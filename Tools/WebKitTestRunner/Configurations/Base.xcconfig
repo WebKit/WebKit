@@ -1,4 +1,4 @@
-// Copyright (C) 2010-2023 Apple Inc. All rights reserved.
+// Copyright (C) 2010-2024 Apple Inc. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions
@@ -74,7 +74,7 @@ WK_FIXME_WARNING_CFLAGS = -Wno-unused-parameter;
 GCC_PREFIX_HEADER = WebKitTestRunnerPrefix.h
 
 DEBUG_DEFINES = NDEBUG;
-DEBUG_DEFINES[config=Debug] = ;
+DEBUG_DEFINES[config=Debug] = $(WK_ENABLE_CONJECTURE_ASSERT_YES);
 
 WK_DEFAULT_GCC_OPTIMIZATION_LEVEL[config=Debug] = 0;
 
@@ -92,5 +92,3 @@ HEADER_SEARCH_PATHS = $(BUILT_PRODUCTS_DIR)/usr/local/include $(WEBCORE_TEST_SUP
 HEADER_SEARCH_PATHS_cocoatouch = $(SRCROOT)/../../Source/WebKit/Platform/spi/ios $(SRCROOT)/../../Source/WebKit/Platform/spi/watchos $(SRCROOT)/../../Source/WebKit/UIProcess/ios;
 
 LIBRARY_SEARCH_PATHS = $(SDK_DIR)$(WK_ALTERNATE_WEBKIT_SDK_PATH)$(WK_LIBRARY_INSTALL_PATH) $(inherited);
-
-EXCLUDED_INSTALLSRC_SUBDIRECTORY_PATTERNS = $(inherited) "$(PROJECT_DIR)/gtk";

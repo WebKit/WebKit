@@ -38,11 +38,11 @@ GST_DEBUG_CATEGORY_STATIC(webkitGstMockDeviceDebug);
 #define webkit_mock_device_provider_parent_class parent_class
 WEBKIT_DEFINE_TYPE_WITH_CODE(GStreamerMockDevice, webkit_mock_device, GST_TYPE_DEVICE, GST_DEBUG_CATEGORY_INIT(webkitGstMockDeviceDebug, "webkitmockdevice", 0, "Mock Device"))
 
-static GstElement* webkitMockDeviceCreateElement(GstDevice* device, const char* name)
+static GstElement* webkitMockDeviceCreateElement([[maybe_unused]] GstDevice* device, const char* name)
 {
     GST_INFO_OBJECT(device, "Creating source element for device %s", name);
     auto* element = makeGStreamerElement("appsrc", name);
-    g_object_set(element, "format", GST_FORMAT_TIME, "is-live", TRUE, nullptr);
+    g_object_set(element, "format", GST_FORMAT_TIME, "is-live", TRUE, "do-timestamp", TRUE, nullptr);
     return element;
 }
 

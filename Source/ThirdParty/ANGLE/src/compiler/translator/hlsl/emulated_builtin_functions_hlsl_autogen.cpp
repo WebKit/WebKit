@@ -562,20 +562,63 @@ constexpr FunctionPair g_hlslFunctions[] = {
      "{\n"
      "    return a ? y : x;\n"
      "}\n"},
+    {BuiltInId::mix_Int1_Int1_Bool1,
+     "int mix_emu(int x, int y, bool a)\n"
+     "{\n"
+     "    return a ? y : x;\n"
+     "}\n"},
+    {BuiltInId::mix_UInt1_UInt1_Bool1,
+     "uint mix_emu(uint x, uint y, bool a)\n"
+     "{\n"
+     "    return a ? y : x;\n"
+     "}\n"},
     {BuiltInId::mix_Float2_Float2_Bool2,
      "float2 mix_emu(float2 x, float2 y, bool2 a)\n"
      "{\n"
-     "    return a ? y : x;\n"
+     "    return float2(a[0] ? y[0] : x[0], a[1] ? y[1] : x[1]);\n"
+     "}\n"},
+    {BuiltInId::mix_Int2_Int2_Bool2,
+     "int2 mix_emu(int2 x, int2 y, bool2 a)\n"
+     "{\n"
+     "    return int2(a[0] ? y[0] : x[0], a[1] ? y[1] : x[1]);\n"
+     "}\n"},
+    {BuiltInId::mix_UInt2_UInt2_Bool2,
+     "uint2 mix_emu(uint2 x, uint2 y, bool2 a)\n"
+     "{\n"
+     "    return uint2(a[0] ? y[0] : x[0], a[1] ? y[1] : x[1]);\n"
      "}\n"},
     {BuiltInId::mix_Float3_Float3_Bool3,
      "float3 mix_emu(float3 x, float3 y, bool3 a)\n"
      "{\n"
-     "    return a ? y : x;\n"
+     "    return float3(a[0] ? y[0] : x[0], a[1] ? y[1] : x[1], a[2] ? y[2] : x[2]);\n"
+     "}\n"},
+    {BuiltInId::mix_Int3_Int3_Bool3,
+     "int3 mix_emu(int3 x, int3 y, bool3 a)\n"
+     "{\n"
+     "    return int3(a[0] ? y[0] : x[0], a[1] ? y[1] : x[1], a[2] ? y[2] : x[2]);\n"
+     "}\n"},
+    {BuiltInId::mix_UInt3_UInt3_Bool3,
+     "uint3 mix_emu(uint3 x, uint3 y, bool3 a)\n"
+     "{\n"
+     "    return uint3(a[0] ? y[0] : x[0], a[1] ? y[1] : x[1], a[2] ? y[2] : x[2]);\n"
      "}\n"},
     {BuiltInId::mix_Float4_Float4_Bool4,
      "float4 mix_emu(float4 x, float4 y, bool4 a)\n"
      "{\n"
-     "    return a ? y : x;\n"
+     "    return float4(a[0] ? y[0] : x[0], a[1] ? y[1] : x[1], a[2] ? y[2] : x[2], a[3] ? y[3] : "
+     "x[3]);\n"
+     "}\n"},
+    {BuiltInId::mix_Int4_Int4_Bool4,
+     "int4 mix_emu(int4 x, int4 y, bool4 a)\n"
+     "{\n"
+     "    return int4(a[0] ? y[0] : x[0], a[1] ? y[1] : x[1], a[2] ? y[2] : x[2], a[3] ? y[3] : "
+     "x[3]);\n"
+     "}\n"},
+    {BuiltInId::mix_UInt4_UInt4_Bool4,
+     "uint4 mix_emu(uint4 x, uint4 y, bool4 a)\n"
+     "{\n"
+     "    return uint4(a[0] ? y[0] : x[0], a[1] ? y[1] : x[1], a[2] ? y[2] : x[2], a[3] ? y[3] : "
+     "x[3]);\n"
      "}\n"},
     {BuiltInId::bitfieldExtract_UInt1_Int1_Int1,
      "uint bitfieldExtract_emu(uint value, int offset, int bits)\n"

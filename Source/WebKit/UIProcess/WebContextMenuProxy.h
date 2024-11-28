@@ -45,6 +45,9 @@ class WebContextMenuProxy : public RefCounted<WebContextMenuProxy>, public WebCo
 public:
     virtual ~WebContextMenuProxy();
 
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
+
     virtual void show();
 
     WebPageProxy* page() const { return m_page.get(); }

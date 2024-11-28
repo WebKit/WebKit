@@ -221,15 +221,19 @@ void RenderMathMLOperator::layoutBlock(bool relayoutChildren, LayoutUnit pageLog
 {
     ASSERT(needsLayout());
 
+    insertPositionedChildrenIntoContainingBlock();
+
     if (!relayoutChildren && simplifiedLayout())
         return;
+
+    layoutFloatingChildren();
 
     LayoutUnit leadingSpaceValue = leadingSpace();
     LayoutUnit trailingSpaceValue = trailingSpace();
 
     if (useMathOperator()) {
         recomputeLogicalWidth();
-        for (auto child = firstChildBox(); child; child = child->nextSiblingBox())
+        for (auto child = firstInFlowChildBox(); child; child = child->nextInFlowSiblingBox())
             child->layoutIfNeeded();
         setLogicalWidth(leadingSpaceValue + m_mathOperator.width() + trailingSpaceValue + borderAndPaddingLogicalWidth());
         setLogicalHeight(m_mathOperator.ascent() + m_mathOperator.descent() + borderAndPaddingLogicalHeight());
@@ -245,9 +249,7 @@ void RenderMathMLOperator::layoutBlock(bool relayoutChildren, LayoutUnit pageLog
         setLogicalWidth(width);
 
         // We then move the children to take spacing into account.
-        LayoutPoint horizontalShift(style().direction() == TextDirection::LTR ? leadingSpaceValue : -leadingSpaceValue, 0_lu);
-        for (auto* child = firstChildBox(); child; child = child->nextSiblingBox())
-            child->setLocation(child->location() + horizontalShift);
+        shiftInFlowChildren(writingMode().isBidiLTR() ? leadingSpaceValue : -leadingSpaceValue, 0_lu);
     }
 
     updateScrollInfoAfterLayout();
@@ -323,7 +325,7 @@ void RenderMathMLOperator::paint(PaintInfo& info, const LayoutPoint& paintOffset
         return;
 
     LayoutPoint operatorTopLeft = paintOffset + location();
-    operatorTopLeft.move((style().isLeftToRightDirection() ? leadingSpace() : trailingSpace()) + borderLeft() + paddingLeft(), borderAndPaddingBefore());
+    operatorTopLeft.move((writingMode().isBidiLTR() ? leadingSpace() : trailingSpace()) + borderLeft() + paddingLeft(), borderAndPaddingBefore());
 
     m_mathOperator.paint(style(), info, operatorTopLeft);
 }

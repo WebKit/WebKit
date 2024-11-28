@@ -78,7 +78,7 @@ void MediaDevices::stop()
     if (m_deviceChangeToken) {
         auto* controller = UserMediaController::from(document()->page());
         if (controller)
-            controller->removeDeviceChangeObserver(m_deviceChangeToken);
+            controller->removeDeviceChangeObserver(*m_deviceChangeToken);
     }
     m_scheduledEventTimer.stop();
 }
@@ -283,7 +283,7 @@ void MediaDevices::getDisplayMedia(DisplayMediaStreamConstraints&& constraints, 
     }
 
     // FIXME: We use hidden while the spec is using focus, let's revisit when when spec is made clearer.
-    if (!document->isFullyActive() || document->topDocument().hidden()) {
+    if (!document->isFullyActive() || document->hidden()) {
         promise.reject(Exception { ExceptionCode::InvalidStateError, "Document is not fully active or does not have focus"_s });
         return;
     }
@@ -309,12 +309,25 @@ static inline bool checkSpeakerAccess(const Document& document)
         && PermissionsPolicy::isFeatureEnabled(PermissionsPolicy::Feature::SpeakerSelection, document, PermissionsPolicy::ShouldReportViolation::No);
 }
 
+static inline bool exposeSpeakersWithoutMicrophoneAccess(const Document& document)
+{
+    return document.frame() && document.frame()->settings().exposeSpeakersWithoutMicrophoneEnabled();
+}
+
+static inline bool haveMicrophoneDevice(const Vector<CaptureDeviceWithCapabilities>& devices, const String& deviceId)
+{
+    return std::any_of(devices.begin(), devices.end(), [&deviceId](auto& deviceWithCapabilities) {
+        auto& device = deviceWithCapabilities.device;
+        return device.persistentId() == deviceId && device.type() == CaptureDevice::DeviceType::Microphone;
+    });
+}
+
 void MediaDevices::exposeDevices(Vector<CaptureDeviceWithCapabilities>&& newDevices, MediaDeviceHashSalts&& deviceIDHashSalts, EnumerateDevicesPromise&& promise)
 {
     if (isContextStopped())
         return;
 
-    auto& document = *this->document();
+    Ref document = *this->document();
 
     bool canAccessCamera = checkCameraAccess(document);
     bool canAccessMicrophone = checkMicrophoneAccess(document);
@@ -338,11 +351,13 @@ void MediaDevices::exposeDevices(Vector<CaptureDeviceWithCapabilities>&& newDevi
             deviceId = center.hashStringWithSalt(newDevice.persistentId(), deviceIDHashSalts.ephemeralDeviceSalt);
         else
             deviceId = center.hashStringWithSalt(newDevice.persistentId(), deviceIDHashSalts.persistentDeviceSalt);
-        auto groupId = hashedGroupId(newDevice.groupId());
+        auto groupId = newDevice.groupId().isEmpty() ? emptyString() : hashedGroupId(newDevice.groupId());
 
         if (newDevice.type() == CaptureDevice::DeviceType::Speaker) {
-            m_audioOutputDeviceIdToPersistentId.add(deviceId, newDevice.persistentId());
-            devices.append(RefPtr<MediaDeviceInfo> { MediaDeviceInfo::create(newDevice.label(), WTFMove(deviceId), WTFMove(groupId), toMediaDeviceInfoKind(newDevice.type())) });
+            if (exposeSpeakersWithoutMicrophoneAccess(document) || haveMicrophoneDevice(newDevices, newDevice.groupId())) {
+                m_audioOutputDeviceIdToPersistentId.add(deviceId, newDevice.persistentId());
+                devices.append(RefPtr<MediaDeviceInfo> { MediaDeviceInfo::create(newDevice.label(), WTFMove(deviceId), WTFMove(groupId), toMediaDeviceInfoKind(newDevice.type())) });
+            }
         } else
             devices.append(RefPtr<InputDeviceInfo> { InputDeviceInfo::create(WTFMove(newDeviceWithCapabilities), WTFMove(deviceId), WTFMove(groupId)) });
     }

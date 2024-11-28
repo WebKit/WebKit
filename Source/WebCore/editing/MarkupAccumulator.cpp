@@ -59,6 +59,8 @@
 #include <wtf/URL.h>
 #include <wtf/unicode/CharacterNames.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 using namespace HTMLNames;
@@ -207,7 +209,7 @@ MarkupAccumulator::MarkupAccumulator(Vector<Ref<Node>>* nodes, ResolveURLs resol
 
 MarkupAccumulator::~MarkupAccumulator() = default;
 
-void MarkupAccumulator::enableURLReplacement(HashMap<String, String>&& replacementURLStrings, HashMap<RefPtr<CSSStyleSheet>, String>&& replacementURLStringsForCSSStyleSheet)
+void MarkupAccumulator::enableURLReplacement(UncheckedKeyHashMap<String, String>&& replacementURLStrings, UncheckedKeyHashMap<RefPtr<CSSStyleSheet>, String>&& replacementURLStringsForCSSStyleSheet)
 {
     m_urlReplacementData = URLReplacementData { WTFMove(replacementURLStrings), WTFMove(replacementURLStringsForCSSStyleSheet) };
 }
@@ -487,7 +489,7 @@ void MarkupAccumulator::appendNamespace(StringBuilder& result, const AtomString&
         return;
     }
 
-    // Use emptyAtom()s's impl() for null strings since this HashMap can't handle nullptr as a key
+    // Use emptyAtom()s's impl() for null strings since this UncheckedKeyHashMap can't handle nullptr as a key
     auto addResult = namespaces.add(prefix.isNull() ? emptyAtom().impl() : prefix.impl(), namespaceURI.impl());
     if (!addResult.isNewEntry) {
         if (addResult.iterator->value == namespaceURI.impl())
@@ -860,7 +862,7 @@ static bool isElementExcludedByRule(const MarkupExclusionRule& rule, const Eleme
                 continue;
             }
 
-            // FIXME: We might optimize this by using a HashMap when there are too many attributes.
+            // FIXME: We might optimize this by using a UncheckedKeyHashMap when there are too many attributes.
             for (const Attribute& attribute : element.attributesIterator()) {
                 if (!equalIgnoringASCIICase(attribute.localName(), attributeLocalName))
                     continue;
@@ -882,3 +884,5 @@ bool MarkupAccumulator::shouldExcludeElement(const Element& element)
 }
 
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

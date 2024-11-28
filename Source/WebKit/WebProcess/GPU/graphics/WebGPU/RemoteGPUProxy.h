@@ -63,6 +63,7 @@ public:
     RemoteGPUProxy& root() { return *this; }
 
     IPC::StreamClientConnection& streamClientConnection() { return *m_streamConnection; }
+    Ref<IPC::StreamClientConnection> protectedStreamClientConnection() { return *m_streamConnection; }
 
     void ref() const final { return ThreadSafeRefCounted<RemoteGPUProxy>::ref(); }
     void deref() const final { return ThreadSafeRefCounted<RemoteGPUProxy>::deref(); }
@@ -94,12 +95,12 @@ private:
     template<typename T>
     WARN_UNUSED_RETURN IPC::Error send(T&& message)
     {
-        return root().streamClientConnection().send(std::forward<T>(message), backing());
+        return root().protectedStreamClientConnection()->send(std::forward<T>(message), backing());
     }
     template<typename T>
     WARN_UNUSED_RETURN IPC::Connection::SendSyncResult<T> sendSync(T&& message)
     {
-        return root().streamClientConnection().sendSync(std::forward<T>(message), backing());
+        return root().protectedStreamClientConnection()->sendSync(std::forward<T>(message), backing());
     }
 
     void requestAdapter(const WebCore::WebGPU::RequestAdapterOptions&, CompletionHandler<void(RefPtr<WebCore::WebGPU::Adapter>&&)>&&) final;
@@ -139,11 +140,14 @@ private:
     void disconnectGpuProcessIfNeeded();
 
     // SerialFunctionDispatcher
-    void dispatch(Function<void()>&& function) final { m_dispatcher.dispatch(WTFMove(function)); }
-    bool isCurrent() const final { return m_dispatcher.isCurrent(); }
+    void dispatch(Function<void()>&&) final;
+    bool isCurrent() const final;
+
+    RefPtr<IPC::StreamClientConnection> protectedStreamConnection() const { return m_streamConnection; }
+    Ref<WebGPU::ConvertToBackingContext> protectedConvertToBackingContext() const;
 
     Ref<WebGPU::ConvertToBackingContext> m_convertToBackingContext;
-    SerialFunctionDispatcher& m_dispatcher;
+    ThreadSafeWeakPtr<SerialFunctionDispatcher> m_dispatcher;
     WeakPtr<GPUProcessConnection> m_gpuProcessConnection;
     RefPtr<IPC::StreamClientConnection> m_streamConnection;
     WebGPUIdentifier m_backing { WebGPUIdentifier::generate() };

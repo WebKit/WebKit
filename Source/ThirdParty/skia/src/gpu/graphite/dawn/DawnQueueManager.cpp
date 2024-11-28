@@ -120,7 +120,7 @@ const DawnSharedContext* DawnQueueManager::dawnSharedContext() const {
 }
 
 std::unique_ptr<CommandBuffer> DawnQueueManager::getNewCommandBuffer(
-        ResourceProvider* resourceProvider) {
+        ResourceProvider* resourceProvider, Protected) {
     return DawnCommandBuffer::Make(dawnSharedContext(),
                                    static_cast<DawnResourceProvider*>(resourceProvider));
 }
@@ -144,7 +144,7 @@ QueueManager::OutstandingSubmission DawnQueueManager::onSubmitToGpu() {
 #endif
 }
 
-#if defined(GRAPHITE_TEST_UTILS)
+#if defined(GPU_TEST_UTILS)
 void DawnQueueManager::startCapture() {
     // TODO: Dawn doesn't have capturing feature yet.
 }

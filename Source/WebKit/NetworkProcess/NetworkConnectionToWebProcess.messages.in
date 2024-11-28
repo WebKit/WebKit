@@ -20,7 +20,7 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-messages -> NetworkConnectionToWebProcess LegacyReceiver {
+messages -> NetworkConnectionToWebProcess WantsDispatchMessage {
 
     ScheduleResourceLoad(WebKit::NetworkResourceLoadParameters resourceLoadParameters, std::optional<WebKit::NetworkResourceLoadIdentifier> existingLoaderToResume)
     PerformSynchronousLoad(WebKit::NetworkResourceLoadParameters resourceLoadParameters) -> (WebCore::ResourceError error, WebCore::ResourceResponse response, Vector<uint8_t> data) Synchronous
@@ -34,7 +34,7 @@ messages -> NetworkConnectionToWebProcess LegacyReceiver {
     PreconnectTo(std::optional<WebCore::ResourceLoaderIdentifier> preconnectionIdentifier, WebKit::NetworkResourceLoadParameters loadParameters);
     IsResourceLoadFinished(WebCore::ResourceLoaderIdentifier resourceLoadIdentifier) -> (bool isFinished)
 
-    StartDownload(WebKit::DownloadID downloadID, WebCore::ResourceRequest request, std::optional<WebCore::SecurityOriginData> topOrigin, std::optional<WebKit::NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain, String suggestedName)
+    StartDownload(WebKit::DownloadID downloadID, WebCore::ResourceRequest request, std::optional<WebCore::SecurityOriginData> topOrigin, std::optional<WebKit::NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain, String suggestedName, enum:bool WebCore::FromDownloadAttribute fromDownloadAttribute, std::optional<WebCore::FrameIdentifier> frameID, std::optional<WebCore::PageIdentifier> pageID)
     ConvertMainResourceLoadToDownload(std::optional<WebCore::ResourceLoaderIdentifier> mainResourceLoadIdentifier, WebKit::DownloadID downloadID, WebCore::ResourceRequest request, std::optional<WebCore::SecurityOriginData> topOrigin, WebCore::ResourceResponse response, std::optional<WebKit::NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain)
 
     CookiesForDOM(URL firstParty, struct WebCore::SameSiteInfo sameSiteInfo, URL url, WebCore::FrameIdentifier frameID, WebCore::PageIdentifier pageID, enum:bool WebCore::IncludeSecureCookies includeSecureCookies, enum:bool WebCore::ApplyTrackingPrevention applyTrackingPrevention, enum:bool WebCore::ShouldRelaxThirdPartyCookieBlocking shouldRelaxThirdPartyCookieBlocking) -> (String cookieString, bool didAccessSecureCookies) Synchronous
@@ -91,10 +91,10 @@ messages -> NetworkConnectionToWebProcess LegacyReceiver {
     GetNetworkLoadIntermediateInformation(WebCore::ResourceLoaderIdentifier resourceLoadIdentifier) -> (Vector<WebCore::NetworkTransactionInformation> transactions) Synchronous
     TakeNetworkLoadInformationMetrics(WebCore::ResourceLoaderIdentifier resourceLoadIdentifier) -> (WebCore::NetworkLoadMetrics networkMetrics) Synchronous
 
-    EstablishSWContextConnection(WebKit::WebPageProxyIdentifier webPageProxyID, WebCore::RegistrableDomain domain, std::optional<WebCore::ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier) -> ()
+    EstablishSWContextConnection(WebKit::WebPageProxyIdentifier webPageProxyID, WebCore::Site site, std::optional<WebCore::ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier) -> ()
     CloseSWContextConnection()
 
-    EstablishSharedWorkerContextConnection(WebKit::WebPageProxyIdentifier webPageProxyID, WebCore::RegistrableDomain domain) -> ()
+    EstablishSharedWorkerContextConnection(WebKit::WebPageProxyIdentifier webPageProxyID, WebCore::Site site) -> ()
     CloseSharedWorkerContextConnection()
 
     CreateRTCProvider() -> ()
@@ -121,9 +121,6 @@ messages -> NetworkConnectionToWebProcess LegacyReceiver {
 #if ENABLE(CONTENT_FILTERING)
     InstallMockContentFilter(WebCore::MockContentFilterSettings settings)
 #endif
-#if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
-    LogOnBehalfOfWebContent(std::span<const char> logChannelIncludingNullTerminator, std::span<const char> logCategoryIncludingNullTerminator, std::span<const char> logStringIncludingNullTerminator, uint8_t logType, int32_t pid)
-#endif
 
     UseRedirectionForCurrentNavigation(WebCore::ResourceLoaderIdentifier resourceLoadIdentifier, WebCore::ResourceResponse response)
 
@@ -134,8 +131,8 @@ messages -> NetworkConnectionToWebProcess LegacyReceiver {
     NavigatorGetPushPermissionState(URL scopeURL) -> (Expected<uint8_t, WebCore::ExceptionData> result)
 #endif
 
-    [EnabledIf='isWebTransportEnabled()'] InitializeWebTransportSession(URL url) -> (std::optional<WebKit::WebTransportSessionIdentifier> identifier)
-    [EnabledIf='isWebTransportEnabled()'] DestroyWebTransportSession(WebKit::WebTransportSessionIdentifier identifier)
+    [EnabledBy=WebTransportEnabled] InitializeWebTransportSession(URL url) -> (std::optional<WebKit::WebTransportSessionIdentifier> identifier)
+    [EnabledBy=WebTransportEnabled] DestroyWebTransportSession(WebKit::WebTransportSessionIdentifier identifier)
 
     ClearFrameLoadRecordsForStorageAccess(WebCore::FrameIdentifier frameID)
 

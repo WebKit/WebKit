@@ -1,0 +1,6 @@
+
+
+FAIL The dialog element should support :open and :closed. ':closed' is not a valid selector.
+FAIL The details element should support :open and :closed. ':closed' is not a valid selector.
+FAIL The select element should support :open and :closed. promise_test: Unhandled rejection with value: object "SyntaxError: ':closed' is not a valid selector."
+

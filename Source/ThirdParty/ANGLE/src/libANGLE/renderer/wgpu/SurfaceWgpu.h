@@ -32,6 +32,11 @@ class SurfaceWgpu : public SurfaceImpl
         webgpu::ImageHelper texture;
         RenderTargetWgpu renderTarget;
     };
+    angle::Result createDepthStencilAttachment(uint32_t width,
+                                               uint32_t height,
+                                               const webgpu::Format &webgpuFormat,
+                                               wgpu::Device &device,
+                                               AttachmentImage *outDepthStencilAttachment);
 };
 
 class OffscreenSurfaceWgpu : public SurfaceWgpu
@@ -46,7 +51,7 @@ class OffscreenSurfaceWgpu : public SurfaceWgpu
                             gl::Texture *texture,
                             EGLint buffer) override;
     egl::Error releaseTexImage(const gl::Context *context, EGLint buffer) override;
-    void setSwapInterval(EGLint interval) override;
+    void setSwapInterval(const egl::Display *display, EGLint interval) override;
 
     // width and height can change with client window resizing
     EGLint getWidth() const override;
@@ -92,7 +97,7 @@ class WindowSurfaceWgpu : public SurfaceWgpu
                             gl::Texture *texture,
                             EGLint buffer) override;
     egl::Error releaseTexImage(const gl::Context *context, EGLint buffer) override;
-    void setSwapInterval(EGLint interval) override;
+    void setSwapInterval(const egl::Display *display, EGLint interval) override;
 
     // width and height can change with client window resizing
     EGLint getWidth() const override;
@@ -123,6 +128,7 @@ class WindowSurfaceWgpu : public SurfaceWgpu
 
     angle::Result swapImpl(const gl::Context *context);
 
+    angle::Result configureSurface(const egl::Display *display, const gl::Extents &size);
     angle::Result updateCurrentTexture(const egl::Display *display);
 
     virtual angle::Result createWgpuSurface(const egl::Display *display,
@@ -132,9 +138,14 @@ class WindowSurfaceWgpu : public SurfaceWgpu
 
     EGLNativeWindowType mNativeWindow;
     wgpu::Surface mSurface;
-    wgpu::SwapChain mSwapChain;
 
-    gl::Extents mCurrentSwapChainSize;
+    const webgpu::Format *mSurfaceTextureFormat = nullptr;
+    wgpu::TextureUsage mSurfaceTextureUsage;
+    wgpu::PresentMode mPresentMode;
+
+    const webgpu::Format *mDepthStencilFormat = nullptr;
+
+    gl::Extents mCurrentSurfaceSize;
 
     AttachmentImage mColorAttachment;
     AttachmentImage mDepthStencilAttachment;

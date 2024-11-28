@@ -28,10 +28,12 @@
 
 #include "AST.h"
 #include "MetalFunctionWriter.h"
-#include <notify.h>
 #include <wtf/DataLog.h>
 #include <wtf/text/StringBuilder.h>
 
+#if PLATFORM(COCOA)
+#include <notify.h>
+#endif
 namespace WGSL {
 
 namespace Metal {
@@ -48,6 +50,7 @@ static StringView metalCodePrologue()
 
 }
 
+#if PLATFORM(COCOA)
 static void dumpMetalCodeIfNeeded(StringBuilder& stringBuilder)
 {
     static bool dumpMetalCode = false;
@@ -64,6 +67,7 @@ static void dumpMetalCodeIfNeeded(StringBuilder& stringBuilder)
         dataLogLn(stringBuilder.toString());
     }
 }
+#endif
 
 String generateMetalCode(ShaderModule& shaderModule, PrepareResult& prepareResult, const HashMap<String, ConstantValue>& constantValues)
 {
@@ -72,7 +76,9 @@ String generateMetalCode(ShaderModule& shaderModule, PrepareResult& prepareResul
 
     Metal::emitMetalFunctions(stringBuilder, shaderModule, prepareResult, constantValues);
 
+#if PLATFORM(COCOA)
     dumpMetalCodeIfNeeded(stringBuilder);
+#endif
 
     return stringBuilder.toString();
 }

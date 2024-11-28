@@ -138,6 +138,7 @@ std::optional<NavigationActionData> WebFrameLoaderClient::navigationActionData(c
         navigationAction.openedByDOMWithOpener(),
         hasOpener,
         isPerformingHTTPFallback == IsPerformingHTTPFallback::Yes,
+        { },
         requester.securityOrigin->data(),
         requester.topOrigin->data(),
         navigationAction.targetBackForwardItemIdentifier(),
@@ -176,8 +177,11 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const Navigat
 
     // Notify the UIProcess.
     if (policyDecisionMode == PolicyDecisionMode::Synchronous) {
+        bool shouldUseSyncIPCForFragmentNavigations = false;
 #if PLATFORM(COCOA)
-        if (navigationAction.processingUserGesture() || !linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::AsyncFragmentNavigationPolicyDecision)) {
+        shouldUseSyncIPCForFragmentNavigations = !linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::AsyncFragmentNavigationPolicyDecision);
+#endif
+        if (navigationAction.processingUserGesture() || navigationAction.isFromNavigationAPI() || shouldUseSyncIPCForFragmentNavigations) {
             auto sendResult = webPage->sendSync(Messages::WebPageProxy::DecidePolicyForNavigationActionSync(*navigationActionData));
             if (!sendResult.succeeded()) {
                 WebFrameLoaderClient_RELEASE_LOG_ERROR(Network, "dispatchDecidePolicyForNavigationAction: ignoring because of failing to send sync IPC with error %" PUBLIC_LOG_STRING, IPC::errorAsString(sendResult.error()).characters());
@@ -190,7 +194,6 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const Navigat
             m_frame->didReceivePolicyDecision(listenerID, PolicyDecision { policyDecision.isNavigatingToAppBoundDomain, policyDecision.policyAction, { }, policyDecision.downloadID });
             return;
         }
-#endif
         webPage->sendWithAsyncReply(Messages::WebPageProxy::DecidePolicyForNavigationActionAsync(*navigationActionData), [] (PolicyDecision&&) { });
         m_frame->didReceivePolicyDecision(listenerID, PolicyDecision { std::nullopt, PolicyAction::Use });
         return;
@@ -205,6 +208,18 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const Navigat
 
         frame->didReceivePolicyDecision(listenerID, WTFMove(policyDecision));
     });
+}
+
+void WebFrameLoaderClient::updateSandboxFlags(SandboxFlags sandboxFlags)
+{
+    if (RefPtr webPage = m_frame->page())
+        webPage->send(Messages::WebPageProxy::UpdateSandboxFlags(m_frame->frameID(), sandboxFlags));
+}
+
+void WebFrameLoaderClient::updateOpener(const WebCore::Frame& newOpener)
+{
+    if (RefPtr webPage = m_frame->page())
+        webPage->send(Messages::WebPageProxy::UpdateOpener(m_frame->frameID(), newOpener.frameID()));
 }
 
 }

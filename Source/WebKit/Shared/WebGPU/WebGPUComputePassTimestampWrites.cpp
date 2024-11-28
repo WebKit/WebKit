@@ -41,9 +41,7 @@ std::optional<ComputePassTimestampWrites> ConvertToBackingContext::convertToBack
     if (!computePassTimestampWrite.querySet)
         return std::nullopt;
 
-    auto querySet = convertToBacking(*computePassTimestampWrite.querySet);
-    if (!querySet)
-        return std::nullopt;
+    auto querySet = convertToBacking(*computePassTimestampWrite.protectedQuerySet());
 
     return { { querySet, computePassTimestampWrite.beginningOfPassWriteIndex, computePassTimestampWrite.endOfPassWriteIndex } };
 }

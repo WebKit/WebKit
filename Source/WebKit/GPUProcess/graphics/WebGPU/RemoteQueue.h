@@ -72,7 +72,8 @@ public:
 
     virtual ~RemoteQueue();
 
-    const SharedPreferencesForWebProcess& sharedPreferencesForWebProcess() const { return m_gpu->sharedPreferencesForWebProcess(); }
+    // FIXME: Remove SUPPRESS_UNCOUNTED_ARG once https://github.com/llvm/llvm-project/pull/111198 lands.
+    SUPPRESS_UNCOUNTED_ARG std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess() const { return m_gpu->sharedPreferencesForWebProcess(); }
 
     void stopListeningForIPC();
 
@@ -87,6 +88,9 @@ private:
     RemoteQueue& operator=(RemoteQueue&&) = delete;
 
     WebCore::WebGPU::Queue& backing() { return m_backing; }
+    Ref<WebCore::WebGPU::Queue> protectedBacking();
+
+    Ref<WebGPU::ObjectHeap> protectedObjectHeap() const;
 
     void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;
 

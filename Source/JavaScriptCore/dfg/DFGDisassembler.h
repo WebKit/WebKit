@@ -95,7 +95,7 @@ private:
     DumpContext m_dumpContext;
     MacroAssembler::Label m_startOfCode;
     Vector<MacroAssembler::Label> m_labelForBlockIndex;
-    HashMap<Node*, MacroAssembler::Label> m_labelForNode;
+    UncheckedKeyHashMap<Node*, MacroAssembler::Label> m_labelForNode;
     MacroAssembler::Label m_endOfMainPath;
     MacroAssembler::Label m_endOfCode;
 };

@@ -128,7 +128,7 @@ struct CachedSandboxHeader {
 // byte N
 
 struct SandboxInfo {
-    SandboxInfo(const String& parentDirectoryPath, const String& directoryPath, const String& filePath, const SandboxParametersPtr& sandboxParameters, const CString& header, const WebCore::AuxiliaryProcessType& processType, const SandboxInitializationParameters& initializationParameters, const String& profileOrProfilePath, bool isProfilePath)
+    SandboxInfo(const String& parentDirectoryPath, const String& directoryPath, const String& filePath, const SandboxParametersPtr& sandboxParameters, const CString& header, const WTF::AuxiliaryProcessType& processType, const SandboxInitializationParameters& initializationParameters, const String& profileOrProfilePath, bool isProfilePath)
         : parentDirectoryPath { parentDirectoryPath }
         , directoryPath { directoryPath }
         , filePath { filePath }
@@ -146,7 +146,7 @@ struct SandboxInfo {
     const String& filePath;
     const SandboxParametersPtr& sandboxParameters;
     const CString& header;
-    const WebCore::AuxiliaryProcessType& processType;
+    const WTF::AuxiliaryProcessType& processType;
     const SandboxInitializationParameters& initializationParameters;
     const String& profileOrProfilePath;
     const bool isProfilePath;
@@ -192,19 +192,18 @@ static OSStatus enableSandboxStyleFileQuarantine()
 }
 
 #if USE(CACHE_COMPILED_SANDBOX)
-static std::optional<Vector<char>> fileContents(const String& path, bool shouldLock = false, OptionSet<FileSystem::FileLockMode> lockMode = FileSystem::FileLockMode::Exclusive)
+static std::optional<Vector<uint8_t>> fileContents(const String& path, bool shouldLock = false, OptionSet<FileSystem::FileLockMode> lockMode = FileSystem::FileLockMode::Exclusive)
 {
     FileHandle file = shouldLock ? FileHandle(path, FileSystem::FileOpenMode::Read, lockMode) : FileHandle(path, FileSystem::FileOpenMode::Read);
     file.open();
     if (!file)
         return std::nullopt;
 
-    char chunk[4096];
-    constexpr size_t chunkSize = std::size(chunk);
-    Vector<char> contents;
-    contents.reserveInitialCapacity(chunkSize);
-    while (size_t bytesRead = file.read(chunk, chunkSize))
-        contents.append(std::span { chunk, bytesRead });
+    std::array<uint8_t, 4096> chunk;
+    Vector<uint8_t> contents;
+    contents.reserveInitialCapacity(chunk.size());
+    while (size_t bytesRead = file.read(chunk))
+        contents.append(std::span { chunk }.first(bytesRead));
     contents.shrinkToFit();
 
     return contents;
@@ -213,17 +212,17 @@ static std::optional<Vector<char>> fileContents(const String& path, bool shouldL
 #if USE(APPLE_INTERNAL_SDK)
 // These strings must match the last segment of the "com.apple.rootless.storage.<this part must match>" entry in each
 // process's restricted entitlements file (ex. Configurations/Networking-OSX-restricted.entitlements).
-constexpr ASCIILiteral processStorageClass(WebCore::AuxiliaryProcessType type)
+constexpr ASCIILiteral processStorageClass(WTF::AuxiliaryProcessType type)
 {
     switch (type) {
-    case WebCore::AuxiliaryProcessType::WebContent:
+    case WTF::AuxiliaryProcessType::WebContent:
         return "WebKitWebContentSandbox"_s;
-    case WebCore::AuxiliaryProcessType::Network:
+    case WTF::AuxiliaryProcessType::Network:
         return "WebKitNetworkingSandbox"_s;
-    case WebCore::AuxiliaryProcessType::Plugin:
+    case WTF::AuxiliaryProcessType::Plugin:
         return "WebKitPluginSandbox"_s;
 #if ENABLE(GPU_PROCESS)
-    case WebCore::AuxiliaryProcessType::GPU:
+    case WTF::AuxiliaryProcessType::GPU:
         return "WebKitGPUSandbox"_s;
 #endif
     }
@@ -269,23 +268,23 @@ static String sandboxDataVaultParentDirectory()
     return String::fromUTF8(resolvedPath);
 }
 
-static String sandboxDirectory(WebCore::AuxiliaryProcessType processType, const String& parentDirectory)
+static String sandboxDirectory(WTF::AuxiliaryProcessType processType, const String& parentDirectory)
 {
     StringBuilder directory;
     directory.append(parentDirectory);
     switch (processType) {
-    case WebCore::AuxiliaryProcessType::WebContent:
+    case WTF::AuxiliaryProcessType::WebContent:
         directory.append("/com.apple.WebKit.WebContent.Sandbox"_s);
         break;
-    case WebCore::AuxiliaryProcessType::Network:
+    case WTF::AuxiliaryProcessType::Network:
         directory.append("/com.apple.WebKit.Networking.Sandbox"_s);
         break;
-    case WebCore::AuxiliaryProcessType::Plugin:
+    case WTF::AuxiliaryProcessType::Plugin:
         WTFLogAlways("sandboxDirectory: Unexpected Plugin process initialization.");
         CRASH();
         break;
 #if ENABLE(GPU_PROCESS)
-    case WebCore::AuxiliaryProcessType::GPU:
+    case WTF::AuxiliaryProcessType::GPU:
         directory.append("/com.apple.WebKit.GPU.Sandbox"_s);
         break;
 #endif
@@ -429,11 +428,11 @@ static SandboxProfilePtr compileAndCacheSandboxProfile(const SandboxInfo& info)
 
     Vector<uint8_t> cacheFile;
     cacheFile.reserveInitialCapacity(expectedFileSize);
-    cacheFile.append(std::span { bitwise_cast<uint8_t*>(&cachedHeader), sizeof(CachedSandboxHeader) });
+    cacheFile.append(asByteSpan(cachedHeader));
     cacheFile.append(info.header.span());
     if (haveBuiltin)
-        cacheFile.append(std::span { sandboxProfile->builtin, cachedHeader.builtinSize });
-    cacheFile.append(std::span { sandboxProfile->data, cachedHeader.dataSize });
+        cacheFile.append(unsafeMakeSpan(sandboxProfile->builtin, cachedHeader.builtinSize));
+    cacheFile.append(unsafeMakeSpan(sandboxProfile->data, cachedHeader.dataSize));
 
     if (!writeSandboxDataToCacheFile(info, cacheFile))
         WTFLogAlways("%s: Unable to cache compiled sandbox\n", getprogname());
@@ -454,13 +453,13 @@ static bool tryApplyCachedSandbox(const SandboxInfo& info)
     auto contents = fileContents(info.filePath);
     if (!contents || contents->isEmpty())
         return false;
-    Vector<char> cachedSandboxContents = WTFMove(*contents);
+    Vector<uint8_t> cachedSandboxContents = WTFMove(*contents);
     if (sizeof(CachedSandboxHeader) > cachedSandboxContents.size())
         return false;
 
     // This data may be corrupted if the sandbox file was cached on a different platform with different endianness
     CachedSandboxHeader cachedSandboxHeader;
-    memcpy(&cachedSandboxHeader, cachedSandboxContents.data(), sizeof(CachedSandboxHeader));
+    memcpySpan(asMutableByteSpan(cachedSandboxHeader), cachedSandboxContents.span().first(sizeof(CachedSandboxHeader)));
     int32_t libsandboxVersion = NSVersionOfRunTimeLibrary("sandbox");
     RELEASE_ASSERT(libsandboxVersion > 0);
     String osVersion = systemMarketingVersion();
@@ -478,9 +477,9 @@ static bool tryApplyCachedSandbox(const SandboxInfo& info)
 
     // These values are computed based on the disk layout specified below the definition of the CachedSandboxHeader struct
     // and must be changed if the layout changes.
-    const char* sandboxHeaderPtr = bitwise_cast<char *>(cachedSandboxContents.data()) + sizeof(CachedSandboxHeader);
-    const char* sandboxBuiltinPtr = sandboxHeaderPtr + cachedSandboxHeader.headerSize;
-    unsigned char* sandboxDataPtr = bitwise_cast<unsigned char*>(haveBuiltin ? sandboxBuiltinPtr + cachedSandboxHeader.builtinSize : sandboxBuiltinPtr);
+    auto sandboxHeader = cachedSandboxContents.mutableSpan().subspan(sizeof(CachedSandboxHeader));
+    auto sandboxBuiltin = sandboxHeader.subspan(cachedSandboxHeader.headerSize);
+    auto sandboxData = haveBuiltin ? sandboxBuiltin.subspan(cachedSandboxHeader.builtinSize) : sandboxBuiltin;
 
     size_t expectedFileSize = sizeof(CachedSandboxHeader) + cachedSandboxHeader.headerSize + cachedSandboxHeader.dataSize;
     if (haveBuiltin)
@@ -489,7 +488,7 @@ static bool tryApplyCachedSandbox(const SandboxInfo& info)
         return false;
     if (cachedSandboxHeader.headerSize != info.header.length())
         return false;
-    if (memcmp(sandboxHeaderPtr, info.header.data(), info.header.length()))
+    if (!equalSpans(sandboxHeader.first(info.header.length()), info.header.span()))
         return false;
 
     SandboxProfile profile { };
@@ -497,13 +496,15 @@ static bool tryApplyCachedSandbox(const SandboxInfo& info)
     profile.builtin = nullptr;
     profile.size = cachedSandboxHeader.dataSize;
     if (haveBuiltin) {
-        builtin = CString::newUninitialized(cachedSandboxHeader.builtinSize, profile.builtin);
+        std::span<char> cstringBuffer;
+        builtin = CString::newUninitialized(cachedSandboxHeader.builtinSize, cstringBuffer);
+        profile.builtin = cstringBuffer.data();
         if (builtin.isNull())
             return false;
-        memcpy(profile.builtin, sandboxBuiltinPtr, cachedSandboxHeader.builtinSize);
+        memcpy(profile.builtin, sandboxBuiltin.data(), cachedSandboxHeader.builtinSize);
     }
-    ASSERT(static_cast<void *>(sandboxDataPtr + profile.size) <= static_cast<void *>(cachedSandboxContents.data() + cachedSandboxContents.size()));
-    profile.data = sandboxDataPtr;
+    ASSERT(sandboxData.subspan(profile.size).data() <= std::to_address(cachedSandboxContents.end()));
+    profile.data = sandboxData.data();
 
     if (sandbox_apply(&profile)) {
         WTFLogAlways("%s: Could not apply cached sandbox: %s\n", getprogname(), safeStrerror(errno).data());
@@ -570,7 +571,7 @@ static bool applySandbox(const AuxiliaryProcessInitializationParameters& paramet
 #if USE(CACHE_COMPILED_SANDBOX)
     // The plugin process's DARWIN_USER_TEMP_DIR and DARWIN_USER_CACHE_DIR sandbox parameters are randomized so
     // so the compiled sandbox should not be cached because it won't be reused.
-    if (parameters.processType == WebCore::AuxiliaryProcessType::Plugin) {
+    if (parameters.processType == WTF::AuxiliaryProcessType::Plugin) {
         WTFLogAlways("applySandbox: Unexpected Plugin process initialization.");
         CRASH();
     }

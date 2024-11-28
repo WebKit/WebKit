@@ -1,0 +1,42 @@
+<script>
+async function run() {
+    let adapter0 = await navigator.gpu.requestAdapter();
+    let device0 = await adapter0.requestDevice();
+    let texture1 = device0.createTexture({ size: [4, 210, 1], dimension: '3d', format: 'rgba16uint', usage: GPUTextureUsage.RENDER_ATTACHMENT});
+    let bindGroupLayout1 = device0.createBindGroupLayout({ entries: [] });
+    let pipelineLayout1 = device0.createPipelineLayout({ bindGroupLayouts: [ bindGroupLayout1 ] });
+    let bindGroup17 = device0.createBindGroup({ layout: bindGroupLayout1, entries: [] });
+    let shaderModule = device0.createShaderModule({ code: `
+        struct FragmentOutput0 {
+            @location(0) f0: vec4u,
+        }
+        @fragment fn fragment0() -> FragmentOutput0 {
+            var out: FragmentOutput0;
+            return out;
+        }
+        struct VertexOutput1 {
+            @invariant @builtin(position) f7: vec4f,
+        }
+        @vertex fn vertex1() -> VertexOutput1 {
+            var out: VertexOutput1;
+            return out;
+        }
+    `});
+    let pipeline2 = device0.createRenderPipeline({
+        layout: pipelineLayout1,
+        fragment: { module: shaderModule, targets: [{ format: 'rgba16uint' }] },
+        vertex: { module: shaderModule, buffers: [] }
+    });
+    let commandEncoder36 = device0.createCommandEncoder();
+    let renderPassEncoder8 = commandEncoder36.beginRenderPass({
+        colorAttachments: [
+            { view: texture1.createView(), depthSlice: 0, loadOp: 'clear', storeOp: 'store' }
+        ]
+    });
+    renderPassEncoder8.setPipeline(pipeline2)
+    renderPassEncoder8.setBindGroup(0, bindGroup17);
+    renderPassEncoder8.draw(54, 42, 4_294_967_295)
+}
+globalThis.testRunner?.waitUntilDone();
+run().finally(() => setTimeout(() => globalThis.testRunner?.notifyDone(), 1000));
+</script>

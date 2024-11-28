@@ -36,21 +36,63 @@
 #include "RenderBoxModelObjectInlines.h"
 #include "RenderFragmentedFlow.h"
 #include "RenderInline.h"
+#include "RenderLayer.h"
 #include "RenderStyle.h"
 #include "RenderStyleInlines.h"
+#include "RenderView.h"
+#include "StyleBuilderConverter.h"
 #include "StyleBuilderState.h"
 #include "StyleScope.h"
 #include "WritingMode.h"
-#include <wtf/CheckedPtr.h>
-#include <wtf/CheckedRef.h>
-#include <wtf/TZoneMallocInlines.h>
-#include <wtf/TypeCasts.h>
 
 namespace WebCore::Style {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(AnchorPositionedState);
 
-static BoxAxis mapInsetPropertyToPhysicalAxis(CSSPropertyID id, const RenderStyle& style)
+static bool isSizingProperty(CSSPropertyID propertyID)
+{
+    switch (propertyID) {
+    case CSSPropertyWidth:
+    case CSSPropertyMinWidth:
+    case CSSPropertyMaxWidth:
+
+    case CSSPropertyHeight:
+    case CSSPropertyMinHeight:
+    case CSSPropertyMaxHeight:
+
+    case CSSPropertyBlockSize:
+    case CSSPropertyMinBlockSize:
+    case CSSPropertyMaxBlockSize:
+
+    case CSSPropertyInlineSize:
+    case CSSPropertyMinInlineSize:
+    case CSSPropertyMaxInlineSize:
+        return true;
+    default:
+        return false;
+    }
+}
+
+static bool isMarginProperty(CSSPropertyID propertyID)
+{
+    switch (propertyID) {
+    case CSSPropertyMarginLeft:
+    case CSSPropertyMarginRight:
+    case CSSPropertyMarginTop:
+    case CSSPropertyMarginBottom:
+
+    case CSSPropertyMarginBlockStart:
+    case CSSPropertyMarginBlockEnd:
+    case CSSPropertyMarginInlineStart:
+    case CSSPropertyMarginInlineEnd:
+        return true;
+
+    default:
+        return false;
+    }
+}
+
+static BoxAxis mapInsetPropertyToPhysicalAxis(CSSPropertyID id, const WritingMode writingMode)
 {
     switch (id) {
     case CSSPropertyLeft:
@@ -61,17 +103,17 @@ static BoxAxis mapInsetPropertyToPhysicalAxis(CSSPropertyID id, const RenderStyl
         return BoxAxis::Vertical;
     case CSSPropertyInsetInlineStart:
     case CSSPropertyInsetInlineEnd:
-        return mapLogicalAxisToPhysicalAxis(makeTextFlow(style.writingMode(), style.direction()), LogicalBoxAxis::Inline);
+        return mapAxisLogicalToPhysical(writingMode, LogicalBoxAxis::Inline);
     case CSSPropertyInsetBlockStart:
     case CSSPropertyInsetBlockEnd:
-        return mapLogicalAxisToPhysicalAxis(makeTextFlow(style.writingMode(), style.direction()), LogicalBoxAxis::Block);
+        return mapAxisLogicalToPhysical(writingMode, LogicalBoxAxis::Block);
     default:
         ASSERT_NOT_REACHED();
         return BoxAxis::Horizontal;
     }
 }
 
-static BoxSide mapInsetPropertyToPhysicalSide(CSSPropertyID id, const RenderStyle& style)
+static BoxSide mapInsetPropertyToPhysicalSide(CSSPropertyID id, const WritingMode writingMode)
 {
     switch (id) {
     case CSSPropertyLeft:
@@ -83,13 +125,13 @@ static BoxSide mapInsetPropertyToPhysicalSide(CSSPropertyID id, const RenderStyl
     case CSSPropertyBottom:
         return BoxSide::Bottom;
     case CSSPropertyInsetInlineStart:
-        return mapLogicalSideToPhysicalSide(makeTextFlow(style.writingMode(), style.direction()), LogicalBoxSide::InlineStart);
+        return mapSideLogicalToPhysical(writingMode, LogicalBoxSide::InlineStart);
     case CSSPropertyInsetInlineEnd:
-        return mapLogicalSideToPhysicalSide(makeTextFlow(style.writingMode(), style.direction()), LogicalBoxSide::InlineEnd);
+        return mapSideLogicalToPhysical(writingMode, LogicalBoxSide::InlineEnd);
     case CSSPropertyInsetBlockStart:
-        return mapLogicalSideToPhysicalSide(makeTextFlow(style.writingMode(), style.direction()), LogicalBoxSide::BlockStart);
+        return mapSideLogicalToPhysical(writingMode, LogicalBoxSide::BlockStart);
     case CSSPropertyInsetBlockEnd:
-        return mapLogicalSideToPhysicalSide(makeTextFlow(style.writingMode(), style.direction()), LogicalBoxSide::BlockEnd);
+        return mapSideLogicalToPhysical(writingMode, LogicalBoxSide::BlockEnd);
     default:
         ASSERT_NOT_REACHED();
         return BoxSide::Top;
@@ -116,9 +158,9 @@ static BoxSide flipBoxSide(BoxSide side)
 // Physical sides (left/right/top/bottom) can only be used in certain inset properties. "For example,
 // left is usable in left, right, or the logical inset properties that refer to the horizontal axis."
 // See: https://drafts.csswg.org/css-anchor-position-1/#typedef-anchor-side
-static bool anchorSideMatchesInsetProperty(CSSValueID anchorSideID, CSSPropertyID insetPropertyID, const RenderStyle& style)
+static bool anchorSideMatchesInsetProperty(CSSValueID anchorSideID, CSSPropertyID insetPropertyID, const WritingMode writingMode)
 {
-    auto physicalAxis = mapInsetPropertyToPhysicalAxis(insetPropertyID, style);
+    auto physicalAxis = mapInsetPropertyToPhysicalAxis(insetPropertyID, writingMode);
 
     switch (anchorSideID) {
     case CSSValueID::CSSValueInside:
@@ -147,23 +189,23 @@ static bool anchorSideMatchesInsetProperty(CSSValueID anchorSideID, CSSPropertyI
 static BoxSide computeStartEndBoxSide(CSSPropertyID insetPropertyID, CheckedRef<const RenderElement> anchorPositionedRenderer, bool shouldComputeStart, bool shouldUseContainingBlockWritingMode)
 {
     // 1. Compute the physical axis of inset property (using the element's writing mode)
-    auto physicalAxis = mapInsetPropertyToPhysicalAxis(insetPropertyID, anchorPositionedRenderer->style());
+    auto physicalAxis = mapInsetPropertyToPhysicalAxis(insetPropertyID, anchorPositionedRenderer->writingMode());
 
     // 2. Convert the physical axis to the corresponding logical axis w.r.t. the element OR containing block's writing mode
-    auto& textFlowStyle = shouldUseContainingBlockWritingMode ? anchorPositionedRenderer->containingBlock()->style() : anchorPositionedRenderer->style();
-    auto textFlow = makeTextFlow(textFlowStyle.writingMode(), textFlowStyle.direction());
-    auto logicalAxis = mapPhysicalAxisToLogicalAxis(textFlow, physicalAxis);
+    auto& style = shouldUseContainingBlockWritingMode ? anchorPositionedRenderer->containingBlock()->style() : anchorPositionedRenderer->style();
+    auto writingMode = style.writingMode();
+    auto logicalAxis = mapAxisPhysicalToLogical(writingMode, physicalAxis);
 
     // 3. Convert the logical start OR end side to the corresponding physical side w.r.t. the
     // element OR containing block's writing mode
     if (logicalAxis == LogicalBoxAxis::Inline) {
         if (shouldComputeStart)
-            return mapLogicalSideToPhysicalSide(textFlow, LogicalBoxSide::InlineStart);
-        return mapLogicalSideToPhysicalSide(textFlow, LogicalBoxSide::InlineEnd);
+            return mapSideLogicalToPhysical(writingMode, LogicalBoxSide::InlineStart);
+        return mapSideLogicalToPhysical(writingMode, LogicalBoxSide::InlineEnd);
     }
     if (shouldComputeStart)
-        return mapLogicalSideToPhysicalSide(textFlow, LogicalBoxSide::BlockStart);
-    return mapLogicalSideToPhysicalSide(textFlow, LogicalBoxSide::BlockEnd);
+        return mapSideLogicalToPhysical(writingMode, LogicalBoxSide::BlockStart);
+    return mapSideLogicalToPhysical(writingMode, LogicalBoxSide::BlockEnd);
 }
 
 // Insets for positioned elements are specified w.r.t. their containing blocks. Additionally, the containing block
@@ -200,11 +242,32 @@ static LayoutSize offsetFromAncestorContainer(const RenderElement& descendantCon
         if (!nextContainer)
             break;
         LayoutSize currentOffset = currentContainer->offsetFromContainer(*nextContainer, referencePoint);
+
+        // https://drafts.csswg.org/css-anchor-position-1/#scroll
+        // "anchor() is defined to assume all the scroll containers between the anchor element and
+        // the positioned element’s containing block are at their initial scroll position,"
+        if (CheckedPtr boxContainer = dynamicDowncast<RenderBox>(*nextContainer))
+            offset += toLayoutSize(boxContainer->scrollPosition());
+
         offset += currentOffset;
         referencePoint.move(currentOffset);
         currentContainer = WTFMove(nextContainer);
     } while (currentContainer != &ancestorContainer);
 
+    return offset;
+}
+
+static LayoutSize scrollOffsetFromAncestorContainer(const RenderElement& descendant, const RenderElement& ancestorContainer)
+{
+    ASSERT(descendant.isDescendantOf(&ancestorContainer));
+
+    auto offset = LayoutSize { };
+    for (auto* ancestor = descendant.container(); ancestor; ancestor = ancestor->container()) {
+        if (auto* box = dynamicDowncast<RenderBox>(ancestor))
+            offset -= toLayoutSize(box->scrollPosition());
+        if (ancestor == &ancestorContainer)
+            break;
+    }
     return offset;
 }
 
@@ -256,22 +319,20 @@ static LayoutRect computeAnchorRectRelativeToContainingBlock(CheckedRef<const Re
 // align the edge of the positioned elements' inset-modified containing block corresponding to the
 // property the function appears in with the specified border edge of the target anchor element..."
 // See: https://drafts.csswg.org/css-anchor-position-1/#anchor-pos
-static Length computeInsetValue(CSSPropertyID insetPropertyID, CheckedRef<const RenderBoxModelObject> anchorBox, CheckedRef<const RenderElement> anchorPositionedRenderer, const CSSAnchorValue& anchorValue)
+static LayoutUnit computeInsetValue(CSSPropertyID insetPropertyID, CheckedRef<const RenderBoxModelObject> anchorBox, CheckedRef<const RenderElement> anchorPositionedRenderer, AnchorPositionEvaluator::Side anchorSide)
 {
     CheckedPtr containingBlock = anchorPositionedRenderer->containingBlock();
     ASSERT(containingBlock);
 
-    auto insetPropertySide = mapInsetPropertyToPhysicalSide(insetPropertyID, anchorPositionedRenderer->style());
-    auto anchorSideID = anchorValue.anchorSide()->valueID();
+    auto insetPropertySide = mapInsetPropertyToPhysicalSide(insetPropertyID, anchorPositionedRenderer->writingMode());
+    auto anchorSideID = std::holds_alternative<CSSValueID>(anchorSide) ? std::get<CSSValueID>(anchorSide) : CSSValueInvalid;
     auto anchorRect = computeAnchorRectRelativeToContainingBlock(anchorBox, *containingBlock);
 
     // Explicitly deal with the center/percentage value here.
     // "Refers to a position a corresponding percentage between the start and end sides, with
     // 0% being equivalent to start and 100% being equivalent to end. center is equivalent to 50%."
     if (anchorSideID == CSSValueCenter || anchorSideID == CSSValueInvalid) {
-        double percentage = 0.5;
-        if (anchorSideID != CSSValueCenter)
-            percentage = dynamicDowncast<CSSPrimitiveValue>(anchorValue.anchorSide())->valueDividingBy100IfPercentageDeprecated<double>();
+        double percentage = anchorSideID == CSSValueCenter ? 0.5 : std::get<double>(anchorSide);
 
         // We assume that the "start" side always is either the top or left side of the anchor element.
         // However, if that is not the case, we should take the complement of the percentage.
@@ -280,7 +341,7 @@ static Length computeInsetValue(CSSPropertyID insetPropertyID, CheckedRef<const 
             percentage = 1 - percentage;
 
         LayoutUnit insetValue;
-        auto insetPropertyAxis = mapInsetPropertyToPhysicalAxis(insetPropertyID, anchorPositionedRenderer->style());
+        auto insetPropertyAxis = mapInsetPropertyToPhysicalAxis(insetPropertyID, anchorPositionedRenderer->writingMode());
         if (insetPropertyAxis == BoxAxis::Vertical) {
             insetValue = anchorRect.location().y() + anchorRect.height() * percentage;
             if (insetPropertySide == BoxSide::Bottom)
@@ -290,52 +351,51 @@ static Length computeInsetValue(CSSPropertyID insetPropertyID, CheckedRef<const 
             if (insetPropertySide == BoxSide::Right)
                 insetValue = containingBlock->width() - insetValue;
         }
-        insetValue = removeBorderForInsetValue(insetValue, insetPropertySide, *containingBlock);
-        return Length(insetValue, LengthType::Fixed);
+        return removeBorderForInsetValue(insetValue, insetPropertySide, *containingBlock);
     }
 
     // Normalize the anchor side to a physical side
-    BoxSide anchorSide;
+    BoxSide boxSide;
     switch (anchorSideID) {
     case CSSValueID::CSSValueTop:
-        anchorSide = BoxSide::Top;
+        boxSide = BoxSide::Top;
         break;
     case CSSValueID::CSSValueBottom:
-        anchorSide = BoxSide::Bottom;
+        boxSide = BoxSide::Bottom;
         break;
     case CSSValueID::CSSValueLeft:
-        anchorSide = BoxSide::Left;
+        boxSide = BoxSide::Left;
         break;
     case CSSValueID::CSSValueRight:
-        anchorSide = BoxSide::Right;
+        boxSide = BoxSide::Right;
         break;
     case CSSValueID::CSSValueInside:
-        anchorSide = insetPropertySide;
+        boxSide = insetPropertySide;
         break;
     case CSSValueID::CSSValueOutside:
-        anchorSide = flipBoxSide(insetPropertySide);
+        boxSide = flipBoxSide(insetPropertySide);
         break;
     case CSSValueID::CSSValueStart:
-        anchorSide = computeStartEndBoxSide(insetPropertyID, anchorPositionedRenderer, true, true);
+        boxSide = computeStartEndBoxSide(insetPropertyID, anchorPositionedRenderer, true, true);
         break;
     case CSSValueID::CSSValueEnd:
-        anchorSide = computeStartEndBoxSide(insetPropertyID, anchorPositionedRenderer, false, true);
+        boxSide = computeStartEndBoxSide(insetPropertyID, anchorPositionedRenderer, false, true);
         break;
     case CSSValueID::CSSValueSelfStart:
-        anchorSide = computeStartEndBoxSide(insetPropertyID, anchorPositionedRenderer, true, false);
+        boxSide = computeStartEndBoxSide(insetPropertyID, anchorPositionedRenderer, true, false);
         break;
     case CSSValueID::CSSValueSelfEnd:
-        anchorSide = computeStartEndBoxSide(insetPropertyID, anchorPositionedRenderer, false, false);
+        boxSide = computeStartEndBoxSide(insetPropertyID, anchorPositionedRenderer, false, false);
         break;
     default:
         ASSERT_NOT_REACHED();
-        anchorSide = BoxSide::Top;
+        boxSide = BoxSide::Top;
         break;
     }
 
     // Compute inset from the containing block
     LayoutUnit insetValue;
-    switch (anchorSide) {
+    switch (boxSide) {
     case BoxSide::Top:
         insetValue = anchorRect.location().y();
         if (insetPropertySide == BoxSide::Bottom)
@@ -357,85 +417,252 @@ static Length computeInsetValue(CSSPropertyID insetPropertyID, CheckedRef<const 
             insetValue = containingBlock->width() - insetValue;
         break;
     }
-    insetValue = removeBorderForInsetValue(insetValue, insetPropertySide, *containingBlock);
-    return Length(insetValue, LengthType::Fixed);
+    return removeBorderForInsetValue(insetValue, insetPropertySide, *containingBlock);
 }
 
-Length AnchorPositionEvaluator::resolveAnchorValue(const BuilderState& builderState, const CSSAnchorValue& anchorValue)
+RefPtr<Element> AnchorPositionEvaluator::findAnchorAndAttemptResolution(const BuilderState& builderState, std::optional<ScopedName> elementName)
 {
-    // FIXME: Determine when this if guard is true and what it means.
-    if (!builderState.element())
-        return Length(0, LengthType::Fixed);
+    const auto& style = builderState.style();
+
+    auto isValid = [&] {
+        if (!builderState.element())
+            return false;
+
+        // FIXME: Support pseudo-elements.
+        if (style.pseudoElementType() != PseudoId::None)
+            return false;
+
+        return true;
+    };
+
+    if (!isValid())
+        return { };
+
     Ref anchorPositionedElement = *builderState.element();
-
-    // FIXME: Support pseudo-elements.
-    if (builderState.style().pseudoElementType() != PseudoId::None)
-        return Length(0, LengthType::Fixed);
-
-    // FIXME: Support animations and transitions.
-    if (builderState.style().hasAnimationsOrTransitions())
-        return Length(0, LengthType::Fixed);
-
-    // In-flow elements cannot be anchor-positioned.
-    // FIXME: Should attempt to resolve the fallback value.
-    if (!builderState.style().hasOutOfFlowPosition())
-        return Length(0, LengthType::Fixed);
 
     auto& anchorPositionedStates = anchorPositionedElement->document().styleScope().anchorPositionedStates();
     auto& anchorPositionedState = *anchorPositionedStates.ensure(anchorPositionedElement, [&] {
         return WTF::makeUnique<AnchorPositionedState>();
     }).iterator->value.get();
 
-    // If we are encountering this anchor() instance for the first time, then we need to collect
-    // all the relevant anchor-name strings that are referenced in this anchor function,
-    // including the references in the fallback value.
-    if (anchorPositionedState.stage < AnchorPositionResolutionStage::FinishedCollectingAnchorNames)
-        anchorValue.collectAnchorNames(anchorPositionedState.anchorNames);
+    if (!elementName)
+        elementName = builderState.style().positionAnchor();
+
+    if (elementName) {
+        // Collect anchor names that this element refers to in anchor() or anchor-size()
+        bool isNewAnchorName = anchorPositionedState.anchorNames.add(elementName->name).isNewEntry;
+
+        // If anchor resolution has progressed past Initial, and we pick up a new anchor name, set the
+        // stage back to Initial. This restarts the resolution process to resolve newly added names.
+        if (isNewAnchorName)
+            anchorPositionedState.stage = AnchorPositionResolutionStage::Initial;
+    }
 
     // An anchor() instance will be ready to be resolved when all referenced anchor-names
     // have been mapped to an actual anchor element in the DOM tree. At that point, we
     // should also have layout information for the anchor-positioned element alongside
     // the anchors referenced by the anchor-positioned element. Until then, we cannot
     // resolve this anchor() instance.
-    if (anchorPositionedState.stage < AnchorPositionResolutionStage::FoundAnchors)
-        return Length(0, LengthType::Fixed);
+    if (anchorPositionedState.stage == AnchorPositionResolutionStage::Initial)
+        return { };
+
+    CheckedPtr anchorPositionedRenderer = anchorPositionedElement->renderer();
+    if (!anchorPositionedRenderer) {
+        // If no render tree information is present, the procedure is finished.
+        anchorPositionedState.stage = AnchorPositionResolutionStage::Resolved;
+        return { };
+    }
 
     // Anchor value may now be resolved using layout information
+
+    RefPtr anchorElement = elementName ? anchorPositionedState.anchorElements.get(elementName->name) : nullptr;
+    if (!anchorElement) {
+        // See: https://drafts.csswg.org/css-anchor-position-1/#valid-anchor-function
+        anchorPositionedState.stage = AnchorPositionResolutionStage::Resolved;
+
+        return { };
+    }
+
+    if (auto* state = anchorPositionedStates.get(*anchorElement)) {
+        // Check if the anchor is itself anchor-positioned but hasn't been positioned yet.
+        if (state->stage != AnchorPositionResolutionStage::Positioned)
+            return { };
+    }
+
     anchorPositionedState.stage = AnchorPositionResolutionStage::Resolved;
+
+    return anchorElement;
+}
+
+std::optional<double> AnchorPositionEvaluator::evaluate(const BuilderState& builderState, std::optional<ScopedName> elementName, Side side)
+{
+    auto propertyID = builderState.cssPropertyID();
+    const auto& style = builderState.style();
+
+    // https://drafts.csswg.org/css-anchor-position-1/#anchor-valid
+    auto isValidAnchor = [&] {
+        // It’s being used in an inset property...
+        if (!CSSProperty::isInsetProperty(propertyID))
+            return false;
+
+        // ...on an absolutely-positioned element.
+        if (!style.hasOutOfFlowPosition())
+            return false;
+
+        // If its <anchor-side> specifies a physical keyword, it’s being used in an inset property in that axis.
+        // (For example, left can only be used in left, right, or a logical inset property in the horizontal axis.)
+        if (auto* sideID = std::get_if<CSSValueID>(&side); sideID && !anchorSideMatchesInsetProperty(*sideID, propertyID, style.writingMode()))
+            return false;
+
+        return true;
+    };
+
+    if (!isValidAnchor())
+        return { };
+
+    auto anchorElement = findAnchorAndAttemptResolution(builderState, elementName);
+    if (!anchorElement)
+        return { };
+
+    CheckedPtr anchorRenderer = anchorElement->renderer();
+    ASSERT(anchorRenderer);
+
+    CheckedPtr anchorPositionedElement = builderState.element();
+    ASSERT(anchorPositionedElement);
     CheckedPtr anchorPositionedRenderer = anchorPositionedElement->renderer();
     ASSERT(anchorPositionedRenderer);
 
-    // Attempt to find the element associated with the target anchor
-    String anchorString = anchorValue.anchorElementString();
-    if (anchorString.isNull())
-        anchorString = anchorPositionedRenderer->style().positionAnchor();
-    auto anchorElementIt = anchorPositionedState.anchorElements.find(anchorString);
-    if (anchorElementIt == anchorPositionedState.anchorElements.end()) {
-        // FIXME: Should rely on fallback, and also should behave as unset if fallback doesn't exist.
-        // See: https://drafts.csswg.org/css-anchor-position-1/#valid-anchor-function
-        return Length(0, LengthType::Fixed);
-    }
-    CheckedPtr anchorRenderer = anchorElementIt->value->renderer();
-    ASSERT(anchorRenderer);
-
-    // Confirm that the axis specified by the inset property matches the side provided in
-    // the anchor() call.
-    auto insetPropertyID = builderState.cssPropertyID();
-    auto& anchorPositionedElementStyle = anchorPositionedElement->renderer()->style();
-    if (!anchorSideMatchesInsetProperty(anchorValue.anchorSide()->valueID(), insetPropertyID, anchorPositionedElementStyle)) {
-        // FIXME: Should rely on fallback, and also should behave as unset if fallback doesn't exist.
-        // See: https://drafts.csswg.org/css-anchor-position-1/#valid-anchor-function
-        return Length(0, LengthType::Fixed);
-    }
-
     // Proceed with computing the inset value for the specified inset property.
     CheckedRef anchorBox = downcast<RenderBoxModelObject>(*anchorRenderer);
-    return computeInsetValue(insetPropertyID, anchorBox, *anchorPositionedRenderer, anchorValue);
+    return computeInsetValue(propertyID, anchorBox, *anchorPositionedRenderer, side);
 }
 
-static const RenderElement* penultimateContainingBlockChainElement(const RenderElement* descendant, const RenderElement* ancestor)
+// Returns the default anchor size dimension to use when it is not specified in
+// anchor-size(). This matches the axis of the property that anchor-size() is used in.
+static AnchorSizeDimension defaultDimensionForPropertyID(CSSPropertyID propertyID)
 {
-    auto* currentElement = descendant;
+    switch (propertyID) {
+    case CSSPropertyWidth:
+    case CSSPropertyMinWidth:
+    case CSSPropertyMaxWidth:
+    case CSSPropertyLeft:
+    case CSSPropertyRight:
+    case CSSPropertyMarginLeft:
+    case CSSPropertyMarginRight:
+        return AnchorSizeDimension::Width;
+
+    case CSSPropertyHeight:
+    case CSSPropertyMinHeight:
+    case CSSPropertyMaxHeight:
+    case CSSPropertyTop:
+    case CSSPropertyBottom:
+    case CSSPropertyMarginTop:
+    case CSSPropertyMarginBottom:
+        return AnchorSizeDimension::Height;
+
+    case CSSPropertyBlockSize:
+    case CSSPropertyMinBlockSize:
+    case CSSPropertyMaxBlockSize:
+    case CSSPropertyInsetBlockStart:
+    case CSSPropertyInsetBlockEnd:
+    case CSSPropertyMarginBlockStart:
+    case CSSPropertyMarginBlockEnd:
+        return AnchorSizeDimension::Block;
+
+    case CSSPropertyInlineSize:
+    case CSSPropertyMinInlineSize:
+    case CSSPropertyMaxInlineSize:
+    case CSSPropertyInsetInlineStart:
+    case CSSPropertyInsetInlineEnd:
+    case CSSPropertyMarginInlineStart:
+    case CSSPropertyMarginInlineEnd:
+        return AnchorSizeDimension::Inline;
+
+    default:
+        ASSERT_NOT_REACHED("anchor-size() being used in disallowed CSS property, which should not happen");
+        return AnchorSizeDimension::Width;
+    }
+}
+
+// Convert anchor size dimension to the physical dimension (width or height).
+static BoxAxis anchorSizeDimensionToPhysicalDimension(AnchorSizeDimension dimension, const RenderStyle& style, const RenderStyle& containerStyle)
+{
+    switch (dimension) {
+    case AnchorSizeDimension::Width:
+        return BoxAxis::Horizontal;
+    case AnchorSizeDimension::Height:
+        return BoxAxis::Vertical;
+    case AnchorSizeDimension::Block:
+        return mapAxisLogicalToPhysical(containerStyle.writingMode(), LogicalBoxAxis::Block);
+    case AnchorSizeDimension::Inline:
+        return mapAxisLogicalToPhysical(containerStyle.writingMode(), LogicalBoxAxis::Inline);
+    case AnchorSizeDimension::SelfBlock:
+        return mapAxisLogicalToPhysical(style.writingMode(), LogicalBoxAxis::Block);
+    case AnchorSizeDimension::SelfInline:
+        return mapAxisLogicalToPhysical(style.writingMode(), LogicalBoxAxis::Inline);
+    }
+
+    ASSERT_NOT_REACHED();
+    return BoxAxis::Horizontal;
+}
+
+std::optional<double> AnchorPositionEvaluator::evaluateSize(const BuilderState& builderState, std::optional<ScopedName> elementName, std::optional<AnchorSizeDimension> dimension)
+{
+    auto propertyID = builderState.cssPropertyID();
+    const auto& style = builderState.style();
+
+    auto isValidAnchorSize = [&] {
+        // It’s being used in a sizing property, an inset property, or a margin property...
+        if (!isSizingProperty(propertyID) && !CSSProperty::isInsetProperty(propertyID) && !isMarginProperty(propertyID))
+            return false;
+
+        // ...on an absolutely-positioned element.
+        if (!style.hasOutOfFlowPosition())
+            return false;
+
+        return true;
+    };
+
+    if (!isValidAnchorSize())
+        return { };
+
+    auto anchorElement = findAnchorAndAttemptResolution(builderState, elementName);
+    if (!anchorElement)
+        return { };
+
+    // Resolve the dimension (width or height) to return from the anchor positioned element.
+    CheckedPtr anchorPositionedElement = builderState.element();
+    ASSERT(anchorPositionedElement);
+    CheckedPtr anchorPositionedRenderer = anchorPositionedElement->renderer();
+    ASSERT(anchorPositionedRenderer);
+
+    CheckedPtr anchorPositionedContainerRenderer = anchorPositionedRenderer->container();
+    ASSERT(anchorPositionedContainerRenderer);
+
+    auto resolvedDimension = dimension.value_or(defaultDimensionForPropertyID(propertyID));
+    auto physicalDimension = anchorSizeDimensionToPhysicalDimension(resolvedDimension, anchorPositionedRenderer->style(), anchorPositionedContainerRenderer->style());
+
+    // Return the dimension information from the anchor element.
+    CheckedPtr anchorRenderer = anchorElement->renderer();
+    ASSERT(anchorRenderer);
+
+    CheckedRef anchorBox = downcast<RenderBoxModelObject>(*anchorRenderer);
+    auto anchorBorderBoundingBox = anchorBox->borderBoundingBox();
+
+    switch (physicalDimension) {
+    case BoxAxis::Horizontal:
+        return anchorBorderBoundingBox.width();
+    case BoxAxis::Vertical:
+        return anchorBorderBoundingBox.height();
+    }
+
+    ASSERT_NOT_REACHED();
+    return { };
+}
+
+static const RenderElement* penultimateContainingBlockChainElement(const RenderElement& descendant, const RenderElement* ancestor)
+{
+    auto* currentElement = &descendant;
     for (auto* nextElement = currentElement->containingBlock(); nextElement; nextElement = nextElement->containingBlock()) {
         if (nextElement == ancestor)
             return currentElement;
@@ -460,15 +687,14 @@ static bool firstChildPrecedesSecondChild(const RenderObject* firstChild, const 
 }
 
 // See: https://drafts.csswg.org/css-anchor-position-1/#acceptable-anchor-element
-static bool isAcceptableAnchorElement(Ref<const Element> anchorElement, Ref<const Element> anchorPositionedElement)
+static bool isAcceptableAnchorElement(const RenderBoxModelObject& anchorRenderer, Ref<const Element> anchorPositionedElement)
 {
-    CheckedPtr anchorRenderer = anchorElement->renderer();
     CheckedPtr anchorPositionedRenderer = anchorPositionedElement->renderer();
-    ASSERT(anchorRenderer && anchorPositionedRenderer);
+    ASSERT(anchorPositionedRenderer);
     CheckedPtr containingBlock = anchorPositionedRenderer->containingBlock();
     ASSERT(containingBlock);
 
-    auto* penultimateElement = penultimateContainingBlockChainElement(anchorRenderer.get(), containingBlock.get());
+    auto* penultimateElement = penultimateContainingBlockChainElement(anchorRenderer, containingBlock.get());
     if (!penultimateElement)
         return false;
 
@@ -478,37 +704,153 @@ static bool isAcceptableAnchorElement(Ref<const Element> anchorElement, Ref<cons
     if (!firstChildPrecedesSecondChild(penultimateElement, anchorPositionedRenderer.get(), containingBlock.get()))
         return false;
 
+    // "Possible anchor is either an element or a fully styleable tree-abiding pseudo-element."
+    // This always have an associated Element (for ::before/::after it is PseudoElement).
+    if (!anchorRenderer.element())
+        return false;
+
     // FIXME: Implement the rest of https://drafts.csswg.org/css-anchor-position-1/#acceptable-anchor-element.
     return true;
 }
 
 
-static std::optional<Ref<Element>> findLastAcceptableAnchorWithName(String anchorName, Ref<const Element> anchorPositionedElement)
+static std::optional<Ref<Element>> findLastAcceptableAnchorWithName(AtomString anchorName, Ref<const Element> anchorPositionedElement, const AnchorsForAnchorName& anchorsForAnchorName)
 {
-    const auto& anchors = anchorPositionedElement->document().styleScope().anchorsForAnchorName().get(anchorName);
+    const auto& anchors = anchorsForAnchorName.get(anchorName);
 
-    // FIXME: These should iterate through the anchor targets in reverse DOM order.
-    for (auto anchor : makeReversedRange(anchors)) {
-        ASSERT(anchor->renderer());
+    for (auto& anchor : makeReversedRange(anchors)) {
         if (isAcceptableAnchorElement(anchor.get(), anchorPositionedElement))
-            return anchor.get();
+            return *anchor->element();
     }
 
     return { };
 }
 
-void AnchorPositionEvaluator::findAnchorsForAnchorPositionedElement(Ref<const Element> anchorPositionedElement)
+static AnchorsForAnchorName collectAnchorsForAnchorName(const Document& document)
 {
-    auto* anchorPositionedState = anchorPositionedElement->document().styleScope().anchorPositionedStates().get(anchorPositionedElement);
-    ASSERT(anchorPositionedState && anchorPositionedState->stage == AnchorPositionResolutionStage::FinishedCollectingAnchorNames);
+    if (!document.renderView())
+        return { };
 
-    for (auto& anchorName : anchorPositionedState->anchorNames) {
-        auto anchor = findLastAcceptableAnchorWithName(anchorName, anchorPositionedElement);
-        if (anchor.has_value())
-            anchorPositionedState->anchorElements.add(anchorName, anchor->get());
+    AnchorsForAnchorName anchorsForAnchorName;
+
+    auto& anchors = document.renderView()->anchors();
+    for (auto& anchorRenderer : anchors) {
+        for (auto& scopedName : anchorRenderer.style().anchorNames()) {
+            anchorsForAnchorName.ensure(scopedName.name, [&] {
+                return AnchorsForAnchorName::MappedType { };
+            }).iterator->value.append(anchorRenderer);
+        }
     }
 
-    anchorPositionedState->stage = AnchorPositionResolutionStage::FoundAnchors;
+    // Sort them in tree order.
+    for (auto& anchors : anchorsForAnchorName.values()) {
+        std::sort(anchors.begin(), anchors.end(), [](auto& a, auto& b) {
+            // FIXME: Figure out anonymous pseudo-elements.
+            if (!a->element() || !b->element())
+                return !!b->element();
+            return is_lt(treeOrder<ComposedTree>(*a->element(), *b->element()));
+        });
+    }
+
+    return anchorsForAnchorName;
+}
+
+AnchorElements AnchorPositionEvaluator::findAnchorsForAnchorPositionedElement(const Element& anchorPositionedElement, const HashSet<AtomString>& anchorNames, const AnchorsForAnchorName& anchorsForAnchorName)
+{
+    AnchorElements anchorElements;
+
+    for (auto& anchorName : anchorNames) {
+        auto anchor = findLastAcceptableAnchorWithName(anchorName, anchorPositionedElement, anchorsForAnchorName);
+        if (anchor)
+            anchorElements.add(anchorName, anchor->get());
+    }
+
+    return anchorElements;
+}
+
+void AnchorPositionEvaluator::updateAnchorPositioningStatesAfterInterleavedLayout(const Document& document)
+{
+    if (document.styleScope().anchorPositionedStates().isEmptyIgnoringNullReferences())
+        return;
+
+    auto anchorsForAnchorName = collectAnchorsForAnchorName(document);
+
+    for (auto elementAndState : document.styleScope().anchorPositionedStates()) {
+        auto& state = *elementAndState.value;
+        if (state.stage == AnchorPositionResolutionStage::Initial) {
+            Ref element { elementAndState.key };
+            if (element->renderer())
+                state.anchorElements = findAnchorsForAnchorPositionedElement(element, state.anchorNames, anchorsForAnchorName);
+            state.stage = AnchorPositionResolutionStage::FoundAnchors;
+            continue;
+        }
+        if (state.stage == AnchorPositionResolutionStage::Resolved)
+            state.stage = AnchorPositionResolutionStage::Positioned;
+    }
+}
+
+void AnchorPositionEvaluator::updateSnapshottedScrollOffsets(Document& document)
+{
+    // https://drafts.csswg.org/css-anchor-position-1/#scroll
+
+    auto& states = document.styleScope().anchorPositionedStates();
+    for (auto elementAndState : states) {
+        CheckedRef anchorPositionedElement = elementAndState.key;
+        if (!anchorPositionedElement->renderer())
+            continue;
+
+        CheckedPtr anchorPositionedRenderer = dynamicDowncast<RenderBox>(anchorPositionedElement->renderer());
+        if (!anchorPositionedRenderer || !anchorPositionedRenderer->layer())
+            continue;
+
+        auto needsScrollAdjustment = [&] {
+            // FIXME: This is incomplete.
+            if (!anchorPositionedRenderer->style().positionAnchor())
+                return false;
+
+            if (elementAndState.value->anchorElements.size() != 1)
+                return false;
+
+            return true;
+        }();
+
+        if (!needsScrollAdjustment)
+            continue;
+
+        auto anchorElement = *elementAndState.value->anchorElements.values().begin();
+        if (!anchorElement->renderer())
+            continue;
+
+        CheckedPtr containingBlock = anchorPositionedRenderer->containingBlock();
+
+        auto scrollOffset = scrollOffsetFromAncestorContainer(*anchorElement->renderer(), *containingBlock);
+
+        if (scrollOffset.isZero() && !anchorPositionedRenderer->layer()->snapshottedScrollOffsetForAnchorPositioning())
+            continue;
+
+        anchorPositionedRenderer->layer()->setSnapshottedScrollOffsetForAnchorPositioning(scrollOffset);
+    }
+}
+
+void AnchorPositionEvaluator::cleanupAnchorPositionedState(Element& element)
+{
+    if (element.document().styleScope().anchorPositionedStates().remove(element)) {
+        if (auto* renderer = dynamicDowncast<RenderBox>(element.renderer()); renderer && renderer->layer())
+            renderer->layer()->clearSnapshottedScrollOffsetForAnchorPositioning();
+    }
+}
+
+WTF::TextStream& operator<<(WTF::TextStream& ts, PositionTryOrder order)
+{
+    switch (order) {
+    case PositionTryOrder::Normal: ts << "normal"; break;
+    case PositionTryOrder::MostWidth: ts << "most-width"; break;
+    case PositionTryOrder::MostHeight: ts << "most-height"; break;
+    case PositionTryOrder::MostBlockSize: ts << "most-block-size"; break;
+    case PositionTryOrder::MostInlineSize: ts << "most-inline-size"; break;
+    }
+
+    return ts;
 }
 
 } // namespace WebCore::Style

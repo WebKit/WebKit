@@ -43,7 +43,9 @@ using SetupEntryPoints = void (*)(angle::TraceCallbacks *, angle::TraceFunctions
 class TraceLibrary : angle::NonCopyable, angle::TraceCallbacks
 {
   public:
-    TraceLibrary(const std::string &traceName, const TraceInfo &traceInfo);
+    TraceLibrary(const std::string &traceName,
+                 const TraceInfo &traceInfo,
+                 const std::string &baseDir);
 
     bool valid() const
     {

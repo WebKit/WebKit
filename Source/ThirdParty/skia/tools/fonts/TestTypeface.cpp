@@ -143,6 +143,7 @@ SkPath TestTypeface::getPath(SkGlyphID glyphID) {
 }
 
 void TestTypeface::onFilterRec(SkScalerContextRec* rec) const {
+    rec->useStrokeForFakeBold();
     rec->setHinting(SkFontHinting::kNone);
 }
 
@@ -274,7 +275,7 @@ protected:
         SK_ABORT("Should have generated from path.");
     }
 
-    bool generatePath(const SkGlyph& glyph, SkPath* path) override {
+    bool generatePath(const SkGlyph& glyph, SkPath* path, bool* modified) override {
         *path = this->getTestTypeface()->getPath(glyph.getGlyphID()).makeTransform(fMatrix);
         return true;
     }

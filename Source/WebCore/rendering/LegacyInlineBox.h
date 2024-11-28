@@ -72,9 +72,6 @@ public:
             adjustPosition(delta, 0);
     }
 
-    virtual void paint(PaintInfo&, const LayoutPoint&, LayoutUnit lineTop, LayoutUnit lineBottom) = 0;
-    virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, LayoutUnit lineTop, LayoutUnit lineBottom, HitTestAction) = 0;
-
 #if ENABLE(TREE_DEBUGGING)
     void showNodeTreeForThis() const;
     void showLineTreeForThis() const;

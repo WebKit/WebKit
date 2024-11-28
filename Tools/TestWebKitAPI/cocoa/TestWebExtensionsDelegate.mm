@@ -131,6 +131,12 @@
         completionHandler([NSError errorWithDomain:NSCocoaErrorDomain code:0 userInfo:@{ NSDebugDescriptionErrorKey: @"runtime.connectNative() not implemented" }]);
 }
 
+- (void)webExtensionController:(WKWebExtensionController *)controller didUpdateAction:(WKWebExtensionAction *)action forExtensionContext:(WKWebExtensionContext *)context
+{
+    if (_didUpdateAction)
+        _didUpdateAction(action);
+}
+
 - (void)webExtensionController:(WKWebExtensionController *)controller presentPopupForAction:(WKWebExtensionAction *)action forExtensionContext:(WKWebExtensionContext *)context completionHandler:(void (^)(NSError *))completionHandler
 {
     if (_presentPopupForAction) {
@@ -138,6 +144,30 @@
         completionHandler(nil);
     } else
         completionHandler([NSError errorWithDomain:NSCocoaErrorDomain code:0 userInfo:@{ NSDebugDescriptionErrorKey: @"action.showPopup() not implemented" }]);
+}
+
+- (void)_webExtensionController:(WKWebExtensionController *)controller presentSidebar:(_WKWebExtensionSidebar *)sidebar forExtensionContext:(WKWebExtensionContext *)context completionHandler:(void (^)(NSError *))completionHandler
+{
+    if (_presentSidebar) {
+        _presentSidebar(sidebar);
+        completionHandler(nil);
+    } else
+        completionHandler([NSError errorWithDomain:NSCocoaErrorDomain code:0 userInfo:@{ NSDebugDescriptionErrorKey: @"sidebarAction.open() / sidePanel.open() not implemented" }]);
+}
+
+- (void)_webExtensionController:(WKWebExtensionController *)controller closeSidebar:(_WKWebExtensionSidebar *)sidebar forExtensionContext:(WKWebExtensionContext *)context completionHandler:(void (^)(NSError *))completionHandler
+{
+    if (_closeSidebar) {
+        _closeSidebar(sidebar);
+        completionHandler(nil);
+    } else
+        completionHandler([NSError errorWithDomain:NSCocoaErrorDomain code:0 userInfo:@{ NSDebugDescriptionErrorKey: @"sidebarAction.close() not implemented" }]);
+}
+
+- (void)_webExtensionController:(WKWebExtensionController *)controller didUpdateSidebar:(_WKWebExtensionSidebar *)sidebar forExtensionContext:(WKWebExtensionContext *)context
+{
+    if (_didUpdateSidebar)
+        _didUpdateSidebar(sidebar);
 }
 
 @end

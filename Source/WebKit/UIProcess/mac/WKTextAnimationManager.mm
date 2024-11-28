@@ -80,8 +80,9 @@
     _chunkToEffect = adoptNS([[NSMutableDictionary alloc] init]);
 
     _effectView = adoptNS([PAL::alloc_WTTextEffectViewInstance() initWithAsyncSource:self]);
+    [_effectView setClipsToBounds:YES];
     [_effectView setFrame:webView.view().bounds];
-    [_webView->view() addSubview:_effectView.get()];
+
     return self;
 }
 
@@ -113,6 +114,17 @@
                 strongWebView->page().callCompletionHandlerForAnimationID(*animationID, runMode);
         }).get();
 
+        effect.get().completion = makeBlockPtr([weakSelf = WeakObjCPtr<WKTextAnimationManager>(self), uuid = RetainPtr(uuid)] {
+            auto strongSelf = weakSelf.get();
+            if (!strongSelf)
+                return;
+
+            [strongSelf removeTextAnimationForAnimationID:uuid.get()];
+
+            if (![strongSelf hasActiveTextAnimationType])
+                [strongSelf hideTextAnimationView];
+        }).get();
+
         break;
 
     case WebCore::TextAnimationType::Final:
@@ -124,14 +136,26 @@
                 strongWebView->page().updateUnderlyingTextVisibilityForTextAnimationID(remainingID, false);
         }).get();
 
-        effect.get().completion = makeBlockPtr([weakWebView = WeakPtr<WebKit::WebViewImpl>(_webView), remainingID = data.unanimatedRangeUUID, uuid = RetainPtr(uuid), runMode = data.runMode] {
+        effect.get().completion = makeBlockPtr([weakSelf = WeakObjCPtr<WKTextAnimationManager>(self), weakWebView = WeakPtr<WebKit::WebViewImpl>(_webView), remainingID = data.unanimatedRangeUUID, uuid = RetainPtr(uuid), runMode = data.runMode, effect = WeakObjCPtr<id<_WTTextEffect>>(effect.get())] {
+            if (auto strongEffect = effect.get())
+                [strongEffect setCompletion:nil];
+
             auto strongWebView = weakWebView.get();
             auto animationID = WTF::UUID::fromNSUUID(uuid.get());
+
+            auto strongSelf = weakSelf.get();
+            if (!strongSelf)
+                return;
+
+            [strongSelf removeTextAnimationForAnimationID:uuid.get()];
+
+            if (![strongSelf hasActiveTextAnimationType])
+                [strongSelf hideTextAnimationView];
 
             if (!strongWebView || !animationID)
                 return;
 
-            strongWebView->page().didEndPartialIntelligenceTextPonderingAnimationImpl();
+            strongWebView->page().didEndPartialIntelligenceTextAnimationImpl();
 
             strongWebView->page().updateUnderlyingTextVisibilityForTextAnimationID(remainingID, true);
             strongWebView->page().callCompletionHandlerForAnimationID(*animationID, runMode);
@@ -141,6 +165,9 @@
     }
 
     ASSERT(effect);
+
+    if (![_effectView superview])
+        [_webView->view() addSubview:_effectView.get()];
 
     RetainPtr effectID = [_effectView addEffect:effect.get()];
     RetainPtr effectData = adoptNS([[WKTextAnimationTypeEffectData alloc] initWithEffectID:effectID.get() type:data.style]);
@@ -154,6 +181,11 @@
         [_effectView removeEffect:[effectData effectID]];
         [_chunkToEffect removeObjectForKey:uuid];
     }
+}
+
+- (void)hideTextAnimationView
+{
+    [_effectView removeFromSuperview];
 }
 
 - (BOOL)hasActiveTextAnimationType
@@ -177,7 +209,7 @@
     for (NSUUID *chunkID in [_chunkToEffect allKeys]) {
         RetainPtr effectData = [_chunkToEffect objectForKey:chunkID];
         if ([effectData type] == WebCore::TextAnimationType::Initial)
-            [self addTextAnimationForAnimationID:chunkID withData: { WebCore::TextAnimationType::Initial, WebCore::TextAnimationRunMode::RunAnimation, WTF::UUID(WTF::UUID::emptyValue) }];
+            [self addTextAnimationForAnimationID:chunkID withData:{ WebCore::TextAnimationType::Initial, WebCore::TextAnimationRunMode::RunAnimation }];
     }
 }
 
@@ -193,7 +225,6 @@
     }
 
     _webView->page().getTextIndicatorForID(*uuid, [protectedSelf = retainPtr(self), completionHandler = makeBlockPtr(completionHandler)] (std::optional<WebCore::TextIndicatorData> indicatorData) {
-
         if (!indicatorData) {
             completionHandler(nil);
             return;
@@ -220,9 +251,9 @@
             textRectInSnapshotCoordinates.scale(indicatorData->contentImageScaleFactor);
             [textPreviews addObject:adoptNS([PAL::alloc_WTTextPreviewInstance() initWithSnapshotImage:adoptCF(CGImageCreateWithImageInRect(snapshotPlatformImage, textRectInSnapshotCoordinates)).get() presentationFrame:textLineFrameInBoundingRectCoordinates]).get()];
         }
+
         completionHandler(textPreviews.get());
     });
-
 }
 
 - (void)textPreviewForRect:(CGRect)rect completion:(void (^)(_WTTextPreview *preview))completionHandler
@@ -236,6 +267,7 @@
             completionHandler(nil);
             return;
         }
+
         auto bitmap = WebCore::ShareableBitmap::create(WTFMove(*imageHandle), WebCore::SharedMemory::Protection::ReadOnly);
         RetainPtr<CGImageRef> cgImage = bitmap ? bitmap->makeCGImage() : nullptr;
         RetainPtr textPreview = adoptNS([PAL::alloc_WTTextPreviewInstance() initWithSnapshotImage:cgImage.get() presentationFrame:rect]);
@@ -252,6 +284,7 @@
             completionHandler();
         return;
     }
+
     _webView->page().updateUnderlyingTextVisibilityForTextAnimationID(*uuid, isTextVisible, [completionHandler = makeBlockPtr(completionHandler)] () {
         if (completionHandler)
             completionHandler();

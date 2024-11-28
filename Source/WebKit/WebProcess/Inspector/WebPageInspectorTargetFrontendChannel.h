@@ -28,6 +28,7 @@
 #include <JavaScriptCore/InspectorFrontendChannel.h>
 #include <wtf/RefCounted.h>
 #include <wtf/TZoneMalloc.h>
+#include <wtf/WeakRef.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebKit {
@@ -45,7 +46,7 @@ private:
     ConnectionType connectionType() const override { return m_connectionType; }
     void sendMessageToFrontend(const String& message) override;
 
-    WebPage& m_page;
+    WeakRef<WebPage> m_page;
     String m_targetId;
     Inspector::FrontendChannel::ConnectionType m_connectionType { Inspector::FrontendChannel::ConnectionType::Remote };
 };

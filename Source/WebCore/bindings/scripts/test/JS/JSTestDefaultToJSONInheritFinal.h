@@ -32,7 +32,7 @@ public:
     using DOMWrapped = TestDefaultToJSONInheritFinal;
     static JSTestDefaultToJSONInheritFinal* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestDefaultToJSONInheritFinal>&& impl)
     {
-        auto& vm = globalObject->vm();
+        SUPPRESS_UNCOUNTED_LOCAL auto& vm = globalObject->vm();
         JSTestDefaultToJSONInheritFinal* ptr = new (NotNull, JSC::allocateCell<JSTestDefaultToJSONInheritFinal>(vm)) JSTestDefaultToJSONInheritFinal(structure, *globalObject, WTFMove(impl));
         ptr->finishCreation(vm);
         return ptr;

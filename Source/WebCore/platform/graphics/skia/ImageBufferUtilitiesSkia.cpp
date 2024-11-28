@@ -30,16 +30,17 @@
 #include "GLContext.h"
 #include "MIMETypeRegistry.h"
 #include "PlatformDisplay.h"
+
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
 #include <skia/core/SkData.h>
 #include <skia/core/SkImage.h>
 #include <skia/core/SkStream.h>
 #include <skia/encode/SkJpegEncoder.h>
-#include <wtf/text/WTFString.h>
-
-IGNORE_CLANG_WARNINGS_BEGIN("cast-align")
 #include <skia/encode/SkPngEncoder.h>
 #include <skia/encode/SkWebpEncoder.h>
-IGNORE_CLANG_WARNINGS_END
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
+
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

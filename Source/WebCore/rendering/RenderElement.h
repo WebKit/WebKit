@@ -108,7 +108,6 @@ public:
     inline bool shouldApplySizeOrInlineSizeContainment() const;
     inline bool shouldApplyStyleContainment() const;
     inline bool shouldApplyPaintContainment() const;
-    inline bool shouldApplyLayoutOrPaintContainment() const;
     inline bool shouldApplyAnyContainment() const;
 
     bool hasEligibleContainmentForSizeQuery() const;
@@ -279,7 +278,7 @@ public:
     inline Overflow effectiveOverflowInlineDirection() const;
     inline Overflow effectiveOverflowBlockDirection() const;
 
-    bool isWritingModeRoot() const { return !parent() || parent()->style().writingMode() != style().writingMode(); }
+    bool isWritingModeRoot() const { return !parent() || parent()->style().writingMode().computedWritingMode() != style().writingMode().computedWritingMode(); }
 
     bool isDeprecatedFlexItem() const { return !isInline() && !isFloatingOrOutOfFlowPositioned() && parent() && parent()->isRenderDeprecatedFlexibleBox(); }
     bool isFlexItemIncludingDeprecated() const { return !isInline() && !isFloatingOrOutOfFlowPositioned() && parent() && parent()->isFlexibleBoxIncludingDeprecated(); }
@@ -292,8 +291,6 @@ public:
 
     static void markRendererDirtyAfterTopLayerChange(RenderElement* renderer, RenderBlock* containingBlockBeforeStyleResolution);
 
-    bool isSkippedContentRoot() const;
-
     void clearNeedsLayoutForSkippedContent();
 
     void setRenderBoxHasShapeOutsideInfo(bool b) { m_renderBoxHasShapeOutsideInfo = b; }
@@ -304,7 +301,7 @@ public:
     using LayoutIdentifier = unsigned;
     void setLayoutIdentifier(LayoutIdentifier layoutIdentifier) { m_layoutIdentifier = layoutIdentifier; }
     LayoutIdentifier layoutIdentifier() const { return m_layoutIdentifier; }
-    bool didVisitDuringLastLayout() const;
+    bool didVisitSinceLayout(LayoutIdentifier) const;
 
 protected:
     RenderElement(Type, Element&, RenderStyle&&, OptionSet<TypeFlag>, TypeSpecificFlags);
@@ -428,6 +425,7 @@ private:
 inline int adjustForAbsoluteZoom(int, const RenderElement&);
 inline LayoutUnit adjustLayoutUnitForAbsoluteZoom(LayoutUnit, const RenderElement&);
 inline LayoutSize adjustLayoutSizeForAbsoluteZoom(LayoutSize, const RenderElement&);
+inline bool isSkippedContentRoot(const RenderElement&);
 
 inline void RenderElement::setChildNeedsLayout(MarkingBehavior markParents)
 {
@@ -491,13 +489,6 @@ inline RenderObject* RenderElement::lastInFlowChild() const
         return lastChild->previousInFlowSibling();
     }
     return nullptr;
-}
-
-inline bool RenderObject::isSkippedContentRoot() const
-{
-    if (isRenderText())
-        return false;
-    return downcast<RenderElement>(*this).isSkippedContentRoot();
 }
 
 inline RenderElement* RenderObject::parent() const

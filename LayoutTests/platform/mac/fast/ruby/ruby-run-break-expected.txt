@@ -11,39 +11,39 @@ layer at (0,0) size 800x600
           text run at (0,36) width 109: "on the other line."
         RenderBR {BR} at (108,36) size 1x18
         RenderBR {BR} at (0,54) size 0x18
-      RenderBlock {DIV} at (0,72) size 284x80 [border: (2px solid #0000FF)]
-        RenderText {#text} at (12,22) size 158x18
-          text run at (12,22) width 158: "<ruby> is defined in the "
-        RenderInline {RUBY} at (12,22) size 279x46
-          RenderInline (generated) at (164,22) size 24x18
-            RenderText {#text} at (170,22) size 12x18
-              text run at (170,22) width 12: "H"
-          RenderBlock {RT} at (164,12) size 24x10
+      RenderBlock {DIV} at (0,72) size 284x70 [border: (2px solid #0000FF)]
+        RenderText {#text} at (12,12) size 154x18
+          text run at (12,12) width 154: "<ruby> is defined in the"
+        RenderInline {RUBY} at (12,40) size 130x18
+          RenderInline (generated) at (12,40) size 23x18
+            RenderText {#text} at (17,40) size 13x18
+              text run at (17,40) width 13: "H"
+          RenderBlock {RT} at (12,30) size 23x10
             RenderText {#text} at (0,0) size 23x10
               text run at (0,0) width 23: "Hyper"
-          RenderInline (generated) at (187,22) size 16x18
-            RenderText {#text} at (190,22) size 10x18
-              text run at (190,22) width 10: "T"
-          RenderBlock {RT} at (187,12) size 16x10
+          RenderInline (generated) at (34,40) size 17x18
+            RenderText {#text} at (37,40) size 11x18
+              text run at (37,40) width 11: "T"
+          RenderBlock {RT} at (34,30) size 17x10
             RenderText {#text} at (0,0) size 16x10
               text run at (0,0) width 16: "Text"
-          RenderInline (generated) at (203,22) size 29x18
-            RenderText {#text} at (210,22) size 15x18
-              text run at (210,22) width 15: "M"
-          RenderBlock {RT} at (203,12) size 29x10
+          RenderInline (generated) at (50,40) size 29x18
+            RenderText {#text} at (57,40) size 15x18
+              text run at (57,40) width 15: "M"
+          RenderBlock {RT} at (50,30) size 29x10
             RenderText {#text} at (0,0) size 29x10
               text run at (0,0) width 29: "Markup"
-          RenderInline (generated) at (231,22) size 36x18
-            RenderText {#text} at (244,22) size 11x18
-              text run at (244,22) width 11: "L"
-          RenderBlock {RT} at (231,12) size 36x10
+          RenderInline (generated) at (78,40) size 37x18
+            RenderText {#text} at (91,40) size 11x18
+              text run at (91,40) width 11: "L"
+          RenderBlock {RT} at (78,30) size 37x10
             RenderText {#text} at (0,0) size 36x10
               text run at (0,0) width 36: "Language"
-          RenderInline (generated) at (12,50) size 28x18
-            RenderText {#text} at (21,50) size 9x18
-              text run at (21,50) width 9: "5"
-          RenderBlock {RT} at (12,40) size 28x10
+          RenderInline (generated) at (114,40) size 28x18
+            RenderText {#text} at (123,40) size 9x18
+              text run at (123,40) width 9: "5"
+          RenderBlock {RT} at (114,30) size 28x10
             RenderText {#text} at (0,0) size 28x10
               text run at (0,0) width 28: "Level 5"
-        RenderText {#text} at (34,50) size 44x18
-          text run at (34,50) width 44: " specs."
+        RenderText {#text} at (137,40) size 43x18
+          text run at (137,40) width 43: " specs."

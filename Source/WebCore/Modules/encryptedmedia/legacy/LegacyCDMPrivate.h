@@ -27,6 +27,7 @@
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
 
+#include <wtf/AbstractRefCounted.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/WTFString.h>
 
@@ -35,15 +36,15 @@ namespace WebCore {
 class LegacyCDMSession;
 class LegacyCDMSessionClient;
 
-class CDMPrivateInterface {
+class CDMPrivateInterface : public AbstractRefCounted {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(CDMPrivateInterface);
 public:
     CDMPrivateInterface() = default;
     virtual ~CDMPrivateInterface() = default;
 
-    virtual bool supportsMIMEType(const String&) = 0;
+    virtual bool supportsMIMEType(const String&) const = 0;
 
-    virtual std::unique_ptr<LegacyCDMSession> createSession(LegacyCDMSessionClient&) = 0;
+    virtual RefPtr<LegacyCDMSession> createSession(LegacyCDMSessionClient&) = 0;
 };
 
 } // namespace WebCore

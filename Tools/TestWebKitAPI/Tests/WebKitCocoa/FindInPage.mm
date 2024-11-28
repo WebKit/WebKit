@@ -30,6 +30,7 @@
 #import "Test.h"
 #import "TestNavigationDelegate.h"
 #import "TestWKWebView.h"
+#import "UnifiedPDFTestHelpers.h"
 #import "WKWebViewConfigurationExtras.h"
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/_WKFindDelegate.h>
@@ -108,7 +109,7 @@ TEST(WebKit, FindInPage)
     RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 200, 200)]);
     [webView _setOverrideDeviceScaleFactor:2];
 
-    NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"lots-of-text" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"lots-of-text" withExtension:@"html"]];
     [webView loadRequest:request];
     [webView _test_waitForDidFinishNavigation];
 
@@ -156,7 +157,7 @@ TEST(WebKit, FindInPage)
 TEST(WebKit, FindInPageSelectMatch)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 200, 200)]);
-    auto request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"lots-of-text" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+    auto request = [NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"lots-of-text" withExtension:@"html"]];
     [webView _setUsePlatformFindUI:NO];
     [webView loadRequest:request];
     [webView _test_waitForDidFinishNavigation];
@@ -177,7 +178,7 @@ TEST(WebKit, FindInPageWithPlatformPresentation)
     [webView _setOverrideDeviceScaleFactor:2];
     [webView _setUsePlatformFindUI:NO];
 
-    NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"lots-of-text" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"lots-of-text" withExtension:@"html"]];
     [webView loadRequest:request];
     [webView _test_waitForDidFinishNavigation];
 
@@ -572,7 +573,7 @@ TEST(WebKit, FindInPage)
 {
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 200, 200)]);
 
-    NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"lots-of-text" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"lots-of-text" withExtension:@"html"]];
     [webView loadRequest:request];
     [webView _test_waitForDidFinishNavigation];
 
@@ -584,7 +585,7 @@ TEST(WebKit, FindInPageCaseInsensitive)
 {
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 200, 200)]);
 
-    NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"lots-of-text" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"lots-of-text" withExtension:@"html"]];
     [webView loadRequest:request];
     [webView _test_waitForDidFinishNavigation];
 
@@ -599,7 +600,7 @@ TEST(WebKit, FindInPageStartsWith)
 {
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 200, 200)]);
 
-    NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"lots-of-text" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"lots-of-text" withExtension:@"html"]];
     [webView loadRequest:request];
     [webView _test_waitForDidFinishNavigation];
 
@@ -618,7 +619,7 @@ TEST(WebKit, FindInPageFullWord)
 {
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 200, 200)]);
 
-    NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"lots-of-text" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"lots-of-text" withExtension:@"html"]];
     [webView loadRequest:request];
     [webView _test_waitForDidFinishNavigation];
 
@@ -636,7 +637,7 @@ TEST(WebKit, FindInPageDoNotCrashWhenUsingMutableString)
 {
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 200, 200)]);
 
-    NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"lots-of-text" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"lots-of-text" withExtension:@"html"]];
     [webView loadRequest:request];
     [webView _test_waitForDidFinishNavigation];
 
@@ -876,7 +877,7 @@ TEST(WebKit, CannotHaveMultipleFindOverlays)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 200, 200)]);
 
-    NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"lots-of-text" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"lots-of-text" withExtension:@"html"]];
     [webView loadRequest:request];
     [webView _test_waitForDidFinishNavigation];
 
@@ -905,7 +906,7 @@ TEST(WebKit, FindOverlayCloseWebViewCrash)
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 200, 200)]);
     [webView setFindInteractionEnabled:YES];
 
-    NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"lots-of-text" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"lots-of-text" withExtension:@"html"]];
     [webView loadRequest:request];
     [webView _test_waitForDidFinishNavigation];
 
@@ -930,7 +931,7 @@ TEST(WebKit, FindOverlaySPI)
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 200, 200)]);
     [webView _setFindDelegate:findDelegate.get()];
 
-    NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"lots-of-text" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"lots-of-text" withExtension:@"html"]];
     [webView loadRequest:request];
     [webView _test_waitForDidFinishNavigation];
 
@@ -981,7 +982,7 @@ TEST(WebKit, FindInPDF)
 
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
 
-    NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"test" withExtension:@"pdf" subdirectory:@"TestWebKitAPI.resources"]];
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"test" withExtension:@"pdf"]];
     [webView loadRequest:request];
     [webView _test_waitForDidFinishNavigation];
 
@@ -1000,7 +1001,7 @@ TEST(WebKit, FindInPDFAfterReload)
     auto webView = adoptNS([[FindInPageTestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
 
     auto searchForText = [&] {
-        NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"test" withExtension:@"pdf" subdirectory:@"TestWebKitAPI.resources"]];
+        NSURLRequest *request = [NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"test" withExtension:@"pdf"]];
         [webView loadRequest:request];
         [webView _test_waitForDidFinishNavigation];
 
@@ -1035,7 +1036,7 @@ TEST(WebKit, FindInPDFAfterFindInPage)
     [findInteraction dismissFindNavigator];
     [webView waitForNextPresentationUpdate];
 
-    NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"test" withExtension:@"pdf" subdirectory:@"TestWebKitAPI.resources"]];
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"test" withExtension:@"pdf"]];
     [webView loadRequest:request];
     [webView _test_waitForDidFinishNavigation];
 
@@ -1045,6 +1046,73 @@ TEST(WebKit, FindInPDFAfterFindInPage)
     [findInteraction dismissFindNavigator];
     [webView waitForNextPresentationUpdate];
 }
+
+#if ENABLE(UNIFIED_PDF)
+
+TEST(WebKit, FindInUnifiedPDF)
+{
+    RetainPtr webView = adoptNS([[FindInPageTestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:TestWebKitAPI::configurationForWebViewTestingUnifiedPDF().get()]);
+
+    RetainPtr request = [NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"test" withExtension:@"pdf"]];
+    [webView loadRequest:request.get()];
+    [webView _test_waitForDidFinishNavigation];
+
+    RetainPtr searchOptions = adoptNS([[UITextSearchOptions alloc] init]);
+    testPerformTextSearchWithQueryStringInWebView(webView.get(), @"555", searchOptions.get(), 2UL);
+
+    hasPerformedTextSearchWithQueryString = false;
+}
+
+TEST(WebKit, FindInUnifiedPDFAfterReload)
+{
+    RetainPtr webView = adoptNS([[FindInPageTestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:TestWebKitAPI::configurationForWebViewTestingUnifiedPDF().get()]);
+
+    auto searchForText = [&] {
+        RetainPtr request = [NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"test" withExtension:@"pdf"]];
+        [webView loadRequest:request.get()];
+        [webView _test_waitForDidFinishNavigation];
+
+        RetainPtr findInteraction = [webView findInteraction];
+        [findInteraction presentFindNavigatorShowingReplace:NO];
+        [webView waitForNextPresentationUpdate];
+
+        RetainPtr searchOptions = adoptNS([[UITextSearchOptions alloc] init]);
+        testPerformTextSearchWithQueryStringInWebView(webView.get(), @"555", searchOptions.get(), 2UL);
+
+        [findInteraction dismissFindNavigator];
+        [webView waitForNextPresentationUpdate];
+
+        hasPerformedTextSearchWithQueryString = false;
+    };
+
+    searchForText();
+    searchForText();
+}
+
+TEST(WebKit, FindInUnifiedPDFAfterFindInPage)
+{
+    RetainPtr webView = adoptNS([[FindInPageTestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 200, 200) configuration:TestWebKitAPI::configurationForWebViewTestingUnifiedPDF().get()]);
+    [webView synchronouslyLoadTestPageNamed:@"lots-of-text"];
+
+    RetainPtr findInteraction = [webView findInteraction];
+    [findInteraction presentFindNavigatorShowingReplace:NO];
+    [webView waitForNextPresentationUpdate];
+
+    [findInteraction dismissFindNavigator];
+    [webView waitForNextPresentationUpdate];
+
+    RetainPtr request = [NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"test" withExtension:@"pdf"]];
+    [webView loadRequest:request.get()];
+    [webView _test_waitForDidFinishNavigation];
+
+    [findInteraction presentFindNavigatorShowingReplace:NO];
+    [webView waitForNextPresentationUpdate];
+
+    [findInteraction dismissFindNavigator];
+    [webView waitForNextPresentationUpdate];
+}
+
+#endif
 
 TEST(WebKit, FindInteractionSupportsTextReplacement)
 {

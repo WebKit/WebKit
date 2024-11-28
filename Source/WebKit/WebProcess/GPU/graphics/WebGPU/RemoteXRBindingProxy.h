@@ -49,7 +49,7 @@ namespace WebKit::WebGPU {
 class ConvertToBackingContext;
 
 class RemoteXRBindingProxy final : public WebCore::WebGPU::XRBinding {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(RemoteXRBindingProxy);
 public:
     static Ref<RemoteXRBindingProxy> create(RemoteDeviceProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier)
     {
@@ -60,6 +60,7 @@ public:
 
     RemoteDeviceProxy& parent() { return m_parent; }
     RemoteGPUProxy& root() { return m_parent->root(); }
+    Ref<RemoteGPUProxy> protectedRoot() { return m_parent->root(); }
 
 private:
     friend class DowncastConvertToBackingContext;
@@ -75,18 +76,18 @@ private:
 
     RefPtr<WebCore::WebGPU::XRProjectionLayer> createProjectionLayer(const WebCore::WebGPU::XRProjectionLayerInit&) final;
     RefPtr<WebCore::WebGPU::XRSubImage> getSubImage(WebCore::WebGPU::XRProjectionLayer&, WebCore::WebXRFrame&, std::optional<WebCore::WebGPU::XREye>/* = "none"*/) final;
-    RefPtr<WebCore::WebGPU::XRSubImage> getViewSubImage(WebCore::WebGPU::XRProjectionLayer&, WebCore::WebGPU::XREye) final;
+    RefPtr<WebCore::WebGPU::XRSubImage> getViewSubImage(WebCore::WebGPU::XRProjectionLayer&) final;
     WebCore::WebGPU::TextureFormat getPreferredColorFormat() final;
 
     template<typename T>
     WARN_UNUSED_RETURN IPC::Error send(T&& message)
     {
-        return root().streamClientConnection().send(WTFMove(message), backing());
+        return root().protectedStreamClientConnection()->send(WTFMove(message), backing());
     }
     template<typename T>
     WARN_UNUSED_RETURN IPC::Connection::SendSyncResult<T> sendSync(T&& message)
     {
-        return root().streamClientConnection().sendSync(WTFMove(message), backing());
+        return root().protectedStreamClientConnection()->sendSync(WTFMove(message), backing());
     }
 
     WebGPUIdentifier m_backing;

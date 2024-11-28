@@ -49,8 +49,16 @@ PerActivityStateCPUUsageSampler::PerActivityStateCPUUsageSampler(WebProcessPool&
     m_loggingTimer.startRepeating(loggingInterval);
 }
 
-PerActivityStateCPUUsageSampler::~PerActivityStateCPUUsageSampler()
+PerActivityStateCPUUsageSampler::~PerActivityStateCPUUsageSampler() = default;
+
+void PerActivityStateCPUUsageSampler::ref() const
 {
+    m_processPool->ref();
+}
+
+void PerActivityStateCPUUsageSampler::deref() const
+{
+    m_processPool->deref();
 }
 
 void PerActivityStateCPUUsageSampler::reportWebContentCPUTime(Seconds cpuTime, ActivityStateForCPUSampling activityState)

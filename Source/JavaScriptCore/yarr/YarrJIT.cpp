@@ -48,6 +48,8 @@
 #include <wtf/Threading.h>
 #include <wtf/text/MakeString.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 #if ENABLE(YARR_JIT)
 
 namespace JSC { namespace Yarr {
@@ -757,25 +759,35 @@ class YarrGenerator final : public YarrJITInfo {
     {
         ASSERT(term->type == PatternTerm::Type::CharacterClass);
 
+        auto processCharacterClass = [&] (CharacterClass* characterClassToProcess) {
 #if ENABLE(YARR_JIT_UNICODE_EXPRESSIONS)
-        if (m_decodeSurrogatePairs && term->invert())
-            failures.append(m_jit.branch32(MacroAssembler::Equal, character, MacroAssembler::TrustedImm32(errorCodePoint)));
+            if (m_decodeSurrogatePairs && term->invert())
+                failures.append(m_jit.branch32(MacroAssembler::Equal, character, MacroAssembler::TrustedImm32(errorCodePoint)));
 #endif
-        if (term->invert())
-            matchCharacterClass(character, scratch, failures, term->characterClass);
-        else if (term->characterClass->m_matches.isEmpty() && term->characterClass->m_matchesUnicode.isEmpty()
-            && (term->characterClass->m_ranges.size() + term->characterClass->m_rangesUnicode.size()) == 1) {
-            matchCharacterClassOnlyOneRange(character, scratch, failures, term->characterClass->m_ranges.size() ? term->characterClass->m_ranges : term->characterClass->m_rangesUnicode);
-        } else {
-            MacroAssembler::JumpList matchDest;
-            // If we are matching the "any character" builtin class for non-unicode patterns,
-            // we only need to read the character and don't need to match as it will always succeed.
-            if (!term->characterClass->m_anyCharacter) {
-                matchCharacterClass(character, scratch, matchDest, term->characterClass);
-                failures.append(m_jit.jump());
+            if (term->invert())
+                matchCharacterClass(character, scratch, failures, characterClassToProcess);
+            else if (characterClassToProcess->m_matches.isEmpty() && characterClassToProcess->m_matchesUnicode.isEmpty()
+                && (characterClassToProcess->m_ranges.size() + characterClassToProcess->m_rangesUnicode.size()) == 1) {
+                matchCharacterClassOnlyOneRange(character, scratch, failures, characterClassToProcess->m_ranges.size() ? characterClassToProcess->m_ranges : characterClassToProcess->m_rangesUnicode);
+            } else {
+                MacroAssembler::JumpList matchDest;
+                // If we are matching the "any character" builtin class for non-unicode patterns,
+                // we only need to read the character and don't need to match as it will always succeed.
+                if (!characterClassToProcess->m_anyCharacter) {
+                    matchCharacterClass(character, scratch, matchDest, characterClassToProcess);
+                    failures.append(m_jit.jump());
+                }
+                matchDest.link(&m_jit);
             }
-            matchDest.link(&m_jit);
-        }
+        };
+
+        if (m_charSize == CharSize::Char8) {
+            CharacterClass characterClass8Bit;
+
+            characterClass8Bit.copyOnly8BitCharacterData(*term->characterClass);
+            processCharacterClass(&characterClass8Bit);
+        } else
+            processCharacterClass(term->characterClass);
 
         // Note that this falls through on a successful characterClass match.
     }
@@ -5454,3 +5466,5 @@ void YarrCodeBlock::dumpSimpleName(PrintStream& out) const
 }}
 
 #endif
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

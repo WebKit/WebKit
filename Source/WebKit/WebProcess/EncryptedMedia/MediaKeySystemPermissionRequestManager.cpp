@@ -88,7 +88,7 @@ void MediaKeySystemPermissionRequestManager::sendMediaKeySystemRequest(MediaKeyS
     ASSERT(webFrame);
 
     auto* topLevelDocumentOrigin = userRequest.topLevelDocumentOrigin();
-    m_page.send(Messages::WebPageProxy::RequestMediaKeySystemPermissionForFrame(userRequest.identifier(), webFrame->frameID(), topLevelDocumentOrigin->data(), userRequest.keySystem()));
+    Ref { m_page.get() }->send(Messages::WebPageProxy::RequestMediaKeySystemPermissionForFrame(userRequest.identifier(), webFrame->frameID(), topLevelDocumentOrigin->data(), userRequest.keySystem()));
 }
 
 void MediaKeySystemPermissionRequestManager::cancelMediaKeySystemRequest(MediaKeySystemRequest& request)
@@ -141,6 +141,16 @@ void MediaKeySystemPermissionRequestManager::mediaKeySystemWasDenied(MediaKeySys
         return;
 
     request->deny(WTFMove(message));
+}
+
+void MediaKeySystemPermissionRequestManager::ref() const
+{
+    m_page->ref();
+}
+
+void MediaKeySystemPermissionRequestManager::deref() const
+{
+    m_page->deref();
 }
 
 } // namespace WebKit

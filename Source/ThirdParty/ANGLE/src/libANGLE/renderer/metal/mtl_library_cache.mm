@@ -97,22 +97,6 @@ egl::BlobCache::Key GenerateBlobCacheKeyForShaderLibrary(
     return sha1.DigestAsArray();
 }
 
-// Returns a new MTLLibrary from the specified data.
-AutoObjCPtr<id<MTLLibrary>> NewMetalLibraryFromMetallib(id<MTLDevice> metalDevice,
-                                                        const uint8_t *data,
-                                                        size_t size)
-{
-    ANGLE_MTL_OBJC_SCOPE
-    {
-        // Copy the data as the life of the BlobCache is not necessarily the same as that of the
-        // metallibrary.
-        auto mtl_data = dispatch_data_create(data, size, dispatch_get_main_queue(),
-                                             DISPATCH_DATA_DESTRUCTOR_DEFAULT);
-
-        NSError *nsError = nil;
-        return [metalDevice newLibraryWithData:mtl_data error:&nsError];
-    }
-}
 
 }  // namespace
 
@@ -166,11 +150,12 @@ AutoObjCPtr<id<MTLLibrary>> LibraryCache::getOrCompileShaderLibrary(
         std::string metallib_filename =
             CompileShaderLibraryToFile(*source, macros, disableFastMath, usesInvariance);
         angle::MemoryBuffer memory_buffer = ReadMetallibFromFile(metallib_filename);
-        entry.library =
-            NewMetalLibraryFromMetallib(metalDevice, memory_buffer.data(), memory_buffer.size());
+        AutoObjCPtr<NSError *> error;
+        entry.library = CreateShaderLibraryFromBinary(metalDevice, memory_buffer.data(),
+                                                      memory_buffer.size(), &error);
         auto cache_key =
             GenerateBlobCacheKeyForShaderLibrary(source, macros, disableFastMath, usesInvariance);
-        displayMtl->getBlobCache()->put(cache_key, std::move(memory_buffer));
+        displayMtl->getBlobCache()->put(nullptr, cache_key, std::move(memory_buffer));
         return entry.library;
     }
 
@@ -180,9 +165,11 @@ AutoObjCPtr<id<MTLLibrary>> LibraryCache::getOrCompileShaderLibrary(
             GenerateBlobCacheKeyForShaderLibrary(source, macros, disableFastMath, usesInvariance);
         egl::BlobCache::Value value;
         angle::ScratchBuffer scratch_buffer;
-        if (displayMtl->getBlobCache()->get(&scratch_buffer, cache_key, &value))
+        if (displayMtl->getBlobCache()->get(nullptr, &scratch_buffer, cache_key, &value))
         {
-            entry.library = NewMetalLibraryFromMetallib(metalDevice, value.data(), value.size());
+            AutoObjCPtr<NSError *> error;
+            entry.library =
+                CreateShaderLibraryFromBinary(metalDevice, value.data(), value.size(), &error);
         }
         ANGLE_HISTOGRAM_BOOLEAN("GPU.ANGLE.MetalShaderInBlobCache", entry.library);
         ANGLEPlatformCurrent()->recordShaderCacheUse(entry.library);

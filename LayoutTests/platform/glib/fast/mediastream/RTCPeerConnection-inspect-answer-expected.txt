@@ -11,7 +11,7 @@ o=- {session-id:OK} 0 IN IP4 0.0.0.0
 s=-
 t=0 0
 a=ice-options:trickle
-m=audio 9 UDP/TLS/RTP/SAVPF 96 97 98
+m=audio 9 UDP/TLS/RTP/SAVPF 96
 c=IN IP4 0.0.0.0
 a=ice-ufrag:{ice-ufrag:OK}
 a=ice-pwd:{ice-password:OK}
@@ -21,8 +21,6 @@ a=setup:active
 a=rtpmap:96 OPUS/48000/2
 a=rtcp-fb:96 transport-cc
 a=fmtp:96 minptime=10;useinbandfec=1
-a=rtpmap:97 red/48000
-a=rtpmap:98 ulpfec/48000
 a=recvonly
 a=fingerprint:sha-256 {fingerprint:OK}
 ===
@@ -35,7 +33,7 @@ o=- {session-id:OK} 1 IN IP4 0.0.0.0
 s=-
 t=0 0
 a=ice-options:trickle
-m=audio 9 UDP/TLS/RTP/SAVPF 96 97 98
+m=audio 9 UDP/TLS/RTP/SAVPF 96
 c=IN IP4 0.0.0.0
 a=ice-ufrag:{ice-ufrag:OK}
 a=ice-pwd:{ice-password:OK}
@@ -44,19 +42,7 @@ a=mid:{mid:OK}
 a=setup:active
 a=rtpmap:96 OPUS/48000/2
 a=rtcp-fb:96 transport-cc
-a=rtcp-mux
-a=rtcp-rsize
-a=rtcp-fb:8 transport-cc
-a=msid:{media-stream-id:OK} {media-stream-track-id:OK}
-a=fingerprint:sha-256 {fingerprint:OK}
-a=extmap:1 http://www.ietf.org/id/draft-holmer-rmcat-transport-wide-cc-extensions-01
-a=extmap:2 urn:ietf:params:rtp-hdrext:sdes:mid
-a=extmap:3 urn:ietf:params:rtp-hdrext:sdes:repaired-rtp-stream-id
-a=extmap:4 urn:ietf:params:rtp-hdrext:sdes:rtp-stream-id
-a=extmap:5 urn:ietf:params:rtp-hdrext:ssrc-audio-level vad=on
 a=fmtp:96 minptime=10;useinbandfec=1
-a=rtpmap:97 red/48000
-a=rtpmap:98 ulpfec/48000
 a=recvonly
 a=fingerprint:sha-256 {fingerprint:OK}
 m=video 9 UDP/TLS/RTP/SAVPF 97 96
@@ -72,7 +58,8 @@ a=rtcp-fb:97 nack pli
 a=rtcp-fb:97 ccm fir
 a=rtcp-fb:97 transport-cc
 a=fmtp:97 packetization-mode=1;level-asymmetry-allowed=1
-a=rtpmap:96 red/90000
+a=rtpmap:96 rtx/90000
+a=fmtp:96 apt=97
 a=recvonly
 a=fingerprint:sha-256 {fingerprint:OK}
 ===

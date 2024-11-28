@@ -5,18 +5,19 @@
  * found in the LICENSE file.
  */
 
-#include "include/gpu/GrBackendSurface.h"
+#include "include/gpu/ganesh/GrBackendSurface.h"
 
 #include "include/core/SkTextureCompressionType.h"
-#include "include/gpu/GrTypes.h"
+#include "include/gpu/ganesh/GrTypes.h"
 #include "include/gpu/MutableTextureState.h"  // IWYU pragma: keep
 #include "include/private/base/SkAssert.h"
 #include "include/private/gpu/ganesh/GrTypesPriv.h"
 #include "src/gpu/GpuTypesPriv.h"
 #include "src/gpu/ganesh/GrBackendSurfacePriv.h"
+#include "src/gpu/ganesh/GrUtil.h"
 
 #ifdef SK_DIRECT3D
-#include "include/gpu/d3d/GrD3DTypes.h"
+#include "include/gpu/ganesh/d3d/GrD3DTypes.h"
 #include "src/gpu/ganesh/d3d/GrD3DResourceState.h"
 #include "src/gpu/ganesh/d3d/GrD3DUtil.h"
 #endif
@@ -220,7 +221,7 @@ bool GrBackendFormat::operator==(const GrBackendFormat& that) const {
     return false;
 }
 
-#if defined(SK_DEBUG) || defined(GR_TEST_UTILS)
+#if defined(SK_DEBUG) || defined(GPU_TEST_UTILS)
 #include "include/core/SkString.h"
 
 SkString GrBackendFormat::toStr() const {
@@ -458,7 +459,7 @@ GrBackendFormat GrBackendTexture::getBackendFormat() const {
     }
 }
 
-#if defined(GR_TEST_UTILS)
+#if defined(GPU_TEST_UTILS)
 bool GrBackendTexture::TestingOnly_Equals(const GrBackendTexture& t0, const GrBackendTexture& t1) {
     if (!t0.isValid() || !t1.isValid()) {
         return false; // two invalid backend textures are not considered equal
@@ -659,7 +660,7 @@ bool GrBackendRenderTarget::isProtected() const {
     return false;
 }
 
-#if defined(GR_TEST_UTILS)
+#if defined(GPU_TEST_UTILS)
 bool GrBackendRenderTarget::TestingOnly_Equals(const GrBackendRenderTarget& r0,
                                                const GrBackendRenderTarget& r1) {
     if (!r0.isValid() || !r1.isValid()) {

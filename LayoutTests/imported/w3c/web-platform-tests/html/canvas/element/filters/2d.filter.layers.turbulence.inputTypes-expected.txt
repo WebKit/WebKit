@@ -1,0 +1,6 @@
+2d.filter.layers.turbulence.inputTypes
+Test exceptions on CanvasFilter() turbulence object
+Actual output:
+
+FAIL Test exceptions on CanvasFilter() turbulence object assert_throws_js: function "function() { ctx.beginLayer({filter: filterOptions}); }" did not throw
+

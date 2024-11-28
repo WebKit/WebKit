@@ -15,5 +15,7 @@
 	<string>${BUNDLE_VERSION}</string>
 	<key>CFBundleName</key>
 	<string>${PRODUCT_BUNDLE_NAME}</string>
+	<key>CFBundleFollowParentLocalization</key>
+	<true/>
 </dict>
 </plist>

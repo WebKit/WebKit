@@ -4,8 +4,8 @@ This test checks that going back and forth across a slow-loading frame doesn't c
 If testing manually click here.
 
 ============== Back Forward List ==============
-        http://127.0.0.1:8000/navigation/back-to-slow-frame.html  **nav target**
-curr->  http://127.0.0.1:8000/navigation/resources/back-to-slow-frame-2.html  **nav target**
+        http://127.0.0.1:8000/navigation/back-to-slow-frame.html
+curr->  http://127.0.0.1:8000/navigation/resources/back-to-slow-frame-2.html
             http://127.0.0.1:8000/navigation/resources/slow-resource-1-sec.pl (in frame "<!--frame1-->")
-        http://127.0.0.1:8000/navigation/resources/back-to-slow-frame-3.html  **nav target**
+        http://127.0.0.1:8000/navigation/resources/back-to-slow-frame-3.html
 ===============================================

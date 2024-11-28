@@ -46,6 +46,18 @@ SimpleRange::SimpleRange(BoundaryPoint&& start, BoundaryPoint&& end)
 {
 }
 
+WeakSimpleRange::WeakSimpleRange(const WeakBoundaryPoint& start, const WeakBoundaryPoint& end)
+    : start(start)
+    , end(end)
+{
+}
+
+WeakSimpleRange::WeakSimpleRange(WeakBoundaryPoint&& start, WeakBoundaryPoint&& end)
+    : start(WTFMove(start))
+    , end(WTFMove(end))
+{
+}
+
 std::optional<SimpleRange> makeRangeSelectingNode(Node& node)
 {
     RefPtr parent = node.parentNode();

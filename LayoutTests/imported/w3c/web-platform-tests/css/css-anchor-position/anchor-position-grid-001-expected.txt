@@ -4,14 +4,12 @@
 
 FAIL .target 1 assert_equals:
 <div class="target target1-l" data-offset-x="100" data-expected-height="100"></div>
-height expected 100 but got 0
-FAIL .target 2 assert_equals:
-<div class="target target1-r" data-offset-x="404" data-expected-height="100"></div>
-height expected 100 but got 0
+offsetLeft expected 100 but got 200
+PASS .target 2
 FAIL .target 3 assert_equals:
 <div class="target target1-t" data-offset-y="0" data-expected-width="310"></div>
-width expected 310 but got 0
+width expected 310 but got 100
 FAIL .target 4 assert_equals:
 <div class="target target1-b" data-offset-y="95" data-expected-width="310"></div>
-width expected 310 but got 0
+width expected 310 but got 100
 

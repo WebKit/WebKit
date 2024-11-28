@@ -408,6 +408,16 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     webkit_settings_set_disable_web_security(settings, TRUE);
     g_assert_true(webkit_settings_get_disable_web_security(settings));
 
+#if ENABLE(WEB_RTC)
+    g_assert_cmpstr("", ==, webkit_settings_get_webrtc_udp_ports_range(settings));
+    webkit_settings_set_webrtc_udp_ports_range(settings, "20000:30000");
+    g_assert_cmpstr("20000:30000", ==, webkit_settings_get_webrtc_udp_ports_range(settings));
+    webkit_settings_set_webrtc_udp_ports_range(settings, "20000:0");
+    g_assert_cmpstr("20000:0", ==, webkit_settings_get_webrtc_udp_ports_range(settings));
+    webkit_settings_set_webrtc_udp_ports_range(settings, "0:20000");
+    g_assert_cmpstr("0:20000", ==, webkit_settings_get_webrtc_udp_ports_range(settings));
+#endif
+
     g_object_unref(G_OBJECT(settings));
 }
 
@@ -478,7 +488,7 @@ void testWebKitFeatures(Test* test, gconstpointer)
         // FIXME: This is enabled in UnifiedWebPreferences.yaml, but the
         // actual value ends up being disabled without an obvious reason.
         // Needs investigating.
-        if (identifier == "GrammarAndSpellingPseudoElements"_s)
+        if (identifier == "TargetTextPseudoElement"_s)
             continue;
 
         g_assert(webkit_settings_get_feature_enabled(settings.get(), feature) == webkit_feature_get_default_value(feature));

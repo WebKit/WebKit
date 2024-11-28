@@ -124,7 +124,7 @@ void MtlCaps::initGPUFamily(id<MTLDevice> device) {
 }
 
 void MtlCaps::initCaps(const id<MTLDevice> device) {
-#if defined(GRAPHITE_TEST_UTILS)
+#if defined(GPU_TEST_UTILS)
     this->setDeviceName([[device name] UTF8String]);
 #endif
 
@@ -434,7 +434,7 @@ void MtlCaps::initFormatTable(const id<MTLDevice> device) {
         } else {
             info->fFlags = FormatInfo::kTexturable_Flag;
         }
-        info->fColorTypeInfoCount = 1;
+        info->fColorTypeInfoCount = 2;
         info->fColorTypeInfos = std::make_unique<ColorTypeInfo[]>(info->fColorTypeInfoCount);
         int ctIdx = 0;
         // Format: RGB10A2Unorm, Surface: kRGBA_1010102
@@ -443,13 +443,20 @@ void MtlCaps::initFormatTable(const id<MTLDevice> device) {
             ctInfo.fColorType = kRGBA_1010102_SkColorType;
             ctInfo.fFlags = ColorTypeInfo::kUploadData_Flag | ColorTypeInfo::kRenderable_Flag;
         }
+        // Format: RGB10A2Unorm, Surface: kRGB_101010x
+        {
+            auto& ctInfo = info->fColorTypeInfos[ctIdx++];
+            ctInfo.fColorType = kRGB_101010x_SkColorType;
+            ctInfo.fFlags = ColorTypeInfo::kUploadData_Flag;
+            ctInfo.fReadSwizzle = skgpu::Swizzle::RGB1();
+        }
     }
 
     // Format: RGBA16Float
     {
         info = &fFormatTable[GetFormatIndex(MTLPixelFormatRGBA16Float)];
         info->fFlags = FormatInfo::kAllFlags;
-        info->fColorTypeInfoCount = 2;
+        info->fColorTypeInfoCount = 3;
         info->fColorTypeInfos = std::make_unique<ColorTypeInfo[]>(info->fColorTypeInfoCount);
         int ctIdx = 0;
         // Format: RGBA16Float, Surface: RGBA_F16
@@ -463,6 +470,13 @@ void MtlCaps::initFormatTable(const id<MTLDevice> device) {
             auto& ctInfo = info->fColorTypeInfos[ctIdx++];
             ctInfo.fColorType = kRGBA_F16Norm_SkColorType;
             ctInfo.fFlags = ColorTypeInfo::kUploadData_Flag | ColorTypeInfo::kRenderable_Flag;
+        }
+        // Format: RGBA16Float, Surface: RGB_F16F16F16x
+        {
+            auto& ctInfo = info->fColorTypeInfos[ctIdx++];
+            ctInfo.fColorType = kRGBA_F16_SkColorType;
+            ctInfo.fFlags = ColorTypeInfo::kUploadData_Flag;
+            ctInfo.fReadSwizzle = skgpu::Swizzle::RGB1();
         }
     }
 
@@ -682,13 +696,14 @@ void MtlCaps::initFormatTable(const id<MTLDevice> device) {
     this->setColorType(kRGB_888x_SkColorType,         { MTLPixelFormatRGBA8Unorm });
     this->setColorType(kBGRA_8888_SkColorType,        { MTLPixelFormatBGRA8Unorm });
     this->setColorType(kRGBA_1010102_SkColorType,     { MTLPixelFormatRGB10A2Unorm });
+    this->setColorType(kRGB_101010x_SkColorType,      { MTLPixelFormatRGB10A2Unorm });
     // kBGRA_1010102_SkColorType
-    // kRGB_101010x_SkColorType
     // kBGR_101010x_SkColorType
     // kBGR_101010x_XR_SkColorType
     this->setColorType(kGray_8_SkColorType,           { MTLPixelFormatR8Unorm });
     this->setColorType(kRGBA_F16Norm_SkColorType,     { MTLPixelFormatRGBA16Float });
     this->setColorType(kRGBA_F16_SkColorType,         { MTLPixelFormatRGBA16Float });
+    this->setColorType(kRGB_F16F16F16x_SkColorType,   { MTLPixelFormatRGBA16Float });
     // kRGBA_F32_SkColorType
     this->setColorType(kR8G8_unorm_SkColorType,       { MTLPixelFormatRG8Unorm });
     this->setColorType(kA16_float_SkColorType,        { MTLPixelFormatR16Float });
@@ -743,6 +758,14 @@ TextureInfo MtlCaps::getTextureInfoForSampledCopy(const TextureInfo& textureInfo
 }
 
 namespace {
+
+skgpu::UniqueKey::Domain get_domain() {
+    static const skgpu::UniqueKey::Domain kMtlGraphicsPipelineDomain =
+            skgpu::UniqueKey::GenerateDomain();
+
+    return kMtlGraphicsPipelineDomain;
+}
+
 MTLPixelFormat format_from_compression(SkTextureCompressionType compression) {
     switch (compression) {
         case SkTextureCompressionType::kETC2_RGB8_UNORM:
@@ -891,16 +914,15 @@ const Caps::ColorTypeInfo* MtlCaps::getColorTypeInfo(
     return nullptr;
 }
 
-static const skgpu::UniqueKey::Domain kGraphicsPipelineDomain = UniqueKey::GenerateDomain();
-static const int kGraphicsPipelineKeyData32Count = 5;
+static const int kMtlGraphicsPipelineKeyData32Count = 5;
 
 UniqueKey MtlCaps::makeGraphicsPipelineKey(const GraphicsPipelineDesc& pipelineDesc,
                                            const RenderPassDesc& renderPassDesc) const {
     UniqueKey pipelineKey;
     {
         // 5 uint32_t's (render step id, paint id, uint64 renderpass desc, uint16 write swizzle key)
-        UniqueKey::Builder builder(&pipelineKey, kGraphicsPipelineDomain,
-                                   kGraphicsPipelineKeyData32Count, "GraphicsPipeline");
+        UniqueKey::Builder builder(&pipelineKey, get_domain(),
+                                   kMtlGraphicsPipelineKeyData32Count, "MtlGraphicsPipeline");
         // add GraphicsPipelineDesc key
         builder[0] = pipelineDesc.renderStepID();
         builder[1] = pipelineDesc.paintParamsID().asUInt();
@@ -936,8 +958,8 @@ bool MtlCaps::extractGraphicsDescs(const UniqueKey& key,
         Swizzle fWriteSwizzle;
     } keyData;
 
-    SkASSERT(key.domain() == kGraphicsPipelineDomain);
-    SkASSERT(key.dataSize() == 4 * kGraphicsPipelineKeyData32Count);
+    SkASSERT(key.domain() == get_domain());
+    SkASSERT(key.dataSize() == 4 * kMtlGraphicsPipelineKeyData32Count);
 
     const uint32_t* rawKeyData = key.data();
 

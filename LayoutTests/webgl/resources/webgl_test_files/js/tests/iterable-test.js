@@ -107,10 +107,15 @@ IterableTest = (function() {
 
     gl.uniformMatrix4fv(uniforms.u_modelViewProjMatrix.location, false, identityMat);
 
+    var extraHeight = 0;
+
     function test() {
       var gl2 = wtu.create3DContext(null, {antialias: true});
 
-      gl2.canvas.width = gl2.canvas.height = 1024;
+      gl2.canvas.width = 1024;
+      // Make this test a little more stressful by slightly changing the canvas's height each iteration.
+      gl2.canvas.height = 1024 + extraHeight;
+      extraHeight = (1 + extraHeight) % 4;
       gl2.canvas.style.width = gl2.canvas.style.height = "1px";
       document.body.appendChild(gl2.canvas);
 

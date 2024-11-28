@@ -24,6 +24,10 @@
 
 #pragma once
 
+#include <wtf/Compiler.h>
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 #include <bit>
 #include <optional>
 #include <wtf/StdLibExtras.h>
@@ -273,6 +277,18 @@ ALWAYS_INLINE bool isNonZero(simde_uint32x4_t accumulated)
 #endif
 }
 
+ALWAYS_INLINE bool isNonZero(simde_uint64x2_t accumulated)
+{
+#if CPU(X86_64)
+    auto raw = simde_uint64x2_to_m128i(accumulated);
+    return !simde_mm_test_all_zeros(raw, raw);
+#else
+    // There is no simde_vmaxvq_u64, so using simde_vmaxvq_u8.
+    // But this is fine since it only just checks if the input is all-zeros.
+    return simde_vmaxvq_u32(simde_vreinterpretq_u32_u64(accumulated));
+#endif
+}
+
 ALWAYS_INLINE std::optional<uint8_t> findFirstNonZeroIndex(simde_uint8x16_t value)
 {
 #if CPU(X86_64)
@@ -481,11 +497,11 @@ ALWAYS_INLINE const CharacterType* find(std::span<const CharacterType> span, con
     const auto* end = span.data() + span.size();
     if (span.size() >= threshold) {
         for (; cursor + (stride - 1) < end; cursor += stride) {
-            if (auto index = vectorMatch(SIMD::load(bitwise_cast<const UnsignedType*>(cursor))))
+            if (auto index = vectorMatch(SIMD::load(std::bit_cast<const UnsignedType*>(cursor))))
                 return cursor + index.value();
         }
         if (cursor < end) {
-            if (auto index = vectorMatch(SIMD::load(bitwise_cast<const UnsignedType*>(end - stride))))
+            if (auto index = vectorMatch(SIMD::load(std::bit_cast<const UnsignedType*>(end - stride))))
                 return end - stride + index.value();
         }
         return end;
@@ -509,11 +525,11 @@ ALWAYS_INLINE const CharacterType* findInterleaved(std::span<const CharacterType
     const auto* end = span.data() + span.size();
     if (span.size() >= threshold) {
         for (; cursor + (stride - 1) < end; cursor += stride) {
-            if (auto index = vectorMatch(simde_vld2q_u8(bitwise_cast<const uint8_t*>(cursor))))
+            if (auto index = vectorMatch(simde_vld2q_u8(std::bit_cast<const uint8_t*>(cursor))))
                 return cursor + index.value();
         }
         if (cursor < end) {
-            if (auto index = vectorMatch(simde_vld2q_u8(bitwise_cast<const uint8_t*>(end - stride))))
+            if (auto index = vectorMatch(simde_vld2q_u8(std::bit_cast<const uint8_t*>(end - stride))))
                 return end - stride + index.value();
         }
         return end;
@@ -530,3 +546,5 @@ ALWAYS_INLINE const CharacterType* findInterleaved(std::span<const CharacterType
 }
 
 namespace SIMD = WTF::SIMD;
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

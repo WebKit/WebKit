@@ -297,48 +297,29 @@ bool ValidateTexImageFormatCombination(const Context *context,
                                        GLenum format,
                                        GLenum type)
 {
-    // Different validation if on desktop api
-    if (context->getClientType() == EGL_OPENGL_API)
+    // The type and format are valid if any supported internal format has that type and format.
+    // ANGLE_texture_external_yuv_sampling extension adds support for YUV formats
+    if (gl::IsYuvFormat(format))
     {
-        // The type and format are valid if any supported internal format has that type and format
-        if (!ValidDesktopFormat(format))
+        if (!context->getExtensions().yuvInternalFormatANGLE)
         {
             ANGLE_VALIDATION_ERROR(GL_INVALID_ENUM, kInvalidFormat);
-            return false;
-        }
-
-        if (!ValidDesktopType(type))
-        {
-            ANGLE_VALIDATION_ERROR(GL_INVALID_ENUM, kInvalidType);
             return false;
         }
     }
     else
     {
-        // The type and format are valid if any supported internal format has that type and format.
-        // ANGLE_texture_external_yuv_sampling extension adds support for YUV formats
-        if (gl::IsYuvFormat(format))
+        if (!ValidES3Format(format))
         {
-            if (!context->getExtensions().yuvInternalFormatANGLE)
-            {
-                ANGLE_VALIDATION_ERROR(GL_INVALID_ENUM, kInvalidFormat);
-                return false;
-            }
-        }
-        else
-        {
-            if (!ValidES3Format(format))
-            {
-                ANGLE_VALIDATION_ERROR(GL_INVALID_ENUM, kInvalidFormat);
-                return false;
-            }
-        }
-
-        if (!ValidES3Type(type) || (type == GL_HALF_FLOAT_OES && context->isWebGL()))
-        {
-            ANGLE_VALIDATION_ERROR(GL_INVALID_ENUM, kInvalidType);
+            ANGLE_VALIDATION_ERROR(GL_INVALID_ENUM, kInvalidFormat);
             return false;
         }
+    }
+
+    if (!ValidES3Type(type) || (type == GL_HALF_FLOAT_OES && context->isWebGL()))
+    {
+        ANGLE_VALIDATION_ERROR(GL_INVALID_ENUM, kInvalidType);
+        return false;
     }
 
     // For historical reasons, glTexImage2D and glTexImage3D pass in their internal format as a
@@ -362,10 +343,11 @@ bool ValidateTexImageFormatCombination(const Context *context,
         return false;
     }
 
-    if (context->getClientType() == EGL_OPENGL_API)
+    // Check if this is a valid format combination to load texture data
+    // ANGLE_texture_external_yuv_sampling extension adds support for YUV formats
+    if (gl::IsYuvFormat(format))
     {
-        // Check if this is a valid format combination to load texture data
-        if (!ValidDesktopFormatCombination(format, type, internalFormat))
+        if (type != GL_UNSIGNED_BYTE)
         {
             ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kInvalidFormatCombination);
             return false;
@@ -373,23 +355,10 @@ bool ValidateTexImageFormatCombination(const Context *context,
     }
     else
     {
-        // Check if this is a valid format combination to load texture data
-        // ANGLE_texture_external_yuv_sampling extension adds support for YUV formats
-        if (gl::IsYuvFormat(format))
+        if (!ValidES3FormatCombination(format, type, internalFormat))
         {
-            if (type != GL_UNSIGNED_BYTE)
-            {
-                ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kInvalidFormatCombination);
-                return false;
-            }
-        }
-        else
-        {
-            if (!ValidES3FormatCombination(format, type, internalFormat))
-            {
-                ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kInvalidFormatCombination);
-                return false;
-            }
+            ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kInvalidFormatCombination);
+            return false;
         }
     }
 

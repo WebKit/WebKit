@@ -3,7 +3,7 @@ layer at (0,0) size 1428x585
 layer at (0,0) size 800x31
   RenderBlock {HTML} at (0,0) size 800x31 [color=#FFFFFF]
     RenderBody {BODY} at (8,8) size 784x15
-      RenderInline {RUBY} at (0,5) size 1420x12
+      RenderInline {RUBY} at (0,5) size 1420x10
         RenderInline (generated) at (0,5) size 1420x10
           RenderText {#text} at (0,5) size 1420x10
             text run at (0,5) width 1420: "Attempt to create a floating ruby text element. Float is not supported for ruby text, which should be apparent from the resulting render tree."

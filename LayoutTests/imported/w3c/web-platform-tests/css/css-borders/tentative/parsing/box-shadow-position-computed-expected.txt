@@ -1,0 +1,6 @@
+
+FAIL Property box-shadow-position value 'inset' assert_true: box-shadow-position doesn't seem to be supported in the computed style expected true got false
+FAIL Property box-shadow-position value 'outset' assert_true: box-shadow-position doesn't seem to be supported in the computed style expected true got false
+FAIL Property box-shadow-position value 'inset, outset' assert_true: box-shadow-position doesn't seem to be supported in the computed style expected true got false
+FAIL Property box-shadow-position value 'outset, inset' assert_true: box-shadow-position doesn't seem to be supported in the computed style expected true got false
+

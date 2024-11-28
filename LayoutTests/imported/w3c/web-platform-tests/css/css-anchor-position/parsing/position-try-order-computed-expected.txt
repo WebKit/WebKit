@@ -1,9 +1,9 @@
 
-FAIL Property position-try-order value 'normal' assert_true: position-try-order doesn't seem to be supported in the computed style expected true got false
-FAIL Property position-try-order value 'most-width' assert_true: position-try-order doesn't seem to be supported in the computed style expected true got false
-FAIL Property position-try-order value 'most-height' assert_true: position-try-order doesn't seem to be supported in the computed style expected true got false
-FAIL Property position-try-order value 'most-block-size' assert_true: position-try-order doesn't seem to be supported in the computed style expected true got false
-FAIL Property position-try-order value 'most-inline-size' assert_true: position-try-order doesn't seem to be supported in the computed style expected true got false
-FAIL Property position-try-order has initial value normal assert_true: position-try-order doesn't seem to be supported in the computed style expected true got false
-FAIL Property position-try-order does not inherit assert_true: expected true got false
+PASS Property position-try-order value 'normal'
+PASS Property position-try-order value 'most-width'
+PASS Property position-try-order value 'most-height'
+PASS Property position-try-order value 'most-block-size'
+PASS Property position-try-order value 'most-inline-size'
+PASS Property position-try-order has initial value normal
+PASS Property position-try-order does not inherit
 

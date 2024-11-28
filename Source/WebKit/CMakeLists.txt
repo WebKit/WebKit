@@ -44,6 +44,7 @@ set(WebKit_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBKIT_DIR}/Shared/Databases/IndexedDB"
     "${WEBKIT_DIR}/Shared/Extensions"
     "${WEBKIT_DIR}/Shared/FileAPI"
+    "${WEBKIT_DIR}/Shared/graphics"
     "${WEBKIT_DIR}/Shared/Gamepad"
     "${WEBKIT_DIR}/Shared/Notifications"
     "${WEBKIT_DIR}/Shared/RemoteLayerTree"
@@ -194,8 +195,6 @@ set(WebKit_MESSAGES_IN_FILES
 
     GPUProcess/webrtc/LibWebRTCCodecsProxy
     GPUProcess/webrtc/RemoteAudioMediaStreamTrackRendererInternalUnitManager
-    GPUProcess/webrtc/RemoteMediaRecorder
-    GPUProcess/webrtc/RemoteMediaRecorderManager
     GPUProcess/webrtc/RemoteSampleBufferDisplayLayer
     GPUProcess/webrtc/RemoteSampleBufferDisplayLayerManager
 
@@ -257,8 +256,6 @@ set(WebKit_MESSAGES_IN_FILES
     UIProcess/WebProcessPool
     UIProcess/WebProcessProxy
     UIProcess/WebScreenOrientationManagerProxy
-
-    UIProcess/Automation/WebAutomationSession
 
     UIProcess/Downloads/DownloadProxy
 
@@ -408,6 +405,7 @@ set(WebKit_SERIALIZATION_IN_FILES
     Shared/BackgroundFetchState.serialization.in
     Shared/CacheModel.serialization.in
     Shared/CallbackID.serialization.in
+    Shared/ContentWorldData.serialization.in
     Shared/ContextMenuContextData.serialization.in
     Shared/CoordinateSystem.serialization.in
     Shared/DebuggableInfoData.serialization.in
@@ -451,6 +449,7 @@ set(WebKit_SERIALIZATION_IN_FILES
     Shared/ResourceLoadStatisticsParameters.serialization.in
     Shared/SameDocumentNavigationType.serialization.in
     Shared/SandboxExtension.serialization.in
+    Shared/ScriptTelemetry.serialization.in
     Shared/ScrollingAccelerationCurve.serialization.in
     Shared/SessionState.serialization.in
     Shared/SyntheticEditingCommandType.serialization.in
@@ -471,6 +470,7 @@ set(WebKit_SERIALIZATION_IN_FILES
     Shared/WebEvent.serialization.in
     Shared/WebFindOptions.serialization.in
     Shared/WebFoundTextRange.serialization.in
+    Shared/WebFrameMetrics.serialization.in
     Shared/WebHitTestResultData.serialization.in
     Shared/WebImage.serialization.in
     Shared/WebNavigationDataStore.serialization.in
@@ -489,6 +489,7 @@ set(WebKit_SERIALIZATION_IN_FILES
     Shared/WebsiteDataStoreParameters.serialization.in
     Shared/WebsitePoliciesData.serialization.in
     Shared/WebsitePopUpPolicy.serialization.in
+    Shared/WebsitePushAndNotificationsEnabledPolicy.serialization.in
 
     Shared/API/APIArray.serialization.in
     Shared/API/APIData.serialization.in
@@ -634,6 +635,7 @@ set(WebCore_SERIALIZATION_IN_FILES
     PlatformMediaSession.serialization.in
     PlatformScreen.serialization.in
     PlatformWheelEvent.serialization.in
+    ProcessSyncData.serialization.in
     ProtectionSpaceBase.serialization.in
     ScrollTypes.serialization.in
     WebGPU.serialization.in
@@ -727,6 +729,13 @@ set(WebKit_GENERATED_SERIALIZERS_SUFFIX cpp)
 
 WEBKIT_FRAMEWORK_DECLARE(WebKit)
 WEBKIT_INCLUDE_CONFIG_FILES_IF_EXISTS()
+
+if (PORT STREQUAL GTK OR PORT STREQUAL WPE)
+    WEBKIT_ADD_TARGET_CXX_FLAGS(WebKit
+        -Wunsafe-buffer-usage
+        -fsafe-buffer-usage-suggestions
+    )
+endif ()
 
 if (WebKit_PUBLIC_FRAMEWORK_HEADERS)
     WEBKIT_COPY_FILES(WebKit_CopyHeaders

@@ -26,6 +26,8 @@
 #include "config.h"
 #include "XRGPUBinding.h"
 
+#if ENABLE(WEBXR_LAYERS)
+
 #include "GPUDevice.h"
 #include "WebGPUXRBinding.h"
 #include "WebGPUXREye.h"
@@ -36,8 +38,7 @@
 #include "XRGPUProjectionLayerInit.h"
 #include "XRGPUSubImage.h"
 #include "XRProjectionLayer.h"
-
-#if ENABLE(WEBXR_LAYERS)
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
@@ -58,7 +59,13 @@ WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(XRGPUBinding);
 XRGPUBinding::XRGPUBinding(const WebXRSession& session, GPUDevice& device)
     : m_backing(device.createXRBinding(session))
     , m_session(&session)
+    , m_device(device)
 {
+}
+
+GPUDevice& XRGPUBinding::device()
+{
+    return m_device;
 }
 
 ExceptionOr<Ref<XRProjectionLayer>> XRGPUBinding::createProjectionLayer(ScriptExecutionContext& scriptExecutionContext, std::optional<XRGPUProjectionLayerInit> init)
@@ -93,13 +100,13 @@ ExceptionOr<Ref<XRGPUSubImage>> XRGPUBinding::getViewSubImage(XRProjectionLayer&
     if (!m_backing)
         return Exception { ExceptionCode::AbortError };
 
-    RefPtr subImage = m_backing->getViewSubImage(projectionLayer.backing(), convertToBacking(xrView.eye()));
-    return XRGPUSubImage::create(subImage.releaseNonNull());
+    RefPtr subImage = m_backing->getViewSubImage(projectionLayer.backing());
+    return XRGPUSubImage::create(subImage.releaseNonNull(), convertToBacking(xrView.eye()), m_device);
 }
 
 GPUTextureFormat XRGPUBinding::getPreferredColorFormat()
 {
-    return GPUTextureFormat::Bgra8unorm;
+    return GPUTextureFormat::Bgra8unormSRGB;
 }
 
 } // namespace WebCore

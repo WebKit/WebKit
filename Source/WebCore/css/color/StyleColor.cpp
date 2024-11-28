@@ -37,6 +37,7 @@
 #include "RenderTheme.h"
 #include "StyleColorLayers.h"
 #include "StyleColorMix.h"
+#include "StyleContrastColor.h"
 #include "StyleRelativeColor.h"
 #include <wtf/text/TextStream.h>
 
@@ -72,13 +73,18 @@ StyleColor::StyleColor(StyleCurrentColor&& color)
 {
 }
 
+StyleColor::StyleColor(StyleColorLayers&& colorLayers)
+    : m_color { makeIndirectColor(WTFMove(colorLayers)) }
+{
+}
+
 StyleColor::StyleColor(StyleColorMix&& colorMix)
     : m_color { makeIndirectColor(WTFMove(colorMix)) }
 {
 }
 
-StyleColor::StyleColor(StyleColorLayers&& colorLayers)
-    : m_color { makeIndirectColor(WTFMove(colorLayers)) }
+StyleColor::StyleColor(StyleContrastColor&& contrastColor)
+    : m_color { makeIndirectColor(WTFMove(contrastColor)) }
 {
 }
 
@@ -190,11 +196,14 @@ decltype(auto) StyleColor::visit(const StyleColor::ColorKind& color, F&&... f)
         [&](const StyleCurrentColor& currentColor) {
             return visitor(currentColor);
         },
+        [&](const UniqueRef<StyleColorLayers>& colorLayers) {
+            return visitor(colorLayers.get());
+        },
         [&](const UniqueRef<StyleColorMix>& colorMix) {
             return visitor(colorMix.get());
         },
-        [&](const UniqueRef<StyleColorLayers>& colorLayers) {
-            return visitor(colorLayers.get());
+        [&](const UniqueRef<StyleContrastColor>& contrastColor) {
+            return visitor(contrastColor.get());
         },
         [&]<typename Descriptor>(const UniqueRef<StyleRelativeColor<Descriptor>>& relativeColor) {
             return visitor(relativeColor.get());
@@ -216,11 +225,14 @@ StyleColor::ColorKind StyleColor::copy(const StyleColor::ColorKind& other)
         [] (const StyleCurrentColor&) -> StyleColor::ColorKind {
             return StyleCurrentColor { };
         },
+        [] (const StyleColorLayers& colorLayers) -> StyleColor::ColorKind {
+            return makeUniqueRef<StyleColorLayers>(colorLayers);
+        },
         [] (const StyleColorMix& colorMix) -> StyleColor::ColorKind {
             return makeUniqueRef<StyleColorMix>(colorMix);
         },
-        [] (const StyleColorLayers& colorLayers) -> StyleColor::ColorKind {
-            return makeUniqueRef<StyleColorLayers>(colorLayers);
+        [] (const StyleContrastColor& contrastColor) -> StyleColor::ColorKind {
+            return makeUniqueRef<StyleContrastColor>(contrastColor);
         },
         []<typename Descriptor>(const StyleRelativeColor<Descriptor>& relativeColor) -> StyleColor::ColorKind {
             return makeUniqueRef<StyleRelativeColor<Descriptor>>(relativeColor);
@@ -344,6 +356,11 @@ bool StyleColor::isColorMix() const
     return std::holds_alternative<UniqueRef<StyleColorMix>>(m_color);
 }
 
+bool StyleColor::isContrastColor() const
+{
+    return std::holds_alternative<UniqueRef<StyleContrastColor>>(m_color);
+}
+
 bool StyleColor::isRelativeColor() const
 {
     return std::holds_alternative<UniqueRef<StyleRelativeColor<RGBFunctionModernRelative>>>(m_color)
@@ -402,7 +419,7 @@ void serializationForCSS(StringBuilder& builder, const StyleColor& color)
 
 // MARK: - TextStream.
 
-WTF::TextStream& operator<<(WTF::TextStream& out, const StyleColor& color)
+TextStream& operator<<(TextStream& out, const StyleColor& color)
 {
     out << "StyleColor[";
 
@@ -413,6 +430,17 @@ WTF::TextStream& operator<<(WTF::TextStream& out, const StyleColor& color)
     );
 
     out << "]";
+    return out;
+}
+
+TextStream& operator<<(TextStream& out, StyleColorOptions colorOptions)
+{
+    switch (colorOptions) {
+    case StyleColorOptions::ForVisitedLink: out << "ForVisitedLink"; break;
+    case StyleColorOptions::UseSystemAppearance: out << "UseSystemAppearance"; break;
+    case StyleColorOptions::UseDarkAppearance: out << "UseDarkAppearance"; break;
+    case StyleColorOptions::UseElevatedUserInterfaceLevel: out << "UseElevatedUserInterfaceLevel"; break;
+    }
     return out;
 }
 

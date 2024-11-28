@@ -53,7 +53,7 @@ public:
             return adoptRef(*new InternalObserverFilter::SubscriberCallbackFilter(context, source, predicate));
         }
 
-        CallbackResult<void> handleEvent(Subscriber& subscriber) final
+        CallbackResult<void> handleEventRethrowingException(Subscriber& subscriber) final
         {
             RefPtr context = scriptExecutionContext();
 
@@ -95,13 +95,13 @@ private:
         auto matches = false;
 
         // The exception is not reported, instead it is forwarded to the
-        // error handler. As such, PredicateCallback `[RethrowsException]`
+        // error handler. As such, PredicateCallback has `[RethrowException]`
         // and here a catch scope is declared so the error can be passed
         // to the subscription error handler.
         JSC::Exception* previousException = nullptr;
         {
             auto catchScope = DECLARE_CATCH_SCOPE(vm);
-            auto result = m_predicate->handleEvent(value, m_idx);
+            auto result = m_predicate->handleEventRethrowingException(value, m_idx);
             previousException = catchScope.exception();
             if (previousException) {
                 catchScope.clearException();

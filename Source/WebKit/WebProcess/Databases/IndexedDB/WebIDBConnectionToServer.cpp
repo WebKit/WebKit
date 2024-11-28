@@ -61,11 +61,9 @@ WebIDBConnectionToServer::WebIDBConnectionToServer()
 {
 }
 
-WebIDBConnectionToServer::~WebIDBConnectionToServer()
-{
-}
+WebIDBConnectionToServer::~WebIDBConnectionToServer() = default;
 
-IDBConnectionIdentifier WebIDBConnectionToServer::identifier() const
+std::optional<IDBConnectionIdentifier> WebIDBConnectionToServer::identifier() const
 {
     return Process::identifier();
 }
@@ -135,7 +133,7 @@ void WebIDBConnectionToServer::deleteIndex(const IDBRequestData& requestData, We
     send(Messages::NetworkStorageManager::DeleteIndex(requestData, objectStoreIdentifier, indexName));
 }
 
-void WebIDBConnectionToServer::renameIndex(const IDBRequestData& requestData, WebCore::IDBObjectStoreIdentifier objectStoreIdentifier, uint64_t indexIdentifier, const String& newName)
+void WebIDBConnectionToServer::renameIndex(const IDBRequestData& requestData, WebCore::IDBObjectStoreIdentifier objectStoreIdentifier, WebCore::IDBIndexIdentifier indexIdentifier, const String& newName)
 {
     send(Messages::NetworkStorageManager::RenameIndex(requestData, objectStoreIdentifier, indexIdentifier, newName));
 }

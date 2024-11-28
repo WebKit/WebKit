@@ -46,9 +46,11 @@ enum {
     LAST_SIGNAL
 };
 
-static guint signals[LAST_SIGNAL] = { 0, };
+static std::array<unsigned, LAST_SIGNAL> signals;
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GTK/WPE Port
 G_DEFINE_TYPE(WebKitWebFormManager, webkit_web_form_manager, G_TYPE_OBJECT)
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 static void webkit_web_form_manager_init(WebKitWebFormManager*)
 {
@@ -223,7 +225,7 @@ void webkit_web_form_manager_input_element_auto_fill(JSCValue* element, const ch
     if (!input)
         return;
 
-    input->setAutoFilled(true);
+    input->setAutofilled(true);
     input->setValueForUser(String::fromUTF8(value));
 }
 
@@ -245,5 +247,5 @@ gboolean webkit_web_form_manager_input_element_is_auto_filled(JSCValue* element)
 
     RefPtr node = nodeForJSCValue(element);
     RefPtr input = dynamicDowncast<HTMLInputElement>(node);
-    return input && input->isAutoFilled();
+    return input && input->autofilled();
 }

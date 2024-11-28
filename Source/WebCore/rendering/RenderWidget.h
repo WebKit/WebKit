@@ -48,7 +48,7 @@ public:
     static void scheduleWidgetToMove(Widget&, LocalFrameView*);
 
 private:
-    using WidgetToParentMap = HashMap<RefPtr<Widget>, SingleThreadWeakPtr<LocalFrameView>>;
+    using WidgetToParentMap = UncheckedKeyHashMap<RefPtr<Widget>, SingleThreadWeakPtr<LocalFrameView>>;
     static WidgetToParentMap& widgetNewParentMap();
 
     WEBCORE_EXPORT void moveWidgets();

@@ -110,7 +110,11 @@ public:
     std::pair<VertexWriter, BindBufferInfo> getVertexWriter(size_t count, size_t stride);
     std::pair<IndexWriter, BindBufferInfo> getIndexWriter(size_t count, size_t stride);
     std::pair<UniformWriter, BindBufferInfo> getUniformWriter(size_t count, size_t stride);
+
+    // Return an SSBO writer that is aligned for binding, per the requirements in fCurrentBuffers.
     std::pair<UniformWriter, BindBufferInfo> getSsboWriter(size_t count, size_t stride);
+    // Return an SSBO writer that is aligned for indexing from the shader, per the provided stride.
+    std::pair<UniformWriter, BindBufferInfo> getAlignedSsboWriter(size_t count, size_t stride);
 
     // The remaining writers and buffer allocator functions assume that byte counts are safely
     // calculated by the caller (e.g. Vello or ).
@@ -148,38 +152,51 @@ public:
     // 'unusedBytes' is less than the 'count*stride' to the original allocation.
     void returnVertexBytes(size_t unusedBytes);
 
-    size_t alignUniformBlockSize(size_t dataSize) {
-        return SkAlignTo(dataSize, fCurrentBuffers[kUniformBufferIndex].fStartAlignment);
-    }
-
-    // Finalizes all buffers and transfers ownership of them to a Recording. Should not call if
-    // hasMappingFailed() returns true.
-    void transferToRecording(Recording*);
+    // Finalizes all buffers and transfers ownership of them to a Recording. Returns true on success
+    // and false if a mapping had previously failed.
+    //
+    // Regardless of success or failure, the DrawBufferManager is reset to a valid initial state
+    // for recording buffer data for the next Recording.
+    [[nodiscard]] bool transferToRecording(Recording*);
 
 private:
     friend class ScratchBuffer;
 
     struct BufferInfo {
-        BufferInfo(BufferType type, uint32_t blockSize, const Caps* caps);
+        BufferInfo(BufferType type, uint32_t minBlockSize, uint32_t maxBlockSize, const Caps* caps);
 
         const BufferType fType;
         const uint32_t fStartAlignment;
-        const uint32_t fBlockSize;
+        const uint32_t fMinBlockSize;
+        const uint32_t fMaxBlockSize;
         sk_sp<Buffer> fBuffer;
         // The fTransferBuffer can be null, if draw buffer cannot be mapped,
         // see Caps::drawBufferCanBeMapped() for detail.
         BindBufferInfo fTransferBuffer{};
         void* fTransferMapPtr = nullptr;
         uint32_t fOffset = 0;
+
+        // Block size to use when creating new buffers; between fMinBlockSize and fMaxBlockSize.
+        uint32_t fCurBlockSize = 0;
+        // How many bytes have been used for for this buffer type since the last Recording snap.
+        uint32_t fUsedSize = 0;
     };
-    std::pair<void* /*mappedPtr*/, BindBufferInfo> prepareMappedBindBuffer(BufferInfo* info,
-                                                                           uint32_t requiredBytes,
-                                                                           std::string_view label);
+    std::pair<void* /*mappedPtr*/, BindBufferInfo> prepareMappedBindBuffer(
+            BufferInfo* info,
+            std::string_view label,
+            uint32_t requiredBytes,
+            uint32_t requiredAlignment = 0);
     BindBufferInfo prepareBindBuffer(BufferInfo* info,
-                                     uint32_t requiredBytes,
                                      std::string_view label,
+                                     uint32_t requiredBytes,
+                                     uint32_t requiredAlignment = 0,
                                      bool supportCpuUpload = false,
                                      ClearBuffer cleared = ClearBuffer::kNo);
+
+    // Helper method for public getSsboWriter methods.
+    std::pair<UniformWriter, BindBufferInfo> getSsboWriter(size_t count,
+                                                           size_t stride,
+                                                           size_t alignment);
 
     sk_sp<Buffer> findReusableSbo(size_t bufferSize);
 

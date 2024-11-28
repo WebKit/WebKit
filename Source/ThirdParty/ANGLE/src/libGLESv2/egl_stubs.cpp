@@ -152,10 +152,9 @@ EGLContext CreateContext(Thread *thread,
     ANGLE_EGL_TRY_PREPARE_FOR_CALL_RETURN(thread, display->prepareForCall(), "eglCreateContext",
                                           GetDisplayIfValid(display), EGL_NO_CONTEXT);
     gl::Context *context = nullptr;
-    ANGLE_EGL_TRY_RETURN(thread,
-                         display->createContext(configuration, sharedGLContext, thread->getAPI(),
-                                                attributes, &context),
-                         "eglCreateContext", GetDisplayIfValid(display), EGL_NO_CONTEXT);
+    ANGLE_EGL_TRY_RETURN(
+        thread, display->createContext(configuration, sharedGLContext, attributes, &context),
+        "eglCreateContext", GetDisplayIfValid(display), EGL_NO_CONTEXT);
 
     thread->setSuccess();
     return reinterpret_cast<EGLContext>(static_cast<uintptr_t>(context->id().value));
@@ -762,7 +761,7 @@ EGLBoolean SwapInterval(Thread *thread, Display *display, EGLint interval)
     EGLint clampedInterval      = std::min(std::max(interval, surfaceConfig->minSwapInterval),
                                            surfaceConfig->maxSwapInterval);
 
-    drawSurface->setSwapInterval(clampedInterval);
+    drawSurface->setSwapInterval(display, clampedInterval);
 
     thread->setSuccess();
     return EGL_TRUE;

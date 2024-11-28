@@ -159,6 +159,8 @@ std::optional<CachedResource::Type> LinkLoader::resourceTypeFromAsAttribute(cons
         return std::nullopt;
     case FetchRequestDestination::Embed:
         return std::nullopt;
+    case FetchRequestDestination::Environmentmap:
+        return std::nullopt;
     case FetchRequestDestination::Font:
         return CachedResource::Type::FontResource;
     case FetchRequestDestination::Image:
@@ -229,6 +231,7 @@ static std::unique_ptr<LinkPreloadResourceClient> createLinkPreloadResourceClien
     case CachedResource::Type::ApplicationManifest:
 #endif
 #if ENABLE(MODEL_ELEMENT)
+    case CachedResource::Type::EnvironmentMapResource:
     case CachedResource::Type::ModelResource:
 #endif
         // None of these values is currently supported as an `as` value.
@@ -277,7 +280,7 @@ void LinkLoader::preconnectIfNeeded(const LinkLoadParameters& params, Document& 
     if (equalLettersIgnoringASCIICase(params.crossOrigin, "anonymous"_s) && !document.protectedSecurityOrigin()->isSameOriginDomain(SecurityOrigin::create(href)))
         storageCredentialsPolicy = StoredCredentialsPolicy::DoNotUse;
     ASSERT(document.frame()->loader().networkingContext());
-    platformStrategies()->loaderStrategy()->preconnectTo(document.protectedFrame()->checkedLoader(), href, storageCredentialsPolicy, LoaderStrategy::ShouldPreconnectAsFirstParty::No, [weakDocument = WeakPtr { document }, href](ResourceError error) {
+    platformStrategies()->loaderStrategy()->preconnectTo(document.protectedFrame()->protectedLoader(), href, storageCredentialsPolicy, LoaderStrategy::ShouldPreconnectAsFirstParty::No, [weakDocument = WeakPtr { document }, href](ResourceError error) {
         RefPtr document = weakDocument.get();
         if (!document)
             return;
@@ -412,7 +415,7 @@ void LinkLoader::loadLink(const LinkLoadParameters& params, Document& document)
         // FIXME: The href attribute of the link element can be in "//hostname" form, and we shouldn't attempt
         // to complete that as URL <https://bugs.webkit.org/show_bug.cgi?id=48857>.
         if (document.settings().dnsPrefetchingEnabled() && params.href.isValid() && !params.href.isEmpty() && document.frame())
-            document.protectedFrame()->checkedLoader()->client().prefetchDNS(params.href.host().toString());
+            document.protectedFrame()->protectedLoader()->client().prefetchDNS(params.href.host().toString());
     }
 
     preconnectIfNeeded(params, document);

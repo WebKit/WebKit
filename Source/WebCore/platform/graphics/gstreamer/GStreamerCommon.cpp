@@ -24,7 +24,6 @@
 #if USE(GSTREAMER)
 
 #include "ApplicationGLib.h"
-#include "DMABufVideoSinkGStreamer.h"
 #include "GLVideoSinkGStreamer.h"
 #include "GStreamerAudioMixer.h"
 #include "GStreamerQuirks.h"
@@ -34,7 +33,6 @@
 #include "GstAllocatorFastMalloc.h"
 #include "IntSize.h"
 #include "PlatformDisplay.h"
-#include "RuntimeApplicationChecks.h"
 #include "SharedBuffer.h"
 #include "WebKitAudioSinkGStreamer.h"
 #include <gst/audio/audio-info.h>
@@ -45,14 +43,17 @@
 #include <wtf/NeverDestroyed.h>
 #include <wtf/PrintStream.h>
 #include <wtf/RecursiveLockAdapter.h>
+#include <wtf/RuntimeApplicationChecks.h>
 #include <wtf/Scope.h>
 #include <wtf/TZoneMallocInlines.h>
+#include <wtf/UUID.h>
 #include <wtf/glib/GThreadSafeWeakPtr.h>
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/glib/RunLoopSourcePriority.h>
 #include <wtf/glib/WTFGType.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringHash.h>
+#include <wtf/text/StringToIntegerConversion.h>
 
 #if USE(GSTREAMER_MPEGTS)
 #define GST_USE_UNSTABLE_API
@@ -70,7 +71,7 @@
 #include "GStreamerMediaStreamSource.h"
 #endif
 
-#if ENABLE(SPEECH_SYNTHESIS)
+#if USE(FLITE)
 #include "WebKitFliteSourceGStreamer.h"
 #endif
 
@@ -94,6 +95,11 @@
 #include <gst/gstinitstaticplugins.h>
 #else
 #define IS_GST_FULL_1_18 0
+#endif
+
+#if USE(GBM)
+#include "DRMDeviceManager.h"
+#include <drm_fourcc.h>
 #endif
 
 GST_DEBUG_CATEGORY(webkit_gst_common_debug);
@@ -230,6 +236,51 @@ bool getSampleVideoInfo(GstSample* sample, GstVideoInfo& videoInfo)
 }
 #endif
 
+std::optional<TrackID> getStreamIdFromPad(const GRefPtr<GstPad>& pad)
+{
+    GUniquePtr<gchar> streamIdAsCharacters(gst_pad_get_stream_id(pad.get()));
+    if (!streamIdAsCharacters) {
+        GST_DEBUG_OBJECT(pad.get(), "Failed to get stream-id from pad");
+        return std::nullopt;
+    }
+
+    std::optional<TrackID> streamId(parseStreamId(StringView::fromLatin1(streamIdAsCharacters.get())));
+    if (!streamId)
+        GST_WARNING_OBJECT(pad.get(), "Got invalid stream-id from pad: %s", streamIdAsCharacters.get());
+
+    return streamId;
+}
+
+std::optional<TrackID> getStreamIdFromStream(const GRefPtr<GstStream>& stream)
+{
+    const gchar* streamIdAsCharacters = gst_stream_get_stream_id(stream.get());
+    if (!streamIdAsCharacters) {
+        GST_DEBUG_OBJECT(stream.get(), "Failed to get stream-id from stream");
+        return std::nullopt;
+    }
+
+    std::optional<TrackID> streamId(parseStreamId(StringView::fromLatin1(streamIdAsCharacters)));
+    if (!streamId)
+        GST_WARNING_OBJECT(stream.get(), "Got invalid stream-id from stream: %s", streamIdAsCharacters);
+
+    return streamId;
+}
+
+std::optional<TrackID> parseStreamId(StringView stringId)
+{
+    auto maybeUUID = WTF::UUID::parse(stringId);
+    if (maybeUUID.has_value())
+        return maybeUUID.value().low();
+
+    // GStreamer docs advise against interpreting contents of a stream-id,
+    // however this is the format qtdemux uses for stream-id creation,
+    // so we can reasonably rely on it.
+    size_t position = stringId.find('/');
+    if (position == notFound || position + 1 == stringId.length())
+        return parseIntegerAllowingTrailingJunk<TrackID>(stringId);
+
+    return parseIntegerAllowingTrailingJunk<TrackID>(stringId.substring(position + 1));
+}
 
 StringView capsMediaType(const GstCaps* caps)
 {
@@ -311,17 +362,21 @@ bool ensureGStreamerInitialized()
         // is to register the playbin3 element under the playbin namespace. We
         // can't allow this, when we create playbin, we want playbin2, not
         // playbin3.
-        if (g_getenv("USE_PLAYBIN3"))
+        // The USE_PLAYBIN3 environment variable is no longer supported.
+        // https://gitlab.freedesktop.org/gstreamer/gstreamer/-/merge_requests/6255
+        if (!webkitGstCheckVersion(1, 24, 0) && g_getenv("USE_PLAYBIN3"))
             WTFLogAlways("The USE_PLAYBIN3 variable was detected in the environment. Expect playback issues or please unset it.");
 
 #if ENABLE(VIDEO) || ENABLE(WEB_AUDIO)
         Vector<String> parameters = s_UIProcessCommandLineOptions.value_or(extractGStreamerOptionsFromCommandLine());
         s_UIProcessCommandLineOptions.reset();
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib port
         char** argv = g_new0(char*, parameters.size() + 2);
         int argc = parameters.size() + 1;
         argv[0] = g_strdup(FileSystem::currentExecutableName().data());
         for (unsigned i = 0; i < parameters.size(); i++)
             argv[i + 1] = g_strdup(parameters[i].utf8().data());
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
         GUniqueOutPtr<GError> error;
         isGStreamerInitialized = gst_init_check(&argc, &argv, &error.outPtr());
@@ -388,13 +443,12 @@ void registerWebKitGStreamerElements()
         gst_element_register(nullptr, "webkitmediasrc", GST_RANK_PRIMARY, WEBKIT_TYPE_MEDIA_SRC);
 #endif
 
-#if ENABLE(SPEECH_SYNTHESIS)
+#if USE(FLITE)
         gst_element_register(nullptr, "webkitflitesrc", GST_RANK_NONE, WEBKIT_TYPE_FLITE_SRC);
 #endif
 
 #if ENABLE(VIDEO)
         gst_element_register(0, "webkitwebsrc", GST_RANK_PRIMARY + 100, WEBKIT_TYPE_WEB_SRC);
-        gst_element_register(0, "webkitdmabufvideosink", GST_RANK_NONE, WEBKIT_TYPE_DMABUF_VIDEO_SINK);
         gst_element_register(0, "webkitglvideosink", GST_RANK_NONE, WEBKIT_TYPE_GL_VIDEO_SINK);
 #endif
         // We don't want autoaudiosink to autoplug our sink.
@@ -409,9 +463,9 @@ void registerWebKitGStreamerElements()
 
         // Downrank the libav AAC decoders, due to their broken LC support, as reported in:
         // https://ffmpeg.org/pipermail/ffmpeg-devel/2019-July/247063.html
-        const char* const elementNames[] = { "avdec_aac", "avdec_aac_fixed", "avdec_aac_latm" };
-        for (unsigned i = 0; i < G_N_ELEMENTS(elementNames); i++) {
-            GRefPtr<GstElementFactory> avAACDecoderFactory = adoptGRef(gst_element_factory_find(elementNames[i]));
+        std::array<ASCIILiteral, 3> elementNames { "avdec_aac"_s, "avdec_aac_fixed"_s, "avdec_aac_latm"_s };
+        for (auto& elementName : elementNames) {
+            GRefPtr<GstElementFactory> avAACDecoderFactory = adoptGRef(gst_element_factory_find(elementName));
             if (avAACDecoderFactory)
                 gst_plugin_feature_set_rank(GST_PLUGIN_FEATURE_CAST(avAACDecoderFactory.get()), GST_RANK_MARGINAL);
         }
@@ -436,12 +490,16 @@ void registerWebKitGStreamerElements()
         // base class does not abstract away network access. They can't work in a sandboxed
         // media process, so demote their rank in order to prevent decodebin3 from auto-plugging them.
         if (webkitGstCheckVersion(1, 22, 0)) {
-            const char* const elementNames[] = { "dashdemux2", "hlsdemux2", "mssdemux2" };
-            for (unsigned i = 0; i < G_N_ELEMENTS(elementNames); i++) {
-                if (auto factory = adoptGRef(gst_element_factory_find(elementNames[i])))
+            std::array<ASCIILiteral, 3> elementNames = { "dashdemux2"_s, "hlsdemux2"_s, "mssdemux2"_s };
+            for (auto& elementName : elementNames) {
+                if (auto factory = adoptGRef(gst_element_factory_find(elementName)))
                     gst_plugin_feature_set_rank(GST_PLUGIN_FEATURE_CAST(factory.get()), GST_RANK_NONE);
             }
         }
+
+        // Make sure isofmp4mux is auto-plugged in transcodebin pipelines.
+        if (auto factory = adoptGRef(gst_element_factory_find("isofmp4mux")))
+            gst_plugin_feature_set_rank(GST_PLUGIN_FEATURE_CAST(factory.get()), GST_RANK_PRIMARY + 1);
 
         // The VAAPI plugin is not much maintained anymore and prone to rendering issues. In the
         // mid-term we will leverage the new stateless VA decoders. Disable the legacy plugin,
@@ -482,9 +540,9 @@ void registerWebKitGStreamerVideoEncoder()
 // We use a recursive lock because the removal of a pipeline can trigger the removal of another one,
 // from the same thread, specially when using chained element harnesses.
 static RecursiveLock s_activePipelinesMapLock;
-static HashMap<String, GRefPtr<GstElement>>& activePipelinesMap()
+static UncheckedKeyHashMap<String, GRefPtr<GstElement>>& activePipelinesMap()
 {
-    static NeverDestroyed<HashMap<String, GRefPtr<GstElement>>> activePipelines;
+    static NeverDestroyed<UncheckedKeyHashMap<String, GRefPtr<GstElement>>> activePipelines;
     return activePipelines.get();
 }
 
@@ -677,6 +735,8 @@ GstVideoFrame* GstMappedFrame::get()
     return &m_frame;
 }
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib port
+
 uint8_t* GstMappedFrame::componentData(int comp) const
 {
     RELEASE_ASSERT(isValid());
@@ -724,6 +784,8 @@ int GstMappedFrame::planeStride(uint32_t planeIndex) const
     RELEASE_ASSERT(isValid());
     return GST_VIDEO_FRAME_PLANE_STRIDE(&m_frame, planeIndex);
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 GstMappedAudioBuffer::GstMappedAudioBuffer(GstBuffer* buffer, GstAudioInfo info, GstMapFlags flags)
 {
@@ -831,6 +893,11 @@ void connectSimpleBusMessageCallback(GstElement* pipeline, Function<void(GstMess
             break;
         }
         case GST_MESSAGE_LATENCY:
+            // Recalculate the latency, we don't need any special handling
+            // here other than the GStreamer default.
+            // This can happen if the latency of live elements changes, or
+            // for one reason or another a new live element is added or
+            // removed from the pipeline.
             gst_bin_recalculate_latency(GST_BIN_CAST(pipeline.get()));
             break;
         default:
@@ -916,9 +983,14 @@ bool webkitGstSetElementStateSynchronously(GstElement* pipeline, GstState target
 
     auto cleanup = makeScopeExit([bus = GRefPtr<GstBus>(bus), pipeline, targetState] {
         gst_bus_disable_sync_message_emission(bus.get());
+#ifdef GST_DISABLE_GST_DEBUG
+        UNUSED_VARIABLE(pipeline);
+        UNUSED_VARIABLE(targetState);
+#else
         GstState currentState;
         auto result = gst_element_get_state(pipeline, &currentState, nullptr, 0);
         GST_DEBUG_OBJECT(pipeline, "Task finished, result: %s, target state reached: %s", gst_element_state_change_return_get_name(result), boolForPrinting(currentState == targetState));
+#endif
     });
 
     result = gst_element_set_state(pipeline, targetState);
@@ -1020,6 +1092,11 @@ std::optional<T> gstStructureGet(const GstStructure* structure, ASCIILiteral key
 template<typename T>
 std::optional<T> gstStructureGet(const GstStructure* structure, StringView key)
 {
+    if (!structure) {
+        ASSERT_NOT_REACHED_WITH_MESSAGE("tried to access a field of a null GstStructure");
+        return std::nullopt;
+    }
+
     T value;
     auto strKey = key.toStringWithoutCopying();
     if constexpr(std::is_same_v<T, int>) {
@@ -1064,18 +1141,65 @@ template std::optional<bool> gstStructureGet(const GstStructure*, StringView key
 
 StringView gstStructureGetString(const GstStructure* structure, ASCIILiteral key)
 {
+    if (!structure) {
+        ASSERT_NOT_REACHED_WITH_MESSAGE("tried to access a field of a null GstStructure");
+        return { };
+    }
+
     return gstStructureGetString(structure, StringView { key });
 }
 
 StringView gstStructureGetString(const GstStructure* structure, StringView key)
 {
+    if (!structure) {
+        ASSERT_NOT_REACHED_WITH_MESSAGE("tried to access a field of a null GstStructure");
+        return { };
+    }
+
     return StringView::fromLatin1(gst_structure_get_string(structure, static_cast<const char*>(key.rawCharacters())));
 }
 
 StringView gstStructureGetName(const GstStructure* structure)
 {
+    if (!structure) {
+        ASSERT_NOT_REACHED_WITH_MESSAGE("tried to access a field of a null GstStructure");
+        return { };
+    }
+
     return StringView::fromLatin1(gst_structure_get_name(structure));
 }
+
+template<typename T>
+Vector<T> gstStructureGetArray(const GstStructure* structure, ASCIILiteral key)
+{
+    static_assert(std::is_same_v<T, int> || std::is_same_v<T, int64_t> || std::is_same_v<T, unsigned>
+        || std::is_same_v<T, uint64_t> || std::is_same_v<T, double> || std::is_same_v<T, const GstStructure*>);
+    Vector<T> result;
+    if (!structure)
+        return result;
+    const GValue* array = gst_structure_get_value(structure, key.characters());
+    if (!GST_VALUE_HOLDS_ARRAY (array))
+        return result;
+    unsigned size = gst_value_array_get_size(array);
+    for (unsigned i = 0; i < size; i++) {
+        const GValue* item = gst_value_array_get_value(array, i);
+        if constexpr(std::is_same_v<T, int>)
+            result.append(g_value_get_int(item));
+        else if constexpr(std::is_same_v<T, int64_t>)
+            result.append(g_value_get_int64(item));
+        else if constexpr(std::is_same_v<T, unsigned>)
+            result.append(g_value_get_uint(item));
+        else if constexpr(std::is_same_v<T, uint64_t>)
+            result.append(g_value_get_uint64(item));
+        else if constexpr(std::is_same_v<T, double>)
+            result.append(g_value_get_double(item));
+        else if constexpr(std::is_same_v<T, const GstStructure*>)
+            result.append(gst_value_get_structure(item));
+    }
+    return result;
+}
+
+template Vector<const GstStructure*> gstStructureGetArray(const GstStructure*, ASCIILiteral key);
 
 static RefPtr<JSON::Value> gstStructureToJSON(const GstStructure*);
 
@@ -1155,15 +1279,6 @@ static std::optional<RefPtr<JSON::Value>> gstStructureValueToJSON(const GValue* 
     return { };
 }
 
-static gboolean parseGstStructureValue(GQuark fieldId, const GValue* value, gpointer userData)
-{
-    if (auto jsonValue = gstStructureValueToJSON(value)) {
-        auto* object = reinterpret_cast<JSON::Object*>(userData);
-        object->setValue(String::fromLatin1(g_quark_to_string(fieldId)), jsonValue->releaseNonNull());
-    }
-    return TRUE;
-}
-
 static RefPtr<JSON::Value> gstStructureToJSON(const GstStructure* structure)
 {
     auto jsonObject = JSON::Object::create();
@@ -1171,7 +1286,13 @@ static RefPtr<JSON::Value> gstStructureToJSON(const GstStructure* structure)
     if (!resultValue)
         return nullptr;
 
-    gst_structure_foreach(structure, parseGstStructureValue, resultValue.get());
+    gstStructureForeach(structure, [&](auto id, auto value) -> bool {
+        if (auto jsonValue = gstStructureValueToJSON(value)) {
+            auto fieldId = gstIdToString(id);
+            resultValue->setValue(fieldId.toString(), jsonValue->releaseNonNull());
+        }
+        return TRUE;
+    });
     return resultValue;
 }
 
@@ -1548,6 +1669,167 @@ std::optional<unsigned> gstGetAutoplugSelectResult(ASCIILiteral nick)
     return enumValue->value;
 }
 
+bool gstStructureForeach(const GstStructure* structure, Function<bool(GstId, const GValue*)>&& callback)
+{
+#if GST_CHECK_VERSION(1, 25, 0)
+    return gst_structure_foreach_id_str(structure, [](GstId id, const GValue* value, gpointer userData) -> gboolean {
+        auto& callback = *reinterpret_cast<Function<bool(GstId, const GValue*)>*>(userData);
+        return callback(id, value);
+    }, &callback);
+#else
+    return gst_structure_foreach(structure, [](GQuark quark, const GValue* value, gpointer userData) -> gboolean {
+        auto& callback = *reinterpret_cast<Function<bool(GQuark, const GValue*)>*>(userData);
+        return callback(quark, value);
+    }, &callback);
+#endif
+}
+
+void gstStructureIdSetValue(GstStructure* structure, GstId id, const GValue* value)
+{
+#if GST_CHECK_VERSION(1, 25, 0)
+    gst_structure_id_str_set_value(structure, id, value);
+#else
+    gst_structure_set_value(structure, g_quark_to_string(id), value);
+#endif
+}
+
+bool gstStructureMapInPlace(GstStructure* structure, Function<bool(GstId, GValue*)>&& callback)
+{
+#if GST_CHECK_VERSION(1, 25, 0)
+    return gst_structure_map_in_place_id_str(structure, [](GstId id, GValue* value, gpointer userData) -> gboolean {
+        auto& callback = *reinterpret_cast<Function<bool(GstId, GValue*)>*>(userData);
+        return callback(id, value);
+    }, &callback);
+#else
+    return gst_structure_map_in_place(structure, [](GQuark quark, GValue* value, gpointer userData) -> gboolean {
+        auto& callback = *reinterpret_cast<Function<bool(GQuark, GValue*)>*>(userData);
+        return callback(quark, value);
+    }, &callback);
+#endif
+}
+
+StringView gstIdToString(GstId id)
+{
+#if GST_CHECK_VERSION(1, 25, 0)
+    return StringView::fromLatin1(gst_id_str_as_str(id));
+#else
+    return StringView::fromLatin1(g_quark_to_string(id));
+#endif
+}
+
+void gstStructureFilterAndMapInPlace(GstStructure* structure, Function<bool(GstId, GValue*)>&& callback)
+{
+#if GST_CHECK_VERSION(1, 25, 0)
+    gst_structure_filter_and_map_in_place_id_str(structure, [](GstId id, GValue* value, gpointer userData) -> gboolean {
+        auto& callback = *reinterpret_cast<Function<bool(GstId, GValue*)>*>(userData);
+        return callback(id, value);
+    }, &callback);
+#else
+    gst_structure_filter_and_map_in_place(structure, [](GQuark quark, GValue* value, gpointer userData) -> gboolean {
+        auto& callback = *reinterpret_cast<Function<bool(GQuark, GValue*)>*>(userData);
+        return callback(quark, value);
+    }, &callback);
+#endif
+}
+
+#if USE(GBM) && !GST_CHECK_VERSION(1, 24, 0)
+static GstVideoFormat drmFourccToGstVideoFormat(uint32_t fourcc)
+{
+    switch (fourcc) {
+    case DRM_FORMAT_XRGB8888:
+        return GST_VIDEO_FORMAT_BGRx;
+    case DRM_FORMAT_XBGR8888:
+        return GST_VIDEO_FORMAT_RGBx;
+    case DRM_FORMAT_ARGB8888:
+        return GST_VIDEO_FORMAT_BGRA;
+    case DRM_FORMAT_ABGR8888:
+        return GST_VIDEO_FORMAT_RGBA;
+    case DRM_FORMAT_YUV420:
+        return GST_VIDEO_FORMAT_I420;
+    case DRM_FORMAT_YVU420:
+        return GST_VIDEO_FORMAT_YV12;
+    case DRM_FORMAT_NV12:
+        return GST_VIDEO_FORMAT_NV12;
+    case DRM_FORMAT_NV21:
+        return GST_VIDEO_FORMAT_NV21;
+    case DRM_FORMAT_YUV444:
+        return GST_VIDEO_FORMAT_Y444;
+    case DRM_FORMAT_YUV411:
+        return GST_VIDEO_FORMAT_Y41B;
+    case DRM_FORMAT_YUV422:
+        return GST_VIDEO_FORMAT_Y42B;
+    case DRM_FORMAT_P010:
+        return GST_VIDEO_FORMAT_P010_10LE;
+    default:
+        break;
+    }
+
+    RELEASE_ASSERT_NOT_REACHED();
+    return GST_VIDEO_FORMAT_UNKNOWN;
+}
+#endif // USE(GBM) && !GST_CHECK_VERSION(1, 24, 0)
+
+#if USE(GBM)
+GRefPtr<GstCaps> buildDMABufCaps()
+{
+    GRefPtr<GstCaps> caps = adoptGRef(gst_caps_from_string("video/x-raw(memory:DMABuf), width = " GST_VIDEO_SIZE_RANGE ", height = " GST_VIDEO_SIZE_RANGE ", framerate = " GST_VIDEO_FPS_RANGE));
+#if GST_CHECK_VERSION(1, 24, 0)
+    gst_caps_set_simple(caps.get(), "format", G_TYPE_STRING, "DMA_DRM", nullptr);
+
+    static const char* formats = g_getenv("WEBKIT_GST_DMABUF_FORMATS");
+    if (formats && *formats) {
+        auto formatsString = StringView::fromLatin1(formats);
+        GValue drmSupportedFormats = G_VALUE_INIT;
+        g_value_init(&drmSupportedFormats, GST_TYPE_LIST);
+        for (auto token : formatsString.split(',')) {
+            GValue value = G_VALUE_INIT;
+            g_value_init(&value, G_TYPE_STRING);
+            g_value_set_string(&value, token.toStringWithoutCopying().ascii().data());
+            gst_value_list_append_and_take_value(&drmSupportedFormats, &value);
+        }
+        gst_caps_set_value(caps.get(), "drm-format", &drmSupportedFormats);
+        g_value_unset(&drmSupportedFormats);
+        return caps;
+    }
+#endif
+
+    GValue supportedFormats = G_VALUE_INIT;
+    g_value_init(&supportedFormats, GST_TYPE_LIST);
+    const auto& dmabufFormats = PlatformDisplay::sharedDisplay().dmabufFormatsForVideo();
+    for (const auto& format : dmabufFormats) {
+#if GST_CHECK_VERSION(1, 24, 0)
+        if (format.modifiers.isEmpty() || format.modifiers[0] == DRM_FORMAT_MOD_INVALID) {
+            GValue value = G_VALUE_INIT;
+            g_value_init(&value, G_TYPE_STRING);
+            g_value_take_string(&value, gst_video_dma_drm_fourcc_to_string(format.fourcc, DRM_FORMAT_MOD_LINEAR));
+            gst_value_list_append_and_take_value(&supportedFormats, &value);
+        } else {
+            for (auto modifier : format.modifiers) {
+                GValue value = G_VALUE_INIT;
+                g_value_init(&value, G_TYPE_STRING);
+                g_value_take_string(&value, gst_video_dma_drm_fourcc_to_string(format.fourcc, modifier));
+                gst_value_list_append_and_take_value(&supportedFormats, &value);
+            }
+        }
+#elif USE(GBM)
+        GValue value = G_VALUE_INIT;
+        g_value_init(&value, G_TYPE_STRING);
+        g_value_set_string(&value, gst_video_format_to_string(drmFourccToGstVideoFormat(format.fourcc)));
+        gst_value_list_append_and_take_value(&supportedFormats, &value);
+#endif
+    }
+
+#if GST_CHECK_VERSION(1, 24, 0)
+    gst_caps_set_value(caps.get(), "drm-format", &supportedFormats);
+#elif USE(GBM)
+    gst_caps_set_value(caps.get(), "format", &supportedFormats);
+#endif
+    g_value_unset(&supportedFormats);
+
+    return caps;
+}
+#endif // USE(GBM)
+
 #undef GST_CAT_DEFAULT
 
 } // namespace WebCore
@@ -1557,7 +1839,12 @@ std::optional<unsigned> gstGetAutoplugSelectResult(ASCIILiteral nick)
 #if !GST_CHECK_VERSION(1, 20, 0)
 GstBuffer* gst_buffer_new_memdup(gconstpointer data, gsize size)
 {
-    gpointer copiedData = g_memdup2(data, size);
+    gpointer copiedData = nullptr;
+
+    if (data && size) {
+        copiedData = g_malloc(size);
+        memcpy(copiedData, data, size);
+    }
 
     return gst_buffer_new_wrapped_full(static_cast<GstMemoryFlags>(0), copiedData, size, 0, size, copiedData, g_free);
 }

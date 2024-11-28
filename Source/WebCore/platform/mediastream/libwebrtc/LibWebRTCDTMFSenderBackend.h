@@ -31,6 +31,7 @@
 #include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 ALLOW_UNUSED_PARAMETERS_BEGIN
 ALLOW_COMMA_BEGIN
 #include <webrtc/api/dtmf_sender_interface.h>
@@ -38,6 +39,7 @@ ALLOW_COMMA_BEGIN
 
 ALLOW_UNUSED_PARAMETERS_END
 ALLOW_COMMA_END
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 namespace WebCore {
 class LibWebRTCDTMFSenderBackend;

@@ -5,7 +5,7 @@
 import("//gni/angle.gni")
 import("//third_party/OpenCL-CTS/gn/angle_ocl_cts.gni")
 
-ocl_cts_binary("image_streams") {
+ocl_cts_source_set("image_streams") {
   include_dirs = [
     "$angle_root/third_party/OpenCL-CTS/src/test_conformance/images/kernel_read_write",
     "$angle_root/third_party/OpenCL-CTS/src/test_conformance/images/",

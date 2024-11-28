@@ -43,6 +43,8 @@ class WebViewImpl;
 - (void)addTextAnimationForAnimationID:(NSUUID *)uuid withData:(const WebCore::TextAnimationData&)data;
 - (void)removeTextAnimationForAnimationID:(NSUUID *)uuid;
 
+- (void)hideTextAnimationView;
+
 - (BOOL)hasActiveTextAnimationType;
 
 - (void)suppressTextAnimationType;

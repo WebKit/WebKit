@@ -32,18 +32,20 @@
 #include "AccessibilityRenderObject.h"
 
 namespace WebCore {
-    
+
+// This class is representative of role="tree" elements, not the abstract concept
+// of the "accessibility tree".
 class AccessibilityTree final : public AccessibilityRenderObject {
 public:
-    static Ref<AccessibilityTree> create(RenderObject&);
-    static Ref<AccessibilityTree> create(Node&);
+    static Ref<AccessibilityTree> create(AXID, RenderObject&);
+    static Ref<AccessibilityTree> create(AXID, Node&);
     virtual ~AccessibilityTree();
 
 private:
-    explicit AccessibilityTree(RenderObject&);
-    explicit AccessibilityTree(Node&);
-    bool computeIsIgnored() const override;
-    AccessibilityRole determineAccessibilityRole() override;
+    explicit AccessibilityTree(AXID, RenderObject&);
+    explicit AccessibilityTree(AXID, Node&);
+    bool computeIsIgnored() const final;
+    AccessibilityRole determineAccessibilityRole() final;
     bool isTreeValid() const;
 };
     

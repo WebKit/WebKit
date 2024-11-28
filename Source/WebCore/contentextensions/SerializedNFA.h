@@ -30,6 +30,8 @@
 #include "ImmutableNFA.h"
 #include <wtf/FileSystem.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 namespace ContentExtensions {
 
@@ -194,5 +196,7 @@ private:
 
 } // namespace ContentExtensions
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ENABLE(CONTENT_EXTENSIONS)

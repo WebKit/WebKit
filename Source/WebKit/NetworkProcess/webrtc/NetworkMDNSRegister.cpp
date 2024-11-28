@@ -47,6 +47,16 @@ NetworkMDNSRegister::NetworkMDNSRegister(NetworkConnectionToWebProcess& connecti
 
 NetworkMDNSRegister::~NetworkMDNSRegister() = default;
 
+void NetworkMDNSRegister::ref() const
+{
+    m_connection->ref();
+}
+
+void NetworkMDNSRegister::deref() const
+{
+    m_connection->deref();
+}
+
 bool NetworkMDNSRegister::hasRegisteredName(const String& name) const
 {
     return m_registeredNames.contains(name);
@@ -88,7 +98,7 @@ void NetworkMDNSRegister::closeAndForgetService(DNSServiceRef service)
 }
 
 struct PendingRegistrationRequestIdentifierType { };
-using PendingRegistrationRequestIdentifier = LegacyNullableObjectIdentifier<PendingRegistrationRequestIdentifierType>;
+using PendingRegistrationRequestIdentifier = ObjectIdentifier<PendingRegistrationRequestIdentifierType>;
 static HashMap<PendingRegistrationRequestIdentifier, std::unique_ptr<PendingRegistrationRequest>>& pendingRegistrationRequestMap()
 {
     static NeverDestroyed<HashMap<PendingRegistrationRequestIdentifier, std::unique_ptr<PendingRegistrationRequest>>> map;
@@ -104,7 +114,7 @@ static void registerMDNSNameCallback(DNSServiceRef service, DNSRecordRef record,
     MDNS_RELEASE_LOG_IN_CALLBACK(request->sessionID, "registerMDNSNameCallback with error %d", errorCode);
 
     if (errorCode) {
-        request->connection->mdnsRegister().closeAndForgetService(service);
+        request->connection->protectedMDNSRegister()->closeAndForgetService(service);
         request->completionHandler(request->name, WebCore::MDNSRegisterError::DNSSD);
         return;
     }

@@ -42,9 +42,9 @@ using namespace WebCore;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteAudioSession);
 
-UniqueRef<RemoteAudioSession> RemoteAudioSession::create()
+Ref<RemoteAudioSession> RemoteAudioSession::create()
 {
-    return makeUniqueRef<RemoteAudioSession>();
+    return adoptRef(*new RemoteAudioSession);
 }
 
 RemoteAudioSession::RemoteAudioSession()

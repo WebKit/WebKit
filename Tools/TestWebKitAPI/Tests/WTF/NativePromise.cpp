@@ -157,7 +157,7 @@ static auto doFail()
     };
 }
 
-static auto doFailAndReject(Logger::LogSiteIdentifier location = Logger::LogSiteIdentifier(__builtin_FUNCTION(), nullptr))
+static auto doFailAndReject(Logger::LogSiteIdentifier location = Logger::LogSiteIdentifier(__builtin_FUNCTION(), 0))
 {
     return [location = WTFMove(location)] {
         EXPECT_TRUE(false);

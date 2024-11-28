@@ -32,12 +32,14 @@
 #include "FloatSize.h"
 #include "ScrollAnimator.h"
 #include <wtf/RetainPtr.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class Scrollbar;
 
 class ScrollAnimatorMac final : public ScrollAnimator {
+    WTF_MAKE_TZONE_ALLOCATED(ScrollAnimatorMac);
 public:
     ScrollAnimatorMac(ScrollableArea&);
     virtual ~ScrollAnimatorMac();

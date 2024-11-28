@@ -29,6 +29,7 @@
 #if PLATFORM(COCOA)
 
 #import <WebCore/Document.h>
+#import <WebCore/DocumentInlines.h>
 #import <WebCore/Quirks.h>
 #import <WebCore/SameSiteInfo.h>
 #import <pal/spi/cf/CFNetworkSPI.h>

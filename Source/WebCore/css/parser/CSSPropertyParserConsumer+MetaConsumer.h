@@ -24,13 +24,12 @@
 
 #pragma once
 
-#include "CSSCalcSymbolsAllowed.h"
-#include "CSSCalcValue.h"
 #include "CSSParserToken.h"
 #include "CSSParserTokenRange.h"
+#include "CSSPrimitiveNumericTypes.h"
 #include "CSSPropertyParserConsumer+MetaConsumerDefinitions.h"
-#include "CSSPropertyParserConsumer+Primitives.h"
-#include "CSSPropertyParserConsumer+RawTypes.h"
+#include "CSSPropertyParserOptions.h"
+#include "StylePrimitiveNumericTypes.h"
 #include <optional>
 #include <type_traits>
 #include <wtf/Brigand.h>
@@ -48,15 +47,21 @@ namespace CSSPropertyParserHelpers {
 template<typename... Ts>
 using MetaConsumerVariantWrapper = typename std::variant<Ts...>;
 
+template<typename TypeList>
+using MetaConsumerVariantOrSingle = std::conditional_t<
+    brigand::size<TypeList>::value == 1,
+    brigand::front<TypeList>,
+    brigand::wrap<TypeList, MetaConsumerVariantWrapper>
+>;
+
 /// The result of a meta consume.
-/// To be used with a list of `raw` types. e.g. `ConsumeResult<AngleRaw, PercentRaw, NoneRaw>`, which will yield a
-/// result type of `std::variant<AngleRaw, UnevaluatedCalc<AngleRaw>, PercentRaw, UnevaluatedCalc<PercentRaw>, NoneRaw>`.
+/// To be used with a list of `CSS` types (e.g. `ConsumeResult<CSS::Angle<Range>, CSS::Percentage<Range>, CSS::None>`), which will yield a
+/// result type of either a std::variant of those types (e.g.`std::variant<CSS::Angle<Range>, CSS::Percentage<Range>, CSS::None>`) or the type
+/// itself if only a single type was specified.
 template<typename... Ts>
 struct MetaConsumeResult {
-    using TypeList = brigand::flatten<
-        brigand::transform<brigand::list<Ts...>, ConsumerDefinition<brigand::_1>>
-    >;
-    using type = brigand::wrap<TypeList, MetaConsumerVariantWrapper>;
+    using TypeList = brigand::list<Ts...>;
+    using type = MetaConsumerVariantOrSingle<TypeList>;
 };
 
 
@@ -141,7 +146,7 @@ struct MetaConsumerUnroller<tokenType, ResultType, T, Ts...> {
         using Consumer = MetaConsumerDispatcher<tokenType, ConsumerDefinition<T>>;
         if constexpr (Consumer::supported) {
             if (auto result = Consumer::consume(args...))
-                return {{ *result }};
+                return { T { *result } };
         }
         return MetaConsumerUnroller<tokenType, ResultType, Ts...>::consume(args...);
     }
@@ -152,7 +157,7 @@ struct MetaConsumerUnroller<tokenType, ResultType, T, Ts...> {
 // An example use that attempts to consumer either a <number> or <percentage>
 // looks like:
 //
-//    auto result = MetaConsumer<PercentRaw, NumberRaw>::consume(range, ...);
+//    auto result = MetaConsumer<CSS::Percentage<R>, CSS::Number<R>>::consume(range, ...);
 //
 // (Argument list elided for brevity)
 template<typename... Ts>
@@ -160,23 +165,23 @@ struct MetaConsumer {
     using ResultType = typename MetaConsumeResult<Ts...>::type;
 
     template<typename... Args>
-    static std::optional<ResultType> consume(CSSParserTokenRange& range, CSSCalcSymbolsAllowed symbolsAllowed, CSSPropertyParserOptions options, Args&&... args)
+    static std::optional<ResultType> consume(CSSParserTokenRange& range, const CSSParserContext& context, CSSCalcSymbolsAllowed symbolsAllowed, CSSPropertyParserOptions options, Args&&... args)
     {
         switch (range.peek().type()) {
         case FunctionToken:
-            return MetaConsumerUnroller<FunctionToken, ResultType, Ts...>::consume(range, WTFMove(symbolsAllowed), options, std::forward<Args>(args)...);
+            return MetaConsumerUnroller<FunctionToken, ResultType, Ts...>::consume(range, context, WTFMove(symbolsAllowed), options, std::forward<Args>(args)...);
 
         case NumberToken:
-            return MetaConsumerUnroller<NumberToken, ResultType, Ts...>::consume(range, WTFMove(symbolsAllowed), options, std::forward<Args>(args)...);
+            return MetaConsumerUnroller<NumberToken, ResultType, Ts...>::consume(range, context, WTFMove(symbolsAllowed), options, std::forward<Args>(args)...);
 
         case PercentageToken:
-            return MetaConsumerUnroller<PercentageToken, ResultType, Ts...>::consume(range, WTFMove(symbolsAllowed), options, std::forward<Args>(args)...);
+            return MetaConsumerUnroller<PercentageToken, ResultType, Ts...>::consume(range, context, WTFMove(symbolsAllowed), options, std::forward<Args>(args)...);
 
         case DimensionToken:
-            return MetaConsumerUnroller<DimensionToken, ResultType, Ts...>::consume(range, WTFMove(symbolsAllowed), options, std::forward<Args>(args)...);
+            return MetaConsumerUnroller<DimensionToken, ResultType, Ts...>::consume(range, context, WTFMove(symbolsAllowed), options, std::forward<Args>(args)...);
 
         case IdentToken:
-            return MetaConsumerUnroller<IdentToken, ResultType, Ts...>::consume(range, WTFMove(symbolsAllowed), options, std::forward<Args>(args)...);
+            return MetaConsumerUnroller<IdentToken, ResultType, Ts...>::consume(range, context, WTFMove(symbolsAllowed), options, std::forward<Args>(args)...);
 
         default:
             return { };

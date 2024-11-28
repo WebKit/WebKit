@@ -34,11 +34,6 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(ImageFrameAnimator);
 
-std::unique_ptr<ImageFrameAnimator> ImageFrameAnimator::create(BitmapImageSource& source)
-{
-    return makeUnique<ImageFrameAnimator>(source);
-}
-
 ImageFrameAnimator::ImageFrameAnimator(BitmapImageSource& source)
     : m_source(source)
     , m_frameCount(source.frameCount())
@@ -48,6 +43,16 @@ ImageFrameAnimator::ImageFrameAnimator(BitmapImageSource& source)
     ASSERT(m_frameCount > 0);
     ASSERT(m_repetitionCount != RepetitionCountNone);
     ASSERT(m_currentFrameIndex < m_frameCount);
+}
+
+void ImageFrameAnimator::ref() const
+{
+    m_source.get()->ref();
+}
+
+void ImageFrameAnimator::deref() const
+{
+    m_source.get()->deref();
 }
 
 ImageFrameAnimator::~ImageFrameAnimator()
@@ -61,10 +66,11 @@ void ImageFrameAnimator::destroyDecodedData(bool destroyAll)
     // only hang on to one frame at a time.
     static constexpr unsigned LargeAnimationCutoff = 30 * 1024 * 1024;
 
-    if (m_source.decodedSize() < LargeAnimationCutoff)
+    RefPtr source = m_source.get();
+    if (source->decodedSize() < LargeAnimationCutoff)
         return;
 
-    m_source.destroyDecodedData(destroyAll);
+    source->destroyDecodedData(destroyAll);
 }
 
 void ImageFrameAnimator::startTimer(Seconds delay)
@@ -83,12 +89,14 @@ void ImageFrameAnimator::timerFired()
 {
     clearTimer();
 
+    RefPtr source = m_source.get();
+
     // Don't advance to nextFrame if the next frame is being decoded.
-    if (m_source.isPendingDecodingAtIndex(nextFrameIndex(), m_nextFrameSubsamplingLevel, m_nextFrameOptions))
+    if (source->isPendingDecodingAtIndex(nextFrameIndex(), m_nextFrameSubsamplingLevel, m_nextFrameOptions))
         return;
 
     advanceAnimation();
-    m_source.imageFrameAtIndexAvailable(m_currentFrameIndex, ImageAnimatingState::Yes, m_source.frameDecodingStatusAtIndex(m_currentFrameIndex));
+    source->imageFrameAtIndexAvailable(m_currentFrameIndex, ImageAnimatingState::Yes, source->frameDecodingStatusAtIndex(m_currentFrameIndex));
 }
 
 bool ImageFrameAnimator::imageFrameDecodeAtIndexHasFinished(unsigned index, ImageAnimatingState animatingState, DecodingStatus decodingStatus)
@@ -107,7 +115,7 @@ bool ImageFrameAnimator::imageFrameDecodeAtIndexHasFinished(unsigned index, Imag
         return true;
 
     advanceAnimation();
-    m_source.imageFrameAtIndexAvailable(m_currentFrameIndex, animatingState, decodingStatus);
+    m_source.get()->imageFrameAtIndexAvailable(m_currentFrameIndex, animatingState, decodingStatus);
     return true;
 }
 
@@ -116,8 +124,10 @@ bool ImageFrameAnimator::startAnimation(SubsamplingLevel subsamplingLevel, const
     if (m_frameTimer)
         return true;
 
+    RefPtr source = m_source.get();
+
     // ImageObserver may disallow animation.
-    if (!m_source.isAnimationAllowed())
+    if (!source->isAnimationAllowed())
         return false;
 
     m_nextFrameSubsamplingLevel = subsamplingLevel;
@@ -127,7 +137,7 @@ bool ImageFrameAnimator::startAnimation(SubsamplingLevel subsamplingLevel, const
 
     if (options.decodingMode() == DecodingMode::Asynchronous) {
         LOG(Images, "ImageFrameAnimator::%s - %p - url: %s. Decoding for frame at index = %d will be requested.", __FUNCTION__, this, sourceUTF8(), nextFrameIndex());
-        m_source.requestNativeImageAtIndexIfNeeded(nextFrameIndex(), subsamplingLevel, ImageAnimatingState::Yes, options);
+        source->requestNativeImageAtIndexIfNeeded(nextFrameIndex(), subsamplingLevel, ImageAnimatingState::Yes, options);
     }
 
     auto time = MonotonicTime::now();
@@ -136,7 +146,7 @@ bool ImageFrameAnimator::startAnimation(SubsamplingLevel subsamplingLevel, const
     if (!m_desiredFrameStartTime)
         m_desiredFrameStartTime = time;
 
-    auto duration = m_source.frameDurationAtIndex(m_currentFrameIndex);
+    auto duration = source->frameDurationAtIndex(m_currentFrameIndex);
 
     // Setting 'm_desiredFrameStartTime' to 'time' means we are late; otherwise we are early.
     m_desiredFrameStartTime = std::max(time, m_desiredFrameStartTime + duration);
@@ -167,7 +177,7 @@ void ImageFrameAnimator::resetAnimation()
 {
     stopAnimation();
 
-    m_currentFrameIndex = m_source.primaryFrameIndex();
+    m_currentFrameIndex = m_source.get()->primaryFrameIndex();
     m_repetitionsComplete = RepetitionCountNone;
     m_desiredFrameStartTime = { };
 
@@ -182,7 +192,7 @@ bool ImageFrameAnimator::isAnimationAllowed() const
 
 const char* ImageFrameAnimator::sourceUTF8() const
 {
-    return m_source.sourceUTF8();
+    return m_source.get()->sourceUTF8();
 }
 
 void ImageFrameAnimator::dump(TextStream& ts) const

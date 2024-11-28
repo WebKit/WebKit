@@ -30,6 +30,7 @@
 #include "IDBDatabaseInfo.h"
 #include "IDBDatabaseNameAndVersion.h"
 #include "IDBGetResult.h"
+#include "IDBIndexIdentifier.h"
 #include "IDBObjectStoreIdentifier.h"
 #include "ServerOpenDBRequest.h"
 #include "UniqueIDBDatabaseTransaction.h"
@@ -102,7 +103,7 @@ public:
     void clearObjectStore(UniqueIDBDatabaseTransaction&, IDBObjectStoreIdentifier, ErrorCallback&&, SpaceCheckResult = SpaceCheckResult::Unknown);
     void createIndex(UniqueIDBDatabaseTransaction&, const IDBIndexInfo&, ErrorCallback&&, SpaceCheckResult = SpaceCheckResult::Unknown);
     void deleteIndex(UniqueIDBDatabaseTransaction&, IDBObjectStoreIdentifier, const String& indexName, ErrorCallback&&, SpaceCheckResult = SpaceCheckResult::Unknown);
-    void renameIndex(UniqueIDBDatabaseTransaction&, IDBObjectStoreIdentifier, uint64_t indexIdentifier, const String& newName, ErrorCallback&&, SpaceCheckResult = SpaceCheckResult::Unknown);
+    void renameIndex(UniqueIDBDatabaseTransaction&, IDBObjectStoreIdentifier, IDBIndexIdentifier, const String& newName, ErrorCallback&&, SpaceCheckResult = SpaceCheckResult::Unknown);
     void putOrAdd(const IDBRequestData&, const IDBKeyData&, const IDBValue&, IndexedDB::ObjectStoreOverwriteMode, KeyDataCallback&&);
     void putOrAddAfterSpaceCheck(const IDBRequestData&, const IDBKeyData&, const IDBValue&, IndexedDB::ObjectStoreOverwriteMode, KeyDataCallback&&, bool isKeyGenerated, const IndexIDToIndexKeyMap&, const IDBObjectStoreInfo&, SpaceCheckResult);
     void getRecord(const IDBRequestData&, const IDBGetRecordData&, GetResultCallback&&, SpaceCheckResult = SpaceCheckResult::Unknown);

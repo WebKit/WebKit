@@ -61,7 +61,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)hideCustomControls:(BOOL)hidden;
 #endif
 #if ENABLE(LINEAR_MEDIA_PLAYER)
-- (void)configureEnvironmentPickerButtonView;
+- (void)configureEnvironmentPickerOrFullscreenVideoButtonView;
 #endif
 @end
 

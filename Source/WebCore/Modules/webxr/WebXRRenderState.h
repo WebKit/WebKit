@@ -58,6 +58,7 @@ public:
 
 #if ENABLE(WEBXR_LAYERS)
     const Vector<Ref<WebXRLayer>>& layers() const { return m_layers; }
+    void setLayers(const Vector<Ref<WebXRLayer>>&);
 #endif
 
     HTMLCanvasElement* outputCanvas() const { return m_outputCanvas.get(); }

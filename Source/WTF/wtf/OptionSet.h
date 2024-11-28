@@ -160,6 +160,12 @@ public:
         return fromRaw(lhs.m_storage | rhs.m_storage);
     }
 
+    constexpr OptionSet& operator|=(const OptionSet& other)
+    {
+        add(other);
+        return *this;
+    }
+
     constexpr friend OptionSet operator&(OptionSet lhs, OptionSet rhs)
     {
         return fromRaw(lhs.m_storage & rhs.m_storage);

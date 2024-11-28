@@ -46,7 +46,6 @@
 #include <wtf/URL.h>
 #include <wtf/text/MakeString.h>
 
-
 namespace WebCore {
 using namespace JSC;
 
@@ -115,12 +114,11 @@ template<> void JSTestCEReactionsStringifierDOMConstructor::initializeProperties
 
 /* Hash table for prototype */
 
-static const HashTableValue JSTestCEReactionsStringifierPrototypeTableValues[] =
-{
-    { "constructor"_s, static_cast<unsigned>(PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestCEReactionsStringifierConstructor, 0 } },
-    { "value"_s, JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { HashTableValue::GetterSetterType, jsTestCEReactionsStringifier_value, setJSTestCEReactionsStringifier_value } },
-    { "valueWithoutReactions"_s, JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { HashTableValue::GetterSetterType, jsTestCEReactionsStringifier_valueWithoutReactions, setJSTestCEReactionsStringifier_valueWithoutReactions } },
-    { "toString"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestCEReactionsStringifierPrototypeFunction_toString, 0 } },
+static const std::array<HashTableValue, 4> JSTestCEReactionsStringifierPrototypeTableValues {
+    HashTableValue { "constructor"_s, static_cast<unsigned>(PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestCEReactionsStringifierConstructor, 0 } },
+    HashTableValue { "value"_s, JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { HashTableValue::GetterSetterType, jsTestCEReactionsStringifier_value, setJSTestCEReactionsStringifier_value } },
+    HashTableValue { "valueWithoutReactions"_s, JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { HashTableValue::GetterSetterType, jsTestCEReactionsStringifier_valueWithoutReactions, setJSTestCEReactionsStringifier_valueWithoutReactions } },
+    HashTableValue { "toString"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestCEReactionsStringifierPrototypeFunction_toString, 0 } },
 };
 
 const ClassInfo JSTestCEReactionsStringifierPrototype::s_info = { "TestCEReactionsStringifier"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestCEReactionsStringifierPrototype) };
@@ -166,7 +164,7 @@ void JSTestCEReactionsStringifier::destroy(JSC::JSCell* cell)
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestCEReactionsStringifierConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
-    auto& vm = JSC::getVM(lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto* prototype = jsDynamicCast<JSTestCEReactionsStringifierPrototype*>(JSValue::decode(thisValue));
     if (UNLIKELY(!prototype))
@@ -176,9 +174,9 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestCEReactionsStringifierConstructor, (JSGlobalObjec
 
 static inline JSValue jsTestCEReactionsStringifier_valueGetter(JSGlobalObject& lexicalGlobalObject, JSTestCEReactionsStringifier& thisObject)
 {
-    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto& impl = thisObject.wrapped();
+    SUPPRESS_UNCOUNTED_LOCAL auto& impl = thisObject.wrapped();
     RELEASE_AND_RETURN(throwScope, (toJS<IDLDOMString>(lexicalGlobalObject, throwScope, impl.value())));
 }
 
@@ -189,11 +187,11 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestCEReactionsStringifier_value, (JSGlobalObject* le
 
 static inline bool setJSTestCEReactionsStringifier_valueSetter(JSGlobalObject& lexicalGlobalObject, JSTestCEReactionsStringifier& thisObject, JSValue value)
 {
-    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(&lexicalGlobalObject);
     UNUSED_PARAM(vm);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     CustomElementReactionStack customElementReactionStack(lexicalGlobalObject);
-    auto& impl = thisObject.wrapped();
+    SUPPRESS_UNCOUNTED_LOCAL auto& impl = thisObject.wrapped();
     auto nativeValueConversionResult = convert<IDLDOMString>(lexicalGlobalObject, value);
     if (UNLIKELY(nativeValueConversionResult.hasException(throwScope)))
         return false;
@@ -210,9 +208,9 @@ JSC_DEFINE_CUSTOM_SETTER(setJSTestCEReactionsStringifier_value, (JSGlobalObject*
 
 static inline JSValue jsTestCEReactionsStringifier_valueWithoutReactionsGetter(JSGlobalObject& lexicalGlobalObject, JSTestCEReactionsStringifier& thisObject)
 {
-    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto& impl = thisObject.wrapped();
+    SUPPRESS_UNCOUNTED_LOCAL auto& impl = thisObject.wrapped();
     RELEASE_AND_RETURN(throwScope, (toJS<IDLDOMString>(lexicalGlobalObject, throwScope, impl.valueWithoutReactions())));
 }
 
@@ -223,11 +221,11 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestCEReactionsStringifier_valueWithoutReactions, (JS
 
 static inline bool setJSTestCEReactionsStringifier_valueWithoutReactionsSetter(JSGlobalObject& lexicalGlobalObject, JSTestCEReactionsStringifier& thisObject, JSValue value)
 {
-    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(&lexicalGlobalObject);
     UNUSED_PARAM(vm);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     CustomElementReactionDisallowedScope customElementReactionDisallowedScope;
-    auto& impl = thisObject.wrapped();
+    SUPPRESS_UNCOUNTED_LOCAL auto& impl = thisObject.wrapped();
     auto nativeValueConversionResult = convert<IDLDOMString>(lexicalGlobalObject, value);
     if (UNLIKELY(nativeValueConversionResult.hasException(throwScope)))
         return false;
@@ -244,11 +242,11 @@ JSC_DEFINE_CUSTOM_SETTER(setJSTestCEReactionsStringifier_valueWithoutReactions, 
 
 static inline JSC::EncodedJSValue jsTestCEReactionsStringifierPrototypeFunction_toStringBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestCEReactionsStringifier>::ClassParameter castedThis)
 {
-    auto& vm = JSC::getVM(lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(callFrame);
-    auto& impl = castedThis->wrapped();
+    SUPPRESS_UNCOUNTED_LOCAL auto& impl = castedThis->wrapped();
     RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLDOMString>(*lexicalGlobalObject, throwScope, impl.value())));
 }
 
@@ -271,8 +269,8 @@ void JSTestCEReactionsStringifier::analyzeHeap(JSCell* cell, HeapAnalyzer& analy
 {
     auto* thisObject = jsCast<JSTestCEReactionsStringifier*>(cell);
     analyzer.setWrappedObjectForCell(cell, &thisObject->wrapped());
-    if (thisObject->scriptExecutionContext())
-        analyzer.setLabelForCell(cell, makeString("url "_s, thisObject->scriptExecutionContext()->url().string()));
+    if (RefPtr context = thisObject->scriptExecutionContext())
+        analyzer.setLabelForCell(cell, makeString("url "_s, context->url().string()));
     Base::analyzeHeap(cell, analyzer);
 }
 
@@ -291,6 +289,7 @@ void JSTestCEReactionsStringifierOwner::finalize(JSC::Handle<JSC::Unknown> handl
     uncacheWrapper(world, jsTestCEReactionsStringifier->protectedWrapped().ptr(), jsTestCEReactionsStringifier);
 }
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 #if ENABLE(BINDING_INTEGRITY)
 #if PLATFORM(WIN)
 #pragma warning(disable: 4483)
@@ -315,6 +314,8 @@ template<typename T, typename = std::enable_if_t<std::is_same_v<T, TestCEReactio
     }
 }
 #endif
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+
 JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject*, JSDOMGlobalObject* globalObject, Ref<TestCEReactionsStringifier>&& impl)
 {
 #if ENABLE(BINDING_INTEGRITY)

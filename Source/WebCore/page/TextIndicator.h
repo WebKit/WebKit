@@ -123,6 +123,9 @@ enum class TextIndicatorOption : uint16_t {
 
     // If this option is set, exclude all content that is replaced by a separate render pass, like images, media, etc.
     SkipReplacedContent = 1 << 13,
+
+    // If this option is set, perform the snapshot with 3x as the base scale, rather than the device scale factor
+    SnapshotContentAt3xBaseScale = 1 << 14,
 };
 
 struct TextIndicatorData {

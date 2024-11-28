@@ -27,9 +27,9 @@
 #include "AccessibilityMockObject.h"
 
 namespace WebCore {
-    
-AccessibilityMockObject::AccessibilityMockObject()
-    : m_parent(nullptr)
+
+AccessibilityMockObject::AccessibilityMockObject(AXID axID)
+    : AccessibilityObject(axID)
 {
 }
 

@@ -91,6 +91,12 @@ enum class WebCore::WebGPU::BlendOperation : uint8_t {
     Max,
 };
 
+header: <WebCore/WebGPUCanvasToneMappingMode.h>
+enum class WebCore::WebGPU::CanvasToneMappingMode : uint8_t {
+    Standard,
+    Extended,
+};
+
 header: <WebCore/WebGPUCanvasAlphaMode.h>
 enum class WebCore::WebGPU::CanvasAlphaMode : uint8_t {
     Opaque,

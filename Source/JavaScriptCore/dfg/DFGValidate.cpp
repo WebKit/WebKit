@@ -1100,7 +1100,7 @@ private:
     GraphDumpMode m_graphDumpMode;
     CString m_graphDumpBeforePhase;
 
-    HashMap<Node*, unsigned> m_myRefCounts;
+    UncheckedKeyHashMap<Node*, unsigned> m_myRefCounts;
     Vector<uint32_t> m_myTupleRefCounts;
     HashSet<Node*> m_acceptableNodes;
 };

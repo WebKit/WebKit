@@ -176,13 +176,13 @@ private:
     ALWAYS_INLINE void refIfNotNull()
     {
         if (T* ptr = PtrTraits::unwrap(m_ptr); LIKELY(ptr))
-            ptr->incrementPtrCount();
+            ptr->incrementCheckedPtrCount();
     }
 
     ALWAYS_INLINE void derefIfNotNull()
     {
         if (T* ptr = PtrTraits::unwrap(m_ptr); LIKELY(ptr))
-            ptr->decrementPtrCount();
+            ptr->decrementCheckedPtrCount();
     }
 
     typename PtrTraits::StorageType m_ptr;
@@ -214,6 +214,7 @@ inline bool is(const CheckedPtr<ArgType, ArgPtrTraits>& source)
 
 template<typename P> struct HashTraits<CheckedPtr<P>> : SimpleClassHashTraits<CheckedPtr<P>> {
     static P* emptyValue() { return nullptr; }
+    static bool isEmptyValue(const CheckedPtr<P>& value) { return !value; }
 
     typedef P* PeekType;
     static PeekType peek(const CheckedPtr<P>& value) { return value.get(); }

@@ -42,6 +42,8 @@
 #include <wtf/TZoneMalloc.h>
 #include <wtf/UniqueRef.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
     enum OpcodeID : unsigned;
@@ -181,7 +183,7 @@ namespace JSC {
         static int stackPointerOffsetFor(UnlinkedCodeBlock*);
         static int stackPointerOffsetFor(CodeBlock*);
 
-        JS_EXPORT_PRIVATE static HashMap<CString, Seconds> compileTimeStats();
+        JS_EXPORT_PRIVATE static UncheckedKeyHashMap<CString, Seconds> compileTimeStats();
         JS_EXPORT_PRIVATE static Seconds totalCompileTime();
 
     private:
@@ -217,6 +219,9 @@ namespace JSC {
 
         template <typename Bytecode>
         void store32ToMetadata(GPRReg, const Bytecode&, size_t offset);
+
+        template <typename Bytecode>
+        void storePtrToMetadata(GPRReg, const Bytecode&, size_t offset);
 
         template <typename Bytecode>
         void materializePointerIntoMetadata(const Bytecode&, size_t offset, GPRReg);
@@ -364,8 +369,10 @@ namespace JSC {
         void emit_op_tail_call_varargs(const JSInstruction*);
         void emit_op_tail_call_forward_arguments(const JSInstruction*);
         void emit_op_construct_varargs(const JSInstruction*);
+        void emit_op_super_construct_varargs(const JSInstruction*);
         void emit_op_catch(const JSInstruction*);
         void emit_op_construct(const JSInstruction*);
+        void emit_op_super_construct(const JSInstruction*);
         void emit_op_create_this(const JSInstruction*);
         void emit_op_to_this(const JSInstruction*);
         void emit_op_get_argument(const JSInstruction*);
@@ -800,12 +807,6 @@ namespace JSC {
 
         int jumpTarget(const JSInstruction*, int target);
 
-#if ENABLE(DFG_JIT)
-        void emitEnterOptimizationCheck();
-#else
-        void emitEnterOptimizationCheck() { }
-#endif
-
 #ifndef NDEBUG
         void printBytecodeOperandTypes(VirtualRegister src1, VirtualRegister src2);
 #endif
@@ -851,8 +852,8 @@ namespace JSC {
         BaselineJITPlan& m_plan;
         Vector<FarCallRecord> m_farCalls;
         Vector<Label> m_labels;
-        HashMap<BytecodeIndex, Label> m_checkpointLabels;
-        HashMap<BytecodeIndex, Label> m_fastPathResumeLabels;
+        UncheckedKeyHashMap<BytecodeIndex, Label> m_checkpointLabels;
+        UncheckedKeyHashMap<BytecodeIndex, Label> m_fastPathResumeLabels;
         Vector<JITGetByIdGenerator> m_getByIds;
         Vector<JITGetByValGenerator> m_getByVals;
         Vector<JITGetByIdWithThisGenerator> m_getByIdsWithThis;
@@ -898,8 +899,8 @@ namespace JSC {
 
         PCToCodeOriginMapBuilder m_pcToCodeOriginMapBuilder;
 
-        HashMap<const JSInstruction*, void*> m_instructionToMathIC;
-        HashMap<const JSInstruction*, UniqueRef<MathICGenerationState>> m_instructionToMathICGenerationState;
+        UncheckedKeyHashMap<const JSInstruction*, void*> m_instructionToMathIC;
+        UncheckedKeyHashMap<const JSInstruction*, UniqueRef<MathICGenerationState>> m_instructionToMathICGenerationState;
 
         bool m_canBeOptimized;
         bool m_shouldEmitProfiling;
@@ -922,5 +923,6 @@ namespace JSC {
 
 } // namespace JSC
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ENABLE(JIT)

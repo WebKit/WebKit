@@ -154,8 +154,10 @@ public:
     void setHasCreatedImageBuffer(bool hasCreatedImageBuffer) { m_hasCreatedImageBuffer = hasCreatedImageBuffer; }
     bool hasCreatedImageBuffer() const { return m_hasCreatedImageBuffer; }
 
+    RefPtr<ImageBuffer> createImageForNoiseInjection() const;
+
 protected:
-    explicit CanvasBase(IntSize, const ScriptExecutionContext&);
+    explicit CanvasBase(IntSize, ScriptExecutionContext&);
 
     virtual ScriptExecutionContext* canvasBaseScriptExecutionContext() const = 0;
 

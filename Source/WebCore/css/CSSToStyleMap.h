@@ -46,48 +46,49 @@ class BuilderState;
 
 class CSSToStyleMap {
 public:
-    explicit CSSToStyleMap(Style::BuilderState&);
+    explicit CSSToStyleMap(const Style::BuilderState&);
 
     static void mapFillAttachment(CSSPropertyID, FillLayer&, const CSSValue&);
     static void mapFillClip(CSSPropertyID, FillLayer&, const CSSValue&);
     static void mapFillComposite(CSSPropertyID, FillLayer&, const CSSValue&);
     static void mapFillBlendMode(CSSPropertyID, FillLayer&, const CSSValue&);
     static void mapFillOrigin(CSSPropertyID, FillLayer&, const CSSValue&);
-    void mapFillImage(CSSPropertyID, FillLayer&, const CSSValue&);
+    void mapFillImage(CSSPropertyID, FillLayer&, const CSSValue&) const;
     static void mapFillRepeat(CSSPropertyID, FillLayer&, const CSSValue&);
-    void mapFillSize(CSSPropertyID, FillLayer&, const CSSValue&);
-    void mapFillXPosition(CSSPropertyID, FillLayer&, const CSSValue&);
-    void mapFillYPosition(CSSPropertyID, FillLayer&, const CSSValue&);
+    void mapFillSize(CSSPropertyID, FillLayer&, const CSSValue&) const;
+    void mapFillXPosition(CSSPropertyID, FillLayer&, const CSSValue&) const;
+    void mapFillYPosition(CSSPropertyID, FillLayer&, const CSSValue&) const;
     static void mapFillMaskMode(CSSPropertyID, FillLayer&, const CSSValue&);
 
-    void mapAnimationDelay(Animation&, const CSSValue&);
+    void mapAnimationDelay(Animation&, const CSSValue&) const;
     static void mapAnimationDirection(Animation&, const CSSValue&);
-    void mapAnimationDuration(Animation&, const CSSValue&);
+    void mapAnimationDuration(Animation&, const CSSValue&) const;
     static void mapAnimationFillMode(Animation&, const CSSValue&);
-    void mapAnimationIterationCount(Animation&, const CSSValue&);
-    void mapAnimationName(Animation&, const CSSValue&);
+    void mapAnimationIterationCount(Animation&, const CSSValue&) const;
+    void mapAnimationName(Animation&, const CSSValue&) const;
     static void mapAnimationPlayState(Animation&, const CSSValue&);
     static void mapAnimationProperty(Animation&, const CSSValue&);
-    void mapAnimationTimeline(Animation&, const CSSValue&);
-    void mapAnimationTimingFunction(Animation&, const CSSValue&);
+    void mapAnimationTimeline(Animation&, const CSSValue&) const;
+    void mapAnimationTimingFunction(Animation&, const CSSValue&) const;
     static void mapAnimationCompositeOperation(Animation&, const CSSValue&);
     static void mapAnimationAllowsDiscreteTransitions(Animation&, const CSSValue&);
+    void mapAnimationRangeStart(Animation&, const CSSValue&) const;
+    void mapAnimationRangeEnd(Animation&, const CSSValue&) const;
 
-    void mapNinePieceImage(const CSSValue*, NinePieceImage&);
-    void mapNinePieceImageSlice(const CSSValue&, NinePieceImage&);
-    void mapNinePieceImageSlice(const CSSBorderImageSliceValue&, NinePieceImage&);
-    void mapNinePieceImageWidth(const CSSValue&, NinePieceImage&);
-    void mapNinePieceImageWidth(const CSSBorderImageWidthValue&, NinePieceImage&);
-    LengthBox mapNinePieceImageQuad(const CSSValue&);
+    void mapNinePieceImage(const CSSValue*, NinePieceImage&) const;
+    void mapNinePieceImageSlice(const CSSValue&, NinePieceImage&) const;
+    void mapNinePieceImageSlice(const CSSBorderImageSliceValue&, NinePieceImage&) const;
+    void mapNinePieceImageWidth(const CSSValue&, NinePieceImage&) const;
+    void mapNinePieceImageWidth(const CSSBorderImageWidthValue&, NinePieceImage&) const;
+    LengthBox mapNinePieceImageQuad(const CSSValue&) const;
     static void mapNinePieceImageRepeat(const CSSValue&, NinePieceImage&);
 
 private:
-    RenderStyle* style() const;
-    RefPtr<StyleImage> styleImage(const CSSValue&);
-    LengthBox mapNinePieceImageQuad(const Quad&);
-    Length mapNinePieceImageSide(const CSSValue&);
+    RefPtr<StyleImage> styleImage(const CSSValue&) const;
+    LengthBox mapNinePieceImageQuad(const Quad&) const;
+    Length mapNinePieceImageSide(const CSSValue&) const;
 
-    Style::BuilderState& m_builderState;
+    const Style::BuilderState& m_builderState;
 };
 
 } // namespace WebCore

@@ -1,3 +1,3 @@
 
-FAIL navigation.back() same-document preventDefault assert_equals: expected "http://localhost:8800/navigation-api/navigate-event/navigation-back-same-document-preventDefault.html#" but got ""
+PASS navigation.back() same-document preventDefault
 

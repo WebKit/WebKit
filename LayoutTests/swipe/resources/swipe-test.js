@@ -22,11 +22,11 @@ function testComplete(logContainer)
     window.testRunner.notifyDone();
 }
 
-function initializeSwipeTest()
+async function initializeSwipeTest()
 {
     window.localStorage["swipeLogging"] = "";
     testRunner.setNavigationGesturesEnabled(true);
-    testRunner.clearBackForwardList();
+    await testRunner.clearBackForwardList();
 }
 
 function startMeasuringDuration(key)

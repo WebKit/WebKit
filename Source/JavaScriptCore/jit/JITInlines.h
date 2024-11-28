@@ -508,6 +508,12 @@ ALWAYS_INLINE void JIT::store32ToMetadata(GPRReg value, const Bytecode& bytecode
 }
 
 template <typename Bytecode>
+ALWAYS_INLINE void JIT::storePtrToMetadata(GPRReg value, const Bytecode& bytecode, size_t offset)
+{
+    storePtr(value, Address(GPRInfo::metadataTableRegister, m_profiledCodeBlock->metadataTable()->offsetInMetadataTable(bytecode) + offset));
+}
+
+template <typename Bytecode>
 ALWAYS_INLINE void JIT::materializePointerIntoMetadata(const Bytecode& bytecode, size_t offset, GPRReg result)
 {
     addPtr(TrustedImm32(m_profiledCodeBlock->metadataTable()->offsetInMetadataTable(bytecode) + offset), GPRInfo::metadataTableRegister, result);

@@ -74,7 +74,7 @@ std::wstring createPEMString(WKProtectionSpaceRef protectionSpace)
 
     std::wstring pems;
 
-    for (auto i = 0; i < WKArrayGetSize(chain.get()); i++) {
+    for (size_t i = 0; i < WKArrayGetSize(chain.get()); i++) {
         auto item = WKArrayGetItemAtIndex(chain.get(), i);
         assert(WKGetTypeID(item) == WKDataGetTypeID());
         auto certificate = static_cast<WKDataRef>(item);

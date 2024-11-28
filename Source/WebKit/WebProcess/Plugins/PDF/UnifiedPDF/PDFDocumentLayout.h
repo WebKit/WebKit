@@ -105,7 +105,12 @@ public:
     // This is the scale that scales the largest page or pair of pages up or down to fit the available width.
     float scale() const { return m_scale; }
 
-    void updateLayout(WebCore::IntSize pluginSize, ShouldUpdateAutoSizeScale);
+    enum class LayoutUpdateChange : uint8_t {
+        PageGeometries = 1 << 0,
+        DocumentBounds = 1 << 1,
+    };
+
+    OptionSet<LayoutUpdateChange> updateLayout(WebCore::IntSize pluginSize, ShouldUpdateAutoSizeScale);
     WebCore::FloatSize contentsSize() const;
     WebCore::FloatSize scaledContentsSize() const;
 
@@ -130,6 +135,8 @@ public:
         WebCore::FloatRect cropBox;
         WebCore::FloatRect layoutBounds;
         WebCore::IntDegrees rotation { 0 };
+
+        friend bool operator==(const PageGeometry&, const PageGeometry&) = default;
     };
 
     std::optional<PageGeometry> geometryForPage(RetainPtr<PDFPage>) const;

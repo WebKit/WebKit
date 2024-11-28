@@ -91,7 +91,7 @@ std::optional<bool> DocumentStorageAccess::hasStorageAccessQuickCheck()
     if (frame->isMainFrame())
         return true;
 
-    if (securityOrigin->equal(&document->topOrigin()))
+    if (securityOrigin->equal(document->topOrigin()))
         return true;
 
     if (!frame->page())
@@ -160,7 +160,7 @@ std::optional<StorageAccessQuickResult> DocumentStorageAccess::requestStorageAcc
     if (frame->isMainFrame())
         return StorageAccessQuickResult::Grant;
 
-    if (securityOrigin.equal(&document->topOrigin()))
+    if (securityOrigin.equal(document->topOrigin()))
         return StorageAccessQuickResult::Grant;
 
     // If there is a sandbox, it has to allow the storage access API to be called.

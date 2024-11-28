@@ -116,8 +116,6 @@ $(PROJECT_DIR)/GPUProcess/webrtc/LibWebRTCCodecsProxy.messages.in
 $(PROJECT_DIR)/GPUProcess/webrtc/RemoteAudioMediaStreamTrackRenderer.messages.in
 $(PROJECT_DIR)/GPUProcess/webrtc/RemoteAudioMediaStreamTrackRendererInternalUnitManager.messages.in
 $(PROJECT_DIR)/GPUProcess/webrtc/RemoteAudioMediaStreamTrackRendererManager.messages.in
-$(PROJECT_DIR)/GPUProcess/webrtc/RemoteMediaRecorder.messages.in
-$(PROJECT_DIR)/GPUProcess/webrtc/RemoteMediaRecorderManager.messages.in
 $(PROJECT_DIR)/GPUProcess/webrtc/RemoteSampleBufferDisplayLayer.messages.in
 $(PROJECT_DIR)/GPUProcess/webrtc/RemoteSampleBufferDisplayLayerManager.messages.in
 $(PROJECT_DIR)/ModelProcess/ModelConnectionToWebProcess.messages.in
@@ -271,6 +269,7 @@ $(PROJECT_DIR)/Shared/Cocoa/RemoteObjectInvocation.serialization.in
 $(PROJECT_DIR)/Shared/Cocoa/RevealItem.serialization.in
 $(PROJECT_DIR)/Shared/Cocoa/SharedCARingBuffer.serialization.in
 $(PROJECT_DIR)/Shared/Cocoa/WebCoreArgumentCodersCocoa.serialization.in
+$(PROJECT_DIR)/Shared/ContentWorldData.serialization.in
 $(PROJECT_DIR)/Shared/ContextMenuContextData.serialization.in
 $(PROJECT_DIR)/Shared/CoordinateSystem.serialization.in
 $(PROJECT_DIR)/Shared/Databases/IndexedDB/WebIDBResult.serialization.in
@@ -281,6 +280,7 @@ $(PROJECT_DIR)/Shared/DragControllerAction.serialization.in
 $(PROJECT_DIR)/Shared/DrawingAreaInfo.serialization.in
 $(PROJECT_DIR)/Shared/EditingRange.serialization.in
 $(PROJECT_DIR)/Shared/EditorState.serialization.in
+$(PROJECT_DIR)/Shared/Extensions/WebExtensionActionClickBehavior.serialization.in
 $(PROJECT_DIR)/Shared/Extensions/WebExtensionAlarmParameters.serialization.in
 $(PROJECT_DIR)/Shared/Extensions/WebExtensionCommandParameters.serialization.in
 $(PROJECT_DIR)/Shared/Extensions/WebExtensionContentWorldType.serialization.in
@@ -294,6 +294,7 @@ $(PROJECT_DIR)/Shared/Extensions/WebExtensionFrameParameters.serialization.in
 $(PROJECT_DIR)/Shared/Extensions/WebExtensionMatchedRuleParameters.serialization.in
 $(PROJECT_DIR)/Shared/Extensions/WebExtensionMenuItem.serialization.in
 $(PROJECT_DIR)/Shared/Extensions/WebExtensionMessageSenderParameters.serialization.in
+$(PROJECT_DIR)/Shared/Extensions/WebExtensionMessageTargetParameters.serialization.in
 $(PROJECT_DIR)/Shared/Extensions/WebExtensionSidebarParameters.serialization.in
 $(PROJECT_DIR)/Shared/Extensions/WebExtensionStorage.serialization.in
 $(PROJECT_DIR)/Shared/Extensions/WebExtensionTab.serialization.in
@@ -319,6 +320,7 @@ $(PROJECT_DIR)/Shared/InspectorExtensionTypes.serialization.in
 $(PROJECT_DIR)/Shared/JavaScriptCore.serialization.in
 $(PROJECT_DIR)/Shared/LayerTreeContext.serialization.in
 $(PROJECT_DIR)/Shared/LoadParameters.serialization.in
+$(PROJECT_DIR)/Shared/LogStream.messages.in
 $(PROJECT_DIR)/Shared/MediaPlaybackState.serialization.in
 $(PROJECT_DIR)/Shared/Model.serialization.in
 $(PROJECT_DIR)/Shared/ModelProcessConnectionParameters.serialization.in
@@ -348,6 +350,7 @@ $(PROJECT_DIR)/Shared/ResourceLoadInfo.serialization.in
 $(PROJECT_DIR)/Shared/ResourceLoadStatisticsParameters.serialization.in
 $(PROJECT_DIR)/Shared/SameDocumentNavigationType.serialization.in
 $(PROJECT_DIR)/Shared/SandboxExtension.serialization.in
+$(PROJECT_DIR)/Shared/ScriptTelemetry.serialization.in
 $(PROJECT_DIR)/Shared/ScrollingAccelerationCurve.serialization.in
 $(PROJECT_DIR)/Shared/SessionState.serialization.in
 $(PROJECT_DIR)/Shared/Shared/EditorState.serialization.in
@@ -377,6 +380,7 @@ $(PROJECT_DIR)/Shared/WebExtensionContextParameters.serialization.in
 $(PROJECT_DIR)/Shared/WebExtensionControllerParameters.serialization.in
 $(PROJECT_DIR)/Shared/WebFindOptions.serialization.in
 $(PROJECT_DIR)/Shared/WebFoundTextRange.serialization.in
+$(PROJECT_DIR)/Shared/WebFrameMetrics.serialization.in
 $(PROJECT_DIR)/Shared/WebGPU/WebGPUBindGroupDescriptor.serialization.in
 $(PROJECT_DIR)/Shared/WebGPU/WebGPUBindGroupEntry.serialization.in
 $(PROJECT_DIR)/Shared/WebGPU/WebGPUBindGroupLayoutDescriptor.serialization.in
@@ -468,6 +472,7 @@ $(PROJECT_DIR)/Shared/WebsiteData/WebsiteDataType.serialization.in
 $(PROJECT_DIR)/Shared/WebsiteDataStoreParameters.serialization.in
 $(PROJECT_DIR)/Shared/WebsitePoliciesData.serialization.in
 $(PROJECT_DIR)/Shared/WebsitePopUpPolicy.serialization.in
+$(PROJECT_DIR)/Shared/WebsitePushAndNotificationsEnabledPolicy.serialization.in
 $(PROJECT_DIR)/Shared/XR/PlatformXR.serialization.in
 $(PROJECT_DIR)/Shared/XR/XRSystem.serialization.in
 $(PROJECT_DIR)/Shared/cf/CFTypes.serialization.in
@@ -492,7 +497,6 @@ $(PROJECT_DIR)/Shared/mac/SecItemRequestData.serialization.in
 $(PROJECT_DIR)/Shared/mac/SecItemResponseData.serialization.in
 $(PROJECT_DIR)/Shared/mac/WebHitTestResultPlatformData.serialization.in
 $(PROJECT_DIR)/UIProcess/Automation/Automation.json
-$(PROJECT_DIR)/UIProcess/Automation/WebAutomationSession.messages.in
 $(PROJECT_DIR)/UIProcess/Cocoa/PlaybackSessionManagerProxy.messages.in
 $(PROJECT_DIR)/UIProcess/Cocoa/UserMediaCaptureManagerProxy.messages.in
 $(PROJECT_DIR)/UIProcess/Cocoa/VideoPresentationManagerProxy.messages.in
@@ -701,6 +705,7 @@ $(WEBCORE_PRIVATE_HEADERS_DIR)/PlatformMediaSession.serialization.in
 $(WEBCORE_PRIVATE_HEADERS_DIR)/PlatformScreen.serialization.in
 $(WEBCORE_PRIVATE_HEADERS_DIR)/PlatformWheelEvent.serialization.in
 $(WEBCORE_PRIVATE_HEADERS_DIR)/PlaybackSessionModel.serialization.in
+$(WEBCORE_PRIVATE_HEADERS_DIR)/ProcessSyncData.serialization.in
 $(WEBCORE_PRIVATE_HEADERS_DIR)/ProtectionSpaceBase.serialization.in
 $(WEBCORE_PRIVATE_HEADERS_DIR)/ScrollTypes.serialization.in
 $(WEBCORE_PRIVATE_HEADERS_DIR)/WebGPU.serialization.in

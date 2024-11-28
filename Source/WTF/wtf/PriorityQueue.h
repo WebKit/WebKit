@@ -63,7 +63,7 @@ public:
         return result;
     }
 
-    void decreaseKey(const Invocable<bool(T&)> auto& desiredElement)
+    void decreaseKey(NOESCAPE const Invocable<bool(T&)> auto& desiredElement)
     {
         for (size_t i = 0; i < m_buffer.size(); ++i) {
             if (desiredElement(m_buffer[i])) {
@@ -74,7 +74,7 @@ public:
         ASSERT(isValidHeap());
     }
 
-    void increaseKey(const Invocable<bool(T&)> auto& desiredElement)
+    void increaseKey(NOESCAPE const Invocable<bool(T&)> auto& desiredElement)
     {
         for (size_t i = 0; i < m_buffer.size(); ++i) {
             if (desiredElement(m_buffer[i])) {

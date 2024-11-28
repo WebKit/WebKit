@@ -64,6 +64,8 @@ private:
 
     ShapeDetectionIdentifier backing() const { return m_backing; }
 
+    Ref<IPC::StreamClientConnection> protectedStreamClientConnection() const;
+
     void detect(Ref<WebCore::ImageBuffer>&&, CompletionHandler<void(Vector<WebCore::ShapeDetection::DetectedFace>&&)>&&) final;
 
     ShapeDetectionIdentifier m_backing;

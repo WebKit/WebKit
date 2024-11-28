@@ -29,6 +29,7 @@
 
 #include "RenderingUpdateID.h"
 #include <WebCore/RenderingResource.h>
+#include <wtf/CheckedRef.h>
 #include <wtf/HashMap.h>
 
 namespace WebCore {
@@ -98,7 +99,7 @@ private:
     unsigned m_numberOfFontsUsedInCurrentRenderingUpdate { 0 };
     unsigned m_numberOfFontCustomPlatformDatasUsedInCurrentRenderingUpdate { 0 };
 
-    RemoteRenderingBackendProxy& m_remoteRenderingBackendProxy;
+    CheckedRef<RemoteRenderingBackendProxy> m_remoteRenderingBackendProxy;
     uint64_t m_renderingUpdateID;
 };
 

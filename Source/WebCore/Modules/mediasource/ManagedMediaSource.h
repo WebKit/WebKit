@@ -36,7 +36,7 @@ namespace WebCore {
 class ManagedMediaSource final : public MediaSource {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(ManagedMediaSource);
 public:
-    static Ref<ManagedMediaSource> create(ScriptExecutionContext&);
+    static Ref<ManagedMediaSource> create(ScriptExecutionContext&, MediaSourceInit&&);
     ~ManagedMediaSource();
 
     enum class PreferredQuality { Low, Medium, High };
@@ -50,7 +50,7 @@ public:
     bool isManaged() const final { return true; }
 
 private:
-    explicit ManagedMediaSource(ScriptExecutionContext&);
+    ManagedMediaSource(ScriptExecutionContext&, MediaSourceInit&&);
     void monitorSourceBuffers() final;
     void elementDetached() final;
     void setStreaming(bool);

@@ -31,6 +31,8 @@
 #include "ParsingUtilities.h"
 #include <wtf/SortedArrayMap.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 template<typename CharacterType>
@@ -139,21 +141,21 @@ std::optional<CSSCustomPropertySyntax> CSSCustomPropertySyntax::parse(StringView
 auto CSSCustomPropertySyntax::typeForTypeName(StringView dataTypeName) -> Type
 {
     static constexpr std::pair<ComparableASCIILiteral, Type> mappings[] = {
-        { "angle", Type::Angle },
-        { "color", Type::Color },
-        { "custom-ident", Type::CustomIdent },
-        { "image", Type::Image },
-        { "integer", Type::Integer },
-        { "length", Type::Length },
-        { "length-percentage", Type::LengthPercentage },
-        { "number", Type::Number },
-        { "percentage", Type::Percentage },
-        { "resolution", Type::Resolution },
-        { "string", Type::String },
-        { "time", Type::Time },
-        { "transform-function", Type::TransformFunction },
-        { "transform-list", Type::TransformList },
-        { "url", Type::URL },
+        { "angle"_s, Type::Angle },
+        { "color"_s, Type::Color },
+        { "custom-ident"_s, Type::CustomIdent },
+        { "image"_s, Type::Image },
+        { "integer"_s, Type::Integer },
+        { "length"_s, Type::Length },
+        { "length-percentage"_s, Type::LengthPercentage },
+        { "number"_s, Type::Number },
+        { "percentage"_s, Type::Percentage },
+        { "resolution"_s, Type::Resolution },
+        { "string"_s, Type::String },
+        { "time"_s, Type::Time },
+        { "transform-function"_s, Type::TransformFunction },
+        { "transform-list"_s, Type::TransformList },
+        { "url"_s, Type::URL },
     };
 
     static constexpr SortedArrayMap typeMap { mappings };
@@ -161,3 +163,5 @@ auto CSSCustomPropertySyntax::typeForTypeName(StringView dataTypeName) -> Type
 }
 
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

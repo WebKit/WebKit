@@ -72,7 +72,7 @@ inline JSFunction* JSFunction::createWithInvalidatedReallocationWatchpoint(VM& v
 
 inline JSFunction::JSFunction(VM& vm, FunctionExecutable* executable, JSScope* scope, Structure* structure)
     : Base(vm, scope, structure)
-    , m_executableOrRareData(bitwise_cast<uintptr_t>(executable))
+    , m_executableOrRareData(std::bit_cast<uintptr_t>(executable))
 {
     assertTypeInfoFlagInvariants();
 }

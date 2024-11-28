@@ -24,10 +24,11 @@
  */
 
 #include "config.h"
-#include "ObjectIdentifier.h"
+#include <wtf/ObjectIdentifier.h>
 
-#include "MainThread.h"
 #include <atomic>
+#include <wtf/MainThread.h>
+#include <wtf/PrintStream.h>
 
 namespace WTF {
 
@@ -42,6 +43,11 @@ TextStream& operator<<(TextStream& ts, const ObjectIdentifierGenericBase<uint64_
 {
     ts << identifier.toRawValue();
     return ts;
+}
+
+void printInternal(PrintStream& out, const ObjectIdentifierGenericBase<uint64_t>& identifier)
+{
+    out.print(identifier.toRawValue());
 }
 
 uint64_t ObjectIdentifierThreadSafeAccessTraits<uint64_t>::generateIdentifierInternal()
@@ -65,6 +71,11 @@ TextStream& operator<<(TextStream& ts, const ObjectIdentifierGenericBase<UUID>& 
 {
     ts << identifier.toRawValue();
     return ts;
+}
+
+void printInternal(PrintStream& out, const ObjectIdentifierGenericBase<UUID>& identifier)
+{
+    out.print(identifier.toRawValue());
 }
 
 } // namespace WTF

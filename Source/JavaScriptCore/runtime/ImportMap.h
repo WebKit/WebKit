@@ -37,13 +37,13 @@ class SourceCode;
 
 class ImportMap final : public RefCounted<ImportMap> {
 public:
-    using SpecifierMap = HashMap<String, URL>;
+    using SpecifierMap = UncheckedKeyHashMap<String, URL>;
     struct ScopeEntry {
         URL m_scope;
         SpecifierMap m_map;
     };
     using Scopes = Vector<ScopeEntry>;
-    using IntegrityMap = HashMap<URL, String>;
+    using IntegrityMap = UncheckedKeyHashMap<URL, String>;
 
     class Reporter {
     public:

@@ -31,6 +31,7 @@
 #include "PlatformCALayer.h"
 #include "PlatformCALayerClient.h"
 #include "Timer.h"
+#include <wtf/CheckedPtr.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/TZoneMalloc.h>
@@ -42,9 +43,10 @@ class IntPoint;
 class IntRect;
 class TileController;
 
-class TileCoverageMap : public PlatformCALayerClient {
+class TileCoverageMap final : public PlatformCALayerClient, public CanMakeCheckedPtr<TileCoverageMap> {
     WTF_MAKE_TZONE_ALLOCATED(TileCoverageMap);
     WTF_MAKE_NONCOPYABLE(TileCoverageMap);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(TileCoverageMap);
 public:
     TileCoverageMap(const TileController&);
     ~TileCoverageMap();

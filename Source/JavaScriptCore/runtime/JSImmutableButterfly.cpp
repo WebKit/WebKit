@@ -33,6 +33,8 @@
 #include "ScopedArguments.h"
 #include <wtf/IterationStatus.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 const ClassInfo JSImmutableButterfly::s_info = { "Immutable Butterfly"_s, nullptr, nullptr, nullptr, CREATE_METHOD_TABLE(JSImmutableButterfly) };
@@ -241,9 +243,11 @@ JSImmutableButterfly* JSImmutableButterfly::tryCreateFromArgList(VM& vm, ArgList
     JSImmutableButterfly* result = JSImmutableButterfly::tryCreate(vm, vm.immutableButterflyStructures[arrayIndexFromIndexingType(CopyOnWriteArrayWithContiguous) - NumberOfIndexingShapes].get(), argList.size());
     if (UNLIKELY(!result))
         return nullptr;
-    gcSafeMemcpy(bitwise_cast<EncodedJSValue*>(result->toButterfly()->contiguous().data()), argList.data(), argList.size() * sizeof(EncodedJSValue));
+    gcSafeMemcpy(std::bit_cast<EncodedJSValue*>(result->toButterfly()->contiguous().data()), argList.data(), argList.size() * sizeof(EncodedJSValue));
     vm.writeBarrier(result);
     return result;
 }
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

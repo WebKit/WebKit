@@ -22,17 +22,17 @@
 
 #if ENABLE(GPU_PROCESS)
 
-messages -> RemoteRenderingBackend NotRefCounted Stream {
+messages -> RemoteRenderingBackend Stream {
     CreateImageBuffer(WebCore::FloatSize logicalSize, WebCore::RenderingMode renderingMode, WebCore::RenderingPurpose renderingPurpose, float resolutionScale, WebCore::DestinationColorSpace colorSpace, enum:uint8_t WebCore::ImageBufferPixelFormat pixelFormat, WebCore::RenderingResourceIdentifier renderingResourceIdentifier)
     ReleaseImageBuffer(WebCore::RenderingResourceIdentifier renderingResourceIdentifier)
     GetImageBufferResourceLimitsForTesting() -> (struct WebCore::ImageBufferResourceLimits limits) Async
     DestroyGetPixelBufferSharedMemory()
     CacheNativeImage(WebCore::ShareableBitmapHandle handle, WebCore::RenderingResourceIdentifier renderingResourceIdentifier) NotStreamEncodable
     CacheFont(struct WebCore::FontInternalAttributes data, struct WebCore::FontPlatformDataAttributes platformData, std::optional<WebCore::RenderingResourceIdentifier> renderingResourceIdentifier) NotStreamEncodable
-#if PLATFORM(COCOA)
+#if PLATFORM(COCOA) || USE(SKIA)
     CacheFontCustomPlatformData(struct WebCore::FontCustomPlatformSerializedData fontCustomPlatformData) NotStreamEncodable
 #endif
-#if !PLATFORM(COCOA)
+#if !PLATFORM(COCOA) && !USE(SKIA)
     CacheFontCustomPlatformData(Ref<WebCore::FontCustomPlatformData> customPlatformData) NotStreamEncodable
 #endif
     CacheDecomposedGlyphs(Ref<WebCore::DecomposedGlyphs> decomposedGlyphs)

@@ -72,7 +72,12 @@ extension WKWebView {
     }
 
     open override func _intelligenceCollectContent(in visibleRect: CGRect, collector: UIIntelligenceElementCollector) {
-        collector.collect(.remote(collector.context.createRemoteContext()))
+#if canImport(UIIntelligenceSupport, _version: 9007)
+        let context = collector.context.createRemoteContext(description: "WKWebView")
+#else
+        let context = collector.context.createRemoteContext()
+#endif
+        collector.collect(.remote(context))
     }
 
     open override func _intelligenceCollectRemoteContent(in visibleRect: CGRect, remoteContextWrapper: UIIntelligenceCollectionRemoteContextWrapper) {

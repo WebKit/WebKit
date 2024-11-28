@@ -1,0 +1,24 @@
+<!-- webkit-test-runner [ CanvasPixelFormatEnabled=false ] -->
+<html>
+    <script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+    description("Test that the pixelFormat member of CanvasRenderingContext2DSettings is unsupported when CanvasPixelFormatEnabled=false.");
+
+    function testPixelFormatUnsupported(settings) {
+        let canvas = document.createElement("canvas");
+        let context = canvas.getContext("2d", settings);
+        window.testSettings = context.getContextAttributes();
+        shouldBeUndefined("testSettings.pixelFormat");
+    }
+
+    testPixelFormatUnsupported(undefined);
+    testPixelFormatUnsupported({ pixelFormat: "uint8" });
+    testPixelFormatUnsupported({ pixelFormat: "float16" });
+    testPixelFormatUnsupported({ pixelFormat: "foo" });
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

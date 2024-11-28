@@ -15,27 +15,35 @@
 
 using namespace sh;
 
-class MSLVertexOutputTest : public MatchOutputCodeTest
+class MSLOutputTestBase : public MatchOutputCodeTest
 {
   public:
-    MSLVertexOutputTest() : MatchOutputCodeTest(GL_VERTEX_SHADER, SH_MSL_METAL_OUTPUT)
+    MSLOutputTestBase(GLenum shaderType) : MatchOutputCodeTest(shaderType, SH_MSL_METAL_OUTPUT)
     {
         ShCompileOptions defaultCompileOptions = {};
-        defaultCompileOptions.validateAST      = true;
+        // Default options that are forced for MSL output.
+        defaultCompileOptions.rescopeGlobalVariables             = true;
+        defaultCompileOptions.simplifyLoopConditions             = true;
+        defaultCompileOptions.initializeUninitializedLocals      = true;
+        defaultCompileOptions.separateCompoundStructDeclarations = true;
+        // The tests also test that validation succeeds. This should be also the
+        // default forced option, but currently MSL backend does not generate
+        // valid trees. Once validateAST is forced, move to above hunk.
+        defaultCompileOptions.validateAST = true;
         setDefaultCompileOptions(defaultCompileOptions);
     }
 };
 
-class MSLOutputTest : public MatchOutputCodeTest
+class MSLOutputTest : public MSLOutputTestBase
 {
   public:
-    MSLOutputTest() : MatchOutputCodeTest(GL_FRAGMENT_SHADER, SH_MSL_METAL_OUTPUT)
-    {
-        ShCompileOptions defaultCompileOptions       = {};
-        defaultCompileOptions.rescopeGlobalVariables = true;
-        defaultCompileOptions.validateAST            = true;
-        setDefaultCompileOptions(defaultCompileOptions);
-    }
+    MSLOutputTest() : MSLOutputTestBase(GL_FRAGMENT_SHADER) {}
+};
+
+class MSLVertexOutputTest : public MSLOutputTestBase
+{
+  public:
+    MSLVertexOutputTest() : MSLOutputTestBase(GL_VERTEX_SHADER) {}
 };
 
 // Test that having dynamic indexing of a vector inside the right hand side of logical or doesn't
@@ -890,6 +898,55 @@ void main(){
     compile(kShader);
 }
 
+// Tests that rewriting varyings for per-element element access does not cause crash.
+// Test for a clash between a[0] and a_0. Both could be clashing at a_0.
+TEST_F(MSLVertexOutputTest, VaryingRewriteUnderscoreNoCrash)
+{
+    const char kShader[] = R"(precision mediump float;
+varying mat2 a_0;
+varying mat3 a[1];
+void main(){
+    a_0 = mat2(0,1,2,3);
+    a[0] = mat3(0,1,2,3,4,5,6,7,8);
+    gl_Position = vec4(1);
+})";
+    compile(kShader);
+}
+
+// Tests that rewriting varyings for per-element element access does not cause crash.
+// ES3 variant.
+// Test for a clash between a[0] and a_0. Both could be clashing at a_0.
+TEST_F(MSLVertexOutputTest, VaryingRewriteUnderscoreNoCrash2)
+{
+    const char kShader[] = R"(#version 300 es
+precision mediump float;
+out mat2 a_0;
+out mat3 a[1];
+void main(){
+    a_0 = mat2(0,1,2,3);
+    a[0] = mat3(0,1,2,3,4,5,6,7,8);
+})";
+    compile(kShader);
+}
+
+// Tests that rewriting varyings for per-element element access does not cause crash.
+// Test for a clash between a_[0] and a._0. Both could be clashing at a__0.
+TEST_F(MSLVertexOutputTest, VaryingRewriteUnderscoreNoCrash3)
+{
+    const char kShader[] = R"(#version 300 es
+precision mediump float;
+out mat3 a_[1];
+struct s {
+    mat2 _0;
+};
+out s a;
+void main(){
+    a._0 = mat2(0,1,2,3);
+    a_[0] = mat3(0,1,2,3,4,5,6,7,8);
+})";
+    compile(kShader);
+}
+
 // Tests that rewriting attributes for per-element element access does not cause crash.
 // At the time of writing a_ would be confused with a due to matrixes being flattened
 // for fragment inputs, and the new variables would be given semantic names separated
@@ -919,5 +976,65 @@ TEST_F(MSLVertexOutputTest, VertexIDIvecNoCrash)
 {
     const char kShader[] = R"(#version 300 es
 void main(){ivec2 xy=ivec2((+gl_VertexID));gl_Position=vec4((xy), 0,1);})";
+    compile(kShader);
+}
+
+TEST_F(MSLVertexOutputTest, StructEqualityNoCrash)
+{
+    const char kShader[] = R"(#version 300 es
+struct S{mediump vec2 i;};S a,b;void main(){if (a==b){}})";
+    compile(kShader);
+}
+
+TEST_F(MSLOutputTest, StructAndVarDeclarationNoCrash)
+{
+    const char kShader[] = R"(#version 300 es
+void main(){struct S{mediump vec4 v;};S a;a=a,1;})";
+    compile(kShader);
+}
+
+TEST_F(MSLOutputTest, StructAndVarDeclarationSeparationNoCrash)
+{
+    const char kShader[] = R"(#version 300 es
+void main(){struct S{mediump vec4 v;}a;a=a,1;})";
+    compile(kShader);
+}
+
+TEST_F(MSLOutputTest, StructAndVarDeclarationSeparationNoCrash2)
+{
+    const char kShader[] = R"(#version 300 es
+void main(){struct S{mediump vec4 v;}a,b;a=b,1;})";
+    compile(kShader);
+}
+
+TEST_F(MSLOutputTest, StructAndVarDeclarationSeparationNoCrash3)
+{
+    const char kShader[] = R"(#version 300 es
+ void main(){struct S1{mediump vec4 v;}l;struct S2{S1 s1;}s2;s2=s2,l=l,1;})";
+    compile(kShader);
+}
+
+TEST_F(MSLOutputTest, MultisampleInterpolationNoCrash)
+{
+    getResources()->OES_shader_multisample_interpolation = 1;
+    const char kShader[]                                 = R"(#version 300 es
+#extension GL_OES_shader_multisample_interpolation : require
+precision highp float;
+in float i; out vec4 c; void main() { c = vec4(interpolateAtOffset(i, vec2(i))); })";
+    compile(kShader);
+}
+
+TEST_F(MSLVertexOutputTest, ClipCullDistanceNoCrash)
+{
+    getResources()->ANGLE_clip_cull_distance = 1;
+    const char kShader[]                     = R"(#version 300 es
+#extension GL_ANGLE_clip_cull_distance : require
+void main() { gl_Position = vec4(0.0, 0.0, 0.0, 1.0); gl_ClipDistance[1] = 1.0;})";
+    compile(kShader);
+}
+
+TEST_F(MSLOutputTest, UnnamedOutParameterNoCrash)
+{
+    const char kShader[] = R"(void f(out int){}void main(){int a;f(a);})";
     compile(kShader);
 }

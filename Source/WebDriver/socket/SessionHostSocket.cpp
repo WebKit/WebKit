@@ -30,10 +30,21 @@
 #include <wtf/UUID.h>
 #include <wtf/text/MakeString.h>
 
+#if PLATFORM(WIN)
+#include <shlwapi.h>
+#include <ws2tcpip.h>
+#endif
+
 namespace WebDriver {
 
 SessionHost::~SessionHost()
 {
+#if PLATFORM(WIN)
+    if (m_browserHandle) {
+        ::TerminateProcess(m_browserHandle.get(), 0);
+        m_browserHandle = { };
+    }
+#endif
 }
 
 HashMap<String, Inspector::RemoteInspectorConnectionClient::CallHandler>& SessionHost::dispatchMap()
@@ -55,8 +66,76 @@ void SessionHost::sendWebInspectorEvent(const String& event)
     send(m_clientID.value(), event.utf8().span());
 }
 
+#if PLATFORM(WIN)
+static std::optional<unsigned> getFreePort()
+{
+    // This function binds port 0 and immediately closes it,
+    // and returns the port number actually bound as a free port.
+
+    // FIXME:
+    // There is no guarantee that the port number returned by this function will always be available.
+    // Another application may use it immediately.
+
+    auto sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+    if (sock == INVALID_SOCKET)
+        return std::nullopt;
+
+    sockaddr_in address = { };
+    address.sin_family = AF_INET;
+    address.sin_addr.s_addr = htonl(INADDR_ANY);
+    address.sin_port = htons(0);
+    int ret = bind(sock, reinterpret_cast<struct sockaddr*>(&address), sizeof(address));
+    if (ret == SOCKET_ERROR) {
+        closesocket(sock);
+        return std::nullopt;
+    }
+
+    address = { };
+    socklen_t len = sizeof(address);
+    ret = getsockname(sock, reinterpret_cast<struct sockaddr*>(&address), &len);
+    if (ret == SOCKET_ERROR) {
+        closesocket(sock);
+        return std::nullopt;
+    }
+
+    auto freePort = ntohs(address.sin_port);
+    ::closesocket(sock);
+    return freePort;
+}
+
+static WTF::Win32Handle launchBrowser()
+{
+    WCHAR pathStr[MAX_PATH];
+    if (!::GetModuleFileName(nullptr, pathStr, std::size(pathStr)))
+        return { };
+
+    // Launch MiniBrowser.exe in the same path as WebDriver.exe.
+    // FIXME: It would be even better if the WebKit browsers elsewhere instead of MiniBrowser could be specified.
+    ::PathRemoveFileSpec(pathStr);
+    if (!::PathAppend(pathStr, L"MiniBrowser.exe"))
+        return { };
+
+    auto commandLine = makeString('"', String(pathStr), '"');
+
+    STARTUPINFO startupInfo { };
+    startupInfo.cb = sizeof(startupInfo);
+    startupInfo.dwFlags = STARTF_USESHOWWINDOW;
+    startupInfo.wShowWindow = SW_HIDE;
+    PROCESS_INFORMATION processInformation { };
+    if (::CreateProcess(0, commandLine.wideCharacters().data(), 0, 0, true, 0, 0, 0, &startupInfo, &processInformation))
+        return Win32Handle::adopt(processInformation.hProcess);
+
+    return { };
+}
+#endif
+
 void SessionHost::connectToBrowser(Function<void (std::optional<String> error)>&& completionHandler)
 {
+    if (m_clientID) {
+        completionHandler(makeString("Already connected to the browser."_s));
+        return;
+    }
+
     String targetIp;
     uint16_t targetPort = 0;
 
@@ -69,9 +148,32 @@ void SessionHost::connectToBrowser(Function<void (std::optional<String> error)>&
     }
 
     if (targetIp.isEmpty() || !targetPort) {
+#if !PLATFORM(WIN)
         completionHandler(makeString("Target IP/port is invalid, or not specified."_s));
         return;
-    }
+#else
+        // WebDriver will launch MiniBrowser for automation if both "-t" and "--target" options are not specified.
+        auto freePort = getFreePort();
+        if (!freePort) {
+            completionHandler(makeString("Failed to launch MiniBrowser."_s));
+            return;
+        }
+
+        targetIp = "127.0.0.1"_s;
+        targetPort = *freePort;
+
+        auto envVar = makeString(targetIp, ':', targetPort);
+        ::SetEnvironmentVariable(L"WEBKIT_INSPECTOR_SERVER", envVar.wideCharacters().data());
+
+        m_browserHandle = launchBrowser();
+        if (!m_browserHandle) {
+            completionHandler(makeString("Failed to launch MiniBrowser."_s));
+            return;
+        }
+        m_isRemoteBrowser = false;
+#endif
+    } else
+        m_isRemoteBrowser = true;
 
     m_clientID = connectInet(targetIp.utf8().data(), targetPort);
     if (!m_clientID)
@@ -88,6 +190,13 @@ bool SessionHost::isConnected() const
 void SessionHost::didClose(Inspector::RemoteInspectorSocketEndpoint&, Inspector::ConnectionID)
 {
     inspectorDisconnected();
+
+#if PLATFORM(WIN)
+    if (m_browserHandle) {
+        ::TerminateProcess(m_browserHandle.get(), 0);
+        m_browserHandle = { };
+    }
+#endif
 
     m_clientID = std::nullopt;
 }

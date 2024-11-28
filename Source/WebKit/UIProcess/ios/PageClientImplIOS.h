@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -48,6 +48,7 @@ namespace WebKit {
 
 class RemoteLayerTreeNode;
 
+enum class ColorControlSupportsAlpha : bool;
 enum class UndoOrRedo : bool;
 
 class PageClientImpl final : public PageClientImplCocoa
@@ -55,6 +56,10 @@ class PageClientImpl final : public PageClientImplCocoa
     , public WebFullScreenManagerProxyClient
 #endif
     {
+    WTF_MAKE_FAST_ALLOCATED;
+#if ENABLE(FULLSCREEN_API)
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(PageClientImpl);
+#endif
 public:
     PageClientImpl(WKContentView *, WKWebView *);
     virtual ~PageClientImpl();
@@ -106,12 +111,11 @@ private:
     void didChangeContentSize(const WebCore::IntSize&) override;
     void setCursor(const WebCore::Cursor&) override;
     void setCursorHiddenUntilMouseMoves(bool) override;
-    void didChangeViewportProperties(const WebCore::ViewportAttributes&) override;
     void registerEditCommand(Ref<WebEditCommandProxy>&&, UndoOrRedo) override;
     void clearAllEditCommands() override;
     bool canUndoRedo(UndoOrRedo) override;
     void executeUndoRedo(UndoOrRedo) override;
-    void accessibilityWebProcessTokenReceived(std::span<const uint8_t>, WebCore::FrameIdentifier, pid_t) override;
+    void accessibilityWebProcessTokenReceived(std::span<const uint8_t>, pid_t) override;
     bool executeSavedCommandBySelector(const String& selector) override;
     void updateSecureInputState() override;
     void resetSecureInputState() override;
@@ -143,7 +147,7 @@ private:
     Ref<WebCore::ValidationBubble> createValidationBubble(const String& message, const WebCore::ValidationBubble::Settings&) final;
 
 #if ENABLE(INPUT_TYPE_COLOR)
-    RefPtr<WebColorPicker> createColorPicker(WebPageProxy*, const WebCore::Color& initialColor, const WebCore::IntRect&, Vector<WebCore::Color>&&) final;
+    RefPtr<WebColorPicker> createColorPicker(WebPageProxy*, const WebCore::Color& initialColor, const WebCore::IntRect&, ColorControlSupportsAlpha, Vector<WebCore::Color>&&) final;
 #endif
 
 #if ENABLE(DATALIST_ELEMENT)
@@ -197,6 +201,7 @@ private:
     void elementDidBlur() override;
     void focusedElementDidChangeInputMode(WebCore::InputMode) override;
     void didUpdateEditorState() override;
+    void reconcileEnclosingScrollViewContentOffset(EditorState&) final;
     bool isFocusingElement() override;
     void selectionDidChange() override;
     bool interpretKeyEvent(const NativeWebKeyboardEvent&, bool isCharEvent) override;
@@ -228,8 +233,8 @@ private:
 
     void scrollingNodeScrollViewWillStartPanGesture(WebCore::ScrollingNodeID) override;
     void scrollingNodeScrollViewDidScroll(WebCore::ScrollingNodeID) override;
-    void scrollingNodeScrollWillStartScroll(WebCore::ScrollingNodeID) override;
-    void scrollingNodeScrollDidEndScroll(WebCore::ScrollingNodeID) override;
+    void scrollingNodeScrollWillStartScroll(std::optional<WebCore::ScrollingNodeID>) override;
+    void scrollingNodeScrollDidEndScroll(std::optional<WebCore::ScrollingNodeID>) override;
         
     void requestScrollToRect(const WebCore::FloatRect& targetRect, const WebCore::FloatPoint& origin) override;
         
@@ -243,6 +248,9 @@ private:
     void closeFullScreenManager() override;
     bool isFullScreen() override;
     void enterFullScreen(WebCore::FloatSize mediaDimensions) override;
+#if ENABLE(QUICKLOOK_FULLSCREEN)
+    void updateImageSource() override;
+#endif
     void exitFullScreen() override;
     void beganEnterFullScreen(const WebCore::IntRect& initialFrame, const WebCore::IntRect& finalFrame) override;
     void beganExitFullScreen(const WebCore::IntRect& initialFrame, const WebCore::IntRect& finalFrame) override;
@@ -347,11 +355,17 @@ private:
     UIViewController *presentingViewController() const final;
 #endif
 
+    bool isPotentialTapInProgress() const final;
+
     WebCore::FloatPoint webViewToRootView(const WebCore::FloatPoint&) const final;
     WebCore::FloatRect rootViewToWebView(const WebCore::FloatRect&) const final;
 
 #if HAVE(SPATIAL_TRACKING_LABEL)
     const String& spatialTrackingLabel() const final;
+#endif
+
+#if ENABLE(PDF_PLUGIN)
+    void pluginDidInstallPDFDocument(double initialScale) final;
 #endif
 
     void scheduleVisibleContentRectUpdate() final;

@@ -25,9 +25,9 @@
 
 #pragma once
 
+#include "CSSPrimitiveNumericTypes.h"
 #include "ColorInterpolationMethod.h"
 #include "StyleColor.h"
-#include <variant>
 #include <wtf/Forward.h>
 
 namespace WebCore {
@@ -42,7 +42,7 @@ struct CSSUnresolvedColorMix {
     struct Component {
         bool operator==(const Component&) const;
 
-        using Percentage = std::variant<PercentRaw, UnevaluatedCalc<PercentRaw>>;
+        using Percentage = CSS::Percentage<CSS::Range{0, 100}>;
 
         UniqueRef<CSSUnresolvedColor> color;
         std::optional<Percentage> percentage;
@@ -55,8 +55,10 @@ struct CSSUnresolvedColorMix {
     Component mixComponents2;
 };
 
-PercentRaw resolveComponentPercentage(const CSSUnresolvedColorMix::Component::Percentage&, const CSSToLengthConversionData&);
-PercentRaw resolveComponentPercentageNoConversionDataRequired(const CSSUnresolvedColorMix::Component::Percentage&);
+using ResolvedColorMixPercentage = Style::Percentage<CSS::Range{0, 100}>;
+
+ResolvedColorMixPercentage resolveComponentPercentage(const CSSUnresolvedColorMix::Component::Percentage&, const CSSToLengthConversionData&);
+ResolvedColorMixPercentage resolveComponentPercentageNoConversionDataRequired(const CSSUnresolvedColorMix::Component::Percentage&);
 
 void serializationForCSS(StringBuilder&, const CSSUnresolvedColorMix&);
 String serializationForCSS(const CSSUnresolvedColorMix&);

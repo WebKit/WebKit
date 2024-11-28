@@ -123,7 +123,6 @@ public:
 
 private:
     void emitNecessaryHelpers();
-    void visitGlobal(AST::Variable&);
     void serializeVariable(AST::Variable&);
     void generatePackingHelpers(AST::Structure&);
     bool emitPackedVector(const Types::Vector&);
@@ -145,7 +144,6 @@ private:
     HashSet<AST::Function*> m_visitedFunctions;
     PrepareResult& m_prepareResult;
     const HashMap<String, ConstantValue>& m_constantValues;
-    HashMap<String, ConstantValue> m_overrides;
 };
 
 static ASCIILiteral serializeAddressSpace(AddressSpace addressSpace)
@@ -172,8 +170,6 @@ void FunctionDefinitionWriter::write()
     for (auto& declaration : m_shaderModule.declarations()) {
         if (auto* structure = dynamicDowncast<AST::Structure>(declaration))
             visit(*structure);
-        else if (auto* variable = dynamicDowncast<AST::Variable>(declaration))
-            visitGlobal(*variable);
     }
 
     for (auto& declaration : m_shaderModule.declarations()) {
@@ -237,7 +233,7 @@ void FunctionDefinitionWriter::emitNecessaryHelpers()
     if (m_shaderModule.usesPackArray()) {
         m_shaderModule.clearUsesPackArray();
         m_stringBuilder.append(m_indent, "template<typename T, size_t N>\n"_s,
-            m_indent, "array<typename T::PackedType, N> __pack(array<T, N> unpacked)\n"_s,
+            m_indent, "static array<typename T::PackedType, N> __pack(array<T, N> unpacked)\n"_s,
             m_indent, "{\n"_s);
         {
             IndentationScope scope(m_indent);
@@ -253,7 +249,7 @@ void FunctionDefinitionWriter::emitNecessaryHelpers()
 
         if (m_shaderModule.usesPackedVec3()) {
             m_stringBuilder.append(m_indent, "template<typename T, size_t N>\n"_s,
-                m_indent, "array<PackedVec3<T>, N> __pack(array<vec<T, 3>, N> unpacked)\n"_s,
+                m_indent, "static array<PackedVec3<T>, N> __pack(array<vec<T, 3>, N> unpacked)\n"_s,
                 m_indent, "{\n"_s);
             {
                 IndentationScope scope(m_indent);
@@ -272,7 +268,7 @@ void FunctionDefinitionWriter::emitNecessaryHelpers()
     if (m_shaderModule.usesUnpackArray()) {
         m_shaderModule.clearUsesUnpackArray();
         m_stringBuilder.append(m_indent, "template<typename T, size_t N>\n"_s,
-            m_indent, "array<typename T::UnpackedType, N> __unpack(array<T, N> packed)\n"_s,
+            m_indent, "static array<typename T::UnpackedType, N> __unpack(array<T, N> packed)\n"_s,
             m_indent, "{\n"_s);
         {
             IndentationScope scope(m_indent);
@@ -288,7 +284,7 @@ void FunctionDefinitionWriter::emitNecessaryHelpers()
 
         if (m_shaderModule.usesPackedVec3()) {
             m_stringBuilder.append(m_indent, "template<typename T, size_t N>\n"_s,
-                m_indent, "array<vec<T, 3>, N> __unpack(array<PackedVec3<T>, N> packed)\n"_s,
+                m_indent, "static array<vec<T, 3>, N> __unpack(array<PackedVec3<T>, N> packed)\n"_s,
                 m_indent, "{\n"_s);
             {
                 IndentationScope scope(m_indent);
@@ -307,23 +303,23 @@ void FunctionDefinitionWriter::emitNecessaryHelpers()
     if (m_shaderModule.usesPackVector()) {
         m_shaderModule.clearUsesPackVector();
         m_stringBuilder.append(m_indent, "template<typename T>\n"_s,
-            m_indent, "packed_vec<T, 3> __pack(vec<T, 3> unpacked) { return unpacked; }\n\n"_s);
+            m_indent, "static packed_vec<T, 3> __pack(vec<T, 3> unpacked) { return unpacked; }\n\n"_s);
     }
 
     if (m_shaderModule.usesUnpackVector()) {
         m_shaderModule.clearUsesUnpackVector();
         m_stringBuilder.append(m_indent, "template<typename T>\n"_s,
-            m_indent, "vec<T, 3> __unpack(packed_vec<T, 3> packed) { return packed; }\n\n"_s);
+            m_indent, "static vec<T, 3> __unpack(packed_vec<T, 3> packed) { return packed; }\n\n"_s);
 
         if (m_shaderModule.usesPackedVec3()) {
             m_stringBuilder.append(m_indent, "template<typename T>\n"_s,
-                m_indent, "vec<T, 3> __unpack(PackedVec3<T> packed) { return packed; }\n\n"_s);
+                m_indent, "static vec<T, 3> __unpack(PackedVec3<T> packed) { return packed; }\n\n"_s);
         }
     }
 
     if (m_shaderModule.usesWorkgroupUniformLoad()) {
         m_stringBuilder.append(m_indent, "template<typename T>\n"_s,
-            m_indent, "T __workgroup_uniform_load(threadgroup T* const ptr)\n"_s,
+            m_indent, "static T __workgroup_uniform_load(threadgroup T* const ptr)\n"_s,
             m_indent, "{\n"_s);
         {
             IndentationScope scope(m_indent);
@@ -337,7 +333,7 @@ void FunctionDefinitionWriter::emitNecessaryHelpers()
 
     if (m_shaderModule.usesDivision()) {
         m_stringBuilder.append(m_indent, "template<typename T, typename U, typename V = conditional_t<is_scalar_v<U>, T, U>>\n"_s,
-            m_indent, "V __wgslDiv(T lhs, U rhs)\n"_s,
+            m_indent, "static V __wgslDiv(T lhs, U rhs)\n"_s,
             m_indent, "{\n"_s);
         {
             IndentationScope scope(m_indent);
@@ -354,7 +350,7 @@ void FunctionDefinitionWriter::emitNecessaryHelpers()
 
     if (m_shaderModule.usesModulo()) {
         m_stringBuilder.append(m_indent, "template<typename T, typename U, typename V = conditional_t<is_scalar_v<U>, T, U>>\n"_s,
-            m_indent, "V __wgslMod(T lhs, U rhs)\n"_s,
+            m_indent, "static V __wgslMod(T lhs, U rhs)\n"_s,
             m_indent, "{\n"_s);
         {
             IndentationScope scope(m_indent);
@@ -380,7 +376,7 @@ void FunctionDefinitionWriter::emitNecessaryHelpers()
         }
         m_stringBuilder.append(m_indent, "};\n\n"_s,
             m_indent, "template<typename T, typename U = conditional_t<is_vector_v<T>, vec<int, vec_elements<T>::value ?: 2>, int>>\n"_s,
-            m_indent, "__frexp_result<T, U> __wgslFrexp(T value)\n"_s,
+            m_indent, "static __frexp_result<T, U> __wgslFrexp(T value)\n"_s,
             m_indent, "{\n"_s);
         {
             IndentationScope scope(m_indent);
@@ -401,7 +397,7 @@ void FunctionDefinitionWriter::emitNecessaryHelpers()
         }
         m_stringBuilder.append(m_indent, "};\n\n"_s,
             m_indent, "template<typename T>\n"_s,
-            m_indent, "__modf_result<T, T> __wgslModf(T value)\n"_s,
+            m_indent, "static __modf_result<T, T> __wgslModf(T value)\n"_s,
             m_indent, "{\n"_s);
         {
             IndentationScope scope(m_indent);
@@ -433,7 +429,7 @@ void FunctionDefinitionWriter::emitNecessaryHelpers()
 
     if (m_shaderModule.usesDot()) {
         m_stringBuilder.append(m_indent, "template<typename T, unsigned N>\n"_s,
-            m_indent, "T __wgslDot(vec<T, N> lhs, vec<T, N> rhs)\n"_s,
+            m_indent, "static T __wgslDot(vec<T, N> lhs, vec<T, N> rhs)\n"_s,
             m_indent, "{\n"_s);
         {
             IndentationScope scope(m_indent);
@@ -446,7 +442,7 @@ void FunctionDefinitionWriter::emitNecessaryHelpers()
     }
 
     if (m_shaderModule.usesDot4I8Packed()) {
-        m_stringBuilder.append(m_indent, "int __wgslDot4I8Packed(uint lhs, uint rhs)\n"_s,
+        m_stringBuilder.append(m_indent, "static int __wgslDot4I8Packed(uint lhs, uint rhs)\n"_s,
             m_indent, "{\n"_s);
         {
             IndentationScope scope(m_indent);
@@ -458,7 +454,7 @@ void FunctionDefinitionWriter::emitNecessaryHelpers()
     }
 
     if (m_shaderModule.usesDot4U8Packed()) {
-        m_stringBuilder.append(m_indent, "uint __wgslDot4U8Packed(uint lhs, uint rhs)\n"_s,
+        m_stringBuilder.append(m_indent, "static uint __wgslDot4U8Packed(uint lhs, uint rhs)\n"_s,
             m_indent, "{\n"_s);
         {
             IndentationScope scope(m_indent);
@@ -471,7 +467,7 @@ void FunctionDefinitionWriter::emitNecessaryHelpers()
 
     if (m_shaderModule.usesFirstLeadingBit()) {
         m_stringBuilder.append(m_indent, "template<typename T>\n"_s,
-            m_indent, "T __wgslFirstLeadingBit(T e)\n"_s,
+            m_indent, "static T __wgslFirstLeadingBit(T e)\n"_s,
             m_indent, "{\n"_s);
         {
             IndentationScope scope(m_indent);
@@ -485,7 +481,7 @@ void FunctionDefinitionWriter::emitNecessaryHelpers()
 
     if (m_shaderModule.usesFirstTrailingBit()) {
         m_stringBuilder.append(m_indent, "template<typename T>\n"_s,
-            m_indent, "T __wgslFirstTrailingBit(T e)\n"_s,
+            m_indent, "static T __wgslFirstTrailingBit(T e)\n"_s,
             m_indent, "{\n"_s);
         {
             IndentationScope scope(m_indent);
@@ -496,7 +492,7 @@ void FunctionDefinitionWriter::emitNecessaryHelpers()
 
     if (m_shaderModule.usesSign()) {
         m_stringBuilder.append(m_indent, "template<typename T>\n"_s,
-            m_indent, "T __wgslSign(T e)\n"_s,
+            m_indent, "static T __wgslSign(T e)\n"_s,
             m_indent, "{\n"_s);
         {
             IndentationScope scope(m_indent);
@@ -507,7 +503,7 @@ void FunctionDefinitionWriter::emitNecessaryHelpers()
 
     if (m_shaderModule.usesExtractBits()) {
         m_stringBuilder.append(m_indent, "template<typename T>\n"_s,
-            m_indent, "T __wgslExtractBits(T e, uint offset, uint count)\n"_s,
+            m_indent, "static T __wgslExtractBits(T e, uint offset, uint count)\n"_s,
             m_indent, "{\n"_s);
         {
             IndentationScope scope(m_indent);
@@ -519,14 +515,11 @@ void FunctionDefinitionWriter::emitNecessaryHelpers()
     }
 
     if (m_shaderModule.usesMin()) {
-        m_stringBuilder.append(m_indent, "template<typename T>\n"_s,
-            m_indent, "static T __attribute((always_inline)) __wgslMin(T a, T b)\n"_s,
+        m_stringBuilder.append(m_indent, "static uint __attribute((always_inline)) __wgslMin(uint a, uint b)\n"_s,
             m_indent, "{\n"_s);
         {
             IndentationScope scope(m_indent);
-            m_stringBuilder.append(m_indent, "volatile T va = a;\n"_s,
-                m_indent, "volatile T vb = b;\n"_s,
-                m_indent, "return min(va, vb);\n"_s);
+            m_stringBuilder.append("return select(b, a, a < b);\n"_s);
         }
         m_stringBuilder.append(m_indent, "}\n\n"_s);
     }
@@ -607,7 +600,7 @@ void FunctionDefinitionWriter::visit(AST::Structure& structDecl)
         for (auto& member : structDecl.members()) {
             auto& name = member.name();
             auto* type = member.type().inferredType();
-            if (isPrimitiveReference(type, Types::Primitive::TextureExternal)) {
+            if (isPrimitive(type, Types::Primitive::TextureExternal) || isPrimitiveReference(type, Types::Primitive::TextureExternal))  {
                 m_stringBuilder.append(m_indent, "texture2d<float> __"_s, name, "_FirstPlane;\n"_s,
                     m_indent, "texture2d<float> __"_s, name, "_SecondPlane;\n"_s,
                     m_indent, "float3x2 __"_s, name, "_UVRemapMatrix;\n"_s,
@@ -666,7 +659,7 @@ void FunctionDefinitionWriter::generatePackingHelpers(AST::Structure& structure)
     const String& packedName = structure.name();
     auto unpackedName = structure.original()->name();
 
-    m_stringBuilder.append(m_indent, packedName, " __pack("_s, unpackedName, " unpacked)\n"_s,
+    m_stringBuilder.append(m_indent, "static "_s, packedName, " __pack("_s, unpackedName, " unpacked)\n"_s,
         m_indent, "{\n"_s);
     {
         IndentationScope scope(m_indent);
@@ -681,7 +674,7 @@ void FunctionDefinitionWriter::generatePackingHelpers(AST::Structure& structure)
         m_stringBuilder.append(m_indent, "return packed;\n"_s);
     }
     m_stringBuilder.append(m_indent, "}\n\n"_s,
-        m_indent, unpackedName, " __unpack("_s, packedName, " packed)\n"_s,
+        m_indent, "static "_s, unpackedName, " __unpack("_s, packedName, " packed)\n"_s,
         m_indent, "{\n"_s);
     {
         IndentationScope scope(m_indent);
@@ -757,26 +750,6 @@ void FunctionDefinitionWriter::visit(AST::Variable& variable)
 void FunctionDefinitionWriter::visit(AST::ConstAssert&)
 {
     // const_assert should not generate any code
-}
-
-void FunctionDefinitionWriter::visitGlobal(AST::Variable& variable)
-{
-    if (variable.flavor() != AST::VariableFlavor::Override)
-        return;
-
-    String entryName = variable.originalName();
-    if (variable.id())
-        entryName = String::number(*variable.id());
-    auto it = m_constantValues.find(entryName);
-    if (it != m_constantValues.end()) {
-        m_overrides.add(variable.name(), it->value);
-        return;
-    }
-    auto* initializer = variable.maybeInitializer();
-    if (!initializer)
-        return;
-    if (auto& maybeConstant = initializer->constantValue())
-        m_overrides.add(variable.name(), *maybeConstant);
 }
 
 void FunctionDefinitionWriter::serializeVariable(AST::Variable& variable)
@@ -965,6 +938,8 @@ static ASCIILiteral convertToSampleMode(InterpolationType type, InterpolationSam
         return "flat"_s;
     case InterpolationType::Linear:
         switch (sampleType) {
+        case InterpolationSampling::First:
+        case InterpolationSampling::Either:
         case InterpolationSampling::Center:
             return "center_no_perspective"_s;
         case InterpolationSampling::Centroid:
@@ -974,6 +949,8 @@ static ASCIILiteral convertToSampleMode(InterpolationType type, InterpolationSam
         }
     case InterpolationType::Perspective:
         switch (sampleType) {
+        case InterpolationSampling::First:
+        case InterpolationSampling::Either:
         case InterpolationSampling::Center:
             return "center_perspective"_s;
         case InterpolationSampling::Centroid:
@@ -1952,50 +1929,50 @@ void FunctionDefinitionWriter::visit(const Type* type, AST::CallExpression& call
 
     if (auto* target = dynamicDowncast<AST::IdentifierExpression>(call.target())) {
         static constexpr std::pair<ComparableASCIILiteral, void(*)(FunctionDefinitionWriter*, AST::CallExpression&)> builtinMappings[] {
-            { "__dynamicOffset", emitDynamicOffset },
-            { "arrayLength", emitArrayLength },
-            { "atomicAdd", emitAtomicAdd },
-            { "atomicAnd", emitAtomicAnd },
-            { "atomicExchange", emitAtomicExchange },
-            { "atomicLoad", emitAtomicLoad },
-            { "atomicMax", emitAtomicMax },
-            { "atomicMin", emitAtomicMin },
-            { "atomicOr", emitAtomicOr },
-            { "atomicStore", emitAtomicStore },
-            { "atomicSub", emitAtomicSub },
-            { "atomicXor", emitAtomicXor },
-            { "degrees", emitDegrees },
-            { "distance", emitDistance },
-            { "length", emitLength },
-            { "pack2x16float", emitPack2x16Float },
-            { "pack4xI8", emitPack4xI8 },
-            { "pack4xI8Clamp", emitPack4xI8Clamp },
-            { "pack4xU8", emitPack4xU8 },
-            { "pack4xU8Clamp", emitPack4xU8Clamp },
-            { "quantizeToF16", emitQuantizeToF16 },
-            { "radians", emitRadians },
-            { "storageBarrier", emitStorageBarrier },
-            { "textureBarrier", emitTextureBarrier },
-            { "textureDimensions", emitTextureDimensions },
-            { "textureGather", emitTextureGather },
-            { "textureGatherCompare", emitTextureGatherCompare },
-            { "textureLoad", emitTextureLoad },
-            { "textureNumLayers", emitTextureNumLayers },
-            { "textureNumLevels", emitTextureNumLevels },
-            { "textureNumSamples", emitTextureNumSamples },
-            { "textureSample", emitTextureSample },
-            { "textureSampleBaseClampToEdge", emitTextureSampleBaseClampToEdge },
-            { "textureSampleBias", emitTextureSampleBias },
-            { "textureSampleCompare", emitTextureSampleCompare },
-            { "textureSampleCompareLevel", emitTextureSampleCompare },
-            { "textureSampleGrad", emitTextureSampleGrad },
-            { "textureSampleLevel", emitTextureSampleLevel },
-            { "textureStore", emitTextureStore },
-            { "unpack2x16float", emitUnpack2x16Float },
-            { "unpack4xI8", emitUnpack4xI8 },
-            { "unpack4xU8", emitUnpack4xU8 },
-            { "workgroupBarrier", emitWorkgroupBarrier },
-            { "workgroupUniformLoad", emitWorkgroupUniformLoad },
+            { "__dynamicOffset"_s, emitDynamicOffset },
+            { "arrayLength"_s, emitArrayLength },
+            { "atomicAdd"_s, emitAtomicAdd },
+            { "atomicAnd"_s, emitAtomicAnd },
+            { "atomicExchange"_s, emitAtomicExchange },
+            { "atomicLoad"_s, emitAtomicLoad },
+            { "atomicMax"_s, emitAtomicMax },
+            { "atomicMin"_s, emitAtomicMin },
+            { "atomicOr"_s, emitAtomicOr },
+            { "atomicStore"_s, emitAtomicStore },
+            { "atomicSub"_s, emitAtomicSub },
+            { "atomicXor"_s, emitAtomicXor },
+            { "degrees"_s, emitDegrees },
+            { "distance"_s, emitDistance },
+            { "length"_s, emitLength },
+            { "pack2x16float"_s, emitPack2x16Float },
+            { "pack4xI8"_s, emitPack4xI8 },
+            { "pack4xI8Clamp"_s, emitPack4xI8Clamp },
+            { "pack4xU8"_s, emitPack4xU8 },
+            { "pack4xU8Clamp"_s, emitPack4xU8Clamp },
+            { "quantizeToF16"_s, emitQuantizeToF16 },
+            { "radians"_s, emitRadians },
+            { "storageBarrier"_s, emitStorageBarrier },
+            { "textureBarrier"_s, emitTextureBarrier },
+            { "textureDimensions"_s, emitTextureDimensions },
+            { "textureGather"_s, emitTextureGather },
+            { "textureGatherCompare"_s, emitTextureGatherCompare },
+            { "textureLoad"_s, emitTextureLoad },
+            { "textureNumLayers"_s, emitTextureNumLayers },
+            { "textureNumLevels"_s, emitTextureNumLevels },
+            { "textureNumSamples"_s, emitTextureNumSamples },
+            { "textureSample"_s, emitTextureSample },
+            { "textureSampleBaseClampToEdge"_s, emitTextureSampleBaseClampToEdge },
+            { "textureSampleBias"_s, emitTextureSampleBias },
+            { "textureSampleCompare"_s, emitTextureSampleCompare },
+            { "textureSampleCompareLevel"_s, emitTextureSampleCompare },
+            { "textureSampleGrad"_s, emitTextureSampleGrad },
+            { "textureSampleLevel"_s, emitTextureSampleLevel },
+            { "textureStore"_s, emitTextureStore },
+            { "unpack2x16float"_s, emitUnpack2x16Float },
+            { "unpack4xI8"_s, emitUnpack4xI8 },
+            { "unpack4xU8"_s, emitUnpack4xU8 },
+            { "workgroupBarrier"_s, emitWorkgroupBarrier },
+            { "workgroupUniformLoad"_s, emitWorkgroupUniformLoad },
         };
         static constexpr SortedArrayMap builtins { builtinMappings };
         const auto& targetName = target->identifier().id();
@@ -2005,40 +1982,40 @@ void FunctionDefinitionWriter::visit(const Type* type, AST::CallExpression& call
         }
 
         static constexpr std::pair<ComparableASCIILiteral, ASCIILiteral> directMappings[] {
-            { "atomicCompareExchangeWeak", "__wgslAtomicCompareExchangeWeak"_s },
-            { "countLeadingZeros", "clz"_s },
-            { "countOneBits", "popcount"_s },
-            { "countTrailingZeros", "ctz"_s },
-            { "dot", "__wgslDot"_s },
-            { "dot4I8Packed", "__wgslDot4I8Packed"_s },
-            { "dot4U8Packed", "__wgslDot4U8Packed"_s },
-            { "dpdx", "dfdx"_s },
-            { "dpdxCoarse", "dfdx"_s },
-            { "dpdxFine", "dfdx"_s },
-            { "dpdy", "dfdy"_s },
-            { "dpdyCoarse", "dfdy"_s },
-            { "dpdyFine", "dfdy"_s },
-            { "extractBits", "__wgslExtractBits"_s },
-            { "faceForward", "faceforward"_s },
-            { "firstLeadingBit", "__wgslFirstLeadingBit"_s },
-            { "firstTrailingBit", "__wgslFirstTrailingBit"_s },
-            { "frexp", "__wgslFrexp"_s },
-            { "fwidthCoarse", "fwidth"_s },
-            { "fwidthFine", "fwidth"_s },
-            { "insertBits", "insert_bits"_s },
-            { "inverseSqrt", "rsqrt"_s },
-            { "modf", "__wgslModf"_s },
-            { "pack2x16snorm", "pack_float_to_snorm2x16"_s },
-            { "pack2x16unorm", "pack_float_to_unorm2x16"_s },
-            { "pack4x8snorm", "pack_float_to_snorm4x8"_s },
-            { "pack4x8unorm", "pack_float_to_unorm4x8"_s },
-            { "reverseBits", "reverse_bits"_s },
-            { "round", "rint"_s },
-            { "sign", "__wgslSign"_s },
-            { "unpack2x16snorm", "unpack_snorm2x16_to_float"_s },
-            { "unpack2x16unorm", "unpack_unorm2x16_to_float"_s },
-            { "unpack4x8snorm", "unpack_snorm4x8_to_float"_s },
-            { "unpack4x8unorm", "unpack_unorm4x8_to_float"_s },
+            { "atomicCompareExchangeWeak"_s, "__wgslAtomicCompareExchangeWeak"_s },
+            { "countLeadingZeros"_s, "clz"_s },
+            { "countOneBits"_s, "popcount"_s },
+            { "countTrailingZeros"_s, "ctz"_s },
+            { "dot"_s, "__wgslDot"_s },
+            { "dot4I8Packed"_s, "__wgslDot4I8Packed"_s },
+            { "dot4U8Packed"_s, "__wgslDot4U8Packed"_s },
+            { "dpdx"_s, "dfdx"_s },
+            { "dpdxCoarse"_s, "dfdx"_s },
+            { "dpdxFine"_s, "dfdx"_s },
+            { "dpdy"_s, "dfdy"_s },
+            { "dpdyCoarse"_s, "dfdy"_s },
+            { "dpdyFine"_s, "dfdy"_s },
+            { "extractBits"_s, "__wgslExtractBits"_s },
+            { "faceForward"_s, "faceforward"_s },
+            { "firstLeadingBit"_s, "__wgslFirstLeadingBit"_s },
+            { "firstTrailingBit"_s, "__wgslFirstTrailingBit"_s },
+            { "frexp"_s, "__wgslFrexp"_s },
+            { "fwidthCoarse"_s, "fwidth"_s },
+            { "fwidthFine"_s, "fwidth"_s },
+            { "insertBits"_s, "insert_bits"_s },
+            { "inverseSqrt"_s, "rsqrt"_s },
+            { "modf"_s, "__wgslModf"_s },
+            { "pack2x16snorm"_s, "pack_float_to_snorm2x16"_s },
+            { "pack2x16unorm"_s, "pack_float_to_unorm2x16"_s },
+            { "pack4x8snorm"_s, "pack_float_to_snorm4x8"_s },
+            { "pack4x8unorm"_s, "pack_float_to_unorm4x8"_s },
+            { "reverseBits"_s, "reverse_bits"_s },
+            { "round"_s, "rint"_s },
+            { "sign"_s, "__wgslSign"_s },
+            { "unpack2x16snorm"_s, "unpack_snorm2x16_to_float"_s },
+            { "unpack2x16unorm"_s, "unpack_unorm2x16_to_float"_s },
+            { "unpack4x8snorm"_s, "unpack_snorm4x8_to_float"_s },
+            { "unpack4x8unorm"_s, "unpack_unorm4x8_to_float"_s },
         };
         static constexpr SortedArrayMap mappedNames { directMappings };
         if (call.isConstructor()) {
@@ -2199,8 +2176,8 @@ void FunctionDefinitionWriter::visit(AST::IndexAccessExpression& access)
 
 void FunctionDefinitionWriter::visit(AST::IdentifierExpression& identifier)
 {
-    auto it = m_overrides.find(identifier.identifier());
-    if (UNLIKELY(it != m_overrides.end())) {
+    auto it = m_constantValues.find(identifier.identifier());
+    if (UNLIKELY(it != m_constantValues.end())) {
         m_stringBuilder.append('(');
         serializeConstant(identifier.inferredType(), it->value);
         m_stringBuilder.append(')');
@@ -2246,25 +2223,19 @@ void FunctionDefinitionWriter::visit(AST::Unsigned32Literal& literal)
 void FunctionDefinitionWriter::visit(AST::AbstractFloatLiteral& literal)
 {
     NumberToStringBuffer buffer;
-    WTF::numberToStringWithTrailingPoint(literal.value(), buffer);
-
-    m_stringBuilder.append(span(&buffer[0]));
+    m_stringBuilder.append(WTF::numberToStringWithTrailingPoint(literal.value(), buffer));
 }
 
 void FunctionDefinitionWriter::visit(AST::Float32Literal& literal)
 {
     NumberToStringBuffer buffer;
-    WTF::numberToStringWithTrailingPoint(literal.value(), buffer);
-
-    m_stringBuilder.append(span(&buffer[0]));
+    m_stringBuilder.append(WTF::numberToStringWithTrailingPoint(literal.value(), buffer));
 }
 
 void FunctionDefinitionWriter::visit(AST::Float16Literal& literal)
 {
     NumberToStringBuffer buffer;
-    WTF::numberToStringWithTrailingPoint(literal.value(), buffer);
-
-    m_stringBuilder.append(span(&buffer[0]));
+    m_stringBuilder.append(WTF::numberToStringWithTrailingPoint(literal.value(), buffer));
 }
 
 void FunctionDefinitionWriter::visit(AST::Statement& statement)
@@ -2583,20 +2554,17 @@ void FunctionDefinitionWriter::serializeConstant(const Type* type, ConstantValue
                 break;
             case Primitive::AbstractFloat: {
                 NumberToStringBuffer buffer;
-                WTF::numberToStringWithTrailingPoint(std::get<double>(value), buffer);
-                m_stringBuilder.append(span(&buffer[0]));
+                m_stringBuilder.append(WTF::numberToStringWithTrailingPoint(std::get<double>(value), buffer));
                 break;
             }
             case Primitive::F32: {
                 NumberToStringBuffer buffer;
-                WTF::numberToStringWithTrailingPoint(std::get<float>(value), buffer);
-                m_stringBuilder.append(span(&buffer[0]));
+                m_stringBuilder.append(WTF::numberToStringWithTrailingPoint(std::get<float>(value), buffer));
                 break;
             }
             case Primitive::F16: {
                 NumberToStringBuffer buffer;
-                WTF::numberToStringWithTrailingPoint(std::get<half>(value), buffer);
-                m_stringBuilder.append(span(&buffer[0]), 'h');
+                m_stringBuilder.append(WTF::numberToStringWithTrailingPoint(std::get<half>(value), buffer), 'h');
                 break;
             }
             case Primitive::Bool:

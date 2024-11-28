@@ -47,7 +47,7 @@ namespace WebCore {
 static SecurityPolicy::LocalLoadPolicy localLoadPolicy = SecurityPolicy::AllowLocalLoadsForLocalOnly;
 
 using OriginAccessAllowlist = Vector<OriginAccessEntry>;
-using OriginAccessMap = HashMap<SecurityOriginData, std::unique_ptr<OriginAccessAllowlist>>;
+using OriginAccessMap = UncheckedKeyHashMap<SecurityOriginData, std::unique_ptr<OriginAccessAllowlist>>;
 
 static Lock originAccessMapLock;
 static OriginAccessMap& originAccessMap() WTF_REQUIRES_LOCK(originAccessMapLock)
@@ -198,7 +198,7 @@ bool SecurityPolicy::allowSubstituteDataAccessToLocal()
 
 bool SecurityPolicy::isAccessAllowed(const SecurityOrigin& activeOrigin, const SecurityOrigin& targetOrigin, const URL& targetURL, const OriginAccessPatterns& patterns)
 {
-    ASSERT(targetOrigin.equal(SecurityOrigin::create(targetURL).ptr()));
+    ASSERT(targetOrigin.equal(SecurityOrigin::create(targetURL)));
     {
         Locker locker { originAccessMapLock };
         if (auto* list = originAccessMap().get(activeOrigin.data())) {

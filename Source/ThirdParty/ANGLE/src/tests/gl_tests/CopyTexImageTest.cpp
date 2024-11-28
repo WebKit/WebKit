@@ -1308,9 +1308,6 @@ TEST_P(CopyTexImageTestES3, 3DSubImageDrawTextureData)
 // Test glCopyTexSubImage3D with mismatched texture formats
 TEST_P(CopyTexImageTestES3, 3DSubImageDrawMismatchedTextureTypes)
 {
-    // TODO(anglebug.com/42264029)
-    ANGLE_SKIP_TEST_IF(IsIOS() && IsOpenGLES());
-
     GLFramebuffer fbo;
     glBindFramebuffer(GL_FRAMEBUFFER, fbo);
 

@@ -166,7 +166,7 @@ function shouldThrow(fn, error, message) {
         Symbol("symbol"),
     ];
     for (const invalidIterator of invalidIterators) {
-        shouldThrow(() => { Iterator.from(invalidIterator) }, TypeError, "Iterafor.from requires an object or string");
+        shouldThrow(() => { Iterator.from(invalidIterator) }, TypeError, "GetIteratorFlattenable expects its first argument to be an object or a string");
     }
 }
 

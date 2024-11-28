@@ -31,10 +31,12 @@
 #pragma once
 
 #include "InputType.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class HiddenInputType final : public InputType {
+    WTF_MAKE_TZONE_ALLOCATED(HiddenInputType);
 public:
     static Ref<HiddenInputType> create(HTMLInputElement& element)
     {

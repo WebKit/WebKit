@@ -27,6 +27,7 @@
 
 #if ENABLE(WEB_PUSH_NOTIFICATIONS)
 
+#include "Connection.h"
 #include "MessageReceiver.h"
 #include "PushMessageForTesting.h"
 #include "WebPushMessage.h"
@@ -68,7 +69,7 @@ using WebKit::WebPushD::WebPushDaemonConnectionConfiguration;
 namespace WebPushD {
 
 enum class PushClientConnectionIdentifierType { };
-using PushClientConnectionIdentifier = LegacyNullableAtomicObjectIdentifier<PushClientConnectionIdentifierType>;
+using PushClientConnectionIdentifier = AtomicObjectIdentifier<PushClientConnectionIdentifierType>;
 
 class PushClientConnection : public RefCounted<PushClientConnection>, public Identified<PushClientConnectionIdentifier>, public IPC::MessageReceiver {
     WTF_MAKE_TZONE_ALLOCATED(PushClientConnection);
@@ -88,10 +89,6 @@ public:
     void connectionClosed();
 
     void didReceiveMessageWithReplyHandler(IPC::Decoder&, Function<void(UniqueRef<IPC::Encoder>&&)>&&) override;
-
-#if PLATFORM(IOS)
-    String associatedWebClipTitle() const;
-#endif
 
 private:
     PushClientConnection(xpc_connection_t, String&& hostAppCodeSigningIdentifier, bool hostAppHasPushInjectEntitlement, String&& pushPartitionString, std::optional<WTF::UUID>&& dataStoreIdentifier);
@@ -120,16 +117,13 @@ private:
     void cancelNotification(WebCore::SecurityOriginData&&, const WTF::UUID& notificationID);
     void setAppBadge(WebCore::SecurityOriginData&&, std::optional<uint64_t>);
     void getAppBadgeForTesting(CompletionHandler<void(std::optional<uint64_t>)>&&);
+    void setProtocolVersionForTesting(unsigned, CompletionHandler<void()>&&);
 
     OSObjectPtr<xpc_connection_t> m_xpcConnection;
     String m_hostAppCodeSigningIdentifier;
     bool m_hostAppHasPushInjectEntitlement { false };
     String m_pushPartitionString;
     Markable<WTF::UUID> m_dataStoreIdentifier;
-
-#if PLATFORM(IOS)
-    mutable RetainPtr<UIWebClip> m_associatedWebClip;
-#endif
 };
 
 } // namespace WebPushD

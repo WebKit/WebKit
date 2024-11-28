@@ -474,12 +474,12 @@ std::optional<Vector<ServiceWorkerScripts>> SWRegistrationDatabase::updateRegist
             || statement->bindText(6, StringView { convertUpdateViaCacheToString(data.registration.updateViaCache) }) != SQLITE_OK
             || statement->bindText(7, data.scriptURL.string()) != SQLITE_OK
             || statement->bindText(8, StringView { convertWorkerTypeToString(data.workerType) }) != SQLITE_OK
-            || statement->bindBlob(9, std::span(cspEncoder.buffer(), cspEncoder.bufferSize())) != SQLITE_OK
-            || statement->bindBlob(10, std::span(coepEncoder.buffer(), coepEncoder.bufferSize())) != SQLITE_OK
+            || statement->bindBlob(9, cspEncoder.span()) != SQLITE_OK
+            || statement->bindBlob(10, coepEncoder.span()) != SQLITE_OK
             || statement->bindText(11, data.referrerPolicy) != SQLITE_OK
-            || statement->bindBlob(12, std::span(scriptResourceMapEncoder.buffer(), scriptResourceMapEncoder.bufferSize())) != SQLITE_OK
-            || statement->bindBlob(13, std::span(certificateInfoEncoder.buffer(), certificateInfoEncoder.bufferSize())) != SQLITE_OK
-            || statement->bindBlob(14, std::span(navigationPreloadStateEncoder.buffer(), navigationPreloadStateEncoder.bufferSize())) != SQLITE_OK
+            || statement->bindBlob(12, scriptResourceMapEncoder.span()) != SQLITE_OK
+            || statement->bindBlob(13, certificateInfoEncoder.span()) != SQLITE_OK
+            || statement->bindBlob(14, navigationPreloadStateEncoder.span()) != SQLITE_OK
             || statement->step() != SQLITE_DONE) {
             RELEASE_LOG_ERROR(ServiceWorker, "SWRegistrationDatabase::updateRegistrations failed to insert record (%i) - %s", m_database->lastError(), m_database->lastErrorMsg());
             return std::nullopt;

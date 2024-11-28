@@ -42,15 +42,15 @@ template<typename> class DOMPromiseDeferred;
 
 class FileSystemSyncAccessHandle : public ActiveDOMObject, public RefCounted<FileSystemSyncAccessHandle>, public CanMakeWeakPtr<FileSystemSyncAccessHandle> {
 public:
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
+
     struct FilesystemReadWriteOptions {
         std::optional<unsigned long long> at;
     };
 
     static Ref<FileSystemSyncAccessHandle> create(ScriptExecutionContext&, FileSystemFileHandle&, FileSystemSyncAccessHandleIdentifier, FileHandle&&, uint64_t capacity);
     ~FileSystemSyncAccessHandle();
-
-    void ref() const final { RefCounted::ref(); }
-    void deref() const final { RefCounted::deref(); }
 
     ExceptionOr<void> truncate(unsigned long long size);
     ExceptionOr<unsigned long long> getSize();

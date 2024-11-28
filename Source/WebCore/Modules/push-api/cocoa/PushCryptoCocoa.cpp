@@ -30,6 +30,8 @@
 #include <pal/spi/cocoa/CommonCryptoSPI.h>
 #include <wtf/Scope.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore::PushCrypto {
 
 P256DHKeyPair P256DHKeyPair::generate(void)
@@ -127,3 +129,5 @@ std::optional<Vector<uint8_t>> decryptAES128GCM(std::span<const uint8_t> key, st
 }
 
 } // namespace WebCore::PushCrypto
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

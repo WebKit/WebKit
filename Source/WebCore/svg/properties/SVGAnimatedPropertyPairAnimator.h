@@ -26,6 +26,7 @@
 #pragma once
 
 #include "SVGAttributeAnimator.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
@@ -33,6 +34,7 @@ class SVGElement;
 
 template<typename AnimatedPropertyAnimator1, typename AnimatedPropertyAnimator2>
 class SVGAnimatedPropertyPairAnimator : public SVGAttributeAnimator {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(SVGAnimatedPropertyPairAnimator);
 public:
     using AnimatedProperty1 = typename AnimatedPropertyAnimator1::AnimatorAnimatedProperty;
     using AnimatedProperty2 = typename AnimatedPropertyAnimator2::AnimatorAnimatedProperty;

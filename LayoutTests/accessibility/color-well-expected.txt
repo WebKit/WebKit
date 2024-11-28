@@ -1,12 +1,12 @@
-This test checks the role of ColorWellRolean input with type=color
-
-On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
-
+This test checks the role of ColorWellRole on an input with type=color
 
 Role of input type=color is: AXRole: AXColorWell
 Value of empty color well: AXValue: rgb 0.00000 0.00000 0.00000 1
 Value of good color well: AXValue: rgb 1.00000 0.00000 0.00000 1
 Value of bad color well: AXValue: rgb 0.00000 0.00000 0.00000 1
+Value of alpha color well: AXValue: rgb 0.231373 0.235294 0.231373 0.400000
+Value of p3 color well: AXValue: rgb 1.00000 0.266667 0.600000 0.258824
+
 PASS successfullyParsed is true
 
 TEST COMPLETE

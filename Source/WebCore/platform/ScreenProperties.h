@@ -40,7 +40,7 @@ struct ScreenData {
     DestinationColorSpace colorSpace { DestinationColorSpace::SRGB() };
     int screenDepth { 0 };
     int screenDepthPerComponent { 0 };
-    bool screenSupportsExtendedColor { false };
+    ContentsFormat screenContentsFormat { ContentsFormat::RGBA8 };
     bool screenHasInvertedColors { false };
     bool screenSupportsHighDynamicRange { false };
 #if PLATFORM(MAC)

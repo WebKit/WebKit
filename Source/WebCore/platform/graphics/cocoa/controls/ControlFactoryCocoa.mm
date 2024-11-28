@@ -30,8 +30,11 @@
 
 #import "ApplePayButtonCocoa.h"
 #import "ApplePayButtonPart.h"
+#import <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ControlFactoryCocoa);
 
 #if ENABLE(APPLE_PAY)
 std::unique_ptr<PlatformControl> ControlFactoryCocoa::createPlatformApplePayButton(ApplePayButtonPart& part)

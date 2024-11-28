@@ -40,8 +40,12 @@
 #include "LocalFrameLoaderClient.h"
 #include "SecurityOrigin.h"
 #include <wtf/NeverDestroyed.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(MediaResourceLoader);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(MediaResource);
 
 static bool shouldRecordResponsesForTesting = false;
 
@@ -83,7 +87,7 @@ void MediaResourceLoader::sendH2Ping(const URL& url, CompletionHandler<void(Expe
     if (!m_document || !m_document->frame())
         return completionHandler(makeUnexpected(internalError(url)));
 
-    m_document->protectedFrame()->checkedLoader()->client().sendH2Ping(url, WTFMove(completionHandler));
+    m_document->protectedFrame()->protectedLoader()->client().sendH2Ping(url, WTFMove(completionHandler));
 }
 
 RefPtr<PlatformMediaResource> MediaResourceLoader::requestResource(ResourceRequest&& request, LoadOptions options)

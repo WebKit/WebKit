@@ -29,11 +29,11 @@
 #if PLATFORM(IOS_FAMILY)
 
 #import "SystemVersion.h"
-#import <WebCore/RuntimeApplicationChecks.h>
 #import <pal/spi/ios/MobileGestaltSPI.h>
 #import <pal/spi/ios/UIKitSPI.h>
 #import <pal/system/ios/Device.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/RuntimeApplicationChecks.h>
 #import <wtf/cf/TypeCastsCF.h>
 #import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #import <wtf/text/MakeString.h>

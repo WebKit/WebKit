@@ -69,13 +69,13 @@ public:
 
 private:
     // RTCDataChannelHandler
-    void setClient(RTCDataChannelHandlerClient&, ScriptExecutionContextIdentifier) final;
+    void setClient(RTCDataChannelHandlerClient&, std::optional<ScriptExecutionContextIdentifier>) final;
     bool sendStringData(const CString&) final;
     bool sendRawData(std::span<const uint8_t>) final;
     void close() final;
 
     RTCDataChannelIdentifier m_remoteIdentifier;
-    RTCDataChannelIdentifier m_localIdentifier;
+    Markable<RTCDataChannelIdentifier> m_localIdentifier;
 
     RTCDataChannelHandlerClient* m_client { nullptr };
     Ref<RTCDataChannelRemoteHandlerConnection> m_connection;

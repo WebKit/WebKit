@@ -40,7 +40,7 @@ public:
     JSCallbackData* callbackData() { return m_data; }
 
     // Functions
-    CallbackResult<typename IDLDOMString::CallbackReturnType> handleEvent(typename IDLSequence<IDLLong>::ParameterType argument) override;
+    CallbackResult<typename IDLDOMString::CallbackReturnType> handleEventRethrowingException(typename IDLSequence<IDLLong>::ParameterType argument) override;
 
 private:
     JSTestCallbackFunctionRethrow(JSC::JSObject*, JSDOMGlobalObject*);

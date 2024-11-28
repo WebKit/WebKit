@@ -14,17 +14,17 @@ PASS @scope (.a) to (& > &) is valid
 PASS @scope (.a) to (> .b) is valid
 PASS @scope (.a) to (+ .b) is valid
 PASS @scope (.a) to (~ .b) is valid
-PASS @scope () is valid
-PASS @scope to () is valid
-PASS @scope () to () is valid
-PASS @scope (.c <> .d) is valid
-PASS @scope (.a, .c <> .d) is valid
-PASS @scope (.a <> .b, .c) is valid
-PASS @scope (div::before) is valid
-PASS @scope (div::after) is valid
-PASS @scope (slotted(div)) is valid
-PASS @scope (.a) to (div::before) is valid
-PASS @scope (> &) to (>>) is valid
+PASS @scope () is not valid
+PASS @scope to () is not valid
+PASS @scope () to () is not valid
+PASS @scope (.c <> .d) is not valid
+PASS @scope (.a, .c <> .d) is not valid
+PASS @scope (.a <> .b, .c) is not valid
+FAIL @scope (div::before) is not valid assert_equals: expected 0 but got 1
+FAIL @scope (div::after) is not valid assert_equals: expected 0 but got 1
+PASS @scope (slotted(div)) is not valid
+FAIL @scope (.a) to (div::before) is not valid assert_equals: expected 0 but got 1
+PASS @scope (> &) to (>>) is not valid
 PASS @scope div is not valid
 PASS @scope (.a) unknown (.c) is not valid
 PASS @scope (.a) to unknown (.c) is not valid
@@ -41,4 +41,5 @@ PASS @scope } is not valid
 PASS @scope (.a is not valid
 PASS @scope (.a to (.b) is not valid
 PASS @scope ( to (.b) is not valid
+PASS @scope (.a) from (.c) is not valid
 

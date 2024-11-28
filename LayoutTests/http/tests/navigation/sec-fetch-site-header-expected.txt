@@ -11,5 +11,5 @@ TEST COMPLETE
 
 ============== Back Forward List ==============
         http://127.0.0.1:8000/navigation/sec-fetch-site-header.html
-curr->  https://localhost:8443/referrer-policy/resources/check-sec-fetch-site.py?expected=none  **nav target**
+curr->  https://localhost:8443/referrer-policy/resources/check-sec-fetch-site.py?expected=none
 ===============================================

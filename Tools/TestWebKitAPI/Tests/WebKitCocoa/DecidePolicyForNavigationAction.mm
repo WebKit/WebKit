@@ -32,6 +32,7 @@
 #import "PlatformWebView.h"
 #import "Test.h"
 #import "TestProtocol.h"
+#import "TestWKWebView.h"
 #import <WebKit/WKNavigationActionPrivate.h>
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/_WKHitTestResult.h>
@@ -224,6 +225,37 @@ TEST(WebKit, DecidePolicyForNavigationActionGoForward)
     EXPECT_WK_STREQ(secondURL, [[[action request] URL] absoluteString]);
     EXPECT_WK_STREQ(firstURL, [[[[action targetFrame] request] URL] absoluteString]);
     EXPECT_EQ(webView.get(), [[action targetFrame] webView]);
+
+    newWebView = nullptr;
+    action = nullptr;
+}
+
+TEST(WebKit, DecidePolicyForNavigationActionCancelAndGoBack)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+    RetainPtr controller = adoptNS([[DecidePolicyForNavigationActionController alloc] init]);
+    [webView setNavigationDelegate:controller.get()];
+
+    finishedNavigation = false;
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:firstURL]]];
+    TestWebKitAPI::Util::run(&finishedNavigation);
+
+    finishedNavigation = false;
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:secondURL]]];
+    TestWebKitAPI::Util::run(&finishedNavigation);
+
+    finishedNavigation = false;
+    shouldCancelNavigation = true;
+    decidedPolicy = false;
+    [webView goBack];
+    TestWebKitAPI::Util::run(&decidedPolicy);
+    [webView waitForNextPresentationUpdate];
+    EXPECT_FALSE(finishedNavigation);
+
+    shouldCancelNavigation = false;
+    [webView goBack];
+    TestWebKitAPI::Util::run(&finishedNavigation);
+    EXPECT_WK_STREQ(firstURL, [webView URL].absoluteString);
 
     newWebView = nullptr;
     action = nullptr;
@@ -659,7 +691,7 @@ TEST(WebKit, DelayDecidePolicyForNavigationAction)
     auto controller = adoptNS([[DecidePolicyForNavigationActionController alloc] init]);
     [webView setNavigationDelegate:controller.get()];
 
-    RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+    RetainPtr<NSURL> testURL = [NSBundle.test_resourcesBundle URLForResource:@"simple" withExtension:@"html"];
     [webView loadRequest:[NSURLRequest requestWithURL:testURL.get()]];
     TestWebKitAPI::Util::run(&decidedPolicy);
     [webView loadRequest:[NSURLRequest requestWithURL:testURL.get()]];

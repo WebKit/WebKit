@@ -26,6 +26,7 @@
 #pragma once
 
 #include "RenderLayoutState.h"
+#include "RenderView.h"
 #include <wtf/CheckedPtr.h>
 
 namespace WebCore {
@@ -38,6 +39,7 @@ public:
 private:
     CheckedPtr<const RenderBlockFlow> m_blockContainer;
     std::optional<RenderLayoutState::LineClamp> m_previousLineClamp { };
+    std::optional<RenderLayoutState::LegacyLineClamp> m_skippedLegacyLineClampToRestore { };
 };
 
 inline LineClampUpdater::LineClampUpdater(const RenderBlockFlow& blockContainer)
@@ -48,8 +50,15 @@ inline LineClampUpdater::LineClampUpdater(const RenderBlockFlow& blockContainer)
         return;
 
     m_previousLineClamp = layoutState->lineClamp();
-    auto maximumLinesForBlockContainer = m_blockContainer->style().maxLines();
+    if (blockContainer.isFieldset()) {
+        layoutState->setLineClamp({ });
 
+        m_skippedLegacyLineClampToRestore = layoutState->legacyLineClamp();
+        layoutState->setLegacyLineClamp({ });
+        return;
+    }
+
+    auto maximumLinesForBlockContainer = m_blockContainer->style().maxLines();
     if (maximumLinesForBlockContainer) {
         // New, top level line clamp.
         layoutState->setLineClamp(RenderLayoutState::LineClamp { maximumLinesForBlockContainer, m_blockContainer->style().overflowContinue() == OverflowContinue::Discard });
@@ -74,6 +83,9 @@ inline LineClampUpdater::~LineClampUpdater()
     auto* layoutState = m_blockContainer->view().frameView().layoutContext().layoutState();
     if (!layoutState)
         return;
+
+    if (m_skippedLegacyLineClampToRestore)
+        layoutState->setLegacyLineClamp(m_skippedLegacyLineClampToRestore);
 
     if (!m_previousLineClamp) {
         layoutState->setLineClamp({ });

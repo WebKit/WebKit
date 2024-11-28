@@ -74,7 +74,7 @@ SpeculativeLoad::SpeculativeLoad(Cache& cache, const GlobalFrameID& globalFrameI
     parameters.isNavigatingToAppBoundDomain = isNavigatingToAppBoundDomain;
     parameters.allowPrivacyProxy = allowPrivacyProxy;
     parameters.advancedPrivacyProtections = advancedPrivacyProtections;
-    m_networkLoad = makeUnique<NetworkLoad>(*this, WTFMove(parameters), *networkSession);
+    m_networkLoad = NetworkLoad::create(*this, WTFMove(parameters), *networkSession);
     m_networkLoad->startWithScheduling();
 }
 

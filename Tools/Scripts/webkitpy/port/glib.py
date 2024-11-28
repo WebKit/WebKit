@@ -87,28 +87,16 @@ class GLibPort(Port):
         environment['WEBKIT_EXEC_PATH'] = self._build_path('bin')
         environment['LD_LIBRARY_PATH'] = self._prepend_to_env_value(self._build_path('lib'), environment.get('LD_LIBRARY_PATH', ''))
         self._copy_value_from_environ_if_set(environment, 'LIBGL_ALWAYS_SOFTWARE')
-        self._copy_value_from_environ_if_set(environment, 'WEBKIT_OUTPUTDIR')
-        self._copy_value_from_environ_if_set(environment, 'WEBKIT_JHBUILD')
-        self._copy_value_from_environ_if_set(environment, 'WEBKIT_TOP_LEVEL')
-        self._copy_value_from_environ_if_set(environment, 'WEBKIT_DEBUG')
-        self._copy_value_from_environ_if_set(environment, 'WEBKIT_GST_DISABLE_GL_SINK')
-        self._copy_value_from_environ_if_set(environment, 'WEBKIT_GST_DMABUF_SINK_DISABLED')
-        self._copy_value_from_environ_if_set(environment, 'WEBKIT_GST_HARNESS_DUMP_DIR')
-        self._copy_value_from_environ_if_set(environment, 'WEBKIT_GST_USE_PLAYBIN3')
-        self._copy_value_from_environ_if_set(environment, 'WEBKIT_GST_HOLE_PUNCH_QUIRK')
-        self._copy_value_from_environ_if_set(environment, 'WEBKIT_GST_QUIRKS')
         self._copy_value_from_environ_if_set(environment, 'AT_SPI_BUS_ADDRESS')
-        for gst_variable in ('DEBUG', 'DEBUG_DUMP_DOT_DIR', 'DEBUG_FILE', 'DEBUG_NO_COLOR',
-                             'PLUGIN_SCANNER', 'PLUGIN_PATH', 'PLUGIN_SYSTEM_PATH', 'REGISTRY',
-                             'PLUGIN_PATH_1_0', 'TRACERS'):
-            self._copy_value_from_environ_if_set(environment, 'GST_%s' % gst_variable)
+
+        # Copy all GStreamer related env vars
+        self._copy_values_from_environ_with_prefix(environment, 'GST_')
 
         gst_feature_rank_override = os.environ.get('GST_PLUGIN_FEATURE_RANK')
         # Disable hardware-accelerated encoders and decoders. Depending on the underlying platform
         # they might be selected and decrease tests reproducibility. They can still be re-enabled by
         # setting the GST_PLUGIN_FEATURE_RANK variable accordingly when calling run-webkit-tests.
         downranked_elements = ['vah264dec', 'vah264enc', 'vah265dec', 'vah265enc', 'vaav1dec', 'vaav1enc', 'vajpegdec','vavp9dec']
-
         environment['GST_PLUGIN_FEATURE_RANK'] = 'fakeaudiosink:max,' + ','.join(['%s:0' % element for element in downranked_elements])
         if gst_feature_rank_override:
             environment['GST_PLUGIN_FEATURE_RANK'] += ',%s' % gst_feature_rank_override
@@ -151,6 +139,7 @@ class GLibPort(Port):
         env = os.environ.copy()
         env['WEBKIT_EXEC_PATH'] = self._build_path('bin')
         env['WEBKIT_INJECTED_BUNDLE_PATH'] = self._build_path('lib')
+        env['WEBKIT_INSPECTOR_RESOURCES_PATH'] = self._build_path('share')
         env['LD_LIBRARY_PATH'] = self._prepend_to_env_value(self._build_path('lib'), env.get('LD_LIBRARY_PATH', ''))
         return env
 

@@ -29,7 +29,9 @@
 
 #include <WebKit/WKBase.h>
 #include <WebKit/WKImage.h>
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
 #include <skia/core/SkImage.h>
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 
 #ifdef __cplusplus
 extern "C" {

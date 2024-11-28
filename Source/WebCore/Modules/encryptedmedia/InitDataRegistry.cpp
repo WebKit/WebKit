@@ -200,9 +200,11 @@ bool isPlayReadySanitizedInitializationData(const SharedBuffer& buffer)
     // The protection data starts with a 10-byte PlayReady version
     // header that needs to be skipped over to avoid XML parsing
     // errors.
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib port
     char* startTag = const_cast<char*>(protectionData);
     while (startTag && *startTag != '<')
         startTag++;
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     if (!startTag)
         return false;
 

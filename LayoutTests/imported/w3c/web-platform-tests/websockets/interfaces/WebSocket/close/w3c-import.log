@@ -15,6 +15,7 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/websockets/interfaces/WebSocket/close/close-basic.html
+/LayoutTests/imported/w3c/web-platform-tests/websockets/interfaces/WebSocket/close/close-connecting-async.any.js
 /LayoutTests/imported/w3c/web-platform-tests/websockets/interfaces/WebSocket/close/close-connecting.html
 /LayoutTests/imported/w3c/web-platform-tests/websockets/interfaces/WebSocket/close/close-multiple.html
 /LayoutTests/imported/w3c/web-platform-tests/websockets/interfaces/WebSocket/close/close-nested.html

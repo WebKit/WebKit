@@ -288,7 +288,7 @@ int WebPushToolMain(int, char **)
 
     auto connection = WebPushTool::Connection::create(preferTestService, bundleIdentifier.get(), pushPartition.get());
     connection->connectToService(host ? WebPushTool::WaitForServiceToExist::No : WebPushTool::WaitForServiceToExist::Yes);
-    verb->run(*connection);
+    verb->run(connection.get());
 
     CFRunLoopRun();
     return 0;

@@ -388,6 +388,17 @@ void BlockDirectory::shrink()
     }
 }
 
+// FIXME: rdar://139998916
+MarkedBlock::Handle* BlockDirectory::findMarkedBlockHandleDebug(MarkedBlock* block)
+{
+    for (size_t index = 0; index < m_blocks.size(); ++index) {
+        MarkedBlock::Handle* handle = m_blocks[index];
+        if (handle && &handle->block() == block)
+            return handle;
+    }
+    return nullptr;
+}
+
 void BlockDirectory::assertNoUnswept()
 {
     if (!ASSERT_ENABLED)
@@ -481,16 +492,6 @@ void BlockDirectory::dumpBits(PrintStream& out)
 MarkedSpace& BlockDirectory::markedSpace() const
 {
     return m_subspace->space();
-}
-
-bool BlockDirectory::isFreeListedCell(const void* target)
-{
-    bool result = false;
-    m_localAllocators.forEach(
-        [&] (LocalAllocator* allocator) {
-            result |= allocator->isFreeListedCell(target);
-        });
-    return result;
 }
 
 #if ASSERT_ENABLED

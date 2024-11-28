@@ -788,22 +788,6 @@ bool ValidateGetPlatformDisplayCommon(const ValidationContext *val,
                 case EGL_PLATFORM_ANGLE_D3D_LUID_LOW_ANGLE:
                     luidSpecified = true;
                     break;
-                case EGL_PLATFORM_ANGLE_DEVICE_CONTEXT_VOLATILE_EAGL_ANGLE:
-                    // The property does not have an effect if it's not active, so do not check
-                    // for non-support.
-                    switch (value)
-                    {
-                        case EGL_FALSE:
-                        case EGL_TRUE:
-                            break;
-                        default:
-                            val->setError(EGL_BAD_ATTRIBUTE,
-                                          "Invalid value for "
-                                          "EGL_PLATFORM_ANGLE_DEVICE_CONTEXT_VOLATILE_"
-                                          "EAGL_ANGLE attrib");
-                            return false;
-                    }
-                    break;
                 case EGL_PLATFORM_ANGLE_DEVICE_CONTEXT_VOLATILE_CGL_ANGLE:
                     // The property does not have an effect if it's not active, so do not check
                     // for non-support.
@@ -1227,44 +1211,33 @@ bool ValidateCompatibleSurface(const ValidationContext *val,
     const Config *contextConfig = context->getConfig();
     const Config *surfaceConfig = surface->getConfig();
 
-    if (context->getClientType() != EGL_OPENGL_API)
+    // Surface compatible with client API - only OPENGL_ES supported
+    switch (context->getClientMajorVersion())
     {
-        // Surface compatible with client API - only OPENGL_ES supported
-        switch (context->getClientMajorVersion())
-        {
-            case 1:
-                if (!(surfaceConfig->renderableType & EGL_OPENGL_ES_BIT))
-                {
-                    val->setError(EGL_BAD_MATCH, "Surface not compatible with OpenGL ES 1.x.");
-                    return false;
-                }
-                break;
-            case 2:
-                if (!(surfaceConfig->renderableType & EGL_OPENGL_ES2_BIT))
-                {
-                    val->setError(EGL_BAD_MATCH, "Surface not compatible with OpenGL ES 2.x.");
-                    return false;
-                }
-                break;
-            case 3:
-                if (!(surfaceConfig->renderableType & (EGL_OPENGL_ES2_BIT | EGL_OPENGL_ES3_BIT)))
-                {
-                    val->setError(EGL_BAD_MATCH, "Surface not compatible with OpenGL ES 3.x.");
-                    return false;
-                }
-                break;
-            default:
-                val->setError(EGL_BAD_MATCH, "Surface not compatible with Context API.");
+        case 1:
+            if (!(surfaceConfig->renderableType & EGL_OPENGL_ES_BIT))
+            {
+                val->setError(EGL_BAD_MATCH, "Surface not compatible with OpenGL ES 1.x.");
                 return false;
-        }
-    }
-    else
-    {
-        if (!(surfaceConfig->renderableType & EGL_OPENGL_BIT))
-        {
-            val->setError(EGL_BAD_MATCH, "Surface not compatible with OpenGL Desktop.");
+            }
+            break;
+        case 2:
+            if (!(surfaceConfig->renderableType & EGL_OPENGL_ES2_BIT))
+            {
+                val->setError(EGL_BAD_MATCH, "Surface not compatible with OpenGL ES 2.x.");
+                return false;
+            }
+            break;
+        case 3:
+            if (!(surfaceConfig->renderableType & (EGL_OPENGL_ES2_BIT | EGL_OPENGL_ES3_BIT)))
+            {
+                val->setError(EGL_BAD_MATCH, "Surface not compatible with OpenGL ES 3.x.");
+                return false;
+            }
+            break;
+        default:
+            val->setError(EGL_BAD_MATCH, "Surface not compatible with Context API.");
             return false;
-        }
     }
 
     // EGL KHR no config context
@@ -1619,15 +1592,7 @@ bool ValidateCreateContextAttribute(const ValidationContext *val,
         case EGL_CONTEXT_FLAGS_KHR:
         case EGL_CONTEXT_OPENGL_DEBUG:
         case EGL_CONTEXT_OPENGL_ROBUST_ACCESS:
-            break;
-
         case EGL_CONTEXT_OPENGL_PROFILE_MASK_KHR:
-            if (val->eglThread->getAPI() != EGL_OPENGL_API)
-            {
-                // Only valid for OpenGL (non-ES) contexts
-                val->setError(EGL_BAD_ATTRIBUTE, "OpenGL profile mask requires an OpenGL context.");
-                return false;
-            }
             break;
 
         case EGL_CONTEXT_OPENGL_ROBUST_ACCESS_EXT:
@@ -1854,20 +1819,8 @@ bool ValidateCreateContextAttributeValue(const ValidationContext *val,
         case EGL_CONTEXT_MINOR_VERSION:
         case EGL_CONTEXT_OPENGL_DEBUG:
         case EGL_CONTEXT_VIRTUALIZATION_GROUP_ANGLE:
-            break;
-
         case EGL_CONTEXT_OPENGL_PROFILE_MASK_KHR:
-        {
-            constexpr EGLint kValidProfileMaskFlags =
-                (EGL_CONTEXT_OPENGL_CORE_PROFILE_BIT |
-                 EGL_CONTEXT_OPENGL_COMPATIBILITY_PROFILE_BIT);
-            if ((value & ~kValidProfileMaskFlags) != 0)
-            {
-                val->setError(EGL_BAD_ATTRIBUTE, "Invalid OpenGL profile mask.");
-                return false;
-            }
             break;
-        }
 
         case EGL_CONTEXT_FLAGS_KHR:
         {
@@ -2634,16 +2587,9 @@ bool ValidateCreateContext(const ValidationContext *val,
             break;
 
         case EGL_OPENGL_API:
-            // The requested configuration must use EGL_OPENGL_BIT if EGL_OPENGL_BIT is the
-            // currently bound API.
-            if ((configuration != EGL_NO_CONFIG_KHR) &&
-                !(configuration->renderableType & EGL_OPENGL_BIT))
-            {
-                val->setError(EGL_BAD_CONFIG);
-                return false;
-            }
-            // TODO(http://anglebug.com/42266001): validate desktop OpenGL versions and profile mask
-            break;
+            // Desktop GL is not supported by ANGLE.
+            val->setError(EGL_BAD_CONFIG);
+            return false;
 
         default:
             val->setError(EGL_BAD_MATCH, "Unsupported API.");
@@ -5165,9 +5111,6 @@ bool ValidateBindAPI(const ValidationContext *val, const EGLenum api)
     switch (api)
     {
         case EGL_OPENGL_ES_API:
-#ifdef ANGLE_ENABLE_GL_DESKTOP_FRONTEND
-        case EGL_OPENGL_API:
-#endif  // ANGLE_ENABLE_GL_DESKTOP_FRONTEND
             break;
         case EGL_OPENVG_API:
             val->setError(EGL_BAD_PARAMETER);
@@ -6111,10 +6054,7 @@ bool ValidateQueryStringiANGLE(const ValidationContext *val,
     {
         case EGL_FEATURE_NAME_ANGLE:
         case EGL_FEATURE_CATEGORY_ANGLE:
-        case EGL_FEATURE_DESCRIPTION_ANGLE:
-        case EGL_FEATURE_BUG_ANGLE:
         case EGL_FEATURE_STATUS_ANGLE:
-        case EGL_FEATURE_CONDITION_ANGLE:
             break;
         default:
             val->setError(EGL_BAD_PARAMETER, "name is not valid.");
@@ -6425,13 +6365,6 @@ bool ValidateQueryDeviceAttribEXT(const ValidationContext *val,
             break;
         case EGL_D3D9_DEVICE_ANGLE:
             if (!device->getExtensions().deviceD3D9)
-            {
-                val->setError(EGL_BAD_ATTRIBUTE);
-                return false;
-            }
-            break;
-        case EGL_EAGL_CONTEXT_ANGLE:
-            if (!device->getExtensions().deviceEAGL)
             {
                 val->setError(EGL_BAD_ATTRIBUTE);
                 return false;

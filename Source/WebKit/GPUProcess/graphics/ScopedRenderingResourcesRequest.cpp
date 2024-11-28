@@ -30,4 +30,16 @@ namespace WebKit {
 
 std::atomic<unsigned> ScopedRenderingResourcesRequest::s_requests;
 
+#if !PLATFORM(COCOA)
+
+void ScopedRenderingResourcesRequest::scheduleFreeRenderingResources()
+{
+}
+
+void ScopedRenderingResourcesRequest::freeRenderingResources()
+{
+}
+
+#endif
+
 }

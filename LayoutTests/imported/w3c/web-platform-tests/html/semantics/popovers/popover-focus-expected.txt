@@ -24,49 +24,9 @@ PASS Popover focus test: autofocus popover and multiple autofocus children
 PASS Popover button click focus test: autofocus popover and multiple autofocus children
 PASS Popover corner cases test: autofocus popover and multiple autofocus children
 PASS Popover focus test: Opening dialogs as popovers should use dialog initial focus algorithm.
-FAIL Popover button click focus test: Opening dialogs as popovers should use dialog initial focus algorithm. assert_equals: focus should move to the button when clicked, and should stay there when the popover closes expected Element node <button tabindex="0" popovertarget="popover-id">Click me<... but got Element node <body>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<dialog popover="auto" autofocus=...
+PASS Popover button click focus test: Opening dialogs as popovers should use dialog initial focus algorithm.
 PASS Popover corner cases test: Opening dialogs as popovers should use dialog initial focus algorithm.
 PASS Popover focus test: Opening dialogs as popovers which have autofocus should focus the dialog.
-FAIL Popover button click focus test: Opening dialogs as popovers which have autofocus should focus the dialog. assert_equals: focus should move to the button when clicked, and should stay there when the popover closes expected Element node <button tabindex="0" popovertarget="popover-id">Click me<... but got Element node <body>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<style>
-  [popover] {
-    borde...
+PASS Popover button click focus test: Opening dialogs as popovers which have autofocus should focus the dialog.
 PASS Popover corner cases test: Opening dialogs as popovers which have autofocus should focus the dialog.
 

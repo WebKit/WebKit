@@ -46,7 +46,7 @@ public:
     Vector<Ref<HTMLInputElement>> groupMembers(const HTMLInputElement&) const;
 
 private:
-    typedef HashMap<AtomString, std::unique_ptr<RadioButtonGroup>> NameToGroupMap;
+    typedef UncheckedKeyHashMap<AtomString, std::unique_ptr<RadioButtonGroup>> NameToGroupMap;
     NameToGroupMap m_nameToGroupMap;
 };
 

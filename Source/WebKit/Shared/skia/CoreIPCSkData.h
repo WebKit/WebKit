@@ -47,7 +47,9 @@ public:
 
     std::span<const uint8_t> dataReference() const
     {
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // Skia port
         return { m_skData->bytes(), m_skData->size() };
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     }
 
 private:

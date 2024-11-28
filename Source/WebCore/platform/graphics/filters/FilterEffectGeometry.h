@@ -85,6 +85,6 @@ private:
     OptionSet<Flags> m_flags;
 };
 
-using FilterEffectGeometryMap = HashMap<Ref<FilterEffect>, FilterEffectGeometry>;
+using FilterEffectGeometryMap = UncheckedKeyHashMap<Ref<FilterEffect>, FilterEffectGeometry>;
 
 } // namespace WebCore

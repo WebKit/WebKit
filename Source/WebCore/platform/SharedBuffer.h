@@ -78,8 +78,8 @@ class SharedMemoryHandle;
 // To modify or combine the data, allocate a new DataSegment.
 class DataSegment : public ThreadSafeRefCounted<DataSegment> {
 public:
-    WEBCORE_EXPORT size_t size() const;
-    std::span<const uint8_t> span() const { return std::span { data(), size() }; }
+    size_t size() const { return span().size(); }
+    WEBCORE_EXPORT std::span<const uint8_t> span() const;
 
     WEBCORE_EXPORT static Ref<DataSegment> create(Vector<uint8_t>&&);
 
@@ -98,10 +98,8 @@ public:
     WEBCORE_EXPORT static Ref<DataSegment> create(FileSystem::MappedFileData&&);
 
     struct Provider {
-        Function<const uint8_t*()> data;
-        Function<size_t()> size;
+        Function<std::span<const uint8_t>()> span;
     };
-
     WEBCORE_EXPORT static Ref<DataSegment> create(Provider&&);
 
 #if USE(FOUNDATION)
@@ -115,8 +113,6 @@ private:
 #if USE(FOUNDATION)
     void iterate(CFDataRef, const Function<void(std::span<const uint8_t>)>& apply) const;
 #endif
-
-    WEBCORE_EXPORT const uint8_t* data() const;
 
     explicit DataSegment(Vector<uint8_t>&& data)
         : m_immutableData(WTFMove(data)) { }
@@ -156,6 +152,7 @@ private:
 #endif
         FileSystem::MappedFileData,
         Provider> m_immutableData;
+
     friend class FragmentedSharedBuffer;
     friend class SharedBuffer; // For createCFData
 };
@@ -279,7 +276,7 @@ private:
 
     // Combines all the segments into a Vector and returns that vector after clearing the FragmentedSharedBuffer.
     WEBCORE_EXPORT Vector<uint8_t> takeData();
-    const DataSegmentVectorEntry* getSegmentForPosition(size_t position) const;
+    std::span<const DataSegmentVectorEntry> segmentForPosition(size_t position) const;
 
 #if ASSERT_ENABLED
     bool internallyConsistent() const;
@@ -309,7 +306,7 @@ public:
     WEBCORE_EXPORT static Ref<SharedBuffer> create(Ref<FragmentedSharedBuffer>&&);
 
     WEBCORE_EXPORT const uint8_t& operator[](size_t) const;
-    std::span<const uint8_t> span() const { return std::span(data(), size()); }
+    WEBCORE_EXPORT std::span<const uint8_t> span() const;
     WTF::Persistence::Decoder decoder() const;
 
     enum class MayUseFileMapping : bool { No, Yes };
@@ -339,7 +336,6 @@ private:
     WEBCORE_EXPORT explicit SharedBuffer(Ref<FragmentedSharedBuffer>&&);
 
     WEBCORE_EXPORT static RefPtr<SharedBuffer> createFromReadingFile(const String& filePath);
-    WEBCORE_EXPORT const uint8_t* data() const;
 };
 
 class SharedBufferBuilder {

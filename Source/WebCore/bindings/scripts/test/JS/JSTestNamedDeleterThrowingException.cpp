@@ -47,7 +47,6 @@
 #include <wtf/URL.h>
 #include <wtf/text/MakeString.h>
 
-
 namespace WebCore {
 using namespace JSC;
 
@@ -108,9 +107,8 @@ template<> void JSTestNamedDeleterThrowingExceptionDOMConstructor::initializePro
 
 /* Hash table for prototype */
 
-static const HashTableValue JSTestNamedDeleterThrowingExceptionPrototypeTableValues[] =
-{
-    { "constructor"_s, static_cast<unsigned>(PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestNamedDeleterThrowingExceptionConstructor, 0 } },
+static const std::array<HashTableValue, 1> JSTestNamedDeleterThrowingExceptionPrototypeTableValues {
+    HashTableValue { "constructor"_s, static_cast<unsigned>(PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestNamedDeleterThrowingExceptionConstructor, 0 } },
 };
 
 const ClassInfo JSTestNamedDeleterThrowingExceptionPrototype::s_info = { "TestNamedDeleterThrowingException"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestNamedDeleterThrowingExceptionPrototype) };
@@ -182,7 +180,7 @@ bool JSTestNamedDeleterThrowingException::getOwnPropertySlot(JSObject* object, J
 
 bool JSTestNamedDeleterThrowingException::getOwnPropertySlotByIndex(JSObject* object, JSGlobalObject* lexicalGlobalObject, unsigned index, PropertySlot& slot)
 {
-    auto& vm = JSC::getVM(lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto* thisObject = jsCast<JSTestNamedDeleterThrowingException*>(object);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
@@ -202,7 +200,7 @@ bool JSTestNamedDeleterThrowingException::getOwnPropertySlotByIndex(JSObject* ob
 
 void JSTestNamedDeleterThrowingException::getOwnPropertyNames(JSObject* object, JSGlobalObject* lexicalGlobalObject, PropertyNameArray& propertyNames, DontEnumPropertiesMode mode)
 {
-    auto& vm = JSC::getVM(lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(lexicalGlobalObject);
     auto* thisObject = jsCast<JSTestNamedDeleterThrowingException*>(object);
     ASSERT_GC_OBJECT_INHERITS(object, info());
     for (auto& propertyName : thisObject->wrapped().supportedPropertyNames())
@@ -251,7 +249,7 @@ bool JSTestNamedDeleterThrowingException::putByIndex(JSCell* cell, JSGlobalObjec
     auto* thisObject = jsCast<JSTestNamedDeleterThrowingException*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
 
-    auto& vm = JSC::getVM(lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
     throwScope.assertNoException();
@@ -286,7 +284,7 @@ bool JSTestNamedDeleterThrowingException::defineOwnProperty(JSObject* object, JS
 bool JSTestNamedDeleterThrowingException::deleteProperty(JSCell* cell, JSGlobalObject* lexicalGlobalObject, PropertyName propertyName, DeletePropertySlot& slot)
 {
     auto& thisObject = *jsCast<JSTestNamedDeleterThrowingException*>(cell);
-    auto& impl = thisObject.wrapped();
+    SUPPRESS_UNCOUNTED_LOCAL auto& impl = thisObject.wrapped();
     if (!propertyName.isSymbol() && impl.isSupportedPropertyName(propertyNameToString(propertyName))) {
         if (isVisibleNamedProperty<LegacyOverrideBuiltIns::No>(*lexicalGlobalObject, thisObject, propertyName)) {
             using ReturnType = decltype(impl.deleteNamedProperty(propertyNameToString(propertyName)));
@@ -301,8 +299,8 @@ bool JSTestNamedDeleterThrowingException::deletePropertyByIndex(JSCell* cell, JS
 {
     UNUSED_PARAM(lexicalGlobalObject);
     auto& thisObject = *jsCast<JSTestNamedDeleterThrowingException*>(cell);
-    auto& impl = thisObject.wrapped();
-    auto& vm = JSC::getVM(lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& impl = thisObject.wrapped();
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(lexicalGlobalObject);
     auto propertyName = Identifier::from(vm, index);
     if (impl.isSupportedPropertyName(propertyNameToString(propertyName))) {
         if (isVisibleNamedProperty<LegacyOverrideBuiltIns::No>(*lexicalGlobalObject, thisObject, propertyName)) {
@@ -316,7 +314,7 @@ bool JSTestNamedDeleterThrowingException::deletePropertyByIndex(JSCell* cell, JS
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestNamedDeleterThrowingExceptionConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
-    auto& vm = JSC::getVM(lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto* prototype = jsDynamicCast<JSTestNamedDeleterThrowingExceptionPrototype*>(JSValue::decode(thisValue));
     if (UNLIKELY(!prototype))
@@ -338,8 +336,8 @@ void JSTestNamedDeleterThrowingException::analyzeHeap(JSCell* cell, HeapAnalyzer
 {
     auto* thisObject = jsCast<JSTestNamedDeleterThrowingException*>(cell);
     analyzer.setWrappedObjectForCell(cell, &thisObject->wrapped());
-    if (thisObject->scriptExecutionContext())
-        analyzer.setLabelForCell(cell, makeString("url "_s, thisObject->scriptExecutionContext()->url().string()));
+    if (RefPtr context = thisObject->scriptExecutionContext())
+        analyzer.setLabelForCell(cell, makeString("url "_s, context->url().string()));
     Base::analyzeHeap(cell, analyzer);
 }
 
@@ -358,6 +356,7 @@ void JSTestNamedDeleterThrowingExceptionOwner::finalize(JSC::Handle<JSC::Unknown
     uncacheWrapper(world, jsTestNamedDeleterThrowingException->protectedWrapped().ptr(), jsTestNamedDeleterThrowingException);
 }
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 #if ENABLE(BINDING_INTEGRITY)
 #if PLATFORM(WIN)
 #pragma warning(disable: 4483)
@@ -382,6 +381,8 @@ template<typename T, typename = std::enable_if_t<std::is_same_v<T, TestNamedDele
     }
 }
 #endif
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+
 JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject*, JSDOMGlobalObject* globalObject, Ref<TestNamedDeleterThrowingException>&& impl)
 {
 #if ENABLE(BINDING_INTEGRITY)

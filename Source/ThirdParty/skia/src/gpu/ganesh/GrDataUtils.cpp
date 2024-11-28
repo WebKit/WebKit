@@ -37,11 +37,11 @@
 
 using namespace skia_private;
 
-#if defined(GR_TEST_UTILS)
+#if defined(GPU_TEST_UTILS)
 
 // The following four helpers are copied from src/gpu/DataUtils.cpp to support the test only
 // GrTwoColorBC1Compress function. Ideally we would copy the test function into DataUtils.cpp
-// instead, but we're currently trying to avoid using the GR_TEST_UTILS define in src/gpu.
+// instead, but we're currently trying to avoid using the GPU_TEST_UTILS define in src/gpu.
 
 static int num_4x4_blocks(int size) {
     return ((size + 3) & ~3) >> 2;
@@ -178,6 +178,9 @@ static skgpu::Swizzle get_load_and_src_swizzle(GrColorType ct, SkRasterPipelineO
         case GrColorType::kBGRA_1010102:     *load = SkRasterPipelineOp::load_1010102;
                                              swizzle = skgpu::Swizzle("bgra");
                                              break;
+        case GrColorType::kRGB_101010x:      *load = SkRasterPipelineOp::load_1010102;
+                                             swizzle = skgpu::Swizzle("rgb1");
+                                             break;
         case GrColorType::kRGBA_10x6:        *load = SkRasterPipelineOp::load_10x6;     break;
         case GrColorType::kAlpha_F16:        *load = SkRasterPipelineOp::load_af16;     break;
         case GrColorType::kRGBA_F16_Clamped: *load = SkRasterPipelineOp::load_f16;      break;
@@ -192,6 +195,10 @@ static skgpu::Swizzle get_load_and_src_swizzle(GrColorType ct, SkRasterPipelineO
                                              break;
         case GrColorType::kRGBA_F16:         *load = SkRasterPipelineOp::load_f16;
                                              *isNormalized = false;
+                                             break;
+        case GrColorType::kRGB_F16F16F16x:   *load = SkRasterPipelineOp::load_f16;
+                                             *isNormalized = false;
+                                             swizzle = skgpu::Swizzle("rgb1");
                                              break;
         case GrColorType::kRGBA_F32:         *load = SkRasterPipelineOp::load_f32;
                                              *isNormalized = false;
@@ -265,6 +272,9 @@ static skgpu::Swizzle get_dst_swizzle_and_store(GrColorType ct, SkRasterPipeline
         case GrColorType::kBGRA_1010102:     swizzle = skgpu::Swizzle("bgra");
                                              *store = SkRasterPipelineOp::store_1010102;
                                              break;
+        case GrColorType::kRGB_101010x:     swizzle = skgpu::Swizzle("rgb1");
+                                             *store = SkRasterPipelineOp::store_1010102;
+                                             break;
         case GrColorType::kRGBA_10x6:        *store = SkRasterPipelineOp::store_10x6;     break;
         case GrColorType::kRGBA_F16_Clamped: *store = SkRasterPipelineOp::store_f16;      break;
         case GrColorType::kRG_1616:          *store = SkRasterPipelineOp::store_rg1616;   break;
@@ -280,6 +290,10 @@ static skgpu::Swizzle get_dst_swizzle_and_store(GrColorType ct, SkRasterPipeline
                                              *isNormalized = false;
                                              break;
         case GrColorType::kRGBA_F16:         *store = SkRasterPipelineOp::store_f16;
+                                             *isNormalized = false;
+                                             break;
+        case GrColorType::kRGB_F16F16F16x:   swizzle = skgpu::Swizzle("rgb1");
+                                             *store = SkRasterPipelineOp::store_f16;
                                              *isNormalized = false;
                                              break;
         case GrColorType::kRGBA_F32:         *store = SkRasterPipelineOp::store_f32;

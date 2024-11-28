@@ -137,24 +137,25 @@ if (DEVELOPER_MODE AND DEVELOPER_MODE_FATAL_WARNINGS)
 endif ()
 
 if (COMPILER_IS_GCC_OR_CLANG)
-    WEBKIT_APPEND_GLOBAL_COMPILER_FLAGS(-fno-strict-aliasing)
+    if (COMPILER_IS_CLANG OR (DEVELOPER_MODE AND !ARM))
+        # Split debug information in ".debug_types" / ".debug_info" sections - this leads
+        # to a smaller overall size of the debug information, and avoids linker relocation
+        # errors on e.g. aarch64 (relocation R_AARCH64_ABS32 out of range: 4312197985 is not in [-2147483648, 4294967295])
+        # But when using GCC this breaks Linux distro debuginfo generation, so limit to DEVELOPER_MODE.
+        # Also when using GCC this causes ld to run out of memory on armv7, so disable for ARM.
+        WEBKIT_PREPEND_GLOBAL_COMPILER_FLAGS(-fdebug-types-section)
+    endif ()
 
-    # Split debug information in ".debug_types" / ".debug_info" sections - this leads
-    # to a smaller overall size of the debug information, and avoids linker relocation
-    # errors on e.g. aarch64 (relocation R_AARCH64_ABS32 out of range: 4312197985 is not in [-2147483648, 4294967295])
-    WEBKIT_PREPEND_GLOBAL_COMPILER_FLAGS(-fdebug-types-section)
+    WEBKIT_APPEND_GLOBAL_COMPILER_FLAGS(-fno-strict-aliasing)
 
     # clang-cl.exe impersonates cl.exe so some clang arguments like -fno-rtti are
     # represented using cl.exe's options and should not be passed as flags, so
     # we do not add -fno-rtti or -fno-exceptions for clang-cl
-    if (COMPILER_IS_CLANG_CL)
-        # FIXME: These warnings should be addressed
-        WEBKIT_PREPEND_GLOBAL_COMPILER_FLAGS(-Wno-sign-compare
-                                             -Wno-deprecated-declarations)
-    else ()
+    if (NOT COMPILER_IS_CLANG_CL)
         WEBKIT_APPEND_GLOBAL_COMPILER_FLAGS(-fno-exceptions)
         WEBKIT_APPEND_GLOBAL_CXX_FLAGS(-fno-rtti)
         WEBKIT_APPEND_GLOBAL_CXX_FLAGS(-fcoroutines)
+        WEBKIT_PREPEND_GLOBAL_CXX_FLAGS(-fasynchronous-unwind-tables)
 
         WEBKIT_PREPEND_GLOBAL_COMPILER_FLAGS(-Wno-tautological-compare)
 
@@ -227,6 +228,9 @@ if (COMPILER_IS_GCC_OR_CLANG)
     # Makes builds faster. The GCC manual warns about the possibility that the assembler being
     # used may not support input from a pipe, but in practice the toolchains we support all do.
     WEBKIT_PREPEND_GLOBAL_COMPILER_FLAGS(-pipe)
+
+    WEBKIT_PREPEND_GLOBAL_COMPILER_FLAGS(-Werror=undefined-inline
+                                         -Werror=undefined-internal)
 endif ()
 
 if (COMPILER_IS_GCC_OR_CLANG AND NOT MSVC)
@@ -249,12 +253,18 @@ if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" AND NOT "${LOWERCASE_CMAKE_HOST_SY
     set(CMAKE_SHARED_LINKER_FLAGS_DEBUG "-Wl,--no-keep-memory ${CMAKE_SHARED_LINKER_FLAGS_DEBUG}")
 endif ()
 
-if (LTO_MODE AND COMPILER_IS_CLANG)
+if (LTO_MODE AND COMPILER_IS_CLANG AND NOT MSVC)
     set(CMAKE_C_FLAGS "-flto=${LTO_MODE} ${CMAKE_C_FLAGS}")
     set(CMAKE_CXX_FLAGS "-flto=${LTO_MODE} ${CMAKE_CXX_FLAGS}")
     set(CMAKE_EXE_LINKER_FLAGS "-flto=${LTO_MODE} ${CMAKE_EXE_LINKER_FLAGS}")
     set(CMAKE_SHARED_LINKER_FLAGS "-flto=${LTO_MODE} ${CMAKE_SHARED_LINKER_FLAGS}")
     set(CMAKE_MODULE_LINKER_FLAGS "-flto=${LTO_MODE} ${CMAKE_MODULE_LINKER_FLAGS}")
+elseif (LTO_MODE AND COMPILER_IS_CLANG AND MSVC AND NOT DEVELOPER_MODE)
+    set(CMAKE_C_FLAGS "-flto=${LTO_MODE} ${CMAKE_C_FLAGS}")
+    set(CMAKE_CXX_FLAGS "-flto=${LTO_MODE} ${CMAKE_CXX_FLAGS}")
+    set(CMAKE_EXE_LINKER_FLAGS "/opt:lldlto=2 ${CMAKE_EXE_LINKER_FLAGS}")
+    set(CMAKE_SHARED_LINKER_FLAGS "/opt:lldlto=2 ${CMAKE_SHARED_LINKER_FLAGS}")
+    set(CMAKE_MODULE_LINKER_FLAGS "/opt:lldlto=2 ${CMAKE_MODULE_LINKER_FLAGS}")
 endif ()
 
 if (COMPILER_IS_GCC_OR_CLANG)
@@ -484,10 +494,6 @@ if (CMAKE_CXX_COMPILER_ID MATCHES "GNU" AND WTF_CPU_MIPS)
     # processor. This is a workaround and does not cover all cases
     # (see comment #28 in the link above).
     WEBKIT_PREPEND_GLOBAL_COMPILER_FLAGS(-mno-lxc1-sxc1)
-endif ()
-
-if (COMPILER_IS_GCC_OR_CLANG)
-    set(COMPILE_C_AS_CXX "-xc++;-std=c++2b")
 endif ()
 
 # FIXME: Enable pre-compiled headers for all ports <https://webkit.org/b/139438>

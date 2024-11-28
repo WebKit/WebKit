@@ -37,6 +37,8 @@
 #include <CoreFoundation/CoreFoundation.h>
 #endif
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 class CachedBitVector;
 }
@@ -273,6 +275,14 @@ public:
         }
         return result;
     }
+
+    // If the lambda returns an IterationStatus, we use it. The lambda can also return
+    // void, in which case, we'll iterate every set bit.
+    template<typename Func>
+    constexpr ALWAYS_INLINE void forEachSetBit(const Func&) const;
+
+    template<typename Func>
+    constexpr ALWAYS_INLINE void forEachSetBit(size_t startIndex, const Func&) const;
     
     WTF_EXPORT_PRIVATE void dump(PrintStream& out) const;
     
@@ -363,12 +373,13 @@ public:
     iterator begin() const { return iterator(*this, findBit(0, true)); }
     iterator end() const { return iterator(*this, size()); }
 
-    unsigned outOfLineMemoryUse() const
+    static unsigned outOfLineMemoryUse(size_t bitCount)
     {
-        if (isInline())
+        if (bitCount <= maxInlineBits())
             return 0;
-        return byteCount(size());
+        return byteCount(bitCount);
     }
+    unsigned outOfLineMemoryUse() const { return outOfLineMemoryUse(size()); }
         
     WTF_EXPORT_PRIVATE void shiftRightByMultipleOf64(size_t);
 
@@ -456,8 +467,8 @@ private:
     public:
         size_t numBits() const { return m_numBits; }
         size_t numWords() const { return (m_numBits + bitsInPointer() - 1) / bitsInPointer(); }
-        uintptr_t* bits() { return bitwise_cast<uintptr_t*>(this + 1); }
-        const uintptr_t* bits() const { return bitwise_cast<const uintptr_t*>(this + 1); }
+        uintptr_t* bits() { return std::bit_cast<uintptr_t*>(this + 1); }
+        const uintptr_t* bits() const { return std::bit_cast<const uintptr_t*>(this + 1); }
         
         static WTF_EXPORT_PRIVATE OutOfLineBits* create(size_t numBits);
         
@@ -474,8 +485,8 @@ private:
     
     bool isInline() const { return m_bitsOrPointer >> maxInlineBits(); }
     
-    const OutOfLineBits* outOfLineBits() const { return bitwise_cast<const OutOfLineBits*>(m_bitsOrPointer << 1); }
-    OutOfLineBits* outOfLineBits() { return bitwise_cast<OutOfLineBits*>(m_bitsOrPointer << 1); }
+    const OutOfLineBits* outOfLineBits() const { return std::bit_cast<const OutOfLineBits*>(m_bitsOrPointer << 1); }
+    OutOfLineBits* outOfLineBits() { return std::bit_cast<OutOfLineBits*>(m_bitsOrPointer << 1); }
     
     WTF_EXPORT_PRIVATE void resizeOutOfLine(size_t numBits, size_t shiftInWords = 0);
     WTF_EXPORT_PRIVATE void setSlow(const BitVector& other);
@@ -509,6 +520,34 @@ private:
     uintptr_t m_bitsOrPointer;
 };
 
+template<typename Func>
+ALWAYS_INLINE constexpr void BitVector::forEachSetBit(const Func& func) const
+{
+    uintptr_t copiedInline = cleanseInlineBits(m_bitsOrPointer);
+    const uintptr_t* bits = &copiedInline;
+    size_t words = 1;
+    if (!isInline()) {
+        const OutOfLineBits* outOfLineBits = this->outOfLineBits();
+        bits = outOfLineBits->bits();
+        words = outOfLineBits->numWords();
+    }
+    WTF::forEachSetBit(std::span { bits, words }, func);
+}
+
+template<typename Func>
+ALWAYS_INLINE constexpr void BitVector::forEachSetBit(size_t startIndex, const Func& func) const
+{
+    uintptr_t copiedInline = cleanseInlineBits(m_bitsOrPointer);
+    const uintptr_t* bits = &copiedInline;
+    size_t words = 1;
+    if (!isInline()) {
+        const OutOfLineBits* outOfLineBits = this->outOfLineBits();
+        bits = outOfLineBits->bits();
+        words = outOfLineBits->numWords();
+    }
+    WTF::forEachSetBit(std::span { bits, words }, startIndex, func);
+}
+
 struct BitVectorHash {
     static unsigned hash(const BitVector& vector) { return vector.hash(); }
     static bool equal(const BitVector& a, const BitVector& b) { return a == b; }
@@ -523,3 +562,5 @@ template<> struct HashTraits<BitVector> : public CustomHashTraits<BitVector> { }
 } // namespace WTF
 
 using WTF::BitVector;
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

@@ -26,6 +26,8 @@
 #pragma once
 
 #include "OSCheck.h"
+#include <optional>
+#include <wtf/Atomics.h>
 
 namespace JSC {
 
@@ -297,6 +299,42 @@ private:
     int m_value;
 };
 
+class ARM64FPImmediate {
+public:
+    static ARM64FPImmediate create64(uint64_t value)
+    {
+        uint8_t result = 0;
+        for (unsigned i = 0; i < sizeof(double); ++i) {
+            uint8_t slice = static_cast<uint8_t>(value >> (8 * i));
+            if (!slice)
+                continue;
+            if (slice == UINT8_MAX) {
+                result |= (1U << i);
+                continue;
+            }
+            return { };
+        }
+        return ARM64FPImmediate(result);
+    }
+
+    bool isValid() const { return m_value.has_value(); }
+    uint8_t value() const
+    {
+        ASSERT(isValid());
+        return m_value.value();
+    }
+
+private:
+    ARM64FPImmediate() = default;
+
+    ARM64FPImmediate(uint8_t value)
+        : m_value(value)
+    {
+    }
+
+    std::optional<uint8_t> m_value;
+};
+
 ALWAYS_INLINE bool isValidARMThumb2Immediate(int64_t value)
 {
     if (value < 0)
@@ -318,10 +356,34 @@ enum class MachineCodeCopyMode : uint8_t {
     JITMemcpy,
 };
 
-static void* performJITMemcpy(void *dst, const void *src, size_t n);
+static ALWAYS_INLINE void* memcpyAtomicIfPossible(void* dst, const void* src, size_t n)
+{
+#if !CPU(NEEDS_ALIGNED_ACCESS)
+    // We would like to do atomic write here.
+    switch (n) {
+    case 1:
+        WTF::atomicStore(std::bit_cast<uint8_t*>(dst), *std::bit_cast<const uint8_t*>(src), std::memory_order_relaxed);
+        return dst;
+    case 2:
+        WTF::atomicStore(std::bit_cast<uint16_t*>(dst), *std::bit_cast<const uint16_t*>(src), std::memory_order_relaxed);
+        return dst;
+    case 4:
+        WTF::atomicStore(std::bit_cast<uint32_t*>(dst), *std::bit_cast<const uint32_t*>(src), std::memory_order_relaxed);
+        return dst;
+    case 8:
+        WTF::atomicStore(std::bit_cast<uint64_t*>(dst), *std::bit_cast<const uint64_t*>(src), std::memory_order_relaxed);
+        return dst;
+    default:
+        break;
+    }
+#endif
+    return memcpy(dst, src, n);
+}
+
+static void* performJITMemcpy(void* dst, const void* src, size_t n);
 
 template<MachineCodeCopyMode copy>
-ALWAYS_INLINE void* machineCodeCopy(void *dst, const void *src, size_t n)
+ALWAYS_INLINE void* machineCodeCopy(void* dst, const void* src, size_t n)
 {
 #if CPU(ARM_THUMB2)
     // For thumb instructions, we want to avoid the case where we have
@@ -337,7 +399,7 @@ ALWAYS_INLINE void* machineCodeCopy(void *dst, const void *src, size_t n)
     }
 #endif
     if constexpr (copy == MachineCodeCopyMode::Memcpy)
-        return memcpy(dst, src, n);
+        return memcpyAtomicIfPossible(dst, src, n);
     else
         return performJITMemcpy(dst, src, n);
 }

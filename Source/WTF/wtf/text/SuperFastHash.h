@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2005-2024 Apple Inc. All rights reserved.
  * Copyright (C) 2010 Patrick Gansterer <paroga@paroga.com>
  *
  * This library is free software; you can redistribute it and/or
@@ -22,7 +22,10 @@
 #pragma once
 
 #include <span>
+#include <wtf/Compiler.h>
 #include <wtf/text/StringHasher.h>
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace WTF {
 
@@ -273,5 +276,7 @@ private:
 };
 
 } // namespace WTF
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 using WTF::SuperFastHash;

@@ -35,7 +35,7 @@ class SurfaceNULL : public SurfaceImpl
     egl::Error releaseTexImage(const gl::Context *context, EGLint buffer) override;
     egl::Error getSyncValues(EGLuint64KHR *ust, EGLuint64KHR *msc, EGLuint64KHR *sbc) override;
     egl::Error getMscRate(EGLint *numerator, EGLint *denominator) override;
-    void setSwapInterval(EGLint interval) override;
+    void setSwapInterval(const egl::Display *display, EGLint interval) override;
 
     // width and height can change with client window resizing
     EGLint getWidth() const override;

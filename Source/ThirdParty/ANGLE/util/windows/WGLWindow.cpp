@@ -114,8 +114,8 @@ std::vector<int> GetPixelFormatAttributes(const ConfigParameters &configParams)
 
 }  // namespace
 
-WGLWindow::WGLWindow(EGLenum clientType, int majorVersion, int minorVersion, int profileMask)
-    : GLWindowBase(clientType, majorVersion, minorVersion, profileMask),
+WGLWindow::WGLWindow(int majorVersion, int minorVersion)
+    : GLWindowBase(majorVersion, minorVersion),
       mDeviceContext(nullptr),
       mWGLContext(nullptr),
       mWindow(nullptr)
@@ -269,30 +269,13 @@ HGLRC WGLWindow::createContext(const ConfigParameters &configParams, HGLRC share
     // Tear down the context and create another with ES2 compatibility.
     _wglDeleteContext(context);
 
-    // This could be extended to cover ES1 compatibility and desktop GL profiles.
-    int profileMask = 0;
-    if (mClientType == EGL_OPENGL_ES_API)
-    {
-        profileMask = WGL_CONTEXT_ES2_PROFILE_BIT_EXT;
-    }
-    else
-    {
-        if ((mProfileMask & EGL_CONTEXT_OPENGL_CORE_PROFILE_BIT) != 0)
-        {
-            profileMask |= WGL_CONTEXT_CORE_PROFILE_BIT_ARB;
-        }
-        if ((mProfileMask & EGL_CONTEXT_OPENGL_COMPATIBILITY_PROFILE_BIT) != 0)
-        {
-            profileMask |= WGL_CONTEXT_COMPATIBILITY_PROFILE_BIT_ARB;
-        }
-    }
-
+    // This could be extended to cover ES1 compatibility.
     const int createAttribs[] = {WGL_CONTEXT_MAJOR_VERSION_ARB,
                                  mClientMajorVersion,
                                  WGL_CONTEXT_MINOR_VERSION_ARB,
                                  mClientMinorVersion,
                                  WGL_CONTEXT_PROFILE_MASK_ARB,
-                                 profileMask,
+                                 WGL_CONTEXT_ES2_PROFILE_BIT_EXT,
                                  0,
                                  0};
 
@@ -496,9 +479,9 @@ GenericProc WGLWindow::getProcAddress(const char *name)
 }
 
 // static
-WGLWindow *WGLWindow::New(EGLenum clientType, int majorVersion, int minorVersion, int profileMask)
+WGLWindow *WGLWindow::New(int majorVersion, int minorVersion)
 {
-    return new WGLWindow(clientType, majorVersion, minorVersion, profileMask);
+    return new WGLWindow(majorVersion, minorVersion);
 }
 
 // static

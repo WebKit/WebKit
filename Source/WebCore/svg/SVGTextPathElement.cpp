@@ -1,7 +1,8 @@
 /*
  * Copyright (C) 2007 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2010 Rob Buis <rwlbuis@gmail.com>
- * Copyright (C) 2018-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Google Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -161,6 +162,12 @@ void SVGTextPathElement::buildPendingResource()
         }
     } else if (RefPtr pathElement = dynamicDowncast<SVGPathElement>(*target.element))
         pathElement->addReferencingElement(*this);
+
+    CheckedPtr renderer = this->renderer();
+    if (!renderer)
+        return;
+
+    LegacyRenderSVGResource::markForLayoutAndParentResourceInvalidation(*renderer);
 }
 
 Node::InsertedIntoAncestorResult SVGTextPathElement::insertedIntoAncestor(InsertionType insertionType, ContainerNode& parentOfInsertedTree)

@@ -173,7 +173,6 @@ private:
     void showSpellingUI(bool show) final;
     bool spellingUIIsShowing() final;
     void getGuessesForWord(const String& word, const String& context, const WebCore::VisibleSelection& currentSelection, Vector<String>& guesses) final;
-    void willSetInputMethodState() final;
     void setInputMethodState(WebCore::Element*) final;
     void requestCheckingOfString(WebCore::TextCheckingRequest&, const WebCore::VisibleSelection& currentSelection) final;
 
@@ -204,6 +203,10 @@ private:
 
     bool performTwoStepDrop(WebCore::DocumentFragment&, const WebCore::SimpleRange&, bool isMove) final;
     bool supportsGlobalSelection() final;
+
+#if PLATFORM(IOS_FAMILY)
+    bool shouldDrawVisuallyContiguousBidiSelection() const final;
+#endif
 
     WeakPtr<WebPage> m_page;
 };

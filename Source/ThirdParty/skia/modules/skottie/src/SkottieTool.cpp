@@ -40,8 +40,8 @@
 
 #if !defined(CPU_ONLY)
 #include "include/gpu/GpuTypes.h"
-#include "include/gpu/GrDirectContext.h"
-#include "include/gpu/GrTypes.h"
+#include "include/gpu/ganesh/GrDirectContext.h"
+#include "include/gpu/ganesh/GrTypes.h"
 #include "include/gpu/ganesh/SkSurfaceGanesh.h"
 #include "tools/gpu/ContextType.h"
 #include "tools/gpu/GrContextFactory.h"
@@ -76,9 +76,10 @@
 #include "include/ports/SkFontMgr_mac_ct.h"
 #elif defined(SK_BUILD_FOR_ANDROID) && defined(SK_FONTMGR_ANDROID_AVAILABLE)
 #include "include/ports/SkFontMgr_android.h"
-#include "src/ports/SkTypeface_FreeType.h"
-#elif defined(SK_BUILD_FOR_UNIX) && defined(SK_FONTMGR_FONTCONFIG_AVAILABLE)
+#include "include/ports/SkFontScanner_FreeType.h"
+#elif defined(SK_BUILD_FOR_UNIX) && defined(SK_FONTMGR_FONTCONFIG_AVAILABLE) && defined(SK_TYPEFACE_FACTORY_FREETYPE)
 #include "include/ports/SkFontMgr_fontconfig.h"
+#include "include/ports/SkFontScanner_FreeType.h"
 #else
 #include "include/ports/SkFontMgr_empty.h"
 #endif
@@ -506,10 +507,10 @@ int main(int argc, char** argv) {
     // If necessary, clients should use a font manager that would load fonts from the system.
 #if defined(SK_BUILD_FOR_MAC) && defined(SK_FONTMGR_CORETEXT_AVAILABLE)
     sk_sp<SkFontMgr> fontMgr = SkFontMgr_New_CoreText(nullptr);
-#elif defined(SK_BUILD_FOR_ANDROID) && defined(SK_FONTMGR_ANDROID_AVAILABLE)
-    sk_sp<SkFontMgr> fontMgr = SkFontMgr_New_Android(nullptr, std::make_unique<SkFontScanner_FreeType>());
-#elif defined(SK_BUILD_FOR_UNIX) && defined(SK_FONTMGR_FONTCONFIG_AVAILABLE)
-    sk_sp<SkFontMgr> fontMgr = SkFontMgr_New_FontConfig(nullptr);
+#elif defined(SK_BUILD_FOR_ANDROID) && defined(SK_FONTMGR_ANDROID_AVAILABLE) && defined(SK_TYPEFACE_FACTORY_FREETYPE)
+    sk_sp<SkFontMgr> fontMgr = SkFontMgr_New_Android(nullptr, SkFontScanner_Make_FreeType());
+#elif defined(SK_BUILD_FOR_UNIX) && defined(SK_FONTMGR_FONTCONFIG_AVAILABLE) && defined(SK_TYPEFACE_FACTORY_FREETYPE)
+    sk_sp<SkFontMgr> fontMgr = SkFontMgr_New_FontConfig(nullptr, SkFontScanner_Make_FreeType());
 #else
     sk_sp<SkFontMgr> fontMgr = SkFontMgr_New_Custom_Empty();
 #endif
@@ -531,15 +532,22 @@ int main(int argc, char** argv) {
         return 1;
     }
 
-    // Instantiate an animation on the main thread for two reasons:
-    //   - we need to know its duration upfront
-    //   - we want to only report parsing errors once
-    auto anim = skottie::Animation::Builder()
+    const auto build_animation = [&fontMgr, &rp, &data](
+            const sk_sp<Logger>& logger,
+            const sk_sp<skottie::PrecompInterceptor>& pint) {
+        return skottie::Animation::Builder()
             .setFontManager(fontMgr)
             .setLogger(logger)
+            .setPrecompInterceptor(pint)
             .setResourceProvider(rp)
             .setTextShapingFactory(SkShapers::BestAvailable())
             .make(static_cast<const char*>(data->data()), data->size());
+    };
+
+    // Instantiate an animation on the main thread for two reasons:
+    //   - we need to know its duration upfront
+    //   - we want to only report parsing errors once
+    const auto anim = build_animation(logger, nullptr);
     if (!anim) {
         SkDebugf("Could not parse animation: '%s'.\n", FLAGS_input[0]);
         return 1;
@@ -597,11 +605,7 @@ int main(int argc, char** argv) {
 
             const auto start = std::chrono::steady_clock::now();
             thread_local static auto* anim =
-                    skottie::Animation::Builder()
-                        .setResourceProvider(rp)
-                        .setPrecompInterceptor(precomp_interceptor)
-                        .make(static_cast<const char*>(data->data()), data->size())
-                        .release();
+                    build_animation(nullptr, precomp_interceptor).release();
             thread_local static auto* gen = singleton_generator
                     ? singleton_generator.get()
                     : FrameGenerator::Make(sink.get(), fmt, scale_matrix).release();

@@ -1,0 +1,81 @@
+<script>
+async function run() {
+  adapter0 = await navigator.gpu.requestAdapter();
+  device0 = await adapter0.requestDevice();
+  buffer4 = device0.createBuffer({size : 1, usage : GPUBufferUsage.VERTEX});
+  pipelineLayout0 = device0.createPipelineLayout({bindGroupLayouts : []});
+  shaderModule1 = device0.createShaderModule({
+    code : `
+struct FragmentOutput0 {
+  @location(0) f2: vec4f,
+}
+
+struct VertexOutput0 {
+  @builtin(position) f2: vec4f,
+  @location(0) f6: f16
+}
+
+fn unconst_u32(v: u32) -> u32 { return v; }
+
+@vertex fn vertex0(
+  @location(0) @interpolate(flat) a0: vec4u,
+  @location(1) @interpolate(linear) a1: vec2f
+) -> VertexOutput0 {
+  var out: VertexOutput0;
+  out.f6 -= f16(a1[unconst_u32(0)]);
+  return out;
+}
+
+@fragment fn fragment0() -> FragmentOutput0 {
+  var out: FragmentOutput0;
+  return out;
+}
+`
+  });
+  pipeline0 = await device0.createRenderPipelineAsync({
+    layout : pipelineLayout0,
+    fragment : {
+      module : shaderModule1,
+      entryPoint : 'fragment0',
+      targets : [ {format : 'rgba16float'} ]
+    },
+    vertex : {
+      module : shaderModule1,
+      buffers : [ {
+        arrayStride : 0,
+        attributes : [
+          {format : 'uint16x4', offset : 0, shaderLocation : 0},
+          {format : 'unorm10-10-10-2', offset : 0, shaderLocation : 1}
+        ]
+      } ]
+    }
+  });
+  texture14 = device0.createTexture({
+    size : {width : 1, height : 1, depthOrArrayLayers : 1},
+    dimension : '3d',
+    format : 'rgba16float',
+    usage : GPUTextureUsage.RENDER_ATTACHMENT
+  });
+  textureView16 = texture14.createView();
+  buffer12 = device0.createBuffer({size : 10, usage : GPUBufferUsage.INDEX});
+  commandEncoder29 = device0.createCommandEncoder();
+  renderPassEncoder2 = commandEncoder29.beginRenderPass({
+    colorAttachments : [ {
+      view : textureView16,
+      depthSlice : 0,
+      loadOp : 'clear',
+      storeOp : 'discard'
+    } ],
+  });
+  renderPassEncoder2.setPipeline(pipeline0)
+  renderPassEncoder2.setIndexBuffer(buffer12, 'uint16')
+  renderPassEncoder2.setVertexBuffer(0, buffer4);
+  renderPassEncoder2.drawIndexed(3)
+  renderPassEncoder2.end()
+  commandBuffer3 = commandEncoder29.finish();
+  device0.queue.submit([ commandBuffer3 ])
+}
+
+testRunner?.waitUntilDone();
+run().then(() => testRunner?.notifyDone());
+</script>

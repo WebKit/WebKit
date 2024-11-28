@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WaiterListManager.h"
 
+#include "DeferredWorkTimerInlines.h"
 #include "HeapCellInlines.h"
 #include "JSGlobalObject.h"
 #include "JSLock.h"
@@ -35,6 +36,8 @@
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RawPointer.h>
 #include <wtf/TZoneMallocInlines.h>
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace JSC {
 
@@ -217,7 +220,6 @@ void WaiterListManager::notifyWaiterImpl(const AbstractLocker& listLocker, Ref<W
         waiter->scheduleWorkAndClear(listLocker, [resolveResult](DeferredWorkTimer::Ticket ticket) {
             JSPromise* promise = jsCast<JSPromise*>(ticket->target());
             JSGlobalObject* globalObject = promise->globalObject();
-            ASSERT(ticket->globalObject() == globalObject);
             VM& vm = promise->vm();
             JSValue result = resolveResult == ResolveResult::Ok ? vm.smallStrings.okString() : vm.smallStrings.timedOutString();
             promise->resolve(globalObject, result);
@@ -304,7 +306,7 @@ void WaiterListManager::unregister(JSGlobalObject* globalObject)
         Locker listLocker { list->lock };
         list->removeIf(listLocker, [&](Waiter* waiter) {
             if (waiter->isAsync()) {
-                if (auto ticket = waiter->ticket(listLocker); ticket && !ticket->isCancelled() && ticket->globalObject() == globalObject) {
+                if (auto ticket = waiter->ticket(listLocker); ticket && !ticket->isCancelled() && ticket->target()->globalObject() == globalObject) {
                     dataLogLnIf(WaiterListsManagerInternal::verbose,
                         "<WaiterListManager> <Thread:", Thread::current(),
                         "> unregister JSGlobalObject is cancelling waiter=", *waiter,
@@ -389,8 +391,8 @@ void Waiter::dump(PrintStream& out) const
     auto ticket = this->ticket(NoLockingNecessary);
     out.print(", ticket=", RawPointer(ticket.get()));
     if (ticket && !ticket->isCancelled()) {
-        out.print(", m_ticket->globalObject=", RawPointer(ticket->globalObject()));
-        out.print(", m_ticket->target=", RawPointer(jsCast<JSObject*>(ticket->dependencies().last().get())));
+        out.print(", m_ticket->globalObject=", RawPointer(ticket->target()->globalObject()));
+        out.print(", m_ticket->target=", RawPointer(jsCast<JSObject*>(ticket->dependencies().last())));
         out.print(", m_ticket->scriptExecutionOwner=", RawPointer(ticket->scriptExecutionOwner()));
     }
 
@@ -399,3 +401,5 @@ void Waiter::dump(PrintStream& out) const
 }
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

@@ -39,7 +39,6 @@
 #import <WebCore/NetworkStorageSession.h>
 #import <WebCore/PublicSuffixStore.h>
 #import <WebCore/ResourceRequestCFNet.h>
-#import <WebCore/RuntimeApplicationChecks.h>
 #import <WebCore/SecurityOrigin.h>
 #import <WebCore/SecurityOriginData.h>
 #import <pal/spi/cf/CFNetworkSPI.h>
@@ -48,6 +47,7 @@
 #import <wtf/FileSystem.h>
 #import <wtf/ProcessPrivilege.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/RuntimeApplicationChecks.h>
 #import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 
 #if ENABLE(CONTENT_FILTERING)
@@ -115,6 +115,7 @@ void NetworkProcess::platformInitializeNetworkProcessCocoa(const NetworkProcessC
     if (auditToken && [NEFilterSource respondsToSelector:@selector(setDelegation:)])
         [NEFilterSource setDelegation:&auditToken.value()];
 #endif
+    m_enableModernDownloadProgress = parameters.enableModernDownloadProgress;
 }
 
 RetainPtr<CFDataRef> NetworkProcess::sourceApplicationAuditData() const

@@ -40,12 +40,6 @@
 
 namespace WebKit {
 
-static inline Ref<WebProcessProxy> connectionToWebProcessProxy(const IPC::Connection& connection)
-{
-    // FIXME: Check the type.
-    return static_cast<WebProcessProxy&>(*connection.client());
-}
-
 ASCIILiteral WebGeolocationManagerProxy::supplementName()
 {
     return "WebGeolocationManagerProxy"_s;
@@ -59,7 +53,7 @@ Ref<WebGeolocationManagerProxy> WebGeolocationManagerProxy::create(WebProcessPoo
 WebGeolocationManagerProxy::WebGeolocationManagerProxy(WebProcessPool* processPool)
     : WebContextSupplement(processPool)
 {
-    WebContextSupplement::processPool()->addMessageReceiver(Messages::WebGeolocationManagerProxy::messageReceiverName(), *this);
+    WebContextSupplement::protectedProcessPool()->addMessageReceiver(Messages::WebGeolocationManagerProxy::messageReceiverName(), *this);
 }
 
 WebGeolocationManagerProxy::~WebGeolocationManagerProxy() = default;
@@ -92,6 +86,12 @@ void WebGeolocationManagerProxy::webProcessIsGoingAway(WebProcessProxy& proxy)
         stopUpdatingWithProxy(proxy, registrableDomain);
 }
 
+std::optional<SharedPreferencesForWebProcess> WebGeolocationManagerProxy::sharedPreferencesForWebProcess(IPC::Connection& connection) const
+{
+    RefPtr process = WebProcessProxy::processForConnection(connection);
+    return process ? process->sharedPreferencesForWebProcess() : std::nullopt;
+}
+
 void WebGeolocationManagerProxy::refWebContextSupplement()
 {
     API::Object::ref();
@@ -106,16 +106,16 @@ void WebGeolocationManagerProxy::providerDidChangePosition(WebGeolocationPositio
 {
     for (auto& [registrableDomain, perDomainData] : m_perDomainData) {
         perDomainData->lastPosition = position->corePosition();
-        for (auto& process : perDomainData->watchers)
-            process.send(Messages::WebGeolocationManager::DidChangePosition(registrableDomain, perDomainData->lastPosition.value()), 0);
+        for (Ref process : perDomainData->watchers)
+            process->send(Messages::WebGeolocationManager::DidChangePosition(registrableDomain, perDomainData->lastPosition.value()), 0);
     }
 }
 
 void WebGeolocationManagerProxy::providerDidFailToDeterminePosition(const String& errorMessage)
 {
     for (auto& [registrableDomain, perDomainData] : m_perDomainData) {
-        for (auto& proxy : perDomainData->watchers)
-            proxy.send(Messages::WebGeolocationManager::DidFailToDeterminePosition(registrableDomain, errorMessage), 0);
+        for (Ref proxy : perDomainData->watchers)
+            proxy->send(Messages::WebGeolocationManager::DidFailToDeterminePosition(registrableDomain, errorMessage), 0);
     }
 }
 
@@ -124,23 +124,24 @@ void WebGeolocationManagerProxy::resetPermissions()
 {
     ASSERT(m_clientProvider);
     for (auto& [registrableDomain, perDomainData] : m_perDomainData) {
-        for (auto& proxy : perDomainData->watchers)
-            proxy.send(Messages::WebGeolocationManager::ResetPermissions(registrableDomain), 0);
+        for (Ref proxy : perDomainData->watchers)
+            proxy->send(Messages::WebGeolocationManager::ResetPermissions(registrableDomain), 0);
     }
 }
 #endif
 
 void WebGeolocationManagerProxy::startUpdating(IPC::Connection& connection, const WebCore::RegistrableDomain& registrableDomain, WebPageProxyIdentifier pageProxyID, const String& authorizationToken, bool enableHighAccuracy)
 {
-    startUpdatingWithProxy(connectionToWebProcessProxy(connection), registrableDomain, pageProxyID, authorizationToken, enableHighAccuracy);
+    if (RefPtr process = WebProcessProxy::processForConnection(connection))
+        startUpdatingWithProxy(*process, registrableDomain, pageProxyID, authorizationToken, enableHighAccuracy);
 }
 
 void WebGeolocationManagerProxy::startUpdatingWithProxy(WebProcessProxy& proxy, const WebCore::RegistrableDomain& registrableDomain, WebPageProxyIdentifier pageProxyID, const String& authorizationToken, bool enableHighAccuracy)
 {
-    auto page = WebProcessProxy::webPage(pageProxyID);
+    RefPtr page = WebProcessProxy::webPage(pageProxyID);
     MESSAGE_CHECK(proxy.connection(), !!page);
 
-    auto isValidAuthorizationToken = page->geolocationPermissionRequestManager().isValidAuthorizationToken(authorizationToken);
+    auto isValidAuthorizationToken = page->protectedGeolocationPermissionRequestManager()->isValidAuthorizationToken(authorizationToken);
     MESSAGE_CHECK(proxy.connection(), isValidAuthorizationToken);
 
     auto& perDomainData = *m_perDomainData.ensure(registrableDomain, [] {
@@ -167,7 +168,8 @@ void WebGeolocationManagerProxy::startUpdatingWithProxy(WebProcessProxy& proxy, 
 
 void WebGeolocationManagerProxy::stopUpdating(IPC::Connection& connection, const WebCore::RegistrableDomain& registrableDomain)
 {
-    stopUpdatingWithProxy(connectionToWebProcessProxy(connection), registrableDomain);
+    if (RefPtr process = WebProcessProxy::processForConnection(connection))
+        stopUpdatingWithProxy(*process, registrableDomain);
 }
 
 void WebGeolocationManagerProxy::stopUpdatingWithProxy(WebProcessProxy& proxy, const WebCore::RegistrableDomain& registrableDomain)
@@ -197,7 +199,8 @@ void WebGeolocationManagerProxy::stopUpdatingWithProxy(WebProcessProxy& proxy, c
 
 void WebGeolocationManagerProxy::setEnableHighAccuracy(IPC::Connection& connection, const WebCore::RegistrableDomain& registrableDomain, bool enabled)
 {
-    setEnableHighAccuracyWithProxy(connectionToWebProcessProxy(connection), registrableDomain, enabled);
+    if (RefPtr process = WebProcessProxy::processForConnection(connection))
+        setEnableHighAccuracyWithProxy(*process, registrableDomain, enabled);
 }
 
 void WebGeolocationManagerProxy::setEnableHighAccuracyWithProxy(WebProcessProxy& proxy, const WebCore::RegistrableDomain& registrableDomain, bool enabled)

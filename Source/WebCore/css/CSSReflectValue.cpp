@@ -31,7 +31,7 @@
 namespace WebCore {
 
 CSSReflectValue::CSSReflectValue(CSSValueID direction, Ref<CSSPrimitiveValue> offset, RefPtr<CSSValue> mask)
-    : CSSValue(ReflectClass)
+    : CSSValue(ClassType::Reflect)
     , m_direction(direction)
     , m_offset(WTFMove(offset))
     , m_mask(WTFMove(mask))

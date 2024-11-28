@@ -33,6 +33,7 @@
 #include <wtf/MathExtras.h>
 #include <wtf/NotFound.h>
 #include <wtf/SIMDHelpers.h>
+#include <wtf/StdLibExtras.h>
 #include <wtf/UnalignedAccess.h>
 #include <wtf/text/ASCIIFastPath.h>
 #include <wtf/text/ASCIILiteral.h>
@@ -41,30 +42,54 @@ namespace WTF {
 
 inline std::span<const LChar> span(const LChar& character)
 {
-    return { &character, 1 };
+    return unsafeMakeSpan(&character, 1);
 }
 
 inline std::span<const UChar> span(const UChar& character)
 {
-    return { &character, 1 };
+    return unsafeMakeSpan(&character, 1);
 }
 
 inline std::span<const LChar> span8(const char* string)
 {
-    return { byteCast<LChar>(string), string ? strlen(string) : 0 };
+    return unsafeMakeSpan(byteCast<LChar>(string), string ? strlen(string) : 0);
+}
+
+inline std::span<const LChar> span8IncludingNullTerminator(const char* string)
+{
+    return unsafeMakeSpan(byteCast<LChar>(string), string ? strlen(string) + 1 : 0);
 }
 
 inline std::span<const char> span(const char* string)
 {
-    return { string, string ? strlen(string) : 0 };
+    return unsafeMakeSpan(string, string ? strlen(string) : 0);
 }
+
+inline std::span<const LChar> span(const LChar* string)
+{
+    return unsafeMakeSpan(string, string ? strlen(byteCast<char>(string)) : 0);
+}
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+inline std::span<const UChar> span(const UChar* string)
+{
+    if (!string)
+        return { };
+    size_t length = 0;
+    while (string[length])
+        ++length;
+    return unsafeMakeSpan(string, length);
+}
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #if !HAVE(MISSING_U8STRING)
 inline std::span<const char8_t> span(const std::u8string& string)
 {
-    return { string.data(), string.length() };
+    return unsafeMakeSpan(string.data(), string.length());
 }
 #endif
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 template<typename CharacterType> inline constexpr bool isLatin1(CharacterType character)
 {
@@ -753,7 +778,7 @@ inline size_t find(std::span<const CharacterType> characters, CharacterType matc
     if constexpr (sizeof(CharacterType) == 1) {
         if (index >= characters.size())
             return notFound;
-        auto* result = reinterpret_cast<const CharacterType*>(find8(bitwise_cast<const uint8_t*>(characters.data() + index), matchCharacter, characters.size() - index));
+        auto* result = reinterpret_cast<const CharacterType*>(find8(std::bit_cast<const uint8_t*>(characters.data() + index), matchCharacter, characters.size() - index));
         ASSERT(!result || static_cast<unsigned>(result - characters.data()) >= index);
         if (result)
             return result - characters.data();
@@ -763,7 +788,7 @@ inline size_t find(std::span<const CharacterType> characters, CharacterType matc
     if constexpr (sizeof(CharacterType) == 2) {
         if (index >= characters.size())
             return notFound;
-        auto* result = reinterpret_cast<const CharacterType*>(find16(bitwise_cast<const uint16_t*>(characters.data() + index), matchCharacter, characters.size() - index));
+        auto* result = reinterpret_cast<const CharacterType*>(find16(std::bit_cast<const uint16_t*>(characters.data() + index), matchCharacter, characters.size() - index));
         ASSERT(!result || static_cast<unsigned>(result - characters.data()) >= index);
         if (result)
             return result - characters.data();
@@ -925,16 +950,16 @@ inline void copyElements(uint16_t* __restrict destination, const uint8_t* __rest
         const auto* simdEnd = destination + (length & ~memoryAccessMask);
         simde_uint8x16_t zeros = simde_vdupq_n_u8(0);
         do {
-            simde_uint8x16x4_t bytes = simde_vld1q_u8_x4(bitwise_cast<const uint8_t*>(source));
+            simde_uint8x16x4_t bytes = simde_vld1q_u8_x4(std::bit_cast<const uint8_t*>(source));
             source += memoryAccessSize;
 
-            simde_vst2q_u8(bitwise_cast<uint8_t*>(destination), (simde_uint8x16x2_t { bytes.val[0], zeros }));
+            simde_vst2q_u8(std::bit_cast<uint8_t*>(destination), (simde_uint8x16x2_t { bytes.val[0], zeros }));
             destination += memoryAccessSize / 4;
-            simde_vst2q_u8(bitwise_cast<uint8_t*>(destination), (simde_uint8x16x2_t { bytes.val[1], zeros }));
+            simde_vst2q_u8(std::bit_cast<uint8_t*>(destination), (simde_uint8x16x2_t { bytes.val[1], zeros }));
             destination += memoryAccessSize / 4;
-            simde_vst2q_u8(bitwise_cast<uint8_t*>(destination), (simde_uint8x16x2_t { bytes.val[2], zeros }));
+            simde_vst2q_u8(std::bit_cast<uint8_t*>(destination), (simde_uint8x16x2_t { bytes.val[2], zeros }));
             destination += memoryAccessSize / 4;
-            simde_vst2q_u8(bitwise_cast<uint8_t*>(destination), (simde_uint8x16x2_t { bytes.val[3], zeros }));
+            simde_vst2q_u8(std::bit_cast<uint8_t*>(destination), (simde_uint8x16x2_t { bytes.val[3], zeros }));
             destination += memoryAccessSize / 4;
         } while (destination != simdEnd);
     }
@@ -1116,15 +1141,17 @@ inline void copyElements(uint8_t* __restrict destination, const uint64_t* __rest
         *destination++ = *source++;
 }
 
+#ifndef __swift__ // FIXME: rdar://136156228
 inline void copyElements(UChar* __restrict destination, const LChar* __restrict source, size_t length)
 {
-    copyElements(bitwise_cast<uint16_t*>(destination), bitwise_cast<const uint8_t*>(source), length);
+    copyElements(std::bit_cast<uint16_t*>(destination), std::bit_cast<const uint8_t*>(source), length);
 }
 
 inline void copyElements(LChar* __restrict destination, const UChar* __restrict source, size_t length)
 {
-    copyElements(bitwise_cast<uint8_t*>(destination), bitwise_cast<const uint16_t*>(source), length);
+    copyElements(std::bit_cast<uint8_t*>(destination), std::bit_cast<const uint16_t*>(source), length);
 }
+#endif
 
 template<typename CharacterType, CharacterType... characters>
 ALWAYS_INLINE bool compareEach(CharacterType input)
@@ -1147,10 +1174,10 @@ ALWAYS_INLINE bool charactersContain(std::span<const CharacterType> span)
         size_t index = 0;
         BulkType accumulated { };
         for (; index + (stride - 1) < length; index += stride)
-            accumulated = SIMD::bitOr(accumulated, SIMD::equal<characters...>(SIMD::load(bitwise_cast<const UnsignedType*>(data + index))));
+            accumulated = SIMD::bitOr(accumulated, SIMD::equal<characters...>(SIMD::load(std::bit_cast<const UnsignedType*>(data + index))));
 
         if (index < length)
-            accumulated = SIMD::bitOr(accumulated, SIMD::equal<characters...>(SIMD::load(bitwise_cast<const UnsignedType*>(data + length - stride))));
+            accumulated = SIMD::bitOr(accumulated, SIMD::equal<characters...>(SIMD::load(std::bit_cast<const UnsignedType*>(data + length - stride))));
 
         return SIMD::isNonZero(accumulated);
     }
@@ -1163,6 +1190,8 @@ ALWAYS_INLINE bool charactersContain(std::span<const CharacterType> span)
     return false;
 }
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+
 }
 
 using WTF::equalIgnoringASCIICase;
@@ -1172,4 +1201,5 @@ using WTF::equalLettersIgnoringASCIICaseWithLength;
 using WTF::isLatin1;
 using WTF::span;
 using WTF::span8;
+using WTF::span8IncludingNullTerminator;
 using WTF::charactersContain;

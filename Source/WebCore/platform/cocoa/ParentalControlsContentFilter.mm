@@ -35,11 +35,14 @@
 #import <objc/runtime.h>
 #import <pal/spi/cocoa/WebFilterEvaluatorSPI.h>
 #import <wtf/SoftLinking.h>
+#import <wtf/TZoneMallocInlines.h>
 
 SOFT_LINK_PRIVATE_FRAMEWORK_OPTIONAL(WebContentAnalysis);
 SOFT_LINK_CLASS_OPTIONAL(WebContentAnalysis, WebFilterEvaluator);
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ParentalControlsContentFilter);
 
 bool ParentalControlsContentFilter::enabled()
 {

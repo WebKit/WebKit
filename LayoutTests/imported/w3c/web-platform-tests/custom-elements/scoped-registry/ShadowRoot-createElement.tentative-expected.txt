@@ -1,0 +1,6 @@
+
+PASS ShadowRoot.createElement() for autonomous custom element
+PASS ShadowRoot.createElementNS() for autonomous custom element
+FAIL ShadowRoot.createElement() for customized built-in element assert_true: expected true got false
+FAIL ShadowRoot.createElementNS() for customized built-in element assert_true: expected true got false
+

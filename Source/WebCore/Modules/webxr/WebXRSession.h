@@ -57,20 +57,17 @@ struct XRRenderStateInit;
 class WebXRSession final : public RefCounted<WebXRSession>, public EventTarget, public ActiveDOMObject, public PlatformXR::TrackingAndRenderingClient {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(WebXRSession);
 public:
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
+
+    USING_CAN_MAKE_WEAKPTR(PlatformXR::TrackingAndRenderingClient);
+
     using RequestReferenceSpacePromise = DOMPromiseDeferred<IDLInterface<WebXRReferenceSpace>>;
     using EndPromise = DOMPromiseDeferred<void>;
     using FeatureList = PlatformXR::Device::FeatureList;
 
     static Ref<WebXRSession> create(Document&, WebXRSystem&, XRSessionMode, PlatformXR::Device&, FeatureList&&);
     virtual ~WebXRSession();
-
-    // ActiveDOMObject.
-    void ref() const final { RefCounted::ref(); }
-    void deref() const final { RefCounted::deref(); }
-
-    using PlatformXR::TrackingAndRenderingClient::weakPtrFactory;
-    using PlatformXR::TrackingAndRenderingClient::WeakValueType;
-    using PlatformXR::TrackingAndRenderingClient::WeakPtrImplType;
 
     XREnvironmentBlendMode environmentBlendMode() const;
     XRInteractionMode interactionMode() const;

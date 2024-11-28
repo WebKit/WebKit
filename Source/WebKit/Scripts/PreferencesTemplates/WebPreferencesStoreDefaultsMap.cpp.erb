@@ -28,6 +28,7 @@
 #include "config.h"
 #include "WebPreferencesStore.h"
 
+#include "WebKit2Initialize.h"
 #include "WebPreferencesDefinitions.h"
 #include "WebPreferencesKeys.h"
 #include <variant>
@@ -45,7 +46,9 @@ using namespace WebCore;
 
 WebPreferencesStore::ValueMap& WebPreferencesStore::defaults()
 {
+    InitializeWebKit2();
     static NeverDestroyed<ValueMap> defaults;
+
     if (defaults.get().isEmpty()) {
 <%- for @pref in @exposedPreferences do -%>
 <%- if @pref.condition -%>

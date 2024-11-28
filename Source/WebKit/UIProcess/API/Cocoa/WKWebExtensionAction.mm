@@ -30,14 +30,13 @@
 #import "config.h"
 #import "WKWebExtensionActionInternal.h"
 
+#import "CocoaHelpers.h"
 #import "CocoaImage.h"
 #import "WebExtensionAction.h"
 #import "WebExtensionContext.h"
 #import "WebExtensionTab.h"
 #import <wtf/BlockPtr.h>
 #import <wtf/CompletionHandler.h>
-
-NSNotificationName const WKWebExtensionActionPropertiesDidChangeNotification = @"WKWebExtensionActionPropertiesDidChange";
 
 #if USE(APPKIT)
 using CocoaMenuItem = NSMenuItem;
@@ -65,90 +64,90 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(WKWebExtensionAction, WebExtensionAction, 
 
 - (WKWebExtensionContext *)webExtensionContext
 {
-    if (auto *context = _webExtensionAction->extensionContext())
+    if (auto *context = self._protectedWebExtensionAction->extensionContext())
         return context->wrapper();
     return nil;
 }
 
 - (id<WKWebExtensionTab>)associatedTab
 {
-    if (RefPtr tab = _webExtensionAction->tab())
+    if (RefPtr tab = self._protectedWebExtensionAction->tab())
         return tab->delegate();
     return nil;
 }
 
 - (CocoaImage *)iconForSize:(CGSize)size
 {
-    return _webExtensionAction->icon(size);
+    return WebKit::toCocoaImage(self._protectedWebExtensionAction->icon(WebCore::FloatSize(size)));
 }
 
 - (NSString *)label
 {
-    return _webExtensionAction->label();
+    return self._protectedWebExtensionAction->label();
 }
 
 - (NSString *)badgeText
 {
-    return _webExtensionAction->badgeText();
+    return self._protectedWebExtensionAction->badgeText();
 }
 
 - (BOOL)hasUnreadBadgeText
 {
-    return _webExtensionAction->hasUnreadBadgeText();
+    return self._protectedWebExtensionAction->hasUnreadBadgeText();
 }
 
 - (void)setHasUnreadBadgeText:(BOOL)hasUnreadBadgeText
 {
-    return _webExtensionAction->setHasUnreadBadgeText(hasUnreadBadgeText);
+    return self._protectedWebExtensionAction->setHasUnreadBadgeText(hasUnreadBadgeText);
 }
 
 - (NSString *)inspectionName
 {
-    return _webExtensionAction->popupWebViewInspectionName();
+    return self._protectedWebExtensionAction->popupWebViewInspectionName();
 }
 
 - (void)setInspectionName:(NSString *)name
 {
-    _webExtensionAction->setPopupWebViewInspectionName(name);
+    self._protectedWebExtensionAction->setPopupWebViewInspectionName(name);
 }
 
 - (BOOL)isEnabled
 {
-    return _webExtensionAction->isEnabled();
+    return self._protectedWebExtensionAction->isEnabled();
 }
 
 - (NSArray<CocoaMenuItem *> *)menuItems
 {
-    return _webExtensionAction->platformMenuItems();
+    return self._protectedWebExtensionAction->platformMenuItems();
 }
 
 - (BOOL)presentsPopup
 {
-    return _webExtensionAction->presentsPopup();
+    return self._protectedWebExtensionAction->presentsPopup();
 }
 
 #if PLATFORM(IOS_FAMILY)
 - (UIViewController *)popupViewController
 {
-    return _webExtensionAction->popupViewController();
+    return self._protectedWebExtensionAction->popupViewController();
 }
 #endif
 
 #if PLATFORM(MAC)
 - (NSPopover *)popupPopover
 {
-    return _webExtensionAction->popupPopover();
+    return self._protectedWebExtensionAction->popupPopover();
 }
 #endif
 
 - (WKWebView *)popupWebView
 {
-    return _webExtensionAction->popupWebView();
+    return self._protectedWebExtensionAction->popupWebView();
 }
 
 - (void)closePopup
 {
-    _webExtensionAction->closePopup();
+    self._protectedWebExtensionAction->closePopup();
 }
 
 #pragma mark WKObject protocol implementation
@@ -159,6 +158,11 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(WKWebExtensionAction, WebExtensionAction, 
 }
 
 - (WebKit::WebExtensionAction&)_webExtensionAction
+{
+    return *_webExtensionAction;
+}
+
+- (Ref<WebKit::WebExtensionAction>)_protectedWebExtensionAction
 {
     return *_webExtensionAction;
 }

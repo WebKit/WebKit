@@ -20,28 +20,31 @@
 #include "config.h"
 #include "HexNumber.h"
 
+#include <wtf/ASCIICType.h>
+#include <wtf/CheckedArithmetic.h>
+#include <wtf/IndexedRange.h>
 #include <wtf/PrintStream.h>
+#include <wtf/StdLibExtras.h>
 #include <wtf/text/StringView.h>
 
 namespace WTF {
 
 namespace Internal {
 
-std::pair<LChar*, unsigned> appendHex(LChar* buffer, unsigned bufferSize, std::uintmax_t number, unsigned minimumDigits, HexConversionMode mode)
+std::span<LChar> appendHex(std::span<LChar> buffer, std::uintmax_t number, unsigned minimumDigits, HexConversionMode mode)
 {
-    auto end = buffer + bufferSize;
-    auto start = end;
-    auto hexDigits = hexDigitsForMode(mode);
+    size_t startIndex = buffer.size();
+    auto& hexDigits = hexDigitsForMode(mode);
     do {
-        *--start = hexDigits[number & 0xF];
+        buffer[--startIndex] = hexDigits[number & 0xF];
         number >>= 4;
     } while (number);
-    auto startWithLeadingZeros = end - std::min(minimumDigits, bufferSize);
-    if (start > startWithLeadingZeros) {
-        std::memset(startWithLeadingZeros, '0', start - startWithLeadingZeros);
-        start = startWithLeadingZeros;
+    auto startIndexWithLeadingZeros = buffer.size() - std::min<size_t>(minimumDigits, buffer.size());
+    if (startIndex > startIndexWithLeadingZeros) {
+        memsetSpan(buffer.subspan(startIndexWithLeadingZeros, startIndex - startIndexWithLeadingZeros), '0');
+        startIndex = startIndexWithLeadingZeros;
     }
-    return { start, end - start };
+    return buffer.subspan(startIndex);
 }
 
 }
@@ -49,6 +52,30 @@ std::pair<LChar*, unsigned> appendHex(LChar* buffer, unsigned bufferSize, std::u
 void printInternal(PrintStream& out, HexNumberBuffer buffer)
 {
     out.print(StringView(buffer.span()));
+}
+
+static void toHexInternal(std::span<const uint8_t> values, std::span<LChar> hexadecimalOutput)
+{
+    for (auto [i, digestValue] : indexedRange(values)) {
+        hexadecimalOutput[i * 2] = upperNibbleToASCIIHexDigit(digestValue);
+        hexadecimalOutput[i * 2 + 1] = lowerNibbleToASCIIHexDigit(digestValue);
+    }
+}
+
+CString toHexCString(std::span<const uint8_t> values)
+{
+    std::span<char> buffer;
+    auto result = CString::newUninitialized(CheckedSize(values.size()) * 2U, buffer);
+    toHexInternal(values, byteCast<LChar>(buffer));
+    return result;
+}
+
+String toHexString(std::span<const uint8_t> values)
+{
+    std::span<LChar> buffer;
+    auto result = String::createUninitialized(CheckedSize(values.size()) * 2U, buffer);
+    toHexInternal(values, buffer);
+    return result;
 }
 
 } // namespace WTF

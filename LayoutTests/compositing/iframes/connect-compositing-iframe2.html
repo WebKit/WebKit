@@ -29,10 +29,10 @@
         testRunner.waitUntilDone();
     }
 
-    function doTest()
+    async function doTest()
     {
         if (window.testRunner)
-            testRunner.displayAndTrackRepaints();
+            await testRunner.displayAndTrackRepaints();
 
       document.getElementById('iframe').className = 'composited';
 

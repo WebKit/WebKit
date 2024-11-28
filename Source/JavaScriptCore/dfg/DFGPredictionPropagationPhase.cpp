@@ -1004,7 +1004,7 @@ private:
         case GetByValMegamorphic:
         case ArrayPop:
         case ArrayPush:
-        case ArraySpliceExtract:
+        case ArraySplice:
         case RegExpExec:
         case RegExpExecNonGlobalOrSticky:
         case RegExpTest:
@@ -1307,6 +1307,7 @@ private:
         case NewArray:
         case NewArrayWithSize:
         case NewArrayWithConstantSize:
+        case NewArrayWithSizeAndStructure:
         case CreateRest:
         case NewArrayBuffer:
         case ObjectKeys:

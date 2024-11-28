@@ -193,10 +193,6 @@ body[dir=rtl] .timeline-overview.frames > .timeline-ruler:not(.both-handles-clam
     left: 0;
 }
 
-body.mac-platform.legacy .timeline-overview > .graphs-container {
-    top: 22px;
-}
-
 .timeline-overview > .graphs-container > .timeline-overview-graph {
     height: 36px;
 }

@@ -28,6 +28,7 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "Connection.h"
+#include "RemoteRenderingBackend.h"
 #include "ShapeDetectionIdentifier.h"
 #include "StreamMessageReceiver.h"
 #include <WebCore/ProcessIdentifier.h>
@@ -60,7 +61,7 @@ public:
         return adoptRef(*new RemoteFaceDetector(WTFMove(faceDetector), objectHeap, backend, identifier, webProcessIdentifier));
     }
 
-    const SharedPreferencesForWebProcess& sharedPreferencesForWebProcess() const;
+    std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess() const;
 
     virtual ~RemoteFaceDetector();
 
@@ -73,6 +74,7 @@ private:
     RemoteFaceDetector& operator=(RemoteFaceDetector&&) = delete;
 
     WebCore::ShapeDetection::FaceDetector& backing() { return m_backing; }
+    Ref<RemoteRenderingBackend> protectedBackend() const { return m_backend.get(); }
 
     void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;
 

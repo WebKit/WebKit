@@ -105,6 +105,7 @@ class FramebufferVk : public FramebufferImpl
     // Returns render area with deferred clears in consideration. When deferred clear is used
     // in the render pass, the render area must cover the whole framebuffer.
     gl::Rectangle getRenderArea(ContextVk *contextVk) const;
+    uint32_t getLayerCount() const { return mCurrentFramebufferDesc.getLayerCount(); }
 
     const gl::DrawBufferMask &getEmulatedAlphaAttachmentMask() const;
     RenderTargetVk *getColorDrawRenderTarget(size_t colorIndexGL) const;
@@ -124,7 +125,7 @@ class FramebufferVk : public FramebufferImpl
     bool hasDeferredClears() const { return !mDeferredClears.empty(); }
     angle::Result flushDeferredClears(ContextVk *contextVk);
 
-    void switchToFramebufferFetchMode(ContextVk *contextVk, bool hasFramebufferFetch);
+    void switchToColorFramebufferFetchMode(ContextVk *contextVk, bool hasColorFramebufferFetch);
 
     bool updateLegacyDither(ContextVk *contextVk);
 
@@ -247,6 +248,7 @@ class FramebufferVk : public FramebufferImpl
     void updateActiveColorMasks(size_t colorIndex, bool r, bool g, bool b, bool a);
     void updateRenderPassDesc(ContextVk *contextVk);
     angle::Result updateColorAttachment(const gl::Context *context, uint32_t colorIndex);
+    void updateColorAttachmentColorspace(gl::SrgbWriteControlMode srgbWriteControlMode);
     angle::Result updateDepthStencilAttachment(const gl::Context *context);
     void updateDepthStencilAttachmentSerial(ContextVk *contextVk);
     angle::Result flushColorAttachmentUpdates(const gl::Context *context,

@@ -25,31 +25,36 @@
 
 #pragma once
 
-#include "FormattingConstraints.h"
+#include "LayoutUnit.h"
 
 namespace WebCore {
 namespace Layout {
 
-struct ConstraintsForFlexContent : public ConstraintsForInFlowContent {
-    ConstraintsForFlexContent(const ConstraintsForInFlowContent&, std::optional<LayoutUnit> availableVerticalSpace, std::optional<LayoutUnit> minimumVerticalSpace);
-
-    std::optional<LayoutUnit> availableVerticalSpace() const { return m_availableVerticalSpace; }
-    std::optional<LayoutUnit> minimumVerticalSpace() const { return m_minimumVerticalSpace; }
+struct ConstraintsForFlexContent {
+    struct AxisGeometry {
+        std::optional<LayoutUnit> minimumSize;
+        std::optional<LayoutUnit> maximumSize;
+        std::optional<LayoutUnit> availableSize;
+        LayoutUnit startPosition;
+    };
+    ConstraintsForFlexContent(const AxisGeometry& mainAxis, const AxisGeometry& crossAxis, bool isSizedUnderMinMax);
+    const AxisGeometry& mainAxis() const { return m_mainAxisGeometry; }
+    const AxisGeometry& crossAxis() const { return m_crossAxisGeometry; }
+    bool isSizedUnderMinMax() const { return m_isSizedUnderMinMax; }
 
 private:
-    std::optional<LayoutUnit> m_availableVerticalSpace;
-    std::optional<LayoutUnit> m_minimumVerticalSpace;
+    AxisGeometry m_mainAxisGeometry;
+    AxisGeometry m_crossAxisGeometry;
+    bool m_isSizedUnderMinMax { false };
 };
 
-inline ConstraintsForFlexContent::ConstraintsForFlexContent(const ConstraintsForInFlowContent& genericContraints, std::optional<LayoutUnit> availableVerticalSpace, std::optional<LayoutUnit> minimumVerticalSpace)
-    : ConstraintsForInFlowContent(genericContraints.horizontal(), genericContraints.logicalTop(), FlexContent)
-    , m_availableVerticalSpace(availableVerticalSpace)
-    , m_minimumVerticalSpace(minimumVerticalSpace)
+inline ConstraintsForFlexContent::ConstraintsForFlexContent(const AxisGeometry& mainAxis, const AxisGeometry& crossAxis, bool isSizedUnderMinMax)
+    : m_mainAxisGeometry(mainAxis)
+    , m_crossAxisGeometry(crossAxis)
+    , m_isSizedUnderMinMax(isSizedUnderMinMax)
 {
 }
 
 }
 }
-
-SPECIALIZE_TYPE_TRAITS_LAYOUT_FORMATTING_CONSTRAINTS(ConstraintsForFlexContent, isConstraintsForFlexContent())
 

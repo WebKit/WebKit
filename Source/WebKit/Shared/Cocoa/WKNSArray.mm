@@ -51,8 +51,13 @@
 
 - (id)objectAtIndex:(NSUInteger)i
 {
-    RefPtr object = _array->at(i);
+    RefPtr object = self._protectedArray->at(i);
     return object ? (id)object->wrapper() : [NSNull null];
+}
+
+- (RefPtr<API::Array>)_protectedArray
+{
+    return _array.get();
 }
 
 #pragma mark NSCopying protocol implementation

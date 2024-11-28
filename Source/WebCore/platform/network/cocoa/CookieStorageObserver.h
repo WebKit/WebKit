@@ -47,7 +47,7 @@ namespace WebCore {
 
 // Use eager initialization for the WeakPtrFactory since we construct WeakPtrs on a non-main thread.
 class WEBCORE_EXPORT CookieStorageObserver : public CanMakeWeakPtr<CookieStorageObserver, WeakPtrFactoryInitialization::Eager> {
-    WTF_MAKE_TZONE_ALLOCATED(CookieStorageObserver);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(CookieStorageObserver, WEBCORE_EXPORT);
     WTF_MAKE_NONCOPYABLE(CookieStorageObserver);
 public:
     explicit CookieStorageObserver(NSHTTPCookieStorage *);

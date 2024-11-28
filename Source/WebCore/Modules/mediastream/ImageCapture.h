@@ -44,13 +44,12 @@ namespace WebCore {
 class ImageCapture : public RefCounted<ImageCapture>, public ActiveDOMObject {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(ImageCapture);
 public:
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
+
     static ExceptionOr<Ref<ImageCapture>> create(Document&, Ref<MediaStreamTrack>);
 
     ~ImageCapture();
-
-    // ActiveDOMObject.
-    void ref() const final { RefCounted::ref(); }
-    void deref() const final { RefCounted::deref(); }
 
     void takePhoto(PhotoSettings&&, DOMPromiseDeferred<IDLInterface<Blob>>&&);
     void getPhotoCapabilities(DOMPromiseDeferred<IDLDictionary<PhotoCapabilities>>&&);
@@ -63,7 +62,7 @@ private:
 
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const { return m_logger.get(); }
-    const void* logIdentifier() const { return m_logIdentifier; }
+    uint64_t logIdentifier() const { return m_logIdentifier; }
     ASCIILiteral logClassName() const { return "ImageCapture"_s; }
     WTFLogChannel& logChannel() const;
 #endif
@@ -71,7 +70,7 @@ private:
     Ref<MediaStreamTrack> m_track;
 #if !RELEASE_LOG_DISABLED
     Ref<const Logger> m_logger;
-    const void* m_logIdentifier;
+    const uint64_t m_logIdentifier;
 #endif
 };
 

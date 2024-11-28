@@ -22,8 +22,8 @@
 
 import sys
 
-if sys.version_info < (3, 6):
-    raise ImportError("webkitscmpy requires Python 3.6 or above")
+if sys.version_info < (3, 9):  # noqa: UP036
+    raise ImportError("webkitscmpy requires Python 3.9 or above")
 
 import logging
 import os
@@ -46,13 +46,11 @@ try:
 except ImportError:
     raise ImportError(
         "'webkitcorepy' could not be found on your Python path.\n" +
-        "You are not running from a WebKit checkout.\n" +
-        "Please install webkitcorepy with `pip install webkitcorepy --extra-index-url <package index URL>`"
+        "You are not running from a complete WebKit checkout.\n" +
+        "See https://github.com/WebKit/WebKit/tree/main/Tools/Scripts/libraries/webkitcorepy"
     )
 
 version = Version(7, 0, 0)
-if sys.version_info < (3, 0):
-    raise ImportError('webkitscmpy no longer supports Python 2')
 
 AutoInstall.register(Package('fasteners', Version(0, 15, 0)))
 AutoInstall.register(Package('markupsafe', Version(2, 1, 5), pypi_name='MarkupSafe', wheel=True))

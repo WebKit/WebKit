@@ -32,6 +32,7 @@
 #include <WebCore/FrameIdentifier.h>
 #include <pal/SessionID.h>
 #include <wtf/Forward.h>
+#include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/StdSet.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
@@ -39,15 +40,6 @@
 #if HAVE(CORE_PREDICTION)
 #include "ResourceLoadStatisticsClassifierCocoa.h"
 #endif
-
-namespace WebKit {
-class ResourceLoadStatisticsStore;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::ResourceLoadStatisticsStore> : std::true_type { };
-}
 
 namespace WebCore {
 class KeyedDecoder;
@@ -95,7 +87,7 @@ enum class CanRequestStorageAccessWithoutUserInteraction : bool { No, Yes };
 enum class DataRemovalFrequency : uint8_t { Never, Short, Long };
 
 // This is always constructed / used / destroyed on the WebResourceLoadStatisticsStore's statistics queue.
-class ResourceLoadStatisticsStore final : public DatabaseUtilities, public CanMakeWeakPtr<ResourceLoadStatisticsStore> {
+class ResourceLoadStatisticsStore final : public RefCountedAndCanMakeWeakPtr<ResourceLoadStatisticsStore>,  public DatabaseUtilities {
     WTF_MAKE_TZONE_ALLOCATED(ResourceLoadStatisticsStore);
 public:
     using ResourceLoadStatistics = WebCore::ResourceLoadStatistics;
@@ -111,7 +103,11 @@ public:
     using DomainInNeedOfStorageAccess = WebCore::RegistrableDomain;
     using OpenerDomain = WebCore::RegistrableDomain;
     
-    ResourceLoadStatisticsStore(WebResourceLoadStatisticsStore&, SuspendableWorkQueue&, ShouldIncludeLocalhost, const String& storageDirectoryPath, PAL::SessionID);
+    static Ref<ResourceLoadStatisticsStore> create(WebResourceLoadStatisticsStore& webResourceLoadStatisticsStore, SuspendableWorkQueue& suspendableWorkQueue, ShouldIncludeLocalhost shouldIncludeLocalhost, const String& storageDirectoryPath, PAL::SessionID sessionID)
+    {
+        return adoptRef(*new ResourceLoadStatisticsStore(webResourceLoadStatisticsStore, suspendableWorkQueue, shouldIncludeLocalhost, storageDirectoryPath, sessionID));
+    }
+
     virtual ~ResourceLoadStatisticsStore();
 
     void clear(CompletionHandler<void()>&&);
@@ -215,6 +211,8 @@ public:
     static void interruptAllDatabases();
 
 private:
+    ResourceLoadStatisticsStore(WebResourceLoadStatisticsStore&, SuspendableWorkQueue&, ShouldIncludeLocalhost, const String& storageDirectoryPath, PAL::SessionID);
+
     WebResourceLoadStatisticsStore& store() { return m_store.get(); }
 
     struct Parameters {

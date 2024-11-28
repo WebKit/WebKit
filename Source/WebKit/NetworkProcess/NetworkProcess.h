@@ -153,7 +153,13 @@ public:
 
     NetworkProcess(AuxiliaryProcessInitializationParameters&&);
     ~NetworkProcess();
-    static constexpr WebCore::AuxiliaryProcessType processType = WebCore::AuxiliaryProcessType::Network;
+    static constexpr WTF::AuxiliaryProcessType processType = WTF::AuxiliaryProcessType::Network;
+
+    // CheckedPtr interface
+    uint32_t checkedPtrCount() const final { return CanMakeCheckedPtr::checkedPtrCount(); }
+    uint32_t checkedPtrCountWithoutThreadCheck() const final { return CanMakeCheckedPtr::checkedPtrCountWithoutThreadCheck(); }
+    void incrementCheckedPtrCount() const final { CanMakeCheckedPtr::incrementCheckedPtrCount(); }
+    void decrementCheckedPtrCount() const final { CanMakeCheckedPtr::decrementCheckedPtrCount(); }
 
     template <typename T>
     T* supplement()
@@ -167,9 +173,16 @@ public:
         m_supplements.add(T::supplementName(), makeUnique<T>(*this));
     }
 
+    template <typename T>
+    void addSupplementWithoutRefCountedCheck()
+    {
+        m_supplements.add(T::supplementName(), makeUniqueWithoutRefCountedCheck<T>(*this));
+    }
+
     void removeNetworkConnectionToWebProcess(NetworkConnectionToWebProcess&);
 
     AuthenticationManager& authenticationManager();
+    Ref<AuthenticationManager> protectedAuthenticationManager();
     DownloadManager& downloadManager();
 
     void setSession(PAL::SessionID, std::unique_ptr<NetworkSession>&&);
@@ -296,6 +309,7 @@ public:
 
     void setBlobRegistryTopOriginPartitioningEnabled(PAL::SessionID, bool) const;
     void setShouldSendPrivateTokenIPCForTesting(PAL::SessionID, bool) const;
+    void setOptInCookiePartitioningEnabled(PAL::SessionID, bool) const;
 
     void preconnectTo(PAL::SessionID, WebPageProxyIdentifier, WebCore::PageIdentifier, WebCore::ResourceRequest&&, WebCore::StoredCredentialsPolicy, std::optional<NavigatingToAppBoundDomain>);
 
@@ -332,8 +346,8 @@ public:
 
     const String& uiProcessBundleIdentifier() const;
 
-    void ref() const override { ThreadSafeRefCounted<NetworkProcess>::ref(); }
-    void deref() const override { ThreadSafeRefCounted<NetworkProcess>::deref(); }
+    void ref() const final { ThreadSafeRefCounted<NetworkProcess>::ref(); }
+    void deref() const final { ThreadSafeRefCounted<NetworkProcess>::deref(); }
 
     void storePrivateClickMeasurement(PAL::SessionID, WebCore::PrivateClickMeasurement&&);
     void dumpPrivateClickMeasurement(PAL::SessionID, CompletionHandler<void(String)>&&);
@@ -357,12 +371,13 @@ public:
     const OptionSet<NetworkCache::CacheOption>& cacheOptions() const { return m_cacheOptions; }
 
     NetworkConnectionToWebProcess* webProcessConnection(WebCore::ProcessIdentifier) const;
-    WebCore::ProcessIdentifier webProcessIdentifierForConnection(IPC::Connection&) const;
+    std::optional<WebCore::ProcessIdentifier> webProcessIdentifierForConnection(IPC::Connection&) const;
     WebCore::MessagePortChannelRegistry& messagePortChannelRegistry() { return m_messagePortChannelRegistry; }
 
     void setServiceWorkerFetchTimeoutForTesting(Seconds, CompletionHandler<void()>&&);
     void resetServiceWorkerFetchTimeoutForTesting(CompletionHandler<void()>&&);
     Seconds serviceWorkerFetchTimeout() const { return m_serviceWorkerFetchTimeout; }
+    void terminateIdleServiceWorkers(WebCore::ProcessIdentifier, CompletionHandler<void()>&&);
 
     static Seconds randomClosedPortDelay();
 
@@ -389,6 +404,7 @@ public:
 
 #if ENABLE(WEB_RTC)
     RTCDataChannelRemoteManagerProxy& rtcDataChannelProxy();
+    Ref<RTCDataChannelRemoteManagerProxy> protectedRTCDataChannelProxy();
 #endif
 
     bool ftpEnabled() const { return m_ftpEnabled; }
@@ -432,13 +448,9 @@ public:
     void allowFilesAccessFromWebProcess(WebCore::ProcessIdentifier, const Vector<String>&, CompletionHandler<void()>&&);
     void allowFileAccessFromWebProcess(WebCore::ProcessIdentifier, const String&, CompletionHandler<void()>&&);
 
-private:
-    // CheckedPtr interface
-    uint32_t ptrCount() const final { return CanMakeCheckedPtr::ptrCount(); }
-    uint32_t ptrCountWithoutThreadCheck() const final { return CanMakeCheckedPtr::ptrCountWithoutThreadCheck(); }
-    void incrementPtrCount() const final { CanMakeCheckedPtr::incrementPtrCount(); }
-    void decrementPtrCount() const final { CanMakeCheckedPtr::decrementPtrCount(); }
+    bool enableModernDownloadProgress() const { return m_enableModernDownloadProgress; }
 
+private:
     void platformInitializeNetworkProcess(const NetworkProcessCreationParameters&);
 
     void didReceiveNetworkProcessMessage(IPC::Connection&, IPC::Decoder&);
@@ -459,6 +471,7 @@ private:
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
     bool didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&) override;
     void didClose(IPC::Connection&) override;
+    bool dispatchMessage(IPC::Connection&, IPC::Decoder&);
 
     // DownloadManager::Client
     void didCreateDownload() override;
@@ -480,16 +493,16 @@ private:
     void clearDiskCache(WallTime modifiedSince, CompletionHandler<void()>&&);
 
     void downloadRequest(PAL::SessionID, DownloadID, const WebCore::ResourceRequest&, const std::optional<WebCore::SecurityOriginData>& topOrigin, std::optional<NavigatingToAppBoundDomain>, const String& suggestedFilename);
-    void resumeDownload(PAL::SessionID, DownloadID, std::span<const uint8_t> resumeData, const String& path, SandboxExtensionHandle&&, CallDownloadDidStart);
+    void resumeDownload(PAL::SessionID, DownloadID, std::span<const uint8_t> resumeData, const String& path, SandboxExtensionHandle&&, CallDownloadDidStart, std::span<const uint8_t> activityAccessToken);
     void cancelDownload(DownloadID, CompletionHandler<void(std::span<const uint8_t>)>&&);
 #if PLATFORM(COCOA)
 #if HAVE(MODERN_DOWNLOADPROGRESS)
-    void publishDownloadProgress(DownloadID, const URL&, std::span<const uint8_t> bookmarkData, WebKit::UseDownloadPlaceholder);
+    void publishDownloadProgress(DownloadID, const URL&, std::span<const uint8_t> bookmarkData, WebKit::UseDownloadPlaceholder, std::span<const uint8_t> activityAccessToken);
 #else
     void publishDownloadProgress(DownloadID, const URL&, SandboxExtensionHandle&&);
 #endif
 #endif
-    void dataTaskWithRequest(WebPageProxyIdentifier, PAL::SessionID, WebCore::ResourceRequest&&, const std::optional<WebCore::SecurityOriginData>& topOrigin, IPC::FormDataReference&&, CompletionHandler<void(DataTaskIdentifier)>&&);
+    void dataTaskWithRequest(WebPageProxyIdentifier, PAL::SessionID, WebCore::ResourceRequest&&, const std::optional<WebCore::SecurityOriginData>& topOrigin, IPC::FormDataReference&&, CompletionHandler<void(std::optional<DataTaskIdentifier>)>&&);
     void cancelDataTask(DataTaskIdentifier, PAL::SessionID, CompletionHandler<void()>&&);
     void applicationDidEnterBackground();
     void applicationWillEnterForeground();
@@ -527,6 +540,7 @@ private:
 #endif
 
     void terminateRemoteWorkerContextConnectionWhenPossible(RemoteWorkerType, PAL::SessionID, const WebCore::RegistrableDomain&, WebCore::ProcessIdentifier);
+    void runningOrTerminatingServiceWorkerCountForTesting(PAL::SessionID, CompletionHandler<void(unsigned)>&&) const;
     void platformFlushCookies(PAL::SessionID, CompletionHandler<void()>&&);
     
     void registerURLSchemeAsSecure(const String&) const;
@@ -572,7 +586,7 @@ private:
 #endif
 
 #if USE(RUNNINGBOARD)
-    WebSQLiteDatabaseTracker m_webSQLiteDatabaseTracker;
+    Ref<WebSQLiteDatabaseTracker> m_webSQLiteDatabaseTracker;
     RefPtr<ProcessAssertion> m_holdingLockedFileAssertion;
 #endif
     
@@ -599,6 +613,7 @@ private:
     int m_mediaStreamingActivitityToken { NOTIFY_TOKEN_INVALID };
     bool m_isParentProcessFullWebBrowserOrRunningTest { false };
 #endif
+    bool m_enableModernDownloadProgress { false };
 };
 
 #if !PLATFORM(COCOA)

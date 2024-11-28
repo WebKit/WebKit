@@ -61,18 +61,10 @@ public:
     ExecutionCounter();
     void forceSlowPathConcurrently(); // If you use this, checkIfThresholdCrossedAndSet() may still return false.
     bool checkIfThresholdCrossedAndSet(CodeBlock*);
-    bool hasCrossedThreshold() const { return m_counter >= 0; }
     void setNewThreshold(int32_t threshold, CodeBlock* = nullptr);
     void deferIndefinitely();
     double count() const { return static_cast<double>(m_totalCount) + m_counter; }
     void dump(PrintStream&) const;
-    
-    void setNewThresholdForOSRExit(uint32_t activeThreshold, double memoryUsageAdjustedThreshold)
-    {
-        m_activeThreshold = activeThreshold;
-        m_counter = static_cast<int32_t>(-memoryUsageAdjustedThreshold);
-        m_totalCount = memoryUsageAdjustedThreshold;
-    }
 
     template<typename T>
     static T clippedThreshold(CodeBlock* codeBlock, T threshold)

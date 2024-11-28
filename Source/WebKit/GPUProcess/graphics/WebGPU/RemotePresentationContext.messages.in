@@ -24,11 +24,11 @@
 #if ENABLE(GPU_PROCESS)
 
 [EnabledBy=WebGPUEnabled]
-messages -> RemotePresentationContext NotRefCounted Stream {
+messages -> RemotePresentationContext Stream {
     void Configure(WebKit::WebGPU::CanvasConfiguration configuration)
     void Unconfigure()
-    void GetCurrentTexture(WebKit::WebGPUIdentifier identifier)
-    void Present()
+    void GetCurrentTexture(WebKit::WebGPUIdentifier identifier, uint32_t frameIndex)
+    void Present(uint32_t frameIndex)
 }
 
 #endif

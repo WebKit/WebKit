@@ -28,15 +28,21 @@
 #import "PlatformUtilities.h"
 #import "TestNavigationDelegate.h"
 #import "TestWKWebView.h"
+#include <pal/cf/CoreTextSoftLink.h>
 
 namespace TestWebKitAPI {
 
+// rdar://136524076
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 150000
+TEST(LockdownMode, DISABLED_SVGFonts)
+#else
 TEST(LockdownMode, SVGFonts)
+#endif
 {
     auto webViewConfiguration = adoptNS([WKWebViewConfiguration new]);
     webViewConfiguration.get().defaultWebpagePreferences.lockdownModeEnabled = YES;
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
-    NSURL *url = [[NSBundle mainBundle] URLForResource:@"SVGFont" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+    NSURL *url = [NSBundle.test_resourcesBundle URLForResource:@"SVGFont" withExtension:@"html"];
     [webView loadRequest:[NSURLRequest requestWithURL:url]];
     [webView _test_waitForDidFinishNavigation];
 
@@ -53,11 +59,11 @@ TEST(LockdownMode, NotAllowedFontLoadingAPI)
         auto webViewConfiguration = adoptNS([WKWebViewConfiguration new]);
         webViewConfiguration.get().defaultWebpagePreferences.lockdownModeEnabled = YES;
         auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
-        NSURL *url = [[NSBundle mainBundle] URLForResource:@"ImmediateFont" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+        NSURL *url = [NSBundle.test_resourcesBundle URLForResource:@"ImmediateFont" withExtension:@"html"];
         [webView loadRequest:[NSURLRequest requestWithURL:url]];
         [webView _test_waitForDidFinishNavigation];
 
-        NSURL *fontURL = [[NSBundle mainBundle] URLForResource:@"Ahem" withExtension:@"ttf" subdirectory:@"TestWebKitAPI.resources"];
+        NSURL *fontURL = [NSBundle.test_resourcesBundle URLForResource:@"Ahem" withExtension:@"ttf"];
         NSData *fontData = [NSData dataWithContentsOfURL:fontURL];
         NSError *error = nil;
         NSMutableArray<NSNumber *> *array = [NSMutableArray arrayWithCapacity:fontData.length];
@@ -80,7 +86,10 @@ TEST(LockdownMode, NotAllowedFontLoadingAPI)
         auto referenceResult = static_cast<NSNumber *>([webView objectByEvaluatingJavaScript:@"reference.offsetWidth"]).intValue;
 
         EXPECT_NE(beforeTargetResult, targetResult);
-        EXPECT_EQ(targetResult, referenceResult);
+        if (!PAL::canLoad_CoreText_CTFontManagerCreateMemorySafeFontDescriptorFromData())
+            EXPECT_EQ(targetResult, referenceResult);
+        else
+            EXPECT_NE(targetResult, referenceResult);
     }
 }
 
@@ -90,11 +99,11 @@ TEST(LockdownMode, AllowedFontLoadingAPI)
         auto webViewConfiguration = adoptNS([WKWebViewConfiguration new]);
         webViewConfiguration.get().defaultWebpagePreferences.lockdownModeEnabled = YES;
         auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
-        NSURL *url = [[NSBundle mainBundle] URLForResource:@"ImmediateFont" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+        NSURL *url = [NSBundle.test_resourcesBundle URLForResource:@"ImmediateFont" withExtension:@"html"];
         [webView loadRequest:[NSURLRequest requestWithURL:url]];
         [webView _test_waitForDidFinishNavigation];
 
-        NSURL *fontURL = [[NSBundle mainBundle] URLForResource:@"Ahem-10000A" withExtension:@"ttf" subdirectory:@"TestWebKitAPI.resources"];
+        NSURL *fontURL = [NSBundle.test_resourcesBundle URLForResource:@"Ahem-10000A" withExtension:@"ttf"];
         NSData *fontData = [NSData dataWithContentsOfURL:fontURL];
         NSError *error = nil;
         NSMutableArray<NSNumber *> *array = [NSMutableArray arrayWithCapacity:fontData.length];
@@ -127,7 +136,7 @@ TEST(LockdownMode, AllowedFont)
         auto webViewConfiguration = adoptNS([WKWebViewConfiguration new]);
         webViewConfiguration.get().defaultWebpagePreferences.lockdownModeEnabled = YES;
         auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
-        NSURL *url = [[NSBundle mainBundle] URLForResource:@"LockdownModeFonts" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+        NSURL *url = [NSBundle.test_resourcesBundle URLForResource:@"LockdownModeFonts" withExtension:@"html"];
         [webView loadRequest:[NSURLRequest requestWithURL:url]];
         [webView _test_waitForDidFinishNavigation];
 
@@ -147,7 +156,7 @@ TEST(LockdownMode, NotAllowedFont)
         auto webViewConfiguration = adoptNS([WKWebViewConfiguration new]);
         webViewConfiguration.get().defaultWebpagePreferences.lockdownModeEnabled = YES;
         auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
-        NSURL *url = [[NSBundle mainBundle] URLForResource:@"LockdownModeFonts" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+        NSURL *url = [NSBundle.test_resourcesBundle URLForResource:@"LockdownModeFonts" withExtension:@"html"];
         [webView loadRequest:[NSURLRequest requestWithURL:url]];
         [webView _test_waitForDidFinishNavigation];
 
@@ -160,7 +169,10 @@ TEST(LockdownMode, NotAllowedFont)
 #if PLATFORM(WATCHOS)
         EXPECT_NE(targetResult, referenceResult);
 #else
+    if (!PAL::canLoad_CoreText_CTFontManagerCreateMemorySafeFontDescriptorFromData())
         EXPECT_EQ(targetResult, referenceResult);
+    else
+        EXPECT_NE(targetResult, referenceResult);
 #endif
     }
 }

@@ -49,6 +49,10 @@ public:
             && gridRowStart == o.gridRowStart && gridRowEnd == o.gridRowEnd;
     }
 
+#if !LOG_DISABLED
+    void dumpDifferences(TextStream&, const StyleGridItemData&) const;
+#endif
+
     GridPosition gridColumnStart;
     GridPosition gridColumnEnd;
     GridPosition gridRowStart;

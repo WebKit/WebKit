@@ -25,17 +25,24 @@ function clearValue(event) {
     this.value = '';
 }
 input.addEventListener('focus', clearValue, false);
-// Click the cancel button.
-eventSender.mouseMoveTo(cancelX, middleY);
-eventSender.mouseDown();
-eventSender.mouseUp();
-// Click the input element. The event should not be captured by the cancel button.
-eventSender.mouseMoveTo(middleX, middleY);
-eventSender.mouseDown();
-eventSender.mouseUp();
 
-shouldBe('mouseDownCount', '2');
-input.removeEventListener('focus', clearValue, false);
+onload = async () => {
+    if (!window.testRunner)
+        return;
+    testRunner.waitUntilDone();
+    // Click the cancel button.
+    await eventSender.asyncMouseMoveTo(cancelX, middleY);
+    await eventSender.asyncMouseDown();
+    await eventSender.asyncMouseUp();
+    // Click the input element. The event should not be captured by the cancel button.
+    await eventSender.asyncMouseMoveTo(middleX, middleY);
+    await eventSender.asyncMouseDown();
+    await eventSender.asyncMouseUp();
+
+    shouldBe('mouseDownCount', '2');
+    input.removeEventListener('focus', clearValue, false);
+    testRunner.notifyDone();
+}
 </script>
 <script src="../../resources/js-test-post.js"></script>
 </body>

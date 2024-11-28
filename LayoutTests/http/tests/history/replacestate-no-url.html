@@ -5,7 +5,7 @@
   <script src="/js-test-resources/js-test.js"></script>
   <script>
   jsTestIsAsync = true;
-  description('Tests that ReplaceState should not change document URL if URL argument is null.');
+  description('Tests that ReplaceState should not change document URL if URL argument is null or empty.');
 
   function testNullUrl() {
     debug('Push item one');
@@ -32,7 +32,7 @@
       shouldBeEqualToString('document.location.href', 'http://127.0.0.1:8000/one');
       setTimeout(testEmptyUrl, 0);
     } else {
-      shouldBeEqualToString('document.location.href', 'http://127.0.0.1:8000/');
+      shouldBeEqualToString('document.location.href', 'http://127.0.0.1:8000/one');
       finishJSTest();
     }
   }

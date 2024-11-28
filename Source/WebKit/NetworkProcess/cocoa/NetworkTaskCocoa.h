@@ -61,6 +61,7 @@ protected:
     void blockCookies();
     void unblockCookies();
     static void updateTaskWithFirstPartyForSameSiteCookies(NSURLSessionTask*, const WebCore::ResourceRequest&);
+    void updateTaskWithStoragePartitionIdentifier(const WebCore::ResourceRequest&);
     bool needsFirstPartyCookieBlockingLatchModeQuirk(const URL& firstPartyURL, const URL& requestURL, const URL& redirectingURL) const;
     static NSString *lastRemoteIPAddress(NSURLSessionTask *);
     static WebCore::RegistrableDomain lastCNAMEDomain(String);

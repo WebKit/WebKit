@@ -29,10 +29,12 @@
 
 #include "ScrollingTreePositionedNode.h"
 #include <wtf/RetainPtr.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class ScrollingTreePositionedNodeCocoa : public ScrollingTreePositionedNode {
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(ScrollingTreePositionedNodeCocoa, WEBCORE_EXPORT);
 public:
     WEBCORE_EXPORT static Ref<ScrollingTreePositionedNodeCocoa> create(ScrollingTree&, ScrollingNodeID);
 

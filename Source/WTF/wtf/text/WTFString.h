@@ -24,6 +24,10 @@
 // This file would be called String.h, but that conflicts with <string.h>
 // on systems without case-sensitive file systems.
 
+#include <wtf/Compiler.h>
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 #include <wtf/text/IntegerToStringConversion.h>
 #include <wtf/text/StringImpl.h>
 
@@ -96,15 +100,15 @@ public:
     bool isNull() const { return !m_impl; }
     bool isEmpty() const { return !m_impl || m_impl->isEmpty(); }
 
-    StringImpl* impl() const { return m_impl.get(); }
+    StringImpl* impl() const LIFETIME_BOUND { return m_impl.get(); }
     RefPtr<StringImpl> releaseImpl() { return WTFMove(m_impl); }
 
     unsigned length() const { return m_impl ? m_impl->length() : 0; }
-    std::span<const LChar> span8() const { return m_impl ? m_impl->span8() : std::span<const LChar>(); }
-    std::span<const UChar> span16() const { return m_impl ? m_impl->span16() : std::span<const UChar>(); }
+    std::span<const LChar> span8() const LIFETIME_BOUND { return m_impl ? m_impl->span8() : std::span<const LChar>(); }
+    std::span<const UChar> span16() const LIFETIME_BOUND { return m_impl ? m_impl->span16() : std::span<const UChar>(); }
 
     // Return span8() or span16() depending on CharacterType.
-    template<typename CharacterType> std::span<const CharacterType> span() const;
+    template<typename CharacterType> std::span<const CharacterType> span() const LIFETIME_BOUND;
 
     bool is8Bit() const { return !m_impl || m_impl->is8Bit(); }
 
@@ -205,8 +209,8 @@ public:
 
     // Returns an uninitialized string. The characters needs to be written
     // into the buffer returned in data before the returned string is used.
-    static String createUninitialized(unsigned length, UChar*& data) { return StringImpl::createUninitialized(length, data); }
-    static String createUninitialized(unsigned length, LChar*& data) { return StringImpl::createUninitialized(length, data); }
+    static String createUninitialized(unsigned length, std::span<UChar>& data) { return StringImpl::createUninitialized(length, data); }
+    static String createUninitialized(unsigned length, std::span<LChar>& data) { return StringImpl::createUninitialized(length, data); }
 
     using SplitFunctor = WTF::Function<void(StringView)>;
 
@@ -556,15 +560,20 @@ inline bool startsWithLettersIgnoringASCIICase(const String& string, ASCIILitera
 
 inline namespace StringLiterals {
 
-inline String operator"" _str(const char* characters, size_t)
+#ifndef __swift__
+// Swift will import this as global and then all literals will be WTF.String
+// instead of Swift.String
+inline String operator""_str(const char* characters, size_t)
 {
     return ASCIILiteral::fromLiteralUnsafe(characters);
 }
 
-inline String operator"" _str(const UChar* characters, size_t length)
+// FIXME: rdar://136156228
+inline String operator""_str(const UChar* characters, size_t length)
 {
     return String({ characters, length });
 }
+#endif
 
 } // inline StringLiterals
 
@@ -586,3 +595,5 @@ using WTF::reverseFind;
 using WTF::codePointCompareLessThan;
 
 #include <wtf/text/AtomString.h>
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

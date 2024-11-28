@@ -140,11 +140,11 @@ public:
     
     void loadFiles()
     {
-        NSURL *file1 = [[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+        NSURL *file1 = [NSBundle.test_resourcesBundle URLForResource:@"simple" withExtension:@"html"];
         [webView loadFileURL:file1 allowingReadAccessToURL:file1];
         [webView _test_waitForDidFinishNavigation];
 
-        NSURL *file2 = [[NSBundle mainBundle] URLForResource:@"simple2" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+        NSURL *file2 = [NSBundle.test_resourcesBundle URLForResource:@"simple2" withExtension:@"html"];
         [webView loadFileURL:file2 allowingReadAccessToURL:file2];
         [webView _test_waitForDidFinishNavigation];
     }

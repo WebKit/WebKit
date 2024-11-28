@@ -1,5 +1,7 @@
 
-FAIL currentTime handles direction: rtl correctly promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'actual.unit')"
-FAIL currentTime handles writing-mode: vertical-rl correctly promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'actual.unit')"
-FAIL currentTime handles writing-mode: vertical-lr correctly promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'actual.unit')"
+FAIL currentTime handles direction: rtl correctly assert_approx_equals: values do not match for "Unscrolled inline timeline" expected 0 +/- 0.125 but got 100
+FAIL currentTime handles writing-mode: vertical-rl correctly assert_approx_equals: values do not match for "Unscrolled inline timeline" expected 0 +/- 0.125 but got 100
+FAIL currentTime handles writing-mode: sideways-rl correctly assert_approx_equals: values do not match for "Unscrolled inline timeline" expected 0 +/- 0.125 but got 100
+FAIL currentTime handles writing-mode: vertical-lr correctly assert_approx_equals: values do not match for "Scrolled block timeline" expected 20 +/- 0.125 but got 10
+FAIL currentTime handles writing-mode: sideways-lr correctly assert_approx_equals: values do not match for "Unscrolled block timeline" expected 0 +/- 0.125 but got 100
 

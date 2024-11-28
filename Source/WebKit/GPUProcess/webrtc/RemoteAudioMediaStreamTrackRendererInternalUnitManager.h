@@ -62,15 +62,17 @@ public:
 
     void notifyLastToCaptureAudioChanged();
 
+    void ref() const;
+    void deref() const;
+
 private:
     // Messages
-    void createUnit(AudioMediaStreamTrackRendererInternalUnitIdentifier, CompletionHandler<void(std::optional<WebCore::CAAudioStreamDescription>, size_t)>&& callback);
+    void createUnit(AudioMediaStreamTrackRendererInternalUnitIdentifier, const String&, CompletionHandler<void(std::optional<WebCore::CAAudioStreamDescription>, size_t)>&& callback);
     void deleteUnit(AudioMediaStreamTrackRendererInternalUnitIdentifier);
     void startUnit(AudioMediaStreamTrackRendererInternalUnitIdentifier, ConsumerSharedCARingBuffer::Handle&&, IPC::Semaphore&&);
     void stopUnit(AudioMediaStreamTrackRendererInternalUnitIdentifier);
-    void setAudioOutputDevice(AudioMediaStreamTrackRendererInternalUnitIdentifier, const String&);
 
-    HashMap<AudioMediaStreamTrackRendererInternalUnitIdentifier, UniqueRef<class RemoteAudioMediaStreamTrackRendererInternalUnitManagerUnit>> m_units;
+    HashMap<AudioMediaStreamTrackRendererInternalUnitIdentifier, Ref<class RemoteAudioMediaStreamTrackRendererInternalUnitManagerUnit>> m_units;
     ThreadSafeWeakPtr<GPUConnectionToWebProcess> m_gpuConnectionToWebProcess;
 };
 

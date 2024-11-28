@@ -50,6 +50,7 @@
 #include "Settings.h"
 #include "ShadowRoot.h"
 #include "SubframeLoader.h"
+#include "VoidCallback.h"
 #include "Widget.h"
 #include <wtf/TZoneMallocInlines.h>
 
@@ -72,6 +73,7 @@ HTMLPlugInElement::HTMLPlugInElement(const QualifiedName& tagName, Document& doc
 HTMLPlugInElement::~HTMLPlugInElement()
 {
     ASSERT(!m_instance); // cleared in detach()
+    ASSERT(!m_pendingPDFTestCallback);
 }
 
 bool HTMLPlugInElement::willRespondToMouseClickEventsWithEditability(Editability) const
@@ -246,6 +248,11 @@ RenderPtr<RenderElement> HTMLPlugInElement::createElementRenderer(RenderStyle&& 
     return createRenderer<RenderEmbeddedObject>(*this, WTFMove(style));
 }
 
+bool HTMLPlugInElement::isReplaced(const RenderStyle&) const
+{
+    return !m_pluginReplacement || !m_pluginReplacement->willCreateRenderer();
+}
+
 void HTMLPlugInElement::swapRendererTimerFired()
 {
     ASSERT(displayState() == PreparingPluginReplacement);
@@ -254,7 +261,6 @@ void HTMLPlugInElement::swapRendererTimerFired()
     
     // Create a shadow root, which will trigger the code to add a snapshot container
     // and reattach, thus making a new Renderer.
-    Ref protectedThis { *this };
     ensureUserAgentShadowRoot();
 }
 
@@ -368,7 +374,7 @@ bool HTMLPlugInElement::requestObject(const String& relativeURL, const String& m
     return true;
 }
 
-bool HTMLPlugInElement::setReplacement(RenderEmbeddedObject::PluginUnavailabilityReason reason, const String& unavailabilityDescription)
+bool HTMLPlugInElement::setReplacement(PluginUnavailabilityReason reason, const String& unavailabilityDescription)
 {
     Ref protectedThis { *this };
     {
@@ -376,7 +382,7 @@ bool HTMLPlugInElement::setReplacement(RenderEmbeddedObject::PluginUnavailabilit
         if (!renderer)
             return false;
 
-        if (reason == RenderEmbeddedObject::UnsupportedPlugin)
+        if (reason == PluginUnavailabilityReason::UnsupportedPlugin)
             document().addConsoleMessage(MessageSource::JS, MessageLevel::Warning, "Tried to use an unsupported plug-in."_s);
 
         renderer->setPluginUnavailabilityReasonWithDescription(reason, unavailabilityDescription);
@@ -460,6 +466,19 @@ bool HTMLPlugInElement::canLoadScriptURL(const URL&) const
 {
     // FIXME: Probably want to at least check canAddSubframe.
     return true;
+}
+
+void HTMLPlugInElement::pluginDestroyedWithPendingPDFTestCallback(RefPtr<VoidCallback>&& callback)
+{
+    ASSERT(!m_pendingPDFTestCallback);
+    m_pendingPDFTestCallback = WTFMove(callback);
+}
+
+RefPtr<VoidCallback> HTMLPlugInElement::takePendingPDFTestCallback()
+{
+    if (!m_pendingPDFTestCallback)
+        return nullptr;
+    return WTFMove(m_pendingPDFTestCallback);
 }
 
 }

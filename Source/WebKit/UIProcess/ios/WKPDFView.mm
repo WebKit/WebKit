@@ -676,7 +676,7 @@ static NSStringCompareOptions stringCompareOptions(_WKFindOptions findOptions)
     // FIXME 40916725: PDFKit should dispatch this message to the main thread like it does for other delegate messages.
     RunLoop::main().dispatch([webView = _webView] {
         if (auto page = [webView _page])
-            page->dispatchProcessDidTerminate(WebKit::ProcessTerminationReason::Crash);
+            page->dispatchProcessDidTerminate(page->legacyMainFrameProcess(), WebKit::ProcessTerminationReason::Crash);
     });
 }
 

@@ -207,7 +207,7 @@ private:
 
         bool result = true;
 
-        HashMap<AbstractHeap, Node*> potentialStackEscapes;
+        UncheckedKeyHashMap<AbstractHeap, Node*> potentialStackEscapes;
         
         for (m_nodeIndex = 0; m_nodeIndex < block->size(); ++m_nodeIndex) {
             m_node = block->at(m_nodeIndex);
@@ -343,6 +343,7 @@ private:
                 
             case MultiPutByOffset:
             case MultiDeleteByOffset: {
+                // These nodes may cause transition too.
                 considerBarrier(m_node->child1());
                 break;
             }
@@ -383,6 +384,7 @@ private:
             case NewArray:
             case NewArrayWithSize:
             case NewArrayWithConstantSize:
+            case NewArrayWithSizeAndStructure:
             case NewArrayBuffer:
             case NewInternalFieldObject:
             case NewTypedArray:

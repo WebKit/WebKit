@@ -64,7 +64,10 @@ public:
     void setupPipeline();
     void start();
     void stop();
+    bool isStopped() const;
     WARN_UNUSED_RETURN GRefPtr<GstCaps> caps();
+
+    std::pair<GstClockTime, GstClockTime> queryLatency();
 
     GstElement* makeElement(const char* factoryName);
     virtual GstElement* createSource();

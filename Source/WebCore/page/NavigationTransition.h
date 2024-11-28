@@ -43,7 +43,7 @@ public:
     DOMPromise* finished();
 
     void resolvePromise();
-    void rejectPromise(Exception&);
+    void rejectPromise(Exception&, JSC::JSValue exceptionObject);
 
 private:
     explicit NavigationTransition(NavigationNavigationType, Ref<NavigationHistoryEntry>&& fromEntry, Ref<DeferredPromise>&& finished);

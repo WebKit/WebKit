@@ -106,7 +106,7 @@ enum {
     N_PROPERTIES,
 };
 
-static GParamSpec* sObjProperties[N_PROPERTIES] = { nullptr, };
+static std::array<GParamSpec*, N_PROPERTIES> sObjProperties;
 
 struct _WebKitWindowPropertiesPrivate {
 #if PLATFORM(GTK)
@@ -303,7 +303,7 @@ static void webkit_window_properties_class_init(WebKitWindowPropertiesClass* req
             FALSE,
             paramFlags);
 
-    g_object_class_install_properties(objectClass, N_PROPERTIES, sObjProperties);
+    g_object_class_install_properties(objectClass, N_PROPERTIES, sObjProperties.data());
 }
 
 WebKitWindowProperties* webkitWindowPropertiesCreate()

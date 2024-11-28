@@ -350,7 +350,7 @@ struct RenderPassDepthAttachmentDesc : public RenderPassAttachmentDesc
         return !(*this == other);
     }
 
-    double clearDepth = 0;
+    double clearDepth = 1.0;
 };
 
 struct RenderPassStencilAttachmentDesc : public RenderPassAttachmentDesc

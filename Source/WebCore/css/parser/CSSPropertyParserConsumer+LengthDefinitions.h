@@ -24,43 +24,86 @@
 
 #pragma once
 
-#include "CSSParserToken.h"
 #include "CSSPropertyParserConsumer+MetaConsumerDefinitions.h"
-#include "CSSPropertyParserConsumer+Primitives.h"
-#include "CSSPropertyParserConsumer+UnevaluatedCalc.h"
-#include <optional>
-#include <wtf/Brigand.h>
 
 namespace WebCore {
-
-class CSSCalcSymbolsAllowed;
-class CSSParserTokenRange;
-
 namespace CSSPropertyParserHelpers {
 
-std::optional<LengthRaw> validatedRange(LengthRaw, CSSPropertyParserOptions);
+struct LengthValidator {
+    static constexpr bool isValid(CSSUnitType unitType, CSSPropertyParserOptions options)
+    {
+        switch (unitType) {
+        case CSSUnitType::CSS_QUIRKY_EM:
+            if (!isUASheetBehavior(options.parserMode))
+                return false;
+            FALLTHROUGH;
+        case CSSUnitType::CSS_EM:
+        case CSSUnitType::CSS_REM:
+        case CSSUnitType::CSS_LH:
+        case CSSUnitType::CSS_RLH:
+        case CSSUnitType::CSS_CAP:
+        case CSSUnitType::CSS_RCAP:
+        case CSSUnitType::CSS_CH:
+        case CSSUnitType::CSS_RCH:
+        case CSSUnitType::CSS_IC:
+        case CSSUnitType::CSS_RIC:
+        case CSSUnitType::CSS_EX:
+        case CSSUnitType::CSS_REX:
+        case CSSUnitType::CSS_PX:
+        case CSSUnitType::CSS_CM:
+        case CSSUnitType::CSS_MM:
+        case CSSUnitType::CSS_IN:
+        case CSSUnitType::CSS_PT:
+        case CSSUnitType::CSS_PC:
+        case CSSUnitType::CSS_VW:
+        case CSSUnitType::CSS_VH:
+        case CSSUnitType::CSS_VMIN:
+        case CSSUnitType::CSS_VMAX:
+        case CSSUnitType::CSS_VB:
+        case CSSUnitType::CSS_VI:
+        case CSSUnitType::CSS_SVW:
+        case CSSUnitType::CSS_SVH:
+        case CSSUnitType::CSS_SVMIN:
+        case CSSUnitType::CSS_SVMAX:
+        case CSSUnitType::CSS_SVB:
+        case CSSUnitType::CSS_SVI:
+        case CSSUnitType::CSS_LVW:
+        case CSSUnitType::CSS_LVH:
+        case CSSUnitType::CSS_LVMIN:
+        case CSSUnitType::CSS_LVMAX:
+        case CSSUnitType::CSS_LVB:
+        case CSSUnitType::CSS_LVI:
+        case CSSUnitType::CSS_DVW:
+        case CSSUnitType::CSS_DVH:
+        case CSSUnitType::CSS_DVMIN:
+        case CSSUnitType::CSS_DVMAX:
+        case CSSUnitType::CSS_DVB:
+        case CSSUnitType::CSS_DVI:
+        case CSSUnitType::CSS_Q:
+        case CSSUnitType::CSS_CQW:
+        case CSSUnitType::CSS_CQH:
+        case CSSUnitType::CSS_CQI:
+        case CSSUnitType::CSS_CQB:
+        case CSSUnitType::CSS_CQMIN:
+        case CSSUnitType::CSS_CQMAX:
+            return true;
 
-struct LengthKnownTokenTypeFunctionConsumer {
-    static constexpr CSSParserTokenType tokenType = FunctionToken;
-    static std::optional<UnevaluatedCalc<LengthRaw>> consume(CSSParserTokenRange&, CSSCalcSymbolsAllowed, CSSPropertyParserOptions);
+        default:
+            return false;
+        }
+    }
+
+    template<auto R> static bool isValid(CSS::LengthRaw<R> raw, CSSPropertyParserOptions)
+    {
+        // Values other than 0 and +/-∞ are not supported for <length> numeric ranges currently.
+        return isValidNonCanonicalizableDimensionValue(raw);
+    }
 };
 
-struct LengthKnownTokenTypeDimensionConsumer {
-    static constexpr CSSParserTokenType tokenType = DimensionToken;
-    static std::optional<LengthRaw> consume(CSSParserTokenRange&, CSSCalcSymbolsAllowed, CSSPropertyParserOptions);
-};
-
-struct LengthKnownTokenTypeNumberConsumer {
-    static constexpr CSSParserTokenType tokenType = NumberToken;
-    static std::optional<LengthRaw> consume(CSSParserTokenRange&, CSSCalcSymbolsAllowed, CSSPropertyParserOptions);
-};
-
-template<> struct ConsumerDefinition<LengthRaw> {
-    using type = brigand::list<LengthRaw, UnevaluatedCalc<LengthRaw>>;
-
-    using FunctionToken = LengthKnownTokenTypeFunctionConsumer;
-    using DimensionToken = LengthKnownTokenTypeDimensionConsumer;
-    using NumberToken = LengthKnownTokenTypeNumberConsumer;
+template<auto R> struct ConsumerDefinition<CSS::Length<R>> {
+    using FunctionToken = FunctionConsumerForCalcValues<CSS::Length<R>>;
+    using DimensionToken = DimensionConsumer<CSS::Length<R>, LengthValidator>;
+    using NumberToken = NumberConsumerForUnitlessValues<CSS::Length<R>, LengthValidator, CSSUnitType::CSS_PX>;
 };
 
 } // namespace CSSPropertyParserHelpers

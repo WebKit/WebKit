@@ -56,11 +56,11 @@ class DeprecatedPortTest(unittest.TestCase):
         self.assertEqual(WpePort().build_webkit_command(), DeprecatedPort().script_shell_command("build-webkit") + ["--wpe", "--update-wpe", DeprecatedPort().makeArgs()])
         self.assertEqual(WpePort().build_webkit_command(build_style="debug"), DeprecatedPort().script_shell_command("build-webkit") + ["--debug", "--wpe", "--update-wpe", DeprecatedPort().makeArgs()])
 
-    def test_wincairo_port(self):
-        self.assertEqual(WinCairoPort().flag(), "--port=wincairo")
-        self.assertEqual(WinCairoPort().run_webkit_tests_command(), DeprecatedPort().script_shell_command("run-webkit-tests") + ["--wincairo"])
-        self.assertEqual(WinCairoPort().build_webkit_command(), DeprecatedPort().script_shell_command("build-webkit") + ["--wincairo"])
-        self.assertEqual(WinCairoPort().build_webkit_command(build_style="debug"), DeprecatedPort().script_shell_command("build-webkit") + ["--debug", "--wincairo"])
+    def test_win_port(self):
+        self.assertEqual(WinPort().flag(), "--port=win")
+        self.assertEqual(WinPort().run_webkit_tests_command(), DeprecatedPort().script_shell_command("run-webkit-tests"))
+        self.assertEqual(WinPort().build_webkit_command(), DeprecatedPort().script_shell_command("build-webkit"))
+        self.assertEqual(WinPort().build_webkit_command(build_style="debug"), DeprecatedPort().script_shell_command("build-webkit") + ["--debug"])
 
     def test_jsconly_port(self):
         self.assertEqual(JscOnlyPort().flag(), "--port=jsc-only")

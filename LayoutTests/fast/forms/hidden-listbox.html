@@ -1,6 +1,9 @@
 <script>
-if (window.testRunner)
-    testRunner.displayAndTrackRepaints();
+onload = async () => {
+    testRunner?.waitUntilDone();
+    await testRunner?.displayAndTrackRepaints();
+    testRunner?.notifyDone();
+}
 </script>
 This tests that the whole listbox control is hidden when visibility is set to hidden.<br>
 <select multiple style="visibility: hidden">

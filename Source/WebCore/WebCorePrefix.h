@@ -161,12 +161,12 @@
 #ifdef __cplusplus
 
 #if !PLATFORM(WIN)
-#import <wtf/FastMalloc.h>
-#import <wtf/HashMap.h>
-#import <wtf/StdLibExtras.h>
-#import <wtf/TZoneMallocInlines.h>
-#import <wtf/text/AtomString.h>
-#import <wtf/text/WTFString.h>
+#include <wtf/FastMalloc.h>
+#include <wtf/HashMap.h>
+#include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMalloc.h>
+#include <wtf/text/AtomString.h>
+#include <wtf/text/WTFString.h>
 #endif
 
 #define new ("if you use new/delete make sure to include config.h at the top of the file"()) 

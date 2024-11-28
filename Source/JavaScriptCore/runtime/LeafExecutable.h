@@ -32,7 +32,7 @@ namespace JSC {
 class LeafExecutable;
 class UnlinkedFunctionExecutable;
 
-using LeafExecutableMap = HashMap<const UnlinkedFunctionExecutable*, LeafExecutable>;
+using LeafExecutableMap = UncheckedKeyHashMap<const UnlinkedFunctionExecutable*, LeafExecutable>;
 
 class LeafExecutable {
 public:

@@ -45,7 +45,9 @@
 #import <objc/runtime.h>
 #import <pal/spi/ios/BrowserEngineKitSPI.h>
 #import <wtf/BlockPtr.h>
+#import <wtf/Deque.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 
 #if PLATFORM(MAC)
 #import <AppKit/AppKit.h>
@@ -78,7 +80,7 @@ static NSString *overrideBundleIdentifier(id, SEL)
 
 - (void)loadTestPageNamed:(NSString *)pageName
 {
-    NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:pageName withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:pageName withExtension:@"html"]];
     [self loadRequest:request];
 }
 
@@ -106,6 +108,12 @@ static NSString *overrideBundleIdentifier(id, SEL)
     [self _test_waitForDidFinishNavigationWithPreferences:preferences];
 }
 
+- (void)synchronouslyLoadSimulatedRequest:(NSURLRequest *)request responseHTMLString:(NSString *)htmlString
+{
+    [self loadSimulatedRequest:request responseHTMLString:htmlString];
+    [self _test_waitForDidFinishNavigation];
+}
+
 - (void)synchronouslyLoadRequestIgnoringSSLErrors:(NSURLRequest *)request
 {
     [self loadRequest:request];
@@ -120,12 +128,12 @@ static NSString *overrideBundleIdentifier(id, SEL)
 
 - (void)synchronouslyLoadHTMLString:(NSString *)html
 {
-    [self synchronouslyLoadHTMLString:html baseURL:[[[NSBundle mainBundle] bundleURL] URLByAppendingPathComponent:@"TestWebKitAPI.resources"]];
+    [self synchronouslyLoadHTMLString:html baseURL:NSBundle.test_resourcesBundle.resourceURL];
 }
 
 - (void)synchronouslyLoadHTMLString:(NSString *)html preferences:(WKWebpagePreferences *)preferences
 {
-    [self loadHTMLString:html baseURL:[[[NSBundle mainBundle] bundleURL] URLByAppendingPathComponent:@"TestWebKitAPI.resources"]];
+    [self loadHTMLString:html baseURL:NSBundle.test_resourcesBundle.resourceURL];
     [self _test_waitForDidFinishNavigationWithPreferences:preferences];
 }
 
@@ -137,7 +145,7 @@ static NSString *overrideBundleIdentifier(id, SEL)
 
 - (void)synchronouslyLoadTestPageNamed:(NSString *)pageName asStringWithBaseURL:(NSURL *)url
 {
-    [self synchronouslyLoadHTMLString:[NSString stringWithContentsOfURL:[[NSBundle mainBundle] URLForResource:pageName withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"] encoding:NSUTF8StringEncoding error:nil] baseURL:url];
+    [self synchronouslyLoadHTMLString:[NSString stringWithContentsOfURL:[NSBundle.test_resourcesBundle URLForResource:pageName withExtension:@"html"] encoding:NSUTF8StringEncoding error:nil] baseURL:url];
 }
 
 - (void)synchronouslyLoadTestPageNamed:(NSString *)pageName preferences:(WKWebpagePreferences *)preferences
@@ -665,7 +673,6 @@ static WebEvent *unwrap(BEKeyEntry *event)
 
 @implementation TestMessageHandler {
     NSMutableDictionary<NSString *, dispatch_block_t> *_messageHandlers;
-    BlockPtr<void(NSString *)> _wildcardMessageHandler;
 }
 
 - (void)addMessage:(NSString *)message withHandler:(dispatch_block_t)handler
@@ -673,12 +680,7 @@ static WebEvent *unwrap(BEKeyEntry *event)
     if (!_messageHandlers)
         _messageHandlers = [NSMutableDictionary dictionary];
 
-    _messageHandlers[message] = [handler copy];
-}
-
-- (void)setWildcardMessageHandler:(void (^)(NSString *))handler
-{
-    _wildcardMessageHandler = handler;
+    _messageHandlers[message] = adoptNS([handler copy]).autorelease();
 }
 
 - (void)removeMessage:(NSString *)message
@@ -688,12 +690,10 @@ static WebEvent *unwrap(BEKeyEntry *event)
 
 - (void)userContentController:(WKUserContentController *)userContentController didReceiveScriptMessage:(WKScriptMessage *)message
 {
-    dispatch_block_t handler = _messageHandlers[message.body];
-    if (handler)
+    if (dispatch_block_t handler = _messageHandlers[message.body])
         handler();
-
-    if (_wildcardMessageHandler)
-        _wildcardMessageHandler(message.body);
+    if (_didReceiveScriptMessage)
+        _didReceiveScriptMessage(message.body);
 }
 
 @end
@@ -918,6 +918,12 @@ static InputSessionChangeCount nextInputSessionChangeCount()
 #endif
 }
 
+- (void)removeFromTestWindow
+{
+    if (_hostWindow)
+        [self removeFromSuperview];
+}
+
 - (void)clearMessageHandlers:(NSArray *)messageNames
 {
     for (NSString *messageName in messageNames)
@@ -940,14 +946,14 @@ static InputSessionChangeCount nextInputSessionChangeCount()
         _testHandler = adoptNS([[TestMessageHandler alloc] init]);
         [[[self configuration] userContentController] addScriptMessageHandler:_testHandler.get() name:@"testHandler"];
     }
-    [_testHandler setWildcardMessageHandler:action];
+    [_testHandler setDidReceiveScriptMessage:action];
 }
 
 - (void)synchronouslyLoadHTMLStringAndWaitUntilAllImmediateChildFramesPaint:(NSString *)html
 {
     bool didFireDOMLoadEvent = false;
     [self performAfterLoading:[&] { didFireDOMLoadEvent = true; }];
-    [self loadHTMLString:html baseURL:[NSBundle.mainBundle.bundleURL URLByAppendingPathComponent:@"TestWebKitAPI.resources"]];
+    [self loadHTMLString:html baseURL:NSBundle.test_resourcesBundle.resourceURL];
     TestWebKitAPI::Util::run(&didFireDOMLoadEvent);
     [self waitForNextPresentationUpdate];
 }
@@ -960,6 +966,22 @@ static InputSessionChangeCount nextInputSessionChangeCount()
         isDoneWaiting = true;
     }];
     TestWebKitAPI::Util::run(&isDoneWaiting);
+}
+
+- (void)waitForMessages:(NSArray<NSString *> *)expectedMessages
+{
+    __block Deque<RetainPtr<NSString>> receivedMessages;
+    RetainPtr messageHandler = adoptNS([TestMessageHandler new]);
+    [messageHandler setDidReceiveScriptMessage:^(NSString *message) {
+        receivedMessages.append(message);
+    }];
+    [self.configuration.userContentController addScriptMessageHandler:messageHandler.get() name:@"testHandler"];
+    for (NSString *expectedMessage in expectedMessages) {
+        while (receivedMessages.isEmpty())
+            TestWebKitAPI::Util::spinRunLoop();
+        EXPECT_WK_STREQ(receivedMessages.takeFirst().get(), expectedMessage);
+    }
+    [self.configuration.userContentController removeScriptMessageHandlerForName:@"testHandler"];
 }
 
 - (void)performAfterLoading:(dispatch_block_t)actions
@@ -1176,16 +1198,19 @@ static InputSessionChangeCount nextInputSessionChangeCount()
 
 - (NSArray<NSValue *> *)selectionViewRectsInContentCoordinates
 {
-    NSMutableArray *selectionRects = [NSMutableArray array];
-    NSArray<UITextSelectionRect *> *rects = nil;
 #if HAVE(UI_TEXT_SELECTION_DISPLAY_INTERACTION)
-    if (auto view = self.textSelectionDisplayInteraction.highlightView; !view.hidden)
-        rects = view.selectionRects;
+    RetainPtr contentView = [self textInputContentView];
+    if (auto view = self.textSelectionDisplayInteraction.highlightView; !view.hidden) {
+        RetainPtr uiTextSelectionRects = [view selectionRects];
+        NSMutableArray *selectionRects = [NSMutableArray arrayWithCapacity:[uiTextSelectionRects count]];
+        for (UITextSelectionRect *rect in uiTextSelectionRects.get()) {
+            CGRect rectInContentView = [view convertRect:rect.rect toView:contentView.get()];
+            [selectionRects addObject:[NSValue valueWithCGRect:rectInContentView]];
+        }
+        return selectionRects;
+    }
 #endif
-
-    for (UITextSelectionRect *rect in rects)
-        [selectionRects addObject:[NSValue valueWithCGRect:rect.rect]];
-    return selectionRects;
+    return @[ ];
 }
 
 - (_WKActivatedElementInfo *)activatedElementAtPosition:(CGPoint)position
@@ -1458,9 +1483,9 @@ static WKContentView *recursiveFindWKContentView(UIView *view)
     return frame.autorelease();
 }
 
-- (_WKFrameTreeNode *)firstChildFrame
+- (WKFrameInfo *)firstChildFrame
 {
-    return [self mainFrame].childFrames.firstObject;
+    return [self mainFrame].childFrames.firstObject.info;
 }
 
 - (void)evaluateJavaScript:(NSString *)string inFrame:(WKFrameInfo *)frame completionHandler:(void(^)(id, NSError *))completionHandler

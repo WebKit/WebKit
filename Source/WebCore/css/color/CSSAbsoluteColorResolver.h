@@ -29,15 +29,11 @@
 #include "CSSColorConversion+ToColor.h"
 #include "CSSColorConversion+ToTypedColor.h"
 #include "CSSColorDescriptors.h"
-#include "CSSPropertyParserConsumer+RawTypes.h"
-#include "CSSPropertyParserConsumer+UnevaluatedCalc.h"
 #include "Color.h"
+#include "StylePrimitiveNumericTypes+Conversions.h"
 #include <optional>
 
 namespace WebCore {
-
-template<typename Descriptor, unsigned Index>
-using CSSUnresolvedAbsoluteColorComponent = GetComponentResultWithCalcResult<Descriptor, Index>;
 
 template<typename D>
 struct CSSAbsoluteColorResolver {
@@ -48,23 +44,14 @@ struct CSSAbsoluteColorResolver {
 };
 
 template<typename Descriptor>
-bool requiresConversionData(const CSSAbsoluteColorResolver<Descriptor>& absolute)
-{
-    return requiresConversionData(std::get<0>(absolute.components))
-        || requiresConversionData(std::get<1>(absolute.components))
-        || requiresConversionData(std::get<2>(absolute.components))
-        || requiresConversionData(std::get<3>(absolute.components));
-}
-
-template<typename Descriptor>
 Color resolve(const CSSAbsoluteColorResolver<Descriptor>& absolute, const CSSToLengthConversionData& conversionData)
 {
     // Evaluated any calc values to their corresponding channel value.
-    auto components = CSSColorParseType<Descriptor> {
-        evaluateCalc(std::get<0>(absolute.components), conversionData, CSSCalcSymbolTable { }),
-        evaluateCalc(std::get<1>(absolute.components), conversionData, CSSCalcSymbolTable { }),
-        evaluateCalc(std::get<2>(absolute.components), conversionData, CSSCalcSymbolTable { }),
-        evaluateCalc(std::get<3>(absolute.components), conversionData, CSSCalcSymbolTable { })
+    auto components = StyleColorParseType<Descriptor> {
+        Style::toStyle(std::get<0>(absolute.components), conversionData),
+        Style::toStyle(std::get<1>(absolute.components), conversionData),
+        Style::toStyle(std::get<2>(absolute.components), conversionData),
+        Style::toStyle(std::get<3>(absolute.components), conversionData)
     };
 
     // Normalize values into their numeric form, forming a validated typed color.
@@ -78,14 +65,14 @@ Color resolve(const CSSAbsoluteColorResolver<Descriptor>& absolute, const CSSToL
 template<typename Descriptor>
 Color resolveNoConversionDataRequired(const CSSAbsoluteColorResolver<Descriptor>& absolute)
 {
-    ASSERT(!requiresConversionData(absolute));
+    ASSERT(!requiresConversionData(absolute.components));
 
     // Evaluated any calc values to their corresponding channel value.
-    auto components = CSSColorParseType<Descriptor> {
-        evaluateCalcNoConversionDataRequired(std::get<0>(absolute.components), CSSCalcSymbolTable { }),
-        evaluateCalcNoConversionDataRequired(std::get<1>(absolute.components), CSSCalcSymbolTable { }),
-        evaluateCalcNoConversionDataRequired(std::get<2>(absolute.components), CSSCalcSymbolTable { }),
-        evaluateCalcNoConversionDataRequired(std::get<3>(absolute.components), CSSCalcSymbolTable { })
+    auto components = StyleColorParseType<Descriptor> {
+        Style::toStyleNoConversionDataRequired(std::get<0>(absolute.components)),
+        Style::toStyleNoConversionDataRequired(std::get<1>(absolute.components)),
+        Style::toStyleNoConversionDataRequired(std::get<2>(absolute.components)),
+        Style::toStyleNoConversionDataRequired(std::get<3>(absolute.components))
     };
 
     // Normalize values into their numeric form, forming a validated typed color.

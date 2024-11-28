@@ -41,7 +41,7 @@ namespace JSC {
     const JSC::Identifier& name##Symbol() const { return m_##name##Symbol; }
 #define DECLARE_BUILTIN_IDENTIFIER_ACCESSOR_IN_JSC(name) \
     const JSC::Identifier& name##PublicName() const { return m_##name; } \
-    JSC::Identifier name##PrivateName() const { return JSC::Identifier::fromUid(*bitwise_cast<SymbolImpl*>(&JSC::Symbols::name##PrivateName)); }
+    JSC::Identifier name##PrivateName() const { return JSC::Identifier::fromUid(*std::bit_cast<SymbolImpl*>(&JSC::Symbols::name##PrivateName)); }
 
 
 #define JSC_COMMON_PRIVATE_IDENTIFIERS_EACH_PROPERTY_NAME(macro) \
@@ -115,9 +115,6 @@ namespace JSC {
     macro(generatorValue) \
     macro(generatorThis) \
     macro(generatorResumeMode) \
-    macro(syncIterator) \
-    macro(nextMethod) \
-    macro(asyncGeneratorQueueItemNext) \
     macro(this) \
     macro(toIntegerOrInfinity) \
     macro(toLength) \
@@ -138,7 +135,6 @@ namespace JSC {
     macro(instanceOf) \
     macro(isArraySlow) \
     macro(sameValue) \
-    macro(concatMemcpy) \
     macro(appendMemcpy) \
     macro(regExpCreate) \
     macro(isRegExp) \
@@ -181,11 +177,6 @@ namespace JSC {
     macro(regExpSearchFast) \
     macro(regExpSplitFast) \
     macro(regExpTestFast) \
-    macro(regExpStringIteratorRegExp) \
-    macro(regExpStringIteratorString) \
-    macro(regExpStringIteratorGlobal) \
-    macro(regExpStringIteratorUnicode) \
-    macro(regExpStringIteratorDone) \
     macro(stringIncludesInternal) \
     macro(stringIndexOfInternal) \
     macro(stringSplitFast) \
@@ -210,7 +201,8 @@ namespace JSC {
     macro(sentinelString) \
     macro(createRemoteFunction) \
     macro(isRemoteFunction) \
-    macro(arrayFromFast) \
+    macro(arrayFromFastFillWithUndefined) \
+    macro(arrayFromFastFillWithEmpty) \
     macro(arraySort) \
     macro(jsonParse) \
     macro(jsonStringify) \
@@ -224,8 +216,9 @@ namespace JSC {
     macro(indexOf) \
     macro(pop) \
     macro(wrapForValidIteratorCreate) \
-    macro(wrapForValidIteratorGetIteratedIterator) \
-    macro(wrapForValidIteratorGetIteratedNextMethod) \
+    macro(asyncFromSyncIteratorCreate) \
+    macro(regExpStringIteratorCreate) \
+    macro(iteratorHelperCreate) \
 
 
 namespace Symbols {

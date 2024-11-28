@@ -29,6 +29,7 @@ using WebRTCTrackData = struct _WebRTCTrackData {
     GRefPtr<GstWebRTCRTPTransceiver> transceiver;
     RealtimeMediaSource::Type type;
     GRefPtr<GstCaps> caps;
+    unsigned ssrc;
 };
 
 } // namespace WebCore

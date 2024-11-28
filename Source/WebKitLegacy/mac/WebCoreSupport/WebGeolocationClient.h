@@ -35,6 +35,7 @@ class GeolocationPositionData;
 
 class WebGeolocationClient : public WebCore::GeolocationClient {
     WTF_MAKE_TZONE_ALLOCATED(WebGeolocationClient);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(WebGeolocationClient);
 public:
     WebGeolocationClient(WebView *);
     WebView *webView() { return m_webView; }

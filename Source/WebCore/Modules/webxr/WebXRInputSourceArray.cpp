@@ -39,11 +39,6 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(WebXRInputSourceArray);
 
-UniqueRef<WebXRInputSourceArray> WebXRInputSourceArray::create(WebXRSession& session)
-{
-    return makeUniqueRef<WebXRInputSourceArray>(session);
-}
-
 WebXRInputSourceArray::WebXRInputSourceArray(WebXRSession& session)
     : m_session(session)
 {

@@ -29,6 +29,8 @@
 #include "Structure.h"
 #include <wtf/TinyPtrSet.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 class TrackedReferences;
@@ -60,3 +62,5 @@ public:
 };
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

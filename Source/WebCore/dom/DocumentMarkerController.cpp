@@ -36,6 +36,7 @@
 #include "Page.h"
 #include "RenderBlockFlow.h"
 #include "RenderLayer.h"
+#include "RenderReplaced.h"
 #include "RenderText.h"
 #include "RenderedDocumentMarker.h"
 #include "TextIterator.h"
@@ -50,7 +51,7 @@ constexpr Seconds markerFadeAnimationDuration = 200_ms;
 
 constexpr double markerAnimationFrameRate = 30;
 
-inline bool DocumentMarkerController::possiblyHasMarkers(OptionSet<DocumentMarker::Type> types) const
+inline bool DocumentMarkerController::possiblyHasMarkers(OptionSet<DocumentMarkerType> types) const
 {
     return m_possiblyExistingMarkerTypes.containsAny(types);
 }
@@ -82,13 +83,13 @@ auto DocumentMarkerController::collectTextRanges(const SimpleRange& range) -> Ve
     return ranges;
 }
 
-void DocumentMarkerController::addMarker(const SimpleRange& range, DocumentMarker::Type type, const DocumentMarker::Data& data)
+void DocumentMarkerController::addMarker(const SimpleRange& range, DocumentMarkerType type, const DocumentMarker::Data& data)
 {
     for (auto& textPiece : collectTextRanges(range))
         addMarker(textPiece.node, { type, textPiece.range, DocumentMarker::Data { data } });
 }
 
-void DocumentMarkerController::addMarker(Text& node, unsigned startOffset, unsigned length, DocumentMarker::Type type, DocumentMarker::Data&& data)
+void DocumentMarkerController::addMarker(Text& node, unsigned startOffset, unsigned length, DocumentMarkerType type, DocumentMarker::Data&& data)
 {
     addMarker(node, { type, { startOffset, startOffset + length }, WTFMove(data) });
 }
@@ -97,22 +98,22 @@ void DocumentMarkerController::addDraggedContentMarker(const SimpleRange& range)
 {
     // FIXME: Since the marker is already stored in a map keyed by node, we can probably change things around so we don't have to also store the node in the marker.
     for (auto& textPiece : collectTextRanges(range))
-        addMarker(textPiece.node, { DocumentMarker::Type::DraggedContent, textPiece.range, RefPtr<Node> { textPiece.node.ptr() } });
+        addMarker(textPiece.node, { DocumentMarkerType::DraggedContent, textPiece.range, RefPtr<Node> { textPiece.node.ptr() } });
 }
 
 void DocumentMarkerController::addTransparentContentMarker(const SimpleRange& range, WTF::UUID uuid)
 {
     // FIXME: Since the marker is already stored in a map keyed by node, we can probably change things around so we don't have to also store the node in the marker.
     for (auto& textPiece : collectTextRanges(range))
-        addMarker(textPiece.node, { DocumentMarker::Type::TransparentContent, textPiece.range, DocumentMarker::TransparentContentData { { textPiece.node.ptr() }, uuid } });
+        addMarker(textPiece.node, { DocumentMarkerType::TransparentContent, textPiece.range, DocumentMarker::TransparentContentData { { textPiece.node.ptr() }, uuid } });
 }
 
-void DocumentMarkerController::removeMarkers(const SimpleRange& range, OptionSet<DocumentMarker::Type> types, RemovePartiallyOverlappingMarker overlapRule)
+void DocumentMarkerController::removeMarkers(const SimpleRange& range, OptionSet<DocumentMarkerType> types, RemovePartiallyOverlappingMarker overlapRule)
 {
     filterMarkers(range, nullptr, types, overlapRule);
 }
 
-void DocumentMarkerController::filterMarkers(const SimpleRange& range, const Function<FilterMarkerResult(const DocumentMarker&)>& filter, OptionSet<DocumentMarker::Type> types, RemovePartiallyOverlappingMarker overlapRule)
+void DocumentMarkerController::filterMarkers(const SimpleRange& range, const Function<FilterMarkerResult(const DocumentMarker&)>& filter, OptionSet<DocumentMarkerType> types, RemovePartiallyOverlappingMarker overlapRule)
 {
     for (auto& textPiece : collectTextRanges(range)) {
         if (!possiblyHasMarkers(types))
@@ -176,7 +177,7 @@ Ref<Document> DocumentMarkerController::protectedDocument() const
     return m_document.get();
 }
 
-void DocumentMarkerController::updateRectsForInvalidatedMarkersOfType(DocumentMarker::Type type)
+void DocumentMarkerController::updateRectsForInvalidatedMarkersOfType(DocumentMarkerType type)
 {
     if (!possiblyHasMarkers(type))
         return;
@@ -196,7 +197,7 @@ void DocumentMarkerController::updateRectsForInvalidatedMarkersOfType(DocumentMa
     }
 }
 
-Vector<FloatRect> DocumentMarkerController::renderedRectsForMarkers(DocumentMarker::Type type)
+Vector<FloatRect> DocumentMarkerController::renderedRectsForMarkers(DocumentMarkerType type)
 {
     Vector<FloatRect> result;
 
@@ -255,29 +256,41 @@ static bool shouldInsertAsSeparateMarker(const DocumentMarker& marker)
 {
     switch (marker.type()) {
 #if ENABLE(PLATFORM_DRIVEN_TEXT_CHECKING)
-    case DocumentMarker::Type::PlatformTextChecking:
+    case DocumentMarkerType::PlatformTextChecking:
         return true;
 #endif
 
 #if PLATFORM(IOS_FAMILY)
-    case DocumentMarker::Type::DictationPhraseWithAlternatives:
-    case DocumentMarker::Type::DictationResult:
+    case DocumentMarkerType::DictationPhraseWithAlternatives:
+    case DocumentMarkerType::DictationResult:
         return true;
 #endif
 
-#if ENABLE(WRITING_TOOLS)
-    case DocumentMarker::Type::WritingToolsTextSuggestion:
-        return true;
-#endif
-    case DocumentMarker::Type::TransparentContent:
+    case DocumentMarkerType::TransparentContent:
         return is<RenderReplaced>(std::get<DocumentMarker::TransparentContentData>(marker.data()).node->renderer());
 
-    case DocumentMarker::Type::DraggedContent:
+    case DocumentMarkerType::DraggedContent:
         return is<RenderReplaced>(std::get<RefPtr<Node>>(marker.data())->renderer());
 
     default:
         return false;
     }
+}
+
+static bool canMergeMarkers(const DocumentMarker& marker, const DocumentMarker& other)
+{
+    ASSERT(!shouldInsertAsSeparateMarker(marker));
+    ASSERT(!shouldInsertAsSeparateMarker(other));
+
+    if (marker.type() != other.type())
+        return false;
+
+#if ENABLE(WRITING_TOOLS)
+    if (marker.type() == DocumentMarkerType::WritingToolsTextSuggestion)
+        return std::get<DocumentMarker::WritingToolsTextSuggestionData>(marker.data()).suggestionID == std::get<DocumentMarker::WritingToolsTextSuggestionData>(other.data()).suggestionID;
+#endif
+
+    return true;
 }
 
 // Markers are stored in order sorted by their start offset.
@@ -317,7 +330,7 @@ void DocumentMarkerController::addMarker(Node& node, DocumentMarker&& newMarker)
             DocumentMarker marker = list->at(i);
             if (marker.startOffset() > toInsert.startOffset())
                 break;
-            if (marker.type() == toInsert.type() && marker.endOffset() >= toInsert.startOffset()) {
+            if (canMergeMarkers(marker, toInsert) && marker.endOffset() >= toInsert.startOffset()) {
                 toInsert.setStartOffset(marker.startOffset());
                 list->remove(i);
                 numMarkers--;
@@ -332,7 +345,7 @@ void DocumentMarkerController::addMarker(Node& node, DocumentMarker&& newMarker)
             DocumentMarker marker = list->at(j);
             if (marker.startOffset() > toInsert.endOffset())
                 break;
-            if (marker.type() == toInsert.type()) {
+            if (canMergeMarkers(marker, toInsert)) {
                 list->remove(j);
                 if (toInsert.endOffset() <= marker.endOffset()) {
                     toInsert.setEndOffset(marker.endOffset());
@@ -350,7 +363,7 @@ void DocumentMarkerController::addMarker(Node& node, DocumentMarker&& newMarker)
         renderer->repaint();
 
 #if ENABLE(WRITING_TOOLS)
-    if (newMarker.type() == DocumentMarker::Type::WritingToolsTextSuggestion) {
+    if (newMarker.type() == DocumentMarkerType::WritingToolsTextSuggestion) {
         if (!m_writingToolsTextSuggestionAnimationTimer.isActive())
             m_writingToolsTextSuggestionAnimationTimer.startRepeating(1_s / markerAnimationFrameRate);
     }
@@ -401,7 +414,7 @@ void DocumentMarkerController::copyMarkers(Node& source, OffsetRange range, Node
     }
 }
 
-void DocumentMarkerController::removeMarkers(Node& node, OffsetRange range, OptionSet<DocumentMarker::Type> types, const Function<FilterMarkerResult(const DocumentMarker&)>& filter, RemovePartiallyOverlappingMarker overlapRule)
+void DocumentMarkerController::removeMarkers(Node& node, OffsetRange range, OptionSet<DocumentMarkerType> types, const Function<FilterMarkerResult(const DocumentMarker&)>& filter, RemovePartiallyOverlappingMarker overlapRule)
 {
     if (range.start >= range.end)
         return;
@@ -467,7 +480,7 @@ void DocumentMarkerController::removeMarkers(Node& node, OffsetRange range, Opti
     }
 }
 
-WeakPtr<DocumentMarker> DocumentMarkerController::markerContainingPoint(const LayoutPoint& point, DocumentMarker::Type type)
+WeakPtr<DocumentMarker> DocumentMarkerController::markerContainingPoint(const LayoutPoint& point, DocumentMarkerType type)
 {
     if (!possiblyHasMarkers(type))
         return nullptr;
@@ -483,7 +496,7 @@ WeakPtr<DocumentMarker> DocumentMarkerController::markerContainingPoint(const La
     return nullptr;
 }
 
-Vector<WeakPtr<RenderedDocumentMarker>> DocumentMarkerController::markersFor(Node& node, OptionSet<DocumentMarker::Type> types) const
+Vector<WeakPtr<RenderedDocumentMarker>> DocumentMarkerController::markersFor(Node& node, OptionSet<DocumentMarkerType> types) const
 {
     if (!possiblyHasMarkers(types))
         return { };
@@ -502,7 +515,7 @@ Vector<WeakPtr<RenderedDocumentMarker>> DocumentMarkerController::markersFor(Nod
 }
 
 template<>
-void DocumentMarkerController::forEach<DocumentMarkerController::IterationDirection::Forwards>(const SimpleRange& range, OptionSet<DocumentMarker::Type> types, Function<bool(Node&, RenderedDocumentMarker&)>&& function)
+void DocumentMarkerController::forEach<DocumentMarkerController::IterationDirection::Forwards>(const SimpleRange& range, OptionSet<DocumentMarkerType> types, Function<bool(Node&, RenderedDocumentMarker&)>&& function)
 {
     if (!possiblyHasMarkers(types))
         return;
@@ -525,7 +538,7 @@ void DocumentMarkerController::forEach<DocumentMarkerController::IterationDirect
 }
 
 template<>
-void DocumentMarkerController::forEach<DocumentMarkerController::IterationDirection::Backwards>(const SimpleRange& range, OptionSet<DocumentMarker::Type> types, Function<bool(Node&, RenderedDocumentMarker&)>&& function)
+void DocumentMarkerController::forEach<DocumentMarkerController::IterationDirection::Backwards>(const SimpleRange& range, OptionSet<DocumentMarkerType> types, Function<bool(Node&, RenderedDocumentMarker&)>&& function)
 {
     if (!possiblyHasMarkers(types))
         return;
@@ -550,7 +563,7 @@ void DocumentMarkerController::forEach<DocumentMarkerController::IterationDirect
     }
 }
 
-void DocumentMarkerController::forEachOfTypes(OptionSet<DocumentMarker::Type> types, Function<bool(Node&, RenderedDocumentMarker&)>&& function)
+void DocumentMarkerController::forEachOfTypes(OptionSet<DocumentMarkerType> types, Function<bool(Node&, RenderedDocumentMarker&)>&& function)
 {
     if (!possiblyHasMarkers(types))
         return;
@@ -567,7 +580,7 @@ void DocumentMarkerController::forEachOfTypes(OptionSet<DocumentMarker::Type> ty
     }
 }
 
-Vector<WeakPtr<RenderedDocumentMarker>> DocumentMarkerController::markersInRange(const SimpleRange& range, OptionSet<DocumentMarker::Type> types)
+Vector<WeakPtr<RenderedDocumentMarker>> DocumentMarkerController::markersInRange(const SimpleRange& range, OptionSet<DocumentMarkerType> types)
 {
     // FIXME: Consider making forEach public and changing callers to use that function instead of this one.
     Vector<WeakPtr<RenderedDocumentMarker>> markers;
@@ -578,7 +591,7 @@ Vector<WeakPtr<RenderedDocumentMarker>> DocumentMarkerController::markersInRange
     return markers;
 }
 
-Vector<SimpleRange> DocumentMarkerController::rangesForMarkersInRange(const SimpleRange& range, OptionSet<DocumentMarker::Type> types)
+Vector<SimpleRange> DocumentMarkerController::rangesForMarkersInRange(const SimpleRange& range, OptionSet<DocumentMarkerType> types)
 {
     Vector<SimpleRange> ranges;
     forEach(range, types, [&] (Node& node, RenderedDocumentMarker& marker) {
@@ -588,7 +601,7 @@ Vector<SimpleRange> DocumentMarkerController::rangesForMarkersInRange(const Simp
     return ranges;
 }
 
-void DocumentMarkerController::removeMarkers(Node& node, OptionSet<DocumentMarker::Type> types)
+void DocumentMarkerController::removeMarkers(Node& node, OptionSet<DocumentMarkerType> types)
 {
     if (!possiblyHasMarkers(types))
         return;
@@ -599,12 +612,12 @@ void DocumentMarkerController::removeMarkers(Node& node, OptionSet<DocumentMarke
         removeMarkersFromList(iterator, types);
 }
 
-void DocumentMarkerController::removeMarkers(OptionSet<DocumentMarker::Type> types)
+void DocumentMarkerController::removeMarkers(OptionSet<DocumentMarkerType> types)
 {
     removeMarkers(types, nullptr);
 }
 
-void DocumentMarkerController::removeMarkers(OptionSet<DocumentMarker::Type> types, const Function<FilterMarkerResult(const RenderedDocumentMarker&)>& filter)
+void DocumentMarkerController::removeMarkers(OptionSet<DocumentMarkerType> types, const Function<FilterMarkerResult(const RenderedDocumentMarker&)>& filter)
 {
     if (!possiblyHasMarkers(types))
         return;
@@ -615,14 +628,14 @@ void DocumentMarkerController::removeMarkers(OptionSet<DocumentMarker::Type> typ
         removedMarkerTypes = removedMarkerTypes & removeMarkersFromList(m_markers.find(node), types, filter);
 
 #if ENABLE(WRITING_TOOLS)
-    if (removedMarkerTypes.contains(DocumentMarker::Type::WritingToolsTextSuggestion))
+    if (removedMarkerTypes.contains(DocumentMarkerType::WritingToolsTextSuggestion))
         m_writingToolsTextSuggestionAnimationTimer.stop();
 #endif
 
     m_possiblyExistingMarkerTypes.remove(removedMarkerTypes);
 }
 
-OptionSet<DocumentMarker::Type> DocumentMarkerController::removeMarkersFromList(MarkerMap::iterator iterator, OptionSet<DocumentMarker::Type> types, const Function<FilterMarkerResult(const RenderedDocumentMarker&)>& filter)
+OptionSet<DocumentMarkerType> DocumentMarkerController::removeMarkersFromList(MarkerMap::iterator iterator, OptionSet<DocumentMarkerType> types, const Function<FilterMarkerResult(const RenderedDocumentMarker&)>& filter)
 {
     bool needsRepainting = false;
     bool listCanBeRemoved;
@@ -673,7 +686,7 @@ OptionSet<DocumentMarker::Type> DocumentMarkerController::removeMarkersFromList(
     return removedMarkerTypes;
 }
 
-void DocumentMarkerController::repaintMarkers(OptionSet<DocumentMarker::Type> types)
+void DocumentMarkerController::repaintMarkers(OptionSet<DocumentMarkerType> types)
 {
     if (!possiblyHasMarkers(types))
         return;
@@ -747,7 +760,7 @@ void DocumentMarkerController::shiftMarkers(Node& node, unsigned startOffset, in
     }
 }
 
-void DocumentMarkerController::dismissMarkers(OptionSet<DocumentMarker::Type> types)
+void DocumentMarkerController::dismissMarkers(OptionSet<DocumentMarkerType> types)
 {
     if (!possiblyHasMarkers(types))
         return;
@@ -769,7 +782,7 @@ void DocumentMarkerController::dismissMarkers(OptionSet<DocumentMarker::Type> ty
 void DocumentMarkerController::writingToolsTextSuggestionAnimationTimerFired()
 {
 #if ENABLE(WRITING_TOOLS)
-    forEachOfTypes({ DocumentMarker::Type::WritingToolsTextSuggestion }, [](Node& node, RenderedDocumentMarker&) {
+    forEachOfTypes({ DocumentMarkerType::WritingToolsTextSuggestion }, [](Node& node, RenderedDocumentMarker&) {
         if (CheckedPtr renderer = node.renderer())
             renderer->repaint();
         return false;
@@ -818,7 +831,7 @@ void DocumentMarkerController::fadeAnimationTimerFired()
         m_fadeAnimationTimer.stop();
 }
 
-bool DocumentMarkerController::hasMarkers(const SimpleRange& range, OptionSet<DocumentMarker::Type> types)
+bool DocumentMarkerController::hasMarkers(const SimpleRange& range, OptionSet<DocumentMarkerType> types)
 {
     bool foundMarker = false;
     forEach(range, types, [&] (Node&, RenderedDocumentMarker&) {
@@ -828,7 +841,7 @@ bool DocumentMarkerController::hasMarkers(const SimpleRange& range, OptionSet<Do
     return foundMarker;
 }
 
-void DocumentMarkerController::clearDescriptionOnMarkersIntersectingRange(const SimpleRange& range, OptionSet<DocumentMarker::Type> types)
+void DocumentMarkerController::clearDescriptionOnMarkersIntersectingRange(const SimpleRange& range, OptionSet<DocumentMarkerType> types)
 {
     forEach(range, types, [&] (Node&, RenderedDocumentMarker& marker) {
         marker.clearData();
@@ -847,17 +860,17 @@ std::tuple<float, float> DocumentMarkerController::markerYPositionAndHeightForFo
     return { y, height };
 }
 
-void addMarker(const SimpleRange& range, DocumentMarker::Type type, const DocumentMarker::Data& data)
+void addMarker(const SimpleRange& range, DocumentMarkerType type, const DocumentMarker::Data& data)
 {
     range.start.protectedDocument()->checkedMarkers()->addMarker(range, type, data);
 }
 
-void addMarker(Text& node, unsigned startOffset, unsigned length, DocumentMarker::Type type, DocumentMarker::Data&& data)
+void addMarker(Text& node, unsigned startOffset, unsigned length, DocumentMarkerType type, DocumentMarker::Data&& data)
 {
     node.protectedDocument()->checkedMarkers()->addMarker(node, startOffset, length, type, WTFMove(data));
 }
 
-void removeMarkers(const SimpleRange& range, OptionSet<DocumentMarker::Type> types, RemovePartiallyOverlappingMarker policy)
+void removeMarkers(const SimpleRange& range, OptionSet<DocumentMarkerType> types, RemovePartiallyOverlappingMarker policy)
 {
     range.start.protectedDocument()->checkedMarkers()->removeMarkers(range, types, policy);
 }

@@ -51,7 +51,7 @@ TEST(WKWebView, EvaluateJavaScriptBlockCrash)
     @autoreleasepool {
         RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
 
-        NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+        NSURLRequest *request = [NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"simple" withExtension:@"html"]];
         [webView loadRequest:request];
 
         [webView evaluateJavaScript:@"" completionHandler:^(id result, NSError *error) {
@@ -77,7 +77,7 @@ TEST(WKWebView, EvaluateJavaScriptErrorCases)
 {
     RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
 
-    NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"simple" withExtension:@"html"]];
     [webView loadRequest:request];
     [webView _test_waitForDidFinishNavigation];
 

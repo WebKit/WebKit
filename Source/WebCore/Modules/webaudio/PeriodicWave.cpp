@@ -47,6 +47,8 @@ constexpr unsigned MaxPeriodicWaveSize = 16384;
 
 constexpr float CentsPerRange = 1200 / NumberOfOctaveBands;
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 Ref<PeriodicWave> PeriodicWave::create(float sampleRate, Float32Array& real, Float32Array& imaginary)
@@ -340,5 +342,7 @@ unsigned PeriodicWave::periodicWaveSize() const
 }
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ENABLE(WEB_AUDIO)

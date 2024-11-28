@@ -18,8 +18,8 @@ async function runTest()
     if (window.location.hostname === "127.0.0.1") {
         await resetCookies();
         await setCookie("strict", "10", {"SameSite": "Strict", "Max-Age": 100, "path": "/"});
-        await setCookie("implicit-lax", "10", {"SameSite": null, "Max-Age": 100, "path": "/"});
-        await setCookie("lax-because-invalid-SameSite-value", "10", {"SameSite": "invalid", "Max-Age": 100, "path": "/"});
+        await setCookie("implicit-none", "10", {"SameSite": null, "Max-Age": 100, "path": "/"});
+        await setCookie("none-because-invalid-SameSite-value", "10", {"SameSite": "invalid", "Max-Age": 100, "path": "/"});
         await setCookie("lax", "10", {"SameSite": "Lax", "Max-Age": 100, "path": "/"});
         window.location.hostname = "localhost";
     } else {

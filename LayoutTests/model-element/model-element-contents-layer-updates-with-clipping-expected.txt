@@ -7,10 +7,9 @@
       (position 0.00 0.00)
       (bounds 300.00 150.00)
       (children
-        (contents layer (model)
+        (contents layer (hosted model)
           (position 0.00 0.00)
           (bounds 300.00 150.00)
-          (model data size 395126)
         )
       )
     )
@@ -25,10 +24,9 @@ After Changing Source:
       (position 0.00 0.00)
       (bounds 300.00 150.00)
       (children
-        (contents layer (model)
+        (contents layer (hosted model)
           (position 0.00 0.00)
           (bounds 300.00 150.00)
-          (model data size 3248)
         )
       )
     )

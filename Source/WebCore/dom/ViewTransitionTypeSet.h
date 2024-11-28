@@ -55,7 +55,7 @@ private:
     ViewTransitionTypeSet(Document&, Vector<AtomString>&&);
 
     ListHashSet<AtomString> m_typeSet;
-    Document& m_document;
+    WeakPtr<Document, WeakPtrImplWithEventTargetData> m_document;
 };
 
 }

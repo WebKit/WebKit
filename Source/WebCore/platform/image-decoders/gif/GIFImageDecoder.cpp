@@ -152,6 +152,8 @@ bool GIFImageDecoder::setFailed()
 
 void GIFImageDecoder::clearFrameBufferCache(size_t clearBeforeFrame)
 {
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
     // In some cases, like if the decoder was destroyed while animating, we
     // can be asked to clear more frames than we currently have.
     if (m_frameBufferCache.isEmpty())
@@ -198,6 +200,8 @@ void GIFImageDecoder::clearFrameBufferCache(size_t clearBeforeFrame)
         if (!j->isInvalid())
             j->clear();
     }
+
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 }
 
 bool GIFImageDecoder::haveDecodedRow(unsigned frameIndex, const Vector<unsigned char>& rowBuffer, size_t width, size_t rowNumber, unsigned repeatCount, bool writeTransparentPixels)
@@ -230,7 +234,9 @@ bool GIFImageDecoder::haveDecodedRow(unsigned frameIndex, const Vector<unsigned 
     if ((buffer.isInvalid() && !initFrameBuffer(frameIndex)) || !buffer.hasBackingStore())
         return false;
 
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     auto* currentAddress = buffer.backingStore()->pixelAt(xBegin, yBegin);
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     // Write one row's worth of data into the frame.  
     for (int x = xBegin; x < xEnd; ++x) {
         const unsigned char sourceValue = rowBuffer[x - frameContext->xOffset];

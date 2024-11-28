@@ -2,13 +2,19 @@
 <html>
 <head>
 <script>
-addEventListener("load", () => {
-    let image = document.querySelector("img");
-    eventSender.mouseMoveTo(130, 130);
+addEventListener("load", async () => {
+    if (!window.testRunner)
+        return;
+
+    testRunner.waitUntilDone();
     testRunner.dumpAsText();
+
+    let image = document.querySelector("img");
+    await eventSender.asyncMouseMoveTo(130, 130);
 
     let foundLookUpItem = eventSender.contextClick().some((item) => (item.title || item).includes?.("Look Up"));
     document.querySelector("pre").textContent = `Found lookup item? ${foundLookUpItem}`;
+    testRunner.notifyDone();
 });
 </script>
 </head>

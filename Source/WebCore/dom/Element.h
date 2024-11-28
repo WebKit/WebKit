@@ -42,6 +42,7 @@
 
 namespace JSC {
 class JSGlobalObject;
+class JSValue;
 }
 
 namespace WebCore {
@@ -136,7 +137,7 @@ struct SecurityPolicyViolationEventInit;
 struct ShadowRootInit;
 
 using ElementName = NodeName;
-using ExplicitlySetAttrElementsMap = HashMap<QualifiedName, Vector<WeakPtr<Element, WeakPtrImplWithEventTargetData>>>;
+using ExplicitlySetAttrElementsMap = UncheckedKeyHashMap<QualifiedName, Vector<WeakPtr<Element, WeakPtrImplWithEventTargetData>>>;
 using TrustedTypeOrString = std::variant<RefPtr<TrustedHTML>, RefPtr<TrustedScript>, RefPtr<TrustedScriptURL>, AtomString>;
 
 // https://drafts.csswg.org/css-contain/#relevant-to-the-user
@@ -185,6 +186,9 @@ public:
     WEBCORE_EXPORT void setElementsArrayAttribute(const QualifiedName& attributeName, std::optional<Vector<Ref<Element>>>&& value);
     static bool isElementReflectionAttribute(const Settings&, const QualifiedName&);
     static bool isElementsArrayReflectionAttribute(const QualifiedName&);
+
+    WEBCORE_EXPORT void setUserInfo(JSC::JSGlobalObject&, JSC::JSValue);
+    WEBCORE_EXPORT String userInfo() const;
 
     // Call this to get the value of an attribute that is known not to be the style
     // attribute or one of the SVG animatable attributes.
@@ -391,6 +395,7 @@ public:
 
     virtual RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&);
     virtual bool rendererIsNeeded(const RenderStyle&);
+    virtual bool isReplaced(const RenderStyle&) const { return false; }
 
     inline ShadowRoot* shadowRoot() const; // Defined in ElementRareData.h
     RefPtr<ShadowRoot> shadowRootForBindings(JSC::JSGlobalObject&) const;
@@ -398,7 +403,7 @@ public:
     WEBCORE_EXPORT ExceptionOr<ShadowRoot&> attachShadow(const ShadowRootInit&);
     ExceptionOr<ShadowRoot&> attachDeclarativeShadow(ShadowRootMode, ShadowRootDelegatesFocus, ShadowRootClonable, ShadowRootSerializable);
 
-    ShadowRoot* userAgentShadowRoot() const;
+    WEBCORE_EXPORT ShadowRoot* userAgentShadowRoot() const;
     RefPtr<ShadowRoot> protectedUserAgentShadowRoot() const;
     WEBCORE_EXPORT ShadowRoot& ensureUserAgentShadowRoot();
     WEBCORE_EXPORT ShadowRoot& createUserAgentShadowRoot();
@@ -502,7 +507,7 @@ public:
     virtual bool attributeContainsURL(const Attribute& attribute) const { return isURLAttribute(attribute); }
     String resolveURLStringIfNeeded(const String& urlString, ResolveURLs = ResolveURLs::Yes, const URL& base = URL()) const;
     virtual String completeURLsInAttributeValue(const URL& base, const Attribute&, ResolveURLs = ResolveURLs::Yes) const;
-    virtual Attribute replaceURLsInAttributeValue(const Attribute&, const HashMap<String, String>&) const;
+    virtual Attribute replaceURLsInAttributeValue(const Attribute&, const UncheckedKeyHashMap<String, String>&) const;
     virtual bool isHTMLContentAttribute(const Attribute&) const { return false; }
 
     WEBCORE_EXPORT URL getURLAttribute(const QualifiedName&) const;
@@ -585,7 +590,6 @@ public:
 
     virtual bool isFormListedElement() const { return false; }
     virtual bool isValidatedFormListedElement() const { return false; }
-    virtual bool isFormControlElement() const { return false; }
     virtual bool isMaybeFormAssociatedCustomElement() const { return false; }
     virtual bool isSpinButtonElement() const { return false; }
     virtual bool isTextFormControlElement() const { return false; }
@@ -821,6 +825,10 @@ public:
     bool hasAutoTextDirectionState() const;
 
     void updateEffectiveTextDirection();
+    void updateEffectiveTextDirectionIfNeeded();
+
+    AtomString viewTransitionCapturedName(const std::optional<Style::PseudoElementIdentifier>&) const;
+    void setViewTransitionCapturedName(const std::optional<Style::PseudoElementIdentifier>&, AtomString);
 
 protected:
     Element(const QualifiedName&, Document&, OptionSet<TypeFlag>);

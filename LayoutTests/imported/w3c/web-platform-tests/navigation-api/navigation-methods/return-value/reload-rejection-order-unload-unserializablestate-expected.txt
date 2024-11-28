@@ -1,4 +1,0 @@
-
-
-FAIL reload() with an unserializable state inside onunload throws "DataCloneError", not "InvalidStateError" assert_equals: expected 1 but got 0
-

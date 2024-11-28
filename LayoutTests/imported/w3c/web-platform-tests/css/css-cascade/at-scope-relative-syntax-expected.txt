@@ -1,0 +1,10 @@
+
+PASS > .foo in @scope,.nest created by string valid
+PASS > .foo in .nest,@scope created by string valid
+PASS > .foo in @scope,.nest,@media screen created by string valid
+PASS > .foo in .nest,@scope,@media screen created by string valid
+PASS > .foo in @scope,.nest created by insertRule valid
+FAIL > .foo in .nest,@scope created by insertRule valid assert_equals: expected "> .foo" but got "& > .foo"
+PASS > .foo in @scope,.nest,@media screen created by insertRule valid
+PASS > .foo in .nest,@scope,@media screen created by insertRule valid
+

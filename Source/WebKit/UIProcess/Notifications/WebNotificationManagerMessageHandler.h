@@ -36,6 +36,9 @@ class WebNotificationManagerMessageHandler : public NotificationManagerMessageHa
 private:
     explicit WebNotificationManagerMessageHandler(WebPageProxy&);
 
+    void ref() const final;
+    void deref() const final;
+
     void showNotification(IPC::Connection&, const WebCore::NotificationData&, RefPtr<WebCore::NotificationResources>&&, CompletionHandler<void()>&&) final;
     void cancelNotification(WebCore::SecurityOriginData&&, const WTF::UUID& notificationID) final;
     void clearNotifications(const Vector<WTF::UUID>& notificationIDs) final;

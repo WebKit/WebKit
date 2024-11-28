@@ -29,6 +29,7 @@
 #include "PlatformAudioTrackConfiguration.h"
 #include "TrackPrivateBase.h"
 #include <wtf/Function.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #if ENABLE(VIDEO)
 
@@ -37,6 +38,7 @@ namespace WebCore {
 struct AudioInfo;
 
 class AudioTrackPrivate : public TrackPrivateBase {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(AudioTrackPrivate);
 public:
     virtual void setEnabled(bool enabled)
     {

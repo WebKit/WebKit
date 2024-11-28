@@ -30,6 +30,6 @@
 namespace WebCore {
 
 enum class IDBDatabaseConnectionIdentifierType { };
-using IDBDatabaseConnectionIdentifier = LegacyNullableAtomicObjectIdentifier<IDBDatabaseConnectionIdentifierType>;
+using IDBDatabaseConnectionIdentifier = AtomicObjectIdentifier<IDBDatabaseConnectionIdentifierType>;
 
 } // namespace WebCore

@@ -1177,9 +1177,6 @@ TEST_P(StateChangeTestES3, SamplerMetadataUpdateOnSetProgram)
 {
     // http://anglebug.com/40096654
     ANGLE_SKIP_TEST_IF(IsAndroid() && IsOpenGLES());
-    // TODO(anglebug.com/42264029) Appears as though there's something wrong with textureSize on iOS
-    // unrelated to switching programs.
-    ANGLE_SKIP_TEST_IF(IsIOS() && IsOpenGLES());
     GLVertexArray vertexArray;
     glBindVertexArray(vertexArray);
 
@@ -7529,9 +7526,6 @@ TEST_P(RobustBufferAccessWebGL2ValidationStateChangeTest, BindZeroSizeBufferThen
     // Mali does not support robustness now.
     ANGLE_SKIP_TEST_IF(IsARM());
 
-    // TODO(anglebug.com/42264029)
-    ANGLE_SKIP_TEST_IF(IsIOS() && IsOpenGLES());
-
     std::vector<GLubyte> data(48, 1);
 
     ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Passthrough(), essl1_shaders::fs::Red());
@@ -11245,6 +11239,9 @@ ANGLE_INSTANTIATE_TEST_ES3_AND(
         .disable(Feature::SupportsExtendedDynamicState)
         .disable(Feature::SupportsExtendedDynamicState2),
     ES3_VULKAN().disable(Feature::SupportsExtendedDynamicState2),
+    ES3_VULKAN()
+        .disable(Feature::SupportsExtendedDynamicState2)
+        .disable(Feature::SupportsGraphicsPipelineLibrary),
     ES3_VULKAN().disable(Feature::UseVertexInputBindingStrideDynamicState),
     ES3_VULKAN().disable(Feature::UsePrimitiveRestartEnableDynamicState));
 
@@ -11256,6 +11253,9 @@ ANGLE_INSTANTIATE_TEST_ES31_AND(
         .disable(Feature::SupportsExtendedDynamicState)
         .disable(Feature::SupportsExtendedDynamicState2),
     ES31_VULKAN().disable(Feature::SupportsExtendedDynamicState2),
+    ES31_VULKAN()
+        .disable(Feature::SupportsExtendedDynamicState2)
+        .disable(Feature::SupportsGraphicsPipelineLibrary),
     ES31_VULKAN().disable(Feature::UseVertexInputBindingStrideDynamicState),
     ES31_VULKAN().disable(Feature::UsePrimitiveRestartEnableDynamicState));
 

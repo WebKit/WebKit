@@ -29,6 +29,7 @@
 
 #include "ArgumentCodersCocoa.h"
 #include <wtf/RetainPtr.h>
+#include <wtf/cf/VectorCF.h>
 
 namespace WebKit {
 
@@ -59,9 +60,7 @@ public:
     std::span<const uint8_t> dataReference() const
     {
         ASSERT(m_cfCharacterSetData);
-        CFDataRef data = m_cfCharacterSetData.get();
-        ASSERT(data);
-        return { CFDataGetBytePtr(data), static_cast<size_t>(CFDataGetLength(data)) };
+        return span(m_cfCharacterSetData.get());
     }
 
 private:

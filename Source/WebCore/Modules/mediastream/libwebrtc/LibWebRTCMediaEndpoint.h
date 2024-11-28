@@ -31,7 +31,9 @@
 #include "LibWebRTCRtpSenderBackend.h"
 #include "RTCRtpReceiver.h"
 #include "Timer.h"
+#include <wtf/WeakRef.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 ALLOW_UNUSED_PARAMETERS_BEGIN
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 ALLOW_COMMA_BEGIN
@@ -47,6 +49,7 @@ IGNORE_CLANG_WARNINGS_END
 ALLOW_COMMA_END
 ALLOW_DEPRECATED_DECLARATIONS_END
 ALLOW_UNUSED_PARAMETERS_END
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #include <wtf/LoggerHelper.h>
 #include <wtf/RobinHoodHashMap.h>
@@ -173,14 +176,16 @@ private:
 
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const final { return m_logger.get(); }
-    const void* logIdentifier() const final { return m_logIdentifier; }
+    uint64_t logIdentifier() const final { return m_logIdentifier; }
     ASCIILiteral logClassName() const final { return "LibWebRTCMediaEndpoint"_s; }
     WTFLogChannel& logChannel() const final;
 
     Seconds statsLogInterval(int64_t) const;
 #endif
 
-    LibWebRTCPeerConnectionBackend& m_peerConnectionBackend;
+    Ref<LibWebRTCPeerConnectionBackend> protectedPeerConnectionBackend() const;
+
+    WeakRef<LibWebRTCPeerConnectionBackend> m_peerConnectionBackend;
     rtc::scoped_refptr<webrtc::PeerConnectionFactoryInterface> m_peerConnectionFactory;
     rtc::scoped_refptr<webrtc::PeerConnectionInterface> m_backend;
 
@@ -204,7 +209,7 @@ private:
 #if !RELEASE_LOG_DISABLED
     int64_t m_statsFirstDeliveredTimestamp { 0 };
     Ref<const Logger> m_logger;
-    const void* m_logIdentifier;
+    const uint64_t m_logIdentifier;
 #endif
     bool m_isGatheringRTCLogs { false };
     bool m_shouldIgnoreNegotiationNeededSignal { false };

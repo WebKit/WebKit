@@ -45,7 +45,8 @@ enum class CrossOriginOpenerPolicyValue : uint8_t {
     UnsafeNone,
     SameOrigin,
     SameOriginPlusCOEP,
-    SameOriginAllowPopups
+    SameOriginAllowPopups,
+    NoopenerAllowPopups
 };
 
 enum class COOPDisposition : bool { Reporting , Enforce };

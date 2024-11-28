@@ -23,7 +23,7 @@
 
 #if ENABLE(GPU_PROCESS) && PLATFORM(IOS_FAMILY)
 
-messages -> RemoteMediaSessionHelper NotRefCounted {
+messages -> RemoteMediaSessionHelper {
     ApplicationWillEnterForeground(enum:bool WebKit::RemoteMediaSessionHelper::SuspendedUnderLock suspendedUnderLock)
     ApplicationDidEnterBackground(enum:bool WebKit::RemoteMediaSessionHelper::SuspendedUnderLock suspendedUnderLock)
     ApplicationWillBecomeInactive()

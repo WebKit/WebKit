@@ -28,7 +28,7 @@
 
 namespace WebCore {
 
-DictationContext AlternativeTextContextController::addAlternatives(PlatformTextAlternatives *alternatives)
+std::optional<DictationContext> AlternativeTextContextController::addAlternatives(PlatformTextAlternatives *alternatives)
 {
     if (!alternatives)
         return { };
@@ -51,15 +51,11 @@ void AlternativeTextContextController::replaceAlternatives(PlatformTextAlternati
 
 PlatformTextAlternatives *AlternativeTextContextController::alternativesForContext(DictationContext context) const
 {
-    if (!context)
-        return nil;
     return m_alternatives.get(context).get();
 }
 
 void AlternativeTextContextController::removeAlternativesForContext(DictationContext context)
 {
-    if (!context)
-        return;
     if (auto alternatives = m_alternatives.take(context))
         m_contexts.remove(alternatives);
 }

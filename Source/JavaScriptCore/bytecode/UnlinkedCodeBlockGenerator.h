@@ -175,7 +175,7 @@ public:
     const Identifier& identifier(int index) const { return m_identifiers[index]; }
     void addIdentifier(const Identifier& i) { return m_identifiers.append(i); }
 
-    using OutOfLineJumpTargets = HashMap<JSInstructionStream::Offset, int>;
+    using OutOfLineJumpTargets = UncheckedKeyHashMap<JSInstructionStream::Offset, int>;
     void addOutOfLineJumpTarget(JSInstructionStream::Offset, int target);
     int outOfLineJumpOffset(JSInstructionStream::Offset);
     int outOfLineJumpOffset(const JSInstructionStream::Ref& instruction)
@@ -216,7 +216,7 @@ private:
     Vector<UnlinkedHandlerInfo> m_exceptionHandlers;
     Vector<UnlinkedSimpleJumpTable> m_unlinkedSwitchJumpTables;
     Vector<UnlinkedStringJumpTable> m_unlinkedStringSwitchJumpTables;
-    HashMap<unsigned, UnlinkedCodeBlock::RareData::TypeProfilerExpressionRange> m_typeProfilerInfoMap;
+    UncheckedKeyHashMap<unsigned, UnlinkedCodeBlock::RareData::TypeProfilerExpressionRange> m_typeProfilerInfoMap;
     Vector<JSInstructionStream::Offset> m_opProfileControlFlowBytecodeOffsets;
     Vector<BitVector> m_bitVectors;
     Vector<IdentifierSet> m_constantIdentifierSets;

@@ -158,9 +158,10 @@ void DrawingAreaProxyCoordinatedGraphics::sizeDidChange()
     sendUpdateGeometry();
 }
 
-void DrawingAreaProxyCoordinatedGraphics::deviceScaleFactorDidChange()
+void DrawingAreaProxyCoordinatedGraphics::deviceScaleFactorDidChange(CompletionHandler<void()>&& completionHandler)
 {
     send(Messages::DrawingArea::SetDeviceScaleFactor(m_webPageProxy->deviceScaleFactor()));
+    completionHandler();
 }
 
 void DrawingAreaProxyCoordinatedGraphics::setBackingStoreIsDiscardable(bool isBackingStoreDiscardable)
@@ -303,7 +304,7 @@ void DrawingAreaProxyCoordinatedGraphics::discardBackingStore()
 }
 #endif
 
-WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(DrawingAreaProxyCoordinatedGraphicsDrawingMonitor, DrawingAreaProxyCoordinatedGraphics::DrawingMonitor);
+WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(DrawingAreaProxyCoordinatedGraphics, DrawingMonitor);
 
 DrawingAreaProxyCoordinatedGraphics::DrawingMonitor::DrawingMonitor(WebPageProxy& webPage)
     : m_timer(RunLoop::main(), this, &DrawingMonitor::stop)

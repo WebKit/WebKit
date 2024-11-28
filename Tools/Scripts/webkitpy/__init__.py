@@ -29,8 +29,8 @@
 
 import sys
 
-if sys.version_info < (3, 6):
-    raise ImportError("webkitpy requires Python 3.6")
+if sys.version_info < (3, 9):  # noqa: UP036
+    raise ImportError("webkitpy requires Python 3.9")
 
 import os
 import platform

@@ -25,8 +25,14 @@
 
 #pragma once
 
+#include <wtf/Compiler.h>
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 #include "VM.h"
 #include <wtf/StackPointer.h>
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 namespace JSC {
     

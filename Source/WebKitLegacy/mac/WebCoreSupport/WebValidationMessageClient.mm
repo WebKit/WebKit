@@ -28,8 +28,11 @@
 #import "WebView.h"
 #import "WebViewInternal.h"
 #import <WebCore/Element.h>
+#import <wtf/TZoneMallocInlines.h>
 
 using namespace WebCore;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebValidationMessageClient);
 
 WebValidationMessageClient::WebValidationMessageClient(WebView* view)
     : m_view(view)

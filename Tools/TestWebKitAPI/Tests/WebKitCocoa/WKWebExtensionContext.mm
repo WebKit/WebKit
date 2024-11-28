@@ -28,12 +28,14 @@
 #if ENABLE(WK_WEB_EXTENSIONS)
 
 #import "TestCocoa.h"
+#import "WebExtensionUtilities.h"
 #import <WebKit/WKFoundation.h>
 #import <WebKit/WKWebExtensionCommand.h>
 #import <WebKit/WKWebExtensionContextPrivate.h>
 #import <WebKit/WKWebExtensionMatchPatternPrivate.h>
 #import <WebKit/WKWebExtensionPermission.h>
 #import <WebKit/WKWebExtensionPrivate.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 
 #if PLATFORM(IOS_FAMILY)
 #import <UIKit/UIKit.h>

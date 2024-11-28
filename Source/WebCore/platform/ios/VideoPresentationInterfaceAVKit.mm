@@ -361,7 +361,7 @@ NS_ASSUME_NONNULL_BEGIN
 #endif
 - (void)setWebKitOverrideRouteSharingPolicy:(NSUInteger)routeSharingPolicy routingContextUID:(NSString *)routingContextUID;
 #if !RELEASE_LOG_DISABLED
-@property (readonly, nonatomic) const void* logIdentifier;
+@property (readonly, nonatomic) uint64_t logIdentifier;
 @property (readonly, nonatomic) const Logger* loggerPtr;
 @property (readonly, nonatomic) WTFLogChannel* logChannel;
 #endif
@@ -739,11 +739,11 @@ static const NSTimeInterval startPictureInPictureTimeInterval = 5.0;
 }
 
 #if !RELEASE_LOG_DISABLED
-- (const void*)logIdentifier
+- (uint64_t)logIdentifier
 {
     if (auto fullscreenInterface = _fullscreenInterface.get())
         return fullscreenInterface->logIdentifier();
-    return nullptr;
+    return 0;
 }
 
 - (const Logger*)loggerPtr
@@ -797,7 +797,8 @@ void VideoPresentationInterfaceAVKit::setupFullscreen(UIView& videoView, const F
 {
     [playerController() setContentDimensions:videoDimensions];
     VideoPresentationInterfaceIOS::setupFullscreen(videoView, initialRect, videoDimensions, parentView, mode, allowsPictureInPicturePlayback, standby, blocksReturnToFullscreenFromPictureInPicture);
-    playerLayer().captionsLayer = captionsLayer();
+    if (playerLayer().captionsLayer != captionsLayer())
+        playerLayer().captionsLayer = captionsLayer();
 }
 
 void VideoPresentationInterfaceAVKit::updateRouteSharingPolicy()

@@ -28,6 +28,7 @@
 #include "config.h"
 #include "JSCustomElementInterface.h"
 
+#include "CustomElementRegistry.h"
 #include "DOMWrapperWorld.h"
 #include "ElementRareData.h"
 #include "EventLoop.h"
@@ -65,9 +66,9 @@ JSCustomElementInterface::~JSCustomElementInterface() = default;
 
 static RefPtr<Element> constructCustomElementSynchronously(Document&, VM&, JSGlobalObject&, JSObject* constructor, const AtomString& localName, ParserConstructElementWithEmptyStack);
 
-Ref<Element> JSCustomElementInterface::constructElementWithFallback(Document& document, const AtomString& localName, ParserConstructElementWithEmptyStack parserConstructElementWithEmptyStack)
+Ref<Element> JSCustomElementInterface::constructElementWithFallback(Document& document, CustomElementRegistry& registry, const AtomString& localName, ParserConstructElementWithEmptyStack parserConstructElementWithEmptyStack)
 {
-    if (auto element = tryToConstructCustomElement(document, localName, parserConstructElementWithEmptyStack))
+    if (auto element = tryToConstructCustomElement(document, registry, localName, parserConstructElementWithEmptyStack))
         return element.releaseNonNull();
 
     auto element = HTMLUnknownElement::create(QualifiedName(nullAtom(), localName, HTMLNames::xhtmlNamespaceURI), document);
@@ -77,9 +78,9 @@ Ref<Element> JSCustomElementInterface::constructElementWithFallback(Document& do
     return element;
 }
 
-Ref<Element> JSCustomElementInterface::constructElementWithFallback(Document& document, const QualifiedName& name)
+Ref<Element> JSCustomElementInterface::constructElementWithFallback(Document& document, CustomElementRegistry& registry, const QualifiedName& name)
 {
-    if (auto element = tryToConstructCustomElement(document, name.localName(), ParserConstructElementWithEmptyStack::No)) {
+    if (auto element = tryToConstructCustomElement(document, registry, name.localName(), ParserConstructElementWithEmptyStack::No)) {
         if (!name.prefix().isNull())
             element->setPrefix(name.prefix());
         return element.releaseNonNull();
@@ -103,7 +104,7 @@ Ref<HTMLElement> JSCustomElementInterface::createElement(Document& document)
     return HTMLElement::create(m_name, document);
 }
 
-RefPtr<Element> JSCustomElementInterface::tryToConstructCustomElement(Document& document, const AtomString& localName, ParserConstructElementWithEmptyStack parserConstructElementWithEmptyStack)
+RefPtr<Element> JSCustomElementInterface::tryToConstructCustomElement(Document& document, CustomElementRegistry& registry, const AtomString& localName, ParserConstructElementWithEmptyStack parserConstructElementWithEmptyStack)
 {
     if (!canInvokeCallback())
         return nullptr;
@@ -122,7 +123,11 @@ RefPtr<Element> JSCustomElementInterface::tryToConstructCustomElement(Document& 
     ASSERT(lexicalGlobalObject);
     if (!lexicalGlobalObject)
         return nullptr;
+    auto* oldRegistry = document.activeCustomElementRegistry();
+    document.setActiveCustomElementRegistry(registry);
     auto element = constructCustomElementSynchronously(document, vm, *lexicalGlobalObject, m_constructor.get(), localName, parserConstructElementWithEmptyStack);
+    if (oldRegistry)
+        document.setActiveCustomElementRegistry(*oldRegistry);
     EXCEPTION_ASSERT(!!scope.exception() == !element);
     if (!element) {
         auto* exception = scope.exception();
@@ -218,6 +223,8 @@ void JSCustomElementInterface::upgradeElement(Element& element)
         return;
     JSGlobalObject* lexicalGlobalObject = globalObject;
 
+    RefPtr registry = element.treeScope().customElementRegistry();
+    Ref document = downcast<Document>(*context);
     auto constructData = JSC::getConstructData(m_constructor.get());
     if (constructData.type == CallData::Type::None) {
         ASSERT_NOT_REACHED();
@@ -241,11 +248,18 @@ void JSCustomElementInterface::upgradeElement(Element& element)
     if (m_isFormAssociated)
         downcast<HTMLMaybeFormAssociatedCustomElement>(element).willUpgradeFormAssociated();
 
+    auto* oldRegistry = document->activeCustomElementRegistry();
+    if (registry)
+        document->setActiveCustomElementRegistry(*registry);
+
     MarkedArgumentBuffer args;
     ASSERT(!args.hasOverflowed());
     JSExecState::instrumentFunction(context, constructData);
     JSValue returnedElement = construct(lexicalGlobalObject, m_constructor.get(), constructData, args);
     InspectorInstrumentation::didCallFunction(context);
+
+    if (oldRegistry)
+        document->setActiveCustomElementRegistry(*oldRegistry);
 
     m_constructionStack.removeLast();
 

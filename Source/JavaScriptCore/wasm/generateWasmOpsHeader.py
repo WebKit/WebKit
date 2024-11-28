@@ -219,6 +219,10 @@ contents = wasm.header + """
 
 #pragma once
 
+#include <wtf/Compiler.h>
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 #if ENABLE(WEBASSEMBLY)
 
 #include <cstdint>
@@ -286,6 +290,7 @@ struct Type {
         switch(kind) {
         case TypeKind::I64:
         case TypeKind::Funcref:
+        case TypeKind::Exn:
         case TypeKind::Externref:
         case TypeKind::RefNull:
         case TypeKind::Ref:
@@ -548,6 +553,8 @@ inline void printInternal(PrintStream& out, JSC::Wasm::ExtAtomicOpType op)
 } // namespace WTF
 
 #endif // ENABLE(WEBASSEMBLY)
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 """
 

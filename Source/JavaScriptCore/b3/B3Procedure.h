@@ -135,7 +135,7 @@ public:
     Value* addIntConstant(Origin, Type, int64_t value);
     Value* addIntConstant(Value*, int64_t value);
 
-    // bits is a bitwise_cast of the constant you want.
+    // bits is a std::bit_cast of the constant you want.
     JS_EXPORT_PRIVATE Value* addConstant(Origin, Type, uint64_t bits);
     JS_EXPORT_PRIVATE Value* addConstant(Origin, Type, v128_t bits);
 

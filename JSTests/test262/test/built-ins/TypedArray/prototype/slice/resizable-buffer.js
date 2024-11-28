@@ -20,7 +20,7 @@ for (let ctor of ctors) {
   // Write some data into the array.
   const taWrite = new ctor(rab);
   for (let i = 0; i < 4; ++i) {
-    WriteToTypedArray(taWrite, i, i);
+    taWrite[i] = MayNeedBigInt(taWrite, i);
   }
   const fixedLengthSlice = fixedLength.slice();
   assert.compareArray(ToNumbers(fixedLengthSlice), [

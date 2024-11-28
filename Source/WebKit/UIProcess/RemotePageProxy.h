@@ -27,23 +27,14 @@
 
 #include "MessageReceiver.h"
 #include "NavigationActionData.h"
-#include "Site.h"
 #include "WebPageProxyMessageReceiverRegistration.h"
 #include "WebProcessProxy.h"
 #include <WebCore/FrameIdentifier.h>
 #include <WebCore/NavigationIdentifier.h>
 #include <WebCore/PageIdentifier.h>
 #include <WebCore/ProcessIdentifier.h>
+#include <WebCore/Site.h>
 #include <wtf/TZoneMalloc.h>
-
-namespace WebKit {
-class RemotePageProxy;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::RemotePageProxy> : std::true_type { };
-}
 
 namespace IPC {
 class Connection;
@@ -71,23 +62,26 @@ class RemotePageVisitedLinkStoreRegistration;
 class UserData;
 class WebFrameProxy;
 class WebPageProxy;
+class WebProcessActivityState;
 class WebProcessProxy;
 
 struct FrameInfoData;
 struct FrameTreeCreationParameters;
 struct NavigationActionData;
 
-class RemotePageProxy : public IPC::MessageReceiver {
+enum class ProcessTerminationReason : uint8_t;
+
+class RemotePageProxy : public IPC::MessageReceiver, public RefCounted<RemotePageProxy> {
     WTF_MAKE_TZONE_ALLOCATED(RemotePageProxy);
 public:
-    RemotePageProxy(WebPageProxy&, WebProcessProxy&, const Site&, WebPageProxyMessageReceiverRegistration* = nullptr);
+    static Ref<RemotePageProxy> create(WebPageProxy&, WebProcessProxy&, const WebCore::Site&, WebPageProxyMessageReceiverRegistration* = nullptr);
     ~RemotePageProxy();
 
     WebPageProxy* page() const;
     RefPtr<WebPageProxy> protectedPage() const;
 
     void injectPageIntoNewProcess();
-    void processDidTerminate(WebCore::ProcessIdentifier);
+    void processDidTerminate(WebProcessProxy&, ProcessTerminationReason);
 
     WebPageProxyMessageReceiverRegistration& messageReceiverRegistration() { return m_messageReceiverRegistration; }
 
@@ -96,9 +90,12 @@ public:
     WebProcessProxy& siteIsolatedProcess() const { return m_process.get(); }
     WebCore::PageIdentifier pageID() const { return m_webPageID; } // FIXME: Remove this in favor of identifierInSiteIsolatedProcess.
     WebCore::PageIdentifier identifierInSiteIsolatedProcess() const { return m_webPageID; }
-    const Site& site() const { return m_site; }
+    const WebCore::Site& site() const { return m_site; }
+
+    WebProcessActivityState& processActivityState();
 
 private:
+    RemotePageProxy(WebPageProxy&, WebProcessProxy&, const WebCore::Site&, WebPageProxyMessageReceiverRegistration*);
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
     bool didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&) final;
     void decidePolicyForResponse(FrameInfoData&&, std::optional<WebCore::NavigationIdentifier>, const WebCore::ResourceResponse&, const WebCore::ResourceRequest&, bool canShowMIMEType, const String& downloadAttribute, bool isShowingInitialAboutBlank, WebCore::CrossOriginOpenerPolicyValue activeDocumentCOOPValue, CompletionHandler<void(PolicyDecision&&)>&&);
@@ -113,10 +110,11 @@ private:
     const WebCore::PageIdentifier m_webPageID;
     const Ref<WebProcessProxy> m_process;
     WeakPtr<WebPageProxy> m_page;
-    const Site m_site;
-    std::unique_ptr<RemotePageDrawingAreaProxy> m_drawingArea;
+    const WebCore::Site m_site;
+    RefPtr<RemotePageDrawingAreaProxy> m_drawingArea;
     std::unique_ptr<RemotePageVisitedLinkStoreRegistration> m_visitedLinkStoreRegistration;
     WebPageProxyMessageReceiverRegistration m_messageReceiverRegistration;
+    UniqueRef<WebProcessActivityState> m_processActivityState;
 };
 
 }

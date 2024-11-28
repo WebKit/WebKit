@@ -32,7 +32,7 @@ class TextDocument final : public HTMLDocument {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(TextDocument);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(TextDocument);
 public:
-    static Ref<TextDocument> create(LocalFrame* frame, const Settings& settings, const URL& url, ScriptExecutionContextIdentifier identifier)
+    static Ref<TextDocument> create(LocalFrame* frame, const Settings& settings, const URL& url, std::optional<ScriptExecutionContextIdentifier> identifier)
     {
         auto document = adoptRef(*new TextDocument(frame, settings, url, identifier));
         document->addToContextsMap();
@@ -40,7 +40,7 @@ public:
     }
 
 private:
-    TextDocument(LocalFrame*, const Settings&, const URL&, ScriptExecutionContextIdentifier);
+    TextDocument(LocalFrame*, const Settings&, const URL&, std::optional<ScriptExecutionContextIdentifier>);
     
     Ref<DocumentParser> createParser() override;
 };

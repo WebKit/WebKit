@@ -27,8 +27,7 @@
 
 #if USE(APPLE_INTERNAL_SDK)
 
-#include <MediaRemote/MRNowPlayingTypes.h>
-#include <MediaRemote/MediaRemote.h>
+#import <MediaRemote/MediaRemote_Private.h>
 
 #else
 
@@ -139,5 +138,15 @@ void MRMediaRemoteSetNowPlayingInfoWithMergePolicy(CFDictionaryRef, MRMediaRemot
 CFArrayRef MRMediaRemoteCopyPickableRoutes();
 
 WTF_EXTERN_C_END
+
+@protocol MRUIControllable <NSObject>
+@end
+
+@protocol MRNowPlayingActivityUIControllable <MRUIControllable>
+@end
+
+@interface MRUIControllerProvider : NSObject
++ (id<MRNowPlayingActivityUIControllable>)nowPlayingActivityController;
+@end
 
 #endif // USE(APPLE_INTERNAL_SDK)

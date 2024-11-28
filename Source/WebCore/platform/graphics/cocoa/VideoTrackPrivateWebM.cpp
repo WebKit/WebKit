@@ -25,12 +25,15 @@
 
 #include "config.h"
 #include "VideoTrackPrivateWebM.h"
+#include <wtf/TZoneMallocInlines.h>
 
 #if ENABLE(MEDIA_SOURCE)
 
 #include "MediaSample.h"
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(VideoTrackPrivateWebM);
 
 Ref<VideoTrackPrivateWebM> VideoTrackPrivateWebM::create(webm::TrackEntry&& trackEntry)
 {

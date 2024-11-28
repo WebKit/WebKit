@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008, 2012, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2008, 2012, 2016-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,6 +27,7 @@
 
 #include "CSSPrimitiveValue.h"
 #include "CSSValue.h"
+#include "CSSValueKeywords.h"
 #include "TimingFunction.h"
 
 namespace WebCore {
@@ -63,7 +64,7 @@ public:
 
 private:
     CSSLinearTimingFunctionValue(Vector<LinearStop>&& stops)
-        : CSSValue(LinearTimingFunctionClass)
+        : CSSValue(ClassType::LinearTimingFunction)
         , m_stops(WTFMove(stops))
     {
         ASSERT(m_stops.size() >= 2);
@@ -87,7 +88,7 @@ public:
 
 private:
     CSSCubicBezierTimingFunctionValue(Ref<CSSPrimitiveValue>&& x1, Ref<CSSPrimitiveValue>&& y1, Ref<CSSPrimitiveValue>&& x2, Ref<CSSPrimitiveValue>&& y2)
-        : CSSValue(CubicBezierTimingFunctionClass)
+        : CSSValue(ClassType::CubicBezierTimingFunction)
         , m_x1(WTFMove(x1))
         , m_y1(WTFMove(y1))
         , m_x2(WTFMove(x2))
@@ -120,7 +121,7 @@ public:
 
 private:
     CSSStepsTimingFunctionValue(Ref<CSSPrimitiveValue>&& steps, std::optional<StepsTimingFunction::StepPosition> stepPosition)
-        : CSSValue(StepsTimingFunctionClass)
+        : CSSValue(ClassType::StepsTimingFunction)
         , m_steps(WTFMove(steps))
         , m_stepPosition(stepPosition)
     {
@@ -146,7 +147,7 @@ public:
 
 private:
     CSSSpringTimingFunctionValue(Ref<CSSPrimitiveValue>&& mass, Ref<CSSPrimitiveValue>&& stiffness, Ref<CSSPrimitiveValue>&& damping, Ref<CSSPrimitiveValue>&& initialVelocity)
-        : CSSValue(SpringTimingFunctionClass)
+        : CSSValue(ClassType::SpringTimingFunction)
         , m_mass(WTFMove(mass))
         , m_stiffness(WTFMove(stiffness))
         , m_damping(WTFMove(damping))

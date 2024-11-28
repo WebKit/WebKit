@@ -31,6 +31,8 @@
 
 #if ENABLE(ASSEMBLER)
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 namespace Probe {
 
@@ -126,7 +128,7 @@ template<typename T, SavedFPWidth savedFPWidth>
 T CPUState::fpr(FPRegisterID id) const
 {
     CPUState* cpu = const_cast<CPUState*>(this);
-    return bitwise_cast<T>(cpu->fpr<savedFPWidth>(id));
+    return std::bit_cast<T>(cpu->fpr<savedFPWidth>(id));
 }
 
 inline void*& CPUState::pc()
@@ -278,5 +280,7 @@ extern "C" void SYSV_ABI executeJSCJITProbe(State*) REFERENCED_FROM_ASM WTF_INTE
 
 } // namespace Probe
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ENABLE(ASSEMBLER)

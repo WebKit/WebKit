@@ -53,15 +53,6 @@
 #include <wtf/WeakPtr.h>
 #include <wtf/WorkQueue.h>
 
-namespace WebKit {
-class TimerAlignment;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::RemoteRenderingBackendProxy> : std::true_type { };
-}
-
 namespace WebCore {
 
 class DestinationColorSpace;
@@ -170,7 +161,7 @@ public:
 
     RefPtr<IPC::StreamClientConnection> connection();
 
-    SerialFunctionDispatcher& dispatcher() { return m_dispatcher; }
+    bool isCurrent() const final;
     Ref<WorkQueue> workQueue() { return m_queue; }
 
     void didBecomeUnresponsive();
@@ -179,11 +170,11 @@ public:
 private:
     explicit RemoteRenderingBackendProxy(SerialFunctionDispatcher&);
 
-    template<typename T, typename U, typename V, typename W, SupportsObjectIdentifierNullState supportsNullState> auto send(T&& message, ObjectIdentifierGeneric<U, V, W, supportsNullState>);
+    template<typename T, typename U, typename V, typename W> auto send(T&& message, ObjectIdentifierGeneric<U, V, W>);
     template<typename T> auto send(T&& message) { return send(std::forward<T>(message), renderingBackendIdentifier()); }
-    template<typename T, typename U, typename V, typename W, SupportsObjectIdentifierNullState supportsNullState> auto sendSync(T&& message, ObjectIdentifierGeneric<U, V, W, supportsNullState>);
+    template<typename T, typename U, typename V, typename W> auto sendSync(T&& message, ObjectIdentifierGeneric<U, V, W>);
     template<typename T> auto sendSync(T&& message) { return sendSync(std::forward<T>(message), renderingBackendIdentifier()); }
-    template<typename T, typename C, typename U, typename V, typename W, SupportsObjectIdentifierNullState supportsNullState> auto sendWithAsyncReply(T&& message, C&& callback, ObjectIdentifierGeneric<U, V, W, supportsNullState>);
+    template<typename T, typename C, typename U, typename V, typename W> auto sendWithAsyncReply(T&& message, C&& callback, ObjectIdentifierGeneric<U, V, W>);
     template<typename T, typename C> auto sendWithAsyncReply(T&& message, C&& callback) { return sendWithAsyncReply(std::forward<T>(message), std::forward<C>(callback), renderingBackendIdentifier()); }
 
     // Connection::Client
@@ -206,10 +197,11 @@ private:
     void didMarkLayersAsVolatile(MarkSurfacesAsVolatileRequestIdentifier, Vector<std::pair<RemoteImageBufferSetIdentifier, OptionSet<BufferInSetType>>>, bool didMarkAllLayerAsVolatile);
 
     // SerialFunctionDispatcher
-    void dispatch(Function<void()>&& function) final { m_dispatcher.dispatch(WTFMove(function)); }
-    bool isCurrent() const final { return m_dispatcher.isCurrent(); }
+    void dispatch(Function<void()>&&) final;
 
-    SerialFunctionDispatcher& m_dispatcher;
+    RefPtr<IPC::StreamClientConnection> protectedConnection() const { return m_connection; }
+
+    ThreadSafeWeakPtr<SerialFunctionDispatcher> m_dispatcher;
     WeakPtr<GPUProcessConnection> m_gpuProcessConnection; // Only for main thread operation.
     RefPtr<IPC::StreamClientConnection> m_connection;
     RefPtr<RemoteSharedResourceCacheProxy> m_sharedResourceCache;

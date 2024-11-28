@@ -48,7 +48,7 @@ struct JSGlobalObject::RareData {
     WTF_MAKE_STRUCT_FAST_ALLOCATED;
 
     unsigned profileGroup { 0 };
-    HashMap<OpaqueJSClass*, std::unique_ptr<OpaqueJSClassContextData>> opaqueJSClassData;
+    UncheckedKeyHashMap<OpaqueJSClass*, std::unique_ptr<OpaqueJSClassContextData>> opaqueJSClassData;
 };
 
 struct JSGlobalObject::GlobalPropertyInfo {
@@ -235,9 +235,9 @@ inline JSFunction* JSGlobalObject::performProxyObjectSetByValSloppyFunction() co
 inline JSFunction* JSGlobalObject::performProxyObjectSetByValSloppyFunctionConcurrently() const { return performProxyObjectSetByValSloppyFunction(); }
 inline JSFunction* JSGlobalObject::performProxyObjectSetByValStrictFunction() const { return m_performProxyObjectSetByValStrictFunction.get(); }
 inline JSFunction* JSGlobalObject::performProxyObjectSetByValStrictFunctionConcurrently() const { return performProxyObjectSetByValStrictFunction(); }
-inline GetterSetter* JSGlobalObject::regExpProtoGlobalGetter() const { return bitwise_cast<GetterSetter*>(linkTimeConstant(LinkTimeConstant::regExpProtoGlobalGetter)); }
-inline GetterSetter* JSGlobalObject::regExpProtoUnicodeGetter() const { return bitwise_cast<GetterSetter*>(linkTimeConstant(LinkTimeConstant::regExpProtoUnicodeGetter)); }
-inline GetterSetter* JSGlobalObject::regExpProtoUnicodeSetsGetter() const { return bitwise_cast<GetterSetter*>(linkTimeConstant(LinkTimeConstant::regExpProtoUnicodeSetsGetter)); }
+inline GetterSetter* JSGlobalObject::regExpProtoGlobalGetter() const { return std::bit_cast<GetterSetter*>(linkTimeConstant(LinkTimeConstant::regExpProtoGlobalGetter)); }
+inline GetterSetter* JSGlobalObject::regExpProtoUnicodeGetter() const { return std::bit_cast<GetterSetter*>(linkTimeConstant(LinkTimeConstant::regExpProtoUnicodeGetter)); }
+inline GetterSetter* JSGlobalObject::regExpProtoUnicodeSetsGetter() const { return std::bit_cast<GetterSetter*>(linkTimeConstant(LinkTimeConstant::regExpProtoUnicodeSetsGetter)); }
 
 ALWAYS_INLINE VM& getVM(JSGlobalObject* globalObject)
 {
@@ -317,6 +317,57 @@ inline JSArray* constructArrayNegativeIndexed(JSGlobalObject* globalObject, Arra
     if (UNLIKELY(!array))
         return nullptr;
     return ArrayAllocationProfile::updateLastAllocationFor(profile, array);
+}
+
+ALWAYS_INLINE JSArray* tryCreateContiguousArrayWithPattern(JSGlobalObject* globalObject, JSString* pattern, size_t initialLength)
+{
+    if (initialLength >= MIN_ARRAY_STORAGE_CONSTRUCTION_LENGTH)
+        return nullptr;
+
+    VM& vm = globalObject->vm();
+    Structure* structure = globalObject->originalArrayStructureForIndexingType(ArrayWithContiguous);
+    if (UNLIKELY(!hasContiguous(structure->indexingType())))
+        return nullptr;
+
+    unsigned vectorLength = Butterfly::optimalContiguousVectorLength(structure, initialLength);
+    void* temp = vm.auxiliarySpace().allocate(
+        vm,
+        Butterfly::totalSize(0, 0, true, vectorLength * sizeof(EncodedJSValue)),
+        nullptr, AllocationFailureMode::ReturnNull);
+    if (UNLIKELY(!temp))
+        return nullptr;
+    Butterfly* butterfly = Butterfly::fromBase(temp, 0, 0);
+    butterfly->setVectorLength(vectorLength);
+    butterfly->setPublicLength(initialLength);
+
+#if OS(DARWIN)
+    memset_pattern8(static_cast<void*>(butterfly->contiguous().data()), &pattern, sizeof(EncodedJSValue) * initialLength);
+    if (vectorLength > initialLength)
+        memset(static_cast<void*>(butterfly->contiguous().data() + initialLength), 0, sizeof(EncodedJSValue) * (vectorLength - initialLength));
+#else
+    for (unsigned i = 0; i < initialLength; ++i)
+        butterfly->contiguous().atUnsafe(i).setWithoutWriteBarrier(pattern);
+    for (unsigned i = initialLength; i < vectorLength; ++i)
+        butterfly->contiguous().atUnsafe(i).clear();
+#endif
+    return JSArray::createWithButterfly(vm, nullptr, structure, butterfly);
+}
+
+ALWAYS_INLINE JSArray* createPatternFilledArray(JSGlobalObject* globalObject, JSString* pattern, size_t count)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    if (JSArray* array = tryCreateContiguousArrayWithPattern(globalObject, pattern, count); LIKELY(array))
+        return array;
+
+    JSArray* array = constructEmptyArray(globalObject, nullptr, count);
+    RETURN_IF_EXCEPTION(scope, { });
+    for (size_t i = 0, arrayIndex = 0; i < count; ++i) {
+        array->putDirectIndex(globalObject, arrayIndex++, pattern);
+        RETURN_IF_EXCEPTION(scope, { });
+    }
+    return array;
 }
 
 template<typename... Args>

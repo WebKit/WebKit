@@ -1,34 +1,32 @@
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT Current times and effect phase at start when delay = 0 and endDelay = 0 | Test timed out
-NOTRUN Current times and effect phase in active range when delay = 0 and endDelay = 0 |
-NOTRUN Current times and effect phase at effect end time when delay = 0 and endDelay = 0 |
-NOTRUN Current times and effect phase at timeline start when delay = 500 and endDelay = 0 |
-NOTRUN Current times and effect phase before start delay when delay = 500 and endDelay = 0 |
-NOTRUN Current times and effect phase at start delay when delay = 500 and endDelay = 0 |
-NOTRUN Current times and effect phase in active range when delay = 500 and endDelay = 0 |
-NOTRUN Current times and effect phase at effect end time when delay = 500 and endDelay = 0 |
-NOTRUN Current times and effect phase at timeline start when delay = 0 and endDelay = 500 |
-NOTRUN Current times and effect phase in active range when delay = 0 and endDelay = 500 |
-NOTRUN Current times and effect phase at effect end time when delay = 0 and endDelay = 500 |
-NOTRUN Current times and effect phase after effect end time when delay = 0 and endDelay = 500 |
-NOTRUN Current times and effect phase at timeline boundary when delay = 0 and endDelay = 500 |
-NOTRUN Current times and effect phase at timeline start when delay = 250 and endDelay = 250 |
-NOTRUN Current times and effect phase before start delay when delay = 250 and endDelay = 250 |
-NOTRUN Current times and effect phase at start delay when delay = 250 and endDelay = 250 |
-NOTRUN Current times and effect phase in active range when delay = 250 and endDelay = 250 |
-NOTRUN Current times and effect phase at effect end time when delay = 250 and endDelay = 250 |
-NOTRUN Current times and effect phase after effect end time when delay = 250 and endDelay = 250 |
-NOTRUN Current times and effect phase at timeline boundary when delay = 250 and endDelay = 250 |
-NOTRUN Current times and effect phase at timeline start when delay = -125 and endDelay = -125 |
-NOTRUN Current times and effect phase in active range when delay = -125 and endDelay = -125 |
-NOTRUN Current times and effect phase at timeline end when delay = -125 and endDelay = -125 |
-NOTRUN Playback rate affects whether active phase boundary is inclusive.
-NOTRUN Verify that (play -> pause -> play) doesn't change phase/progress.
-NOTRUN Pause in before phase, scroll timeline into active phase, animation should remain in the before phase
-NOTRUN Pause in before phase, set animation current time to be in active range, animation should become active. Scrolling should have no effect.
-NOTRUN Make scroller inactive, then set current time to an in range time
-NOTRUN Animation effect is still applied after pausing and making timeline inactive.
-NOTRUN Make timeline inactive, force style update then pause the animation. No crashing indicates test success.
+PASS Current times and effect phase at start when delay = 0 and endDelay = 0 |
+PASS Current times and effect phase in active range when delay = 0 and endDelay = 0 |
+PASS Current times and effect phase at effect end time when delay = 0 and endDelay = 0 |
+FAIL Current times and effect phase at timeline start when delay = 500 and endDelay = 0 | assert_equals: animation effect progress expected (object) null but got (number) 0
+FAIL Current times and effect phase before start delay when delay = 500 and endDelay = 0 | assert_equals: animation effect progress expected (object) null but got (number) 0.25
+FAIL Current times and effect phase at start delay when delay = 500 and endDelay = 0 | assert_approx_equals: animation effect progress expected 0 +/- 0.001 but got 0.5
+FAIL Current times and effect phase in active range when delay = 500 and endDelay = 0 | assert_approx_equals: animation effect progress expected 0.5 +/- 0.001 but got 0.75
+PASS Current times and effect phase at effect end time when delay = 500 and endDelay = 0 |
+PASS Current times and effect phase at timeline start when delay = 0 and endDelay = 500 |
+FAIL Current times and effect phase in active range when delay = 0 and endDelay = 500 | assert_approx_equals: animation effect progress expected 0.5 +/- 0.001 but got 0.25
+FAIL Current times and effect phase at effect end time when delay = 0 and endDelay = 500 | assert_equals: animation effect progress expected (object) null but got (number) 0.5
+FAIL Current times and effect phase after effect end time when delay = 0 and endDelay = 500 | assert_equals: animation effect progress expected (object) null but got (number) 0.75
+FAIL Current times and effect phase at timeline boundary when delay = 0 and endDelay = 500 | assert_equals: animation effect progress expected (object) null but got (number) 1
+FAIL Current times and effect phase at timeline start when delay = 250 and endDelay = 250 | assert_equals: animation effect progress expected (object) null but got (number) 0
+FAIL Current times and effect phase before start delay when delay = 250 and endDelay = 250 | assert_equals: animation effect progress expected (object) null but got (number) 0.1
+FAIL Current times and effect phase at start delay when delay = 250 and endDelay = 250 | assert_approx_equals: animation effect progress expected 0 +/- 0.001 but got 0.25
+PASS Current times and effect phase in active range when delay = 250 and endDelay = 250 |
+FAIL Current times and effect phase at effect end time when delay = 250 and endDelay = 250 | assert_equals: animation effect progress expected (object) null but got (number) 0.75
+FAIL Current times and effect phase after effect end time when delay = 250 and endDelay = 250 | assert_equals: animation effect progress expected (object) null but got (number) 0.9
+FAIL Current times and effect phase at timeline boundary when delay = 250 and endDelay = 250 | assert_equals: animation effect progress expected (object) null but got (number) 1
+FAIL Current times and effect phase at timeline start when delay = -125 and endDelay = -125 | assert_approx_equals: animation effect progress expected 0.25 +/- 0.001 but got 0
+PASS Current times and effect phase in active range when delay = -125 and endDelay = -125 |
+FAIL Current times and effect phase at timeline end when delay = -125 and endDelay = -125 | assert_approx_equals: animation effect progress expected 0.75 +/- 0.001 but got 1
+FAIL Playback rate affects whether active phase boundary is inclusive. assert_equals: Animation effect is in before phase when current time is 0% (progress is null with 'none' fill mode) expected (object) null but got (number) 0
+FAIL Verify that (play -> pause -> play) doesn't change phase/progress. assert_equals: expected (object) null but got (number) 0
+FAIL Pause in before phase, scroll timeline into active phase, animation should remain in the before phase assert_equals: expected (object) null but got (number) 0
+FAIL Pause in before phase, set animation current time to be in active range, animation should become active. Scrolling should have no effect. assert_equals: expected (object) null but got (number) 0
+PASS Make scroller inactive, then set current time to an in range time
+PASS Animation effect is still applied after pausing and making timeline inactive.
+PASS Make timeline inactive, force style update then pause the animation. No crashing indicates test success.
 

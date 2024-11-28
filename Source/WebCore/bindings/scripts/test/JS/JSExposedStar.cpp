@@ -46,7 +46,6 @@
 #include <wtf/URL.h>
 #include <wtf/text/MakeString.h>
 
-
 namespace WebCore {
 using namespace JSC;
 
@@ -112,12 +111,11 @@ template<> void JSExposedStarDOMConstructor::initializeProperties(VM& vm, JSDOMG
 
 /* Hash table for prototype */
 
-static const HashTableValue JSExposedStarPrototypeTableValues[] =
-{
-    { "constructor"_s, static_cast<unsigned>(PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsExposedStarConstructor, 0 } },
-    { "operationForAllContexts"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsExposedStarPrototypeFunction_operationForAllContexts, 0 } },
-    { "operationJustForWindowContexts"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsExposedStarPrototypeFunction_operationJustForWindowContexts, 0 } },
-    { "operationJustForWorkerContexts"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsExposedStarPrototypeFunction_operationJustForWorkerContexts, 0 } },
+static const std::array<HashTableValue, 4> JSExposedStarPrototypeTableValues {
+    HashTableValue { "constructor"_s, static_cast<unsigned>(PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsExposedStarConstructor, 0 } },
+    HashTableValue { "operationForAllContexts"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsExposedStarPrototypeFunction_operationForAllContexts, 0 } },
+    HashTableValue { "operationJustForWindowContexts"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsExposedStarPrototypeFunction_operationJustForWindowContexts, 0 } },
+    HashTableValue { "operationJustForWorkerContexts"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsExposedStarPrototypeFunction_operationJustForWorkerContexts, 0 } },
 };
 
 const ClassInfo JSExposedStarPrototype::s_info = { "ExposedStar"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSExposedStarPrototype) };
@@ -179,7 +177,7 @@ JSValue JSExposedStar::getConstructor(VM& vm, const JSGlobalObject* globalObject
 
 JSC_DEFINE_CUSTOM_GETTER(jsExposedStarConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
-    auto& vm = JSC::getVM(lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto* prototype = jsDynamicCast<JSExposedStarPrototype*>(JSValue::decode(thisValue));
     if (UNLIKELY(!prototype))
@@ -189,11 +187,11 @@ JSC_DEFINE_CUSTOM_GETTER(jsExposedStarConstructor, (JSGlobalObject* lexicalGloba
 
 static inline JSC::EncodedJSValue jsExposedStarPrototypeFunction_operationForAllContextsBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSExposedStar>::ClassParameter castedThis)
 {
-    auto& vm = JSC::getVM(lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(callFrame);
-    auto& impl = castedThis->wrapped();
+    SUPPRESS_UNCOUNTED_LOCAL auto& impl = castedThis->wrapped();
     RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLUndefined>(*lexicalGlobalObject, throwScope, [&]() -> decltype(auto) { return impl.operationForAllContexts(); })));
 }
 
@@ -204,11 +202,11 @@ JSC_DEFINE_HOST_FUNCTION(jsExposedStarPrototypeFunction_operationForAllContexts,
 
 static inline JSC::EncodedJSValue jsExposedStarPrototypeFunction_operationJustForWindowContextsBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSExposedStar>::ClassParameter castedThis)
 {
-    auto& vm = JSC::getVM(lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(callFrame);
-    auto& impl = castedThis->wrapped();
+    SUPPRESS_UNCOUNTED_LOCAL auto& impl = castedThis->wrapped();
     RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLUndefined>(*lexicalGlobalObject, throwScope, [&]() -> decltype(auto) { return impl.operationJustForWindowContexts(); })));
 }
 
@@ -219,11 +217,11 @@ JSC_DEFINE_HOST_FUNCTION(jsExposedStarPrototypeFunction_operationJustForWindowCo
 
 static inline JSC::EncodedJSValue jsExposedStarPrototypeFunction_operationJustForWorkerContextsBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSExposedStar>::ClassParameter castedThis)
 {
-    auto& vm = JSC::getVM(lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(callFrame);
-    auto& impl = castedThis->wrapped();
+    SUPPRESS_UNCOUNTED_LOCAL auto& impl = castedThis->wrapped();
     RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLUndefined>(*lexicalGlobalObject, throwScope, [&]() -> decltype(auto) { return impl.operationJustForWorkerContexts(); })));
 }
 
@@ -246,11 +244,12 @@ void JSExposedStar::analyzeHeap(JSCell* cell, HeapAnalyzer& analyzer)
 {
     auto* thisObject = jsCast<JSExposedStar*>(cell);
     analyzer.setWrappedObjectForCell(cell, &thisObject->wrapped());
-    if (thisObject->scriptExecutionContext())
-        analyzer.setLabelForCell(cell, makeString("url "_s, thisObject->scriptExecutionContext()->url().string()));
+    if (RefPtr context = thisObject->scriptExecutionContext())
+        analyzer.setLabelForCell(cell, makeString("url "_s, context->url().string()));
     Base::analyzeHeap(cell, analyzer);
 }
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 #if ENABLE(BINDING_INTEGRITY)
 #if PLATFORM(WIN)
 #pragma warning(disable: 4483)
@@ -275,6 +274,8 @@ template<typename T, typename = std::enable_if_t<std::is_same_v<T, ExposedStar>,
     }
 }
 #endif
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+
 JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject*, JSDOMGlobalObject* globalObject, Ref<ExposedStar>&& impl)
 {
 #if ENABLE(BINDING_INTEGRITY)

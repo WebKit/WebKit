@@ -31,6 +31,7 @@
 #include "IdentifierTypes.h"
 #include "SandboxExtension.h"
 #include "UseDownloadPlaceholder.h"
+#include "WebsiteDataStore.h"
 #include <WebCore/ResourceRequest.h>
 #include <wtf/Forward.h>
 #include <wtf/Ref.h>
@@ -56,7 +57,6 @@ namespace WebKit {
 
 class DownloadProxyMap;
 class WebPageProxy;
-class WebsiteDataStore;
 
 enum class AllowOverwrite : bool;
 
@@ -64,7 +64,7 @@ struct FrameInfoData;
 
 class DownloadProxy : public API::ObjectImpl<API::Object::Type::Download>, public IPC::MessageReceiver {
 public:
-    using DecideDestinationCallback = CompletionHandler<void(String, SandboxExtension::Handle, AllowOverwrite, WebKit::UseDownloadPlaceholder)>;
+    using DecideDestinationCallback = CompletionHandler<void(String, SandboxExtension::Handle, AllowOverwrite, WebKit::UseDownloadPlaceholder, const URL&, SandboxExtension::Handle, std::span<const uint8_t>, std::span<const uint8_t>)>;
 
     template<typename... Args> static Ref<DownloadProxy> create(Args&&... args)
     {
@@ -118,16 +118,28 @@ public:
     void didCreateDestination(const String& path);
     void didFinish();
     void didFail(const WebCore::ResourceError&, std::span<const uint8_t> resumeData);
+#if HAVE(MODERN_DOWNLOADPROGRESS)
+    void didReceivePlaceholderURL(const URL&, std::span<const uint8_t> bookmarkData, WebKit::SandboxExtensionHandle&&, CompletionHandler<void()>&&);
+    void didReceiveFinalURL(const URL&, std::span<const uint8_t> bookmarkData, WebKit::SandboxExtensionHandle&&);
+#endif
     void willSendRequest(WebCore::ResourceRequest&& redirectRequest, const WebCore::ResourceResponse& redirectResponse, CompletionHandler<void(WebCore::ResourceRequest&&)>&&);
     void decideDestinationWithSuggestedFilename(const WebCore::ResourceResponse&, String&& suggestedFilename, DecideDestinationCallback&&);
 
 private:
     explicit DownloadProxy(DownloadProxyMap&, WebsiteDataStore&, API::DownloadClient&, const WebCore::ResourceRequest&, const FrameInfoData&, WebPageProxy*);
 
+    Ref<API::DownloadClient> protectedClient() const;
+    RefPtr<WebsiteDataStore> protectedDataStore() { return m_dataStore; }
+
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
-    CheckedRef<DownloadProxyMap> m_downloadProxyMap;
+#if HAVE(MODERN_DOWNLOADPROGRESS)
+    static Vector<uint8_t> bookmarkDataForURL(const URL&);
+    static Vector<uint8_t> activityAccessToken();
+#endif
+
+    WeakPtr<DownloadProxyMap> m_downloadProxyMap;
     RefPtr<WebsiteDataStore> m_dataStore;
     Ref<API::DownloadClient> m_client;
     DownloadID m_downloadID;

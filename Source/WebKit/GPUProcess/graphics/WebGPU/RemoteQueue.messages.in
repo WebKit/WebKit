@@ -24,7 +24,7 @@
 #if ENABLE(GPU_PROCESS)
 
 [EnabledBy=WebGPUEnabled]
-messages -> RemoteQueue NotRefCounted Stream {
+messages -> RemoteQueue Stream {
     void Destruct()
     void Submit(Vector<WebKit::WebGPUIdentifier> commandBuffers)
     void OnSubmittedWorkDone() -> ()

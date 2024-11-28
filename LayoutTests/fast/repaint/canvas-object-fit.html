@@ -19,10 +19,9 @@
             
         var ctx;
         
-        function repaintTest()
+        async function repaintTest()
         {
-            if (window.testRunner)
-                testRunner.displayAndTrackRepaints();
+            await testRunner?.displayAndTrackRepaints();
 
             ctx.fillStyle = "rgb(0, 0, 128)";
             ctx.fillRect(40, 40, 10, 10);

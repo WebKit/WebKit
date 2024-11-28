@@ -65,10 +65,12 @@ public:
     bool isInScrollAnchoringAncestorChain(const RenderObject&);
 
     Element* anchorElement() const { return m_anchorElement.get(); }
+
+
 private:
     Element* findAnchorElementRecursive(Element*);
     bool didFindPriorityCandidate(Document&);
-    FloatPoint computeOffsetFromOwningScroller(RenderObject& candidate);
+    FloatPoint computeOffsetFromOwningScroller(RenderObject&);
     LocalFrameView& frameView();
 
     ScrollableArea& m_owningScrollableArea;

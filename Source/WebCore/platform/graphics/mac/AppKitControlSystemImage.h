@@ -44,7 +44,7 @@ enum class AppKitControlSystemImageType : uint8_t {
 };
 
 class WEBCORE_EXPORT AppKitControlSystemImage : public SystemImage {
-    WTF_MAKE_TZONE_ALLOCATED(AppKitControlSystemImage);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(AppKitControlSystemImage, WEBCORE_EXPORT);
 public:
     virtual ~AppKitControlSystemImage() = default;
 

@@ -110,9 +110,9 @@ private:
     RefPtr<SandboxExtension> m_sandboxExtension;
     RetainPtr<NSURLSessionDataTask> m_task;
     WebCore::NetworkLoadMetrics m_networkLoadMetrics;
-    WebCore::FrameIdentifier m_frameID;
+    Markable<WebCore::FrameIdentifier> m_frameID;
     Markable<WebCore::PageIdentifier> m_pageID;
-    WebPageProxyIdentifier m_webPageProxyID;
+    Markable<WebPageProxyIdentifier> m_webPageProxyID;
 
     bool m_isForMainResourceNavigationForAnyFrame { false };
     RefPtr<WebCore::SecurityOrigin> m_sourceOrigin;

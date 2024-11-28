@@ -28,11 +28,11 @@
 
 #if PLATFORM(IOS_FAMILY)
 
-#import <WebCore/RuntimeApplicationChecks.h>
 #import <pal/spi/cocoa/FeatureFlagsSPI.h>
 #import <pal/spi/ios/ManagedConfigurationSPI.h>
 #import <pal/system/ios/Device.h>
 #import <pal/system/ios/UserInterfaceIdiom.h>
+#import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 
 #import <pal/ios/ManagedConfigurationSoftLink.h>
 
@@ -97,7 +97,7 @@ static bool isAsyncTextInputFeatureFlagEnabled()
 
 bool defaultUseAsyncUIKitInteractions()
 {
-    if (WebCore::CocoaApplication::isIBooks()) {
+    if (WTF::CocoaApplication::isIBooks()) {
         // FIXME: Remove this exception once rdar://119836700 is addressed.
         return false;
     }

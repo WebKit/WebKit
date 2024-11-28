@@ -90,7 +90,11 @@ public:
 
     inline bool willLog(const WTFLogChannel& channel, WTFLogLevel level) const
     {
-        return allOf(m_loggers, [channel, level] (auto& logger) { return logger->willLog(channel, level); });
+        for (auto& loggers : m_loggers) {
+            if (!loggers->willLog(channel, level))
+                return false;
+        }
+        return true;
     }
 
 private:

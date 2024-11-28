@@ -40,6 +40,7 @@
 #include "SourceCode.h"
 #include "VariableEnvironment.h"
 #include <wtf/FixedVector.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace JSC {
 
@@ -225,7 +226,7 @@ public:
     void finalizeUnconditionally(VM&, CollectionScope);
 
     struct ClassElementDefinition {
-        WTF_MAKE_STRUCT_FAST_ALLOCATED;
+        WTF_MAKE_STRUCT_TZONE_ALLOCATED(ClassElementDefinition);
 
         enum class Kind : uint8_t {
             FieldWithLiteralPropertyKey = 0,
@@ -241,7 +242,7 @@ public:
     };
 
     struct RareData {
-        WTF_MAKE_STRUCT_FAST_ALLOCATED;
+        WTF_MAKE_STRUCT_TZONE_ALLOCATED(RareData);
 
         SourceCode m_classSource;
         String m_sourceURLDirective;

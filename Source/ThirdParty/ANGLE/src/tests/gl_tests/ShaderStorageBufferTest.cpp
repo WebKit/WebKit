@@ -3050,6 +3050,53 @@ void main() {
     EXPECT_GL_NO_ERROR();
 }
 
+// Test that certain floating-point values are unchanged after constant folding.
+TEST_P(ShaderStorageBufferTest31, ConstantFoldingPrecision)
+{
+    constexpr char kCS[] = R"(#version 310 es
+
+layout(std430, binding = 0) buffer block {
+    float f;
+} instance;
+
+layout(local_size_x = 1, local_size_y = 1, local_size_z = 1) in;
+void main() {
+    instance.f = intBitsToFloat(0x0da5cc2f);
+})";
+
+    ANGLE_GL_COMPUTE_PROGRAM(program, kCS);
+
+    glUseProgram(program);
+
+    constexpr size_t kSize = sizeof(GLfloat);
+
+    // Create shader storage buffer
+    GLBuffer shaderStorageBuffer;
+
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, shaderStorageBuffer);
+    glBufferData(GL_SHADER_STORAGE_BUFFER, kSize, nullptr, GL_STATIC_DRAW);
+
+    // Bind shader storage buffer
+    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, shaderStorageBuffer);
+
+    glDispatchCompute(1, 1, 1);
+
+    glMemoryBarrier(GL_BUFFER_UPDATE_BARRIER_BIT | GL_SHADER_STORAGE_BARRIER_BIT);
+
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, shaderStorageBuffer);
+    const void *bufferData = glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, kSize, GL_MAP_READ_BIT);
+
+    int32_t result = static_cast<const int32_t *>(bufferData)[0];
+
+    // Compare against the int32_t representation of the float passed to
+    // intBitsToFloat() in the shader.
+    EXPECT_EQ(result, 0x0da5cc2f);
+
+    glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
+
+    EXPECT_GL_NO_ERROR();
+}
+
 // Tests two SSBOs in the fragment shader.
 TEST_P(ShaderStorageBufferTest31, TwoSSBOsInFragmentShader)
 {

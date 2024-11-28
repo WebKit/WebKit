@@ -23,7 +23,7 @@
 
 #if ENABLE(GPU_PROCESS) && ENABLE(VIDEO)
 
-messages -> RemoteMediaPlayerManagerProxy NotRefCounted {
+messages -> RemoteMediaPlayerManagerProxy {
     CreateMediaPlayer(WebCore::MediaPlayerIdentifier identifier, WebCore::MediaPlayerClientIdentifier clientIdentifier, enum:uint8_t WebCore::MediaPlayerMediaEngineIdentifier remoteEngineIdentifier, struct WebKit::RemoteMediaPlayerProxyConfiguration proxyConfiguration)
     DeleteMediaPlayer(WebCore::MediaPlayerIdentifier identifier)
 

@@ -44,13 +44,15 @@ class JSWebAssemblyInstance;
 
 namespace LLInt {
 
+extern "C" void SYSV_ABI logWasmPrologue(uint64_t i, uint64_t* fp, uint64_t* sp) REFERENCED_FROM_ASM WTF_INTERNAL;
+
 #define WASM_SLOW_PATH_DECL(name) \
     extern "C" UGPRPair SYSV_ABI slow_path_wasm_##name(CallFrame* callFrame, const WasmInstruction* pc, JSWebAssemblyInstance* instance)
 
 #define WASM_SLOW_PATH_HIDDEN_DECL(name) \
     WASM_SLOW_PATH_DECL(name) REFERENCED_FROM_ASM WTF_INTERNAL
 
-#if ENABLE(WEBASSEMBLY_OMGJIT)
+#if ENABLE(WEBASSEMBLY_BBQJIT)
 WASM_SLOW_PATH_HIDDEN_DECL(prologue_osr);
 WASM_SLOW_PATH_HIDDEN_DECL(loop_osr);
 WASM_SLOW_PATH_HIDDEN_DECL(epilogue_osr);
@@ -84,6 +86,7 @@ WASM_SLOW_PATH_HIDDEN_DECL(memory_atomic_wait64);
 WASM_SLOW_PATH_HIDDEN_DECL(memory_atomic_notify);
 WASM_SLOW_PATH_HIDDEN_DECL(throw);
 WASM_SLOW_PATH_HIDDEN_DECL(rethrow);
+WASM_SLOW_PATH_HIDDEN_DECL(throw_ref);
 WASM_SLOW_PATH_HIDDEN_DECL(retrieve_and_clear_exception);
 WASM_SLOW_PATH_HIDDEN_DECL(array_new);
 WASM_SLOW_PATH_HIDDEN_DECL(array_get);

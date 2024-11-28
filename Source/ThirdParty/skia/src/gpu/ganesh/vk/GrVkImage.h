@@ -11,11 +11,11 @@
 #include "include/core/SkRefCnt.h"
 #include "include/core/SkTypes.h"
 #include "include/gpu/GpuTypes.h"
-#include "include/gpu/GrBackendSurface.h"
-#include "include/gpu/GrTypes.h"
+#include "include/gpu/ganesh/GrBackendSurface.h"
+#include "include/gpu/ganesh/GrTypes.h"
 #include "include/gpu/MutableTextureState.h"
 #include "include/gpu/ganesh/vk/GrVkBackendSurface.h"
-#include "include/gpu/vk/GrVkTypes.h"
+#include "include/gpu/ganesh/vk/GrVkTypes.h"
 #include "include/gpu/vk/VulkanMutableTextureState.h"
 #include "include/gpu/vk/VulkanTypes.h"
 #include "include/private/base/SkDebug.h"
@@ -221,7 +221,7 @@ public:
     static VkPipelineStageFlags LayoutToPipelineSrcStageFlags(const VkImageLayout layout);
     static VkAccessFlags LayoutToSrcAccessMask(const VkImageLayout layout);
 
-#if defined(GR_TEST_UTILS)
+#if defined(GPU_TEST_UTILS)
     void setCurrentQueueFamilyToGraphicsQueue(GrVkGpu* gpu);
 #endif
 

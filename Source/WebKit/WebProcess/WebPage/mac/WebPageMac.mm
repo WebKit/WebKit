@@ -47,7 +47,7 @@
 #import "WebFrame.h"
 #import "WebHitTestResultData.h"
 #import "WebImage.h"
-#import "WebInspector.h"
+#import "WebInspectorInternal.h"
 #import "WebKeyboardEvent.h"
 #import "WebMouseEvent.h"
 #import "WebPageOverlay.h"
@@ -94,15 +94,16 @@
 #import <WebCore/RenderObject.h>
 #import <WebCore/RenderStyle.h>
 #import <WebCore/RenderView.h>
-#import <WebCore/RuntimeApplicationChecks.h>
 #import <WebCore/ScrollView.h>
 #import <WebCore/StyleInheritedData.h>
 #import <WebCore/TextIterator.h>
 #import <WebCore/VisibleUnits.h>
 #import <WebCore/WindowsKeyboardCodes.h>
+#import <WebCore/markup.h>
 #import <pal/spi/cocoa/LaunchServicesSPI.h>
 #import <pal/spi/cocoa/NSAccessibilitySPI.h>
 #import <pal/spi/mac/NSApplicationSPI.h>
+#import <wtf/RuntimeApplicationChecks.h>
 #import <wtf/SetForScope.h>
 #import <wtf/SortedArrayMap.h>
 #import <wtf/cocoa/VectorCocoa.h>
@@ -126,11 +127,11 @@ void WebPage::platformInitializeAccessibility()
     [NSApplication _accessibilityInitialize];
 
     // Get the pid for the starting process.
-    pid_t pid = WebCore::presentingApplicationPID();
+    pid_t pid = presentingApplicationPID();
     createMockAccessibilityElement(pid);
     RefPtr localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame());
     if (localMainFrame)
-        accessibilityTransferRemoteToken(accessibilityRemoteTokenData(), localMainFrame->frameID());
+        accessibilityTransferRemoteToken(accessibilityRemoteTokenData());
 
     // Close Mach connection to Launch Services.
 #if HAVE(LS_SERVER_CONNECTION_STATUS_RELEASE_NOTIFICATIONS_MASK)
@@ -157,7 +158,7 @@ void WebPage::platformReinitialize()
     RefPtr frame = m_page->focusController().focusedOrMainFrame();
     if (!frame)
         return;
-    accessibilityTransferRemoteToken(accessibilityRemoteTokenData(), frame->frameID());
+    accessibilityTransferRemoteToken(accessibilityRemoteTokenData());
 }
 
 RetainPtr<NSData> WebPage::accessibilityRemoteTokenData() const
@@ -236,13 +237,13 @@ static String commandNameForSelectorName(const String& selectorName)
     // Map selectors into Editor command names.
     // This is not needed for any selectors that have the same name as the Editor command.
     static constexpr std::pair<ComparableASCIILiteral, ASCIILiteral> selectorExceptions[] = {
-        { "insertNewlineIgnoringFieldEditor:", "InsertNewline"_s },
-        { "insertParagraphSeparator:", "InsertNewline"_s },
-        { "insertTabIgnoringFieldEditor:", "InsertTab"_s },
-        { "pageDown:", "MovePageDown"_s },
-        { "pageDownAndModifySelection:", "MovePageDownAndModifySelection"_s },
-        { "pageUp:", "MovePageUp"_s },
-        { "pageUpAndModifySelection:", "MovePageUpAndModifySelection"_s },
+        { "insertNewlineIgnoringFieldEditor:"_s, "InsertNewline"_s },
+        { "insertParagraphSeparator:"_s, "InsertNewline"_s },
+        { "insertTabIgnoringFieldEditor:"_s, "InsertTab"_s },
+        { "pageDown:"_s, "MovePageDown"_s },
+        { "pageDownAndModifySelection:"_s, "MovePageDownAndModifySelection"_s },
+        { "pageUp:"_s, "MovePageUp"_s },
+        { "pageUpAndModifySelection:"_s, "MovePageUpAndModifySelection"_s },
     };
     static constexpr SortedArrayMap map { selectorExceptions };
     if (auto commandName = map.tryGet(selectorName))
@@ -762,7 +763,7 @@ void WebPage::handleSelectionServiceClick(FrameSelection& selection, const Vecto
     if (!range)
         return;
 
-    auto selectionString = attributedString(*range);
+    auto selectionString = attributedString(*range, IgnoreUserSelectNone::Yes);
     if (selectionString.isNull())
         return;
 
@@ -1085,7 +1086,7 @@ bool WebPage::shouldAvoidComputingPostLayoutDataForEditorState() const
         return false;
     }
 
-    if (!m_requiresUserActionForEditingControlsManager || m_hasEverFocusedElementDueToUserInteractionSincePageTransition) {
+    if (!m_requiresUserActionForEditingControlsManager || !m_userInteractionsSincePageTransition.isEmpty()) {
         // Text editing controls on the touch bar depend on having post-layout editor state data.
         return false;
     }

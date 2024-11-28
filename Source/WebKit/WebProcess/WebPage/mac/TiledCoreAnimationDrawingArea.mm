@@ -65,6 +65,7 @@
 #import <wtf/MainThread.h>
 #import <wtf/MonotonicTime.h>
 #import <wtf/SystemTracing.h>
+#import <wtf/TZoneMallocInlines.h>
 
 #if ENABLE(ASYNC_SCROLLING)
 #import <WebCore/AsyncScrollingCoordinator.h>
@@ -74,6 +75,8 @@
 
 namespace WebKit {
 using namespace WebCore;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(TiledCoreAnimationDrawingArea);
 
 TiledCoreAnimationDrawingArea::TiledCoreAnimationDrawingArea(WebPage& webPage, const WebPageCreationParameters& parameters)
     : DrawingArea(DrawingAreaType::TiledCoreAnimation, parameters.drawingAreaIdentifier, webPage)
@@ -544,9 +547,10 @@ void TiledCoreAnimationDrawingArea::updateGeometry(const IntSize& viewSize, bool
     m_layerHostingContext->setFencePort(fencePort.sendRight());
 }
 
-void TiledCoreAnimationDrawingArea::setDeviceScaleFactor(float deviceScaleFactor)
+void TiledCoreAnimationDrawingArea::setDeviceScaleFactor(float deviceScaleFactor, CompletionHandler<void()>&& completionHandler)
 {
     Ref { m_webPage.get() }->setDeviceScaleFactor(deviceScaleFactor);
+    completionHandler();
 }
 
 void TiledCoreAnimationDrawingArea::setLayerHostingMode(LayerHostingMode)

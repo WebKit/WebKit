@@ -35,12 +35,17 @@ namespace WebKit {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(ModelElementController);
 
+Ref<ModelElementController> ModelElementController::create(WebPageProxy& webPageProxy)
+{
+    return adoptRef(*new ModelElementController(webPageProxy));
+}
+
 ModelElementController::ModelElementController(WebPageProxy& webPageProxy)
     : m_webPageProxy(webPageProxy)
 {
 }
 
-WebPageProxy& ModelElementController::page()
+WebPageProxy* ModelElementController::page()
 {
     return m_webPageProxy.get();
 }

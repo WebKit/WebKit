@@ -27,6 +27,7 @@
 #include "config.h"
 #include "LocalizedStrings.h"
 
+#include "DateComponents.h"
 #include "IntSize.h"
 #include "NotImplemented.h"
 #include <wtf/MathExtras.h>
@@ -1534,9 +1535,11 @@ String datePickerYearLabelTitle()
 
 #if ENABLE(INPUT_TYPE_WEEK_PICKER)
 
-String inputWeekLabel()
+String inputWeekLabel(const DateComponents& dateComponents)
 {
-    return WEB_UI_STRING_KEY("Week", "Week", "Week label for week of year input type");
+    int week = dateComponents.week();
+    int year = dateComponents.fullYear();
+    return WEB_UI_FORMAT_STRING("Week %1$d, %2$d", "Week of year input type label with week number and year", week, year);
 }
 
 #endif
@@ -1582,9 +1585,16 @@ String pdfPasswordFormInvalidPasswordSubtitle()
     return WEB_UI_STRING("Invalid Password", "Message when a PDF fails to unlock with the given password");
 }
 
-String contextMenuItemTagCopyLinkToHighlight()
+String contextMenuItemTagCopyLinkWithHighlight()
 {
-    return WEB_UI_STRING("Copy Link to Highlight", "Copy link to highlight context menu item");
+    return WEB_UI_STRING("Copy Link with Highlight", "Copy link with highlight context menu item");
 }
+
+#if ENABLE(LINEAR_MEDIA_PLAYER)
+String fullscreenControllerViewSpatial()
+{
+    return WEB_UI_STRING("View Spatial", "Title for View Spatial action button while in fullscreen");
+}
+#endif
 
 } // namespace WebCore

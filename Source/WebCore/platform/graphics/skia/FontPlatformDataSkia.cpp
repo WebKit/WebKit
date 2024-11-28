@@ -44,14 +44,70 @@ FontPlatformData::FontPlatformData(sk_sp<SkTypeface>&& typeface, float size, boo
     : FontPlatformData(size, syntheticBold, syntheticOblique, orientation, widthVariant, textRenderingMode, customPlatformData)
 {
     m_font = SkFont(typeface, m_size);
+    m_features = WTFMove(features);
+
+    platformDataInit();
+}
+
+FontPlatformData::FontPlatformData(float size, FontOrientation&& orientation, FontWidthVariant&& widthVariant, TextRenderingMode&& textRenderingMode, bool syntheticBold, bool syntheticOblique, RefPtr<FontCustomPlatformData>&& customPlatformData)
+    : FontPlatformData(size, syntheticBold, syntheticOblique, orientation, widthVariant, textRenderingMode, customPlatformData.get())
+{
+    m_font = SkFont(customPlatformData->m_typeface, m_size);
+
+    platformDataInit();
+}
+
+void FontPlatformData::platformDataInit()
+{
     m_font.setEmbolden(m_syntheticBold);
     m_font.setSkewX(m_syntheticOblique ? -SK_Scalar1 / 4 : 0);
+
+    bool useSubpixelPositioning = FontRenderOptions::singleton().useSubpixelPositioning();
+
     m_font.setEdging(FontRenderOptions::singleton().antialias());
-    m_font.setHinting(FontRenderOptions::singleton().hinting());
+    if (m_font.getEdging() == SkFont::Edging::kAlias) {
+        // Force full hinting when antialiasing is disabled like Cairo does.
+        m_font.setHinting(SkFontHinting::kFull);
+    } else if (useSubpixelPositioning) {
+        // Disable hinting when subpixel positioning is enabled.
+        m_font.setHinting(SkFontHinting::kNone);
+    } else
+        m_font.setHinting(FontRenderOptions::singleton().hinting());
+
+    // Force subpixel positioning when not running tests and full hinting was not requested.
+    bool forceSubpixel = !FontRenderOptions::singleton().isHintingDisabledForTesting() && m_font.getHinting() != SkFontHinting::kFull;
+    m_font.setSubpixel(forceSubpixel || useSubpixelPositioning);
+
+    m_font.setLinearMetrics(m_font.getHinting() == SkFontHinting::kNone && m_font.isSubpixel());
 
     m_hbFont = SkiaHarfBuzzFont::getOrCreate(*m_font.getTypeface());
+}
 
-    m_features = WTFMove(features);
+std::optional<FontPlatformData> FontPlatformData::fromIPCData(float size, FontOrientation&& orientation, FontWidthVariant&& widthVariant, TextRenderingMode&& textRenderingMode, bool syntheticBold, bool syntheticOblique, IPCData&& ipcData)
+{
+    return WTF::switchOn(ipcData,
+        [&] (const FontPlatformSerializedData& d) -> std::optional<FontPlatformData> {
+            if (sk_sp<SkTypeface> typeface = SkTypeface::MakeDeserialize(SkMemoryStream::Make(d.typefaceData).get(), nullptr))
+                return FontPlatformData(WTFMove(typeface), size, syntheticBold, syntheticOblique, WTFMove(orientation), WTFMove(widthVariant), WTFMove(textRenderingMode), { });
+
+            return std::nullopt;
+        },
+        [&] (FontPlatformSerializedCreationData& d) -> std::optional<FontPlatformData> {
+            auto fontFaceData = SharedBuffer::create(WTFMove(d.fontFaceData));
+            if (RefPtr fontCustomPlatformData = FontCustomPlatformData::create(fontFaceData, d.itemInCollection))
+                return FontPlatformData(size, WTFMove(orientation), WTFMove(widthVariant), WTFMove(textRenderingMode), syntheticBold, syntheticOblique, WTFMove(fontCustomPlatformData));
+
+            return std::nullopt;
+        }
+    );
+}
+
+FontPlatformData::IPCData FontPlatformData::toIPCData() const
+{
+    if (auto* data = creationData())
+        return FontPlatformSerializedCreationData { { data->fontFaceData->span() }, data->itemInCollection };
+
+    return FontPlatformSerializedData { m_font.getTypeface()->serialize() };
 }
 
 bool FontPlatformData::isFixedPitch() const
@@ -110,17 +166,22 @@ RefPtr<SharedBuffer> FontPlatformData::openTypeTable(uint32_t table) const
 
 FontPlatformData FontPlatformData::create(const Attributes& data, const FontCustomPlatformData* custom)
 {
-    ASSERT(custom);
-    sk_sp<SkTypeface> typeface = custom->m_typeface;
     Vector<hb_feature_t> features = data.m_features;
-    return FontPlatformData(WTFMove(typeface), data.m_size, data.m_syntheticBold, data.m_syntheticOblique, data.m_orientation, data.m_widthVariant, data.m_textRenderingMode, WTFMove(features), custom);
+    if (custom) {
+        sk_sp<SkTypeface> typeface = custom->m_typeface;
+        return { WTFMove(typeface), data.m_size, data.m_syntheticBold, data.m_syntheticOblique, data.m_orientation, data.m_widthVariant, data.m_textRenderingMode, WTFMove(features), custom };
+    }
+    sk_sp<SkTypeface> typeface = FontCache::forCurrentThread().fontManager().matchFamilyStyle(data.m_familyName.c_str(), data.m_style);
+    return { WTFMove(typeface), data.m_size, data.m_syntheticBold, data.m_syntheticOblique, data.m_orientation, data.m_widthVariant, data.m_textRenderingMode, WTFMove(features) };
 }
 
 FontPlatformData::Attributes FontPlatformData::attributes() const
 {
-    Attributes result(m_size, m_orientation, m_widthVariant, m_textRenderingMode, m_syntheticBold, m_syntheticOblique);
-    result.m_features = m_features;
-    return result;
+    SkString familyName;
+    skFont().getTypeface()->getFamilyName(&familyName);
+    SkFontStyle style = skFont().getTypeface()->fontStyle();
+    Vector<hb_feature_t> features = m_features;
+    return { m_size, m_orientation, m_widthVariant, m_textRenderingMode, m_syntheticBold, m_syntheticOblique, familyName, style, WTFMove(features) };
 }
 
 hb_font_t* FontPlatformData::hbFont() const

@@ -1,5 +1,5 @@
 
-FAIL Relevancy updated after changing proximity to the viewport. assert_false: far from viewport expected false got true
-FAIL Relevancy updated after being focused/unfocused. assert_false: initial relevancy expected false got true
-FAIL Relevancy updated after being selected/unselected. assert_false: initial relevancy expected false got true
+PASS Relevancy updated after changing proximity to the viewport.
+PASS Relevancy updated after being focused/unfocused.
+PASS Relevancy updated after being selected/unselected.
 

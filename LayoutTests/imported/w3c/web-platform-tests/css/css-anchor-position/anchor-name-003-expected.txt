@@ -1,111 +1,41 @@
 
-FAIL .target 1 assert_equals:
-<div class="target" data-expected-width="30"></div>
-width expected 30 but got 0
-FAIL .target 2 assert_equals:
-<div class="target" data-expected-width="30"></div>
-width expected 30 but got 0
+PASS .target 1
+PASS .target 2
 PASS .target 3
-FAIL .target 4 assert_equals:
-<div class="target" data-expected-width="30"></div>
-width expected 30 but got 0
-FAIL .target 5 assert_equals:
-<div class="target" data-expected-width="40"></div>
-width expected 40 but got 0
-FAIL .target 6 assert_equals:
-<div class="target" data-expected-width="30"></div>
-width expected 30 but got 0
-FAIL .target 7 assert_equals:
-<div class="target" data-expected-width="30"></div>
-width expected 30 but got 0
-FAIL .target 8 assert_equals:
-<div class="target" data-expected-width="30"></div>
-width expected 30 but got 0
-FAIL .target 9 assert_equals:
-<div class="target" data-expected-width="30"></div>
-width expected 30 but got 0
+PASS .target 4
+PASS .target 5
+PASS .target 6
+PASS .target 7
+PASS .target 8
+PASS .target 9
 PASS .target 10
-FAIL .target 11 assert_equals:
-<div class="target" data-expected-width="20"></div>
-width expected 20 but got 0
-FAIL .target 12 assert_equals:
-<div class="target" data-expected-width="10"></div>
-width expected 10 but got 0
-FAIL .target 13 assert_equals:
-<div class="target" data-expected-width="50"></div>
-width expected 50 but got 0
-FAIL .target 14 assert_equals:
-<div class="target" data-expected-width="50"></div>
-width expected 50 but got 0
-FAIL .target 15 assert_equals:
-<div class="target" data-expected-width="70"></div>
-width expected 70 but got 0
-FAIL .target 16 assert_equals:
-<div class="target" data-expected-width="70"></div>
-width expected 70 but got 0
+PASS .target 11
+PASS .target 12
+PASS .target 13
+PASS .target 14
+PASS .target 15
+PASS .target 16
 PASS .target 17
-FAIL .target 18 assert_equals:
-<div class="target" data-expected-width="20"></div>
-width expected 20 but got 0
-FAIL .target 19 assert_equals:
-<div class="target" data-expected-width="10"></div>
-width expected 10 but got 0
-FAIL .target 20 assert_equals:
-<div class="target" data-expected-width="110"></div>
-width expected 110 but got 0
-FAIL .target 21 assert_equals:
-<div class="target" data-expected-width="110"></div>
-width expected 110 but got 0
-FAIL .target 22 assert_equals:
-<div class="target" data-expected-width="110"></div>
-width expected 110 but got 0
-FAIL .target 23 assert_equals:
-<div class="target" data-expected-width="100"></div>
-width expected 100 but got 0
-FAIL .target 24 assert_equals:
-<div class="target" data-expected-width="20"></div>
-width expected 20 but got 0
-FAIL .target 25 assert_equals:
-<div class="target" data-expected-width="20"></div>
-width expected 20 but got 0
-FAIL .target 26 assert_equals:
-<div class="target" data-expected-width="120"></div>
-width expected 120 but got 0
-FAIL .target 27 assert_equals:
-<div class="target" data-expected-width="110"></div>
-width expected 110 but got 0
-FAIL .target 28 assert_equals:
-<div class="target" data-expected-width="100"></div>
-width expected 100 but got 0
-FAIL .target 29 assert_equals:
-<div class="target" data-expected-width="100"></div>
-width expected 100 but got 0
-FAIL .target 30 assert_equals:
-<div class="target" data-expected-width="10"></div>
-width expected 10 but got 0
-FAIL .target 31 assert_equals:
-<div class="target" data-expected-width="10"></div>
-width expected 10 but got 0
+PASS .target 18
+PASS .target 19
+PASS .target 20
+PASS .target 21
+PASS .target 22
+PASS .target 23
+PASS .target 24
+PASS .target 25
+PASS .target 26
+PASS .target 27
+PASS .target 28
+PASS .target 29
+PASS .target 30
+PASS .target 31
 PASS .target 32
-FAIL .target 33 assert_equals:
-<div class="target" data-expected-width="10"></div>
-width expected 10 but got 0
-FAIL .target 34 assert_equals:
-<div class="target" data-expected-width="20"></div>
-width expected 20 but got 0
-FAIL .target 35 assert_equals:
-<div class="target" data-expected-width="10"></div>
-width expected 10 but got 0
-FAIL .target 36 assert_equals:
-<div class="target" data-expected-width="10"></div>
-width expected 10 but got 0
-FAIL .target 37 assert_equals:
-<div class="target" data-expected-width="10"></div>
-width expected 10 but got 0
-FAIL .target 38 assert_equals:
-<div class="target" data-expected-width="10"></div>
-width expected 10 but got 0
-FAIL .target 39 assert_equals:
-<div class="target" data-expected-width="10"></div>
-width expected 10 but got 0
+PASS .target 33
+PASS .target 34
+PASS .target 35
+PASS .target 36
+PASS .target 37
+PASS .target 38
+PASS .target 39
 

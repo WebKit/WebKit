@@ -90,11 +90,11 @@ private:
 
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const final;
-    const void* logIdentifier() const final;
+    uint64_t logIdentifier() const final;
     WTFLogChannel& logChannel() const final;
     ASCIILiteral logClassName() const final { return "MediaControlTextTrackContainerElement"_s; }
     mutable RefPtr<Logger> m_logger;
-    mutable const void* m_logIdentifier { nullptr };
+    mutable uint64_t m_logIdentifier { 0 };
 #endif
 
     std::unique_ptr<TextTrackRepresentation> m_textTrackRepresentation;

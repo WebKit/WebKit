@@ -12,9 +12,9 @@ PASS setFontFaceWeight(fontFace, '800') is "800"
 PASS setFontFaceWeight(fontFace, '900') is "900"
 PASS setFontFaceWeight(fontFace, 'garbage') threw exception SyntaxError: The string did not match the expected pattern..
 PASS setFontFaceWeight(fontFace, 'initial') threw exception SyntaxError: The string did not match the expected pattern..
-PASS setFontFaceWeight(fontFace, 'calc(3 + 4)') is "7"
-PASS setFontFaceWeight(fontFace, 'calc(100 + 200)') is "300"
-PASS setFontFaceWeight(fontFace, 'calc(150 + 50)') is "200"
+PASS setFontFaceWeight(fontFace, 'calc(3 + 4)') is "calc(7)"
+PASS setFontFaceWeight(fontFace, 'calc(100 + 200)') is "calc(300)"
+PASS setFontFaceWeight(fontFace, 'calc(150 + 50)') is "calc(200)"
 PASS setFontFaceStretch(fontFace, '1%') is "1%"
 PASS setFontFaceStretch(fontFace, '2') threw exception SyntaxError: The string did not match the expected pattern..
 PASS setFontFaceStretch(fontFace, 'ultra-condensed') is "ultra-condensed"

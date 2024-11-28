@@ -26,6 +26,7 @@
 #import "config.h"
 #import "TestRunnerWKWebView.h"
 
+#import "PlatformViewHelpers.h"
 #import "TestController.h"
 #import "WebKitTestRunnerDraggingInfo.h"
 #import <WebKit/WKUIDelegatePrivate.h>
@@ -35,6 +36,7 @@
 #import <wtf/BlockPtr.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/SoftLinking.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 
 #if PLATFORM(IOS_FAMILY)
 #import "UIKitSPIForTesting.h"
@@ -384,14 +386,11 @@ IGNORE_WARNINGS_END
     }
 }
 
-- (BOOL)isZoomingOrScrolling
+static bool isZoomingOrScrolling(UIScrollView *scroller)
 {
-    auto scroller = self.scrollView;
     if (scroller.isZooming || scroller.isAnimatingZoom || scroller.isAnimatingScroll
-        || scroller.isVerticalBouncing || scroller.isHorizontalBouncing || scroller.isZoomBouncing)
-        return YES;
-
-    if (self._keyboardScrollingAnimationRunning)
+        || scroller.isVerticalBouncing || scroller.isHorizontalBouncing || scroller.isZoomBouncing
+        || scroller.decelerating || scroller.dragging || scroller.scrollAnimating || scroller.tracking)
         return YES;
 
     static NeverDestroyed<RetainPtr<NSSet>> animationKeyNames = [NSSet setWithArray:@[
@@ -403,6 +402,19 @@ IGNORE_WARNINGS_END
 
     for (NSString *key in scroller.layer.animationKeys) {
         if ([animationKeyNames.get() containsObject:key])
+            return YES;
+    }
+
+    return NO;
+}
+
+- (BOOL)isZoomingOrScrolling
+{
+    if (self._keyboardScrollingAnimationRunning)
+        return YES;
+
+    for (UIScrollView *scroller in findAllViewsInHierarchyOfType(self, UIScrollView.class)) {
+        if (isZoomingOrScrolling(scroller))
             return YES;
     }
 

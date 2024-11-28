@@ -113,6 +113,7 @@ ExceptionOr<void> PaymentRequestValidator::validateTotal(const ApplePayLineItem&
     return { };
 }
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 static ExceptionOr<void> validateCountryCode(const String& countryCode)
 {
     if (!countryCode)
@@ -125,6 +126,7 @@ static ExceptionOr<void> validateCountryCode(const String& countryCode)
 
     return Exception { ExceptionCode::TypeError, makeString("\""_s, countryCode, "\" is not a valid country code."_s) };
 }
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 static ExceptionOr<void> validateCurrencyCode(const String& currencyCode)
 {

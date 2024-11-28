@@ -144,6 +144,10 @@ RefPtr<AudioWorkletProcessor> AudioWorkletGlobalScope::createProcessor(const Str
         return nullptr;
 
     JSC::JSObject* jsConstructor = constructor->callbackData()->callback();
+    ASSERT(jsConstructor);
+    if (!jsConstructor)
+        return nullptr;
+
     auto* globalObject = constructor->callbackData()->globalObject();
     JSC::VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);

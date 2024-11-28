@@ -54,13 +54,13 @@ TEST(WebKitLegacy, SimplifyMarkupTest)
     RetainPtr<SimplifyMarkupTest> testController = adoptNS([SimplifyMarkupTest new]);
     
     webView1.get().frameLoadDelegate = testController.get();
-    [[webView1.get() mainFrame] loadRequest:[NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"verboseMarkup" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]]];
+    [[webView1.get() mainFrame] loadRequest:[NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"verboseMarkup" withExtension:@"html"]]];
     
     Util::run(&didFinishLoad);
     didFinishLoad = false;
 
     webView2.get().frameLoadDelegate = testController.get();
-    [[webView2.get() mainFrame] loadRequest:[NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"verboseMarkup" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]]];
+    [[webView2.get() mainFrame] loadRequest:[NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"verboseMarkup" withExtension:@"html"]]];
     
     Util::run(&didFinishLoad);
     didFinishLoad = false;

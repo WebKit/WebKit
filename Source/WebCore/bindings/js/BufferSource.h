@@ -26,6 +26,10 @@
 
 #pragma once
 
+#include <wtf/Compiler.h>
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 #include <JavaScriptCore/ArrayBuffer.h>
 #include <JavaScriptCore/ArrayBufferView.h>
 #include <span>
@@ -37,6 +41,8 @@
 OBJC_CLASS NSData;
 #endif
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+
 namespace WebCore {
 
 class BufferSource {
@@ -46,6 +52,10 @@ public:
     BufferSource() { }
     BufferSource(VariantType&& variant)
         : m_variant(WTFMove(variant))
+    { }
+
+    BufferSource(const VariantType& variant)
+        : m_variant(variant)
     { }
     explicit BufferSource(std::span<const uint8_t> span)
         : m_variant(JSC::ArrayBuffer::tryCreate(span)) { }

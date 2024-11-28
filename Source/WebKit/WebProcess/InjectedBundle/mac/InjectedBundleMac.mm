@@ -130,8 +130,8 @@ bool InjectedBundle::initialize(const WebProcessCreationParameters& parameters, 
         if (dlopen_preflight(executablePath.fileSystemRepresentation)) {
             // We don't hold onto this handle anywhere more permanent since we never dlclose.
             if (void* handle = dlopen(executablePath.fileSystemRepresentation, RTLD_LAZY | RTLD_GLOBAL | RTLD_FIRST)) {
-                additionalClassesForParameterCoderFunction = bitwise_cast<WKBundleAdditionalClassesForParameterCoderFunctionPtr>(dlsym(handle, "WKBundleAdditionalClassesForParameterCoder"));
-                initializeFunction = bitwise_cast<WKBundleInitializeFunctionPtr>(dlsym(handle, "WKBundleInitialize"));
+                additionalClassesForParameterCoderFunction = std::bit_cast<WKBundleAdditionalClassesForParameterCoderFunctionPtr>(dlsym(handle, "WKBundleAdditionalClassesForParameterCoder"));
+                initializeFunction = std::bit_cast<WKBundleInitializeFunctionPtr>(dlsym(handle, "WKBundleInitialize"));
             }
         }
     }
@@ -146,11 +146,11 @@ bool InjectedBundle::initialize(const WebProcessCreationParameters& parameters, 
             NSLog(@"InjectedBundle::load failed - loadAndReturnError failed, error: %@", error);
             return false;
         }
-        initializeFunction = bitwise_cast<WKBundleInitializeFunctionPtr>(CFBundleGetFunctionPointerForName([m_platformBundle _cfBundle], CFSTR("WKBundleInitialize")));
+        initializeFunction = std::bit_cast<WKBundleInitializeFunctionPtr>(CFBundleGetFunctionPointerForName([m_platformBundle _cfBundle], CFSTR("WKBundleInitialize")));
     }
 
     if (!additionalClassesForParameterCoderFunction)
-        additionalClassesForParameterCoderFunction = bitwise_cast<WKBundleAdditionalClassesForParameterCoderFunctionPtr>(CFBundleGetFunctionPointerForName([m_platformBundle _cfBundle], CFSTR("WKBundleAdditionalClassesForParameterCoder")));
+        additionalClassesForParameterCoderFunction = std::bit_cast<WKBundleAdditionalClassesForParameterCoderFunctionPtr>(CFBundleGetFunctionPointerForName([m_platformBundle _cfBundle], CFSTR("WKBundleAdditionalClassesForParameterCoder")));
 
     // Update list of valid classes for the parameter coder
     if (additionalClassesForParameterCoderFunction)

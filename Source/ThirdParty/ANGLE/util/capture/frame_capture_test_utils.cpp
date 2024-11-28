@@ -130,7 +130,7 @@ bool LoadTraceNamesFromJSON(const std::string jsonFilePath, std::vector<std::str
         return false;
     }
 
-    if (!doc.IsObject() || !doc.HasMember("traces") || !doc["traces"].IsArray())
+    if (!doc.IsArray())
     {
         return false;
     }
@@ -138,7 +138,7 @@ bool LoadTraceNamesFromJSON(const std::string jsonFilePath, std::vector<std::str
     // Read trace json into a list of trace names.
     std::vector<std::string> traces;
 
-    rapidjson::Document::Array traceArray = doc["traces"].GetArray();
+    rapidjson::Document::Array traceArray = doc.GetArray();
     for (rapidjson::SizeType arrayIndex = 0; arrayIndex < traceArray.Size(); ++arrayIndex)
     {
         const rapidjson::Document::ValueType &arrayElement = traceArray[arrayIndex];
@@ -148,9 +148,7 @@ bool LoadTraceNamesFromJSON(const std::string jsonFilePath, std::vector<std::str
             return false;
         }
 
-        std::vector<std::string> traceAndVersion;
-        angle::SplitStringAlongWhitespace(arrayElement.GetString(), &traceAndVersion);
-        traces.push_back(traceAndVersion[0]);
+        traces.push_back(arrayElement.GetString());
     }
 
     *namesOut = std::move(traces);
@@ -241,7 +239,9 @@ bool LoadTraceInfoFromJSON(const std::string &traceName,
     return true;
 }
 
-TraceLibrary::TraceLibrary(const std::string &traceName, const TraceInfo &traceInfo)
+TraceLibrary::TraceLibrary(const std::string &traceName,
+                           const TraceInfo &traceInfo,
+                           const std::string &baseDir)
 {
     std::stringstream libNameStr;
     SearchType searchType = SearchType::ModuleDir;
@@ -250,7 +250,7 @@ TraceLibrary::TraceLibrary(const std::string &traceName, const TraceInfo &traceI
     // This means we are using the binary build of traces on Android, which are
     // not bundled in the APK, but located in the app's home directory.
     searchType = SearchType::SystemDir;
-    libNameStr << "/data/user/0/com.android.angle.test/angle_traces/";
+    libNameStr << baseDir;
 #endif  // defined(ANGLE_TRACE_EXTERNAL_BINARIES)
 #if !defined(ANGLE_PLATFORM_WINDOWS)
     libNameStr << "lib";
@@ -258,6 +258,7 @@ TraceLibrary::TraceLibrary(const std::string &traceName, const TraceInfo &traceI
     libNameStr << traceName;
     std::string libName = libNameStr.str();
     std::string loadError;
+
     mTraceLibrary.reset(OpenSharedLibraryAndGetError(libName.c_str(), searchType, &loadError));
     if (mTraceLibrary->getNative() == nullptr)
     {

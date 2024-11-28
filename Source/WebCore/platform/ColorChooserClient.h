@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2017-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,7 +32,7 @@
 
 #if ENABLE(INPUT_TYPE_COLOR)
 
-#include <wtf/CheckedPtr.h>
+#include <wtf/AbstractRefCountedAndCanMakeWeakPtr.h>
 #include <wtf/Forward.h>
 
 namespace WebCore {
@@ -39,15 +40,15 @@ namespace WebCore {
 class Color;
 class IntRect;
 
-class ColorChooserClient : public CanMakeCheckedPtr<ColorChooserClient> {
+class ColorChooserClient : public AbstractRefCountedAndCanMakeWeakPtr<ColorChooserClient> {
     WTF_MAKE_FAST_ALLOCATED;
-    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(ColorChooserClient);
 public:
     virtual ~ColorChooserClient() = default;
 
     virtual void didChooseColor(const Color&) = 0;
     virtual void didEndChooser() = 0;
     virtual IntRect elementRectRelativeToRootView() const = 0;
+    virtual bool supportsAlpha() const = 0;
     virtual Vector<Color> suggestedColors() const = 0;
 };
 

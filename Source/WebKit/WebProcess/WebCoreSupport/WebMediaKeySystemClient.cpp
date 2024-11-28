@@ -49,14 +49,19 @@ void WebMediaKeySystemClient::pageDestroyed()
     delete this;
 }
 
+Ref<WebPage> WebMediaKeySystemClient::protectedPage() const
+{
+    return m_page.get();
+}
+
 void WebMediaKeySystemClient::requestMediaKeySystem(MediaKeySystemRequest& request)
 {
-    m_page->mediaKeySystemPermissionRequestManager().startMediaKeySystemRequest(request);
+    protectedPage()->protectedMediaKeySystemPermissionRequestManager()->startMediaKeySystemRequest(request);
 }
 
 void WebMediaKeySystemClient::cancelMediaKeySystemRequest(MediaKeySystemRequest& request)
 {
-    m_page->mediaKeySystemPermissionRequestManager().cancelMediaKeySystemRequest(request);
+    protectedPage()->protectedMediaKeySystemPermissionRequestManager()->cancelMediaKeySystemRequest(request);
 }
 
 } // namespace WebKit;

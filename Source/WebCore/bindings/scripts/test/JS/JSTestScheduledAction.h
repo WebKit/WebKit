@@ -31,7 +31,7 @@ public:
     using Base = JSDOMWrapper<TestScheduledAction>;
     static JSTestScheduledAction* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestScheduledAction>&& impl)
     {
-        auto& vm = globalObject->vm();
+        SUPPRESS_UNCOUNTED_LOCAL auto& vm = globalObject->vm();
         JSTestScheduledAction* ptr = new (NotNull, JSC::allocateCell<JSTestScheduledAction>(vm)) JSTestScheduledAction(structure, *globalObject, WTFMove(impl));
         ptr->finishCreation(vm);
         return ptr;

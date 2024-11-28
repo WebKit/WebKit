@@ -27,24 +27,25 @@
 
 #include "Connection.h"
 #include <WebCore/FileSystemHandleIdentifier.h>
-#include <wtf/CheckedPtr.h>
+#include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/TZoneMalloc.h>
-#include <wtf/WeakPtr.h>
 
 namespace WebKit {
 
 class FileSystemStorageHandle;
 
-class FileSystemStorageHandleRegistry : public CanMakeThreadSafeCheckedPtr<FileSystemStorageHandleRegistry> {
+class FileSystemStorageHandleRegistry final : public RefCountedAndCanMakeWeakPtr<FileSystemStorageHandleRegistry> {
     WTF_MAKE_TZONE_ALLOCATED(FileSystemStorageHandleRegistry);
-    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(FileSystemStorageHandleRegistry);
 public:
-    FileSystemStorageHandleRegistry();
+    static Ref<FileSystemStorageHandleRegistry> create();
+
     void registerHandle(WebCore::FileSystemHandleIdentifier, FileSystemStorageHandle&);
     void unregisterHandle(WebCore::FileSystemHandleIdentifier);
     FileSystemStorageHandle* getHandle(WebCore::FileSystemHandleIdentifier);
 
 private:
+    FileSystemStorageHandleRegistry();
+
     HashMap<WebCore::FileSystemHandleIdentifier, WeakPtr<FileSystemStorageHandle>> m_handles;
 };
 

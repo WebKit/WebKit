@@ -391,7 +391,12 @@ TEST(FontManagerTests, ChangeFontColorWithColorPanel)
         [webView stringByEvaluatingJavaScript:@"document.body.innerHTML"]);
 }
 
+// rdar://136532193
+#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 150000)
+TEST(FontManagerTests, DISABLED_ChangeTypingAttributesWithInspectorBar)
+#else
 TEST(FontManagerTests, ChangeTypingAttributesWithInspectorBar)
+#endif
 {
     auto webView = webViewForFontManagerTesting(NSFontManager.sharedFontManager);
     auto inspectorBar = adoptNS([[TestInspectorBar alloc] initWithWebView:webView.get()]);

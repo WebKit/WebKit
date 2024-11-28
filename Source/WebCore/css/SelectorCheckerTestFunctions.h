@@ -66,25 +66,25 @@ namespace WebCore {
 ALWAYS_INLINE bool isAutofilled(const Element& element)
 {
     auto* inputElement = dynamicDowncast<HTMLInputElement>(element);
-    return inputElement && inputElement->isAutoFilled();
+    return inputElement && inputElement->autofilled();
 }
 
 ALWAYS_INLINE bool isAutofilledStrongPassword(const Element& element)
 {
     auto* inputElement = dynamicDowncast<HTMLInputElement>(element);
-    return inputElement && inputElement->isAutoFilled() && inputElement->hasAutoFillStrongPasswordButton();
+    return inputElement && inputElement->autofilled() && inputElement->hasAutofillStrongPasswordButton();
 }
 
 ALWAYS_INLINE bool isAutofilledStrongPasswordViewable(const Element& element)
 {
     auto* inputElement = dynamicDowncast<HTMLInputElement>(element);
-    return inputElement && inputElement->isAutoFilledAndViewable();
+    return inputElement && inputElement->autofilledAndViewable();
 }
 
 ALWAYS_INLINE bool isAutofilledAndObscured(const Element& element)
 {
     auto* inputElement = dynamicDowncast<HTMLInputElement>(element);
-    return inputElement && inputElement->isAutoFilledAndObscured();
+    return inputElement && inputElement->autofilledAndObscured();
 }
 
 ALWAYS_INLINE bool matchesDefaultPseudoClass(const Element& element)
@@ -202,7 +202,7 @@ ALWAYS_INLINE bool containslanguageSubtagMatchingRange(StringView language, Stri
     return false;
 }
 
-ALWAYS_INLINE bool matchesLangPseudoClass(const Element& element, const FixedVector<PossiblyQuotedIdentifier>& argumentList)
+ALWAYS_INLINE bool matchesLangPseudoClass(const Element& element, const FixedVector<PossiblyQuotedIdentifier>& langList)
 {
     AtomString language;
 #if ENABLE(VIDEO)
@@ -218,7 +218,7 @@ ALWAYS_INLINE bool matchesLangPseudoClass(const Element& element, const FixedVec
     // Implement basic and extended filterings of given language tags as specified in www.ietf.org/rfc/rfc4647.txt.
     StringView languageStringView = language;
     unsigned languageLength = language.length();
-    for (auto& range : argumentList) {
+    for (auto& range : langList) {
         StringView rangeStringView = range.identifier;
         if (rangeStringView.isEmpty())
             continue;
@@ -425,16 +425,19 @@ ALWAYS_INLINE bool matchesFullscreenDocumentPseudoClass(const Element& element)
     return fullscreenManager && fullscreenManager->fullscreenElement();
 }
 
-#if ENABLE(VIDEO)
 ALWAYS_INLINE bool matchesInWindowFullscreenPseudoClass(const Element& element)
 {
+#if ENABLE(VIDEO)
     if (&element != element.document().fullscreenManager().currentFullscreenElement())
         return false;
 
     auto* mediaElement = dynamicDowncast<HTMLMediaElement>(element);
     return mediaElement && mediaElement->fullscreenMode() == HTMLMediaElementEnums::VideoFullscreenModeInWindow;
-}
+#else
+    UNUSED_PARAM(element);
+    return false;
 #endif
+}
 
 #endif
 
@@ -585,32 +588,6 @@ ALWAYS_INLINE bool matchesActiveViewTransitionPseudoClass(const Element& element
     if (&element != element.document().documentElement())
         return false;
     return !!element.document().activeViewTransition();
-}
-
-ALWAYS_INLINE bool matchesActiveViewTransitionTypePseudoClass(const Element& element, const FixedVector<PossiblyQuotedIdentifier>& typesInSelector)
-{
-    // This pseudo class only matches the root element.
-    if (&element != element.document().documentElement())
-        return false;
-
-    if (const auto* viewTransition = element.document().activeViewTransition()) {
-        const auto& activeTypes = viewTransition->types();
-
-        for (const auto& type : typesInSelector) {
-            ASSERT(!type.wasQuoted);
-
-            // https://github.com/w3c/csswg-drafts/issues/9534#issuecomment-1802364085
-            // RESOLVED: type can accept any idents, except 'none' or '-ua-' prefixes
-            const auto& ident = type.identifier;
-            if (ident.convertToASCIILowercase() == "none"_s || ident.convertToASCIILowercase().startsWith("-ua-"_s))
-                continue;
-
-            if (activeTypes.hasType(ident))
-                return true;
-        }
-    }
-
-    return false;
 }
 
 } // namespace WebCore

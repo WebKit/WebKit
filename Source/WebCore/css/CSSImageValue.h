@@ -61,7 +61,7 @@ public:
     Ref<DeprecatedCSSOMValue> createDeprecatedCSSOMWrapper(CSSStyleDeclaration&) const;
 
     bool customTraverseSubresources(const Function<bool(const CachedResource&)>&) const;
-    void customSetReplacementURLForSubresources(const HashMap<String, String>&);
+    void customSetReplacementURLForSubresources(const UncheckedKeyHashMap<String, String>&);
     void customClearReplacementURLForSubresources();
     bool customMayDependOnBaseURL() const;
 
@@ -69,7 +69,7 @@ public:
 
     bool knownToBeOpaque(const RenderElement&) const;
 
-    RefPtr<StyleImage> createStyleImage(Style::BuilderState&) const;
+    RefPtr<StyleImage> createStyleImage(const Style::BuilderState&) const;
 
     bool isLoadedFromOpaqueSource() const { return m_loadedFromOpaqueSource == LoadedFromOpaqueSource::Yes; }
 

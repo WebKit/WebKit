@@ -38,9 +38,9 @@
 #include <WebCore/ResourceError.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/ResourceResponse.h>
-#include <WebCore/RuntimeApplicationChecks.h>
 #include <pal/crypto/CryptoDigest.h>
 #include <wtf/CryptographicallyRandomNumber.h>
+#include <wtf/RuntimeApplicationChecks.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
@@ -57,6 +57,11 @@ using EphemeralNonce = WebCore::PCM::EphemeralNonce;
 constexpr Seconds debugModeSecondsUntilSend { 10_s };
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(PrivateClickMeasurementManager);
+
+Ref<PrivateClickMeasurementManager> PrivateClickMeasurementManager::create(UniqueRef<PCM::Client>&& client, const String& storageDirectory)
+{
+    return adoptRef(*new PrivateClickMeasurementManager(WTFMove(client), storageDirectory));
+}
 
 PrivateClickMeasurementManager::PrivateClickMeasurementManager(UniqueRef<PCM::Client>&& client, const String& storageDirectory)
     : m_firePendingAttributionRequestsTimer(RunLoop::main(), this, &PrivateClickMeasurementManager::firePendingAttributionRequests)

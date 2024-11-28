@@ -41,7 +41,7 @@ Compilation::Compilation(Bytecodes* bytecodes, CompilationKind kind)
     , m_numInlinedPutByIds(0)
     , m_numInlinedCalls(0)
     , m_jettisonReason(NotJettisoned)
-    , m_uid(UID::create())
+    , m_uid(UID::generate())
 {
 }
 
@@ -53,7 +53,7 @@ void Compilation::addProfiledBytecodes(Database& database, CodeBlock* profiledBl
     
     // First make sure that we haven't already added profiled bytecodes for this code
     // block. We do this using an O(N) search because I suspect that this list will
-    // tend to be fairly small, and the additional space costs of having a HashMap/Set
+    // tend to be fairly small, and the additional space costs of having a UncheckedKeyHashMap/Set
     // would be greater than the time cost of occasionally doing this search.
     
     for (unsigned i = m_profiledBytecodes.size(); i--;) {
@@ -153,7 +153,7 @@ Ref<JSON::Value> Compilation::toJSON(Dumper& dumper) const
     if (!m_additionalJettisonReason.isNull())
         result->setString(dumper.keys().m_additionalJettisonReason, String::fromUTF8(m_additionalJettisonReason.span()));
 
-    result->setValue(dumper.keys().m_uid, m_uid.toJSON(dumper));
+    result->setString(dumper.keys().m_uid, makeString(m_uid));
 
     return result;
 }

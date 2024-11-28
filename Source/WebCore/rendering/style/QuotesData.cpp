@@ -22,6 +22,8 @@
 #include "config.h"
 #include "QuotesData.h"
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 static size_t sizeForQuotesDataWithQuoteCount(unsigned count)
@@ -84,3 +86,5 @@ bool operator==(const QuotesData& a, const QuotesData& b)
 }
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

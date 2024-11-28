@@ -73,6 +73,11 @@ MediaSourcePrivateAVFObjC::~MediaSourcePrivateAVFObjC()
     ALWAYS_LOG(LOGIDENTIFIER);
 }
 
+void MediaSourcePrivateAVFObjC::setPlayer(MediaPlayerPrivateInterface* player)
+{
+    m_player = downcast<MediaPlayerPrivateMediaSourceAVFObjC>(player);
+}
+
 MediaSourcePrivate::AddStatus MediaSourcePrivateAVFObjC::addSourceBuffer(const ContentType& contentType, bool webMParserEnabled, RefPtr<SourceBufferPrivate>& outPrivate)
 {
     DEBUG_LOG(LOGIDENTIFIER, contentType);
@@ -157,6 +162,12 @@ void MediaSourcePrivateAVFObjC::sourceBufferKeyNeeded(SourceBufferPrivateAVFObjC
 
     if (auto player = platformPlayer())
         player->keyNeeded(initData);
+}
+
+void MediaSourcePrivateAVFObjC::keyAdded()
+{
+    for (auto& sourceBuffer : m_sourceBuffers)
+        sourceBuffer->attemptToDecrypt();
 }
 #endif
 

@@ -32,6 +32,7 @@
 #include "TrackPrivateBase.h"
 #include <wtf/JSONValues.h>
 #include <wtf/MediaTime.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #if ENABLE(DATACUE_VALUE)
 #include "SerializedPlatformDataCue.h"
@@ -43,6 +44,7 @@ class InbandTextTrackPrivate;
 class ISOWebVTTCue;
 
 class InbandTextTrackPrivateClient : public TrackPrivateBaseClient {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(InbandTextTrackPrivateClient);
 public:
     virtual ~InbandTextTrackPrivateClient() = default;
 

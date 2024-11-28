@@ -6,7 +6,7 @@ if (window.testRunner)
     window.testRunner.waitUntilDone();
 async function runTest() {
     if (window.testRunner) {
-        testRunner.displayAndTrackRepaints();
+        await testRunner.displayAndTrackRepaints();
         await window.testRunner.setPageScaleFactor(0.5, 0, 0);
         testRunner.notifyDone();
     }

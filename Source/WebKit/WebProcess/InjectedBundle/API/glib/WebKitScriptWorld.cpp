@@ -53,7 +53,7 @@ struct _WebKitScriptWorldPrivate {
     CString name;
 };
 
-static guint signals[LAST_SIGNAL] = { 0, };
+static std::array<unsigned, LAST_SIGNAL> signals;
 
 WEBKIT_DEFINE_FINAL_TYPE(WebKitScriptWorld, webkit_script_world, G_TYPE_OBJECT, GObject)
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Apple Inc. All rights reserved.
+ * Copyright (c) 2023-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -1676,7 +1676,10 @@ void TypeChecker::visit(AST::UnaryExpression& unary)
         auto* type = infer(unary.expression(), Evaluation::Runtime);
         auto* pointer = std::get_if<Types::Pointer>(type);
         if (!pointer) {
-            typeError(unary.span(), "cannot dereference expression of type '"_s, *type, '\'');
+            if (isBottom(type))
+                inferred(type);
+            else
+                typeError(unary.span(), "cannot dereference expression of type '"_s, *type, '\'');
             return;
         }
 
@@ -1767,8 +1770,14 @@ void TypeChecker::visit(AST::ArrayTypeExpression& array)
                 }
             }
             size = { static_cast<unsigned>(elementCount) };
-        } else
+        } else {
+            m_shaderModule.addOverrideValidation(*array.maybeElementCount(), [&](const ConstantValue& elementCount) -> std::optional<String> {
+                if (elementCount.integerValue() < 1)
+                    return { "array count must be greater than 0"_s };
+                return std::nullopt;
+            });
             size = { array.maybeElementCount() };
+        }
     }
 
     inferred(m_types.arrayType(elementType, size));
@@ -2027,6 +2036,11 @@ const Type* TypeChecker::chooseOverload(ASCIILiteral kind, const SourceSpan& spa
 
 const Type* TypeChecker::infer(AST::Expression& expression, Evaluation evaluation, DiscardResult discardResult)
 {
+    if (evaluation > m_evaluation) {
+        typeError(InferBottom::No, expression.span(), "cannot use "_s, evaluationToString(evaluation), " value in "_s, evaluationToString(m_evaluation), " expression"_s);
+        return m_types.bottomType();
+    }
+
     auto discardResultScope = SetForScope(m_discardResult, discardResult);
     auto evaluationScope = SetForScope(m_evaluation, evaluation);
 
@@ -2231,6 +2245,8 @@ Behaviors TypeChecker::analyzeStatements(AST::Statement::List& statements)
 const Type* TypeChecker::check(AST::Expression& expression, Constraint constraint, Evaluation evaluation)
 {
     auto* type = infer(expression, evaluation);
+    if (isBottom(type))
+        return type;
     type = satisfyOrPromote(type, constraint, m_types);
     if (!type)
         return nullptr;

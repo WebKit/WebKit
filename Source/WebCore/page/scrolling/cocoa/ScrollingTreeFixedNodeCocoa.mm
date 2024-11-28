@@ -32,9 +32,12 @@
 #import "ScrollingStateFixedNode.h"
 #import "ScrollingThread.h"
 #import "WebCoreCALayerExtras.h"
+#import <wtf/TZoneMallocInlines.h>
 #import <wtf/text/TextStream.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ScrollingTreeFixedNodeCocoa);
 
 Ref<ScrollingTreeFixedNodeCocoa> ScrollingTreeFixedNodeCocoa::create(ScrollingTree& scrollingTree, ScrollingNodeID nodeID)
 {
@@ -69,7 +72,7 @@ void ScrollingTreeFixedNodeCocoa::applyLayerPositions()
 #if ENABLE(SCROLLING_THREAD)
     if (ScrollingThread::isCurrentThread()) {
         // Match the behavior of ScrollingTreeFrameScrollingNodeMac::repositionScrollingLayers().
-        if (!scrollingTree().isScrollingSynchronizedWithMainThread())
+        if (!scrollingTree()->isScrollingSynchronizedWithMainThread())
             [m_layer _web_setLayerTopLeftPosition:CGPointZero];
     }
 #endif

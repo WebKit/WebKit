@@ -33,7 +33,6 @@
 #include "FrameLoaderTypes.h"
 #include "LoaderMalloc.h"
 #include "Timer.h"
-#include <wtf/CheckedRef.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Forward.h>
 #include <wtf/WeakRef.h>
@@ -51,12 +50,14 @@ enum class NewLoadInProgress : bool { No, Yes };
 enum class ScheduleLocationChangeResult : uint8_t { Stopped, Completed, Started };
 enum class ScheduleHistoryNavigationResult : bool { Completed, Aborted };
 
-class NavigationScheduler final : public CanMakeCheckedPtr<NavigationScheduler> {
+class NavigationScheduler final {
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Loader);
-    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(NavigationScheduler);
 public:
     explicit NavigationScheduler(Frame&);
     ~NavigationScheduler();
+
+    void ref() const;
+    void deref() const;
 
     bool redirectScheduledDuringLoad();
     bool locationChangePending();

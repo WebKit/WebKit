@@ -40,7 +40,6 @@
 #import "WebsiteDataStoreParameters.h"
 #import <WebCore/NetworkStorageSession.h>
 #import <WebCore/RegistrableDomain.h>
-#import <WebCore/RuntimeApplicationChecks.h>
 #import <WebCore/SearchPopupMenuCocoa.h>
 #import <pal/spi/cf/CFNetworkSPI.h>
 #import <pal/spi/cocoa/NetworkSPI.h>
@@ -50,6 +49,7 @@
 #import <wtf/URL.h>
 #import <wtf/UUID.h>
 #import <wtf/cocoa/Entitlements.h>
+#import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #import <wtf/text/MakeString.h>
 #import <wtf/text/cf/StringConcatenateCF.h>
 
@@ -172,11 +172,11 @@ void WebsiteDataStore::platformSetNetworkParameters(WebsiteDataStoreParameters& 
     bool isSafari = false;
     bool isMiniBrowser = false;
 #if PLATFORM(IOS_FAMILY)
-    isSafari = WebCore::IOSApplication::isMobileSafari();
-    isMiniBrowser = WebCore::IOSApplication::isMiniBrowser();
+    isSafari = WTF::IOSApplication::isMobileSafari();
+    isMiniBrowser = WTF::IOSApplication::isMiniBrowser();
 #elif PLATFORM(MAC)
-    isSafari = WebCore::MacApplication::isSafari();
-    isMiniBrowser = WebCore::MacApplication::isMiniBrowser();
+    isSafari = WTF::MacApplication::isSafari();
+    isMiniBrowser = WTF::MacApplication::isMiniBrowser();
 #endif
     // FIXME: Remove these once Safari adopts _WKWebsiteDataStoreConfiguration.httpProxy and .httpsProxy.
     if (!httpProxy.isValid() && (isSafari || isMiniBrowser))
@@ -231,9 +231,9 @@ std::optional<bool> WebsiteDataStore::useNetworkLoader()
 
     [[maybe_unused]] const auto isSafari =
 #if PLATFORM(MAC)
-        WebCore::MacApplication::isSafari();
+        WTF::MacApplication::isSafari();
 #elif PLATFORM(IOS_FAMILY)
-        WebCore::IOSApplication::isMobileSafari() || WebCore::IOSApplication::isSafariViewService();
+        WTF::IOSApplication::isMobileSafari() || WTF::IOSApplication::isSafariViewService();
 #else
         false;
 #endif
@@ -243,7 +243,7 @@ std::optional<bool> WebsiteDataStore::useNetworkLoader()
     if (!linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::UseCFNetworkNetworkLoader))
         return std::nullopt;
 #if defined(NW_SETTINGS_HAS_UNIFIED_HTTP)
-    if (isRunningTest(WebCore::applicationBundleIdentifier()))
+    if (isRunningTest(applicationBundleIdentifier()))
         return true;
     if (nw_settings_get_unified_http_enabled())
         return isSafari;
@@ -363,7 +363,7 @@ String WebsiteDataStore::defaultApplicationCacheDirectory(const String& baseDire
     // Preserving it avoids the need to migrate data when upgrading.
     // FIXME: Ideally we should just have Safari, WebApp, and webbookmarksd create a data store with
     // this application cache path.
-    if (WebCore::IOSApplication::isMobileSafari() || WebCore::IOSApplication::isWebBookmarksD()) {
+    if (WTF::IOSApplication::isMobileSafari() || WTF::IOSApplication::isWebBookmarksD()) {
         NSString *cachePath = [NSHomeDirectory() stringByAppendingPathComponent:@"Library/Caches/com.apple.WebAppCache"];
 
         return WebKit::stringByResolvingSymlinksInPath(String { cachePath.stringByStandardizingPath });
@@ -660,7 +660,7 @@ void WebsiteDataStore::initializeAppBoundDomains(ForceReinitialization forceRein
 void WebsiteDataStore::addTestDomains() const
 {
     if (appBoundDomains().isEmpty()) {
-        for (auto& domain : appBoundDomainsForTesting(WebCore::applicationBundleIdentifier()))
+        for (auto& domain : appBoundDomainsForTesting(applicationBundleIdentifier()))
             appBoundDomains().add(domain);
     }
 }
@@ -781,12 +781,12 @@ void WebsiteDataStore::initializeManagedDomains(ForceReinitialization forceReini
 
         bool isSafari = false;
 #if PLATFORM(MAC)
-        isSafari = WebCore::MacApplication::isSafari();
+        isSafari = WTF::MacApplication::isSafari();
         NSDictionary *managedSitesPrefs = [NSDictionary dictionaryWithContentsOfFile:[[NSString stringWithFormat:@"/Library/Managed Preferences/%@/%@.plist", NSUserName(), kManagedSitesIdentifier] stringByStandardizingPath]];
         crossSiteTrackingPreventionRelaxedDomains = [managedSitesPrefs objectForKey:kCrossSiteTrackingPreventionRelaxedDomainsKey];
         crossSiteTrackingPreventionRelaxedApps = [managedSitesPrefs objectForKey:kCrossSiteTrackingPreventionRelaxedAppsKey];
 #elif !PLATFORM(MACCATALYST)
-        isSafari = WebCore::IOSApplication::isMobileSafari();
+        isSafari = WTF::IOSApplication::isMobileSafari();
         if ([PAL::getMCProfileConnectionClass() instancesRespondToSelector:@selector(crossSiteTrackingPreventionRelaxedDomains)])
             crossSiteTrackingPreventionRelaxedDomains = [(MCProfileConnection *)[PAL::getMCProfileConnectionClass() sharedConnection] crossSiteTrackingPreventionRelaxedDomains];
         else

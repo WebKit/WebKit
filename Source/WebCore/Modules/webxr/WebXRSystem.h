@@ -59,15 +59,14 @@ struct XRSessionInit;
 class WebXRSystem final : public RefCounted<WebXRSystem>, public EventTarget, public ActiveDOMObject {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(WebXRSystem);
 public:
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
+
     using IsSessionSupportedPromise = DOMPromiseDeferred<IDLBoolean>;
     using RequestSessionPromise = DOMPromiseDeferred<IDLInterface<WebXRSession>>;
 
     static Ref<WebXRSystem> create(Navigator&);
     ~WebXRSystem();
-
-    // ActiveDOMObject.
-    void ref() const final { RefCounted::ref(); }
-    void deref() const final { RefCounted::deref(); }
 
     void isSessionSupported(XRSessionMode, IsSessionSupportedPromise&&);
     void requestSession(Document&, XRSessionMode, const XRSessionInit&, RequestSessionPromise&&);

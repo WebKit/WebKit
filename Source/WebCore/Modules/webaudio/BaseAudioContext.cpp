@@ -76,6 +76,7 @@
 #include "PlatformMediaSessionManager.h"
 #include "ScriptController.h"
 #include "ScriptProcessorNode.h"
+#include "ScriptTelemetryCategory.h"
 #include "StereoPannerNode.h"
 #include "StereoPannerOptions.h"
 #include "WaveShaperNode.h"
@@ -120,6 +121,17 @@ static HashSet<uint64_t>& liveAudioContexts()
     return contexts;
 }
 
+static OptionSet<NoiseInjectionPolicy> effectiveNoiseInjectionPolicies(Document& document)
+{
+    OptionSet<NoiseInjectionPolicy> policies;
+    auto documentPolicies = document.noiseInjectionPolicies();
+    if (documentPolicies.contains(NoiseInjectionPolicy::Minimal))
+        policies.add(NoiseInjectionPolicy::Minimal);
+    if (documentPolicies.contains(NoiseInjectionPolicy::Enhanced) && document.requiresScriptExecutionTelemetry(ScriptTelemetryCategory::Audio))
+        policies.add(NoiseInjectionPolicy::Enhanced);
+    return policies;
+}
+
 BaseAudioContext::BaseAudioContext(Document& document)
     : ActiveDOMObject(document)
 #if !RELEASE_LOG_DISABLED
@@ -129,7 +141,7 @@ BaseAudioContext::BaseAudioContext(Document& document)
     , m_contextID(generateContextID())
     , m_worklet(AudioWorklet::create(*this))
     , m_listener(AudioListener::create(*this))
-    , m_noiseInjectionPolicies(document.noiseInjectionPolicies())
+    , m_noiseInjectionPolicies(effectiveNoiseInjectionPolicies(document))
 {
     liveAudioContexts().add(m_contextID);
 
@@ -296,9 +308,14 @@ void BaseAudioContext::decodeAudioData(Ref<ArrayBuffer>&& audioData, RefPtr<Audi
     if (!m_audioDecoder)
         m_audioDecoder = makeUnique<AsyncAudioDecoder>();
 
-    auto p = m_audioDecoder->decodeAsync(WTFMove(audioData), sampleRate());
-    p->whenSettled(RunLoop::current(), [this, activity = makePendingActivity(*this), successCallback = WTFMove(successCallback), errorCallback = WTFMove(errorCallback), promise = WTFMove(promise)] (DecodingTaskPromise::Result&& result) mutable {
-        queueTaskKeepingObjectAlive(*this, TaskSource::InternalAsyncTask, [successCallback = WTFMove(successCallback), errorCallback = WTFMove(errorCallback), promise = WTFMove(promise), result = WTFMove(result)]() mutable {
+    audioData->pin();
+
+    auto p = m_audioDecoder->decodeAsync(audioData.copyRef(), sampleRate());
+    p->whenSettled(RunLoop::current(), [this, audioData = WTFMove(audioData), activity = makePendingActivity(*this), successCallback = WTFMove(successCallback), errorCallback = WTFMove(errorCallback), promise = WTFMove(promise)] (DecodingTaskPromise::Result&& result) mutable {
+        queueTaskKeepingObjectAlive(*this, TaskSource::InternalAsyncTask, [audioData = WTFMove(audioData), successCallback = WTFMove(successCallback), errorCallback = WTFMove(errorCallback), promise = WTFMove(promise), result = WTFMove(result)]() mutable {
+
+            audioData->unpin();
+
             if (!result) {
                 promise->reject(WTFMove(result.error()));
                 if (errorCallback)

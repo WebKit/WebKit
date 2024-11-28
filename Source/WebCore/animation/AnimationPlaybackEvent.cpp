@@ -35,39 +35,20 @@ WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(AnimationPlaybackEvent);
 
 AnimationPlaybackEvent::AnimationPlaybackEvent(const AtomString& type, const AnimationPlaybackEventInit& initializer, IsTrusted isTrusted)
     : AnimationEventBase(EventInterfaceType::AnimationPlaybackEvent, type, initializer, isTrusted)
+    , m_timelineTime(initializer.timelineTime)
+    , m_currentTime(initializer.currentTime)
 {
-    if (initializer.currentTime)
-        m_currentTime = Seconds::fromMilliseconds(*initializer.currentTime);
-    else
-        m_currentTime = std::nullopt;
-
-    if (initializer.timelineTime)
-        m_timelineTime = Seconds::fromMilliseconds(*initializer.timelineTime);
-    else
-        m_timelineTime = std::nullopt;
 }
 
-AnimationPlaybackEvent::AnimationPlaybackEvent(const AtomString& type, WebAnimation* animation, std::optional<Seconds> scheduledTime, std::optional<Seconds> timelineTime, std::optional<Seconds> currentTime)
+AnimationPlaybackEvent::AnimationPlaybackEvent(const AtomString& type, WebAnimation* animation, std::optional<WebAnimationTime> scheduledTime, std::optional<WebAnimationTime> timelineTime, std::optional<WebAnimationTime> currentTime)
     : AnimationEventBase(EventInterfaceType::AnimationPlaybackEvent, type, animation, scheduledTime)
-    , m_timelineTime(timelineTime)
-    , m_currentTime(currentTime)
 {
+    if (timelineTime)
+        m_timelineTime = *timelineTime;
+    if (currentTime)
+        m_currentTime = *currentTime;
 }
 
 AnimationPlaybackEvent::~AnimationPlaybackEvent() = default;
-
-std::optional<double> AnimationPlaybackEvent::bindingsCurrentTime() const
-{
-    if (!m_currentTime)
-        return std::nullopt;
-    return secondsToWebAnimationsAPITime(m_currentTime.value());
-}
-
-std::optional<double> AnimationPlaybackEvent::bindingsTimelineTime() const
-{
-    if (!m_timelineTime)
-        return std::nullopt;
-    return secondsToWebAnimationsAPITime(m_timelineTime.value());
-}
 
 } // namespace WebCore

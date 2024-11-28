@@ -32,13 +32,17 @@
 #include "IntSize.h"
 #include "PlatformImage.h"
 #include "RenderingResource.h"
+#include <wtf/Lock.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/UniqueRef.h>
 
 namespace WebCore {
 
-class GraphicsContext;
+#if USE(SKIA)
+class GLFence;
+#endif
 
+class GraphicsContext;
 class NativeImageBackend;
 
 class NativeImage final : public RenderingResource {
@@ -56,6 +60,7 @@ public:
     bool hasAlpha() const;
     std::optional<Color> singlePixelSolidColor() const;
     WEBCORE_EXPORT DestinationColorSpace colorSpace() const;
+    Headroom headroom() const;
 
     void draw(GraphicsContext&, const FloatRect& destRect, const FloatRect& srcRect, ImagePaintingOptions);
     void clearSubimages();
@@ -79,7 +84,24 @@ public:
     virtual IntSize size() const = 0;
     virtual bool hasAlpha() const = 0;
     virtual DestinationColorSpace colorSpace() const = 0;
+    virtual Headroom headroom() const = 0;
     WEBCORE_EXPORT virtual bool isRemoteNativeImageBackendProxy() const;
+
+#if USE(SKIA)
+    // During DisplayList recording a fence is created, so that we can wait until the SkImage finished rendering
+    // before we attempt to access the GPU resource from a secondary thread during replay (in threaded GPU painting mode).
+    virtual void finishAcceleratedRenderingAndCreateFence() { }
+    virtual void waitForAcceleratedRenderingFenceCompletion() { }
+
+    virtual const GrDirectContext* skiaGrContext() const { return nullptr; }
+
+    // Use to copy an accelerated NativeImage, cloning the PlatformImageNativeImageBackend, creating
+    // a new SkImage tied to the current thread (and thus the thread-local GrDirectContext), but re-using
+    // the existing backend texture, of this NativeImage. This avoids any GPU->GPU copies and has the
+    // sole purpose to abe able to access an accelerated NativeImage from another thread, that is not
+    // the creation thread.
+    virtual RefPtr<NativeImage> copyAcceleratedNativeImageBorrowingBackendTexture() const { return nullptr; }
+#endif
 };
 
 class PlatformImageNativeImageBackend final : public NativeImageBackend {
@@ -90,8 +112,22 @@ public:
     WEBCORE_EXPORT IntSize size() const final;
     WEBCORE_EXPORT bool hasAlpha() const final;
     WEBCORE_EXPORT DestinationColorSpace colorSpace() const final;
+    WEBCORE_EXPORT Headroom headroom() const final;
+
+#if USE(SKIA)
+    void finishAcceleratedRenderingAndCreateFence() final;
+    void waitForAcceleratedRenderingFenceCompletion() final;
+
+    const GrDirectContext* skiaGrContext() const final;
+
+    RefPtr<NativeImage> copyAcceleratedNativeImageBorrowingBackendTexture() const final;
+#endif
 private:
     PlatformImagePtr m_platformImage;
+#if USE(SKIA)
+    std::unique_ptr<GLFence> m_fence WTF_GUARDED_BY_LOCK(m_fenceLock);
+    Lock m_fenceLock;
+#endif
 };
 
 } // namespace WebCore

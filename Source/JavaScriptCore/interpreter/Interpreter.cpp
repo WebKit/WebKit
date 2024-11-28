@@ -283,6 +283,8 @@ unsigned sizeFrameForVarargs(JSGlobalObject* globalObject, CallFrame* callFrame,
     return length;
 }
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 void loadVarargs(JSGlobalObject* globalObject, JSValue* firstElementDest, JSValue arguments, uint32_t offset, uint32_t length)
 {
     if (UNLIKELY(!arguments.isCell()) || !length)
@@ -330,13 +332,15 @@ void loadVarargs(JSGlobalObject* globalObject, JSValue* firstElementDest, JSValu
     }
 }
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+
 void setupVarargsFrame(JSGlobalObject* globalObject, CallFrame* callFrame, CallFrame* newCallFrame, JSValue arguments, uint32_t offset, uint32_t length)
 {
     VirtualRegister calleeFrameOffset(newCallFrame - callFrame);
     
     loadVarargs(
         globalObject,
-        bitwise_cast<JSValue*>(&callFrame->r(calleeFrameOffset + CallFrame::argumentOffset(0))),
+        std::bit_cast<JSValue*>(&callFrame->r(calleeFrameOffset + CallFrame::argumentOffset(0))),
         arguments, offset, length);
     
     newCallFrame->setArgumentCountIncludingThis(length + 1);
@@ -352,7 +356,9 @@ void setupForwardArgumentsFrame(JSGlobalObject*, CallFrame* execCaller, CallFram
 {
     ASSERT(length == execCaller->argumentCount());
     unsigned offset = execCaller->argumentOffset(0) * sizeof(Register);
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     memcpy(reinterpret_cast<char*>(execCallee) + offset, reinterpret_cast<char*>(execCaller) + offset, length * sizeof(Register));
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     execCallee->setArgumentCountIncludingThis(length + 1);
 }
 
@@ -382,11 +388,13 @@ Interpreter::Interpreter()
 
 Interpreter::~Interpreter() = default;
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 #if ENABLE(COMPUTED_GOTO_OPCODES)
 #if !ENABLE(LLINT_EMBEDDED_OPCODE_ID) || ASSERT_ENABLED
-HashMap<Opcode, OpcodeID>& Interpreter::opcodeIDTable()
+UncheckedKeyHashMap<Opcode, OpcodeID>& Interpreter::opcodeIDTable()
 {
-    static LazyNeverDestroyed<HashMap<Opcode, OpcodeID>> opcodeIDTable;
+    static LazyNeverDestroyed<UncheckedKeyHashMap<Opcode, OpcodeID>> opcodeIDTable;
 
     static std::once_flag initializeKey;
     std::call_once(initializeKey, [&] {
@@ -400,6 +408,8 @@ HashMap<Opcode, OpcodeID>& Interpreter::opcodeIDTable()
 }
 #endif // !ENABLE(LLINT_EMBEDDED_OPCODE_ID) || ASSERT_ENABLED
 #endif // ENABLE(COMPUTED_GOTO_OPCODES)
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #if ASSERT_ENABLED
 bool Interpreter::isOpcode(Opcode opcode)
@@ -674,6 +684,8 @@ public:
                 m_wasmTag = &wasmException->tag();
             } else if (ErrorInstance* error = jsDynamicCast<ErrorInstance*>(thrownValue))
                 m_catchableFromWasm = error->isCatchableFromWasm();
+            else
+                m_catchableFromWasm = true;
         }
 #else
         UNUSED_PARAM(thrownValue);
@@ -738,6 +750,8 @@ public:
     }
 
 private:
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
     void copyCalleeSavesToEntryFrameCalleeSavesBuffer(StackVisitor& visitor) const
     {
 #if ENABLE(ASSEMBLER)
@@ -775,13 +789,16 @@ private:
                 // its frame.
                 continue;
             }
-
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
             record->calleeSaveRegistersBuffer[calleeSavesEntry->offsetAsIndex()] = *(frame + currentEntry.offsetAsIndex());
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
         }
 #else
         UNUSED_PARAM(visitor);
 #endif
     }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
     ALWAYS_INLINE static void notifyDebuggerOfUnwinding(VM& vm, CallFrame* callFrame)
     {
@@ -1243,6 +1260,12 @@ ALWAYS_INLINE JSValue Interpreter::executeCallImpl(VM& vm, JSObject* function, c
         ASSERT(jitCode == functionExecutable->generatedJITCodeForCall().ptr());
         return JSValue::decode(vmEntryToJavaScript(jitCode->addressForCall(), &vm, &protoCallFrame));
     }
+
+#if ENABLE(WEBASSEMBLY)
+    if (callData.native.isWasm)
+        return JSValue::decode(vmEntryToWasm(jsCast<WebAssemblyFunction*>(function)->jsEntrypoint(MustCheckArity).taggedPtr(), &vm, &protoCallFrame));
+#endif
+
     return JSValue::decode(vmEntryToNative(nativeFunction.taggedPtr(), &vm, &protoCallFrame));
 }
 

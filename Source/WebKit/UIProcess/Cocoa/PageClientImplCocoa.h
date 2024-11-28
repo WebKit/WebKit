@@ -89,7 +89,7 @@ public:
     NSSet *serializableFileWrapperClasses() const final;
 #endif
 
-    WebCore::DictationContext addDictationAlternatives(PlatformTextAlternatives *) final;
+    std::optional<WebCore::DictationContext> addDictationAlternatives(PlatformTextAlternatives *) final;
     void replaceDictationAlternatives(PlatformTextAlternatives *, WebCore::DictationContext) final;
     void removeDictationAlternatives(WebCore::DictationContext) final;
     Vector<String> dictationAlternatives(WebCore::DictationContext) final;
@@ -121,7 +121,7 @@ public:
     void writingToolsActiveWillChange() final;
     void writingToolsActiveDidChange() final;
 
-    void didEndPartialIntelligenceTextPonderingAnimation() final;
+    void didEndPartialIntelligenceTextAnimation() final;
     bool writingToolsTextReplacementsFinished() final;
 
     void addTextAnimationForAnimationID(const WTF::UUID&, const WebCore::TextAnimationData&) final;
@@ -140,6 +140,8 @@ public:
     void videoControlsManagerDidChange() override;
 
     CocoaWindow *platformWindow() const final;
+
+    void processDidUpdateThrottleState() final;
 
 protected:
     RetainPtr<WKWebView> webView() const { return m_webView.get(); }

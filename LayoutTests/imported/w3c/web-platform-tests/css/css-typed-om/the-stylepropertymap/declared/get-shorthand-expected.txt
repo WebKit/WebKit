@@ -1,4 +1,4 @@
 
 PASS Getting a shorthand property set explicitly in css rule returns a base CSSStyleValue
-PASS Getting a shorthand property that is partially set in css rule returns null
+PASS Getting a shorthand property that is partially set in css rule returns undefined
 

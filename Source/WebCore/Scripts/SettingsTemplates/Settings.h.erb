@@ -30,6 +30,8 @@
 #include "SettingsBase.h"
 #include <wtf/RefCounted.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 class Page;
@@ -39,6 +41,9 @@ class Settings : public SettingsBase, public RefCounted<Settings> {
 public:
     WEBCORE_EXPORT static Ref<Settings> create(Page*);
     WEBCORE_EXPORT virtual ~Settings();
+
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
 
     WEBCORE_EXPORT void disableUnstableFeaturesForModernWebKit();
     WEBCORE_EXPORT static void disableGlobalUnstableFeaturesForModernWebKit();
@@ -120,3 +125,5 @@ private:
 };
 
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

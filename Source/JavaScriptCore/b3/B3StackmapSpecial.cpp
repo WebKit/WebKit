@@ -90,6 +90,11 @@ void StackmapSpecial::forEachArgImpl(
         Arg& arg = inst.args[i + numIgnoredAirArgs];
         ConstrainedValue child = value->constrainedChild(i + numIgnoredB3Args);
 
+#if USE(JSVALUE32_64)
+        // LowerInt64 should have lowered this argument already.
+        RELEASE_ASSERT(child.value()->type() != Int64 || child.rep().isStack() || child.rep().isStackArgument());
+#endif
+
         Arg::Role role;
         switch (roleMode) {
         case ForceLateUseUnlessRecoverable:
@@ -123,18 +128,7 @@ void StackmapSpecial::forEachArgImpl(
                 role = Arg::LateColdUse;
                 break;
 #if USE(JSVALUE32_64)
-            case ValueRep::SomeRegisterPair:
             case ValueRep::RegisterPair:
-                role = Arg::Use;
-                break;
-            case ValueRep::SomeRegisterPairWithClobber:
-                role = Arg::UseDef;
-                break;
-            case ValueRep::SomeLateRegisterPair:
-            case ValueRep::LateRegisterPair:
-                role = Arg::LateUse;
-                break;
-            case ValueRep::SomeEarlyRegisterPair:
 #endif
             case ValueRep::SomeEarlyRegister:
                 RELEASE_ASSERT_NOT_REACHED();
@@ -148,7 +142,6 @@ void StackmapSpecial::forEachArgImpl(
                 // The role can only be some kind of def if we did SomeRegisterWithClobber, which is
                 // only allowed for patchpoints. Patchpoints don't use the defArgWidth feature.
                 RELEASE_ASSERT(!Arg::isAnyDef(role));
-                
                 if (Arg::isWarmUse(role))
                     role = Arg::LateUse;
                 else
@@ -245,9 +238,6 @@ bool StackmapSpecial::isArgValidForType(const Air::Arg& arg, Type type)
 {
     switch (arg.kind()) {
     case Arg::Tmp:
-#if USE(JSVALUE32_64)
-    case Arg::TmpPair:
-#endif
     case Arg::Imm:
     case Arg::BigImm:
         break;
@@ -289,14 +279,7 @@ bool StackmapSpecial::isArgValidForRep(Air::Code& code, const Air::Arg& arg, con
         }
         return false;
 #if USE(JSVALUE32_64)
-    case ValueRep::SomeRegisterPair:
-    case ValueRep::SomeRegisterPairWithClobber:
-    case ValueRep::SomeEarlyRegisterPair:
-    case ValueRep::SomeLateRegisterPair:
-        return arg.isTmpPair();
-    case ValueRep::LateRegisterPair:
     case ValueRep::RegisterPair:
-        return arg == Arg(Tmp(rep.regHi()), Tmp(rep.regLo()));
 #endif
     case ValueRep::Stack:
     case ValueRep::Constant:
@@ -312,10 +295,6 @@ ValueRep StackmapSpecial::repForArg(Air::Code& code, const Arg& arg)
     case Arg::Tmp:
         return ValueRep::reg(arg.reg());
         break;
-#if USE(JSVALUE32_64)
-    case Arg::TmpPair:
-        return ValueRep::regPair(arg.regHi(), arg.regLo());
-#endif
     case Arg::Imm:
     case Arg::BigImm:
         return ValueRep::constant(arg.value());

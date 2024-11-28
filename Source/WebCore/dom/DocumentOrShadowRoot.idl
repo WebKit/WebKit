@@ -29,13 +29,6 @@ interface mixin DocumentOrShadowRoot {
     // Extensions from HTML (https://html.spec.whatwg.org/multipage/dom.html#documentorshadowroot)
     readonly attribute Element? activeElement;
 
-    // FIXME: getSelection is currently defined only to be on Document in the Selection API spec
-    // https://w3c.github.io/selection-api/#extensions-to-document-interface, but
-    // previously had been defined to be on DocumentOrShadowRoot in the deprecated Shadow DOM spec
-    // https://w3c.github.io/webcomponents/spec/shadow/#extensions-to-the-documentorshadowroot-mixin.
-    // We should get this resolved in the Selection API spec and move this to the correct IDL files.
-    // DOMSelection? getSelection();
-
     // FIXME: These are currently defined only to be on Document in the CSSOM spec
     // https://drafts.csswg.org/cssom-view/#extensions-to-the-document-interface, but
     // previously had been defined to be on DocumentOrShadowRoot in the deprecated Shadow DOM spec
@@ -43,5 +36,4 @@ interface mixin DocumentOrShadowRoot {
     // We should get this resolved in the CSSOM spec and move these to the correct IDL files.
     Element? elementFromPoint(double x, double y);
     sequence<Element> elementsFromPoint(double x, double y);
-    // CaretPosition? caretPositionFromPoint(double x, double y); // FIXME: Implement this.
 };

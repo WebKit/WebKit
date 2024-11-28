@@ -16,9 +16,9 @@
 #include "include/core/SkSurface.h"
 #include "include/core/SkTypes.h"
 #include "include/gpu/GpuTypes.h"
-#include "include/gpu/GrBackendSurface.h"
-#include "include/gpu/GrDirectContext.h"
-#include "include/gpu/GrTypes.h"
+#include "include/gpu/ganesh/GrBackendSurface.h"
+#include "include/gpu/ganesh/GrDirectContext.h"
+#include "include/gpu/ganesh/GrTypes.h"
 #include "include/gpu/ganesh/SkImageGanesh.h"
 #include "include/gpu/ganesh/SkSurfaceGanesh.h"
 #include "include/private/base/SkTo.h"
@@ -90,6 +90,7 @@ static const TestCase gTests[] = {
     { kGray_8_SkColorType,             kOpaque_SkAlphaType, kGray_SkColorChannelFlag,  true },
     { kRGBA_F16Norm_SkColorType,       kPremul_SkAlphaType, kRGBA_SkColorChannelFlags, true },
     { kRGBA_F16_SkColorType,           kPremul_SkAlphaType, kRGBA_SkColorChannelFlags, true },
+    { kRGB_F16F16F16x_SkColorType,     kOpaque_SkAlphaType, kRGB_SkColorChannelFlags,  true },
     { kRGBA_F32_SkColorType,           kPremul_SkAlphaType, kRGBA_SkColorChannelFlags, true },
     { kR8G8_unorm_SkColorType,         kOpaque_SkAlphaType, kRG_SkColorChannelFlags,   true },
     { kR16G16_unorm_SkColorType,       kOpaque_SkAlphaType, kRG_SkColorChannelFlags,   false},

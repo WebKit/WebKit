@@ -141,6 +141,11 @@ bool JITPlan::checkLivenessAndVisitChildren(AbstractSlotVisitor& visitor)
     return true;
 }
 
+bool JITPlan::isInSafepoint() const
+{
+    return m_thread && m_thread->safepoint();
+}
+
 bool JITPlan::safepointKeepsDependenciesLive() const
 {
     return m_thread && m_thread->safepoint() && m_thread->safepoint()->keepDependenciesLive();

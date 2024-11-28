@@ -53,6 +53,13 @@
 
 using namespace WebKit;
 
+class UIClient;
+
+namespace WTF {
+template<typename T> struct IsDeprecatedTimerSmartPointerException;
+template<> struct IsDeprecatedTimerSmartPointerException<UIClient> : std::true_type { };
+}
+
 class UIClient : public API::UIClient {
 public:
     explicit UIClient(WebKitWebView* webView)
@@ -61,10 +68,10 @@ public:
     }
 
 private:
-    void createNewPage(WebPageProxy& page, Ref<API::PageConfiguration>&& configuration, WebCore::WindowFeatures&& windowFeatures, Ref<API::NavigationAction>&& apiNavigationAction, CompletionHandler<void(RefPtr<WebPageProxy>&&)>&& completionHandler) final
+    void createNewPage(WebPageProxy& page, Ref<API::PageConfiguration>&& configuration, Ref<API::NavigationAction>&& apiNavigationAction, CompletionHandler<void(RefPtr<WebPageProxy>&&)>&& completionHandler) final
     {
         WebKitNavigationAction navigationAction(WTFMove(apiNavigationAction));
-        completionHandler(webkitWebViewCreateNewPage(m_webView, WTFMove(configuration), WTFMove(windowFeatures), &navigationAction));
+        completionHandler(webkitWebViewCreateNewPage(m_webView, WTFMove(configuration), &navigationAction));
     }
 
     void showPage(WebPageProxy*) final

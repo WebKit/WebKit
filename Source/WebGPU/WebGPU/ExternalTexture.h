@@ -65,10 +65,13 @@ public:
 
     bool isValid() const;
     void update(CVPixelBufferRef);
+    size_t openCommandEncoderCount() const;
 
 private:
     ExternalTexture(CVPixelBufferRef, WGPUColorSpace, Device&);
     ExternalTexture(Device&);
+
+    Ref<Device> protectedDevice() const { return m_device; }
 
     RetainPtr<CVPixelBufferRef> m_pixelBuffer;
     WGPUColorSpace m_colorSpace;

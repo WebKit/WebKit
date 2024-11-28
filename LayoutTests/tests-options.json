@@ -2312,6 +2312,18 @@
     "imported/w3c/web-platform-tests/css/selectors/media/media-loading-state.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/custom-elements/form-associated/ElementInternals-target-element-is-held-strongly.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/custom-elements/state/custom-state-set-strong-ref.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/custom-elements/state/state-css-selector-shadow-dom.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/custom-elements/state/state-css-selector.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/custom-state-pseudo-class/custom-state-set-strong-ref.tentative.html": [
         "slow"
     ],
@@ -2558,9 +2570,6 @@
     "imported/w3c/web-platform-tests/editing/run/unlink.html": [
         "slow"
     ],
-    "imported/w3c/web-platform-tests/encoding/api-invalid-label.html": [
-        "slow"
-    ],
     "imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/euc-jp/eucjp-decode-cseucpkdfmtjapanese.html": [
         "slow"
     ],
@@ -2753,9 +2762,6 @@
     "imported/w3c/web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-encode-form-errors-han.html": [
         "slow"
     ],
-    "imported/w3c/web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-encode-form-errors-hangul.html": [
-        "slow"
-    ],
     "imported/w3c/web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-encode-form-errors-misc.html": [
         "slow"
     ],
@@ -2859,9 +2865,6 @@
         "slow"
     ],
     "imported/w3c/web-platform-tests/encoding/legacy-mb-tchinese/big5/big5-encode-href.html": [
-        "slow"
-    ],
-    "imported/w3c/web-platform-tests/encoding/single-byte-decoder.html": [
         "slow"
     ],
     "imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-encrypted-clear-sources.html": [
@@ -4793,6 +4796,9 @@
     "imported/w3c/web-platform-tests/mathml/relations/html5-tree/tabindex-002.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/mathml/relations/html5-tree/tabindex-002.tentative.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/media-capabilities/decodingInfoEncryptedMedia.https.html": [
         "slow"
     ],
@@ -5484,6 +5490,24 @@
         "slow"
     ],
     "imported/w3c/web-platform-tests/scroll-to-text-fragment/find-range-from-text-directive.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/scroll-to-text-fragment/force-load-at-top.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/scroll-to-text-fragment/iframes.sub.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/scroll-to-text-fragment/non-html-documents.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/scroll-to-text-fragment/redirects.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/scroll-to-text-fragment/scroll-to-text-fragment-after-DOMContentLoaded.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/scroll-to-text-fragment/scroll-to-text-fragment-scroll-to-center.html": [
         "slow"
     ],
     "imported/w3c/web-platform-tests/scroll-to-text-fragment/scroll-to-text-fragment.html": [
@@ -6437,6 +6461,123 @@
     "imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiocontext-interface/suspend-with-navigation.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/webauthn/createcredential-abort.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/webauthn/createcredential-attachment.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/webauthn/createcredential-badargs-authnrselection.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/webauthn/createcredential-badargs-challenge.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/webauthn/createcredential-badargs-rp.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/webauthn/createcredential-badargs-user.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/webauthn/createcredential-cross-origin-iframe.https.sub.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/webauthn/createcredential-excludecredentials.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/webauthn/createcredential-extensions.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/webauthn/createcredential-getpublickey.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/webauthn/createcredential-hints.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/webauthn/createcredential-large-blob-not-supported.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/webauthn/createcredential-large-blob-supported.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/webauthn/createcredential-minpinlength.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/webauthn/createcredential-passing.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/webauthn/createcredential-prf.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/webauthn/createcredential-pubkeycredparams.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/webauthn/createcredential-resident-key.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/webauthn/createcredential-timeout.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/webauthn/credblob-not-supported.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/webauthn/credblob-supported.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/webauthn/getcredential-abort.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/webauthn/getcredential-allowcredentials.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/webauthn/getcredential-attachment.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/webauthn/getcredential-badargs-rpid.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/webauthn/getcredential-badargs-userverification.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/webauthn/getcredential-extensions.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/webauthn/getcredential-hints.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/webauthn/getcredential-large-blob-not-supported.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/webauthn/getcredential-large-blob-supported.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/webauthn/getcredential-passing.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/webauthn/getcredential-prf.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/webauthn/getcredential-rk-passing.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/webauthn/getcredential-timeout.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/webauthn/remote-desktop-client-override.tentative.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/webauthn/signal-all-accepted-credentials.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/webauthn/signal-current-user-details.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/webauthn/signal-unknown-credential.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/webauthn/storecredential.https.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/webmessaging/broadcastchannel/cross-partition.https.tentative.html": [
         "slow"
     ],
@@ -6690,6 +6831,9 @@
         "slow"
     ],
     "imported/w3c/web-platform-tests/websockets/opening-handshake/003.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/websockets/opening-handshake/006.html": [
         "slow"
     ],
     "imported/w3c/web-platform-tests/websockets/unload-a-document/002.html": [

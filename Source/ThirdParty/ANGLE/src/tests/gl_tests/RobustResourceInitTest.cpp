@@ -1213,8 +1213,6 @@ TEST_P(RobustResourceInitTestES3, TextureInit_UIntRGB8)
     ANGLE_SKIP_TEST_IF(!hasGLExtension());
     // http://anglebug.com/42263936
     ANGLE_SKIP_TEST_IF(IsAMD() && IsD3D11());
-    // TODO(anglebug.com/42264029) iOS doesn't like to read this format as UNSIGNED_BYTE.
-    ANGLE_SKIP_TEST_IF(IsIOS() && IsOpenGLES());
 
     testIntegerTextureInit<uint8_t>("u", GL_RGBA8UI, GL_RGB8UI, GL_UNSIGNED_BYTE);
 }
@@ -1230,8 +1228,6 @@ TEST_P(RobustResourceInitTestES3, TextureInit_IntRGB8)
     ANGLE_SKIP_TEST_IF(!hasGLExtension());
     // http://anglebug.com/42263936
     ANGLE_SKIP_TEST_IF(IsAMD() && IsD3D11());
-    // TODO(stianglebug.com/42264029) iOS doesn't like to read this format as BYTE.
-    ANGLE_SKIP_TEST_IF(IsIOS() && IsOpenGLES());
 
     testIntegerTextureInit<int8_t>("i", GL_RGBA8I, GL_RGB8I, GL_BYTE);
 }
@@ -2376,6 +2372,35 @@ TEST_P(RobustResourceInitTestES3, CheckDepthStencilRenderbufferIsCleared)
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER,
                               depthStencilRb);
     ASSERT_GL_NO_ERROR();
+
+    // Render a quad at Z = 1.0 with depth test on and depth function set to GL_EQUAL.
+    // If the depth buffer is not cleared to 1.0 this will fail
+    glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_EQUAL);
+
+    ANGLE_GL_PROGRAM(drawGreen, essl1_shaders::vs::Simple(), essl1_shaders::fs::Green());
+    drawQuad(drawGreen, essl1_shaders::PositionAttrib(), 1.0f, 1.0f, true);
+    EXPECT_PIXEL_RECT_EQ(0, 0, kWidth, kHeight, GLColor::green);
+
+    // Render with stencil test on and stencil function set to GL_EQUAL
+    // If the stencil is not zero this will fail.
+    glDisable(GL_DEPTH_TEST);
+    glEnable(GL_STENCIL_TEST);
+    glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
+    glStencilFunc(GL_EQUAL, 0, 0xFF);
+
+    ANGLE_GL_PROGRAM(drawRed, essl1_shaders::vs::Simple(), essl1_shaders::fs::Red());
+    drawQuad(drawRed, essl1_shaders::PositionAttrib(), 1.0f, 1.0f, true);
+    EXPECT_PIXEL_RECT_EQ(0, 0, kWidth, kHeight, GLColor::red);
+
+    ASSERT_GL_NO_ERROR();
+}
+
+// Test that default framebuffer depth and stencil are cleared to values that
+// are consistent with non-default framebuffer clear values. Depth 1.0, stencil 0.0.
+TEST_P(RobustResourceInitTestES3, CheckDefaultDepthStencilRenderbufferIsCleared)
+{
+    ANGLE_SKIP_TEST_IF(!hasRobustSurfaceInit());
 
     // Render a quad at Z = 1.0 with depth test on and depth function set to GL_EQUAL.
     // If the depth buffer is not cleared to 1.0 this will fail

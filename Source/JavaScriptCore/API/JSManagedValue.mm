@@ -86,11 +86,13 @@ static JSManagedValueHandleOwner& managedValueHandleOwner()
         return self;
 
     JSC::JSGlobalObject* globalObject = toJS([value.context JSGlobalContextRef]);
+    JSC::VM& vm = globalObject->vm();
+    JSC::JSLockHolder apiLocker(vm);
     auto& owner = managedValueHandleOwner();
     JSC::Weak<JSC::JSGlobalObject> weak(globalObject, &owner, (__bridge void*)self);
     m_globalObject.swap(weak);
 
-    m_lock = &globalObject->vm().apiLock();
+    m_lock = &vm.apiLock();
 
     NSPointerFunctionsOptions weakIDOptions = NSPointerFunctionsWeakMemory | NSPointerFunctionsObjectPersonality;
     NSPointerFunctionsOptions integerOptions = NSPointerFunctionsOpaqueMemory | NSPointerFunctionsIntegerPersonality;
@@ -149,11 +151,10 @@ static JSManagedValueHandleOwner& managedValueHandleOwner()
         return nil;
 
     WTF::Locker<JSC::JSLock> locker(m_lock.get());
-    JSC::VM* vm = m_lock->vm();
+    RefPtr<JSC::VM> vm = m_lock->vm();
     if (!vm)
         return nil;
 
-    JSC::JSLockHolder apiLocker(vm);
     if (!m_globalObject)
         return nil;
     if (m_weakValue.isClear())

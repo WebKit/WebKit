@@ -156,7 +156,6 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
     validOutputs.push_back(SH_SPIRV_VULKAN_OUTPUT);
     validOutputs.push_back(SH_HLSL_3_0_OUTPUT);
     validOutputs.push_back(SH_HLSL_4_1_OUTPUT);
-    validOutputs.push_back(SH_HLSL_4_0_FL9_3_OUTPUT);
 #endif
 #ifdef ANGLE_ENABLE_METAL
     validOutputs.push_back(SH_MSL_METAL_OUTPUT);
@@ -213,6 +212,7 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
         resources.EXT_shader_framebuffer_fetch    = 1;
         resources.NV_shader_framebuffer_fetch     = 1;
         resources.ARM_shader_framebuffer_fetch    = 1;
+        resources.ARM_shader_framebuffer_fetch_depth_stencil = 1;
         resources.EXT_YUV_target                  = 1;
         resources.APPLE_clip_distance             = 1;
         resources.MaxDualSourceDrawBuffers        = 1;

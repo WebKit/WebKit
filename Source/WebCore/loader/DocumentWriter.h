@@ -49,7 +49,7 @@ public:
     void replaceDocumentWithResultOfExecutingJavascriptURL(const String&, Document* ownerDocument);
 
     bool begin();
-    bool begin(const URL&, bool dispatchWindowObjectAvailable = true, Document* ownerDocument = nullptr, ScriptExecutionContextIdentifier = { }, const NavigationAction* triggeringAction = nullptr);
+    bool begin(const URL&, bool dispatchWindowObjectAvailable = true, Document* ownerDocument = nullptr, std::optional<ScriptExecutionContextIdentifier> = std::nullopt, const NavigationAction* triggeringAction = nullptr);
     void addData(const SharedBuffer&);
     void insertDataSynchronously(const String&); // For an internal use only to prevent the parser from yielding.
     WEBCORE_EXPORT void end();
@@ -69,7 +69,7 @@ public:
     void setDocumentWasLoadedAsPartOfNavigation();
 
 private:
-    Ref<Document> createDocument(const URL&, ScriptExecutionContextIdentifier);
+    Ref<Document> createDocument(const URL&, std::optional<ScriptExecutionContextIdentifier>);
     void clear();
     RefPtr<DocumentParser> protectedParser() const;
 

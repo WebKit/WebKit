@@ -236,6 +236,35 @@ std::optional<WebKit::CoreIPCNSSomeFoundationType> ArgumentCoder<WebKit::CoreIPC
     };
 }
 
+void ArgumentCoder<WebKit::CoreIPCclass NSSomeOtherFoundationType>::encode(Encoder& encoder, const WebKit::CoreIPCclass NSSomeOtherFoundationType& instance)
+{
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.m_DictionaryKey)>, RetainPtr<NSDictionary>>);
+    struct ShouldBeSameSizeAsclass_NSSomeOtherFoundationType : public VirtualTableAndRefCountOverhead<std::is_polymorphic_v<WebKit::CoreIPCclass NSSomeOtherFoundationType>, false> {
+        RetainPtr<NSDictionary> DictionaryKey;
+    };
+    static_assert(sizeof(ShouldBeSameSizeAsclass_NSSomeOtherFoundationType) == sizeof(WebKit::CoreIPCclass NSSomeOtherFoundationType));
+    static_assert(MembersInCorrectOrder < 0
+        , offsetof(WebKit::CoreIPCclass NSSomeOtherFoundationType, m_DictionaryKey)
+    >::value);
+
+    encoder << instance.m_DictionaryKey;
+}
+
+std::optional<WebKit::CoreIPCclass NSSomeOtherFoundationType> ArgumentCoder<WebKit::CoreIPCclass NSSomeOtherFoundationType>::decode(Decoder& decoder)
+{
+    auto DictionaryKey = decoder.decode<RetainPtr<NSDictionary>>();
+    if (!DictionaryKey)
+        return std::nullopt;
+
+    if (UNLIKELY(!decoder.isValid()))
+        return std::nullopt;
+    return {
+        WebKit::CoreIPCclass NSSomeOtherFoundationType {
+            WTFMove(*DictionaryKey)
+        }
+    };
+}
+
 #if ENABLE(DATA_DETECTION)
 void ArgumentCoder<WebKit::CoreIPCDDScannerResult>::encode(Encoder& encoder, const WebKit::CoreIPCDDScannerResult& instance)
 {

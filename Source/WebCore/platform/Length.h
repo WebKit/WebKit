@@ -1,6 +1,6 @@
 /*
     Copyright (C) 1999 Lars Knoll (knoll@kde.org)
-    Copyright (C) 2006, 2008, 2014 Apple Inc. All rights reserved.
+    Copyright (C) 2006-2024 Apple Inc. All rights reserved.
     Copyright (C) 2011 Rik Cabanier (cabanier@adobe.com)
     Copyright (C) 2011 Adobe Systems Incorporated. All rights reserved.
 
@@ -168,6 +168,8 @@ public:
     bool isMinIntrinsic() const;
     bool isContent() const;
 
+    bool isEmptyValue() const { return m_isEmptyValue; }
+
     bool hasQuirk() const;
     void setHasQuirk(bool);
 
@@ -192,7 +194,19 @@ public:
 
     bool isLegacyIntrinsic() const;
 
+    struct MarkableTraits {
+        static bool isEmptyValue(const Length& length) { return length.isEmptyValue(); }
+        static Length emptyValue() { return Length::createEmptyValue(); }
+    };
+
 private:
+    static Length createEmptyValue()
+    {
+        auto result = Length(LengthType::Undefined);
+        result.m_isEmptyValue = true;
+        return result;
+    }
+
     bool isCalculatedEqual(const Length&) const;
 
     void initialize(const Length&);
@@ -211,6 +225,7 @@ private:
     LengthType m_type;
     bool m_hasQuirk { false };
     bool m_isFloat { false };
+    bool m_isEmptyValue { false };
 };
 
 // Blend two lengths to produce a new length that is in between them. Used for animation.
@@ -298,6 +313,7 @@ inline void Length::initialize(const Length& other)
 {
     m_type = other.m_type;
     m_hasQuirk = other.m_hasQuirk;
+    m_isEmptyValue = other.m_isEmptyValue;
 
     switch (m_type) {
     case LengthType::Auto:
@@ -332,6 +348,7 @@ inline void Length::initialize(Length&& other)
 {
     m_type = other.m_type;
     m_hasQuirk = other.m_hasQuirk;
+    m_isEmptyValue = other.m_isEmptyValue;
 
     switch (m_type) {
     case LengthType::Auto:
@@ -374,6 +391,8 @@ inline bool Length::operator==(const Length& other) const
     // FIXME: This might be too long to be inline.
     if (type() != other.type() || hasQuirk() != other.hasQuirk())
         return false;
+    if (isEmptyValue() || other.isEmptyValue())
+        return isEmptyValue() && other.isEmptyValue();
     if (isUndefined())
         return true;
     if (isCalculated())
@@ -398,6 +417,7 @@ inline Length& Length::operator*=(float value)
 inline float Length::value() const
 {
     ASSERT(!isUndefined());
+    ASSERT(!isEmptyValue());
     ASSERT(!isCalculated());
     return m_isFloat ? m_floatValue : m_intValue;
 }
@@ -440,7 +460,7 @@ inline void Length::setHasQuirk(bool hasQuirk)
 
 inline void Length::setValue(LengthType type, int value)
 {
-    ASSERT(m_type != LengthType::Calculated);
+    ASSERT(!isCalculated());
     ASSERT(type != LengthType::Calculated);
     m_type = type;
     m_intValue = value;
@@ -449,7 +469,7 @@ inline void Length::setValue(LengthType type, int value)
 
 inline void Length::setValue(LengthType type, float value)
 {
-    ASSERT(m_type != LengthType::Calculated);
+    ASSERT(!isCalculated());
     ASSERT(type != LengthType::Calculated);
     m_type = type;
     m_floatValue = value;
@@ -458,7 +478,7 @@ inline void Length::setValue(LengthType type, float value)
 
 inline void Length::setValue(LengthType type, LayoutUnit value)
 {
-    ASSERT(m_type != LengthType::Calculated);
+    ASSERT(!isCalculated());
     ASSERT(type != LengthType::Calculated);
     m_type = type;
     m_floatValue = value;
@@ -492,6 +512,7 @@ inline bool Length::isMinContent() const
 
 inline bool Length::isNegative() const
 {
+    ASSERT(!isEmptyValue());
     if (isUndefined() || isCalculated())
         return false;
     return m_isFloat ? (m_floatValue < 0) : (m_intValue < 0);
@@ -519,6 +540,7 @@ inline bool Length::isPercentOrCalculated() const
 
 inline bool Length::isPositive() const
 {
+    ASSERT(!isEmptyValue());
     if (isUndefined())
         return false;
     if (isCalculated())
@@ -529,6 +551,7 @@ inline bool Length::isPositive() const
 inline bool Length::isZero() const
 {
     ASSERT(!isUndefined());
+    ASSERT(!isEmptyValue());
     if (isCalculated() || isAuto())
         return false;
     return m_isFloat ? !m_floatValue : !m_intValue;

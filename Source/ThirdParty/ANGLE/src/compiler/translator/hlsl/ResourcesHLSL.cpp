@@ -439,19 +439,6 @@ void ResourcesHLSL::outputHLSLImageUniformGroup(TInfoSinkBase &out,
     *groupTextureRegisterIndex += groupRegisterCount;
 }
 
-void ResourcesHLSL::outputHLSL4_0_FL9_3Sampler(TInfoSinkBase &out,
-                                               const TType &type,
-                                               const TVariable &variable,
-                                               const unsigned int registerIndex)
-{
-    out << "uniform " << SamplerString(type.getBasicType()) << " sampler_"
-        << DecorateVariableIfNeeded(variable) << ArrayString(type) << " : register(s"
-        << str(registerIndex) << ");\n";
-    out << "uniform " << TextureString(type.getBasicType()) << " texture_"
-        << DecorateVariableIfNeeded(variable) << ArrayString(type) << " : register(t"
-        << str(registerIndex) << ");\n";
-}
-
 void ResourcesHLSL::outputUniform(TInfoSinkBase &out,
                                   const TType &type,
                                   const TVariable &variable,
@@ -515,11 +502,6 @@ void ResourcesHLSL::uniformsHeader(TInfoSinkBase &out,
         {
             HLSLTextureGroup group = TextureGroup(type.getBasicType());
             groupedSamplerUniforms[group].push_back(&variable);
-        }
-        else if (outputType == SH_HLSL_4_0_FL9_3_OUTPUT && IsSampler(type.getBasicType()))
-        {
-            unsigned int registerIndex = assignUniformRegister(type, variable.name(), nullptr);
-            outputHLSL4_0_FL9_3Sampler(out, type, variable, registerIndex);
         }
         else if (outputType == SH_HLSL_4_1_OUTPUT && IsImage(type.getBasicType()))
         {
@@ -589,12 +571,6 @@ void ResourcesHLSL::uniformsHeader(TInfoSinkBase &out,
                         HLSLTextureGroup group = TextureGroup(samplerType.getBasicType());
                         groupedSamplerUniforms[group].push_back(sampler);
                         samplerInStructSymbolsToAPINames[sampler] = symbolsToAPINames[sampler];
-                    }
-                    else if (outputType == SH_HLSL_4_0_FL9_3_OUTPUT)
-                    {
-                        unsigned int registerIndex = assignSamplerInStructUniformRegister(
-                            samplerType, symbolsToAPINames[sampler], nullptr);
-                        outputHLSL4_0_FL9_3Sampler(out, samplerType, *sampler, registerIndex);
                     }
                     else
                     {

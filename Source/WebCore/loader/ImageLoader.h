@@ -31,15 +31,6 @@
 #include <wtf/text/AtomString.h>
 
 namespace WebCore {
-class ImageLoader;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::ImageLoader> : std::true_type { };
-}
-
-namespace WebCore {
 
 class DeferredPromise;
 class Document;
@@ -56,8 +47,12 @@ enum class LazyImageLoadState : uint8_t { None, Deferred, LoadImmediately, FullI
 
 class ImageLoader : public CachedImageClient {
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Loader);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(ImageLoader);
 public:
     virtual ~ImageLoader();
+
+    void ref() const;
+    void deref() const;
 
     // This function should be called when the element is attached to a document; starts
     // loading if a load hasn't already been started.

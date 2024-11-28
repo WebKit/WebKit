@@ -30,6 +30,8 @@
 #include "JSCellInlines.h"
 #include <wtf/text/MakeString.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 FileBasedFuzzerAgentBase::FileBasedFuzzerAgentBase(VM&)
@@ -51,6 +53,8 @@ OpcodeID FileBasedFuzzerAgentBase::opcodeAliasForLookupKey(const OpcodeID& opcod
         return op_get_by_val;
     if (opcodeId == op_construct_varargs)
         return op_construct;
+    if (opcodeId == op_super_construct_varargs)
+        return op_super_construct;
     return opcodeId;
 }
 
@@ -81,3 +85,5 @@ SpeculatedType FileBasedFuzzerAgentBase::getPrediction(CodeBlock* codeBlock, con
 }
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

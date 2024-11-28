@@ -54,10 +54,12 @@ public:
     virtual bool isStreamingContent() const = 0;
     virtual bool attachToElement(WeakPtr<HTMLMediaElement>&&) = 0;
     virtual void detachFromElement() = 0;
+    virtual void elementIsShuttingDown() = 0;
     virtual void openIfDeferredOpen() = 0;
     virtual bool isManaged() const = 0;
     virtual void setAsSrcObject(bool) = 0;
     virtual void memoryPressure() = 0;
+    virtual bool detachable() const = 0;
 };
 
 } // namespace WebCore

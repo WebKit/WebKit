@@ -141,6 +141,7 @@ enum ShouldReplaceDocumentIfJavaScriptURL {
     DoNotReplaceDocumentIfJavaScriptURL
 };
 
+enum class IsMainResourceLoad : bool { No, Yes };
 enum class LockHistory : bool { No, Yes };
 enum class LockBackForwardList : bool { No, Yes };
 enum class AllowNavigationToInvalidURL : bool { No, Yes };

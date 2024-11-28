@@ -347,7 +347,7 @@ void WriteParamValueReplay<ParamType::TFramebufferID>(std::ostream &os,
                                                       const CallCapture &call,
                                                       gl::FramebufferID value)
 {
-    os << "gFramebufferMap[" << value.value << "]";
+    os << "gFramebufferMapPerContext[" << call.contextID.value << "][" << value.value << "]";
 }
 
 template <>
@@ -642,6 +642,24 @@ void WriteParamValueReplay<ParamType::TEGLTimeKHR>(std::ostream &os,
                                                    EGLTimeKHR value)
 {
     os << value << "ul";
+}
+
+template <>
+void WriteParamValueReplay<ParamType::TGLGETBLOBPROCANGLE>(std::ostream &os,
+                                                           const CallCapture &call,
+                                                           GLGETBLOBPROCANGLE value)
+{
+    // It's not necessary to implement correct capture for these types.
+    os << "0";
+}
+
+template <>
+void WriteParamValueReplay<ParamType::TGLSETBLOBPROCANGLE>(std::ostream &os,
+                                                           const CallCapture &call,
+                                                           GLSETBLOBPROCANGLE value)
+{
+    // It's not necessary to implement correct capture for these types.
+    os << "0";
 }
 
 template <typename ParamValueType>

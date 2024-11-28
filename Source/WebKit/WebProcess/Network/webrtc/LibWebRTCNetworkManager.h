@@ -39,8 +39,11 @@ namespace WebKit {
 class LibWebRTCNetworkManager final : public WebCore::RTCNetworkManager, public rtc::NetworkManagerBase, public webrtc::MdnsResponderInterface, public WebRTCMonitorObserver {
     WTF_MAKE_TZONE_ALLOCATED(LibWebRTCNetworkManager);
 public:
-    static LibWebRTCNetworkManager* getOrCreate(WebCore::ScriptExecutionContextIdentifier);
+    static RefPtr<LibWebRTCNetworkManager> getOrCreate(WebCore::ScriptExecutionContextIdentifier);
     ~LibWebRTCNetworkManager();
+
+    void ref() const final { ThreadSafeRefCounted::ref(); }
+    void deref() const final { ThreadSafeRefCounted::deref(); }
 
     void setEnumeratingAllNetworkInterfacesEnabled(bool);
     void setEnumeratingVisibleNetworkInterfacesEnabled(bool);

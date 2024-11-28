@@ -33,7 +33,6 @@
 #include "CSSParser.h"
 #include "CSSParserIdioms.h"
 #include "CSSPropertyParserConsumer+Font.h"
-#include "CSSPropertyParserHelpers.h"
 #include "CSSRuleList.h"
 #include "CSSStyleRule.h"
 #include "CSSValueList.h"
@@ -65,6 +64,8 @@
 #include "VisibleUnits.h"
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace WebCore {
 
@@ -1358,6 +1359,10 @@ void EditingStyle::mergeStyle(const StyleProperties* style, CSSPropertyOverrideM
 static Ref<MutableStyleProperties> styleFromMatchedRulesForElement(Element& element, unsigned rulesToInclude)
 {
     Ref style = MutableStyleProperties::create();
+
+    if (!element.isConnected())
+        return style;
+
     for (auto& matchedRule : element.styleResolver().styleRulesForElement(&element, rulesToInclude))
         style->mergeAndOverrideOnConflict(matchedRule->protectedProperties());
     
@@ -2008,3 +2013,5 @@ RefPtr<CSSValue> backgroundColorInEffect(Node* node)
 }
 
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

@@ -34,9 +34,9 @@
 #include "XRGPUProjectionLayerInit.h"
 
 #include <ExceptionOr.h>
-#include <wtf/IsoMalloc.h>
 #include <wtf/Ref.h>
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -67,7 +67,7 @@ struct XRQuadLayerInit;
 
 // https://github.com/immersive-web/WebXR-WebGPU-Binding/blob/main/explainer.md
 class XRGPUBinding : public RefCounted<XRGPUBinding> {
-    WTF_MAKE_ISO_ALLOCATED(XRGPUBinding);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(XRGPUBinding);
 public:
     static Ref<XRGPUBinding> create(const WebXRSession& session, GPUDevice& device)
     {
@@ -81,6 +81,8 @@ public:
     ExceptionOr<Ref<XRGPUSubImage>> getViewSubImage(XRProjectionLayer&, WebXRView&);
     GPUTextureFormat getPreferredColorFormat();
 
+    GPUDevice& device();
+
     // The core specification doesn't require these, support will be added later.
     // XRQuadLayer createQuadLayer(optional XRGPUQuadLayerInit init);
     // XRCylinderLayer createCylinderLayer(optional XRGPUCylinderLayerInit init);
@@ -92,6 +94,7 @@ private:
     RefPtr<WebGPU::XRBinding> m_backing;
     RefPtr<const WebXRSession> m_session;
     std::optional<XRGPUProjectionLayerInit> m_init;
+    Ref<GPUDevice> m_device;
 };
 
 } // namespace WebCore

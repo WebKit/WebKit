@@ -46,6 +46,8 @@
 #include <wtf/text/StringView.h>
 #include <wtf/unicode/CharacterNames.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 // We don't let our line box tree for a single line get any deeper than this.
@@ -825,3 +827,5 @@ inline LegacyInlineIterator BreakingContext::handleEndOfLine()
 }
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

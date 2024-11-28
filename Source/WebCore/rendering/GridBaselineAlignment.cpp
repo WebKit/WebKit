@@ -63,12 +63,14 @@ LayoutUnit GridBaselineAlignment::ascentForGridItem(const RenderBox& gridItem, G
 
     ASSERT(position == ItemPosition::Baseline || position == ItemPosition::LastBaseline);
     auto baseline = 0_lu;
-    auto gridItemMargin = alignmentAxis == GridAxis::GridColumnAxis ? gridItem.marginBlockStart(m_writingMode) : gridItem.marginInlineStart(m_writingMode);
+    auto gridItemMargin = alignmentAxis == GridAxis::GridColumnAxis
+        ? gridItem.marginBefore(m_writingMode)
+        : gridItem.marginStart(m_writingMode);
     auto& parentStyle = gridItem.parent()->style();
 
     if (alignmentAxis == GridAxis::GridColumnAxis) {
         auto alignmentContextDirection = [&] {
-            return parentStyle.isHorizontalWritingMode() ? LineDirectionMode::HorizontalLine : LineDirectionMode::VerticalLine;
+            return parentStyle.writingMode().isHorizontal() ? LineDirectionMode::HorizontalLine : LineDirectionMode::VerticalLine;
         };
 
         if (!isParallelToAlignmentAxisForGridItem(gridItem, alignmentAxis))
@@ -84,7 +86,7 @@ LayoutUnit GridBaselineAlignment::ascentForGridItem(const RenderBox& gridItem, G
         if (baseline == noValidBaseline) {
             ASSERT(!gridItem.needsLayout());
             if (isVerticalAlignmentContext(alignmentAxis))
-                return isFlippedWritingMode(m_writingMode) ? gridItemMargin + gridItem.size().width().toInt() : gridItemMargin;
+                return m_writingMode.isBlockFlipped() ? gridItemMargin + gridItem.size().width().toInt() : gridItemMargin;
             return gridItemMargin + synthesizedBaseline(gridItem, parentStyle, LineDirectionMode::HorizontalLine, BaselineSynthesisEdge::BorderBox);
         }
     }
@@ -103,18 +105,18 @@ LayoutUnit GridBaselineAlignment::descentForGridItem(const RenderBox& gridItem, 
 bool GridBaselineAlignment::isDescentBaselineForGridItem(const RenderBox& gridItem, GridAxis alignmentAxis) const
 {
     return isVerticalAlignmentContext(alignmentAxis)
-        && ((gridItem.style().isFlippedBlocksWritingMode() && !isFlippedWritingMode(m_writingMode))
-            || (gridItem.style().isFlippedLinesWritingMode() && isFlippedWritingMode(m_writingMode)));
+        && ((gridItem.writingMode().isBlockFlipped() && !m_writingMode.isBlockFlipped())
+            || (gridItem.writingMode().isLineInverted() && m_writingMode.isBlockFlipped()));
 }
 
 bool GridBaselineAlignment::isVerticalAlignmentContext(GridAxis alignmentAxis) const
 {
-    return alignmentAxis == GridAxis::GridRowAxis ? isHorizontalWritingMode(m_writingMode) : !isHorizontalWritingMode(m_writingMode);
+    return (alignmentAxis == GridAxis::GridRowAxis) == m_writingMode.isHorizontal();
 }
 
 bool GridBaselineAlignment::isOrthogonalGridItemForBaseline(const RenderBox& gridItem) const
 {
-    return isHorizontalWritingMode(m_writingMode) != gridItem.isHorizontalWritingMode();
+    return m_writingMode.isOrthogonal(gridItem.writingMode());
 }
 
 bool GridBaselineAlignment::isParallelToAlignmentAxisForGridItem(const RenderBox& gridItem, GridAxis alignmentAxis) const

@@ -29,6 +29,7 @@
 
 #import "ControlFactoryCocoa.h"
 #import "WebControlView.h"
+#import <wtf/TZoneMalloc.h>
 
 OBJC_CLASS NSServicesRolloverButtonCell;
 
@@ -38,6 +39,7 @@ class FloatRect;
 struct ControlStyle;
 
 class ControlFactoryMac final : public ControlFactoryCocoa {
+    WTF_MAKE_TZONE_ALLOCATED(ControlFactoryMac);
 public:
     using ControlFactoryCocoa::ControlFactoryCocoa;
 

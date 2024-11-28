@@ -27,8 +27,11 @@
 #include "DeviceOrientationClientMock.h"
 
 #include "DeviceOrientationController.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(DeviceOrientationClientMock);
 
 DeviceOrientationClientMock::DeviceOrientationClientMock()
     : m_controller(0)

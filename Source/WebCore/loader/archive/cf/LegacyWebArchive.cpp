@@ -584,7 +584,7 @@ static void addSubresourcesForAttachmentElementsIfNecessary(LocalFrame& frame, c
 
 #endif
 
-static HashMap<RefPtr<CSSStyleSheet>, String> addSubresourcesForCSSStyleSheetsIfNecessary(LocalFrame& frame, const String& subresourcesDirectoryName, HashSet<String>& uniqueFileNames, HashMap<String, String>& uniqueSubresources, Vector<Ref<ArchiveResource>>& subresources)
+static UncheckedKeyHashMap<RefPtr<CSSStyleSheet>, String> addSubresourcesForCSSStyleSheetsIfNecessary(LocalFrame& frame, const String& subresourcesDirectoryName, HashSet<String>& uniqueFileNames, UncheckedKeyHashMap<String, String>& uniqueSubresources, Vector<Ref<ArchiveResource>>& subresources)
 {
     if (subresourcesDirectoryName.isEmpty())
         return { };
@@ -593,8 +593,8 @@ static HashMap<RefPtr<CSSStyleSheet>, String> addSubresourcesForCSSStyleSheetsIf
     if (!document)
         return { };
 
-    HashMap<RefPtr<CSSStyleSheet>, String> uniqueCSSStyleSheets;
-    HashMap<RefPtr<CSSStyleSheet>, String> relativeUniqueCSSStyleSheets;
+    UncheckedKeyHashMap<RefPtr<CSSStyleSheet>, String> uniqueCSSStyleSheets;
+    UncheckedKeyHashMap<RefPtr<CSSStyleSheet>, String> relativeUniqueCSSStyleSheets;
     Ref documentStyleSheets = document->styleSheets();
     for (unsigned index = 0; index < documentStyleSheets->length(); ++index) {
         RefPtr cssStyleSheet = dynamicDowncast<CSSStyleSheet>(documentStyleSheets->item(index));
@@ -640,7 +640,7 @@ static HashMap<RefPtr<CSSStyleSheet>, String> addSubresourcesForCSSStyleSheetsIf
     }
 
     auto frameName = frame.tree().uniqueName();
-    HashMap<String, String> relativeUniqueSubresources;
+    UncheckedKeyHashMap<String, String> relativeUniqueSubresources;
     for (auto& [urlString, path] : uniqueSubresources) {
         // The style sheet files are stored in the same directory as other subresources.
         relativeUniqueSubresources.add(urlString, FileSystem::lastComponentOfPathIgnoringTrailingSlash(path));
@@ -671,7 +671,7 @@ RefPtr<LegacyWebArchive> LegacyWebArchive::create(const String& markupString, Lo
 
     Vector<Ref<LegacyWebArchive>> subframeArchives;
     Vector<Ref<ArchiveResource>> subresources;
-    HashMap<String, String> uniqueSubresources;
+    UncheckedKeyHashMap<String, String> uniqueSubresources;
     HashSet<String> uniqueFileNames;
     String subresourcesDirectoryName = mainFrameFilePath.isNull() ? String { } : makeString(mainFrameFilePath, "_files"_s);
 

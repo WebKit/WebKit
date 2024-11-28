@@ -49,6 +49,7 @@ public:
     bool punchOutWhiteBackgroundsInDarkMode() const { return boolWebPreferenceFeatureValue("PunchOutWhiteBackgroundsInDarkMode", false); }
     bool useServiceWorkerShortTimeout() const { return boolWebPreferenceFeatureValue("ShouldUseServiceWorkerShortTimeout", false); }
     bool accessibilityIsolatedTreeMode() const { return boolWebPreferenceFeatureValue("IsAccessibilityIsolatedTreeEnabled", false); }
+    bool siteIsolationEnabled() const { return boolWebPreferenceFeatureValue("SiteIsolationEnabled", false); }
 
     bool allowsLinkPreview() const { return boolTestRunnerFeatureValue("allowsLinkPreview"); }
     bool appHighlightsEnabled() const { return boolTestRunnerFeatureValue("appHighlightsEnabled"); }
@@ -84,6 +85,10 @@ public:
     bool longPressActionsEnabled() const { return boolTestRunnerFeatureValue("longPressActionsEnabled"); }
     bool enhancedWindowingEnabled() const { return boolTestRunnerFeatureValue("enhancedWindowingEnabled"); }
     bool textExtractionEnabled() const { return boolTestRunnerFeatureValue("textExtractionEnabled"); }
+    bool useHardwareKeyboardMode() const { return boolTestRunnerFeatureValue("useHardwareKeyboardMode"); }
+    bool shouldIgnoreWebProcessTermination() const { return boolTestRunnerFeatureValue("ignoreWebProcessTermination"); }
+    bool enableMetalDebugDevice() const { return boolTestRunnerFeatureValue("enableMetalDebugDevice"); }
+    bool enableMetalShaderValidation() const { return boolTestRunnerFeatureValue("enableMetalShaderValidation"); }
     double contentInsetTop() const { return doubleTestRunnerFeatureValue("contentInset.top"); }
     double obscuredInsetTop() const { return doubleTestRunnerFeatureValue("obscuredInset.top"); }
     double horizontalSystemMinimumLayoutMargin() const { return doubleTestRunnerFeatureValue("horizontalSystemMinimumLayoutMargin"); }

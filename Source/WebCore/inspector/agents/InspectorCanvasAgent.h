@@ -34,21 +34,13 @@
 #include <JavaScriptCore/InspectorBackendDispatchers.h>
 #include <JavaScriptCore/InspectorFrontendDispatchers.h>
 #include <initializer_list>
+#include <wtf/CheckedPtr.h>
 #include <wtf/Forward.h>
 #include <wtf/RobinHoodHashMap.h>
 #include <wtf/RobinHoodHashSet.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
-
-namespace WebCore {
-class InspectorCanvasAgent;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::InspectorCanvasAgent> : std::true_type { };
-}
 
 namespace Inspector {
 class InjectedScriptManager;
@@ -65,9 +57,10 @@ class WebGLProgram;
 class WebGLRenderingContextBase;
 #endif // ENABLE(WEBGL)
 
-class InspectorCanvasAgent : public InspectorAgentBase, public Inspector::CanvasBackendDispatcherHandler, public CanvasObserver {
+class InspectorCanvasAgent : public InspectorAgentBase, public Inspector::CanvasBackendDispatcherHandler, public CanvasObserver, public CanMakeCheckedPtr<InspectorCanvasAgent> {
     WTF_MAKE_NONCOPYABLE(InspectorCanvasAgent);
     WTF_MAKE_TZONE_ALLOCATED(InspectorCanvasAgent);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(InspectorCanvasAgent);
 public:
     ~InspectorCanvasAgent();
 

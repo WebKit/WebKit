@@ -9,6 +9,8 @@ info: |
 includes: [propertyHelper.js]
 ---*/
 
-verifyNotEnumerable(Map, 'prototype');
-verifyNotWritable(Map, 'prototype');
-verifyNotConfigurable(Map, 'prototype');
+verifyProperty(Map, 'prototype', {
+  writable: false,
+  enumerable: false,
+  configurable: false,
+});

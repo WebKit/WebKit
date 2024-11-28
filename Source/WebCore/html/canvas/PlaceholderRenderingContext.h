@@ -45,14 +45,17 @@ public:
     virtual ~PlaceholderRenderingContextSource() = default;
 
     // Called by the offscreen context to submit the frame.
-    virtual void setPlaceholderBuffer(ImageBuffer&);
+    void setPlaceholderBuffer(ImageBuffer&);
 
     // Called by the placeholder context to attach to compositor layer.
-    virtual void setContentsToLayer(GraphicsLayer&) = 0;
+    void setContentsToLayer(GraphicsLayer&);
 
-protected:
-    PlaceholderRenderingContextSource(PlaceholderRenderingContext&);
+private:
+    explicit PlaceholderRenderingContextSource(PlaceholderRenderingContext&);
+
     WeakPtr<PlaceholderRenderingContext> m_placeholder; // For main thread use.
+    Lock m_lock;
+    RefPtr<GraphicsLayerAsyncContentsDisplayDelegate> m_delegate WTF_GUARDED_BY_LOCK(m_lock);
 };
 
 class PlaceholderRenderingContext final : public CanvasRenderingContext {
@@ -68,8 +71,6 @@ public:
 
 private:
     PlaceholderRenderingContext(HTMLCanvasElement&);
-    bool isPlaceholder() const final { return true; }
-    bool delegatesDisplay() const final { return true; }
     void setContentsToLayer(GraphicsLayer&) final;
 
     Ref<PlaceholderRenderingContextSource> m_source;

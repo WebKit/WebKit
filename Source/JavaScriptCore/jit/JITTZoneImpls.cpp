@@ -27,12 +27,14 @@
 
 #if ENABLE(JIT)
 
+#include "JITMathIC.h"
 #include "JSInterfaceJIT.h"
 #include "SpecializedThunkJIT.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace JSC {
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(MathICGenerationState);
 WTF_MAKE_TZONE_ALLOCATED_IMPL(JSInterfaceJIT);
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SpecializedThunkJIT);
 

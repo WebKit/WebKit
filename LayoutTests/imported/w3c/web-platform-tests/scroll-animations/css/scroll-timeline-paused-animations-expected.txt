@@ -1,4 +1,4 @@
 
-FAIL Test that the scroll animation is paused assert_equals: 'actual' unit type must be 'percent' for "timeline time reset" expected (string) "percent" but got (undefined) undefined
-FAIL Test that the scroll animation is paused by updating animation-play-state assert_equals: 'actual' unit type must be 'percent' for "timeline time reset" expected (string) "percent" but got (undefined) undefined
+PASS Test that the scroll animation is paused
+FAIL Test that the scroll animation is paused by updating animation-play-state assert_equals: Current time preserved when pause-pending. expected "200px" but got "50px"
 

@@ -101,12 +101,12 @@ public:
 
     void traverseNextTextBox() { m_inlineBox = inlineTextBox()->nextTextBox(); }
 
-    void traverseNextOnLine()
+    void traverseNextLeafOnLine()
     {
         m_inlineBox = m_inlineBox->nextLeafOnLine();
     }
 
-    void traversePreviousOnLine()
+    void traversePreviousLeafOnLine()
     {
         m_inlineBox = m_inlineBox->previousLeafOnLine();
     }
@@ -145,6 +145,30 @@ public:
 
     LegacyInlineBox* legacyInlineBox() const { return const_cast<LegacyInlineBox*>(m_inlineBox); }
     const LegacyRootInlineBox& rootInlineBox() const { return m_inlineBox->root(); }
+
+    void traverseNextBoxOnLine()
+    {
+        if (auto* flowBox = dynamicDowncast<LegacyInlineFlowBox>(m_inlineBox); flowBox && flowBox->firstChild()) {
+            m_inlineBox = flowBox->firstChild();
+            return;
+        }
+
+        traverseNextBoxOnLineSkippingChildren();
+    }
+
+    void traverseNextBoxOnLineSkippingChildren()
+    {
+        if (m_inlineBox->nextOnLine()) {
+            m_inlineBox = m_inlineBox->nextOnLine();
+            return;
+        }
+
+        auto* parent = m_inlineBox->parent();
+        while (parent && !parent->nextOnLine())
+            parent = parent->parent();
+
+        m_inlineBox = parent ? parent->nextOnLine() : nullptr;
+    }
 
 private:
     const LegacyInlineTextBox* inlineTextBox() const { return downcast<LegacyInlineTextBox>(m_inlineBox); }

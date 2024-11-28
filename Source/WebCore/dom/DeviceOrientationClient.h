@@ -29,6 +29,7 @@
 #include "DeviceClient.h"
 #include <wtf/Noncopyable.h>
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
@@ -37,6 +38,7 @@ class DeviceOrientationData;
 class Page;
 
 class DeviceOrientationClient : public DeviceClient {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(DeviceOrientationClient);
     WTF_MAKE_NONCOPYABLE(DeviceOrientationClient);
 public:
     DeviceOrientationClient() = default;

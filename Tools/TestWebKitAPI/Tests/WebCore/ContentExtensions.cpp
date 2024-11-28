@@ -1557,6 +1557,7 @@ TEST_F(ContentExtensionTest, InvalidJSON)
 
     checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-domain\":[\"a\"],\"unless-domain\":[\"a\"]}}]"_s, ContentExtensionError::JSONMultipleConditions);
     checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-top-url\":[\"a\"],\"unless-top-url\":[]}}]"_s, ContentExtensionError::JSONMultipleConditions);
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-frame-url\":[\"a\"],\"unless-frame-url\":[]}}]"_s, ContentExtensionError::JSONMultipleConditions);
     checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-top-url\":[\"a\"],\"if-frame-url\":[]}}]"_s, ContentExtensionError::JSONMultipleConditions);
     checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-top-url\":[\"a\"],\"unless-top-url\":[\"a\"]}}]"_s, ContentExtensionError::JSONMultipleConditions);
     checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-domain\":[\"a\"],\"if-top-url\":[\"a\"]}}]"_s, ContentExtensionError::JSONMultipleConditions);
@@ -3112,6 +3113,37 @@ TEST_F(ContentExtensionTest, IfFrameURL)
     auto matchingEverything = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"https\", \"if-frame-url\":[\".*\"]}}]"_s);
     testRequest(matchingEverything, requestInTopAndFrameURLs("https://example.com/"_s, "https://webkit.org/"_s, "https://whatwg.org/"_s), { variantIndex<BlockLoadAction> });
     testRequest(matchingEverything, requestInTopAndFrameURLs("http://example.com/"_s, "https://webkit.org/"_s, "https://webkit.org/"_s), { });
+}
+
+TEST_F(ContentExtensionTest, UnlessFrameURL)
+{
+    auto basic = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"https\", \"unless-frame-url\":[\"whatwg\"]}}]"_s);
+    testRequest(basic, requestInTopAndFrameURLs("https://example.com/"_s, "https://webkit.org/"_s, "https://webkit.org/"_s), { variantIndex<BlockLoadAction> });
+    testRequest(basic, requestInTopAndFrameURLs("https://example.com/"_s, "https://webkit.org/"_s, "https://whatwg.org/"_s), { });
+
+    auto caseSensitivity = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"https\", \"unless-frame-url\":[\"whatwg\"],\"frame-url-filter-is-case-sensitive\":true}}]"_s);
+    auto caseSensitivityRequest = requestInTopAndFrameURLs("https://example.com/"_s, "https://webkit.org/"_s, "https://example.com/wHaTwG"_s);
+    testRequest(basic, caseSensitivityRequest, { });
+    testRequest(caseSensitivity, caseSensitivityRequest, { variantIndex<BlockLoadAction> });
+
+    auto otherFlags = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"https\", \"unless-frame-url\":[\"whatwg\"],\"resource-type\":[\"image\"]}}]"_s);
+    testRequest(otherFlags, requestInTopAndFrameURLs("https://example.com/"_s, "https://webkit.org/"_s, "https://whatwg.org/"_s, ResourceType::Document), { });
+    testRequest(otherFlags, requestInTopAndFrameURLs("https://example.com/"_s, "https://webkit.org/"_s, "https://whatwg.org/"_s, ResourceType::Image), { });
+    testRequest(otherFlags, requestInTopAndFrameURLs("https://example.com/"_s, "https://webkit.org/"_s, "https://www.w3.org/"_s, ResourceType::Document), { });
+    testRequest(otherFlags, requestInTopAndFrameURLs("https://example.com/"_s, "https://webkit.org/"_s, "https://www.w3.org/"_s, ResourceType::Image), { variantIndex<BlockLoadAction> });
+
+    auto otherRulesWithConditions = makeBackend("["
+        "{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"https\", \"unless-frame-url\":[\"whatwg\"]}},"
+        "{\"action\":{\"type\":\"block-cookies\"},\"trigger\":{\"url-filter\":\"https\", \"if-top-url\":[\"example\"]}}"
+    "]"_s);
+    testRequest(otherRulesWithConditions, requestInTopAndFrameURLs("https://example.com/"_s, "https://webkit.org/"_s, "https://whatwg.org/"_s), { });
+    testRequest(otherRulesWithConditions, requestInTopAndFrameURLs("https://example.com/"_s, "https://webkit.org/"_s, "https://www.w3.org/"_s), { variantIndex<BlockLoadAction> });
+    testRequest(otherRulesWithConditions, requestInTopAndFrameURLs("https://example.com/"_s, "https://example.com/"_s, "https://webkit.org/"_s), { variantIndex<BlockCookiesAction>, variantIndex<BlockLoadAction> });
+    testRequest(otherRulesWithConditions, requestInTopAndFrameURLs("https://example.com/"_s, "https://example.com/"_s, "https://whatwg.org/"_s), { variantIndex<BlockCookiesAction> });
+
+    auto matchingNothing = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"https\", \"unless-frame-url\":[\".*\"]}}]"_s);
+    testRequest(matchingNothing, requestInTopAndFrameURLs("https://example.com/"_s, "https://webkit.org/"_s, "https://whatwg.org/"_s), { });
+    testRequest(matchingNothing, requestInTopAndFrameURLs("http://example.com/"_s, "https://webkit.org/"_s, "https://webkit.org/"_s), { });
 }
 
 TEST_F(ContentExtensionTest, RegexSubstitution)

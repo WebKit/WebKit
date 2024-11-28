@@ -29,6 +29,7 @@
 #include "AnimationList.h"
 #include "ContentData.h"
 #include "FillLayer.h"
+#include "RenderStyleDifference.h"
 #include "RenderStyleInlines.h"
 #include "ShadowData.h"
 #include "StyleDeprecatedFlexibleBoxData.h"
@@ -180,5 +181,63 @@ bool StyleMiscNonInheritedData::hasFilters() const
 {
     return !filter->operations.isEmpty();
 }
+
+#if !LOG_DISABLED
+void StyleMiscNonInheritedData::dumpDifferences(TextStream& ts, const StyleMiscNonInheritedData& other) const
+{
+    LOG_IF_DIFFERENT(opacity);
+
+    deprecatedFlexibleBox->dumpDifferences(ts, other.deprecatedFlexibleBox);
+    flexibleBox->dumpDifferences(ts, other.flexibleBox);
+    multiCol->dumpDifferences(ts, other.multiCol);
+
+    filter->dumpDifferences(ts, other.filter);
+    transform->dumpDifferences(ts, other.transform);
+
+    LOG_IF_DIFFERENT(mask);
+
+    visitedLinkColor->dumpDifferences(ts, other.visitedLinkColor);
+
+    LOG_IF_DIFFERENT(animations);
+    LOG_IF_DIFFERENT(transitions);
+
+    LOG_IF_DIFFERENT(content);
+    LOG_IF_DIFFERENT(boxShadow);
+
+    LOG_IF_DIFFERENT(altText);
+    LOG_IF_DIFFERENT(aspectRatioWidth);
+    LOG_IF_DIFFERENT(aspectRatioHeight);
+
+    LOG_IF_DIFFERENT(alignContent);
+    LOG_IF_DIFFERENT(justifyContent);
+    LOG_IF_DIFFERENT(alignItems);
+    LOG_IF_DIFFERENT(alignSelf);
+    LOG_IF_DIFFERENT(justifyItems);
+    LOG_IF_DIFFERENT(justifySelf);
+    LOG_IF_DIFFERENT(objectPosition);
+    LOG_IF_DIFFERENT(order);
+
+    LOG_IF_DIFFERENT_WITH_CAST(bool, hasAttrContent);
+    LOG_IF_DIFFERENT_WITH_CAST(bool, hasDisplayAffectedByAnimations);
+
+#if ENABLE(DARK_MODE_CSS)
+    LOG_IF_DIFFERENT_WITH_CAST(bool, hasExplicitlySetColorScheme);
+#endif
+
+    LOG_IF_DIFFERENT_WITH_CAST(bool, hasExplicitlySetDirection);
+    LOG_IF_DIFFERENT_WITH_CAST(bool, hasExplicitlySetWritingMode);
+
+    LOG_IF_DIFFERENT_WITH_CAST(TableLayoutType, tableLayout);
+    LOG_IF_DIFFERENT_WITH_CAST(AspectRatioType, aspectRatioType);
+    LOG_IF_DIFFERENT_WITH_CAST(StyleAppearance, appearance);
+    LOG_IF_DIFFERENT_WITH_CAST(StyleAppearance, usedAppearance);
+
+    LOG_IF_DIFFERENT_WITH_CAST(bool, textOverflow);
+
+    LOG_IF_DIFFERENT_WITH_CAST(UserDrag, objectFit);
+    LOG_IF_DIFFERENT_WITH_CAST(ObjectFit, textOverflow);
+    LOG_IF_DIFFERENT_WITH_CAST(Resize, resize);
+}
+#endif // !LOG_DISABLED
 
 } // namespace WebCore

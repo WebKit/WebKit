@@ -31,6 +31,7 @@
 #include "ThreadableLoader.h"
 #include "ThreadableLoaderClient.h"
 #include "URLKeepingBlobAlive.h"
+#include <wtf/CheckedPtr.h>
 #include <wtf/URL.h>
 
 namespace WebCore {
@@ -47,7 +48,7 @@ class WEBCORE_EXPORT FetchLoader final : public ThreadableLoaderClient {
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(FetchLoader);
 public:
     FetchLoader(FetchLoaderClient&, FetchBodyConsumer*);
-    ~FetchLoader() = default;
+    ~FetchLoader();
 
     RefPtr<FragmentedSharedBuffer> startStreaming();
 
@@ -60,15 +61,15 @@ public:
 
 private:
     // ThreadableLoaderClient API.
-    void didReceiveResponse(ScriptExecutionContextIdentifier, ResourceLoaderIdentifier, const ResourceResponse&) final;
+    void didReceiveResponse(ScriptExecutionContextIdentifier, std::optional<ResourceLoaderIdentifier>, const ResourceResponse&) final;
     void didReceiveData(const SharedBuffer&) final;
-    void didFinishLoading(ScriptExecutionContextIdentifier, ResourceLoaderIdentifier, const NetworkLoadMetrics&) final;
-    void didFail(ScriptExecutionContextIdentifier, const ResourceError&) final;
+    void didFinishLoading(ScriptExecutionContextIdentifier, std::optional<ResourceLoaderIdentifier>, const NetworkLoadMetrics&) final;
+    void didFail(std::optional<ScriptExecutionContextIdentifier>, const ResourceError&) final;
 
 private:
-    FetchLoaderClient& m_client;
+    CheckedRef<FetchLoaderClient> m_client;
     RefPtr<ThreadableLoader> m_loader;
-    FetchBodyConsumer* m_consumer;
+    CheckedPtr<FetchBodyConsumer> m_consumer;
     bool m_isStarted { false };
     URLKeepingBlobAlive m_urlForReading;
 };

@@ -52,11 +52,11 @@
 #import <WebCore/LocalizedStrings.h>
 #import <WebCore/Page.h>
 #import <WebCore/RenderBoxInlines.h>
-#import <WebCore/RuntimeApplicationChecks.h>
 #import <WebCore/SharedBuffer.h>
 #import <WebCore/SimpleRange.h>
 #import <WebKitLegacy/DOMPrivate.h>
 #import <pal/spi/mac/NSSharingServicePickerSPI.h>
+#import <wtf/RuntimeApplicationChecks.h>
 #import <wtf/TZoneMallocInlines.h>
 #import <wtf/URL.h>
 

@@ -2,13 +2,13 @@
 <head>
     <title>Test HTML Page</title>
 <script>
-function test()
+async function test()
 {
-    if (window.testRunner) {
-        testRunner.dumpAsText();
-        document.body.offsetTop;
-        testRunner.displayAndTrackRepaints();
-    }
+    testRunner?.dumpAsText();
+    testRunner?.waitUntilDone();
+    document.body.offsetTop;
+    await testRunner?.displayAndTrackRepaints();
+    testRunner?.notifyDone();
 }
 </script>
     <style type="text/css">

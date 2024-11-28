@@ -116,6 +116,7 @@ public:
 
     bool hasEventListeners() const;
     bool hasEventListeners(const AtomString& eventType) const;
+    bool hasAnyEventListeners(Vector<AtomString> eventTypes) const;
     bool hasCapturingEventListeners(const AtomString& eventType);
     bool hasActiveEventListeners(const AtomString& eventType) const;
 
@@ -241,6 +242,17 @@ inline bool EventTarget::hasEventListeners(const AtomString& eventType) const
 {
     auto* data = eventTargetData();
     return data && data->eventListenerMap.contains(eventType);
+}
+
+inline bool EventTarget::hasAnyEventListeners(Vector<AtomString> eventTypes) const
+{
+    if (auto* data = eventTargetData()) {
+        for (const auto& eventType : eventTypes) {
+            if (data->eventListenerMap.contains(eventType))
+                return true;
+        }
+    }
+    return false;
 }
 
 inline bool EventTarget::hasCapturingEventListeners(const AtomString& eventType)

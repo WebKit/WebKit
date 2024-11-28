@@ -52,9 +52,10 @@ class StyleRuleFontPaletteValues;
 
 class CSSFontSelector final : public FontSelector, public CSSFontFaceClient, public ActiveDOMObject {
 public:
-    using FontSelector::weakPtrFactory;
-    using FontSelector::WeakValueType;
-    using FontSelector::WeakPtrImplType;
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
+
+    USING_CAN_MAKE_WEAKPTR(FontSelector);
 
     using FontSelector::ref;
     using FontSelector::deref;
@@ -98,10 +99,6 @@ public:
 
     void updateStyleIfNeeded();
 
-    // CSSFontFaceClient needs to be able to be held in a RefPtr.
-    void ref() const final { FontSelector::ref(); }
-    void deref() const final { FontSelector::deref(); }
-
 private:
     explicit CSSFontSelector(ScriptExecutionContext&);
 
@@ -142,8 +139,8 @@ private:
             return ASCIICaseInsensitiveHash::equal(a.first, b.first) && DefaultHash<AtomString>::equal(a.second, b.second);
         }
     };
-    HashMap<std::pair<AtomString, AtomString>, FontPaletteValues, PaletteMapHash> m_paletteMap;
-    HashMap<String, Ref<FontFeatureValues>> m_featureValues;
+    UncheckedKeyHashMap<std::pair<AtomString, AtomString>, FontPaletteValues, PaletteMapHash> m_paletteMap;
+    UncheckedKeyHashMap<String, Ref<FontFeatureValues>> m_featureValues;
 
     HashSet<RefPtr<CSSFontFace>> m_cssConnectionsPossiblyToRemove;
     HashSet<RefPtr<StyleRuleFontFace>> m_cssConnectionsEncounteredDuringBuild;

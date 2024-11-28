@@ -31,6 +31,8 @@
 #include "CodeBlock.h"
 #include "DFGJITCode.h"
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 void assertInvariants()
@@ -83,8 +85,8 @@ void assertInvariants()
 #if ASSERT_ENABLED
     Vector<int> testVector;
     testVector.resize(42);
-    ASSERT(bitwise_cast<uint32_t*>(&testVector)[sizeof(void*) / sizeof(uint32_t) + 1] == 42);
-    ASSERT(bitwise_cast<int**>(&testVector)[0] == testVector.begin());
+    ASSERT(std::bit_cast<uint32_t*>(&testVector)[sizeof(void*) / sizeof(uint32_t) + 1] == 42);
+    ASSERT(std::bit_cast<int**>(&testVector)[0] == testVector.begin());
 #endif
 
     {
@@ -141,3 +143,5 @@ void assertInvariants()
 }
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

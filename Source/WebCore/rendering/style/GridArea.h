@@ -210,7 +210,7 @@ private:
 class GridArea {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(GridArea);
 public:
-    // HashMap requires a default constuctor.
+    // UncheckedKeyHashMap requires a default constuctor.
     GridArea()
         : columns(GridSpan::indefiniteGridSpan())
         , rows(GridSpan::indefiniteGridSpan())
@@ -233,7 +233,7 @@ public:
 };
 
 struct NamedGridAreaMap {
-    HashMap<String, GridArea> map;
+    UncheckedKeyHashMap<String, GridArea> map;
 
     friend bool operator==(const NamedGridAreaMap&, const NamedGridAreaMap&) = default;
 };

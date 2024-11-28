@@ -4,7 +4,7 @@ PASS System color CanvasText works
 PASS System color LinkText works
 PASS System color VisitedText works
 PASS System color ActiveText works
-FAIL System color ButtonFace works assert_not_equals: ButtonFace should react to color-scheme got disallowed value "rgb(192, 192, 192)"
+PASS System color ButtonFace works
 PASS System color ButtonText works
 PASS System color ButtonBorder works
 PASS System color Field works

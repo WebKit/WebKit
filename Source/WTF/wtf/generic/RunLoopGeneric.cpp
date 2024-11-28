@@ -297,8 +297,8 @@ void RunLoop::unscheduleWithLock(TimerBase::ScheduledTask& task)
 
 // Since RunLoop does not own the registered TimerBase,
 // TimerBase and its owner should manage these lifetime.
-RunLoop::TimerBase::TimerBase(RunLoop& runLoop)
-    : m_runLoop(runLoop)
+RunLoop::TimerBase::TimerBase(Ref<RunLoop>&& runLoop)
+    : m_runLoop(WTFMove(runLoop))
     , m_scheduledTask(ScheduledTask::create(*this))
 {
 }

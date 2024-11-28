@@ -30,6 +30,7 @@
 namespace WebCore {
 
 class CryptoAlgorithmAesKeyParams final : public CryptoAlgorithmParameters {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(CryptoAlgorithmAesKeyParams);
 public:
     unsigned short length;
 

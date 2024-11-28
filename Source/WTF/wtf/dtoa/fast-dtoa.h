@@ -81,8 +81,8 @@ bool FastDtoa(double d,
               FastDtoaMode mode,
               int requested_digits,
               BufferReference<char> buffer,
-              int* length,
-              int* decimal_point);
+              int& length,
+              int& decimal_point);
 
 }  // namespace double_conversion
 }  // namespace WTF

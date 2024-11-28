@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -64,7 +64,8 @@ static void loadPictureInPicture(RetainPtr<TestWKWebView> webView)
 #if ENABLE(VIDEO_PRESENTATION_MODE)
 
 // FIXME: Re-enable this test for Big Sur once webkit.org/b/245241 is resolved
-#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 141000)
+// rdar://problem/136528371
+#if ((PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 141000) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 150000))
 TEST(WKWebViewCloseAllMediaPresentations, DISABLED_PictureInPicture)
 #else
 TEST(WKWebViewCloseAllMediaPresentations, PictureInPicture)
@@ -94,7 +95,8 @@ TEST(WKWebViewCloseAllMediaPresentations, PictureInPicture)
 }
 
 // FIXME: Re-enable this test for Big Sur once webkit.org/b/245241 is resolved
-#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 141000)
+// rdar://problem/136528371
+#if ((PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 141000) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 150000))
 TEST(WKWebViewCloseAllMediaPresentationsInternal, DISABLED_PictureInPicture)
 #else
 TEST(WKWebViewCloseAllMediaPresentationsInternal, PictureInPicture)
@@ -138,7 +140,7 @@ TEST(WKWebViewCloseAllMediaPresentations, VideoFullscreen)
 #endif
 {
     auto *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
-    [[configuration preferences] _setFullScreenEnabled:YES];
+    [configuration preferences].elementFullscreenEnabled = YES;
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration addToWindow:YES]);
 
     [webView synchronouslyLoadHTMLString:@"<video src=video-with-audio.mp4 webkit-playsinline playsinline loop></video>"];
@@ -175,7 +177,7 @@ TEST(WKWebViewCloseAllMediaPresentations, ElementFullscreen)
 #endif
 {
     auto *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
-    [[configuration preferences] _setFullScreenEnabled:YES];
+    [configuration preferences].elementFullscreenEnabled = YES;
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration addToWindow:YES]);
 
     [webView synchronouslyLoadHTMLString:@"<div id=\"target\" style=\"width:100px;height:100px;background-color:red\"></div>"];
@@ -201,7 +203,8 @@ TEST(WKWebViewCloseAllMediaPresentations, ElementFullscreen)
 }
 
 // FIXME: Re-enable this test for Big Sur once webkit.org/b/245241 is resolved
-#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 141000)
+// rdar://problem/136528371
+#if ((PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 141000) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 150000))
 TEST(WKWebViewCloseAllMediaPresentations, DISABLED_MultipleSequentialCloseAllMediaPresentations)
 #else
 TEST(WKWebViewCloseAllMediaPresentations, MultipleSequentialCloseAllMediaPresentations)

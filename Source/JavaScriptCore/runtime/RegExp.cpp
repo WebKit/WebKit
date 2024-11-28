@@ -164,6 +164,8 @@ void RegExp::finishCreation(VM& vm)
         return;
     }
 
+    setAtom(WTFMove(pattern.m_atom));
+
     m_numSubpatterns = pattern.m_numSubpatterns;
     if (!pattern.m_captureGroupNames.isEmpty() || !pattern.m_namedGroupToParenIndices.isEmpty()) {
         m_rareData = makeUnique<RareData>();
@@ -223,6 +225,8 @@ void RegExp::byteCodeCompileIfNecessary(VM* vm)
     }
     ASSERT(m_numSubpatterns == pattern.m_numSubpatterns);
 
+    setAtom(WTFMove(pattern.m_atom));
+
     m_regExpBytecode = byteCodeCompilePattern(vm, pattern, m_constructionErrorCode);
     if (!m_regExpBytecode) {
         m_state = ParseError;
@@ -240,6 +244,8 @@ void RegExp::compile(VM* vm, Yarr::CharSize charSize, std::optional<StringView> 
         return;
     }
     ASSERT(m_numSubpatterns == pattern.m_numSubpatterns);
+
+    setAtom(WTFMove(pattern.m_atom));
 
     if (!hasCode()) {
         ASSERT(m_state == NotCompiled);
@@ -306,6 +312,8 @@ void RegExp::compileMatchOnly(VM* vm, Yarr::CharSize charSize, std::optional<Str
     }
     ASSERT(m_numSubpatterns == pattern.m_numSubpatterns);
 
+    setAtom(WTFMove(pattern.m_atom));
+
     if (!hasCode()) {
         ASSERT(m_state == NotCompiled);
         vm->regExpCache()->addToStrongCache(this);
@@ -364,6 +372,7 @@ void RegExp::deleteCode()
     if (!hasCode())
         return;
     m_state = NotCompiled;
+    m_atom = String();
 #if ENABLE(YARR_JIT)
     if (m_regExpJITCode)
         m_regExpJITCode->clear(locker);

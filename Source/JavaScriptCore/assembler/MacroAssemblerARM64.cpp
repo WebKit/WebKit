@@ -34,6 +34,10 @@
 #include <wtf/InlineASM.h>
 #include <wtf/TZoneMallocInlines.h>
 
+#if OS(DARWIN)
+#include <sys/sysctl.h>
+#endif
+
 #if OS(LINUX)
 #include <asm/hwcap.h>
 #if __has_include(<sys/auxv.h>)
@@ -58,8 +62,6 @@ static unsigned long getauxval(unsigned long type)
 #endif
 
 namespace JSC {
-
-WTF_MAKE_TZONE_ALLOCATED_IMPL(MacroAssemblerARM64);
 
 JSC_DECLARE_NOEXCEPT_JIT_OPERATION(ctiMasmProbeTrampoline, void, ());
 JSC_ANNOTATE_JIT_OPERATION_PROBE(ctiMasmProbeTrampoline);
@@ -836,6 +838,7 @@ asm (
 
 void MacroAssembler::probe(Probe::Function function, void* arg, SavedFPWidth savedFPWidth)
 {
+    JIT_COMMENT(*this, "Probe start");
     sub64(TrustedImm32(sizeof(IncomingProbeRecord)), sp);
 
     storePair64(x24, x25, sp, TrustedImm32(offsetof(IncomingProbeRecord, x24)));
@@ -854,6 +857,7 @@ void MacroAssembler::probe(Probe::Function function, void* arg, SavedFPWidth sav
     // ctiMasmProbeTrampoline should have restored every register except for lr and the sp.
     load64(Address(sp, offsetof(LRRestorationRecord, lr)), lr);
     add64(TrustedImm32(sizeof(LRRestorationRecord)), sp);
+    JIT_COMMENT(*this, "First non-probe instruction");
 }
 
 void MacroAssemblerARM64::collectCPUFeatures()
@@ -870,6 +874,7 @@ void MacroAssemblerARM64::collectCPUFeatures()
         // that feature, the kernel does not tell it to users.), it is a stable approach.
         // https://www.kernel.org/doc/Documentation/arm64/elf_hwcaps.txt
         uint64_t hwcaps = getauxval(AT_HWCAP);
+        uint64_t hwcaps2 = getauxval(AT_HWCAP2);
 
 #if !defined(HWCAP_ATOMICS)
 #define HWCAP_ATOMICS (1 << 8)
@@ -887,9 +892,31 @@ void MacroAssemblerARM64::collectCPUFeatures()
 #define HWCAP_JSCVT (1 << 13)
 #endif
 
+#if !defined(HWCAP2_FRINT)
+#define HWCAP2_FRINT (1 << 8)
+#endif
+
         s_lseCheckState = (hwcaps & HWCAP_ATOMICS) ? CPUIDCheckState::Set : CPUIDCheckState::Clear;
         s_jscvtCheckState = (hwcaps & HWCAP_JSCVT) ? CPUIDCheckState::Set : CPUIDCheckState::Clear;
         s_float16CheckState = ((hwcaps & HWCAP_FPHP) && (hwcaps & HWCAP_ASIMDHP)) ? CPUIDCheckState::Set : CPUIDCheckState::Clear;
+        s_frintCheckState = (hwcaps2 & HWCAP2_FRINT) ? CPUIDCheckState::Set : CPUIDCheckState::Clear;
+    });
+#endif
+
+#if OS(DARWIN)
+    static std::once_flag onceKey;
+    std::call_once(onceKey, [] {
+        auto checkCPU = [&](const char* string) {
+            uint32_t val = 0;
+            size_t valSize = sizeof(val);
+            int rc = sysctlbyname(string, &val, &valSize, nullptr, 0);
+            return (rc >= 0 && val) ? CPUIDCheckState::Set : CPUIDCheckState::Clear;
+        };
+
+        s_lseCheckState = checkCPU("hw.optional.arm.FEAT_LSE");
+        s_jscvtCheckState = checkCPU("hw.optional.arm.FEAT_JSCVT");
+        s_float16CheckState = checkCPU("hw.optional.arm.FEAT_FP16");
+        s_frintCheckState = checkCPU("hw.optional.arm.FEAT_FRINTTS");
     });
 #endif
 
@@ -916,11 +943,20 @@ void MacroAssemblerARM64::collectCPUFeatures()
         s_float16CheckState = CPUIDCheckState::Clear;
 #endif
     }
+
+    if (s_frintCheckState == CPUIDCheckState::NotChecked) {
+#if HAVE(FRINT_INSTRUCTION)
+        s_frintCheckState = CPUIDCheckState::Set;
+#else
+        s_frintCheckState = CPUIDCheckState::Clear;
+#endif
+    }
 }
 
 MacroAssemblerARM64::CPUIDCheckState MacroAssemblerARM64::s_lseCheckState = CPUIDCheckState::NotChecked;
 MacroAssemblerARM64::CPUIDCheckState MacroAssemblerARM64::s_jscvtCheckState = CPUIDCheckState::NotChecked;
 MacroAssemblerARM64::CPUIDCheckState MacroAssemblerARM64::s_float16CheckState = CPUIDCheckState::NotChecked;
+MacroAssemblerARM64::CPUIDCheckState MacroAssemblerARM64::s_frintCheckState = CPUIDCheckState::NotChecked;
 
 } // namespace JSC
 

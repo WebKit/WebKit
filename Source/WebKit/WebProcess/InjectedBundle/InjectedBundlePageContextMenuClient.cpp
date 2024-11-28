@@ -37,9 +37,12 @@
 #include "WKBundleAPICast.h"
 #include "WebPage.h"
 #include <WebCore/ContextMenu.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
 using namespace WebCore;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(InjectedBundlePageContextMenuClient);
 
 InjectedBundlePageContextMenuClient::InjectedBundlePageContextMenuClient(const WKBundlePageContextMenuClientBase* client)
 {

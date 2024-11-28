@@ -57,7 +57,7 @@ public:
     WEBCORE_EXPORT void messagePortChannelDestroyed(MessagePortChannel&);
 
 private:
-    HashMap<MessagePortIdentifier, WeakRef<MessagePortChannel>> m_openChannels;
+    UncheckedKeyHashMap<MessagePortIdentifier, WeakRef<MessagePortChannel>> m_openChannels;
 };
 
 } // namespace WebCore

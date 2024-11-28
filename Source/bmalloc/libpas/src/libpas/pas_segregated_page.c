@@ -91,7 +91,7 @@ pas_lock* pas_segregated_page_switch_lock_slow(
     pas_lock* held_lock,
     pas_lock* page_lock)
 {
-    static const bool verbose = false;
+    static const bool verbose = PAS_SHOULD_LOG(PAS_LOG_SEGREGATED_HEAPS);
     
     PAS_ASSERT(held_lock != page_lock);
     
@@ -193,7 +193,7 @@ void pas_segregated_page_construct(pas_segregated_page* page,
                                    bool was_stolen,
                                    const pas_segregated_page_config* page_config_ptr)
 {
-    static const bool verbose = false;
+    static const bool verbose = PAS_SHOULD_LOG(PAS_LOG_SEGREGATED_HEAPS);
     
     pas_segregated_page_config page_config;
     pas_segregated_page_role role;
@@ -298,7 +298,7 @@ void pas_segregated_page_construct(pas_segregated_page* page,
 
 void pas_segregated_page_note_emptiness(pas_segregated_page* page, pas_note_emptiness_action action)
 {
-    static const bool verbose = false;
+    static const bool verbose = PAS_SHOULD_LOG(PAS_LOG_SEGREGATED_HEAPS);
     if (page->lock_ptr)
         pas_lock_testing_assert_held(page->lock_ptr);
     if (verbose) {
@@ -335,7 +335,7 @@ bool pas_segregated_page_take_empty_granules(
     pas_range_locked_mode range_locked_mode,
     pas_lock_hold_mode heap_lock_hold_mode)
 {
-    static const bool verbose = false;
+    static const bool verbose = PAS_SHOULD_LOG(PAS_LOG_SEGREGATED_HEAPS);
     
     pas_page_granule_use_count* use_counts;
     pas_segregated_view owner;
@@ -434,7 +434,7 @@ void pas_segregated_page_commit_fully(
     pas_lock** held_lock,
     pas_commit_fully_lock_hold_mode lock_hold_mode)
 {
-    static const bool verbose = false;
+    static const bool verbose = PAS_SHOULD_LOG(PAS_LOG_SEGREGATED_HEAPS);
     
     const pas_segregated_page_config* page_config_ptr;
     pas_segregated_page_config page_config;
@@ -570,7 +570,7 @@ static bool verify_granules_live_object_callback(pas_segregated_view view,
                                                  pas_range range,
                                                  void* arg)
 {
-    static const bool verbose = false;
+    static const bool verbose = PAS_SHOULD_LOG(PAS_LOG_SEGREGATED_HEAPS);
     
     verify_granules_data* data;
 
@@ -595,7 +595,7 @@ static bool verify_granules_live_object_callback(pas_segregated_view view,
 
 void pas_segregated_page_verify_granules(pas_segregated_page* page)
 {
-    static const bool verbose = false;
+    static const bool verbose = PAS_SHOULD_LOG(PAS_LOG_SEGREGATED_HEAPS);
     
     pas_segregated_page_config page_config;
     pas_segregated_page_role role;

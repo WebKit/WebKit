@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2007 David Smith (catfish.man@gmail.com)
- * Copyright (C) 2003-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2024 Apple Inc. All rights reserved.
  * Copyright (C) Research In Motion Limited 2010. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -39,7 +39,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(RenderTreeBuilderFirstLetter, RenderTreeBuilder::FirstLetter);
+WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(RenderTreeBuilder, FirstLetter);
 
 static std::optional<RenderStyle> styleForFirstLetter(const RenderElement& firstLetterContainer)
 {
@@ -52,7 +52,7 @@ static std::optional<RenderStyle> styleForFirstLetter(const RenderElement& first
 
     // If we have an initial letter drop that is >= 1, then we need to force floating to be on.
     if (firstLetterStyle.initialLetterDrop() >= 1 && !firstLetterStyle.isFloating())
-        firstLetterStyle.setFloating(firstLetterStyle.isLeftToRightDirection() ? Float::Left : Float::Right);
+        firstLetterStyle.setFloating(firstLetterStyle.writingMode().isBidiLTR() ? Float::Left : Float::Right);
 
     // We have to compute the correct font-size for the first-letter if it has an initial letter height set.
     auto* paragraph = firstLetterContainer.isRenderBlockFlow() ? &firstLetterContainer : firstLetterContainer.containingBlock();

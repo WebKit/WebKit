@@ -49,6 +49,9 @@ public:
     static Ref<SceneKitModelPlayer> create(ModelPlayerClient&);
     virtual ~SceneKitModelPlayer();
 
+#if ENABLE(MODEL_PROCESS)
+    WebCore::ModelPlayerIdentifier identifier() const final;
+#endif
 private:
     SceneKitModelPlayer(ModelPlayerClient&);
 
@@ -87,6 +90,9 @@ private:
     RefPtr<SceneKitModel> m_model;
 
     RetainPtr<SCNMetalLayer> m_layer;
+#if ENABLE(MODEL_PROCESS)
+    WebCore::ModelPlayerIdentifier m_id;
+#endif
 };
 
 }

@@ -160,7 +160,7 @@ void removeDetachedChildrenInContainer(ContainerNode& container)
         if (next)
             next->setPreviousSibling(nullptr);
 
-        node->setTreeScopeRecursively(RefAllowingPartiallyDestroyed<Document> { container.document() });
+        node->setTreeScopeRecursively(Ref<Document> { container.document() });
         if (node->isInTreeScope())
             notifyChildNodeRemoved(container, *node);
         ASSERT_WITH_SECURITY_IMPLICATION(!node->isInTreeScope());

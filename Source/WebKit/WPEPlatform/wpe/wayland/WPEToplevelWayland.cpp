@@ -235,8 +235,8 @@ struct _WPEToplevelWaylandPrivate {
     bool isUnderTouch;
     GWeakPtr<WPEView> visibleView;
 
-    Vector<GRefPtr<WPEMonitor>, 1> monitors;
-    GRefPtr<WPEMonitor> currentMonitor;
+    Vector<GRefPtr<WPEScreen>, 1> screens;
+    GRefPtr<WPEScreen> currentScreen;
 
     struct {
         std::optional<uint32_t> width;
@@ -364,12 +364,12 @@ const struct xdg_toplevel_listener xdgToplevelListener = {
 static void wpeToplevelWaylandUpdateScale(WPEToplevelWayland* toplevel)
 {
     auto* priv = toplevel->priv;
-    if (priv->monitors.isEmpty())
+    if (priv->screens.isEmpty())
         return;
 
     double scale = 1;
-    for (const auto& monitor : priv->monitors)
-        scale = std::max(scale, wpe_monitor_get_scale(monitor.get()));
+    for (const auto& screen : priv->screens)
+        scale = std::max(scale, wpe_screen_get_scale(screen.get()));
 
     if (wl_surface_get_version(priv->wlSurface) >= WL_SURFACE_SET_BUFFER_SCALE_SINCE_VERSION)
         wl_surface_set_buffer_scale(priv->wlSurface, scale);
@@ -386,22 +386,22 @@ static const struct wl_surface_listener surfaceListener = {
         if (!display)
             return;
 
-        auto* monitor = wpeDisplayWaylandFindMonitor(WPE_DISPLAY_WAYLAND(display), wlOutput);
-        if (!monitor)
+        auto* screen = wpeDisplayWaylandFindScreen(WPE_DISPLAY_WAYLAND(display), wlOutput);
+        if (!screen)
             return;
 
         auto* priv = WPE_TOPLEVEL_WAYLAND(toplevel)->priv;
-        // For now we just use the last entered monitor as current, but we could do someting smarter.
-        bool monitorChanged = false;
-        if (priv->currentMonitor.get() != monitor) {
-            priv->currentMonitor = monitor;
-            monitorChanged = true;
+        // For now we just use the last entered screen as current, but we could do someting smarter.
+        bool screenChanged = false;
+        if (priv->currentScreen.get() != screen) {
+            priv->currentScreen = screen;
+            screenChanged = true;
         }
-        priv->monitors.append(monitor);
+        priv->screens.append(screen);
         wpeToplevelWaylandUpdateScale(WPE_TOPLEVEL_WAYLAND(toplevel));
-        if (monitorChanged)
-            wpe_toplevel_monitor_changed(toplevel);
-        g_signal_connect_object(monitor, "notify::scale", G_CALLBACK(+[](WPEToplevelWayland* toplevel) {
+        if (screenChanged)
+            wpe_toplevel_screen_changed(toplevel);
+        g_signal_connect_object(screen, "notify::scale", G_CALLBACK(+[](WPEToplevelWayland* toplevel) {
             wpeToplevelWaylandUpdateScale(WPE_TOPLEVEL_WAYLAND(toplevel));
         }), toplevel, G_CONNECT_SWAPPED);
     },
@@ -413,19 +413,19 @@ static const struct wl_surface_listener surfaceListener = {
         if (!display)
             return;
 
-        auto* monitor = wpeDisplayWaylandFindMonitor(WPE_DISPLAY_WAYLAND(display), wlOutput);
-        if (!monitor)
+        auto* screen = wpeDisplayWaylandFindScreen(WPE_DISPLAY_WAYLAND(display), wlOutput);
+        if (!screen)
             return;
 
         auto* priv = WPE_TOPLEVEL_WAYLAND(toplevel)->priv;
-        priv->monitors.removeLast(monitor);
-        if (!priv->monitors.isEmpty())
-            priv->currentMonitor = priv->monitors.last();
+        priv->screens.removeLast(screen);
+        if (!priv->screens.isEmpty())
+            priv->currentScreen = priv->screens.last();
         else
-            priv->currentMonitor = nullptr;
+            priv->currentScreen = nullptr;
         wpeToplevelWaylandUpdateScale(WPE_TOPLEVEL_WAYLAND(toplevel));
-        wpe_toplevel_monitor_changed(toplevel);
-        g_signal_handlers_disconnect_by_data(monitor, toplevel);
+        wpe_toplevel_screen_changed(toplevel);
+        g_signal_handlers_disconnect_by_data(screen, toplevel);
     },
 #ifdef WL_SURFACE_PREFERRED_BUFFER_SCALE_SINCE_VERSION
     // preferred_buffer_scale
@@ -569,10 +569,10 @@ static void wpeToplevelWaylandConstructed(GObject *object)
 
     wl_display_roundtrip(wpe_display_wayland_get_wl_display(display));
 
-    // Set the first monitor as the default one until enter monitor is emitted.
-    if (wpe_display_get_n_monitors(WPE_DISPLAY(display))) {
-        priv->currentMonitor = wpe_display_get_monitor(WPE_DISPLAY(display), 0);
-        auto scale = wpe_monitor_get_scale(priv->currentMonitor.get());
+    // Set the first screen as the default one until enter screen is emitted.
+    if (wpe_display_get_n_screens(WPE_DISPLAY(display))) {
+        priv->currentScreen = wpe_display_get_screen(WPE_DISPLAY(display), 0);
+        auto scale = wpe_screen_get_scale(priv->currentScreen.get());
         if (wl_surface_get_version(priv->wlSurface) >= WL_SURFACE_SET_BUFFER_SCALE_SINCE_VERSION)
             wl_surface_set_buffer_scale(priv->wlSurface, scale);
         wpe_toplevel_scale_changed(toplevel, scale);
@@ -585,8 +585,8 @@ static void wpeToplevelWaylandConstructed(GObject *object)
 static void wpeToplevelWaylandDispose(GObject* object)
 {
     auto* priv = WPE_TOPLEVEL_WAYLAND(object)->priv;
-    priv->currentMonitor = nullptr;
-    priv->monitors.clear();
+    priv->currentScreen = nullptr;
+    priv->screens.clear();
     g_clear_pointer(&priv->xdgToplevel, xdg_toplevel_destroy);
     g_clear_pointer(&priv->dmabufFeedback, zwp_linux_dmabuf_feedback_v1_destroy);
     g_clear_pointer(&priv->surfaceSync, zwp_linux_surface_synchronization_v1_destroy);
@@ -596,10 +596,10 @@ static void wpeToplevelWaylandDispose(GObject* object)
     G_OBJECT_CLASS(wpe_toplevel_wayland_parent_class)->dispose(object);
 }
 
-static WPEMonitor* wpeToplevelWaylandGetMonitor(WPEToplevel* toplevel)
+static WPEScreen* wpeToplevelWaylandGetScreen(WPEToplevel* toplevel)
 {
     auto* priv = WPE_TOPLEVEL_WAYLAND(toplevel)->priv;
-    return priv->currentMonitor.get();
+    return priv->currentScreen.get();
 }
 
 static gboolean wpeToplevelWaylandResize(WPEToplevel* toplevel, int width, int height)
@@ -717,7 +717,7 @@ static void wpe_toplevel_wayland_class_init(WPEToplevelWaylandClass* toplevelWay
     objectClass->dispose = wpeToplevelWaylandDispose;
 
     WPEToplevelClass* toplevelClass = WPE_TOPLEVEL_CLASS(toplevelWaylandClass);
-    toplevelClass->get_monitor = wpeToplevelWaylandGetMonitor;
+    toplevelClass->get_screen = wpeToplevelWaylandGetScreen;
     toplevelClass->resize = wpeToplevelWaylandResize;
     toplevelClass->set_fullscreen = wpeToplevelWaylandSetFullscreen;
     toplevelClass->set_maximized = wpeToplevelWaylandSetMaximized;

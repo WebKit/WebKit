@@ -1,4 +1,4 @@
-<!DOCTYPE html><!-- webkit-test-runner [ ModelElementEnabled=true ] -->
+<!DOCTYPE html><!-- webkit-test-runner [ ModelElementEnabled=true ModelProcessEnabled=true ] -->
 <html>
 <head>
     <style>
@@ -19,21 +19,14 @@
     const layers = document.getElementById("layers");
     const model = document.getElementById("model");
 
-    const modelDidLoad = () => {
-        layers.innerText = window.internals?.platformLayerTreeAsText(model) ?? "This test requires testRunner.";
+    model.ready.then((resolve) => {
+        layers.textContent = window.internals?.platformLayerTreeAsText(model) ?? "This test requires testRunner.";
         model.remove();
         window.testRunner?.notifyDone();
-    };
-
-    if (model.complete)
-        modelDidLoad();
-    else {
-        model.addEventListener("load", modelDidLoad);
-        model.addEventListener("error", event => {
-            layers.textContent = `Failed. Model did not load.`;
-            window.testRunner?.notifyDone();
-        });
-    }
+    }, (reason) => {
+        layers.textContent = "Failed model load: " + reason;
+        window.testRunner?.notifyDone();
+    });
 </script>
 </body>
 </html>

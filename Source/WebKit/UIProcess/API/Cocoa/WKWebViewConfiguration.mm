@@ -43,7 +43,6 @@
 #import "WebURLSchemeHandlerCocoa.h"
 #import "_WKApplicationManifestInternal.h"
 #import "_WKVisitedLinkStoreInternal.h"
-#import <WebCore/RuntimeApplicationChecks.h>
 #import <WebCore/Settings.h>
 #import <WebCore/WebCoreObjCExtras.h>
 #import <WebKit/WKProcessPool.h>
@@ -257,6 +256,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 #if PLATFORM(VISION)
     [coder encodeBool:self._gamepadAccessRequiresExplicitConsent forKey:@"gamepadAccessRequiresExplicitConsent"];
     [coder encodeBool:self._overlayRegionsEnabled forKey:@"overlayRegionsEnabled"];
+    [coder encodeBool:self._cssTransformStyleSeparatedEnabled forKey:@"cssTransformStyleSeparatedEnabled"];
 #endif
 }
 
@@ -308,6 +308,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 #if PLATFORM(VISION)
     self._gamepadAccessRequiresExplicitConsent = [coder decodeBoolForKey:@"gamepadAccessRequiresExplicitConsent"];
     self._overlayRegionsEnabled = [coder decodeBoolForKey:@"overlayRegionsEnabled"];
+    self._cssTransformStyleSeparatedEnabled = [coder decodeBoolForKey:@"cssTransformStyleSeparatedEnabled"];
 #endif
 
     return self;
@@ -1410,11 +1411,11 @@ static WebKit::AttributionOverrideTesting toAttributionOverrideTesting(_WKAttrib
 
 - (void)_setShouldRelaxThirdPartyCookieBlocking:(BOOL)relax
 {
-    bool allowed = WebCore::applicationBundleIdentifier() == "com.apple.WebKit.TestWebKitAPI"_s;
+    bool allowed = applicationBundleIdentifier() == "com.apple.WebKit.TestWebKitAPI"_s;
 #if PLATFORM(MAC)
-    allowed |= WebCore::MacApplication::isSafari();
+    allowed |= WTF::MacApplication::isSafari();
 #elif PLATFORM(IOS_FAMILY)
-    allowed |= WebCore::IOSApplication::isMobileSafari() || WebCore::IOSApplication::isSafariViewService();
+    allowed |= WTF::IOSApplication::isMobileSafari() || WTF::IOSApplication::isSafariViewService();
 #endif
 #if ENABLE(WK_WEB_EXTENSIONS)
     allowed |= _pageConfiguration->requiredWebExtensionBaseURL().isValid();
@@ -1536,6 +1537,21 @@ static WebKit::AttributionOverrideTesting toAttributionOverrideTesting(_WKAttrib
 {
 #if ENABLE(OVERLAY_REGIONS_IN_EVENT_REGION)
     _pageConfiguration->setOverlayRegionsEnabled(overlayRegionsEnabled);
+#endif
+}
+
+- (BOOL)_cssTransformStyleSeparatedEnabled
+{
+#if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
+    return _pageConfiguration->cssTransformStyleSeparatedEnabled();
+#else
+    return NO;
+#endif
+}
+- (void)_setCSSTransformStyleSeparatedEnabled:(BOOL)enabled
+{
+#if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
+    _pageConfiguration->setCSSTransformStyleSeparatedEnabled(enabled);
 #endif
 }
 

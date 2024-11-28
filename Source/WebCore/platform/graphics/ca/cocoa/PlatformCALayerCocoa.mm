@@ -27,6 +27,7 @@
 #import "PlatformCALayerCocoa.h"
 
 #import "AnimationUtilities.h"
+#import "ContentsFormatCocoa.h"
 #import "GraphicsContext.h"
 #import "GraphicsLayerCA.h"
 #import "IOSurface.h"
@@ -72,7 +73,7 @@
 
 namespace WebCore {
 
-using LayerToPlatformCALayerMap = HashMap<void*, PlatformCALayer*>;
+using LayerToPlatformCALayerMap = UncheckedKeyHashMap<void*, PlatformCALayer*>;
 
 static Lock layerToPlatformLayerMapLock;
 static LayerToPlatformCALayerMap& layerToPlatformLayerMap() WTF_REQUIRES_LOCK(layerToPlatformLayerMapLock)
@@ -292,7 +293,7 @@ void PlatformCALayerCocoa::commonInit()
         Locker locker { layerToPlatformLayerMapLock };
         layerToPlatformLayerMap().add(m_layer.get(), this);
     }
-    
+
     // Clear all the implicit animations on the CALayer
     if (m_layerType == PlatformCALayer::LayerType::LayerTypeAVPlayerLayer || m_layerType == PlatformCALayer::LayerType::LayerTypeScrollContainerLayer || m_layerType == PlatformCALayer::LayerType::LayerTypeCustom)
         [m_layer web_disableAllActions];
@@ -713,7 +714,7 @@ bool PlatformCALayerCocoa::backingStoreAttached() const
     return m_backingStoreAttached;
 }
 
-#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
+#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION) || HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
 void PlatformCALayerCocoa::setVisibleRect(const FloatRect&)
 {
 }
@@ -767,20 +768,20 @@ void PlatformCALayerCocoa::setAcceleratesDrawing(bool acceleratesDrawing)
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
-bool PlatformCALayerCocoa::wantsDeepColorBackingStore() const
+ContentsFormat PlatformCALayerCocoa::contentsFormat() const
 {
-    return m_wantsDeepColorBackingStore;
+    return m_contentsFormat;
 }
 
-void PlatformCALayerCocoa::setWantsDeepColorBackingStore(bool wantsDeepColorBackingStore)
+void PlatformCALayerCocoa::setContentsFormat(ContentsFormat contentsFormat)
 {
-    if (wantsDeepColorBackingStore == m_wantsDeepColorBackingStore)
+    if (contentsFormat == m_contentsFormat)
         return;
 
-    m_wantsDeepColorBackingStore = wantsDeepColorBackingStore;
+    m_contentsFormat = contentsFormat;
 
     if (usesTiledBackingLayer()) {
-        [static_cast<WebTiledBackingLayer *>(m_layer.get()) setWantsDeepColorBackingStore:m_wantsDeepColorBackingStore];
+        [static_cast<WebTiledBackingLayer *>(m_layer.get()) setContentsFormat:m_contentsFormat];
         return;
     }
 
@@ -1131,24 +1132,20 @@ void PlatformCALayerCocoa::setIsDescendentOfSeparatedPortal(bool)
 #endif
 #endif
 
-static NSString *layerContentsFormat(bool wantsDeepColor)
-{
-#if HAVE(IOSURFACE_RGB10)
-    if (wantsDeepColor)
-        return kCAContentsFormatRGBA10XR;
-#else
-    UNUSED_PARAM(wantsDeepColor);
-#endif
-
-    return nil;
-}
-
 void PlatformCALayerCocoa::updateContentsFormat()
 {
     if (m_layerType == PlatformCALayer::LayerType::LayerTypeWebLayer || m_layerType == PlatformCALayer::LayerType::LayerTypeTiledBackingTileLayer) {
         BEGIN_BLOCK_OBJC_EXCEPTIONS
-        if (NSString *formatString = layerContentsFormat(wantsDeepColorBackingStore()))
+        auto contentsFormat = this->contentsFormat();
+
+        if (NSString *formatString = contentsFormatString(contentsFormat))
             [m_layer setContentsFormat:formatString];
+#if HAVE(HDR_SUPPORT)
+        if (contentsFormat == ContentsFormat::RGBA16F) {
+            [m_layer setWantsExtendedDynamicRangeContent:true];
+            [m_layer setToneMapMode:CAToneMapModeIfSupported];
+        }
+#endif
         END_BLOCK_OBJC_EXCEPTIONS
     }
 }
@@ -1315,12 +1312,7 @@ void PlatformCALayerCocoa::enumerateRectsBeingDrawn(GraphicsContext& context, vo
 
 unsigned PlatformCALayerCocoa::backingStoreBytesPerPixel() const
 {
-#if PLATFORM(IOS_FAMILY)
-    if (wantsDeepColorBackingStore())
-        return isOpaque() ? 4 : 5;
-#endif
-
-    return 4;
+    return contentsFormatBytesPerPixel(contentsFormat(), isOpaque());
 }
 
 AVPlayerLayer *PlatformCALayerCocoa::avPlayerLayer() const
@@ -1334,8 +1326,8 @@ AVPlayerLayer *PlatformCALayerCocoa::avPlayerLayer() const
     if ([platformLayer() isKindOfClass:PAL::getAVPlayerLayerClass()])
         return static_cast<AVPlayerLayer *>(platformLayer());
 
-    if ([platformLayer() isKindOfClass:WebVideoContainerLayer.class])
-        return static_cast<WebVideoContainerLayer *>(platformLayer()).playerLayer;
+    if (auto *layer = dynamic_objc_cast<WebVideoContainerLayer>(platformLayer()))
+        return layer.playerLayer;
 
     ASSERT_NOT_REACHED();
     return nil;

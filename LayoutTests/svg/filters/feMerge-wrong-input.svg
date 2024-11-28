@@ -1,7 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg">
 <defs>
 <!-- check that WebKit doesn't crash, if an effect is not available in feMerge -->
-<filter id="filter" primitiveUnits="objectBoundingBox">
+<filter id="filter" filterUnits="userSpaceOnUse" primitiveUnits="objectBoundingBox">
 <feMerge>
 <feMergeNode in="does-not-exist"/>
 </feMerge>

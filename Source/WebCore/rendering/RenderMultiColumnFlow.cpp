@@ -46,7 +46,6 @@ WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderMultiColumnFlow);
 
 RenderMultiColumnFlow::RenderMultiColumnFlow(Document& document, RenderStyle&& style)
     : RenderFragmentedFlow(Type::MultiColumnFlow, document, WTFMove(style))
-    , m_spannerMap(makeUnique<SpannerMap>())
 {
     setFragmentedFlowState(FragmentedFlowState::InsideFlow);
     ASSERT(isRenderMultiColumnFlow());
@@ -107,7 +106,7 @@ RenderBox* RenderMultiColumnFlow::previousColumnSetOrSpannerSiblingOf(const Rend
 
 RenderMultiColumnSpannerPlaceholder* RenderMultiColumnFlow::findColumnSpannerPlaceholder(const RenderBox* spanner) const
 {
-    return m_spannerMap->get(spanner).get();
+    return m_spannerMap.get(spanner).get();
 }
 
 void RenderMultiColumnFlow::layout()
@@ -367,7 +366,7 @@ LayoutSize RenderMultiColumnFlow::physicalTranslationOffsetFromFlowToFragment(co
     
     // Now we know how we want the rect to be translated into the fragment. At this point we're converting
     // back to physical coordinates.
-    if (style().isFlippedBlocksWritingMode()) {
+    if (writingMode().isBlockFlipped()) {
         LayoutRect portionRect(columnSet->fragmentedFlowPortionRect());
         LayoutRect columnRect = columnSet->columnRectAt(0);
         LayoutUnit physicalDeltaFromPortionBottom = logicalHeight() - columnSet->logicalBottomInFragmentedFlow();

@@ -28,6 +28,7 @@
 #include "WebPageInspectorAgentBase.h"
 #include <JavaScriptCore/InspectorBackendDispatchers.h>
 #include <JavaScriptCore/InspectorFrontendDispatchers.h>
+#include <wtf/CheckedPtr.h>
 #include <wtf/Forward.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/WeakRef.h>
@@ -36,9 +37,10 @@ namespace WebKit {
 
 class WebPageProxy;
 
-class InspectorBrowserAgent final : public InspectorAgentBase, public Inspector::BrowserBackendDispatcherHandler {
+class InspectorBrowserAgent final : public InspectorAgentBase, public Inspector::BrowserBackendDispatcherHandler, public CanMakeCheckedPtr<InspectorBrowserAgent> {
     WTF_MAKE_NONCOPYABLE(InspectorBrowserAgent);
     WTF_MAKE_TZONE_ALLOCATED(InspectorBrowserAgent);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(InspectorBrowserAgent);
 public:
     InspectorBrowserAgent(WebPageAgentContext&);
     ~InspectorBrowserAgent();

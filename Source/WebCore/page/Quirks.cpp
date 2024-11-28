@@ -26,6 +26,7 @@
 #include "config.h"
 #include "Quirks.h"
 
+#include "AccessibilityObject.h"
 #include "Attr.h"
 #include "DOMTokenList.h"
 #include "DeprecatedGlobalSettings.h"
@@ -41,6 +42,7 @@
 #include "HTMLCollection.h"
 #include "HTMLDivElement.h"
 #include "HTMLMetaElement.h"
+#include "HTMLNames.h"
 #include "HTMLObjectElement.h"
 #include "HTMLVideoElement.h"
 #include "JSEventListener.h"
@@ -53,7 +55,6 @@
 #include "PlatformMouseEvent.h"
 #include "RegistrableDomain.h"
 #include "ResourceLoadObserver.h"
-#include "RuntimeApplicationChecks.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGPathElement.h"
 #include "SVGSVGElement.h"
@@ -104,9 +105,9 @@ static HashMap<RegistrableDomain, String>& updatableStorageAccessUserAgentString
 }
 
 #if PLATFORM(IOS_FAMILY)
-static inline bool isYahooMail(Document& document)
+bool Quirks::isYahooMail() const
 {
-    auto host = document.topDocument().url().host();
+    auto host = topDocumentURL().host();
     return host.startsWith("mail."_s) && PublicSuffixStore::singleton().topPrivatelyControlledDomain(host).startsWith("yahoo."_s);
 }
 #endif
@@ -145,7 +146,12 @@ bool Quirks::shouldIgnoreInvalidSignal() const
 // or make different helpers
 bool Quirks::isDomain(const String& domainString) const
 {
-    return RegistrableDomain(m_document->topDocument().url()).string() == domainString;
+    return RegistrableDomain(topDocumentURL()).string() == domainString;
+}
+
+bool Quirks::domainStartsWith(const String& prefix) const
+{
+    return RegistrableDomain(topDocumentURL()).string().startsWith(prefix);
 }
 
 bool Quirks::isEmbedDomain(const String& domainString) const
@@ -156,17 +162,30 @@ bool Quirks::isEmbedDomain(const String& domainString) const
 }
 
 // ceac.state.gov https://bugs.webkit.org/show_bug.cgi?id=193478
+// weather.com rdar://139689157
 bool Quirks::needsFormControlToBeMouseFocusable() const
 {
 #if PLATFORM(MAC)
     if (!needsQuirks())
         return false;
 
-    auto host = m_document->topDocument().url().host();
-    return host == "ceac.state.gov"_s || host.endsWith(".ceac.state.gov"_s);
+    if (!m_quirksData.needsFormControlToBeMouseFocusableQuirk) {
+        m_quirksData.needsFormControlToBeMouseFocusableQuirk = [&] {
+            auto host = topDocumentURL().host();
+            if (host == "ceac.state.gov"_s || host.endsWith(".ceac.state.gov"_s))
+                return true;
+
+            if (host == "weather.com"_s)
+                return true;
+
+            return false;
+        }();
+    }
+
+    return *m_quirksData.needsFormControlToBeMouseFocusableQuirk;
 #else
     return false;
-#endif
+#endif // PLATFORM(MAC)
 }
 
 bool Quirks::needsAutoplayPlayPauseEvents() const
@@ -188,10 +207,7 @@ bool Quirks::needsAutoplayPlayPauseEvents() const
 // - iOS PiP
 bool Quirks::needsSeekingSupportDisabled() const
 {
-    if (!needsQuirks())
-        return false;
-
-    return isDomain("netflix.com"_s);
+    return needsQuirks() && isNetflix();
 }
 
 // netflix.com https://bugs.webkit.org/show_bug.cgi?id=193301
@@ -205,7 +221,7 @@ bool Quirks::needsPerDocumentAutoplayBehavior() const
     if (!needsQuirks())
         return false;
 
-    return isDomain("netflix.com"_s);
+    return isNetflix();
 #endif
 }
 
@@ -215,7 +231,10 @@ bool Quirks::shouldAutoplayWebAudioForArbitraryUserGesture() const
     if (!needsQuirks())
         return false;
 
-    return isDomain("zoom.us"_s);
+    if (!m_quirksData.shouldAutoplayWebAudioForArbitraryUserGestureQuirk)
+        m_quirksData.shouldAutoplayWebAudioForArbitraryUserGestureQuirk = isDomain("zoom.us"_s);
+
+    return *m_quirksData.shouldAutoplayWebAudioForArbitraryUserGestureQuirk;
 }
 
 // youtube.com https://bugs.webkit.org/show_bug.cgi?id=195598
@@ -224,31 +243,8 @@ bool Quirks::hasBrokenEncryptedMediaAPISupportQuirk() const
 #if ENABLE(THUNDER)
     return false;
 #else
-
-    if (!needsQuirks())
-        return false;
-
-    if (m_hasBrokenEncryptedMediaAPISupportQuirk)
-        return m_hasBrokenEncryptedMediaAPISupportQuirk.value();
-
-    m_hasBrokenEncryptedMediaAPISupportQuirk = isDomain("youtube.com"_s);
-
-    return m_hasBrokenEncryptedMediaAPISupportQuirk.value();
+    return needsQuirks() && isYouTube();
 #endif
-}
-
-// google.com https://bugs.webkit.org/show_bug.cgi?id=223700
-// FIXME: Remove after the site is fixed, <rdar://problem/75792913>
-bool Quirks::shouldHideSearchFieldResultsButton() const
-{
-#if PLATFORM(IOS_FAMILY)
-    if (!needsQuirks())
-        return false;
-
-    if (PublicSuffixStore::singleton().topPrivatelyControlledDomain(m_document->topDocument().url().host()).startsWith("google."_s))
-        return true;
-#endif
-    return false;
 }
 
 // docs.google.com https://bugs.webkit.org/show_bug.cgi?id=161984
@@ -258,7 +254,10 @@ bool Quirks::isTouchBarUpdateSuppressedForHiddenContentEditable() const
     if (!needsQuirks())
         return false;
 
-    return m_document->topDocument().url().host() == "docs.google.com"_s;
+    if (!m_quirksData.isTouchBarUpdateSuppressedForHiddenContentEditableQuirk)
+        m_quirksData.isTouchBarUpdateSuppressedForHiddenContentEditableQuirk = topDocumentURL().host() == "docs.google.com"_s;
+
+    return *m_quirksData.isTouchBarUpdateSuppressedForHiddenContentEditableQuirk;
 #else
     return false;
 #endif
@@ -274,20 +273,28 @@ bool Quirks::isNeverRichlyEditableForTouchBar() const
     if (!needsQuirks())
         return false;
 
-    auto& url = m_document->topDocument().url();
-    auto host = url.host();
+    if (!m_quirksData.isNeverRichlyEditableForTouchBarQuirk) {
+        m_quirksData.isNeverRichlyEditableForTouchBarQuirk = [&] {
+            auto url = topDocumentURL();
+            auto host = url.host();
 
-    if (host == "onedrive.live.com"_s)
-        return true;
+            if (host == "onedrive.live.com"_s)
+                return true;
 
-    if (isDomain("trix-editor.org"_s))
-        return true;
+            if (isDomain("trix-editor.org"_s))
+                return true;
 
-    if (host == "www.icloud.com"_s) {
-        auto path = url.path();
-        if (path.contains("notes"_s) || url.fragmentIdentifier().contains("notes"_s))
-            return true;
+            if (host == "www.icloud.com"_s) {
+                auto path = url.path();
+                if (path.contains("notes"_s) || url.fragmentIdentifier().contains("notes"_s))
+                    return true;
+            }
+
+            return false;
+        }();
     }
+
+    return *m_quirksData.isNeverRichlyEditableForTouchBarQuirk;
 #endif
 
     return false;
@@ -297,16 +304,19 @@ bool Quirks::isNeverRichlyEditableForTouchBar() const
 // FIXME https://bugs.webkit.org/show_bug.cgi?id=260698
 bool Quirks::shouldSuppressAutocorrectionAndAutocapitalizationInHiddenEditableAreas() const
 {
-
 #if PLATFORM(IOS_FAMILY)
     if (!needsQuirks())
         return false;
 
-    auto host = m_document->topDocument().url().host();
-    if (host == "docs.google.com"_s)
-        return true;
-#endif
+    if (!m_quirksData.shouldSuppressAutocorrectionAndAutocapitalizationInHiddenEditableAreasQuirk) {
+        auto host = topDocumentURL().host();
+        m_quirksData.shouldSuppressAutocorrectionAndAutocapitalizationInHiddenEditableAreasQuirk = host == "docs.google.com"_s;
+    }
+
+    return *m_quirksData.shouldSuppressAutocorrectionAndAutocapitalizationInHiddenEditableAreasQuirk;
+#else
     return false;
+#endif
 }
 
 // weebly.com rdar://48003980
@@ -319,13 +329,10 @@ bool Quirks::shouldDispatchSyntheticMouseEventsWhenModifyingSelection() const
     if (!needsQuirks())
         return false;
 
-    if (isDomain("medium.com"_s))
-        return true;
+    if (!m_quirksData.shouldDispatchSyntheticMouseEventsWhenModifyingSelectionQuirk)
+        m_quirksData.shouldDispatchSyntheticMouseEventsWhenModifyingSelectionQuirk = isDomain("medium.com"_s) || isDomain("weebly.com"_s);
 
-    if (isDomain("weebly.com"_s))
-        return true;
-
-    return false;
+    return *m_quirksData.shouldDispatchSyntheticMouseEventsWhenModifyingSelectionQuirk;
 }
 
 // www.youtube.com rdar://52361019
@@ -338,20 +345,28 @@ bool Quirks::needsYouTubeMouseOutQuirk() const
     if (!needsQuirks())
         return false;
 
-    return m_document->url().host() == "www.youtube.com"_s;
+    if (!m_quirksData.needsYouTubeMouseOutQuirk)
+        m_quirksData.needsYouTubeMouseOutQuirk = m_document->url().host() == "www.youtube.com"_s;
+
+    return *m_quirksData.needsYouTubeMouseOutQuirk;
 #else
     return false;
 #endif
 }
 
-// mail.google.com rdar://128360054
-// FIXME (rdar://130624461): Remove this quirk once Gmail adopts the `writingsuggestions` attribute.
+// safe.menlosecurity.com rdar://135114489
+// FIXME (rdar://138585709): Remove this quirk for safe.menlosecurity.com once investigation into text corruption on the site is completed and the issue is resolved.
 bool Quirks::shouldDisableWritingSuggestionsByDefault() const
 {
     if (!needsQuirks())
         return false;
-    auto& url = m_document->topDocument().url();
-    return url.host() == "mail.google.com"_s;
+
+    if (!m_quirksData.shouldDisableWritingSuggestionsByDefaultQuirk) {
+        auto url = topDocumentURL();
+        m_quirksData.shouldDisableWritingSuggestionsByDefaultQuirk = url.host() == "safe.menlosecurity.com"_s;
+    }
+
+    return *m_quirksData.shouldDisableWritingSuggestionsByDefaultQuirk;
 }
 
 void Quirks::updateStorageAccessUserAgentStringQuirks(HashMap<RegistrableDomain, String>&& userAgentStringQuirks)
@@ -393,39 +408,87 @@ bool Quirks::shouldDisableElementFullscreenQuirk() const
     // (Ref: rdar://116531089)
     // Instagram.com stories flow under the notch and status bar
     // (Ref: rdar://121014613)
-    // Twitter.com video embeds have controls that are too tiny and
+    // x.com (twitter) video embeds have controls that are too tiny and
     // show page behind fullscreen.
     // (Ref: rdar://121473410)
     // YouTube.com does not provide AirPlay controls in fullscreen
     // (Ref: rdar://121471373)
-    if (!m_shouldDisableElementFullscreen) {
-        m_shouldDisableElementFullscreen = isDomain("vimeo.com"_s)
+    if (!m_quirksData.shouldDisableElementFullscreen) {
+        m_quirksData.shouldDisableElementFullscreen = isVimeo()
             || isDomain("instagram.com"_s)
             || (PAL::currentUserInterfaceIdiomIsSmallScreen() && isDomain("digitaltrends.com"_s))
             || (PAL::currentUserInterfaceIdiomIsSmallScreen() && isDomain("as.com"_s))
-            || isEmbedDomain("twitter.com"_s)
             || isEmbedDomain("x.com"_s)
-            || (PAL::currentUserInterfaceIdiomIsSmallScreen() && (isDomain("youtube.com"_s) || isYoutubeEmbedDomain()));
+            || (PAL::currentUserInterfaceIdiomIsSmallScreen() && (isYouTube() || isYoutubeEmbedDomain()));
     }
 
-    return m_shouldDisableElementFullscreen.value();
+    return *m_quirksData.shouldDisableElementFullscreen;
 #else
     return false;
 #endif
 }
 
-#if ENABLE(TOUCH_EVENTS)
 bool Quirks::isAmazon() const
 {
-    return PublicSuffixStore::singleton().topPrivatelyControlledDomain(m_document->topDocument().url().host()).startsWith("amazon."_s);
+    if (!m_quirksData.isAmazon)
+        m_quirksData.isAmazon = PublicSuffixStore::singleton().topPrivatelyControlledDomain(topDocumentURL().host()).startsWith("amazon."_s);
+
+    return *m_quirksData.isAmazon;
+}
+
+
+bool Quirks::isESPN() const
+{
+    if (!m_quirksData.isESPN)
+        m_quirksData.isESPN = isDomain("espn.com"_s);
+
+    return *m_quirksData.isESPN;
 }
 
 bool Quirks::isGoogleMaps() const
 {
-    auto& url = m_document->topDocument().url();
-    return PublicSuffixStore::singleton().topPrivatelyControlledDomain(url.host()).startsWith("google."_s) && startsWithLettersIgnoringASCIICase(url.path(), "/maps/"_s);
+    if (!m_quirksData.isGoogleMaps) {
+        auto url = topDocumentURL();
+        m_quirksData.isGoogleMaps = PublicSuffixStore::singleton().topPrivatelyControlledDomain(url.host()).startsWith("google."_s) && startsWithLettersIgnoringASCIICase(url.path(), "/maps/"_s);
+    }
+
+    return *m_quirksData.isGoogleMaps;
 }
 
+bool Quirks::isNetflix() const
+{
+    if (!m_quirksData.isNetflix)
+        m_quirksData.isNetflix = isDomain("netflix.com"_s);
+
+    return *m_quirksData.isNetflix;
+}
+
+bool Quirks::isSoundCloud() const
+{
+    if (!m_quirksData.isSoundCloud)
+        m_quirksData.isSoundCloud = isDomain("soundcloud.com"_s);
+
+    return *m_quirksData.isSoundCloud;
+}
+
+bool Quirks::isVimeo() const
+{
+    if (!m_quirksData.isVimeo)
+        m_quirksData.isVimeo = isDomain("vimeo.com"_s);
+
+    return *m_quirksData.isVimeo;
+}
+
+bool Quirks::isYouTube() const
+{
+    if (!m_quirksData.isYouTube)
+        m_quirksData.isYouTube = isDomain("youtube.com"_s);
+
+    return *m_quirksData.isYouTube;
+}
+
+
+#if ENABLE(TOUCH_EVENTS)
 // rdar://49124313
 // desmos.com rdar://47068176
 // flipkart.com rdar://49648520
@@ -440,74 +503,72 @@ bool Quirks::shouldDispatchSimulatedMouseEvents(const EventTarget* target) const
     if (!needsQuirks())
         return false;
 
-    auto doShouldDispatchChecks = [this]() -> ShouldDispatchSimulatedMouseEvents {
+    auto doShouldDispatchChecks = [this] () -> QuirksData::ShouldDispatchSimulatedMouseEvents {
         auto* loader = m_document->loader();
         if (!loader || loader->simulatedMouseEventsDispatchPolicy() != SimulatedMouseEventsDispatchPolicy::Allow)
-            return ShouldDispatchSimulatedMouseEvents::No;
+            return QuirksData::ShouldDispatchSimulatedMouseEvents::No;
 
         if (isAmazon())
-            return ShouldDispatchSimulatedMouseEvents::Yes;
+            return QuirksData::ShouldDispatchSimulatedMouseEvents::Yes;
         if (isGoogleMaps())
-            return ShouldDispatchSimulatedMouseEvents::Yes;
+            return QuirksData::ShouldDispatchSimulatedMouseEvents::Yes;
 
-        auto& url = m_document->topDocument().url();
+        auto url = topDocumentURL();
         auto host = url.host();
 
         if (isDomain("wix.com"_s)) {
             // Disable simulated mouse dispatching for template selection.
-            return startsWithLettersIgnoringASCIICase(url.path(), "/website/templates/"_s) ? ShouldDispatchSimulatedMouseEvents::No : ShouldDispatchSimulatedMouseEvents::Yes;
+            return startsWithLettersIgnoringASCIICase(url.path(), "/website/templates/"_s) ? QuirksData::ShouldDispatchSimulatedMouseEvents::No : QuirksData::ShouldDispatchSimulatedMouseEvents::Yes;
         }
 
         if (isDomain("trello.com"_s))
-            return ShouldDispatchSimulatedMouseEvents::Yes;
+            return QuirksData::ShouldDispatchSimulatedMouseEvents::Yes;
         if (isDomain("airtable.com"_s))
-            return ShouldDispatchSimulatedMouseEvents::Yes;
+            return QuirksData::ShouldDispatchSimulatedMouseEvents::Yes;
         if (isDomain("flipkart.com"_s))
-            return ShouldDispatchSimulatedMouseEvents::Yes;
-        if (host == "trailers.apple.com"_s)
-            return ShouldDispatchSimulatedMouseEvents::Yes;
-        if (isDomain("soundcloud.com"_s))
-            return ShouldDispatchSimulatedMouseEvents::Yes;
+            return QuirksData::ShouldDispatchSimulatedMouseEvents::Yes;
+        if (isSoundCloud())
+            return QuirksData::ShouldDispatchSimulatedMouseEvents::Yes;
         if (host == "naver.com"_s)
-            return ShouldDispatchSimulatedMouseEvents::Yes;
+            return QuirksData::ShouldDispatchSimulatedMouseEvents::Yes;
         if (host.endsWith(".naver.com"_s)) {
             // Disable the quirk for tv.naver.com subdomain to be able to simulate hover on videos.
             if (host == "tv.naver.com"_s)
-                return ShouldDispatchSimulatedMouseEvents::No;
+                return QuirksData::ShouldDispatchSimulatedMouseEvents::No;
             // Disable the quirk for mail.naver.com subdomain to be able to tap on mail subjects.
             if (host == "mail.naver.com"_s)
-                return ShouldDispatchSimulatedMouseEvents::No;
+                return QuirksData::ShouldDispatchSimulatedMouseEvents::No;
             // Disable the quirk on the mobile site.
             // FIXME: Maybe this quirk should be disabled for "m." subdomains on all sites? These are generally mobile sites that don't need mouse events.
             if (host == "m.naver.com"_s)
-                return ShouldDispatchSimulatedMouseEvents::No;
-            return ShouldDispatchSimulatedMouseEvents::Yes;
+                return QuirksData::ShouldDispatchSimulatedMouseEvents::No;
+            return QuirksData::ShouldDispatchSimulatedMouseEvents::Yes;
         }
         if (isDomain("mybinder.org"_s))
-            return ShouldDispatchSimulatedMouseEvents::DependingOnTargetFor_mybinder_org;
-        return ShouldDispatchSimulatedMouseEvents::No;
+            return QuirksData::ShouldDispatchSimulatedMouseEvents::DependingOnTargetFor_mybinder_org;
+        return QuirksData::ShouldDispatchSimulatedMouseEvents::No;
     };
 
-    if (m_shouldDispatchSimulatedMouseEventsQuirk == ShouldDispatchSimulatedMouseEvents::Unknown)
-        m_shouldDispatchSimulatedMouseEventsQuirk = doShouldDispatchChecks();
+    if (m_quirksData.shouldDispatchSimulatedMouseEventsQuirk == QuirksData::ShouldDispatchSimulatedMouseEvents::Unknown)
+        m_quirksData.shouldDispatchSimulatedMouseEventsQuirk = doShouldDispatchChecks();
 
-    switch (m_shouldDispatchSimulatedMouseEventsQuirk) {
-    case ShouldDispatchSimulatedMouseEvents::Unknown:
+    switch (m_quirksData.shouldDispatchSimulatedMouseEventsQuirk) {
+    case QuirksData::ShouldDispatchSimulatedMouseEvents::Unknown:
         ASSERT_NOT_REACHED();
         return false;
 
-    case ShouldDispatchSimulatedMouseEvents::No:
+    case QuirksData::ShouldDispatchSimulatedMouseEvents::No:
         return false;
 
-    case ShouldDispatchSimulatedMouseEvents::DependingOnTargetFor_mybinder_org:
+    case QuirksData::ShouldDispatchSimulatedMouseEvents::DependingOnTargetFor_mybinder_org:
         for (RefPtr node = dynamicDowncast<Node>(target); node; node = node->parentNode()) {
             // This uses auto* instead of RefPtr as otherwise GCC does not compile.
-            if (auto* element = dynamicDowncast<Element>(*node); element && const_cast<Element&>(*element).classList().contains("lm-DockPanel-tabBar"_s))
+            if (auto* element = dynamicDowncast<Element>(*node); element && element->hasClassName("lm-DockPanel-tabBar"_s))
                 return true;
         }
         return false;
 
-    case ShouldDispatchSimulatedMouseEvents::Yes:
+    case QuirksData::ShouldDispatchSimulatedMouseEvents::Yes:
         return true;
     }
 
@@ -520,6 +581,9 @@ bool Quirks::shouldDispatchSimulatedMouseEvents(const EventTarget* target) const
 bool Quirks::shouldDispatchedSimulatedMouseEventsAssumeDefaultPrevented(EventTarget* target) const
 {
     if (!needsQuirks() || !shouldDispatchSimulatedMouseEvents(target))
+        return false;
+
+    if (!isAmazon() || !isSoundCloud())
         return false;
 
     RefPtr element = dynamicDowncast<Element>(target);
@@ -535,60 +599,10 @@ bool Quirks::shouldDispatchedSimulatedMouseEventsAssumeDefaultPrevented(EventTar
             return sibling->getIdAttribute() == "magnifierLens"_s;
     }
 
-    if (isDomain("soundcloud.com"_s))
-        return element->classList().contains("sceneLayer"_s);
+    if (isSoundCloud())
+        return element->hasClassName("sceneLayer"_s);
 
     return false;
-}
-
-// maps.google.com https://bugs.webkit.org/show_bug.cgi?id=199904
-// desmos.com rdar://50925173
-std::optional<Event::IsCancelable> Quirks::simulatedMouseEventTypeForTarget(EventTarget* target) const
-{
-    if (!shouldDispatchSimulatedMouseEvents(target))
-        return {};
-
-    // On Google Maps, we want to limit simulated mouse events to dragging the little man that allows entering into Street View.
-    if (isGoogleMaps()) {
-        if (RefPtr element = dynamicDowncast<Element>(target); element && element->getAttribute(HTMLNames::classAttr) == "widget-expand-button-pegman-icon"_s)
-            return Event::IsCancelable::Yes;
-        return {};
-    }
-
-    if (isDomain("desmos.com"_s))
-        return Event::IsCancelable::No;
-
-    return Event::IsCancelable::Yes;
-}
-
-// youtube.com rdar://53415195
-bool Quirks::shouldMakeTouchEventNonCancelableForTarget(EventTarget* target) const
-{
-    if (!needsQuirks())
-        return false;
-
-    auto host = m_document->topDocument().url().host();
-
-    if (host == "www.youtube.com"_s) {
-        if (RefPtr element = dynamicDowncast<Element>(target)) {
-            unsigned depth = 3;
-            for (; element && depth; element = element->parentElement(), --depth) {
-                if (element->localName() == "paper-item"_s && element->classList().contains("yt-dropdown-menu"_s))
-                    return true;
-            }
-        }
-    }
-
-    return false;
-}
-
-// shutterstock.com rdar://58844166
-bool Quirks::shouldPreventPointerMediaQueryFromEvaluatingToCoarse() const
-{
-    if (!needsQuirks())
-        return false;
-
-    return isDomain("shutterstock.com"_s);
 }
 
 // sites.google.com rdar://58653069
@@ -597,27 +611,18 @@ bool Quirks::shouldPreventDispatchOfTouchEvent(const AtomString& touchEventType,
     if (!needsQuirks())
         return false;
 
-    if (RefPtr element = dynamicDowncast<Element>(target); element && touchEventType == eventNames().touchendEvent && m_document->topDocument().url().host() == "sites.google.com"_s) {
-        auto& classList = element->classList();
-        return classList.contains("DPvwYc"_s) && classList.contains("sm8sCf"_s);
-    }
+    if (!m_quirksData.shouldPreventDispatchOfTouchEventQuirk)
+        m_quirksData.shouldPreventDispatchOfTouchEventQuirk = topDocumentURL().host() == "sites.google.com"_s;
+
+    if (!m_quirksData.shouldPreventDispatchOfTouchEventQuirk.value())
+        return false;
+
+    if (RefPtr element = dynamicDowncast<Element>(target); element && touchEventType == eventNames().touchendEvent)
+        return element->hasClassName("DPvwYc"_s) && element->hasClassName("sm8sCf"_s);
 
     return false;
 }
 
-#endif
-
-#if ENABLE(IOS_TOUCH_EVENTS)
-// mail.yahoo.com rdar://59824469
-bool Quirks::shouldSynthesizeTouchEvents() const
-{
-    if (!needsQuirks())
-        return false;
-
-    if (!m_shouldSynthesizeTouchEventsQuirk)
-        m_shouldSynthesizeTouchEventsQuirk = isYahooMail(*protectedDocument());
-    return m_shouldSynthesizeTouchEventsQuirk.value();
-}
 #endif
 
 // live.com rdar://52116170
@@ -628,19 +633,25 @@ bool Quirks::shouldAvoidResizingWhenInputViewBoundsChange() const
     if (!needsQuirks())
         return false;
 
-    auto& url = m_document->topDocument().url();
-    auto host = url.host();
+    if (!m_quirksData.shouldAvoidResizingWhenInputViewBoundsChangeQuirk) {
+        m_quirksData.shouldAvoidResizingWhenInputViewBoundsChangeQuirk = [&] {
+            auto url = topDocumentURL();
+            auto host = url.host();
 
-    if (isDomain("live.com"_s))
-        return true;
+            if (isDomain("live.com"_s))
+                return true;
 
-    if (isDomain("google.com"_s) && url.path().startsWithIgnoringASCIICase("/maps/"_s))
-        return true;
+            if (isGoogleMaps())
+                return true;
 
-    if (host.endsWith(".sharepoint.com"_s))
-        return true;
+            if (host.endsWith(".sharepoint.com"_s))
+                return true;
 
-    return false;
+            return false;
+        }();
+    }
+
+    return *m_quirksData.shouldAvoidResizingWhenInputViewBoundsChangeQuirk;
 }
 
 // mailchimp.com rdar://47868965
@@ -650,8 +661,10 @@ bool Quirks::shouldDisablePointerEventsQuirk() const
     if (!needsQuirks())
         return false;
 
-    if (isDomain("mailchimp.com"_s))
-        return true;
+    if (!m_quirksData.shouldDisablePointerEventsQuirk)
+        m_quirksData.shouldDisablePointerEventsQuirk = isDomain("mailchimp.com"_s);
+
+    return *m_quirksData.shouldDisablePointerEventsQuirk;
 #endif
     return false;
 }
@@ -666,8 +679,12 @@ bool Quirks::needsDeferKeyDownAndKeyPressTimersUntilNextEditingCommand() const
     if (!needsQuirks())
         return false;
 
-    auto& url = m_document->topDocument().url();
-    return url.host() == "docs.google.com"_s && startsWithLettersIgnoringASCIICase(url.path(), "/spreadsheets/"_s);
+    if (!m_quirksData.needsDeferKeyDownAndKeyPressTimersUntilNextEditingCommandQuirk) {
+        auto url = topDocumentURL();
+        m_quirksData.needsDeferKeyDownAndKeyPressTimersUntilNextEditingCommandQuirk = url.host() == "docs.google.com"_s && startsWithLettersIgnoringASCIICase(url.path(), "/spreadsheets/"_s);
+    }
+
+    return *m_quirksData.needsDeferKeyDownAndKeyPressTimersUntilNextEditingCommandQuirk;
 #else
     return false;
 #endif
@@ -681,10 +698,10 @@ bool Quirks::needsGMailOverflowScrollQuirk() const
     if (!needsQuirks())
         return false;
 
-    if (!m_needsGMailOverflowScrollQuirk)
-        m_needsGMailOverflowScrollQuirk = m_document->url().host() == "mail.google.com"_s;
+    if (!m_quirksData.needsGMailOverflowScrollQuirk)
+        m_quirksData.needsGMailOverflowScrollQuirk = m_document->url().host() == "mail.google.com"_s;
 
-    return *m_needsGMailOverflowScrollQuirk;
+    return *m_quirksData.needsGMailOverflowScrollQuirk;
 #else
     return false;
 #endif
@@ -697,10 +714,10 @@ bool Quirks::needsIPadSkypeOverflowScrollQuirk() const
     if (!needsQuirks())
         return false;
 
-    if (!m_needsIPadSkypeOverflowScrollQuirk)
-        m_needsIPadSkypeOverflowScrollQuirk = m_document->url().host() == "web.skype.com"_s;
+    if (!m_quirksData.needsIPadSkypeOverflowScrollQuirk)
+        m_quirksData.needsIPadSkypeOverflowScrollQuirk = m_document->url().host() == "web.skype.com"_s;
 
-    return *m_needsIPadSkypeOverflowScrollQuirk;
+    return *m_quirksData.needsIPadSkypeOverflowScrollQuirk;
 #else
     return false;
 #endif
@@ -714,13 +731,48 @@ bool Quirks::needsYouTubeOverflowScrollQuirk() const
     if (!needsQuirks())
         return false;
 
-    if (!m_needsYouTubeOverflowScrollQuirk)
-        m_needsYouTubeOverflowScrollQuirk = m_document->url().host() == "www.youtube.com"_s;
+    if (!m_quirksData.needsYouTubeOverflowScrollQuirk)
+        m_quirksData.needsYouTubeOverflowScrollQuirk = m_document->url().host() == "www.youtube.com"_s;
 
-    return *m_needsYouTubeOverflowScrollQuirk;
+    return *m_quirksData.needsYouTubeOverflowScrollQuirk;
 #else
     return false;
 #endif
+}
+
+// amazon.com rdar://128962002
+bool Quirks::needsPrimeVideoUserSelectNoneQuirk() const
+{
+#if PLATFORM(MAC)
+    if (!needsQuirks())
+        return false;
+
+    if (!m_quirksData.needsPrimeVideoUserSelectNoneQuirk)
+        m_quirksData.needsPrimeVideoUserSelectNoneQuirk = isAmazon();
+
+    return *m_quirksData.needsPrimeVideoUserSelectNoneQuirk;
+#else
+    return false;
+#endif
+}
+
+// youtube.com rdar://135886305
+// NOTE: Also remove `BuilderConverter::convertScrollbarWidth` and related code when removing this quirk.
+bool Quirks::needsScrollbarWidthThinDisabledQuirk() const
+{
+    return needsQuirks() && isYouTube();
+}
+
+// spotify.com rdar://138918575
+bool Quirks::needsBodyScrollbarWidthNoneDisabledQuirk() const
+{
+    if (!needsQuirks())
+        return false;
+
+    if (!m_quirksData.needsBodyScrollbarWidthNoneDisabledQuirk)
+        m_quirksData.needsBodyScrollbarWidthNoneDisabledQuirk = m_document->url().host() == "open.spotify.com"_s;
+
+    return *m_quirksData.needsBodyScrollbarWidthNoneDisabledQuirk;
 }
 
 // gizmodo.com rdar://102227302
@@ -730,10 +782,10 @@ bool Quirks::needsFullscreenDisplayNoneQuirk() const
     if (!needsQuirks())
         return false;
 
-    if (!m_needsFullscreenDisplayNoneQuirk)
-        m_needsFullscreenDisplayNoneQuirk = isDomain("gizmodo.com"_s);
+    if (!m_quirksData.needsFullscreenDisplayNoneQuirk)
+        m_quirksData.needsFullscreenDisplayNoneQuirk = isDomain("gizmodo.com"_s);
 
-    return *m_needsFullscreenDisplayNoneQuirk;
+    return *m_quirksData.needsFullscreenDisplayNoneQuirk;
 #else
     return false;
 #endif
@@ -746,10 +798,10 @@ bool Quirks::needsFullscreenObjectFitQuirk() const
     if (!needsQuirks())
         return false;
 
-    if (!m_needsFullscreenObjectFitQuirk)
-        m_needsFullscreenObjectFitQuirk = isDomain("cnn.com"_s);
+    if (!m_quirksData.needsFullscreenObjectFitQuirk)
+        m_quirksData.needsFullscreenObjectFitQuirk = isDomain("cnn.com"_s);
 
-    return *m_needsFullscreenObjectFitQuirk;
+    return *m_quirksData.needsFullscreenObjectFitQuirk;
 #else
     return false;
 #endif
@@ -759,7 +811,17 @@ bool Quirks::needsFullscreenObjectFitQuirk() const
 bool Quirks::needsWeChatScrollingQuirk() const
 {
 #if PLATFORM(IOS) || PLATFORM(VISION)
-    return needsQuirks() && !linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::NoWeChatScrollingQuirk) && IOSApplication::isWechat();
+    return needsQuirks() && !linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::NoWeChatScrollingQuirk) && WTF::IOSApplication::isWechat();
+#else
+    return false;
+#endif
+}
+
+// maps.google.com rdar://67358928
+bool Quirks::needsGoogleMapsScrollingQuirk() const
+{
+#if PLATFORM(IOS_FAMILY)
+    return needsQuirks() && isGoogleMaps();
 #else
     return false;
 #endif
@@ -790,7 +852,7 @@ bool Quirks::shouldSilenceResizeObservers() const
     if (!page || !page->isTakingSnapshotsForApplicationSuspension())
         return false;
 
-    return isDomain("youtube.com"_s);
+    return isYouTube();
 #else
     return false;
 #endif
@@ -803,13 +865,16 @@ bool Quirks::shouldSilenceWindowResizeEvents() const
         return false;
 
     // We silence window resize events during the 'homing out' snapshot sequence when on nytimes.com
-    // to address <rdar://problem/59763843>, and on twitter.com to address <rdar://problem/58804852> &
+    // to address <rdar://problem/59763843>, and on x.com (twitter) to address <rdar://problem/58804852> &
     // <rdar://problem/61731801>.
     auto* page = m_document->page();
     if (!page || !page->isTakingSnapshotsForApplicationSuspension())
         return false;
 
-    return isDomain("nytimes.com"_s) || isDomain("twitter.com"_s) || isDomain("x.com"_s) || isDomain("zillow.com"_s) || isDomain("365scores.com"_s);
+    if (!m_quirksData.shouldSilenceWindowResizeEvents)
+        m_quirksData.shouldSilenceWindowResizeEvents = isDomain("nytimes.com"_s) || isDomain("x.com"_s) || isDomain("zillow.com"_s) || isDomain("365scores.com"_s);
+
+    return *m_quirksData.shouldSilenceWindowResizeEvents;
 #else
     return false;
 #endif
@@ -821,13 +886,16 @@ bool Quirks::shouldSilenceMediaQueryListChangeEvents() const
     if (!needsQuirks())
         return false;
 
-    // We silence MediaQueryList's change events during the 'homing out' snapshot sequence when on twitter.com
+    // We silence MediaQueryList's change events during the 'homing out' snapshot sequence when on x.com (twitter)
     // to address <rdar://problem/58804852> & <rdar://problem/61731801>.
     auto* page = m_document->page();
     if (!page || !page->isTakingSnapshotsForApplicationSuspension())
         return false;
 
-    return isDomain("twitter.com"_s) || isDomain("x.com"_s);
+    if (!m_quirksData.shouldSilenceMediaQueryListChangeEvents)
+        m_quirksData.shouldSilenceMediaQueryListChangeEvents = isDomain("x.com"_s);
+
+    return *m_quirksData.shouldSilenceMediaQueryListChangeEvents;
 #else
     return false;
 #endif
@@ -839,7 +907,10 @@ bool Quirks::shouldAvoidScrollingWhenFocusedContentIsVisible() const
     if (!needsQuirks())
         return false;
 
-    return m_document->url().host() == "www.zillow.com"_s;
+    if (!m_quirksData.shouldAvoidScrollingWhenFocusedContentIsVisibleQuirk)
+        m_quirksData.shouldAvoidScrollingWhenFocusedContentIsVisibleQuirk = m_document->url().host() == "www.zillow.com"_s;
+
+    return *m_quirksData.shouldAvoidScrollingWhenFocusedContentIsVisibleQuirk;
 }
 
 // att.com rdar://55185021
@@ -848,7 +919,11 @@ bool Quirks::shouldUseLegacySelectPopoverDismissalBehaviorInDataActivation() con
     if (!needsQuirks())
         return false;
 
-    return isDomain("att.com"_s);
+    if (!m_quirksData.shouldUseLegacySelectPopoverDismissalBehaviorInDataActivationQuirk)
+        m_quirksData.shouldUseLegacySelectPopoverDismissalBehaviorInDataActivationQuirk = isDomain("att.com"_s);
+
+    return *m_quirksData.shouldUseLegacySelectPopoverDismissalBehaviorInDataActivationQuirk;
+
 }
 
 // ralphlauren.com rdar://55629493
@@ -858,7 +933,10 @@ bool Quirks::shouldIgnoreAriaForFastPathContentObservationCheck() const
     if (!needsQuirks())
         return false;
 
-    return m_document->url().host() == "www.ralphlauren.com"_s;
+    if (!m_quirksData.shouldIgnoreAriaForFastPathContentObservationCheckQuirk)
+        m_quirksData.shouldIgnoreAriaForFastPathContentObservationCheckQuirk = m_document->url().host() == "www.ralphlauren.com"_s;
+
+    return *m_quirksData.shouldIgnoreAriaForFastPathContentObservationCheckQuirk;
 #endif
     return false;
 }
@@ -876,7 +954,10 @@ bool Quirks::shouldIgnoreViewportArgumentsToAvoidExcessiveZoom() const
         return false;
 
 #if ENABLE(META_VIEWPORT)
-    return isWikipediaDomain(m_document->url());
+    if (!m_quirksData.shouldIgnoreViewportArgumentsToAvoidExcessiveZoomQuirk)
+        m_quirksData.shouldIgnoreViewportArgumentsToAvoidExcessiveZoomQuirk = isWikipediaDomain(m_document->url());
+
+    return *m_quirksData.shouldIgnoreViewportArgumentsToAvoidExcessiveZoomQuirk;
 #endif
     return false;
 }
@@ -910,16 +991,7 @@ bool Quirks::shouldOpenAsAboutBlank(const String& stringToOpen) const
 bool Quirks::needsPreloadAutoQuirk() const
 {
 #if PLATFORM(IOS_FAMILY)
-    if (!needsQuirks())
-        return false;
-
-    if (m_needsPreloadAutoQuirk)
-        return m_needsPreloadAutoQuirk.value();
-
-    auto domain = RegistrableDomain(m_document->url()).string();
-    m_needsPreloadAutoQuirk = domain == "vimeo.com"_s;
-
-    return m_needsPreloadAutoQuirk.value();
+    return needsQuirks() && isVimeo();
 #else
     return false;
 #endif
@@ -927,23 +999,30 @@ bool Quirks::needsPreloadAutoQuirk() const
 
 // vimeo.com rdar://56996057
 // docs.google.com rdar://59893415
+// bing.com rdar://133223599
 bool Quirks::shouldBypassBackForwardCache() const
 {
     if (!needsQuirks())
         return false;
 
     RefPtr document = m_document.get();
-    auto topURL = document->topDocument().url();
-    auto host = topURL.host();
+    auto topURL = topDocumentURL();
     RegistrableDomain registrableDomain { topURL };
 
     // Vimeo.com used to bypass the back/forward cache by serving "Cache-Control: no-store" over HTTPS.
     // We started caching such content in r250437 but the vimeo.com content unfortunately is not currently compatible
     // because it changes the opacity of its body to 0 when navigating away and fails to restore the original opacity
     // when coming back from the back/forward cache (e.g. in 'pageshow' event handler). See <rdar://problem/56996057>.
-    if (topURL.protocolIs("https"_s) && host == "vimeo.com"_s) {
+    if (topURL.protocolIs("https"_s) && isVimeo()) {
         if (auto* documentLoader = document->frame() ? document->frame()->loader().documentLoader() : nullptr)
             return documentLoader->response().cacheControlContainsNoStore();
+    }
+
+    // Spinner issue from image search for bing.com.
+    if (registrableDomain == "bing.com"_s) {
+        static MainThreadNeverDestroyed<const AtomString> imageSearchDialogID("sb_sbidialog"_s);
+        if (RefPtr element = document->getElementById(imageSearchDialogID.get()))
+            return element->renderer();
     }
 
     // Login issue on bankofamerica.com (rdar://104938789).
@@ -980,13 +1059,13 @@ bool Quirks::shouldBypassAsyncScriptDeferring() const
     if (!needsQuirks())
         return false;
 
-    if (!m_shouldBypassAsyncScriptDeferring) {
-        auto domain = RegistrableDomain { m_document->topDocument().url() };
+    if (!m_quirksData.shouldBypassAsyncScriptDeferring) {
+        auto domain = RegistrableDomain { topDocumentURL() };
         // Deferring 'mapbox-gl.js' script on bungalow.com causes the script to get in a bad state (rdar://problem/61658940).
         // Deferring the google maps script on sfusd.edu may get the page in a bad state (rdar://116292738).
-        m_shouldBypassAsyncScriptDeferring = domain == "bungalow.com"_s || domain == "sfusd.edu"_s;
+        m_quirksData.shouldBypassAsyncScriptDeferring = domain == "bungalow.com"_s || domain == "sfusd.edu"_s;
     }
-    return *m_shouldBypassAsyncScriptDeferring;
+    return *m_quirksData.shouldBypassAsyncScriptDeferring;
 }
 
 // smoothscroll JS library rdar://52712513
@@ -1033,11 +1112,12 @@ bool Quirks::shouldEnableLegacyGetUserMediaQuirk() const
     if (!needsQuirks())
         return false;
 
-    if (!m_shouldEnableLegacyGetUserMediaQuirk) {
+    if (!m_quirksData.shouldEnableLegacyGetUserMediaQuirk) {
         auto host = m_document->securityOrigin().host();
-        m_shouldEnableLegacyGetUserMediaQuirk = host == "www.baidu.com"_s || host == "www.warbyparker.com"_s;
+        m_quirksData.shouldEnableLegacyGetUserMediaQuirk = host == "www.baidu.com"_s || host == "www.warbyparker.com"_s;
     }
-    return m_shouldEnableLegacyGetUserMediaQuirk.value();
+
+    return *m_quirksData.shouldEnableLegacyGetUserMediaQuirk;
 }
 
 // zoom.us rdar://118185086
@@ -1046,10 +1126,10 @@ bool Quirks::shouldDisableImageCaptureQuirk() const
     if (!needsQuirks())
         return false;
 
-    if (!m_shouldDisableImageCaptureQuirk)
-        m_shouldDisableImageCaptureQuirk = isDomain("zoom.us"_s);
+    if (!m_quirksData.shouldDisableImageCaptureQuirk)
+        m_quirksData.shouldDisableImageCaptureQuirk = isDomain("zoom.us"_s);
 
-    return m_shouldDisableImageCaptureQuirk.value();
+    return *m_quirksData.shouldDisableImageCaptureQuirk;
 }
 #endif
 
@@ -1059,14 +1139,12 @@ bool Quirks::needsCanPlayAfterSeekedQuirk() const
     if (!needsQuirks())
         return false;
 
-    if (m_needsCanPlayAfterSeekedQuirk)
-        return *m_needsCanPlayAfterSeekedQuirk;
+    if (!m_quirksData.needsCanPlayAfterSeekedQuirk) {
+        auto domain = m_document->securityOrigin().domain();
+        m_quirksData.needsCanPlayAfterSeekedQuirk = domain == "hulu.com"_s || domain.endsWith(".hulu.com"_s);
+    }
 
-    auto domain = m_document->securityOrigin().domain();
-
-    m_needsCanPlayAfterSeekedQuirk = domain == "hulu.com"_s || domain.endsWith(".hulu.com"_s);
-
-    return m_needsCanPlayAfterSeekedQuirk.value();
+    return *m_quirksData.needsCanPlayAfterSeekedQuirk;
 }
 
 // wikipedia.org rdar://54856323
@@ -1077,19 +1155,23 @@ bool Quirks::shouldLayOutAtMinimumWindowWidthWhenIgnoringScalingConstraints() co
 
     // FIXME: We should consider replacing this with a heuristic to determine whether
     // or not the edges of the page mostly lack content after shrinking to fit.
-    return isWikipediaDomain(m_document->url());
+    if (!m_quirksData.shouldLayOutAtMinimumWindowWidthWhenIgnoringScalingConstraintsQuirk)
+        m_quirksData.shouldLayOutAtMinimumWindowWidthWhenIgnoringScalingConstraintsQuirk = isWikipediaDomain(m_document->url());
+
+    return *m_quirksData.shouldLayOutAtMinimumWindowWidthWhenIgnoringScalingConstraintsQuirk;
 }
 
 // mail.yahoo.com rdar://63511613
 bool Quirks::shouldAvoidPastingImagesAsWebContent() const
 {
+#if PLATFORM(IOS_FAMILY)
     if (!needsQuirks())
         return false;
 
-#if PLATFORM(IOS_FAMILY)
-    if (!m_shouldAvoidPastingImagesAsWebContent)
-        m_shouldAvoidPastingImagesAsWebContent = isYahooMail(*protectedDocument());
-    return *m_shouldAvoidPastingImagesAsWebContent;
+    if (!m_quirksData.shouldAvoidPastingImagesAsWebContent)
+        m_quirksData.shouldAvoidPastingImagesAsWebContent = isYahooMail();
+
+    return *m_quirksData.shouldAvoidPastingImagesAsWebContent;
 #else
     return false;
 #endif
@@ -1130,23 +1212,6 @@ bool Quirks::isMicrosoftTeamsRedirectURL(const URL& url)
     return url.host() == "teams.microsoft.com"_s && url.query().contains("Retried+3+times+without+success"_s);
 }
 
-static bool elementHasClassInClosestAncestors(const Element& element, const AtomString& className, unsigned distance)
-{
-    if (element.hasClassName(className))
-        return true;
-
-    unsigned currentDistance = 0;
-    RefPtr ancestor = dynamicDowncast<Element>(element.parentNode());
-    while (ancestor && currentDistance < distance) {
-        ++currentDistance;
-        if (ancestor->hasClassName(className))
-            return true;
-
-        ancestor = dynamicDowncast<Element>(ancestor->parentNode());
-    }
-    return false;
-}
-
 static bool isStorageAccessQuirkDomainAndElement(const URL& url, const Element& element)
 {
     // Microsoft Teams login case.
@@ -1166,10 +1231,6 @@ static bool isStorageAccessQuirkDomainAndElement(const URL& url, const Element& 
                 || element.classNames().contains("sb-signin-button"_s));
     }
 
-    // Gizmodo login case: rdar://106782128.
-    if (url.host() == "gizmodo.com"_s)
-        return elementHasClassInClosestAncestors(element, "js_user-button"_s, 6);
-
     return false;
 }
 
@@ -1186,7 +1247,7 @@ bool Quirks::hasStorageAccessForAllLoginDomains(const HashSet<RegistrableDomain>
 Quirks::StorageAccessResult Quirks::requestStorageAccessAndHandleClick(CompletionHandler<void(ShouldDispatchClick)>&& completionHandler) const
 {
     RefPtr document = m_document.get();
-    auto firstPartyDomain = RegistrableDomain(document->topDocument().url());
+    auto firstPartyDomain = RegistrableDomain(topDocumentURL());
     auto domainsInNeedOfStorageAccess = NetworkStorageSession::subResourceDomainsInNeedOfStorageAccessForFirstParty(firstPartyDomain);
     if (!domainsInNeedOfStorageAccess || domainsInNeedOfStorageAccess.value().isEmpty()) {
         completionHandler(ShouldDispatchClick::No);
@@ -1256,15 +1317,9 @@ Quirks::StorageAccessResult Quirks::triggerOptionalStorageAccessQuirk(Element& e
 
     static NeverDestroyed<HashSet<RegistrableDomain>> kinjaQuirks = [] {
         HashSet<RegistrableDomain> set;
-        set.add(RegistrableDomain::uncheckedCreateFromRegistrableDomainString("avclub.com"_s));
-        set.add(RegistrableDomain::uncheckedCreateFromRegistrableDomainString("deadspin.com"_s));
         set.add(RegistrableDomain::uncheckedCreateFromRegistrableDomainString("jalopnik.com"_s));
-        set.add(RegistrableDomain::uncheckedCreateFromRegistrableDomainString("jezebel.com"_s));
         set.add(RegistrableDomain::uncheckedCreateFromRegistrableDomainString("kotaku.com"_s));
-        set.add(RegistrableDomain::uncheckedCreateFromRegistrableDomainString("lifehacker.com"_s));
         set.add(RegistrableDomain::uncheckedCreateFromRegistrableDomainString("theroot.com"_s));
-        set.add(RegistrableDomain::uncheckedCreateFromRegistrableDomainString("thetakeout.com"_s));
-        set.add(RegistrableDomain::uncheckedCreateFromRegistrableDomainString("theonion.com"_s));
         set.add(RegistrableDomain::uncheckedCreateFromRegistrableDomainString("theinventory.com"_s));
         return set;
     }();
@@ -1339,45 +1394,56 @@ bool Quirks::needsVP9FullRangeFlagQuirk() const
     if (!needsQuirks())
         return false;
 
-    if (!m_needsVP9FullRangeFlagQuirk)
-        m_needsVP9FullRangeFlagQuirk = m_document->url().host() == "www.youtube.com"_s;
+    if (!m_quirksData.needsVP9FullRangeFlagQuirk)
+        m_quirksData.needsVP9FullRangeFlagQuirk = m_document->url().host() == "www.youtube.com"_s;
 
-    return *m_needsVP9FullRangeFlagQuirk;
+    return *m_quirksData.needsVP9FullRangeFlagQuirk;
 }
 
 bool Quirks::requiresUserGestureToPauseInPictureInPicture() const
 {
 #if ENABLE(VIDEO_PRESENTATION_MODE)
-    // Facebook, Twitter, and Reddit will naively pause a <video> element that has scrolled out of the viewport,
+    // Facebook, x (twitter), and Reddit will naively pause a <video> element that has scrolled out of the viewport,
     // regardless of whether that element is currently in PiP mode.
     // We should remove the quirk once <rdar://problem/67273166>, <rdar://problem/73369869>, and <rdar://problem/80645747> have been fixed.
     if (!needsQuirks())
         return false;
 
-    if (!m_requiresUserGestureToPauseInPictureInPicture) {
-        auto domain = RegistrableDomain(m_document->topDocument().url()).string();
-        m_requiresUserGestureToPauseInPictureInPicture = isDomain("facebook.com"_s) || isDomain("twitter.com"_s) || isDomain("x.com"_s) || isDomain("reddit.com"_s);
+    if (!m_quirksData.requiresUserGestureToPauseInPictureInPictureQuirk) {
+        auto domain = RegistrableDomain(topDocumentURL()).string();
+        m_quirksData.requiresUserGestureToPauseInPictureInPictureQuirk = isDomain("facebook.com"_s) || isDomain("x.com"_s) || isDomain("reddit.com"_s) || isDomain("forbes.com"_s);
     }
 
-    return *m_requiresUserGestureToPauseInPictureInPicture;
+    return *m_quirksData.requiresUserGestureToPauseInPictureInPictureQuirk;
 #else
     return false;
 #endif
 }
 
+bool Quirks::returnNullPictureInPictureElementDuringFullscreenChange() const
+{
+    if (!needsQuirks())
+        return false;
+
+    if (!m_quirksData.returnNullPictureInPictureElementDuringFullscreenChangeQuirk)
+        m_quirksData.returnNullPictureInPictureElementDuringFullscreenChangeQuirk = isDomain("bbc.co.uk"_s);
+
+    return *m_quirksData.returnNullPictureInPictureElementDuringFullscreenChangeQuirk;
+}
+
 bool Quirks::requiresUserGestureToLoadInPictureInPicture() const
 {
 #if ENABLE(VIDEO_PRESENTATION_MODE)
-    // Twitter will remove the "src" attribute of a <video> element that has scrolled out of the viewport and
+    // X will remove the "src" attribute of a <video> element that has scrolled out of the viewport and
     // load the <video> element with an empty "src" regardless of whether that element is currently in PiP mode.
     // We should remove the quirk once <rdar://problem/73369869> has been fixed.
     if (!needsQuirks())
         return false;
 
-    if (!m_requiresUserGestureToLoadInPictureInPicture)
-        m_requiresUserGestureToLoadInPictureInPicture = isDomain("twitter.com"_s) || isDomain("x.com"_s);
+    if (!m_quirksData.requiresUserGestureToLoadInPictureInPictureQuirk)
+        m_quirksData.requiresUserGestureToLoadInPictureInPictureQuirk = || isDomain("x.com"_s);
 
-    return *m_requiresUserGestureToLoadInPictureInPicture;
+    return *m_quirksData.requiresUserGestureToLoadInPictureInPictureQuirk;
 #else
     return false;
 #endif
@@ -1390,13 +1456,7 @@ bool Quirks::blocksReturnToFullscreenFromPictureInPictureQuirk() const
     // returns to fullscreen from picture-in-picture. This quirk disables the "return to fullscreen
     // from picture-in-picture" feature for those sites. We should remove the quirk once
     // rdar://problem/73167931 has been fixed.
-    if (!needsQuirks())
-        return false;
-
-    if (!m_blocksReturnToFullscreenFromPictureInPictureQuirk)
-        m_blocksReturnToFullscreenFromPictureInPictureQuirk = isDomain("vimeo.com"_s);
-
-    return *m_blocksReturnToFullscreenFromPictureInPictureQuirk;
+    return needsQuirks() && isVimeo();
 #else
     return false;
 #endif
@@ -1407,14 +1467,7 @@ bool Quirks::blocksEnteringStandardFullscreenFromPictureInPictureQuirk() const
 #if ENABLE(FULLSCREEN_API) && ENABLE(VIDEO_PRESENTATION_MODE)
     // Vimeo enters fullscreen when starting playback from the inline play button while already in PIP.
     // This behavior is revealing a bug in the fullscreen handling. See rdar://107592139.
-    if (!needsQuirks())
-        return false;
-
-    if (!m_blocksEnteringStandardFullscreenFromPictureInPictureQuirk) {
-        m_blocksEnteringStandardFullscreenFromPictureInPictureQuirk = isDomain("vimeo.com"_s);
-    }
-
-    return *m_blocksEnteringStandardFullscreenFromPictureInPictureQuirk;
+    return needsQuirks() && isVimeo();
 #else
     return false;
 #endif
@@ -1425,18 +1478,9 @@ bool Quirks::shouldDisableEndFullscreenEventWhenEnteringPictureInPictureFromFull
 #if ENABLE(VIDEO_PRESENTATION_MODE)
     // This quirk disables the "webkitendfullscreen" event when a video enters picture-in-picture
     // from fullscreen for the sites which cannot handle the event properly in that case.
-    // We should remove the quirk once <rdar://problem/73261957> and <rdar://problem/90393832> have been fixed.
-    if (!needsQuirks())
-        return false;
-
-    if (!m_shouldDisableEndFullscreenEventWhenEnteringPictureInPictureFromFullscreenQuirk) {
-        auto host = m_document->topDocument().url().host();
-        auto domain = RegistrableDomain(m_document->topDocument().url());
-
-        m_shouldDisableEndFullscreenEventWhenEnteringPictureInPictureFromFullscreenQuirk = host == "trailers.apple.com"_s || domain == "espn.com"_s || domain == "vimeo.com"_s;
-    }
-
-    return *m_shouldDisableEndFullscreenEventWhenEnteringPictureInPictureFromFullscreenQuirk;
+    // We should remove once the quirks have been fixed.
+    // <rdar://90393832> vimeo.com
+    return needsQuirks() && (isESPN() || isVimeo());
 #else
     return false;
 #endif
@@ -1450,10 +1494,10 @@ bool Quirks::shouldDelayFullscreenEventWhenExitingPictureInPictureQuirk() const
     if (!needsQuirks())
         return false;
 
-    if (!m_shouldDelayFullscreenEventWhenExitingPictureInPictureQuirk)
-        m_shouldDelayFullscreenEventWhenExitingPictureInPictureQuirk = isDomain("bbc.com"_s);
+    if (!m_quirksData.shouldDelayFullscreenEventWhenExitingPictureInPictureQuirk)
+        m_quirksData.shouldDelayFullscreenEventWhenExitingPictureInPictureQuirk = isDomain("bbc.com"_s);
 
-    return *m_shouldDelayFullscreenEventWhenExitingPictureInPictureQuirk;
+    return *m_quirksData.shouldDelayFullscreenEventWhenExitingPictureInPictureQuirk;
 #else
     return false;
 #endif
@@ -1469,27 +1513,22 @@ bool Quirks::shouldAllowNavigationToCustomProtocolWithoutUserGesture(StringView 
 #if PLATFORM(IOS) || PLATFORM(VISION)
 bool Quirks::allowLayeredFullscreenVideos() const
 {
-    if (!needsQuirks())
-        return false;
-
-    if (!m_allowLayeredFullscreenVideos) {
-        auto domain = RegistrableDomain(m_document->topDocument().url());
-
-        m_allowLayeredFullscreenVideos = domain == "espn.com"_s;
-    }
-
-    return *m_allowLayeredFullscreenVideos;
+    return needsQuirks() && isESPN();
 }
 #endif
 
 #if PLATFORM(VISION)
-// twitter.com: rdar://124180748
+// x.com: rdar://132850672
+// FIXME (rdar://124579556): Remove once 'x.com' adjusts video handling for visionOS.
 bool Quirks::shouldDisableFullscreenVideoAspectRatioAdaptiveSizing() const
 {
     if (!needsQuirks())
         return false;
 
-    return isDomain("twitter.com"_s) || isDomain("x.com"_s);
+    if (!m_quirksData.shouldDisableFullscreenVideoAspectRatioAdaptiveSizingQuirk)
+        m_quirksData.shouldDisableFullscreenVideoAspectRatioAdaptiveSizingQuirk = isDomain("x.com"_s);
+
+    return *m_quirksData.shouldDisableFullscreenVideoAspectRatioAdaptiveSizingQuirk;
 }
 #endif
 
@@ -1505,10 +1544,10 @@ bool Quirks::shouldEnableFontLoadingAPIQuirk() const
     if (!needsQuirks() || m_document->settings().downloadableBinaryFontTrustedTypes() == DownloadableBinaryFontTrustedTypes::Any)
         return false;
 
-    if (!m_shouldEnableFontLoadingAPIQuirk)
-        m_shouldEnableFontLoadingAPIQuirk = m_document->url().host() == "play.hbomax.com"_s;
+    if (!m_quirksData.shouldEnableFontLoadingAPIQuirk)
+        m_quirksData.shouldEnableFontLoadingAPIQuirk = m_document->url().host() == "play.hbomax.com"_s;
 
-    return m_shouldEnableFontLoadingAPIQuirk.value();
+    return *m_quirksData.shouldEnableFontLoadingAPIQuirk;
 }
 
 // hulu.com rdar://100199996
@@ -1517,26 +1556,25 @@ bool Quirks::needsVideoShouldMaintainAspectRatioQuirk() const
     if (!needsQuirks())
         return false;
 
-    if (m_needsVideoShouldMaintainAspectRatioQuirk)
-        return m_needsVideoShouldMaintainAspectRatioQuirk.value();
+    if (!m_quirksData.needsVideoShouldMaintainAspectRatioQuirk)
+        m_quirksData.needsVideoShouldMaintainAspectRatioQuirk = isDomain("hulu.com"_s);
 
-    auto domain = RegistrableDomain(m_document->url()).string();
-    m_needsVideoShouldMaintainAspectRatioQuirk = domain == "hulu.com"_s;
-
-    return m_needsVideoShouldMaintainAspectRatioQuirk.value();
+    return *m_quirksData.needsVideoShouldMaintainAspectRatioQuirk;
 }
 
 bool Quirks::shouldExposeShowModalDialog() const
 {
     if (!needsQuirks())
         return false;
-    if (!m_shouldExposeShowModalDialog) {
+
+    if (!m_quirksData.shouldExposeShowModalDialog) {
         // Marcus: <rdar://101086391>.
         // Pandora: <rdar://100243111>.
         // Soundcloud: <rdar://102913500>.
-        m_shouldExposeShowModalDialog = isDomain("pandora.com"_s) || isDomain("marcus.com"_s) || isDomain("soundcloud.com"_s);
+        m_quirksData.shouldExposeShowModalDialog = isDomain("pandora.com"_s) || isDomain("marcus.com"_s) || isSoundCloud();
     }
-    return *m_shouldExposeShowModalDialog;
+
+    return *m_quirksData.shouldExposeShowModalDialog;
 }
 
 // marcus.com rdar://102959860
@@ -1545,11 +1583,13 @@ bool Quirks::shouldNavigatorPluginsBeEmpty() const
 #if PLATFORM(IOS_FAMILY)
     if (!needsQuirks())
         return false;
-    if (!m_shouldNavigatorPluginsBeEmpty) {
+
+    if (!m_quirksData.shouldNavigatorPluginsBeEmpty) {
         // Marcus login issue: <rdar://103011164>.
-        m_shouldNavigatorPluginsBeEmpty = isDomain("marcus.com"_s);
+        m_quirksData.shouldNavigatorPluginsBeEmpty = isDomain("marcus.com"_s);
     }
-    return *m_shouldNavigatorPluginsBeEmpty;
+
+    return *m_quirksData.shouldNavigatorPluginsBeEmpty;
 #else
     return false;
 #endif
@@ -1561,14 +1601,15 @@ bool Quirks::shouldDisableLazyIframeLoadingQuirk() const
     if (!needsQuirks())
         return false;
 
-    if (!m_shouldDisableLazyIframeLoadingQuirk) {
+    if (!m_quirksData.shouldDisableLazyIframeLoadingQuirk) {
 #if PLATFORM(IOS_FAMILY)
-        m_shouldDisableLazyIframeLoadingQuirk = !linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::NoUNIQLOLazyIframeLoadingQuirk) && IOSApplication::isUNIQLOApp();
+        m_quirksData.shouldDisableLazyIframeLoadingQuirk = !linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::NoUNIQLOLazyIframeLoadingQuirk) && WTF::IOSApplication::isUNIQLOApp();
 #else
-        m_shouldDisableLazyIframeLoadingQuirk = false;
+        m_quirksData.shouldDisableLazyIframeLoadingQuirk = false;
 #endif
     }
-    return *m_shouldDisableLazyIframeLoadingQuirk;
+
+    return *m_quirksData.shouldDisableLazyIframeLoadingQuirk;
 }
 
 // Breaks express checkout on victoriassecret.com (rdar://104818312).
@@ -1577,7 +1618,10 @@ bool Quirks::shouldDisableFetchMetadata() const
     if (!needsQuirks())
         return false;
 
-    return isDomain("victoriassecret.com"_s);
+    if (!m_quirksData.shouldDisableFetchMetadata)
+        m_quirksData.shouldDisableFetchMetadata = isDomain("victoriassecret.com"_s);
+
+    return *m_quirksData.shouldDisableFetchMetadata;
 }
 
 // Push state file path restrictions break Mimeo Photo Plugin (rdar://112445672).
@@ -1587,7 +1631,7 @@ bool Quirks::shouldDisablePushStateFilePathRestrictions() const
         return false;
 
 #if PLATFORM(MAC)
-    return MacApplication::isMimeoPhotoProject();
+    return WTF::MacApplication::isMimeoPhotoProject();
 #else
     return false;
 #endif
@@ -1648,7 +1692,7 @@ String Quirks::advancedPrivacyProtectionSubstituteDataURLForScriptWithFeatures(c
 bool Quirks::needsResettingTransitionCancelsRunningTransitionQuirk() const
 {
 #if PLATFORM(IOS_FAMILY)
-    return needsQuirks() && !linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::ResettingTransitionCancelsRunningTransitionQuirk) && IOSApplication::isDOFUSTouch();
+    return needsQuirks() && !linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::ResettingTransitionCancelsRunningTransitionQuirk) && WTF::IOSApplication::isDOFUSTouch();
 #else
     return false;
 #endif
@@ -1659,11 +1703,12 @@ bool Quirks::shouldStarBePermissionsPolicyDefaultValue() const
     if (!needsQuirks())
         return false;
 
-    if (!m_shouldStarBePermissionsPolicyDefaultValueQuirk) {
+    if (!m_quirksData.shouldStarBePermissionsPolicyDefaultValueQuirk) {
         auto domain = m_document->securityOrigin().domain();
-        m_shouldStarBePermissionsPolicyDefaultValueQuirk = domain == "jsfiddle.net"_s;
+        m_quirksData.shouldStarBePermissionsPolicyDefaultValueQuirk = domain == "jsfiddle.net"_s;
     }
-    return *m_shouldStarBePermissionsPolicyDefaultValueQuirk;
+
+    return *m_quirksData.shouldStarBePermissionsPolicyDefaultValueQuirk;
 }
 
 // Microsoft office online generates data URLs with incorrect padding on Safari only (rdar://114573089).
@@ -1672,9 +1717,10 @@ bool Quirks::shouldDisableDataURLPaddingValidation() const
     if (!needsQuirks())
         return false;
 
-    if (!m_shouldDisableDataURLPaddingValidation)
-        m_shouldDisableDataURLPaddingValidation = m_document->url().host().endsWith("officeapps.live.com"_s) || m_document->url().host().endsWith("onedrive.live.com"_s);
-    return *m_shouldDisableDataURLPaddingValidation;
+    if (!m_quirksData.shouldDisableDataURLPaddingValidation)
+        m_quirksData.shouldDisableDataURLPaddingValidation = m_document->url().host().endsWith("officeapps.live.com"_s) || m_document->url().host().endsWith("onedrive.live.com"_s);
+
+    return *m_quirksData.shouldDisableDataURLPaddingValidation;
 }
 
 bool Quirks::needsDisableDOMPasteAccessQuirk() const
@@ -1682,10 +1728,10 @@ bool Quirks::needsDisableDOMPasteAccessQuirk() const
     if (!needsQuirks())
         return false;
 
-    if (m_needsDisableDOMPasteAccessQuirk)
-        return *m_needsDisableDOMPasteAccessQuirk;
+    if (m_quirksData.needsDisableDOMPasteAccessQuirk)
+        return *m_quirksData.needsDisableDOMPasteAccessQuirk;
 
-    m_needsDisableDOMPasteAccessQuirk = [&] {
+    m_quirksData.needsDisableDOMPasteAccessQuirk = [&] {
         if (!m_document)
             return false;
         auto* globalObject = m_document->globalObject();
@@ -1697,20 +1743,8 @@ bool Quirks::needsDisableDOMPasteAccessQuirk() const
         auto tableauPrepProperty = JSC::Identifier::fromString(vm, "tableauPrep"_s);
         return globalObject->hasProperty(globalObject, tableauPrepProperty);
     }();
-    return *m_needsDisableDOMPasteAccessQuirk;
-}
 
-// oracle.com rdar://117673533
-bool Quirks::shouldDisableNavigatorStandaloneQuirk() const
-{
-#if PLATFORM(MAC)
-    if (!needsQuirks())
-        return false;
-
-    if (isDomain("oracle.com"_s))
-        return true;
-#endif
-    return false;
+    return *m_quirksData.needsDisableDOMPasteAccessQuirk;
 }
 
 bool Quirks::shouldPreventOrientationMediaQueryFromEvaluatingToLandscape() const
@@ -1718,7 +1752,10 @@ bool Quirks::shouldPreventOrientationMediaQueryFromEvaluatingToLandscape() const
     if (!needsQuirks())
         return false;
 
-    return shouldPreventOrientationMediaQueryFromEvaluatingToLandscapeInternal(m_document->topDocument().url());
+    if (!m_quirksData.shouldPreventOrientationMediaQueryFromEvaluatingToLandscapeQuirk)
+        m_quirksData.shouldPreventOrientationMediaQueryFromEvaluatingToLandscapeQuirk = shouldPreventOrientationMediaQueryFromEvaluatingToLandscapeInternal(topDocumentURL());
+
+    return *m_quirksData.shouldPreventOrientationMediaQueryFromEvaluatingToLandscapeQuirk;
 }
 
 bool Quirks::shouldFlipScreenDimensions() const
@@ -1727,10 +1764,25 @@ bool Quirks::shouldFlipScreenDimensions() const
     if (!needsQuirks())
         return false;
 
-    return shouldFlipScreenDimensionsInternal(m_document->topDocument().url());
+    if (!m_quirksData.shouldFlipScreenDimensionsQuirk)
+        m_quirksData.shouldFlipScreenDimensionsQuirk = shouldFlipScreenDimensionsInternal(topDocumentURL());
+
+    return *m_quirksData.shouldFlipScreenDimensionsQuirk;
 #else
     return false;
 #endif
+}
+
+// FIXME: Remove this when rdar://137625935 is resolved.
+bool Quirks::shouldAllowDownloadsInSpiteOfCSP() const
+{
+    if (!needsQuirks())
+        return false;
+
+    if (!m_quirksData.shouldAllowDownloadsInSpiteOfCSPQuirk)
+        m_quirksData.shouldAllowDownloadsInSpiteOfCSPQuirk = isDomain("apple.com"_s);
+
+    return *m_quirksData.shouldAllowDownloadsInSpiteOfCSPQuirk;
 }
 
 // This section is dedicated to UA override for iPad. iPads (but iPad Mini) are sending a desktop user agent
@@ -1812,12 +1864,16 @@ bool Quirks::needsIPadMiniUserAgent(const URL& url)
     if (host == "roblox.com"_s || host.endsWith(".roblox.com"_s))
         return true;
 
-    // FIXME: Remove this quirk when <rdar://122481999> is complete
+    // FIXME: Remove this quirk when <rdar://122481999> is complete.
     if (host == "spotify.com"_s || host.endsWith(".spotify.com"_s) || host.endsWith(".spotifycdn.com"_s))
         return true;
 
     // FIXME: Remove this quirk if seatguru decides to adjust their site. See https://webkit.org/b/276947
     if (host == "seatguru.com"_s || host.endsWith(".seatguru.com"_s))
+        return true;
+
+    // FIXME: Remove this quirk once <rdar://113978106> is no longer happening.
+    if (host == "www.indiatimes.com"_s)
         return true;
 
     return false;
@@ -1845,12 +1901,10 @@ bool Quirks::shouldIgnorePlaysInlineRequirementQuirk() const
     if (!needsQuirks())
         return false;
 
-    if (m_shouldIgnorePlaysInlineRequirementQuirk)
-        return *m_shouldIgnorePlaysInlineRequirementQuirk;
+    if (!m_quirksData.shouldIgnorePlaysInlineRequirementQuirk)
+        m_quirksData.shouldIgnorePlaysInlineRequirementQuirk = isDomain("premierleague.com"_s);
 
-    m_shouldIgnorePlaysInlineRequirementQuirk = isDomain("premierleague.com"_s);
-
-    return *m_shouldIgnorePlaysInlineRequirementQuirk;
+    return *m_quirksData.shouldIgnorePlaysInlineRequirementQuirk;
 #else
     return false;
 #endif
@@ -1882,23 +1936,18 @@ bool Quirks::needsGetElementsByNameQuirk() const
 #endif
 }
 
+// FIXME: Remove this quirk when <rdar://127247321> is complete
 bool Quirks::needsRelaxedCorsMixedContentCheckQuirk() const
 {
     if (!needsQuirks())
         return false;
 
-    if (m_needsRelaxedCorsMixedContentCheckQuirk)
-        return *m_needsRelaxedCorsMixedContentCheckQuirk;
+    if (!m_quirksData.needsRelaxedCorsMixedContentCheckQuirk) {
+        auto host = m_document->url().host();
+        m_quirksData.needsRelaxedCorsMixedContentCheckQuirk = host == "tripadvisor.com"_s || host.endsWith(".tripadvisor.com"_s);
+    }
 
-    m_needsRelaxedCorsMixedContentCheckQuirk = false;
-
-    auto host = m_document->url().host();
-
-    // FIXME: Remove this quirk when <rdar://127247321> is complete
-    if (host == "tripadvisor.com"_s || host.endsWith(".tripadvisor.com"_s))
-        m_needsRelaxedCorsMixedContentCheckQuirk = true;
-
-    return *m_needsRelaxedCorsMixedContentCheckQuirk;
+    return *m_quirksData.needsRelaxedCorsMixedContentCheckQuirk;
 }
 
 // rdar://127398734
@@ -1916,7 +1965,11 @@ bool Quirks::shouldIgnoreTextAutoSizing() const
 {
     if (!needsQuirks())
         return false;
-    return m_document->topDocument().url().host() == "news.ycombinator.com"_s;
+
+    if (!m_quirksData.shouldIgnoreTextAutoSizingQuirk)
+        m_quirksData.shouldIgnoreTextAutoSizingQuirk = topDocumentURL().host() == "news.ycombinator.com"_s;
+
+    return *m_quirksData.shouldIgnoreTextAutoSizingQuirk;
 }
 #endif
 
@@ -1928,6 +1981,213 @@ std::optional<TargetedElementSelectors> Quirks::defaultVisibilityAdjustmentSelec
     UNUSED_PARAM(requestURL);
     return {};
 #endif
+}
+
+String Quirks::scriptToEvaluateBeforeRunningScriptFromURL(const URL& scriptURL)
+{
+    if (!needsQuirks())
+        return { };
+
+#if PLATFORM(IOS_FAMILY)
+    auto topDomain = RegistrableDomain(topDocumentURL()).string();
+
+    // player.anyclip.com rdar://138789765
+    if (UNLIKELY(topDomain == "thesaurus.com"_s && scriptURL.lastPathComponent().endsWith("lre.js"_s)) && scriptURL.host() == "player.anyclip.com"_s)
+        return "(function() { let userAgent = navigator.userAgent; Object.defineProperty(navigator, 'userAgent', { get: () => { return userAgent + ' Chrome/130.0.0.0 Android/15.0'; }, configurable: true }); })();"_s;
+
+#if ENABLE(DESKTOP_CONTENT_MODE_QUIRKS)
+    if (UNLIKELY(topDomain == "webex.com"_s && scriptURL.lastPathComponent().startsWith("pushdownload."_s)))
+        return "Object.defineProperty(window, 'Touch', { get: () => undefined });"_s;
+#endif
+#else
+    UNUSED_PARAM(scriptURL);
+#endif
+
+    return { };
+}
+
+bool Quirks::shouldHideCoarsePointerCharacteristics() const
+{
+#if ENABLE(DESKTOP_CONTENT_MODE_QUIRKS)
+    if (!needsQuirks())
+        return false;
+
+    if (!m_quirksData.shouldHideCoarsePointerCharacteristicsQuirk)
+        m_quirksData.shouldHideCoarsePointerCharacteristicsQuirk = isDomain("disneyplus.com"_s);
+
+    return *m_quirksData.shouldHideCoarsePointerCharacteristicsQuirk;
+#else
+    return false;
+#endif
+}
+
+// hulu.com rdar://126096361
+bool Quirks::implicitMuteWhenVolumeSetToZero() const
+{
+#if HAVE(MEDIA_VOLUME_PER_ELEMENT)
+    if (!needsQuirks())
+        return false;
+
+    if (!m_quirksData.implicitMuteWhenVolumeSetToZero) {
+        auto domain = RegistrableDomain(topDocumentURL()).string();
+        m_quirksData.implicitMuteWhenVolumeSetToZero = domain == "hulu.com"_s || domain.endsWith(".hulu.com"_s);
+    }
+
+    return *m_quirksData.implicitMuteWhenVolumeSetToZero;
+#else
+    return false;
+#endif
+}
+
+#if ENABLE(TOUCH_EVENTS)
+
+bool Quirks::shouldOmitTouchEventDOMAttributesForDesktopWebsite(const URL& requestURL)
+{
+    return requestURL.host() == "secure.chase.com"_s;
+}
+
+bool Quirks::shouldDispatchPointerOutAfterHandlingSyntheticClick() const
+{
+    if (!needsQuirks())
+        return false;
+
+    if (!m_quirksData.shouldDispatchPointerOutAfterHandlingSyntheticClick) {
+        // Remove once rdar://139397190 is fixed.
+        m_quirksData.shouldDispatchPointerOutAfterHandlingSyntheticClick = domainStartsWith("soylent."_s);
+    }
+
+    return *m_quirksData.shouldDispatchPointerOutAfterHandlingSyntheticClick;
+}
+
+#endif // ENABLE(TOUCH_EVENTS)
+
+bool Quirks::needsZeroMaxTouchPointsQuirk() const
+{
+#if ENABLE(DESKTOP_CONTENT_MODE_QUIRKS)
+    if (!needsQuirks())
+        return false;
+
+    if (!m_quirksData.needsZeroMaxTouchPointsQuirk)
+        m_quirksData.needsZeroMaxTouchPointsQuirk = isDomain("max.com"_s);
+
+    return *m_quirksData.needsZeroMaxTouchPointsQuirk;
+#else
+    return false;
+#endif
+}
+
+bool Quirks::needsChromeMediaControlsPseudoElement() const
+{
+    if (!needsQuirks())
+        return false;
+
+    if (!m_quirksData.needsChromeMediaControlsPseudoElementQuirk)
+        m_quirksData.needsChromeMediaControlsPseudoElementQuirk = isDomain("imdb.com"_s);
+
+    return *m_quirksData.needsChromeMediaControlsPseudoElementQuirk;
+}
+
+#if PLATFORM(IOS_FAMILY)
+// Remove this once rdar://139478801 is resolved.
+bool Quirks::shouldSynthesizeTouchEventsAfterNonSyntheticClick(const Node& target) const
+{
+    if (!needsQuirks())
+        return false;
+
+    if (!m_quirksData.shouldSynthesizeTouchEventsAfterNonSyntheticClickQuirk)
+        m_quirksData.shouldSynthesizeTouchEventsAfterNonSyntheticClickQuirk = isDomain("cbssports.com"_s);
+
+    if (!m_quirksData.shouldSynthesizeTouchEventsAfterNonSyntheticClickQuirk.value())
+        return false;
+
+    return target.nodeName() == "AVIA-BUTTON"_s;
+}
+
+bool Quirks::shouldIgnoreContentObservationForClick(const Node& targetNode) const
+{
+    if (!needsQuirks())
+        return false;
+
+    if (!m_quirksData.mayNeedToIgnoreContentObservation)
+        m_quirksData.mayNeedToIgnoreContentObservation = isDomain("walmart.com"_s);
+
+    if (!m_quirksData.mayNeedToIgnoreContentObservation.value())
+        return false;
+
+    auto accessibilityRole = [](const Element& element) {
+        return AccessibilityObject::ariaRoleToWebCoreRole(element.getAttribute(HTMLNames::roleAttr));
+    };
+
+    RefPtr target = dynamicDowncast<Element>(targetNode);
+    if (!target || accessibilityRole(*target) != AccessibilityRole::Button)
+        return false;
+
+    RefPtr parent = target->parentElementInComposedTree();
+    if (!parent || accessibilityRole(*parent) != AccessibilityRole::ListItem)
+        return false;
+
+    return true;
+}
+
+#endif // PLATFORM(IOS_FAMILY)
+
+bool Quirks::needsMozillaFileTypeForDataTransfer() const
+{
+    if (!needsQuirks())
+        return false;
+
+    if (!m_quirksData.needsMozillaFileTypeForDataTransferQuirk)
+        m_quirksData.needsMozillaFileTypeForDataTransferQuirk = topDocumentURL().host() == "outlook.live.com"_s;
+
+    return *m_quirksData.needsMozillaFileTypeForDataTransferQuirk;
+}
+
+// bing.com rdar://126573838
+bool Quirks::needsBingGestureEventQuirk(EventTarget* target) const
+{
+    if (!needsQuirks())
+        return false;
+
+    if (!m_quirksData.needsBingGestureEventQuirk) {
+        auto url = topDocumentURL();
+        m_quirksData.needsBingGestureEventQuirk = url.host() == "www.bing.com"_s && startsWithLettersIgnoringASCIICase(url.path(), "/maps"_s);
+    }
+
+    if (!m_quirksData.needsBingGestureEventQuirk.value())
+        return false;
+
+    if (RefPtr element = dynamicDowncast<Element>(target)) {
+        static MainThreadNeverDestroyed<const AtomString> mapClass("atlas-map-canvas"_s);
+        return element->hasClassName(mapClass.get());
+    }
+
+    return false;
+}
+
+#if PLATFORM(IOS)
+// forbes.com rdar://117093458
+bool Quirks::hideForbesVolumeSlider() const
+{
+    return needsQuirks() && !PAL::currentUserInterfaceIdiomIsSmallScreen() && m_document->url().host() == "www.forbes.com"_s;
+}
+
+bool Quirks::hideIGNVolumeSlider() const
+{
+    return needsQuirks() && !PAL::currentUserInterfaceIdiomIsSmallScreen() && m_document->url().host() == "www.ign.com"_s;
+}
+#endif // PLATFORM(IOS)
+
+URL Quirks::topDocumentURL() const
+{
+    if (UNLIKELY(!m_topDocumentURLForTesting.isEmpty()))
+        return m_topDocumentURLForTesting;
+
+    return m_document->topURL();
+}
+
+void Quirks::setTopDocumentURLForTesting(URL&& url)
+{
+    m_topDocumentURLForTesting = WTFMove(url);
 }
 
 }

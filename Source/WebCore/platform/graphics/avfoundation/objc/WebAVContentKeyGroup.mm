@@ -48,7 +48,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 #if !RELEASE_LOG_DISABLED
 @interface WebAVContentKeyGroup (Logging)
-@property (nonatomic, readonly) const void* logIdentifier;
+@property (nonatomic, readonly) uint64_t logIdentifier;
 @property (nonatomic, readonly) const Logger* loggerPtr;
 @property (nonatomic, readonly) WTFLogChannel* logChannel;
 @end
@@ -129,9 +129,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 @implementation WebAVContentKeyGroup (Logging)
 
-- (const void*)logIdentifier
+- (uint64_t)logIdentifier
 {
-    return _dataSource ? _dataSource->contentKeyGroupDataSourceLogIdentifier() : nullptr;
+    return _dataSource ? _dataSource->contentKeyGroupDataSourceLogIdentifier() : 0;
 }
 
 - (const Logger*)loggerPtr

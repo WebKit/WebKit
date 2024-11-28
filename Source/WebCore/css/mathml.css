@@ -167,11 +167,12 @@ mfrac > * {
 }
 
 msub > * + *, msup > * + *, msubsup > * + *, mmultiscripts > * + *, munder > * + *, mover > * + *, munderover > * + * {
-    font-size: 0.75em; /* FIXME: MathML standard is 0.71em */
+    font-size: 0.71em;
     math-style: compact;
 }
+
 mroot > *:last-child {
-    font-size: 0.5625em; /* This 0.75^2 since the scriptlevel is incremented by 2 in the index. */
+    font-size: 0.5041em; /* This 0.71^2 since the scriptlevel is incremented by 2 in the index. */
     math-style: compact;
 }
 

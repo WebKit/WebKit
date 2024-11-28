@@ -35,6 +35,7 @@
 #import "CocoaHelpers.h"
 #import "MessageSenderInlines.h"
 #import "WebExtensionAPISidebarAction.h"
+#import "WebExtensionActionClickBehavior.h"
 #import "WebExtensionContextMessages.h"
 #import "WebProcess.h"
 
@@ -42,6 +43,7 @@ namespace WebKit {
 
 static NSString * const tabIdKey = @"tabId";
 static NSString * const windowIdKey = @"windowId";
+static NSString * const actionClickBehaviorKey = @"openPanelOnActionClick";
 
 static ParseResult parseTabIdentifier(NSDictionary *options)
 {
@@ -60,7 +62,7 @@ static ParseResult parseTabIdentifier(NSDictionary *options)
 
 static ParseResult parseWindowIdentifier(NSDictionary *options)
 {
-    id maybeWindowId = [options objectForKey:tabIdKey];
+    id maybeWindowId = [options objectForKey:windowIdKey];
 
     if (!maybeWindowId || [maybeWindowId isKindOfClass:NSNull.class])
         return std::monostate();
@@ -71,6 +73,22 @@ static ParseResult parseWindowIdentifier(NSDictionary *options)
     }
 
     return toErrorString(nil, @"options", @"'windowId' must be a number");
+}
+
+static std::variant<WebExtensionActionClickBehavior, SidebarError> parseActionClickBehavior(NSDictionary *behavior)
+{
+    static NSDictionary<NSString *, id> *types = @{
+        actionClickBehaviorKey: @YES.class,
+    };
+
+    NSString *exceptionString;
+    if (!validateDictionary(behavior, @"behavior", nil, types, &exceptionString))
+        return exceptionString;
+
+    NSNumber *actionClickBehavior = behavior[actionClickBehaviorKey];
+    if (actionClickBehavior.boolValue)
+        return WebExtensionActionClickBehavior::OpenSidebar;
+    return WebExtensionActionClickBehavior::OpenPopup;
 }
 
 static NSDictionary<NSString *, id> *serializeSidebarParameters(WebExtensionSidebarParameters const& parameters)
@@ -145,18 +163,45 @@ void WebExtensionAPISidePanel::setOptions(NSDictionary *options, Ref<WebExtensio
 
 void WebExtensionAPISidePanel::getPanelBehavior(Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
 {
-    // FIXME: <https://webkit.org/b/276833> Implement panel behavior methods
-    callback->reportError(@"unimplemented");
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::SidebarGetActionClickBehavior(), [protectedThis = Ref { *this }, callback = WTFMove(callback)](Expected<WebExtensionActionClickBehavior, WebExtensionError>&& result) {
+        if (!result) {
+            callback->reportError(result.error());
+            return;
+        }
+
+        bool openPanelOnActionClick = result.value() == WebExtensionActionClickBehavior::OpenSidebar;
+        callback->call(@{
+            actionClickBehaviorKey: @(openPanelOnActionClick),
+        });
+    }, extensionContext().identifier());
 }
 
 void WebExtensionAPISidePanel::setPanelBehavior(NSDictionary *behavior, Ref<WebExtensionCallbackHandler>&& callback, NSString** outExceptionString)
 {
-    // FIXME: <https://webkit.org/b/276833> Implement panel behavior methods
-    callback->reportError(@"unimplemented");
+    auto result = parseActionClickBehavior(behavior);
+    if ((*outExceptionString = indicatesError(result).get()))
+        return;
+
+    auto actionClickBehavior = std::get<WebExtensionActionClickBehavior>(result);
+
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::SidebarSetActionClickBehavior(actionClickBehavior), [protectedThis = Ref { *this }, callback = WTFMove(callback)](Expected<void, WebExtensionError>&& result) {
+        if (!result) {
+            callback->reportError(result.error());
+            return;
+        }
+
+        callback->call({ });
+    }, extensionContext().identifier());
 }
 
 void WebExtensionAPISidePanel::open(NSDictionary *options, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
 {
+    if (!WebCore::UserGestureIndicator::processingUserGesture()) {
+        // In chrome, this error manifests as a rejected promise, so match this behavior
+        callback->reportError(toErrorString(@"sidePanel.open()", nil, @"it must be called during a user gesture"));
+        return;
+    }
+
     auto tabResult = parseTabIdentifier(options);
     if ((*outExceptionString = indicatesError(tabResult).get()))
         return;

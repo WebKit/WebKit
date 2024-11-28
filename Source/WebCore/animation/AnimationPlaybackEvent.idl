@@ -23,11 +23,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+typedef (double or CSSNumericValue) CSSNumberish;
+
 [
     Exposed=Window
 ] interface AnimationPlaybackEvent : Event {
     constructor([AtomString] DOMString type, optional AnimationPlaybackEventInit eventInitDict);
 
-    [ImplementedAs=bindingsCurrentTime] readonly attribute double? currentTime;
-    [ImplementedAs=bindingsTimelineTime] readonly attribute double? timelineTime;
+    readonly attribute CSSNumberish? currentTime;
+    readonly attribute CSSNumberish? timelineTime;
 };

@@ -83,6 +83,8 @@
 #define SUPPORT_OS2  /* Support for IBM TCP/IP for OS/2 - FTP Server */
 #define SUPPORT_W16  /* Support for win16 hosts: SuperTCP or NetManage Chameleon */
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 typedef struct tm FTPTime;
@@ -155,3 +157,5 @@ struct ListResult
 FTPEntryType parseOneFTPLine(const char* inputLine, ListState&, ListResult&);
                  
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

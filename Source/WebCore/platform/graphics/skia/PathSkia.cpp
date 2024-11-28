@@ -30,13 +30,14 @@
 #include "GraphicsContextSkia.h"
 #include "NotImplemented.h"
 #include "PathStream.h"
+
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
 #include <skia/core/SkPathUtils.h>
 #include <skia/core/SkRRect.h>
-#include <wtf/NeverDestroyed.h>
-
-IGNORE_CLANG_WARNINGS_BEGIN("cast-align")
 #include <skia/core/SkSurface.h>
-IGNORE_CLANG_WARNINGS_END
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
+
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
@@ -205,8 +206,10 @@ void PathSkia::addPath(const PathSkia& path, const AffineTransform& transform)
 
 bool PathSkia::applyElements(const PathElementApplier& applier) const
 {
-    auto convertPoints = [](FloatPoint dst[], const SkPoint src[], int count) {
-        for (int i = 0; i < count; i++) {
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib/Win port
+
+    auto convertPoints = [](std::span<FloatPoint, 3> dst, const SkPoint src[], int count) {
+        for (int i = 0; i < count; ++i) {
             dst[i].setX(SkScalarToFloat(src[i].fX));
             dst[i].setY(SkScalarToFloat(src[i].fY));
         }
@@ -257,6 +260,8 @@ bool PathSkia::applyElements(const PathElementApplier& applier) const
         applier(pathElement);
     }
     return true;
+
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 }
 
 bool PathSkia::isEmpty() const

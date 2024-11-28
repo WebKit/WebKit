@@ -56,6 +56,8 @@ public:
     {
     }
 
+    bool isHashTableEmptyValue() const { return std::holds_alternative<WTF::HashTableEmptyValueType>(m_address); }
+
     WEBCORE_EXPORT IPAddress isolatedCopy() const;
     WEBCORE_EXPORT unsigned matchingNetMaskLength(const IPAddress& other) const;
     WEBCORE_EXPORT static std::optional<IPAddress> fromString(const String&);
@@ -118,6 +120,7 @@ namespace WTF {
 
 template<> struct HashTraits<WebCore::IPAddress> : GenericHashTraits<WebCore::IPAddress> {
     static WebCore::IPAddress emptyValue() { return WebCore::IPAddress { WTF::HashTableEmptyValue }; }
+    static bool isEmptyValue(const WebCore::IPAddress& value) { return value.isHashTableEmptyValue(); }
 };
 
 } // namespace WTF

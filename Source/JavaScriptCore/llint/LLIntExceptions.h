@@ -59,6 +59,7 @@ MacroAssemblerCodeRef<ExceptionHandlerPtrTag> handleCatch(OpcodeSize);
 #if ENABLE(WEBASSEMBLY)
 MacroAssemblerCodeRef<ExceptionHandlerPtrTag> handleWasmCatch(OpcodeSize);
 MacroAssemblerCodeRef<ExceptionHandlerPtrTag> handleWasmCatchAll(OpcodeSize);
+MacroAssemblerCodeRef<ExceptionHandlerPtrTag> handleWasmTryTable(WasmOpcodeID, OpcodeSize);
 #endif // ENABLE(WEBASSEMBLY)
 
 } } // namespace JSC::LLInt

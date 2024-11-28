@@ -38,6 +38,8 @@
 #include <unicode/unumsys.h>
 #include <wtf/unicode/icu/ICUHelpers.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 const ClassInfo IntlLocale::s_info = { "Object"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(IntlLocale) };
@@ -178,7 +180,7 @@ bool LocaleIDBuilder::setKeywordValue(ASCIILiteral key, StringView value)
 
     ASSERT(value.containsOnlyASCII());
     Vector<char, 32> rawValue(value.length() + 1);
-    value.getCharacters(byteCast<LChar>(rawValue.data()));
+    value.getCharacters(byteCast<LChar>(rawValue.mutableSpan()));
     rawValue[value.length()] = '\0';
 
     UErrorCode status = U_ZERO_ERROR;
@@ -598,7 +600,7 @@ JSArray* IntlLocale::calendars(JSGlobalObject* globalObject)
     const char* pointer;
     int32_t length = 0;
     while ((pointer = uenum_next(calendars.get(), &length, &status)) && U_SUCCESS(status)) {
-        String calendar({ pointer, static_cast<size_t>(length) });
+        String calendar(unsafeMakeSpan(pointer, static_cast<size_t>(length)));
         if (auto mapped = mapICUCalendarKeywordToBCP47(calendar))
             elements.append(WTFMove(mapped.value()));
         else
@@ -636,7 +638,7 @@ JSArray* IntlLocale::collations(JSGlobalObject* globalObject)
     const char* pointer;
     int32_t length = 0;
     while ((pointer = uenum_next(enumeration.get(), &length, &status)) && U_SUCCESS(status)) {
-        String collation({ pointer, static_cast<size_t>(length) });
+        String collation(unsafeMakeSpan(pointer, static_cast<size_t>(length)));
         // 1.1.3 step 4, The values "standard" and "search" must be excluded from list.
         if (collation == "standard"_s || collation == "search"_s)
             continue;
@@ -882,3 +884,5 @@ JSObject* IntlLocale::weekInfo(JSGlobalObject* globalObject)
 }
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

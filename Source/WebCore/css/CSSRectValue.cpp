@@ -29,7 +29,7 @@
 namespace WebCore {
 
 CSSRectValue::CSSRectValue(Rect rect)
-    : CSSValue(RectClass)
+    : CSSValue(ClassType::Rect)
     , m_rect(WTFMove(rect))
 {
 }

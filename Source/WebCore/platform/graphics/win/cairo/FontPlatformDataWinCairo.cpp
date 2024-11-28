@@ -103,7 +103,7 @@ void FontPlatformData::platformDataInit(HFONT font, float size)
 FontPlatformData::FontPlatformData(GDIObject<HFONT> font, cairo_font_face_t* fontFace, float size, bool bold, bool oblique, const FontCustomPlatformData* customPlatformData)
     : FontPlatformData(size, bold, oblique, FontOrientation::Horizontal, FontWidthVariant::RegularWidth, TextRenderingMode::AutoTextRendering, customPlatformData)
 {
-    m_font = SharedGDIObject<HFONT>::create(WTFMove(font));
+    m_hfont = SharedGDIObject<HFONT>::create(WTFMove(font));
 
     cairo_matrix_t fontMatrix;
     cairo_matrix_init_scale(&fontMatrix, size, size);
@@ -133,7 +133,7 @@ unsigned FontPlatformData::hash() const
 
 bool FontPlatformData::platformIsEqual(const FontPlatformData& other) const
 {
-    return m_font == other.m_font
+    return m_hfont == other.m_hfont
         && m_scaledFont == other.m_scaledFont;
 }
 
@@ -152,7 +152,7 @@ String FontPlatformData::description() const
 String FontPlatformData::familyName() const
 {
     HWndDC hdc(0);
-    HGDIOBJ oldFont = SelectObject(hdc, m_font.get());
+    HGDIOBJ oldFont = SelectObject(hdc, m_hfont.get());
     wchar_t faceName[LF_FACESIZE];
     GetTextFace(hdc, LF_FACESIZE, faceName);
     SelectObject(hdc, oldFont);

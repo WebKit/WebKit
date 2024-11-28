@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body onload="notifyLoaded()">
+    <video id=video controls autoplay playsinline></video>
+    <script>
+function notifyLoaded()
+{
+    if (window.webkit)
+        window.webkit.messageHandlers.gum.postMessage("PASS");
+}
+
+function startCapture()
+{
+    navigator.mediaDevices.getUserMedia({ audio:true, video:true }).then(stream => {
+        window.actionState = "";
+        video.srcObject = stream;
+
+        registerActionHandlers();
+        registerMuteHandlers();
+
+        if (window.webkit)
+            window.webkit.messageHandlers.gum.postMessage("PASS");
+    }, (e) => {
+        if (window.webkit)
+            window.webkit.messageHandlers.gum.postMessage("FAIL: "  + e);
+    });
+}
+
+function startScreenshareCapture()
+{
+    if (!window.internals) {
+        if (window.webkit)
+            window.webkit.messageHandlers.gum.postMessage("FAIL, no internals");
+        return;
+    }
+
+    window.internals.withUserGesture(() => {
+        navigator.mediaDevices.getDisplayMedia({ video:true }).then(stream => {
+            window.actionState = "";
+            video.srcObject = stream;
+
+            registerActionHandlers();
+            registerMuteHandlers();
+
+            if (window.webkit)
+                window.webkit.messageHandlers.gum.postMessage("PASS");
+        }, (e) => {
+            if (window.webkit)
+                window.webkit.messageHandlers.gum.postMessage("FAIL: "  + e);
+        });
+    });
+}
+
+function registerActionHandlers()
+{
+    navigator.mediaSession.setActionHandler("togglecamera", action => {
+        addToActionState(action.isActivating ? "activating camera" : "deactivating camera");
+    });
+    navigator.mediaSession.setActionHandler("togglemicrophone", action => {
+        addToActionState(action.isActivating ? "activating microphone" : "deactivating microphone");
+    });
+    navigator.mediaSession.setActionHandler("togglescreenshare", action => {
+        addToActionState(action.isActivating ? "activating screenshare" : "deactivating screenshare");
+    });
+}
+
+function registerMuteHandlers()
+{
+    const audioTrack = video.srcObject.getAudioTracks().length ? video.srcObject.getAudioTracks()[0] : null;
+    const videoTrack = video.srcObject.getVideoTracks()[0];
+
+    if (!audioTrack) {
+        videoTrack.onmute = () => addToActionState("muting screenshare");
+        videoTrack.onunmute = () => addToActionState("unmuting screenshare");
+        return;
+    }
+
+    audioTrack.onmute = () => addToActionState("muting microphone");
+    audioTrack.onunmute = () => addToActionState("unmuting microphone");
+
+    videoTrack.onmute = () => addToActionState("muting camera");
+    videoTrack.onunmute = () => addToActionState("unmuting camera");
+}
+
+function setCameraActive(shouldActivate)
+{
+    if (!window.internals) {
+        window.webkit.messageHandlers.gum.postMessage("test requires internals");
+        return;
+    }
+
+    window.internals.withUserGesture(() => {
+        navigator.mediaSession.setCameraActive(shouldActivate).then(() => {
+            addToActionState("setCameraActive successful");
+            if (window.webkit)
+                window.webkit.messageHandlers.gum.postMessage("PASS");
+        }, (e) => {
+            addToActionState("setCameraActive not successful");
+            if (window.webkit)
+                window.webkit.messageHandlers.gum.postMessage("FAIL setCameraActive " + e);
+        });
+    });
+}
+
+function setMicrophoneActive(shouldActivate)
+{
+    if (!window.internals) {
+        window.webkit.messageHandlers.gum.postMessage("test requires internals");
+        return;
+    }
+
+    window.internals.withUserGesture(() => {
+        navigator.mediaSession.setMicrophoneActive(shouldActivate).then(() => {
+            addToActionState("setMicrophoneActive successful");
+            if (window.webkit)
+                window.webkit.messageHandlers.gum.postMessage("PASS");
+        }, (e) => {
+            addToActionState("setMicrophoneActive not successful");
+            if (window.webkit)
+                window.webkit.messageHandlers.gum.postMessage("FAIL setMicrophoneActive " + e);
+        });
+    });
+}
+
+function setScreenshareActive(shouldActivate, expectSuccess)
+{
+    if (!window.internals) {
+        window.webkit.messageHandlers.gum.postMessage("test requires internals");
+        return;
+    }
+
+    window.internals.withUserGesture(() => {
+        navigator.mediaSession.setScreenshareActive(shouldActivate).then(() => {
+            addToActionState("setScreenshareActive successful");
+            if (window.webkit)
+                window.webkit.messageHandlers.gum.postMessage(expectSuccess ? "PASS" : "FAIL, activated successfully");
+        }, (e) => {
+            addToActionState("setScreenshareActive not successful");
+            if (window.webkit)
+                window.webkit.messageHandlers.gum.postMessage(expectSuccess ? "FAIL setMicrophoneActive " + e : "PASS");
+        });
+    });
+}
+
+function addToActionState(state)
+{
+    window.actionState += state + ", ";
+}
+
+function validateActionState(state)
+{
+    window.actionState += "end";
+    if (window.webkit)
+        window.webkit.messageHandlers.gum.postMessage(state === actionState ? "PASS" : "FAIL, got " + window.actionState);
+    window.actionState = "";
+}
+    </script>
+</body>
+</html>

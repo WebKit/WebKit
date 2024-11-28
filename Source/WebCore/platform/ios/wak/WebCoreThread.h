@@ -64,7 +64,8 @@ WEBCORE_EXPORT void WebThreadUnlock(void);
 // ---------------------------------------------------------------------------------------------
 WEBCORE_EXPORT bool WebThreadIsLocked(void);
 WEBCORE_EXPORT bool WebThreadIsLockedOrDisabled(void);
-    
+WEBCORE_EXPORT bool WebThreadIsLockedOrDisabledInMainOrWebThread(void);
+
 WEBCORE_EXPORT void WebThreadLockPushModal(void);
 WEBCORE_EXPORT void WebThreadLockPopModal(void);
 

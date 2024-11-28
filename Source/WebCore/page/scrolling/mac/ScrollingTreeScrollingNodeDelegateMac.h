@@ -31,6 +31,7 @@
 #include "ScrollingEffectsController.h"
 #include "ThreadedScrollingTreeScrollingNodeDelegate.h"
 #include <wtf/RunLoop.h>
+#include <wtf/TZoneMalloc.h>
 
 OBJC_CLASS NSScrollerImp;
 
@@ -44,6 +45,7 @@ class ScrollingTreeScrollingNode;
 class ScrollingTree;
 
 class ScrollingTreeScrollingNodeDelegateMac final : public ThreadedScrollingTreeScrollingNodeDelegate {
+    WTF_MAKE_TZONE_ALLOCATED(ScrollingTreeScrollingNodeDelegateMac);
 public:
     explicit ScrollingTreeScrollingNodeDelegateMac(ScrollingTreeScrollingNode&);
     virtual ~ScrollingTreeScrollingNodeDelegateMac();

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,11 +31,14 @@
 #include "LayoutElementBox.h"
 #include "LayoutUnit.h"
 #include "TextBreakingPositionContext.h"
-#include "TextDirection.h"
+#include "WritingMode.h"
 #include <wtf/Range.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 namespace Layout {
+
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(InlineDamage);
 
 InlineInvalidation::InlineInvalidation(InlineDamage& inlineDamage, const InlineItemList& inlineItemList, const InlineDisplay::Content& displayContent)
     : m_inlineDamage(inlineDamage)
@@ -68,7 +71,7 @@ bool InlineInvalidation::rootStyleWillChange(const ElementBox& formattingContext
         if ((newFirstLineStyle && newFirstLineStyle->fontCascade() != oldStyle.fontCascade()) || (oldFirstLineStyle && oldFirstLineStyle->fontCascade() != newStyle.fontCascade()))
             return true;
 
-        if (oldStyle.direction() != newStyle.direction() || oldStyle.unicodeBidi() != newStyle.unicodeBidi() || oldStyle.tabSize() != newStyle.tabSize() || oldStyle.textSecurity() != newStyle.textSecurity())
+        if (oldStyle.writingMode().bidiDirection() != newStyle.writingMode().bidiDirection() || oldStyle.unicodeBidi() != newStyle.unicodeBidi() || oldStyle.tabSize() != newStyle.tabSize() || oldStyle.textSecurity() != newStyle.textSecurity())
             return true;
 
         return false;
@@ -109,7 +112,7 @@ bool InlineInvalidation::styleWillChange(const Box& layoutBox, const RenderStyle
         if (contentMayNeedNewBreakingPositionsAndMeasuring)
             return true;
 
-        auto bidiContextChanged = oldStyle.unicodeBidi() != newStyle.unicodeBidi() || oldStyle.direction() != newStyle.direction();
+        auto bidiContextChanged = oldStyle.unicodeBidi() != newStyle.unicodeBidi() || oldStyle.writingMode().bidiDirection() != newStyle.writingMode().bidiDirection();
         if (bidiContextChanged)
             return true;
 

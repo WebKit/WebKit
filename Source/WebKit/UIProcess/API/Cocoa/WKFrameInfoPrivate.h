@@ -36,5 +36,9 @@
 @property (nonatomic, readonly) BOOL _isFocused WK_API_AVAILABLE(macos(14.4), ios(17.4), visionos(1.1));
 @property (nonatomic, readonly) BOOL _errorOccurred WK_API_AVAILABLE(macos(14.4), ios(17.4), visionos(1.1));
 @property (nonatomic, readonly, copy, nullable) NSString *_title WK_API_AVAILABLE(macos(15.0), ios(18.0), visionos(2.0));
+@property (nonatomic, readonly) BOOL _isScrollable WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
+@property (nonatomic, readonly) CGSize _contentSize WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
+@property (nonatomic, readonly) CGSize _visibleContentSize WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
+@property (nonatomic, readonly) CGSize _visibleContentSizeExcludingScrollbars WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
 
 @end

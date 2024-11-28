@@ -24,8 +24,8 @@
 #pragma once
 
 #include "ContainerNode.h"
-#include "RuntimeApplicationChecks.h"
 #include <wtf/MainThread.h>
+#include <wtf/RuntimeApplicationChecks.h>
 
 #if PLATFORM(IOS_FAMILY)
 #include "WebCoreThread.h"

@@ -35,7 +35,7 @@ namespace WebCore {
 using AcceleratedEffects = Vector<Ref<AcceleratedEffect>>;
 
 class WEBCORE_EXPORT AcceleratedEffectStack : public RefCounted<AcceleratedEffectStack> {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(AcceleratedEffectStack);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED_EXPORT(AcceleratedEffectStack, WEBCORE_EXPORT);
 public:
     static Ref<AcceleratedEffectStack> create();
 

@@ -188,10 +188,10 @@ fn testFieldAccess() -> i32
 fn testIndexAccess() -> i32
 {
     // CHECK: local\d+ = __unpack\(global\d+\);
-    // CHECK-NEXT: local\d+\[min\(unsigned\(0\), \(2u - 1u\)\)\] = __unpack\(global\d+\[min\(unsigned\(0\), \(2u - 1u\)\)\]\);
-    // CHECK-NEXT: global\d+\[min\(unsigned\(0\), \(2u - 1u\)\)\] = global\d+\[min\(unsigned\(0\), \(2u - 1u\)\)\];
-    // CHECK-NEXT: global\d+\[min\(unsigned\(0\), \(2u - 1u\)\)\] = __pack\(local\d+\[min\(unsigned\(0\), \(2u - 1u\)\)\]\);
-    // CHECK-NEXT: global\d+\[min\(unsigned\(global\d+\), \(2u - 1u\)\)\] = __pack\(local\d+\[min\(unsigned\(global\d+\), \(2u - 1u\)\)\]\);
+    // CHECK-NEXT: local\d+\[__wgslMin\(unsigned\(0\), \(2u - 1u\)\)\] = __unpack\(global\d+\[__wgslMin\(unsigned\(0\), \(2u - 1u\)\)\]\);
+    // CHECK-NEXT: global\d+\[__wgslMin\(unsigned\(0\), \(2u - 1u\)\)\] = global\d+\[__wgslMin\(unsigned\(0\), \(2u - 1u\)\)\];
+    // CHECK-NEXT: global\d+\[__wgslMin\(unsigned\(0\), \(2u - 1u\)\)\] = __pack\(local\d+\[__wgslMin\(unsigned\(0\), \(2u - 1u\)\)\]\);
+    // CHECK-NEXT: global\d+\[__wgslMin\(unsigned\(global\d+\), \(2u - 1u\)\)\] = __pack\(local\d+\[__wgslMin\(unsigned\(global\d+\), \(2u - 1u\)\)\]\);
     var at = at1;
     at[0] = at1[0];
     at1[0] = at2[0];

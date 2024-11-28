@@ -121,10 +121,6 @@ class RemoteMediaResourceManager;
 class RemoteVideoFrameObjectHeap;
 #endif
 
-#if PLATFORM(COCOA) && ENABLE(MEDIA_RECORDER)
-class RemoteMediaRecorderManager;
-#endif
-
 #if ENABLE(WEBGL)
 class RemoteGraphicsContextGL;
 #endif
@@ -139,22 +135,21 @@ public:
     static Ref<GPUConnectionToWebProcess> create(GPUProcess&, WebCore::ProcessIdentifier, PAL::SessionID, IPC::Connection::Handle&&, GPUProcessConnectionParameters&&);
     virtual ~GPUConnectionToWebProcess();
 
-    const SharedPreferencesForWebProcess& sharedPreferencesForWebProcess() const { return m_sharedPreferencesForWebProcess; }
-    void updateSharedPreferencesForWebProcess(SharedPreferencesForWebProcess&& sharedPreferencesForWebProcess) { m_sharedPreferencesForWebProcess = WTFMove(sharedPreferencesForWebProcess); }
+    std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess() const { return m_sharedPreferencesForWebProcess; }
+    const SharedPreferencesForWebProcess& sharedPreferencesForWebProcessValue() const { return m_sharedPreferencesForWebProcess; }
+    void updateSharedPreferencesForWebProcess(SharedPreferencesForWebProcess&&);
 
 #if ENABLE(WEBXR)
-    bool isWebXREnabled() const { return sharedPreferencesForWebProcess().webXREnabled; }
+    bool isWebXREnabled() const { return m_sharedPreferencesForWebProcess.webXREnabled; }
 #else
     bool isWebXREnabled() const { return false; }
 #endif
 
 #if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
-    bool isDynamicContentScalingEnabled() const { return sharedPreferencesForWebProcess().useCGDisplayListsForDOMRendering; }
+    bool isDynamicContentScalingEnabled() const { return m_sharedPreferencesForWebProcess.useCGDisplayListsForDOMRendering; }
 #endif
 
-    using WebCore::NowPlayingManagerClient::weakPtrFactory;
-    using WebCore::NowPlayingManagerClient::WeakValueType;
-    using WebCore::NowPlayingManagerClient::WeakPtrImplType;
+    USING_CAN_MAKE_WEAKPTR(WebCore::NowPlayingManagerClient);
 
     IPC::Connection& connection() { return m_connection.get(); }
     Ref<IPC::Connection> protectedConnection() { return m_connection; }
@@ -172,9 +167,7 @@ public:
     PAL::SessionID sessionID() const { return m_sessionID; }
 
     bool isLockdownModeEnabled() const { return m_isLockdownModeEnabled; }
-    bool isLockdownSafeFontParserEnabled() const { return sharedPreferencesForWebProcess().lockdownFontParserEnabled; }
-
-    bool allowTestOnlyIPC() const { return sharedPreferencesForWebProcess().allowTestOnlyIPC; }
+    bool isLockdownSafeFontParserEnabled() const { return sharedPreferencesForWebProcess() ? sharedPreferencesForWebProcess()->lockdownFontParserEnabled : false; }
 
     Logger& logger();
 
@@ -185,6 +178,9 @@ public:
 
 #if ENABLE(MEDIA_STREAM)
     void setOrientationForMediaCapture(WebCore::IntDegrees);
+    void rotationAngleForCaptureDeviceChanged(const String&, WebCore::VideoFrameRotation);
+    void startMonitoringCaptureDeviceRotation(WebCore::PageIdentifier, const String&);
+    void stopMonitoringCaptureDeviceRotation(WebCore::PageIdentifier, const String&);
     void updateCaptureAccess(bool allowAudioCapture, bool allowVideoCapture, bool allowDisplayCapture);
     void updateCaptureOrigin(const WebCore::SecurityOriginData&);
     bool setCaptureAttributionString();
@@ -208,13 +204,16 @@ public:
     const WebCore::ProcessIdentity& webProcessIdentity() const { return m_webProcessIdentity; }
 #if ENABLE(ENCRYPTED_MEDIA)
     RemoteCDMFactoryProxy& cdmFactoryProxy();
+    Ref<RemoteCDMFactoryProxy> protectedCdmFactoryProxy();
 #endif
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
     RemoteLegacyCDMFactoryProxy& legacyCdmFactoryProxy();
+    Ref<RemoteLegacyCDMFactoryProxy> protectedLegacyCdmFactoryProxy();
 #endif
     RemoteMediaEngineConfigurationFactoryProxy& mediaEngineConfigurationFactoryProxy();
 #if ENABLE(VIDEO)
     RemoteMediaPlayerManagerProxy& remoteMediaPlayerManagerProxy() { return m_remoteMediaPlayerManagerProxy.get(); }
+    Ref<RemoteMediaPlayerManagerProxy> protectedRemoteMediaPlayerManagerProxy();
 #endif
 #if USE(AUDIO_SESSION)
     RemoteAudioSessionProxyManager& audioSessionManager();
@@ -260,10 +259,10 @@ public:
     void setMediaEnvironment(WebCore::PageIdentifier, const String&);
 #endif
 
+    bool isAlwaysOnLoggingAllowed() const;
+
 private:
     GPUConnectionToWebProcess(GPUProcess&, WebCore::ProcessIdentifier, PAL::SessionID, IPC::Connection::Handle&&, GPUProcessConnectionParameters&&);
-
-    Ref<IPC::Connection> protectedConnection() const { return m_connection.copyRef(); }
 
 #if PLATFORM(COCOA) && USE(LIBWEBRTC)
     Ref<LibWebRTCCodecsProxy> protectedLibWebRTCCodecsProxy() const;
@@ -271,14 +270,13 @@ private:
 
 #if ENABLE(WEB_AUDIO)
     RemoteAudioDestinationManager& remoteAudioDestinationManager();
+    Ref<RemoteAudioDestinationManager> protectedRemoteAudioDestinationManager();
 #endif
 #if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
     Ref<RemoteSampleBufferDisplayLayerManager> protectedSampleBufferDisplayLayerManager() const;
     UserMediaCaptureManagerProxy& userMediaCaptureManagerProxy();
+    Ref<UserMediaCaptureManagerProxy> protectedUserMediaCaptureManagerProxy();
     RemoteAudioMediaStreamTrackRendererInternalUnitManager& audioMediaStreamTrackRendererInternalUnitManager();
-#endif
-#if PLATFORM(COCOA) && ENABLE(MEDIA_RECORDER)
-    RemoteMediaRecorderManager& mediaRecorderManager();
 #endif
 
     void createRenderingBackend(RenderingBackendIdentifier, IPC::StreamServerConnection::Handle&&);
@@ -309,6 +307,7 @@ private:
 
 #if USE(AUDIO_SESSION)
     RemoteAudioSessionProxy& audioSessionProxy();
+    Ref<RemoteAudioSessionProxy> protectedAudioSessionProxy();
     using EnsureAudioSessionCompletion = CompletionHandler<void(const RemoteAudioSessionConfiguration&)>;
     void ensureAudioSession(EnsureAudioSessionCompletion&&);
 #endif
@@ -345,6 +344,7 @@ private:
 #if PLATFORM(MAC) && ENABLE(WEBGL)
     void dispatchDisplayWasReconfigured();
 #endif
+    void enableMediaPlaybackIfNecessary();
 
     static uint64_t gObjectCountForTesting;
 
@@ -361,20 +361,17 @@ private:
     RefPtr<RemoteSharedResourceCache> m_sharedResourceCache;
 #if ENABLE(VIDEO)
     RefPtr<RemoteMediaResourceManager> m_remoteMediaResourceManager WTF_GUARDED_BY_CAPABILITY(mainThread);
-    UniqueRef<RemoteMediaPlayerManagerProxy> m_remoteMediaPlayerManagerProxy;
+    Ref<RemoteMediaPlayerManagerProxy> m_remoteMediaPlayerManagerProxy;
 #endif
     PAL::SessionID m_sessionID;
 #if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
-    std::unique_ptr<UserMediaCaptureManagerProxy> m_userMediaCaptureManagerProxy;
+    RefPtr<UserMediaCaptureManagerProxy> m_userMediaCaptureManagerProxy;
     std::unique_ptr<RemoteAudioMediaStreamTrackRendererInternalUnitManager> m_audioMediaStreamTrackRendererInternalUnitManager;
     bool m_isLastToCaptureAudio { false };
 
     Ref<RemoteSampleBufferDisplayLayerManager> m_sampleBufferDisplayLayerManager;
 #endif
 
-#if PLATFORM(COCOA) && ENABLE(MEDIA_RECORDER)
-    std::unique_ptr<RemoteMediaRecorderManager> m_remoteMediaRecorderManager;
-#endif
 #if ENABLE(MEDIA_STREAM)
     Ref<WebCore::SecurityOrigin> m_captureOrigin;
     bool m_allowsAudioCapture { false };
@@ -399,16 +396,16 @@ private:
     using RemoteGPUMap = HashMap<WebGPUIdentifier, IPC::ScopedActiveMessageReceiveQueue<RemoteGPU>>;
     RemoteGPUMap m_remoteGPUMap;
 #if ENABLE(ENCRYPTED_MEDIA)
-    std::unique_ptr<RemoteCDMFactoryProxy> m_cdmFactoryProxy;
+    RefPtr<RemoteCDMFactoryProxy> m_cdmFactoryProxy;
 #endif
 #if USE(AUDIO_SESSION)
-    std::unique_ptr<RemoteAudioSessionProxy> m_audioSessionProxy;
+    RefPtr<RemoteAudioSessionProxy> m_audioSessionProxy;
 #endif
 #if PLATFORM(IOS_FAMILY)
     std::unique_ptr<RemoteMediaSessionHelperProxy> m_mediaSessionHelperProxy;
 #endif
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
-    std::unique_ptr<RemoteLegacyCDMFactoryProxy> m_legacyCdmFactoryProxy;
+    RefPtr<RemoteLegacyCDMFactoryProxy> m_legacyCdmFactoryProxy;
 #endif
 #if HAVE(AVASSETREADER)
     std::unique_ptr<RemoteImageDecoderAVFProxy> m_imageDecoderAVFProxy;
@@ -424,7 +421,7 @@ private:
     RemoteAudioHardwareListenerMap m_remoteAudioHardwareListenerMap;
 
 #if USE(GRAPHICS_LAYER_WC)
-    using RemoteWCLayerTreeHostMap = HashMap<WCLayerTreeHostIdentifier, std::unique_ptr<RemoteWCLayerTreeHost>>;
+    using RemoteWCLayerTreeHostMap = HashMap<WCLayerTreeHostIdentifier, Ref<RemoteWCLayerTreeHost>>;
     RemoteWCLayerTreeHostMap m_remoteWCLayerTreeHostMap;
 #endif
 
@@ -440,10 +437,10 @@ private:
 #endif
 
 #if ENABLE(ROUTING_ARBITRATION) && HAVE(AVAUDIO_ROUTING_ARBITER)
-    UniqueRef<LocalAudioSessionRoutingArbitrator> m_routingArbitrator;
+    std::unique_ptr<LocalAudioSessionRoutingArbitrator> m_routingArbitrator;
 #endif
 #if ENABLE(IPC_TESTING_API)
-    IPCTester m_ipcTester;
+    const Ref<IPCTester> m_ipcTester;
 #endif
     SharedPreferencesForWebProcess m_sharedPreferencesForWebProcess;
 };

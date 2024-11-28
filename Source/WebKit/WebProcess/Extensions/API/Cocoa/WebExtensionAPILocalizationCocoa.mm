@@ -31,6 +31,7 @@
 #import "WebExtensionAPILocalization.h"
 
 #import "CocoaHelpers.h"
+#import "FoundationSPI.h"
 #import "Logging.h"
 #import "MessageSenderInlines.h"
 #import "WebExtensionContextMessages.h"
@@ -86,6 +87,16 @@ void WebExtensionAPILocalization::getAcceptLanguages(Ref<WebExtensionCallbackHan
     }
 
     callback->call(acceptLanguages.array);
+}
+
+void WebExtensionAPILocalization::getPreferredSystemLanguages(Ref<WebExtensionCallbackHandler>&& callback)
+{
+    callback->call(NSLocale.preferredLanguages);
+}
+
+void WebExtensionAPILocalization::getSystemUILanguage(Ref<WebExtensionCallbackHandler>&& callback)
+{
+    callback->call(NSLocale._deviceLanguage);
 }
 
 } // namespace WebKit

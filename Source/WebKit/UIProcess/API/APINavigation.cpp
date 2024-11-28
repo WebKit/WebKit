@@ -50,7 +50,7 @@ SubstituteData::SubstituteData(Vector<uint8_t>&& content, const ResourceResponse
 Navigation::Navigation(WebCore::ProcessIdentifier processID)
     : m_navigationID(WebCore::NavigationIdentifier::generate())
     , m_processID(processID)
-    , m_clientNavigationActivity(navigationActivityTimeout)
+    , m_clientNavigationActivity(ProcessThrottler::TimedActivity::create(navigationActivityTimeout))
 {
 }
 
@@ -58,7 +58,7 @@ Navigation::Navigation(WebCore::ProcessIdentifier processID, RefPtr<WebBackForwa
     : m_navigationID(WebCore::NavigationIdentifier::generate())
     , m_processID(processID)
     , m_reloadItem(WTFMove(currentAndTargetItem))
-    , m_clientNavigationActivity(navigationActivityTimeout)
+    , m_clientNavigationActivity(ProcessThrottler::TimedActivity::create(navigationActivityTimeout))
 {
 }
 
@@ -69,7 +69,7 @@ Navigation::Navigation(WebCore::ProcessIdentifier processID, WebCore::ResourceRe
     , m_currentRequest(m_originalRequest)
     , m_redirectChain { m_originalRequest.url() }
     , m_fromItem(WTFMove(fromItem))
-    , m_clientNavigationActivity(navigationActivityTimeout)
+    , m_clientNavigationActivity(ProcessThrottler::TimedActivity::create(navigationActivityTimeout))
 {
 }
 
@@ -81,7 +81,7 @@ Navigation::Navigation(WebCore::ProcessIdentifier processID, Ref<WebBackForwardL
     , m_targetItem(WTFMove(targetItem))
     , m_fromItem(WTFMove(fromItem))
     , m_backForwardFrameLoadType(backForwardFrameLoadType)
-    , m_clientNavigationActivity(navigationActivityTimeout)
+    , m_clientNavigationActivity(ProcessThrottler::TimedActivity::create(navigationActivityTimeout))
 {
 }
 

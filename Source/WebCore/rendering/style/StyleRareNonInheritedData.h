@@ -2,7 +2,7 @@
  * Copyright (C) 2000 Lars Knoll (knoll@kde.org)
  *           (C) 2000 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2003-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2024 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Graham Dennis (graham.dennis@gmail.com)
  *
  * This library is free software; you can redistribute it and/or
@@ -47,14 +47,22 @@
 #include "StyleSelfAlignmentData.h"
 #include "StyleTextEdge.h"
 #include "TextDecorationThickness.h"
+#include "TimelineScope.h"
 #include "TouchAction.h"
 #include "TranslateTransformOperation.h"
 #include "ViewTimeline.h"
+#include "ViewTransitionName.h"
+#include "WebAnimationTypes.h"
 #include "WillChangeData.h"
 #include <memory>
 #include <wtf/DataRef.h>
+#include <wtf/Markable.h>
 #include <wtf/OptionSet.h>
 #include <wtf/Vector.h>
+
+namespace WTF {
+class TextStream;
+}
 
 namespace WebCore {
 
@@ -98,14 +106,18 @@ public:
     
     bool operator==(const StyleRareNonInheritedData&) const;
 
+#if !LOG_DISABLED
+    void dumpDifferences(TextStream&, const StyleRareNonInheritedData&) const;
+#endif
+
     LengthPoint perspectiveOrigin() const { return { perspectiveOriginX, perspectiveOriginY }; }
 
     bool hasBackdropFilters() const;
 
     OptionSet<Containment> usedContain() const;
 
-    std::optional<Length> containIntrinsicWidth;
-    std::optional<Length> containIntrinsicHeight;
+    Markable<Length> containIntrinsicWidth;
+    Markable<Length> containIntrinsicHeight;
 
     Length perspectiveOriginX;
     Length perspectiveOriginY;
@@ -160,7 +172,7 @@ public:
     Vector<Style::ScopedName> containerNames;
 
     Vector<Style::ScopedName> viewTransitionClasses;
-    std::optional<Style::ScopedName> viewTransitionName;
+    Style::ViewTransitionName viewTransitionName;
 
     GapLength columnGap;
     GapLength rowGap;
@@ -189,19 +201,19 @@ public:
     Vector<ViewTimelineInsets> viewTimelineInsets;
     Vector<AtomString> viewTimelineNames;
 
+    TimelineScope timelineScope;
+
     ScrollbarGutter scrollbarGutter;
     ScrollbarWidth scrollbarWidth { ScrollbarWidth::Auto };
 
     float zoom;
     AtomString pseudoElementNameArgument;
 
-    Vector<AtomString> anchorNames;
-    AtomString positionAnchor;
-
-    TextEdge textBoxEdge;
+    Vector<Style::ScopedName> anchorNames;
+    std::optional<Style::ScopedName> positionAnchor;
 
     std::optional<Length> blockStepSize;
-    unsigned blockStepInsert : 1; // BlockStepInsert
+    unsigned blockStepInsert : 2; // BlockStepInsert
 
     unsigned overscrollBehaviorX : 2; // OverscrollBehavior
     unsigned overscrollBehaviorY : 2; // OverscrollBehavior
@@ -219,16 +231,16 @@ public:
 
     unsigned contentVisibility : 2; // ContentVisibility
 
-    unsigned effectiveBlendMode: 5; // EBlendMode
+    unsigned effectiveBlendMode: 5; // BlendMode
     unsigned isolation : 1; // Isolation
 
 #if ENABLE(APPLE_PAY)
-    unsigned applePayButtonStyle : 2;
-    unsigned applePayButtonType : 4;
+    unsigned applePayButtonStyle : 2; // ApplePayButtonStyle
+    unsigned applePayButtonType : 4; // ApplePayButtonType
 #endif
 
     unsigned breakBefore : 4; // BreakBetween
-    unsigned breakAfter : 4;
+    unsigned breakAfter : 4; // BreakBetween
     unsigned breakInside : 3; // BreakInside
 
     unsigned inputSecurity : 1; // InputSecurity
@@ -243,6 +255,8 @@ public:
     unsigned overflowAnchor : 1; // Scroll Anchoring- OverflowAnchor
 
     bool hasClip : 1;
+
+    unsigned positionTryOrder : 3; // Style::PositionTryOrder; 5 values so 3 bits.
 
     FieldSizing fieldSizing { FieldSizing::Fixed };
 

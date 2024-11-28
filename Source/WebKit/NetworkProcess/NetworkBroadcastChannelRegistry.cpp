@@ -46,10 +46,17 @@ static bool isValidClientOrigin(const WebCore::ClientOrigin& clientOrigin)
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(NetworkBroadcastChannelRegistry);
 
+Ref<NetworkBroadcastChannelRegistry> NetworkBroadcastChannelRegistry::create(NetworkProcess& networkProcess)
+{
+    return adoptRef(*new NetworkBroadcastChannelRegistry(networkProcess));
+}
+
 NetworkBroadcastChannelRegistry::NetworkBroadcastChannelRegistry(NetworkProcess& networkProcess)
     : m_networkProcess(networkProcess)
 {
 }
+
+NetworkBroadcastChannelRegistry::~NetworkBroadcastChannelRegistry() = default;
 
 void NetworkBroadcastChannelRegistry::registerChannel(IPC::Connection& connection, const WebCore::ClientOrigin& origin, const String& name)
 {

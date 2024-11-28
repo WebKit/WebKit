@@ -48,10 +48,10 @@ QueueImpl::QueueImpl(WebGPUPtr<WGPUQueue>&& queue, ConvertToBackingContext& conv
 
 QueueImpl::~QueueImpl() = default;
 
-void QueueImpl::submit(Vector<std::reference_wrapper<CommandBuffer>>&& commandBuffers)
+void QueueImpl::submit(Vector<Ref<WebGPU::CommandBuffer>>&& commandBuffers)
 {
-    auto backingCommandBuffers = commandBuffers.map([&convertToBackingContext = m_convertToBackingContext.get()](auto commandBuffer) {
-        return convertToBackingContext.convertToBacking(commandBuffer);
+    auto backingCommandBuffers = commandBuffers.map([&](auto commandBuffer) {
+        return Ref { m_convertToBackingContext }->convertToBacking(commandBuffer);
     });
 
     wgpuQueueSubmit(m_backing.get(), backingCommandBuffers.size(), backingCommandBuffers.data());
@@ -98,7 +98,7 @@ void QueueImpl::writeBufferNoCopy(
     Size64 dataOffset,
     std::optional<Size64> size)
 {
-    wgpuQueueWriteBuffer(m_backing.get(), m_convertToBackingContext->convertToBacking(buffer), bufferOffset, source.subspan(dataOffset, size.value_or(source.size() - dataOffset)));
+    wgpuQueueWriteBuffer(m_backing.get(), Ref { m_convertToBackingContext }->convertToBacking(buffer), bufferOffset, source.subspan(dataOffset, size.value_or(source.size() - dataOffset)));
 }
 
 void QueueImpl::writeTexture(
@@ -107,12 +107,14 @@ void QueueImpl::writeTexture(
     const ImageDataLayout& dataLayout,
     const Extent3D& size)
 {
+    Ref convertToBackingContext = m_convertToBackingContext;
+
     WGPUImageCopyTexture backingDestination {
         .nextInChain = nullptr,
-        .texture = m_convertToBackingContext->convertToBacking(destination.texture),
+        .texture = convertToBackingContext->convertToBacking(destination.protectedTexture().get()),
         .mipLevel = destination.mipLevel,
-        .origin = destination.origin ? m_convertToBackingContext->convertToBacking(*destination.origin) : WGPUOrigin3D { 0, 0, 0 },
-        .aspect = m_convertToBackingContext->convertToBacking(destination.aspect),
+        .origin = destination.origin ? convertToBackingContext->convertToBacking(*destination.origin) : WGPUOrigin3D { 0, 0, 0 },
+        .aspect = convertToBackingContext->convertToBacking(destination.aspect),
     };
 
     WGPUTextureDataLayout backingDataLayout {
@@ -122,7 +124,7 @@ void QueueImpl::writeTexture(
         .rowsPerImage = dataLayout.rowsPerImage.value_or(WGPU_COPY_STRIDE_UNDEFINED),
     };
 
-    WGPUExtent3D backingSize = m_convertToBackingContext->convertToBacking(size);
+    WGPUExtent3D backingSize = convertToBackingContext->convertToBacking(size);
 
     wgpuQueueWriteTexture(m_backing.get(), &backingDestination, source, &backingDataLayout, &backingSize);
 }

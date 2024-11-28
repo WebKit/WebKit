@@ -61,6 +61,16 @@ ScriptRunner::~ScriptRunner()
     }
 }
 
+void ScriptRunner::ref() const
+{
+    m_document->ref();
+}
+
+void ScriptRunner::deref() const
+{
+    m_document->deref();
+}
+
 void ScriptRunner::queueScriptForExecution(ScriptElement& scriptElement, LoadableScript& loadableScript, ExecutionType executionType)
 {
     ASSERT(scriptElement.element().isConnected());

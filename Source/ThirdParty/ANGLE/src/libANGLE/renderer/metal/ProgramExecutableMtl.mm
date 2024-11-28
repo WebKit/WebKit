@@ -1037,10 +1037,6 @@ angle::Result ProgramExecutableMtl::getSpecializedShader(
                     type:MTLDataTypeBool
                 withName:@"ANGLEUseSampleCompareGradient"];
     [funcConstants
-        setConstantValue:&(context->getDisplay()->getFeatures().allowSamplerCompareLod.enabled)
-                    type:MTLDataTypeBool
-                withName:@"ANGLEUseSampleCompareLod"];
-    [funcConstants
         setConstantValue:&(context->getDisplay()->getFeatures().emulateAlphaToCoverage.enabled)
                     type:MTLDataTypeBool
                 withName:@"ANGLEEmulateAlphaToCoverage"];

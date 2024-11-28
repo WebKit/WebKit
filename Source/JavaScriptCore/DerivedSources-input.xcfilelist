@@ -49,6 +49,8 @@ $(PROJECT_DIR)/builtins/GlobalOperations.js
 $(PROJECT_DIR)/builtins/InternalPromiseConstructor.js
 $(PROJECT_DIR)/builtins/IteratorHelpers.js
 $(PROJECT_DIR)/builtins/JSIteratorConstructor.js
+$(PROJECT_DIR)/builtins/JSIteratorHelperPrototype.js
+$(PROJECT_DIR)/builtins/JSIteratorPrototype.js
 $(PROJECT_DIR)/builtins/MapConstructor.js
 $(PROJECT_DIR)/builtins/MapIteratorPrototype.js
 $(PROJECT_DIR)/builtins/MapPrototype.js
@@ -170,6 +172,7 @@ $(PROJECT_DIR)/runtime/IntlSegmentsPrototype.cpp
 $(PROJECT_DIR)/runtime/JSDataViewPrototype.cpp
 $(PROJECT_DIR)/runtime/JSGlobalObject.cpp
 $(PROJECT_DIR)/runtime/JSInternalPromiseConstructor.cpp
+$(PROJECT_DIR)/runtime/JSIteratorHelperPrototype.cpp
 $(PROJECT_DIR)/runtime/JSModuleLoader.cpp
 $(PROJECT_DIR)/runtime/JSONObject.cpp
 $(PROJECT_DIR)/runtime/JSPromiseConstructor.cpp

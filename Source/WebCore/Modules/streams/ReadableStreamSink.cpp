@@ -33,6 +33,8 @@
 #include "SharedBuffer.h"
 #include <JavaScriptCore/Uint8Array.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 ReadableStreamToSharedBufferSink::ReadableStreamToSharedBufferSink(Callback&& callback)
@@ -75,3 +77,5 @@ void ReadableStreamToSharedBufferSink::error(String&& message)
 }
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

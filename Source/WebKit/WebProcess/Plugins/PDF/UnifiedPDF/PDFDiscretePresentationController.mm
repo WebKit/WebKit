@@ -112,8 +112,6 @@ bool PDFDiscretePresentationController::handleKeyboardEvent(const WebKeyboardEve
     if (handleKeyboardCommand(event))
         return true;
 
-    // FIXME: <https://webkit.org/b/276981> Need to check for scrollability first.
-
     if (handleKeyboardEventForPageNavigation(event))
         return true;
 #endif
@@ -129,28 +127,10 @@ bool PDFDiscretePresentationController::handleKeyboardCommand(const WebKeyboardE
 
 bool PDFDiscretePresentationController::handleKeyboardEventForPageNavigation(const WebKeyboardEvent& event)
 {
-//    if (m_isScrollingWithAnimationToPageExtent)
-//        return false;
-
     if (event.type() == WebEventType::KeyUp)
         return false;
 
     auto key = event.key();
-    if (key == "ArrowLeft"_s || key == "ArrowUp"_s || key == "PageUp"_s) {
-        if (!canGoToPreviousRow())
-            return false;
-
-        goToPreviousRow(Animated::No);
-        return true;
-    }
-
-    if (key == "ArrowRight"_s || key == "ArrowDown"_s || key == "PageDown"_s) {
-        if (!canGoToNextRow())
-            return false;
-
-        goToNextRow(Animated::No);
-        return true;
-    }
 
     if (key == "Home"_s) {
         if (!m_visibleRowIndex)
@@ -166,6 +146,39 @@ bool PDFDiscretePresentationController::handleKeyboardEventForPageNavigation(con
             return false;
 
         goToRowIndex(lastRowIndex, Animated::No);
+        return true;
+    }
+
+    auto maximumScrollPosition = m_plugin->maximumScrollPosition();
+
+    bool isHorizontallyScrollable = !!maximumScrollPosition.x();
+    bool isVerticallyScrollable = !!maximumScrollPosition.y();
+
+    if (key == "ArrowLeft"_s || key == "ArrowUp"_s || key == "PageUp"_s) {
+        if (key == "ArrowLeft"_s) {
+            if (isHorizontallyScrollable)
+                return false;
+        } else if (isVerticallyScrollable)
+            return false;
+
+        if (!canGoToPreviousRow())
+            return false;
+
+        goToPreviousRow(Animated::No);
+        return true;
+    }
+
+    if (key == "ArrowRight"_s || key == "ArrowDown"_s || key == "PageDown"_s) {
+        if (key == "ArrowRight"_s) {
+            if (isHorizontallyScrollable)
+                return false;
+        } else if (isVerticallyScrollable)
+            return false;
+
+        if (!canGoToNextRow())
+            return false;
+
+        goToNextRow(Animated::No);
         return true;
     }
 
@@ -549,8 +562,8 @@ void PDFDiscretePresentationController::startTransitionAnimation(PageTransitionS
         // The animation runs on top of the non-stretched layer position and opacity.
         auto layerPosition = positionForRowContainerLayer(animatingRow.pages);
         animatingRow.containerLayer->setPosition(layerPosition);
-        animatingRow.containerLayer->setOpacity(1);
-        stationaryRow.containerLayer->setOpacity(1);
+        animatingRow.protectedContainerLayer()->setOpacity(1);
+        stationaryRow.protectedContainerLayer()->setOpacity(1);
 
         return transitionDuration;
     };
@@ -813,7 +826,7 @@ void PDFDiscretePresentationController::updateLayersForTransitionState()
         for (auto& row : m_rows) {
             auto layerPosition = positionForRowContainerLayer(row.pages);
             row.containerLayer->setPosition(layerPosition);
-            row.containerLayer->setOpacity(1);
+            row.protectedContainerLayer()->setOpacity(1);
             row.containerLayer->removeAnimation("move"_s, { });
             row.containerLayer->removeAnimation("fade"_s, { });
         }
@@ -844,10 +857,10 @@ void PDFDiscretePresentationController::updateLayersForTransitionState()
         case TransitionDirection::PreviousVertical: {
             // Previous page pulls down up from the top or right.
             topLayerRow.containerLayer->setPosition(layerPosition);
-            topLayerRow.containerLayer->setOpacity(layerOpacities[topLayerIndex][startIndex]);
+            topLayerRow.protectedContainerLayer()->setOpacity(layerOpacities[topLayerIndex][startIndex]);
             if (additionalVisibleRowIndex) {
                 auto& bottomRow = m_rows[topLayerRowIndex + 1];
-                bottomRow.containerLayer->setOpacity(layerOpacities[bottomLayerIndex][startIndex]);
+                bottomRow.protectedContainerLayer()->setOpacity(layerOpacities[bottomLayerIndex][startIndex]);
             }
             break;
         }
@@ -939,20 +952,16 @@ PDFPageCoverage PDFDiscretePresentationController::pageCoverageForContentsRect(c
     }
 
     auto contentsRect = convertFromPaintingToContents(paintingRect, row->pages[0]);
-
-    auto drawingRect = IntRect { { }, m_plugin->documentSize() };
-    drawingRect.intersect(enclosingIntRect(contentsRect));
-
-    auto rectInPDFLayoutCoordinates = m_plugin->convertDown(UnifiedPDFPlugin::CoordinateSpace::Contents, UnifiedPDFPlugin::CoordinateSpace::PDFDocumentLayout, FloatRect { drawingRect });
+    auto paintRectInPDFLayoutCoordinates = m_plugin->convertDown(UnifiedPDFPlugin::CoordinateSpace::Contents, UnifiedPDFPlugin::CoordinateSpace::PDFDocumentLayout, contentsRect);
 
     auto pageCoverage = PDFPageCoverage { };
 
     auto addPageToCoverage = [&](PDFDocumentLayout::PageIndex pageIndex) {
         auto pageBounds = layoutBoundsForPageAtIndex(pageIndex);
-        if (!pageBounds.intersects(rectInPDFLayoutCoordinates))
+        if (!pageBounds.intersects(paintRectInPDFLayoutCoordinates))
             return;
 
-        pageCoverage.append(PerPageInfo { pageIndex, pageBounds });
+        pageCoverage.append(PerPageInfo { pageIndex, pageBounds, paintRectInPDFLayoutCoordinates });
     };
 
     for (auto pageIndex : row->pages)
@@ -1022,7 +1031,7 @@ void PDFDiscretePresentationController::deviceOrPageScaleFactorChanged()
     for (auto& row : m_rows) {
         // We need to manually propagate noteDeviceOrPageScaleFactorChangedIncludingDescendants to the layers of unparented rows.
         if (!row.containerLayer->parent())
-            row.containerLayer->noteDeviceOrPageScaleFactorChangedIncludingDescendants();
+            row.protectedContainerLayer()->noteDeviceOrPageScaleFactorChangedIncludingDescendants();
     }
 }
 
@@ -1059,7 +1068,7 @@ void PDFDiscretePresentationController::buildRows()
         auto leftPageIndex = layoutRow.pages[0];
 
         row.leftPageContainerLayer = makePageContainerLayer(leftPageIndex);
-        RefPtr pageBackgroundLayer = pageBackgroundLayerForPageContainerLayer(*row.leftPageContainerLayer);
+        RefPtr pageBackgroundLayer = pageBackgroundLayerForPageContainerLayer(*row.protectedLeftPageContainerLayer());
         m_layerIDToRowIndexMap.add(*pageBackgroundLayer->primaryLayerID(), rowIndex);
 
         if (row.pages.numPages() == 1) {
@@ -1069,19 +1078,19 @@ void PDFDiscretePresentationController::buildRows()
 
         auto rightPageIndex = layoutRow.pages[1];
         row.rightPageContainerLayer = makePageContainerLayer(rightPageIndex);
-        RefPtr rightPageBackgroundLayer = pageBackgroundLayerForPageContainerLayer(*row.rightPageContainerLayer);
+        RefPtr rightPageBackgroundLayer = pageBackgroundLayerForPageContainerLayer(*row.protectedRightPageContainerLayer());
         m_layerIDToRowIndexMap.add(*rightPageBackgroundLayer->primaryLayerID(), rowIndex);
     };
 
     auto parentRowLayers = [](RowData& row) {
         ASSERT(row.containerLayer->children().isEmpty());
-        row.containerLayer->addChild(*row.leftPageContainerLayer);
+        row.containerLayer->addChild(*row.protectedLeftPageContainerLayer());
         if (row.rightPageContainerLayer)
-            row.containerLayer->addChild(*row.rightPageContainerLayer);
+            row.containerLayer->addChild(*row.protectedRightPageContainerLayer());
 
-        row.containerLayer->addChild(*row.contentsLayer);
+        row.containerLayer->addChild(*row.protectedContentsLayer());
 #if ENABLE(UNIFIED_PDF_SELECTION_LAYER)
-        row.containerLayer->addChild(*row.selectionLayer);
+        row.containerLayer->addChild(*row.protectedSelectionLayer());
 #endif
     };
 
@@ -1095,24 +1104,23 @@ void PDFDiscretePresentationController::buildRows()
         createRowPageBackgroundContainerLayers(rowIndex, layoutRow, row);
 
         // This contents layer is used to paint both pages in two-up; it spans across both backgrounds.
-        row.contentsLayer = createGraphicsLayer(makeString("Row contents "_s, rowIndex), GraphicsLayer::Type::TiledBacking);
-        row.contentsLayer->setAnchorPoint({ });
-        row.contentsLayer->setDrawsContent(true);
-        row.contentsLayer->setAcceleratesDrawing(m_plugin->canPaintSelectionIntoOwnedLayer());
+        RefPtr rowContentsLayer = row.contentsLayer = createGraphicsLayer(makeString("Row contents "_s, rowIndex), GraphicsLayer::Type::TiledBacking);
+        rowContentsLayer->setAnchorPoint({ });
+        rowContentsLayer->setDrawsContent(true);
+        rowContentsLayer->setAcceleratesDrawing(m_plugin->canPaintSelectionIntoOwnedLayer());
 
         // This is the call that enables async rendering.
-        asyncRenderer()->startTrackingLayer(*row.contentsLayer);
+        asyncRenderer()->startTrackingLayer(*rowContentsLayer);
 
-        m_layerIDToRowIndexMap.set(*row.contentsLayer->primaryLayerID(), rowIndex);
-
+        m_layerIDToRowIndexMap.set(*rowContentsLayer->primaryLayerID(), rowIndex);
 
 #if ENABLE(UNIFIED_PDF_SELECTION_LAYER)
-        row.selectionLayer = createGraphicsLayer(makeString("Row selection "_s, rowIndex), GraphicsLayer::Type::TiledBacking);
-        row.selectionLayer->setAnchorPoint({ });
-        row.selectionLayer->setDrawsContent(true);
-        row.selectionLayer->setAcceleratesDrawing(true);
-        row.selectionLayer->setBlendMode(BlendMode::Multiply);
-        m_layerIDToRowIndexMap.set(*row.selectionLayer->primaryLayerID(), rowIndex);
+        RefPtr rowSelectionLayer = row.selectionLayer = createGraphicsLayer(makeString("Row selection "_s, rowIndex), GraphicsLayer::Type::TiledBacking);
+        rowSelectionLayer->setAnchorPoint({ });
+        rowSelectionLayer->setDrawsContent(true);
+        rowSelectionLayer->setAcceleratesDrawing(true);
+        rowSelectionLayer->setBlendMode(BlendMode::Multiply);
+        m_layerIDToRowIndexMap.set(*rowSelectionLayer->primaryLayerID(), rowIndex);
 #endif
 
         parentRowLayers(row);
@@ -1190,7 +1198,7 @@ void PDFDiscretePresentationController::updateLayersOnLayoutChange(FloatSize doc
     transform.scale(scaleFactor);
     transform.translate(centeringOffset.width(), centeringOffset.height());
 
-    m_rowsContainerLayer->setTransform(transform);
+    protectedRowsContainerLayer()->setTransform(transform);
 
     for (auto& row : m_rows) {
         // Same as positionForRowContainerLayer().
@@ -1198,12 +1206,14 @@ void PDFDiscretePresentationController::updateLayersOnLayoutChange(FloatSize doc
         auto scaledRowBounds = rowPageBounds;
         scaledRowBounds.scale(documentLayout.scale());
 
-        row.containerLayer->setPosition(scaledRowBounds.location());
-        row.containerLayer->setSize(scaledRowBounds.size());
+        RefPtr rowContainerLayer = row.containerLayer;
+        rowContainerLayer->setPosition(scaledRowBounds.location());
+        rowContainerLayer->setSize(scaledRowBounds.size());
 
         updateRowPageContainerLayers(row, rowPageBounds);
 
-        row.contentsLayer->setPosition({ });
+        RefPtr rowContentsLayer = row.contentsLayer;
+        rowContentsLayer->setPosition({ });
 
         bool needsRepaint = false;
         // This contents offset accounts for containerLayer being positioned with an offset from the edge of the
@@ -1215,19 +1225,20 @@ void PDFDiscretePresentationController::updateLayersOnLayoutChange(FloatSize doc
             needsRepaint = true;
         }
 
-        if (row.contentsLayer->size() != scaledRowBounds.size()) {
-            row.contentsLayer->setSize(scaledRowBounds.size());
+        if (rowContentsLayer->size() != scaledRowBounds.size()) {
+            rowContentsLayer->setSize(scaledRowBounds.size());
             needsRepaint = true;
         }
 
         if (needsRepaint)
-            row.contentsLayer->setNeedsDisplay();
+            rowContentsLayer->setNeedsDisplay();
 
 #if ENABLE(UNIFIED_PDF_SELECTION_LAYER)
-        row.selectionLayer->setPosition({ });
-        row.selectionLayer->setSize(scaledRowBounds.size());
+        RefPtr rowSelectionLayer = row.selectionLayer;
+        rowSelectionLayer->setPosition({ });
+        rowSelectionLayer->setSize(scaledRowBounds.size());
         if (needsRepaint)
-            row.selectionLayer->setNeedsDisplay();
+            rowSelectionLayer->setNeedsDisplay();
 #endif
     }
 
@@ -1242,7 +1253,8 @@ void PDFDiscretePresentationController::updateLayersAfterChangeInVisibleRow(std:
     if (additionalVisibleRowIndex && *additionalVisibleRowIndex >= m_rows.size())
         additionalVisibleRowIndex = { };
 
-    m_rowsContainerLayer->removeAllChildren();
+    RefPtr rowsContainerLayer = m_rowsContainerLayer;
+    rowsContainerLayer->removeAllChildren();
 
     auto& visibleRow = m_rows[m_visibleRowIndex];
 
@@ -1257,7 +1269,7 @@ void PDFDiscretePresentationController::updateLayersAfterChangeInVisibleRow(std:
     updateRowTiledLayers(visibleRow, isInWindow);
 
     RefPtr rowContainer = visibleRow.containerLayer;
-    m_rowsContainerLayer->addChild(rowContainer.releaseNonNull());
+    rowsContainerLayer->addChild(rowContainer.releaseNonNull());
 
     if (additionalVisibleRowIndex) {
         auto& additionalVisibleRow = m_rows[*additionalVisibleRowIndex];
@@ -1265,9 +1277,9 @@ void PDFDiscretePresentationController::updateLayersAfterChangeInVisibleRow(std:
 
         RefPtr rowContainer = additionalVisibleRow.containerLayer;
         if (*additionalVisibleRowIndex < m_visibleRowIndex)
-            m_rowsContainerLayer->addChild(rowContainer.releaseNonNull());
+            rowsContainerLayer->addChild(rowContainer.releaseNonNull());
         else
-            m_rowsContainerLayer->addChildAtIndex(rowContainer.releaseNonNull(), 0);
+            rowsContainerLayer->addChildAtIndex(rowContainer.releaseNonNull(), 0);
     }
 }
 
@@ -1328,9 +1340,9 @@ void PDFDiscretePresentationController::repaintForIncrementalLoad()
         if (RefPtr rightBackgroundLayer = row.leftPageBackgroundLayer())
             rightBackgroundLayer->setNeedsDisplay();
 
-        row.contentsLayer->setNeedsDisplay();
+        row.protectedContentsLayer()->setNeedsDisplay();
 #if ENABLE(UNIFIED_PDF_SELECTION_LAYER)
-        row.selectionLayer->setNeedsDisplay();
+        row.protectedSelectionLayer()->setNeedsDisplay();
 #endif
     }
 }
@@ -1352,7 +1364,7 @@ void PDFDiscretePresentationController::setNeedsRepaintInDocumentRect(OptionSet<
 
     if (repaintRequirements.contains(RepaintRequirement::PDFContent)) {
         if (RefPtr asyncRenderer = asyncRendererIfExists())
-            asyncRenderer->pdfContentChangedInRect(row.contentsLayer.get(), m_plugin->nonNormalizedScaleFactor(), contentsRect, layoutRow);
+            asyncRenderer->pdfContentChangedInRect(row.contentsLayer.get(), contentsRect, layoutRow);
     }
 
 #if ENABLE(UNIFIED_PDF_SELECTION_LAYER)
@@ -1572,7 +1584,7 @@ bool PDFDiscretePresentationController::RowData::isPageBackgroundLayer(const Gra
 
 RefPtr<GraphicsLayer> PDFDiscretePresentationController::RowData::leftPageBackgroundLayer() const
 {
-    return PDFPresentationController::pageBackgroundLayerForPageContainerLayer(*leftPageContainerLayer);
+    return PDFPresentationController::pageBackgroundLayerForPageContainerLayer(*protectedLeftPageContainerLayer());
 }
 
 RefPtr<GraphicsLayer> PDFDiscretePresentationController::RowData::rightPageBackgroundLayer() const
@@ -1580,16 +1592,16 @@ RefPtr<GraphicsLayer> PDFDiscretePresentationController::RowData::rightPageBackg
     if (!rightPageContainerLayer)
         return nullptr;
 
-    return PDFPresentationController::pageBackgroundLayerForPageContainerLayer(*rightPageContainerLayer);
+    return PDFPresentationController::pageBackgroundLayerForPageContainerLayer(*protectedRightPageContainerLayer());
 }
 
 RefPtr<GraphicsLayer> PDFDiscretePresentationController::RowData::backgroundLayerForPageIndex(PDFDocumentLayout::PageIndex pageIndex) const
 {
     if (pageIndex == pages.pages[0])
-        return PDFPresentationController::pageBackgroundLayerForPageContainerLayer(*leftPageContainerLayer);
+        return leftPageBackgroundLayer();
 
-    if (pages.numPages() == 2 && pageIndex == pages.pages[1] && rightPageContainerLayer)
-        return PDFPresentationController::pageBackgroundLayerForPageContainerLayer(*rightPageContainerLayer);
+    if (pages.numPages() == 2 && pageIndex == pages.pages[1])
+        return rightPageBackgroundLayer();
 
     return nullptr;
 }

@@ -1,7 +1,5 @@
 
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT Validate pointer events track pointer movement without pointer capture. Test timed out
-NOTRUN Test pointer capture.
+PASS Validate pointer events track pointer movement without pointer capture.
+FAIL Test pointer capture. assert_equals: Check after hover on capture target: Unexpected events pointerout@target0, pointerleave@target0 expected 0 but got 2
 

@@ -1,0 +1,33 @@
+<body>
+    <h3>This tests the filter is applied to the text correctly.</h3>
+    <canvas id="canvas"></canvas>
+    <script>
+        if (window.testRunner)
+            testRunner.waitUntilDone();
+
+        let image = new Image;
+        image.onload = () => {
+            const canvas = document.getElementById('canvas');
+            const ctx = canvas.getContext('2d');
+
+            ctx.drawImage(image, 0, 0);
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }
+
+        image.src = "data:image/svg+xml;charset=UTF-8, \
+            <svg xmlns='http://www.w3.org/2000/svg' width='300' height='150'> \
+                <style> \
+                    text { \
+                        font-size: 48px; \
+                        font-family: serif; \
+                    } \
+                </style> \
+                <filter id='svgDropShadow'> \
+                    <feDropShadow dx='5' dy='5' stdDeviation='0' flood-color='gray'/> \
+                </filter> \
+                <text x='10' y='40' fill='blue' filter='url(%23svgDropShadow)'>Hello world!</text> \
+                <text x='10' y='120' fill='none' stroke='red' filter='url(%23svgDropShadow)'>Hello world!</text> \
+            </svg>";
+    </script>
+</body>

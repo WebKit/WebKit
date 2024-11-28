@@ -18,15 +18,19 @@
             document.getElementById("widener").style.removeProperty("width");
             document.getElementById("target").style.removeProperty("-webkit-column-count");
         }
+        
+        onload = async () => {
+            window.scrollBy(1, 0);
+            if (window.testRunner) {
+                testRunner.dumpAsText();
+                testRunner.waitUntilDone();
+                await testRunner.displayAndTrackRepaints();
+                test();
+                testRunner.notifyDone();
+            } else
+                setTimeout(test, 500);
+        }
  
-               window.scrollBy(1, 0);
-
-        if (window.testRunner) {
-            testRunner.displayAndTrackRepaints();
-            testRunner.dumpAsText();
-            test();
-        } else
-            setTimeout(test, 500);
 
     </script>
 </body>

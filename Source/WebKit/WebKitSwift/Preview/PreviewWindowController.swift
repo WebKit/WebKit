@@ -27,16 +27,25 @@
 import OSLog
 import WebKitSwift
 
+#if USE_APPLE_INTERNAL_SDK
 @_spi(PreviewApplication) import QuickLook
+#else
+import QuickLook_SPI
+#endif
 
 @objc(WKSPreviewWindowController)
 public final class PreviewWindowController: NSObject {
     private static let logger = Logger(subsystem: "com.apple.WebKit", category: "Fullscreen")
+    enum UpdateError: Error {
+        case newUpdateQueued
+    }
 
-    private let item: PreviewItem
+    private var item: PreviewItem
     private let previewConfiguration: PreviewApplication.PreviewConfiguration
     private var previewSession: PreviewSession?
     private var isClosing = false
+    private var isOpen = false
+    private var windowOpenedContinuation: CheckedContinuation<Void, Error>?
 
     @objc public weak var delegate: WKSPreviewWindowControllerDelegate?
 
@@ -61,9 +70,13 @@ public final class PreviewWindowController: NSObject {
                 DispatchQueue.main.async { [weak self] in
                     guard let self = self else { return }
                     switch event {
+                    case .didOpen:
+                        self.isOpen = true
+                        self.windowOpenedContinuation?.resume()
                     case .didFail(let error):
                         self.isClosing = true
                         self.delegate?.previewWindowControllerDidClose(self)
+                        windowOpenedContinuation?.resume(throwing: error)
                         PreviewWindowController.logger.error("Preview open failed with error \(error)")
                     case .didClose:
                         self.isClosing = true
@@ -72,6 +85,32 @@ public final class PreviewWindowController: NSObject {
                         break
                     }
                 }
+            }
+        }
+    }
+    
+    @objc(updateImage:) public func updateImage(url: URL) {
+        self.item = PreviewItem(url: url, displayName: nil, editingMode: .disabled);
+        
+        Task {
+            do {
+                if !self.isOpen {
+                    if let continuation = self.windowOpenedContinuation {
+                        // The Quick Look window isn't ready yet, but there's already been an earlier update queued
+                        // Throw that update and queue this one instead
+                        continuation.resume(throwing: UpdateError.newUpdateQueued)
+                    }
+                    try await withCheckedThrowingContinuation { continuation in
+                        self.windowOpenedContinuation = continuation
+                    }
+                }
+#if USE_APPLE_INTERNAL_SDK
+                try await previewSession?.update(items: [self.item])
+#endif
+            } catch UpdateError.newUpdateQueued {
+                PreviewWindowController.logger.debug("WKSPreviewWindowController.updateImage skipped: newer image update queued");
+            } catch {
+                PreviewWindowController.logger.error("WKSPreviewWindowController.updateImage failed: \(error, privacy: .public)")
             }
         }
     }

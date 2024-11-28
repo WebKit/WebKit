@@ -97,7 +97,7 @@ private:
 };
 
 class ImageDocumentElement final : public HTMLImageElement {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED_INLINE(ImageDocumentElement);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(ImageDocumentElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(ImageDocumentElement);
 public:
     static Ref<ImageDocumentElement> create(ImageDocument&);
@@ -114,6 +114,8 @@ private:
 
     WeakPtr<ImageDocument, WeakPtrImplWithEventTargetData> m_imageDocument;
 };
+
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(ImageDocumentElement);
 
 inline Ref<ImageDocumentElement> ImageDocumentElement::create(ImageDocument& document)
 {

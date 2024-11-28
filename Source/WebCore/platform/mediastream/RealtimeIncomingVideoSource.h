@@ -35,6 +35,7 @@
 #include "LibWebRTCMacros.h"
 #include "RealtimeMediaSource.h"
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 ALLOW_UNUSED_PARAMETERS_BEGIN
 ALLOW_COMMA_BEGIN
 
@@ -42,6 +43,7 @@ ALLOW_COMMA_BEGIN
 
 ALLOW_UNUSED_PARAMETERS_END
 ALLOW_COMMA_END
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #include <wtf/RetainPtr.h>
 
@@ -98,7 +100,7 @@ private:
 #if !RELEASE_LOG_DISABLED
     bool m_enableFrameRatedMonitoringLogging { false };
     mutable RefPtr<const Logger> m_logger;
-    const void* m_logIdentifier;
+    uint64_t m_logIdentifier { 0 };
 #endif
 };
 

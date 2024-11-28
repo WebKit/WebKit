@@ -29,11 +29,13 @@
 
 #include "MediaStreamTrackPrivate.h"
 #include "VideoTrackPrivate.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/StringToIntegerConversion.h>
 
 namespace WebCore {
 
 class VideoTrackPrivateMediaStream final : public VideoTrackPrivate {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(VideoTrackPrivateMediaStream);
     WTF_MAKE_NONCOPYABLE(VideoTrackPrivateMediaStream)
 public:
     static Ref<VideoTrackPrivateMediaStream> create(MediaStreamTrackPrivate& streamTrack)

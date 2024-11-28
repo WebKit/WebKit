@@ -532,6 +532,33 @@ describe('Canvas Behavior', () => {
         bluePaint.delete();
     });
 
+    gm('savelayerrec_canvas_backdrop_tilemode', (canvas) => {
+        // Note: fiddle.skia.org quietly draws a white background before doing
+        // other things, which is noticed in cases like this where we use saveLayer
+        // with the rec struct.
+        canvas.scale(8, 8);
+        const redPaint = new CanvasKit.Paint();
+        redPaint.setColor(CanvasKit.RED);
+        redPaint.setAntiAlias(true);
+        canvas.drawCircle(21, 21, 8, redPaint);
+
+        const bluePaint = new CanvasKit.Paint();
+        bluePaint.setColor(CanvasKit.BLUE);
+        canvas.drawCircle(31, 21, 8, bluePaint);
+
+        const blurIF = CanvasKit.ImageFilter.MakeBlur(8, 0.2, CanvasKit.TileMode.Decal, null);
+
+        const count = canvas.saveLayer(null, null, blurIF, 0, CanvasKit.TileMode.Decal);
+        expect(count).toEqual(1);
+        canvas.scale(1/4, 1/4);
+        canvas.drawCircle(125, 85, 8, redPaint);
+        canvas.restore();
+
+        blurIF.delete();
+        redPaint.delete();
+        bluePaint.delete();
+    });
+
     gm('drawpoints_canvas', (canvas) => {
         const paint = new CanvasKit.Paint();
         paint.setAntiAlias(true);
@@ -758,6 +785,23 @@ describe('Canvas Behavior', () => {
             0.707106,  0.707106, 0, 21.213203,
             0       ,  0       , 1,  0       ,
             0       ,  0       , 0,  1       ], matr);
+    });
+
+    it('can quickly tell if a rect is in the current clip region', () => {
+      const canvas = new CanvasKit.Canvas(200, 200);
+
+      canvas.save();
+      const rejectWithNoClip = canvas.quickReject(CanvasKit.LTRBRect(10, 10, 20, 20));
+      expect(rejectWithNoClip).toBeFalse();
+      canvas.restore();
+
+      canvas.save();
+      canvas.clipRect(CanvasKit.LTRBRect(10, 10, 20, 20), CanvasKit.ClipOp.Intersect, false);
+      const rejectPartiallyInsideClip = canvas.quickReject(CanvasKit.LTRBRect(15, 15, 25, 25));
+      expect(rejectPartiallyInsideClip).toBeFalse();
+      const rejectEntirelyOutsideClip = canvas.quickReject(CanvasKit.LTRBRect(30, 30, 50, 50));
+      expect(rejectEntirelyOutsideClip).toBeTrue();
+      canvas.restore();
     });
 
     it('can accept a 3x2 matrix', () => {

@@ -76,10 +76,6 @@ void main()
 }
 )";
 
-    // iOS chokes on the "smooth" qualifier.
-    // TODO(anglebug.com/42264029): Add shader compiler workaround that omits "smooth".
-    ANGLE_SKIP_TEST_IF(IsIOS() && IsOpenGLES());
-
     ANGLE_GL_PROGRAM(program, vertSrc, fragSrc);
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 

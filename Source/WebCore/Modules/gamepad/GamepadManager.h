@@ -37,7 +37,7 @@ namespace WebCore {
 
 class Gamepad;
 class LocalDOMWindow;
-class NavigatorGamepad;
+class Navigator;
 class WeakPtrImplWithEventTargetData;
 
 class GamepadManager : public GamepadProviderClient {
@@ -50,8 +50,8 @@ public:
     void platformGamepadDisconnected(PlatformGamepad&) final;
     void platformGamepadInputActivity(EventMakesGamepadsVisible) final;
 
-    void registerNavigator(NavigatorGamepad&);
-    void unregisterNavigator(NavigatorGamepad&);
+    void registerNavigator(Navigator&);
+    void unregisterNavigator(Navigator&);
     void registerDOMWindow(LocalDOMWindow&);
     void unregisterDOMWindow(LocalDOMWindow&);
 
@@ -62,25 +62,25 @@ public:
 private:
     GamepadManager();
 
-    void makeGamepadVisible(PlatformGamepad&, WeakHashSet<NavigatorGamepad>&, WeakHashSet<LocalDOMWindow, WeakPtrImplWithEventTargetData>&);
+    void makeGamepadVisible(PlatformGamepad&, WeakHashSet<Navigator>&, WeakHashSet<LocalDOMWindow, WeakPtrImplWithEventTargetData>&);
     void dispatchGamepadEvent(const AtomString& eventName, PlatformGamepad&);
 
     void maybeStartMonitoringGamepads();
     void maybeStopMonitoringGamepads();
 
 #if PLATFORM(VISION)
-    void findUnquarantinedNavigatorsAndWindows(WeakHashSet<NavigatorGamepad>&, WeakHashSet<LocalDOMWindow, WeakPtrImplWithEventTargetData>&);
+    void findUnquarantinedNavigatorsAndWindows(WeakHashSet<Navigator>&, WeakHashSet<LocalDOMWindow, WeakPtrImplWithEventTargetData>&);
 #endif
 
     bool m_isMonitoringGamepads;
 
-    WeakHashSet<NavigatorGamepad> m_navigators;
-    WeakHashSet<NavigatorGamepad> m_gamepadBlindNavigators;
+    WeakHashSet<Navigator> m_navigators;
+    WeakHashSet<Navigator> m_gamepadBlindNavigators;
     WeakHashSet<LocalDOMWindow, WeakPtrImplWithEventTargetData> m_domWindows;
     WeakHashSet<LocalDOMWindow, WeakPtrImplWithEventTargetData> m_gamepadBlindDOMWindows;
 
 #if PLATFORM(VISION)
-    WeakHashSet<NavigatorGamepad> m_gamepadQuarantinedNavigators;
+    WeakHashSet<Navigator> m_gamepadQuarantinedNavigators;
     WeakHashSet<LocalDOMWindow, WeakPtrImplWithEventTargetData> m_gamepadQuarantinedDOMWindows;
 #endif
 };

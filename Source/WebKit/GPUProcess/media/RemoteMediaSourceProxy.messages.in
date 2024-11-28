@@ -25,7 +25,8 @@
 
 #if ENABLE(GPU_PROCESS) && ENABLE(MEDIA_SOURCE)
 
-messages -> RemoteMediaSourceProxy NotRefCounted {
+[EnabledBy=MediaSourceEnabled || ManagedMediaSourceEnabled]
+messages -> RemoteMediaSourceProxy {
     AddSourceBuffer(WebCore::ContentType contentType) -> (enum:uint8_t WebCore::MediaSourcePrivateAddStatus status, std::optional<WebKit::RemoteSourceBufferIdentifier> remoteSourceBufferIdentifier) Synchronous
     DurationChanged(MediaTime duration)
     BufferedChanged(WebCore::PlatformTimeRanges buffered)
@@ -33,6 +34,7 @@ messages -> RemoteMediaSourceProxy NotRefCounted {
     SetTimeFudgeFactor(MediaTime fudgeFactor)
     MarkEndOfStream(enum:uint8_t WebCore::MediaSourcePrivateEndOfStreamStatus status)
     UnmarkEndOfStream()
+    Shutdown()
 }
 
 #endif

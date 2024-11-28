@@ -51,12 +51,15 @@
 #include "ScriptDisallowedScope.h"
 #include "ShadowRoot.h"
 #include "UserAgentParts.h"
+#include <wtf/TZoneMallocInlines.h>
 
 #if ENABLE(IOS_TOUCH_EVENTS)
 #include "TouchEvent.h"
 #endif
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CheckboxInputType);
 
 const AtomString& CheckboxInputType::formControlType() const
 {
@@ -255,7 +258,7 @@ void CheckboxInputType::didDispatchClick(Event& event, const InputElementClickSt
 
 static int switchPointerTrackingLogicalLeftPosition(Element& element, LayoutPoint absoluteLocation)
 {
-    auto isVertical = !element.renderer()->style().isHorizontalWritingMode();
+    auto isVertical = !element.renderer()->writingMode().isHorizontal();
     auto localLocation = element.renderer()->absoluteToLocal(absoluteLocation, UseTransforms);
     return isVertical ? localLocation.y() : localLocation.x();
 }
@@ -445,7 +448,7 @@ void CheckboxInputType::updateIsSwitchVisuallyOnFromAbsoluteLocation(LayoutPoint
 {
     auto logicalLeftPosition = switchPointerTrackingLogicalLeftPosition(*element(), absoluteLocation);
     auto isSwitchVisuallyOn = m_isSwitchVisuallyOn;
-    auto isRTL = element()->computedStyle()->direction() == TextDirection::RTL;
+    auto isRTL = element()->computedStyle()->writingMode().isBidiRTL();
     auto switchThumbIsLogicallyLeft = (!isRTL && !isSwitchVisuallyOn) || (isRTL && isSwitchVisuallyOn);
     auto switchTrackRect = element()->renderer()->absoluteBoundingBoxRect();
     auto switchThumbLength = switchTrackRect.height();

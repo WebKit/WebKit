@@ -108,6 +108,8 @@ static std::optional<IPAddress> extractIPAddress(const struct sockaddr* address)
     return std::nullopt;
 }
 
+static constexpr auto timeoutForDNSResolution = 60_s;
+
 void DNSResolveQueueCFNet::performDNSLookup(const String& hostname, Ref<CompletionHandlerWrapper>&& completionHandler)
 {
     RetainPtr hostEndpoint = adoptCF(nw_endpoint_create_host(hostname.utf8().data(), "0"));
@@ -117,10 +119,19 @@ void DNSResolveQueueCFNet::performDNSLookup(const String& hostname, Ref<Completi
     nw_parameters_set_context(parameters.get(), context.get());
     RetainPtr resolver = adoptCF(nw_resolver_create_with_endpoint(hostEndpoint.get(), parameters.get()));
 
-    nw_resolver_set_update_handler(resolver.get(), dispatch_get_main_queue(), makeBlockPtr([resolver, completionHandler = WTFMove(completionHandler)] (nw_resolver_status_t status, nw_array_t resolvedEndpoints) mutable {
-        if (status == nw_resolver_status_in_progress)
+    RELEASE_ASSERT_WITH_MESSAGE(isMainThread(), "Always create timer on the main thread.");
+    auto timeoutTimer = makeUnique<Timer>([resolver, completionHandler]() mutable {
+        completionHandler->complete(makeUnexpected(DNSError::Cancelled));
+        nw_resolver_cancel(resolver.get()); // This will destroy the timer and this lambda.
+    });
+    timeoutTimer->startOneShot(timeoutForDNSResolution);
+
+    nw_resolver_set_update_handler(resolver.get(), dispatch_get_main_queue(), makeBlockPtr([resolver = WTFMove(resolver), completionHandler = WTFMove(completionHandler), timeoutTimer = WTFMove(timeoutTimer)] (nw_resolver_status_t status, nw_array_t resolvedEndpoints) mutable {
+        if (status != nw_resolver_status_complete)
             return;
-        auto callCompletionHandler = [resolver = WTFMove(resolver), completionHandler = WTFMove(completionHandler)](DNSAddressesOrError&& result) mutable {
+
+        auto callCompletionHandler = [resolver = WTFMove(resolver), completionHandler = WTFMove(completionHandler), timeoutTimer = WTFMove(timeoutTimer)](DNSAddressesOrError&& result) mutable {
+            timeoutTimer->stop();
             completionHandler->complete(WTFMove(result));
             // We need to call nw_resolver_cancel to release the reference taken by nw_resolver_set_update_handler on the resolver.
             nw_resolver_cancel(resolver.get());

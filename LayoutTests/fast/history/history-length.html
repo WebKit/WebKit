@@ -1,11 +1,11 @@
 <script>
-onload = function() {
+onload = async function() {
   if (location.search.substring(1).length == 0) {
     sessionStorage.testStage = 0;
     if (window.testRunner) {
       testRunner.dumpAsText();
-      testRunner.clearBackForwardList();
       testRunner.waitUntilDone();
+      await testRunner.clearBackForwardList();
     }
   }
 

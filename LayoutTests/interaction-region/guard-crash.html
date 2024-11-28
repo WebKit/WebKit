@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<style>
+    body { margin: 0; }
+    .guard-dupe {
+        position: relative;
+    }
+
+    .guard-dupe a {
+        font-size: 20px;
+        line-height: 20px;
+        background: white;
+    }
+
+    .guard-dupe img {
+        display: block;
+        width: 38px;
+        height:38px;
+    }
+
+    .red {
+        cursor: pointer;
+        background: red;
+        opacity: 0.5;
+
+        width: 18px;
+        height: 18px;
+        position: absolute;
+        top: 10px;
+        left: 10px;
+    }
+
+    .interaction {
+        width: 100px;
+        height: 100px;
+
+        cursor: pointer;
+        background: yellow;
+    }
+
+    .guard-dupe, .interaction {
+        float: left;
+        margin: 8px;
+    }
+</style>
+<script src="../resources/ui-helper.js"></script>
+<body>
+
+<div class="guard-dupe">
+    <!-- This would get a guard because it's too small. -->
+    <div class="red" style="" onclick="click()"></div>
+    <!-- This guard container will have the exact same rect -->
+    <a href="#" onclick="click()" class="duck">
+        <img src="../css3/blending/resources/ducky.png" style="" alt="ducky" />
+    </a>
+</div>
+
+<div class="interaction" onclick="click()"></div>
+
+<pre id="results"></pre>
+<script>
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}
+
+window.onload = async function () {
+    const repeat = 10;
+    let guard = document.querySelector(".guard-dupe");
+    let interaction = document.querySelector(".interaction");
+
+    let guards = [];
+    let interactions = [];
+    for (let i = 0; i < repeat; i++) {
+        guards.push(guard.cloneNode(true));
+        interactions.push(interaction.cloneNode(true));
+    }
+
+    for (let i = 0; i < repeat; i++) {
+        document.body.appendChild(interactions[i]);
+        document.body.appendChild(guards[i]);
+    }
+
+    await UIHelper.ensureStablePresentationUpdate();
+
+    // Remove and re-order elements to cause InteractionRegion layers churn.
+    await Array.from(document.querySelectorAll(".guard-dupe")).reduce( async (acc, el, idx) => {
+        await acc;
+        el.remove();
+        if (idx % 2 == 0)
+            document.body.insertBefore(el, document.body.firstElementChild);
+        return UIHelper.ensureStablePresentationUpdate();
+    }, Promise.resolve());
+
+    await UIHelper.ensureStablePresentationUpdate();
+
+    if (window.internals)
+        results.textContent = await UIHelper.getCALayerTree();
+
+    testRunner.notifyDone();
+};
+</script>
+</body>
+</html>

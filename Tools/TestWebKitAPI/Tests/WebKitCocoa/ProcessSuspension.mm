@@ -222,7 +222,7 @@ TEST(ProcessSuspension, DeallocateSuspendedView)
     // Deallocating a suspended WebView should not throw or crash.
     @autoreleasepool {
         auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
-        [webView loadRequest:[NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]]];
+        [webView loadRequest:[NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"simple" withExtension:@"html"]]];
         [webView _test_waitForDidFinishNavigation];
 
         __block bool done = false;

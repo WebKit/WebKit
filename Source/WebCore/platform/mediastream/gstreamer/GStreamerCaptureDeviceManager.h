@@ -53,7 +53,7 @@ public:
     void devicesChanged() final;
     void deviceWillBeRemoved(const String& persistentId) final;
 
-    void registerCapturer(const RefPtr<GStreamerCapturer>&);
+    void registerCapturer(RefPtr<GStreamerCapturer>&&);
     void unregisterCapturer(const GStreamerCapturer&);
     void stopCapturing(const String& persistentId);
 
@@ -77,6 +77,10 @@ class GStreamerAudioCaptureDeviceManager final : public GStreamerCaptureDeviceMa
 public:
     static GStreamerAudioCaptureDeviceManager& singleton();
     CaptureDevice::DeviceType deviceType() final { return CaptureDevice::DeviceType::Microphone; }
+
+    // ref() and deref() do nothing because this object is a singleton.
+    void ref() const final { }
+    void deref() const final { }
 };
 
 class GStreamerVideoCaptureDeviceManager final : public GStreamerCaptureDeviceManager {
@@ -84,6 +88,10 @@ class GStreamerVideoCaptureDeviceManager final : public GStreamerCaptureDeviceMa
 public:
     static GStreamerVideoCaptureDeviceManager& singleton();
     CaptureDevice::DeviceType deviceType() final { return CaptureDevice::DeviceType::Camera; }
+
+    // ref() and deref() do nothing because this object is a singleton.
+    void ref() const final { }
+    void deref() const final { }
 };
 
 class GStreamerDisplayCaptureDeviceManager final : public DisplayCaptureManager {

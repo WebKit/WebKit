@@ -143,7 +143,7 @@ LayoutPoint RenderFragmentContainer::fragmentedFlowPortionLocation() const
     LayoutPoint portionLocation;
     LayoutRect portionRect = fragmentedFlowPortionRect();
 
-    if (fragmentedFlow()->style().isFlippedBlocksWritingMode()) {
+    if (fragmentedFlow()->writingMode().isBlockFlipped()) {
         LayoutRect flippedFragmentedFlowPortionRect(portionRect);
         fragmentedFlow()->flipForWritingMode(flippedFragmentedFlowPortionRect);
         portionLocation = flippedFragmentedFlowPortionRect.location();
@@ -210,7 +210,7 @@ void RenderFragmentContainer::styleDidChange(StyleDifference diff, const RenderS
     if (!isValid())
         return;
 
-    if (oldStyle && oldStyle->writingMode() != style().writingMode())
+    if (oldStyle && oldStyle->writingMode().computedWritingMode() !=writingMode().computedWritingMode())
         m_fragmentedFlow->fragmentChangedWritingMode(this);
 }
 

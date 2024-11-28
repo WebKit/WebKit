@@ -155,7 +155,9 @@ std::optional<Vector<uint8_t>> mpiZeroPrefixedData(gcry_mpi_t paramMPI, size_t t
     // and copy the MPI data into memory area following the prefix (if any).
     Vector<uint8_t> output(targetLength, 0);
     size_t prefixLength = targetLength - *length;
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib port
     gcry_error_t error = gcry_mpi_print(GCRYMPI_FMT_USG, output.data() + prefixLength, targetLength, nullptr, paramMPI);
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     if (error != GPG_ERR_NO_ERROR) {
         PAL::GCrypt::logError(error);
         return std::nullopt;

@@ -65,9 +65,6 @@ class CompressedTextureFormatsTest : public ANGLETest<CompressedTextureTestParam
 
     void testSetUp() override
     {
-        // Older Metal versions do not support compressed TEXTURE_3D.
-        mDisableTexture3D = IsMetal() && !IsMetalCompressedTexture3DAvailable();
-
         // Apple platforms require PVRTC1 textures to be squares.
         mSquarePvrtc1 = IsAppleGPU();
     }

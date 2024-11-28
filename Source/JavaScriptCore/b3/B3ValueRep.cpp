@@ -58,16 +58,8 @@ void ValueRep::addUsedRegistersTo(bool isSIMDContext, RegisterSetBuilder& set) c
         set.add(GPRInfo::callFrameRegister, IgnoreVectors);
         return;
 #if USE(JSVALUE32_64)
-    case SomeRegisterPair:
-    case SomeRegisterPairWithClobber:
-    case SomeEarlyRegisterPair:
-    case SomeLateRegisterPair:
-        return;
-    case LateRegisterPair:
     case RegisterPair:
-        set.add(regLo(), isSIMDContext ? conservativeWidth(regLo()) : conservativeWidthWithoutVectors(reg()));
-        set.add(regHi(), isSIMDContext ? conservativeWidth(regHi()) : conservativeWidthWithoutVectors(reg()));
-        return;
+        break;
 #endif
     }
     RELEASE_ASSERT_NOT_REACHED();
@@ -96,6 +88,11 @@ void ValueRep::dump(PrintStream& out) const
     case Register:
         out.print("(", reg(), ")");
         return;
+#if USE(JSVALUE32_64)
+    case RegisterPair:
+        out.print("(", u.regPair.regLo, ", ", u.regPair.regHi, ")");
+        return;
+#endif
     case Stack:
         out.print("(", offsetFromFP(), ")");
         return;
@@ -105,17 +102,6 @@ void ValueRep::dump(PrintStream& out) const
     case Constant:
         out.print("(", value(), ")");
         return;
-#if USE(JSVALUE32_64)
-    case SomeRegisterPair:
-    case SomeRegisterPairWithClobber:
-    case SomeEarlyRegisterPair:
-    case SomeLateRegisterPair:
-        return;
-    case LateRegisterPair:
-    case RegisterPair:
-        out.print("(", regHi(), ",", regLo(), ")");
-        return;
-#endif
     }
     RELEASE_ASSERT_NOT_REACHED();
 }
@@ -214,6 +200,11 @@ void printInternal(PrintStream& out, ValueRep::Kind kind)
     case ValueRep::SomeRegister:
         out.print("SomeRegister");
         return;
+#if USE(JSVALUE32_64)
+    case ValueRep::RegisterPair:
+        out.print("SomeRegisterPair");
+        return;
+#endif
     case ValueRep::SomeRegisterWithClobber:
         out.print("SomeRegisterWithClobber");
         return;
@@ -238,26 +229,6 @@ void printInternal(PrintStream& out, ValueRep::Kind kind)
     case ValueRep::Constant:
         out.print("Constant");
         return;
-#if USE(JSVALUE32_64)
-    case ValueRep::SomeRegisterPair:
-        out.print("SomeRegisterPair");
-        return;
-    case ValueRep::SomeRegisterPairWithClobber:
-        out.print("SomeRegisterPairWithClobber");
-        return;
-    case ValueRep::SomeEarlyRegisterPair:
-        out.print("SomeEarlyRegisterPair");
-        return;
-    case ValueRep::SomeLateRegisterPair:
-        out.print("SomeLateRegisterPair");
-        return;
-    case ValueRep::RegisterPair:
-        out.print("RegisterPair");
-        return;
-    case ValueRep::LateRegisterPair:
-        out.print("LateRegisterPair");
-        return;
-#endif
     }
     RELEASE_ASSERT_NOT_REACHED();
 }

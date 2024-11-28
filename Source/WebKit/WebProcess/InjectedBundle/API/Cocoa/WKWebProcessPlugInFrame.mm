@@ -51,7 +51,8 @@
 
 + (instancetype)lookUpFrameFromHandle:(_WKFrameHandle *)handle
 {
-    return wrapper(WebKit::WebProcess::singleton().webFrame(handle->_frameHandle->frameID()));
+    auto frameID = handle->_frameHandle->frameID();
+    return wrapper(frameID ? WebKit::WebProcess::singleton().webFrame(*frameID) : nullptr);
 }
 
 + (instancetype)lookUpFrameFromJSContext:(JSContext *)context

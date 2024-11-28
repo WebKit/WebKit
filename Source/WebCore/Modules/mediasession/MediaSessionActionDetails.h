@@ -33,12 +33,12 @@ namespace WebCore {
 
 struct MediaSessionActionDetails {
     MediaSessionAction action = MediaSessionAction::Play;
-    std::optional<double> seekOffset;
-    std::optional<double> seekTime;
-    std::optional<bool> fastSeek;
-    std::optional<bool> isActivating;
+    std::optional<double> seekOffset { };
+    std::optional<double> seekTime { };
+    std::optional<bool> fastSeek { };
+    std::optional<bool> isActivating { };
 #if ENABLE(MEDIA_SESSION_PLAYLIST)
-    String trackIdentifier;
+    String trackIdentifier { };
 #endif
 };
 

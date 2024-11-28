@@ -30,6 +30,6 @@
 namespace WebKit {
 
 struct WebExtensionContextIdentifierType;
-using WebExtensionContextIdentifier = LegacyNullableObjectIdentifier<WebExtensionContextIdentifierType>;
+using WebExtensionContextIdentifier = ObjectIdentifier<WebExtensionContextIdentifierType>;
 
 }

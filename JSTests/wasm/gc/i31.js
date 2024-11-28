@@ -295,17 +295,17 @@ function testI31Table() {
     assert.throws(
       () => m.exports.t.set(0, "foo"),
       TypeError,
-      "WebAssembly.Table.prototype.set failed to cast the second argument to the table's element type"
+      "Argument value did not match the reference type"
     );
     assert.throws(
       () => m.exports.t.set(0, m2.exports.makeArray()),
       TypeError,
-      "WebAssembly.Table.prototype.set failed to cast the second argument to the table's element type"
+      "Argument value did not match the reference type"
     );
     assert.throws(
       () => m.exports.t.set(0, 8e99),
       TypeError,
-      "WebAssembly.Table.prototype.set failed to cast the second argument to the table's element type"
+      "Argument value did not match the reference type"
     );
     m.exports.t.set(0, 3);
     assert.eq(m.exports.t.get(0), 3);

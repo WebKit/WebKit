@@ -1,0 +1,13 @@
+<script>
+async function run() {
+    let adapter1 = await navigator.gpu.requestAdapter();
+    let device0 = await adapter1.requestDevice({ requiredFeatures: [ 'texture-compression-astc'] });
+    let texture1 = device0.createTexture({ size: [ 64, 64, 12 ], format: 'astc-4x4-unorm-srgb', usage: GPUTextureUsage.COPY_DST });
+    device0.queue.writeTexture({ texture: texture1 }, new Uint8Array(14_980), { bytesPerRow: 130 }, {width: 4, height: 12 });
+    await device0.queue.onSubmittedWorkDone();
+    device0.queue.writeTexture({ texture: texture1 }, new Uint8Array(202), {}, {width: 48, height: 4 });
+}
+
+globalThis.testRunner?.waitUntilDone();
+run().finally(() => globalThis.testRunner?.notifyDone());
+</script>

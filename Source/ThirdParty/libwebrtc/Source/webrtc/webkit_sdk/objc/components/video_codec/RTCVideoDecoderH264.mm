@@ -369,7 +369,7 @@ CMSampleBufferRef H264BufferToCMSampleBuffer(const uint8_t* buffer, size_t buffe
     VTDecompressionSessionWaitForAsynchronousFrames(_decompressionSession);
 
   while (auto *frame = _reorderQueue.takeIfAny()) {
-    _callback(frame);
+    _callback(frame, true);
   }
 }
 
@@ -392,13 +392,18 @@ CMSampleBufferRef H264BufferToCMSampleBuffer(const uint8_t* buffer, size_t buffe
 
 - (void)processFrame:(RTCVideoFrame*)decodedFrame reorderSize:(uint64_t)reorderSize {
   // FIXME: In case of IDR, we could push out all queued frames.
+  bool hasCalledCallback = false;
   if (!_reorderQueue.isEmpty() || reorderSize) {
     _reorderQueue.append(decodedFrame, reorderSize);
     while (auto *frame = _reorderQueue.takeIfAvailable()) {
-      _callback(frame);
+      hasCalledCallback = true;
+      _callback(frame, frame != decodedFrame);
+    }
+    if (!hasCalledCallback) {
+      _callback(nil, true);
     }
     return;
   }
-  _callback(decodedFrame);
+  _callback(decodedFrame, false);
 }
 @end

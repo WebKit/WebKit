@@ -1,0 +1,40 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src="../../../resources/ui-helper.js"></script>
+<script src="../../../resources/js-test.js"></script>
+</head>
+<body>
+<input type="date"></input>
+<input id="month" type="month"></input>
+<input type="datetime-local"></input>
+<input type="week"></input>
+<script>
+jsTestIsAsync = true;
+
+let dateValues = ["0001-01-01", "10000-12-31", "20000-12-31"];
+let monthValues = ["0001-01", "10000-12", "20000-12"];
+let datetime_localValues = ["0001-01-01T00:00", "10000-12-31T23:59", "20000-12-31T00:00"];
+let weekValues = ["0001-W01", "10000-W52", "20000-W52"];
+
+let inputs = document.querySelectorAll("input");
+let values = [dateValues, monthValues, datetime_localValues, weekValues];
+
+addEventListener("load", async () => {
+    description("This test verifies that invoking a date picker for an input with a value outside or at the limit of the user-selectable range does not cause a crash.");
+    for (var i = 0; i < inputs.length; i++) {
+        for (var j = 0; j < values[i].length; j++){
+            inputs[i].value = values[i][j];
+            await UIHelper.activateElement(inputs[i]);
+            await UIHelper.waitForContextMenuToShow();
+            await UIHelper.deactivateFormControl(inputs[i]);
+            await UIHelper.waitForContextMenuToHide();
+            testPassed("Date picker invocation did not crash for value " + values[i][j]);
+        }
+    }
+    finishJSTest();
+});
+</script>
+</body>
+</html>

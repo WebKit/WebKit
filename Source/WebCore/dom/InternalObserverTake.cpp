@@ -52,7 +52,7 @@ public:
             return adoptRef(*new InternalObserverTake::SubscriberCallbackTake(context, source, amount));
         }
 
-        CallbackResult<void> handleEvent(Subscriber& subscriber) final
+        CallbackResult<void> handleEventRethrowingException(Subscriber& subscriber) final
         {
             RefPtr context = scriptExecutionContext();
 

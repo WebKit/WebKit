@@ -64,7 +64,6 @@
 #include <JavaScriptCore/JSArray.h>
 #endif
 
-
 namespace WebCore {
 using namespace JSC;
 
@@ -151,22 +150,21 @@ using JSTestConditionalIncludesDOMConstructor = JSDOMConstructorNotConstructable
 
 /* Hash table for constructor */
 
-static const HashTableValue JSTestConditionalIncludesConstructorTableValues[] =
-{
+static const std::array<HashTableValue, 3> JSTestConditionalIncludesConstructorTableValues {
 #if ENABLE(Condition22) || ENABLE(Condition23)
-    { "MIXIN_CONSTANT"_s, PropertyAttribute::ReadOnly | PropertyAttribute::DontDelete | PropertyAttribute::ConstantInteger, NoIntrinsic, { HashTableValue::ConstantType, 1 } },
+    HashTableValue { "MIXIN_CONSTANT"_s, PropertyAttribute::ReadOnly | PropertyAttribute::DontDelete | PropertyAttribute::ConstantInteger, NoIntrinsic, { HashTableValue::ConstantType, 1 } },
 #else
-    { { }, 0, NoIntrinsic, { HashTableValue::End } },
+    HashTableValue { { }, 0, NoIntrinsic, { HashTableValue::End } },
 #endif
 #if ENABLE(Condition22) || ENABLE(Condition23)
-    { "MIXIN_REFLECTED_CONSTANT"_s, PropertyAttribute::ReadOnly | PropertyAttribute::DontDelete | PropertyAttribute::ConstantInteger, NoIntrinsic, { HashTableValue::ConstantType, 2 } },
+    HashTableValue { "MIXIN_REFLECTED_CONSTANT"_s, PropertyAttribute::ReadOnly | PropertyAttribute::DontDelete | PropertyAttribute::ConstantInteger, NoIntrinsic, { HashTableValue::ConstantType, 2 } },
 #else
-    { { }, 0, NoIntrinsic, { HashTableValue::End } },
+    HashTableValue { { }, 0, NoIntrinsic, { HashTableValue::End } },
 #endif
 #if ENABLE(Condition22) || ENABLE(Condition23)
-    { "PARTIAL_MIXIN_CONSTANT_FROM_PARTIAL"_s, PropertyAttribute::ReadOnly | PropertyAttribute::DontDelete | PropertyAttribute::ConstantInteger, NoIntrinsic, { HashTableValue::ConstantType, 5 } },
+    HashTableValue { "PARTIAL_MIXIN_CONSTANT_FROM_PARTIAL"_s, PropertyAttribute::ReadOnly | PropertyAttribute::DontDelete | PropertyAttribute::ConstantInteger, NoIntrinsic, { HashTableValue::ConstantType, 5 } },
 #else
-    { { }, 0, NoIntrinsic, { HashTableValue::End } },
+    HashTableValue { { }, 0, NoIntrinsic, { HashTableValue::End } },
 #endif
 };
 
@@ -224,84 +222,83 @@ template<> void JSTestConditionalIncludesDOMConstructor::initializeProperties(VM
 
 /* Hash table for prototype */
 
-static const HashTableValue JSTestConditionalIncludesPrototypeTableValues[] =
-{
-    { "constructor"_s, static_cast<unsigned>(PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestConditionalIncludesConstructor, 0 } },
-    { "testAttr"_s, JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { HashTableValue::GetterSetterType, jsTestConditionalIncludes_testAttr, 0 } },
+static const std::array<HashTableValue, 17> JSTestConditionalIncludesPrototypeTableValues {
+    HashTableValue { "constructor"_s, static_cast<unsigned>(PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestConditionalIncludesConstructor, 0 } },
+    HashTableValue { "testAttr"_s, JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { HashTableValue::GetterSetterType, jsTestConditionalIncludes_testAttr, 0 } },
 #if ENABLE(Condition22) || ENABLE(Condition23)
-    { "mixinReadOnlyAttribute"_s, JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { HashTableValue::GetterSetterType, jsTestConditionalIncludes_mixinReadOnlyAttribute, 0 } },
+    HashTableValue { "mixinReadOnlyAttribute"_s, JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { HashTableValue::GetterSetterType, jsTestConditionalIncludes_mixinReadOnlyAttribute, 0 } },
 #else
-    { { }, 0, NoIntrinsic, { HashTableValue::End } },
+    HashTableValue { { }, 0, NoIntrinsic, { HashTableValue::End } },
 #endif
 #if ENABLE(Condition22) || ENABLE(Condition23)
-    { "mixinAttribute"_s, JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { HashTableValue::GetterSetterType, jsTestConditionalIncludes_mixinAttribute, setJSTestConditionalIncludes_mixinAttribute } },
+    HashTableValue { "mixinAttribute"_s, JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { HashTableValue::GetterSetterType, jsTestConditionalIncludes_mixinAttribute, setJSTestConditionalIncludes_mixinAttribute } },
 #else
-    { { }, 0, NoIntrinsic, { HashTableValue::End } },
+    HashTableValue { { }, 0, NoIntrinsic, { HashTableValue::End } },
 #endif
 #if ENABLE(Condition22) || ENABLE(Condition23)
-    { "mixinCustomAttribute"_s, JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { HashTableValue::GetterSetterType, jsTestConditionalIncludes_mixinCustomAttribute, setJSTestConditionalIncludes_mixinCustomAttribute } },
+    HashTableValue { "mixinCustomAttribute"_s, JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { HashTableValue::GetterSetterType, jsTestConditionalIncludes_mixinCustomAttribute, setJSTestConditionalIncludes_mixinCustomAttribute } },
 #else
-    { { }, 0, NoIntrinsic, { HashTableValue::End } },
+    HashTableValue { { }, 0, NoIntrinsic, { HashTableValue::End } },
 #endif
 #if ENABLE(Condition22) || ENABLE(Condition23)
-    { "mixinNodeAttribute"_s, JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { HashTableValue::GetterSetterType, jsTestConditionalIncludes_mixinNodeAttribute, setJSTestConditionalIncludes_mixinNodeAttribute } },
+    HashTableValue { "mixinNodeAttribute"_s, JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { HashTableValue::GetterSetterType, jsTestConditionalIncludes_mixinNodeAttribute, setJSTestConditionalIncludes_mixinNodeAttribute } },
 #else
-    { { }, 0, NoIntrinsic, { HashTableValue::End } },
+    HashTableValue { { }, 0, NoIntrinsic, { HashTableValue::End } },
 #endif
 #if ENABLE(Condition22) || ENABLE(Condition23)
-    { "partialMixinAttributeFromPartial"_s, JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { HashTableValue::GetterSetterType, jsTestConditionalIncludes_partialMixinAttributeFromPartial, 0 } },
+    HashTableValue { "partialMixinAttributeFromPartial"_s, JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { HashTableValue::GetterSetterType, jsTestConditionalIncludes_partialMixinAttributeFromPartial, 0 } },
 #else
-    { { }, 0, NoIntrinsic, { HashTableValue::End } },
+    HashTableValue { { }, 0, NoIntrinsic, { HashTableValue::End } },
 #endif
 #if (ENABLE(Condition12) && ENABLE(Condition22)) || ENABLE(Condition23)
-    { "mixinOperation"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestConditionalIncludesPrototypeFunction_mixinOperation, 0 } },
+    HashTableValue { "mixinOperation"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestConditionalIncludesPrototypeFunction_mixinOperation, 0 } },
 #else
-    { { }, 0, NoIntrinsic, { HashTableValue::End } },
+    HashTableValue { { }, 0, NoIntrinsic, { HashTableValue::End } },
 #endif
 #if (ENABLE(Condition12) && ENABLE(Condition22)) || ENABLE(Condition23)
-    { "mixinComplexOperation"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestConditionalIncludesPrototypeFunction_mixinComplexOperation, 2 } },
+    HashTableValue { "mixinComplexOperation"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestConditionalIncludesPrototypeFunction_mixinComplexOperation, 2 } },
 #else
-    { { }, 0, NoIntrinsic, { HashTableValue::End } },
+    HashTableValue { { }, 0, NoIntrinsic, { HashTableValue::End } },
 #endif
 #if (ENABLE(Condition12) && ENABLE(Condition22)) || ENABLE(Condition23)
-    { "mixinCustomOperation"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestConditionalIncludesPrototypeFunction_mixinCustomOperation, 0 } },
+    HashTableValue { "mixinCustomOperation"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestConditionalIncludesPrototypeFunction_mixinCustomOperation, 0 } },
 #else
-    { { }, 0, NoIntrinsic, { HashTableValue::End } },
+    HashTableValue { { }, 0, NoIntrinsic, { HashTableValue::End } },
 #endif
 #if (ENABLE(Condition11) && ENABLE(Condition12) && ENABLE(Condition22)) || ENABLE(Condition23)
-    { "mixinConditionalOperation"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestConditionalIncludesPrototypeFunction_mixinConditionalOperation, 0 } },
+    HashTableValue { "mixinConditionalOperation"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestConditionalIncludesPrototypeFunction_mixinConditionalOperation, 0 } },
 #else
-    { { }, 0, NoIntrinsic, { HashTableValue::End } },
+    HashTableValue { { }, 0, NoIntrinsic, { HashTableValue::End } },
 #endif
 #if (ENABLE(Condition12) && ENABLE(Condition22)) || ENABLE(Condition23)
-    { "mixinSettingsConditionalOperation"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestConditionalIncludesPrototypeFunction_mixinSettingsConditionalOperation, 0 } },
+    HashTableValue { "mixinSettingsConditionalOperation"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestConditionalIncludesPrototypeFunction_mixinSettingsConditionalOperation, 0 } },
 #else
-    { { }, 0, NoIntrinsic, { HashTableValue::End } },
+    HashTableValue { { }, 0, NoIntrinsic, { HashTableValue::End } },
 #endif
 #if (ENABLE(Condition12) && ENABLE(Condition22)) || ENABLE(Condition23)
-    { "mixinResultFieldOperation"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestConditionalIncludesPrototypeFunction_mixinResultFieldOperation, 0 } },
+    HashTableValue { "mixinResultFieldOperation"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestConditionalIncludesPrototypeFunction_mixinResultFieldOperation, 0 } },
 #else
-    { { }, 0, NoIntrinsic, { HashTableValue::End } },
+    HashTableValue { { }, 0, NoIntrinsic, { HashTableValue::End } },
 #endif
 #if (ENABLE(Condition12) && ENABLE(Condition22) && ENABLE(Condition33)) || ENABLE(Condition23)
-    { "partialMixinOperationFromPartial"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestConditionalIncludesPrototypeFunction_partialMixinOperationFromPartial, 0 } },
+    HashTableValue { "partialMixinOperationFromPartial"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestConditionalIncludesPrototypeFunction_partialMixinOperationFromPartial, 0 } },
 #else
-    { { }, 0, NoIntrinsic, { HashTableValue::End } },
+    HashTableValue { { }, 0, NoIntrinsic, { HashTableValue::End } },
 #endif
 #if ENABLE(Condition22) || ENABLE(Condition23)
-    { "MIXIN_CONSTANT"_s, PropertyAttribute::ReadOnly | PropertyAttribute::DontDelete | PropertyAttribute::ConstantInteger, NoIntrinsic, { HashTableValue::ConstantType, 1 } },
+    HashTableValue { "MIXIN_CONSTANT"_s, PropertyAttribute::ReadOnly | PropertyAttribute::DontDelete | PropertyAttribute::ConstantInteger, NoIntrinsic, { HashTableValue::ConstantType, 1 } },
 #else
-    { { }, 0, NoIntrinsic, { HashTableValue::End } },
+    HashTableValue { { }, 0, NoIntrinsic, { HashTableValue::End } },
 #endif
 #if ENABLE(Condition22) || ENABLE(Condition23)
-    { "MIXIN_REFLECTED_CONSTANT"_s, PropertyAttribute::ReadOnly | PropertyAttribute::DontDelete | PropertyAttribute::ConstantInteger, NoIntrinsic, { HashTableValue::ConstantType, 2 } },
+    HashTableValue { "MIXIN_REFLECTED_CONSTANT"_s, PropertyAttribute::ReadOnly | PropertyAttribute::DontDelete | PropertyAttribute::ConstantInteger, NoIntrinsic, { HashTableValue::ConstantType, 2 } },
 #else
-    { { }, 0, NoIntrinsic, { HashTableValue::End } },
+    HashTableValue { { }, 0, NoIntrinsic, { HashTableValue::End } },
 #endif
 #if ENABLE(Condition22) || ENABLE(Condition23)
-    { "PARTIAL_MIXIN_CONSTANT_FROM_PARTIAL"_s, PropertyAttribute::ReadOnly | PropertyAttribute::DontDelete | PropertyAttribute::ConstantInteger, NoIntrinsic, { HashTableValue::ConstantType, 5 } },
+    HashTableValue { "PARTIAL_MIXIN_CONSTANT_FROM_PARTIAL"_s, PropertyAttribute::ReadOnly | PropertyAttribute::DontDelete | PropertyAttribute::ConstantInteger, NoIntrinsic, { HashTableValue::ConstantType, 5 } },
 #else
-    { { }, 0, NoIntrinsic, { HashTableValue::End } },
+    HashTableValue { { }, 0, NoIntrinsic, { HashTableValue::End } },
 #endif
 };
 
@@ -486,7 +483,7 @@ void JSTestConditionalIncludes::destroy(JSC::JSCell* cell)
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestConditionalIncludesConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
-    auto& vm = JSC::getVM(lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto* prototype = jsDynamicCast<JSTestConditionalIncludesPrototype*>(JSValue::decode(thisValue));
     if (UNLIKELY(!prototype))
@@ -496,9 +493,9 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestConditionalIncludesConstructor, (JSGlobalObject* 
 
 static inline JSValue jsTestConditionalIncludes_testAttrGetter(JSGlobalObject& lexicalGlobalObject, JSTestConditionalIncludes& thisObject)
 {
-    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto& impl = thisObject.wrapped();
+    SUPPRESS_UNCOUNTED_LOCAL auto& impl = thisObject.wrapped();
     RELEASE_AND_RETURN(throwScope, (toJS<IDLDouble>(lexicalGlobalObject, throwScope, impl.testAttr())));
 }
 
@@ -510,9 +507,9 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestConditionalIncludes_testAttr, (JSGlobalObject* le
 #if ENABLE(Condition22) || ENABLE(Condition23)
 static inline JSValue jsTestConditionalIncludes_mixinReadOnlyAttributeGetter(JSGlobalObject& lexicalGlobalObject, JSTestConditionalIncludes& thisObject)
 {
-    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto& impl = thisObject.wrapped();
+    SUPPRESS_UNCOUNTED_LOCAL auto& impl = thisObject.wrapped();
     RELEASE_AND_RETURN(throwScope, (toJS<IDLDOMString>(lexicalGlobalObject, throwScope, impl.mixinReadOnlyAttribute())));
 }
 
@@ -526,9 +523,9 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestConditionalIncludes_mixinReadOnlyAttribute, (JSGl
 #if ENABLE(Condition22) || ENABLE(Condition23)
 static inline JSValue jsTestConditionalIncludes_mixinAttributeGetter(JSGlobalObject& lexicalGlobalObject, JSTestConditionalIncludes& thisObject)
 {
-    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto& impl = thisObject.wrapped();
+    SUPPRESS_UNCOUNTED_LOCAL auto& impl = thisObject.wrapped();
     RELEASE_AND_RETURN(throwScope, (toJS<IDLDOMString>(lexicalGlobalObject, throwScope, impl.mixinAttribute())));
 }
 
@@ -542,10 +539,10 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestConditionalIncludes_mixinAttribute, (JSGlobalObje
 #if ENABLE(Condition22) || ENABLE(Condition23)
 static inline bool setJSTestConditionalIncludes_mixinAttributeSetter(JSGlobalObject& lexicalGlobalObject, JSTestConditionalIncludes& thisObject, JSValue value)
 {
-    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(&lexicalGlobalObject);
     UNUSED_PARAM(vm);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto& impl = thisObject.wrapped();
+    SUPPRESS_UNCOUNTED_LOCAL auto& impl = thisObject.wrapped();
     auto nativeValueConversionResult = convert<IDLDOMString>(lexicalGlobalObject, value);
     if (UNLIKELY(nativeValueConversionResult.hasException(throwScope)))
         return false;
@@ -579,7 +576,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestConditionalIncludes_mixinCustomAttribute, (JSGlob
 #if ENABLE(Condition22) || ENABLE(Condition23)
 static inline bool setJSTestConditionalIncludes_mixinCustomAttributeSetter(JSGlobalObject& lexicalGlobalObject, JSTestConditionalIncludes& thisObject, JSValue value)
 {
-    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(&lexicalGlobalObject);
     UNUSED_PARAM(vm);
     thisObject.setMixinCustomAttribute(lexicalGlobalObject, value);
     return true;
@@ -595,9 +592,9 @@ JSC_DEFINE_CUSTOM_SETTER(setJSTestConditionalIncludes_mixinCustomAttribute, (JSG
 #if ENABLE(Condition22) || ENABLE(Condition23)
 static inline JSValue jsTestConditionalIncludes_mixinNodeAttributeGetter(JSGlobalObject& lexicalGlobalObject, JSTestConditionalIncludes& thisObject)
 {
-    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto& impl = thisObject.wrapped();
+    SUPPRESS_UNCOUNTED_LOCAL auto& impl = thisObject.wrapped();
     RELEASE_AND_RETURN(throwScope, (toJS<IDLInterface<Node>>(lexicalGlobalObject, *thisObject.globalObject(), throwScope, impl.mixinNodeAttribute())));
 }
 
@@ -611,10 +608,10 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestConditionalIncludes_mixinNodeAttribute, (JSGlobal
 #if ENABLE(Condition22) || ENABLE(Condition23)
 static inline bool setJSTestConditionalIncludes_mixinNodeAttributeSetter(JSGlobalObject& lexicalGlobalObject, JSTestConditionalIncludes& thisObject, JSValue value)
 {
-    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(&lexicalGlobalObject);
     UNUSED_PARAM(vm);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto& impl = thisObject.wrapped();
+    SUPPRESS_UNCOUNTED_LOCAL auto& impl = thisObject.wrapped();
     auto nativeValueConversionResult = convert<IDLInterface<Node>>(lexicalGlobalObject, value, [](JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope) { throwAttributeTypeError(lexicalGlobalObject, scope, "TestConditionalIncludes"_s, "mixinNodeAttribute"_s, "Node"_s); });
     if (UNLIKELY(nativeValueConversionResult.hasException(throwScope)))
         return false;
@@ -634,9 +631,9 @@ JSC_DEFINE_CUSTOM_SETTER(setJSTestConditionalIncludes_mixinNodeAttribute, (JSGlo
 #if ENABLE(Condition22) || ENABLE(Condition23)
 static inline JSValue jsTestConditionalIncludes_partialMixinAttributeFromPartialGetter(JSGlobalObject& lexicalGlobalObject, JSTestConditionalIncludes& thisObject)
 {
-    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto& impl = thisObject.wrapped();
+    SUPPRESS_UNCOUNTED_LOCAL auto& impl = thisObject.wrapped();
     RELEASE_AND_RETURN(throwScope, (toJS<IDLDouble>(lexicalGlobalObject, throwScope, impl.partialMixinAttributeFromPartial())));
 }
 
@@ -650,11 +647,11 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestConditionalIncludes_partialMixinAttributeFromPart
 #if (ENABLE(Condition12) && ENABLE(Condition22)) || ENABLE(Condition23)
 static inline JSC::EncodedJSValue jsTestConditionalIncludesPrototypeFunction_mixinOperationBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestConditionalIncludes>::ClassParameter castedThis)
 {
-    auto& vm = JSC::getVM(lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(callFrame);
-    auto& impl = castedThis->wrapped();
+    SUPPRESS_UNCOUNTED_LOCAL auto& impl = castedThis->wrapped();
     RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLUndefined>(*lexicalGlobalObject, throwScope, [&]() -> decltype(auto) { return impl.mixinOperation(); })));
 }
 
@@ -668,11 +665,11 @@ JSC_DEFINE_HOST_FUNCTION(jsTestConditionalIncludesPrototypeFunction_mixinOperati
 #if (ENABLE(Condition12) && ENABLE(Condition22)) || ENABLE(Condition23)
 static inline JSC::EncodedJSValue jsTestConditionalIncludesPrototypeFunction_mixinComplexOperationBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestConditionalIncludes>::ClassParameter castedThis)
 {
-    auto& vm = JSC::getVM(lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(callFrame);
-    auto& impl = castedThis->wrapped();
+    SUPPRESS_UNCOUNTED_LOCAL auto& impl = castedThis->wrapped();
     if (UNLIKELY(callFrame->argumentCount() < 2))
         return throwVMError(lexicalGlobalObject, throwScope, createNotEnoughArgumentsError(lexicalGlobalObject));
     auto* context = jsCast<JSDOMGlobalObject*>(lexicalGlobalObject)->scriptExecutionContext();
@@ -699,7 +696,7 @@ JSC_DEFINE_HOST_FUNCTION(jsTestConditionalIncludesPrototypeFunction_mixinComplex
 #if (ENABLE(Condition12) && ENABLE(Condition22)) || ENABLE(Condition23)
 static inline JSC::EncodedJSValue jsTestConditionalIncludesPrototypeFunction_mixinCustomOperationBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestConditionalIncludes>::ClassParameter castedThis)
 {
-    auto& vm = JSC::getVM(lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(callFrame);
@@ -716,11 +713,11 @@ JSC_DEFINE_HOST_FUNCTION(jsTestConditionalIncludesPrototypeFunction_mixinCustomO
 #if (ENABLE(Condition11) && ENABLE(Condition12) && ENABLE(Condition22)) || ENABLE(Condition23)
 static inline JSC::EncodedJSValue jsTestConditionalIncludesPrototypeFunction_mixinConditionalOperationBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestConditionalIncludes>::ClassParameter castedThis)
 {
-    auto& vm = JSC::getVM(lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(callFrame);
-    auto& impl = castedThis->wrapped();
+    SUPPRESS_UNCOUNTED_LOCAL auto& impl = castedThis->wrapped();
     RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLUndefined>(*lexicalGlobalObject, throwScope, [&]() -> decltype(auto) { return impl.mixinConditionalOperation(); })));
 }
 
@@ -734,11 +731,11 @@ JSC_DEFINE_HOST_FUNCTION(jsTestConditionalIncludesPrototypeFunction_mixinConditi
 #if (ENABLE(Condition12) && ENABLE(Condition22)) || ENABLE(Condition23)
 static inline JSC::EncodedJSValue jsTestConditionalIncludesPrototypeFunction_mixinSettingsConditionalOperationBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestConditionalIncludes>::ClassParameter castedThis)
 {
-    auto& vm = JSC::getVM(lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(callFrame);
-    auto& impl = castedThis->wrapped();
+    SUPPRESS_UNCOUNTED_LOCAL auto& impl = castedThis->wrapped();
     RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLUndefined>(*lexicalGlobalObject, throwScope, [&]() -> decltype(auto) { return impl.mixinSettingsConditionalOperation(); })));
 }
 
@@ -752,11 +749,11 @@ JSC_DEFINE_HOST_FUNCTION(jsTestConditionalIncludesPrototypeFunction_mixinSetting
 #if (ENABLE(Condition12) && ENABLE(Condition22)) || ENABLE(Condition23)
 static inline JSC::EncodedJSValue jsTestConditionalIncludesPrototypeFunction_mixinResultFieldOperationBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestConditionalIncludes>::ClassParameter castedThis)
 {
-    auto& vm = JSC::getVM(lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(callFrame);
-    auto& impl = castedThis->wrapped();
+    SUPPRESS_UNCOUNTED_LOCAL auto& impl = castedThis->wrapped();
     auto implResult = impl.mixinResultFieldOperation();
     RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLSequence<IDLInterface<Node>>>(*lexicalGlobalObject, *castedThis->globalObject(), throwScope, WTFMove(implResult.nodes))));
 }
@@ -771,11 +768,11 @@ JSC_DEFINE_HOST_FUNCTION(jsTestConditionalIncludesPrototypeFunction_mixinResultF
 #if (ENABLE(Condition12) && ENABLE(Condition22) && ENABLE(Condition33)) || ENABLE(Condition23)
 static inline JSC::EncodedJSValue jsTestConditionalIncludesPrototypeFunction_partialMixinOperationFromPartialBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestConditionalIncludes>::ClassParameter castedThis)
 {
-    auto& vm = JSC::getVM(lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(callFrame);
-    auto& impl = castedThis->wrapped();
+    SUPPRESS_UNCOUNTED_LOCAL auto& impl = castedThis->wrapped();
     RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLUndefined>(*lexicalGlobalObject, throwScope, [&]() -> decltype(auto) { return impl.partialMixinOperationFromPartial(); })));
 }
 
@@ -800,8 +797,8 @@ void JSTestConditionalIncludes::analyzeHeap(JSCell* cell, HeapAnalyzer& analyzer
 {
     auto* thisObject = jsCast<JSTestConditionalIncludes*>(cell);
     analyzer.setWrappedObjectForCell(cell, &thisObject->wrapped());
-    if (thisObject->scriptExecutionContext())
-        analyzer.setLabelForCell(cell, makeString("url "_s, thisObject->scriptExecutionContext()->url().string()));
+    if (RefPtr context = thisObject->scriptExecutionContext())
+        analyzer.setLabelForCell(cell, makeString("url "_s, context->url().string()));
     Base::analyzeHeap(cell, analyzer);
 }
 
@@ -820,6 +817,7 @@ void JSTestConditionalIncludesOwner::finalize(JSC::Handle<JSC::Unknown> handle, 
     uncacheWrapper(world, jsTestConditionalIncludes->protectedWrapped().ptr(), jsTestConditionalIncludes);
 }
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 #if ENABLE(BINDING_INTEGRITY)
 #if PLATFORM(WIN)
 #pragma warning(disable: 4483)
@@ -844,6 +842,8 @@ template<typename T, typename = std::enable_if_t<std::is_same_v<T, TestCondition
     }
 }
 #endif
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+
 JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject*, JSDOMGlobalObject* globalObject, Ref<TestConditionalIncludes>&& impl)
 {
 #if ENABLE(BINDING_INTEGRITY)

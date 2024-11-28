@@ -30,6 +30,6 @@
 namespace WebCore {
 
 enum class FileSystemHandleIdentifierType { };
-using FileSystemHandleIdentifier = LegacyNullableAtomicObjectIdentifier<FileSystemHandleIdentifierType>;
+using FileSystemHandleIdentifier = AtomicObjectIdentifier<FileSystemHandleIdentifierType>;
 
 } // namespace WebCore

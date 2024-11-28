@@ -49,7 +49,7 @@ void CachedSpecialPropertyAdaptiveStructureWatchpoint::install(VM&)
 
 void CachedSpecialPropertyAdaptiveStructureWatchpoint::fireInternal(VM& vm, const FireDetail&)
 {
-    if (!m_structureRareData->isLive())
+    if (m_structureRareData->isPendingDestruction())
         return;
 
     if (m_key.isWatchable(PropertyCondition::EnsureWatchability)) {

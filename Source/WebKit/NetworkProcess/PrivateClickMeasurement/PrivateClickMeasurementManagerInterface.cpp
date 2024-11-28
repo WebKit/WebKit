@@ -176,19 +176,19 @@ bool messageTypeSendsReply(MessageType messageType)
     return false;
 }
 
-static std::unique_ptr<PrivateClickMeasurementManager>& managerPointer()
+static RefPtr<PrivateClickMeasurementManager>& managerPointer()
 {
-    static NeverDestroyed<std::unique_ptr<PrivateClickMeasurementManager>> manager;
+    static NeverDestroyed<RefPtr<PrivateClickMeasurementManager>> manager;
     return manager.get();
 }
 
 void initializePCMStorageInDirectory(const String& storageDirectory)
 {
     ASSERT(!managerPointer());
-    managerPointer() = makeUnique<PrivateClickMeasurementManager>(makeUniqueRef<PCM::DaemonClient>(), storageDirectory);
+    managerPointer() = PrivateClickMeasurementManager::create(makeUniqueRef<PCM::DaemonClient>(), storageDirectory);
 }
 
-static PrivateClickMeasurementManager& daemonManager()
+static PrivateClickMeasurementManager& daemonManagerSingleton()
 {
     ASSERT(managerPointer());
     return *managerPointer();
@@ -204,7 +204,7 @@ void handlePCMMessage(std::span<const uint8_t> encodedMessage)
     if (UNLIKELY(!arguments))
         return;
 
-    IPC::callMemberFunction(&daemonManager(), Info::MemberFunction, WTFMove(*arguments));
+    IPC::callMemberFunction(&daemonManagerSingleton(), Info::MemberFunction, WTFMove(*arguments));
 }
 
 static void handlePCMMessageSetDebugModeIsEnabled(const Daemon::Connection& connection, std::span<const uint8_t> encodedMessage)
@@ -220,7 +220,7 @@ static void handlePCMMessageSetDebugModeIsEnabled(const Daemon::Connection& conn
     bool debugModeWasEnabled = connectionSet.debugModeEnabled();
     connectionSet.setConnectedNetworkProcessHasDebugModeEnabled(connection, *enabled);
     if (debugModeWasEnabled != connectionSet.debugModeEnabled())
-        daemonManager().setDebugModeIsEnabled(*enabled);
+        daemonManagerSingleton().setDebugModeIsEnabled(*enabled);
 #else
     UNUSED_PARAM(connection);
     UNUSED_PARAM(encodedMessage);
@@ -241,12 +241,12 @@ void handlePCMMessageWithReply(std::span<const uint8_t> encodedMessage, Completi
         replySender(Info::encodeReply(args...));
     }};
 
-    IPC::callMemberFunction(&daemonManager(), Info::MemberFunction, WTFMove(*arguments), WTFMove(completionHandler));
+    IPC::callMemberFunction(&daemonManagerSingleton(), Info::MemberFunction, WTFMove(*arguments), WTFMove(completionHandler));
 }
 
 void doDailyActivityInManager()
 {
-    daemonManager().firePendingAttributionRequests();
+    daemonManagerSingleton().firePendingAttributionRequests();
 }
 
 void decodeMessageAndSendToManager(const Daemon::Connection& connection, MessageType messageType, std::span<const uint8_t> encodedMessage, CompletionHandler<void(Vector<uint8_t>&&)>&& replySender)

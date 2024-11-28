@@ -34,7 +34,7 @@ class VulkanYcbcrConversion;
 
 class VulkanResourceProvider final : public ResourceProvider {
 public:
-    static constexpr size_t kIntrinsicConstantSize = sizeof(float) * 4;
+    static constexpr size_t kIntrinsicConstantSize = sizeof(float) * 8; // float4 + 2xfloat2
     static constexpr size_t kLoadMSAAVertexBufferSize = sizeof(float) * 8; // 4 points of 2 floats
 
     using UniformBindGroupKey = FixedSizeKey<2 * VulkanGraphicsPipeline::kNumUniformBuffers>;
@@ -43,14 +43,11 @@ public:
                            SingleOwner*,
                            uint32_t recorderID,
                            size_t resourceBudget,
-                           sk_sp<Buffer> intrinsicConstantUniformBuffer,
-                           sk_sp<Buffer> loadMSAAVertexBuffer);
+                           sk_sp<Buffer> intrinsicConstantUniformBuffer);
 
     ~VulkanResourceProvider() override;
 
     sk_sp<Buffer> refIntrinsicConstantBuffer() const;
-
-    const Buffer* loadMSAAVertexBuffer() const;
 
     sk_sp<VulkanYcbcrConversion> findOrCreateCompatibleYcbcrConversion(
             const VulkanYcbcrConversionInfo& ycbcrInfo) const;
@@ -60,7 +57,8 @@ private:
 
     sk_sp<GraphicsPipeline> createGraphicsPipeline(const RuntimeEffectDictionary*,
                                                    const GraphicsPipelineDesc&,
-                                                   const RenderPassDesc&) override;
+                                                   const RenderPassDesc&,
+                                                   SkEnumBitMask<PipelineCreationFlags>) override;
     sk_sp<ComputePipeline> createComputePipeline(const ComputePipelineDesc&) override;
 
     sk_sp<Texture> createTexture(SkISize,
@@ -114,9 +112,6 @@ private:
     // resource provider creation. This way, render passes across all command buffers can simply
     // update the value within this buffer as needed.
     sk_sp<Buffer> fIntrinsicUniformBuffer;
-    // Similary, use a shared buffer b/w all renderpasses to store vertices for loading MSAA from
-    // resolve.
-    sk_sp<Buffer> fLoadMSAAVertexBuffer;
 
     // The first value of the pair is a renderpass key. Graphics pipeline keys contain extra
     // information that we do not need for identifying unique pipelines.

@@ -47,7 +47,6 @@
 #include <wtf/URL.h>
 #include <wtf/text/MakeString.h>
 
-
 namespace WebCore {
 using namespace JSC;
 
@@ -108,9 +107,8 @@ template<> void JSTestNamedSetterThrowingExceptionDOMConstructor::initializeProp
 
 /* Hash table for prototype */
 
-static const HashTableValue JSTestNamedSetterThrowingExceptionPrototypeTableValues[] =
-{
-    { "constructor"_s, static_cast<unsigned>(PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestNamedSetterThrowingExceptionConstructor, 0 } },
+static const std::array<HashTableValue, 1> JSTestNamedSetterThrowingExceptionPrototypeTableValues {
+    HashTableValue { "constructor"_s, static_cast<unsigned>(PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestNamedSetterThrowingExceptionConstructor, 0 } },
 };
 
 const ClassInfo JSTestNamedSetterThrowingExceptionPrototype::s_info = { "TestNamedSetterThrowingException"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestNamedSetterThrowingExceptionPrototype) };
@@ -182,7 +180,7 @@ bool JSTestNamedSetterThrowingException::getOwnPropertySlot(JSObject* object, JS
 
 bool JSTestNamedSetterThrowingException::getOwnPropertySlotByIndex(JSObject* object, JSGlobalObject* lexicalGlobalObject, unsigned index, PropertySlot& slot)
 {
-    auto& vm = JSC::getVM(lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto* thisObject = jsCast<JSTestNamedSetterThrowingException*>(object);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
@@ -202,7 +200,7 @@ bool JSTestNamedSetterThrowingException::getOwnPropertySlotByIndex(JSObject* obj
 
 void JSTestNamedSetterThrowingException::getOwnPropertyNames(JSObject* object, JSGlobalObject* lexicalGlobalObject, PropertyNameArray& propertyNames, DontEnumPropertiesMode mode)
 {
-    auto& vm = JSC::getVM(lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(lexicalGlobalObject);
     auto* thisObject = jsCast<JSTestNamedSetterThrowingException*>(object);
     ASSERT_GC_OBJECT_INHERITS(object, info());
     for (auto& propertyName : thisObject->wrapped().supportedPropertyNames())
@@ -252,7 +250,7 @@ bool JSTestNamedSetterThrowingException::putByIndex(JSCell* cell, JSGlobalObject
     auto* thisObject = jsCast<JSTestNamedSetterThrowingException*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
 
-    auto& vm = JSC::getVM(lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
     auto propertyName = Identifier::from(vm, index);
@@ -305,7 +303,7 @@ bool JSTestNamedSetterThrowingException::defineOwnProperty(JSObject* object, JSG
 bool JSTestNamedSetterThrowingException::deleteProperty(JSCell* cell, JSGlobalObject* lexicalGlobalObject, PropertyName propertyName, DeletePropertySlot& slot)
 {
     auto& thisObject = *jsCast<JSTestNamedSetterThrowingException*>(cell);
-    auto& impl = thisObject.wrapped();
+    SUPPRESS_UNCOUNTED_LOCAL auto& impl = thisObject.wrapped();
 
     // Temporary quirk for ungap/@custom-elements polyfill (rdar://problem/111008826), consider removing in 2025.
     if (auto* document = dynamicDowncast<Document>(jsDynamicCast<JSDOMGlobalObject*>(lexicalGlobalObject)->scriptExecutionContext())) {
@@ -325,7 +323,7 @@ bool JSTestNamedSetterThrowingException::deletePropertyByIndex(JSCell* cell, JSG
 {
     UNUSED_PARAM(lexicalGlobalObject);
     auto& thisObject = *jsCast<JSTestNamedSetterThrowingException*>(cell);
-    auto& impl = thisObject.wrapped();
+    SUPPRESS_UNCOUNTED_LOCAL auto& impl = thisObject.wrapped();
 
     // Temporary quirk for ungap/@custom-elements polyfill (rdar://problem/111008826), consider removing in 2025.
     if (auto* document = dynamicDowncast<Document>(jsDynamicCast<JSDOMGlobalObject*>(lexicalGlobalObject)->scriptExecutionContext())) {
@@ -333,7 +331,7 @@ bool JSTestNamedSetterThrowingException::deletePropertyByIndex(JSCell* cell, JSG
             return JSObject::deletePropertyByIndex(cell, lexicalGlobalObject, index);
     }
 
-    auto& vm = JSC::getVM(lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(lexicalGlobalObject);
     auto propertyName = Identifier::from(vm, index);
     if (impl.isSupportedPropertyName(propertyNameToString(propertyName))) {
         PropertySlot slotForGet { &thisObject, PropertySlot::InternalMethodType::VMInquiry, &lexicalGlobalObject->vm() };
@@ -345,7 +343,7 @@ bool JSTestNamedSetterThrowingException::deletePropertyByIndex(JSCell* cell, JSG
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestNamedSetterThrowingExceptionConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
-    auto& vm = JSC::getVM(lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto* prototype = jsDynamicCast<JSTestNamedSetterThrowingExceptionPrototype*>(JSValue::decode(thisValue));
     if (UNLIKELY(!prototype))
@@ -367,8 +365,8 @@ void JSTestNamedSetterThrowingException::analyzeHeap(JSCell* cell, HeapAnalyzer&
 {
     auto* thisObject = jsCast<JSTestNamedSetterThrowingException*>(cell);
     analyzer.setWrappedObjectForCell(cell, &thisObject->wrapped());
-    if (thisObject->scriptExecutionContext())
-        analyzer.setLabelForCell(cell, makeString("url "_s, thisObject->scriptExecutionContext()->url().string()));
+    if (RefPtr context = thisObject->scriptExecutionContext())
+        analyzer.setLabelForCell(cell, makeString("url "_s, context->url().string()));
     Base::analyzeHeap(cell, analyzer);
 }
 
@@ -387,6 +385,7 @@ void JSTestNamedSetterThrowingExceptionOwner::finalize(JSC::Handle<JSC::Unknown>
     uncacheWrapper(world, jsTestNamedSetterThrowingException->protectedWrapped().ptr(), jsTestNamedSetterThrowingException);
 }
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 #if ENABLE(BINDING_INTEGRITY)
 #if PLATFORM(WIN)
 #pragma warning(disable: 4483)
@@ -411,6 +410,8 @@ template<typename T, typename = std::enable_if_t<std::is_same_v<T, TestNamedSett
     }
 }
 #endif
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+
 JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject*, JSDOMGlobalObject* globalObject, Ref<TestNamedSetterThrowingException>&& impl)
 {
 #if ENABLE(BINDING_INTEGRITY)

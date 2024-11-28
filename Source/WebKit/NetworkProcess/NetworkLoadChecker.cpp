@@ -54,7 +54,7 @@ using namespace WebCore;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(NetworkLoadChecker);
 
-NetworkLoadChecker::NetworkLoadChecker(NetworkProcess& networkProcess, NetworkResourceLoader* networkResourceLoader, NetworkSchemeRegistry* schemeRegistry, FetchOptions&& options, PAL::SessionID sessionID, WebPageProxyIdentifier webPageProxyID, HTTPHeaderMap&& originalRequestHeaders, URL&& url, DocumentURL&& documentURL, RefPtr<SecurityOrigin>&& sourceOrigin, RefPtr<SecurityOrigin>&& topOrigin, RefPtr<SecurityOrigin>&& parentOrigin, PreflightPolicy preflightPolicy, String&& referrer, bool allowPrivacyProxy, OptionSet<AdvancedPrivacyProtections> advancedPrivacyProtections, bool shouldCaptureExtraNetworkLoadMetrics, LoadType requestLoadType)
+NetworkLoadChecker::NetworkLoadChecker(NetworkProcess& networkProcess, NetworkResourceLoader* networkResourceLoader, NetworkSchemeRegistry* schemeRegistry, FetchOptions&& options, PAL::SessionID sessionID, std::optional<WebPageProxyIdentifier> webPageProxyID, HTTPHeaderMap&& originalRequestHeaders, URL&& url, DocumentURL&& documentURL, RefPtr<SecurityOrigin>&& sourceOrigin, RefPtr<SecurityOrigin>&& topOrigin, RefPtr<SecurityOrigin>&& parentOrigin, PreflightPolicy preflightPolicy, String&& referrer, bool allowPrivacyProxy, OptionSet<AdvancedPrivacyProtections> advancedPrivacyProtections, bool shouldCaptureExtraNetworkLoadMetrics, LoadType requestLoadType)
     : m_options(WTFMove(options))
     , m_allowPrivacyProxy(allowPrivacyProxy)
     , m_advancedPrivacyProtections(advancedPrivacyProtections)
@@ -370,6 +370,7 @@ bool NetworkLoadChecker::isAllowedByContentSecurityPolicy(const ResourceRequest&
     case FetchOptions::Destination::Audio:
     case FetchOptions::Destination::Document:
     case FetchOptions::Destination::Embed:
+    case FetchOptions::Destination::Environmentmap:
     case FetchOptions::Destination::Font:
     case FetchOptions::Destination::Image:
     case FetchOptions::Destination::Iframe:
@@ -466,7 +467,7 @@ void NetworkLoadChecker::checkCORSRequestWithPreflight(ResourceRequest&& request
     ASSERT(m_options.mode == FetchOptions::Mode::Cors);
 
     m_isSimpleRequest = false;
-    if (CrossOriginPreflightResultCache::singleton().canSkipPreflight(m_sessionID, m_origin->toString(), request.url(), m_storedCredentialsPolicy, request.httpMethod(), m_originalRequestHeaders)) {
+    if (CrossOriginPreflightResultCache::singleton().canSkipPreflight(m_sessionID, { m_topOrigin->data(), m_origin->data() }, request.url(), m_storedCredentialsPolicy, request.httpMethod(), m_originalRequestHeaders)) {
         LOAD_CHECKER_RELEASE_LOG("checkCORSRequestWithPreflight - preflight can be skipped thanks to cached result");
         updateRequestForAccessControl(request, *origin(), m_storedCredentialsPolicy);
         handler(WTFMove(request));
@@ -479,7 +480,7 @@ void NetworkLoadChecker::checkCORSRequestWithPreflight(ResourceRequest&& request
     NetworkCORSPreflightChecker::Parameters parameters = {
         WTFMove(requestForPreflight),
         *m_origin,
-        m_topOrigin,
+        *m_topOrigin,
         request.httpReferrer(),
         request.httpUserAgent(),
         m_sessionID,
@@ -489,7 +490,7 @@ void NetworkLoadChecker::checkCORSRequestWithPreflight(ResourceRequest&& request
         m_advancedPrivacyProtections,
         request.hasHTTPHeaderField(HTTPHeaderName::SecFetchSite)
     };
-    m_corsPreflightChecker = makeUnique<NetworkCORSPreflightChecker>(m_networkProcess.get(), m_networkResourceLoader.get(), WTFMove(parameters), m_shouldCaptureExtraNetworkLoadMetrics, [this, request = WTFMove(request), handler = WTFMove(handler), isRedirected = isRedirected()](auto&& error) mutable {
+    m_corsPreflightChecker = NetworkCORSPreflightChecker::create(m_networkProcess.get(), m_networkResourceLoader.get(), WTFMove(parameters), m_shouldCaptureExtraNetworkLoadMetrics, [this, request = WTFMove(request), handler = WTFMove(handler), isRedirected = isRedirected()](auto&& error) mutable {
         LOAD_CHECKER_RELEASE_LOG("checkCORSRequestWithPreflight - makeCrossOriginAccessRequestWithPreflight preflight complete, success=%d forRedirect=%d", error.isNull(), isRedirected);
 
         if (!error.isNull()) {
@@ -500,7 +501,7 @@ void NetworkLoadChecker::checkCORSRequestWithPreflight(ResourceRequest&& request
         if (m_shouldCaptureExtraNetworkLoadMetrics)
             m_loadInformation.transactions.append(m_corsPreflightChecker->takeInformation());
 
-        auto corsPreflightChecker = WTFMove(m_corsPreflightChecker);
+        auto corsPreflightChecker = std::exchange(m_corsPreflightChecker, nullptr);
         updateRequestForAccessControl(request, *origin(), m_storedCredentialsPolicy);
         handler(WTFMove(request));
     });
@@ -558,6 +559,11 @@ void NetworkLoadChecker::storeRedirectionIfNeeded(const ResourceRequest& request
     if (!m_shouldCaptureExtraNetworkLoadMetrics)
         return;
     m_loadInformation.transactions.append(NetworkTransactionInformation { NetworkTransactionInformation::Type::Redirection, ResourceRequest { request }, ResourceResponse { response }, { } });
+}
+
+Ref<NetworkProcess> NetworkLoadChecker::protectedNetworkProcess()
+{
+    return m_networkProcess;
 }
 
 } // namespace WebKit

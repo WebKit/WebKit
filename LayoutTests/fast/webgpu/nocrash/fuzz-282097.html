@@ -1,0 +1,80 @@
+<script>
+async function run() {
+    let adapter = await navigator.gpu.requestAdapter();
+    let device = await adapter.requestDevice();
+    let bindGroupLayout = device.createBindGroupLayout({
+        entries: [
+            { binding: 0, visibility: GPUShaderStage.VERTEX, texture: { viewDimension: '3d', sampleType: 'sint' } },
+            { binding: 1, visibility: GPUShaderStage.VERTEX, externalTexture: {} },
+            { binding: 2, visibility: GPUShaderStage.VERTEX, buffer: {} },
+            { binding: 3, visibility: GPUShaderStage.VERTEX, buffer: {} }
+        ]
+    });
+    let texture1 = device.createTexture({ size: [1008], format: 'rg16float', usage: GPUTextureUsage.RENDER_ATTACHMENT });
+    let texture2 = device.createTexture({ size: [1], dimension: '3d', format: 'rg16sint', usage: GPUTextureUsage.TEXTURE_BINDING });
+    let texture3 = device.createTexture({ size: [1008], format: 'rg32uint', usage: GPUTextureUsage.RENDER_ATTACHMENT });
+    let pipelineLayout = device.createPipelineLayout({ bindGroupLayouts: [bindGroupLayout] });
+    let textureView1 = texture1.createView();
+    let textureView2 = texture2.createView();
+    let textureView3 = texture3.createView();
+    let shaderModule1 = device.createShaderModule({ code: `
+        @group(0) @binding(3) var<uniform> buffer11: mat2x3h;
+        struct VertexOutput0 {
+            @builtin(position) f1: vec4f,
+        }
+        @vertex fn vertex0() -> VertexOutput0 {
+            return VertexOutput0(vec4f(buffer11[0].xxyx));
+        }
+    `});
+    let shaderModule2 = device.createShaderModule({ code: `
+        struct FragmentOutput1 {
+            @location(0) f0: vec4u,
+            @location(1) f1: vec4f,
+        }
+        @fragment fn fragment1() -> FragmentOutput1 {
+            return FragmentOutput1();
+        }
+    `});
+    let videoFrame = new VideoFrame(new ArrayBuffer(16), { codedWidth: 2, codedHeight: 2, format: 'BGRA', timestamp: 0 });
+    let commandEncoder = device.createCommandEncoder();
+    let buffer1 = device.createBuffer({ size: 1680, usage: GPUBufferUsage.UNIFORM });
+    let buffer2 = device.createBuffer({ size: 5370, usage: GPUBufferUsage.UNIFORM });
+    let externalTexture = device.importExternalTexture({ source: videoFrame });
+    let bindGroup = device.createBindGroup({
+        layout: bindGroupLayout,
+        entries: [
+            { binding: 0, resource: textureView2 },
+            { binding: 1, resource: externalTexture },
+            { binding: 2, resource: { buffer: buffer2 } },
+            { binding: 3, resource: { buffer: buffer1 } },
+        ]
+    });
+    let pipeline = device.createRenderPipeline({
+        layout: pipelineLayout,
+        fragment: {
+            module: shaderModule2,
+            targets: [
+                { format: 'rg32uint' },
+                { format: 'rg16float' }
+            ]
+        },
+        vertex: {
+            module: shaderModule1,
+        }
+    });
+    let renderPassEncoder = commandEncoder.beginRenderPass({
+        colorAttachments: [
+            { view: textureView3, loadOp: 'clear', storeOp: 'discard' },
+            { view: textureView1, loadOp: 'clear', storeOp: 'discard' },
+        ]
+    });
+    renderPassEncoder.setPipeline(pipeline);
+    renderPassEncoder.setBindGroup(0, bindGroup);
+    renderPassEncoder.draw(15, 8);
+    renderPassEncoder.end();
+    let commandBuffer = commandEncoder.finish();
+    device.queue.submit([commandBuffer])
+}
+globalThis.testRunner?.waitUntilDone();
+run().then(() => globalThis.testRunner?.notifyDone());
+</script>

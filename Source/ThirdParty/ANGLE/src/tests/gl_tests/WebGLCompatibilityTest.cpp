@@ -5361,6 +5361,26 @@ void main()
 
     GLuint program = CompileProgram(essl1_shaders::vs::Simple(), kFSStructTooLarge);
     EXPECT_EQ(0u, program);
+
+    // A second variation where the large array is on the variable itself not a member.
+    constexpr char kFSStructTooLarge2[] =
+        R"(precision mediump float;
+struct Light {
+mat2 array;
+};
+
+uniform Light light[67108865];
+
+void main()
+{
+    if (light[0].array[0][0] == 2.0)
+        gl_FragColor = vec4(0.0, 1.0, 0.0, 1.0);
+    else
+        gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
+})";
+
+    program = CompileProgram(essl1_shaders::vs::Simple(), kFSStructTooLarge2);
+    EXPECT_EQ(0u, program);
 }
 
 // Reject attempts to allocate too much private memory.

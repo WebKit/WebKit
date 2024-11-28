@@ -357,13 +357,13 @@ private:
     const FatEntry* fatEntry() const
     {
         ASSERT(isFat());
-        return bitwise_cast<const FatEntry*>(m_bits);
+        return std::bit_cast<const FatEntry*>(m_bits);
     }
     
     FatEntry* fatEntry()
     {
         ASSERT(isFat());
-        return bitwise_cast<FatEntry*>(m_bits);
+        return std::bit_cast<FatEntry*>(m_bits);
     }
     
     FatEntry* inflate()
@@ -446,10 +446,10 @@ public:
     typedef JSCell Base;
     static constexpr unsigned StructureFlags = Base::StructureFlags | StructureIsImmortal;
 
-    typedef HashMap<RefPtr<UniquedStringImpl>, SymbolTableEntry, IdentifierRepHash, HashTraits<RefPtr<UniquedStringImpl>>, SymbolTableIndexHashTraits> Map;
-    typedef HashMap<RefPtr<UniquedStringImpl>, GlobalVariableID, IdentifierRepHash> UniqueIDMap;
-    typedef HashMap<RefPtr<UniquedStringImpl>, RefPtr<TypeSet>, IdentifierRepHash> UniqueTypeSetMap;
-    typedef HashMap<VarOffset, RefPtr<UniquedStringImpl>> OffsetToVariableMap;
+    typedef UncheckedKeyHashMap<RefPtr<UniquedStringImpl>, SymbolTableEntry, IdentifierRepHash, HashTraits<RefPtr<UniquedStringImpl>>, SymbolTableIndexHashTraits> Map;
+    typedef UncheckedKeyHashMap<RefPtr<UniquedStringImpl>, GlobalVariableID, IdentifierRepHash> UniqueIDMap;
+    typedef UncheckedKeyHashMap<RefPtr<UniquedStringImpl>, RefPtr<TypeSet>, IdentifierRepHash> UniqueTypeSetMap;
+    typedef UncheckedKeyHashMap<VarOffset, RefPtr<UniquedStringImpl>> OffsetToVariableMap;
     typedef Vector<SymbolTableEntry*> LocalToEntryVec;
     typedef WTF::IteratorRange<typename PrivateNameEnvironment::iterator> PrivateNameIteratorRange;
 

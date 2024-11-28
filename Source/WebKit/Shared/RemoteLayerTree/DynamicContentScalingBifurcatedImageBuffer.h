@@ -45,6 +45,7 @@ class DynamicContentScalingImageBufferBackend;
 // the context flush, etc.).
 
 class DynamicContentScalingBifurcatedImageBuffer : public WebCore::ImageBuffer {
+    WTF_MAKE_TZONE_ALLOCATED(DynamicContentScalingBifurcatedImageBuffer);
 public:
     DynamicContentScalingBifurcatedImageBuffer(WebCore::ImageBufferParameters, const WebCore::ImageBufferBackend::Info&, const WebCore::ImageBufferCreationContext&, std::unique_ptr<WebCore::ImageBufferBackend>&& = nullptr, WebCore::RenderingResourceIdentifier = WebCore::RenderingResourceIdentifier::generate());
 

@@ -50,11 +50,11 @@ WEBCORE_EXPORT NSString *WebUIApplicationWillEnterForegroundNotification = @"Web
 WEBCORE_EXPORT NSString *WebUIApplicationDidBecomeActiveNotification = @"WebUIApplicationDidBecomeActiveNotification";
 WEBCORE_EXPORT NSString *WebUIApplicationDidEnterBackgroundNotification = @"WebUIApplicationDidEnterBackgroundNotification";
 
-#if HAVE(CELESTIAL)
-SOFT_LINK_PRIVATE_FRAMEWORK_OPTIONAL(Celestial)
-SOFT_LINK_CLASS_OPTIONAL(Celestial, AVSystemController)
-SOFT_LINK_CONSTANT_MAY_FAIL(Celestial, AVSystemController_PIDToInheritApplicationStateFrom, NSString *)
-SOFT_LINK_CONSTANT_MAY_FAIL(Celestial, AVSystemController_ServerConnectionDiedNotification, NSString *)
+#if HAVE(MEDIAEXPERIENCE_AVSYSTEMCONTROLLER)
+SOFT_LINK_PRIVATE_FRAMEWORK_OPTIONAL(MediaExperience)
+SOFT_LINK_CLASS_OPTIONAL(MediaExperience, AVSystemController)
+SOFT_LINK_CONSTANT_MAY_FAIL(MediaExperience, AVSystemController_PIDToInheritApplicationStateFrom, NSString *)
+SOFT_LINK_CONSTANT_MAY_FAIL(MediaExperience, AVSystemController_ServerConnectionDiedNotification, NSString *)
 #endif
 
 using namespace WebCore;
@@ -91,7 +91,7 @@ public:
 
     void externalOutputDeviceAvailableDidChange();
     void updateCarPlayIsConnected();
-#if HAVE(CELESTIAL)
+#if HAVE(MEDIAEXPERIENCE_AVSYSTEMCONTROLLER)
     void mediaServerConnectionDied();
 #endif
 #if PLATFORM(IOS_FAMILY) && !PLATFORM(IOS_FAMILY_SIMULATOR) && !PLATFORM(MACCATALYST) && !PLATFORM(WATCHOS)
@@ -107,7 +107,7 @@ private:
     void stopMonitoringWirelessRoutesInternal() final;
 
     RetainPtr<WebMediaSessionHelper> m_objcObserver;
-#if HAVE(CELESTIAL)
+#if HAVE(MEDIAEXPERIENCE_AVSYSTEMCONTROLLER)
     std::optional<int> m_presentedApplicationPID;
 #endif
 };
@@ -272,7 +272,7 @@ void MediaSessionHelperIOS::providePresentingApplicationPID(int pid, ShouldOverr
         return;
 #endif
 
-#if HAVE(CELESTIAL)
+#if HAVE(MEDIAEXPERIENCE_AVSYSTEMCONTROLLER)
     if (m_presentedApplicationPID && (*m_presentedApplicationPID == pid || shouldOverride == ShouldOverride::No))
         return;
 
@@ -309,7 +309,7 @@ void MediaSessionHelperIOS::stopMonitoringWirelessRoutesInternal()
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
-#if HAVE(CELESTIAL)
+#if HAVE(MEDIAEXPERIENCE_AVSYSTEMCONTROLLER)
 void MediaSessionHelperIOS::mediaServerConnectionDied()
 {
     if (m_presentedApplicationPID) {
@@ -319,7 +319,7 @@ void MediaSessionHelperIOS::mediaServerConnectionDied()
         });
     }
 }
-#endif // HAVE(CELESTIAL)
+#endif // HAVE(MEDIAEXPERIENCE_AVSYSTEMCONTROLLER)
 
 void MediaSessionHelperIOS::updateCarPlayIsConnected()
 {
@@ -388,7 +388,7 @@ void MediaSessionHelperIOS::externalOutputDeviceAvailableDidChange()
     [center addObserver:self selector:@selector(activeOutputDeviceDidChange:) name:PAL::get_AVFoundation_AVAudioSessionRouteChangeNotification() object:nil];
     [center addObserver:self selector:@selector(spatialPlaybackCapabilitiesChanged:) name:PAL::get_AVFoundation_AVAudioSessionSpatialPlaybackCapabilitiesChangedNotification() object:nil];
 
-#if HAVE(CELESTIAL)
+#if HAVE(MEDIAEXPERIENCE_AVSYSTEMCONTROLLER)
     if (canLoadAVSystemController_ServerConnectionDiedNotification())
         [center addObserver:self selector:@selector(mediaServerConnectionDied:) name:getAVSystemController_ServerConnectionDiedNotification() object:nil];
 #endif
@@ -549,7 +549,7 @@ void MediaSessionHelperIOS::externalOutputDeviceAvailableDidChange()
     });
 }
 
-#if HAVE(CELESTIAL)
+#if HAVE(MEDIAEXPERIENCE_AVSYSTEMCONTROLLER)
 - (void)mediaServerConnectionDied:(NSNotification *)notification
 {
     LOG(Media, "-[WebMediaSessionHelper mediaServerConnectionDied:]");
@@ -559,7 +559,7 @@ void MediaSessionHelperIOS::externalOutputDeviceAvailableDidChange()
             callback->mediaServerConnectionDied();
     });
 }
-#endif // HAVE(CELESTIAL)
+#endif // HAVE(MEDIAEXPERIENCE_AVSYSTEMCONTROLLER)
 
 - (void)activeOutputDeviceDidChange:(NSNotification *)notification
 {

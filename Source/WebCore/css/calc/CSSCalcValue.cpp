@@ -42,28 +42,25 @@
 #include "CSSCalcTree+Simplification.h"
 #include "CSSParser.h"
 #include "CSSParserTokenRange.h"
+#include "CSSPropertyParserOptions.h"
 #include "CalculationCategory.h"
 #include "CalculationValue.h"
 #include "Logging.h"
+#include "StylePrimitiveNumericTypes.h"
 #include <wtf/MathExtras.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
 
-bool CSSCalcValue::isCalcFunction(CSSValueID functionId)
-{
-    return CSSCalc::isCalcFunction(functionId);
-}
-
-RefPtr<CSSCalcValue> CSSCalcValue::parse(CSSValueID function, const CSSParserTokenRange& tokens, Calculation::Category category, ValueRange range, CSSCalcSymbolsAllowed symbolsAllowed)
+RefPtr<CSSCalcValue> CSSCalcValue::parse(CSSParserTokenRange& tokens, const CSSParserContext& context, Calculation::Category category, CSS::Range range, CSSCalcSymbolsAllowed symbolsAllowed, CSSPropertyParserOptions propertyOptions)
 {
     auto parserOptions = CSSCalc::ParserOptions {
         .category = category,
+        .range = range,
         .allowedSymbols = WTFMove(symbolsAllowed),
-        .range = range
+        .propertyOptions = propertyOptions
     };
-
     auto simplificationOptions = CSSCalc::SimplificationOptions {
         .category = category,
         .conversionData = std::nullopt,
@@ -73,7 +70,7 @@ RefPtr<CSSCalcValue> CSSCalcValue::parse(CSSValueID function, const CSSParserTok
         .allowNonMatchingUnits = false
     };
 
-    auto tree = CSSCalc::parseAndSimplify(tokens, function, parserOptions, simplificationOptions);
+    auto tree = CSSCalc::parseAndSimplify(tokens, context, parserOptions, simplificationOptions);
     if (!tree)
         return nullptr;
 
@@ -110,17 +107,12 @@ Ref<CSSCalcValue> CSSCalcValue::copySimplified(const CSSToLengthConversionData& 
 }
 
 CSSCalcValue::CSSCalcValue(CSSCalc::Tree&& tree)
-    : CSSValue(CalculationClass)
+    : CSSValue(ClassType::Calculation)
     , m_tree(WTFMove(tree))
 {
 }
 
 CSSCalcValue::~CSSCalcValue() = default;
-
-Calculation::Category CSSCalcValue::category() const
-{
-    return m_tree.category;
-}
 
 CSSUnitType CSSCalcValue::primitiveType() const
 {
@@ -131,7 +123,7 @@ CSSUnitType CSSCalcValue::primitiveType() const
         return CSSUnitType::CSS_INTEGER;
     case Calculation::Category::Number:
         return CSSUnitType::CSS_NUMBER;
-    case Calculation::Category::Percent:
+    case Calculation::Category::Percentage:
         return CSSUnitType::CSS_PERCENTAGE;
     case Calculation::Category::Length:
         return CSSUnitType::CSS_PX;
@@ -145,12 +137,18 @@ CSSUnitType CSSCalcValue::primitiveType() const
         return CSSUnitType::CSS_DPPX;
     case Calculation::Category::Flex:
         return CSSUnitType::CSS_FR;
-    case Calculation::Category::PercentLength:
+    case Calculation::Category::LengthPercentage:
         if (!m_tree.type.percentHint)
             return CSSUnitType::CSS_PX;
-        if (std::holds_alternative<CSSCalc::Percent>(m_tree.root))
+        if (std::holds_alternative<CSSCalc::Percentage>(m_tree.root))
             return CSSUnitType::CSS_PERCENTAGE;
         return CSSUnitType::CSS_CALC_PERCENTAGE_WITH_LENGTH;
+    case Calculation::Category::AnglePercentage:
+        if (!m_tree.type.percentHint)
+            return CSSUnitType::CSS_DEG;
+        if (std::holds_alternative<CSSCalc::Percentage>(m_tree.root))
+            return CSSUnitType::CSS_PERCENTAGE;
+        return CSSUnitType::CSS_CALC_PERCENTAGE_WITH_ANGLE;
     }
 
     ASSERT_NOT_REACHED();
@@ -191,7 +189,7 @@ inline double CSSCalcValue::clampToPermittedRange(double value) const
     if (m_tree.category == Calculation::Category::Integer)
         value = std::floor(value + 0.5);
 
-    return m_tree.range == ValueRange::NonNegative && value < 0 ? 0 : value;
+    return std::clamp(value, m_tree.range.min, m_tree.range.max);
 }
 
 double CSSCalcValue::doubleValueNoConversionDataRequired(const CSSCalcSymbolTable& symbolTable) const
@@ -231,6 +229,17 @@ double CSSCalcValue::computeLengthPx(const CSSToLengthConversionData& conversion
     return clampToPermittedRange(CSSPrimitiveValue::computeNonCalcLengthDouble(conversionData, CSSUnitType::CSS_PX, CSSCalc::evaluateDouble(m_tree, options).value_or(0)));
 }
 
+Ref<CalculationValue> CSSCalcValue::createCalculationValueNoConversionDataRequired(const CSSCalcSymbolTable& symbolTable) const
+{
+    ASSERT(!m_tree.requiresConversionData);
+
+    auto options = CSSCalc::EvaluationOptions {
+        .conversionData = std::nullopt,
+        .symbolTable = symbolTable
+    };
+    return CSSCalc::toCalculationValue(m_tree, options);
+}
+
 Ref<CalculationValue> CSSCalcValue::createCalculationValue(const CSSToLengthConversionData& conversionData, const CSSCalcSymbolTable& symbolTable) const
 {
     auto options = CSSCalc::EvaluationOptions {
@@ -240,78 +249,6 @@ Ref<CalculationValue> CSSCalcValue::createCalculationValue(const CSSToLengthConv
     return CSSCalc::toCalculationValue(m_tree, options);
 }
 
-NumberRaw CSSCalcValue::numberValueDeprecated(const CSSCalcSymbolTable& symbolTable) const
-{
-    ASSERT(m_tree.category == Calculation::Category::Number);
-    return { doubleValueDeprecated(symbolTable) };
-}
-
-NumberRaw CSSCalcValue::numberValue(const CSSToLengthConversionData& conversionData, const CSSCalcSymbolTable& symbolTable) const
-{
-    ASSERT(m_tree.category == Calculation::Category::Number);
-    return { doubleValue(conversionData, symbolTable) };
-}
-
-PercentRaw CSSCalcValue::percentValueDeprecated(const CSSCalcSymbolTable& symbolTable) const
-{
-    ASSERT(m_tree.category == Calculation::Category::Percent);
-    return { doubleValueDeprecated(symbolTable) };
-}
-
-PercentRaw CSSCalcValue::percentValue(const CSSToLengthConversionData& conversionData, const CSSCalcSymbolTable& symbolTable) const
-{
-    ASSERT(m_tree.category == Calculation::Category::Percent);
-    return { doubleValue(conversionData, symbolTable) };
-}
-
-AngleRaw CSSCalcValue::angleValueDeprecated(const CSSCalcSymbolTable& symbolTable) const
-{
-    ASSERT(m_tree.category == Calculation::Category::Angle);
-    return { CSSUnitType::CSS_DEG, doubleValueDeprecated(symbolTable) };
-}
-
-AngleRaw CSSCalcValue::angleValue(const CSSToLengthConversionData& conversionData, const CSSCalcSymbolTable& symbolTable) const
-{
-    ASSERT(m_tree.category == Calculation::Category::Angle);
-    return { CSSUnitType::CSS_DEG, doubleValue(conversionData, symbolTable) };
-}
-
-LengthRaw CSSCalcValue::lengthValueDeprecated(const CSSCalcSymbolTable& symbolTable) const
-{
-    ASSERT(m_tree.category == Calculation::Category::Length);
-    return { CSSUnitType::CSS_PX, doubleValueDeprecated(symbolTable) };
-}
-
-LengthRaw CSSCalcValue::lengthValue(const CSSToLengthConversionData& conversionData, const CSSCalcSymbolTable& symbolTable) const
-{
-    ASSERT(m_tree.category == Calculation::Category::Length);
-    return { CSSUnitType::CSS_PX, doubleValue(conversionData, symbolTable) };
-}
-
-ResolutionRaw CSSCalcValue::resolutionValueDeprecated(const CSSCalcSymbolTable& symbolTable) const
-{
-    ASSERT(m_tree.category == Calculation::Category::Resolution);
-    return { CSSUnitType::CSS_DPPX, doubleValueDeprecated(symbolTable) };
-}
-
-ResolutionRaw CSSCalcValue::resolutionValue(const CSSToLengthConversionData& conversionData, const CSSCalcSymbolTable& symbolTable) const
-{
-    ASSERT(m_tree.category == Calculation::Category::Resolution);
-    return { CSSUnitType::CSS_DPPX, doubleValue(conversionData, symbolTable) };
-}
-
-TimeRaw CSSCalcValue::timeValueDeprecated(const CSSCalcSymbolTable& symbolTable) const
-{
-    ASSERT(m_tree.category == Calculation::Category::Time);
-    return { CSSUnitType::CSS_S, doubleValueDeprecated(symbolTable) };
-}
-
-TimeRaw CSSCalcValue::timeValue(const CSSToLengthConversionData& conversionData, const CSSCalcSymbolTable& symbolTable) const
-{
-    ASSERT(m_tree.category == Calculation::Category::Time);
-    return { CSSUnitType::CSS_S, doubleValue(conversionData, symbolTable) };
-}
-
 void CSSCalcValue::dump(TextStream& ts) const
 {
     ts << indent << "(" << "CSSCalcValue";
@@ -319,7 +256,8 @@ void CSSCalcValue::dump(TextStream& ts) const
     TextStream multilineStream;
     multilineStream.setIndent(ts.indent() + 2);
 
-    multilineStream.dumpProperty("should clamp non-negative", m_tree.range == ValueRange::NonNegative);
+    multilineStream.dumpProperty("minimum value", m_tree.range.min);
+    multilineStream.dumpProperty("maximum value", m_tree.range.max);
     multilineStream.dumpProperty("expression", CSSCalc::serializationForCSS(m_tree));
 
     ts << multilineStream.release();

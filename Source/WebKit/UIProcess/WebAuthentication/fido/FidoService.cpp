@@ -36,20 +36,23 @@
 #include <WebCore/FidoConstants.h>
 #include <WebCore/FidoHidMessage.h>
 #include <wtf/RunLoop.h>
+#include <wtf/TZoneMallocInlines.h>
 
 
 namespace WebKit {
 using namespace fido;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(FidoService);
 
 FidoService::FidoService(AuthenticatorTransportServiceObserver& observer)
     : AuthenticatorTransportService(observer)
 {
 }
 
-void FidoService::getInfo(std::unique_ptr<CtapDriver>&& driver)
+void FidoService::getInfo(Ref<CtapDriver>&& driver)
 {
     // Get authenticator info from the device.
-    driver->transact(encodeEmptyAuthenticatorRequest(CtapRequestCommand::kAuthenticatorGetInfo), [weakThis = WeakPtr { *this }, weakDriver = WeakPtr { *driver }] (Vector<uint8_t>&& response) mutable {
+    driver->transact(encodeEmptyAuthenticatorRequest(CtapRequestCommand::kAuthenticatorGetInfo), [weakThis = WeakPtr { *this }, weakDriver = WeakPtr { driver.get() }] (Vector<uint8_t>&& response) mutable {
         ASSERT(RunLoop::isMain());
         if (!weakThis)
             return;
@@ -64,18 +67,19 @@ void FidoService::continueAfterGetInfo(WeakPtr<CtapDriver>&& weakDriver, Vector<
     if (!weakDriver)
         return;
 
-    auto driver = m_drivers.take(weakDriver.get());
+    RefPtr driver = m_drivers.take(weakDriver.get());
     if (!driver || !observer() || response.isEmpty())
         return;
 
     auto info = readCTAPGetInfoResponse(response);
     if (info && info->versions().find(ProtocolVersion::kCtap) != info->versions().end()) {
-        observer()->authenticatorAdded(CtapAuthenticator::create(WTFMove(driver), WTFMove(*info)));
+        driver->setMaxMsgSize(info->maxMsgSize());
+        observer()->authenticatorAdded(CtapAuthenticator::create(driver.releaseNonNull(), WTFMove(*info)));
         return;
     }
     LOG_ERROR("Couldn't parse a ctap get info response.");
     driver->setProtocol(ProtocolVersion::kU2f);
-    observer()->authenticatorAdded(U2fAuthenticator::create(WTFMove(driver)));
+    observer()->authenticatorAdded(U2fAuthenticator::create(driver.releaseNonNull()));
 }
 
 } // namespace WebKit

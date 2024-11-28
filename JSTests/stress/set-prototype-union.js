@@ -76,5 +76,5 @@ try {
 }
 
 
-assertArrayContent(Array.from(set1.union({ size:1, has(v) { return set1.has(v); }, keys() { return set1.keys() } })), [1]);
-assertArrayContent(Array.from(set4.union({ size:1, has(v) { return set1.has(v); }, keys() { return set1.keys() } })), [obj1, array1, set1, 1]);
+assertArrayContent(Array.from(set1.union({ size:1, has(v) { return set1.has(v); }, keys() { assert(arguments.length, 0, "keys() arguments.length"); return set1.keys() } })), [1]);
+assertArrayContent(Array.from(set4.union({ size:1, has(v) { return set1.has(v); }, keys() { assert(arguments.length, 0, "keys() arguments.length"); return set1.keys() } })), [obj1, array1, set1, 1]);

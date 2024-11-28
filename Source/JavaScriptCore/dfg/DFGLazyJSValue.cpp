@@ -215,7 +215,7 @@ uintptr_t LazyJSValue::switchLookupValue(SwitchKind kind) const
             return 0;
         case SwitchCell:
             if (value()->value())
-                return bitwise_cast<uintptr_t>(value()->value().asCell());
+                return std::bit_cast<uintptr_t>(value()->value().asCell());
             return 0;
         default:
             RELEASE_ASSERT_NOT_REACHED();

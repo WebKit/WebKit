@@ -32,6 +32,9 @@
 #include "AirCode.h"
 #include "B3BasicBlockInlines.h"
 #include "B3BreakCriticalEdges.h"
+#include "B3CCallValue.h"
+#include "B3Procedure.h"
+#include "B3ProcedureInlines.h"
 #include "B3ValueInlines.h"
 
 namespace JSC { namespace B3 { namespace Air {
@@ -42,8 +45,8 @@ template<typename BankInfo>
 void marshallCCallArgumentImpl(Vector<Arg>& result, unsigned& argumentCount, unsigned& stackOffset, Type childType)
 {
     const auto registerCount = cCallArgumentRegisterCount(childType);
-    if (is32Bit() && childType == Int64)
-        argumentCount = WTF::roundUpToMultipleOf<2>(argumentCount);
+    if constexpr (is32Bit())
+        ASSERT(childType != Int64);
 
     if (argumentCount < BankInfo::numberOfArgumentRegisters) {
         for (unsigned i = 0; i < registerCount; i++)
@@ -130,6 +133,16 @@ size_t cCallResultCount(Code& code, CCallValue* value)
 
     }
 }
+// Do register arguments of this type need to be even-aligned? (e.g. r0/r1 would
+// be even aligned, r1/r2 wouldn't).
+bool cCallArgumentEvenRegisterAlignment(Type type)
+{
+    if (!is32Bit())
+        return false;
+    if (type == Int64)
+        return true;
+    return false;
+}
 
 size_t cCallArgumentRegisterCount(Type type)
 {
@@ -206,9 +219,9 @@ Inst buildCCall(Code& code, Value* origin, const Vector<Arg>& arguments)
 }
 
 #if CPU(ARM_THUMB2)
-Value* ArgumentValueList::makeStitch(B3::BasicBlock*, Value* hi, Value* low) const
+Value* ArgumentValueList::makeStitch(B3::BasicBlock*, Value* low, Value* hi) const
 {
-    return block->appendNew<Value>(procedure, Stitch, Origin(), hi, low);
+    return block->appendNew<Value>(procedure, Stitch, Origin(), low, hi);
 }
 #endif
 
@@ -262,8 +275,7 @@ Value* ArgumentValueList::makeCCallValue(B3::BasicBlock* block, size_t idx) cons
     case Int64:
         RELEASE_ASSERT(argCount == sizeof(uint64_t) / sizeof(uintptr_t));
 #if CPU(ARM_THUMB2)
-            return makeStitch(block, makeCCallValue(block, types[idx], underlyingArgs[firstUnderlyingArg + 1]),
-                makeCCallValue(block, types[idx], underlyingArgs[firstUnderlyingArg]));
+            return makeStitch(block, makeCCallValue(block, Int32, underlyingArgs[firstUnderlyingArg]), makeCCallValue(block, Int32, underlyingArgs[firstUnderlyingArg + 1]));
 #else
         return makeCCallValue(block, types[idx], underlyingArgs[firstUnderlyingArg]);
 #endif
@@ -284,6 +296,16 @@ ArgumentValueList computeCCallArguments(Procedure& procedure, B3::BasicBlock* bl
 
     for (auto type : types) {
         argUnderlyingCounts.append(underlyingArgs.size());
+#if CPU(ARM_THUMB2)
+        if (type == Int64) {
+            // Int64 arguments are passed in even-based register pairs on ARMv7.
+            if ((gpArgumentCount < 4) && (gpArgumentCount % 2))
+                ++gpArgumentCount;
+            marshallCCallArgument(underlyingArgs, gpArgumentCount, fpArgumentCount, stackOffset, Int32);
+            marshallCCallArgument(underlyingArgs, gpArgumentCount, fpArgumentCount, stackOffset, Int32);
+            continue;
+        }
+#endif
         marshallCCallArgument(underlyingArgs, gpArgumentCount, fpArgumentCount, stackOffset, type);
     }
 

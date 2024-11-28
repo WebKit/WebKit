@@ -48,6 +48,11 @@ namespace WebKit {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(WebSharedWorkerServerConnection);
 
+Ref<WebSharedWorkerServerConnection> WebSharedWorkerServerConnection::create(NetworkProcess& networkProcess, WebSharedWorkerServer& server, IPC::Connection& connection, WebCore::ProcessIdentifier webProcessIdentifier)
+{
+    return adoptRef(*new WebSharedWorkerServerConnection(networkProcess, server, connection, webProcessIdentifier));
+}
+
 WebSharedWorkerServerConnection::WebSharedWorkerServerConnection(NetworkProcess& networkProcess, WebSharedWorkerServer& server, IPC::Connection& connection, WebCore::ProcessIdentifier webProcessIdentifier)
     : m_contentConnection(connection)
     , m_networkProcess(networkProcess)
@@ -62,12 +67,17 @@ WebSharedWorkerServerConnection::~WebSharedWorkerServerConnection()
     CONNECTION_RELEASE_LOG("~WebSharedWorkerServerConnection:");
 }
 
-WebSharedWorkerServer& WebSharedWorkerServerConnection::server()
+Ref<NetworkProcess> WebSharedWorkerServerConnection::protectedNetworkProcess()
+{
+    return m_networkProcess;
+}
+
+WebSharedWorkerServer* WebSharedWorkerServerConnection::server()
 {
     return m_server.get();
 }
 
-const WebSharedWorkerServer& WebSharedWorkerServerConnection::server() const
+const WebSharedWorkerServer* WebSharedWorkerServerConnection::server() const
 {
     return m_server.get();
 }
@@ -77,19 +87,17 @@ IPC::Connection* WebSharedWorkerServerConnection::messageSenderConnection() cons
     return m_contentConnection.ptr();
 }
 
-PAL::SessionID WebSharedWorkerServerConnection::sessionID()
-{
-    return server().sessionID();
-}
-
 NetworkSession* WebSharedWorkerServerConnection::session()
 {
-    return m_networkProcess->networkSession(sessionID());
+    CheckedPtr server = m_server.get();
+    if (!server)
+        return nullptr;
+    return protectedNetworkProcess()->networkSession(server->sessionID());
 }
 
 void WebSharedWorkerServerConnection::requestSharedWorker(WebCore::SharedWorkerKey&& sharedWorkerKey, WebCore::SharedWorkerObjectIdentifier sharedWorkerObjectIdentifier, WebCore::TransferredMessagePort&& port, WebCore::WorkerOptions&& workerOptions)
 {
-    MESSAGE_CHECK(m_networkProcess->allowsFirstPartyForCookies(m_webProcessIdentifier, WebCore::RegistrableDomain::uncheckedCreateFromHost(sharedWorkerKey.origin.topOrigin.host())));
+    MESSAGE_CHECK(protectedNetworkProcess()->allowsFirstPartyForCookies(m_webProcessIdentifier, WebCore::RegistrableDomain::uncheckedCreateFromHost(sharedWorkerKey.origin.topOrigin.host())));
     MESSAGE_CHECK(sharedWorkerObjectIdentifier.processIdentifier() == m_webProcessIdentifier);
     MESSAGE_CHECK(sharedWorkerKey.name == workerOptions.name);
     CONNECTION_RELEASE_LOG("requestSharedWorker: sharedWorkerObjectIdentifier=%" PUBLIC_LOG_STRING, sharedWorkerObjectIdentifier.toString().utf8().data());

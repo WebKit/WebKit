@@ -41,7 +41,7 @@ TEST(WKWebView, LoadFileWithLoadRequest)
     auto delegate = adoptNS([[TestNavigationDelegate alloc] init]);
     [webView setNavigationDelegate:delegate.get()];
 
-    NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"simple" withExtension:@"html"]];
     [webView loadRequest:request];
     [delegate waitForDidFinishNavigation];
 }
@@ -53,13 +53,13 @@ TEST(WKWebView, LoadTwoFiles)
     auto delegate = adoptNS([[TestNavigationDelegate alloc] init]);
     [webView setNavigationDelegate:delegate.get()];
 
-    NSURL *file = [[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+    NSURL *file = [NSBundle.test_resourcesBundle URLForResource:@"simple" withExtension:@"html"];
     [webView loadFileURL:file allowingReadAccessToURL:file.URLByDeletingLastPathComponent];
     [delegate waitForDidFinishNavigation];
     EXPECT_WK_STREQ(webView.get()._resourceDirectoryURL.path, file.URLByDeletingLastPathComponent.path);
 
     // Load a second file: resource that is in a completely different directory from the above
-    file = [[NSBundle mainBundle] URLForResource:@"simple2" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+    file = [NSBundle.test_resourcesBundle URLForResource:@"simple2" withExtension:@"html"];
     NSURL *targetURL = [NSURL fileURLWithPath:[@"~/Library/WebKit/com.apple.WebKit.TestWebKitAPI/simple2.html" stringByExpandingTildeInPath]];
     [[NSFileManager defaultManager] createDirectoryAtURL:targetURL.URLByDeletingLastPathComponent withIntermediateDirectories:YES attributes:nil error:nil];
     [[NSFileManager defaultManager] removeItemAtURL:targetURL error:nil];
@@ -87,7 +87,7 @@ TEST(WKWebView, LoadRelativeFileURL)
     auto delegate = adoptNS([[TestNavigationDelegate alloc] init]);
     [webView setNavigationDelegate:delegate.get()];
     
-    NSString *path = [NSBundle.mainBundle pathForResource:@"simple" ofType:@"html" inDirectory:@"TestWebKitAPI.resources"];
+    NSString *path = [NSBundle.test_resourcesBundle pathForResource:@"simple" ofType:@"html"];
     NSURL *baseURL = [NSURL fileURLWithPath:path.stringByDeletingLastPathComponent];
     NSURL *fileURL = [NSURL fileURLWithPath:path.lastPathComponent relativeToURL:baseURL];
     EXPECT_NOT_NULL([webView loadFileURL:fileURL allowingReadAccessToURL:fileURL.URLByDeletingLastPathComponent]);
@@ -109,7 +109,7 @@ TEST(WKWebView, RepeatLoadFileURL)
     auto delegate = adoptNS([[TestNavigationDelegate alloc] init]);
     [webView setNavigationDelegate:delegate.get()];
     
-    NSString *path = [NSBundle.mainBundle pathForResource:@"simple" ofType:@"html" inDirectory:@"TestWebKitAPI.resources"];
+    NSString *path = [NSBundle.test_resourcesBundle pathForResource:@"simple" ofType:@"html"];
     NSURL *baseURL = [NSURL fileURLWithPath:path.stringByDeletingLastPathComponent];
     NSURL *fileURL = [NSURL fileURLWithPath:path.lastPathComponent relativeToURL:baseURL];
     EXPECT_NOT_NULL([webView loadFileURL:fileURL allowingReadAccessToURL:fileURL.URLByDeletingLastPathComponent]);

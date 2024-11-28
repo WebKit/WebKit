@@ -33,13 +33,13 @@
 #include <wtf/Forward.h>
 #include <wtf/Function.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
 
-class HidConnection {
-    WTF_MAKE_TZONE_ALLOCATED(HidConnection);
+class HidConnection : public RefCountedAndCanMakeWeakPtr<HidConnection> {
     WTF_MAKE_NONCOPYABLE(HidConnection);
 public:
     enum class DataSent : bool { No, Yes };
@@ -47,7 +47,7 @@ public:
     using DataSentCallback = CompletionHandler<void(DataSent)>;
     using DataReceivedCallback = Function<void(Vector<uint8_t>&&)>;
 
-    explicit HidConnection(IOHIDDeviceRef);
+    static Ref<HidConnection> create(IOHIDDeviceRef);
     virtual ~HidConnection();
 
     // Overrided by MockHidConnection.
@@ -63,6 +63,7 @@ public:
     void receiveReport(Vector<uint8_t>&&);
 
 protected:
+    explicit HidConnection(IOHIDDeviceRef);
     bool isInitialized() const { return m_isInitialized; }
     void setIsInitialized(bool isInitialized) { m_isInitialized = isInitialized; }
 

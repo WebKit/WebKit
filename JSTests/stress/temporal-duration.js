@@ -94,7 +94,7 @@ shouldThrow(() => Temporal.Duration.from({}), TypeError);
         shouldBe(fromDurationLike[field], pos[field]);
     }
 }
-shouldNotThrow(() => Temporal.Duration.from(`P${Array(308).fill(9).join('')}Y`));
+shouldThrow(() => Temporal.Duration.from(`P${Array(308).fill(9).join('')}Y`), RangeError);
 shouldBe(Temporal.Duration.from('+P1Y2DT3H4.0S').toString(), 'P1Y2DT3H4S');
 shouldBe(Temporal.Duration.from('PT1.03125H').toString(), 'PT1H1M52.5S');
 shouldBe(Temporal.Duration.from('PT1.03125M').toString(), 'PT1M1.875S');

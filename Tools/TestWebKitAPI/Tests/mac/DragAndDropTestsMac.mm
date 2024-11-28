@@ -107,7 +107,7 @@ TEST(DragAndDropTests, DragPromisedImageFileIntoFileUpload)
     TestWKWebView *webView = [simulator webView];
     [webView synchronouslyLoadTestPageNamed:@"image-and-file-upload"];
 
-    NSURL *imageURL = [NSBundle.mainBundle URLForResource:@"apple" withExtension:@"gif" subdirectory:@"TestWebKitAPI.resources"];
+    NSURL *imageURL = [NSBundle.test_resourcesBundle URLForResource:@"apple" withExtension:@"gif"];
     [simulator writePromisedFiles:@[ imageURL ]];
     [simulator runFrom:NSMakePoint(100, 100) to:NSMakePoint(100, 300)];
 
@@ -153,7 +153,7 @@ TEST(DragAndDropTests, DragImageFileIntoFileUpload)
     TestWKWebView *webView = [simulator webView];
     [webView synchronouslyLoadTestPageNamed:@"image-and-file-upload"];
 
-    NSURL *imageURL = [NSBundle.mainBundle URLForResource:@"apple" withExtension:@"gif" subdirectory:@"TestWebKitAPI.resources"];
+    NSURL *imageURL = [NSBundle.test_resourcesBundle URLForResource:@"apple" withExtension:@"gif"];
     [simulator writeFiles:@[ imageURL ]];
     [simulator runFrom:NSMakePoint(100, 100) to:NSMakePoint(100, 300)];
 

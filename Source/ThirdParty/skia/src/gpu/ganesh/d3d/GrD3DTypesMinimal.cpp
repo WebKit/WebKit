@@ -7,7 +7,7 @@
 
 #include "include/private/gpu/ganesh/GrD3DTypesMinimal.h"
 
-#include "include/gpu/d3d/GrD3DTypes.h"
+#include "include/gpu/ganesh/d3d/GrD3DTypes.h"
 #include "src/gpu/ganesh/d3d/GrD3DResourceState.h"
 #include "src/gpu/ganesh/d3d/GrD3DTypesPriv.h"
 
@@ -55,7 +55,7 @@ bool GrD3DBackendSurfaceInfo::isProtected() const {
     return fTextureResourceInfo->fProtected == GrProtected::kYes;
 }
 
-#if defined(GR_TEST_UTILS)
+#if defined(GPU_TEST_UTILS)
 bool GrD3DBackendSurfaceInfo::operator==(const GrD3DBackendSurfaceInfo& that) const {
     GrD3DTextureResourceInfo cpyInfoThis = *fTextureResourceInfo;
     GrD3DTextureResourceInfo cpyInfoThat = *that.fTextureResourceInfo;

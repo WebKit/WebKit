@@ -1,0 +1,23 @@
+
+EVENT(loadedmetadata)
+EXPECTED (pixelData[0] == '0') OK
+EXPECTED (pixelData[1] == '0') OK
+EXPECTED (pixelData[2] == '0') OK
+EXPECTED (pixelData[0] >= '253') OK
+EXPECTED (pixelData[1] >= '253') OK
+EXPECTED (pixelData[2] <= '2') OK
+EVENT(loadedmetadata)
+EXPECTED (pixelData[0] == '0') OK
+EXPECTED (pixelData[1] == '0') OK
+EXPECTED (pixelData[2] == '0') OK
+EXPECTED (pixelData[0] >= '253') OK
+EXPECTED (pixelData[1] >= '253') OK
+EXPECTED (pixelData[2] <= '2') OK
+EVENT(loadedmetadata)
+EXPECTED (pixelData[0] == '0') OK
+EXPECTED (pixelData[1] == '0') OK
+EXPECTED (pixelData[2] == '0') OK
+EXPECTED (pixelData[0] >= '253') OK
+EXPECTED (pixelData[1] >= '253') OK
+EXPECTED (pixelData[2] <= '2') OK
+

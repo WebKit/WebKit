@@ -9,22 +9,6 @@ Finding pause location...
 Creating breakpoint...
 Adding breakpoint...
 Triggering pause...
-PAUSE AT n:3:8
-      0    import { inner } from "./inner.js"
-      1
- ->   2    export |function middle(x) {
-      3        let y = "middle";
-      4        y += inner(x);
-      5        return y;
-
-PAUSE AT t:6:12
-      2    export function middle(x) {
-      3        let y = "middle";
-      4        y += inner(x);
- ->   5        return |y;
-      6    }
-      7
-
 PAUSE AT t:3:1
       0    import { middle } from "./middle.js"
       1
@@ -56,7 +40,6 @@ Unblackboxing script...
 
 -- Running test case: Debugger.setShouldBlackboxURL.SourceMap.Pause.inner.Blackbox.middle
 Fetching scripts...
-Blackboxing script...
 Finding pause location...
 Creating breakpoint...
 Adding breakpoint...
@@ -94,7 +77,6 @@ PAUSE AT Global Code:1:10
 --- Source Unavailable ---
 
 Removing breakpoint...
-Unblackboxing script...
 
 -- Running test case: Debugger.setShouldBlackboxURL.SourceMap.Pause.inner.Blackbox.outer
 Fetching scripts...
@@ -108,22 +90,6 @@ PAUSE AT n:2:5
  ->   1        |return "inner" + x;
       2    }
       3
-
-PAUSE AT n:3:8
-      0    import { inner } from "./inner.js"
-      1
- ->   2    export |function middle(x) {
-      3        let y = "middle";
-      4        y += inner(x);
-      5        return y;
-
-PAUSE AT t:6:12
-      2    export function middle(x) {
-      3        let y = "middle";
-      4        y += inner(x);
- ->   5        return |y;
-      6    }
-      7
 
 PAUSE AT Global Code:1:10
 --- Source Unavailable ---

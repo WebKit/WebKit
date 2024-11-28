@@ -273,12 +273,16 @@ inline RefPtr<match_constness_t<Source, Target>, TargetPtrTraits, TargetRefDeref
     return static_pointer_cast<match_constness_t<Source, Target>, TargetPtrTraits, TargetRefDerefTraits>(WTFMove(source));
 }
 
-template<typename T>
-using RefPtrAllowingPartiallyDestroyed = RefPtr<T, RawPtrTraits<T>, RefDerefTraitsAllowingPartiallyDestroyed<T>>;
+template<typename T, typename U>
+ALWAYS_INLINE void lazyInitialize(const RefPtr<T>& ptr, Ref<U>&& obj)
+{
+    RELEASE_ASSERT(!ptr);
+    const_cast<RefPtr<T>&>(ptr) = WTFMove(obj);
+}
 
 } // namespace WTF
 
 using WTF::RefPtr;
-using WTF::RefPtrAllowingPartiallyDestroyed;
 using WTF::adoptRef;
 using WTF::static_pointer_cast;
+using WTF::lazyInitialize;

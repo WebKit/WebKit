@@ -46,9 +46,11 @@ static bool decrypt(WebKitMediaCommonEncryptionDecrypt*, GstBuffer* iv, GstBuffe
 GST_DEBUG_CATEGORY(webkitMediaThunderDecryptDebugCategory);
 #define GST_CAT_DEFAULT webkitMediaThunderDecryptDebugCategory
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib port
 static const char* cencEncryptionMediaTypes[] = { "video/mp4", "audio/mp4", "video/x-h264", "video/x-h265", "audio/mpeg",
     "audio/x-eac3", "audio/x-ac3", "audio/x-flac", "audio/x-opus", "video/x-vp9", "video/x-av1", nullptr };
 static const char* webmEncryptionMediaTypes[] = { "video/webm", "audio/webm", "video/x-vp9", "video/x-av1", "audio/x-opus", "audio/x-vorbis", "video/x-vp8", nullptr };
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 static GstStaticPadTemplate srcTemplate = GST_STATIC_PAD_TEMPLATE("src",
     GST_PAD_SRC,

@@ -127,7 +127,7 @@ unsigned char RenderedPosition::bidiLevelOnRight() const
     return box ? box->bidiLevel() : 0;
 }
 
-RenderedPosition RenderedPosition::leftBoundaryOfBidiRun(unsigned char bidiLevelOfRun)
+RenderedPosition RenderedPosition::leftBoundaryOfBidiRun(unsigned char bidiLevelOfRun) const
 {
     if (!m_box || bidiLevelOfRun > m_box->bidiLevel())
         return RenderedPosition();
@@ -144,7 +144,7 @@ RenderedPosition RenderedPosition::leftBoundaryOfBidiRun(unsigned char bidiLevel
     return RenderedPosition();
 }
 
-RenderedPosition RenderedPosition::rightBoundaryOfBidiRun(unsigned char bidiLevelOfRun)
+RenderedPosition RenderedPosition::rightBoundaryOfBidiRun(unsigned char bidiLevelOfRun) const
 {
     if (!m_box || bidiLevelOfRun > m_box->bidiLevel())
         return RenderedPosition();

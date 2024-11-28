@@ -77,7 +77,7 @@ enum {
     N_PROPERTIES,
 };
 
-static GParamSpec* sObjProperties[N_PROPERTIES] = { nullptr, };
+static std::array<GParamSpec*, N_PROPERTIES> sObjProperties;
 
 struct _WebKitWebInspectorPrivate {
     ~_WebKitWebInspectorPrivate()
@@ -93,7 +93,7 @@ struct _WebKitWebInspectorPrivate {
 
 WEBKIT_DEFINE_FINAL_TYPE(WebKitWebInspector, webkit_web_inspector, G_TYPE_OBJECT, GObject)
 
-static guint signals[LAST_SIGNAL] = { 0, };
+static std::array<unsigned, LAST_SIGNAL> signals;
 
 static void webkitWebInspectorGetProperty(GObject* object, guint propId, GValue* value, GParamSpec* paramSpec)
 {
@@ -157,7 +157,7 @@ static void webkit_web_inspector_class_init(WebKitWebInspectorClass* findClass)
             FALSE,
             WEBKIT_PARAM_READABLE);
 
-    g_object_class_install_properties(gObjectClass, N_PROPERTIES, sObjProperties);
+    g_object_class_install_properties(gObjectClass, N_PROPERTIES, sObjProperties.data());
 
     /**
      * WebKitWebInspector::open-window:

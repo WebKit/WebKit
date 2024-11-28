@@ -59,7 +59,7 @@ unsigned LegacyTileLayerPool::bytesBackingLayerWithPixelSize(const IntSize& size
 LegacyTileLayerPool::LayerList& LegacyTileLayerPool::listOfLayersWithSize(const IntSize& size, AccessType accessType)
 {
     ASSERT(!m_layerPoolMutex.tryLock());
-    HashMap<IntSize, LayerList>::iterator it = m_reuseLists.find(size);
+    UncheckedKeyHashMap<IntSize, LayerList>::iterator it = m_reuseLists.find(size);
     if (it == m_reuseLists.end()) {
         it = m_reuseLists.add(size, LayerList()).iterator;
         m_sizesInPruneOrder.append(size);

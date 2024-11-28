@@ -35,6 +35,8 @@
 #include "XPathStep.h"
 #include "XPathVariableReference.h"
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 #if COMPILER(MSVC)
 // See https://msdn.microsoft.com/en-us/library/1wea5zwe.aspx
 #pragma warning(disable: 4701)
@@ -426,7 +428,7 @@ OrExpr:
     |
     OrExpr OR AndExpr
     {
-        $$ = new WebCore::XPath::LogicalOp(WebCore::XPath::LogicalOp::OP_Or, std::unique_ptr<WebCore::XPath::Expression>($1), std::unique_ptr<WebCore::XPath::Expression>($3));
+        $$ = new WebCore::XPath::LogicalOp(WebCore::XPath::LogicalOp::Opcode::Or, std::unique_ptr<WebCore::XPath::Expression>($1), std::unique_ptr<WebCore::XPath::Expression>($3));
     }
     ;
 
@@ -435,7 +437,7 @@ AndExpr:
     |
     AndExpr AND EqualityExpr
     {
-        $$ = new WebCore::XPath::LogicalOp(WebCore::XPath::LogicalOp::OP_And, std::unique_ptr<WebCore::XPath::Expression>($1), std::unique_ptr<WebCore::XPath::Expression>($3));
+        $$ = new WebCore::XPath::LogicalOp(WebCore::XPath::LogicalOp::Opcode::And, std::unique_ptr<WebCore::XPath::Expression>($1), std::unique_ptr<WebCore::XPath::Expression>($3));
     }
     ;
 
@@ -462,12 +464,12 @@ AdditiveExpr:
     |
     AdditiveExpr PLUS MultiplicativeExpr
     {
-        $$ = new WebCore::XPath::NumericOp(WebCore::XPath::NumericOp::OP_Add, std::unique_ptr<WebCore::XPath::Expression>($1), std::unique_ptr<WebCore::XPath::Expression>($3));
+        $$ = new WebCore::XPath::NumericOp(WebCore::XPath::NumericOp::Opcode::Add, std::unique_ptr<WebCore::XPath::Expression>($1), std::unique_ptr<WebCore::XPath::Expression>($3));
     }
     |
     AdditiveExpr MINUS MultiplicativeExpr
     {
-        $$ = new WebCore::XPath::NumericOp(WebCore::XPath::NumericOp::OP_Sub, std::unique_ptr<WebCore::XPath::Expression>($1), std::unique_ptr<WebCore::XPath::Expression>($3));
+        $$ = new WebCore::XPath::NumericOp(WebCore::XPath::NumericOp::Opcode::Sub, std::unique_ptr<WebCore::XPath::Expression>($1), std::unique_ptr<WebCore::XPath::Expression>($3));
     }
     ;
 
@@ -490,3 +492,5 @@ UnaryExpr:
     ;
 
 %%
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

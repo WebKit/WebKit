@@ -9,5 +9,5 @@ Click left mouse button again.
 Test passes if the proper behavior of the events is observed.
 
 
-FAIL mouse Test pointerevent coordinates when pointer is locked assert_equals: clientX expected 172 but got 314
+FAIL mouse Test pointerevent coordinates when pointer is locked assert_equals: clientX expected 146 but got 275
 

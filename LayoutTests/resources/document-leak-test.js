@@ -27,6 +27,9 @@ function createFrames(framesToCreate)
 
     for (let i = 0; i < allFrames.length; ++i) {
         let frame = document.createElement("iframe");
+        frame.style.width = '100vw';
+        frame.style.height = '100vh';
+        frame.style.border = 'none';
         document.body.appendChild(frame);
         allFrames[i] = frame;
     }

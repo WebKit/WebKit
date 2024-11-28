@@ -90,7 +90,7 @@ SVGSVGElement::~SVGSVGElement()
 {
     if (RefPtr viewSpec = m_viewSpec)
         viewSpec->resetContextElement();
-    RefAllowingPartiallyDestroyed<Document> document = this->document();
+    Ref<Document> document = this->document();
     document->unregisterForDocumentSuspensionCallbacks(*this);
     document->checkedSVGExtensions()->removeTimeContainer(*this);
 }
@@ -479,6 +479,11 @@ RenderPtr<RenderElement> SVGSVGElement::createElementRenderer(RenderStyle&& styl
     return createRenderer<LegacyRenderSVGViewportContainer>(*this, WTFMove(style));
 }
 
+bool SVGSVGElement::isReplaced(const RenderStyle&) const
+{
+    return isOutermostSVGSVGElement();
+}
+
 Node::InsertedIntoAncestorResult SVGSVGElement::insertedIntoAncestor(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
 {
     if (insertionType.connectedToDocument) {
@@ -500,7 +505,7 @@ Node::InsertedIntoAncestorResult SVGSVGElement::insertedIntoAncestor(InsertionTy
 void SVGSVGElement::removedFromAncestor(RemovalType removalType, ContainerNode& oldParentOfRemovedTree)
 {
     if (removalType.disconnectedFromDocument) {
-        RefAllowingPartiallyDestroyed<Document> document = this->document();
+        Ref<Document> document = this->document();
         document->checkedSVGExtensions()->removeTimeContainer(*this);
         pauseAnimations();
     }

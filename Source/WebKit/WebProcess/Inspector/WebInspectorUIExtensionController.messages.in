@@ -22,7 +22,7 @@
 
 #if ENABLE(INSPECTOR_EXTENSIONS)
 
-messages -> WebInspectorUIExtensionController NotRefCounted {
+messages -> WebInspectorUIExtensionController {
     RegisterExtension(String extensionID, String extensionBundleIdentifier, String displayName) -> (Expected<void, Inspector::ExtensionError> result)
     UnregisterExtension(String extensionID) -> (Expected<void, Inspector::ExtensionError> result)
 

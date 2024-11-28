@@ -37,6 +37,8 @@
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/text/MakeString.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 template<typename Adaptor>
@@ -284,7 +286,7 @@ bool JSGenericTypedArrayView<Adaptor>::setFromTypedArray(JSGlobalObject* globalO
             return false;
 
         RELEASE_ASSERT(JSC::elementSize(Adaptor::typeValue) == JSC::elementSize(other->type()));
-        memmove(typedVector() + offset, bitwise_cast<typename Adaptor::Type*>(other->vector()) + objectOffset, length * elementSize);
+        memmove(typedVector() + offset, std::bit_cast<typename Adaptor::Type*>(other->vector()) + objectOffset, length * elementSize);
         return true;
     };
 
@@ -358,15 +360,15 @@ void JSGenericTypedArrayView<Adaptor>::copyFromInt32ShapeArray(size_t offset, JS
     // 1. int32_t -> uint32_t conversion does not change any bit representation. So we can simply copy them.
     // 2. Hole is represented as JSEmpty in Int32Shape, which lower 32bits is zero. And we expect 0 for undefined, thus this copying simply works.
     if constexpr (Adaptor::typeValue == TypeUint8 || Adaptor::typeValue == TypeInt8) {
-        WTF::copyElements(bitwise_cast<uint8_t*>(typedVector() + offset), bitwise_cast<const uint64_t*>(array->butterfly()->contiguous().data() + objectOffset), length);
+        WTF::copyElements(std::bit_cast<uint8_t*>(typedVector() + offset), std::bit_cast<const uint64_t*>(array->butterfly()->contiguous().data() + objectOffset), length);
         return;
     }
     if constexpr (Adaptor::typeValue == TypeUint16 || Adaptor::typeValue == TypeInt16) {
-        WTF::copyElements(bitwise_cast<uint16_t*>(typedVector() + offset), bitwise_cast<const uint64_t*>(array->butterfly()->contiguous().data() + objectOffset), length);
+        WTF::copyElements(std::bit_cast<uint16_t*>(typedVector() + offset), std::bit_cast<const uint64_t*>(array->butterfly()->contiguous().data() + objectOffset), length);
         return;
     }
     if constexpr (Adaptor::typeValue == TypeUint32 || Adaptor::typeValue == TypeInt32) {
-        WTF::copyElements(bitwise_cast<uint32_t*>(typedVector() + offset), bitwise_cast<const uint64_t*>(array->butterfly()->contiguous().data() + objectOffset), length);
+        WTF::copyElements(std::bit_cast<uint32_t*>(typedVector() + offset), std::bit_cast<const uint64_t*>(array->butterfly()->contiguous().data() + objectOffset), length);
         return;
     }
     for (size_t i = 0; i < length; ++i) {
@@ -771,12 +773,12 @@ template<typename Adaptor> inline size_t JSGenericTypedArrayView<Adaptor>::byteL
 
 template<typename Adaptor> inline const typename Adaptor::Type* JSGenericTypedArrayView<Adaptor>::typedVector() const
 {
-    return bitwise_cast<const typename Adaptor::Type*>(vector());
+    return std::bit_cast<const typename Adaptor::Type*>(vector());
 }
 
 template<typename Adaptor> inline typename Adaptor::Type* JSGenericTypedArrayView<Adaptor>::typedVector()
 {
-    return bitwise_cast<typename Adaptor::Type*>(vector());
+    return std::bit_cast<typename Adaptor::Type*>(vector());
 }
 
 template<typename Adaptor> inline bool JSGenericTypedArrayView<Adaptor>::inBounds(size_t i) const
@@ -1012,3 +1014,5 @@ template<typename PassedAdaptor> inline Structure* JSGenericResizableOrGrowableS
 }
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

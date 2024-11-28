@@ -36,6 +36,12 @@
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/MakeString.h>
 
+#if ENABLE(WEBDRIVER_BIDI)
+#include "WebSocketServer.h"
+#include <cstdint>
+#include <wtf/text/StringBuilder.h>
+#endif
+
 namespace WebDriver {
 
 // https://w3c.github.io/webdriver/webdriver-spec.html#dfn-session-script-timeout
@@ -60,7 +66,7 @@ const String& Session::shadowRootIdentifier()
     return shadowRootID;
 }
 
-Session::Session(std::unique_ptr<SessionHost>&& host)
+Session::Session(Ref<SessionHost>&& host)
     : m_host(WTFMove(host))
     , m_scriptTimeout(defaultScriptTimeout)
     , m_pageLoadTimeout(defaultPageLoadTimeout)
@@ -70,8 +76,19 @@ Session::Session(std::unique_ptr<SessionHost>&& host)
         setTimeouts(capabilities().timeouts.value(), [](CommandResult&&) { });
 }
 
+#if ENABLE(WEBDRIVER_BIDI)
+Session::Session(Ref<SessionHost>&& host, WeakPtr<WebSocketServer>&& bidiServer)
+    : Session(WTFMove(host))
+{
+    m_bidiServer = WTFMove(bidiServer);
+}
+#endif
+
 Session::~Session()
 {
+#if ENABLE(WEBDRIVER_BIDI)
+    m_bidiServer->removeResourceForSession(id());
+#endif
 }
 
 const String& Session::id() const

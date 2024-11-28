@@ -29,7 +29,8 @@
     EnabledBySetting=WebGPUEnabled,
     ActiveDOMObject,
     Exposed=(Window,DedicatedWorker),
-    SecureContext
+    SecureContext,
+    JSGenerateToJSObject
 ]
 interface GPUDevice : EventTarget {
     [SameObject] readonly attribute GPUSupportedFeatures features;

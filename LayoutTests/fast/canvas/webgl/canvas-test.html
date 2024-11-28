@@ -133,9 +133,8 @@ if (!gl) {
   canvas.style.width = "100px";
   canvas.style.height = "25px";
   var intervalId;
-  intervalId = window.setInterval(function() {
-    if (window.testRunner)
-      testRunner.displayAndTrackRepaints();
+  intervalId = window.setInterval(async function() {
+    await testRunner?.displayAndTrackRepaints();
     if (canvas.clientWidth == 100 &&
         canvas.clientHeight == 25) {
       window.clearInterval(intervalId);

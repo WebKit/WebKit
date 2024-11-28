@@ -99,7 +99,7 @@ bool JITData::tryInitialize(VM& vm, CodeBlock* codeBlock, const JITCode& jitCode
         auto entry = jitCode.m_linkerIR.at(i);
         switch (entry.type()) {
         case LinkerIR::Type::CallLinkInfo: {
-            unsigned index = bitwise_cast<uintptr_t>(entry.pointer());
+            unsigned index = std::bit_cast<uintptr_t>(entry.pointer());
             const UnlinkedCallLinkInfo& unlinkedCallLinkInfo = jitCode.m_unlinkedCallLinkInfos[index];
             OptimizingCallLinkInfo& callLinkInfo = m_callLinkInfos[index];
             callLinkInfo.initializeFromDFGUnlinkedCallLinkInfo(vm, unlinkedCallLinkInfo, codeBlock);
@@ -263,21 +263,21 @@ RegisterSetBuilder JITCode::liveRegistersToPreserveAtExceptionHandlingCallSite(C
 bool JITCode::checkIfOptimizationThresholdReached(CodeBlock* codeBlock)
 {
     ASSERT(codeBlock->jitType() == JITType::DFGJIT);
-    return tierUpCounter.checkIfThresholdCrossedAndSet(codeBlock);
+    return codeBlock->dfgJITData()->tierUpCounter().checkIfThresholdCrossedAndSet(codeBlock);
 }
 
 void JITCode::optimizeNextInvocation(CodeBlock* codeBlock)
 {
     ASSERT(codeBlock->jitType() == JITType::DFGJIT);
     dataLogLnIf(Options::verboseOSR(), *codeBlock, ": FTL-optimizing next invocation.");
-    tierUpCounter.setNewThreshold(0, codeBlock);
+    codeBlock->dfgJITData()->tierUpCounter().setNewThreshold(0, codeBlock);
 }
 
 void JITCode::dontOptimizeAnytimeSoon(CodeBlock* codeBlock)
 {
     ASSERT(codeBlock->jitType() == JITType::DFGJIT);
     dataLogLnIf(Options::verboseOSR(), *codeBlock, ": Not FTL-optimizing anytime soon.");
-    tierUpCounter.deferIndefinitely();
+    codeBlock->dfgJITData()->tierUpCounter().deferIndefinitely();
 }
 
 void JITCode::optimizeAfterWarmUp(CodeBlock* codeBlock)
@@ -285,9 +285,7 @@ void JITCode::optimizeAfterWarmUp(CodeBlock* codeBlock)
     ASSERT(codeBlock->jitType() == JITType::DFGJIT);
     dataLogLnIf(Options::verboseOSR(), *codeBlock, ": FTL-optimizing after warm-up.");
     CodeBlock* baseline = codeBlock->baselineVersion();
-    tierUpCounter.setNewThreshold(
-        baseline->adjustedCounterValue(Options::thresholdForFTLOptimizeAfterWarmUp()),
-        baseline);
+    codeBlock->dfgJITData()->tierUpCounter().setNewThreshold(baseline->adjustedCounterValue(Options::thresholdForFTLOptimizeAfterWarmUp()), baseline);
 }
 
 void JITCode::optimizeSoon(CodeBlock* codeBlock)
@@ -295,16 +293,14 @@ void JITCode::optimizeSoon(CodeBlock* codeBlock)
     ASSERT(codeBlock->jitType() == JITType::DFGJIT);
     dataLogLnIf(Options::verboseOSR(), *codeBlock, ": FTL-optimizing soon.");
     CodeBlock* baseline = codeBlock->baselineVersion();
-    tierUpCounter.setNewThreshold(
-        baseline->adjustedCounterValue(Options::thresholdForFTLOptimizeSoon()),
-        codeBlock);
+    codeBlock->dfgJITData()->tierUpCounter().setNewThreshold(baseline->adjustedCounterValue(Options::thresholdForFTLOptimizeSoon()), codeBlock);
 }
 
 void JITCode::forceOptimizationSlowPathConcurrently(CodeBlock* codeBlock)
 {
     ASSERT(codeBlock->jitType() == JITType::DFGJIT);
     dataLogLnIf(Options::verboseOSR(), *codeBlock, ": Forcing slow path concurrently for FTL entry.");
-    tierUpCounter.forceSlowPathConcurrently();
+    codeBlock->dfgJITData()->tierUpCounter().forceSlowPathConcurrently();
 }
 
 void JITCode::setOptimizationThresholdBasedOnCompilationResult(

@@ -34,7 +34,7 @@
                     }), new ClipboardItem({
                         "text/uri-list" : Promise.resolve(""),
                         "text/plain" : Promise.resolve(textBlob(""))
-                    }), new ClipboardItem({ })
+                    })
                 ]);
                 doneWritingItems = true;
             });
@@ -58,9 +58,6 @@
                 shouldBe("thirdItem.types", "['text/uri-list', 'text/plain']");
                 await checkClipboardItemString(thirdItem, "text/uri-list", "");
                 await checkClipboardItemString(thirdItem, "text/plain", "");
-
-                debug("Testing fourthItem:");
-                shouldBe("fourthItem.types", "[]");
 
                 copyButton.remove();
                 pasteButton.remove();

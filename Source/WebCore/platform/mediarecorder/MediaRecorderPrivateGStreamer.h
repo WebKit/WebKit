@@ -55,7 +55,7 @@ public:
     void stopRecording(CompletionHandler<void()>&&);
     void pauseRecording(CompletionHandler<void()>&&);
     void resumeRecording(CompletionHandler<void()>&&);
-    const String& mimeType() const;
+    const String& mimeType() const { return m_mimeType; }
 
     void setSelectTracksCallback(SelectTracksCallback&& callback) { m_selectTracksCallback = WTFMove(callback); }
 
@@ -64,12 +64,13 @@ private:
 
     void setSource(GstElement*);
     void setSink(GstElement*);
+    void configureAudioEncoder(GstElement*);
     void configureVideoEncoder(GstElement*);
 
     GRefPtr<GstEncodingContainerProfile> containerProfile();
     MediaStreamPrivate& stream() const { return m_stream; }
     void processSample(GRefPtr<GstSample>&&);
-    void notifyPosition(GstClockTime position) { m_position = GST_TIME_AS_SECONDS(position); }
+    void notifyPosition(GstClockTime);
     void notifyEOS();
 
     GRefPtr<GstEncodingProfile> m_audioEncodingProfile;
@@ -83,13 +84,15 @@ private:
     Condition m_eosCondition;
     Lock m_eosLock;
     bool m_eos WTF_GUARDED_BY_LOCK(m_eosLock);
-    double m_position { 0 };
 
     Lock m_dataLock;
     SharedBufferBuilder m_data WTF_GUARDED_BY_LOCK(m_dataLock);
+    MediaTime m_position WTF_GUARDED_BY_LOCK(m_dataLock) { MediaTime::invalidTime() };
+    double m_timeCode WTF_GUARDED_BY_LOCK(m_dataLock) { 0 };
 
     MediaStreamPrivate& m_stream;
     const MediaRecorderPrivateOptions& m_options;
+    String m_mimeType;
     std::optional<SelectTracksCallback> m_selectTracksCallback;
 };
 
@@ -112,7 +115,7 @@ private:
     void stopRecording(CompletionHandler<void()>&&) final;
     void pauseRecording(CompletionHandler<void()>&&) final;
     void resumeRecording(CompletionHandler<void()>&&) final;
-    const String& mimeType() const final;
+    String mimeType() const final;
 
     Ref<MediaRecorderPrivateBackend> m_recorder;
 };

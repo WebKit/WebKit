@@ -58,6 +58,7 @@ class TimeControl extends LayoutItem
         this._duration = 0;
         this._currentTime = 0;
         this._loading = false;
+        this._supportsSeeking = true;
 
         if (this._shouldShowDurationTimeLabel) {
             this.durationTimeLabel.element.addEventListener("click", this);
@@ -96,7 +97,22 @@ class TimeControl extends LayoutItem
             return;
 
         this._loading = flag;
-        this.scrubber.disabled = flag;
+        this.scrubber.disabled = this._loading || !this._supportsSeeking;
+        this.needsLayout = true;
+    }
+
+    get supportsSeeking()
+    {
+        return this._supportsSeeking;
+    }
+    
+    set supportsSeeking(flag)
+    {
+        if (this._supportsSeeking === flag)
+            return;
+
+        this._supportsSeeking = flag;
+        this.scrubber.disabled = this._loading || !this._supportsSeeking;
         this.needsLayout = true;
     }
 

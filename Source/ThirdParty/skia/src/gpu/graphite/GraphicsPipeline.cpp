@@ -6,29 +6,41 @@
  */
 
 #include "src/gpu/graphite/GraphicsPipeline.h"
+
+#include "src/gpu/graphite/ContextUtils.h"
+#include "src/gpu/graphite/Renderer.h"
+#include "src/gpu/graphite/ShaderInfo.h"
 #include "src/utils/SkShaderUtils.h"
 
 namespace skgpu::graphite {
 
-GraphicsPipeline::GraphicsPipeline(const SharedContext* sharedContext, PipelineInfo* pipelineInfo)
+GraphicsPipeline::GraphicsPipeline(const SharedContext* sharedContext,
+                                   const PipelineInfo& pipelineInfo)
         : Resource(sharedContext,
                    Ownership::kOwned,
                    skgpu::Budgeted::kYes,
-                   /*gpuMemorySize=*/0) {
-#if defined(GRAPHITE_TEST_UTILS)
-    if (pipelineInfo) {
-        fPipelineInfo.fRenderStepID = pipelineInfo->fRenderStepID;
-        fPipelineInfo.fPaintID = pipelineInfo->fPaintID;
-        fPipelineInfo.fSkSLVertexShader =
-                SkShaderUtils::PrettyPrint(pipelineInfo->fSkSLVertexShader);
-        fPipelineInfo.fSkSLFragmentShader =
-                SkShaderUtils::PrettyPrint(pipelineInfo->fSkSLFragmentShader);
-        fPipelineInfo.fNativeVertexShader = std::move(pipelineInfo->fNativeVertexShader);
-        fPipelineInfo.fNativeFragmentShader = std::move(pipelineInfo->fNativeFragmentShader);
-    }
-#endif
-}
+                   /*gpuMemorySize=*/0)
+        , fPipelineInfo(pipelineInfo) {}
 
 GraphicsPipeline::~GraphicsPipeline() = default;
+
+GraphicsPipeline::PipelineInfo::PipelineInfo(
+            const ShaderInfo& shaderInfo,
+            SkEnumBitMask<PipelineCreationFlags> pipelineCreationFlags)
+        : fDstReadReq(shaderInfo.dstReadRequirement())
+        , fNumFragTexturesAndSamplers(shaderInfo.numFragmentTexturesAndSamplers())
+        , fHasPaintUniforms(shaderInfo.hasPaintUniforms())
+        , fHasStepUniforms(shaderInfo.hasStepUniforms())
+        , fHasGradientBuffer(shaderInfo.hasGradientBuffer()) {
+#if defined(GPU_TEST_UTILS)
+    fSkSLVertexShader = SkShaderUtils::PrettyPrint(shaderInfo.vertexSkSL());
+    fSkSLFragmentShader = SkShaderUtils::PrettyPrint(shaderInfo.fragmentSkSL());
+    fLabel = shaderInfo.fsLabel();
+#endif
+#if SK_HISTOGRAMS_ENABLED
+    fFromPrecompile =
+            SkToBool(pipelineCreationFlags & PipelineCreationFlags::kForPrecompilation);
+#endif
+}
 
 }  // namespace skgpu::graphite

@@ -37,7 +37,7 @@ template<typename Key, typename Value>
 class SmallMap {
 public:
     using Pair = KeyValuePair<Key, Value>;
-    using Map = HashMap<Key, Value>;
+    using Map = UncheckedKeyHashMap<Key, Value>;
     using Storage = std::variant<std::monostate, Pair, Map>;
 
     static_assert(sizeof(Pair) <= 4 * sizeof(uint64_t), "Don't use SmallMap with large types. It probably wastes memory.");

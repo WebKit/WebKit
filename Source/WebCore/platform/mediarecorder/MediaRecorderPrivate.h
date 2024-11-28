@@ -59,10 +59,10 @@ public:
     ~MediaRecorderPrivate();
 
     // CheckedPtr interface
-    uint32_t ptrCount() const final { return CanMakeCheckedPtr::ptrCount(); }
-    uint32_t ptrCountWithoutThreadCheck() const final { return CanMakeCheckedPtr::ptrCountWithoutThreadCheck(); }
-    void incrementPtrCount() const final { CanMakeCheckedPtr::incrementPtrCount(); }
-    void decrementPtrCount() const final { CanMakeCheckedPtr::decrementPtrCount(); }
+    uint32_t checkedPtrCount() const final { return CanMakeCheckedPtr::checkedPtrCount(); }
+    uint32_t checkedPtrCountWithoutThreadCheck() const final { return CanMakeCheckedPtr::checkedPtrCountWithoutThreadCheck(); }
+    void incrementCheckedPtrCount() const final { CanMakeCheckedPtr::incrementCheckedPtrCount(); }
+    void decrementCheckedPtrCount() const final { CanMakeCheckedPtr::decrementCheckedPtrCount(); }
 
     struct AudioVideoSelectedTracks {
         MediaStreamTrackPrivate* audioTrack { nullptr };
@@ -72,7 +72,7 @@ public:
 
     using FetchDataCallback = CompletionHandler<void(RefPtr<FragmentedSharedBuffer>&&, const String& mimeType, double)>;
     virtual void fetchData(FetchDataCallback&&) = 0;
-    virtual const String& mimeType() const = 0;
+    virtual String mimeType() const = 0;
 
     void stop(CompletionHandler<void()>&&);
     void pause(CompletionHandler<void()>&&);

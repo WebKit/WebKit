@@ -40,12 +40,33 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(NavigationHistoryEntry);
 
-NavigationHistoryEntry::NavigationHistoryEntry(ScriptExecutionContext* context, Ref<HistoryItem>&& historyItem)
-    : ContextDestructionObserver(context)
-    , m_urlString(historyItem->urlString())
-    , m_id(WTF::UUID::createVersion4())
+NavigationHistoryEntry::NavigationHistoryEntry(ScriptExecutionContext* context, const DocumentState& originalDocumentState, Ref<HistoryItem>&& historyItem, String urlString, WTF::UUID key, RefPtr<SerializedScriptValue>&& state, WTF::UUID id)
+    : ActiveDOMObject(context)
+    , m_urlString(urlString)
+    , m_key(key)
+    , m_id(id)
+    , m_state(state)
     , m_associatedHistoryItem(WTFMove(historyItem))
+    , m_originalDocumentState(originalDocumentState)
 {
+}
+
+Ref<NavigationHistoryEntry> NavigationHistoryEntry::create(ScriptExecutionContext* context, Ref<HistoryItem>&& historyItem)
+{
+    Ref entry = adoptRef(*new NavigationHistoryEntry(context, DocumentState::fromContext(context), WTFMove(historyItem), historyItem->urlString(), historyItem->uuidIdentifier()));
+    entry->suspendIfNeeded();
+    return entry;
+}
+
+Ref<NavigationHistoryEntry> NavigationHistoryEntry::create(ScriptExecutionContext* context, const NavigationHistoryEntry& other)
+{
+    Ref historyItem = other.m_associatedHistoryItem;
+    RefPtr state = historyItem->navigationAPIStateObject();
+    if (!state)
+        state = other.m_state;
+    Ref entry = adoptRef(*new NavigationHistoryEntry(context, DocumentState::fromContext(other.scriptExecutionContext()), WTFMove(historyItem), other.m_urlString, other.m_key, WTFMove(state), other.m_id));
+    entry->suspendIfNeeded();
+    return entry;
 }
 
 ScriptExecutionContext* NavigationHistoryEntry::scriptExecutionContext() const
@@ -63,6 +84,9 @@ const String& NavigationHistoryEntry::url() const
     RefPtr document = dynamicDowncast<Document>(scriptExecutionContext());
     if (!document || !document->isFullyActive())
         return nullString();
+    // https://html.spec.whatwg.org/#dom-navigationhistoryentry-url (Step 4)
+    if (document->identifier() != m_originalDocumentState.identifier && (m_originalDocumentState.referrerPolicy == ReferrerPolicy::NoReferrer || m_originalDocumentState.referrerPolicy == ReferrerPolicy::Origin))
+        return nullString();
     return m_urlString;
 }
 
@@ -71,7 +95,7 @@ String NavigationHistoryEntry::key() const
     RefPtr document = dynamicDowncast<Document>(scriptExecutionContext());
     if (!document || !document->isFullyActive())
         return nullString();
-    return m_associatedHistoryItem->uuidIdentifier().toString();
+    return m_key.toString();
 }
 
 String NavigationHistoryEntry::id() const
@@ -110,16 +134,23 @@ JSC::JSValue NavigationHistoryEntry::getState(JSDOMGlobalObject& globalObject) c
     if (!document || !document->isFullyActive())
         return JSC::jsUndefined();
 
-    auto stateObject = m_associatedHistoryItem->navigationAPIStateObject();
-    if (!stateObject)
+    if (!m_state)
         return JSC::jsUndefined();
 
-    return stateObject->deserialize(globalObject, &globalObject, SerializationErrorMode::Throwing);
+    return m_state->deserialize(globalObject, &globalObject, SerializationErrorMode::Throwing);
 }
 
 void NavigationHistoryEntry::setState(RefPtr<SerializedScriptValue>&& state)
 {
+    m_state = state;
     m_associatedHistoryItem->setNavigationAPIStateObject(WTFMove(state));
+}
+
+auto NavigationHistoryEntry::DocumentState::fromContext(ScriptExecutionContext* context) -> DocumentState
+{
+    if (!context)
+        return { };
+    return { context->identifier(), context->referrerPolicy() };
 }
 
 } // namespace WebCore

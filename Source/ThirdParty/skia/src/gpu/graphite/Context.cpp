@@ -56,7 +56,7 @@
 #include "src/image/SkSurface_Base.h"
 #include "src/sksl/SkSLGraphiteModules.h"
 
-#if defined(GRAPHITE_TEST_UTILS)
+#if defined(GPU_TEST_UTILS)
 #include "src/gpu/graphite/ContextOptionsPriv.h"
 #endif
 
@@ -90,9 +90,10 @@ Context::Context(sk_sp<SharedContext> sharedContext,
     // SingleOwner object and it is declared last
     fResourceProvider = fSharedContext->makeResourceProvider(&fSingleOwner,
                                                              SK_InvalidGenID,
-                                                             options.fGpuBudgetInBytes);
+                                                             options.fGpuBudgetInBytes,
+                                                             /* avoidBufferAlloc= */ false);
     fMappedBufferManager = std::make_unique<ClientMappedBufferManager>(this->contextID());
-#if defined(GRAPHITE_TEST_UTILS)
+#if defined(GPU_TEST_UTILS)
     if (options.fOptionsPriv) {
         fStoreContextRefInRecorder = options.fOptionsPriv->fStoreContextRefInRecorder;
     }
@@ -100,7 +101,7 @@ Context::Context(sk_sp<SharedContext> sharedContext,
 }
 
 Context::~Context() {
-#if defined(GRAPHITE_TEST_UTILS)
+#if defined(GPU_TEST_UTILS)
     ASSERT_SINGLE_OWNER
     for (auto& recorder : fTrackedRecorders) {
         recorder->priv().setContext(nullptr);
@@ -137,7 +138,7 @@ std::unique_ptr<Recorder> Context::makeRecorder(const RecorderOptions& options) 
 
     // This is a client-owned Recorder so pass a null context so it creates its own ResourceProvider
     auto recorder = std::unique_ptr<Recorder>(new Recorder(fSharedContext, options, nullptr));
-#if defined(GRAPHITE_TEST_UTILS)
+#if defined(GPU_TEST_UTILS)
     if (fStoreContextRefInRecorder) {
         recorder->priv().setContext(this);
     }
@@ -685,8 +686,10 @@ Context::PixelTransferResult Context::transferPixels(Recorder* recorder,
                                                                             /*bufferOffset=*/0,
                                                                             rowBytes);
     const bool addTasksDirectly = !SkToBool(recorder);
-
-    if (!copyTask || (addTasksDirectly && !fQueueManager->addTask(copyTask.get(), this))) {
+    Protected contextIsProtected = fSharedContext->isProtected();
+    if (!copyTask || (addTasksDirectly && !fQueueManager->addTask(copyTask.get(),
+                                                                  this,
+                                                                  contextIsProtected))) {
         return {};
     } else if (!addTasksDirectly) {
         // Add the task to the Recorder instead of the QueueManager if that's been required for
@@ -694,7 +697,9 @@ Context::PixelTransferResult Context::transferPixels(Recorder* recorder,
         recorder->priv().add(std::move(copyTask));
     }
     sk_sp<SynchronizeToCpuTask> syncTask = SynchronizeToCpuTask::Make(buffer);
-    if (!syncTask || (addTasksDirectly && !fQueueManager->addTask(syncTask.get(), this))) {
+    if (!syncTask || (addTasksDirectly && !fQueueManager->addTask(syncTask.get(),
+                                                                  this,
+                                                                  contextIsProtected))) {
         return {};
     } else if (!addTasksDirectly) {
         recorder->priv().add(std::move(syncTask));
@@ -784,6 +789,11 @@ size_t Context::currentBudgetedBytes() const {
     return fResourceProvider->getResourceCacheCurrentBudgetedBytes();
 }
 
+size_t Context::currentPurgeableBytes() const {
+    ASSERT_SINGLE_OWNER
+    return fResourceProvider->getResourceCacheCurrentPurgeableBytes();
+}
+
 size_t Context::maxBudgetedBytes() const {
     ASSERT_SINGLE_OWNER
     return fResourceProvider->getResourceCacheLimit();
@@ -810,7 +820,7 @@ bool Context::supportsProtectedContent() const {
 
 ///////////////////////////////////////////////////////////////////////////////////
 
-#if defined(GRAPHITE_TEST_UTILS)
+#if defined(GPU_TEST_UTILS)
 bool ContextPriv::readPixels(const SkPixmap& pm,
                              const TextureProxy* textureProxy,
                              const SkImageInfo& srcImageInfo,

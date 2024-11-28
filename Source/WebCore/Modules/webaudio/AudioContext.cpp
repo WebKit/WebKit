@@ -126,8 +126,8 @@ ExceptionOr<Ref<AudioContext>> AudioContext::create(Document& document, AudioCon
 
 AudioContext::AudioContext(Document& document, const AudioContextOptions& contextOptions)
     : BaseAudioContext(document)
-    , m_destinationNode(makeUniqueRef<DefaultAudioDestinationNode>(*this, contextOptions.sampleRate))
-    , m_mediaSession(PlatformMediaSession::create(PlatformMediaSessionManager::sharedManager(), *this))
+    , m_destinationNode(makeUniqueRefWithoutRefCountedCheck<DefaultAudioDestinationNode>(*this, contextOptions.sampleRate))
+    , m_mediaSession(PlatformMediaSession::create(PlatformMediaSessionManager::singleton(), *this))
     , m_currentIdentifier(MediaUniqueIdentifier::generate())
 {
     constructCommon();
@@ -495,10 +495,10 @@ void AudioContext::didReceiveRemoteControlCommand(PlatformMediaSession::RemoteCo
     }
 }
 
-MediaSessionGroupIdentifier AudioContext::mediaSessionGroupIdentifier() const
+std::optional<MediaSessionGroupIdentifier> AudioContext::mediaSessionGroupIdentifier() const
 {
     RefPtr document = downcast<Document>(scriptExecutionContext());
-    return document && document->page() ? document->page()->mediaSessionGroupIdentifier() : MediaSessionGroupIdentifier { };
+    return document && document->page() ? document->page()->mediaSessionGroupIdentifier() : std::nullopt;
 }
 
 static bool hasPlayBackAudioSession(Document* document)
@@ -558,7 +558,8 @@ std::optional<NowPlayingInfo> AudioContext::nowPlayingInfo() const
         false,
         m_currentIdentifier,
         isPlaying(),
-        !page->isVisibleAndActive()
+        !page->isVisibleAndActive(),
+        false
     };
 
     if (page->usesEphemeralSession() && !document->settings().allowPrivacySensitiveOperationsInNonPersistentDataStores())
@@ -659,7 +660,7 @@ bool AudioContext::shouldOverrideBackgroundPlaybackRestriction(PlatformMediaSess
 void AudioContext::defaultDestinationWillBecomeConnected()
 {
     // We might need to interrupt if we previously overrode a background interruption.
-    if (!PlatformMediaSessionManager::sharedManager().isApplicationInBackground() || m_mediaSession->state() == PlatformMediaSession::State::Interrupted) {
+    if (!PlatformMediaSessionManager::singleton().isApplicationInBackground() || m_mediaSession->state() == PlatformMediaSession::State::Interrupted) {
         PlatformMediaSessionManager::updateNowPlayingInfoIfNecessary();
         return;
     }

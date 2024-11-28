@@ -145,6 +145,9 @@ public:
     WEBCORE_EXPORT Parameters nativeWebpageParameters();
     static Parameters nativeWebpageParametersWithoutShrinkToFit();
     static Parameters nativeWebpageParametersWithShrinkToFit();
+#if ENABLE(PDF_PLUGIN)
+    WEBCORE_EXPORT static Parameters pluginDocumentParameters();
+#endif
     WEBCORE_EXPORT static Parameters webpageParameters();
     WEBCORE_EXPORT static Parameters textDocumentParameters();
     WEBCORE_EXPORT static Parameters imageDocumentParameters();

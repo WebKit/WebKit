@@ -25,6 +25,8 @@
 
 #pragma once
 
+#if ENABLE(WPE_PLATFORM) || PLATFORM(GTK)
+
 #include "FloatRect.h"
 #include "Region.h"
 #include <wtf/ForbidHeapAllocation.h>
@@ -123,3 +125,5 @@ static inline WTF::TextStream& operator<<(WTF::TextStream& ts, const Damage& dam
 }
 
 };
+
+#endif // ENABLE(WPE_PLATFORM) || PLATFORM(GTK)

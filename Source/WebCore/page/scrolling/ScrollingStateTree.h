@@ -53,13 +53,13 @@ public:
     WEBCORE_EXPORT ~ScrollingStateTree();
 
     WEBCORE_EXPORT RefPtr<ScrollingStateFrameScrollingNode> rootStateNode() const;
-    WEBCORE_EXPORT RefPtr<ScrollingStateNode> stateNodeForID(ScrollingNodeID) const;
+    WEBCORE_EXPORT RefPtr<ScrollingStateNode> stateNodeForID(std::optional<ScrollingNodeID>) const;
 
     ScrollingNodeID createUnparentedNode(ScrollingNodeType, ScrollingNodeID);
-    WEBCORE_EXPORT ScrollingNodeID insertNode(ScrollingNodeType, ScrollingNodeID, ScrollingNodeID parentID, size_t childIndex);
-    void unparentNode(ScrollingNodeID);
-    void unparentChildrenAndDestroyNode(ScrollingNodeID);
-    void detachAndDestroySubtree(ScrollingNodeID);
+    WEBCORE_EXPORT std::optional<ScrollingNodeID> insertNode(ScrollingNodeType, ScrollingNodeID, std::optional<ScrollingNodeID> parentID, size_t childIndex);
+    void unparentNode(std::optional<ScrollingNodeID>);
+    void unparentChildrenAndDestroyNode(std::optional<ScrollingNodeID>);
+    void detachAndDestroySubtree(std::optional<ScrollingNodeID>);
     void clear();
 
     // Copies the current tree state and clears the changed properties mask in the original.
@@ -75,13 +75,13 @@ public:
     unsigned nodeCount() const { return m_stateNodeMap.size(); }
     unsigned scrollingNodeCount() const { return m_scrollingNodeCount; }
 
-    using StateNodeMap = HashMap<ScrollingNodeID, Ref<ScrollingStateNode>>;
+    using StateNodeMap = UncheckedKeyHashMap<ScrollingNodeID, Ref<ScrollingStateNode>>;
     const StateNodeMap& nodeMap() const { return m_stateNodeMap; }
 
     LayerRepresentation::Type preferredLayerRepresentation() const { return m_preferredLayerRepresentation; }
     void setPreferredLayerRepresentation(LayerRepresentation::Type representation) { m_preferredLayerRepresentation = representation; }
 
-    void reconcileViewportConstrainedLayerPositions(ScrollingNodeID, const LayoutRect& viewportRect, ScrollingLayerPositionAction);
+    void reconcileViewportConstrainedLayerPositions(std::optional<ScrollingNodeID>, const LayoutRect& viewportRect, ScrollingLayerPositionAction);
 
     void scrollingNodeAdded()
     {
@@ -94,8 +94,8 @@ public:
     }
 
     WEBCORE_EXPORT String scrollingStateTreeAsText(OptionSet<ScrollingStateTreeAsTextBehavior>) const;
-    FrameIdentifier rootFrameIdentifier() const { return m_rootFrameIdentifier; }
-    void setRootFrameIdentifier(FrameIdentifier frameID) { m_rootFrameIdentifier = frameID; }
+    FrameIdentifier rootFrameIdentifier() const { return *m_rootFrameIdentifier; }
+    void setRootFrameIdentifier(std::optional<FrameIdentifier> frameID) { m_rootFrameIdentifier = frameID; }
 
 private:
     ScrollingStateTree(bool hasNewRootStateNode, bool hasChangedProperties, RefPtr<ScrollingStateFrameScrollingNode>&&);
@@ -114,12 +114,12 @@ private:
     void traverse(const ScrollingStateNode&, const Function<void(const ScrollingStateNode&)>&) const;
 
     ThreadSafeWeakPtr<AsyncScrollingCoordinator> m_scrollingCoordinator;
-    FrameIdentifier m_rootFrameIdentifier;
+    Markable<FrameIdentifier> m_rootFrameIdentifier;
 
     // Contains all the nodes we know about (those in the m_rootStateNode tree, and in m_unparentedNodes subtrees).
     StateNodeMap m_stateNodeMap;
     // Owns roots of unparented subtrees.
-    HashMap<ScrollingNodeID, RefPtr<ScrollingStateNode>> m_unparentedNodes;
+    UncheckedKeyHashMap<ScrollingNodeID, RefPtr<ScrollingStateNode>> m_unparentedNodes;
 
     RefPtr<ScrollingStateFrameScrollingNode> m_rootStateNode;
     unsigned m_scrollingNodeCount { 0 };

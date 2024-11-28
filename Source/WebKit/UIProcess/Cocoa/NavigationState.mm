@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -122,6 +122,8 @@ static WeakHashMap<WebPageProxy, WeakPtr<NavigationState>>& navigationStates()
 }
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(NavigationState);
+WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(NavigationState, HistoryClient);
+WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(NavigationState, NavigationClient);
 
 NavigationState::NavigationState(WKWebView *webView)
     : m_webView(webView)
@@ -148,6 +150,16 @@ NavigationState::~NavigationState()
         navigationStates().remove(*page);
         page->pageLoadState().removeObserver(*this);
     }
+}
+
+void NavigationState::ref() const
+{
+    [m_webView.get() retain];
+}
+
+void NavigationState::deref() const
+{
+    [m_webView.get() release];
 }
 
 NavigationState* NavigationState::fromWebPage(WebPageProxy& webPageProxy)
@@ -526,7 +538,7 @@ static bool isUnsupportedWebExtensionNavigation(API::NavigationAction& navigatio
         return false;
 
     auto *requiredBaseURL = page.cocoaView().get()._requiredWebExtensionBaseURL;
-    if (!requiredBaseURL)
+    if (!requiredBaseURL || navigationAction.shouldPerformDownload())
         return false;
 
     if (RefPtr extensionController = page.webExtensionController()) {
@@ -1541,7 +1553,7 @@ void NavigationState::didChangeIsLoading()
         }
         if (!m_networkActivity) {
             RELEASE_LOG(ProcessSuspension, "%p - NavigationState is taking a process network assertion because a page load started", this);
-            m_networkActivity = webView->_page->legacyMainFrameProcess().throttler().backgroundActivity("Page Load"_s).moveToUniquePtr();
+            m_networkActivity = webView->_page->legacyMainFrameProcess().throttler().backgroundActivity("Page Load"_s);
         }
     } else if (m_networkActivity) {
         // The application is visible so we delay releasing the background activity for 3 seconds to give it a chance to start another navigation
@@ -1674,7 +1686,7 @@ void NavigationState::didSwapWebProcesses()
     // Transfer our background assertion from the old process to the new one.
     auto webView = this->webView();
     if (m_networkActivity && webView)
-        m_networkActivity = webView->_page->legacyMainFrameProcess().throttler().backgroundActivity("Page Load"_s).moveToUniquePtr();
+        m_networkActivity = webView->_page->legacyMainFrameProcess().throttler().backgroundActivity("Page Load"_s);
 #endif
 }
 

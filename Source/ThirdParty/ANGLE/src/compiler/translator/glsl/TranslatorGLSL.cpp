@@ -328,6 +328,12 @@ void TranslatorGLSL::writeExtensionBehavior(TIntermNode *root,
                  << "\n";
         }
 
+        if (iter.first == TExtension::EXT_texture_shadow_lod)
+        {
+            sink << "#extension " << GetExtensionNameString(iter.first) << " : "
+                 << GetBehaviorString(iter.second) << "\n";
+        }
+
         if (iter.first == TExtension::KHR_blend_equation_advanced)
         {
             sink << "#ifdef GL_KHR_blend_equation_advanced\n"

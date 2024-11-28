@@ -253,7 +253,7 @@ private:
 
     WeakPtr<NetworkSession> m_networkSession;
     Ref<SuspendableWorkQueue> m_statisticsQueue;
-    std::unique_ptr<ResourceLoadStatisticsStore> m_statisticsStore;
+    RefPtr<ResourceLoadStatisticsStore> m_statisticsStore;
 
     RunLoop::Timer m_dailyTasksTimer;
 
@@ -268,7 +268,7 @@ private:
     bool m_firstNetworkProcessCreated { false };
 
     struct StorageAccessRequestRecordValue {
-        WebPageProxyIdentifier webPageProxyID;
+        Markable<WebPageProxyIdentifier> webPageProxyID;
         Markable<WallTime> lastRequestTime;
         WallTime lastLoadTime;
     };

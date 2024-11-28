@@ -31,7 +31,7 @@
 #include <wtf/UniqueRef.h>
 
 typedef struct __CVBuffer* CVPixelBufferRef;
-using WebRTCVideoDecoderCallback = void (^)(CVPixelBufferRef, int64_t timeStamp, int64_t timeStampNs);
+using WebRTCVideoDecoderCallback = void (^)(CVPixelBufferRef, int64_t timeStamp, int64_t timeStampNs, bool isReordered);
 
 namespace webrtc {
 using LocalDecoder = void*;

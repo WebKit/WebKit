@@ -253,6 +253,7 @@ class TType
     }
     bool isScalarFloat() const { return isScalar() && type == EbtFloat; }
     bool isScalarInt() const { return isScalar() && (type == EbtInt || type == EbtUInt); }
+    bool isSignedIntegerValue() const { return (isScalar() || isVector()) && type == EbtInt; }
 
     bool canBeConstructed() const;
 
@@ -460,15 +461,9 @@ struct TTypeSpecifierNonArray
     bool isVector() const { return primarySize > 1 && secondarySize == 1; }
 };
 
-//
-// This is a workaround for a problem with the yacc stack,  It can't have
-// types that it thinks have non-trivial constructors.  It should
-// just be used while recognizing the grammar, not anything else.  Pointers
-// could be used, but also trying to avoid lots of memory management overhead.
-//
-// Not as bad as it looks, there is no actual assumption that the fields
-// match up or are name the same or anything like that.
-//
+// Type represeting parsed type specifire on a struct or variable declaration or
+// parameter declaration.
+// Note: must be trivially constructible.
 struct TPublicType
 {
     // Must have a trivial default constructor since it is used in YYSTYPE.
@@ -476,9 +471,14 @@ struct TPublicType
 
     void initialize(const TTypeSpecifierNonArray &typeSpecifier, TQualifier q);
     void initializeBasicType(TBasicType basicType);
+    const char *getBasicString() const { return sh::getBasicString(getBasicType()); }
 
     TBasicType getBasicType() const { return typeSpecifierNonArray.type; }
     void setBasicType(TBasicType basicType) { typeSpecifierNonArray.type = basicType; }
+    void setQualifier(TQualifier value) { qualifier = value; }
+    void setPrecision(TPrecision value) { precision = value; }
+    void setMemoryQualifier(const TMemoryQualifier &value) { memoryQualifier = value; }
+    void setPrecise(bool value) { precise = value; }
 
     uint8_t getPrimarySize() const { return typeSpecifierNonArray.primarySize; }
     uint8_t getSecondarySize() const { return typeSpecifierNonArray.secondarySize; }
@@ -494,6 +494,9 @@ struct TPublicType
     bool isArray() const;
     void clearArrayness();
     bool isAggregate() const;
+    bool isUnsizedArray() const;
+    void sizeUnsizedArrays();
+    void makeArrays(TVector<unsigned int> *sizes);
 
     TTypeSpecifierNonArray typeSpecifierNonArray;
     TLayoutQualifier layoutQualifier;

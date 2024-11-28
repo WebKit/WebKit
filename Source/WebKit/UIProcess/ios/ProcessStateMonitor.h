@@ -27,6 +27,7 @@
 
 #if PLATFORM(IOS_FAMILY)
 
+#import <wtf/RefCountedAndCanMakeWeakPtr.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/RunLoop.h>
 #import <wtf/TZoneMalloc.h>
@@ -34,24 +35,21 @@
 OBJC_CLASS RBSProcessMonitor;
 
 namespace WebKit {
-class ProcessStateMonitor;
-}
 
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::ProcessStateMonitor> : std::true_type { };
-}
-
-namespace WebKit {
-
-class ProcessStateMonitor : public CanMakeWeakPtr<ProcessStateMonitor> {
+class ProcessStateMonitor : public RefCountedAndCanMakeWeakPtr<ProcessStateMonitor> {
     WTF_MAKE_TZONE_ALLOCATED(ProcessStateMonitor);
 public:
-    ProcessStateMonitor(Function<void(bool)>&& becomeSuspendedHandler);
+    static Ref<ProcessStateMonitor> create(Function<void(bool)>&& becomeSuspendedHandler)
+    {
+        return adoptRef(*new ProcessStateMonitor(WTFMove(becomeSuspendedHandler)));
+    }
+
     ~ProcessStateMonitor();
     void processWillBeSuspendedImmediately();
 
 private:
+    ProcessStateMonitor(Function<void(bool)>&& becomeSuspendedHandler);
+
     void processDidBecomeRunning();
     void processWillBeSuspended(Seconds timeout);
     void suspendTimerFired();

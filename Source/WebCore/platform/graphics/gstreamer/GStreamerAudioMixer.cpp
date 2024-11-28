@@ -92,15 +92,24 @@ GRefPtr<GstPad> GStreamerAudioMixer::registerProducer(GstElement* interaudioSink
     g_object_set(src, "channel", GST_ELEMENT_NAME(interaudioSink), nullptr);
     g_object_set(interaudioSink, "channel", GST_ELEMENT_NAME(interaudioSink), nullptr);
 
-    GstElement* audioResample = makeGStreamerElement("audioresample", nullptr);
+    auto bin = gst_bin_new(nullptr);
+    auto audioResample = makeGStreamerElement("audioresample", nullptr);
     auto audioConvert = makeGStreamerElement("audioconvert", nullptr);
-    gst_bin_add_many(GST_BIN_CAST(m_pipeline.get()), src, audioResample, audioConvert, nullptr);
-    gst_element_link_many(src, audioConvert, audioResample, nullptr);
+    gst_bin_add_many(GST_BIN_CAST(bin), audioResample, audioConvert, nullptr);
+    gst_element_link(audioConvert, audioResample);
+
+    if (auto pad = adoptGRef(gst_bin_find_unlinked_pad(GST_BIN_CAST(bin), GST_PAD_SRC)))
+        gst_element_add_pad(GST_ELEMENT_CAST(bin), gst_ghost_pad_new("src", pad.get()));
+    if (auto pad = adoptGRef(gst_bin_find_unlinked_pad(GST_BIN_CAST(bin), GST_PAD_SINK)))
+        gst_element_add_pad(GST_ELEMENT_CAST(bin), gst_ghost_pad_new("sink", pad.get()));
+
+    gst_bin_add_many(GST_BIN_CAST(m_pipeline.get()), src, bin, nullptr);
+    gst_element_link(src, bin);
 
     bool shouldStart = !m_mixer->numsinkpads;
 
     auto mixerPad = adoptGRef(gst_element_request_pad_simple(m_mixer.get(), "sink_%u"));
-    auto srcPad = adoptGRef(gst_element_get_static_pad(audioResample, "src"));
+    auto srcPad = adoptGRef(gst_element_get_static_pad(bin, "src"));
     gst_pad_link(srcPad.get(), mixerPad.get());
 
     if (shouldStart)
@@ -118,22 +127,22 @@ void GStreamerAudioMixer::unregisterProducer(const GRefPtr<GstPad>& mixerPad)
     GST_DEBUG_OBJECT(m_pipeline.get(), "Unregistering audio producer %" GST_PTR_FORMAT, mixerPad.get());
 
     auto peer = adoptGRef(gst_pad_get_peer(mixerPad.get()));
-    auto audioResample = adoptGRef(gst_pad_get_parent_element(peer.get()));
-    auto resamplePeerPad = adoptGRef(gst_element_get_static_pad(audioResample.get(), "sink"));
-    auto resamplePeer = adoptGRef(gst_pad_get_peer(resamplePeerPad.get()));
-    auto interaudioSrc = adoptGRef(gst_pad_get_parent_element(resamplePeer.get()));
+    auto bin = adoptGRef(gst_pad_get_parent_element(peer.get()));
+    auto sinkPad = adoptGRef(gst_element_get_static_pad(bin.get(), "sink"));
+    auto srcPad = adoptGRef(gst_pad_get_peer(sinkPad.get()));
+    auto interaudioSrc = adoptGRef(gst_pad_get_parent_element(srcPad.get()));
     GST_LOG_OBJECT(m_pipeline.get(), "interaudiosrc: %" GST_PTR_FORMAT, interaudioSrc.get());
 
     gst_element_set_locked_state(interaudioSrc.get(), true);
     gst_element_set_state(interaudioSrc.get(), GST_STATE_NULL);
-    gst_element_set_state(audioResample.get(), GST_STATE_NULL);
+    gst_element_set_state(bin.get(), GST_STATE_NULL);
 
     gst_pad_unlink(peer.get(), mixerPad.get());
-    gst_element_unlink(interaudioSrc.get(), audioResample.get());
+    gst_element_unlink(interaudioSrc.get(), bin.get());
 
     gst_element_release_request_pad(m_mixer.get(), mixerPad.get());
 
-    gst_bin_remove_many(GST_BIN_CAST(m_pipeline.get()), interaudioSrc.get(), audioResample.get(), nullptr);
+    gst_bin_remove_many(GST_BIN_CAST(m_pipeline.get()), interaudioSrc.get(), bin.get(), nullptr);
 
     if (!m_mixer->numsinkpads)
         gst_element_set_state(m_pipeline.get(), GST_STATE_NULL);

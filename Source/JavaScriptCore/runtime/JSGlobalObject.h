@@ -54,6 +54,8 @@ namespace Inspector {
 class JSGlobalObjectInspectorController;
 }
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 class ArrayAllocationProfile;
@@ -61,6 +63,7 @@ class ArrayConstructor;
 class ArrayIteratorPrototype;
 class ArrayPrototype;
 class AsyncFunctionPrototype;
+class AsyncFromSyncIteratorPrototype;
 class AsyncGeneratorFunctionPrototype;
 class AsyncGeneratorPrototype;
 class AsyncIteratorPrototype;
@@ -83,6 +86,7 @@ class JSGlobalObjectDebuggable;
 class JSInternalPromise;
 class JSIterator;
 class JSIteratorConstructor;
+class JSIteratorHelperPrototype;
 class JSIteratorPrototype;
 class JSModuleLoader;
 class JSModuleRecord;
@@ -101,6 +105,7 @@ class ObjectConstructor;
 class ObjectPrototype;
 class RegExpConstructor;
 class RegExpPrototype;
+class RegExpStringIteratorPrototype;
 class SetIteratorPrototype;
 class SetPrototype;
 class ShadowRealmConstructor;
@@ -291,6 +296,7 @@ public:
     WriteBarrier<ShadowRealmPrototype> m_shadowRealmPrototype;
     WriteBarrier<RegExpPrototype> m_regExpPrototype;
     WriteBarrier<JSIteratorPrototype> m_iteratorPrototype;
+    WriteBarrier<JSIteratorHelperPrototype> m_iteratorHelperPrototype;
     WriteBarrier<AsyncIteratorPrototype> m_asyncIteratorPrototype;
     WriteBarrier<GeneratorFunctionPrototype> m_generatorFunctionPrototype;
     WriteBarrier<GeneratorPrototype> m_generatorPrototype;
@@ -298,7 +304,6 @@ public:
     WriteBarrier<ArrayIteratorPrototype> m_arrayIteratorPrototype;
     WriteBarrier<MapIteratorPrototype> m_mapIteratorPrototype;
     WriteBarrier<SetIteratorPrototype> m_setIteratorPrototype;
-    WriteBarrier<WrapForValidIteratorPrototype> m_wrapForValidIteratorPrototype;
 
     LazyProperty<JSGlobalObject, Structure> m_debuggerScopeStructure;
     LazyProperty<JSGlobalObject, Structure> m_withScopeStructure;
@@ -347,18 +352,21 @@ public:
     WriteBarrierStructureID m_regExpStructure;
 
     WriteBarrierStructureID m_asyncFunctionStructure;
+    LazyProperty<JSGlobalObject, Structure> m_asyncFromSyncIteratorStructure;
     WriteBarrierStructureID m_asyncGeneratorFunctionStructure;
     WriteBarrierStructureID m_generatorFunctionStructure;
     WriteBarrierStructureID m_generatorStructure;
     WriteBarrierStructureID m_asyncGeneratorStructure;
     WriteBarrierStructureID m_iteratorStructure;
+    WriteBarrierStructureID m_iteratorHelperStructure;
     WriteBarrierStructureID m_arrayIteratorStructure;
     WriteBarrierStructureID m_mapIteratorStructure;
     WriteBarrierStructureID m_setIteratorStructure;
-    WriteBarrierStructureID m_wrapForValidIteratorStructure;
+    LazyProperty<JSGlobalObject, Structure> m_wrapForValidIteratorStructure;
     WriteBarrierStructureID m_regExpMatchesArrayStructure;
     WriteBarrierStructureID m_regExpMatchesArrayWithIndicesStructure;
     WriteBarrierStructureID m_regExpMatchesIndicesArrayStructure;
+    LazyProperty<JSGlobalObject, Structure> m_regExpStringIteratorStructure;
 
     LazyProperty<JSGlobalObject, Structure> m_customGetterFunctionStructure;
     LazyProperty<JSGlobalObject, Structure> m_customSetterFunctionStructure;
@@ -433,7 +441,7 @@ public:
 #if ENABLE(REMOTE_INSPECTOR)
     // FIXME: <http://webkit.org/b/246237> Local inspection should be controlled by `inspectable` API.
     std::unique_ptr<Inspector::JSGlobalObjectInspectorController> m_inspectorController;
-    std::unique_ptr<JSGlobalObjectDebuggable> m_inspectorDebuggable;
+    RefPtr<JSGlobalObjectDebuggable> m_inspectorDebuggable;
 #endif
 
     Ref<WatchpointSet> m_masqueradesAsUndefinedWatchpointSet;
@@ -462,6 +470,7 @@ public:
     InlineWatchpointSet m_arraySpeciesWatchpointSet { ClearWatchpoint };
     InlineWatchpointSet m_arrayJoinWatchpointSet { IsWatched };
     InlineWatchpointSet m_arrayNegativeOneWatchpointSet { IsWatched };
+    InlineWatchpointSet m_arrayIsConcatSpreadableWatchpointSet { IsWatched };
     InlineWatchpointSet m_arrayPrototypeChainIsSaneWatchpointSet { IsWatched };
     InlineWatchpointSet m_objectPrototypeChainIsSaneWatchpointSet { IsWatched };
     InlineWatchpointSet m_stringPrototypeChainIsSaneWatchpointSet { IsWatched };
@@ -498,6 +507,8 @@ public:
     std::unique_ptr<ObjectAdaptiveStructureWatchpoint> m_objectPrototypeSymbolReplaceMissWatchpoint;
     std::unique_ptr<ObjectAdaptiveStructureWatchpoint> m_arrayPrototypeNegativeOneMissWatchpoint;
     std::unique_ptr<ObjectAdaptiveStructureWatchpoint> m_objectPrototypeNegativeOneMissWatchpoint;
+    std::unique_ptr<ObjectAdaptiveStructureWatchpoint> m_arrayPrototypeIsConcatSpreadableMissWatchpoint;
+    std::unique_ptr<ObjectAdaptiveStructureWatchpoint> m_objectPrototypeIsConcatSpreadableMissWatchpoint;
     std::unique_ptr<ObjectPropertyChangeAdaptiveWatchpoint<InlineWatchpointSet>> m_regExpPrototypeExecWatchpoint;
     std::unique_ptr<ObjectPropertyChangeAdaptiveWatchpoint<InlineWatchpointSet>> m_regExpPrototypeGlobalWatchpoint;
     std::unique_ptr<ObjectPropertyChangeAdaptiveWatchpoint<InlineWatchpointSet>> m_regExpPrototypeUnicodeWatchpoint;
@@ -543,6 +554,7 @@ public:
     InlineWatchpointSet& stringPrototypeChainIsSaneWatchpointSet() { return m_stringPrototypeChainIsSaneWatchpointSet; }
     InlineWatchpointSet& arrayJoinWatchpointSet() { return m_arrayJoinWatchpointSet; }
     InlineWatchpointSet& arrayNegativeOneWatchpointSet() { return m_arrayNegativeOneWatchpointSet; }
+    InlineWatchpointSet& arrayIsConcatSpreadableWatchpointSet() { return m_arrayIsConcatSpreadableWatchpointSet; }
     InlineWatchpointSet& numberToStringWatchpointSet()
     {
         RELEASE_ASSERT(Options::useJIT());
@@ -567,7 +579,7 @@ public:
     bool isArgumentsPrototypeIteratorProtocolFastAndNonObservable();
 
 #if ENABLE(DFG_JIT)
-    using ReferencedGlobalPropertyWatchpointSets = HashMap<RefPtr<UniquedStringImpl>, Ref<WatchpointSet>, IdentifierRepHash>;
+    using ReferencedGlobalPropertyWatchpointSets = UncheckedKeyHashMap<RefPtr<UniquedStringImpl>, Ref<WatchpointSet>, IdentifierRepHash>;
     ReferencedGlobalPropertyWatchpointSets m_referencedGlobalPropertyWatchpointSets;
     ConcurrentJSLock m_referencedGlobalPropertyWatchpointSetsLock;
 #endif
@@ -753,6 +765,7 @@ public:
     RegExpPrototype* regExpPrototype() const { return m_regExpPrototype.get(); }
     JSObject* errorPrototype() const { return m_errorStructure.prototype(this); }
     JSIteratorPrototype* iteratorPrototype() const { return m_iteratorPrototype.get(); }
+    JSIteratorHelperPrototype* iteratorHelperPrototype() const { return m_iteratorHelperPrototype.get(); }
     AsyncIteratorPrototype* asyncIteratorPrototype() const { return m_asyncIteratorPrototype.get(); }
     GeneratorFunctionPrototype* generatorFunctionPrototype() const { return m_generatorFunctionPrototype.get(); }
     GeneratorPrototype* generatorPrototype() const { return m_generatorPrototype.get(); }
@@ -760,7 +773,6 @@ public:
     ArrayIteratorPrototype* arrayIteratorPrototype() const { return m_arrayIteratorPrototype.get(); }
     MapIteratorPrototype* mapIteratorPrototype() const { return m_mapIteratorPrototype.get(); }
     SetIteratorPrototype* setIteratorPrototype() const { return m_setIteratorPrototype.get(); }
-    WrapForValidIteratorPrototype* wrapForValidIteratorPrototype() const { return m_wrapForValidIteratorPrototype.get(); }
     JSObject* mapPrototype() const { return m_mapStructure.prototype(this); }
     // Workaround for the name conflict between JSCell::setPrototype.
     JSObject* jsSetPrototype() const { return m_setStructure.prototype(this); }
@@ -844,15 +856,17 @@ public:
     Structure* regExpStructure() const { return m_regExpStructure.get(); }
     Structure* shadowRealmStructure() const { return m_shadowRealmObjectStructure.get(); }
     Structure* generatorStructure() const { return m_generatorStructure.get(); }
+    Structure* asyncFromSyncIteratorStructure() const { return m_asyncFromSyncIteratorStructure.get(this); }
     Structure* asyncGeneratorStructure() const { return m_asyncGeneratorStructure.get(); }
     Structure* generatorFunctionStructure() const { return m_generatorFunctionStructure.get(); }
     Structure* asyncFunctionStructure() const { return m_asyncFunctionStructure.get(); }
     Structure* asyncGeneratorFunctionStructure() const { return m_asyncGeneratorFunctionStructure.get(); }
     Structure* iteratorStructure() const { return m_iteratorStructure.get(); }
+    Structure* iteratorHelperStructure() const { return m_iteratorHelperStructure.get(); }
     Structure* arrayIteratorStructure() const { return m_arrayIteratorStructure.get(); }    
     Structure* mapIteratorStructure() const { return m_mapIteratorStructure.get(); }
     Structure* setIteratorStructure() const { return m_setIteratorStructure.get(); }
-    Structure* wrapForValidIteratorStructure() const { return m_wrapForValidIteratorStructure.get(); }
+    Structure* wrapForValidIteratorStructure() const { return m_wrapForValidIteratorStructure.get(this); }
     Structure* stringObjectStructure() const { return m_stringObjectStructure.get(); }
     Structure* symbolObjectStructure() const { return m_symbolObjectStructure.get(); }
     Structure* iteratorResultObjectStructure() const { return m_iteratorResultObjectStructure.get(this); }
@@ -861,6 +875,7 @@ public:
     Structure* regExpMatchesArrayStructure() const { return m_regExpMatchesArrayStructure.get(); }
     Structure* regExpMatchesArrayWithIndicesStructure() const { return m_regExpMatchesArrayWithIndicesStructure.get(); }
     Structure* regExpMatchesIndicesArrayStructure() const { return m_regExpMatchesIndicesArrayStructure.get(); }
+    Structure* regExpStringIteratorStructure() const { return m_regExpStringIteratorStructure.get(this); }
     Structure* remoteFunctionStructure() const { return m_remoteFunctionStructure.get(this); }
     Structure* moduleRecordStructure() const { return m_moduleRecordStructure.get(this); }
     Structure* syntheticModuleRecordStructure() const { return m_syntheticModuleRecordStructure.get(this); }
@@ -932,7 +947,7 @@ public:
 #if ENABLE(REMOTE_INSPECTOR)
     // FIXME: <http://webkit.org/b/246237> Local inspection should be controlled by `inspectable` API.
     Inspector::JSGlobalObjectInspectorController& inspectorController() const { return *m_inspectorController.get(); }
-    JSGlobalObjectDebuggable& inspectorDebuggable() { return *m_inspectorDebuggable.get(); }
+    JSGlobalObjectDebuggable& inspectorDebuggable() { return *m_inspectorDebuggable; }
 #endif
 
     void bumpGlobalLexicalBindingEpoch(VM&);
@@ -1186,3 +1201,5 @@ inline JSObject* JSGlobalObject::globalThis() const
 }
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

@@ -80,9 +80,9 @@ public:
     virtual Type type() const = 0;
 
 #if !RELEASE_LOG_DISABLED
-    virtual void setLogger(const Logger&, const void*);
+    virtual void setLogger(const Logger&, uint64_t);
     const Logger& logger() const final { ASSERT(m_logger); return *m_logger.get(); }
-    const void* logIdentifier() const final { return m_logIdentifier; }
+    uint64_t logIdentifier() const final { return m_logIdentifier; }
     WTFLogChannel& logChannel() const final;
 #endif
 
@@ -111,12 +111,12 @@ protected:
     bool hasClients() const;
     bool hasOneClient() const;
     mutable Lock m_lock;
-    using ClientRecord = std::tuple<RefPtr<SharedDispatcher>, WeakPtr<TrackPrivateBaseClient>, bool>;
+    using ClientRecord = std::tuple<RefPtr<SharedDispatcher>, WeakPtr<TrackPrivateBaseClient>, bool /* is main thread */>;
     Vector<ClientRecord> m_clients WTF_GUARDED_BY_LOCK(m_lock);
 
 #if !RELEASE_LOG_DISABLED
     RefPtr<const Logger> m_logger;
-    const void* m_logIdentifier;
+    uint64_t m_logIdentifier { 0 };
 #endif
 };
 

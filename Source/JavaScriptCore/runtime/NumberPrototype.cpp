@@ -40,6 +40,8 @@ using DoubleToStringConverter = WTF::double_conversion::DoubleToStringConverter;
 // To avoid conflict with WTF::StringBuilder.
 typedef WTF::double_conversion::StringBuilder DoubleConversionStringBuilder;
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 static JSC_DECLARE_HOST_FUNCTION(numberProtoFuncToLocaleString);
@@ -407,7 +409,7 @@ JSC_DEFINE_HOST_FUNCTION(numberProtoFuncToExponential, (JSGlobalObject* globalOb
 
     // Round if the argument is not undefined, always format as exponential.
     NumberToStringBuffer buffer;
-    DoubleConversionStringBuilder builder { &buffer[0], sizeof(buffer) };
+    DoubleConversionStringBuilder builder { std::span<char> { buffer } };
     builder.Reset();
     if (arg.isUndefined())
         WTF::dragonbox::ToExponential(x, &builder);
@@ -415,7 +417,7 @@ JSC_DEFINE_HOST_FUNCTION(numberProtoFuncToExponential, (JSGlobalObject* globalOb
         const DoubleToStringConverter& converter = DoubleToStringConverter::EcmaScriptConverter();
         converter.ToExponential(x, decimalPlaces, &builder);
     }
-    return JSValue::encode(jsString(vm, String::fromLatin1(builder.Finalize())));
+    return JSValue::encode(jsString(vm, String { builder.Finalize() }));
 }
 
 // toFixed converts a number to a string, always formatting as an a decimal fraction.
@@ -673,3 +675,5 @@ int32_t extractToStringRadixArgument(JSGlobalObject* globalObject, JSValue radix
 }
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

@@ -30,6 +30,8 @@
 
 namespace WebCore {
 
+class CSSParserTokenRange;
+class CSSValue;
 class Document;
 class FilterOperations;
 class RenderStyle;

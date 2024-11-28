@@ -89,8 +89,8 @@
 	path = third_party/ijar
 	url = https://chromium.googlesource.com/chromium/src/third_party/ijar
 	gclient-condition = checkout_android and not build_with_chromium
-[submodule "third_party/libdrm"]
-	path = third_party/libdrm
+[submodule "third_party/libdrm/src"]
+	path = third_party/libdrm/src
 	url = https://chromium.googlesource.com/chromiumos/third_party/libdrm
 	gclient-condition = checkout_angle_mesa or not build_with_chromium
 [submodule "third_party/libjpeg_turbo"]
@@ -120,6 +120,10 @@
 [submodule "third_party/libc++abi/src"]
 	path = third_party/libc++abi/src
 	url = https://chromium.googlesource.com/external/github.com/llvm/llvm-project/libcxxabi
+	gclient-condition = not build_with_chromium
+[submodule "third_party/llvm-libc/src"]
+	path = third_party/llvm-libc/src
+	url = https://chromium.googlesource.com/external/github.com/llvm/llvm-project/libc
 	gclient-condition = not build_with_chromium
 [submodule "third_party/libunwind/src"]
 	path = third_party/libunwind/src

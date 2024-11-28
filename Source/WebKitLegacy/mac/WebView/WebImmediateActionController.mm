@@ -52,13 +52,14 @@
 #import <WebCore/Range.h>
 #import <WebCore/RenderElement.h>
 #import <WebCore/RenderObject.h>
-#import <WebCore/RuntimeApplicationChecks.h>
 #import <WebCore/TextIndicator.h>
 #import <WebCore/TextIterator.h>
 #import <objc/objc-class.h>
 #import <objc/objc.h>
 #import <pal/spi/mac/LookupSPI.h>
 #import <pal/spi/mac/NSMenuSPI.h>
+#import <wtf/RuntimeApplicationChecks.h>
+
 #import <pal/mac/DataDetectorsSoftLink.h>
 #import <pal/mac/QuickLookUISoftLink.h>
 

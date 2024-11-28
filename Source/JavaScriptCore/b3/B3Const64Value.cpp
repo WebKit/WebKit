@@ -189,7 +189,7 @@ Value* Const64Value::rotLConstant(Procedure& proc, const Value* other) const
 
 Value* Const64Value::bitwiseCastConstant(Procedure& proc) const
 {
-    return proc.add<ConstDoubleValue>(origin(), bitwise_cast<double>(m_value));
+    return proc.add<ConstDoubleValue>(origin(), std::bit_cast<double>(m_value));
 }
 
 Value* Const64Value::iToDConstant(Procedure& proc) const

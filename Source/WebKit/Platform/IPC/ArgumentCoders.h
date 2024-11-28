@@ -39,6 +39,7 @@
 #include <wtf/MonotonicTime.h>
 #include <wtf/OptionSet.h>
 #include <wtf/SHA1.h>
+#include <wtf/StdLibExtras.h>
 #include <wtf/Unexpected.h>
 #include <wtf/WallTime.h>
 
@@ -92,7 +93,7 @@ template<typename T, size_t Extent> struct ArgumentCoder<std::span<T, Extent>> {
         if constexpr (Extent == std::dynamic_extent)
             return data;
         else
-            return std::span<T, Extent> { data.data(), Extent };
+            return data.template subspan<0, Extent>();
     }
 };
 
@@ -112,7 +113,7 @@ struct ArgumentCoder<ArrayReferenceTuple<Types...>> {
         if (UNLIKELY(!size))
             return;
 
-        (..., encoder.encodeSpan(std::span(arrayReference.template data<Indices>(), size)));
+        (..., encoder.encodeSpan(arrayReference.template span<Indices>()));
     }
 
     template<typename Decoder>
@@ -515,6 +516,49 @@ template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t min
 
 template<typename KeyArg, typename MappedArg, typename HashArg, typename KeyTraitsArg, typename MappedTraitsArg, typename HashTableTraits> struct ArgumentCoder<HashMap<KeyArg, MappedArg, HashArg, KeyTraitsArg, MappedTraitsArg, HashTableTraits>> {
     typedef HashMap<KeyArg, MappedArg, HashArg, KeyTraitsArg, MappedTraitsArg, HashTableTraits> HashMapType;
+
+    template<typename Encoder, typename T>
+    static void encode(Encoder& encoder, T&& hashMap)
+    {
+        static_assert(std::is_same_v<std::remove_cvref_t<T>, HashMapType>);
+
+        encoder << static_cast<unsigned>(hashMap.size());
+        for (auto&& entry : hashMap)
+            encoder << WTF::forward_like<T>(entry);
+    }
+
+    template<typename Decoder>
+    static std::optional<HashMapType> decode(Decoder& decoder)
+    {
+        auto hashMapSize = decoder.template decode<unsigned>();
+        if (!hashMapSize)
+            return std::nullopt;
+
+        HashMapType hashMap;
+        for (unsigned i = 0; i < *hashMapSize; ++i) {
+            auto key = decoder.template decode<KeyArg>();
+            if (UNLIKELY(!key))
+                return std::nullopt;
+
+            auto value = decoder.template decode<MappedArg>();
+            if (UNLIKELY(!value))
+                return std::nullopt;
+
+            if (UNLIKELY(!HashMapType::isValidKey(*key)))
+                return std::nullopt;
+
+            if (UNLIKELY(!hashMap.add(WTFMove(*key), WTFMove(*value)).isNewEntry)) {
+                // The hash map already has the specified key, bail.
+                return std::nullopt;
+            }
+        }
+
+        return hashMap;
+    }
+};
+
+template<typename KeyArg, typename MappedArg, typename HashArg, typename KeyTraitsArg, typename MappedTraitsArg, typename HashTableTraits> struct ArgumentCoder<UncheckedKeyHashMap<KeyArg, MappedArg, HashArg, KeyTraitsArg, MappedTraitsArg, HashTableTraits>> {
+    typedef UncheckedKeyHashMap<KeyArg, MappedArg, HashArg, KeyTraitsArg, MappedTraitsArg, HashTableTraits> HashMapType;
 
     template<typename Encoder, typename T>
     static void encode(Encoder& encoder, T&& hashMap)

@@ -31,6 +31,9 @@ int main(int argc, char* argv[])
 #if defined(WEBKIT_INJECTED_BUNDLE_PATH)
     setenv("WEBKIT_INJECTED_BUNDLE_PATH", WEBKIT_INJECTED_BUNDLE_PATH, 0);
 #endif
+#if defined(WEBKIT_INSPECTOR_RESOURCES_PATH)
+    setenv("WEBKIT_INSPECTOR_RESOURCES_PATH", WEBKIT_INSPECTOR_RESOURCES_PATH, 0);
+#endif
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 
     QGuiApplication app(argc, argv);

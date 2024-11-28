@@ -34,12 +34,17 @@
 #import <CoreAudio/AudioHardware.h>
 #import <wtf/LoggerHelper.h>
 #import <wtf/MainThread.h>
+#import <wtf/TZoneMallocInlines.h>
 #import <wtf/UniqueArray.h>
 #import <wtf/text/WTFString.h>
 
 #import <pal/cocoa/AVFoundationSoftLink.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(AudioSessionMac);
 
 static AudioDeviceID defaultDeviceWithoutCaching()
 {
@@ -78,6 +83,11 @@ static float defaultDeviceTransportIsBluetooth()
     return transportType == kAudioDeviceTransportTypeBluetooth || transportType == kAudioDeviceTransportTypeBluetoothLE;
 }
 #endif
+
+Ref<AudioSessionMac> AudioSessionMac::create()
+{
+    return adoptRef(*new AudioSessionMac);
+}
 
 void AudioSessionMac::removePropertyListenersForDefaultDevice() const
 {
@@ -546,16 +556,18 @@ WTFLogChannel& AudioSessionMac::logChannel() const
     return LogMedia;
 }
 
-const void* AudioSessionMac::logIdentifier() const
+uint64_t AudioSessionMac::logIdentifier() const
 {
 #if ENABLE(ROUTING_ARBITRATION)
     if (m_routingArbitrationClient)
         return m_routingArbitrationClient->logIdentifier();
 #endif
 
-    return nullptr;
+    return 0;
 }
 
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // USE(AUDIO_SESSION) && PLATFORM(MAC)

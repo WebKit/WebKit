@@ -134,7 +134,7 @@ constexpr auto videoPlayTestHTML ="<script>"
 
 static Vector<uint8_t> testVideoBytes()
 {
-    return makeVector([NSData dataWithContentsOfURL:[[NSBundle mainBundle] URLForResource:@"test" withExtension:@"mp4" subdirectory:@"TestWebKitAPI.resources"]]);
+    return makeVector([NSData dataWithContentsOfURL:[NSBundle.test_resourcesBundle URLForResource:@"test" withExtension:@"mp4"]]);
 }
 
 static void runVideoTest(NSURLRequest *request, const char* expectedMessage)
@@ -203,7 +203,7 @@ TEST(MediaLoading, LockdownModeHLS)
     "<body onload='createVideoElement()'></body>"_s;
 
     auto testTransportStreamBytes = [&] () -> Vector<uint8_t> {
-        return makeVector([NSData dataWithContentsOfURL:[[NSBundle mainBundle] URLForResource:@"start-offset" withExtension:@"ts" subdirectory:@"TestWebKitAPI.resources"]]);
+        return makeVector([NSData dataWithContentsOfURL:[NSBundle.test_resourcesBundle URLForResource:@"start-offset" withExtension:@"ts"]]);
     };
 
     HTTPServer server({

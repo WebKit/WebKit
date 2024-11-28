@@ -11,6 +11,8 @@ includes: [propertyHelper.js]
 features: [Symbol.toPrimitive]
 ---*/
 
-verifyNotEnumerable(Symbol.prototype, Symbol.toPrimitive);
-verifyNotWritable(Symbol.prototype, Symbol.toPrimitive);
-verifyConfigurable(Symbol.prototype, Symbol.toPrimitive);
+verifyProperty(Symbol.prototype, Symbol.toPrimitive, {
+  writable: false,
+  enumerable: false,
+  configurable: true,
+});

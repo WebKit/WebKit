@@ -35,6 +35,11 @@ namespace WebKit {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(FileSystemStorageManager);
 
+Ref<FileSystemStorageManager> FileSystemStorageManager::create(String&& path, FileSystemStorageHandleRegistry& registry, QuotaCheckFunction&& quotaCheckFunction)
+{
+    return adoptRef(*new FileSystemStorageManager(WTFMove(path), registry, WTFMove(quotaCheckFunction)));
+}
+
 FileSystemStorageManager::FileSystemStorageManager(String&& path, FileSystemStorageHandleRegistry& registry, QuotaCheckFunction&& quotaCheckFunction)
     : m_path(WTFMove(path))
     , m_registry(registry)
@@ -93,14 +98,15 @@ Expected<WebCore::FileSystemHandleIdentifier, FileSystemStorageError> FileSystem
         }
     }
 
-    auto newHandle = FileSystemStorageHandle::create(*this, type, WTFMove(path), WTFMove(name));
+    RefPtr newHandle = FileSystemStorageHandle::create(*this, type, WTFMove(path), WTFMove(name));
     if (!newHandle)
         return makeUnexpected(FileSystemStorageError::Unknown);
     auto newHandleIdentifier = newHandle->identifier();
     m_handlesByConnection.ensure(connection, [&] {
         return HashSet<WebCore::FileSystemHandleIdentifier> { };
     }).iterator->value.add(newHandleIdentifier);
-    m_registry->registerHandle(newHandleIdentifier, *newHandle);
+    if (RefPtr registry = m_registry.get())
+        registry->registerHandle(newHandleIdentifier, *newHandle);
     m_handles.add(newHandleIdentifier, WTFMove(newHandle));
     return newHandleIdentifier;
 }
@@ -126,7 +132,8 @@ void FileSystemStorageManager::closeHandle(FileSystemStorageHandle& handle)
         if (handles.remove(identifier))
             break;
     }
-    m_registry->unregisterHandle(identifier);
+    if (RefPtr registry = m_registry.get())
+        registry->unregisterHandle(identifier);
 }
 
 void FileSystemStorageManager::connectionClosed(IPC::Connection::UniqueID connection)
@@ -140,7 +147,8 @@ void FileSystemStorageManager::connectionClosed(IPC::Connection::UniqueID connec
     auto identifiers = connectionHandles->value;
     for (auto identifier : identifiers) {
         m_handles.remove(identifier);
-        m_registry->unregisterHandle(identifier);
+        if (RefPtr registry = m_registry.get())
+            registry->unregisterHandle(identifier);
     }
 
     m_lockMap.removeIf([&identifiers](auto& entry) {
@@ -183,7 +191,8 @@ void FileSystemStorageManager::close()
     for (auto& [connectionID, identifiers] : m_handlesByConnection) {
         for (auto identifier : identifiers) {
             auto takenHandle = m_handles.take(identifier);
-            m_registry->unregisterHandle(identifier);
+            if (RefPtr registry = m_registry.get())
+                registry->unregisterHandle(identifier);
 
             // Send message to web process to invalidate active sync access handle.
             if (auto accessHandleIdentifier = takenHandle->activeSyncAccessHandle())

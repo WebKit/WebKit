@@ -35,7 +35,6 @@
 #import "TestWKWebView.h"
 #import "UIKitSPIForTesting.h"
 #import "WKWebViewConfigurationExtras.h"
-#import <BrowserEngineKit/BrowserEngineKit.h>
 #import <Contacts/Contacts.h>
 #import <MapKit/MapKit.h>
 #import <MobileCoreServices/MobileCoreServices.h>
@@ -50,6 +49,10 @@
 #import <WebKit/_WKProcessPoolConfiguration.h>
 #import <wtf/Seconds.h>
 #import <wtf/SoftLinking.h>
+
+#if USE(BROWSERENGINEKIT)
+#import <BrowserEngineKit/BrowserEngineKit.h>
+#endif
 
 SOFT_LINK_FRAMEWORK(Contacts)
 SOFT_LINK_CLASS(Contacts, CNMutableContact)
@@ -73,12 +76,12 @@ static NSString *InjectedBundlePasteboardDataType = @"org.webkit.data";
 
 static UIImage *testIconImage()
 {
-    return [UIImage imageNamed:@"TestWebKitAPI.resources/icon.png"];
+    return [UIImage imageNamed:@"TestWebKitAPIResources.bundle/icon.png"];
 }
 
 static NSData *testZIPArchive()
 {
-    NSURL *zipFileURL = [[NSBundle mainBundle] URLForResource:@"compressed-files" withExtension:@"zip" subdirectory:@"TestWebKitAPI.resources"];
+    NSURL *zipFileURL = [NSBundle.test_resourcesBundle URLForResource:@"compressed-files" withExtension:@"zip"];
     return [NSData dataWithContentsOfURL:zipFileURL];
 }
 
@@ -201,7 +204,7 @@ static void checkJSONWithLogging(NSString *jsonString, NSDictionary *expected)
 
 static NSData *testIconImageData()
 {
-    return [NSData dataWithContentsOfURL:[[NSBundle mainBundle] URLForResource:@"icon" withExtension:@"png" subdirectory:@"TestWebKitAPI.resources"]];
+    return [NSData dataWithContentsOfURL:[NSBundle.test_resourcesBundle URLForResource:@"icon" withExtension:@"png"]];
 }
 
 static void runTestWithTemporaryTextFile(void(^runTest)(NSURL *fileURL))
@@ -1579,9 +1582,13 @@ TEST(DragAndDropTests, UnresponsivePageDoesNotHangUI)
 
     // The test passes if we can prepare for a drag session without timing out.
     auto dragSession = adoptNS([[MockDragSession alloc] init]);
+#if USE(BROWSERENGINEKIT)
     [[webView dragInteractionDelegate] dragInteraction:[webView dragInteraction] prepareDragSession:dragSession.get() completion:^{
         return NO;
     }];
+#else
+    [(id<UIDragInteractionDelegate_SPI>)[webView dragInteractionDelegate] _dragInteraction:[webView dragInteraction] prepareForSession:dragSession.get() completion:^{ }];
+#endif
 }
 
 TEST(DragAndDropTests, WebItemProviderPasteboardLoading)
@@ -1700,7 +1707,7 @@ TEST(DragAndDropTests, DragLiftPreviewDataTransferSetDragImage)
 
 static NSData *testIconImageData()
 {
-    return [NSData dataWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"icon" ofType:@"png" inDirectory:@"TestWebKitAPI.resources"]];
+    return [NSData dataWithContentsOfFile:[NSBundle.test_resourcesBundle pathForResource:@"icon" ofType:@"png"]];
 }
 
 TEST(DragAndDropTests, DataTransferGetDataWhenDroppingImageAndMarkup)
@@ -1797,7 +1804,7 @@ TEST(DragAndDropTests, DataTransferGetDataWhenDroppingImageWithFileURL)
     auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebView:webView.get()]);
 
     auto itemProvider = adoptNS([[NSItemProvider alloc] init]);
-    NSURL *iconURL = [[NSBundle mainBundle] URLForResource:@"icon" withExtension:@"png" subdirectory:@"TestWebKitAPI.resources"];
+    NSURL *iconURL = [NSBundle.test_resourcesBundle URLForResource:@"icon" withExtension:@"png"];
     [itemProvider registerFileRepresentationForTypeIdentifier:(__bridge NSString *)kUTTypePNG fileOptions:0 visibility:NSItemProviderRepresentationVisibilityAll loadHandler:[protectedIconURL = retainPtr(iconURL)] (FileLoadCompletionBlock completionHandler) -> NSProgress * {
         completionHandler(protectedIconURL.get(), NO, nil);
         return nil;
@@ -2210,7 +2217,7 @@ TEST(DragAndDropTests, CanStartDragOnModel)
     // FIXME: Remove this after <rdar://problem/83863149> is fixed.
     // It should not be necessary to use WKURLSchemeHandler here, but CFNetwork does not correctly identify USDZ files.
     auto handler = adoptNS([TestURLSchemeHandler new]);
-    RetainPtr<NSData> modelData = [NSData dataWithContentsOfURL:[NSBundle.mainBundle URLForResource:@"cube" withExtension:@"usdz" subdirectory:@"TestWebKitAPI.resources"]];
+    RetainPtr<NSData> modelData = [NSData dataWithContentsOfURL:[NSBundle.test_resourcesBundle URLForResource:@"cube" withExtension:@"usdz"]];
     [handler setStartURLSchemeTaskHandler:^(WKWebView *, id<WKURLSchemeTask> task) {
         NSURLResponse *response = [[[NSURLResponse alloc] initWithURL:task.request.URL MIMEType:@"model/vnd.usdz+zip" expectedContentLength:[modelData length] textEncodingName:nil] autorelease];
         [task didReceiveResponse:response];

@@ -50,17 +50,17 @@ RenderBundleEncoderImpl::~RenderBundleEncoderImpl() = default;
 
 void RenderBundleEncoderImpl::setPipeline(const RenderPipeline& renderPipeline)
 {
-    wgpuRenderBundleEncoderSetPipeline(m_backing.get(), m_convertToBackingContext->convertToBacking(renderPipeline));
+    wgpuRenderBundleEncoderSetPipeline(m_backing.get(), protectedConvertToBackingContext()->convertToBacking(renderPipeline));
 }
 
 void RenderBundleEncoderImpl::setIndexBuffer(const Buffer& buffer, IndexFormat indexFormat, std::optional<Size64> offset, std::optional<Size64> size)
 {
-    wgpuRenderBundleEncoderSetIndexBuffer(m_backing.get(), m_convertToBackingContext->convertToBacking(buffer), m_convertToBackingContext->convertToBacking(indexFormat), offset.value_or(0), size.value_or(WGPU_WHOLE_SIZE));
+    wgpuRenderBundleEncoderSetIndexBuffer(m_backing.get(), protectedConvertToBackingContext()->convertToBacking(buffer), protectedConvertToBackingContext()->convertToBacking(indexFormat), offset.value_or(0), size.value_or(WGPU_WHOLE_SIZE));
 }
 
 void RenderBundleEncoderImpl::setVertexBuffer(Index32 slot, const Buffer* buffer, std::optional<Size64> offset, std::optional<Size64> size)
 {
-    wgpuRenderBundleEncoderSetVertexBuffer(m_backing.get(), slot, buffer ? m_convertToBackingContext->convertToBacking(*buffer) : nullptr, offset.value_or(0), size.value_or(WGPU_WHOLE_SIZE));
+    wgpuRenderBundleEncoderSetVertexBuffer(m_backing.get(), slot, buffer ? protectedConvertToBackingContext()->convertToBacking(*buffer) : nullptr, offset.value_or(0), size.value_or(WGPU_WHOLE_SIZE));
 }
 
 void RenderBundleEncoderImpl::draw(Size32 vertexCount, std::optional<Size32> instanceCount,
@@ -79,24 +79,23 @@ void RenderBundleEncoderImpl::drawIndexed(Size32 indexCount, std::optional<Size3
 
 void RenderBundleEncoderImpl::drawIndirect(const Buffer& indirectBuffer, Size64 indirectOffset)
 {
-    wgpuRenderBundleEncoderDrawIndirect(m_backing.get(), m_convertToBackingContext->convertToBacking(indirectBuffer), indirectOffset);
+    wgpuRenderBundleEncoderDrawIndirect(m_backing.get(), protectedConvertToBackingContext()->convertToBacking(indirectBuffer), indirectOffset);
 }
 
 void RenderBundleEncoderImpl::drawIndexedIndirect(const Buffer& indirectBuffer, Size64 indirectOffset)
 {
-    wgpuRenderBundleEncoderDrawIndexedIndirect(m_backing.get(), m_convertToBackingContext->convertToBacking(indirectBuffer), indirectOffset);
+    wgpuRenderBundleEncoderDrawIndexedIndirect(m_backing.get(), protectedConvertToBackingContext()->convertToBacking(indirectBuffer), indirectOffset);
 }
 
 void RenderBundleEncoderImpl::setBindGroup(Index32 index, const BindGroup& bindGroup,
     std::optional<Vector<BufferDynamicOffset>>&& dynamicOffsets)
 {
     auto backingOffsets = valueOrDefault(dynamicOffsets);
-    wgpuRenderBundleEncoderSetBindGroupWithDynamicOffsets(m_backing.get(), index, m_convertToBackingContext->convertToBacking(bindGroup), WTFMove(dynamicOffsets));
+    wgpuRenderBundleEncoderSetBindGroupWithDynamicOffsets(m_backing.get(), index, protectedConvertToBackingContext()->convertToBacking(bindGroup), WTFMove(dynamicOffsets));
 }
 
 void RenderBundleEncoderImpl::setBindGroup(Index32, const BindGroup&,
-    const uint32_t*,
-    size_t,
+    std::span<const uint32_t>,
     Size64,
     Size32)
 {

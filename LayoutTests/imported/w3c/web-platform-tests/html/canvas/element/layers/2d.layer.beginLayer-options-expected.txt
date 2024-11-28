@@ -1,0 +1,6 @@
+2d.layer.beginLayer-options
+Checks beginLayer works for different option parameter values
+Actual output:
+
+FAIL Checks beginLayer works for different option parameter values assert_throws_js: function "function() { ctx.beginLayer(''); }" did not throw
+

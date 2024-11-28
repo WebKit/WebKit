@@ -33,6 +33,13 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/animating-new-content-subset-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/animating-new-content-subset.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/animating-new-content.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/auto-name-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/auto-name-from-id-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/auto-name-from-id-shadow-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/auto-name-from-id-shadow.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/auto-name-from-id.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/auto-name-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/auto-name.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/backdrop-filter-animated-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/backdrop-filter-animated-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/backdrop-filter-animated.html
@@ -614,6 +621,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/transition-skipped-after-animation-started.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/transition-skipped-from-invalid-callback.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/unset-and-initial-view-transition-name.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/update-callback-called-once-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/update-callback-called-once.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/update-callback-timeout.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/view-transition-name-is-backdrop-filter-root-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/view-transition-name-is-backdrop-filter-root-ref.html

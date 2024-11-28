@@ -43,17 +43,17 @@
 #include <WebCore/Settings.h>
 #include <wtf/TZoneMallocInlines.h>
 
-ALLOW_COMMA_BEGIN
-
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
 // See Bug 274508: Disable thread-safety-reference-return warnings in libwebrtc
 IGNORE_CLANG_WARNINGS_BEGIN("thread-safety-reference-return")
 #include <webrtc/pc/peer_connection_factory.h>
 IGNORE_CLANG_WARNINGS_END
-
-ALLOW_COMMA_END
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 
 namespace WebKit {
 using namespace WebCore;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(LibWebRTCProvider);
 
 LibWebRTCProvider::LibWebRTCProvider(WebPage& webPage)
     : m_webPage(webPage)
@@ -74,7 +74,7 @@ rtc::scoped_refptr<webrtc::PeerConnectionInterface> LibWebRTCProvider::createPee
     LibWebRTCCodecs::initializeIfNeeded();
 #endif
 
-    auto* networkManager = LibWebRTCNetworkManager::getOrCreate(identifier);
+    RefPtr networkManager = LibWebRTCNetworkManager::getOrCreate(identifier);
     if (!networkManager)
         return nullptr;
 

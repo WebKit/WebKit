@@ -25,7 +25,7 @@
 
 #if ENABLE(GPU_PROCESS)
 
-messages -> RemoteRemoteCommandListener NotRefCounted {
+messages -> RemoteRemoteCommandListener {
     DidReceiveRemoteControlCommand(enum:uint8_t WebCore::PlatformMediaSessionRemoteControlCommandType command, struct WebCore::PlatformMediaSession::RemoteCommandArgument argument)
 }
 

@@ -1,4 +1,4 @@
 
 
-FAIL navigate() with an invalid URL inside onbeforeunload throws "SyntaxError", not "InvalidStateError" assert_not_equals: got disallowed value undefined
+PASS navigate() with an invalid URL inside onbeforeunload throws "SyntaxError", not "InvalidStateError"
 

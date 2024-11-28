@@ -85,7 +85,7 @@ function union(other)
     if (!@isCallable(keys))
         @throwTypeError("Set.prototype.union expects other.keys to be callable");
 
-    var iterator = keys.@call(other, keys);
+    var iterator = keys.@call(other);
     var wrapper = {
         @@iterator: function () { return iterator; }
     };
@@ -131,7 +131,7 @@ function intersection(other)
                 result.@add(key);
         } while (true);
     } else {
-        var iterator = keys.@call(other, keys);
+        var iterator = keys.@call(other);
         var wrapper = {
             @@iterator: function () { return iterator; }
         };
@@ -179,7 +179,7 @@ function difference(other)
                 result.@delete(key);
         }
     } else {
-        var iterator = keys.@call(other, keys);
+        var iterator = keys.@call(other);
         var wrapper = {
             @@iterator: function () { return iterator; }
         };
@@ -211,7 +211,7 @@ function symmetricDifference(other)
     if (!@isCallable(keys))
         @throwTypeError("Set.prototype.symmetricDifference expects other.keys to be callable");
 
-    var iterator = keys.@call(other, keys);
+    var iterator = keys.@call(other);
     var wrapper = {
         @@iterator: function () { return iterator; }
     };
@@ -286,7 +286,7 @@ function isSupersetOf(other)
     if (this.@size < size)
         return false;
 
-    var iterator = keys.@call(other, keys);
+    var iterator = keys.@call(other);
     var wrapper = {
         @@iterator: function () { return iterator; }
     };
@@ -331,7 +331,7 @@ function isDisjointFrom(other)
                 return false;
         } while (true);
     } else {
-        var iterator = keys.@call(other, keys);
+        var iterator = keys.@call(other);
         var wrapper = {
             @@iterator: function () { return iterator; }
         };

@@ -31,14 +31,16 @@
 #import <UIKit/UIKit.h>
 #import <wtf/Vector.h>
 
+@class WKContentView;
+
 namespace WebKit {
 
 struct WKTouchPoint {
-    CGPoint locationInScreenCoordinates;
-    CGPoint locationInDocumentCoordinates;
+    CGPoint locationInRootViewCoordinates;
+    CGPoint locationInViewport;
     unsigned identifier { 0 };
     UITouchPhase phase { UITouchPhaseBegan };
-    CGFloat majorRadiusInScreenCoordinates { 0 };
+    CGFloat majorRadiusInWindowCoordinates { 0 };
     CGFloat force { 0 };
     CGFloat altitudeAngle { 0 };
     CGFloat azimuthAngle { 0 };
@@ -48,8 +50,7 @@ struct WKTouchPoint {
 struct WKTouchEvent {
     WKTouchEventType type { WKTouchEventType::Begin };
     NSTimeInterval timestamp { 0 };
-    CGPoint locationInScreenCoordinates;
-    CGPoint locationInDocumentCoordinates;
+    CGPoint locationInRootViewCoordinates;
     CGFloat scale { 0 };
     CGFloat rotation { 0 };
 
@@ -63,17 +64,8 @@ struct WKTouchEvent {
 
 } // namespace WebKit
 
-@class WKTouchEventsGestureRecognizer;
-
-@protocol WKTouchEventsGestureRecognizerDelegate <NSObject>
-- (BOOL)isAnyTouchOverActiveArea:(NSSet *)touches;
-@optional
-- (BOOL)shouldIgnoreTouchEvent;
-- (BOOL)gestureRecognizer:(WKTouchEventsGestureRecognizer *)gestureRecognizer shouldIgnoreTouchEvent:(UIEvent *)event;
-@end
-
 @interface WKTouchEventsGestureRecognizer : UIGestureRecognizer
-- (id)initWithTarget:(id)target action:(SEL)action touchDelegate:(id<WKTouchEventsGestureRecognizerDelegate>)delegate;
+- (instancetype)initWithContentView:(WKContentView *)view;
 - (void)cancel;
 
 @property (nonatomic, getter=isDefaultPrevented) BOOL defaultPrevented;
@@ -81,6 +73,7 @@ struct WKTouchEvent {
 @property (nonatomic, readonly) const WebKit::WKTouchEvent& lastTouchEvent;
 @property (nonatomic, readonly, getter=isDispatchingTouchEvents) BOOL dispatchingTouchEvents;
 @property (nonatomic, readonly) NSMapTable<NSNumber *, UITouch *> *activeTouchesByIdentifier;
+@property (nonatomic, readonly, weak) WKContentView *contentView;
 
 @end
 

@@ -29,6 +29,8 @@
 
 #include <wtf/Vector.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 struct SFrameCompatibilityPrefixBuffer {
@@ -58,5 +60,7 @@ static inline Vector<uint8_t, 8> encodeBigEndian(uint64_t value)
 }
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ENABLE(WEB_RTC)

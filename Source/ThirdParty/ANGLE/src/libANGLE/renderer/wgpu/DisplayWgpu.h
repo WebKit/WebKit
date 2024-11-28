@@ -58,7 +58,6 @@ class DisplayWgpu : public DisplayImpl
     egl::Error waitNative(const gl::Context *context, EGLint engine) override;
     gl::Version getMaxSupportedESVersion() const override;
     gl::Version getMaxConformantESVersion() const override;
-    Optional<gl::Version> getMaxSupportedDesktopVersion() const override;
 
     SurfaceImpl *createWindowSurface(const egl::SurfaceState &state,
                                      EGLNativeWindowType window,
@@ -98,6 +97,8 @@ class DisplayWgpu : public DisplayImpl
     wgpu::Queue &getQueue() { return mQueue; }
     wgpu::Instance &getInstance() { return mInstance; }
 
+    const wgpu::Limits getLimitsWgpu() const { return mLimitsWgpu; }
+
     const gl::Caps &getGLCaps() const { return mGLCaps; }
     const gl::TextureCapsMap &getGLTextureCaps() const { return mGLTextureCaps; }
     const gl::Extensions &getGLExtensions() const { return mGLExtensions; }
@@ -121,6 +122,8 @@ class DisplayWgpu : public DisplayImpl
     wgpu::Instance mInstance;
     wgpu::Device mDevice;
     wgpu::Queue mQueue;
+
+    wgpu::Limits mLimitsWgpu;
 
     gl::Caps mGLCaps;
     gl::TextureCapsMap mGLTextureCaps;

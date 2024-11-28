@@ -29,6 +29,7 @@
 #include "ActiveDOMObject.h"
 #include "InternalObserver.h"
 #include "ScriptWrappable.h"
+#include "SubscribeOptions.h"
 #include "VoidCallback.h"
 #include <wtf/RefCounted.h>
 
@@ -40,18 +41,21 @@ class Subscriber final : public ActiveDOMObject, public ScriptWrappable, public 
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(Subscriber);
 
 public:
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
+
     void next(JSC::JSValue);
     void complete();
     void error(JSC::JSValue);
     void addTeardown(Ref<VoidCallback>);
 
     bool active() { return m_active; }
-    AbortSignal& signal() { return m_abortController->signal(); }
+    AbortSignal& signal() { return m_signal.get(); }
 
-    static Ref<Subscriber> create(ScriptExecutionContext&, Ref<InternalObserver>);
+    Ref<AbortSignal> protectedSignal() const { return m_signal; }
 
-    explicit Subscriber(ScriptExecutionContext&, Ref<InternalObserver>);
-    void followSignal(AbortSignal&);
+    static Ref<Subscriber> create(ScriptExecutionContext&, Ref<InternalObserver>&&, const SubscribeOptions&);
+
     void reportErrorObject(JSC::JSValue);
 
     // JSCustomMarkFunction; for JSSubscriberCustom
@@ -60,17 +64,10 @@ public:
     void visitAdditionalChildren(JSC::AbstractSlotVisitor&);
     void visitAdditionalChildren(JSC::SlotVisitor&);
 
-    // ActiveDOMObject
-    void ref() const final { RefCounted::ref(); }
-    void deref() const final { RefCounted::deref(); }
-
 private:
-    bool m_active = true;
-    Lock m_teardownsLock;
-    Ref<AbortController> m_abortController;
-    Ref<InternalObserver> m_observer;
-    Vector<Ref<VoidCallback>> m_teardowns WTF_GUARDED_BY_LOCK(m_teardownsLock);
+    explicit Subscriber(ScriptExecutionContext&, Ref<InternalObserver>&&, const SubscribeOptions&);
 
+    void followSignal(AbortSignal&);
     void close(JSC::JSValue);
 
     bool isActive() const
@@ -87,6 +84,13 @@ private:
         m_teardowns.clear();
     }
     bool virtualHasPendingActivity() const final { return m_active; }
+
+    bool m_active = true;
+    Lock m_teardownsLock;
+    Ref<AbortSignal> m_signal;
+    Ref<InternalObserver> m_observer;
+    SubscribeOptions m_options;
+    Vector<Ref<VoidCallback>> m_teardowns WTF_GUARDED_BY_LOCK(m_teardownsLock);
 };
 
 } // namespace WebCore

@@ -50,14 +50,14 @@ RemotePresentationContext::RemotePresentationContext(GPUConnectionToWebProcess& 
     , m_gpuConnectionToWebProcess(gpuConnectionToWebProcess)
     , m_gpu(gpu)
 {
-    m_streamConnection->startReceivingMessages(*this, Messages::RemotePresentationContext::messageReceiverName(), m_identifier.toUInt64());
+    protectedStreamConnection()->startReceivingMessages(*this, Messages::RemotePresentationContext::messageReceiverName(), m_identifier.toUInt64());
 }
 
 RemotePresentationContext::~RemotePresentationContext() = default;
 
 void RemotePresentationContext::stopListeningForIPC()
 {
-    m_streamConnection->stopReceivingMessages(Messages::RemotePresentationContext::messageReceiverName(), m_identifier.toUInt64());
+    protectedStreamConnection()->stopReceivingMessages(Messages::RemotePresentationContext::messageReceiverName(), m_identifier.toUInt64());
 }
 
 void RemotePresentationContext::configure(const WebGPU::CanvasConfiguration& canvasConfiguration)
@@ -67,23 +67,23 @@ void RemotePresentationContext::configure(const WebGPU::CanvasConfiguration& can
     if (!convertedConfiguration)
         return;
 
-    bool success = m_backing->configure(*convertedConfiguration);
+    bool success = protectedBacking()->configure(*convertedConfiguration);
     ASSERT_UNUSED(success, success);
 }
 
 void RemotePresentationContext::unconfigure()
 {
-    m_backing->unconfigure();
+    protectedBacking()->unconfigure();
 }
 
-void RemotePresentationContext::present()
+void RemotePresentationContext::present(uint32_t frameIndex)
 {
-    m_backing->present();
+    protectedBacking()->present(frameIndex);
 }
 
-void RemotePresentationContext::getCurrentTexture(WebGPUIdentifier identifier)
+void RemotePresentationContext::getCurrentTexture(WebGPUIdentifier identifier, uint32_t frameIndex)
 {
-    auto texture = m_backing->getCurrentTexture();
+    auto texture = protectedBacking()->getCurrentTexture(frameIndex);
     ASSERT(texture);
     auto connection = m_gpuConnectionToWebProcess.get();
     if (!texture || !connection)
@@ -97,8 +97,24 @@ void RemotePresentationContext::getCurrentTexture(WebGPUIdentifier identifier)
     // but for now let's just create a new RemoteTexture object with the expected identifier, just for simplicity.
     // The Web Process should already be caching these current textures internally, so it's unlikely that we'll
     // actually run into a problem here.
-    auto remoteTexture = RemoteTexture::create(*connection, m_gpu, *texture, m_objectHeap, m_streamConnection.copyRef(), identifier);
-    m_objectHeap->addObject(identifier, remoteTexture);
+    Ref objectHeap = m_objectHeap.get();
+    auto remoteTexture = RemoteTexture::create(*connection, protectedGPU(), *texture, objectHeap, m_streamConnection.copyRef(), identifier);
+    objectHeap->addObject(identifier, remoteTexture);
+}
+
+Ref<WebCore::WebGPU::PresentationContext> RemotePresentationContext::protectedBacking()
+{
+    return m_backing;
+}
+
+Ref<WebGPU::ObjectHeap> RemotePresentationContext::protectedObjectHeap() const
+{
+    return m_objectHeap.get();
+}
+
+Ref<IPC::StreamServerConnection> RemotePresentationContext::protectedStreamConnection() const
+{
+    return m_streamConnection;
 }
 
 } // namespace WebKit

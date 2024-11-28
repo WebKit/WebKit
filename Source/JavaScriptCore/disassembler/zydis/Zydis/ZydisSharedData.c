@@ -29,6 +29,9 @@
 #if ENABLE(ZYDIS)
 
 #include "ZydisInternalSharedData.h"
+#include <wtf/Compiler.h>
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 /* ============================================================================================== */
 /* Data tables                                                                                    */
@@ -177,7 +180,7 @@ void ZydisGetElementInfo(ZydisInternalElementType element, ZydisElementType* typ
         { ZYDIS_ELEMENT_TYPE_CC       ,   5 }
     };
 
-    ZYAN_ASSERT(element < ZYAN_ARRAY_LENGTH(lookup));
+    ZYAN_ASSERT((ZyanUSize)element < ZYAN_ARRAY_LENGTH(lookup));
 
     *type = lookup[element].type;
     *size = lookup[element].size;
@@ -201,5 +204,7 @@ ZyanBool ZydisGetAccessedFlags(const ZydisInstructionDefinition* definition,
 /* ---------------------------------------------------------------------------------------------- */
 
 /* ============================================================================================== */
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif /* ENABLE(ZYDIS) */

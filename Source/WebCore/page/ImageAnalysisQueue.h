@@ -47,11 +47,11 @@ class Page;
 class Timer;
 class WeakPtrImplWithEventTargetData;
 
-class ImageAnalysisQueue {
-    WTF_MAKE_TZONE_ALLOCATED(ImageAnalysisQueue);
+class ImageAnalysisQueue final : public RefCounted<ImageAnalysisQueue> {
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(ImageAnalysisQueue, WEBCORE_EXPORT);
 public:
-    ImageAnalysisQueue(Page&);
-    ~ImageAnalysisQueue();
+    static Ref<ImageAnalysisQueue> create(Page&);
+    WEBCORE_EXPORT ~ImageAnalysisQueue();
 
     WEBCORE_EXPORT void enqueueAllImagesIfNeeded(Document&, const String& sourceLanguageIdentifier, const String& targetLanguageIdentifier);
     void clear();
@@ -62,6 +62,8 @@ public:
     WEBCORE_EXPORT void clearDidBecomeEmptyCallback();
 
 private:
+    explicit ImageAnalysisQueue(Page&);
+
     void resumeProcessingSoon();
     void resumeProcessing();
 

@@ -1,0 +1,317 @@
+</style>
+<script>
+async function videoWithData() {
+ Promise(resolve => {
+ });
+}
+/**
+*/
+async function makeDataUrl(width, color1) {
+ Promise(resolve => {
+ fileReader.onload = () => {
+ };
+ });
+}
+onload = async () => {
+ try {
+let adapter0 = await navigator.gpu.requestAdapter();
+let device0 = await adapter0.requestDevice({
+ requiredFeatures: [
+ ],
+ requiredLimits: {
+ },
+});
+let = device0.createRenderBundleEncoder({
+ colorFormats: [],
+});
+let = device0.createBuffer({
+ size: 4464,
+ usage: GPUBufferUsage.VERTEX,
+});
+try {
+} catch {}
+try {
+} catch {}
+try {
+} catch {}
+try {
+} catch {}
+let = device0.createRenderBundleEncoder({
+ colorFormats: [],
+});
+let texture0 = device0.createTexture({
+ size: {width: 110, depthOrArrayLayers: 1},
+ format: 'depth32float',
+ usage: GPUTextureUsage.COPY_DST | GPUTextureUsage.RENDER_ATTACHMENT,
+});
+let = texture0.createView({label: '\u0680\u{1f7f7}\uc877', aspect: 'depth-only'});
+try {
+} catch {}
+let = device0.createBuffer({
+ size: 12499,
+ usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ,
+});
+try {
+} catch {}
+try {
+} catch {}
+let texture3 = device0.createTexture({
+ size: [27, 1],
+ format: 'depth32float',
+ usage: GPUTextureUsage.COPY_DST | GPUTextureUsage.TEXTURE_BINDING,
+});
+let = device0.createTexture({
+ size: {width: 1},
+ format: 'depth32float',
+ usage: GPUTextureUsage.TEXTURE_BINDING,
+});
+try {
+} catch {}
+try {
+} catch {}
+let commandEncoder22 = device0.createCommandEncoder({label: '\u9d94\u{1fa6b}\u904a\u0340\u48dc\ue9a9\uda76'});
+try {
+} catch {}
+let textureView4 = texture3.createView({
+});
+let = commandEncoder22.beginRenderPass({
+ colorAttachments: [],
+ depthStencilAttachment: {
+ view: textureView4,
+ },
+});
+try {
+} catch {}
+try {
+} catch {}
+let texture5 = device0.createTexture({
+ size: {width: 220, depthOrArrayLayers: 1},
+ sampleCount: 4,
+ format: 'depth32float',
+ usage: GPUTextureUsage.RENDER_ATTACHMENT,
+});
+try {
+} catch {}
+let commandEncoder23 = device0.createCommandEncoder({});
+let = device0.createTexture({
+ size: [471, 1],
+ format: 'depth32float',
+ usage: GPUTextureUsage.TEXTURE_BINDING,
+});
+let = commandEncoder23.beginRenderPass({
+ colorAttachments: [],
+});
+try {
+} catch {}
+try {
+} catch {}
+try {
+gpuCanvasContext0.configure({
+});
+} catch {}
+let commandEncoder24 = device0.createCommandEncoder({});
+let = commandEncoder24.beginRenderPass({
+ colorAttachments: [],
+});
+try {
+} catch {}
+try {
+} catch {}
+let = device0.createShaderModule({
+ code: `
+`,
+});
+let commandEncoder26 = device0.createCommandEncoder({label: '\u0c18\u{1f6c9}\u198d\u59bb\u9f55'});
+let = commandEncoder26.beginRenderPass({
+ colorAttachments: [],
+});
+try {
+} catch {}
+try {
+} catch {}
+try {
+} catch {}
+try {
+} catch {}
+try {
+} catch {}
+let = device0.createRenderBundleEncoder({
+ colorFormats: ['rgba16float'],
+});
+try {
+} catch {}
+try {
+} catch {}
+try {
+} catch {}
+try {
+} catch {}
+try {
+} catch {}
+try {
+} catch {}
+let = device0.createComputePipelineAsync({
+});
+let = device0.createRenderBundleEncoder({
+ colorFormats: [],
+});
+try {
+} catch {}
+try {
+} catch {}
+try {
+} catch {}
+try {
+} catch {}
+let = device0.createBindGroupLayout({
+ entries: [
+ {
+ binding: 221,
+ visibility: GPUShaderStage.FRAGMENT,
+ },
+ {
+ binding: 167,
+ visibility: GPUShaderStage.COMPUTE,
+ },
+ ],
+});
+let = device0.createSampler({
+});
+try {
+} catch {}
+try {
+} catch {}
+try {
+} catch {}
+try {
+} catch {}
+let = device0.createBindGroupLayout({
+ entries: [
+ ],
+});
+let = device0.createBuffer({
+ size: 28498,
+ usage: GPUBufferUsage.QUERY_RESOLVE,
+});
+try {
+} catch {}
+try {
+} catch {}
+try {
+} catch {}
+try {
+} catch {}
+try {
+} catch {}
+try {
+} catch {}
+try {
+} catch {}
+let = device0.createBuffer({
+ size: 5286,
+ usage: GPUBufferUsage.MAP_WRITE,
+});
+try {
+} catch {}
+try {
+} catch {}
+try {
+} catch {}
+try {
+} catch {}
+try {
+commandEncoder34.copyTextureToBuffer({
+}, {width: 117, depthOrArrayLayers: 0});
+} catch {}
+try {
+} catch {}
+let = device0.createShaderModule({
+ code: `
+`,
+});
+try {
+} catch {}
+try {
+} catch {}
+try {
+} catch {}
+try {
+} catch {}
+try {
+} catch {}
+let textureView9 = texture5.createView({label: '\u0d7c\u013f\u{1fb02}\u03a1\u0914\u{1f843}', usage: GPUTextureUsage.TEXTURE_BINDING,
+});
+try {
+} catch {}
+let = device0.createTexture({
+ size: {width: 35},
+ format: 'depth32float',
+ usage: GPUTextureUsage.TEXTURE_BINDING,
+});
+try {
+} catch {}
+try {
+} catch {}
+try {
+device0.queue.writeTexture({
+}, /* */
+{offset: 12}, {width: 155, depthOrArrayLayers: 0});
+} catch {}
+try {
+} catch {}
+try {
+texture5.destroy();
+} catch {}
+let = device0.createTexture({
+ size: [27, 21],
+ format: 'depth32float',
+ usage: GPUTextureUsage.COPY_DST | GPUTextureUsage.RENDER_ATTACHMENT,
+});
+try {
+} catch {}
+try {
+} catch {}
+let = device0.createRenderBundleEncoder({
+ colorFormats: [],
+});
+try {
+} catch {}
+try {
+gpuCanvasContext0.configure({
+});
+} catch {}
+let commandEncoder66 = device0.createCommandEncoder({label: '\u738b\u7632\ufd36\u0da4\u0627'});
+try {
+} catch {}
+try {
+} catch {}
+let = commandEncoder66.beginRenderPass({
+ colorAttachments: [],
+ depthStencilAttachment: {
+ view: textureView9,
+ },
+});
+try {
+} catch {}
+try {
+} catch {}
+try {
+device0.queue.writeTexture({
+}, /* {
+device0.queue.copyExternalImageToTexture(/*
+*/
+{
+}, {width: 0, depthOrArrayLayers: 0});
+} catch {}
+let = device1.createBuffer({
+});
+try {
+} catch {}
+ } catch {
+ if (e instanceof GPUPipelineError) {
+ {
+ }
+ }
+ }
+};
+</script>

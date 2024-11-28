@@ -44,11 +44,12 @@ class NetworkTransportBidirectionalStream;
 class NetworkTransportReceiveStream;
 class NetworkTransportSendStream;
 
+struct SharedPreferencesForWebProcess;
 struct WebTransportSessionIdentifierType;
 struct WebTransportStreamIdentifierType;
 
-using WebTransportSessionIdentifier = LegacyNullableObjectIdentifier<WebTransportSessionIdentifierType>;
-using WebTransportStreamIdentifier = LegacyNullableObjectIdentifier<WebTransportStreamIdentifierType>;
+using WebTransportSessionIdentifier = ObjectIdentifier<WebTransportSessionIdentifierType>;
+using WebTransportStreamIdentifier = ObjectIdentifier<WebTransportStreamIdentifierType>;
 
 class NetworkTransportSession : public RefCounted<NetworkTransportSession>, public IPC::MessageReceiver, public IPC::MessageSender, public Identified<WebTransportSessionIdentifier> {
     WTF_MAKE_TZONE_ALLOCATED(NetworkTransportSession);
@@ -72,6 +73,7 @@ public:
     void receiveBidirectionalStream();
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
+    std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess() const;
 private:
     template<typename... Args> static Ref<NetworkTransportSession> create(Args&&... args) { return adoptRef(*new NetworkTransportSession(std::forward<Args>(args)...)); }
 #if PLATFORM(COCOA)

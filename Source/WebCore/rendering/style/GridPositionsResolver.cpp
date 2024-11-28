@@ -310,7 +310,7 @@ bool NamedLineCollectionBase::hasExplicitNamedLines() const
 
 bool NamedLineCollectionBase::hasNamedLines() const
 {
-    return hasExplicitNamedLines() || m_implicitNamedLinesIndices;
+    return hasExplicitNamedLines() || (m_implicitNamedLinesIndices && !m_implicitNamedLinesIndices->isEmpty());
 }
 
 unsigned NamedLineCollection::lastLine() const

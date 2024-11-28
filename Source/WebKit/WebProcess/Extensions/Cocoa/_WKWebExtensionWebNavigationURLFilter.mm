@@ -35,6 +35,7 @@
 #import "WebExtensionUtilities.h"
 #import <WebKit/WebNSURLExtras.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 
 using namespace WebKit;
 

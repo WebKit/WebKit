@@ -31,6 +31,7 @@
 #include <wtf/Forward.h>
 #include <wtf/FunctionDispatcher.h>
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/Vector.h>
 
@@ -90,6 +91,7 @@ struct ViewportArguments;
 struct WindowFeatures;
 
 class Chrome : public HostWindow {
+    WTF_MAKE_TZONE_ALLOCATED(Chrome);
 public:
     Chrome(Page&, UniqueRef<ChromeClient>&&);
     virtual ~Chrome();
@@ -136,7 +138,7 @@ public:
     FloatSize overrideAvailableScreenSize() const override;
 
     void scrollContainingScrollViewsToRevealRect(const IntRect&) const;
-    void scrollMainFrameToRevealRect(const IntRect&) const;
+    WEBCORE_EXPORT void scrollMainFrameToRevealRect(const IntRect&) const;
 
     void contentsSizeChanged(LocalFrame&, const IntSize&) const;
 
@@ -154,7 +156,7 @@ public:
     void focusedElementChanged(Element*);
     void focusedFrameChanged(Frame*);
 
-    WEBCORE_EXPORT RefPtr<Page> createWindow(LocalFrame&, const WindowFeatures&, const NavigationAction&);
+    WEBCORE_EXPORT RefPtr<Page> createWindow(LocalFrame&, const String& openedMainFrameName, const WindowFeatures&, const NavigationAction&);
     WEBCORE_EXPORT void show();
 
     bool canRunModal() const;
@@ -191,15 +193,15 @@ public:
     WEBCORE_EXPORT void disableSuddenTermination();
 
 #if ENABLE(INPUT_TYPE_COLOR)
-    std::unique_ptr<ColorChooser> createColorChooser(ColorChooserClient&, const Color& initialColor);
+    RefPtr<ColorChooser> createColorChooser(ColorChooserClient&, const Color& initialColor);
 #endif
 
 #if ENABLE(DATALIST_ELEMENT)
-    std::unique_ptr<DataListSuggestionPicker> createDataListSuggestionPicker(DataListSuggestionsClient&);
+    RefPtr<DataListSuggestionPicker> createDataListSuggestionPicker(DataListSuggestionsClient&);
 #endif
 
 #if ENABLE(DATE_AND_TIME_INPUT_TYPES)
-    std::unique_ptr<DateTimeChooser> createDateTimeChooser(DateTimeChooserClient&);
+    RefPtr<DateTimeChooser> createDateTimeChooser(DateTimeChooserClient&);
 #endif
 
     std::unique_ptr<WorkerClient> createWorkerClient(SerialFunctionDispatcher&);

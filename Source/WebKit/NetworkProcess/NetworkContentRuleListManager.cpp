@@ -53,6 +53,16 @@ NetworkContentRuleListManager::~NetworkContentRuleListManager()
     }
 }
 
+void NetworkContentRuleListManager::ref() const
+{
+    m_networkProcess->ref();
+}
+
+void NetworkContentRuleListManager::deref() const
+{
+    m_networkProcess->deref();
+}
+
 Ref<NetworkProcess> NetworkContentRuleListManager::protectedNetworkProcess() const
 {
     ASSERT(RunLoop::isMain());
@@ -69,7 +79,7 @@ void NetworkContentRuleListManager::contentExtensionsBackend(UserContentControll
     m_pendingCallbacks.ensure(identifier, [] {
         return Vector<BackendCallback> { };
     }).iterator->value.append(WTFMove(callback));
-    protectedNetworkProcess()->parentProcessConnection()->send(Messages::NetworkProcessProxy::ContentExtensionRules { identifier }, 0);
+    protectedNetworkProcess()->protectedParentProcessConnection()->send(Messages::NetworkProcessProxy::ContentExtensionRules { identifier }, 0);
 }
 
 void NetworkContentRuleListManager::addContentRuleLists(UserContentControllerIdentifier identifier, Vector<std::pair<WebCompiledContentRuleListData, URL>>&& contentRuleLists)

@@ -29,6 +29,6 @@
 namespace WebCore {
 
 enum class RTCDataChannelLocalIdentifierType { };
-using RTCDataChannelLocalIdentifier = LegacyNullableAtomicObjectIdentifier<RTCDataChannelLocalIdentifierType>;
+using RTCDataChannelLocalIdentifier = AtomicObjectIdentifier<RTCDataChannelLocalIdentifierType>;
 
 } // namespace WebCore

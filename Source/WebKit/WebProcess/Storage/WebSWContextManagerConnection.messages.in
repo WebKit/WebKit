@@ -38,8 +38,6 @@ messages -> WebSWContextManagerConnection {
 #if ENABLE(SHAREABLE_RESOURCE) && PLATFORM(COCOA)
     DidSaveScriptsToDisk(WebCore::ServiceWorkerIdentifier serviceWorkerIdentifier, WebCore::ScriptBuffer script, HashMap<URL, WebCore::ScriptBuffer> importedScripts);
 #endif
-    MatchAllCompleted(uint64_t matchAllRequestIdentifier, Vector<WebCore::ServiceWorkerClientData> clientsData)
-    SkipWaitingCompleted(uint64_t matchAllRequestIdentifier)
     SetUserAgent(String userAgent)
     UpdatePreferencesStore(struct WebKit::WebPreferencesStore store)
     Close()

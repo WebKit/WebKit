@@ -11,11 +11,12 @@
 #include "include/core/SkRect.h"
 #include "include/core/SkRegion.h"
 #include "include/core/SkString.h"
-#include "include/gpu/GrRecordingContext.h"
+#include "include/gpu/ganesh/GrRecordingContext.h"
 #include "include/private/SkColorData.h"
 #include "include/private/base/SkDebug.h"
 #include "include/private/base/SkTArray.h"
 #include "include/private/gpu/ganesh/GrTypesPriv.h"
+#include "src/base/SkSafeMath.h"
 #include "src/gpu/BufferWriter.h"
 #include "src/gpu/ganesh/GrAppliedClip.h"
 #include "src/gpu/ganesh/GrDefaultGeoProcFactory.h"
@@ -28,7 +29,7 @@
 #include "src/gpu/ganesh/ops/GrMeshDrawOp.h"
 #include "src/gpu/ganesh/ops/GrSimpleMeshDrawOpHelperWithStencil.h"
 
-#if defined(GR_TEST_UTILS)
+#if defined(GPU_TEST_UTILS)
 #include "src/base/SkRandom.h"
 #include "src/gpu/ganesh/GrDrawOpTest.h"
 #include "src/gpu/ganesh/GrTestUtils.h"
@@ -146,11 +147,13 @@ private:
 
         int numRegions = fRegions.size();
         int numRects = 0;
+
+        SkSafeMath safeMath;
         for (int i = 0; i < numRegions; i++) {
-            numRects += fRegions[i].fRegion.computeRegionComplexity();
+            numRects = safeMath.addInt(numRects, fRegions[i].fRegion.computeRegionComplexity());
         }
 
-        if (!numRects) {
+        if (!numRects || !safeMath) {
             return;
         }
 
@@ -200,7 +203,7 @@ private:
         return CombineResult::kMerged;
     }
 
-#if defined(GR_TEST_UTILS)
+#if defined(GPU_TEST_UTILS)
     SkString onDumpInfo() const override {
         SkString str = SkStringPrintf("# combined: %d\n", fRegions.size());
         for (int i = 0; i < fRegions.size(); ++i) {
@@ -246,7 +249,7 @@ GrOp::Owner Make(GrRecordingContext* context,
 
 }  // namespace skgpu::ganesh::RegionOp
 
-#if defined(GR_TEST_UTILS)
+#if defined(GPU_TEST_UTILS)
 
 GR_DRAW_OP_TEST_DEFINE(RegionOp) {
     SkRegion region;
@@ -281,4 +284,4 @@ GR_DRAW_OP_TEST_DEFINE(RegionOp) {
                                                        GrGetRandomStencil(random, context));
 }
 
-#endif // defined(GR_TEST_UTILS)
+#endif // defined(GPU_TEST_UTILS)

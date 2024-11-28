@@ -60,9 +60,15 @@ enum {
 class CookieStoreObserver : public API::HTTPCookieStoreObserver {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(CookieStoreObserver);
 public:
+    static RefPtr<CookieStoreObserver> create(Function<void()>&& callback)
+    {
+        return adoptRef(new CookieStoreObserver(WTFMove(callback)));
+    }
+
+private:
     CookieStoreObserver(Function<void()>&& callback)
         : m_callback(WTFMove(callback)) { }
-private:
+
     void cookiesDidChange(API::HTTPCookieStore&) final
     {
         m_callback();
@@ -91,10 +97,10 @@ struct _WebKitCookieManagerPrivate {
 
     WebKitWebsiteDataManager* dataManager;
 
-    std::unique_ptr<CookieStoreObserver> m_observer;
+    RefPtr<CookieStoreObserver> m_observer;
 };
 
-static guint signals[LAST_SIGNAL] = { 0, };
+static std::array<unsigned, LAST_SIGNAL> signals;
 
 WEBKIT_DEFINE_FINAL_TYPE(WebKitCookieManager, webkit_cookie_manager, G_TYPE_OBJECT, GObject)
 
@@ -162,7 +168,7 @@ WebKitCookieManager* webkitCookieManagerCreate(WebKitWebsiteDataManager* dataMan
 {
     WebKitCookieManager* manager = WEBKIT_COOKIE_MANAGER(g_object_new(WEBKIT_TYPE_COOKIE_MANAGER, nullptr));
     manager->priv->dataManager = dataManager;
-    manager->priv->m_observer = makeUnique<CookieStoreObserver>([manager] {
+    manager->priv->m_observer = CookieStoreObserver::create([manager] {
         g_signal_emit(manager, signals[CHANGED], 0);
     });
     manager->priv->cookieStore().registerObserver(*manager->priv->m_observer);

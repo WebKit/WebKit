@@ -163,12 +163,34 @@ void WebsitePoliciesData::applyToDocumentLoader(WebsitePoliciesData&& websitePol
     documentLoader.setModalContainerObservationPolicy(websitePolicies.modalContainerObservationPolicy);
     documentLoader.setColorSchemePreference(websitePolicies.colorSchemePreference);
     documentLoader.setAdvancedPrivacyProtections(websitePolicies.advancedPrivacyProtections);
-    documentLoader.setOriginatorAdvancedPrivacyProtections(websitePolicies.advancedPrivacyProtections);
+    if (!documentLoader.originatorAdvancedPrivacyProtections())
+        documentLoader.setOriginatorAdvancedPrivacyProtections(websitePolicies.advancedPrivacyProtections);
     documentLoader.setIdempotentModeAutosizingOnlyHonorsPercentages(websitePolicies.idempotentModeAutosizingOnlyHonorsPercentages);
     documentLoader.setHTTPSByDefaultMode(websitePolicies.httpsByDefaultMode);
 
-    if (!documentLoader.frame())
+    switch (websitePolicies.pushAndNotificationsEnabledPolicy) {
+    case WebsitePushAndNotificationsEnabledPolicy::UseGlobalPolicy:
+        documentLoader.setPushAndNotificationsEnabledPolicy(WebCore::PushAndNotificationsEnabledPolicy::UseGlobalPolicy);
+        break;
+    case WebsitePushAndNotificationsEnabledPolicy::No:
+        documentLoader.setPushAndNotificationsEnabledPolicy(WebCore::PushAndNotificationsEnabledPolicy::No);
+        break;
+    case WebsitePushAndNotificationsEnabledPolicy::Yes:
+        documentLoader.setPushAndNotificationsEnabledPolicy(WebCore::PushAndNotificationsEnabledPolicy::Yes);
+        break;
+    }
+
+    RefPtr frame = documentLoader.frame();
+    if (!frame)
         return;
+
+    if (!frame->isMainFrame())
+        return;
+
+#if ENABLE(TOUCH_EVENTS)
+    if (auto overrideValue = websitePolicies.overrideTouchEventDOMAttributesEnabled)
+        frame->settings().setTouchEventDOMAttributesEnabled(*overrideValue);
+#endif
 
     documentLoader.applyPoliciesToSettings();
 }

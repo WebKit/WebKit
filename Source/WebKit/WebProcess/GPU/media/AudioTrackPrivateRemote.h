@@ -30,6 +30,7 @@
 
 #include <WebCore/AudioTrackPrivate.h>
 #include <WebCore/MediaPlayerIdentifier.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
 
@@ -38,6 +39,7 @@ class MediaPlayerPrivateRemote;
 struct AudioTrackPrivateRemoteConfiguration;
 
 class AudioTrackPrivateRemote final : public WebCore::AudioTrackPrivate {
+    WTF_MAKE_TZONE_ALLOCATED(AudioTrackPrivateRemote);
     WTF_MAKE_NONCOPYABLE(AudioTrackPrivateRemote)
 public:
     static Ref<AudioTrackPrivateRemote> create(GPUProcessConnection& gpuProcessConnection, WebCore::MediaPlayerIdentifier playerIdentifier, AudioTrackPrivateRemoteConfiguration&& configuration)

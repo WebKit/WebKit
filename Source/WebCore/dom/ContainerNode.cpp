@@ -135,7 +135,7 @@ ALWAYS_INLINE auto ContainerNode::removeAllChildrenWithScriptAssertion(ChildChan
         if (UNLIKELY(isShadowRoot() || isInShadowTree()))
             containingShadowRoot()->willRemoveAllChildren(*this);
 
-        RefAllowingPartiallyDestroyed<Document> { document() }->nodeChildrenWillBeRemoved(*this);
+        Ref<Document> { document() }->nodeChildrenWillBeRemoved(*this);
 
         while (RefPtr child = m_firstChild.get()) {
             if (is<Element>(*child))
@@ -223,7 +223,7 @@ ALWAYS_INLINE bool ContainerNode::removeNodeWithScriptAssertion(Node& childToRem
         if (UNLIKELY(isShadowRoot() || isInShadowTree()))
             containingShadowRoot()->resolveSlotsBeforeNodeInsertionOrRemoval();
 
-        RefAllowingPartiallyDestroyed<Document> { document() }->nodeWillBeRemoved(childToRemove);
+        Ref<Document> { document() }->nodeWillBeRemoved(childToRemove);
 
         ASSERT_WITH_SECURITY_IMPLICATION(childToRemove.parentNode() == this);
         ASSERT(!childToRemove.isDocumentFragment());
@@ -401,7 +401,7 @@ void ContainerNode::takeAllChildrenFrom(ContainerNode* oldParent)
 ContainerNode::~ContainerNode()
 {
     if (!isDocumentNode())
-        willBeDeletedFrom(RefAllowingPartiallyDestroyed<Document> { document() });
+        willBeDeletedFrom(Ref<Document> { document() });
     removeDetachedChildren();
 }
 
@@ -732,7 +732,7 @@ ExceptionOr<void> ContainerNode::removeChild(Node& oldChild)
 
 void ContainerNode::removeBetween(Node* previousChild, Node* nextChild, Node& oldChild)
 {
-    InspectorInstrumentation::didRemoveDOMNode(RefAllowingPartiallyDestroyed<Document> { oldChild.document() }, oldChild);
+    InspectorInstrumentation::didRemoveDOMNode(Ref<Document> { oldChild.document() }, oldChild);
 
     ScriptDisallowedScope::InMainThread scriptDisallowedScope;
 
@@ -813,7 +813,7 @@ void ContainerNode::stringReplaceAll(String&& string)
 
 inline void ContainerNode::rebuildSVGExtensionsElementsIfNecessary()
 {
-    RefAllowingPartiallyDestroyed<Document> document = this->document();
+    Ref<Document> document = this->document();
     if (document->svgExtensionsIfExists() && !is<SVGUseElement>(shadowHost()))
         document->checkedSVGExtensions()->rebuildElements();
 }
@@ -984,7 +984,7 @@ ExceptionOr<void> ContainerNode::appendChild(ChildChange::Source source, Node& n
 
 void ContainerNode::childrenChanged(const ChildChange& change)
 {
-    RefAllowingPartiallyDestroyed<Document> document = this->document();
+    Ref<Document> document = this->document();
     document->incDOMTreeVersion();
 
     if (change.affectsElements == ChildChange::AffectsElements::Yes)
@@ -1073,7 +1073,7 @@ static void dispatchChildInsertionEvents(Node& child)
 static void dispatchChildRemovalEvents(Ref<Node>& child)
 {
     ASSERT_WITH_SECURITY_IMPLICATION(ScriptDisallowedScope::InMainThread::isEventDispatchAllowedInSubtree(child));
-    RefAllowingPartiallyDestroyed<Document> document = child->document();
+    Ref<Document> document = child->document();
     InspectorInstrumentation::willRemoveDOMNode(document, child.get());
 
     if (child->isInShadowTree() || document->shouldNotFireMutationEvents())

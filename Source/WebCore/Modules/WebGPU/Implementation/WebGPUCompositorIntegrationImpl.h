@@ -89,7 +89,7 @@ private:
     CompositorIntegrationImpl& operator=(const CompositorIntegrationImpl&) = delete;
     CompositorIntegrationImpl& operator=(CompositorIntegrationImpl&&) = delete;
 
-    void prepareForDisplay(CompletionHandler<void()>&&) override;
+    void prepareForDisplay(uint32_t frameIndex, CompletionHandler<void()>&&) override;
 
 #if PLATFORM(COCOA)
     Vector<MachSendRight> recreateRenderBuffers(int width, int height, WebCore::DestinationColorSpace&&, WebCore::AlphaPremultiplication, WebCore::WebGPU::TextureFormat, Device&) override;

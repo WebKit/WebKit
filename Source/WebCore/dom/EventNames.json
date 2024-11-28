@@ -295,6 +295,7 @@
     "webkitAnimationStart": { "categories": ["CSSAnimation"] },
     "webkitBeforeTextInserted": { "defaultEventHandler": true },
     "webkitTransitionEnd": { "categories": ["CSSTransition"] },
+    "webkitautofillrequest": { },
     "webkitbeginfullscreen": { },
     "webkitcurrentplaybacktargetiswirelesschanged": { },
     "webkitendfullscreen": { },

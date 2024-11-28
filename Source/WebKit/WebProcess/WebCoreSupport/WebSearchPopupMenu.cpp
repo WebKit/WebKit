@@ -47,16 +47,21 @@ PopupMenu* WebSearchPopupMenu::popupMenu()
     return m_popup.get();
 }
 
+RefPtr<WebPopupMenu> WebSearchPopupMenu::protectedPopup()
+{
+    return m_popup;
+}
+
 void WebSearchPopupMenu::saveRecentSearches(const AtomString& name, const Vector<RecentSearch>& searchItems)
 {
     if (name.isEmpty())
         return;
 
-    RefPtr page = m_popup->page();
+    RefPtr page = protectedPopup()->page();
     if (!page)
         return;
 
-    RefPtr { WebProcess::singleton().parentProcessConnection() }->send(Messages::WebPageProxy::SaveRecentSearches(name, searchItems), page->identifier());
+    WebProcess::singleton().protectedParentProcessConnection()->send(Messages::WebPageProxy::SaveRecentSearches(name, searchItems), page->identifier());
 }
 
 void WebSearchPopupMenu::loadRecentSearches(const AtomString& name, Vector<RecentSearch>& resultItems)
@@ -64,11 +69,11 @@ void WebSearchPopupMenu::loadRecentSearches(const AtomString& name, Vector<Recen
     if (name.isEmpty())
         return;
 
-    RefPtr page = m_popup->page();
+    RefPtr page = protectedPopup()->page();
     if (!page)
         return;
 
-    auto sendResult = RefPtr { WebProcess::singleton().parentProcessConnection() }->sendSync(Messages::WebPageProxy::LoadRecentSearches(name), page->identifier());
+    auto sendResult = WebProcess::singleton().protectedParentProcessConnection()->sendSync(Messages::WebPageProxy::LoadRecentSearches(name), page->identifier());
     if (sendResult.succeeded())
         std::tie(resultItems) = sendResult.takeReply();
 }

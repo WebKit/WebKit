@@ -51,6 +51,11 @@ DestinationColorSpace PlatformImageNativeImageBackend::colorSpace() const
     return DestinationColorSpace::SRGB();
 }
 
+Headroom PlatformImageNativeImageBackend::headroom() const
+{
+    return Headroom::None;
+}
+
 std::optional<Color> NativeImage::singlePixelSolidColor() const
 {
     if (size() != IntSize(1, 1))

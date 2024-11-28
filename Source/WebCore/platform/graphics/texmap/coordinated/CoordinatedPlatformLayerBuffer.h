@@ -42,7 +42,9 @@ public:
         YUV,
         ExternalOES,
         HolePunch,
-        Video
+        Video,
+        DMABuf,
+        NativeImage
     };
 
     virtual ~CoordinatedPlatformLayerBuffer() = default;

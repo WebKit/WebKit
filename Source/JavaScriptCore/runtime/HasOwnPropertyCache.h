@@ -30,6 +30,8 @@
 #include "Structure.h"
 #include <wtf/UniqueRef.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HasOwnPropertyCache);
@@ -68,7 +70,7 @@ public:
 
     ALWAYS_INLINE static uint32_t hash(StructureID structureID, UniquedStringImpl* impl)
     {
-        return bitwise_cast<uint32_t>(structureID) + impl->hash();
+        return std::bit_cast<uint32_t>(structureID) + impl->hash();
     }
 
     ALWAYS_INLINE std::optional<bool> get(Structure* structure, PropertyName propName)
@@ -76,7 +78,7 @@ public:
         UniquedStringImpl* impl = propName.uid();
         StructureID id = structure->id();
         uint32_t index = HasOwnPropertyCache::hash(id, impl) & mask;
-        Entry& entry = bitwise_cast<Entry*>(this)[index];
+        Entry& entry = std::bit_cast<Entry*>(this)[index];
         if (entry.structureID == id && entry.impl.get() == impl)
             return entry.result;
         return std::nullopt;
@@ -108,13 +110,13 @@ public:
             UniquedStringImpl* impl = propName.uid();
             StructureID id = structure->id();
             uint32_t index = HasOwnPropertyCache::hash(id, impl) & mask;
-            bitwise_cast<Entry*>(this)[index] = Entry { RefPtr<UniquedStringImpl>(impl), id, result };
+            std::bit_cast<Entry*>(this)[index] = Entry { RefPtr<UniquedStringImpl>(impl), id, result };
         }
     }
 
     void clear()
     {
-        Entry* buffer = bitwise_cast<Entry*>(this);
+        Entry* buffer = std::bit_cast<Entry*>(this);
         for (uint32_t i = 0; i < size; ++i)
             buffer[i].Entry::~Entry();
 
@@ -124,10 +126,12 @@ public:
 private:
     void clearBuffer()
     {
-        Entry* buffer = bitwise_cast<Entry*>(this);
+        Entry* buffer = std::bit_cast<Entry*>(this);
         for (uint32_t i = 0; i < size; ++i)
             new (&buffer[i]) Entry();
     }
 };
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

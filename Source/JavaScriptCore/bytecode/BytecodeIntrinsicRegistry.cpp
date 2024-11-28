@@ -34,14 +34,18 @@
 #include "IdentifierInlines.h"
 #include "IterationKind.h"
 #include "JSArrayIterator.h"
+#include "JSAsyncFromSyncIterator.h"
 #include "JSAsyncGenerator.h"
 #include "JSGenerator.h"
 #include "JSGlobalObject.h"
+#include "JSIteratorHelper.h"
 #include "JSMapIterator.h"
 #include "JSModuleLoader.h"
 #include "JSPromise.h"
+#include "JSRegExpStringIterator.h"
 #include "JSSetIterator.h"
 #include "JSStringIterator.h"
+#include "JSWrapForValidIterator.h"
 #include "LinkTimeConstant.h"
 #include "Nodes.h"
 #include "StrongInlines.h"
@@ -97,6 +101,7 @@ BytecodeIntrinsicRegistry::BytecodeIntrinsicRegistry(VM& vm)
     m_GeneratorResumeModeReturn.set(m_vm, jsNumber(static_cast<int32_t>(JSGenerator::ResumeMode::ReturnMode)));
     m_GeneratorStateCompleted.set(m_vm, jsNumber(static_cast<int32_t>(JSGenerator::State::Completed)));
     m_GeneratorStateExecuting.set(m_vm, jsNumber(static_cast<int32_t>(JSGenerator::State::Executing)));
+    m_GeneratorStateInit.set(m_vm, jsNumber(static_cast<int32_t>(JSGenerator::State::Init)));
     m_arrayIteratorFieldIteratedObject.set(m_vm, jsNumber(static_cast<int32_t>(JSArrayIterator::Field::IteratedObject)));
     m_arrayIteratorFieldIndex.set(m_vm, jsNumber(static_cast<int32_t>(JSArrayIterator::Field::Index)));
     m_arrayIteratorFieldKind.set(m_vm, jsNumber(static_cast<int32_t>(JSArrayIterator::Field::Kind)));
@@ -122,7 +127,18 @@ BytecodeIntrinsicRegistry::BytecodeIntrinsicRegistry(VM& vm)
     m_AsyncGeneratorSuspendReasonYield.set(m_vm, jsNumber(static_cast<int32_t>(JSAsyncGenerator::AsyncGeneratorSuspendReason::Yield)));
     m_AsyncGeneratorSuspendReasonAwait.set(m_vm, jsNumber(static_cast<int32_t>(JSAsyncGenerator::AsyncGeneratorSuspendReason::Await)));
     m_AsyncGeneratorSuspendReasonNone.set(m_vm, jsNumber(static_cast<int32_t>(JSAsyncGenerator::AsyncGeneratorSuspendReason::None)));
+    m_asyncFromSyncIteratorFieldSyncIterator.set(m_vm, jsNumber(static_cast<int32_t>(JSAsyncFromSyncIterator::Field::SyncIterator)));
+    m_asyncFromSyncIteratorFieldNextMethod.set(m_vm, jsNumber(static_cast<int32_t>(JSAsyncFromSyncIterator::Field::NextMethod)));
     m_abstractModuleRecordFieldState.set(m_vm, jsNumber(static_cast<int32_t>(AbstractModuleRecord::Field::State)));
+    m_wrapForValidIteratorFieldIteratedIterator.set(m_vm, jsNumber(static_cast<int32_t>(JSWrapForValidIterator::Field::IteratedIterator)));
+    m_wrapForValidIteratorFieldIteratedNextMethod.set(m_vm, jsNumber(static_cast<int32_t>(JSWrapForValidIterator::Field::IteratedNextMethod)));
+    m_regExpStringIteratorFieldRegExp.set(m_vm, jsNumber(static_cast<int32_t>(JSRegExpStringIterator::Field::RegExp)));
+    m_regExpStringIteratorFieldString.set(m_vm, jsNumber(static_cast<int32_t>(JSRegExpStringIterator::Field::String)));
+    m_regExpStringIteratorFieldGlobal.set(m_vm, jsNumber(static_cast<int32_t>(JSRegExpStringIterator::Field::Global)));
+    m_regExpStringIteratorFieldFullUnicode.set(m_vm, jsNumber(static_cast<int32_t>(JSRegExpStringIterator::Field::FullUnicode)));
+    m_regExpStringIteratorFieldDone.set(m_vm, jsNumber(static_cast<int32_t>(JSRegExpStringIterator::Field::Done)));
+    m_iteratorHelperFieldGenerator.set(m_vm, jsNumber(static_cast<int32_t>(JSIteratorHelper::Field::Generator)));
+    m_iteratorHelperFieldUnderlyingIterator.set(m_vm, jsNumber(static_cast<int32_t>(JSIteratorHelper::Field::UnderlyingIterator)));
 }
 
 std::optional<BytecodeIntrinsicRegistry::Entry> BytecodeIntrinsicRegistry::lookup(const Identifier& ident) const

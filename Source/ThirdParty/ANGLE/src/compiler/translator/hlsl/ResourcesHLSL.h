@@ -92,10 +92,6 @@ class ResourcesHLSL : angle::NonCopyable
     TString uniformBlockStructString(const TInterfaceBlock &interfaceBlock);
     const ShaderVariable *findUniformByName(const ImmutableString &name) const;
 
-    void outputHLSL4_0_FL9_3Sampler(TInfoSinkBase &out,
-                                    const TType &type,
-                                    const TVariable &variable,
-                                    const unsigned int registerIndex);
     void outputUniform(TInfoSinkBase &out,
                        const TType &type,
                        const TVariable &variable,

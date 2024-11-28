@@ -226,6 +226,16 @@ AppHighlightStorage::AppHighlightStorage(Document& document)
 
 AppHighlightStorage::~AppHighlightStorage() = default;
 
+bool AppHighlightStorage::shouldRestoreHighlights(MonotonicTime timestamp)
+{
+    static constexpr auto highlightRestorationCheckDelay = 1_s;
+    if (timestamp - m_timeAtLastRangeSearch < highlightRestorationCheckDelay)
+        return false;
+
+    m_timeAtLastRangeSearch = timestamp;
+    return true;
+}
+
 void AppHighlightStorage::storeAppHighlight(Ref<StaticRange>&& range, CompletionHandler<void(AppHighlight&&)>&& completionHandler)
 {
     auto data = createAppHighlightRangeData(range);

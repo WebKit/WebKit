@@ -242,7 +242,7 @@ private:
     Timer m_clientDataBufferingTimer;
 
 #if !RELEASE_LOG_DISABLED
-    const void* m_logIdentifier;
+    uint64_t m_logIdentifier { 0 };
 #endif
 
 #if ENABLE(MEDIA_USAGE)

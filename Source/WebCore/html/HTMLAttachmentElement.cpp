@@ -928,6 +928,11 @@ void HTMLAttachmentElement::requestWideLayoutIconIfNeeded()
     if (!m_imageElement)
         return;
 
+// FIXME: Remove after rdar://136373445 is fixed.
+#if PLATFORM(MAC)
+    RELEASE_LOG(Editing, "HTMLAttachmentElement[uuid=%s] requestAttachmentIcon with type='%s'", uniqueIdentifier().utf8().data(), attachmentType().utf8().data());
+#endif
+
     dispatchEvent(Event::create(eventNames().beforeloadEvent, Event::CanBubble::No, Event::IsCancelable::No));
     document().page()->attachmentElementClient()->requestAttachmentIcon(uniqueIdentifier(), FloatSize(attachmentIconSize, attachmentIconSize));
 }

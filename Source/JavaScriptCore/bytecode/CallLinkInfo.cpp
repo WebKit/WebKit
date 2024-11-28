@@ -48,7 +48,7 @@ CallLinkInfo::CallType CallLinkInfo::callTypeFor(OpcodeID opcodeID)
     switch (opcodeID) {
     case op_tail_call_varargs:
     case op_tail_call_forward_arguments:
-        return TailCallVarargs;        
+        return TailCallVarargs;
 
     case op_call:
     case op_call_ignore_result:
@@ -61,9 +61,11 @@ CallLinkInfo::CallType CallLinkInfo::callTypeFor(OpcodeID opcodeID)
         return CallVarargs;
 
     case op_construct:
+    case op_super_construct:
         return Construct;
 
     case op_construct_varargs:
+    case op_super_construct_varargs:
         return ConstructVarargs;
 
     case op_tail_call:
@@ -131,7 +133,7 @@ void CallLinkInfo::unlinkOrUpgradeImpl(VM& vm, CodeBlock* oldCodeBlock, CodeBloc
 
 void CallLinkInfo::setMonomorphicCallee(VM& vm, JSCell* owner, JSObject* callee, CodeBlock* codeBlock, CodePtr<JSEntryPtrTag> codePtr)
 {
-    RELEASE_ASSERT(!(bitwise_cast<uintptr_t>(callee) & polymorphicCalleeMask));
+    RELEASE_ASSERT(!(std::bit_cast<uintptr_t>(callee) & polymorphicCalleeMask));
     m_callee.set(vm, owner, callee);
     m_codeBlock = codeBlock;
     m_monomorphicCallDestination = codePtr;
@@ -147,7 +149,7 @@ void CallLinkInfo::clearCallee()
 
 JSObject* CallLinkInfo::callee()
 {
-    RELEASE_ASSERT(!(bitwise_cast<uintptr_t>(m_callee.get()) & polymorphicCalleeMask));
+    RELEASE_ASSERT(!(std::bit_cast<uintptr_t>(m_callee.get()) & polymorphicCalleeMask));
     return m_callee.get();
 }
 
@@ -277,7 +279,7 @@ void CallLinkInfo::setVirtualCall(VM& vm)
 {
     reset(vm);
     m_callee.clear();
-    *bitwise_cast<uintptr_t*>(m_callee.slot()) = polymorphicCalleeMask;
+    *std::bit_cast<uintptr_t*>(m_callee.slot()) = polymorphicCalleeMask;
     m_codeBlock = nullptr; // PolymorphicCallStubRoutine will set CodeBlock inside it.
     m_monomorphicCallDestination = vm.getCTIVirtualCall(callMode()).code().template retagged<JSEntryPtrTag>();
 
@@ -305,7 +307,7 @@ void CallLinkInfo::setStub(Ref<PolymorphicCallStubRoutine>&& newStub)
     m_stub = WTFMove(newStub);
 
     m_callee.clear();
-    *bitwise_cast<uintptr_t*>(m_callee.slot()) = polymorphicCalleeMask;
+    *std::bit_cast<uintptr_t*>(m_callee.slot()) = polymorphicCalleeMask;
     m_codeBlock = nullptr; // PolymorphicCallStubRoutine will set CodeBlock inside it.
     m_monomorphicCallDestination = m_stub->code().code().retagged<JSEntryPtrTag>();
 

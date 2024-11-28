@@ -50,9 +50,12 @@
 #import <WebCore/ScrollingTreeFixedNodeCocoa.h>
 #import <WebCore/ScrollingTreeStickyNodeCocoa.h>
 #import <WebCore/WheelEventTestMonitor.h>
+#import <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
 using namespace WebCore;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteScrollingCoordinator);
 
 RemoteScrollingCoordinator::RemoteScrollingCoordinator(WebPage* page)
     : AsyncScrollingCoordinator(page->corePage())
@@ -77,25 +80,25 @@ bool RemoteScrollingCoordinator::coordinatesScrollingForFrameView(const LocalFra
     return renderView && renderView->usesCompositing();
 }
 
-bool RemoteScrollingCoordinator::isRubberBandInProgress(ScrollingNodeID nodeID) const
+bool RemoteScrollingCoordinator::isRubberBandInProgress(std::optional<ScrollingNodeID> nodeID) const
 {
     if (!nodeID)
         return false;
-    return m_nodesWithActiveRubberBanding.contains(nodeID);
+    return m_nodesWithActiveRubberBanding.contains(*nodeID);
 }
 
-bool RemoteScrollingCoordinator::isUserScrollInProgress(ScrollingNodeID nodeID) const
+bool RemoteScrollingCoordinator::isUserScrollInProgress(std::optional<ScrollingNodeID> nodeID) const
 {
     if (!nodeID)
         return false;
-    return m_nodesWithActiveUserScrolls.contains(nodeID);
+    return m_nodesWithActiveUserScrolls.contains(*nodeID);
 }
 
-bool RemoteScrollingCoordinator::isScrollSnapInProgress(ScrollingNodeID nodeID) const
+bool RemoteScrollingCoordinator::isScrollSnapInProgress(std::optional<ScrollingNodeID> nodeID) const
 {
     if (!nodeID)
         return false;
-    return m_nodesWithActiveScrollSnap.contains(nodeID);
+    return m_nodesWithActiveScrollSnap.contains(*nodeID);
 }
 
 void RemoteScrollingCoordinator::setScrollPinningBehavior(ScrollPinningBehavior)

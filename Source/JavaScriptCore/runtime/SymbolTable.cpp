@@ -47,7 +47,7 @@ SymbolTableEntry& SymbolTableEntry::copySlow(const SymbolTableEntry& other)
     ASSERT(other.isFat());
     FatEntry* newFatEntry = new FatEntry(*other.fatEntry());
     freeFatEntry();
-    m_bits = bitwise_cast<intptr_t>(newFatEntry);
+    m_bits = std::bit_cast<intptr_t>(newFatEntry);
     return *this;
 }
 
@@ -76,7 +76,7 @@ void SymbolTableEntry::prepareToWatch()
 SymbolTableEntry::FatEntry* SymbolTableEntry::inflateSlow()
 {
     FatEntry* entry = new FatEntry(m_bits);
-    m_bits = bitwise_cast<intptr_t>(entry);
+    m_bits = std::bit_cast<intptr_t>(entry);
     return entry;
 }
 
@@ -146,7 +146,7 @@ SymbolTable* SymbolTable::cloneScopePart(VM& vm)
     result->m_nestedLexicalScope = m_nestedLexicalScope;
     result->m_scopeType = m_scopeType;
 
-    HashMap<VarOffset, uint32_t> varOffsetToArgIndexMap;
+    UncheckedKeyHashMap<VarOffset, uint32_t> varOffsetToArgIndexMap;
 
     if (this->arguments()) {
         // Copy the arguments, but not the WatchpointSets. We create new WatchpointSets as appropriate when we create the SymbolTableEntry

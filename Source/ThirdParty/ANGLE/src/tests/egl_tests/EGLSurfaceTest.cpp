@@ -99,6 +99,16 @@ class EGLSurfaceTest : public ANGLETest<>
         mOSWindow->destroy();
         OSWindow::Delete(&mOSWindow);
 
+        for (OSWindow *win : mOtherWindows)
+        {
+            if (win != nullptr)
+            {
+                win->destroy();
+                OSWindow::Delete(&win);
+            }
+        }
+        mOtherWindows.clear();
+
         ASSERT_TRUE(mWindowSurface == EGL_NO_SURFACE && mContext == EGL_NO_CONTEXT);
     }
 
@@ -324,6 +334,7 @@ class EGLSurfaceTest : public ANGLETest<>
     EGLContext mSecondContext;
     EGLConfig mConfig;
     OSWindow *mOSWindow;
+    std::vector<OSWindow *> mOtherWindows;
 };
 
 class EGLFloatSurfaceTest : public EGLSurfaceTest
@@ -2562,6 +2573,78 @@ TEST_P(EGLSingleBufferTest, WaitOneOffSubmission)
     context2 = EGL_NO_CONTEXT;
 }
 
+// Checks that |WindowSurfaceVk::swamImpl| acquires and process next swapchain image in case of
+// shared present mode, when called from flush.
+TEST_P(EGLSingleBufferTest, AcquireImageFromSwapImpl)
+{
+    ANGLE_SKIP_TEST_IF(!IsEGLDisplayExtensionEnabled(mDisplay, "EGL_KHR_mutable_render_buffer"));
+
+    EGLConfig config = EGL_NO_CONFIG_KHR;
+    ANGLE_SKIP_TEST_IF(!chooseConfig(&config, true));
+
+    EGLContext context = EGL_NO_CONTEXT;
+    EXPECT_EGL_TRUE(createContext(config, &context));
+    ASSERT_EGL_SUCCESS() << "eglCreateContext failed.";
+
+    EGLSurface surface = EGL_NO_SURFACE;
+    OSWindow *osWindow = OSWindow::New();
+    osWindow->initialize("EGLSingleBufferTest", kWidth, kHeight);
+    EXPECT_EGL_TRUE(
+        createWindowSurface(config, osWindow->getNativeWindow(), &surface, EGL_BACK_BUFFER));
+    ASSERT_EGL_SUCCESS() << "eglCreateWindowSurface failed.";
+
+    EXPECT_EGL_TRUE(eglMakeCurrent(mDisplay, surface, surface, context));
+    ASSERT_EGL_SUCCESS() << "eglMakeCurrent failed.";
+
+    if (eglSurfaceAttrib(mDisplay, surface, EGL_RENDER_BUFFER, EGL_SINGLE_BUFFER))
+    {
+        eglSwapBuffers(mDisplay, surface);
+
+        ANGLE_GL_PROGRAM(greenProgram, essl1_shaders::vs::Simple(), essl1_shaders::fs::Green());
+
+        // Draw into the single buffered surface.
+        // Acquire next swapchain image should be deferred (Vulkan back-end).
+        drawQuad(greenProgram, essl1_shaders::PositionAttrib(), 0.5f);
+        glFlush();
+
+        // Prepare auxilary framebuffer.
+        GLRenderbuffer renderBuffer;
+        GLFramebuffer framebuffer;
+        glBindRenderbuffer(GL_RENDERBUFFER, renderBuffer);
+        glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+        glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8, 50, 50);
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER,
+                                  renderBuffer);
+        EXPECT_GL_NO_ERROR();
+
+        // Draw into the auxilary framebuffer just to generate commands into the command buffers.
+        // Otherwise below flush will be ignored.
+        drawQuad(greenProgram, essl1_shaders::PositionAttrib(), 0.5f);
+
+        // Switch back to the Windows Surface and perform flush.
+        // In Vulkan back-end flush will translate into |swapImpl| call while acquire next swapchain
+        // image is still deferred. |swapImpl| must perform the acquire in that case, otherwise
+        // ASSERT will trigger in |present|.
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        glFlush();
+    }
+    else
+    {
+        std::cout << "EGL_SINGLE_BUFFER mode is not supported." << std::endl;
+    }
+
+    EXPECT_EGL_TRUE(eglMakeCurrent(mDisplay, EGL_NO_SURFACE, EGL_NO_SURFACE, context));
+    ASSERT_EGL_SUCCESS() << "eglMakeCurrent - uncurrent failed.";
+
+    eglDestroySurface(mDisplay, surface);
+    surface = EGL_NO_SURFACE;
+    osWindow->destroy();
+    OSWindow::Delete(&osWindow);
+
+    eglDestroyContext(mDisplay, context);
+    context = EGL_NO_CONTEXT;
+}
+
 // Test that setting a surface to EGL_SINGLE_BUFFER after enabling
 // EGL_FRONT_BUFFER_AUTO_REFRESH_ANDROID does not disable auto refresh
 TEST_P(EGLAndroidAutoRefreshTest, Basic)
@@ -2948,6 +3031,44 @@ TEST_P(EGLSurfaceTest, DestroyAndRecreateWhileCurrent)
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
     ASSERT_GL_NO_ERROR();
 }
+
+// Regression test for a bug where destroying more than 2 surfaces during termination
+// overflowed the unlocked tail call storage.
+TEST_P(EGLSurfaceTest, CreateMultiWindowsSurfaceNoDestroy)
+{
+    initializeDisplay();
+
+    // Initialize and create multi RGBA8 window surfaces
+    constexpr EGLint kSurfaceAttributes[] = {EGL_RED_SIZE,     8,
+                                             EGL_GREEN_SIZE,   8,
+                                             EGL_BLUE_SIZE,    8,
+                                             EGL_ALPHA_SIZE,   8,
+                                             EGL_SURFACE_TYPE, EGL_WINDOW_BIT | EGL_PBUFFER_BIT,
+                                             EGL_NONE};
+
+    EGLint configCount      = 0;
+    EGLConfig surfaceConfig = nullptr;
+    ASSERT_EGL_TRUE(eglChooseConfig(mDisplay, kSurfaceAttributes, &surfaceConfig, 1, &configCount));
+    ASSERT_NE(configCount, 0);
+    ASSERT_NE(surfaceConfig, nullptr);
+
+    initializeSurface(surfaceConfig);
+
+    // Create 3 window surfaces to trigger error
+    std::vector<EGLint> windowAttributes;
+    windowAttributes.push_back(EGL_NONE);
+
+    for (int i = 0; i < 3; i++)
+    {
+        OSWindow *w = OSWindow::New();
+        w->initialize("EGLSurfaceTest", 64, 64);
+
+        eglCreateWindowSurface(mDisplay, mConfig, w->getNativeWindow(), windowAttributes.data());
+        ASSERT_EGL_SUCCESS();
+        mOtherWindows.push_back(w);
+    }
+}
+
 }  // anonymous namespace
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(EGLSingleBufferTest);
@@ -2962,6 +3083,8 @@ ANGLE_INSTANTIATE_TEST(EGLSurfaceTest,
                        WithNoFixture(ES2_D3D9()),
                        WithNoFixture(ES2_D3D11()),
                        WithNoFixture(ES3_D3D11()),
+                       WithNoFixture(ES2_METAL()),
+                       WithNoFixture(ES3_METAL()),
                        WithNoFixture(ES2_OPENGL()),
                        WithNoFixture(ES3_OPENGL()),
                        WithNoFixture(ES2_OPENGLES()),

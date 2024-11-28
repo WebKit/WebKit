@@ -1,7 +1,7 @@
 
 PASS Should be above the anchor when at initial scroll position
-FAIL Scroll down until the top edge of #anchor touches container but not overflowing assert_equals: Anchored element should be at the top of anchor expected 200 but got 400
+PASS Scroll down until the top edge of #anchor touches container but not overflowing
 FAIL Scroll further down, making the first fallback position overflow by 1px assert_equals: Anchored element should be at the left of anchor expected 258 but got 358
-FAIL Scroll back up to reuse the first fallback position assert_equals: Anchored element should be at the top of anchor expected 200 but got 400
+PASS Scroll back up to reuse the first fallback position
 FAIL Scroll bottom-right to make the first three fallback positions overflow assert_equals: Anchored element should be at the right of anchor expected 358 but got 258
 

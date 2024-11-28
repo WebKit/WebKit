@@ -30,12 +30,14 @@
 #include "UpSampler.h"
 #include "WaveShaperProcessor.h"
 #include <memory>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 // WaveShaperDSPKernel is an AudioDSPKernel and is responsible for non-linear distortion on one channel.
 
 class WaveShaperDSPKernel final : public AudioDSPKernel {
+    WTF_MAKE_TZONE_ALLOCATED(WaveShaperDSPKernel);
 public:
     explicit WaveShaperDSPKernel(WaveShaperProcessor*);
 

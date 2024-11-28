@@ -42,6 +42,9 @@ class PageClientImpl final : public PageClient
 #endif
 {
     WTF_MAKE_TZONE_ALLOCATED(PageClientImpl);
+#if ENABLE(FULLSCREEN_API)
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(PageClientImpl);
+#endif
 public:
     PageClientImpl(PlayStationWebView&);
 
@@ -91,7 +94,6 @@ private:
 
     void setCursor(const WebCore::Cursor&) override;
     void setCursorHiddenUntilMouseMoves(bool) override;
-    void didChangeViewportProperties(const WebCore::ViewportAttributes&) override;
 
     void registerEditCommand(Ref<WebEditCommandProxy>&&, UndoOrRedo) override;
     void clearAllEditCommands() override;

@@ -25,6 +25,8 @@
 #include <wtf/text/SuperFastHash.h>
 #include <wtf/text/WYHash.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WTF {
 
 template<typename T, typename Converter>
@@ -134,3 +136,5 @@ inline unsigned StringHasher::hashWithTop8BitsMasked()
 } // namespace WTF
 
 using WTF::StringHasher;
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

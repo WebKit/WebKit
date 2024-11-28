@@ -70,6 +70,10 @@
 #include "ImageControlsMac.h"
 #endif
 
+#if ENABLE(SPATIAL_IMAGE_CONTROLS)
+#include "SpatialImageControls.h"
+#endif
+
 namespace WebCore {
 
 WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(HTMLImageElement);
@@ -80,7 +84,7 @@ HTMLImageElement::HTMLImageElement(const QualifiedName& tagName, Document& docum
     : HTMLElement(tagName, document, { TypeFlag::HasCustomStyleResolveCallbacks, TypeFlag::HasDidMoveToNewDocument })
     , FormAssociatedElement(form)
     , ActiveDOMObject(document)
-    , m_imageLoader(makeUnique<HTMLImageLoader>(*this))
+    , m_imageLoader(makeUniqueWithoutRefCountedCheck<HTMLImageLoader>(*this))
     , m_compositeOperator(CompositeOperator::SourceOver)
     , m_imageDevicePixelRatio(1.0f)
 {
@@ -107,7 +111,7 @@ HTMLImageElement::~HTMLImageElement()
     document().removeDynamicMediaQueryDependentImage(*this);
     setForm(nullptr);
 #if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
-    if (auto* page = document().page())
+    if (RefPtr page = document().page())
         page->removeIndividuallyPlayingAnimationElement(*this);
 #endif
 }
@@ -430,6 +434,11 @@ void HTMLImageElement::attributeChanged(const QualifiedName& name, const AtomStr
         m_hadNameBeforeAttributeChanged = willHaveName;
         break;
     }
+#if ENABLE(SPATIAL_IMAGE_CONTROLS)
+    case AttributeNames::controlsAttr:
+        SpatialImageControls::updateSpatialImageControls(*this);
+        break;
+#endif
     default:
         break;
     }
@@ -463,6 +472,11 @@ RenderPtr<RenderElement> HTMLImageElement::createElementRenderer(RenderStyle&& s
         return RenderElement::createFor(*this, WTFMove(style));
 
     return createRenderer<RenderImage>(RenderObject::Type::Image, *this, WTFMove(style), nullptr, m_imageDevicePixelRatio);
+}
+
+bool HTMLImageElement::isReplaced(const RenderStyle& style) const
+{
+    return !style.hasContent();
 }
 
 bool HTMLImageElement::canStartSelection() const
@@ -685,7 +699,7 @@ String HTMLImageElement::completeURLsInAttributeValue(const URL& base, const Att
     return HTMLElement::completeURLsInAttributeValue(base, attribute, resolveURLs);
 }
 
-Attribute HTMLImageElement::replaceURLsInAttributeValue(const Attribute& attribute, const HashMap<String, String>& replacementURLStrings) const
+Attribute HTMLImageElement::replaceURLsInAttributeValue(const Attribute& attribute, const UncheckedKeyHashMap<String, String>& replacementURLStrings) const
 {
     if (attribute.name() != srcsetAttr)
         return attribute;
@@ -880,7 +894,7 @@ void HTMLImageElement::setAllowsAnimation(std::optional<bool> allowsAnimation)
         if (auto* renderer = this->renderer())
             renderer->repaint();
 
-        if (auto* page = document().page()) {
+        if (RefPtr page = document().page()) {
             if (allowsAnimation.value_or(false))
                 page->addIndividuallyPlayingAnimationElement(*this);
             else

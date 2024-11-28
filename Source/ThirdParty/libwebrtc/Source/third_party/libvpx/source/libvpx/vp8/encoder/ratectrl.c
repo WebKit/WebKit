@@ -329,6 +329,11 @@ static void calc_iframe_target_size(VP8_COMP *cpi) {
     if (cpi->oxcf.number_of_layers == 1) {
       kf_boost =
           VPXMAX(initial_boost, (int)round(2 * cpi->output_framerate - 16));
+      // cpi->output_framerate may be as large as 10M. Keep kf_boost small
+      // enough to allow for integer math when multiplying by values in
+      // kf_boost_qadjustment[].
+      const int kMaxKfBoost = 2000;
+      if (kf_boost > kMaxKfBoost) kf_boost = kMaxKfBoost;
     } else {
       /* Initial factor: set target size to: |3.0 * per_frame_bandwidth|. */
       kf_boost = initial_boost;

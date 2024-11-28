@@ -30,17 +30,12 @@
 #include "ApplePaySessionPaymentRequest.h"
 #include <wtf/Expected.h>
 #include <wtf/Function.h>
+#include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/UniqueRef.h>
-#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 class PaymentCoordinator;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::PaymentCoordinator> : std::true_type { };
 }
 
 namespace WebCore {
@@ -63,10 +58,10 @@ struct ApplePayShippingMethod;
 struct ApplePayShippingMethodUpdate;
 struct ExceptionDetails;
 
-class PaymentCoordinator : public CanMakeWeakPtr<PaymentCoordinator> {
+class PaymentCoordinator final : public RefCountedAndCanMakeWeakPtr<PaymentCoordinator> {
     WTF_MAKE_TZONE_ALLOCATED_EXPORT(PaymentCoordinator, WEBCORE_EXPORT);
 public:
-    WEBCORE_EXPORT explicit PaymentCoordinator(UniqueRef<PaymentCoordinatorClient>&&);
+    WEBCORE_EXPORT static Ref<PaymentCoordinator> create(UniqueRef<PaymentCoordinatorClient>&&);
     WEBCORE_EXPORT ~PaymentCoordinator();
 
     PaymentCoordinatorClient& client() { return m_client.get(); }
@@ -105,6 +100,9 @@ public:
     void getSetupFeatures(const ApplePaySetupConfiguration&, const URL&, CompletionHandler<void(Vector<Ref<ApplePaySetupFeature>>&&)>&&);
     void beginApplePaySetup(const ApplePaySetupConfiguration&, const URL&, Vector<Ref<ApplePaySetupFeature>>&&, CompletionHandler<void(bool)>&&);
     void endApplePaySetup();
+
+protected:
+    WEBCORE_EXPORT explicit PaymentCoordinator(UniqueRef<PaymentCoordinatorClient>&&);
 
 private:
     UniqueRef<PaymentCoordinatorClient> m_client;

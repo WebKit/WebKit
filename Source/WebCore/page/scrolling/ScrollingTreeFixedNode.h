@@ -31,12 +31,14 @@
 #include "ScrollingPlatformLayer.h"
 #include "ScrollingTree.h"
 #include "ScrollingTreeNode.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class FixedPositionViewportConstraints;
 
 class ScrollingTreeFixedNode : public ScrollingTreeNode {
+    WTF_MAKE_TZONE_ALLOCATED(ScrollingTreeFixedNode);
 public:
     virtual ~ScrollingTreeFixedNode();
 

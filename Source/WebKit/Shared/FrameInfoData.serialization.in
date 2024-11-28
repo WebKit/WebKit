@@ -30,9 +30,10 @@ struct WebKit::FrameInfoData {
     WebCore::ResourceRequest request
     WebCore::SecurityOriginData securityOrigin
     String frameName
-    WebCore::FrameIdentifier frameID
-    std::optional<WebCore::FrameIdentifier> parentFrameID
+    Markable<WebCore::FrameIdentifier> frameID
+    Markable<WebCore::FrameIdentifier> parentFrameID
     WTF::ProcessID processID
     bool isFocused
     bool errorOccurred
+    WebKit::WebFrameMetrics frameMetrics
 }

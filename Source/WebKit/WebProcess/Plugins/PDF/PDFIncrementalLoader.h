@@ -48,7 +48,7 @@ class PDFPluginBase;
 class PDFPluginStreamLoaderClient;
 
 enum class ByteRangeRequestIdentifierType { };
-using ByteRangeRequestIdentifier = LegacyNullableObjectIdentifier<ByteRangeRequestIdentifierType>;
+using ByteRangeRequestIdentifier = ObjectIdentifier<ByteRangeRequestIdentifierType>;
 using DataRequestCompletionHandler = Function<void(std::span<const uint8_t>)>;
 
 enum class CheckValidRanges : bool;
@@ -79,7 +79,7 @@ public:
 
     // Only public for the callbacks
     size_t dataProviderGetBytesAtPosition(std::span<uint8_t> buffer, off_t position);
-    void dataProviderGetByteRanges(CFMutableArrayRef buffers, const CFRange* ranges, size_t count);
+    void dataProviderGetByteRanges(CFMutableArrayRef buffers, std::span<const CFRange> ranges);
 
 private:
     PDFIncrementalLoader(PDFPluginBase&);
@@ -103,7 +103,7 @@ private:
     void forgetStreamLoader(WebCore::NetscapePlugInStreamLoader&);
     void cancelAndForgetStreamLoader(WebCore::NetscapePlugInStreamLoader&);
 
-    ByteRangeRequestIdentifier identifierForLoader(WebCore::NetscapePlugInStreamLoader*);
+    std::optional<ByteRangeRequestIdentifier> identifierForLoader(WebCore::NetscapePlugInStreamLoader*);
     void removeOutstandingByteRangeRequest(ByteRangeRequestIdentifier);
 
 

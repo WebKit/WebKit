@@ -82,7 +82,7 @@ public:
     }
     
 private:
-    HashMap<Node*, List> m_children;
+    UncheckedKeyHashMap<Node*, List> m_children;
 };
 
 } } // namespace JSC::DFG

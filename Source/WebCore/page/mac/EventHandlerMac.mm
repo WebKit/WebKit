@@ -59,7 +59,6 @@
 #import "RenderListBox.h"
 #import "RenderView.h"
 #import "RenderWidget.h"
-#import "RuntimeApplicationChecks.h"
 #import "ScreenProperties.h"
 #import "ScrollAnimator.h"
 #import "ScrollLatchingController.h"
@@ -76,6 +75,7 @@
 #import <wtf/NeverDestroyed.h>
 #import <wtf/ObjCRuntimeExtras.h>
 #import <wtf/ProcessPrivilege.h>
+#import <wtf/RuntimeApplicationChecks.h>
 #import <wtf/text/TextStream.h>
 
 #if ENABLE(MAC_GESTURE_EVENTS)
@@ -693,18 +693,19 @@ static bool frameHasPlatformWidget(const LocalFrame& frame)
     return false;
 }
 
-bool EventHandler::passMousePressEventToSubframe(MouseEventWithHitTestResults& mouseEventAndResult, LocalFrame& subframe)
+HandleUserInputEventResult EventHandler::passMousePressEventToSubframe(MouseEventWithHitTestResults& mouseEventAndResult, LocalFrame& subframe)
 {
     // WebKit1 code path.
     if (frameHasPlatformWidget(m_frame))
         return passSubframeEventToSubframe(mouseEventAndResult, subframe);
 
     // WebKit2 code path.
-    subframe.eventHandler().handleMousePressEvent(mouseEventAndResult.event());
+    if (auto remoteMouseEventData = subframe.eventHandler().handleMousePressEvent(mouseEventAndResult.event()).remoteUserInputEventData())
+        return *remoteMouseEventData;
     return true;
 }
 
-bool EventHandler::passMouseMoveEventToSubframe(MouseEventWithHitTestResults& mouseEventAndResult, LocalFrame& subframe, HitTestResult* hitTestResult)
+HandleUserInputEventResult EventHandler::passMouseMoveEventToSubframe(MouseEventWithHitTestResults& mouseEventAndResult, LocalFrame& subframe, HitTestResult* hitTestResult)
 {
     // WebKit1 code path.
     if (frameHasPlatformWidget(m_frame))
@@ -716,18 +717,20 @@ bool EventHandler::passMouseMoveEventToSubframe(MouseEventWithHitTestResults& mo
         return false;
 #endif
 
-    subframe.eventHandler().handleMouseMoveEvent(mouseEventAndResult.event(), hitTestResult);
+    if (auto remoteMouseEventData = subframe.eventHandler().handleMouseMoveEvent(mouseEventAndResult.event(), hitTestResult).remoteUserInputEventData())
+        return *remoteMouseEventData;
     return true;
 }
 
-bool EventHandler::passMouseReleaseEventToSubframe(MouseEventWithHitTestResults& mouseEventAndResult, LocalFrame& subframe)
+HandleUserInputEventResult EventHandler::passMouseReleaseEventToSubframe(MouseEventWithHitTestResults& mouseEventAndResult, LocalFrame& subframe)
 {
     // WebKit1 code path.
     if (frameHasPlatformWidget(m_frame))
         return passSubframeEventToSubframe(mouseEventAndResult, subframe);
 
     // WebKit2 code path.
-    subframe.eventHandler().handleMouseReleaseEvent(mouseEventAndResult.event());
+    if (auto remoteMouseEventData = subframe.eventHandler().handleMouseReleaseEvent(mouseEventAndResult.event()).remoteUserInputEventData())
+        return *remoteMouseEventData;
     return true;
 }
 

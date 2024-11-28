@@ -34,9 +34,6 @@ FontRenderOptions::FontRenderOptions() = default;
 
 void FontRenderOptions::setHinting(std::optional<Hinting> hinting)
 {
-    if (m_isHintingDisabledForTesting)
-        return;
-
     switch (hinting.value_or(Hinting::Medium)) {
     case Hinting::None:
         m_hinting = SkFontHinting::kNone;
@@ -53,6 +50,17 @@ void FontRenderOptions::setHinting(std::optional<Hinting> hinting)
     }
 }
 
+SkFontHinting FontRenderOptions::hinting() const
+{
+    if (m_isHintingDisabledForTesting)
+        return SkFontHinting::kNone;
+
+    if (m_followSystemSettings)
+        return m_hinting;
+
+    return SkFontHinting::kSlight;
+}
+
 void FontRenderOptions::setAntialias(std::optional<Antialias> antialias)
 {
     switch (antialias.value_or(Antialias::Normal)) {
@@ -66,6 +74,14 @@ void FontRenderOptions::setAntialias(std::optional<Antialias> antialias)
         m_antialias = SkFont::Edging::kSubpixelAntiAlias;
         break;
     }
+}
+
+SkFont::Edging FontRenderOptions::antialias() const
+{
+    if (m_followSystemSettings)
+        return m_antialias;
+
+    return SkFont::Edging::kAntiAlias;
 }
 
 void FontRenderOptions::setSubpixelOrder(std::optional<SubpixelOrder> subpixelOrder)
@@ -89,9 +105,27 @@ void FontRenderOptions::setSubpixelOrder(std::optional<SubpixelOrder> subpixelOr
     }
 }
 
+SkPixelGeometry FontRenderOptions::subpixelOrder() const
+{
+    if (m_followSystemSettings)
+        return m_subpixelOrder;
+
+    return kUnknown_SkPixelGeometry;
+}
+
+bool FontRenderOptions::useSubpixelPositioning() const
+{
+    // Subpixel positioning is not a system setting, it's set when device scale factor is >= 2.
+    // So, we only apply it when not following system settings to force subpixel position with
+    // linear metrics and no hinting.
+    if (!m_followSystemSettings)
+        return m_useSubpixelPositioning;
+
+    return false;
+}
+
 void FontRenderOptions::disableHintingForTesting()
 {
-    m_hinting = SkFontHinting::kNone;
     m_isHintingDisabledForTesting = true;
 }
 

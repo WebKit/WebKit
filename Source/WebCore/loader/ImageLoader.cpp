@@ -26,6 +26,8 @@
 #include "CachedImage.h"
 #include "CachedResourceLoader.h"
 #include "CachedResourceRequest.h"
+#include "Chrome.h"
+#include "ChromeClient.h"
 #include "CrossOriginAccessControl.h"
 #include "Document.h"
 #include "DocumentLoader.h"
@@ -57,6 +59,10 @@
 
 #if ENABLE(VIDEO)
 #include "RenderVideo.h"
+#endif
+
+#if ENABLE(SPATIAL_IMAGE_CONTROLS)
+#include "SpatialImageControls.h"
 #endif
 
 #if ASSERT_ENABLED
@@ -150,6 +156,16 @@ ImageLoader::~ImageLoader()
     ASSERT(m_hasPendingLoadEvent || m_hasPendingErrorEvent || !loadEventSender().hasPendingEvents(*this));
     if (m_hasPendingLoadEvent || m_hasPendingErrorEvent)
         loadEventSender().cancelEvent(*this);
+}
+
+void ImageLoader::ref() const
+{
+    m_element->ref();
+}
+
+void ImageLoader::deref() const
+{
+    m_element->deref();
 }
 
 void ImageLoader::clearImage()
@@ -470,6 +486,15 @@ void ImageLoader::notifyFinished(CachedResource& resource, const NetworkLoadMetr
     if (hasPendingDecodePromises())
         decode();
     loadEventSender().dispatchEventSoon(*this, eventNames().loadEvent);
+#if ENABLE(QUICKLOOK_FULLSCREEN)
+    if (RefPtr page = element().document().protectedPage())
+        page->chrome().client().updateImageSource(protectedElement().get());
+#endif
+
+#if ENABLE(SPATIAL_IMAGE_CONTROLS)
+    if (RefPtr imageElement = dynamicDowncast<HTMLImageElement>(element()))
+        SpatialImageControls::updateSpatialImageControls(*imageElement);
+#endif
 }
 
 RenderImageResource* ImageLoader::renderImageResource()

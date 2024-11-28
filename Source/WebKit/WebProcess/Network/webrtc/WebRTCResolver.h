@@ -29,6 +29,7 @@
 
 #include "LibWebRTCResolverIdentifier.h"
 #include "RTCNetwork.h"
+#include <wtf/CheckedPtr.h>
 #include <wtf/Forward.h>
 #include <wtf/TZoneMalloc.h>
 
@@ -41,10 +42,12 @@ namespace WebKit {
 
 class LibWebRTCSocketFactory;
 
-class WebRTCResolver {
+class WebRTCResolver : public CanMakeCheckedPtr<WebRTCResolver> {
     WTF_MAKE_TZONE_ALLOCATED(WebRTCResolver);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(WebRTCResolver);
 public:
     WebRTCResolver(LibWebRTCSocketFactory&, LibWebRTCResolverIdentifier);
+    ~WebRTCResolver();
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
 
@@ -52,7 +55,7 @@ private:
     void setResolvedAddress(const Vector<RTCNetwork::IPAddress>&);
     void resolvedAddressError(int);
 
-    LibWebRTCSocketFactory& m_socketFactory;
+    CheckedRef<LibWebRTCSocketFactory> m_socketFactory;
     LibWebRTCResolverIdentifier m_identifier;
 };
 

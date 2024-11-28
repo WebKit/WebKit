@@ -33,28 +33,22 @@
 #include <wtf/UniqueRef.h>
 
 namespace WebKit {
-class FidoService;
-}
 
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::FidoService> : std::true_type { };
-}
-
-namespace WebKit {
-
-class FidoService : public AuthenticatorTransportService {
+class FidoService : public AuthenticatorTransportService, public RefCounted<FidoService> {
+    WTF_MAKE_TZONE_ALLOCATED(FidoService);
 public:
-    explicit FidoService(AuthenticatorTransportServiceObserver&);
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
 
 protected:
-    void getInfo(std::unique_ptr<CtapDriver>&&);
+    explicit FidoService(AuthenticatorTransportServiceObserver&);
+    void getInfo(Ref<CtapDriver>&&);
 
 private:
     void continueAfterGetInfo(WeakPtr<CtapDriver>&&, Vector<uint8_t>&& info);
 
     // Keeping drivers alive when they are getting info from devices.
-    HashSet<std::unique_ptr<CtapDriver>> m_drivers;
+    HashSet<Ref<CtapDriver>> m_drivers;
 };
 
 } // namespace WebKit

@@ -55,7 +55,7 @@ public:
     // baseline-sharing group
     LayoutUnit baselineOffsetForGridItem(ItemPosition, unsigned sharedContext, const RenderBox&, GridAxis) const;
 
-    // Sets the Grid Container's writing-mode so that we can avoid the dependecy of the LayoutGrid class for
+    // Sets the Grid Container's writing mode so that we can avoid the dependecy of the LayoutGrid class for
     // determining whether a grid item is orthogonal or not.
     void setWritingMode(WritingMode writingMode) { m_writingMode = writingMode; };
 
@@ -74,9 +74,9 @@ private:
     bool isOrthogonalGridItemForBaseline(const RenderBox&) const;
     bool isParallelToAlignmentAxisForGridItem(const RenderBox&, GridAxis) const;
 
-    typedef HashMap<unsigned, std::unique_ptr<BaselineAlignmentState>, DefaultHash<unsigned>, WTF::UnsignedWithZeroKeyHashTraits<unsigned>> BaselineAlignmentStateMap;
+    typedef UncheckedKeyHashMap<unsigned, std::unique_ptr<BaselineAlignmentState>, DefaultHash<unsigned>, WTF::UnsignedWithZeroKeyHashTraits<unsigned>> BaselineAlignmentStateMap;
 
-    // Grid Container's WritingMode, used to determine grid item's orthogonality.
+    // Grid Container's writing mode, used to determine grid item's orthogonality.
     WritingMode m_writingMode;
     BaselineAlignmentStateMap m_rowAxisBaselineAlignmentStates;
     BaselineAlignmentStateMap m_colAxisBaselineAlignmentStates;

@@ -45,6 +45,8 @@ class GeolocationController;
 // FIXME: this should not be in WebCore. It should be moved to WebKit.
 // Provides a mock object for the geolocation client.
 class GeolocationClientMock : public GeolocationClient {
+    WTF_MAKE_FAST_ALLOCATED;
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(GeolocationClientMock);
 public:
     GeolocationClientMock();
     virtual ~GeolocationClientMock();

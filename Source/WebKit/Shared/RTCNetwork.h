@@ -32,12 +32,10 @@
 #include <wtf/Forward.h>
 #include <wtf/Vector.h>
 
-ALLOW_COMMA_BEGIN
-
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
 #include <webrtc/rtc_base/socket_address.h>
 #include <webrtc/rtc_base/network.h>
-
-ALLOW_COMMA_END
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 
 namespace WebKit {
 

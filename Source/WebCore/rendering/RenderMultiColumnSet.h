@@ -135,7 +135,7 @@ public:
     };
     LayoutPoint translateFragmentPointToFragmentedFlow(const LayoutPoint & logicalPoint, ColumnHitTestTranslationMode = DoNotClampHitTestTranslationToColumns) const;
 
-    void updateHitTestResult(HitTestResult&, const LayoutPoint&) override;
+    void updateHitTestResult(HitTestResult&, const LayoutPoint&) const override;
     
     LayoutRect columnRectAt(unsigned index) const;
     unsigned columnCount() const;

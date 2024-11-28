@@ -28,7 +28,9 @@
 #if USE(SKIA)
 
 #include <gdk/gdk.h>
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
 #include <skia/core/SkImage.h>
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 #include <wtf/glib/GRefPtr.h>
 
 #if !USE(GTK4)

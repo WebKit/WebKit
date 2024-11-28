@@ -30,6 +30,7 @@
 
 #include "AudioTrackPrivateAVF.h"
 #include <wtf/Observer.h>
+#include <wtf/TZoneMalloc.h>
 
 OBJC_CLASS AVAssetTrack;
 OBJC_CLASS AVPlayerItem;
@@ -43,6 +44,7 @@ class AVTrackPrivateAVFObjCImpl;
 class MediaSelectionOptionAVFObjC;
 
 class AudioTrackPrivateAVFObjC : public AudioTrackPrivateAVF {
+    WTF_MAKE_TZONE_ALLOCATED(AudioTrackPrivateAVFObjC);
     WTF_MAKE_NONCOPYABLE(AudioTrackPrivateAVFObjC)
 public:
     static RefPtr<AudioTrackPrivateAVFObjC> create(AVPlayerItemTrack* track)

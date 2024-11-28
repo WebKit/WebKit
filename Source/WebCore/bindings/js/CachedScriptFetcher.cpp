@@ -37,7 +37,7 @@
 
 namespace WebCore {
 
-Ref<CachedScriptFetcher> CachedScriptFetcher::create(const String& charset)
+Ref<CachedScriptFetcher> CachedScriptFetcher::create(const AtomString& charset)
 {
     return adoptRef(*new CachedScriptFetcher(charset));
 }

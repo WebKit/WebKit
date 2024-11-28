@@ -29,7 +29,10 @@
 
 #if PLATFORM(IOS_FAMILY)
 
+#import "RemoteLayerTreeNode.h"
+#import "RemoteLayerTreeViews.h"
 #import "WKContentViewInteraction.h"
+#import <WebCore/TileController.h>
 
 @implementation WKTextInteractionWrapper {
     __weak WKContentView *_view;
@@ -60,7 +63,7 @@
 
     _textInteractionAssistant = adoptNS([[UIWKTextInteractionAssistant alloc] initWithView:view]);
 
-#if PLATFORM(APPLETV) && USE(UICONTEXTMENU)
+#if PLATFORM(APPLETV) && HAVE(UI_TEXT_CONTEXT_MENU_INTERACTION)
     if (RetainPtr contextMenuInteraction = [self contextMenuInteraction]) {
         [view removeInteraction:contextMenuInteraction.get()];
         [self setExternalContextMenuInteractionDelegate:nil];
@@ -86,21 +89,81 @@
     return _textInteractionAssistant.get();
 }
 
+#if HAVE(UI_TEXT_SELECTION_DISPLAY_INTERACTION)
+
+- (UITextSelectionDisplayInteraction *)textSelectionDisplayInteraction
+{
+#if USE(BROWSERENGINEKIT)
+    if (_asyncTextInteraction)
+        return [_asyncTextInteraction textSelectionDisplayInteraction];
+#endif
+
+    for (id<UIInteraction> interaction in _view.interactions) {
+        if (RetainPtr selectionInteraction = dynamic_objc_cast<UITextSelectionDisplayInteraction>(interaction))
+            return selectionInteraction.get();
+    }
+
+    return nil;
+}
+
+#endif // HAVE(UI_TEXT_SELECTION_DISPLAY_INTERACTION)
+
+- (void)prepareToMoveSelectionContainer:(UIView *)newContainer
+{
+#if HAVE(UI_TEXT_SELECTION_DISPLAY_INTERACTION)
+    RetainPtr displayInteraction = [self textSelectionDisplayInteraction];
+    RetainPtr highlightView = [displayInteraction highlightView];
+    if ([highlightView superview] == newContainer)
+        return;
+
+    // Calling these delegate methods tells the display interaction to remove and reparent all internally
+    // managed views (e.g. selection highlight views, selection handles) in the new selection container.
+    [displayInteraction willMoveToView:_view];
+    [displayInteraction didMoveToView:_view];
+    if (newContainer == _view)
+        return;
+
+    RetainPtr<WKCompositingView> tileGridContainer;
+    auto tileGridContainerName = WebCore::TileController::tileGridContainerLayerName();
+    for (UIView *view in newContainer.subviews) {
+        RetainPtr compositingView = dynamic_objc_cast<WKCompositingView>(view);
+        if ([[compositingView layer].name isEqualToString:tileGridContainerName]) {
+            tileGridContainer = WTFMove(compositingView);
+            break;
+        }
+    }
+
+    if (!tileGridContainer)
+        return;
+
+    auto reinsertAboveTileGridContainer = [&](UIView *view) {
+        if (newContainer == view.superview)
+            [newContainer insertSubview:view aboveSubview:tileGridContainer.get()];
+    };
+
+    reinsertAboveTileGridContainer(highlightView.get());
+    reinsertAboveTileGridContainer([[[displayInteraction handleViews] firstObject] superview]);
+    reinsertAboveTileGridContainer([displayInteraction cursorView]);
+#endif // HAVE(UI_TEXT_SELECTION_DISPLAY_INTERACTION)
+}
+
 - (void)activateSelection
 {
-    [_textInteractionAssistant activateSelection];
 #if USE(BROWSERENGINEKIT)
-    [_asyncTextInteraction textSelectionDisplayInteraction].activated = YES;
+    self.textSelectionDisplayInteraction.activated = YES;
+#else
+    [_textInteractionAssistant activateSelection];
 #endif
 }
 
 - (void)deactivateSelection
 {
-    [_textInteractionAssistant deactivateSelection];
 #if USE(BROWSERENGINEKIT)
-    [_asyncTextInteraction textSelectionDisplayInteraction].activated = NO;
+    self.textSelectionDisplayInteraction.activated = NO;
     _showEditMenuAfterNextSelectionChange = NO;
     [self stopShowEditMenuTimer];
+#else
+    [_textInteractionAssistant deactivateSelection];
 #endif
 }
 
@@ -130,7 +193,11 @@
 #if USE(BROWSERENGINEKIT)
     _shouldRestoreEditMenuAfterOverflowScrolling = _view.isPresentingEditMenu;
     [_asyncTextInteraction dismissEditMenuForSelection];
-    [_asyncTextInteraction textSelectionDisplayInteraction].activated = NO;
+#endif
+
+#if HAVE(UI_TEXT_SELECTION_DISPLAY_INTERACTION)
+    if (!_view.selectionHonorsOverflowScrolling)
+        self.textSelectionDisplayInteraction.activated = NO;
 #endif
 }
 
@@ -140,7 +207,11 @@
 #if USE(BROWSERENGINEKIT)
     if (std::exchange(_shouldRestoreEditMenuAfterOverflowScrolling, NO))
         [_asyncTextInteraction presentEditMenuForSelection];
-    [_asyncTextInteraction textSelectionDisplayInteraction].activated = YES;
+#endif
+
+#if HAVE(UI_TEXT_SELECTION_DISPLAY_INTERACTION)
+    if (!_view.selectionHonorsOverflowScrolling)
+        self.textSelectionDisplayInteraction.activated = YES;
 #endif
 }
 

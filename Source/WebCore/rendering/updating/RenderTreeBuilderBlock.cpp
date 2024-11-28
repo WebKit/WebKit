@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,7 +36,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(RenderTreeBuilderBlock, RenderTreeBuilder::Block);
+WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(RenderTreeBuilder, Block);
 
 static void moveAllChildrenToInternal(RenderBoxModelObject& from, RenderElement& newParent)
 {
@@ -72,7 +72,7 @@ static bool canMergeContiguousAnonymousBlocks(const RenderObject& rendererToBeRe
     return previous && next && previous != anonymousDestroyRoot && next != anonymousDestroyRoot;
 }
 
-static RenderBlock* continuationBefore(RenderBlock& parent, RenderObject* beforeChild)
+RenderBlock* RenderTreeBuilder::Block::continuationBefore(RenderBlock& parent, RenderObject* beforeChild)
 {
     if (beforeChild && beforeChild->parent() == &parent)
         return &parent;

@@ -29,7 +29,7 @@
 #include "FloatRect.h"
 #include "GraphicsTypes.h"
 #include "Image.h"
-#include "RuntimeApplicationChecks.h"
+#include <wtf/RuntimeApplicationChecks.h>
 
 #if USE(CG)
 

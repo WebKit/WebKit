@@ -57,10 +57,10 @@ InlineLayoutUnit InlineFormattingUtils::logicalTopForNextLine(const LineLayoutRe
         auto& lastRunLayoutBox = lineLayoutResult.inlineContent.last().layoutBox();
         if (!lastRunLayoutBox.hasFloatClear() || lastRunLayoutBox.isOutOfFlowPositioned())
             return lineLogicalRect.bottom();
-        auto positionWithClearance = floatingContext.verticalPositionWithClearance(lastRunLayoutBox, formattingContext().geometryForBox(lastRunLayoutBox));
-        if (!positionWithClearance)
+        auto blockAxisPositionWithClearance = floatingContext.blockAxisPositionWithClearance(lastRunLayoutBox, formattingContext().geometryForBox(lastRunLayoutBox));
+        if (!blockAxisPositionWithClearance)
             return lineLogicalRect.bottom();
-        return std::max(lineLogicalRect.bottom(), InlineLayoutUnit(positionWithClearance->position));
+        return std::max(lineLogicalRect.bottom(), InlineLayoutUnit(blockAxisPositionWithClearance->position));
     }
 
     auto intrusiveFloatBottom = [&]() -> std::optional<InlineLayoutUnit> {
@@ -75,20 +75,20 @@ InlineLayoutUnit InlineFormattingUtils::logicalTopForNextLine(const LineLayoutRe
             return LayoutUnit { lineLogicalRect.top() + formattingContext().root().style().computedLineHeight() };
         };
         auto floatConstraints = floatingContext.constraints(toLayoutUnit(lineLogicalRect.top()), nextLineLogicalTop(), FloatingContext::MayBeAboveLastFloat::Yes);
-        if (floatConstraints.left && floatConstraints.right) {
+        if (floatConstraints.start && floatConstraints.end) {
             // In case of left and right constraints, we need to pick the one that's closer to the current line.
-            return std::min(floatConstraints.left->y, floatConstraints.right->y);
+            return std::min(floatConstraints.start->y, floatConstraints.end->y);
         }
-        if (floatConstraints.left)
-            return floatConstraints.left->y;
-        if (floatConstraints.right)
-            return floatConstraints.right->y;
+        if (floatConstraints.start)
+            return floatConstraints.start->y;
+        if (floatConstraints.end)
+            return floatConstraints.end->y;
         // If we didn't manage to place a content on this vertical position due to intrusive floats, we have to have
         // at least one float here.
         ASSERT_NOT_REACHED();
         return { };
     };
-    if (auto firstAvailableVerticalPosition = intrusiveFloatBottom())
+    if (auto firstAvailableVerticalPosition = intrusiveFloatBottom(); firstAvailableVerticalPosition && *firstAvailableVerticalPosition > lineLogicalRect.top())
         return *firstAvailableVerticalPosition;
     // Do not get stuck on the same vertical position even when we find ourselves in this unexpected state.
     return ceil(nextafter(lineLogicalRect.bottom(), std::numeric_limits<float>::max()));
@@ -128,21 +128,18 @@ bool InlineFormattingUtils::inlineLevelBoxAffectsLineBox(const InlineLevelBox& i
 
 InlineRect InlineFormattingUtils::flipVisualRectToLogicalForWritingMode(const InlineRect& visualRect, WritingMode writingMode)
 {
-    switch (writingModeToBlockFlowDirection(writingMode)) {
-    case BlockFlowDirection::TopToBottom:
-    case BlockFlowDirection::BottomToTop:
+    switch (writingMode.blockDirection()) {
+    case FlowDirection::TopToBottom:
+    case FlowDirection::BottomToTop:
         return visualRect;
-    case BlockFlowDirection::LeftToRight:
-    case BlockFlowDirection::RightToLeft: {
+    case FlowDirection::LeftToRight:
+    case FlowDirection::RightToLeft:
         // FIXME: While vertical-lr and vertical-rl modes do differ in the ordering direction of line boxes
         // in a block container (see: https://drafts.csswg.org/css-writing-modes/#block-flow)
         // we ignore it for now as RenderBlock takes care of it for us.
         return InlineRect { visualRect.left(), visualRect.top(), visualRect.height(), visualRect.width() };
     }
-    default:
-        ASSERT_NOT_REACHED();
-        break;
-    }
+    ASSERT_NOT_REACHED();
     return visualRect;
 }
 
@@ -205,7 +202,7 @@ FloatingContext::Constraints InlineFormattingUtils::floatConstraintsForLine(Inli
 
 InlineLayoutUnit InlineFormattingUtils::horizontalAlignmentOffset(const RenderStyle& rootStyle, InlineLayoutUnit contentLogicalRight, InlineLayoutUnit lineLogicalWidth, InlineLayoutUnit hangingTrailingWidth, const Line::RunList& runs, bool isLastLine, std::optional<TextDirection> inlineBaseDirectionOverride)
 {
-    // Depending on the line’s alignment/justification, the hanging glyph can be placed outside the line box.
+    // Depending on the line's alignment/justification, the hanging glyph can be placed outside the line box.
     if (hangingTrailingWidth) {
         // If white-space is set to pre-wrap, the UA must (unconditionally) hang this sequence, unless the sequence is followed
         // by a forced line break, in which case it must conditionally hang the sequence is instead.
@@ -225,7 +222,7 @@ InlineLayoutUnit InlineFormattingUtils::horizontalAlignmentOffset(const RenderSt
     if (horizontalAvailableSpace <= 0)
         return { };
 
-    auto isLeftToRightDirection = inlineBaseDirectionOverride.value_or(rootStyle.direction()) == TextDirection::LTR;
+    auto isLeftToRightDirection = inlineBaseDirectionOverride.value_or(rootStyle.writingMode().bidiDirection()) == TextDirection::LTR;
 
     auto computedHorizontalAlignment = [&] {
         auto textAlign = rootStyle.textAlign();
@@ -409,9 +406,6 @@ bool InlineFormattingUtils::isAtSoftWrapOpportunity(const InlineItem& previous, 
     ASSERT(previous.isText() || previous.isAtomicInlineBox() || previous.layoutBox().isRubyInlineBox());
     ASSERT(next.isText() || next.isAtomicInlineBox() || next.layoutBox().isRubyInlineBox());
 
-    if (previous.layoutBox().isRubyInlineBox() || next.layoutBox().isRubyInlineBox())
-        return RubyFormattingContext::isAtSoftWrapOpportunity(previous, next);
-
     auto mayWrapPrevious = TextUtil::isWrappingAllowed(previous.layoutBox().parent().style());
     auto mayWrapNext = TextUtil::isWrappingAllowed(next.layoutBox().parent().style());
     if (&previous.layoutBox().parent() == &next.layoutBox().parent() && !mayWrapPrevious && !mayWrapNext)
@@ -452,7 +446,7 @@ bool InlineFormattingUtils::isAtSoftWrapOpportunity(const InlineItem& previous, 
     }
     if (previous.layoutBox().isListMarkerBox()) {
         auto& listMarkerBox = downcast<ElementBox>(previous.layoutBox());
-        return !listMarkerBox.isListMarkerInsideList() || !listMarkerBox.isListMarkerOutside();
+        return !listMarkerBox.isListMarkerOutside();
     }
     if (next.layoutBox().isListMarkerBox()) {
         // FIXME: SHould this ever be the case?
@@ -488,8 +482,8 @@ size_t InlineFormattingUtils::nextWrapOpportunity(size_t startIndex, const Inlin
             for (++index; index < layoutRange.endIndex() && inlineItemList[index].isInlineBoxEnd(); ++index) { }
             return index;
         }
-        auto isNonRubyInlineBox = (currentItem.isInlineBoxStart() || currentItem.isInlineBoxEnd()) && !currentItem.layoutBox().isRubyInlineBox();
-        if (isNonRubyInlineBox) {
+        auto isInlineBox = currentItem.isInlineBoxStart() || currentItem.isInlineBoxEnd();
+        if (isInlineBox) {
             // Need to see what comes next to decide.
             continue;
         }
@@ -540,7 +534,7 @@ size_t InlineFormattingUtils::nextWrapOpportunity(size_t startIndex, const Inlin
             // Soft wrap opportunity is at the first inline box that encloses the trailing content.
             for (auto candidateIndex = start + 1; candidateIndex < end; ++candidateIndex) {
                 auto& inlineItem = inlineItemList[candidateIndex];
-                ASSERT(inlineItem.isInlineBoxStart() || inlineItem.isInlineBoxEnd() || inlineItem.isOpaque());
+                ASSERT(inlineItem.isInlineBoxStartOrEnd() || inlineItem.isOpaque());
                 if (inlineItem.isInlineBoxStart())
                     inlineBoxStack.append({ &inlineItem.layoutBox(), candidateIndex });
                 else if (inlineItem.isInlineBoxEnd() && !inlineBoxStack.isEmpty())
@@ -563,15 +557,15 @@ std::pair<InlineLayoutUnit, InlineLayoutUnit> InlineFormattingUtils::textEmphasi
     if (!hasTextEmphasis)
         return { };
     auto emphasisPosition = style.textEmphasisPosition();
-    // Normally we resolve visual -> logical values at pre-layout time, but emphaisis values are not part of the general box geometry.
+    // Normally we resolve visual -> logical values at pre-layout time, but emphasis values are not part of the general box geometry.
     auto hasAboveTextEmphasis = false;
     auto hasUnderTextEmphasis = false;
-    if (style.isHorizontalWritingMode()) {
-        hasAboveTextEmphasis = emphasisPosition.contains(TextEmphasisPosition::Over);
-        hasUnderTextEmphasis = !hasAboveTextEmphasis && emphasisPosition.contains(TextEmphasisPosition::Under);
+    if (style.writingMode().isVerticalTypographic()) {
+        hasAboveTextEmphasis = !emphasisPosition.contains(TextEmphasisPosition::Left);
+        hasUnderTextEmphasis = !hasAboveTextEmphasis;
     } else {
-        hasAboveTextEmphasis = emphasisPosition.contains(TextEmphasisPosition::Right) || emphasisPosition == TextEmphasisPosition::Over;
-        hasUnderTextEmphasis = !hasAboveTextEmphasis && (emphasisPosition.contains(TextEmphasisPosition::Left) || emphasisPosition == TextEmphasisPosition::Under);
+        hasAboveTextEmphasis = !emphasisPosition.contains(TextEmphasisPosition::Under);
+        hasUnderTextEmphasis = !hasAboveTextEmphasis;
     }
 
     if (!hasAboveTextEmphasis && !hasUnderTextEmphasis)
@@ -597,10 +591,16 @@ std::pair<InlineLayoutUnit, InlineLayoutUnit> InlineFormattingUtils::textEmphasi
     return { hasAboveTextEmphasis ? annotationSize : 0.f, hasAboveTextEmphasis ? 0.f : annotationSize };
 }
 
-LineEndingTruncationPolicy InlineFormattingUtils::lineEndingTruncationPolicy(const RenderStyle& rootStyle, size_t numberOfLinesWithInlineContent, std::optional<size_t> numberOfVisibleLinesAllowed)
+LineEndingTruncationPolicy InlineFormattingUtils::lineEndingTruncationPolicy(const RenderStyle& rootStyle, size_t numberOfLinesWithInlineContent, std::optional<size_t> numberOfVisibleLinesAllowed, bool currentLineHasInlineContent)
 {
-    if (numberOfVisibleLinesAllowed && *numberOfVisibleLinesAllowed == numberOfLinesWithInlineContent)
-        return LineEndingTruncationPolicy::WhenContentOverflowsInBlockDirection;
+    if (numberOfVisibleLinesAllowed) {
+        // text-overflow: ellipsis should not apply inside clamping content.
+        if (!currentLineHasInlineContent) {
+            // Content with no inline should never ever receive ellipsis.
+            return LineEndingTruncationPolicy::NoTruncation;
+        }
+        return *numberOfVisibleLinesAllowed == numberOfLinesWithInlineContent ? LineEndingTruncationPolicy::WhenContentOverflowsInBlockDirection : LineEndingTruncationPolicy::NoTruncation;
+    }
 
     // Truncation is in effect when the block container has overflow other than visible.
     if (rootStyle.overflowX() != Overflow::Visible && rootStyle.textOverflow() == TextOverflow::Ellipsis)

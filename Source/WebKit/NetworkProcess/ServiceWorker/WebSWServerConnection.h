@@ -38,6 +38,7 @@
 #include <WebCore/PushSubscriptionData.h>
 #include <WebCore/SWServer.h>
 #include <pal/SessionID.h>
+#include <wtf/CheckedRef.h>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/TZoneMalloc.h>
@@ -72,21 +73,18 @@ struct SharedPreferencesForWebProcess;
 
 class WebSWServerConnection final : public WebCore::SWServer::Connection, public IPC::MessageSender, public IPC::MessageReceiver {
     WTF_MAKE_TZONE_ALLOCATED(WebSWServerConnection);
-    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(WebSWServerConnection);
 public:
-    WebSWServerConnection(NetworkConnectionToWebProcess&, WebCore::SWServer&, IPC::Connection&, WebCore::ProcessIdentifier);
+    static Ref<WebSWServerConnection> create(NetworkConnectionToWebProcess&, WebCore::SWServer&, IPC::Connection&, WebCore::ProcessIdentifier);
     WebSWServerConnection(const WebSWServerConnection&) = delete;
     ~WebSWServerConnection() final;
 
-    using WebCore::SWServer::Connection::weakPtrFactory;
-    using WebCore::SWServer::Connection::WeakValueType;
-    using WebCore::SWServer::Connection::WeakPtrImplType;
+    USING_CAN_MAKE_WEAKPTR(WebCore::SWServer::Connection);
 
     IPC::Connection& ipcConnection() const { return m_contentConnection.get(); }
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
 
-    const SharedPreferencesForWebProcess& sharedPreferencesForWebProcess() const;
+    std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess() const;
 
     NetworkSession* session();
     PAL::SessionID sessionID() const;
@@ -102,6 +100,8 @@ public:
     void unregisterServiceWorkerClient(const WebCore::ScriptExecutionContextIdentifier&);
 
 private:
+    WebSWServerConnection(NetworkConnectionToWebProcess&, WebCore::SWServer&, IPC::Connection&, WebCore::ProcessIdentifier);
+
     // Implement SWServer::Connection (Messages to the client WebProcess)
     void rejectJobInClient(WebCore::ServiceWorkerJobIdentifier, const WebCore::ExceptionData&) final;
     void resolveRegistrationJobInClient(WebCore::ServiceWorkerJobIdentifier, const WebCore::ServiceWorkerRegistrationData&, WebCore::ShouldNotifyWhenResolved) final;
@@ -172,6 +172,7 @@ private:
     
     template<typename U> static void sendToContextProcess(WebCore::SWServerToContextConnection&, U&& message);
     NetworkProcess& networkProcess();
+    Ref<NetworkProcess> protectedNetworkProcess();
 
     WeakPtr<NetworkConnectionToWebProcess> m_networkConnectionToWebProcess;
     Ref<IPC::Connection> m_contentConnection;

@@ -224,9 +224,10 @@ void BytecodeGeneratorification::run()
         jumpTable.add(0, nextToEnterPoint.offset());
         for (unsigned i = 0; i < m_yields.size(); ++i)
             jumpTable.add(i + 1, m_yields[i].point);
+        jumpTable.m_defaultOffset = nextToEnterPoint.offset();
 
         rewriter.insertFragmentBefore(nextToEnterPoint, [&] (BytecodeRewriter::Fragment& fragment) {
-            fragment.appendInstruction<OpSwitchImm>(switchTableIndex, BoundLabel(nextToEnterPoint.offset()), state);
+            fragment.appendInstruction<OpSwitchImm>(switchTableIndex, state);
         });
     }
 

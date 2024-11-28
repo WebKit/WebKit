@@ -106,26 +106,6 @@ body:not(.window-inactive, .window-docked-inactive) .tree-outline:focus-within .
     background-color: var(--value-changed-highlight);
 }
 
-.item.recording-action > .titles .context-replacer::after {
-    content: ".";
-}
-
-.item.recording-action.attribute > .titles .parameters::before {
-    content: " = ";
-}
-
-.item.recording-action:not(.attribute) > .titles .parameters::before {
-    content: "(";
-}
-
-.item.recording-action:not(.attribute) > .titles .parameters::after {
-    content: ")";
-}
-
-.item.recording-action > .titles .parameter:not(:last-child)::after {
-    content: ", ";
-}
-
 .item.recording-action:not(.selected) > .titles .parameter.swizzled {
     color: var(--text-color-gray-medium);
 }

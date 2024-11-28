@@ -113,9 +113,9 @@ private:
     using DeadRegistrations = Vector<WriteBarrier<Unknown>>;
 
     // Note that we don't bother putting a write barrier on the key or target because they are weakly referenced.
-    HashMap<JSCell*, LiveRegistrations> m_liveRegistrations;
-    HashMap<JSCell*, DeadRegistrations> m_deadRegistrations;
-    // We use a separate list for no unregister values instead of a special key in the tables above because the HashMap has a tendency to reallocate under us when iterating...
+    UncheckedKeyHashMap<JSCell*, LiveRegistrations> m_liveRegistrations;
+    UncheckedKeyHashMap<JSCell*, DeadRegistrations> m_deadRegistrations;
+    // We use a separate list for no unregister values instead of a special key in the tables above because the UncheckedKeyHashMap has a tendency to reallocate under us when iterating...
     LiveRegistrations m_noUnregistrationLive;
     DeadRegistrations m_noUnregistrationDead;
     bool m_hasAlreadyScheduledWork { false };

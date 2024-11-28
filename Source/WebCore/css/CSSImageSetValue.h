@@ -42,7 +42,7 @@ public:
     String customCSSText() const;
     bool equals(const CSSImageSetValue& other) const { return itemsEqual(other); }
 
-    RefPtr<StyleImage> createStyleImage(Style::BuilderState&) const;
+    RefPtr<StyleImage> createStyleImage(const Style::BuilderState&) const;
 
 private:
     explicit CSSImageSetValue(CSSValueListBuilder);

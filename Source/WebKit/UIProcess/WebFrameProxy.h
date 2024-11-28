@@ -52,6 +52,11 @@ class Connection;
 class Decoder;
 }
 
+namespace WebCore {
+enum class SandboxFlag : uint16_t;
+using SandboxFlags = OptionSet<SandboxFlag>;
+}
+
 namespace WebKit {
 
 class BrowsingContextGroup;
@@ -59,6 +64,7 @@ class FrameProcess;
 class ProvisionalFrameProxy;
 class BrowsingWarning;
 class UserData;
+class WebBackForwardListFrameItem;
 class WebFramePolicyListenerProxy;
 class WebPageProxy;
 class WebProcessProxy;
@@ -66,6 +72,7 @@ class WebsiteDataStore;
 
 enum class CanWrap : bool { No, Yes };
 enum class DidWrap : bool { No, Yes };
+enum class IsMainFrame : bool { No, Yes };
 enum class ShouldExpectSafeBrowsingResult : bool;
 enum class ProcessSwapRequestedByClient : bool;
 
@@ -76,13 +83,12 @@ struct WebsitePoliciesData;
 
 class WebFrameProxy : public API::ObjectImpl<API::Object::Type::Frame>, public CanMakeWeakPtr<WebFrameProxy> {
 public:
-    enum class IsMainFrame : bool { No, Yes };
-    static Ref<WebFrameProxy> create(WebPageProxy& page, FrameProcess& process, WebCore::FrameIdentifier frameID, IsMainFrame isMainFrame)
+    static Ref<WebFrameProxy> create(WebPageProxy& page, FrameProcess& process, WebCore::FrameIdentifier frameID, WebCore::SandboxFlags sandboxFlags, WebCore::ScrollbarMode scrollingMode, WebFrameProxy* opener, IsMainFrame isMainFrame)
     {
-        return adoptRef(*new WebFrameProxy(page, process, frameID, isMainFrame));
+        return adoptRef(*new WebFrameProxy(page, process, frameID, sandboxFlags, scrollingMode, opener, isMainFrame));
     }
 
-    static WebFrameProxy* webFrame(WebCore::FrameIdentifier);
+    static WebFrameProxy* webFrame(std::optional<WebCore::FrameIdentifier>);
     static bool canCreateFrame(WebCore::FrameIdentifier);
 
     virtual ~WebFrameProxy();
@@ -154,7 +160,7 @@ public:
     void setNavigationCallback(CompletionHandler<void(std::optional<WebCore::PageIdentifier>, std::optional<WebCore::FrameIdentifier>)>&&);
 
     void disconnect();
-    void didCreateSubframe(WebCore::FrameIdentifier, const String& frameName);
+    void didCreateSubframe(WebCore::FrameIdentifier, const String& frameName, WebCore::SandboxFlags, WebCore::ScrollbarMode);
     ProcessID processID() const;
     void prepareForProvisionalLoadInProcess(WebProcessProxy&, API::Navigation&, BrowsingContextGroup&, CompletionHandler<void()>&&);
 
@@ -190,14 +196,24 @@ public:
     TraversalResult traverseNext(CanWrap) const;
     TraversalResult traversePrevious(CanWrap);
 
-    void setHasPendingBackForwardItem(bool hasPendingBackForwardItem) { m_hasPendingBackForwardItem = hasPendingBackForwardItem; }
-    bool hasPendingBackForwardItem() { return m_hasPendingBackForwardItem; }
+    void setPendingChildBackForwardItem(WebBackForwardListFrameItem*);
+    bool hasPendingChildBackForwardItem() const { return !!m_pendingChildBackForwardItem; };
+    WebBackForwardListFrameItem* takePendingChildBackForwardItem();
 
     WebCore::LayerHostingContextIdentifier layerHostingContextIdentifier() const { return m_layerHostingContextIdentifier; }
     void setRemoteFrameSize(WebCore::IntSize size) { m_remoteFrameSize = size; }
 
+    WebCore::SandboxFlags effectiveSandboxFlags() const { return m_effectiveSandboxFlags; }
+    void updateSandboxFlags(WebCore::SandboxFlags sandboxFlags) { m_effectiveSandboxFlags = sandboxFlags; }
+
+    WebCore::ScrollbarMode scrollingMode() const { return m_scrollingMode; }
+    void updateScrollingMode(WebCore::ScrollbarMode);
+
+    void updateOpener(WebCore::FrameIdentifier);
+    WebFrameProxy* opener() { return m_opener.get(); }
+    void disownOpener() { m_opener = nullptr; }
 private:
-    WebFrameProxy(WebPageProxy&, FrameProcess&, WebCore::FrameIdentifier, IsMainFrame);
+    WebFrameProxy(WebPageProxy&, FrameProcess&, WebCore::FrameIdentifier, WebCore::SandboxFlags, WebCore::ScrollbarMode, WebFrameProxy*, IsMainFrame);
 
     std::optional<WebCore::PageIdentifier> pageIdentifier() const;
 
@@ -209,6 +225,7 @@ private:
 
     WeakPtr<WebPageProxy> m_page;
     Ref<FrameProcess> m_frameProcess;
+    WeakPtr<WebFrameProxy> m_opener;
 
     FrameLoadState m_frameLoadState;
 
@@ -227,9 +244,10 @@ private:
 #endif
     CompletionHandler<void(std::optional<WebCore::PageIdentifier>, std::optional<WebCore::FrameIdentifier>)> m_navigateCallback;
     const WebCore::LayerHostingContextIdentifier m_layerHostingContextIdentifier;
-    bool m_hasPendingBackForwardItem { false };
-    const IsMainFrame m_isMainFrame;
+    WeakPtr<WebBackForwardListFrameItem> m_pendingChildBackForwardItem;
     std::optional<WebCore::IntSize> m_remoteFrameSize;
+    WebCore::SandboxFlags m_effectiveSandboxFlags;
+    WebCore::ScrollbarMode m_scrollingMode;
 };
 
 } // namespace WebKit

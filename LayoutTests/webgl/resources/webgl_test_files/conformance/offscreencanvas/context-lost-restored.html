@@ -43,12 +43,12 @@ function init()
                 finishTest();
                 return;
             }
-            testLosingAndRestoringContext().then(function() {
+            testLosingAndRestoringContext().then(function(s) {
                 testPassed("Test passed");
                 finishTest();
                 return;
-            }, function() {
-                testFailed("Some test failed");
+            }, function(s) {
+                testFailed("Test failed: " + s);
                 finishTest();
                 return;
             });

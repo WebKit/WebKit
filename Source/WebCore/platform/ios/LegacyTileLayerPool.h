@@ -70,7 +70,7 @@ private:
     typedef enum { LeaveUnchanged, MarkAsUsed } AccessType;
     LayerList& listOfLayersWithSize(const IntSize&, AccessType = LeaveUnchanged);
 
-    HashMap<IntSize, LayerList> m_reuseLists;
+    UncheckedKeyHashMap<IntSize, LayerList> m_reuseLists;
     // Ordered by recent use. The last size is the most recently used.
     Vector<IntSize> m_sizesInPruneOrder;
     unsigned m_totalBytes;

@@ -267,7 +267,7 @@ JSInternalPromise* importModule(JSGlobalObject* globalObject, const Identifier& 
     return globalObject->moduleLoader()->requestImportModule(globalObject, moduleName, referrer, parameters, scriptFetcher);
 }
 
-HashMap<RefPtr<UniquedStringImpl>, String> retrieveImportAttributesFromDynamicImportOptions(JSGlobalObject* globalObject, JSValue options, const Vector<RefPtr<UniquedStringImpl>>& supportedImportAttributes)
+UncheckedKeyHashMap<RefPtr<UniquedStringImpl>, String> retrieveImportAttributesFromDynamicImportOptions(JSGlobalObject* globalObject, JSValue options, const Vector<RefPtr<UniquedStringImpl>>& supportedImportAttributes)
 {
     // https://tc39.es/proposal-import-attributes/#sec-evaluate-import-call
 
@@ -299,7 +299,7 @@ HashMap<RefPtr<UniquedStringImpl>, String> retrieveImportAttributesFromDynamicIm
     attributesObject->methodTable()->getOwnPropertyNames(attributesObject, globalObject, properties, DontEnumPropertiesMode::Exclude);
     RETURN_IF_EXCEPTION(scope, { });
 
-    HashMap<RefPtr<UniquedStringImpl>, String> result;
+    UncheckedKeyHashMap<RefPtr<UniquedStringImpl>, String> result;
     for (auto& key : properties) {
         JSValue value = attributesObject->get(globalObject, key);
         RETURN_IF_EXCEPTION(scope, { });
@@ -325,7 +325,7 @@ HashMap<RefPtr<UniquedStringImpl>, String> retrieveImportAttributesFromDynamicIm
     return result;
 }
 
-std::optional<ScriptFetchParameters::Type> retrieveTypeImportAttribute(JSGlobalObject* globalObject, const HashMap<RefPtr<UniquedStringImpl>, String>& attributes)
+std::optional<ScriptFetchParameters::Type> retrieveTypeImportAttribute(JSGlobalObject* globalObject, const UncheckedKeyHashMap<RefPtr<UniquedStringImpl>, String>& attributes)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);

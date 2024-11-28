@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2024 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
  * Copyright (C) 2012 Samsung Electronics. All rights reserved.
  *
@@ -19,16 +19,33 @@
  * Boston, MA 02110-1301, USA.
  */
 
+enum AutofillVisibility {
+    "normal",
+    "visible",
+    "hidden",
+};
+
+enum AutofillButtonType {
+    "none",
+    "credentials",
+    "contacts",
+    "strong-password",
+    "credit-card",
+    "loading"
+};
+
 [
     ExportMacro=WEBCORE_EXPORT,
     JSGenerateToNativeObject,
     Exposed=Window
 ] interface HTMLInputElement : HTMLElement {
     [CEReactions=NotNeeded, Reflect] attribute DOMString accept;
+    [Conditional=INPUT_TYPE_COLOR, EnabledBySetting=InputTypeColorEnhancementsEnabled, CEReactions=NotNeeded, Reflect] attribute boolean alpha;
     [CEReactions=NotNeeded, Reflect] attribute DOMString alt;
     [CEReactions=NotNeeded] attribute [AtomString] DOMString autocomplete;
     [CEReactions=NotNeeded, Reflect=checked] attribute boolean defaultChecked;
     attribute boolean checked;
+    [Conditional=INPUT_TYPE_COLOR, EnabledBySetting=InputTypeColorEnhancementsEnabled, CEReactions=NotNeeded] attribute [AtomString] DOMString colorSpace;
     [CEReactions=NotNeeded, Reflect] attribute DOMString dirName;
     [CEReactions=NotNeeded, Reflect] attribute boolean disabled;
     readonly attribute HTMLFormElement form;
@@ -91,6 +108,12 @@
 
     [CEReactions=NotNeeded, Reflect] attribute DOMString align;
     [CEReactions=NotNeeded, Reflect] attribute DOMString useMap;
+
+    // WebKit extension for autofill.
+    [EnabledForWorld=allowAutofill] attribute boolean autofillAvailable;
+    [EnabledForWorld=allowAutofill] attribute boolean autofilled;
+    [EnabledForWorld=allowAutofill] attribute AutofillVisibility autofillVisibility;
+    [EnabledForWorld=allowAutofill] attribute AutofillButtonType autofillButtonType;
 
     // See http://www.w3.org/TR/html-media-capture/
     [CEReactions=NotNeeded, Conditional=MEDIA_CAPTURE, Reflect] attribute DOMString capture;

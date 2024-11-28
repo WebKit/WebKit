@@ -60,6 +60,7 @@ public:
     unsigned currentFrameIndex() const { return m_source->currentFrameIndex(); }
     bool currentFrameHasAlpha() const { return m_source->currentImageFrame().hasAlpha(); }
     ImageOrientation currentFrameOrientation() const { return m_source->currentImageFrame().orientation(); }
+    Headroom currentFrameHeadroom() const { return m_source->currentImageFrame().headroom(); }
     DecodingOptions currentFrameDecodingOptions() const { return m_source->currentImageFrame().decodingOptions(); }
 
     // Primary & current NativeImage

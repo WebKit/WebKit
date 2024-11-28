@@ -87,7 +87,7 @@ public:
             return atShadow(nodeIndex);
         }
         RELEASE_ASSERT_NOT_REACHED();
-        return *bitwise_cast<T*>(nullptr);
+        return *std::bit_cast<T*>(nullptr);
     }
     
     ALWAYS_INLINE T& at(Node* node, NodeFlowProjection::Kind kind)

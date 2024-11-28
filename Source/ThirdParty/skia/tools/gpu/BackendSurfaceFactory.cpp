@@ -8,7 +8,7 @@
 #include "tools/gpu/BackendSurfaceFactory.h"
 
 #include "include/core/SkSurface.h"
-#include "include/gpu/GrDirectContext.h"
+#include "include/gpu/ganesh/GrDirectContext.h"
 #include "include/gpu/ganesh/SkSurfaceGanesh.h"
 #include "src/gpu/ganesh/GrDirectContextPriv.h"
 #include "src/gpu/ganesh/GrGpu.h"
@@ -141,12 +141,12 @@ sk_sp<SkSurface> MakeBackendTextureSurface(skgpu::graphite::Recorder* recorder,
                                           mbet->releaseContext());
 }
 
+#if defined(SK_DAWN)
 sk_sp<SkSurface> MakeBackendTextureViewSurface(skgpu::graphite::Recorder* recorder,
                                                const SkImageInfo& ii,
                                                skgpu::Mipmapped mipmapped,
                                                skgpu::Protected isProtected,
                                                const SkSurfaceProps* props) {
-#ifdef SK_DAWN
     if (recorder->backend() != skgpu::BackendApi::kDawn) {
         return nullptr;
     }
@@ -189,9 +189,9 @@ sk_sp<SkSurface> MakeBackendTextureViewSurface(skgpu::graphite::Recorder* record
                                           props,
                                           release,
                                           mbet.release());
-#endif
     return nullptr;
 }
+#endif // SK_DAWN
 
 #endif  // SK_GRAPHITE
 

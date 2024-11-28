@@ -46,7 +46,7 @@ public:
 private:
     bool isValid() const final
     {
-        return m_owner->isLive();
+        return !m_owner->isPendingDestruction();
     }
 
     void handleFire(VM& vm, const FireDetail&) final

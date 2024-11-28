@@ -33,6 +33,11 @@
 
 namespace WebKit {
 
+Ref<MockHidService> MockHidService::create(AuthenticatorTransportServiceObserver& observer, const WebCore::MockWebAuthenticationConfiguration& configuration)
+{
+    return adoptRef(*new MockHidService(observer, configuration));
+}
+
 MockHidService::MockHidService(AuthenticatorTransportServiceObserver& observer, const WebCore::MockWebAuthenticationConfiguration& configuration)
     : HidService(observer)
     , m_configuration(configuration)
@@ -48,9 +53,9 @@ void MockHidService::platformStartDiscovery()
     LOG_ERROR("No hid authenticators is available.");
 }
 
-UniqueRef<HidConnection> MockHidService::createHidConnection(IOHIDDeviceRef device) const
+Ref<HidConnection> MockHidService::createHidConnection(IOHIDDeviceRef device) const
 {
-    return makeUniqueRef<MockHidConnection>(device, m_configuration);
+    return MockHidConnection::create(device, m_configuration);
 }
 
 } // namespace WebKit

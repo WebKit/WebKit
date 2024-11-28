@@ -29,14 +29,13 @@ WI.RecordingActionTreeElement = class RecordingActionTreeElement extends WI.Gene
     {
         console.assert(representedObject instanceof WI.RecordingAction);
 
-        let {titleFragment, copyText} = WI.RecordingActionTreeElement._generateDOM(representedObject, recordingType);
+        let titleFragment = WI.RecordingActionTreeElement._generateDOM(representedObject, recordingType);
         let classNames = WI.RecordingActionTreeElement._getClassNames(representedObject);
 
         const subtitle = null;
         super(classNames, titleFragment, subtitle, representedObject);
 
         this._index = index;
-        this._copyText = copyText;
 
         if (this.representedObject.valid)
             this.representedObject.singleFireEventListener(WI.RecordingAction.Event.ValidityChanged, this._handleValidityChanged, this);
@@ -49,7 +48,6 @@ WI.RecordingActionTreeElement = class RecordingActionTreeElement extends WI.Gene
         let parameterCount = recordingAction.parameters.length;
 
         function createParameterElement(parameter, swizzleType, index) {
-            let parameterCopyText = "";
             let parameterElement = document.createElement("span");
             parameterElement.classList.add("parameter");
 
@@ -103,19 +101,17 @@ WI.RecordingActionTreeElement = class RecordingActionTreeElement extends WI.Gene
             case WI.Recording.Swizzle.WebGLSampler:
             case WI.Recording.Swizzle.WebGLSync:
             case WI.Recording.Swizzle.WebGLTransformFeedback:
-            case WI.Recording.Swizzle.WebGLVertexArrayObject:
-                parameterCopyText = WI.Recording.displayNameForSwizzleType(swizzleType);
-
-                parameterElement.textContent = parameterCopyText;
-                if (parameter) {
-                    let objectHandleElement = document.createElement("span");
-                    objectHandleElement.classList.add("parameter");
-                    objectHandleElement.classList.add("object-handle");
-                    objectHandleElement.textContent = `@${parameter}`;
-                    parameterElement.append(" ", objectHandleElement);
-                } else
+            case WI.Recording.Swizzle.WebGLVertexArrayObject: {
+                let parameterTypeText = WI.Recording.displayNameForSwizzleType(swizzleType);
+                if (!isNaN(parameter)) {
+                    parameterElement.classList.add("object-handle");
+                    parameterElement.textContent = `${parameterTypeText}${parameter + 1}`;
+                } else {
                     parameterElement.classList.add("swizzled");
+                    parameterElement.textContent = parameterTypeText;
+                }
                 break;
+            }
             }
 
             if (!parameterElement.textContent) {
@@ -123,22 +119,18 @@ WI.RecordingActionTreeElement = class RecordingActionTreeElement extends WI.Gene
                 parameterElement.textContent = swizzleType === WI.Recording.Swizzle.None ? parameter : WI.Recording.displayNameForSwizzleType(swizzleType);
             }
 
-            if (!parameterCopyText.length)
-                   parameterCopyText = parameterElement.textContent;
-
-            return {parameterElement, parameterCopyText};
+            return parameterElement;
         }
 
         let titleFragment = document.createDocumentFragment();
-        let copyText = recordingAction.name;
 
         let contextReplacer = recordingAction.contextReplacer;
         if (contextReplacer) {
-            copyText = contextReplacer + "." + copyText;
-
             let contextReplacerContainer = titleFragment.appendChild(document.createElement("span"));
             contextReplacerContainer.classList.add("context-replacer");
             contextReplacerContainer.textContent = contextReplacer;
+
+            titleFragment.appendChild(document.createTextNode("."));
         }
 
         let nameContainer = titleFragment.appendChild(document.createElement("span"));
@@ -146,30 +138,26 @@ WI.RecordingActionTreeElement = class RecordingActionTreeElement extends WI.Gene
         nameContainer.textContent = recordingAction.name;
 
         if (!parameterCount)
-            return {titleFragment, copyText};
+            return titleFragment;
+
+        titleFragment.appendChild(document.createTextNode(recordingAction.isFunction ? "(" : " = "));
 
         let parametersContainer = titleFragment.appendChild(document.createElement("span"));
         parametersContainer.classList.add("parameters");
 
-        if (recordingAction.isFunction)
-            copyText += "(";
-        else
-            copyText += " = ";
-
         for (let i = 0; i < parameterCount; ++i) {
             let parameter = recordingAction.parameters[i];
             let swizzleType = recordingAction.swizzleTypes[i];
-            let {parameterElement, parameterCopyText} = createParameterElement(parameter, swizzleType, i);
-            parametersContainer.appendChild(parameterElement);
 
             if (i)
-                copyText += ", ";
+                parametersContainer.appendChild(document.createTextNode(", "));
 
-            copyText += parameterCopyText;
+            let parameterElement = createParameterElement(parameter, swizzleType, i);
+            parametersContainer.appendChild(parameterElement);
         }
 
         if (recordingAction.isFunction)
-            copyText += ")";
+            titleFragment.appendChild(document.createTextNode(")"));
 
         let colorParameters = recordingAction.getColorParameters();
         if (colorParameters.length) {
@@ -206,7 +194,7 @@ WI.RecordingActionTreeElement = class RecordingActionTreeElement extends WI.Gene
             }
         }
 
-        return {titleFragment, copyText};
+        return titleFragment;
     }
 
     static _createSwatchForColorParameters(parameters)
@@ -417,11 +405,6 @@ WI.RecordingActionTreeElement = class RecordingActionTreeElement extends WI.Gene
 
     // Protected
 
-    customTitleTooltip()
-    {
-        return this._copyText;
-    }
-
     onattach()
     {
         super.onattach();
@@ -437,7 +420,7 @@ WI.RecordingActionTreeElement = class RecordingActionTreeElement extends WI.Gene
     populateContextMenu(contextMenu, event)
     {
         contextMenu.appendItem(WI.UIString("Copy Action"), () => {
-            InspectorFrontendHost.copyText("context." + this._copyText + ";");
+            InspectorFrontendHost.copyText(`context.${this.mainTitle};`);
         });
 
         contextMenu.appendSeparator();

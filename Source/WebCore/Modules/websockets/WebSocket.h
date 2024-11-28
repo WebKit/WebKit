@@ -51,6 +51,9 @@ class ThreadableWebSocketChannel;
 class WebSocket final : public RefCounted<WebSocket>, public EventTarget, public ActiveDOMObject, private WebSocketChannelClient {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(WebSocket);
 public:
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
+
     static ASCIILiteral subprotocolSeparator();
 
     static ExceptionOr<Ref<WebSocket>> create(ScriptExecutionContext&, const String& url);
@@ -93,10 +96,6 @@ public:
     void setBinaryType(BinaryType);
 
     ScriptExecutionContext* scriptExecutionContext() const final;
-
-    // ActiveDOMObject.
-    void ref() const final { RefCounted::ref(); }
-    void deref() const final { RefCounted::deref(); }
 
 private:
     explicit WebSocket(ScriptExecutionContext&);

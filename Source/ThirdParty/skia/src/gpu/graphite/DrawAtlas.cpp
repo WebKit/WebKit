@@ -277,7 +277,7 @@ SkIPoint DrawAtlas::prepForRender(const AtlasLocator& locator, SkAutoPixmapStora
     return plot->prepForRender(locator, pixmap);
 }
 
-void DrawAtlas::compact(AtlasToken startTokenForNextFlush) {
+void DrawAtlas::compact(AtlasToken startTokenForNextFlush, bool forceCompact) {
     if (fNumActivePages < 1) {
         fPrevFlushToken = startTokenForNextFlush;
         return;
@@ -309,7 +309,7 @@ void DrawAtlas::compact(AtlasToken startTokenForNextFlush) {
     // hasn't been used in a long time.
     // This is to handle the case where a lot of text or path rendering has occurred but then just
     // a blinking cursor is drawn.
-    if (atlasUsedThisFlush || fFlushesSinceLastUse > kAtlasRecentlyUsedCount) {
+    if (forceCompact || atlasUsedThisFlush || fFlushesSinceLastUse > kAtlasRecentlyUsedCount) {
         TArray<Plot*> availablePlots;
         uint32_t lastPageIndex = fNumActivePages - 1;
 
@@ -384,7 +384,7 @@ void DrawAtlas::compact(AtlasToken startTokenForNextFlush) {
         // to evict them if there's available space in lower index pages. Since we prioritize
         // uploading to the first pages, this will eventually clear out usage of this page unless
         // we have a large need.
-        if (availablePlots.size() && usedPlots && usedPlots <= fNumPlots / 4) {
+        if (!availablePlots.empty() && usedPlots && usedPlots <= fNumPlots / 4) {
             plotIter.init(fPages[lastPageIndex].fPlotList, PlotList::Iter::kHead_IterStart);
             while (Plot* plot = plotIter.get()) {
                 // If this plot was used recently
@@ -392,13 +392,13 @@ void DrawAtlas::compact(AtlasToken startTokenForNextFlush) {
                     // See if there's room in an lower index page and if so evict.
                     // We need to be somewhat harsh here so that a handful of plots that are
                     // consistently in use don't end up locking the page in memory.
-                    if (availablePlots.size() > 0) {
+                    if (!availablePlots.empty()) {
                         this->processEvictionAndResetRects(plot);
                         this->processEvictionAndResetRects(availablePlots.back());
                         availablePlots.pop_back();
                         --usedPlots;
                     }
-                    if (!usedPlots || !availablePlots.size()) {
+                    if (usedPlots == 0 || availablePlots.empty()) {
                         break;
                     }
                 }
@@ -407,7 +407,7 @@ void DrawAtlas::compact(AtlasToken startTokenForNextFlush) {
         }
 
         // If none of the plots in the last page have been used recently, delete it.
-        if (!usedPlots) {
+        if (usedPlots == 0) {
             if constexpr (kDumpAtlasData) {
                 SkDebugf("delete %u\n", fNumActivePages-1);
             }

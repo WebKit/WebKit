@@ -2,6 +2,66 @@ Skia Graphics Release Notes
 
 This file includes a list of high level updates for each milestone release.
 
+Milestone 132
+-------------
+  * A new `SkCodec` method has been added: `hasHighBitDepthEncodedData`.
+  * `GrGLInterface` completeness requirements are modified to support using timer queries when available in the GL context.
+    The interface must have relevant functions initialized on OpenGL 3.3 or with GL_EXT_timer_query or GL_ARB_timerquery, on OpenGL ES with
+    GL_EXT_disjoint_timer_query, and on WebGL with GL_EXT_disjoint_timer_query or GL_EXT_disjoint_timer_query_webgl2.
+  * `GrGLInterface` now expects functions that take two `GLuints` instead of one `GLuint64` for `glWaitSync` and `glClientWaitSync`
+    when building with Emscripten. `GrGLMakeAssembledWebGLInterface` binds directly to the `emscipten_gl*` functions declared in the `<webgl/*>` headers rather than the functions declared
+    in `GLES3/gl32.h` and `GLES3/gl2ext.h`.
+  * `SkPathEffect::DashType`, `SkPathEffect::DashInfo` and `SkPathEffect::asADash` have been removed from the public API.
+
+* * *
+
+Milestone 131
+-------------
+  * `SkCanvas::SaveLayerRec` can optionally specify a tilemode to apply to backdrop
+    content when the new layer's effects would sample outside of the previous
+    layer's image.
+  * GrContextOptions::fSharpenMipmappedTextures has been restored. It is now enabled
+    by default but allows clients to disable this feature if desired.
+
+* * *
+
+Milestone 130
+-------------
+  * Add version of `SkAndroidCodec::getGainmapAndroidCodec` which returns an `SkAndroidCodec` instead
+    of an `SkStream`. Mark as deprecated the version that returns an `SkStream`.
+  * `SkColorFilter::filterColor` has been removed. Please use `SkColorFilter::filterColor4f` instead.
+  * SkFourByteTag has been moved to its own file: `include/core/SkFourByteTag.h`
+  * Ganesh files have been moved out of include/gpu/ into include/gpu/ganesh/. Shims have been left in place, but clients should migrate to the new paths.
+  * GR_GL_CUSTOM_SETUP_HEADER will be removed. Configuration in a client provided
+    SkUserConfig.h file (or defines set during compilation) are sufficient to affect
+    settings in GrGLConfig.h
+  * `GR_MAKE_BITFIELD_CLASS_OPS` and `GR_DECL_BITFIELD_CLASS_OPS_FRIENDS` have been removed
+    from the public API
+  * `SkMSec` has been removed from the public API, including `SkParse::FindMSec`
+  * A noop change to our SkSL runtime effect builder APIs. Moved make functions from subclasses
+    SkRuntimeShaderBuilder, SkRuntimeColorFilterBuilder, and SkRuntimeBlendBuilder to the base class
+    SkRuntimeEffectBuilder.
+
+* * *
+
+Milestone 129
+-------------
+  * The Dawn-specific constructors and methods on `skgpu::graphite::TextureInfo`,
+    `skgpu::graphite::BackendTexture`, have been deprecated and
+    moved to be functions in `DawnTypes.h`
+  * `SkImageFilters::DropShadow` and `SkImageFilters::DropShadowOnly` now accept
+    `SkColor4f` and `SkColorSpace` for the shadow color.
+  * `SkScalerContext::MakeRecAndEffects` now converts `SkFont::isEmbolden` to the `kEmbolden_Flag`.
+    It no longer automatically converts embolden requests into (more) stroking.
+    This can now (optionally) be done in `SkTypeface::onFilterRec` by calling the new `SkScalerContextRec::useStrokeForFakeBold()`.
+  * Skia no longer tests building against iOS 11.
+    The minimum deployment target is now iOS 12 as this is the minimum deplyment target for Xcode 15.
+  * The Vulkan-specific constructors and methods on `skgpu::graphite::TextureInfo`,
+    `skgpu::graphite::BackendTexture`, `skgpu::graphite::BackendSemaphore` have been deprecated and
+    moved to be functions in `VulkanGraphiteTypes.h`
+
+* * *
+
 Milestone 128
 -------------
   * SkSL now properly reports an error if user code includes various GLSL reserved keywords.

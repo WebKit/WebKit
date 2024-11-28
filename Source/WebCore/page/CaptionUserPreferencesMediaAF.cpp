@@ -866,7 +866,7 @@ Vector<RefPtr<TextTrack>> CaptionUserPreferencesMediaAF::sortedTrackListForMenu(
     bool requestingCaptionsOrDescriptionsOrSubtitles = kinds.contains(TextTrack::Kind::Subtitles) || kinds.contains(TextTrack::Kind::Captions) || kinds.contains(TextTrack::Kind::Descriptions);
 
     for (unsigned i = 0, length = trackList->length(); i < length; ++i) {
-        TextTrack* track = trackList->item(i);
+        RefPtr track = trackList->item(i);
         if (!kinds.contains(track->kind()))
             continue;
 
@@ -933,7 +933,7 @@ Vector<RefPtr<TextTrack>> CaptionUserPreferencesMediaAF::sortedTrackListForMenu(
     if (requestingCaptionsOrDescriptionsOrSubtitles) {
         // Now that we have filtered for the user's accessibility/translation preference, add  all tracks with a unique language without regard to track type.
         for (unsigned i = 0, length = trackList->length(); i < length; ++i) {
-            TextTrack* track = trackList->item(i);
+            RefPtr track = trackList->item(i);
             String language = displayNameForLanguageLocale(track->language());
 
             if (tracksForMenu.contains(track))

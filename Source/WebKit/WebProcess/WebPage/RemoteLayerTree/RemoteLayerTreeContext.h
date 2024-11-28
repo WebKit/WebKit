@@ -74,7 +74,7 @@ public:
     
     std::optional<WebCore::DestinationColorSpace> displayColorSpace() const;
 
-    DrawingAreaIdentifier drawingAreaIdentifier() const;
+    std::optional<DrawingAreaIdentifier> drawingAreaIdentifier() const;
 
     void buildTransaction(RemoteLayerTreeTransaction&, WebCore::PlatformCALayer& rootLayer, WebCore::FrameIdentifier);
 
@@ -104,7 +104,8 @@ public:
     bool canShowWhileLocked() const;
 #endif
 
-    WebPage& webPage() { return m_webPage; }
+    WebPage& webPage();
+    Ref<WebPage> protectedWebPage();
 
 private:
     explicit RemoteLayerTreeContext(WebPage&);
@@ -112,7 +113,7 @@ private:
     // WebCore::GraphicsLayerFactory
     Ref<WebCore::GraphicsLayer> createGraphicsLayer(WebCore::GraphicsLayer::Type, WebCore::GraphicsLayerClient&) override;
 
-    WebPage& m_webPage;
+    WeakRef<WebPage> m_webPage;
 
     HashMap<WebCore::PlatformLayerIdentifier, RemoteLayerTreeTransaction::LayerCreationProperties> m_createdLayers;
     Vector<WebCore::PlatformLayerIdentifier> m_destroyedLayers;
@@ -125,7 +126,7 @@ private:
 
     HashSet<WeakRef<GraphicsLayerCARemote>> m_liveGraphicsLayers;
 
-    std::unique_ptr<RemoteLayerBackingStoreCollection> m_backingStoreCollection;
+    UniqueRef<RemoteLayerBackingStoreCollection> m_backingStoreCollection;
 
     WebCore::LayerPool m_layerPool;
 

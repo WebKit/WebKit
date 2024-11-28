@@ -106,6 +106,12 @@ Compiler::Compiler(rx::GLImplFactory *implFactory, const State &state, egl::Disp
     mResources.OES_texture_cube_map_array = extensions.textureCubeMapArrayOES;
     mResources.EXT_texture_cube_map_array = extensions.textureCubeMapArrayEXT;
 
+    // EXT_texture_query_lod
+    mResources.EXT_texture_query_lod = extensions.textureQueryLodEXT;
+
+    // EXT_texture_shadow_lod
+    mResources.EXT_texture_shadow_lod = extensions.textureShadowLodEXT;
+
     // EXT_shadow_samplers
     mResources.EXT_shadow_samplers = extensions.shadowSamplersEXT;
 
@@ -138,6 +144,10 @@ Compiler::Compiler(rx::GLImplFactory *implFactory, const State &state, egl::Disp
 
     // GL_ARM_shader_framebuffer_fetch
     mResources.ARM_shader_framebuffer_fetch = extensions.shaderFramebufferFetchARM;
+
+    // GL_ARM_shader_framebuffer_fetch_depth_stencil
+    mResources.ARM_shader_framebuffer_fetch_depth_stencil =
+        extensions.shaderFramebufferFetchDepthStencilARM;
 
     // GLSL ES 3.0 constants
     mResources.MaxVertexOutputVectors  = caps.maxVertexOutputComponents / 4;
@@ -328,24 +338,9 @@ void Compiler::putInstance(ShCompilerInstance &&instance)
 
 ShShaderSpec Compiler::SelectShaderSpec(const State &state)
 {
-    const EGLenum clientType = state.getClientType();
-    const EGLint profileMask = state.getProfileMask();
     const GLint majorVersion = state.getClientMajorVersion();
     const GLint minorVersion = state.getClientMinorVersion();
     bool isWebGL             = state.isWebGL();
-
-    // For Desktop GL
-    if (clientType == EGL_OPENGL_API)
-    {
-        if ((profileMask & EGL_CONTEXT_OPENGL_CORE_PROFILE_BIT) != 0)
-        {
-            return SH_GL_CORE_SPEC;
-        }
-        else
-        {
-            return SH_GL_COMPATIBILITY_SPEC;
-        }
-    }
 
     if (majorVersion >= 3)
     {

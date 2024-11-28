@@ -33,6 +33,9 @@
 #import <JavaScriptCore/JSGlobalObjectInlines.h>
 #import <JavaScriptCore/JSLock.h>
 #import <wtf/Assertions.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 #if !defined(_C_LNG_LNG)
 #define _C_LNG_LNG 'q'
@@ -193,8 +196,8 @@ JSValue convertObjcValueToValue(JSGlobalObject* lexicalGlobalObject, void* buffe
     switch (type) {
         case ObjcObjectType: {
             id obj = *(const id*)buffer;
-            if ([obj isKindOfClass:[NSString class]])
-                return convertNSStringToString(lexicalGlobalObject, (NSString *)obj);
+            if (auto *str = dynamic_objc_cast<NSString>(obj))
+                return convertNSStringToString(lexicalGlobalObject, str);
             if ([obj isKindOfClass:webUndefinedClass()])
                 return jsUndefined();
             if ((__bridge CFBooleanRef)obj == kCFBooleanTrue)
@@ -332,3 +335,5 @@ Exception *throwError(JSGlobalObject* lexicalGlobalObject, ThrowScope& scope, NS
 
 }
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

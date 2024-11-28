@@ -24,12 +24,9 @@
  */
 
 #import "config.h"
+#import "WKNSArray.h"
 #import "WKOpenPanelParametersInternal.h"
 #import <WebCore/MIMETypeRegistry.h>
-
-#if PLATFORM(MAC)
-
-#import "WKNSArray.h"
 
 @implementation WKOpenPanelParameters
 
@@ -70,5 +67,3 @@
 }
 
 @end
-
-#endif

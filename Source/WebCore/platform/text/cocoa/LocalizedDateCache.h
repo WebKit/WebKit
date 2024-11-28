@@ -55,8 +55,8 @@ private:
     // Using int instead of DateComponentsType for the key because the enum
     // does not have a default hash and hash traits. Usage of the maps
     // casts the DateComponents::Type into an int as the key.
-    typedef HashMap<int, RetainPtr<NSDateFormatter>> DateTypeFormatterMap;
-    typedef HashMap<int, float> DateTypeMaxWidthMap;
+    typedef UncheckedKeyHashMap<int, RetainPtr<NSDateFormatter>> DateTypeFormatterMap;
+    typedef UncheckedKeyHashMap<int, float> DateTypeMaxWidthMap;
     DateTypeFormatterMap m_formatterMap;
     DateTypeMaxWidthMap m_maxWidthMap;
     FontCascade m_font;

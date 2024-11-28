@@ -40,6 +40,7 @@
 #include "JSDOMPromiseDeferred.h"
 #include "LocalFrame.h"
 #include "Logging.h"
+#include "MediaPlayerPrivate.h"
 #include "Page.h"
 #include "Performance.h"
 #include "PictureInPictureSupport.h"
@@ -110,7 +111,7 @@ void HTMLVideoElement::didAttachRenderers()
 
     if (shouldDisplayPosterImage()) {
         if (!m_imageLoader)
-            m_imageLoader = makeUnique<HTMLImageLoader>(*this);
+            m_imageLoader = makeUniqueWithoutRefCountedCheck<HTMLImageLoader>(*this);
         m_imageLoader->updateFromElement();
         if (CheckedPtr renderer = this->renderer())
             renderer->checkedImageResource()->setCachedImage(m_imageLoader->protectedImage());
@@ -190,7 +191,7 @@ void HTMLVideoElement::attributeChanged(const QualifiedName& name, const AtomStr
     if (name == posterAttr) {
         if (shouldDisplayPosterImage()) {
             if (!m_imageLoader)
-                m_imageLoader = makeUnique<HTMLImageLoader>(*this);
+                m_imageLoader = makeUniqueWithoutRefCountedCheck<HTMLImageLoader>(*this);
             m_imageLoader->updateFromElementIgnoringPreviousError();
         } else {
             if (CheckedPtr renderer = this->renderer()) {
@@ -345,6 +346,14 @@ RefPtr<ImageBuffer> HTMLVideoElement::createBufferForPainting(const FloatSize& s
     return ImageBuffer::create(size, RenderingPurpose::MediaPainting, 1, colorSpace, pixelFormat, bufferOptionsForRendingMode(renderingMode), hostWindow);
 }
 
+void HTMLVideoElement::paint(GraphicsContext& context, const FloatRect& destRect)
+{
+    RefPtr player = this->player();
+    if (!player)
+        return;
+    player->paint(context, destRect);
+}
+
 void HTMLVideoElement::paintCurrentFrameInContext(GraphicsContext& context, const FloatRect& destRect)
 {
     RefPtr player = this->player();
@@ -355,7 +364,7 @@ void HTMLVideoElement::paintCurrentFrameInContext(GraphicsContext& context, cons
         player->setVisibleForCanvas(true); // Make player visible or it won't draw.
         visibilityStateChanged();
     }
-    context.paintFrameForMedia(*player, destRect);
+    player->paintCurrentFrameInContext(context, destRect);
 }
 
 bool HTMLVideoElement::hasAvailableVideoFrame() const
@@ -787,6 +796,20 @@ void HTMLVideoElement::setVideoFullscreenStandby(bool value)
         });
     }
 }
+
+ExceptionOr<void> HTMLVideoElement::enterFullscreenIgnoringPermissionsPolicy()
+{
+    ignoreFullscreenPermissionPolicyOnNextCallToEnterFullscreen();
+    return webkitEnterFullscreen();
+}
+
+#if ENABLE(VIDEO_PRESENTATION_MODE)
+void HTMLVideoElement::setPresentationModeIgnoringPermissionsPolicy(VideoPresentationMode mode)
+{
+    ignoreFullscreenPermissionPolicyOnNextCallToEnterFullscreen();
+    setPresentationMode(mode);
+}
+#endif
 
 } // namespace WebCore
 

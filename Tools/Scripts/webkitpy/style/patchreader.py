@@ -29,6 +29,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import logging
+import os
 import re
 
 from webkitcorepy import string_utils
@@ -67,6 +68,7 @@ class PatchReader(object):
         call_only_once = True
 
         for path, diff_file in patch_files.items():
+            path = path.replace('/', os.sep)
             line_numbers = diff_file.added_or_modified_line_numbers()
             _log.debug('Found %s new or modified lines in: %s' % (len(line_numbers), path))
 

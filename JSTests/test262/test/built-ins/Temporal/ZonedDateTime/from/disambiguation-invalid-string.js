@@ -25,4 +25,13 @@ const datetime = new Temporal.ZonedDateTime(1_000_000_000_987_654_321n, "UTC");
 assert.throws(RangeError, () => Temporal.ZonedDateTime.from(datetime, { disambiguation: "other string" }));
 
 const propertyBag = { timeZone: "UTC", year: 2001, month: 9, day: 9, hour: 1, minute: 46, second: 40, millisecond: 987, microsecond: 654, nanosecond: 321 };
-assert.throws(RangeError, () => Temporal.ZonedDateTime.from(propertyBag, { disambiguation: "other string" }));
+[
+    "",
+    "EARLIER",
+    "balance",
+    "other string",
+    3,
+    null
+].forEach(disambiguation => {
+    assert.throws(RangeError, () => Temporal.ZonedDateTime.from(propertyBag, { disambiguation }))
+});

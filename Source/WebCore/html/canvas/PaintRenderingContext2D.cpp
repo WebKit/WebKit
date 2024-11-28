@@ -42,7 +42,7 @@ std::unique_ptr<PaintRenderingContext2D> PaintRenderingContext2D::create(CustomP
 }
 
 PaintRenderingContext2D::PaintRenderingContext2D(CustomPaintCanvas& canvas)
-    : CanvasRenderingContext2DBase(canvas, { }, false)
+    : CanvasRenderingContext2DBase(canvas, Type::Paint, { }, false)
 {
 }
 
@@ -53,7 +53,7 @@ CustomPaintCanvas& PaintRenderingContext2D::canvas() const
     return downcast<CustomPaintCanvas>(canvasBase());
 }
 
-GraphicsContext* PaintRenderingContext2D::drawingContext() const
+GraphicsContext* PaintRenderingContext2D::ensureDrawingContext() const
 {
     if (!m_recordingContext)
         m_recordingContext = makeUnique<DisplayList::DrawingContext>(canvasBase().size());

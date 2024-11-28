@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -210,7 +210,7 @@ void ConsoleClient::printConsoleMessageWithArguments(MessageSource source, Messa
     Ref<ScriptCallStack> callStack = createScriptCallStackForConsole(globalObject, stackSize);
     const ScriptCallFrame& lastCaller = callStack->at(0);
 
-    StringBuilder builder(StringBuilder::OverflowHandler::RecordOverflow);
+    StringBuilder builder(OverflowPolicy::RecordOverflow);
 
     if (!lastCaller.sourceURL().isEmpty()) {
         appendURLAndPosition(builder, lastCaller.sourceURL(), lastCaller.lineNumber(), lastCaller.columnNumber());

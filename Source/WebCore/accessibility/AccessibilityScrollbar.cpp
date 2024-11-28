@@ -36,39 +36,31 @@
 
 namespace WebCore {
 
-AccessibilityScrollbar::AccessibilityScrollbar(Scrollbar* scrollbar)
-    : m_scrollbar(scrollbar)
+AccessibilityScrollbar::AccessibilityScrollbar(AXID axID, Scrollbar& scrollbar)
+    : AccessibilityMockObject(axID)
+    , m_scrollbar(scrollbar)
 {
-    ASSERT(scrollbar);
 }
 
-Ref<AccessibilityScrollbar> AccessibilityScrollbar::create(Scrollbar* scrollbar)
+Ref<AccessibilityScrollbar> AccessibilityScrollbar::create(AXID axID, Scrollbar& scrollbar)
 {
-    return adoptRef(*new AccessibilityScrollbar(scrollbar));
+    return adoptRef(*new AccessibilityScrollbar(axID, scrollbar));
 }
     
 LayoutRect AccessibilityScrollbar::elementRect() const
 {
-    if (!m_scrollbar)
-        return LayoutRect();
-    
     return m_scrollbar->frameRect();
 }
     
 Document* AccessibilityScrollbar::document() const
 {
-    AccessibilityObject* parent = parentObject();
-    if (!parent)
-        return nullptr;
-    return parent->document();
+    RefPtr parent = parentObject();
+    return parent ? parent->document() : nullptr;
 }
 
 AccessibilityOrientation AccessibilityScrollbar::orientation() const
 {
     // ARIA 1.1 Elements with the role scrollbar have an implicit aria-orientation value of vertical.
-    if (!m_scrollbar)
-        return AccessibilityOrientation::Vertical;
-
     if (m_scrollbar->orientation() == ScrollbarOrientation::Horizontal)
         return AccessibilityOrientation::Horizontal;
     if (m_scrollbar->orientation() == ScrollbarOrientation::Vertical)
@@ -79,24 +71,16 @@ AccessibilityOrientation AccessibilityScrollbar::orientation() const
 
 bool AccessibilityScrollbar::isEnabled() const
 {
-    if (!m_scrollbar)
-        return false;
     return m_scrollbar->enabled();
 }
     
 float AccessibilityScrollbar::valueForRange() const
 {
-    if (!m_scrollbar)
-        return 0;
-
     return m_scrollbar->currentPos() / m_scrollbar->maximum();
 }
 
 bool AccessibilityScrollbar::setValue(float value)
 {
-    if (!m_scrollbar)
-        return false;
-    
     float newValue = value * m_scrollbar->maximum();
     m_scrollbar->scrollableArea().scrollToOffsetWithoutAnimation(m_scrollbar->orientation(), newValue);
     return true;

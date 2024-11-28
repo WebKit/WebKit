@@ -670,6 +670,14 @@
             "issue": "http://anglebug.com/42263914"
         },
         {
+            "name": "expose_ES32_for_testing",
+            "category": "Workarounds",
+            "description": [
+                "Expose GLES 3.2 for testing purposes on platforms that currently do not fully support it."
+            ],
+            "issue": "http://issuetracker.google.com/376899587"
+        },
+        {
             "name": "emulate_R32f_image_atomic_exchange",
             "category": "Workarounds",
             "description": [
@@ -788,6 +796,13 @@
             "category": "Features",
             "description": [
                 "Whether the Vulkan backend supports non-coherent framebuffer fetch"
+            ]
+        },
+        {
+            "name": "supports_shader_framebuffer_fetch_depth_stencil",
+            "category": "Features",
+            "description": [
+                "Whether the Vulkan backend supports coherent depth/stencil framebuffer fetch"
             ]
         },
         {
@@ -1339,10 +1354,10 @@
             "issue": "https://issuetracker.google.com/253522366"
         },
         {
-            "name": "async_command_buffer_reset",
+            "name": "async_command_buffer_reset_and_garbage_cleanup",
             "category": "Features",
             "description": [
-                "Reset command buffer in async thread."
+                "Reset command buffer and cleanup garbage in async thread."
             ],
             "issue": "https://issuetracker.google.com/255411748"
         },
@@ -1649,6 +1664,176 @@
                 "Prefer host cached + non-coherent memory for buffers with dynamic/stream usage."
             ],
             "issue": "https://issuetracker.google.com/347601787"
+        },
+        {
+            "name": "supports_rounding_mode_rte_fp16",
+            "category": "Features",
+            "description": [
+                "VkDevice supports the RTEFloat16 rounding mode from VK_KHR_shader_float_controls extension"
+            ],
+            "issue": "https://anglebug.com/360031000"
+        },
+        {
+            "name": "supports_rounding_mode_rte_fp32",
+            "category": "Features",
+            "description": [
+                "VkDevice supports the RTEFloat32 rounding mode from VK_KHR_shader_float_controls extension"
+            ],
+            "issue": "https://anglebug.com/360031000"
+        },
+        {
+            "name": "supports_rounding_mode_rte_fp64",
+            "category": "Features",
+            "description": [
+                "VkDevice supports the RTEFloat64 rounding mode from VK_KHR_shader_float_controls extension"
+            ],
+            "issue": "https://anglebug.com/360031000"
+        },
+        {
+            "name": "supports_rounding_mode_rtz_fp16",
+            "category": "Features",
+            "description": [
+                "VkDevice supports the RTZFloat16 rounding mode from VK_KHR_shader_float_controls extension"
+            ],
+            "issue": "https://anglebug.com/360031000"
+        },
+        {
+            "name": "supports_rounding_mode_rtz_fp32",
+            "category": "Features",
+            "description": [
+                "VkDevice supports the RTZFloat32 rounding mode from VK_KHR_shader_float_controls extension"
+            ],
+            "issue": "https://anglebug.com/360031000"
+        },
+        {
+            "name": "supports_rounding_mode_rtz_fp64",
+            "category": "Features",
+            "description": [
+                "VkDevice supports the RTZFloat64 rounding mode from VK_KHR_shader_float_controls extension"
+            ],
+            "issue": "https://anglebug.com/360031000"
+        },
+        {
+            "name": "supports_denorm_preserve_fp16",
+            "category": "Features",
+            "description": [
+                "VkDevice supports the DenormPreserveFloat16 mode from VK_KHR_shader_float_controls extension"
+            ],
+            "issue": "https://anglebug.com/360031000"
+        },
+        {
+            "name": "supports_denorm_preserve_fp32",
+            "category": "Features",
+            "description": [
+                "VkDevice supports the DenormPreserveFloat32 mode from VK_KHR_shader_float_controls extension"
+            ],
+            "issue": "https://anglebug.com/360031000"
+        },
+        {
+            "name": "supports_denorm_preserve_fp64",
+            "category": "Features",
+            "description": [
+                "VkDevice supports the DenormPreserveFloat64 mode from VK_KHR_shader_float_controls extension"
+            ],
+            "issue": "https://anglebug.com/360031000"
+        },
+        {
+            "name": "supports_denorm_ftz_fp16",
+            "category": "Features",
+            "description": [
+                "VkDevice supports the DenormFlushToZeroFloat16 mode from VK_KHR_shader_float_controls extension"
+            ],
+            "issue": "https://anglebug.com/360031000"
+        },
+        {
+            "name": "supports_denorm_ftz_fp32",
+            "category": "Features",
+            "description": [
+                "VkDevice supports the DenormFlushToZeroFloat32 mode from VK_KHR_shader_float_controls extension"
+            ],
+            "issue": "https://anglebug.com/360031000"
+        },
+        {
+            "name": "supports_denorm_ftz_fp64",
+            "category": "Features",
+            "description": [
+                "VkDevice supports the DenormFlushToZeroFloat64 mode from VK_KHR_shader_float_controls extension"
+            ],
+            "issue": "https://anglebug.com/360031000"
+        },
+        {
+            "name": "supports_signed_zero_inf_nan_preserve_fp16",
+            "category": "Features",
+            "description": [
+                "VkDevice supports SignedZeroInfNanPreserve execution mode for 16-bit floating point from VK_KHR_shader_float_controls extension"
+            ],
+            "issue": "https://anglebug.com/360031000"
+        },
+        {
+            "name": "supports_signed_zero_inf_nan_preserve_fp32",
+            "category": "Features",
+            "description": [
+                "VkDevice supports SignedZeroInfNanPreserve execution mode for 32-bit floating point from VK_KHR_shader_float_controls extension"
+            ],
+            "issue": "https://anglebug.com/360031000"
+        },
+        {
+            "name": "supports_signed_zero_inf_nan_preserve_fp64",
+            "category": "Features",
+            "description": [
+                "VkDevice supports SignedZeroInfNanPreserve execution mode for 64-bit floating point from VK_KHR_shader_float_controls extension"
+            ],
+            "issue": "https://anglebug.com/360031000"
+        },
+        {
+            "name": "prefer_double_buffer_swapchain_on_fifo_mode",
+            "category": "Features",
+            "description": [
+                "allow create double buffer swapchain for fifo present mode"
+            ],
+            "issue": "https://issuetracker.google.com/311022968"
+        },
+        {
+            "name": "use_dual_pipeline_blob_cache_slots",
+            "category": "Features",
+            "description": [
+                "Wether to use single or dual slots to store PipelineCacheVk data into the blob cache."
+            ],
+            "issue": "https://anglebug.com/42263322"
+        },
+        {
+            "name": "use_empty_blobs_to_erase_old_pipeline_cache_from_blob_cache",
+            "category": "Features",
+            "description": [
+                "Whether to use empty blobs or 1-sized blobs to erase old PipelineCacheVk data from the blob cache."
+            ],
+            "issue": "https://anglebug.com/42263322"
+        },
+        {
+            "name": "has_blob_cache_that_evicts_old_items_first",
+            "category": "Features",
+            "description": [
+                "Whether platform blob cache evicts old items first (has LRU). ",
+                "This is also true if cache evicts more old items than required when storing a new item."
+            ],
+            "issue": "https://anglebug.com/42263322"
+        },
+        {
+            "name": "verify_pipeline_cache_in_blob_cache",
+            "category": "Features",
+            "description": [
+                "Whether need to perform verification of stored PipelineCacheVk data chunks or not. ",
+                "Relevant, when blob cache does not evict old items first (no LRU) or evicts more old items than required when storing a new item."
+            ],
+            "issue": "https://anglebug.com/42263322"
+        },
+        {
+            "name": "descriptor_set_cache",
+            "category": "Features",
+            "description": [
+                "Whether cache the individual descriptorSet or not."
+            ],
+            "issue": "angleproject:372268711"
         }
     ]
 }

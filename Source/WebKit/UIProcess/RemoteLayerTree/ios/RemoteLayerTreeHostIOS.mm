@@ -45,10 +45,10 @@
 namespace WebKit {
 using namespace WebCore;
 
-std::unique_ptr<RemoteLayerTreeNode> RemoteLayerTreeHost::makeNode(const RemoteLayerTreeTransaction::LayerCreationProperties& properties)
+RefPtr<RemoteLayerTreeNode> RemoteLayerTreeHost::makeNode(const RemoteLayerTreeTransaction::LayerCreationProperties& properties)
 {
     auto makeWithView = [&] (RetainPtr<UIView>&& view) {
-        return makeUnique<RemoteLayerTreeNode>(*properties.layerID, properties.hostIdentifier(), WTFMove(view));
+        return RemoteLayerTreeNode::create(*properties.layerID, properties.hostIdentifier(), WTFMove(view));
     };
 
     switch (properties.type) {

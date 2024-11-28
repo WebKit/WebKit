@@ -136,8 +136,10 @@ static std::optional<Vector<uint8_t>> crypt(int operation, const Vector<uint8_t>
             return std::nullopt;
 
         // Finalize the encryption(decryption)
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib port
         if (1 != EVP_CipherFinal_ex(ctx.get(), outputText.data() + len, &len))
             return std::nullopt;
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     }
 
     // Second part
@@ -155,12 +157,14 @@ static std::optional<Vector<uint8_t>> crypt(int operation, const Vector<uint8_t>
             return std::nullopt;
 
         // Provide the message to be encrypted(decrypted), and obtain the encrypted(decrypted) output
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib
         if (1 != EVP_CipherUpdate(ctx.get(), outputText.data() + headSize, &len, inputText.data() + headSize, tailSize))
             return std::nullopt;
 
         // Finalize the encryption(decryption)
         if (1 != EVP_CipherFinal_ex(ctx.get(), outputText.data() + headSize + len, &len))
             return std::nullopt;
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     }
 
     return outputText;

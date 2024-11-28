@@ -11,12 +11,12 @@
 #include "include/core/SkRefCnt.h"
 #include "include/core/SkSamplingOptions.h"
 #include "include/core/SkTypes.h"
-#include "include/gpu/GrBackendSurface.h"
-#include "include/gpu/GrTypes.h"
+#include "include/gpu/ganesh/GrBackendSurface.h"
+#include "include/gpu/ganesh/GrTypes.h"
 #include "include/gpu/ganesh/gl/GrGLBackendSurface.h"
-#include "include/gpu/gl/GrGLFunctions.h"
-#include "include/gpu/gl/GrGLInterface.h"
-#include "include/gpu/gl/GrGLTypes.h"
+#include "include/gpu/ganesh/gl/GrGLFunctions.h"
+#include "include/gpu/ganesh/gl/GrGLInterface.h"
+#include "include/gpu/ganesh/gl/GrGLTypes.h"
 #include "include/private/SkColorData.h"
 #include "include/private/base/SkDebug.h"
 #include "include/private/base/SkTArray.h"
@@ -223,7 +223,7 @@ public:
         return fProgramCache->precompileShader(this->getContext(), key, data);
     }
 
-#if defined(GR_TEST_UTILS)
+#if defined(GPU_TEST_UTILS)
     bool isTestingOnlyBackendTexture(const GrBackendTexture&) const override;
 
     GrBackendRenderTarget createTestingOnlyBackendRenderTarget(SkISize dimensions,
@@ -241,9 +241,9 @@ public:
 
     void submit(GrOpsRenderPass* renderPass) override;
 
-    [[nodiscard]] GrGLsync insertFence();
-    bool waitFence(GrGLsync);
-    void deleteFence(GrGLsync);
+    [[nodiscard]] GrGLsync insertSync();
+    bool testSync(GrGLsync);
+    void deleteSync(GrGLsync);
 
     [[nodiscard]] std::unique_ptr<GrSemaphore> makeSemaphore(bool isOwned) override;
     std::unique_ptr<GrSemaphore> wrapBackendSemaphore(const GrBackendSemaphore&,
@@ -261,8 +261,6 @@ public:
     GrGLenum getErrorAndCheckForOOM();
 
     std::unique_ptr<GrSemaphore> prepareTextureForCrossContextUsage(GrTexture*) override;
-
-    void deleteSync(GrGLsync);
 
     void bindFramebuffer(GrGLenum fboTarget, GrGLuint fboid);
     void deleteFramebuffer(GrGLuint fboid);
@@ -451,9 +449,7 @@ private:
             const skia_private::TArray<GrSurfaceProxy*, true>& sampledProxies,
             GrXferBarrierFlags renderPassXferBarriers) override;
 
-    bool onSubmitToGpu(GrSyncCpu sync) override;
-
-    bool waitSync(GrGLsync, uint64_t timeout, bool flush);
+    bool onSubmitToGpu(const GrSubmitInfo& info) override;
 
     bool copySurfaceAsDraw(GrSurface* dst, bool drawToMultisampleFBO, GrSurface* src,
                            const SkIRect& srcRect, const SkIRect& dstRect, GrSamplerState::Filter);

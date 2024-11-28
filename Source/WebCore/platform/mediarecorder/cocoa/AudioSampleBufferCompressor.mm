@@ -32,34 +32,41 @@
 #include <AudioToolbox/AudioConverter.h>
 #include <AudioToolbox/AudioFormat.h>
 #include <Foundation/Foundation.h>
+#include <Foundation/NSValue.h>
 #include <algorithm>
+#include <pal/avfoundation/MediaTimeAVFoundation.h>
+#include <wtf/NativePromise.h>
 #include <wtf/Scope.h>
-#include <wtf/TZoneMallocInlines.h>
 
 #import <pal/cf/AudioToolboxSoftLink.h>
 #import <pal/cf/CoreMediaSoftLink.h>
 
-#define LOW_WATER_TIME_IN_SECONDS 0.1
+// Error value we pass through the converter to signal that nothing has gone wrong during encoding and we're done processing the packet.
+constexpr uint32_t kNoMoreDataErr = 'MOAR';
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_ALLOCATED_IMPL(AudioSampleBufferCompressor);
-
-std::unique_ptr<AudioSampleBufferCompressor> AudioSampleBufferCompressor::create(CMBufferQueueTriggerCallback callback, void* callbackObject)
+RefPtr<AudioSampleBufferCompressor> AudioSampleBufferCompressor::create(CMBufferQueueTriggerCallback callback, void* callbackObject, AudioFormatID format, std::optional<AudioStreamBasicDescription> description)
 {
-    auto compressor = std::unique_ptr<AudioSampleBufferCompressor>(new AudioSampleBufferCompressor());
+    Ref compressor = adoptRef(*new AudioSampleBufferCompressor(format, WTFMove(description)));
     if (!compressor->initialize(callback, callbackObject))
         return nullptr;
     return compressor;
 }
 
-AudioSampleBufferCompressor::AudioSampleBufferCompressor()
+AudioSampleBufferCompressor::AudioSampleBufferCompressor(AudioFormatID format, std::optional<AudioStreamBasicDescription>&& description)
     : m_serialDispatchQueue(WorkQueue::create("com.apple.AudioSampleBufferCompressor"_s))
-    , m_lowWaterTime(PAL::CMTimeMakeWithSeconds(LOW_WATER_TIME_IN_SECONDS, 1000))
     , m_currentNativePresentationTimeStamp(PAL::kCMTimeInvalid)
     , m_currentOutputPresentationTimeStamp(PAL::kCMTimeInvalid)
     , m_remainingPrimeDuration(PAL::kCMTimeInvalid)
+    , m_outputCodecType(format)
 {
+    if (description)
+        m_destinationFormat = *description;
+    else
+        memset(&m_destinationFormat, 0, sizeof(AudioStreamBasicDescription));
 }
 
 AudioSampleBufferCompressor::~AudioSampleBufferCompressor()
@@ -94,19 +101,47 @@ bool AudioSampleBufferCompressor::initialize(CMBufferQueueTriggerCallback callba
     return true;
 }
 
-void AudioSampleBufferCompressor::flushInternal(bool isFinished)
+Ref<GenericPromise> AudioSampleBufferCompressor::drain()
 {
-    m_serialDispatchQueue->dispatchSync([this, isFinished] {
-        if (!isFinished) {
-            // FIXME: we might want to compress not yet processed data (whose duration is at most LOW_WATER_TIME_IN_SECONDS).
-            return;
+    return invokeAsync(m_serialDispatchQueue, [weakThis = ThreadSafeWeakPtr { *this }, this] {
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis)
+            return GenericPromise::createAndReject();
+
+        m_isDraining = true;
+        processSampleBuffers();
+        m_isDraining = false;
+
+        if (!m_converter)
+            return GenericPromise::createAndReject();
+
+        if (auto error = PAL::AudioConverterReset(m_converter)) {
+            RELEASE_LOG_ERROR(MediaStream, "AudioSampleBufferCompressor AudioConverterReset failed %d", error);
+            return GenericPromise::createAndReject();
         }
+        return GenericPromise::createAndResolve();
+    });
+}
 
-        processSampleBuffersUntilLowWaterTime(PAL::kCMTimeInvalid);
+Ref<GenericPromise> AudioSampleBufferCompressor::flushInternal(bool isFinished)
+{
+    return invokeAsync(m_serialDispatchQueue, [protectedThis = Ref { *this }, this, isFinished] {
+        m_isDraining = isFinished;
+        processSampleBuffers();
+        m_isDraining = false;
 
-        auto error = PAL::CMBufferQueueMarkEndOfData(m_outputBufferQueue.get());
-        RELEASE_LOG_ERROR_IF(error, MediaStream, "AudioSampleBufferCompressor CMBufferQueueMarkEndOfData failed %d", error);
-        m_isEncoding = false;
+        if (!m_converter)
+            return GenericPromise::createAndReject();
+
+        if (isFinished) {
+            m_isEncoding = false;
+
+            if (auto error = PAL::CMBufferQueueMarkEndOfData(m_outputBufferQueue.get())) {
+                RELEASE_LOG_ERROR(MediaStream, "AudioSampleBufferCompressor CMBufferQueueMarkEndOfData failed %d", error);
+                return GenericPromise::createAndReject();
+            }
+        }
+        return GenericPromise::createAndResolve();
     });
 }
 
@@ -129,10 +164,13 @@ bool AudioSampleBufferCompressor::initAudioConverterForSourceFormatDescription(C
     const auto *audioFormatListItem = PAL::CMAudioFormatDescriptionGetRichestDecodableFormat(formatDescription);
     m_sourceFormat = audioFormatListItem->mASBD;
 
-    memset(&m_destinationFormat, 0, sizeof(AudioStreamBasicDescription));
-    m_destinationFormat.mFormatID = outputFormatID;
-    m_destinationFormat.mSampleRate = m_sourceFormat.mSampleRate;
-    m_destinationFormat.mChannelsPerFrame = m_sourceFormat.mChannelsPerFrame;
+    if (!m_destinationFormat.mFormatID || !m_destinationFormat.mSampleRate) {
+        m_destinationFormat.mFormatID = outputFormatID;
+        m_destinationFormat.mChannelsPerFrame = m_sourceFormat.mChannelsPerFrame;
+        m_destinationFormat.mSampleRate = m_sourceFormat.mSampleRate;
+    }
+    if  (outputFormatID == kAudioFormatOpus)
+        m_destinationFormat.mSampleRate = 48000;
 
     UInt32 size = sizeof(m_destinationFormat);
     if (auto error = PAL::AudioFormatGetProperty(kAudioFormatProperty_FormatInfo, 0, NULL, &size, &m_destinationFormat)) {
@@ -142,7 +180,7 @@ bool AudioSampleBufferCompressor::initAudioConverterForSourceFormatDescription(C
 
     AudioConverterRef converter;
     auto error = PAL::AudioConverterNew(&m_sourceFormat, &m_destinationFormat, &converter);
-    if (error == 'fmt?') {
+    if (error == 'fmt?' && outputFormatID != kAudioFormatOpus) {
         m_destinationFormat.mSampleRate = 44100;
         error = PAL::AudioConverterNew(&m_sourceFormat, &m_destinationFormat, &converter);
     }
@@ -183,19 +221,17 @@ bool AudioSampleBufferCompressor::initAudioConverterForSourceFormatDescription(C
         return false;
     }
 
-    if (m_destinationFormat.mFormatID == kAudioFormatMPEG4AAC) {
-        bool shouldSetDefaultOutputBitRate = true;
-        if (m_outputBitRate) {
-            auto error = PAL::AudioConverterSetProperty(m_converter, kAudioConverterEncodeBitRate, sizeof(*m_outputBitRate), &m_outputBitRate.value());
-            RELEASE_LOG_ERROR_IF(error, MediaStream, "AudioSampleBufferCompressor setting kAudioConverterEncodeBitRate failed with %d", error);
-            shouldSetDefaultOutputBitRate = !!error;
-        }
-        if (shouldSetDefaultOutputBitRate) {
-            auto outputBitRate = defaultOutputBitRate(m_destinationFormat);
-            size = sizeof(outputBitRate);
-            if (auto error = PAL::AudioConverterSetProperty(m_converter, kAudioConverterEncodeBitRate, size, &outputBitRate))
-                RELEASE_LOG_ERROR(MediaStream, "AudioSampleBufferCompressor setting default kAudioConverterEncodeBitRate failed with %d", error);
-        }
+    bool shouldSetDefaultOutputBitRate = true;
+    if (m_outputBitRate) {
+        auto error = PAL::AudioConverterSetProperty(m_converter, kAudioConverterEncodeBitRate, sizeof(*m_outputBitRate), &m_outputBitRate.value());
+        RELEASE_LOG_ERROR_IF(error, MediaStream, "AudioSampleBufferCompressor setting kAudioConverterEncodeBitRate failed with %d", error);
+        shouldSetDefaultOutputBitRate = !!error;
+    }
+    if (shouldSetDefaultOutputBitRate) {
+        auto outputBitRate = defaultOutputBitRate(m_destinationFormat);
+        size = sizeof(outputBitRate);
+        if (auto error = PAL::AudioConverterSetProperty(m_converter, kAudioConverterEncodeBitRate, size, &outputBitRate))
+            RELEASE_LOG_ERROR(MediaStream, "AudioSampleBufferCompressor setting default kAudioConverterEncodeBitRate failed with %d", error);
     }
 
     if (!m_destinationFormat.mBytesPerPacket) {
@@ -206,26 +242,15 @@ bool AudioSampleBufferCompressor::initAudioConverterForSourceFormatDescription(C
             RELEASE_LOG_ERROR(MediaStream, "AudioSampleBufferCompressor getting kAudioConverterPropertyMaximumOutputPacketSize failed with %d", error);
             return false;
         }
-    }
+    } else
+        m_maxOutputPacketSize = m_destinationFormat.mBytesPerPacket;
 
     cleanupInCaseOfError.release();
 
-    auto destinationBufferSize = computeBufferSizeForAudioFormat(m_destinationFormat, m_maxOutputPacketSize, LOW_WATER_TIME_IN_SECONDS);
-    if (m_destinationBuffer.size() < destinationBufferSize)
-        m_destinationBuffer.grow(destinationBufferSize);
-    if (!m_destinationFormat.mBytesPerPacket)
-        m_destinationPacketDescriptions.resize(m_destinationBuffer.capacity() / m_maxOutputPacketSize);
+    if (m_destinationBuffer.size() < m_maxOutputPacketSize)
+        m_destinationBuffer.grow(m_maxOutputPacketSize);
 
     return true;
-}
-
-size_t AudioSampleBufferCompressor::computeBufferSizeForAudioFormat(AudioStreamBasicDescription format, UInt32 maxOutputPacketSize, Float32 duration)
-{
-    UInt32 numPackets = (format.mSampleRate * duration) / format.mFramesPerPacket;
-    UInt32 outputPacketSize = format.mBytesPerPacket ? format.mBytesPerPacket : maxOutputPacketSize;
-    UInt32 bufferSize = numPackets * outputPacketSize;
-
-    return bufferSize;
 }
 
 void AudioSampleBufferCompressor::attachPrimingTrimsIfNeeded(CMSampleBufferRef buffer)
@@ -282,7 +307,7 @@ RetainPtr<NSNumber> AudioSampleBufferCompressor::gradualDecoderRefreshCount()
     return retainPtr([NSNumber numberWithInt:(primeInfo.leadingFrames / m_destinationFormat.mFramesPerPacket)]);
 }
 
-RetainPtr<CMSampleBufferRef> AudioSampleBufferCompressor::sampleBufferWithNumPackets(UInt32 numPackets, AudioBufferList fillBufferList)
+RetainPtr<CMSampleBufferRef> AudioSampleBufferCompressor::sampleBuffer(AudioBufferList fillBufferList)
 {
     Vector<char> cookie;
     if (!m_destinationFormatDescription) {
@@ -323,7 +348,7 @@ RetainPtr<CMSampleBufferRef> AudioSampleBufferCompressor::sampleBufferWithNumPac
     }
 
     CMSampleBufferRef rawSampleBuffer;
-    auto error = PAL::CMAudioSampleBufferCreateWithPacketDescriptions(kCFAllocatorDefault, buffer.get(), true, NULL, NULL, m_destinationFormatDescription.get(), numPackets, m_currentNativePresentationTimeStamp, m_destinationPacketDescriptions.data(), &rawSampleBuffer);
+    auto error = PAL::CMAudioSampleBufferCreateWithPacketDescriptions(kCFAllocatorDefault, buffer.get(), true, NULL, NULL, m_destinationFormatDescription.get(), 1, m_currentNativePresentationTimeStamp, &m_destinationPacketDescriptions, &rawSampleBuffer);
     if (error) {
         RELEASE_LOG_ERROR(MediaStream, "AudioSampleBufferCompressor CMAudioSampleBufferCreateWithPacketDescriptions failed with %d", error);
         return nil;
@@ -348,8 +373,15 @@ OSStatus AudioSampleBufferCompressor::provideSourceDataNumOutputPackets(UInt32* 
     if (packetDescriptionOut)
         *packetDescriptionOut = NULL;
 
-    const UInt32 numPacketsToCopy = *numOutputPacketsPtr;
-    size_t numBytesToCopy = (numPacketsToCopy * m_sourceFormat.mBytesPerPacket);
+    if (PAL::CMBufferQueueIsEmpty(m_inputBufferQueue.get()) && !m_isDraining && m_sampleBlockBufferSize <= m_currentOffsetInSampleBlockBuffer) {
+        m_sampleBlockBuffer = nullptr;
+        m_sampleBlockBufferSize = 0;
+        m_currentOffsetInSampleBlockBuffer = 0;
+        *numOutputPacketsPtr = 0;
+        return kNoMoreDataErr;
+    }
+
+    size_t numBytesToCopy = m_sourceFormat.mBytesPerPacket;
 
     if (audioBufferList->mNumberBuffers == 1) {
         size_t currentOffsetInSourceBuffer = 0;
@@ -459,7 +491,7 @@ OSStatus AudioSampleBufferCompressor::provideSourceDataNumOutputPackets(UInt32* 
     return noErr;
 }
 
-void AudioSampleBufferCompressor::processSampleBuffersUntilLowWaterTime(CMTime lowWaterTime)
+void AudioSampleBufferCompressor::processSampleBuffers()
 {
     using namespace PAL; // For CMTIME_COMPARE_INLINE
 
@@ -467,20 +499,20 @@ void AudioSampleBufferCompressor::processSampleBuffersUntilLowWaterTime(CMTime l
         if (CMBufferQueueIsEmpty(m_inputBufferQueue.get()))
             return;
 
-        auto buffer = (CMSampleBufferRef)(const_cast<void*>(CMBufferQueueGetHead(m_inputBufferQueue.get())));
+        RetainPtr buffer = (CMSampleBufferRef)(const_cast<void*>(CMBufferQueueGetHead(m_inputBufferQueue.get())));
         ASSERT(buffer);
 
-        m_currentNativePresentationTimeStamp = CMSampleBufferGetPresentationTimeStamp(buffer);
-        m_currentOutputPresentationTimeStamp = CMSampleBufferGetOutputPresentationTimeStamp(buffer);
+        m_currentNativePresentationTimeStamp = CMSampleBufferGetPresentationTimeStamp(buffer.get());
+        m_currentOutputPresentationTimeStamp = CMSampleBufferGetOutputPresentationTimeStamp(buffer.get());
 
-        auto formatDescription = CMSampleBufferGetFormatDescription(buffer);
-        if (!initAudioConverterForSourceFormatDescription(formatDescription, m_outputCodecType)) {
+        RetainPtr formatDescription = PAL::CMSampleBufferGetFormatDescription(buffer.get());
+        if (!initAudioConverterForSourceFormatDescription(formatDescription.get(), m_outputCodecType)) {
             // FIXME: Maybe we should error the media recorder if we are not able to get a correct converter.
             return;
         }
     }
 
-    while (CMTIME_IS_INVALID(lowWaterTime) || CMTIME_COMPARE_INLINE(lowWaterTime, <, CMBufferQueueGetDuration(m_inputBufferQueue.get()))) {
+    while (true) {
         AudioBufferList fillBufferList;
 
         fillBufferList.mNumberBuffers = 1;
@@ -488,11 +520,13 @@ void AudioSampleBufferCompressor::processSampleBuffersUntilLowWaterTime(CMTime l
         fillBufferList.mBuffers[0].mDataByteSize = (UInt32)m_destinationBuffer.capacity();
         fillBufferList.mBuffers[0].mData = m_destinationBuffer.data();
 
-        UInt32 outputPacketSize = m_destinationFormat.mBytesPerPacket ? m_destinationFormat.mBytesPerPacket : m_maxOutputPacketSize;
-        UInt32 numOutputPackets = (UInt32)m_destinationBuffer.capacity() / outputPacketSize;
+        UInt32 numOutputPackets = 1;
 
-        auto error = AudioConverterFillComplexBuffer(m_converter, audioConverterComplexInputDataProc, this, &numOutputPackets, &fillBufferList, m_destinationPacketDescriptions.data());
-        if (error) {
+        auto error = AudioConverterFillComplexBuffer(m_converter, audioConverterComplexInputDataProc, this, &numOutputPackets, &fillBufferList, &m_destinationPacketDescriptions);
+
+        bool hasNoMoreData = error == kNoMoreDataErr;
+
+        if (error && !hasNoMoreData) {
             RELEASE_LOG_ERROR(MediaStream, "AudioSampleBufferCompressor AudioConverterFillComplexBuffer failed with %d", error);
             return;
         }
@@ -500,7 +534,7 @@ void AudioSampleBufferCompressor::processSampleBuffersUntilLowWaterTime(CMTime l
         if (!numOutputPackets)
             break;
 
-        auto buffer = sampleBufferWithNumPackets(numOutputPackets, fillBufferList);
+        RetainPtr buffer = sampleBuffer(fillBufferList);
 
         attachPrimingTrimsIfNeeded(buffer.get());
 
@@ -521,6 +555,9 @@ void AudioSampleBufferCompressor::processSampleBuffersUntilLowWaterTime(CMTime l
             RELEASE_LOG_ERROR(MediaStream, "AudioSampleBufferCompressor CMBufferQueueEnqueue failed with %d", error);
             return;
         }
+
+        if (hasNoMoreData)
+            break;
     }
 }
 
@@ -529,7 +566,7 @@ void AudioSampleBufferCompressor::processSampleBuffer(CMSampleBufferRef buffer)
     auto error = PAL::CMBufferQueueEnqueue(m_inputBufferQueue.get(), buffer);
     RELEASE_LOG_ERROR_IF(error, MediaStream, "AudioSampleBufferCompressor CMBufferQueueEnqueue failed with %d", error);
 
-    processSampleBuffersUntilLowWaterTime(m_lowWaterTime);
+    processSampleBuffers();
 }
 
 void AudioSampleBufferCompressor::addSampleBuffer(CMSampleBufferRef buffer)
@@ -537,13 +574,16 @@ void AudioSampleBufferCompressor::addSampleBuffer(CMSampleBufferRef buffer)
     // Heap allocations are forbidden on the audio thread for performance reasons so we need to
     // explicitly allow the following allocation(s).
     DisableMallocRestrictionsForCurrentThreadScope disableMallocRestrictions;
-    m_serialDispatchQueue->dispatchSync([this, buffer] {
-        if (m_isEncoding)
-            processSampleBuffer(buffer);
+
+    m_serialDispatchQueue->dispatch([weakThis = ThreadSafeWeakPtr { *this }, buffer = RetainPtr { buffer }] {
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis || !protectedThis->m_isEncoding)
+            return;
+        protectedThis->processSampleBuffer(buffer.get());
     });
 }
 
-CMSampleBufferRef AudioSampleBufferCompressor::getOutputSampleBuffer()
+CMSampleBufferRef AudioSampleBufferCompressor::getOutputSampleBuffer() const
 {
     return (CMSampleBufferRef)(const_cast<void*>(PAL::CMBufferQueueGetHead(m_outputBufferQueue.get())));
 }
@@ -558,6 +598,13 @@ unsigned AudioSampleBufferCompressor::bitRate() const
     return m_outputBitRate.value_or(0);
 }
 
+bool AudioSampleBufferCompressor::isEmpty() const
+{
+    return m_outputBufferQueue && PAL::CMBufferQueueIsEmpty(m_outputBufferQueue.get());
 }
+
+}
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ENABLE(MEDIA_RECORDER) && USE(AVFOUNDATION)

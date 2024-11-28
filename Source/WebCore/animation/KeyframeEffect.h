@@ -95,8 +95,8 @@ public:
     };
 
     struct ComputedKeyframe : BaseComputedKeyframe {
-        HashMap<CSSPropertyID, String> styleStrings;
-        HashMap<AtomString, String> customStyleStrings;
+        UncheckedKeyHashMap<CSSPropertyID, String> styleStrings;
+        UncheckedKeyHashMap<AtomString, String> customStyleStrings;
     };
 
     struct ParsedKeyframe : ComputedKeyframe {
@@ -254,11 +254,11 @@ private:
     class StackMembershipMutationScope {
         WTF_MAKE_NONCOPYABLE(StackMembershipMutationScope);
     public:
-        StackMembershipMutationScope(KeyframeEffect*);
+        StackMembershipMutationScope(KeyframeEffect&);
         ~StackMembershipMutationScope();
 
     private:
-        KeyframeEffect* m_effect;
+        RefPtr<KeyframeEffect> m_effect;
         RefPtr<Element> m_originalTarget;
         std::optional<Style::PseudoElementIdentifier> m_originalPseudoElementIdentifier;
     };
@@ -273,7 +273,7 @@ private:
     void animationDidChangeTimingProperties() final;
     void animationWasCanceled() final;
     void animationSuspensionStateDidChange(bool) final;
-    void animationTimelineDidChange(AnimationTimeline*) final;
+    void animationTimelineDidChange(const AnimationTimeline*) final;
     void animationDidFinish() final;
     void setAnimation(WebAnimation*) final;
     Seconds timeToNextTick(const BasicEffectTiming&) const final;
@@ -323,6 +323,7 @@ private:
     bool m_hasAcceleratedPropertyOverriddenByCascadeProperty { false };
     bool m_hasReferenceFilter { false };
     bool m_animatesSizeAndSizeDependentTransform { false };
+    bool m_isAssociatedWithProgressBasedTimeline { false };
 };
 
 } // namespace WebCore

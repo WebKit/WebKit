@@ -1,0 +1,23 @@
+<meta name="fuzzy" content="maxDifference=0-3; totalPixels=0-872" />
+<body>
+    <h3>This tests the layer filter is applied to the text correctly.</h3>
+    <canvas id="canvas"></canvas>
+    <svg style="position: absolute; top: -99999px" xmlns="http://www.w3.org/2000/svg">
+        <filter id="svgDropShadow">
+            <feDropShadow dx="5" dy="5" stdDeviation="0" flood-color="gray"/>
+        </filter>
+    </svg>
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+
+        ctx.filter = 'url(#svgDropShadow)';
+        ctx.beginLayer();
+            ctx.fillStyle = "blue"
+            ctx.strokeStyle = "red"
+            ctx.font = "48px serif";
+            ctx.fillText("Hello world!", 10, 40);
+            ctx.strokeText("Hello world!", 10, 120);
+        ctx.endLayer();
+    </script>
+</body>

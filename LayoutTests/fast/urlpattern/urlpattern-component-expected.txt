@@ -1,0 +1,3678 @@
+CONSOLE MESSAGE: NotSupportedError: Not implemented.
+Tests URLPattern: URLPattern constructor
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Testing: {"pattern":[{"pathname":"/foo/bar"}],"inputs":[{"pathname":"/foo/bar"}],"expected_match":{"pathname":{"input":"/foo/bar","groups":{}}}}
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/bar"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"pathname":"/foo/bar"}],"inputs":[{"pathname":"/foo/ba"}],"expected_match":null}
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/bar"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"pathname":"/foo/bar"}],"inputs":[{"pathname":"/foo/bar/"}],"expected_match":null}
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/bar"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"pathname":"/foo/bar"}],"inputs":[{"pathname":"/foo/bar/baz"}],"expected_match":null}
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/bar"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"pathname":"/foo/bar"}],"inputs":["https://example.com/foo/bar"],"expected_match":{"hostname":{"input":"example.com","groups":{"0":"example.com"}},"pathname":{"input":"/foo/bar","groups":{}},"protocol":{"input":"https","groups":{"0":"https"}}}}
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/bar"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"pathname":"/foo/bar"}],"inputs":["https://example.com/foo/bar/baz"],"expected_match":null}
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/bar"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"pathname":"/foo/bar"}],"inputs":[{"hostname":"example.com","pathname":"/foo/bar"}],"expected_match":{"hostname":{"input":"example.com","groups":{"0":"example.com"}},"pathname":{"input":"/foo/bar","groups":{}}}}
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/bar"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"pathname":"/foo/bar"}],"inputs":[{"hostname":"example.com","pathname":"/foo/bar/baz"}],"expected_match":null}
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/bar"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"pathname":"/foo/bar"}],"inputs":[{"pathname":"/foo/bar","baseURL":"https://example.com"}],"expected_match":{"hostname":{"input":"example.com","groups":{"0":"example.com"}},"pathname":{"input":"/foo/bar","groups":{}},"protocol":{"input":"https","groups":{"0":"https"}}}}
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/bar"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"pathname":"/foo/bar"}],"inputs":[{"pathname":"/foo/bar/baz","baseURL":"https://example.com"}],"expected_match":null}
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/bar"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"pathname":"/foo/bar","baseURL":"https://example.com?query#hash"}],"inputs":[{"pathname":"/foo/bar"}],"expected_match":null}
+Component: protocol
+PASS urlPatternComponent is "https"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "example.com"
+Component: port
+PASS urlPatternComponent is ""
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/bar"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"pathname":"/foo/bar","baseURL":"https://example.com?query#hash"}],"inputs":[{"hostname":"example.com","pathname":"/foo/bar"}],"expected_match":null}
+Component: protocol
+PASS urlPatternComponent is "https"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "example.com"
+Component: port
+PASS urlPatternComponent is ""
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/bar"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"pathname":"/foo/bar","baseURL":"https://example.com?query#hash"}],"inputs":[{"protocol":"https","hostname":"example.com","pathname":"/foo/bar"}],"exactly_empty_components":["port"],"expected_match":{"hostname":{"input":"example.com","groups":{}},"pathname":{"input":"/foo/bar","groups":{}},"protocol":{"input":"https","groups":{}}}}
+Component: protocol
+PASS urlPatternComponent is "https"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "example.com"
+Component: port
+PASS urlPatternComponent is ""
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/bar"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"pathname":"/foo/bar","baseURL":"https://example.com"}],"inputs":[{"protocol":"https","hostname":"example.com","pathname":"/foo/bar"}],"exactly_empty_components":["port"],"expected_match":{"hostname":{"input":"example.com","groups":{}},"pathname":{"input":"/foo/bar","groups":{}},"protocol":{"input":"https","groups":{}}}}
+Component: protocol
+PASS urlPatternComponent is "https"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "example.com"
+Component: port
+PASS urlPatternComponent is ""
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/bar"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"pathname":"/foo/bar","baseURL":"https://example.com"}],"inputs":[{"protocol":"https","hostname":"example.com","pathname":"/foo/bar/baz"}],"expected_match":null}
+Component: protocol
+PASS urlPatternComponent is "https"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "example.com"
+Component: port
+PASS urlPatternComponent is ""
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/bar"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"pathname":"/foo/bar","baseURL":"https://example.com?query#hash"}],"inputs":[{"protocol":"https","hostname":"example.com","pathname":"/foo/bar","search":"otherquery","hash":"otherhash"}],"exactly_empty_components":["port"],"expected_match":{"hash":{"input":"otherhash","groups":{"0":"otherhash"}},"hostname":{"input":"example.com","groups":{}},"pathname":{"input":"/foo/bar","groups":{}},"protocol":{"input":"https","groups":{}},"search":{"input":"otherquery","groups":{"0":"otherquery"}}}}
+Component: protocol
+PASS urlPatternComponent is "https"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "example.com"
+Component: port
+PASS urlPatternComponent is ""
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/bar"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"pathname":"/foo/bar","baseURL":"https://example.com"}],"inputs":[{"protocol":"https","hostname":"example.com","pathname":"/foo/bar","search":"otherquery","hash":"otherhash"}],"exactly_empty_components":["port"],"expected_match":{"hash":{"input":"otherhash","groups":{"0":"otherhash"}},"hostname":{"input":"example.com","groups":{}},"pathname":{"input":"/foo/bar","groups":{}},"protocol":{"input":"https","groups":{}},"search":{"input":"otherquery","groups":{"0":"otherquery"}}}}
+Component: protocol
+PASS urlPatternComponent is "https"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "example.com"
+Component: port
+PASS urlPatternComponent is ""
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/bar"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"pathname":"/foo/bar","baseURL":"https://example.com?otherquery#otherhash"}],"inputs":[{"protocol":"https","hostname":"example.com","pathname":"/foo/bar","search":"otherquery","hash":"otherhash"}],"exactly_empty_components":["port"],"expected_match":{"hash":{"input":"otherhash","groups":{"0":"otherhash"}},"hostname":{"input":"example.com","groups":{}},"pathname":{"input":"/foo/bar","groups":{}},"protocol":{"input":"https","groups":{}},"search":{"input":"otherquery","groups":{"0":"otherquery"}}}}
+Component: protocol
+PASS urlPatternComponent is "https"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "example.com"
+Component: port
+PASS urlPatternComponent is ""
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/bar"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"pathname":"/foo/bar","baseURL":"https://example.com?query#hash"}],"inputs":["https://example.com/foo/bar"],"exactly_empty_components":["port"],"expected_match":{"hostname":{"input":"example.com","groups":{}},"pathname":{"input":"/foo/bar","groups":{}},"protocol":{"input":"https","groups":{}}}}
+Component: protocol
+PASS urlPatternComponent is "https"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "example.com"
+Component: port
+PASS urlPatternComponent is ""
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/bar"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"pathname":"/foo/bar","baseURL":"https://example.com?query#hash"}],"inputs":["https://example.com/foo/bar?otherquery#otherhash"],"exactly_empty_components":["port"],"expected_match":{"hash":{"input":"otherhash","groups":{"0":"otherhash"}},"hostname":{"input":"example.com","groups":{}},"pathname":{"input":"/foo/bar","groups":{}},"protocol":{"input":"https","groups":{}},"search":{"input":"otherquery","groups":{"0":"otherquery"}}}}
+Component: protocol
+PASS urlPatternComponent is "https"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "example.com"
+Component: port
+PASS urlPatternComponent is ""
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/bar"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"pathname":"/foo/bar","baseURL":"https://example.com?query#hash"}],"inputs":["https://example.com/foo/bar?query#hash"],"exactly_empty_components":["port"],"expected_match":{"hash":{"input":"hash","groups":{"0":"hash"}},"hostname":{"input":"example.com","groups":{}},"pathname":{"input":"/foo/bar","groups":{}},"protocol":{"input":"https","groups":{}},"search":{"input":"query","groups":{"0":"query"}}}}
+Component: protocol
+PASS urlPatternComponent is "https"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "example.com"
+Component: port
+PASS urlPatternComponent is ""
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/bar"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"pathname":"/foo/bar","baseURL":"https://example.com?query#hash"}],"inputs":["https://example.com/foo/bar/baz"],"expected_match":null}
+Component: protocol
+PASS urlPatternComponent is "https"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "example.com"
+Component: port
+PASS urlPatternComponent is ""
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/bar"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"pathname":"/foo/bar","baseURL":"https://example.com?query#hash"}],"inputs":["https://other.com/foo/bar"],"expected_match":null}
+Component: protocol
+PASS urlPatternComponent is "https"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "example.com"
+Component: port
+PASS urlPatternComponent is ""
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/bar"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"pathname":"/foo/bar","baseURL":"https://example.com?query#hash"}],"inputs":["http://other.com/foo/bar"],"expected_match":null}
+Component: protocol
+PASS urlPatternComponent is "https"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "example.com"
+Component: port
+PASS urlPatternComponent is ""
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/bar"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"pathname":"/foo/bar","baseURL":"https://example.com?query#hash"}],"inputs":[{"pathname":"/foo/bar","baseURL":"https://example.com"}],"exactly_empty_components":["port"],"expected_match":{"hostname":{"input":"example.com","groups":{}},"pathname":{"input":"/foo/bar","groups":{}},"protocol":{"input":"https","groups":{}}}}
+Component: protocol
+PASS urlPatternComponent is "https"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "example.com"
+Component: port
+PASS urlPatternComponent is ""
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/bar"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"pathname":"/foo/bar","baseURL":"https://example.com?query#hash"}],"inputs":[{"pathname":"/foo/bar","baseURL":"https://example.com?query#hash"}],"exactly_empty_components":["port"],"expected_match":{"hostname":{"input":"example.com","groups":{}},"pathname":{"input":"/foo/bar","groups":{}},"protocol":{"input":"https","groups":{}}}}
+Component: protocol
+PASS urlPatternComponent is "https"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "example.com"
+Component: port
+PASS urlPatternComponent is ""
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/bar"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"pathname":"/foo/bar","baseURL":"https://example.com?query#hash"}],"inputs":[{"pathname":"/foo/bar/baz","baseURL":"https://example.com"}],"expected_match":null}
+Component: protocol
+PASS urlPatternComponent is "https"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "example.com"
+Component: port
+PASS urlPatternComponent is ""
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/bar"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"pathname":"/foo/bar","baseURL":"https://example.com?query#hash"}],"inputs":[{"pathname":"/foo/bar","baseURL":"https://other.com"}],"expected_match":null}
+Component: protocol
+PASS urlPatternComponent is "https"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "example.com"
+Component: port
+PASS urlPatternComponent is ""
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/bar"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"pathname":"/foo/bar","baseURL":"https://example.com?query#hash"}],"inputs":[{"pathname":"/foo/bar","baseURL":"http://example.com"}],"expected_match":null}
+Component: protocol
+PASS urlPatternComponent is "https"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "example.com"
+Component: port
+PASS urlPatternComponent is ""
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/bar"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"pathname":"/foo/:bar"}],"inputs":[{"pathname":"/foo/bar"}],"expected_match":{"pathname":{"input":"/foo/bar","groups":{"bar":"bar"}}}}
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/:bar"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"pathname":"/foo/([^\\/]+?)"}],"inputs":[{"pathname":"/foo/bar"}],"expected_match":{"pathname":{"input":"/foo/bar","groups":{"0":"bar"}}}}
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/([^\\/]+?)"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"pathname":"/foo/:bar"}],"inputs":[{"pathname":"/foo/index.html"}],"expected_match":{"pathname":{"input":"/foo/index.html","groups":{"bar":"index.html"}}}}
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/:bar"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"pathname":"/foo/:bar"}],"inputs":[{"pathname":"/foo/bar/"}],"expected_match":null}
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/:bar"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"pathname":"/foo/:bar"}],"inputs":[{"pathname":"/foo/"}],"expected_match":null}
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/:bar"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"pathname":"/foo/(.*)"}],"inputs":[{"pathname":"/foo/bar"}],"expected_obj":{"pathname":"/foo/*"},"expected_match":{"pathname":{"input":"/foo/bar","groups":{"0":"bar"}}}}
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+FAIL urlPatternComponent should be /foo/*. Was /foo/(.*).
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"pathname":"/foo/*"}],"inputs":[{"pathname":"/foo/bar"}],"expected_match":{"pathname":{"input":"/foo/bar","groups":{"0":"bar"}}}}
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/*"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"pathname":"/foo/(.*)"}],"inputs":[{"pathname":"/foo/bar/baz"}],"expected_obj":{"pathname":"/foo/*"},"expected_match":{"pathname":{"input":"/foo/bar/baz","groups":{"0":"bar/baz"}}}}
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+FAIL urlPatternComponent should be /foo/*. Was /foo/(.*).
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"pathname":"/foo/*"}],"inputs":[{"pathname":"/foo/bar/baz"}],"expected_match":{"pathname":{"input":"/foo/bar/baz","groups":{"0":"bar/baz"}}}}
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/*"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"pathname":"/foo/(.*)"}],"inputs":[{"pathname":"/foo/"}],"expected_obj":{"pathname":"/foo/*"},"expected_match":{"pathname":{"input":"/foo/","groups":{"0":""}}}}
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+FAIL urlPatternComponent should be /foo/*. Was /foo/(.*).
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"pathname":"/foo/*"}],"inputs":[{"pathname":"/foo/"}],"expected_match":{"pathname":{"input":"/foo/","groups":{"0":""}}}}
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/*"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"pathname":"/foo/(.*)"}],"inputs":[{"pathname":"/foo"}],"expected_obj":{"pathname":"/foo/*"},"expected_match":null}
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+FAIL urlPatternComponent should be /foo/*. Was /foo/(.*).
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"pathname":"/foo/*"}],"inputs":[{"pathname":"/foo"}],"expected_match":null}
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/*"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"pathname":"/foo/:bar(.*)"}],"inputs":[{"pathname":"/foo/bar"}],"expected_match":{"pathname":{"input":"/foo/bar","groups":{"bar":"bar"}}}}
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/:bar(.*)"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"pathname":"/foo/:bar(.*)"}],"inputs":[{"pathname":"/foo/bar/baz"}],"expected_match":{"pathname":{"input":"/foo/bar/baz","groups":{"bar":"bar/baz"}}}}
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/:bar(.*)"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"pathname":"/foo/:bar(.*)"}],"inputs":[{"pathname":"/foo/"}],"expected_match":{"pathname":{"input":"/foo/","groups":{"bar":""}}}}
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/:bar(.*)"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"pathname":"/foo/:bar(.*)"}],"inputs":[{"pathname":"/foo"}],"expected_match":null}
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/:bar(.*)"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"pathname":"/foo/:bar?"}],"inputs":[{"pathname":"/foo/bar"}],"expected_match":{"pathname":{"input":"/foo/bar","groups":{"bar":"bar"}}}}
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/:bar?"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"pathname":"/foo/:bar?"}],"inputs":[{"pathname":"/foo"}],"//":"The `null` below is translated to undefined in the test harness.","expected_match":{"pathname":{"input":"/foo","groups":{"bar":null}}}}
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/:bar?"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"pathname":"/foo/:bar?"}],"inputs":[{"pathname":"/foo/"}],"expected_match":null}
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/:bar?"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"pathname":"/foo/:bar?"}],"inputs":[{"pathname":"/foobar"}],"expected_match":null}
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/:bar?"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"pathname":"/foo/:bar?"}],"inputs":[{"pathname":"/foo/bar/baz"}],"expected_match":null}
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/:bar?"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"pathname":"/foo/:bar+"}],"inputs":[{"pathname":"/foo/bar"}],"expected_match":{"pathname":{"input":"/foo/bar","groups":{"bar":"bar"}}}}
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/:bar+"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"pathname":"/foo/:bar+"}],"inputs":[{"pathname":"/foo/bar/baz"}],"expected_match":{"pathname":{"input":"/foo/bar/baz","groups":{"bar":"bar/baz"}}}}
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/:bar+"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"pathname":"/foo/:bar+"}],"inputs":[{"pathname":"/foo"}],"expected_match":null}
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/:bar+"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"pathname":"/foo/:bar+"}],"inputs":[{"pathname":"/foo/"}],"expected_match":null}
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/:bar+"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"pathname":"/foo/:bar+"}],"inputs":[{"pathname":"/foobar"}],"expected_match":null}
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/:bar+"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"pathname":"/foo/:bar*"}],"inputs":[{"pathname":"/foo/bar"}],"expected_match":{"pathname":{"input":"/foo/bar","groups":{"bar":"bar"}}}}
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/:bar*"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"pathname":"/foo/:bar*"}],"inputs":[{"pathname":"/foo/bar/baz"}],"expected_match":{"pathname":{"input":"/foo/bar/baz","groups":{"bar":"bar/baz"}}}}
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/:bar*"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"pathname":"/foo/:bar*"}],"inputs":[{"pathname":"/foo"}],"//":"The `null` below is translated to undefined in the test harness.","expected_match":{"pathname":{"input":"/foo","groups":{"bar":null}}}}
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/:bar*"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"pathname":"/foo/:bar*"}],"inputs":[{"pathname":"/foo/"}],"expected_match":null}
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/:bar*"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"pathname":"/foo/:bar*"}],"inputs":[{"pathname":"/foobar"}],"expected_match":null}
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/:bar*"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"pathname":"/foo/(.*)?"}],"inputs":[{"pathname":"/foo/bar"}],"expected_obj":{"pathname":"/foo/*?"},"expected_match":{"pathname":{"input":"/foo/bar","groups":{"0":"bar"}}}}
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+FAIL urlPatternComponent should be /foo/*?. Was /foo/(.*)?.
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"pathname":"/foo/*?"}],"inputs":[{"pathname":"/foo/bar"}],"expected_match":{"pathname":{"input":"/foo/bar","groups":{"0":"bar"}}}}
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/*?"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"pathname":"/foo/(.*)?"}],"inputs":[{"pathname":"/foo/bar/baz"}],"expected_obj":{"pathname":"/foo/*?"},"expected_match":{"pathname":{"input":"/foo/bar/baz","groups":{"0":"bar/baz"}}}}
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+FAIL urlPatternComponent should be /foo/*?. Was /foo/(.*)?.
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"pathname":"/foo/*?"}],"inputs":[{"pathname":"/foo/bar/baz"}],"expected_match":{"pathname":{"input":"/foo/bar/baz","groups":{"0":"bar/baz"}}}}
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/*?"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"pathname":"/foo/(.*)?"}],"inputs":[{"pathname":"/foo"}],"expected_obj":{"pathname":"/foo/*?"},"//":"The `null` below is translated to undefined in the test harness.","expected_match":{"pathname":{"input":"/foo","groups":{"0":null}}}}
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+FAIL urlPatternComponent should be /foo/*?. Was /foo/(.*)?.
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"pathname":"/foo/*?"}],"inputs":[{"pathname":"/foo"}],"//":"The `null` below is translated to undefined in the test harness.","expected_match":{"pathname":{"input":"/foo","groups":{"0":null}}}}
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/*?"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"pathname":"/foo/(.*)?"}],"inputs":[{"pathname":"/foo/"}],"expected_obj":{"pathname":"/foo/*?"},"expected_match":{"pathname":{"input":"/foo/","groups":{"0":""}}}}
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+FAIL urlPatternComponent should be /foo/*?. Was /foo/(.*)?.
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"pathname":"/foo/*?"}],"inputs":[{"pathname":"/foo/"}],"expected_match":{"pathname":{"input":"/foo/","groups":{"0":""}}}}
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/*?"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"pathname":"/foo/(.*)?"}],"inputs":[{"pathname":"/foobar"}],"expected_obj":{"pathname":"/foo/*?"},"expected_match":null}
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+FAIL urlPatternComponent should be /foo/*?. Was /foo/(.*)?.
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"pathname":"/foo/*?"}],"inputs":[{"pathname":"/foobar"}],"expected_match":null}
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/*?"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"pathname":"/foo/(.*)?"}],"inputs":[{"pathname":"/fo"}],"expected_obj":{"pathname":"/foo/*?"},"expected_match":null}
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+FAIL urlPatternComponent should be /foo/*?. Was /foo/(.*)?.
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"pathname":"/foo/*?"}],"inputs":[{"pathname":"/fo"}],"expected_match":null}
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/*?"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"pathname":"/foo/(.*)+"}],"inputs":[{"pathname":"/foo/bar"}],"expected_obj":{"pathname":"/foo/*+"},"expected_match":{"pathname":{"input":"/foo/bar","groups":{"0":"bar"}}}}
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+FAIL urlPatternComponent should be /foo/*+. Was /foo/(.*)+.
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"pathname":"/foo/*+"}],"inputs":[{"pathname":"/foo/bar"}],"expected_match":{"pathname":{"input":"/foo/bar","groups":{"0":"bar"}}}}
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/*+"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"pathname":"/foo/(.*)+"}],"inputs":[{"pathname":"/foo/bar/baz"}],"expected_obj":{"pathname":"/foo/*+"},"expected_match":{"pathname":{"input":"/foo/bar/baz","groups":{"0":"bar/baz"}}}}
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+FAIL urlPatternComponent should be /foo/*+. Was /foo/(.*)+.
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"pathname":"/foo/*+"}],"inputs":[{"pathname":"/foo/bar/baz"}],"expected_match":{"pathname":{"input":"/foo/bar/baz","groups":{"0":"bar/baz"}}}}
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/*+"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"pathname":"/foo/(.*)+"}],"inputs":[{"pathname":"/foo"}],"expected_obj":{"pathname":"/foo/*+"},"expected_match":null}
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+FAIL urlPatternComponent should be /foo/*+. Was /foo/(.*)+.
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"pathname":"/foo/*+"}],"inputs":[{"pathname":"/foo"}],"expected_match":null}
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/*+"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"pathname":"/foo/(.*)+"}],"inputs":[{"pathname":"/foo/"}],"expected_obj":{"pathname":"/foo/*+"},"expected_match":{"pathname":{"input":"/foo/","groups":{"0":""}}}}
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+FAIL urlPatternComponent should be /foo/*+. Was /foo/(.*)+.
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"pathname":"/foo/*+"}],"inputs":[{"pathname":"/foo/"}],"expected_match":{"pathname":{"input":"/foo/","groups":{"0":""}}}}
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/*+"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"pathname":"/foo/(.*)+"}],"inputs":[{"pathname":"/foobar"}],"expected_obj":{"pathname":"/foo/*+"},"expected_match":null}
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+FAIL urlPatternComponent should be /foo/*+. Was /foo/(.*)+.
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"pathname":"/foo/*+"}],"inputs":[{"pathname":"/foobar"}],"expected_match":null}
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/*+"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"pathname":"/foo/(.*)+"}],"inputs":[{"pathname":"/fo"}],"expected_obj":{"pathname":"/foo/*+"},"expected_match":null}
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+FAIL urlPatternComponent should be /foo/*+. Was /foo/(.*)+.
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"pathname":"/foo/*+"}],"inputs":[{"pathname":"/fo"}],"expected_match":null}
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/*+"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"pathname":"/foo/(.*)*"}],"inputs":[{"pathname":"/foo/bar"}],"expected_obj":{"pathname":"/foo/**"},"expected_match":{"pathname":{"input":"/foo/bar","groups":{"0":"bar"}}}}
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+FAIL urlPatternComponent should be /foo/**. Was /foo/(.*)*.
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"pathname":"/foo/**"}],"inputs":[{"pathname":"/foo/bar"}],"expected_match":{"pathname":{"input":"/foo/bar","groups":{"0":"bar"}}}}
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/**"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"pathname":"/foo/(.*)*"}],"inputs":[{"pathname":"/foo/bar/baz"}],"expected_obj":{"pathname":"/foo/**"},"expected_match":{"pathname":{"input":"/foo/bar/baz","groups":{"0":"bar/baz"}}}}
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+FAIL urlPatternComponent should be /foo/**. Was /foo/(.*)*.
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"pathname":"/foo/**"}],"inputs":[{"pathname":"/foo/bar/baz"}],"expected_match":{"pathname":{"input":"/foo/bar/baz","groups":{"0":"bar/baz"}}}}
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/**"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"pathname":"/foo/(.*)*"}],"inputs":[{"pathname":"/foo"}],"expected_obj":{"pathname":"/foo/**"},"//":"The `null` below is translated to undefined in the test harness.","expected_match":{"pathname":{"input":"/foo","groups":{"0":null}}}}
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+FAIL urlPatternComponent should be /foo/**. Was /foo/(.*)*.
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"pathname":"/foo/**"}],"inputs":[{"pathname":"/foo"}],"//":"The `null` below is translated to undefined in the test harness.","expected_match":{"pathname":{"input":"/foo","groups":{"0":null}}}}
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/**"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"pathname":"/foo/(.*)*"}],"inputs":[{"pathname":"/foo/"}],"expected_obj":{"pathname":"/foo/**"},"expected_match":{"pathname":{"input":"/foo/","groups":{"0":""}}}}
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+FAIL urlPatternComponent should be /foo/**. Was /foo/(.*)*.
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"pathname":"/foo/**"}],"inputs":[{"pathname":"/foo/"}],"expected_match":{"pathname":{"input":"/foo/","groups":{"0":""}}}}
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/**"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"pathname":"/foo/(.*)*"}],"inputs":[{"pathname":"/foobar"}],"expected_obj":{"pathname":"/foo/**"},"expected_match":null}
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+FAIL urlPatternComponent should be /foo/**. Was /foo/(.*)*.
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"pathname":"/foo/**"}],"inputs":[{"pathname":"/foobar"}],"expected_match":null}
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/**"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"pathname":"/foo/(.*)*"}],"inputs":[{"pathname":"/fo"}],"expected_obj":{"pathname":"/foo/**"},"expected_match":null}
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+FAIL urlPatternComponent should be /foo/**. Was /foo/(.*)*.
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"pathname":"/foo/**"}],"inputs":[{"pathname":"/fo"}],"expected_match":null}
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/**"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"pathname":"/foo{/bar}"}],"inputs":[{"pathname":"/foo/bar"}],"expected_obj":{"pathname":"/foo/bar"},"expected_match":{"pathname":{"input":"/foo/bar","groups":{}}}}
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+FAIL urlPatternComponent should be /foo/bar. Was /foo{/bar}.
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"pathname":"/foo{/bar}"}],"inputs":[{"pathname":"/foo/bar/baz"}],"expected_obj":{"pathname":"/foo/bar"},"expected_match":null}
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+FAIL urlPatternComponent should be /foo/bar. Was /foo{/bar}.
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"pathname":"/foo{/bar}"}],"inputs":[{"pathname":"/foo"}],"expected_obj":{"pathname":"/foo/bar"},"expected_match":null}
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+FAIL urlPatternComponent should be /foo/bar. Was /foo{/bar}.
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"pathname":"/foo{/bar}"}],"inputs":[{"pathname":"/foo/"}],"expected_obj":{"pathname":"/foo/bar"},"expected_match":null}
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+FAIL urlPatternComponent should be /foo/bar. Was /foo{/bar}.
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"pathname":"/foo{/bar}?"}],"inputs":[{"pathname":"/foo/bar"}],"expected_match":{"pathname":{"input":"/foo/bar","groups":{}}}}
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo{/bar}?"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"pathname":"/foo{/bar}?"}],"inputs":[{"pathname":"/foo/bar/baz"}],"expected_match":null}
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo{/bar}?"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"pathname":"/foo{/bar}?"}],"inputs":[{"pathname":"/foo"}],"expected_match":{"pathname":{"input":"/foo","groups":{}}}}
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo{/bar}?"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"pathname":"/foo{/bar}?"}],"inputs":[{"pathname":"/foo/"}],"expected_match":null}
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo{/bar}?"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"pathname":"/foo{/bar}+"}],"inputs":[{"pathname":"/foo/bar"}],"expected_match":{"pathname":{"input":"/foo/bar","groups":{}}}}
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo{/bar}+"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"pathname":"/foo{/bar}+"}],"inputs":[{"pathname":"/foo/bar/bar"}],"expected_match":{"pathname":{"input":"/foo/bar/bar","groups":{}}}}
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo{/bar}+"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"pathname":"/foo{/bar}+"}],"inputs":[{"pathname":"/foo/bar/baz"}],"expected_match":null}
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo{/bar}+"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"pathname":"/foo{/bar}+"}],"inputs":[{"pathname":"/foo"}],"expected_match":null}
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo{/bar}+"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"pathname":"/foo{/bar}+"}],"inputs":[{"pathname":"/foo/"}],"expected_match":null}
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo{/bar}+"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"pathname":"/foo{/bar}*"}],"inputs":[{"pathname":"/foo/bar"}],"expected_match":{"pathname":{"input":"/foo/bar","groups":{}}}}
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo{/bar}*"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"pathname":"/foo{/bar}*"}],"inputs":[{"pathname":"/foo/bar/bar"}],"expected_match":{"pathname":{"input":"/foo/bar/bar","groups":{}}}}
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo{/bar}*"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"pathname":"/foo{/bar}*"}],"inputs":[{"pathname":"/foo/bar/baz"}],"expected_match":null}
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo{/bar}*"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"pathname":"/foo{/bar}*"}],"inputs":[{"pathname":"/foo"}],"expected_match":{"pathname":{"input":"/foo","groups":{}}}}
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo{/bar}*"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"pathname":"/foo{/bar}*"}],"inputs":[{"pathname":"/foo/"}],"expected_match":null}
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo{/bar}*"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"protocol":"(cafÃ©)"}],"expected_obj":"error"}
+PASS var pattern = new URLPattern(...errorEntry.pattern) threw exception TypeError: Current codepoint is not ascii.
+Testing: {"pattern":[{"username":"(cafÃ©)"}],"expected_obj":"error"}
+PASS var pattern = new URLPattern(...errorEntry.pattern) threw exception TypeError: Current codepoint is not ascii.
+Testing: {"pattern":[{"password":"(cafÃ©)"}],"expected_obj":"error"}
+PASS var pattern = new URLPattern(...errorEntry.pattern) threw exception TypeError: Current codepoint is not ascii.
+Testing: {"pattern":[{"hostname":"(cafÃ©)"}],"expected_obj":"error"}
+PASS var pattern = new URLPattern(...errorEntry.pattern) threw exception TypeError: Current codepoint is not ascii.
+Testing: {"pattern":[{"pathname":"(cafÃ©)"}],"expected_obj":"error"}
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "(cafÃ©)"
+Component: search
+WARN: shouldBeEqualToString() expects string arguments
+WARN: shouldBe() expects function or string arguments
+FAIL urlPatternComponent should be undefined (of type undefined). Was * (of type string).
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"search":"(cafÃ©)"}],"expected_obj":"error"}
+PASS var pattern = new URLPattern(...errorEntry.pattern) threw exception TypeError: Current codepoint is not ascii.
+Testing: {"pattern":[{"hash":"(cafÃ©)"}],"expected_obj":"error"}
+PASS var pattern = new URLPattern(...errorEntry.pattern) threw exception TypeError: Current codepoint is not ascii.
+Testing: {"pattern":[{"protocol":":cafÃ©"}],"inputs":[{"protocol":"foo"}],"expected_match":{"protocol":{"input":"foo","groups":{"cafÃ©":"foo"}}}}
+Component: protocol
+PASS urlPatternComponent is ":cafÃ©"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "*"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"username":":cafÃ©"}],"inputs":[{"username":"foo"}],"expected_match":{"username":{"input":"foo","groups":{"cafÃ©":"foo"}}}}
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is ":cafÃ©"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "*"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"password":":cafÃ©"}],"inputs":[{"password":"foo"}],"expected_match":{"password":{"input":"foo","groups":{"cafÃ©":"foo"}}}}
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is ":cafÃ©"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is ":cafÃ©"
+Component: pathname
+PASS urlPatternComponent is "*"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"hostname":":cafÃ©"}],"inputs":[{"hostname":"foo"}],"expected_match":{"hostname":{"input":"foo","groups":{"cafÃ©":"foo"}}}}
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is ":cafÃ©"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "*"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"pathname":"/:cafÃ©"}],"inputs":[{"pathname":"/foo"}],"expected_match":{"pathname":{"input":"/foo","groups":{"cafÃ©":"foo"}}}}
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/:cafÃ©"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"search":":cafÃ©"}],"inputs":[{"search":"foo"}],"expected_match":{"search":{"input":"foo","groups":{"cafÃ©":"foo"}}}}
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "*"
+Component: search
+PASS urlPatternComponent is ":cafÃ©"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"hash":":cafÃ©"}],"inputs":[{"hash":"foo"}],"expected_match":{"hash":{"input":"foo","groups":{"cafÃ©":"foo"}}}}
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "*"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is ":cafÃ©"
+Testing: {"pattern":[{"protocol":":℘"}],"inputs":[{"protocol":"foo"}],"expected_match":{"protocol":{"input":"foo","groups":{"℘":"foo"}}}}
+Component: protocol
+PASS urlPatternComponent is ":℘"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "*"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"username":":℘"}],"inputs":[{"username":"foo"}],"expected_match":{"username":{"input":"foo","groups":{"℘":"foo"}}}}
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is ":℘"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "*"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"password":":℘"}],"inputs":[{"password":"foo"}],"expected_match":{"password":{"input":"foo","groups":{"℘":"foo"}}}}
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is ":℘"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is ":℘"
+Component: pathname
+PASS urlPatternComponent is "*"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"hostname":":℘"}],"inputs":[{"hostname":"foo"}],"expected_match":{"hostname":{"input":"foo","groups":{"℘":"foo"}}}}
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is ":℘"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "*"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"pathname":"/:℘"}],"inputs":[{"pathname":"/foo"}],"expected_match":{"pathname":{"input":"/foo","groups":{"℘":"foo"}}}}
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/:℘"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"search":":℘"}],"inputs":[{"search":"foo"}],"expected_match":{"search":{"input":"foo","groups":{"℘":"foo"}}}}
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "*"
+Component: search
+PASS urlPatternComponent is ":℘"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"hash":":℘"}],"inputs":[{"hash":"foo"}],"expected_match":{"hash":{"input":"foo","groups":{"℘":"foo"}}}}
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "*"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is ":℘"
+Testing: {"pattern":[{"protocol":":㐀"}],"inputs":[{"protocol":"foo"}],"expected_match":{"protocol":{"input":"foo","groups":{"㐀":"foo"}}}}
+Component: protocol
+PASS urlPatternComponent is ":㐀"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "*"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"username":":㐀"}],"inputs":[{"username":"foo"}],"expected_match":{"username":{"input":"foo","groups":{"㐀":"foo"}}}}
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is ":㐀"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "*"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"password":":㐀"}],"inputs":[{"password":"foo"}],"expected_match":{"password":{"input":"foo","groups":{"㐀":"foo"}}}}
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is ":㐀"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is ":㐀"
+Component: pathname
+PASS urlPatternComponent is "*"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"hostname":":㐀"}],"inputs":[{"hostname":"foo"}],"expected_match":{"hostname":{"input":"foo","groups":{"㐀":"foo"}}}}
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is ":㐀"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "*"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"pathname":"/:㐀"}],"inputs":[{"pathname":"/foo"}],"expected_match":{"pathname":{"input":"/foo","groups":{"㐀":"foo"}}}}
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/:㐀"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"search":":㐀"}],"inputs":[{"search":"foo"}],"expected_match":{"search":{"input":"foo","groups":{"㐀":"foo"}}}}
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "*"
+Component: search
+PASS urlPatternComponent is ":㐀"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"hash":":㐀"}],"inputs":[{"hash":"foo"}],"expected_match":{"hash":{"input":"foo","groups":{"㐀":"foo"}}}}
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "*"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is ":㐀"
+Testing: {"pattern":[{"protocol":"(.*)"}],"inputs":[{"protocol":"cafÃ©"}],"expected_obj":{"protocol":"*"},"expected_match":null}
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "*"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"protocol":"(.*)"}],"inputs":[{"protocol":"cafe"}],"expected_obj":{"protocol":"*"},"expected_match":{"protocol":{"input":"cafe","groups":{"0":"cafe"}}}}
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "*"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"protocol":"foo-bar"}],"inputs":[{"protocol":"foo-bar"}],"expected_match":{"protocol":{"input":"foo-bar","groups":{}}}}
+Component: protocol
+PASS urlPatternComponent is "foo-bar"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "*"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"username":"caf%C3%A9"}],"inputs":[{"username":"cafÃ©"}],"expected_match":{"username":{"input":"caf%C3%A9","groups":{}}}}
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+FAIL urlPatternComponent should be caf%C3%A9. Was café.
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "*"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"username":"cafÃ©"}],"inputs":[{"username":"cafÃ©"}],"expected_obj":{"username":"caf%C3%A9"},"expected_match":{"username":{"input":"caf%C3%A9","groups":{}}}}
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+FAIL urlPatternComponent should be caf%C3%A9. Was cafÃ©.
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "*"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"username":"caf%c3%a9"}],"inputs":[{"username":"cafÃ©"}],"expected_match":null}
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+FAIL urlPatternComponent should be caf%c3%a9. Was café.
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "*"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"password":"caf%C3%A9"}],"inputs":[{"password":"cafÃ©"}],"expected_match":{"password":{"input":"caf%C3%A9","groups":{}}}}
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+FAIL urlPatternComponent should be caf%C3%A9. Was café.
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+FAIL urlPatternComponent should be caf%C3%A9. Was café.
+Component: pathname
+PASS urlPatternComponent is "*"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"password":"cafÃ©"}],"inputs":[{"password":"cafÃ©"}],"expected_obj":{"password":"caf%C3%A9"},"expected_match":{"password":{"input":"caf%C3%A9","groups":{}}}}
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+FAIL urlPatternComponent should be caf%C3%A9. Was cafÃ©.
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+FAIL urlPatternComponent should be caf%C3%A9. Was cafÃ©.
+Component: pathname
+PASS urlPatternComponent is "*"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"password":"caf%c3%a9"}],"inputs":[{"password":"cafÃ©"}],"expected_match":null}
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+FAIL urlPatternComponent should be caf%c3%a9. Was café.
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+FAIL urlPatternComponent should be caf%c3%a9. Was café.
+Component: pathname
+PASS urlPatternComponent is "*"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"hostname":"xn--caf-dma.com"}],"inputs":[{"hostname":"cafÃ©.com"}],"expected_match":{"hostname":{"input":"xn--caf-dma.com","groups":{}}}}
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "xn--caf-dma.com"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "*"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"hostname":"cafÃ©.com"}],"inputs":[{"hostname":"cafÃ©.com"}],"expected_obj":{"hostname":"xn--caf-dma.com"},"expected_match":{"hostname":{"input":"xn--caf-dma.com","groups":{}}}}
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+FAIL urlPatternComponent should be xn--caf-dma.com. Was cafÃ©.com.
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "*"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"port":""}],"inputs":[{"protocol":"http","port":"80"}],"exactly_empty_components":["port"],"expected_match":{"protocol":{"input":"http","groups":{"0":"http"}}}}
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is ""
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "*"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"protocol":"http","port":"80"}],"inputs":[{"protocol":"http","port":"80"}],"exactly_empty_components":["port"],"expected_match":{"protocol":{"input":"http","groups":{}}}}
+Component: protocol
+PASS urlPatternComponent is "http"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is ""
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "*"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"protocol":"http","port":"80{20}?"}],"inputs":[{"protocol":"http","port":"80"}],"expected_match":null}
+Component: protocol
+PASS urlPatternComponent is "http"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "80{20}?"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "*"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"protocol":"http","port":"80 "}],"inputs":[{"protocol":"http","port":"80"}],"expected_obj":"error"}
+FAIL var pattern = new URLPattern(...errorEntry.pattern) should throw an exception. Was undefined.
+Testing: {"pattern":[{"port":"80"}],"inputs":[{"protocol":"http","port":"80"}],"expected_match":null}
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "80"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "*"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"protocol":"http{s}?","port":"80"}],"inputs":[{"protocol":"http","port":"80"}],"expected_match":null}
+Component: protocol
+PASS urlPatternComponent is "http{s}?"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "80"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "*"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"port":"80"}],"inputs":[{"port":"80"}],"expected_match":{"port":{"input":"80","groups":{}}}}
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "80"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "*"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"port":"(.*)"}],"inputs":[{"port":"invalid80"}],"expected_obj":{"port":"*"},"expected_match":null}
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "*"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"pathname":"/foo/bar"}],"inputs":[{"pathname":"/foo/./bar"}],"expected_match":{"pathname":{"input":"/foo/bar","groups":{}}}}
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/bar"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"pathname":"/foo/baz"}],"inputs":[{"pathname":"/foo/bar/../baz"}],"expected_match":{"pathname":{"input":"/foo/baz","groups":{}}}}
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/baz"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"pathname":"/caf%C3%A9"}],"inputs":[{"pathname":"/cafÃ©"}],"expected_match":{"pathname":{"input":"/caf%C3%A9","groups":{}}}}
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/caf%C3%A9"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"pathname":"/cafÃ©"}],"inputs":[{"pathname":"/cafÃ©"}],"expected_obj":{"pathname":"/caf%C3%A9"},"expected_match":{"pathname":{"input":"/caf%C3%A9","groups":{}}}}
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+FAIL urlPatternComponent should be /caf%C3%A9. Was /cafÃ©.
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"pathname":"/caf%c3%a9"}],"inputs":[{"pathname":"/cafÃ©"}],"expected_match":null}
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/caf%c3%a9"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"pathname":"/foo/bar"}],"inputs":[{"pathname":"foo/bar"}],"expected_match":null}
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/bar"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"pathname":"/foo/bar"}],"inputs":[{"pathname":"foo/bar","baseURL":"https://example.com"}],"expected_match":{"protocol":{"input":"https","groups":{"0":"https"}},"hostname":{"input":"example.com","groups":{"0":"example.com"}},"pathname":{"input":"/foo/bar","groups":{}}}}
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/bar"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"pathname":"/foo/../bar"}],"inputs":[{"pathname":"/bar"}],"expected_obj":{"pathname":"/bar"},"expected_match":{"pathname":{"input":"/bar","groups":{}}}}
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+FAIL urlPatternComponent should be /bar. Was /foo/../bar.
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"pathname":"./foo/bar","baseURL":"https://example.com"}],"inputs":[{"pathname":"foo/bar","baseURL":"https://example.com"}],"exactly_empty_components":["port"],"expected_obj":{"pathname":"/foo/bar"},"expected_match":{"protocol":{"input":"https","groups":{}},"hostname":{"input":"example.com","groups":{}},"pathname":{"input":"/foo/bar","groups":{}}}}
+Component: protocol
+PASS urlPatternComponent is "https"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "example.com"
+Component: port
+PASS urlPatternComponent is ""
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+FAIL urlPatternComponent should be /foo/bar. Was ./foo/bar.
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"pathname":"","baseURL":"https://example.com"}],"inputs":[{"pathname":"/","baseURL":"https://example.com"}],"exactly_empty_components":["port"],"expected_obj":{"pathname":"/"},"expected_match":{"protocol":{"input":"https","groups":{}},"hostname":{"input":"example.com","groups":{}},"pathname":{"input":"/","groups":{}}}}
+Component: protocol
+PASS urlPatternComponent is "https"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "example.com"
+Component: port
+PASS urlPatternComponent is ""
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+FAIL urlPatternComponent should be /. Was .
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"pathname":"{/bar}","baseURL":"https://example.com/foo/"}],"inputs":[{"pathname":"./bar","baseURL":"https://example.com/foo/"}],"exactly_empty_components":["port"],"expected_obj":{"pathname":"/bar"},"expected_match":null}
+Component: protocol
+PASS urlPatternComponent is "https"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "example.com"
+Component: port
+PASS urlPatternComponent is ""
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+FAIL urlPatternComponent should be /bar. Was {/bar}.
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"pathname":"\\/bar","baseURL":"https://example.com/foo/"}],"inputs":[{"pathname":"./bar","baseURL":"https://example.com/foo/"}],"exactly_empty_components":["port"],"expected_obj":{"pathname":"/bar"},"expected_match":null}
+Component: protocol
+PASS urlPatternComponent is "https"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "example.com"
+Component: port
+PASS urlPatternComponent is ""
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+FAIL urlPatternComponent should be /bar. Was \/bar.
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"pathname":"b","baseURL":"https://example.com/foo/"}],"inputs":[{"pathname":"./b","baseURL":"https://example.com/foo/"}],"exactly_empty_components":["port"],"expected_obj":{"pathname":"/foo/b"},"expected_match":{"protocol":{"input":"https","groups":{}},"hostname":{"input":"example.com","groups":{}},"pathname":{"input":"/foo/b","groups":{}}}}
+Component: protocol
+PASS urlPatternComponent is "https"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "example.com"
+Component: port
+PASS urlPatternComponent is ""
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+FAIL urlPatternComponent should be /foo/b. Was b.
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"pathname":"foo/bar"}],"inputs":["https://example.com/foo/bar"],"expected_match":null}
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "foo/bar"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"pathname":"foo/bar","baseURL":"https://example.com"}],"inputs":["https://example.com/foo/bar"],"exactly_empty_components":["port"],"expected_obj":{"pathname":"/foo/bar"},"expected_match":{"protocol":{"input":"https","groups":{}},"hostname":{"input":"example.com","groups":{}},"pathname":{"input":"/foo/bar","groups":{}}}}
+Component: protocol
+PASS urlPatternComponent is "https"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "example.com"
+Component: port
+PASS urlPatternComponent is ""
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+FAIL urlPatternComponent should be /foo/bar. Was foo/bar.
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"pathname":":name.html","baseURL":"https://example.com"}],"inputs":["https://example.com/foo.html"],"exactly_empty_components":["port"],"expected_obj":{"pathname":"/:name.html"},"expected_match":{"protocol":{"input":"https","groups":{}},"hostname":{"input":"example.com","groups":{}},"pathname":{"input":"/foo.html","groups":{"name":"foo"}}}}
+Component: protocol
+PASS urlPatternComponent is "https"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "example.com"
+Component: port
+PASS urlPatternComponent is ""
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+FAIL urlPatternComponent should be /:name.html. Was :name.html.
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"search":"q=caf%C3%A9"}],"inputs":[{"search":"q=cafÃ©"}],"expected_match":{"search":{"input":"q=caf%C3%A9","groups":{}}}}
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "*"
+Component: search
+PASS urlPatternComponent is "q=caf%C3%A9"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"search":"q=cafÃ©"}],"inputs":[{"search":"q=cafÃ©"}],"expected_obj":{"search":"q=caf%C3%A9"},"expected_match":{"search":{"input":"q=caf%C3%A9","groups":{}}}}
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "*"
+Component: search
+FAIL urlPatternComponent should be q=caf%C3%A9. Was q=caf%C3%83%C2%A9.
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"search":"q=caf%c3%a9"}],"inputs":[{"search":"q=cafÃ©"}],"expected_match":null}
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "*"
+Component: search
+PASS urlPatternComponent is "q=caf%c3%a9"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"hash":"caf%C3%A9"}],"inputs":[{"hash":"cafÃ©"}],"expected_match":{"hash":{"input":"caf%C3%A9","groups":{}}}}
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "*"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "caf%C3%A9"
+Testing: {"pattern":[{"hash":"cafÃ©"}],"inputs":[{"hash":"cafÃ©"}],"expected_obj":{"hash":"caf%C3%A9"},"expected_match":{"hash":{"input":"caf%C3%A9","groups":{}}}}
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "*"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+FAIL urlPatternComponent should be caf%C3%A9. Was caf%C3%83%C2%A9.
+Testing: {"pattern":[{"hash":"caf%c3%a9"}],"inputs":[{"hash":"cafÃ©"}],"expected_match":null}
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "*"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "caf%c3%a9"
+Testing: {"pattern":[{"protocol":"about","pathname":"(blank|sourcedoc)"}],"inputs":["about:blank"],"expected_match":{"protocol":{"input":"about","groups":{}},"pathname":{"input":"blank","groups":{"0":"blank"}}}}
+Component: protocol
+PASS urlPatternComponent is "about"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "(blank|sourcedoc)"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"protocol":"data","pathname":":number([0-9]+)"}],"inputs":["data:8675309"],"expected_match":{"protocol":{"input":"data","groups":{}},"pathname":{"input":"8675309","groups":{"number":"8675309"}}}}
+Component: protocol
+PASS urlPatternComponent is "data"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is ":number([0-9]+)"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"pathname":"/(\\m)"}],"expected_obj":"error"}
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/(\\m)"
+Component: search
+WARN: shouldBeEqualToString() expects string arguments
+WARN: shouldBe() expects function or string arguments
+FAIL urlPatternComponent should be undefined (of type undefined). Was * (of type string).
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"pathname":"/foo!"}],"inputs":[{"pathname":"/foo!"}],"expected_match":{"pathname":{"input":"/foo!","groups":{}}}}
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo!"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"pathname":"/foo\\:"}],"inputs":[{"pathname":"/foo:"}],"expected_match":{"pathname":{"input":"/foo:","groups":{}}}}
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo\\:"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"pathname":"/foo\\{"}],"inputs":[{"pathname":"/foo{"}],"expected_obj":{"pathname":"/foo%7B"},"expected_match":{"pathname":{"input":"/foo%7B","groups":{}}}}
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+FAIL urlPatternComponent should be /foo%7B. Was /foo\{.
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"pathname":"/foo\\("}],"inputs":[{"pathname":"/foo("}],"expected_match":{"pathname":{"input":"/foo(","groups":{}}}}
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo\\("
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"protocol":"javascript","pathname":"var x = 1;"}],"inputs":[{"protocol":"javascript","pathname":"var x = 1;"}],"expected_match":{"protocol":{"input":"javascript","groups":{}},"pathname":{"input":"var x = 1;","groups":{}}}}
+Component: protocol
+PASS urlPatternComponent is "javascript"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "var x = 1;"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"pathname":"var x = 1;"}],"inputs":[{"protocol":"javascript","pathname":"var x = 1;"}],"expected_obj":{"pathname":"var%20x%20=%201;"},"expected_match":null}
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+FAIL urlPatternComponent should be var%20x%20=%201;. Was var x = 1;.
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"protocol":"javascript","pathname":"var x = 1;"}],"inputs":[{"baseURL":"javascript:var x = 1;"}],"expected_match":{"protocol":{"input":"javascript","groups":{}},"pathname":{"input":"var x = 1;","groups":{}}}}
+Component: protocol
+PASS urlPatternComponent is "javascript"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "var x = 1;"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"protocol":"(data|javascript)","pathname":"var x = 1;"}],"inputs":[{"protocol":"javascript","pathname":"var x = 1;"}],"expected_match":{"protocol":{"input":"javascript","groups":{"0":"javascript"}},"pathname":{"input":"var x = 1;","groups":{}}}}
+Component: protocol
+PASS urlPatternComponent is "(data|javascript)"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "var x = 1;"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"protocol":"(https|javascript)","pathname":"var x = 1;"}],"inputs":[{"protocol":"javascript","pathname":"var x = 1;"}],"expected_obj":{"pathname":"var%20x%20=%201;"},"expected_match":null}
+Component: protocol
+PASS urlPatternComponent is "(https|javascript)"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+FAIL urlPatternComponent should be var%20x%20=%201;. Was var x = 1;.
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"pathname":"var x = 1;"}],"inputs":[{"pathname":"var x = 1;"}],"expected_obj":{"pathname":"var%20x%20=%201;"},"expected_match":{"pathname":{"input":"var%20x%20=%201;","groups":{}}}}
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+FAIL urlPatternComponent should be var%20x%20=%201;. Was var x = 1;.
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"pathname":"/foo/bar"}],"inputs":["./foo/bar","https://example.com"],"expected_match":{"hostname":{"input":"example.com","groups":{"0":"example.com"}},"pathname":{"input":"/foo/bar","groups":{}},"protocol":{"input":"https","groups":{"0":"https"}}}}
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/bar"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":[{"pathname":"/foo/bar"}],"inputs":[{"pathname":"/foo/bar"},"https://example.com"],"expected_match":"error"}
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/bar"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Testing: {"pattern":["https://example.com:8080/foo?bar#baz"],"inputs":[{"pathname":"/foo","search":"bar","hash":"baz","baseURL":"https://example.com:8080"}],"expected_obj":{"protocol":"https","username":"*","password":"*","hostname":"example.com","port":"8080","pathname":"/foo","search":"bar","hash":"baz"},"expected_match":{"protocol":{"input":"https","groups":{}},"hostname":{"input":"example.com","groups":{}},"port":{"input":"8080","groups":{}},"pathname":{"input":"/foo","groups":{}},"search":{"input":"bar","groups":{}},"hash":{"input":"baz","groups":{}}}}
+FAIL successfullyParsed should be true. Was false.
+Some tests failed.
+
+TEST COMPLETE
+

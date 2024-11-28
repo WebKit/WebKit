@@ -16,6 +16,8 @@ PASS animation-fill-mode
 PASS animation-iteration-count
 PASS animation-name
 PASS animation-play-state
+PASS animation-range-end
+PASS animation-range-start
 PASS animation-timeline
 PASS animation-timing-function
 PASS appearance
@@ -182,12 +184,10 @@ PASS isolation
 PASS justify-content
 PASS justify-items
 PASS justify-self
-PASS kerning
 PASS left
 PASS letter-spacing
 PASS lighting-color
 PASS line-break
-PASS line-fit-edge
 PASS line-height
 PASS list-style-image
 PASS list-style-position
@@ -265,6 +265,7 @@ PASS perspective-origin
 PASS pointer-events
 PASS position
 PASS position-anchor
+PASS position-try-order
 PASS print-color-adjust
 PASS quotes
 PASS r
@@ -348,6 +349,7 @@ PASS text-underline-offset
 PASS text-underline-position
 PASS text-wrap-mode
 PASS text-wrap-style
+PASS timeline-scope
 PASS top
 PASS touch-action
 PASS transform

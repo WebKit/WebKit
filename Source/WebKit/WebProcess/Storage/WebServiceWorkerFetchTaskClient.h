@@ -34,6 +34,7 @@
 #include <WebCore/ServiceWorkerTypes.h>
 #include <WebCore/SharedBuffer.h>
 #include <wtf/Lock.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/UniqueRef.h>
 
 namespace WebKit {
@@ -77,6 +78,10 @@ private:
     void didFinishBlobLoading();
 
     struct BlobLoader final : WebCore::FetchLoaderClient {
+        WTF_MAKE_TZONE_ALLOCATED(BlobLoader);
+        WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(BlobLoader);
+    public:
+
         explicit BlobLoader(WebServiceWorkerFetchTaskClient& client) : client(client) { }
 
         // FetchLoaderClient API
@@ -94,7 +99,7 @@ private:
     WebCore::SWServerConnectionIdentifier m_serverConnectionIdentifier;
     WebCore::ServiceWorkerIdentifier m_serviceWorkerIdentifier;
     WebCore::FetchIdentifier m_fetchIdentifier;
-    std::optional<BlobLoader> m_blobLoader;
+    std::unique_ptr<BlobLoader> m_blobLoader;
     bool m_needsContinueDidReceiveResponseMessage { false };
     bool m_waitingForContinueDidReceiveResponseMessage { false };
     std::variant<std::nullptr_t, WebCore::SharedBufferBuilder, Ref<WebCore::FormData>, UniqueRef<WebCore::ResourceError>> m_responseData;

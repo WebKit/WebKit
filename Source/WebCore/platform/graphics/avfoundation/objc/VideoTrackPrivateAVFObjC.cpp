@@ -31,8 +31,11 @@
 #import "AVTrackPrivateAVFObjCImpl.h"
 #import "MediaSelectionGroupAVFObjC.h"
 #import "PlatformVideoTrackConfiguration.h"
+#import <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(VideoTrackPrivateAVFObjC);
 
 VideoTrackPrivateAVFObjC::VideoTrackPrivateAVFObjC(AVPlayerItemTrack* track)
     : VideoTrackPrivateAVFObjC(makeUnique<AVTrackPrivateAVFObjCImpl>(track))

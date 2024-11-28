@@ -16,9 +16,14 @@ None
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/credential-management/META.yml
 /LayoutTests/imported/w3c/web-platform-tests/credential-management/credentialscontainer-create-basics.https.html
+/LayoutTests/imported/w3c/web-platform-tests/credential-management/credentialscontainer-frame-basics.https.html
+/LayoutTests/imported/w3c/web-platform-tests/credential-management/credentialscontainer-get-basics.https.html
+/LayoutTests/imported/w3c/web-platform-tests/credential-management/credentialscontainer-prevent-silent-access.https.html
 /LayoutTests/imported/w3c/web-platform-tests/credential-management/federatedcredential-framed-get.sub.https.html
 /LayoutTests/imported/w3c/web-platform-tests/credential-management/idlharness.https.window.js
+/LayoutTests/imported/w3c/web-platform-tests/credential-management/non-fully-active.https.html
 /LayoutTests/imported/w3c/web-platform-tests/credential-management/otpcredential-get-basics.https.html
 /LayoutTests/imported/w3c/web-platform-tests/credential-management/otpcredential-iframe.https.html
+/LayoutTests/imported/w3c/web-platform-tests/credential-management/otpcredential-store.https.html
 /LayoutTests/imported/w3c/web-platform-tests/credential-management/passwordcredential-framed-get.sub.https.html
 /LayoutTests/imported/w3c/web-platform-tests/credential-management/require_securecontext.html

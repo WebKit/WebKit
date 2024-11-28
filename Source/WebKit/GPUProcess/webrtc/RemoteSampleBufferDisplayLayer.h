@@ -51,12 +51,13 @@ class GPUConnectionToWebProcess;
 class RemoteSampleBufferDisplayLayer : public RefCounted<RemoteSampleBufferDisplayLayer>, public WebCore::SampleBufferDisplayLayerClient, public IPC::MessageReceiver, private IPC::MessageSender {
     WTF_MAKE_TZONE_ALLOCATED(RemoteSampleBufferDisplayLayer);
 public:
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
+
     static RefPtr<RemoteSampleBufferDisplayLayer> create(GPUConnectionToWebProcess&, SampleBufferDisplayLayerIdentifier, Ref<IPC::Connection>&&);
     ~RemoteSampleBufferDisplayLayer();
 
-    using WebCore::SampleBufferDisplayLayerClient::weakPtrFactory;
-    using WebCore::SampleBufferDisplayLayerClient::WeakValueType;
-    using WebCore::SampleBufferDisplayLayerClient::WeakPtrImplType;
+    USING_CAN_MAKE_WEAKPTR(WebCore::SampleBufferDisplayLayerClient);
 
     using LayerInitializationCallback = CompletionHandler<void(std::optional<LayerHostingContextID>)>;
     void initialize(bool hideRootLayer, WebCore::IntSize, bool shouldMaintainAspectRatio, bool canShowWhileLocked, LayerInitializationCallback&&);
@@ -67,11 +68,10 @@ public:
     CGRect bounds() const;
     void updateBoundsAndPosition(CGRect, std::optional<WTF::MachSendRight>&&);
 
-    void ref() final { RefCounted::ref(); }
-    void deref() final { RefCounted::deref(); }
-
 private:
     RemoteSampleBufferDisplayLayer(GPUConnectionToWebProcess&, SampleBufferDisplayLayerIdentifier, Ref<IPC::Connection>&&);
+
+    RefPtr<WebCore::LocalSampleBufferDisplayLayer> protectedSampleBufferDisplayLayer() const;
 
 #if !RELEASE_LOG_DISABLED
     void setLogIdentifier(String&&);

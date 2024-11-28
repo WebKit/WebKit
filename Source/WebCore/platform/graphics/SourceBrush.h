@@ -46,6 +46,7 @@ public:
 
     WEBCORE_EXPORT Gradient* gradient() const;
     WEBCORE_EXPORT Pattern* pattern() const;
+    RefPtr<Pattern> protectedPattern() const { return pattern(); }
     WEBCORE_EXPORT const AffineTransform& gradientSpaceTransform() const;
     WEBCORE_EXPORT std::optional<RenderingResourceIdentifier> gradientIdentifier() const;
 

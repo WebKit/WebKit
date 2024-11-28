@@ -31,8 +31,10 @@ namespace WTF {
 #if !HAVE(TIMINGSAFE_BCMP)
 NEVER_INLINE int constantTimeMemcmp(const void* voidA, const void* voidB, size_t length)
 {
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     const uint8_t* a = static_cast<const uint8_t*>(voidA);
     const uint8_t* b = static_cast<const uint8_t*>(voidB);
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
     uint8_t result = 0;
     for (size_t i = 0; i < length; ++i)

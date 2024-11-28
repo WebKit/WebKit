@@ -271,7 +271,7 @@ bool Analyzer::analyzeCell(VM& vm, JSCell* cell, Analyzer::Action action)
         "cell %p cell.type %d structureID.bits 0x%x", cell, cellType, structureID.bits());
     if (action == Analyzer::Action::LogAndCrash) {
         // structure should be pointing to readable memory. Force a read.
-        WTF::opaque(*bitwise_cast<uintptr_t*>(structure));
+        WTF::opaque(*std::bit_cast<uintptr_t*>(structure));
     }
 
     const ClassInfo* classInfo = structure->classInfoForCells();
@@ -299,7 +299,7 @@ bool Analyzer::analyzeCell(JSCell* cell, Analyzer::Action action)
     if (!cell)
         return cell;
 
-    JSValue value = JSValue::decode(static_cast<EncodedJSValue>(bitwise_cast<uintptr_t>(cell)));
+    JSValue value = JSValue::decode(static_cast<EncodedJSValue>(std::bit_cast<uintptr_t>(cell)));
     AUDIT_VERIFY(value.isCell(), "Invalid cell address: cell %p", cell);
 
     VM& vm = cell->vm();

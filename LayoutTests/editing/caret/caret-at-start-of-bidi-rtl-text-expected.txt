@@ -1,0 +1,10 @@
+This test verifies that you can hit-test to the first character in a RTL text run inside bidi text. To manually run the test, click or tap right before the 'w' in 'world' below.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS distanceFromCaretToRightEdge is >= distanceFromCaretToLeftEdge
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Hello dlrow

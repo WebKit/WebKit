@@ -107,7 +107,7 @@ void MockPageOverlayClient::drawRect(PageOverlay& overlay, GraphicsContext& cont
 bool MockPageOverlayClient::mouseEvent(PageOverlay& overlay, const PlatformMouseEvent& event)
 {
     if (auto* localMainFrame = dynamicDowncast<LocalFrame>(overlay.page()->mainFrame())) {
-        localMainFrame->document()->addConsoleMessage(MessageSource::Other, MessageLevel::Debug,
+        localMainFrame->protectedDocument()->addConsoleMessage(MessageSource::Other, MessageLevel::Debug,
             makeString("MockPageOverlayClient::mouseEvent location ("_s, event.position().x(), ", "_s, event.position().y(), ')'));
     }
     return false;

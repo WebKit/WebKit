@@ -25,7 +25,8 @@
 #pragma once
 
 #include "CSSCalcType.h"
-#include "CSSPropertyParserConsumer+RawTypes.h"
+#include "CSSNone.h"
+#include "CSSPrimitiveNumericRange.h"
 #include "CSSUnits.h"
 #include "CSSValueKeywords.h"
 #include "CalculationTree.h"
@@ -33,8 +34,16 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/Vector.h>
+#include <wtf/text/AtomString.h>
 
 namespace WebCore {
+
+namespace Style {
+
+// Forward declared from AnchorPositionEvaluator.h
+enum class AnchorSizeDimension : uint8_t;
+
+}
 
 enum class CSSUnitType : uint8_t;
 
@@ -70,6 +79,11 @@ struct Log;
 struct Exp;
 struct Abs;
 struct Sign;
+struct Progress;
+
+// CSS Anchor Positioning functions.
+struct Anchor;
+struct AnchorSize;
 
 template<typename Op>
 concept Leaf = requires(Op) {
@@ -91,14 +105,14 @@ struct Number {
     bool operator==(const Number&) const = default;
 };
 
-struct Percent {
+struct Percentage {
     static constexpr bool isLeaf = true;
     static constexpr bool isNumeric = true;
 
     double value;
     Type::PercentHintValue hint;
 
-    bool operator==(const Percent&) const = default;
+    bool operator==(const Percentage&) const = default;
 };
 
 struct CanonicalDimension {
@@ -156,7 +170,7 @@ template<typename Op> struct IndirectNode {
 
 using Node = std::variant<
     Number,
-    Percent,
+    Percentage,
     CanonicalDimension,
     NonCanonicalDimension,
     Symbol,
@@ -186,11 +200,14 @@ using Node = std::variant<
     IndirectNode<Log>,
     IndirectNode<Exp>,
     IndirectNode<Abs>,
-    IndirectNode<Sign>
+    IndirectNode<Sign>,
+    IndirectNode<Progress>,
+    IndirectNode<Anchor>,
+    IndirectNode<AnchorSize>
 >;
 
 using Child = Node;
-using ChildOrNone = std::variant<Child, NoneRaw>;
+using ChildOrNone = std::variant<Child, CSS::NoneRaw>;
 using Children = Vector<Child>;
 
 enum class Stage : bool { Specified, Computed };
@@ -200,7 +217,7 @@ struct Tree {
     Type type;
     Calculation::Category category;
     Stage stage;
-    ValueRange range;
+    CSS::Range range;
 
     // `requiresConversionData` is used both to both indicate whether eager evaluation of the tree (at parse time) is possible or not and to trigger a warning in `CSSCalcValue::doubleValueDeprecated` that the evaluation results will be incorrect.
     bool requiresConversionData = false;
@@ -704,9 +721,66 @@ public:
     bool operator==(const Sign&) const = default;
 };
 
+// Progress-Related Functions - https://drafts.csswg.org/css-values-5/#progress
+struct Progress {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(Progress);
+public:
+    using Base = Calculation::Progress;
+    static constexpr auto id = CSSValueProgress;
+
+    // <progress()> = progress( <calc-sum> from <calc-sum> to <calc-sum> )
+    //     - INPUT: "consistent" <number>, <dimension>, or <percentage>
+    //     - OUTPUT: <number> "made consistent"
+    static constexpr auto input = AllowedTypes::Any;
+    static constexpr auto merge = MergePolicy::Consistent;
+    static constexpr auto output = OutputTransform::NumberMadeConsistent;
+
+    Child progress;
+    Child from;
+    Child to;
+
+    bool operator==(const Progress&) const = default;
+};
+
+struct Anchor {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(Anchor);
+public:
+    static constexpr auto id = CSSValueAnchor;
+
+    // <anchor()> = anchor( <anchor-element>? && <anchor-side>, <length-percentage>? )
+    // <anchor-side> = inside | outside | top | left | right | bottom | start | end | self-start | self-end | <percentage> | center
+    using Side = std::variant<CSSValueID, Child>;
+
+    // Can't use Style::ScopedName here, since the scope ordinal is not available at
+    // parsing time.
+    AtomString elementName;
+    Side side;
+    std::optional<Child> fallback;
+
+    bool operator==(const Anchor&) const = default;
+};
+
+struct AnchorSize {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(AnchorSize);
+public:
+    static constexpr auto id = CSSValueAnchorSize;
+
+    // anchor-size() = anchor-size( [ <anchor-element> || <anchor-size> ]? , <length-percentage>? )
+    // <anchor-element> = <dashed-ident>
+    // <anchor-size> = width | height | block | inline | self-block | self-inline
+
+    // Can't use Style::ScopedName here, since the scope ordinal is not available at
+    // parsing time.
+    AtomString elementName; // <anchor-element>
+    std::optional<Style::AnchorSizeDimension> dimension; // <anchor-size>
+    std::optional<Child> fallback;
+
+    bool operator==(const AnchorSize&) const = default;
+};
+
 // MARK: Size assertions
 
-static_assert(sizeof(Child) == 24);
+static_assert(sizeof(Child) <= 24, "Child should stay small");
 
 // MARK: Reverse mappings
 
@@ -738,6 +812,7 @@ template<> struct ReverseMapping<Calculation::Log> { using Op = Log; };
 template<> struct ReverseMapping<Calculation::Exp> { using Op = Exp; };
 template<> struct ReverseMapping<Calculation::Abs> { using Op = Abs; };
 template<> struct ReverseMapping<Calculation::Sign> { using Op = Sign; };
+template<> struct ReverseMapping<Calculation::Progress> { using Op = Progress; };
 
 // MARK: TextStream
 
@@ -756,10 +831,10 @@ template<> struct ChildConstruction<Number> {
     static Child make(Number&& op) { return Child { WTFMove(op) }; }
 };
 
-// Specialized implementation of ChildConstruction for Percent, needed to avoid `makeUniqueRef`.
-template<> struct ChildConstruction<Percent> {
-    static Child make(Percent&& op, Type) { return Child { WTFMove(op) }; }
-    static Child make(Percent&& op) { return Child { WTFMove(op) }; }
+// Specialized implementation of ChildConstruction for Percentage, needed to avoid `makeUniqueRef`.
+template<> struct ChildConstruction<Percentage> {
+    static Child make(Percentage&& op, Type) { return Child { WTFMove(op) }; }
+    static Child make(Percentage&& op) { return Child { WTFMove(op) }; }
 };
 
 // Specialized implementation of ChildConstruction for CanonicalDimension, needed to avoid `makeUniqueRef`.
@@ -803,7 +878,7 @@ Type getType(CanonicalDimension::Dimension);
 
 // Gets the Type of the leaf node.
 Type getType(const Number&);
-Type getType(const Percent&);
+Type getType(const Percentage&);
 Type getType(const NonCanonicalDimension&);
 Type getType(const CanonicalDimension&);
 Type getType(const Symbol&);
@@ -839,6 +914,7 @@ std::optional<Type> toType(const Log&);
 std::optional<Type> toType(const Exp&);
 std::optional<Type> toType(const Abs&);
 std::optional<Type> toType(const Sign&);
+std::optional<Type> toType(const Progress&);
 
 // MARK: CSSUnitType Evaluation
 
@@ -860,7 +936,7 @@ constexpr CSSUnitType toCSSUnit(const CanonicalDimension::Dimension& dimension)
 
 // Maps Numeric type to its CSSUnitType counterpart.
 constexpr CSSUnitType toCSSUnit(const Number&) { return CSSUnitType::CSS_NUMBER; }
-constexpr CSSUnitType toCSSUnit(const Percent&) { return CSSUnitType::CSS_PERCENTAGE; }
+constexpr CSSUnitType toCSSUnit(const Percentage&) { return CSSUnitType::CSS_PERCENTAGE; }
 constexpr CSSUnitType toCSSUnit(const CanonicalDimension& dimension) { return toCSSUnit(dimension.dimension); }
 constexpr CSSUnitType toCSSUnit(const NonCanonicalDimension& dimension) { return dimension.unit; }
 
@@ -876,7 +952,7 @@ inline bool isNumeric(const Child& root)
 
 // Convenience constructors
 
-// Makes the appropriate child type (number, percent, canonical-dimensions, non-canonical-dimension) based on the CSSUnitType.
+// Makes the appropriate child type (number, percentage, canonical-dimensions, non-canonical-dimension) based on the CSSUnitType.
 Child makeNumeric(double, CSSUnitType);
 
 inline Sum add(Child&& a, Child&& b)
@@ -905,9 +981,9 @@ inline Child makeChildWithValueBasedOn(double value, const Number&)
     return makeChild(Number { .value = value });
 }
 
-inline Child makeChildWithValueBasedOn(double value, const Percent& a)
+inline Child makeChildWithValueBasedOn(double value, const Percentage& a)
 {
-    return makeChild(Percent { .value = value, .hint = a.hint });
+    return makeChild(Percentage { .value = value, .hint = a.hint });
 }
 
 inline Child makeChildWithValueBasedOn(double value, const CanonicalDimension& a)
@@ -1108,6 +1184,16 @@ template<size_t I> const auto& get(const Sign& root)
     return root.a;
 }
 
+template<size_t I> const auto& get(const Progress& root)
+{
+    if constexpr (!I)
+        return root.progress;
+    else if constexpr (I == 1)
+        return root.from;
+    else if constexpr (I == 2)
+        return root.to;
+}
+
 } // namespace CSSCalc
 } // namespace WebCore
 
@@ -1148,6 +1234,10 @@ OP_TUPLE_LIKE_CONFORMANCE(Log, 2);
 OP_TUPLE_LIKE_CONFORMANCE(Exp, 1);
 OP_TUPLE_LIKE_CONFORMANCE(Abs, 1);
 OP_TUPLE_LIKE_CONFORMANCE(Sign, 1);
+OP_TUPLE_LIKE_CONFORMANCE(Progress, 3);
+// FIXME (webkit.org/b/280798): make Anchor and AnchorSize tuple-like
+OP_TUPLE_LIKE_CONFORMANCE(Anchor, 0);
+OP_TUPLE_LIKE_CONFORMANCE(AnchorSize, 0);
 
 #undef OP_TUPLE_LIKE_CONFORMANCE
 

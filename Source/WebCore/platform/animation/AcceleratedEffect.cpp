@@ -177,7 +177,7 @@ RefPtr<AcceleratedEffect> AcceleratedEffect::create(const KeyframeEffect& effect
     return adoptRef(*acceleratedEffect);
 }
 
-Ref<AcceleratedEffect> AcceleratedEffect::create(AnimationEffectTiming timing, Vector<Keyframe>&& keyframes, WebAnimationType type, CompositeOperation composite, RefPtr<TimingFunction>&& defaultKeyframeTimingFunction, OptionSet<WebCore::AcceleratedEffectProperty>&& animatedProperties, bool paused, double playbackRate, std::optional<Seconds> startTime, std::optional<Seconds> holdTime)
+Ref<AcceleratedEffect> AcceleratedEffect::create(AnimationEffectTiming timing, Vector<Keyframe>&& keyframes, WebAnimationType type, CompositeOperation composite, RefPtr<TimingFunction>&& defaultKeyframeTimingFunction, OptionSet<WebCore::AcceleratedEffectProperty>&& animatedProperties, bool paused, double playbackRate, std::optional<WebAnimationTime> startTime, std::optional<WebAnimationTime> holdTime)
 {
     return adoptRef(*new AcceleratedEffect(WTFMove(timing), WTFMove(keyframes), type, composite, WTFMove(defaultKeyframeTimingFunction), WTFMove(animatedProperties), paused, playbackRate, startTime, holdTime));
 }
@@ -213,8 +213,8 @@ AcceleratedEffect::AcceleratedEffect(const KeyframeEffect& effect, const IntRect
         m_paused = animation->playState() == WebAnimation::PlayState::Paused;
         m_playbackRate = animation->playbackRate();
         ASSERT(animation->holdTime() || animation->startTime());
-        m_holdTime = animation->holdTime();
-        m_startTime = animation->startTime();
+        m_holdTime = animation->holdTime() ? animation->holdTime()->time() : std::nullopt;
+        m_startTime = animation->startTime() ? animation->startTime()->time() : std::nullopt;
         if (auto* styleAnimation = dynamicDowncast<StyleOriginatedAnimation>(*animation)) {
             if (auto* defaultKeyframeTimingFunction = styleAnimation->backingAnimation().timingFunction())
                 m_defaultKeyframeTimingFunction = defaultKeyframeTimingFunction;
@@ -251,7 +251,7 @@ AcceleratedEffect::AcceleratedEffect(const KeyframeEffect& effect, const IntRect
     m_animatedProperties.remove(disallowedProperties);
 }
 
-AcceleratedEffect::AcceleratedEffect(AnimationEffectTiming timing, Vector<Keyframe>&& keyframes, WebAnimationType type, CompositeOperation composite, RefPtr<TimingFunction>&& defaultKeyframeTimingFunction, OptionSet<WebCore::AcceleratedEffectProperty>&& animatedProperties, bool paused, double playbackRate, std::optional<Seconds> startTime, std::optional<Seconds> holdTime)
+AcceleratedEffect::AcceleratedEffect(AnimationEffectTiming timing, Vector<Keyframe>&& keyframes, WebAnimationType type, CompositeOperation composite, RefPtr<TimingFunction>&& defaultKeyframeTimingFunction, OptionSet<WebCore::AcceleratedEffectProperty>&& animatedProperties, bool paused, double playbackRate, std::optional<WebAnimationTime> startTime, std::optional<WebAnimationTime> holdTime)
     : m_timing(timing)
     , m_keyframes(WTFMove(keyframes))
     , m_animationType(type)
@@ -350,16 +350,24 @@ static void blend(AcceleratedEffectProperty property, AcceleratedEffectValues& o
     }
 }
 
-void AcceleratedEffect::apply(Seconds currentTime, AcceleratedEffectValues& values, const FloatRect& bounds)
+void AcceleratedEffect::apply(WebAnimationTime currentTime, AcceleratedEffectValues& values, const FloatRect& bounds)
 {
-    auto localTime = [&]() -> Seconds {
+    auto localTime = [&]() -> WebAnimationTime {
         ASSERT(m_holdTime || m_startTime);
         if (m_holdTime)
             return *m_holdTime;
         return (currentTime - *m_startTime) * m_playbackRate;
     }();
 
-    auto resolvedTiming = m_timing.resolve(localTime, m_playbackRate);
+    // FIXME: when we add threaded animaiton support support for scroll-driven animations,
+    // pass in the associated timeline's current time and duration.
+    auto resolvedTiming = m_timing.resolve({
+        std::nullopt,
+        std::nullopt,
+        { m_holdTime ? *m_holdTime : *m_startTime },
+        { localTime },
+        m_playbackRate
+    });
     if (!resolvedTiming.transformedProgress)
         return;
 

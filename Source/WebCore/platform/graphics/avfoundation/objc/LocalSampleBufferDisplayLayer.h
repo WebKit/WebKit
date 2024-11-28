@@ -47,7 +47,7 @@ namespace WebCore {
 enum class VideoFrameRotation : uint16_t;
 
 class WEBCORE_EXPORT LocalSampleBufferDisplayLayer final : public SampleBufferDisplayLayer {
-    WTF_MAKE_TZONE_ALLOCATED(LocalSampleBufferDisplayLayer);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(LocalSampleBufferDisplayLayer, WEBCORE_EXPORT);
 public:
     static RefPtr<LocalSampleBufferDisplayLayer> create(SampleBufferDisplayLayerClient&);
 

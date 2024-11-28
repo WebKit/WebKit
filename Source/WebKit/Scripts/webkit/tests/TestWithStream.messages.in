@@ -21,7 +21,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 # Tests Stream receiver attribute.
-messages -> TestWithStream NotRefCounted Stream {
+messages -> TestWithStream Stream {
     void SendString(String url)
     void SendStringAsync(String url) -> (int64_t returnValue)
     void SendStringSync(String url) -> (int64_t returnValue) Synchronous

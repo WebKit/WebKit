@@ -29,7 +29,7 @@ async function onSessionStarted(xrSession) {
 
         xrSession.updateRenderState({ layers: [projectionLayer] });
         xrSession.requestAnimationFrame(onXRFrame);
-        let xrReferenceSpace = xrSession.requestReferenceSpace("viewer");
+        const xrReferenceSpace = await xrSession.requestReferenceSpace("viewer");
 
         /*** Vertex Buffer Setup ***/
         
@@ -53,16 +53,21 @@ async function onSessionStarted(xrSession) {
                              @location(0) color: vec4<f32>,
                          }
         
-                         @vertex fn vsmain(@builtin(vertex_index) VertexIndex: u32) -> Vertex
+                         @vertex fn vsmain(@builtin(vertex_index) VertexIndex: u32, @builtin(instance_index) InstanceID: u32) -> Vertex
                          {
+                             let triangle = VertexIndex / 3;
+                             let index = VertexIndex - 3 * triangle;
+                             let ftriangle = f32(triangle);
+                             const k: f32 = 0.25;
                              var pos: array<vec2<f32>, 3> = array<vec2<f32>, 3>(
-                                 vec2<f32>( 0.0,  0.5),
-                                 vec2<f32>(-0.5, -0.5),
-                                 vec2<f32>( 0.5, -0.5)
+                                 vec2<f32>( 0.0 + k - 2 * k * ftriangle, -0.5),
+                                 vec2<f32>(-0.5 + k - 2 * k * ftriangle,  0.5),
+                                 vec2<f32>( 0.5 + k - 2 * k * ftriangle,  0.5)
                              );
                              var vertex_out : Vertex;
-                             vertex_out.Position = vec4<f32>(pos[VertexIndex], 0.0, 1.0);
-                             vertex_out.color = vec4<f32>(pos[VertexIndex] + vec2<f32>(0.5, 0.5), 0.0, 1.0);
+                             vertex_out.Position = vec4<f32>(pos[index], 0.5, 1.0);
+                             let shiftedIndex = (index + InstanceID / 270) % 3;
+                             vertex_out.color = vec4<f32>(pos[u32(shiftedIndex)] + vec2<f32>(0.5, 0.5), 0.0, 1.0);
                              return vertex_out;
                          }
         
@@ -76,7 +81,7 @@ async function onSessionStarted(xrSession) {
         /* GPUPipelineStageDescriptors */
         const vertexStageDescriptor = { module: shaderModule, entryPoint: "vsmain" };
         
-        const fragmentStageDescriptor = { module: shaderModule, entryPoint: "fsmain", targets: [ {format: "bgra8unorm" }, ],  };
+        const fragmentStageDescriptor = { module: shaderModule, entryPoint: "fsmain", targets: [ {format: "bgra8unorm-srgb" }, ],  };
         
         /* GPURenderPipelineDescriptor */
         
@@ -85,6 +90,11 @@ async function onSessionStarted(xrSession) {
             vertex: vertexStageDescriptor,
             fragment: fragmentStageDescriptor,
             primitive: {topology: "triangle-list" },
+            depthStencil: {
+              depthWriteEnabled: true,
+              depthCompare: 'always',
+              format: 'depth24plus-stencil8',
+            },
         };
         /* GPURenderPipeline */
         const renderPipeline = device.createRenderPipeline(renderPipelineDescriptor);
@@ -100,7 +110,9 @@ async function onSessionStarted(xrSession) {
         /* GPUCanvasConfiguration */
         const canvasConfiguration = { device: device, format: "bgra8unorm" };
         gpuContext.configure(canvasConfiguration);
-
+        let frameID = 0;
+        let offsets = [0, 0, 0];
+        let offsetIndex = 0;
         function onXRFrame(time, xrFrame) {
             xrSession.requestAnimationFrame(onXRFrame);
             
@@ -109,26 +121,29 @@ async function onSessionStarted(xrSession) {
             /* Acquire Texture To Render To */
             
             /* GPUColor */
-            const darkBlue = { r: 0.15, g: 0.15, b: 0.5, a: 1 };
+            const darkBlue = { r: 0.15 + offsets[0], g: 0.15 + offsets[1], b: 0.5 + offsets[2], a: 1 };
             
             /*** Rendering ***/
             
             /* GPUCommandEncoder */
-            const commandEncoder = device.createCommandEncoder();
             let xrViewerPose = xrFrame.getViewerPose(xrReferenceSpace);
-            for (const view in xrViewerPose.views) {
-                const subImage = xrGpuBinding.getViewSubImage(layer, view);
+            const commandEncoder = device.createCommandEncoder();
+
+            for (let i = 0; i < xrViewerPose.views.length; ++i) {
+                const view = xrViewerPose.views[i];
+                const subImage = xrGpuBinding.getViewSubImage(projectionLayer, view);
                 
                 const passEncoder = commandEncoder.beginRenderPass({
                     colorAttachments: [{
-                        attachment: subImage.colorTexture.createView(subImage.viewDescriptor),
+                        view: subImage.colorTexture.createView(subImage.getViewDescriptor()),
                         loadOp: 'clear',
-                        clearValue: [0,0,0,1],
+                        clearValue: darkBlue,
+                        storeOp: 'store',
                     }],
                     depthStencilAttachment: {
-                        attachment: subImage.depthStencilTexture.createView(subImage.viewDescriptor),
+                        view: subImage.depthStencilTexture.createView(subImage.getViewDescriptor()),
                         depthLoadOp: 'clear',
-                        depthClearValue: 1.0,
+                        depthClearValue: 0.05,
                         depthStoreOp: 'store',
                         stencilLoadOp: 'clear',
                         stencilClearValue: 0,
@@ -141,16 +156,25 @@ async function onSessionStarted(xrSession) {
 
                 const vertexBufferSlot = 0;
                 passEncoder.setVertexBuffer(vertexBufferSlot, vertexBuffer, 0);
-                passEncoder.draw(3, 1, 0, 0); // 3 vertices, 1 instance, 0th vertex, 0th instance.
+                const instanceID = parseInt(frameID, 10);
+                passEncoder.draw(3, 1, i * 3, instanceID); // 3 vertices, 1 instance
                 passEncoder.end();
             }
 
             /* GPUComamndBuffer */
             const commandBuffer = commandEncoder.finish();
-            
+
             /* GPUQueue */
             const queue = device.queue;
             queue.submit([commandBuffer]);
+            ++frameID;
+            offsets[offsetIndex] += 0.01;
+            if (offsets[offsetIndex] > 1) {
+                offsets[offsetIndex] = 0;
+                offsetIndex = offsetIndex + 1;
+                if (offsetIndex > 2)
+                    offsetIndex = 0;
+            }
         }
 
     } catch (error) {

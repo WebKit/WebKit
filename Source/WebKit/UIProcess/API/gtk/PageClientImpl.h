@@ -1,6 +1,6 @@
 
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2024 Apple Inc. All rights reserved.
  * Portions Copyright (c) 2010 Motorola Mobility, Inc.  All rights reserved.
  * Copyright (C) 2011 Igalia S.L.
  *
@@ -46,6 +46,7 @@ namespace WebKit {
 class DrawingAreaProxy;
 class WebPageNamespace;
 
+enum class ColorControlSupportsAlpha : bool;
 enum class UndoOrRedo : bool;
 
 class PageClientImpl : public PageClient
@@ -54,6 +55,9 @@ class PageClientImpl : public PageClient
 #endif
 {
     WTF_MAKE_TZONE_ALLOCATED(PageClientImpl);
+#if ENABLE(FULLSCREEN_API)
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(PageClientImpl);
+#endif
 public:
     explicit PageClientImpl(GtkWidget*);
 
@@ -79,7 +83,6 @@ private:
     void toolTipChanged(const WTF::String&, const WTF::String&) override;
     void setCursor(const WebCore::Cursor&) override;
     void setCursorHiddenUntilMouseMoves(bool) override;
-    void didChangeViewportProperties(const WebCore::ViewportAttributes&) override;
     void registerEditCommand(Ref<WebEditCommandProxy>&&, UndoOrRedo) override;
     void clearAllEditCommands() override;
     bool canUndoRedo(UndoOrRedo) override;
@@ -96,7 +99,7 @@ private:
     Ref<WebContextMenuProxy> createContextMenuProxy(WebPageProxy&, ContextMenuContextData&&, const UserData&) override;
 #endif // ENABLE(CONTEXT_MENUS)
 #if ENABLE(INPUT_TYPE_COLOR)
-    RefPtr<WebColorPicker> createColorPicker(WebPageProxy*, const WebCore::Color& initialColor, const WebCore::IntRect&, Vector<WebCore::Color>&&) override;
+    RefPtr<WebColorPicker> createColorPicker(WebPageProxy*, const WebCore::Color& initialColor, const WebCore::IntRect&, ColorControlSupportsAlpha, Vector<WebCore::Color>&&) override;
 #endif
 #if ENABLE(DATE_AND_TIME_INPUT_TYPES)
     RefPtr<WebDateTimePicker> createDateTimePicker(WebPageProxy&) override;

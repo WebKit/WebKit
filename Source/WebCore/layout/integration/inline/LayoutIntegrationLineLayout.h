@@ -33,7 +33,7 @@
 #include "InlineIteratorLineBox.h"
 #include "InlineIteratorTextBox.h"
 #include "LayoutIntegrationBoxGeometryUpdater.h"
-#include "LayoutIntegrationBoxTree.h"
+#include "LayoutIntegrationBoxTreeUpdater.h"
 #include "LayoutPoint.h"
 #include "LayoutState.h"
 #include "RenderObjectEnums.h"
@@ -77,8 +77,7 @@ public:
     static bool shouldInvalidateLineLayoutPathAfterContentChange(const RenderBlockFlow& parent, const RenderObject& rendererWithNewContent, const LineLayout&);
     static bool shouldInvalidateLineLayoutPathAfterTreeMutation(const RenderBlockFlow& parent, const RenderObject& renderer, const LineLayout&, bool isRemoval);
 
-    void updateInlineContentConstraints();
-    void updateInlineContentDimensions();
+    void updateFormattingContexGeometries(LayoutUnit availableLogicalWidth);
     void updateOverflow();
     static void updateStyle(const RenderObject&);
 
@@ -102,11 +101,11 @@ public:
     LayoutRect visualOverflowBoundingBoxRectFor(const RenderInline&) const;
     Vector<FloatRect> collectInlineBoxRects(const RenderInline&) const;
 
+    LayoutUnit contentLogicalHeight() const;
     std::optional<LayoutUnit> clampedContentLogicalHeight() const;
     bool contains(const RenderElement& renderer) const;
 
     bool isPaginated() const;
-    LayoutUnit contentBoxLogicalHeight() const;
     size_t lineCount() const;
     bool hasVisualOverflow() const;
     LayoutUnit firstLinePhysicalBaseline() const;
@@ -122,8 +121,8 @@ public:
     InlineIterator::LineBoxIterator firstLineBox() const;
     InlineIterator::LineBoxIterator lastLineBox() const;
 
-    const RenderBlockFlow& flow() const { return downcast<RenderBlockFlow>(m_boxTree.rootRenderer()); }
-    RenderBlockFlow& flow() { return downcast<RenderBlockFlow>(m_boxTree.rootRenderer()); }
+    const RenderBlockFlow& flow() const { return downcast<RenderBlockFlow>(*m_rootLayoutBox->rendererForIntegration()); }
+    RenderBlockFlow& flow() { return downcast<RenderBlockFlow>(*m_rootLayoutBox->rendererForIntegration()); }
 
     static void releaseCaches(RenderView&);
 
@@ -152,14 +151,14 @@ private:
 
     Layout::InlineDamage& ensureLineDamage();
 
-    const Layout::ElementBox& rootLayoutBox() const;
-    Layout::ElementBox& rootLayoutBox();
+    const Layout::ElementBox& rootLayoutBox() const { return *m_rootLayoutBox; }
+    Layout::ElementBox& rootLayoutBox() { return *m_rootLayoutBox; }
     void clearInlineContent();
     void releaseCachesAndResetDamage();
 
     LayoutUnit physicalBaselineForLine(const InlineDisplay::Line&) const;
     
-    BoxTree m_boxTree;
+    CheckedPtr<Layout::ElementBox> m_rootLayoutBox;
     WeakPtr<Layout::LayoutState> m_layoutState;
     Layout::BlockFormattingState& m_blockFormattingState;
     Layout::InlineContentCache& m_inlineContentCache;

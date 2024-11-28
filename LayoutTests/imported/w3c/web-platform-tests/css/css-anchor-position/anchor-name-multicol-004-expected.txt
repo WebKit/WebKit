@@ -1,8 +1,8 @@
 
 FAIL .target 1 assert_equals:
 <div class="target" data-expected-width="40" data-expected-height="50"></div>
-width expected 40 but got 0
+width expected 40 but got 10
 FAIL .target 2 assert_equals:
 <div class="target" data-expected-width="40" data-expected-height="50"></div>
-width expected 40 but got 0
+width expected 40 but got 10
 

@@ -253,6 +253,8 @@ void HTMLSelectElement::remove(int optionIndex)
 
 String HTMLSelectElement::value() const
 {
+    if (document().requiresScriptExecutionTelemetry(ScriptTelemetryCategory::FormControls))
+        return emptyString();
     for (auto& item : listItems()) {
         if (RefPtr option = dynamicDowncast<HTMLOptionElement>(item.get())) {
             if (option->selected())
@@ -1440,12 +1442,12 @@ void HTMLSelectElement::listBoxDefaultEventHandler(Event& event)
             return;
 
         CheckedPtr renderer = this->renderer();
-        bool isHorizontalWritingMode = renderer ? renderer->style().isHorizontalWritingMode() : true;
-        bool isFlippedBlocksWritingMode = renderer ? renderer->style().isFlippedBlocksWritingMode() : false;
+        bool isHorizontalWritingMode = renderer ? renderer->writingMode().isHorizontal() : true;
+        bool isBlockFlipped = renderer ? renderer->writingMode().isBlockFlipped() : false;
 
         auto nextKeyIdentifier = isHorizontalWritingMode ? "Down"_s : "Right"_s;
         auto previousKeyIdentifier = isHorizontalWritingMode ? "Up"_s : "Left"_s;
-        if (isFlippedBlocksWritingMode)
+        if (isBlockFlipped)
             std::swap(nextKeyIdentifier, previousKeyIdentifier);
 
         const String& keyIdentifier = keyboardEvent->keyIdentifier();

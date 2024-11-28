@@ -33,9 +33,9 @@
 #include "ImageBufferUtilitiesCG.h"
 #include "IntRect.h"
 #include "PixelBuffer.h"
-#include "RuntimeApplicationChecks.h"
 #include <CoreGraphics/CoreGraphics.h>
 #include <pal/spi/cg/CoreGraphicsSPI.h>
+#include <wtf/RuntimeApplicationChecks.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/TextStream.h>
 

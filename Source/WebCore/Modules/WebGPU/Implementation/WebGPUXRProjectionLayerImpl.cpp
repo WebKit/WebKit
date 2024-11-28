@@ -31,6 +31,8 @@
 #include "WebGPUConvertToBackingContext.h"
 #include "WebGPUDevice.h"
 #include "WebGPUTextureFormat.h"
+#include "WebXRRigidTransform.h"
+#include <wtf/MachSendRight.h>
 
 namespace WebCore::WebGPU {
 
@@ -54,7 +56,11 @@ uint32_t XRProjectionLayerImpl::textureHeight() const
 
 uint32_t XRProjectionLayerImpl::textureArrayLength() const
 {
-    return 0;
+#if PLATFORM(IOS_FAMILY_SIMULATOR)
+    return 1;
+#else
+    return 2;
+#endif
 }
 
 bool XRProjectionLayerImpl::ignoreDepthValues() const
@@ -74,18 +80,26 @@ void XRProjectionLayerImpl::setFixedFoveation(std::optional<float>)
 
 WebXRRigidTransform* XRProjectionLayerImpl::deltaPose() const
 {
+#if ENABLE(WEBXR)
+    return m_webXRRigidTransform.get();
+#else
     return nullptr;
+#endif
 }
 
-void XRProjectionLayerImpl::setDeltaPose(WebXRRigidTransform*)
+void XRProjectionLayerImpl::setDeltaPose(WebXRRigidTransform* pose)
 {
-    return;
+#if ENABLE(WEBXR)
+    m_webXRRigidTransform = pose;
+#else
+    UNUSED_PARAM(pose);
+#endif
 }
 
 // WebXRLayer
-void XRProjectionLayerImpl::startFrame()
+void XRProjectionLayerImpl::startFrame(size_t frameIndex, MachSendRight&& colorBuffer, MachSendRight&& depthBuffer, MachSendRight&& completionSyncEvent, size_t reusableTextureIndex)
 {
-    return;
+    wgpuXRProjectionLayerStartFrame(m_backing.get(), frameIndex, WTFMove(colorBuffer), WTFMove(depthBuffer), WTFMove(completionSyncEvent), reusableTextureIndex);
 }
 
 void XRProjectionLayerImpl::endFrame()

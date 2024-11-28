@@ -23,6 +23,8 @@ var p = new Proxy(target, {});
 var proxyDesc = Object.getOwnPropertyDescriptor(p, "attr");
 
 verifyEqualTo(p, "attr", 1);
-verifyWritable(p, "attr");
-verifyEnumerable(p, "attr");
-verifyConfigurable(p, "attr");
+verifyProperty(p, "attr", {
+  writable: true,
+  enumerable: true,
+  configurable: true,
+});

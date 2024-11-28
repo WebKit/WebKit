@@ -2,9 +2,9 @@
 PASS OP+ID
 PASS ID+CL
 PASS span+CL
-FAIL OP+ruby assert_approx_equals: expected 3 +/- 0.1 but got 2
+PASS OP+ruby
 PASS ruby+CL
-FAIL OP+ruby+CL assert_approx_equals: expected 3 +/- 0.1 but got 2
+PASS OP+ruby+CL
 あ（かき
 あい）か
 あす）か

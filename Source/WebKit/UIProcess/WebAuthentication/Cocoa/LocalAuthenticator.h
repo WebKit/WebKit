@@ -40,6 +40,8 @@ class AuthenticatorAssertionResponse;
 
 namespace WebKit {
 
+BOOL shouldUseAlternateKeychainAttribute();
+
 class LocalAuthenticator final : public Authenticator {
 public:
     // Here is the FSM.
@@ -54,7 +56,7 @@ public:
         PolicyDecided,
     };
 
-    static Ref<LocalAuthenticator> create(UniqueRef<LocalConnection>&& connection)
+    static Ref<LocalAuthenticator> create(Ref<LocalConnection>&& connection)
     {
         return adoptRef(*new LocalAuthenticator(WTFMove(connection)));
     }
@@ -62,7 +64,7 @@ public:
     static void clearAllCredentials();
 
 private:
-    explicit LocalAuthenticator(UniqueRef<LocalConnection>&&);
+    explicit LocalAuthenticator(Ref<LocalConnection>&&);
 
     std::optional<WebCore::ExceptionData> processClientExtensions(std::variant<Ref<WebCore::AuthenticatorAttestationResponse>, Ref<WebCore::AuthenticatorAssertionResponse>>);
 
@@ -85,8 +87,10 @@ private:
 
     std::optional<Vector<Ref<WebCore::AuthenticatorAssertionResponse>>> getExistingCredentials(const String& rpId);
 
+    Ref<LocalConnection> protectedConnection() const { return m_connection; }
+
     State m_state { State::Init };
-    UniqueRef<LocalConnection> m_connection;
+    Ref<LocalConnection> m_connection;
     Vector<Ref<WebCore::AuthenticatorAssertionResponse>> m_existingCredentials;
     RetainPtr<NSData> m_provisionalCredentialId;
 };

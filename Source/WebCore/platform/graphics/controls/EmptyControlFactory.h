@@ -26,10 +26,12 @@
 #pragma once
 
 #include "ControlFactory.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class EmptyControlFactory : public ControlFactory {
+    WTF_MAKE_TZONE_ALLOCATED(EmptyControlFactory);
 public:
     using ControlFactory::ControlFactory;
 

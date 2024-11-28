@@ -15,8 +15,9 @@
     var consoleElm;
     var event;
 
-    window.onload = function()
+    window.onload = async function()
     {
+        testRunner?.waitUntilDone();
         dragMe = document.getElementById("dragMe");
         dropTarget = document.getElementById("dropTarget");
         consoleElm = document.getElementById("console");
@@ -31,7 +32,8 @@
         dropTarget.ondragover = dragOver;
         dropTarget.ondrop = drop;
 
-        runTest();
+        await runTest();
+        testRunner?.notifyDone();
     }
 
     function dragStart(e)
@@ -101,7 +103,7 @@
         e.preventDefault();
     }
 
-    function runTest()
+    async function runTest()
     {
         if (!window.eventSender)
             return;
@@ -114,11 +116,11 @@
         var endX = dropTarget.offsetLeft + 10;
         var endY = dropTarget.offsetTop + dropTarget.offsetHeight / 2;
 
-        eventSender.mouseMoveTo(startX, startY);
-        eventSender.mouseDown();
+        await eventSender.asyncMouseMoveTo(startX, startY);
+        await eventSender.asyncMouseDown();
         eventSender.leapForward(100);
-        eventSender.mouseMoveTo(endX, endY);
-        eventSender.mouseUp();
+        await eventSender.asyncMouseMoveTo(endX, endY);
+        await eventSender.asyncMouseUp();
 
         var testContainer = document.getElementById("test-container");
         if (testContainer)

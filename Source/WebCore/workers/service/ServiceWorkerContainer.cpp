@@ -670,7 +670,7 @@ void ServiceWorkerContainer::getPushPermissionState(ServiceWorkerRegistrationIde
     });
 }
 
-#if ENABLE(NOTIFICATIONS)
+#if ENABLE(NOTIFICATIONS) && ENABLE(NOTIFICATION_EVENT)
 void ServiceWorkerContainer::getNotifications(const URL& serviceWorkerRegistrationURL, const String& tag, DOMPromiseDeferred<IDLSequence<IDLInterface<Notification>>>&& promise)
 {
     ensureSWClientConnection().getNotifications(serviceWorkerRegistrationURL, tag, [promise = WTFMove(promise), protectedThis = Ref { *this }](auto&& result) mutable {

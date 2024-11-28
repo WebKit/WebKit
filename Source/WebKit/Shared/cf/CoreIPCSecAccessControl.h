@@ -28,6 +28,7 @@
 #if HAVE(SEC_ACCESS_CONTROL)
 
 #import <wtf/RetainPtr.h>
+#import <wtf/cf/VectorCF.h>
 #import <wtf/spi/cocoa/SecuritySPI.h>
 
 namespace WebKit {
@@ -60,8 +61,7 @@ public:
     {
         if (!m_accessControlData)
             return { };
-        CFDataRef data = m_accessControlData.get();
-        return { CFDataGetBytePtr(data), static_cast<size_t>(CFDataGetLength(data)) };
+        return span(m_accessControlData.get());
     }
 
 private:

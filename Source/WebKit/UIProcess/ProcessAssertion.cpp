@@ -57,6 +57,7 @@ ASCIILiteral processAssertionTypeDescription(ProcessAssertionType type)
 }
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(ProcessAssertion);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ProcessAndUIAssertion);
 
 void ProcessAssertion::aquireAssertion(Mode mode, CompletionHandler<void()>&& acquisisionHandler)
 {

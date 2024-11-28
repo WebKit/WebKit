@@ -35,7 +35,11 @@ egl::Error DisplayWgpu::initialize(egl::Display *display)
     mQueue = mDevice.GetQueue();
     mFormatTable.initialize();
 
-    webgpu::GenerateCaps(mDevice, &mGLCaps, &mGLTextureCaps, &mGLExtensions, &mGLLimitations,
+    wgpu::SupportedLimits supportedLimits;
+    mDevice.GetLimits(&supportedLimits);
+    mLimitsWgpu = supportedLimits.limits;
+
+    webgpu::GenerateCaps(mLimitsWgpu, &mGLCaps, &mGLTextureCaps, &mGLExtensions, &mGLLimitations,
                          &mEGLCaps, &mEGLExtensions, &mMaxSupportedClientVersion);
 
     return egl::NoError();
@@ -146,11 +150,6 @@ egl::Error DisplayWgpu::waitNative(const gl::Context *context, EGLint engine)
 gl::Version DisplayWgpu::getMaxSupportedESVersion() const
 {
     return mMaxSupportedClientVersion;
-}
-
-Optional<gl::Version> DisplayWgpu::getMaxSupportedDesktopVersion() const
-{
-    return Optional<gl::Version>::Invalid();
 }
 
 gl::Version DisplayWgpu::getMaxConformantESVersion() const
@@ -284,8 +283,7 @@ egl::Error DisplayWgpu::createWgpuDevice()
 
     mAdapter = adapterResult.adapter;
 
-    std::vector<wgpu::FeatureName> requiredFeatures;
-    requiredFeatures.push_back(wgpu::FeatureName::SurfaceCapabilities);
+    std::vector<wgpu::FeatureName> requiredFeatures;  // empty for now
 
     wgpu::DeviceDescriptor deviceDesc;
     deviceDesc.requiredFeatureCount = requiredFeatures.size();

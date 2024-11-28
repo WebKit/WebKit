@@ -4,8 +4,8 @@
 
 import("//gni/angle.gni")
 
-template("ocl_cts_binary") {
-  executable("test_$target_name") {
+template("ocl_cts_source_set") {
+  angle_source_set(target_name) {
     cflags = [
       "-Wno-deprecated-declarations",
       "-Wno-#warnings",
@@ -15,14 +15,21 @@ template("ocl_cts_binary") {
       "-Wno-c++11-narrowing",
     ]
     defines = [ "CL_TARGET_OPENCL_VERSION=300" ]
+
+    # Rename main() to avoid conflict with the gtest-based main()
+    defines += [ "main=ANGLE_oclcts_main" ]
     deps = [
       "$angle_root:cl_includes",
       "$angle_root/third_party/OpenCL-CTS/gn:test_common",
       "$angle_root/third_party/OpenCL-ICD-Loader:opencl_icd_loader",
     ]
-    configs -= [ "//build/config/compiler:chromium_code" ]
-    configs -= [ "//build/config/compiler:no_exceptions" ]
-    configs -= [ "//build/config/compiler:no_rtti" ]
+    suppressed_configs += [
+      "//build/config/compiler:chromium_code",
+      "//build/config/compiler:no_exceptions",
+      "//build/config/compiler:no_rtti",
+      "$angle_root:extra_warnings",
+      "$angle_root:constructor_and_destructor_warnings",
+    ]
     include_dirs = [
       "$angle_root/third_party/OpenCL-CTS/src/test_common",
       "$angle_root/third_party/OpenCL-CTS/src/test_common/autotest",

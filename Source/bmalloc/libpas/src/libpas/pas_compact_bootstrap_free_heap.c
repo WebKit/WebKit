@@ -43,7 +43,17 @@ static pas_aligned_allocation_result compact_bootstrap_source_allocate_aligned(
 {
     PAS_ASSERT(!arg);
     PAS_ASSERT(!alignment.alignment_begin);
-    return pas_compact_heap_reservation_try_allocate(size, alignment.alignment);
+    static const bool verbose = PAS_SHOULD_LOG(PAS_LOG_BOOTSTRAP_HEAPS);
+
+    if (verbose)
+        pas_log("compact bootstrap heap allocating %zu\n", size);
+
+    pas_aligned_allocation_result retval =  pas_compact_heap_reservation_try_allocate(size, alignment.alignment);
+
+    if (verbose)
+        pas_log("compact bootstrap done allocating, returning %p\n", retval.result);
+
+    return retval;
 }
 
 static void initialize_config(pas_large_free_heap_config* config)

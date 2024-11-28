@@ -27,7 +27,6 @@
 
 #import "WebKitVersionChecks.h"
 #import <Foundation/NSBundle.h>
-#import <WebCore/RuntimeApplicationChecks.h>
 #import <mach-o/dyld.h>
 #import <pal/spi/cf/CFUtilitiesSPI.h>
 #import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
@@ -60,7 +59,7 @@ bool defaultAllowsPictureInPictureMediaPlayback()
 
 bool defaultJavaScriptCanOpenWindowsAutomatically()
 {
-    static bool shouldAllowWindowOpenWithoutUserGesture = WebCore::IOSApplication::isTheSecretSocietyHiddenMystery() && !linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::NoTheSecretSocietyHiddenMysteryWindowOpenQuirk);
+    static bool shouldAllowWindowOpenWithoutUserGesture = WTF::IOSApplication::isTheSecretSocietyHiddenMystery() && !linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::NoTheSecretSocietyHiddenMysteryWindowOpenQuirk);
     return shouldAllowWindowOpenWithoutUserGesture;
 }
 
@@ -106,18 +105,18 @@ bool defaultAllowContentSecurityPolicySourceStarToMatchAnyProtocol()
 
 bool defaultLoadDeferringEnabled()
 {
-    return !WebCore::MacApplication::isAdobeInstaller();
+    return !WTF::MacApplication::isAdobeInstaller();
 }
 
 bool defaultWindowFocusRestricted()
 {
-    return !WebCore::MacApplication::isHRBlock();
+    return !WTF::MacApplication::isHRBlock();
 }
 
 bool defaultUsePreHTML5ParserQuirks()
 {
     // Mail.app must continue to display HTML email that contains quirky markup.
-    return WebCore::MacApplication::isAppleMail();
+    return WTF::MacApplication::isAppleMail();
 }
 
 bool defaultNeedsAdobeFrameReloadingQuirk()
@@ -157,7 +156,7 @@ bool defaultNeedsFrameNameFallbackToIdQuirk()
 
 bool defaultNeedsKeyboardEventDisambiguationQuirks()
 {
-    static bool needsQuirks = !WebKitLinkedOnOrAfter(WEBKIT_FIRST_VERSION_WITH_IE_COMPATIBLE_KEYBOARD_EVENT_DISPATCH) && !WebCore::MacApplication::isSafari();
+    static bool needsQuirks = !WebKitLinkedOnOrAfter(WEBKIT_FIRST_VERSION_WITH_IE_COMPATIBLE_KEYBOARD_EVENT_DISPATCH) && !WTF::MacApplication::isSafari();
     return needsQuirks;
 }
 
@@ -166,9 +165,9 @@ bool defaultNeedsKeyboardEventDisambiguationQuirks()
 bool defaultAttachmentElementEnabled()
 {
 #if PLATFORM(IOS_FAMILY)
-    return WebCore::IOSApplication::isMobileMail();
+    return WTF::IOSApplication::isMobileMail();
 #else
-    return WebCore::MacApplication::isAppleMail();
+    return WTF::MacApplication::isAppleMail();
 #endif
 }
 

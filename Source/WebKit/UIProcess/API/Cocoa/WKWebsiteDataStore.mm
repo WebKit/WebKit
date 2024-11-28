@@ -62,6 +62,7 @@
 #import <WebCore/ServiceWorkerClientData.h>
 #import <WebCore/WebCoreObjCExtras.h>
 #import <wtf/BlockPtr.h>
+#import <wtf/TZoneMallocInlines.h>
 #import <wtf/URL.h>
 #import <wtf/Vector.h>
 #import <wtf/WeakObjCPtr.h>
@@ -81,6 +82,7 @@
 @end
 
 class WebsiteDataStoreClient final : public WebKit::WebsiteDataStoreClient {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(WebsiteDataStoreClient);
 public:
     WebsiteDataStoreClient(WKWebsiteDataStore *dataStore, id<_WKWebsiteDataStoreDelegate> delegate)
         : m_dataStore(dataStore)
@@ -192,7 +194,7 @@ private:
         if (!m_hasShowNotificationSelector || !m_delegate || !m_dataStore)
             return false;
 
-        RetainPtr<_WKNotificationData> notification = adoptNS([[_WKNotificationData alloc] initWithCoreData:data dataStore:m_dataStore.getAutoreleased()]);
+        RetainPtr<_WKNotificationData> notification = adoptNS([[_WKNotificationData alloc] _initWithCoreData:data]);
         [m_delegate.getAutoreleased() websiteDataStore:m_dataStore.getAutoreleased() showNotification:notification.get()];
         return true;
     }
@@ -551,9 +553,9 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
         uuid_t proxyIdentifier;
         nw_proxy_config_get_identifier(proxyConfig, proxyIdentifier);
 
-        configDataVector.append({ makeVector(agentData.get()), WTF::UUID(proxyIdentifier) });
+        configDataVector.append({ makeVector(agentData.get()), WTF::UUID(std::span<const uint8_t, 16> { proxyIdentifier }) });
     }
-    
+
     _websiteDataStore->setProxyConfigData(WTFMove(configDataVector));
 }
 
@@ -1414,6 +1416,14 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
         RELEASE_LOG_ERROR(Push, "Unhandled webPushAction: %@", webPushAction);
         completionHandler();
     }
+}
+
+- (void)_runningOrTerminatingServiceWorkerCountForTesting:(void(^)(NSUInteger))completionHandler
+{
+    auto completionHandlerCopy = makeBlockPtr(completionHandler);
+    _websiteDataStore->runningOrTerminatingServiceWorkerCountForTesting([completionHandlerCopy = WTFMove(completionHandlerCopy)](auto result) {
+        completionHandlerCopy(result);
+    });
 }
 
 @end

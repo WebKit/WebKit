@@ -28,10 +28,10 @@
 #include "include/core/SkTypes.h"
 #include "include/effects/SkGradientShader.h"
 #include "include/gpu/GpuTypes.h"
-#include "include/gpu/GrBackendSurface.h"
-#include "include/gpu/GrDirectContext.h"
-#include "include/gpu/GrRecordingContext.h"
-#include "include/gpu/GrTypes.h"
+#include "include/gpu/ganesh/GrBackendSurface.h"
+#include "include/gpu/ganesh/GrDirectContext.h"
+#include "include/gpu/ganesh/GrRecordingContext.h"
+#include "include/gpu/ganesh/GrTypes.h"
 #include "include/gpu/ganesh/SkImageGanesh.h"
 #include "include/gpu/ganesh/SkSurfaceGanesh.h"
 #include "include/private/base/SkTArray.h"
@@ -48,6 +48,7 @@
 #include "src/gpu/ganesh/GrPixmap.h"
 #include "src/gpu/ganesh/GrSamplerState.h"
 #include "src/gpu/ganesh/GrSurfaceProxy.h"
+#include "src/gpu/ganesh/GrUtil.h"
 #include "src/gpu/ganesh/SurfaceContext.h"
 #include "src/gpu/ganesh/SurfaceFillContext.h"
 #include "src/gpu/ganesh/effects/GrTextureEffect.h"
@@ -97,6 +98,7 @@ static constexpr int min_rgb_channel_bits(SkColorType ct) {
         case kGray_8_SkColorType:             return 8;   // counting gray as "rgb"
         case kRGBA_F16Norm_SkColorType:       return 10;  // just counting the mantissa
         case kRGBA_F16_SkColorType:           return 10;  // just counting the mantissa
+        case kRGB_F16F16F16x_SkColorType:     return 10;
         case kRGBA_F32_SkColorType:           return 23;  // just counting the mantissa
         case kR16G16B16A16_unorm_SkColorType: return 16;
         case kR8_unorm_SkColorType:           return 8;
@@ -129,6 +131,7 @@ static constexpr int alpha_channel_bits(SkColorType ct) {
         case kGray_8_SkColorType:             return 0;
         case kRGBA_F16Norm_SkColorType:       return 10;  // just counting the mantissa
         case kRGBA_F16_SkColorType:           return 10;  // just counting the mantissa
+        case kRGB_F16F16F16x_SkColorType:     return 0;
         case kRGBA_F32_SkColorType:           return 23;  // just counting the mantissa
         case kR16G16B16A16_unorm_SkColorType: return 16;
         case kR8_unorm_SkColorType:           return 0;
@@ -337,7 +340,7 @@ static void gpu_read_pixels_test_driver(skiatest::Reporter* reporter,
         } else if (!rules.fUncontainedRectSucceeds && !surfBounds.contains(rect)) {
             REPORTER_ASSERT(reporter, result != Result::kSuccess);
         } else if (result == Result::kFail) {
-            // TODO: Support RGB/BGR 101010x, BGRA 1010102 on the GPU.
+            // TODO: Support BGR 101010x, BGRA 1010102, on the GPU.
             if (SkColorTypeToGrColorType(readCT) != GrColorType::kUnknown) {
                 ERRORF(reporter,
                        "Read failed. %sSrc CT: %s, Src AT: %s Read CT: %s, Read AT: %s, "
@@ -1007,7 +1010,7 @@ static void gpu_write_pixels_test_driver(skiatest::Reporter* reporter,
         } else if (result == Result::kExcusedFailure) {
             return result;
         } else if (result == Result::kFail) {
-            // TODO: Support RGB/BGR 101010x, BGRA 1010102 on the GPU.
+            // TODO: Support BGR 101010x, BGRA 1010102 on the GPU.
             if (SkColorTypeToGrColorType(writeCT) != GrColorType::kUnknown) {
                 ERRORF(reporter,
                        "Write failed. Write CT: %s, Write AT: %s Dst CT: %s, Dst AT: %s, "

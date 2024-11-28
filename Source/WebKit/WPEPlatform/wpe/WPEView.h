@@ -44,7 +44,7 @@ typedef struct _WPEBuffer WPEBuffer;
 typedef struct _WPEBufferDMABufFormats WPEBufferDMABufFormats;
 typedef struct _WPEDisplay WPEDisplay;
 typedef struct _WPEEvent WPEEvent;
-typedef struct _WPEMonitor WPEMonitor;
+typedef struct _WPEScreen WPEScreen;
 typedef struct _WPERectangle WPERectangle;
 
 struct _WPEViewClass
@@ -119,7 +119,7 @@ WPE_API void                    wpe_view_set_cursor_from_bytes         (WPEView 
                                                                         guint               hotspot_x,
                                                                         guint               hotspot_y);
 WPE_API WPEToplevelState        wpe_view_get_toplevel_state            (WPEView            *view);
-WPE_API WPEMonitor             *wpe_view_get_monitor                   (WPEView            *view);
+WPE_API WPEScreen              *wpe_view_get_screen                    (WPEView            *view);
 WPE_API gboolean                wpe_view_render_buffer                 (WPEView            *view,
                                                                         WPEBuffer          *buffer,
                                                                         const WPERectangle *damage_rects,

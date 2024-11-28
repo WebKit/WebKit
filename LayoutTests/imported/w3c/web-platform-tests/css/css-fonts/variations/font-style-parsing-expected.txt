@@ -28,7 +28,7 @@ PASS Font-style (supports): 'oblique' followed by calc is valid even if it must 
 PASS Font-style (supports): 'oblique' followed by calc is valid even if it mixes units (with computation)
 PASS Font-style (computed): 'italic' is valid
 PASS Font-style (computed): 'oblique' is valid
-FAIL Font-style (computed): 'oblique' followed by zero degrees is valid assert_equals: Font-style computed style: 'oblique' followed by zero degrees is valid expected "oblique 0deg" but got "normal"
+PASS Font-style (computed): 'oblique' followed by zero degrees is valid
 PASS Font-style (computed): 'oblique' followed by positive angle in degrees is valid
 FAIL Font-style (computed): 'oblique' followed by positive angle in radians is valid assert_equals: Font-style computed style: 'oblique' followed by positive angle in radians is valid expected "oblique 28.6479deg" but got "oblique 28.5deg"
 PASS Font-style (computed): 'oblique' followed by positive angle in gradians is valid

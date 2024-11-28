@@ -1,0 +1,4 @@
+
+PASS <model> with loop=false should stop after reaching its duration
+PASS <model> with loop=true should loop and continue playing after reaching its duration
+

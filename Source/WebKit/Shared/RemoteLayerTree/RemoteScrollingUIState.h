@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <WebCore/ProcessQualified.h>
 #include <wtf/HashSet.h>
 #include <wtf/OptionSet.h>
 #include <wtf/TZoneMalloc.h>
@@ -36,7 +37,7 @@ class Encoder;
 
 namespace WebCore {
 struct ScrollingNodeIDType;
-using ScrollingNodeID = ProcessQualified<LegacyNullableObjectIdentifier<ScrollingNodeIDType>>;
+using ScrollingNodeID = ProcessQualified<ObjectIdentifier<ScrollingNodeIDType>>;
 }
 
 namespace WebKit {

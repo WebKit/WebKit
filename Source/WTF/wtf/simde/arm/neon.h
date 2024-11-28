@@ -1,5 +1,5 @@
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -32,7 +32,7 @@
 #define SIMDE_ARM_NEON_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/types.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -66,7 +66,7 @@
 #define SIMDE_ARM_NEON_TYPES_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/simde-common.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -100,7 +100,7 @@
 #define SIMDE_COMMON_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/hedley.h :: */
 /* Hedley - https://nemequ.github.io/hedley
  * Created by Evan Nemerson <evan@nemerson.com>
@@ -2151,7 +2151,7 @@ HEDLEY_DIAGNOSTIC_POP
 
 #define SIMDE_VERSION_MAJOR 0
 #define SIMDE_VERSION_MINOR 8
-#define SIMDE_VERSION_MICRO 2
+#define SIMDE_VERSION_MICRO 3
 #define SIMDE_VERSION HEDLEY_VERSION_ENCODE(SIMDE_VERSION_MAJOR, SIMDE_VERSION_MINOR, SIMDE_VERSION_MICRO)
 // Also update meson.build in the root directory of the repository
 
@@ -2159,7 +2159,7 @@ HEDLEY_DIAGNOSTIC_POP
 #include <stdint.h>
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/simde-detect-clang.h :: */
 /* Detect Clang Version
  * Created by Evan Nemerson <evan@nemerson.com>
@@ -2294,7 +2294,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_DETECT_CLANG_H) */
 /* :: End simde/simde-detect-clang.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/simde-arch.h :: */
 /* Architecture detection
  * Created by Evan Nemerson <evan@nemerson.com>
@@ -2341,7 +2341,7 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARCH_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 /* Alpha
    <https://en.wikipedia.org/wiki/DEC_Alpha> */
@@ -2428,6 +2428,9 @@ HEDLEY_DIAGNOSTIC_POP
 #endif
 #if defined(__ARM_FEATURE_CRYPTO) && __ARM_FEATURE_CRYPTO
 #  define SIMDE_ARCH_ARM_CRYPTO
+#endif
+#if defined(__ARM_FEATURE_CRC32) && __ARM_FEATURE_CRC32
+#  define SIMDE_ARCH_ARM_CRC32
 #endif
 #if defined(__ARM_FEATURE_DOTPROD) && __ARM_FEATURE_DOTPROD
 #  define SIMDE_ARCH_ARM_DOTPROD
@@ -2986,7 +2989,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARCH_H) */
 /* :: End simde/simde-arch.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/simde-features.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -3023,9 +3026,9 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_FEATURES_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/simde-diagnostic.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -3077,11 +3080,11 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_DIAGNOSTIC_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 /* This is only to help us implement functions like _mm_undefined_ps. */
 #if defined(SIMDE_DIAGNOSTIC_DISABLE_UNINITIALIZED_)
@@ -4222,9 +4225,9 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_FEATURES_H) */
 /* :: End simde/simde-features.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/simde-math.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -4262,9 +4265,9 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_MATH_H 1
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 #include <stdint.h>
 #if defined(SIMDE_ARM_NEON_A64V8_NATIVE)
@@ -4405,7 +4408,7 @@ SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
   #endif
 #endif
 
-#if !defined(SIMDE_NANF)
+#if !defined(SIMDE_MATH_NANF)
   #if \
       HEDLEY_HAS_BUILTIN(__builtin_nanf) || \
       HEDLEY_GCC_VERSION_CHECK(3,3,0) || \
@@ -5182,16 +5185,36 @@ simde_math_fpclass(double v, const int imm8) {
   #endif
 #endif
 
+#if !defined(simde_math_pow)
+  #if SIMDE_MATH_BUILTIN_LIBM(pow)
+    #define simde_math_pow(y, x) __builtin_pow(y, x)
+  #elif defined(SIMDE_MATH_HAVE_CMATH)
+    #define simde_math_pow(y, x) std::pow(y, x)
+  #elif defined(SIMDE_MATH_HAVE_MATH_H)
+    #define simde_math_pow(y, x) pow(y, x)
+  #endif
+#endif
+
+#if !defined(simde_math_powf)
+  #if SIMDE_MATH_BUILTIN_LIBM(powf)
+    #define simde_math_powf(y, x) __builtin_powf(y, x)
+  #elif defined(SIMDE_MATH_HAVE_CMATH)
+    #define simde_math_powf(y, x) std::pow(y, x)
+  #elif defined(SIMDE_MATH_HAVE_MATH_H)
+    #define simde_math_powf(y, x) powf(y, x)
+  #endif
+#endif
+
 #if HEDLEY_HAS_BUILTIN(__builtin_exp10) ||  HEDLEY_GCC_VERSION_CHECK(3,4,0)
   #  define simde_math_exp10(v) __builtin_exp10(v)
 #else
-#  define simde_math_exp10(v) pow(10.0, (v))
+#  define simde_math_exp10(v) simde_math_pow(10.0, (v))
 #endif
 
 #if HEDLEY_HAS_BUILTIN(__builtin_exp10f) ||  HEDLEY_GCC_VERSION_CHECK(3,4,0)
   #  define simde_math_exp10f(v) __builtin_exp10f(v)
 #else
-#  define simde_math_exp10f(v) powf(10.0f, (v))
+#  define simde_math_exp10f(v) simde_math_powf(10.0f, (v))
 #endif
 
 #if !defined(simde_math_fabs)
@@ -5431,26 +5454,6 @@ simde_math_fpclass(double v, const int imm8) {
     #define simde_math_nearbyintf(v) std::nearbyint(v)
   #elif defined(SIMDE_MATH_HAVE_MATH_H)
     #define simde_math_nearbyintf(v) nearbyintf(v)
-  #endif
-#endif
-
-#if !defined(simde_math_pow)
-  #if SIMDE_MATH_BUILTIN_LIBM(pow)
-    #define simde_math_pow(y, x) __builtin_pow(y, x)
-  #elif defined(SIMDE_MATH_HAVE_CMATH)
-    #define simde_math_pow(y, x) std::pow(y, x)
-  #elif defined(SIMDE_MATH_HAVE_MATH_H)
-    #define simde_math_pow(y, x) pow(y, x)
-  #endif
-#endif
-
-#if !defined(simde_math_powf)
-  #if SIMDE_MATH_BUILTIN_LIBM(powf)
-    #define simde_math_powf(y, x) __builtin_powf(y, x)
-  #elif defined(SIMDE_MATH_HAVE_CMATH)
-    #define simde_math_powf(y, x) std::pow(y, x)
-  #elif defined(SIMDE_MATH_HAVE_MATH_H)
-    #define simde_math_powf(y, x) powf(y, x)
   #endif
 #endif
 
@@ -6295,7 +6298,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_MATH_H) */
 /* :: End simde/simde-math.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/simde-constify.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -6350,7 +6353,7 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_CONSTIFY_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DIAGNOSTIC_DISABLE_VARIADIC_MACROS_
@@ -6697,7 +6700,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif
 /* :: End simde/simde-constify.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/simde-align.h :: */
 /* Alignment
  * Created by Evan Nemerson <evan@nemerson.com>
@@ -6754,7 +6757,7 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ALIGN_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 /* I know this seems a little silly, but some non-hosted compilers
  * don't have stddef.h, so we try to accommodate them. */
@@ -7952,7 +7955,7 @@ SIMDE_DEFINE_CONVERSION_FUNCTION_(simde_float64_as_uint64,      uint64_t, simde_
 SIMDE_DEFINE_CONVERSION_FUNCTION_(simde_uint64_as_float64, simde_float64, uint64_t)
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/check.h :: */
 /* Check (assertions)
  * Portable Snippets - https://github.com/nemequ/portable-snippets
@@ -7974,9 +7977,9 @@ SIMDE_DEFINE_CONVERSION_FUNCTION_(simde_uint64_as_float64, simde_float64, uint64
 #endif
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 #include <stdint.h>
 
 #if !defined(_WIN32)
@@ -8017,7 +8020,7 @@ SIMDE_DEFINE_CONVERSION_FUNCTION_(simde_uint64_as_float64, simde_float64, uint64
 #  endif
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/debug-trap.h :: */
 /* Debugging assertions and traps
  * Portable Snippets - https://github.com/nemequ/portable-snippets
@@ -8506,6 +8509,9 @@ HEDLEY_DIAGNOSTIC_POP
 #    if (!HEDLEY_GCC_VERSION_CHECK(9,0,0) && !defined(SIMDE_ARCH_AARCH64)) || (!defined(SIMDE_ARCH_AARCH64) && defined(SIMDE_ARCH_ARM))
 #      define SIMDE_BUG_GCC_REV_260989
 #    endif
+#    if !HEDLEY_GCC_VERSION_CHECK(11,5,0) && (defined(SIMDE_ARCH_ARM4) || defined(SIMDE_ARCH_AARCH64))
+#      define SIMDE_BUG_GCC_114521
+#    endif
 #    if defined(SIMDE_ARCH_ARM) && !defined(SIMDE_ARCH_AARCH64)
 #      define SIMDE_BUG_GCC_95399
 #      define SIMDE_BUG_GCC_95471
@@ -8703,7 +8709,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_COMMON_H) */
 /* :: End simde/simde-common.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/simde-f16.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -8733,11 +8739,11 @@ HEDLEY_DIAGNOSTIC_POP
  */
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 #if !defined(SIMDE_FLOAT16_H)
 #define SIMDE_FLOAT16_H
@@ -9033,7 +9039,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_FLOAT16_H) */
 /* :: End simde/simde-f16.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/simde-bf16.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -9062,11 +9068,11 @@ HEDLEY_DIAGNOSTIC_POP
  */
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 #if !defined(SIMDE_BFLOAT16_H)
 #define SIMDE_BFLOAT16_H
@@ -10665,7 +10671,7 @@ HEDLEY_DIAGNOSTIC_POP
 /* :: End simde/arm/neon/types.h :: */
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/aba.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -10697,7 +10703,7 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_ABA_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/abd.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -10730,7 +10736,7 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_ABD_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/abs.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -10757,13 +10763,14 @@ HEDLEY_DIAGNOSTIC_POP
  * Copyright:
  *   2020      Evan Nemerson <evan@nemerson.com>
  *   2023      Yi-Yen Chung <eric681@andestech.com> (Copyright owned by Andes Technology)
+ *   2023      Ju-Hung Li <jhlee@pllab.cs.nthu.edu.tw> (Copyright owned by NTHU pllab)
  */
 
 #if !defined(SIMDE_ARM_NEON_ABS_H)
 #define SIMDE_ARM_NEON_ABS_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -10809,10 +10816,14 @@ simde_vabs_f16(simde_float16x4_t a) {
       r_,
       a_ = simde_float16x4_to_private(a);
 
-    SIMDE_VECTORIZE
-    for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
-      r_.values[i] = simde_vabsh_f16(a_.values[i]);
-    }
+    #if defined(SIMDE_RISCV_V_NATIVE) && defined(SIMDE_ARCH_RISCV_ZVFH)
+      r_.sv64 = __riscv_vfabs_v_f16m1(a_.sv64 , 4);
+    #else
+      SIMDE_VECTORIZE
+      for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
+        r_.values[i] = simde_vabsh_f16(a_.values[i]);
+      }
+    #endif
 
     return simde_float16x4_from_private(r_);
   #endif
@@ -10832,10 +10843,14 @@ simde_vabs_f32(simde_float32x2_t a) {
       r_,
       a_ = simde_float32x2_to_private(a);
 
-    SIMDE_VECTORIZE
-    for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
-      r_.values[i] = a_.values[i] < 0 ? -a_.values[i] : a_.values[i];
-    }
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv64 = __riscv_vfabs_v_f32m1(a_.sv64 , 2);
+    #else
+      SIMDE_VECTORIZE
+      for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
+        r_.values[i] = a_.values[i] < 0 ? -a_.values[i] : a_.values[i];
+      }
+    #endif
 
     return simde_float32x2_from_private(r_);
   #endif
@@ -10855,10 +10870,14 @@ simde_vabs_f64(simde_float64x1_t a) {
       r_,
       a_ = simde_float64x1_to_private(a);
 
-    SIMDE_VECTORIZE
-    for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
-      r_.values[i] = a_.values[i] < 0 ? -a_.values[i] : a_.values[i];
-    }
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv64 = __riscv_vfabs_v_f64m1(a_.sv64 , 1);
+    #else
+      SIMDE_VECTORIZE
+      for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
+        r_.values[i] = a_.values[i] < 0 ? -a_.values[i] : a_.values[i];
+      }
+    #endif
 
     return simde_float64x1_from_private(r_);
   #endif
@@ -10880,6 +10899,8 @@ simde_vabs_s8(simde_int8x8_t a) {
 
     #if defined(SIMDE_X86_SSSE3_NATIVE) && defined(SIMDE_X86_MMX_NATIVE)
       r_.m64 = _mm_abs_pi8(a_.m64);
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv64 = __riscv_vmax_vv_i8m1(a_.sv64 , __riscv_vneg_v_i8m1(a_.sv64 , 8) , 8);
     #elif (SIMDE_NATURAL_VECTOR_SIZE > 0) && defined(SIMDE_VECTOR_SUBSCRIPT_SCALAR) && !defined(SIMDE_BUG_GCC_100762)
       __typeof__(r_.values) m = HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), a_.values < INT8_C(0));
       r_.values = (-a_.values & m) | (a_.values & ~m);
@@ -10910,6 +10931,8 @@ simde_vabs_s16(simde_int16x4_t a) {
 
     #if defined(SIMDE_X86_SSSE3_NATIVE) && defined(SIMDE_X86_MMX_NATIVE)
       r_.m64 = _mm_abs_pi16(a_.m64);
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv64 = __riscv_vmax_vv_i16m1(a_.sv64 , __riscv_vneg_v_i16m1(a_.sv64 , 4) , 4);
     #elif defined(SIMDE_VECTOR_SUBSCRIPT_SCALAR) && !defined(SIMDE_BUG_GCC_100761)
       __typeof__(r_.values) m = HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), a_.values < INT16_C(0));
       r_.values = (-a_.values & m) | (a_.values & ~m);
@@ -10940,6 +10963,8 @@ simde_vabs_s32(simde_int32x2_t a) {
 
     #if defined(SIMDE_X86_SSSE3_NATIVE) && defined(SIMDE_X86_MMX_NATIVE)
       r_.m64 = _mm_abs_pi32(a_.m64);
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv64 = __riscv_vmax_vv_i32m1(a_.sv64 , __riscv_vneg_v_i32m1(a_.sv64 , 2) , 2);
     #elif defined(SIMDE_VECTOR_SUBSCRIPT_SCALAR) && !defined(SIMDE_BUG_GCC_100761)
       __typeof__(r_.values) m = HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), a_.values < INT32_C(0));
       r_.values = (-a_.values & m) | (a_.values & ~m);
@@ -10968,7 +10993,9 @@ simde_vabs_s64(simde_int64x1_t a) {
       r_,
       a_ = simde_int64x1_to_private(a);
 
-    #if defined(SIMDE_VECTOR_SUBSCRIPT_SCALAR)
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv64 = __riscv_vmax_vv_i64m1(a_.sv64 , __riscv_vneg_v_i64m1(a_.sv64 , 1) , 1);
+    #elif defined(SIMDE_VECTOR_SUBSCRIPT_SCALAR)
       __typeof__(r_.values) m = HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), a_.values < INT64_C(0));
       r_.values = (-a_.values & m) | (a_.values & ~m);
     #else
@@ -10996,10 +11023,14 @@ simde_vabsq_f16(simde_float16x8_t a) {
       r_,
       a_ = simde_float16x8_to_private(a);
 
-    SIMDE_VECTORIZE
-    for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
-      r_.values[i] = simde_vabsh_f16(a_.values[i]);
-    }
+    #if defined(SIMDE_RISCV_V_NATIVE) && defined(SIMDE_ARCH_RISCV_ZVFH)
+      r_.sv128 = __riscv_vfabs_v_f16m1(a_.sv128 , 8);
+    #else
+      SIMDE_VECTORIZE
+      for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
+        r_.values[i] = simde_vabsh_f16(a_.values[i]);
+      }
+    #endif
 
     return simde_float16x8_from_private(r_);
   #endif
@@ -11023,6 +11054,8 @@ simde_vabsq_f32(simde_float32x4_t a) {
 
     #if defined(SIMDE_WASM_SIMD128_NATIVE)
       r_.v128 = wasm_f32x4_abs(a_.v128);
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv128 = __riscv_vfabs_v_f32m1(a_.sv128 , 4);
     #elif defined(SIMDE_X86_SSE_NATIVE)
       simde_float32 mask_;
       uint32_t u32_ = UINT32_C(0x7FFFFFFF);
@@ -11060,6 +11093,8 @@ simde_vabsq_f64(simde_float64x2_t a) {
       uint64_t u64_ = UINT64_C(0x7FFFFFFFFFFFFFFF);
       simde_memcpy(&mask_, &u64_, sizeof(u64_));
       r_.m128d = _mm_and_pd(_mm_set1_pd(mask_), a_.m128d);
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv128 = __riscv_vfabs_v_f64m1(a_.sv128 , 2);
     #else
       SIMDE_VECTORIZE
       for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
@@ -11093,6 +11128,8 @@ simde_vabsq_s8(simde_int8x16_t a) {
       r_.m128i = _mm_min_epu8(a_.m128i, _mm_sub_epi8(_mm_setzero_si128(), a_.m128i));
     #elif defined(SIMDE_WASM_SIMD128_NATIVE)
       r_.v128 = wasm_i8x16_abs(a_.v128);
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv128 = __riscv_vmax_vv_i8m1(a_.sv128 , __riscv_vneg_v_i8m1(a_.sv128 , 16) , 16);
     #elif (SIMDE_NATURAL_VECTOR_SIZE > 0) && defined(SIMDE_VECTOR_SUBSCRIPT_SCALAR)
         __typeof__(r_.values) m = HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), a_.values < INT8_C(0));
         r_.values = (-a_.values & m) | (a_.values & ~m);
@@ -11129,6 +11166,8 @@ simde_vabsq_s16(simde_int16x8_t a) {
       r_.m128i = _mm_max_epi16(a_.m128i, _mm_sub_epi16(_mm_setzero_si128(), a_.m128i));
     #elif defined(SIMDE_WASM_SIMD128_NATIVE)
       r_.v128 = wasm_i16x8_abs(a_.v128);
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv128 = __riscv_vmax_vv_i16m1(a_.sv128 , __riscv_vneg_v_i16m1(a_.sv128 , 8) , 8);
     #elif (SIMDE_NATURAL_VECTOR_SIZE > 0) && defined(SIMDE_VECTOR_SUBSCRIPT_SCALAR)
       __typeof__(r_.values) m = HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), a_.values < INT16_C(0));
       r_.values = (-a_.values & m) | (a_.values & ~m);
@@ -11166,6 +11205,8 @@ simde_vabsq_s32(simde_int32x4_t a) {
       r_.m128i = _mm_sub_epi32(_mm_xor_si128(a_.m128i, m), m);
     #elif defined(SIMDE_WASM_SIMD128_NATIVE)
       r_.v128 = wasm_i32x4_abs(a_.v128);
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv128 = __riscv_vmax_vv_i32m1(a_.sv128 , __riscv_vneg_v_i32m1(a_.sv128 , 4) , 4);
     #elif (SIMDE_NATURAL_VECTOR_SIZE > 0) && defined(SIMDE_VECTOR_SUBSCRIPT_SCALAR)
       __typeof__(r_.values) m = HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), a_.values < INT32_C(0));
       r_.values = (-a_.values & m) | (a_.values & ~m);
@@ -11187,6 +11228,7 @@ simde_vabsq_s32(simde_int32x4_t a) {
 SIMDE_FUNCTION_ATTRIBUTES
 simde_int64x2_t
 simde_vabsq_s64(simde_int64x2_t a) {
+
   #if defined(SIMDE_ARM_NEON_A64V8_NATIVE)
     return vabsq_s64(a);
   #elif defined(SIMDE_ARM_NEON_A32V7_NATIVE)
@@ -11205,6 +11247,8 @@ simde_vabsq_s64(simde_int64x2_t a) {
       r_.m128i = _mm_sub_epi64(_mm_xor_si128(a_.m128i, m), m);
     #elif defined(SIMDE_WASM_SIMD128_NATIVE)
       r_.v128 = wasm_i64x2_abs(a_.v128);
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv128 = __riscv_vmax_vv_i64m1(a_.sv128 , __riscv_vneg_v_i64m1(a_.sv128 , 2) , 2);
     #elif defined(SIMDE_VECTOR_SUBSCRIPT_SCALAR)
       __typeof__(r_.values) m = HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), a_.values < INT64_C(0));
       r_.values = (-a_.values & m) | (a_.values & ~m);
@@ -11229,7 +11273,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_ABS_H) */
 /* :: End simde/arm/neon/abs.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/subl.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -11256,13 +11300,14 @@ HEDLEY_DIAGNOSTIC_POP
  * Copyright:
  *   2020      Evan Nemerson <evan@nemerson.com>
  *   2020      Sean Maher <seanptmaher@gmail.com> (Copyright owned by Google, LLC)
+ *   2023      Ju-Hung Li <jhlee@pllab.cs.nthu.edu.tw> (Copyright owned by NTHU pllab)
  */
 
 #if !defined(SIMDE_ARM_NEON_SUBL_H)
 #define SIMDE_ARM_NEON_SUBL_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/sub.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -11295,7 +11340,7 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_SUB_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -12021,7 +12066,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_SUB_H) */
 /* :: End simde/arm/neon/sub.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/movl.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -12048,13 +12093,14 @@ HEDLEY_DIAGNOSTIC_POP
  * Copyright:
  *   2020      Evan Nemerson <evan@nemerson.com>
  *   2020      Sean Maher <seanptmaher@gmail.com> (Copyright owned by Google, LLC)
+ *   2023      Chi-Wei Chu <wewe5215@gapp.nthu.edu.tw> (Copyright owned by NTHU pllab)
  */
 
 #if !defined(SIMDE_ARM_NEON_MOVL_H)
 #define SIMDE_ARM_NEON_MOVL_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/combine.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -12082,13 +12128,14 @@ HEDLEY_DIAGNOSTIC_POP
  *   2020      Evan Nemerson <evan@nemerson.com>
  *   2020      Sean Maher <seanptmaher@gmail.com> (Copyright owned by Google, LLC)
  *   2023      Yi-Yen Chung <eric681@andestech.com> (Copyright owned by Andes Technology)
+ *   2023      Chi-Wei Chu <wewe5215@gapp.nthu.edu.tw> (Copyright owned by NTHU pllab)
  */
 
 #if !defined(SIMDE_ARM_NEON_COMBINE_H)
 #define SIMDE_ARM_NEON_COMBINE_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -12104,14 +12151,16 @@ simde_vcombine_f16(simde_float16x4_t low, simde_float16x4_t high) {
     simde_float16x4_private
       low_ = simde_float16x4_to_private(low),
       high_ = simde_float16x4_to_private(high);
-
-      size_t halfway = (sizeof(r_.values) / sizeof(r_.values[0])) / 2;
-      SIMDE_VECTORIZE
-      for (size_t i = 0 ; i < halfway ; i++) {
-        r_.values[i] = low_.values[i];
-        r_.values[i + halfway] = high_.values[i];
-      }
-
+      #if defined(SIMDE_RISCV_V_NATIVE) && SIMDE_ARCH_RISCV_ZVFH
+        r_.sv128 = __riscv_vslideup_vx_f16m1(low_.sv64, high_.sv64, 4, 8);
+      #else
+        size_t halfway = (sizeof(r_.values) / sizeof(r_.values[0])) / 2;
+        SIMDE_VECTORIZE
+        for (size_t i = 0 ; i < halfway ; i++) {
+          r_.values[i] = low_.values[i];
+          r_.values[i + halfway] = high_.values[i];
+        }
+      #endif
     return simde_float16x8_from_private(r_);
   #endif
 }
@@ -12134,7 +12183,9 @@ simde_vcombine_f32(simde_float32x2_t low, simde_float32x2_t high) {
     /* Note: __builtin_shufflevector can have a the output contain
      * twice the number of elements, __builtin_shuffle cannot.
      * Using SIMDE_SHUFFLE_VECTOR_ here would not work. */
-    #if defined(SIMDE_VECTOR_SUBSCRIPT) && HEDLEY_HAS_BUILTIN(__builtin_shufflevector)
+    #if defined(SIMDE_RISCV_V_NATIVE)
+        r_.sv128 = __riscv_vslideup_vx_f32m1(low_.sv64, high_.sv64, 2, 4);
+    #elif defined(SIMDE_VECTOR_SUBSCRIPT) && HEDLEY_HAS_BUILTIN(__builtin_shufflevector)
       r_.values = __builtin_shufflevector(low_.values, high_.values, 0, 1, 2, 3);
     #else
       size_t halfway = (sizeof(r_.values) / sizeof(r_.values[0])) / 2;
@@ -12164,7 +12215,9 @@ simde_vcombine_f64(simde_float64x1_t low, simde_float64x1_t high) {
       low_ = simde_float64x1_to_private(low),
       high_ = simde_float64x1_to_private(high);
 
-    #if defined(SIMDE_VECTOR_SUBSCRIPT) && HEDLEY_HAS_BUILTIN(__builtin_shufflevector)
+    #if defined(SIMDE_RISCV_V_NATIVE)
+        r_.sv128 = __riscv_vslideup_vx_f64m1(low_.sv64, high_.sv64, 1, 2);
+    #elif defined(SIMDE_VECTOR_SUBSCRIPT) && HEDLEY_HAS_BUILTIN(__builtin_shufflevector)
       r_.values = __builtin_shufflevector(low_.values, high_.values, 0, 1);
     #else
       size_t halfway = (sizeof(r_.values) / sizeof(r_.values[0])) / 2;
@@ -12194,7 +12247,9 @@ simde_vcombine_s8(simde_int8x8_t low, simde_int8x8_t high) {
       low_ = simde_int8x8_to_private(low),
       high_ = simde_int8x8_to_private(high);
 
-    #if defined(SIMDE_VECTOR_SUBSCRIPT) && HEDLEY_HAS_BUILTIN(__builtin_shufflevector)
+    #if defined(SIMDE_RISCV_V_NATIVE)
+        r_.sv128 = __riscv_vslideup_vx_i8m1(low_.sv64, high_.sv64, 8, 16);
+    #elif defined(SIMDE_VECTOR_SUBSCRIPT) && HEDLEY_HAS_BUILTIN(__builtin_shufflevector)
       r_.values = __builtin_shufflevector(low_.values, high_.values, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15);
     #else
       size_t halfway = (sizeof(r_.values) / sizeof(r_.values[0])) / 2;
@@ -12224,7 +12279,9 @@ simde_vcombine_s16(simde_int16x4_t low, simde_int16x4_t high) {
       low_ = simde_int16x4_to_private(low),
       high_ = simde_int16x4_to_private(high);
 
-    #if defined(SIMDE_VECTOR_SUBSCRIPT) && HEDLEY_HAS_BUILTIN(__builtin_shufflevector)
+    #if defined(SIMDE_RISCV_V_NATIVE)
+        r_.sv128 = __riscv_vslideup_vx_i16m1(low_.sv64, high_.sv64, 4, 8);
+    #elif defined(SIMDE_VECTOR_SUBSCRIPT) && HEDLEY_HAS_BUILTIN(__builtin_shufflevector)
       r_.values = __builtin_shufflevector(low_.values, high_.values, 0, 1, 2, 3, 4, 5, 6, 7);
     #else
       size_t halfway = (sizeof(r_.values) / sizeof(r_.values[0])) / 2;
@@ -12254,7 +12311,9 @@ simde_vcombine_s32(simde_int32x2_t low, simde_int32x2_t high) {
       low_ = simde_int32x2_to_private(low),
       high_ = simde_int32x2_to_private(high);
 
-    #if defined(SIMDE_VECTOR_SUBSCRIPT) && HEDLEY_HAS_BUILTIN(__builtin_shufflevector)
+    #if defined(SIMDE_RISCV_V_NATIVE)
+        r_.sv128 = __riscv_vslideup_vx_i32m1(low_.sv64, high_.sv64, 2, 4);
+    #elif defined(SIMDE_VECTOR_SUBSCRIPT) && HEDLEY_HAS_BUILTIN(__builtin_shufflevector)
       r_.values = __builtin_shufflevector(low_.values, high_.values, 0, 1, 2, 3);
     #else
       size_t halfway = (sizeof(r_.values) / sizeof(r_.values[0])) / 2;
@@ -12284,7 +12343,9 @@ simde_vcombine_s64(simde_int64x1_t low, simde_int64x1_t high) {
       low_ = simde_int64x1_to_private(low),
       high_ = simde_int64x1_to_private(high);
 
-    #if defined(SIMDE_VECTOR_SUBSCRIPT) && HEDLEY_HAS_BUILTIN(__builtin_shufflevector)
+    #if defined(SIMDE_RISCV_V_NATIVE)
+        r_.sv128 = __riscv_vslideup_vx_i64m1(low_.sv64, high_.sv64, 1, 2);
+    #elif defined(SIMDE_VECTOR_SUBSCRIPT) && HEDLEY_HAS_BUILTIN(__builtin_shufflevector)
       r_.values = __builtin_shufflevector(low_.values, high_.values, 0, 1);
     #else
       size_t halfway = (sizeof(r_.values) / sizeof(r_.values[0])) / 2;
@@ -12314,7 +12375,9 @@ simde_vcombine_u8(simde_uint8x8_t low, simde_uint8x8_t high) {
       low_ = simde_uint8x8_to_private(low),
       high_ = simde_uint8x8_to_private(high);
 
-    #if defined(SIMDE_VECTOR_SUBSCRIPT) && HEDLEY_HAS_BUILTIN(__builtin_shufflevector)
+    #if defined(SIMDE_RISCV_V_NATIVE)
+        r_.sv128 = __riscv_vslideup_vx_u8m1(low_.sv64, high_.sv64, 8, 16);
+    #elif defined(SIMDE_VECTOR_SUBSCRIPT) && HEDLEY_HAS_BUILTIN(__builtin_shufflevector)
       r_.values = __builtin_shufflevector(low_.values, high_.values, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15);
     #else
       size_t halfway = (sizeof(r_.values) / sizeof(r_.values[0])) / 2;
@@ -12344,7 +12407,9 @@ simde_vcombine_u16(simde_uint16x4_t low, simde_uint16x4_t high) {
       low_ = simde_uint16x4_to_private(low),
       high_ = simde_uint16x4_to_private(high);
 
-    #if defined(SIMDE_VECTOR_SUBSCRIPT) && HEDLEY_HAS_BUILTIN(__builtin_shufflevector)
+    #if defined(SIMDE_RISCV_V_NATIVE)
+        r_.sv128 = __riscv_vslideup_vx_u16m1(low_.sv64, high_.sv64, 4, 8);
+    #elif defined(SIMDE_VECTOR_SUBSCRIPT) && HEDLEY_HAS_BUILTIN(__builtin_shufflevector)
       r_.values = __builtin_shufflevector(low_.values, high_.values, 0, 1, 2, 3, 4, 5, 6, 7);
     #else
       size_t halfway = (sizeof(r_.values) / sizeof(r_.values[0])) / 2;
@@ -12374,7 +12439,9 @@ simde_vcombine_u32(simde_uint32x2_t low, simde_uint32x2_t high) {
       low_ = simde_uint32x2_to_private(low),
       high_ = simde_uint32x2_to_private(high);
 
-    #if defined(SIMDE_VECTOR_SUBSCRIPT) && HEDLEY_HAS_BUILTIN(__builtin_shufflevector)
+    #if defined(SIMDE_RISCV_V_NATIVE)
+        r_.sv128 = __riscv_vslideup_vx_u32m1(low_.sv64, high_.sv64, 2, 4);
+    #elif defined(SIMDE_VECTOR_SUBSCRIPT) && HEDLEY_HAS_BUILTIN(__builtin_shufflevector)
       r_.values = __builtin_shufflevector(low_.values, high_.values, 0, 1, 2, 3);
     #else
       size_t halfway = (sizeof(r_.values) / sizeof(r_.values[0])) / 2;
@@ -12404,7 +12471,9 @@ simde_vcombine_u64(simde_uint64x1_t low, simde_uint64x1_t high) {
       low_ = simde_uint64x1_to_private(low),
       high_ = simde_uint64x1_to_private(high);
 
-    #if defined(SIMDE_VECTOR_SUBSCRIPT) && HEDLEY_HAS_BUILTIN(__builtin_shufflevector)
+    #if defined(SIMDE_RISCV_V_NATIVE)
+        r_.sv128 = __riscv_vslideup_vx_u64m1(low_.sv64, high_.sv64, 1, 2);
+    #elif defined(SIMDE_VECTOR_SUBSCRIPT) && HEDLEY_HAS_BUILTIN(__builtin_shufflevector)
       r_.values = __builtin_shufflevector(low_.values, high_.values, 0, 1);
     #else
       size_t halfway = (sizeof(r_.values) / sizeof(r_.values[0])) / 2;
@@ -12553,7 +12622,10 @@ simde_vmovl_s8(simde_int8x8_t a) {
     simde_int16x8_private r_;
     simde_int8x8_private a_ = simde_int8x8_to_private(a);
 
-    #if defined(SIMDE_CONVERT_VECTOR_) && !defined(SIMDE_BUG_GCC_100761)
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      vint8mf2_t va = __riscv_vlmul_trunc_v_i8m1_i8mf2 (a_.sv64);
+      r_.sv128 = __riscv_vwcvt_x_x_v_i16m1 (va, 8);
+    #elif defined(SIMDE_CONVERT_VECTOR_) && !defined(SIMDE_BUG_GCC_100761)
       SIMDE_CONVERT_VECTOR_(r_.values, a_.values);
     #else
       SIMDE_VECTORIZE
@@ -12586,7 +12658,10 @@ simde_vmovl_s16(simde_int16x4_t a) {
     simde_int32x4_private r_;
     simde_int16x4_private a_ = simde_int16x4_to_private(a);
 
-    #if defined(SIMDE_CONVERT_VECTOR_) && !defined(SIMDE_BUG_GCC_100761)
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      vint16mf2_t va = __riscv_vlmul_trunc_v_i16m1_i16mf2 (a_.sv64);
+      r_.sv128 = __riscv_vwcvt_x_x_v_i32m1 (va, 4);
+    #elif defined(SIMDE_CONVERT_VECTOR_) && !defined(SIMDE_BUG_GCC_100761)
       SIMDE_CONVERT_VECTOR_(r_.values, a_.values);
     #else
       SIMDE_VECTORIZE
@@ -12619,7 +12694,10 @@ simde_vmovl_s32(simde_int32x2_t a) {
     simde_int64x2_private r_;
     simde_int32x2_private a_ = simde_int32x2_to_private(a);
 
-    #if defined(SIMDE_CONVERT_VECTOR_)
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      vint32mf2_t va = __riscv_vlmul_trunc_v_i32m1_i32mf2(a_.sv64);
+      r_.sv128 = __riscv_vwcvt_x_x_v_i64m1 (va, 2);
+    #elif defined(SIMDE_CONVERT_VECTOR_)
       SIMDE_CONVERT_VECTOR_(r_.values, a_.values);
     #else
       SIMDE_VECTORIZE
@@ -12652,7 +12730,10 @@ simde_vmovl_u8(simde_uint8x8_t a) {
     simde_uint16x8_private r_;
     simde_uint8x8_private a_ = simde_uint8x8_to_private(a);
 
-    #if defined(SIMDE_CONVERT_VECTOR_) && !defined(SIMDE_BUG_GCC_100761)
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      vuint8mf2_t va = __riscv_vlmul_trunc_v_u8m1_u8mf2(a_.sv64);
+      r_.sv128 = __riscv_vwcvtu_x_x_v_u16m1 (va, 8);
+    #elif defined(SIMDE_CONVERT_VECTOR_) && !defined(SIMDE_BUG_GCC_100761)
       SIMDE_CONVERT_VECTOR_(r_.values, a_.values);
     #else
       SIMDE_VECTORIZE
@@ -12685,7 +12766,10 @@ simde_vmovl_u16(simde_uint16x4_t a) {
     simde_uint32x4_private r_;
     simde_uint16x4_private a_ = simde_uint16x4_to_private(a);
 
-    #if defined(SIMDE_CONVERT_VECTOR_) && !defined(SIMDE_BUG_GCC_100761)
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      vuint16mf2_t va = __riscv_vlmul_trunc_v_u16m1_u16mf2(a_.sv64);
+      r_.sv128 = __riscv_vwcvtu_x_x_v_u32m1 (va, 4);
+    #elif defined(SIMDE_CONVERT_VECTOR_) && !defined(SIMDE_BUG_GCC_100761)
       SIMDE_CONVERT_VECTOR_(r_.values, a_.values);
     #else
       SIMDE_VECTORIZE
@@ -12718,7 +12802,10 @@ simde_vmovl_u32(simde_uint32x2_t a) {
     simde_uint64x2_private r_;
     simde_uint32x2_private a_ = simde_uint32x2_to_private(a);
 
-    #if defined(SIMDE_CONVERT_VECTOR_)
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      vuint32mf2_t va = __riscv_vlmul_trunc_v_u32m1_u32mf2(a_.sv64);
+      r_.sv128 = __riscv_vwcvtu_x_x_v_u64m1 (va, 2);
+    #elif defined(SIMDE_CONVERT_VECTOR_)
       SIMDE_CONVERT_VECTOR_(r_.values, a_.values);
     #else
       SIMDE_VECTORIZE
@@ -12741,7 +12828,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_MOVL_H) */
 /* :: End simde/arm/neon/movl.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/movl_high.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -12774,11 +12861,11 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_MOVL_HIGH_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/get_high.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -12806,13 +12893,14 @@ HEDLEY_DIAGNOSTIC_POP
  *   2020      Evan Nemerson <evan@nemerson.com>
  *   2020      Sean Maher <seanptmaher@gmail.com> (Copyright owned by Google, LLC)
  *   2023      Yi-Yen Chung <eric681@andestech.com> (Copyright owned by Andes Technology)
+ *   2023      Ju-Hung Li <jhlee@pllab.cs.nthu.edu.tw> (Copyright owned by NTHU pllab)
  */
 
 #if !defined(SIMDE_ARM_NEON_GET_HIGH_H)
 #define SIMDE_ARM_NEON_GET_HIGH_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -12826,12 +12914,14 @@ simde_vget_high_f16(simde_float16x8_t a) {
   #else
     simde_float16x4_private r_;
     simde_float16x8_private a_ = simde_float16x8_to_private(a);
-
-    SIMDE_VECTORIZE
-    for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
-      r_.values[i] = a_.values[i + (sizeof(r_.values) / sizeof(r_.values[0]))];
-    }
-
+    #if defined(SIMDE_RISCV_V_NATIVE) && SIMDE_ARCH_RISCV_ZVFH
+      r_.sv64 = __riscv_vslidedown_vx_f16m1(a_.sv128 , 4 , 8);
+    #else
+      SIMDE_VECTORIZE
+      for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
+        r_.values[i] = a_.values[i + (sizeof(r_.values) / sizeof(r_.values[0]))];
+      }
+    #endif
     return simde_float16x4_from_private(r_);
   #endif
 }
@@ -12849,7 +12939,9 @@ simde_vget_high_f32(simde_float32x4_t a) {
     simde_float32x2_private r_;
     simde_float32x4_private a_ = simde_float32x4_to_private(a);
 
-    #if HEDLEY_HAS_BUILTIN(__builtin_shufflevector)
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv64 = __riscv_vslidedown_vx_f32m1(a_.sv128 , 2 , 4);
+    #elif HEDLEY_HAS_BUILTIN(__builtin_shufflevector)
       r_.values = __builtin_shufflevector(a_.values, a_.values, 2, 3);
     #else
       SIMDE_VECTORIZE
@@ -12875,7 +12967,9 @@ simde_vget_high_f64(simde_float64x2_t a) {
     simde_float64x1_private r_;
     simde_float64x2_private a_ = simde_float64x2_to_private(a);
 
-    #if HEDLEY_HAS_BUILTIN(__builtin_shufflevector)
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv64 = __riscv_vslidedown_vx_f64m1(a_.sv128 , 1 , 2);
+    #elif HEDLEY_HAS_BUILTIN(__builtin_shufflevector)
       r_.values = __builtin_shufflevector(a_.values, a_.values, 1);
     #else
       SIMDE_VECTORIZE
@@ -12901,7 +12995,9 @@ simde_vget_high_s8(simde_int8x16_t a) {
     simde_int8x8_private r_;
     simde_int8x16_private a_ = simde_int8x16_to_private(a);
 
-    #if HEDLEY_HAS_BUILTIN(__builtin_shufflevector)
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv64 = __riscv_vslidedown_vx_i8m1(a_.sv128 , 8 , 16);
+    #elif HEDLEY_HAS_BUILTIN(__builtin_shufflevector)
       r_.values = __builtin_shufflevector(a_.values, a_.values, 8, 9, 10, 11, 12, 13, 14, 15);
     #else
       SIMDE_VECTORIZE
@@ -12927,7 +13023,9 @@ simde_vget_high_s16(simde_int16x8_t a) {
     simde_int16x4_private r_;
     simde_int16x8_private a_ = simde_int16x8_to_private(a);
 
-    #if HEDLEY_HAS_BUILTIN(__builtin_shufflevector)
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv64 = __riscv_vslidedown_vx_i16m1(a_.sv128 , 4 , 8);
+    #elif HEDLEY_HAS_BUILTIN(__builtin_shufflevector)
       r_.values = __builtin_shufflevector(a_.values, a_.values, 4, 5, 6, 7);
     #else
       SIMDE_VECTORIZE
@@ -12953,7 +13051,9 @@ simde_vget_high_s32(simde_int32x4_t a) {
     simde_int32x2_private r_;
     simde_int32x4_private a_ = simde_int32x4_to_private(a);
 
-    #if HEDLEY_HAS_BUILTIN(__builtin_shufflevector)
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv64 = __riscv_vslidedown_vx_i32m1(a_.sv128 , 2 , 4);
+    #elif HEDLEY_HAS_BUILTIN(__builtin_shufflevector)
       r_.values = __builtin_shufflevector(a_.values, a_.values, 2, 3);
     #else
       SIMDE_VECTORIZE
@@ -12979,7 +13079,9 @@ simde_vget_high_s64(simde_int64x2_t a) {
     simde_int64x1_private r_;
     simde_int64x2_private a_ = simde_int64x2_to_private(a);
 
-    #if HEDLEY_HAS_BUILTIN(__builtin_shufflevector)
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv64 = __riscv_vslidedown_vx_i64m1(a_.sv128 , 1 , 2);
+    #elif HEDLEY_HAS_BUILTIN(__builtin_shufflevector)
       r_.values = __builtin_shufflevector(a_.values, a_.values, 1);
     #else
       SIMDE_VECTORIZE
@@ -13005,7 +13107,9 @@ simde_vget_high_u8(simde_uint8x16_t a) {
     simde_uint8x8_private r_;
     simde_uint8x16_private a_ = simde_uint8x16_to_private(a);
 
-    #if HEDLEY_HAS_BUILTIN(__builtin_shufflevector)
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv64 = __riscv_vslidedown_vx_u8m1(a_.sv128 , 8 , 16);
+    #elif HEDLEY_HAS_BUILTIN(__builtin_shufflevector)
       r_.values = __builtin_shufflevector(a_.values, a_.values, 8, 9, 10, 11, 12, 13, 14,15);
     #else
       SIMDE_VECTORIZE
@@ -13031,7 +13135,9 @@ simde_vget_high_u16(simde_uint16x8_t a) {
     simde_uint16x4_private r_;
     simde_uint16x8_private a_ = simde_uint16x8_to_private(a);
 
-    #if HEDLEY_HAS_BUILTIN(__builtin_shufflevector)
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv64 = __riscv_vslidedown_vx_u16m1(a_.sv128 , 4 , 8);
+    #elif HEDLEY_HAS_BUILTIN(__builtin_shufflevector)
       r_.values = __builtin_shufflevector(a_.values, a_.values, 4, 5, 6, 7);
     #else
       SIMDE_VECTORIZE
@@ -13057,7 +13163,9 @@ simde_vget_high_u32(simde_uint32x4_t a) {
     simde_uint32x2_private r_;
     simde_uint32x4_private a_ = simde_uint32x4_to_private(a);
 
-    #if HEDLEY_HAS_BUILTIN(__builtin_shufflevector)
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv64 = __riscv_vslidedown_vx_u32m1(a_.sv128 , 2 , 4);
+    #elif HEDLEY_HAS_BUILTIN(__builtin_shufflevector)
       r_.values = __builtin_shufflevector(a_.values, a_.values, 2, 3);
     #else
       SIMDE_VECTORIZE
@@ -13083,7 +13191,9 @@ simde_vget_high_u64(simde_uint64x2_t a) {
     simde_uint64x1_private r_;
     simde_uint64x2_private a_ = simde_uint64x2_to_private(a);
 
-    #if HEDLEY_HAS_BUILTIN(__builtin_shufflevector)
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv64 = __riscv_vslidedown_vx_u64m1(a_.sv128 , 1 , 2);
+    #elif HEDLEY_HAS_BUILTIN(__builtin_shufflevector)
       r_.values = __builtin_shufflevector(a_.values, a_.values, 1);
     #else
       SIMDE_VECTORIZE
@@ -13288,7 +13398,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_MOVL_HIGH_H) */
 /* :: End simde/arm/neon/movl_high.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -13299,6 +13409,12 @@ simde_int16x8_t
 simde_vsubl_s8(simde_int8x8_t a, simde_int8x8_t b) {
   #if defined(SIMDE_ARM_NEON_A32V7_NATIVE)
     return vsubl_s8(a, b);
+  #elif defined(SIMDE_RISCV_V_NATIVE)
+    simde_int16x8_private r_;
+    simde_int8x8_private a_ = simde_int8x8_to_private(a);
+    simde_int8x8_private b_ = simde_int8x8_to_private(b);
+    r_.sv128 = __riscv_vwsub_vv_i16m1(__riscv_vlmul_trunc_v_i8m1_i8mf2(a_.sv64) , __riscv_vlmul_trunc_v_i8m1_i8mf2(b_.sv64) , 8);
+    return simde_int16x8_from_private(r_);
   #else
     return simde_vsubq_s16(simde_vmovl_s8(a), simde_vmovl_s8(b));
   #endif
@@ -13313,6 +13429,12 @@ simde_int32x4_t
 simde_vsubl_s16(simde_int16x4_t a, simde_int16x4_t b) {
   #if defined(SIMDE_ARM_NEON_A32V7_NATIVE)
     return vsubl_s16(a, b);
+  #elif defined(SIMDE_RISCV_V_NATIVE)
+    simde_int32x4_private r_;
+    simde_int16x4_private a_ = simde_int16x4_to_private(a);
+    simde_int16x4_private b_ = simde_int16x4_to_private(b);
+    r_.sv128 = __riscv_vwsub_vv_i32m1(__riscv_vlmul_trunc_v_i16m1_i16mf2(a_.sv64) , __riscv_vlmul_trunc_v_i16m1_i16mf2(b_.sv64) , 4);
+    return simde_int32x4_from_private(r_);
   #else
     return simde_vsubq_s32(simde_vmovl_s16(a), simde_vmovl_s16(b));
   #endif
@@ -13327,6 +13449,12 @@ simde_int64x2_t
 simde_vsubl_s32(simde_int32x2_t a, simde_int32x2_t b) {
   #if defined(SIMDE_ARM_NEON_A32V7_NATIVE)
     return vsubl_s32(a, b);
+  #elif defined(SIMDE_RISCV_V_NATIVE)
+    simde_int64x2_private r_;
+    simde_int32x2_private a_ = simde_int32x2_to_private(a);
+    simde_int32x2_private b_ = simde_int32x2_to_private(b);
+    r_.sv128 = __riscv_vwsub_vv_i64m1(__riscv_vlmul_trunc_v_i32m1_i32mf2(a_.sv64) , __riscv_vlmul_trunc_v_i32m1_i32mf2(b_.sv64) , 2);
+    return simde_int64x2_from_private(r_);
   #else
     return simde_vsubq_s64(simde_vmovl_s32(a), simde_vmovl_s32(b));
   #endif
@@ -13341,6 +13469,12 @@ simde_uint16x8_t
 simde_vsubl_u8(simde_uint8x8_t a, simde_uint8x8_t b) {
   #if defined(SIMDE_ARM_NEON_A32V7_NATIVE)
     return vsubl_u8(a, b);
+  #elif defined(SIMDE_RISCV_V_NATIVE)
+    simde_uint16x8_private r_;
+    simde_uint8x8_private a_ = simde_uint8x8_to_private(a);
+    simde_uint8x8_private b_ = simde_uint8x8_to_private(b);
+    r_.sv128 = __riscv_vwsubu_vv_u16m1(__riscv_vlmul_trunc_v_u8m1_u8mf2 (a_.sv64) , __riscv_vlmul_trunc_v_u8m1_u8mf2 (b_.sv64) , 8);
+    return simde_uint16x8_from_private(r_);
   #else
     return simde_vsubq_u16(simde_vmovl_u8(a), simde_vmovl_u8(b));
   #endif
@@ -13355,6 +13489,12 @@ simde_uint32x4_t
 simde_vsubl_u16(simde_uint16x4_t a, simde_uint16x4_t b) {
   #if defined(SIMDE_ARM_NEON_A32V7_NATIVE)
     return vsubl_u16(a, b);
+  #elif defined(SIMDE_RISCV_V_NATIVE)
+    simde_uint32x4_private r_;
+    simde_uint16x4_private a_ = simde_uint16x4_to_private(a);
+    simde_uint16x4_private b_ = simde_uint16x4_to_private(b);
+    r_.sv128 = __riscv_vwsubu_vv_u32m1(__riscv_vlmul_trunc_v_u16m1_u16mf2 (a_.sv64) , __riscv_vlmul_trunc_v_u16m1_u16mf2 (b_.sv64) , 4);
+    return simde_uint32x4_from_private(r_);
   #else
     return simde_vsubq_u32(simde_vmovl_u16(a), simde_vmovl_u16(b));
   #endif
@@ -13369,6 +13509,12 @@ simde_uint64x2_t
 simde_vsubl_u32(simde_uint32x2_t a, simde_uint32x2_t b) {
   #if defined(SIMDE_ARM_NEON_A32V7_NATIVE)
     return vsubl_u32(a, b);
+  #elif defined(SIMDE_RISCV_V_NATIVE)
+    simde_uint64x2_private r_;
+    simde_uint32x2_private a_ = simde_uint32x2_to_private(a);
+    simde_uint32x2_private b_ = simde_uint32x2_to_private(b);
+    r_.sv128 = __riscv_vwsubu_vv_u64m1(__riscv_vlmul_trunc_v_u32m1_u32mf2 (a_.sv64) , __riscv_vlmul_trunc_v_u32m1_u32mf2 (b_.sv64) , 4);
+    return simde_uint64x2_from_private(r_);
   #else
     return simde_vsubq_u64(simde_vmovl_u32(a), simde_vmovl_u32(b));
   #endif
@@ -13384,7 +13530,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_SUBL_H) */
 /* :: End simde/arm/neon/subl.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/movn.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -13410,13 +13556,14 @@ HEDLEY_DIAGNOSTIC_POP
  *
  * Copyright:
  *   2020      Evan Nemerson <evan@nemerson.com>
+ *   2023      Chi-Wei Chu <wewe5215@gapp.nthu.edu.tw> (Copyright owned by NTHU pllab)
  */
 
 #if !defined(SIMDE_ARM_NEON_MOVN_H)
 #define SIMDE_ARM_NEON_MOVN_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -13431,7 +13578,9 @@ simde_vmovn_s16(simde_int16x8_t a) {
     simde_int8x8_private r_;
     simde_int16x8_private a_ = simde_int16x8_to_private(a);
 
-    #if defined(SIMDE_CONVERT_VECTOR_)
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv64 = __riscv_vlmul_ext_v_i8mf2_i8m1(__riscv_vncvt_x_x_w_i8mf2(a_.sv128, 8));
+    #elif defined(SIMDE_CONVERT_VECTOR_)
       SIMDE_CONVERT_VECTOR_(r_.values, a_.values);
     #else
       SIMDE_VECTORIZE
@@ -13457,7 +13606,9 @@ simde_vmovn_s32(simde_int32x4_t a) {
     simde_int16x4_private r_;
     simde_int32x4_private a_ = simde_int32x4_to_private(a);
 
-    #if defined(SIMDE_CONVERT_VECTOR_)
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv64 = __riscv_vlmul_ext_v_i16mf2_i16m1(__riscv_vncvt_x_x_w_i16mf2(a_.sv128, 4));
+    #elif defined(SIMDE_CONVERT_VECTOR_)
       SIMDE_CONVERT_VECTOR_(r_.values, a_.values);
     #else
       SIMDE_VECTORIZE
@@ -13483,7 +13634,9 @@ simde_vmovn_s64(simde_int64x2_t a) {
     simde_int32x2_private r_;
     simde_int64x2_private a_ = simde_int64x2_to_private(a);
 
-    #if defined(SIMDE_CONVERT_VECTOR_)
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv64 = __riscv_vlmul_ext_v_i32mf2_i32m1(__riscv_vncvt_x_x_w_i32mf2(a_.sv128, 2));
+    #elif defined(SIMDE_CONVERT_VECTOR_)
       SIMDE_CONVERT_VECTOR_(r_.values, a_.values);
     #else
       SIMDE_VECTORIZE
@@ -13509,7 +13662,9 @@ simde_vmovn_u16(simde_uint16x8_t a) {
     simde_uint8x8_private r_;
     simde_uint16x8_private a_ = simde_uint16x8_to_private(a);
 
-    #if defined(SIMDE_CONVERT_VECTOR_)
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv64 = __riscv_vlmul_ext_v_u8mf2_u8m1(__riscv_vncvt_x_x_w_u8mf2(a_.sv128, 8));
+    #elif defined(SIMDE_CONVERT_VECTOR_)
       SIMDE_CONVERT_VECTOR_(r_.values, a_.values);
     #else
       SIMDE_VECTORIZE
@@ -13535,7 +13690,9 @@ simde_vmovn_u32(simde_uint32x4_t a) {
     simde_uint16x4_private r_;
     simde_uint32x4_private a_ = simde_uint32x4_to_private(a);
 
-    #if defined(SIMDE_CONVERT_VECTOR_)
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv64 = __riscv_vlmul_ext_v_u16mf2_u16m1(__riscv_vncvt_x_x_w_u16mf2(a_.sv128, 4));
+    #elif defined(SIMDE_CONVERT_VECTOR_)
       SIMDE_CONVERT_VECTOR_(r_.values, a_.values);
     #else
       SIMDE_VECTORIZE
@@ -13561,7 +13718,9 @@ simde_vmovn_u64(simde_uint64x2_t a) {
     simde_uint32x2_private r_;
     simde_uint64x2_private a_ = simde_uint64x2_to_private(a);
 
-    #if defined(SIMDE_CONVERT_VECTOR_)
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv64 = __riscv_vlmul_ext_v_u32mf2_u32m1(__riscv_vncvt_x_x_w_u32mf2(a_.sv128, 2));
+    #elif defined(SIMDE_CONVERT_VECTOR_)
       SIMDE_CONVERT_VECTOR_(r_.values, a_.values);
     #else
       SIMDE_VECTORIZE
@@ -13584,9 +13743,9 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_MOVN_H) */
 /* :: End simde/arm/neon/movn.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/reinterpret.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -13621,7 +13780,7 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_REINTERPRET_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -21716,7 +21875,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_ABD_H) */
 /* :: End simde/arm/neon/abd.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/add.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -21750,7 +21909,7 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_ADD_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -22861,7 +23020,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_ABA_H) */
 /* :: End simde/arm/neon/aba.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/abal.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -22887,13 +23046,14 @@ HEDLEY_DIAGNOSTIC_POP
  *
  * Copyright:
  *   2023      Yi-Yen Chung <eric681@andestech.com> (Copyright owned by Andes Technology)
+ *   2023      Chi-Wei Chu <wewe5215@gapp.nthu.edu.tw> (Copyright owned by NTHU pllab)
  */
 
 #if !defined(SIMDE_ARM_NEON_ABAL_H)
 #define SIMDE_ARM_NEON_ABAL_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/abdl.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -22925,13 +23085,13 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_ABDL_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -23048,7 +23208,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_ABDL_H) */
 /* :: End simde/arm/neon/abdl.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -23059,6 +23219,14 @@ simde_int16x8_t
 simde_vabal_s8(simde_int16x8_t a, simde_int8x8_t b, simde_int8x8_t c) {
   #if defined(SIMDE_ARM_NEON_A32V7_NATIVE)
     return vabal_s8(a, b, c);
+  #elif defined(SIMDE_RISCV_V_NATIVE)
+    simde_int16x8_private r_, a_ = simde_int16x8_to_private(a);
+    simde_int8x8_private b_ = simde_int8x8_to_private(b);
+    simde_int8x8_private c_ = simde_int8x8_to_private(c);
+    vint16m1_t rst = __riscv_vwsub_vv_i16m1(__riscv_vlmul_trunc_v_i8m1_i8mf2(b_.sv64) , \
+      __riscv_vlmul_trunc_v_i8m1_i8mf2(c_.sv64) , 8);
+    r_.sv128 = __riscv_vadd_vv_i16m1(__riscv_vmax_vv_i16m1(rst , __riscv_vneg_v_i16m1(rst , 8) , 8), a_.sv128, 8);
+    return simde_int16x8_from_private(r_);
   #else
     return simde_vaddq_s16(simde_vabdl_s8(b, c), a);
   #endif
@@ -23073,6 +23241,13 @@ simde_int32x4_t
 simde_vabal_s16(simde_int32x4_t a, simde_int16x4_t b, simde_int16x4_t c) {
   #if defined(SIMDE_ARM_NEON_A32V7_NATIVE)
     return vabal_s16(a, b, c);
+  #elif defined(SIMDE_RISCV_V_NATIVE)
+    simde_int32x4_private r_, a_ = simde_int32x4_to_private(a);
+    simde_int16x4_private b_ = simde_int16x4_to_private(b);
+    simde_int16x4_private c_ = simde_int16x4_to_private(c);
+    vint32m1_t rst = __riscv_vwsub_vv_i32m1(__riscv_vlmul_trunc_v_i16m1_i16mf2(b_.sv64) , __riscv_vlmul_trunc_v_i16m1_i16mf2(c_.sv64) , 4);
+    r_.sv128 = __riscv_vadd_vv_i32m1(__riscv_vmax_vv_i32m1(rst , __riscv_vneg_v_i32m1(rst , 4) , 4), a_.sv128, 4);
+    return simde_int32x4_from_private(r_);
   #else
     return simde_vaddq_s32(simde_vabdl_s16(b, c), a);
   #endif
@@ -23087,6 +23262,13 @@ simde_int64x2_t
 simde_vabal_s32(simde_int64x2_t a, simde_int32x2_t b, simde_int32x2_t c) {
   #if defined(SIMDE_ARM_NEON_A32V7_NATIVE)
     return vabal_s32(a, b, c);
+  #elif defined(SIMDE_RISCV_V_NATIVE)
+    simde_int64x2_private r_, a_ = simde_int64x2_to_private(a);
+    simde_int32x2_private b_ = simde_int32x2_to_private(b);
+    simde_int32x2_private c_ = simde_int32x2_to_private(c);
+    vint64m1_t rst = __riscv_vwsub_vv_i64m1(__riscv_vlmul_trunc_v_i32m1_i32mf2(b_.sv64) , __riscv_vlmul_trunc_v_i32m1_i32mf2(c_.sv64) , 2);
+    r_.sv128 = __riscv_vadd_vv_i64m1(__riscv_vmax_vv_i64m1(rst , __riscv_vneg_v_i64m1(rst , 2) , 2), a_.sv128, 2);
+    return simde_int64x2_from_private(r_);
   #else
     return simde_vaddq_s64(simde_vabdl_s32(b, c), a);
   #endif
@@ -23101,6 +23283,16 @@ simde_uint16x8_t
 simde_vabal_u8(simde_uint16x8_t a, simde_uint8x8_t b, simde_uint8x8_t c) {
   #if defined(SIMDE_ARM_NEON_A32V7_NATIVE)
     return vabal_u8(a, b, c);
+  #elif defined(SIMDE_RISCV_V_NATIVE)
+    simde_uint16x8_private r_, a_ = simde_uint16x8_to_private(a);
+    simde_uint8x8_private b_ = simde_uint8x8_to_private(b);
+    simde_uint8x8_private c_ = simde_uint8x8_to_private(c);
+    vint16m1_t a_tmp = __riscv_vreinterpret_v_u16m1_i16m1(__riscv_vwcvtu_x_x_v_u16m1(__riscv_vlmul_trunc_v_u8m1_u8mf2(b_.sv64), 8));
+    vint16m1_t b_tmp = __riscv_vreinterpret_v_u16m1_i16m1(__riscv_vwcvtu_x_x_v_u16m1(__riscv_vlmul_trunc_v_u8m1_u8mf2(c_.sv64), 8));
+    vint16m1_t rst = __riscv_vsub_vv_i16m1(a_tmp, b_tmp, 8);
+    r_.sv128 = __riscv_vadd_vv_u16m1(__riscv_vreinterpret_v_i16m1_u16m1(__riscv_vmax_vv_i16m1(rst , __riscv_vneg_v_i16m1(rst , 8) , 8)), \
+      a_.sv128, 8);
+    return simde_uint16x8_from_private(r_);
   #else
     return simde_vaddq_u16(simde_vabdl_u8(b, c), a);
   #endif
@@ -23115,6 +23307,16 @@ simde_uint32x4_t
 simde_vabal_u16(simde_uint32x4_t a, simde_uint16x4_t b, simde_uint16x4_t c) {
   #if defined(SIMDE_ARM_NEON_A32V7_NATIVE)
     return vabal_u16(a, b, c);
+  #elif defined(SIMDE_RISCV_V_NATIVE)
+    simde_uint32x4_private r_, a_ = simde_uint32x4_to_private(a);
+    simde_uint16x4_private b_ = simde_uint16x4_to_private(b);
+    simde_uint16x4_private c_ = simde_uint16x4_to_private(c);
+    vint32m1_t a_tmp = __riscv_vreinterpret_v_u32m1_i32m1(__riscv_vwcvtu_x_x_v_u32m1(__riscv_vlmul_trunc_v_u16m1_u16mf2(b_.sv64), 4));
+    vint32m1_t b_tmp = __riscv_vreinterpret_v_u32m1_i32m1(__riscv_vwcvtu_x_x_v_u32m1(__riscv_vlmul_trunc_v_u16m1_u16mf2(c_.sv64), 4));
+    vint32m1_t rst = __riscv_vsub_vv_i32m1(a_tmp, b_tmp, 4);
+    r_.sv128 = __riscv_vadd_vv_u32m1(__riscv_vreinterpret_v_i32m1_u32m1(__riscv_vmax_vv_i32m1(rst , __riscv_vneg_v_i32m1(rst , 4) , 4)), \
+      a_.sv128, 4);
+    return simde_uint32x4_from_private(r_);
   #else
     return simde_vaddq_u32(simde_vabdl_u16(b, c), a);
   #endif
@@ -23129,6 +23331,16 @@ simde_uint64x2_t
 simde_vabal_u32(simde_uint64x2_t a, simde_uint32x2_t b, simde_uint32x2_t c) {
   #if defined(SIMDE_ARM_NEON_A32V7_NATIVE)
     return vabal_u32(a, b, c);
+  #elif defined(SIMDE_RISCV_V_NATIVE)
+    simde_uint64x2_private r_, a_ = simde_uint64x2_to_private(a);
+    simde_uint32x2_private b_ = simde_uint32x2_to_private(b);
+    simde_uint32x2_private c_ = simde_uint32x2_to_private(c);
+    vint64m1_t a_tmp = __riscv_vreinterpret_v_u64m1_i64m1(__riscv_vwcvtu_x_x_v_u64m1(__riscv_vlmul_trunc_v_u32m1_u32mf2(b_.sv64), 2));
+    vint64m1_t b_tmp = __riscv_vreinterpret_v_u64m1_i64m1(__riscv_vwcvtu_x_x_v_u64m1(__riscv_vlmul_trunc_v_u32m1_u32mf2(c_.sv64), 2));
+    vint64m1_t rst = __riscv_vsub_vv_i64m1(a_tmp, b_tmp, 4);
+    r_.sv128 = __riscv_vadd_vv_u64m1(__riscv_vreinterpret_v_i64m1_u64m1(__riscv_vmax_vv_i64m1(rst , __riscv_vneg_v_i64m1(rst , 2) , 2)), \
+      a_.sv128, 2);
+    return simde_uint64x2_from_private(r_);
   #else
     return simde_vaddq_u64(simde_vabdl_u32(b, c), a);
   #endif
@@ -23145,7 +23357,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_abal_H) */
 /* :: End simde/arm/neon/abal.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/abal_high.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -23177,11 +23389,11 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_ABAL_HIGH_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -23277,11 +23489,11 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_abal_H) */
 /* :: End simde/arm/neon/abal_high.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/abdl_high.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -23307,13 +23519,14 @@ HEDLEY_DIAGNOSTIC_POP
  *
  * Copyright:
  *   2023      Yi-Yen Chung <eric681@andestech.com> (Copyright owned by Andes Technology)
+ *   2023      Chi-Wei Chu <wewe5215@gapp.nthu.edu.tw> (Copyright owned by NTHU pllab)
  */
 
 #if !defined(SIMDE_ARM_NEON_ABDL_HIGH_H)
 #define SIMDE_ARM_NEON_ABDL_HIGH_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -23324,6 +23537,14 @@ simde_int16x8_t
 simde_vabdl_high_s8(simde_int8x16_t a, simde_int8x16_t b) {
   #if defined(SIMDE_ARM_NEON_A64V8_NATIVE)
     return vabdl_high_s8(a, b);
+  #elif defined(SIMDE_RISCV_V_NATIVE)
+    simde_int16x8_private r_;
+    simde_int8x16_private a_ = simde_int8x16_to_private(a);
+    simde_int8x16_private b_ = simde_int8x16_to_private(b);
+    vint16m1_t rst = __riscv_vwsub_vv_i16m1(__riscv_vlmul_trunc_v_i8m1_i8mf2(__riscv_vslidedown_vx_i8m1(a_.sv128 , 8 , 16)),
+      __riscv_vlmul_trunc_v_i8m1_i8mf2(__riscv_vslidedown_vx_i8m1(b_.sv128 , 8 , 16)) , 8);
+    r_.sv128 = __riscv_vmax_vv_i16m1(rst , __riscv_vneg_v_i16m1(rst , 8) , 8);
+    return simde_int16x8_from_private(r_);
   #else
     return simde_vabdl_s8(simde_vget_high_s8(a), simde_vget_high_s8(b));
   #endif
@@ -23338,6 +23559,14 @@ simde_int32x4_t
 simde_vabdl_high_s16(simde_int16x8_t a, simde_int16x8_t b) {
   #if defined(SIMDE_ARM_NEON_A64V8_NATIVE)
     return vabdl_high_s16(a, b);
+  #elif defined(SIMDE_RISCV_V_NATIVE)
+    simde_int32x4_private r_;
+    simde_int16x8_private a_ = simde_int16x8_to_private(a);
+    simde_int16x8_private b_ = simde_int16x8_to_private(b);
+    vint32m1_t rst = __riscv_vwsub_vv_i32m1(__riscv_vlmul_trunc_v_i16m1_i16mf2(__riscv_vslidedown_vx_i16m1(a_.sv128 , 4 , 8)) , \
+      __riscv_vlmul_trunc_v_i16m1_i16mf2(__riscv_vslidedown_vx_i16m1(b_.sv128 , 4 , 8)) , 4);
+    r_.sv128 = __riscv_vmax_vv_i32m1(rst , __riscv_vneg_v_i32m1(rst , 4) , 4);
+    return simde_int32x4_from_private(r_);
   #else
     return simde_vabdl_s16(simde_vget_high_s16(a), simde_vget_high_s16(b));
   #endif
@@ -23352,6 +23581,14 @@ simde_int64x2_t
 simde_vabdl_high_s32(simde_int32x4_t a, simde_int32x4_t b) {
   #if defined(SIMDE_ARM_NEON_A64V8_NATIVE)
     return vabdl_high_s32(a, b);
+  #elif defined(SIMDE_RISCV_V_NATIVE)
+    simde_int64x2_private r_;
+    simde_int32x4_private a_ = simde_int32x4_to_private(a);
+    simde_int32x4_private b_ = simde_int32x4_to_private(b);
+    vint64m1_t rst = __riscv_vwsub_vv_i64m1(__riscv_vlmul_trunc_v_i32m1_i32mf2(__riscv_vslidedown_vx_i32m1(a_.sv128 , 2 , 4)) , \
+      __riscv_vlmul_trunc_v_i32m1_i32mf2(__riscv_vslidedown_vx_i32m1(b_.sv128 , 2 , 4)) , 2);
+    r_.sv128 = __riscv_vmax_vv_i64m1(rst , __riscv_vneg_v_i64m1(rst , 2) , 2);
+    return simde_int64x2_from_private(r_);
   #else
     return simde_vabdl_s32(simde_vget_high_s32(a), simde_vget_high_s32(b));
   #endif
@@ -23366,6 +23603,17 @@ simde_uint16x8_t
 simde_vabdl_high_u8(simde_uint8x16_t a, simde_uint8x16_t b) {
   #if defined(SIMDE_ARM_NEON_A64V8_NATIVE)
     return vabdl_high_u8(a, b);
+  #elif defined(SIMDE_RISCV_V_NATIVE)
+    simde_uint16x8_private r_;
+    simde_uint8x16_private a_ = simde_uint8x16_to_private(a);
+    simde_uint8x16_private b_ = simde_uint8x16_to_private(b);
+    vint16m1_t a_tmp = __riscv_vreinterpret_v_u16m1_i16m1(__riscv_vwcvtu_x_x_v_u16m1( \
+      __riscv_vlmul_trunc_v_u8m1_u8mf2(__riscv_vslidedown_vx_u8m1(a_.sv128 , 8 , 16)), 8));
+    vint16m1_t b_tmp = __riscv_vreinterpret_v_u16m1_i16m1(__riscv_vwcvtu_x_x_v_u16m1( \
+      __riscv_vlmul_trunc_v_u8m1_u8mf2(__riscv_vslidedown_vx_u8m1(b_.sv128 , 8 , 16)), 8));
+    vint16m1_t rst = __riscv_vsub_vv_i16m1(a_tmp, b_tmp, 8);
+    r_.sv128 = __riscv_vreinterpret_v_i16m1_u16m1(__riscv_vmax_vv_i16m1(rst , __riscv_vneg_v_i16m1(rst , 8) , 8));
+    return simde_uint16x8_from_private(r_);
   #else
     return simde_vabdl_u8(simde_vget_high_u8(a), simde_vget_high_u8(b));
   #endif
@@ -23380,6 +23628,17 @@ simde_uint32x4_t
 simde_vabdl_high_u16(simde_uint16x8_t a, simde_uint16x8_t b) {
   #if defined(SIMDE_ARM_NEON_A64V8_NATIVE)
     return vabdl_high_u16(a, b);
+  #elif defined(SIMDE_RISCV_V_NATIVE)
+    simde_uint32x4_private r_;
+    simde_uint16x8_private a_ = simde_uint16x8_to_private(a);
+    simde_uint16x8_private b_ = simde_uint16x8_to_private(b);
+    vint32m1_t a_tmp = __riscv_vreinterpret_v_u32m1_i32m1(__riscv_vwcvtu_x_x_v_u32m1( \
+      __riscv_vlmul_trunc_v_u16m1_u16mf2(__riscv_vslidedown_vx_u16m1(a_.sv128 , 4 , 8)), 4));
+    vint32m1_t b_tmp = __riscv_vreinterpret_v_u32m1_i32m1(__riscv_vwcvtu_x_x_v_u32m1( \
+      __riscv_vlmul_trunc_v_u16m1_u16mf2(__riscv_vslidedown_vx_u16m1(b_.sv128 , 4 , 8)), 4));
+    vint32m1_t rst = __riscv_vsub_vv_i32m1(a_tmp, b_tmp, 4);
+    r_.sv128 = __riscv_vreinterpret_v_i32m1_u32m1(__riscv_vmax_vv_i32m1(rst , __riscv_vneg_v_i32m1(rst , 4) , 4));
+    return simde_uint32x4_from_private(r_);
   #else
     return simde_vabdl_u16(simde_vget_high_u16(a), simde_vget_high_u16(b));
   #endif
@@ -23394,6 +23653,17 @@ simde_uint64x2_t
 simde_vabdl_high_u32(simde_uint32x4_t a, simde_uint32x4_t b) {
   #if defined(SIMDE_ARM_NEON_A64V8_NATIVE)
     return vabdl_high_u32(a, b);
+  #elif defined(SIMDE_RISCV_V_NATIVE)
+    simde_uint64x2_private r_;
+    simde_uint32x4_private a_ = simde_uint32x4_to_private(a);
+    simde_uint32x4_private b_ = simde_uint32x4_to_private(b);
+    vint64m1_t a_tmp = __riscv_vreinterpret_v_u64m1_i64m1(__riscv_vwcvtu_x_x_v_u64m1( \
+      __riscv_vlmul_trunc_v_u32m1_u32mf2(__riscv_vslidedown_vx_u32m1(a_.sv128 , 2 , 4)), 2));
+    vint64m1_t b_tmp = __riscv_vreinterpret_v_u64m1_i64m1(__riscv_vwcvtu_x_x_v_u64m1( \
+      __riscv_vlmul_trunc_v_u32m1_u32mf2(__riscv_vslidedown_vx_u32m1(b_.sv128 , 2 , 4)), 2));
+    vint64m1_t rst = __riscv_vsub_vv_i64m1(a_tmp, b_tmp, 4);
+    r_.sv128 = __riscv_vreinterpret_v_i64m1_u64m1(__riscv_vmax_vv_i64m1(rst , __riscv_vneg_v_i64m1(rst , 2) , 2));
+    return simde_uint64x2_from_private(r_);
   #else
     return simde_vabdl_u32(simde_vget_high_u32(a), simde_vget_high_u32(b));
   #endif
@@ -23409,11 +23679,11 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_ABDL_HIGH_H) */
 /* :: End simde/arm/neon/abdl_high.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/addhn.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -23445,9 +23715,9 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_ADDHN_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/shr_n.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -23475,13 +23745,14 @@ HEDLEY_DIAGNOSTIC_POP
  *   2020      Evan Nemerson <evan@nemerson.com>
  *   2020      Christopher Moore <moore@free.fr>
  *   2023      Yi-Yen Chung <eric681@andestech.com> (Copyright owned by Andes Technology)
+ *   2023      Chi-Wei Chu <wewe5215@gapp.nthu.edu.tw> (Copyright owned by NTHU pllab)
  */
 
 #if !defined(SIMDE_ARM_NEON_SHR_N_H)
 #define SIMDE_ARM_NEON_SHR_N_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -23552,7 +23823,9 @@ simde_vshr_n_s8 (const simde_int8x8_t a, const int n)
     a_ = simde_int8x8_to_private(a);
   int32_t n_ = (n == 8) ? 7 : n;
 
-  #if defined(SIMDE_VECTOR_SUBSCRIPT_SCALAR) && !defined(SIMDE_BUG_GCC_100762)
+  #if defined(SIMDE_RISCV_V_NATIVE)
+    r_.sv64 =  __riscv_vsra_vx_i8m1 (a_.sv64, n_, 8);
+  #elif defined(SIMDE_VECTOR_SUBSCRIPT_SCALAR) && !defined(SIMDE_BUG_GCC_100762)
     r_.values = a_.values >> n_;
   #else
     SIMDE_VECTORIZE
@@ -23585,7 +23858,9 @@ simde_vshr_n_s16 (const simde_int16x4_t a, const int n)
     a_ = simde_int16x4_to_private(a);
   int32_t n_ = (n == 16) ? 15 : n;
 
-  #if defined(SIMDE_VECTOR_SUBSCRIPT_SCALAR) && !defined(SIMDE_BUG_GCC_100762)
+  #if defined(SIMDE_RISCV_V_NATIVE)
+    r_.sv64 =  __riscv_vsra_vx_i16m1 (a_.sv64, n_, 4);
+  #elif defined(SIMDE_VECTOR_SUBSCRIPT_SCALAR) && !defined(SIMDE_BUG_GCC_100762)
     r_.values = a_.values >> n_;
   #else
     SIMDE_VECTORIZE
@@ -23615,7 +23890,9 @@ simde_vshr_n_s32 (const simde_int32x2_t a, const int n)
     a_ = simde_int32x2_to_private(a);
   int32_t n_ = (n == 32) ? 31 : n;
 
-  #if defined(SIMDE_VECTOR_SUBSCRIPT_SCALAR)
+  #if defined(SIMDE_RISCV_V_NATIVE)
+    r_.sv64 =  __riscv_vsra_vx_i32m1 (a_.sv64, n_, 2);
+  #elif defined(SIMDE_VECTOR_SUBSCRIPT_SCALAR)
     r_.values = a_.values >> n_;
   #else
     SIMDE_VECTORIZE
@@ -23645,7 +23922,9 @@ simde_vshr_n_s64 (const simde_int64x1_t a, const int n)
     a_ = simde_int64x1_to_private(a);
   int32_t n_ = (n == 64) ? 63 : n;
 
-  #if defined(SIMDE_VECTOR_SUBSCRIPT_SCALAR)
+  #if defined(SIMDE_RISCV_V_NATIVE)
+    r_.sv64 =  __riscv_vsra_vx_i64m1 (a_.sv64, n_, 1);
+  #elif defined(SIMDE_VECTOR_SUBSCRIPT_SCALAR)
     r_.values = a_.values >> n_;
   #else
     SIMDE_VECTORIZE
@@ -23675,7 +23954,9 @@ simde_vshr_n_u8 (const simde_uint8x8_t a, const int n)
   if (n == 8) {
     simde_memset(&r_, 0, sizeof(r_));
   } else {
-    #if defined(SIMDE_VECTOR_SUBSCRIPT_SCALAR) && !defined(SIMDE_BUG_GCC_100762)
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv64 =  __riscv_vsrl_vx_u8m1 (a_.sv64, n, 8);
+    #elif defined(SIMDE_VECTOR_SUBSCRIPT_SCALAR) && !defined(SIMDE_BUG_GCC_100762)
       r_.values = a_.values >> n;
     #else
       SIMDE_VECTORIZE
@@ -23709,7 +23990,9 @@ simde_vshr_n_u16 (const simde_uint16x4_t a, const int n)
   if (n == 16) {
     simde_memset(&r_, 0, sizeof(r_));
   } else {
-    #if defined(SIMDE_VECTOR_SUBSCRIPT_SCALAR)
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv64 =  __riscv_vsrl_vx_u16m1 (a_.sv64, n, 4);
+    #elif defined(SIMDE_VECTOR_SUBSCRIPT_SCALAR)
       r_.values = a_.values >> n;
     #else
       SIMDE_VECTORIZE
@@ -23742,7 +24025,9 @@ simde_vshr_n_u32 (const simde_uint32x2_t a, const int n)
   if (n == 32) {
     simde_memset(&r_, 0, sizeof(r_));
   } else {
-    #if defined(SIMDE_VECTOR_SUBSCRIPT_SCALAR)
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv64 =  __riscv_vsrl_vx_u32m1 (a_.sv64, n, 2);
+    #elif defined(SIMDE_VECTOR_SUBSCRIPT_SCALAR)
       r_.values = a_.values >> n;
     #else
       SIMDE_VECTORIZE
@@ -23775,7 +24060,9 @@ simde_vshr_n_u64 (const simde_uint64x1_t a, const int n)
   if (n == 64) {
     simde_memset(&r_, 0, sizeof(r_));
   } else {
-    #if defined(SIMDE_VECTOR_SUBSCRIPT_SCALAR)
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv64 =  __riscv_vsrl_vx_u64m1 (a_.sv64, n, 1);
+    #elif defined(SIMDE_VECTOR_SUBSCRIPT_SCALAR)
       r_.values = a_.values >> n;
     #else
       SIMDE_VECTORIZE
@@ -23821,6 +24108,9 @@ simde_vshrq_n_s8 (const simde_int8x16_t a, const int n)
                   _mm_and_si128(_mm_set1_epi16(0x00FF), _mm_srai_epi16(_mm_slli_epi16(a_.m128i, 8), 8 + (n))));
   #elif defined(SIMDE_WASM_SIMD128_NATIVE)
     r_.v128 = wasm_i8x16_shr(a_.v128, ((n) == 8) ? 7 : HEDLEY_STATIC_CAST(uint32_t, n));
+  #elif defined(SIMDE_RISCV_V_NATIVE)
+    int32_t n_ = (n == 8) ? 7 : n;
+    r_.sv128 =  __riscv_vsra_vx_i8m1 (a_.sv128, n_, 16);
   #elif defined(SIMDE_VECTOR_SUBSCRIPT_SCALAR)
     r_.values = a_.values >> ((n == 8) ? 7 : n);
   #else
@@ -23854,6 +24144,9 @@ simde_vshrq_n_s16 (const simde_int16x8_t a, const int n)
     r_.m128i = _mm_srai_epi16(a_.m128i, n);
   #elif defined(SIMDE_WASM_SIMD128_NATIVE)
     r_.v128 = wasm_i16x8_shr(a_.v128, ((n) == 16) ? 15 : HEDLEY_STATIC_CAST(uint32_t, n));
+  #elif defined(SIMDE_RISCV_V_NATIVE)
+    int32_t n_ = (n == 16) ? 15 : n;
+    r_.sv128 =  __riscv_vsra_vx_i16m1 (a_.sv128, n_, 8);
   #elif defined(SIMDE_VECTOR_SUBSCRIPT_SCALAR)
     r_.values = a_.values >> ((n == 16) ? 15 : n);
   #else
@@ -23887,6 +24180,9 @@ simde_vshrq_n_s32 (const simde_int32x4_t a, const int n)
     r_.m128i = _mm_srai_epi32(a_.m128i, n);
   #elif defined(SIMDE_WASM_SIMD128_NATIVE)
     r_.v128 = wasm_i32x4_shr(a_.v128, ((n) == 32) ? 31 : HEDLEY_STATIC_CAST(uint32_t, n));
+  #elif defined(SIMDE_RISCV_V_NATIVE)
+    int32_t n_ = (n == 32) ? 31 : n;
+    r_.sv128 =  __riscv_vsra_vx_i32m1 (a_.sv128, n_, 4);
   #elif defined(SIMDE_VECTOR_SUBSCRIPT_SCALAR)
     r_.values = a_.values >> ((n == 32) ? 31 : n);
   #else
@@ -23919,6 +24215,9 @@ simde_vshrq_n_s64 (const simde_int64x2_t a, const int n)
 
   #if defined(SIMDE_WASM_SIMD128_NATIVE)
     r_.v128 = wasm_i64x2_shr(a_.v128, ((n) == 64) ? 63 : HEDLEY_STATIC_CAST(uint32_t, n));
+  #elif defined(SIMDE_RISCV_V_NATIVE)
+    int32_t n_ = (n == 64) ? 63 : n;
+    r_.sv128 =  __riscv_vsra_vx_i64m1 (a_.sv128, n_, 2);
   #elif defined(SIMDE_VECTOR_SUBSCRIPT_SCALAR)
     r_.values = a_.values >> ((n == 64) ? 63 : n);
   #else
@@ -23960,7 +24259,9 @@ simde_vshrq_n_u8 (const simde_uint8x16_t a, const int n)
       if (n == 8) {
         simde_memset(&r_, 0, sizeof(r_));
       } else {
-        #if defined(SIMDE_VECTOR_SUBSCRIPT_SCALAR)
+        #if defined(SIMDE_RISCV_V_NATIVE)
+          r_.sv128 =  __riscv_vsrl_vx_u8m1 (a_.sv128, n, 16);
+        #elif defined(SIMDE_VECTOR_SUBSCRIPT_SCALAR)
           r_.values = a_.values >> n;
         #else
           SIMDE_VECTORIZE
@@ -24000,7 +24301,9 @@ simde_vshrq_n_u16 (const simde_uint16x8_t a, const int n)
       if (n == 16) {
         simde_memset(&r_, 0, sizeof(r_));
       } else {
-        #if defined(SIMDE_VECTOR_SUBSCRIPT_SCALAR)
+        #if defined(SIMDE_RISCV_V_NATIVE)
+          r_.sv128 =  __riscv_vsrl_vx_u16m1 (a_.sv128, n, 8);
+        #elif defined(SIMDE_VECTOR_SUBSCRIPT_SCALAR)
           r_.values = a_.values >> n;
         #else
           SIMDE_VECTORIZE
@@ -24040,7 +24343,9 @@ simde_vshrq_n_u32 (const simde_uint32x4_t a, const int n)
     if (n == 32) {
       simde_memset(&r_, 0, sizeof(r_));
     } else {
-      #if defined(SIMDE_VECTOR_SUBSCRIPT_SCALAR)
+      #if defined(SIMDE_RISCV_V_NATIVE)
+          r_.sv128 =  __riscv_vsrl_vx_u32m1 (a_.sv128, n, 4);
+      #elif defined(SIMDE_VECTOR_SUBSCRIPT_SCALAR)
         r_.values = a_.values >> n;
       #else
         SIMDE_VECTORIZE
@@ -24080,7 +24385,9 @@ simde_vshrq_n_u64 (const simde_uint64x2_t a, const int n)
     if (n == 64) {
       simde_memset(&r_, 0, sizeof(r_));
     } else {
-      #if defined(SIMDE_VECTOR_SUBSCRIPT_SCALAR) && !defined(SIMDE_BUG_GCC_97248)
+      #if defined(SIMDE_RISCV_V_NATIVE)
+          r_.sv128 =  __riscv_vsrl_vx_u64m1 (a_.sv128, n, 2);
+      #elif defined(SIMDE_VECTOR_SUBSCRIPT_SCALAR) && !defined(SIMDE_BUG_GCC_97248)
         r_.values = a_.values >> n;
       #else
         SIMDE_VECTORIZE
@@ -24110,10 +24417,10 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_SHR_N_H) */
 /* :: End simde/arm/neon/shr_n.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -24293,7 +24600,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_ADDHN_H) */
 /* :: End simde/arm/neon/addhn.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/addhn_high.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -24325,9 +24632,9 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_ADDHN_HIGH_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -24423,7 +24730,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_ADDHN_HIGH_H) */
 /* :: End simde/arm/neon/addhn_high.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/addl.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -24450,19 +24757,20 @@ HEDLEY_DIAGNOSTIC_POP
  * Copyright:
  *   2020      Evan Nemerson <evan@nemerson.com>
  *   2020      Sean Maher <seanptmaher@gmail.com> (Copyright owned by Google, LLC)
+ *   2023      Ju-Hung Li <jhlee@pllab.cs.nthu.edu.tw> (Copyright owned by NTHU pllab)
  */
 
 #if !defined(SIMDE_ARM_NEON_ADDL_H)
 #define SIMDE_ARM_NEON_ADDL_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -24473,6 +24781,13 @@ simde_int16x8_t
 simde_vaddl_s8(simde_int8x8_t a, simde_int8x8_t b) {
   #if defined(SIMDE_ARM_NEON_A32V7_NATIVE)
     return vaddl_s8(a, b);
+  #elif defined(SIMDE_RISCV_V_NATIVE)
+    simde_int16x8_private r_;
+    simde_int8x8_private a_ = simde_int8x8_to_private(a);
+    simde_int8x8_private b_ = simde_int8x8_to_private(b);
+
+    r_.sv128 = __riscv_vwadd_vv_i16m1(__riscv_vlmul_trunc_v_i8m1_i8mf2(a_.sv64) , __riscv_vlmul_trunc_v_i8m1_i8mf2(b_.sv64) , 8);
+    return simde_int16x8_from_private(r_);
   #else
     return simde_vaddq_s16(simde_vmovl_s8(a), simde_vmovl_s8(b));
   #endif
@@ -24487,6 +24802,13 @@ simde_int32x4_t
 simde_vaddl_s16(simde_int16x4_t a, simde_int16x4_t b) {
   #if defined(SIMDE_ARM_NEON_A32V7_NATIVE)
     return vaddl_s16(a, b);
+  #elif defined(SIMDE_RISCV_V_NATIVE)
+    simde_int32x4_private r_;
+    simde_int16x4_private a_ = simde_int16x4_to_private(a);
+    simde_int16x4_private b_ = simde_int16x4_to_private(b);
+
+    r_.sv128 = __riscv_vwadd_vv_i32m1(__riscv_vlmul_trunc_v_i16m1_i16mf2(a_.sv64) , __riscv_vlmul_trunc_v_i16m1_i16mf2(b_.sv64) , 4);
+    return simde_int32x4_from_private(r_);
   #else
     return simde_vaddq_s32(simde_vmovl_s16(a), simde_vmovl_s16(b));
   #endif
@@ -24501,6 +24823,13 @@ simde_int64x2_t
 simde_vaddl_s32(simde_int32x2_t a, simde_int32x2_t b) {
   #if defined(SIMDE_ARM_NEON_A32V7_NATIVE)
     return vaddl_s32(a, b);
+  #elif defined(SIMDE_RISCV_V_NATIVE)
+    simde_int64x2_private r_;
+    simde_int32x2_private a_ = simde_int32x2_to_private(a);
+    simde_int32x2_private b_ = simde_int32x2_to_private(b);
+
+    r_.sv128 = __riscv_vwadd_vv_i64m1(__riscv_vlmul_trunc_v_i32m1_i32mf2(a_.sv64) , __riscv_vlmul_trunc_v_i32m1_i32mf2(b_.sv64) , 2);
+    return simde_int64x2_from_private(r_);
   #else
     return simde_vaddq_s64(simde_vmovl_s32(a), simde_vmovl_s32(b));
   #endif
@@ -24515,6 +24844,13 @@ simde_uint16x8_t
 simde_vaddl_u8(simde_uint8x8_t a, simde_uint8x8_t b) {
   #if defined(SIMDE_ARM_NEON_A32V7_NATIVE)
     return vaddl_u8(a, b);
+  #elif defined(SIMDE_RISCV_V_NATIVE)
+    simde_uint16x8_private r_;
+    simde_uint8x8_private a_ = simde_uint8x8_to_private(a);
+    simde_uint8x8_private b_ = simde_uint8x8_to_private(b);
+
+    r_.sv128 = __riscv_vwaddu_vv_u16m1(__riscv_vlmul_trunc_v_u8m1_u8mf2 (a_.sv64) , __riscv_vlmul_trunc_v_u8m1_u8mf2 (b_.sv64) , 8);
+    return simde_uint16x8_from_private(r_);
   #else
     return simde_vaddq_u16(simde_vmovl_u8(a), simde_vmovl_u8(b));
   #endif
@@ -24529,6 +24865,13 @@ simde_uint32x4_t
 simde_vaddl_u16(simde_uint16x4_t a, simde_uint16x4_t b) {
   #if defined(SIMDE_ARM_NEON_A32V7_NATIVE)
     return vaddl_u16(a, b);
+  #elif defined(SIMDE_RISCV_V_NATIVE)
+    simde_uint32x4_private r_;
+    simde_uint16x4_private a_ = simde_uint16x4_to_private(a);
+    simde_uint16x4_private b_ = simde_uint16x4_to_private(b);
+
+    r_.sv128 = __riscv_vwaddu_vv_u32m1(__riscv_vlmul_trunc_v_u16m1_u16mf2 (a_.sv64) , __riscv_vlmul_trunc_v_u16m1_u16mf2 (b_.sv64) , 4);
+    return simde_uint32x4_from_private(r_);
   #else
     return simde_vaddq_u32(simde_vmovl_u16(a), simde_vmovl_u16(b));
   #endif
@@ -24543,6 +24886,13 @@ simde_uint64x2_t
 simde_vaddl_u32(simde_uint32x2_t a, simde_uint32x2_t b) {
   #if defined(SIMDE_ARM_NEON_A32V7_NATIVE)
     return vaddl_u32(a, b);
+  #elif defined(SIMDE_RISCV_V_NATIVE)
+    simde_uint64x2_private r_;
+    simde_uint32x2_private a_ = simde_uint32x2_to_private(a);
+    simde_uint32x2_private b_ = simde_uint32x2_to_private(b);
+
+    r_.sv128 = __riscv_vwaddu_vv_u64m1(__riscv_vlmul_trunc_v_u32m1_u32mf2 (a_.sv64) , __riscv_vlmul_trunc_v_u32m1_u32mf2 (b_.sv64) , 4);
+    return simde_uint64x2_from_private(r_);
   #else
     return simde_vaddq_u64(simde_vmovl_u32(a), simde_vmovl_u32(b));
   #endif
@@ -24558,7 +24908,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_ADDL_H) */
 /* :: End simde/arm/neon/addl.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/addlv.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -24584,17 +24934,18 @@ HEDLEY_DIAGNOSTIC_POP
  *
  * Copyright:
  *   2020      Evan Nemerson <evan@nemerson.com>
+ *   2023      Ju-Hung Li <jhlee@pllab.cs.nthu.edu.tw> (Copyright owned by NTHU pllab)
  */
 
 #if !defined(SIMDE_ARM_NEON_ADDLV_H)
 #define SIMDE_ARM_NEON_ADDLV_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/addv.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -24620,13 +24971,14 @@ HEDLEY_DIAGNOSTIC_POP
  *
  * Copyright:
  *   2020      Evan Nemerson <evan@nemerson.com>
+ *   2023      Ju-Hung Li <jhlee@pllab.cs.nthu.edu.tw> (Copyright owned by NTHU pllab)
  */
 
 #if !defined(SIMDE_ARM_NEON_ADDV_H)
 #define SIMDE_ARM_NEON_ADDV_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -24642,11 +24994,17 @@ simde_vaddv_f32(simde_float32x2_t a) {
   #else
     simde_float32x2_private a_ = simde_float32x2_to_private(a);
 
-    r = 0;
-    SIMDE_VECTORIZE_REDUCTION(+:r)
-    for (size_t i = 0 ; i < (sizeof(a_.values) / sizeof(a_.values[0])) ; i++) {
-      r += a_.values[i];
-    }
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      vfloat32m1_t zero = __riscv_vfmv_v_f_f32m1(0 , 1);
+      vfloat32m1_t sum = __riscv_vfredosum_vs_f32m1_f32m1(a_.sv64 , zero , 2);
+      r = __riscv_vfmv_f_s_f32m1_f32 (sum);
+    #else
+      r = 0;
+      SIMDE_VECTORIZE_REDUCTION(+:r)
+      for (size_t i = 0 ; i < (sizeof(a_.values) / sizeof(a_.values[0])) ; i++) {
+        r += a_.values[i];
+      }
+    #endif
   #endif
 
   return r;
@@ -24666,11 +25024,17 @@ simde_vaddv_s8(simde_int8x8_t a) {
   #else
     simde_int8x8_private a_ = simde_int8x8_to_private(a);
 
-    r = 0;
-    SIMDE_VECTORIZE_REDUCTION(+:r)
-    for (size_t i = 0 ; i < (sizeof(a_.values) / sizeof(a_.values[0])) ; i++) {
-      r += a_.values[i];
-    }
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      vint8m1_t zero = __riscv_vmv_v_x_i8m1(0 , 1);
+      vint8m1_t sum = __riscv_vredsum_vs_i8m1_i8m1(a_.sv64 , zero , 8);
+      r = __riscv_vmv_x_s_i8m1_i8 (sum);
+    #else
+      r = 0;
+      SIMDE_VECTORIZE_REDUCTION(+:r)
+      for (size_t i = 0 ; i < (sizeof(a_.values) / sizeof(a_.values[0])) ; i++) {
+        r += a_.values[i];
+      }
+    #endif
   #endif
 
   return r;
@@ -24690,11 +25054,17 @@ simde_vaddv_s16(simde_int16x4_t a) {
   #else
     simde_int16x4_private a_ = simde_int16x4_to_private(a);
 
-    r = 0;
-    SIMDE_VECTORIZE_REDUCTION(+:r)
-    for (size_t i = 0 ; i < (sizeof(a_.values) / sizeof(a_.values[0])) ; i++) {
-      r += a_.values[i];
-    }
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      vint16m1_t zero = __riscv_vmv_v_x_i16m1(0 , 1);
+      vint16m1_t sum = __riscv_vredsum_vs_i16m1_i16m1(a_.sv64 , zero , 4);
+      r = __riscv_vmv_x_s_i16m1_i16 (sum);
+    #else
+      r = 0;
+      SIMDE_VECTORIZE_REDUCTION(+:r)
+      for (size_t i = 0 ; i < (sizeof(a_.values) / sizeof(a_.values[0])) ; i++) {
+        r += a_.values[i];
+      }
+    #endif
   #endif
 
   return r;
@@ -24714,11 +25084,17 @@ simde_vaddv_s32(simde_int32x2_t a) {
   #else
     simde_int32x2_private a_ = simde_int32x2_to_private(a);
 
-    r = 0;
-    SIMDE_VECTORIZE_REDUCTION(+:r)
-    for (size_t i = 0 ; i < (sizeof(a_.values) / sizeof(a_.values[0])) ; i++) {
-      r += a_.values[i];
-    }
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      vint32m1_t zero = __riscv_vmv_v_x_i32m1(0 , 1);
+      vint32m1_t sum = __riscv_vredsum_vs_i32m1_i32m1(a_.sv64 , zero , 2);
+      r = __riscv_vmv_x_s_i32m1_i32 (sum);
+    #else
+      r = 0;
+      SIMDE_VECTORIZE_REDUCTION(+:r)
+      for (size_t i = 0 ; i < (sizeof(a_.values) / sizeof(a_.values[0])) ; i++) {
+        r += a_.values[i];
+      }
+    #endif
   #endif
 
   return r;
@@ -24738,11 +25114,17 @@ simde_vaddv_u8(simde_uint8x8_t a) {
   #else
     simde_uint8x8_private a_ = simde_uint8x8_to_private(a);
 
-    r = 0;
-    SIMDE_VECTORIZE_REDUCTION(+:r)
-    for (size_t i = 0 ; i < (sizeof(a_.values) / sizeof(a_.values[0])) ; i++) {
-      r += a_.values[i];
-    }
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      vuint8m1_t zero = __riscv_vmv_v_x_u8m1(0 , 1);
+      vuint8m1_t sum = __riscv_vredsum_vs_u8m1_u8m1(a_.sv64 , zero , 8);
+      r = __riscv_vmv_x_s_u8m1_u8 (sum);
+    #else
+      r = 0;
+      SIMDE_VECTORIZE_REDUCTION(+:r)
+      for (size_t i = 0 ; i < (sizeof(a_.values) / sizeof(a_.values[0])) ; i++) {
+        r += a_.values[i];
+      }
+    #endif
   #endif
 
   return r;
@@ -24762,11 +25144,17 @@ simde_vaddv_u16(simde_uint16x4_t a) {
   #else
     simde_uint16x4_private a_ = simde_uint16x4_to_private(a);
 
-    r = 0;
-    SIMDE_VECTORIZE_REDUCTION(+:r)
-    for (size_t i = 0 ; i < (sizeof(a_.values) / sizeof(a_.values[0])) ; i++) {
-      r += a_.values[i];
-    }
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      vuint16m1_t zero = __riscv_vmv_v_x_u16m1(0 , 1);
+      vuint16m1_t sum = __riscv_vredsum_vs_u16m1_u16m1(a_.sv64 , zero , 4);
+      r = __riscv_vmv_x_s_u16m1_u16(sum);
+    #else
+      r = 0;
+      SIMDE_VECTORIZE_REDUCTION(+:r)
+      for (size_t i = 0 ; i < (sizeof(a_.values) / sizeof(a_.values[0])) ; i++) {
+        r += a_.values[i];
+      }
+    #endif
   #endif
 
   return r;
@@ -24786,11 +25174,17 @@ simde_vaddv_u32(simde_uint32x2_t a) {
   #else
     simde_uint32x2_private a_ = simde_uint32x2_to_private(a);
 
-    r = 0;
-    SIMDE_VECTORIZE_REDUCTION(+:r)
-    for (size_t i = 0 ; i < (sizeof(a_.values) / sizeof(a_.values[0])) ; i++) {
-      r += a_.values[i];
-    }
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      vuint32m1_t zero = __riscv_vmv_v_x_u32m1(0 , 1);
+      vuint32m1_t sum = __riscv_vredsum_vs_u32m1_u32m1(a_.sv64 , zero , 2);
+      r = __riscv_vmv_x_s_u32m1_u32 (sum);
+    #else
+      r = 0;
+      SIMDE_VECTORIZE_REDUCTION(+:r)
+      for (size_t i = 0 ; i < (sizeof(a_.values) / sizeof(a_.values[0])) ; i++) {
+        r += a_.values[i];
+      }
+    #endif
   #endif
 
   return r;
@@ -24810,11 +25204,17 @@ simde_vaddvq_f32(simde_float32x4_t a) {
   #else
     simde_float32x4_private a_ = simde_float32x4_to_private(a);
 
-    r = 0;
-    SIMDE_VECTORIZE_REDUCTION(+:r)
-    for (size_t i = 0 ; i < (sizeof(a_.values) / sizeof(a_.values[0])) ; i++) {
-      r += a_.values[i];
-    }
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      vfloat32m1_t zero = __riscv_vfmv_v_f_f32m1(0 , 1);
+      vfloat32m1_t sum = __riscv_vfredosum_vs_f32m1_f32m1(a_.sv128 , zero , 4);
+      r = __riscv_vfmv_f_s_f32m1_f32 (sum);
+    #else
+      r = 0;
+      SIMDE_VECTORIZE_REDUCTION(+:r)
+      for (size_t i = 0 ; i < (sizeof(a_.values) / sizeof(a_.values[0])) ; i++) {
+        r += a_.values[i];
+      }
+    #endif
   #endif
 
   return r;
@@ -24834,11 +25234,17 @@ simde_vaddvq_f64(simde_float64x2_t a) {
   #else
     simde_float64x2_private a_ = simde_float64x2_to_private(a);
 
-    r = 0;
-    SIMDE_VECTORIZE_REDUCTION(+:r)
-    for (size_t i = 0 ; i < (sizeof(a_.values) / sizeof(a_.values[0])) ; i++) {
-      r += a_.values[i];
-    }
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      vfloat64m1_t zero = __riscv_vfmv_v_f_f64m1(0 , 1);
+      vfloat64m1_t sum = __riscv_vfredosum_vs_f64m1_f64m1(a_.sv128 , zero , 2);
+      r = __riscv_vfmv_f_s_f64m1_f64 (sum);
+    #else
+      r = 0;
+      SIMDE_VECTORIZE_REDUCTION(+:r)
+      for (size_t i = 0 ; i < (sizeof(a_.values) / sizeof(a_.values[0])) ; i++) {
+        r += a_.values[i];
+      }
+    #endif
   #endif
 
   return r;
@@ -24858,11 +25264,17 @@ simde_vaddvq_s8(simde_int8x16_t a) {
   #else
     simde_int8x16_private a_ = simde_int8x16_to_private(a);
 
-    r = 0;
-    SIMDE_VECTORIZE_REDUCTION(+:r)
-    for (size_t i = 0 ; i < (sizeof(a_.values) / sizeof(a_.values[0])) ; i++) {
-      r += a_.values[i];
-    }
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      vint8m1_t zero = __riscv_vmv_v_x_i8m1(0 , 1);
+      vint8m1_t sum = __riscv_vredsum_vs_i8m1_i8m1(a_.sv128 , zero , 16);
+      r = __riscv_vmv_x_s_i8m1_i8 (sum);
+    #else
+      r = 0;
+      SIMDE_VECTORIZE_REDUCTION(+:r)
+      for (size_t i = 0 ; i < (sizeof(a_.values) / sizeof(a_.values[0])) ; i++) {
+        r += a_.values[i];
+      }
+    #endif
   #endif
 
   return r;
@@ -24882,11 +25294,17 @@ simde_vaddvq_s16(simde_int16x8_t a) {
   #else
     simde_int16x8_private a_ = simde_int16x8_to_private(a);
 
-    r = 0;
-    SIMDE_VECTORIZE_REDUCTION(+:r)
-    for (size_t i = 0 ; i < (sizeof(a_.values) / sizeof(a_.values[0])) ; i++) {
-      r += a_.values[i];
-    }
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      vint16m1_t zero = __riscv_vmv_v_x_i16m1(0 , 1);
+      vint16m1_t sum = __riscv_vredsum_vs_i16m1_i16m1(a_.sv128 , zero , 8);
+      r = __riscv_vmv_x_s_i16m1_i16 (sum);
+    #else
+      r = 0;
+      SIMDE_VECTORIZE_REDUCTION(+:r)
+      for (size_t i = 0 ; i < (sizeof(a_.values) / sizeof(a_.values[0])) ; i++) {
+        r += a_.values[i];
+      }
+    #endif
   #endif
 
   return r;
@@ -24906,11 +25324,17 @@ simde_vaddvq_s32(simde_int32x4_t a) {
   #else
     simde_int32x4_private a_ = simde_int32x4_to_private(a);
 
-    r = 0;
-    SIMDE_VECTORIZE_REDUCTION(+:r)
-    for (size_t i = 0 ; i < (sizeof(a_.values) / sizeof(a_.values[0])) ; i++) {
-      r += a_.values[i];
-    }
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      vint32m1_t zero = __riscv_vmv_v_x_i32m1(0 , 1);
+      vint32m1_t sum = __riscv_vredsum_vs_i32m1_i32m1(a_.sv128 , zero , 4);
+      r = __riscv_vmv_x_s_i32m1_i32 (sum);
+    #else
+      r = 0;
+      SIMDE_VECTORIZE_REDUCTION(+:r)
+      for (size_t i = 0 ; i < (sizeof(a_.values) / sizeof(a_.values[0])) ; i++) {
+        r += a_.values[i];
+      }
+    #endif
   #endif
 
   return r;
@@ -24930,11 +25354,17 @@ simde_vaddvq_s64(simde_int64x2_t a) {
   #else
     simde_int64x2_private a_ = simde_int64x2_to_private(a);
 
-    r = 0;
-    SIMDE_VECTORIZE_REDUCTION(+:r)
-    for (size_t i = 0 ; i < (sizeof(a_.values) / sizeof(a_.values[0])) ; i++) {
-      r += a_.values[i];
-    }
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      vint64m1_t zero = __riscv_vmv_v_x_i64m1(0 , 1);
+      vint64m1_t sum = __riscv_vredsum_vs_i64m1_i64m1(a_.sv128 , zero , 2);
+      r = __riscv_vmv_x_s_i64m1_i64 (sum);
+    #else
+      r = 0;
+      SIMDE_VECTORIZE_REDUCTION(+:r)
+      for (size_t i = 0 ; i < (sizeof(a_.values) / sizeof(a_.values[0])) ; i++) {
+        r += a_.values[i];
+      }
+    #endif
   #endif
 
   return r;
@@ -24959,11 +25389,17 @@ simde_vaddvq_u8(simde_uint8x16_t a) {
   #else
     simde_uint8x16_private a_ = simde_uint8x16_to_private(a);
 
-    r = 0;
-    SIMDE_VECTORIZE_REDUCTION(+:r)
-    for (size_t i = 0 ; i < (sizeof(a_.values) / sizeof(a_.values[0])) ; i++) {
-      r += a_.values[i];
-    }
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      vuint8m1_t zero = __riscv_vmv_v_x_u8m1(0 , 1);
+      vuint8m1_t sum = __riscv_vredsum_vs_u8m1_u8m1(a_.sv128 , zero , 16);
+      r = __riscv_vmv_x_s_u8m1_u8 (sum);
+    #else
+      r = 0;
+      SIMDE_VECTORIZE_REDUCTION(+:r)
+      for (size_t i = 0 ; i < (sizeof(a_.values) / sizeof(a_.values[0])) ; i++) {
+        r += a_.values[i];
+      }
+    #endif
   #endif
 
   return r;
@@ -24983,11 +25419,17 @@ simde_vaddvq_u16(simde_uint16x8_t a) {
   #else
     simde_uint16x8_private a_ = simde_uint16x8_to_private(a);
 
-    r = 0;
-    SIMDE_VECTORIZE_REDUCTION(+:r)
-    for (size_t i = 0 ; i < (sizeof(a_.values) / sizeof(a_.values[0])) ; i++) {
-      r += a_.values[i];
-    }
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      vuint16m1_t zero = __riscv_vmv_v_x_u16m1(0 , 1);
+      vuint16m1_t sum = __riscv_vredsum_vs_u16m1_u16m1(a_.sv128 , zero , 8);
+      r = __riscv_vmv_x_s_u16m1_u16(sum);
+    #else
+      r = 0;
+      SIMDE_VECTORIZE_REDUCTION(+:r)
+      for (size_t i = 0 ; i < (sizeof(a_.values) / sizeof(a_.values[0])) ; i++) {
+        r += a_.values[i];
+      }
+    #endif
   #endif
 
   return r;
@@ -25007,11 +25449,17 @@ simde_vaddvq_u32(simde_uint32x4_t a) {
   #else
     simde_uint32x4_private a_ = simde_uint32x4_to_private(a);
 
-    r = 0;
-    SIMDE_VECTORIZE_REDUCTION(+:r)
-    for (size_t i = 0 ; i < (sizeof(a_.values) / sizeof(a_.values[0])) ; i++) {
-      r += a_.values[i];
-    }
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      vuint32m1_t zero = __riscv_vmv_v_x_u32m1(0 , 1);
+      vuint32m1_t sum = __riscv_vredsum_vs_u32m1_u32m1(a_.sv128 , zero , 4);
+      r = __riscv_vmv_x_s_u32m1_u32 (sum);
+    #else
+      r = 0;
+      SIMDE_VECTORIZE_REDUCTION(+:r)
+      for (size_t i = 0 ; i < (sizeof(a_.values) / sizeof(a_.values[0])) ; i++) {
+        r += a_.values[i];
+      }
+    #endif
   #endif
 
   return r;
@@ -25031,11 +25479,17 @@ simde_vaddvq_u64(simde_uint64x2_t a) {
   #else
     simde_uint64x2_private a_ = simde_uint64x2_to_private(a);
 
-    r = 0;
-    SIMDE_VECTORIZE_REDUCTION(+:r)
-    for (size_t i = 0 ; i < (sizeof(a_.values) / sizeof(a_.values[0])) ; i++) {
-      r += a_.values[i];
-    }
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      vuint64m1_t zero = __riscv_vmv_v_x_u64m1(0 , 1);
+      vuint64m1_t sum = __riscv_vredsum_vs_u64m1_u64m1(a_.sv128 , zero , 2);
+      r = __riscv_vmv_x_s_u64m1_u64 (sum);
+    #else
+      r = 0;
+      SIMDE_VECTORIZE_REDUCTION(+:r)
+      for (size_t i = 0 ; i < (sizeof(a_.values) / sizeof(a_.values[0])) ; i++) {
+        r += a_.values[i];
+      }
+    #endif
   #endif
 
   return r;
@@ -25060,16 +25514,22 @@ int16_t
 simde_vaddlv_s8(simde_int8x8_t a) {
   #if defined(SIMDE_ARM_NEON_A64V8_NATIVE)
     return vaddlv_s8(a);
-  #elif SIMDE_NATURAL_VECTOR_SIZE_GE(128)
+  #elif SIMDE_NATURAL_VECTOR_SIZE_GE(128) && !defined(SIMDE_RISCV_V_NATIVE)
     return simde_vaddvq_s16(simde_vmovl_s8(a));
   #else
     simde_int8x8_private a_ = simde_int8x8_to_private(a);
     int16_t r = 0;
 
-    SIMDE_VECTORIZE_REDUCTION(+:r)
-    for (size_t i = 0 ; i < (sizeof(a_.values) / sizeof(a_.values[0])) ; i++) {
-      r += a_.values[i];
-    }
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      vint16m1_t zero = __riscv_vmv_v_x_i16m1(0 , 1);
+      vint16m1_t sum = __riscv_vwredsum_vs_i8m1_i16m1(a_.sv64 , zero , 8);
+      r = __riscv_vmv_x_s_i16m1_i16 (sum);
+    #else
+      SIMDE_VECTORIZE_REDUCTION(+:r)
+      for (size_t i = 0 ; i < (sizeof(a_.values) / sizeof(a_.values[0])) ; i++) {
+        r += a_.values[i];
+      }
+    #endif
 
     return r;
   #endif
@@ -25084,16 +25544,22 @@ int32_t
 simde_vaddlv_s16(simde_int16x4_t a) {
   #if defined(SIMDE_ARM_NEON_A64V8_NATIVE)
     return vaddlv_s16(a);
-  #elif SIMDE_NATURAL_VECTOR_SIZE_GE(128)
+  #elif SIMDE_NATURAL_VECTOR_SIZE_GE(128) && !defined(SIMDE_RISCV_V_NATIVE)
     return simde_vaddvq_s32(simde_vmovl_s16(a));
   #else
     simde_int16x4_private a_ = simde_int16x4_to_private(a);
     int32_t r = 0;
 
-    SIMDE_VECTORIZE_REDUCTION(+:r)
-    for (size_t i = 0 ; i < (sizeof(a_.values) / sizeof(a_.values[0])) ; i++) {
-      r += a_.values[i];
-    }
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      vint32m1_t zero = __riscv_vmv_v_x_i32m1(0 , 1);
+      vint32m1_t sum = __riscv_vwredsum_vs_i16m1_i32m1(a_.sv64 , zero , 4);
+      r = __riscv_vmv_x_s_i32m1_i32 (sum);
+    #else
+      SIMDE_VECTORIZE_REDUCTION(+:r)
+      for (size_t i = 0 ; i < (sizeof(a_.values) / sizeof(a_.values[0])) ; i++) {
+        r += a_.values[i];
+      }
+    #endif
 
     return r;
   #endif
@@ -25108,16 +25574,22 @@ int64_t
 simde_vaddlv_s32(simde_int32x2_t a) {
   #if defined(SIMDE_ARM_NEON_A64V8_NATIVE)
     return vaddlv_s32(a);
-  #elif SIMDE_NATURAL_VECTOR_SIZE_GE(128)
+  #elif SIMDE_NATURAL_VECTOR_SIZE_GE(128) && !defined(SIMDE_RISCV_V_NATIVE)
     return simde_vaddvq_s64(simde_vmovl_s32(a));
   #else
     simde_int32x2_private a_ = simde_int32x2_to_private(a);
     int64_t r = 0;
 
-    SIMDE_VECTORIZE_REDUCTION(+:r)
-    for (size_t i = 0 ; i < (sizeof(a_.values) / sizeof(a_.values[0])) ; i++) {
-      r += a_.values[i];
-    }
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      vint64m1_t zero = __riscv_vmv_v_x_i64m1(0 , 1);
+      vint64m1_t sum = __riscv_vwredsum_vs_i32m1_i64m1(a_.sv64 , zero , 2);
+      r = __riscv_vmv_x_s_i64m1_i64 (sum);
+    #else
+      SIMDE_VECTORIZE_REDUCTION(+:r)
+      for (size_t i = 0 ; i < (sizeof(a_.values) / sizeof(a_.values[0])) ; i++) {
+        r += a_.values[i];
+      }
+    #endif
 
     return r;
   #endif
@@ -25132,16 +25604,22 @@ uint16_t
 simde_vaddlv_u8(simde_uint8x8_t a) {
   #if defined(SIMDE_ARM_NEON_A64V8_NATIVE)
     return vaddlv_u8(a);
-  #elif SIMDE_NATURAL_VECTOR_SIZE_GE(128)
+  #elif SIMDE_NATURAL_VECTOR_SIZE_GE(128) && !defined(SIMDE_RISCV_V_NATIVE)
     return simde_vaddvq_u16(simde_vmovl_u8(a));
   #else
     simde_uint8x8_private a_ = simde_uint8x8_to_private(a);
     uint16_t r = 0;
 
-    SIMDE_VECTORIZE_REDUCTION(+:r)
-    for (size_t i = 0 ; i < (sizeof(a_.values) / sizeof(a_.values[0])) ; i++) {
-      r += a_.values[i];
-    }
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      vuint16m1_t zero = __riscv_vmv_v_x_u16m1(0 , 1);
+      vuint16m1_t sum = __riscv_vwredsumu_vs_u8m1_u16m1(a_.sv64 , zero , 8);
+      r = __riscv_vmv_x_s_u16m1_u16 (sum);
+    #else
+      SIMDE_VECTORIZE_REDUCTION(+:r)
+      for (size_t i = 0 ; i < (sizeof(a_.values) / sizeof(a_.values[0])) ; i++) {
+        r += a_.values[i];
+      }
+    #endif
 
     return r;
   #endif
@@ -25156,16 +25634,22 @@ uint32_t
 simde_vaddlv_u16(simde_uint16x4_t a) {
   #if defined(SIMDE_ARM_NEON_A64V8_NATIVE)
     return vaddlv_u16(a);
-  #elif SIMDE_NATURAL_VECTOR_SIZE_GE(128)
+  #elif SIMDE_NATURAL_VECTOR_SIZE_GE(128) && !defined(SIMDE_RISCV_V_NATIVE)
     return simde_vaddvq_u32(simde_vmovl_u16(a));
   #else
     simde_uint16x4_private a_ = simde_uint16x4_to_private(a);
     uint32_t r = 0;
 
-    SIMDE_VECTORIZE_REDUCTION(+:r)
-    for (size_t i = 0 ; i < (sizeof(a_.values) / sizeof(a_.values[0])) ; i++) {
-      r += a_.values[i];
-    }
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      vuint32m1_t zero = __riscv_vmv_v_x_u32m1(0 , 1);
+      vuint32m1_t sum = __riscv_vwredsumu_vs_u16m1_u32m1(a_.sv64 , zero , 4);
+      r = __riscv_vmv_x_s_u32m1_u32 (sum);
+    #else
+      SIMDE_VECTORIZE_REDUCTION(+:r)
+      for (size_t i = 0 ; i < (sizeof(a_.values) / sizeof(a_.values[0])) ; i++) {
+        r += a_.values[i];
+      }
+    #endif
 
     return r;
   #endif
@@ -25180,16 +25664,22 @@ uint64_t
 simde_vaddlv_u32(simde_uint32x2_t a) {
   #if defined(SIMDE_ARM_NEON_A64V8_NATIVE)
     return vaddlv_u32(a);
-  #elif SIMDE_NATURAL_VECTOR_SIZE_GE(128)
+  #elif SIMDE_NATURAL_VECTOR_SIZE_GE(128) && !defined(SIMDE_RISCV_V_NATIVE)
     return simde_vaddvq_u64(simde_vmovl_u32(a));
   #else
     simde_uint32x2_private a_ = simde_uint32x2_to_private(a);
     uint64_t r = 0;
 
-    SIMDE_VECTORIZE_REDUCTION(+:r)
-    for (size_t i = 0 ; i < (sizeof(a_.values) / sizeof(a_.values[0])) ; i++) {
-      r += a_.values[i];
-    }
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      vuint64m1_t zero = __riscv_vmv_v_x_u64m1(0 , 1);
+      vuint64m1_t sum = __riscv_vwredsumu_vs_u32m1_u64m1(a_.sv64 , zero , 2);
+      r = __riscv_vmv_x_s_u64m1_u64 (sum);
+    #else
+      SIMDE_VECTORIZE_REDUCTION(+:r)
+      for (size_t i = 0 ; i < (sizeof(a_.values) / sizeof(a_.values[0])) ; i++) {
+        r += a_.values[i];
+      }
+    #endif
 
     return r;
   #endif
@@ -25214,10 +25704,16 @@ simde_vaddlvq_s8(simde_int8x16_t a) {
     simde_int8x16_private a_ = simde_int8x16_to_private(a);
     int16_t r = 0;
 
-    SIMDE_VECTORIZE_REDUCTION(+:r)
-    for (size_t i = 0 ; i < (sizeof(a_.values) / sizeof(a_.values[0])) ; i++) {
-      r += a_.values[i];
-    }
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      vint16m1_t zero = __riscv_vmv_v_x_i16m1(0 , 1);
+      vint16m1_t sum = __riscv_vwredsum_vs_i8m1_i16m1(a_.sv128 , zero , 16);
+      r = __riscv_vmv_x_s_i16m1_i16 (sum);
+    #else
+      SIMDE_VECTORIZE_REDUCTION(+:r)
+      for (size_t i = 0 ; i < (sizeof(a_.values) / sizeof(a_.values[0])) ; i++) {
+        r += a_.values[i];
+      }
+    #endif
 
     return r;
   #endif
@@ -25243,10 +25739,16 @@ simde_vaddlvq_s16(simde_int16x8_t a) {
     simde_int16x8_private a_ = simde_int16x8_to_private(a);
     int32_t r = 0;
 
-    SIMDE_VECTORIZE_REDUCTION(+:r)
-    for (size_t i = 0 ; i < (sizeof(a_.values) / sizeof(a_.values[0])) ; i++) {
-      r += a_.values[i];
-    }
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      vint32m1_t zero = __riscv_vmv_v_x_i32m1(0 , 1);
+      vint32m1_t sum = __riscv_vwredsum_vs_i16m1_i32m1(a_.sv128 , zero , 8);
+      r = __riscv_vmv_x_s_i32m1_i32 (sum);
+    #else
+      SIMDE_VECTORIZE_REDUCTION(+:r)
+      for (size_t i = 0 ; i < (sizeof(a_.values) / sizeof(a_.values[0])) ; i++) {
+        r += a_.values[i];
+      }
+    #endif
 
     return r;
   #endif
@@ -25265,10 +25767,16 @@ simde_vaddlvq_s32(simde_int32x4_t a) {
     simde_int32x4_private a_ = simde_int32x4_to_private(a);
     int64_t r = 0;
 
-    SIMDE_VECTORIZE_REDUCTION(+:r)
-    for (size_t i = 0 ; i < (sizeof(a_.values) / sizeof(a_.values[0])) ; i++) {
-      r += a_.values[i];
-    }
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      vint64m1_t zero = __riscv_vmv_v_x_i64m1(0 , 1);
+      vint64m1_t sum = __riscv_vwredsum_vs_i32m1_i64m1(a_.sv128 , zero , 4);
+      r = __riscv_vmv_x_s_i64m1_i64 (sum);
+    #else
+      SIMDE_VECTORIZE_REDUCTION(+:r)
+      for (size_t i = 0 ; i < (sizeof(a_.values) / sizeof(a_.values[0])) ; i++) {
+        r += a_.values[i];
+      }
+    #endif
 
     return r;
   #endif
@@ -25292,10 +25800,16 @@ simde_vaddlvq_u8(simde_uint8x16_t a) {
     simde_uint8x16_private a_ = simde_uint8x16_to_private(a);
     uint16_t r = 0;
 
-    SIMDE_VECTORIZE_REDUCTION(+:r)
-    for (size_t i = 0 ; i < (sizeof(a_.values) / sizeof(a_.values[0])) ; i++) {
-      r += a_.values[i];
-    }
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      vuint16m1_t zero = __riscv_vmv_v_x_u16m1(0 , 1);
+      vuint16m1_t sum = __riscv_vwredsumu_vs_u8m1_u16m1(a_.sv128 , zero , 16);
+      r = __riscv_vmv_x_s_u16m1_u16 (sum);
+    #else
+      SIMDE_VECTORIZE_REDUCTION(+:r)
+      for (size_t i = 0 ; i < (sizeof(a_.values) / sizeof(a_.values[0])) ; i++) {
+        r += a_.values[i];
+      }
+    #endif
 
     return r;
   #endif
@@ -25318,14 +25832,20 @@ simde_vaddlvq_u16(simde_uint16x8_t a) {
     return HEDLEY_STATIC_CAST(uint32_t, _mm_cvtsi128_si32(a_));
   #else
     simde_uint16x8_private a_ = simde_uint16x8_to_private(a);
+
     uint32_t r = 0;
-
-    SIMDE_VECTORIZE_REDUCTION(+:r)
-    for (size_t i = 0 ; i < (sizeof(a_.values) / sizeof(a_.values[0])) ; i++) {
-      r += a_.values[i];
-    }
-
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      vuint32m1_t zero = __riscv_vmv_v_x_u32m1(0 , 1);
+      vuint32m1_t sum = __riscv_vwredsumu_vs_u16m1_u32m1(a_.sv128 , zero , 8);
+      r = __riscv_vmv_x_s_u32m1_u32 (sum);
+    #else
+      SIMDE_VECTORIZE_REDUCTION(+:r)
+      for (size_t i = 0 ; i < (sizeof(a_.values) / sizeof(a_.values[0])) ; i++) {
+        r += a_.values[i];
+      }
+    #endif
     return r;
+
   #endif
 }
 #if defined(SIMDE_ARM_NEON_A32V7_ENABLE_NATIVE_ALIASES)
@@ -25342,10 +25862,16 @@ simde_vaddlvq_u32(simde_uint32x4_t a) {
     simde_uint32x4_private a_ = simde_uint32x4_to_private(a);
     uint64_t r = 0;
 
-    SIMDE_VECTORIZE_REDUCTION(+:r)
-    for (size_t i = 0 ; i < (sizeof(a_.values) / sizeof(a_.values[0])) ; i++) {
-      r += a_.values[i];
-    }
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      vuint64m1_t zero = __riscv_vmv_v_x_u64m1(0 , 1);
+      vuint64m1_t sum = __riscv_vwredsumu_vs_u32m1_u64m1(a_.sv128 , zero , 4);
+      r = __riscv_vmv_x_s_u64m1_u64 (sum);
+    #else
+      SIMDE_VECTORIZE_REDUCTION(+:r)
+      for (size_t i = 0 ; i < (sizeof(a_.values) / sizeof(a_.values[0])) ; i++) {
+        r += a_.values[i];
+      }
+    #endif
 
     return r;
   #endif
@@ -25361,7 +25887,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_ADDLV_H) */
 /* :: End simde/arm/neon/addlv.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/addl_high.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -25388,19 +25914,20 @@ HEDLEY_DIAGNOSTIC_POP
  * Copyright:
  *   2020      Evan Nemerson <evan@nemerson.com>
  *   2020      Sean Maher <seanptmaher@gmail.com> (Copyright owned by Google, LLC)
+ *   2023      Ju-Hung Li <jhlee@pllab.cs.nthu.edu.tw> (Copyright owned by NTHU pllab)
  */
 
 #if !defined(SIMDE_ARM_NEON_ADDL_HIGH_H)
 #define SIMDE_ARM_NEON_ADDL_HIGH_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -25411,6 +25938,15 @@ simde_int16x8_t
 simde_vaddl_high_s8(simde_int8x16_t a, simde_int8x16_t b) {
   #if defined(SIMDE_ARM_NEON_A64V8_NATIVE)
     return vaddl_high_s8(a, b);
+  #elif defined(SIMDE_RISCV_V_NATIVE)
+    simde_int16x8_private r_;
+    simde_int8x16_private a_ = simde_int8x16_to_private(a);
+    simde_int8x16_private b_ = simde_int8x16_to_private(b);
+
+    a_.sv128 = __riscv_vslidedown_vx_i8m1(a_.sv128 , 8 , 16);
+    b_.sv128 = __riscv_vslidedown_vx_i8m1(b_.sv128 , 8 , 16);
+    r_.sv128 = __riscv_vwadd_vv_i16m1(__riscv_vlmul_trunc_v_i8m1_i8mf2(a_.sv128) , __riscv_vlmul_trunc_v_i8m1_i8mf2(b_.sv128) , 8);
+    return simde_int16x8_from_private(r_);
   #else
     return simde_vaddq_s16(simde_vmovl_high_s8(a), simde_vmovl_high_s8(b));
   #endif
@@ -25425,6 +25961,15 @@ simde_int32x4_t
 simde_vaddl_high_s16(simde_int16x8_t a, simde_int16x8_t b) {
   #if defined(SIMDE_ARM_NEON_A64V8_NATIVE)
     return vaddl_high_s16(a, b);
+  #elif defined(SIMDE_RISCV_V_NATIVE)
+    simde_int32x4_private r_;
+    simde_int16x8_private a_ = simde_int16x8_to_private(a);
+    simde_int16x8_private b_ = simde_int16x8_to_private(b);
+
+    a_.sv128 = __riscv_vslidedown_vx_i16m1(a_.sv128 , 4 , 8);
+    b_.sv128 = __riscv_vslidedown_vx_i16m1(b_.sv128 , 4 , 8);
+    r_.sv128 = __riscv_vwadd_vv_i32m1(__riscv_vlmul_trunc_v_i16m1_i16mf2(a_.sv128) , __riscv_vlmul_trunc_v_i16m1_i16mf2(b_.sv128) , 4);
+    return simde_int32x4_from_private(r_);
   #else
     return simde_vaddq_s32(simde_vmovl_high_s16(a), simde_vmovl_high_s16(b));
   #endif
@@ -25439,6 +25984,15 @@ simde_int64x2_t
 simde_vaddl_high_s32(simde_int32x4_t a, simde_int32x4_t b) {
   #if defined(SIMDE_ARM_NEON_A64V8_NATIVE)
     return vaddl_high_s32(a, b);
+  #elif defined(SIMDE_RISCV_V_NATIVE)
+    simde_int64x2_private r_;
+    simde_int32x4_private a_ = simde_int32x4_to_private(a);
+    simde_int32x4_private b_ = simde_int32x4_to_private(b);
+
+    a_.sv128 = __riscv_vslidedown_vx_i32m1(a_.sv128 , 2, 4);
+    b_.sv128 = __riscv_vslidedown_vx_i32m1(b_.sv128 , 2, 4);
+    r_.sv128 = __riscv_vwadd_vv_i64m1(__riscv_vlmul_trunc_v_i32m1_i32mf2(a_.sv128) , __riscv_vlmul_trunc_v_i32m1_i32mf2(b_.sv128) , 2);
+    return simde_int64x2_from_private(r_);
   #else
     return simde_vaddq_s64(simde_vmovl_high_s32(a), simde_vmovl_high_s32(b));
   #endif
@@ -25453,6 +26007,15 @@ simde_uint16x8_t
 simde_vaddl_high_u8(simde_uint8x16_t a, simde_uint8x16_t b) {
   #if defined(SIMDE_ARM_NEON_A64V8_NATIVE)
     return vaddl_high_u8(a, b);
+  #elif defined(SIMDE_RISCV_V_NATIVE)
+    simde_uint16x8_private r_;
+    simde_uint8x16_private a_ = simde_uint8x16_to_private(a);
+    simde_uint8x16_private b_ = simde_uint8x16_to_private(b);
+
+    a_.sv128 = __riscv_vslidedown_vx_u8m1(a_.sv128 , 8 , 16);
+    b_.sv128 = __riscv_vslidedown_vx_u8m1(b_.sv128 , 8 , 16);
+    r_.sv128 = __riscv_vwaddu_vv_u16m1(__riscv_vlmul_trunc_v_u8m1_u8mf2 (a_.sv128) , __riscv_vlmul_trunc_v_u8m1_u8mf2 (b_.sv128) , 8);
+    return simde_uint16x8_from_private(r_);
   #else
     return simde_vaddq_u16(simde_vmovl_high_u8(a), simde_vmovl_high_u8(b));
   #endif
@@ -25467,6 +26030,15 @@ simde_uint32x4_t
 simde_vaddl_high_u16(simde_uint16x8_t a, simde_uint16x8_t b) {
   #if defined(SIMDE_ARM_NEON_A64V8_NATIVE)
     return vaddl_high_u16(a, b);
+  #elif defined(SIMDE_RISCV_V_NATIVE)
+    simde_uint32x4_private r_;
+    simde_uint16x8_private a_ = simde_uint16x8_to_private(a);
+    simde_uint16x8_private b_ = simde_uint16x8_to_private(b);
+
+    a_.sv128 = __riscv_vslidedown_vx_u16m1(a_.sv128 , 4 , 8);
+    b_.sv128 = __riscv_vslidedown_vx_u16m1(b_.sv128 , 4 , 8);
+    r_.sv128 = __riscv_vwaddu_vv_u32m1(__riscv_vlmul_trunc_v_u16m1_u16mf2 (a_.sv128) , __riscv_vlmul_trunc_v_u16m1_u16mf2 (b_.sv128) , 4);
+    return simde_uint32x4_from_private(r_);
   #else
     return simde_vaddq_u32(simde_vmovl_high_u16(a), simde_vmovl_high_u16(b));
   #endif
@@ -25481,6 +26053,15 @@ simde_uint64x2_t
 simde_vaddl_high_u32(simde_uint32x4_t a, simde_uint32x4_t b) {
   #if defined(SIMDE_ARM_NEON_A64V8_NATIVE)
     return vaddl_high_u32(a, b);
+  #elif defined(SIMDE_RISCV_V_NATIVE)
+    simde_uint64x2_private r_;
+    simde_uint32x4_private a_ = simde_uint32x4_to_private(a);
+    simde_uint32x4_private b_ = simde_uint32x4_to_private(b);
+
+    a_.sv128 = __riscv_vslidedown_vx_u32m1(a_.sv128 , 2, 4);
+    b_.sv128 = __riscv_vslidedown_vx_u32m1(b_.sv128 , 2, 4);
+    r_.sv128 = __riscv_vwaddu_vv_u64m1(__riscv_vlmul_trunc_v_u32m1_u32mf2 (a_.sv128) , __riscv_vlmul_trunc_v_u32m1_u32mf2 (b_.sv128) , 2);
+    return simde_uint64x2_from_private(r_);
   #else
     return simde_vaddq_u64(simde_vmovl_high_u32(a), simde_vmovl_high_u32(b));
   #endif
@@ -25496,9 +26077,9 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_ADDL_HIGH_H) */
 /* :: End simde/arm/neon/addl_high.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/addw.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -25525,17 +26106,18 @@ HEDLEY_DIAGNOSTIC_POP
  * Copyright:
  *   2020      Evan Nemerson <evan@nemerson.com>
  *   2020      Sean Maher <seanptmaher@gmail.com> (Copyright owned by Google, LLC)
+ *   2023      Chi-Wei Chu <wewe5215@gapp.nthu.edu.tw> (Copyright owned by NTHU pllab)
  */
 
 #if !defined(SIMDE_ARM_NEON_ADDW_H)
 #define SIMDE_ARM_NEON_ADDW_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -25546,14 +26128,17 @@ simde_int16x8_t
 simde_vaddw_s8(simde_int16x8_t a, simde_int8x8_t b) {
   #if defined(SIMDE_ARM_NEON_A32V7_NATIVE)
     return vaddw_s8(a, b);
-  #elif SIMDE_NATURAL_VECTOR_SIZE_GE(128)
+  #elif SIMDE_NATURAL_VECTOR_SIZE_GE(128) && !defined(SIMDE_RISCV_V_NATIVE)
     return simde_vaddq_s16(a, simde_vmovl_s8(b));
   #else
     simde_int16x8_private r_;
     simde_int16x8_private a_ = simde_int16x8_to_private(a);
     simde_int8x8_private b_ = simde_int8x8_to_private(b);
 
-    #if (SIMDE_NATURAL_VECTOR_SIZE > 0) && defined(SIMDE_VECTOR_SUBSCRIPT_OPS) && defined(SIMDE_CONVERT_VECTOR_)
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      vint8mf2_t vb = __riscv_vlmul_trunc_v_i8m1_i8mf2 (b_.sv64);
+      r_.sv128 =  __riscv_vwadd_wv_i16m1(a_.sv128, vb, 8);
+    #elif (SIMDE_NATURAL_VECTOR_SIZE > 0) && defined(SIMDE_VECTOR_SUBSCRIPT_OPS) && defined(SIMDE_CONVERT_VECTOR_)
       SIMDE_CONVERT_VECTOR_(r_.values, b_.values);
       r_.values += a_.values;
     #else
@@ -25576,14 +26161,17 @@ simde_int32x4_t
 simde_vaddw_s16(simde_int32x4_t a, simde_int16x4_t b) {
   #if defined(SIMDE_ARM_NEON_A32V7_NATIVE)
     return vaddw_s16(a, b);
-  #elif SIMDE_NATURAL_VECTOR_SIZE_GE(128)
+  #elif SIMDE_NATURAL_VECTOR_SIZE_GE(128) && !defined(SIMDE_RISCV_V_NATIVE)
     return simde_vaddq_s32(a, simde_vmovl_s16(b));
   #else
     simde_int32x4_private r_;
     simde_int32x4_private a_ = simde_int32x4_to_private(a);
     simde_int16x4_private b_ = simde_int16x4_to_private(b);
 
-    #if (SIMDE_NATURAL_VECTOR_SIZE > 0) && defined(SIMDE_VECTOR_SUBSCRIPT_OPS) && defined(SIMDE_CONVERT_VECTOR_)
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      vint16mf2_t vb = __riscv_vlmul_trunc_v_i16m1_i16mf2 (b_.sv64);
+      r_.sv128 =  __riscv_vwadd_wv_i32m1(a_.sv128, vb, 4);
+    #elif (SIMDE_NATURAL_VECTOR_SIZE > 0) && defined(SIMDE_VECTOR_SUBSCRIPT_OPS) && defined(SIMDE_CONVERT_VECTOR_)
       SIMDE_CONVERT_VECTOR_(r_.values, b_.values);
       r_.values += a_.values;
     #else
@@ -25606,14 +26194,17 @@ simde_int64x2_t
 simde_vaddw_s32(simde_int64x2_t a, simde_int32x2_t b) {
   #if defined(SIMDE_ARM_NEON_A32V7_NATIVE)
     return vaddw_s32(a, b);
-  #elif SIMDE_NATURAL_VECTOR_SIZE_GE(128)
+  #elif SIMDE_NATURAL_VECTOR_SIZE_GE(128) && !defined(SIMDE_RISCV_V_NATIVE)
     return simde_vaddq_s64(a, simde_vmovl_s32(b));
   #else
     simde_int64x2_private r_;
     simde_int64x2_private a_ = simde_int64x2_to_private(a);
     simde_int32x2_private b_ = simde_int32x2_to_private(b);
 
-    #if (SIMDE_NATURAL_VECTOR_SIZE > 0) && defined(SIMDE_VECTOR_SUBSCRIPT_OPS) && defined(SIMDE_CONVERT_VECTOR_)
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      vint32mf2_t vb = __riscv_vlmul_trunc_v_i32m1_i32mf2 (b_.sv64);
+      r_.sv128 =  __riscv_vwadd_wv_i64m1(a_.sv128, vb, 2);
+    #elif (SIMDE_NATURAL_VECTOR_SIZE > 0) && defined(SIMDE_VECTOR_SUBSCRIPT_OPS) && defined(SIMDE_CONVERT_VECTOR_)
       SIMDE_CONVERT_VECTOR_(r_.values, b_.values);
       r_.values += a_.values;
     #else
@@ -25636,14 +26227,17 @@ simde_uint16x8_t
 simde_vaddw_u8(simde_uint16x8_t a, simde_uint8x8_t b) {
   #if defined(SIMDE_ARM_NEON_A32V7_NATIVE)
     return vaddw_u8(a, b);
-  #elif SIMDE_NATURAL_VECTOR_SIZE_GE(128)
+  #elif SIMDE_NATURAL_VECTOR_SIZE_GE(128) && !defined(SIMDE_RISCV_V_NATIVE)
     return simde_vaddq_u16(a, simde_vmovl_u8(b));
   #else
     simde_uint16x8_private r_;
     simde_uint16x8_private a_ = simde_uint16x8_to_private(a);
     simde_uint8x8_private b_ = simde_uint8x8_to_private(b);
 
-    #if (SIMDE_NATURAL_VECTOR_SIZE > 0) && defined(SIMDE_VECTOR_SUBSCRIPT_OPS) && defined(SIMDE_CONVERT_VECTOR_)
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      vuint8mf2_t vb = __riscv_vlmul_trunc_v_u8m1_u8mf2 (b_.sv64);
+      r_.sv128 =  __riscv_vwaddu_wv_u16m1(a_.sv128, vb, 8);
+    #elif (SIMDE_NATURAL_VECTOR_SIZE > 0) && defined(SIMDE_VECTOR_SUBSCRIPT_OPS) && defined(SIMDE_CONVERT_VECTOR_)
       SIMDE_CONVERT_VECTOR_(r_.values, b_.values);
       r_.values += a_.values;
     #else
@@ -25666,14 +26260,17 @@ simde_uint32x4_t
 simde_vaddw_u16(simde_uint32x4_t a, simde_uint16x4_t b) {
   #if defined(SIMDE_ARM_NEON_A32V7_NATIVE)
     return vaddw_u16(a, b);
-  #elif SIMDE_NATURAL_VECTOR_SIZE_GE(128)
+  #elif SIMDE_NATURAL_VECTOR_SIZE_GE(128) && !defined(SIMDE_RISCV_V_NATIVE)
     return simde_vaddq_u32(a, simde_vmovl_u16(b));
   #else
     simde_uint32x4_private r_;
     simde_uint32x4_private a_ = simde_uint32x4_to_private(a);
     simde_uint16x4_private b_ = simde_uint16x4_to_private(b);
 
-    #if (SIMDE_NATURAL_VECTOR_SIZE > 0) && defined(SIMDE_VECTOR_SUBSCRIPT_OPS) && defined(SIMDE_CONVERT_VECTOR_)
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      vuint16mf2_t vb = __riscv_vlmul_trunc_v_u16m1_u16mf2 (b_.sv64);
+      r_.sv128 =  __riscv_vwaddu_wv_u32m1(a_.sv128, vb, 4);
+    #elif (SIMDE_NATURAL_VECTOR_SIZE > 0) && defined(SIMDE_VECTOR_SUBSCRIPT_OPS) && defined(SIMDE_CONVERT_VECTOR_)
       SIMDE_CONVERT_VECTOR_(r_.values, b_.values);
       r_.values += a_.values;
     #else
@@ -25696,14 +26293,17 @@ simde_uint64x2_t
 simde_vaddw_u32(simde_uint64x2_t a, simde_uint32x2_t b) {
   #if defined(SIMDE_ARM_NEON_A32V7_NATIVE)
     return vaddw_u32(a, b);
-  #elif SIMDE_NATURAL_VECTOR_SIZE_GE(128)
+  #elif SIMDE_NATURAL_VECTOR_SIZE_GE(128) && !defined(SIMDE_RISCV_V_NATIVE)
     return simde_vaddq_u64(a, simde_vmovl_u32(b));
   #else
     simde_uint64x2_private r_;
     simde_uint64x2_private a_ = simde_uint64x2_to_private(a);
     simde_uint32x2_private b_ = simde_uint32x2_to_private(b);
 
-    #if (SIMDE_NATURAL_VECTOR_SIZE > 0) && defined(SIMDE_VECTOR_SUBSCRIPT_OPS) && defined(SIMDE_CONVERT_VECTOR_)
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      vuint32mf2_t vb = __riscv_vlmul_trunc_v_u32m1_u32mf2 (b_.sv64);
+      r_.sv128 =  __riscv_vwaddu_wv_u64m1(a_.sv128, vb, 2);
+    #elif (SIMDE_NATURAL_VECTOR_SIZE > 0) && defined(SIMDE_VECTOR_SUBSCRIPT_OPS) && defined(SIMDE_CONVERT_VECTOR_)
       SIMDE_CONVERT_VECTOR_(r_.values, b_.values);
       r_.values += a_.values;
     #else
@@ -25727,7 +26327,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_ADDW_H) */
 /* :: End simde/arm/neon/addw.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/addw_high.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -25753,17 +26353,20 @@ HEDLEY_DIAGNOSTIC_POP
  *
  * Copyright:
  *   2020      Evan Nemerson <evan@nemerson.com>
+ *   2023      Chi-Wei Chu <wewe5215@gapp.nthu.edu.tw> (Copyright owned by NTHU pllab)
  */
 
 #if !defined(SIMDE_ARM_NEON_ADDW_HIGH_H)
 #define SIMDE_ARM_NEON_ADDW_HIGH_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
+/* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -25774,17 +26377,22 @@ simde_int16x8_t
 simde_vaddw_high_s8(simde_int16x8_t a, simde_int8x16_t b) {
   #if defined(SIMDE_ARM_NEON_A64V8_NATIVE)
     return vaddw_high_s8(a, b);
-  #elif SIMDE_NATURAL_VECTOR_SIZE_GE(128)
+  #elif SIMDE_NATURAL_VECTOR_SIZE_GE(128) && !defined(SIMDE_RISCV_V_NATIVE)
     return simde_vaddq_s16(a, simde_vmovl_high_s8(b));
   #else
     simde_int16x8_private r_;
     simde_int16x8_private a_ = simde_int16x8_to_private(a);
     simde_int8x16_private b_ = simde_int8x16_to_private(b);
 
-    SIMDE_VECTORIZE
-    for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
-      r_.values[i] = a_.values[i] + b_.values[i + ((sizeof(b_.values) / sizeof(b_.values[0])) / 2)];
-    }
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      vint8mf2_t b_high = __riscv_vlmul_trunc_v_i8m1_i8mf2(__riscv_vslidedown_vx_i8m1(b_.sv128 , 8 , 16));
+      r_.sv128 =  __riscv_vwadd_wv_i16m1(a_.sv128, b_high, 8);
+    #else
+      SIMDE_VECTORIZE
+      for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
+        r_.values[i] = a_.values[i] + b_.values[i + ((sizeof(b_.values) / sizeof(b_.values[0])) / 2)];
+      }
+    #endif
 
     return simde_int16x8_from_private(r_);
   #endif
@@ -25799,17 +26407,22 @@ simde_int32x4_t
 simde_vaddw_high_s16(simde_int32x4_t a, simde_int16x8_t b) {
   #if defined(SIMDE_ARM_NEON_A64V8_NATIVE)
     return vaddw_high_s16(a, b);
-  #elif SIMDE_NATURAL_VECTOR_SIZE_GE(128)
+  #elif SIMDE_NATURAL_VECTOR_SIZE_GE(128) && !defined(SIMDE_RISCV_V_NATIVE)
     return simde_vaddq_s32(a, simde_vmovl_high_s16(b));
   #else
     simde_int32x4_private r_;
     simde_int32x4_private a_ = simde_int32x4_to_private(a);
     simde_int16x8_private b_ = simde_int16x8_to_private(b);
 
-    SIMDE_VECTORIZE
-    for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
-      r_.values[i] = a_.values[i] + b_.values[i + ((sizeof(b_.values) / sizeof(b_.values[0])) / 2)];
-    }
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      vint16mf2_t b_high = __riscv_vlmul_trunc_v_i16m1_i16mf2(__riscv_vslidedown_vx_i16m1(b_.sv128 , 4 , 8));
+      r_.sv128 =  __riscv_vwadd_wv_i32m1(a_.sv128, b_high, 4);
+    #else
+      SIMDE_VECTORIZE
+      for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
+        r_.values[i] = a_.values[i] + b_.values[i + ((sizeof(b_.values) / sizeof(b_.values[0])) / 2)];
+      }
+    #endif
 
     return simde_int32x4_from_private(r_);
   #endif
@@ -25824,18 +26437,21 @@ simde_int64x2_t
 simde_vaddw_high_s32(simde_int64x2_t a, simde_int32x4_t b) {
   #if defined(SIMDE_ARM_NEON_A64V8_NATIVE)
     return vaddw_high_s32(a, b);
-  #elif SIMDE_NATURAL_VECTOR_SIZE_GE(128)
+  #elif SIMDE_NATURAL_VECTOR_SIZE_GE(128) && !defined(SIMDE_RISCV_V_NATIVE)
     return simde_vaddq_s64(a, simde_vmovl_high_s32(b));
   #else
     simde_int64x2_private r_;
     simde_int64x2_private a_ = simde_int64x2_to_private(a);
     simde_int32x4_private b_ = simde_int32x4_to_private(b);
-
-    SIMDE_VECTORIZE
-    for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
-      r_.values[i] = a_.values[i] + b_.values[i + ((sizeof(b_.values) / sizeof(b_.values[0])) / 2)];
-    }
-
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      vint32mf2_t b_high = __riscv_vlmul_trunc_v_i32m1_i32mf2(__riscv_vslidedown_vx_i32m1(b_.sv128 , 2 , 4));
+      r_.sv128 =  __riscv_vwadd_wv_i64m1(a_.sv128, b_high, 2);
+    #else
+      SIMDE_VECTORIZE
+      for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
+        r_.values[i] = a_.values[i] + b_.values[i + ((sizeof(b_.values) / sizeof(b_.values[0])) / 2)];
+      }
+    #endif
     return simde_int64x2_from_private(r_);
   #endif
 }
@@ -25849,18 +26465,21 @@ simde_uint16x8_t
 simde_vaddw_high_u8(simde_uint16x8_t a, simde_uint8x16_t b) {
   #if defined(SIMDE_ARM_NEON_A64V8_NATIVE)
     return vaddw_high_u8(a, b);
-  #elif SIMDE_NATURAL_VECTOR_SIZE_GE(128)
+  #elif SIMDE_NATURAL_VECTOR_SIZE_GE(128) && !defined(SIMDE_RISCV_V_NATIVE)
     return simde_vaddq_u16(a, simde_vmovl_high_u8(b));
   #else
     simde_uint16x8_private r_;
     simde_uint16x8_private a_ = simde_uint16x8_to_private(a);
     simde_uint8x16_private b_ = simde_uint8x16_to_private(b);
-
-    SIMDE_VECTORIZE
-    for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
-      r_.values[i] = a_.values[i] + b_.values[i + ((sizeof(b_.values) / sizeof(b_.values[0])) / 2)];
-    }
-
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      vuint8mf2_t b_high = __riscv_vlmul_trunc_v_u8m1_u8mf2(__riscv_vslidedown_vx_u8m1(b_.sv128 , 8 , 16));
+      r_.sv128 =  __riscv_vwaddu_wv_u16m1(a_.sv128, b_high, 8);
+    #else
+      SIMDE_VECTORIZE
+      for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
+        r_.values[i] = a_.values[i] + b_.values[i + ((sizeof(b_.values) / sizeof(b_.values[0])) / 2)];
+      }
+    #endif
     return simde_uint16x8_from_private(r_);
   #endif
 }
@@ -25874,18 +26493,21 @@ simde_uint32x4_t
 simde_vaddw_high_u16(simde_uint32x4_t a, simde_uint16x8_t b) {
   #if defined(SIMDE_ARM_NEON_A64V8_NATIVE)
     return vaddw_high_u16(a, b);
-  #elif SIMDE_NATURAL_VECTOR_SIZE_GE(128)
+  #elif SIMDE_NATURAL_VECTOR_SIZE_GE(128) && !defined(SIMDE_RISCV_V_NATIVE)
     return simde_vaddq_u32(a, simde_vmovl_high_u16(b));
   #else
     simde_uint32x4_private r_;
     simde_uint32x4_private a_ = simde_uint32x4_to_private(a);
     simde_uint16x8_private b_ = simde_uint16x8_to_private(b);
-
-    SIMDE_VECTORIZE
-    for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
-      r_.values[i] = a_.values[i] + b_.values[i + ((sizeof(b_.values) / sizeof(b_.values[0])) / 2)];
-    }
-
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      vuint16mf2_t b_high = __riscv_vlmul_trunc_v_u16m1_u16mf2(__riscv_vslidedown_vx_u16m1(b_.sv128 , 4 , 8));
+      r_.sv128 =  __riscv_vwaddu_wv_u32m1(a_.sv128, b_high, 4);
+    #else
+      SIMDE_VECTORIZE
+      for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
+        r_.values[i] = a_.values[i] + b_.values[i + ((sizeof(b_.values) / sizeof(b_.values[0])) / 2)];
+      }
+    #endif
     return simde_uint32x4_from_private(r_);
   #endif
 }
@@ -25899,18 +26521,21 @@ simde_uint64x2_t
 simde_vaddw_high_u32(simde_uint64x2_t a, simde_uint32x4_t b) {
   #if defined(SIMDE_ARM_NEON_A64V8_NATIVE)
     return vaddw_high_u32(a, b);
-  #elif SIMDE_NATURAL_VECTOR_SIZE_GE(128)
+  #elif SIMDE_NATURAL_VECTOR_SIZE_GE(128) && !defined(SIMDE_RISCV_V_NATIVE)
     return simde_vaddq_u64(a, simde_vmovl_high_u32(b));
   #else
     simde_uint64x2_private r_;
     simde_uint64x2_private a_ = simde_uint64x2_to_private(a);
     simde_uint32x4_private b_ = simde_uint32x4_to_private(b);
-
-    SIMDE_VECTORIZE
-    for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
-      r_.values[i] = a_.values[i] + b_.values[i + ((sizeof(b_.values) / sizeof(b_.values[0])) / 2)];
-    }
-
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      vuint32mf2_t b_high = __riscv_vlmul_trunc_v_u32m1_u32mf2(__riscv_vslidedown_vx_u32m1(b_.sv128 , 2 , 4));
+      r_.sv128 =  __riscv_vwaddu_wv_u64m1(a_.sv128, b_high, 2);
+    #else
+      SIMDE_VECTORIZE
+      for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
+        r_.values[i] = a_.values[i] + b_.values[i + ((sizeof(b_.values) / sizeof(b_.values[0])) / 2)];
+      }
+    #endif
     return simde_uint64x2_from_private(r_);
   #endif
 }
@@ -25925,7 +26550,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_ADDW_HIGH_H) */
 /* :: End simde/arm/neon/addw_high.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/aes.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -25957,9 +26582,9 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_AES_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/simde-aes.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -25991,7 +26616,7 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_AES_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -26418,7 +27043,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_AES_H) */
 /* :: End simde/arm/neon/aes.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/and.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -26451,7 +27076,7 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_AND_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -27007,7 +27632,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_AND_H) */
 /* :: End simde/arm/neon/and.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/bcax.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -27033,16 +27658,17 @@ HEDLEY_DIAGNOSTIC_POP
  *
  * Copyright:
  *   2021      Atharva Nimbalkar <atharvakn@gmail.com>
+ *   2023      Chi-Wei Chu <wewe5215@gapp.nthu.edu.tw> (Copyright owned by NTHU pllab)
  */
 
 #if !defined(SIMDE_ARM_NEON_BCAX_H)
 #define SIMDE_ARM_NEON_BCAX_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/eor.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -27070,13 +27696,15 @@ HEDLEY_DIAGNOSTIC_POP
  *   2020      Evan Nemerson <evan@nemerson.com>
  *   2020      Christopher Moore <moore@free.fr>
  *   2023      Yi-Yen Chung <eric681@andestech.com> (Copyright owned by Andes Technology)
+ *   2023      Yung-Cheng Su <eric20607@gapp.nthu.edu.tw> (Copyright owned by NTHU pllab)
+ *   2023      Chi-Wei Chu <wewe5215@gapp.nthu.edu.tw> (Copyright owned by NTHU pllab)
  */
 
 #if !defined(SIMDE_ARM_NEON_EOR_H)
 #define SIMDE_ARM_NEON_EOR_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -27095,6 +27723,8 @@ simde_veor_s8(simde_int8x8_t a, simde_int8x8_t b) {
 
     #if defined(SIMDE_X86_MMX_NATIVE)
       r_.m64 = _mm_xor_si64(a_.m64, b_.m64);
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv64 = __riscv_vxor_vv_i8m1(a_.sv64, b_.sv64, 8);
     #elif defined(SIMDE_VECTOR_SUBSCRIPT_OPS)
       r_.values = a_.values ^ b_.values;
     #else
@@ -27125,6 +27755,8 @@ simde_veor_s16(simde_int16x4_t a, simde_int16x4_t b) {
 
     #if defined(SIMDE_X86_MMX_NATIVE)
       r_.m64 = _mm_xor_si64(a_.m64, b_.m64);
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv64 = __riscv_vxor_vv_i16m1(a_.sv64, b_.sv64, 4);
     #elif defined(SIMDE_VECTOR_SUBSCRIPT_OPS)
       r_.values = a_.values ^ b_.values;
     #else
@@ -27155,6 +27787,8 @@ simde_veor_s32(simde_int32x2_t a, simde_int32x2_t b) {
 
     #if defined(SIMDE_X86_MMX_NATIVE)
       r_.m64 = _mm_xor_si64(a_.m64, b_.m64);
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv64 = __riscv_vxor_vv_i32m1(a_.sv64, b_.sv64, 2);
     #elif defined(SIMDE_VECTOR_SUBSCRIPT_OPS)
       r_.values = a_.values ^ b_.values;
     #else
@@ -27185,6 +27819,8 @@ simde_veor_s64(simde_int64x1_t a, simde_int64x1_t b) {
 
     #if defined(SIMDE_X86_MMX_NATIVE)
       r_.m64 = _mm_xor_si64(a_.m64, b_.m64);
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv64 = __riscv_vxor_vv_i64m1(a_.sv64, b_.sv64, 1);
     #elif defined(SIMDE_VECTOR_SUBSCRIPT_OPS)
       r_.values = a_.values ^ b_.values;
     #else
@@ -27215,6 +27851,8 @@ simde_veor_u8(simde_uint8x8_t a, simde_uint8x8_t b) {
 
     #if defined(SIMDE_X86_MMX_NATIVE)
       r_.m64 = _mm_xor_si64(a_.m64, b_.m64);
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv64 = __riscv_vxor_vv_u8m1(a_.sv64, b_.sv64, 8);
     #elif defined(SIMDE_VECTOR_SUBSCRIPT_OPS)
       r_.values = a_.values ^ b_.values;
     #else
@@ -27245,6 +27883,8 @@ simde_veor_u16(simde_uint16x4_t a, simde_uint16x4_t b) {
 
     #if defined(SIMDE_X86_MMX_NATIVE)
       r_.m64 = _mm_xor_si64(a_.m64, b_.m64);
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv64 = __riscv_vxor_vv_u16m1(a_.sv64, b_.sv64, 4);
     #elif defined(SIMDE_VECTOR_SUBSCRIPT_OPS)
       r_.values = a_.values ^ b_.values;
     #else
@@ -27275,6 +27915,8 @@ simde_veor_u32(simde_uint32x2_t a, simde_uint32x2_t b) {
 
     #if defined(SIMDE_X86_MMX_NATIVE)
       r_.m64 = _mm_xor_si64(a_.m64, b_.m64);
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv64 = __riscv_vxor_vv_u32m1(a_.sv64, b_.sv64, 2);
     #elif defined(SIMDE_VECTOR_SUBSCRIPT_OPS)
       r_.values = a_.values ^ b_.values;
     #else
@@ -27305,6 +27947,8 @@ simde_veor_u64(simde_uint64x1_t a, simde_uint64x1_t b) {
 
     #if defined(SIMDE_X86_MMX_NATIVE)
       r_.m64 = _mm_xor_si64(a_.m64, b_.m64);
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv64 = __riscv_vxor_vv_u64m1(a_.sv64, b_.sv64, 1);
     #elif defined(SIMDE_VECTOR_SUBSCRIPT_OPS)
       r_.values = a_.values ^ b_.values;
     #else
@@ -27339,6 +27983,8 @@ simde_veorq_s8(simde_int8x16_t a, simde_int8x16_t b) {
       r_.m128i = _mm_xor_si128(a_.m128i, b_.m128i);
     #elif defined(SIMDE_WASM_SIMD128_NATIVE)
       r_.v128 = wasm_v128_xor(a_.v128, b_.v128);
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv128 = __riscv_vxor_vv_i8m1(a_.sv128, b_.sv128, 16);
     #elif defined(SIMDE_VECTOR_SUBSCRIPT_OPS)
       r_.values = a_.values ^ b_.values;
     #else
@@ -27373,6 +28019,8 @@ simde_veorq_s16(simde_int16x8_t a, simde_int16x8_t b) {
       r_.m128i = _mm_xor_si128(a_.m128i, b_.m128i);
     #elif defined(SIMDE_WASM_SIMD128_NATIVE)
       r_.v128 = wasm_v128_xor(a_.v128, b_.v128);
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv128 = __riscv_vxor_vv_i16m1(a_.sv128, b_.sv128, 8);
     #elif defined(SIMDE_VECTOR_SUBSCRIPT_OPS)
       r_.values = a_.values ^ b_.values;
     #else
@@ -27407,6 +28055,8 @@ simde_veorq_s32(simde_int32x4_t a, simde_int32x4_t b) {
       r_.m128i = _mm_xor_si128(a_.m128i, b_.m128i);
     #elif defined(SIMDE_WASM_SIMD128_NATIVE)
       r_.v128 = wasm_v128_xor(a_.v128, b_.v128);
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv128 = __riscv_vxor_vv_i32m1(a_.sv128, b_.sv128, 4);
     #elif defined(SIMDE_VECTOR_SUBSCRIPT_OPS)
       r_.values = a_.values ^ b_.values;
     #else
@@ -27441,6 +28091,8 @@ simde_veorq_s64(simde_int64x2_t a, simde_int64x2_t b) {
       r_.m128i = _mm_xor_si128(a_.m128i, b_.m128i);
     #elif defined(SIMDE_WASM_SIMD128_NATIVE)
       r_.v128 = wasm_v128_xor(a_.v128, b_.v128);
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv128 = __riscv_vxor_vv_i64m1(a_.sv128, b_.sv128, 2);
     #elif defined(SIMDE_VECTOR_SUBSCRIPT_OPS)
       r_.values = a_.values ^ b_.values;
     #else
@@ -27475,6 +28127,8 @@ simde_veorq_u8(simde_uint8x16_t a, simde_uint8x16_t b) {
       r_.m128i = _mm_xor_si128(a_.m128i, b_.m128i);
     #elif defined(SIMDE_WASM_SIMD128_NATIVE)
       r_.v128 = wasm_v128_xor(a_.v128, b_.v128);
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv128 = __riscv_vxor_vv_u8m1(a_.sv128, b_.sv128, 16);
     #elif defined(SIMDE_VECTOR_SUBSCRIPT_OPS)
       r_.values = a_.values ^ b_.values;
     #else
@@ -27509,6 +28163,8 @@ simde_veorq_u16(simde_uint16x8_t a, simde_uint16x8_t b) {
       r_.m128i = _mm_xor_si128(a_.m128i, b_.m128i);
     #elif defined(SIMDE_WASM_SIMD128_NATIVE)
       r_.v128 = wasm_v128_xor(a_.v128, b_.v128);
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv128 = __riscv_vxor_vv_u16m1(a_.sv128, b_.sv128, 8);
     #elif defined(SIMDE_VECTOR_SUBSCRIPT_OPS)
       r_.values = a_.values ^ b_.values;
     #else
@@ -27543,6 +28199,8 @@ simde_veorq_u32(simde_uint32x4_t a, simde_uint32x4_t b) {
       r_.m128i = _mm_xor_si128(a_.m128i, b_.m128i);
     #elif defined(SIMDE_WASM_SIMD128_NATIVE)
       r_.v128 = wasm_v128_xor(a_.v128, b_.v128);
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv128 = __riscv_vxor_vv_u32m1(a_.sv128, b_.sv128, 4);
     #elif defined(SIMDE_VECTOR_SUBSCRIPT_OPS)
       r_.values = a_.values ^ b_.values;
     #else
@@ -27577,6 +28235,8 @@ simde_veorq_u64(simde_uint64x2_t a, simde_uint64x2_t b) {
       r_.m128i = _mm_xor_si128(a_.m128i, b_.m128i);
     #elif defined(SIMDE_WASM_SIMD128_NATIVE)
       r_.v128 = wasm_v128_xor(a_.v128, b_.v128);
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv128 = __riscv_vxor_vv_u64m1(a_.sv128, b_.sv128, 2);
     #elif defined(SIMDE_VECTOR_SUBSCRIPT_OPS)
       r_.values = a_.values ^ b_.values;
     #else
@@ -27607,10 +28267,16 @@ simde_veor3q_s8(simde_int8x16_t a, simde_int8x16_t b, simde_int8x16_t c) {
       b_ = simde_int8x16_to_private(b),
       c_ = simde_int8x16_to_private(c);
 
-    SIMDE_VECTORIZE
-    for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
-      r_.values[i] = a_.values[i] ^ b_.values[i] ^ c_.values[i];
-    }
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv128 = __riscv_vxor_vv_i8m1(__riscv_vxor_vv_i8m1(a_.sv128, b_.sv128, 16), c_.sv128, 16);
+    #elif defined(SIMDE_VECTOR_SUBSCRIPT_OPS)
+      r_.values = a_.values ^ b_.values ^ c_.values;
+    #else
+      SIMDE_VECTORIZE
+      for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
+        r_.values[i] = a_.values[i] ^ b_.values[i] ^ c_.values[i];
+      }
+    #endif
 
     return simde_int8x16_from_private(r_);
   #endif
@@ -27632,10 +28298,16 @@ simde_veor3q_s16(simde_int16x8_t a, simde_int16x8_t b, simde_int16x8_t c) {
       b_ = simde_int16x8_to_private(b),
       c_ = simde_int16x8_to_private(c);
 
-    SIMDE_VECTORIZE
-    for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
-      r_.values[i] = a_.values[i] ^ b_.values[i] ^ c_.values[i];
-    }
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv128 = __riscv_vxor_vv_i16m1(__riscv_vxor_vv_i16m1(a_.sv128, b_.sv128, 8), c_.sv128, 8);
+    #elif defined(SIMDE_VECTOR_SUBSCRIPT_OPS)
+      r_.values = a_.values ^ b_.values ^ c_.values;
+    #else
+      SIMDE_VECTORIZE
+      for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
+        r_.values[i] = a_.values[i] ^ b_.values[i] ^ c_.values[i];
+      }
+    #endif
 
     return simde_int16x8_from_private(r_);
   #endif
@@ -27657,10 +28329,16 @@ simde_veor3q_s32(simde_int32x4_t a, simde_int32x4_t b, simde_int32x4_t c) {
       b_ = simde_int32x4_to_private(b),
       c_ = simde_int32x4_to_private(c);
 
-    SIMDE_VECTORIZE
-    for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
-      r_.values[i] = a_.values[i] ^ b_.values[i] ^ c_.values[i];
-    }
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv128 = __riscv_vxor_vv_i32m1(__riscv_vxor_vv_i32m1(a_.sv128, b_.sv128, 4), c_.sv128, 4);
+    #elif defined(SIMDE_VECTOR_SUBSCRIPT_OPS)
+      r_.values = a_.values ^ b_.values ^ c_.values;
+    #else
+      SIMDE_VECTORIZE
+      for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
+        r_.values[i] = a_.values[i] ^ b_.values[i] ^ c_.values[i];
+      }
+    #endif
 
     return simde_int32x4_from_private(r_);
   #endif
@@ -27682,10 +28360,16 @@ simde_veor3q_s64(simde_int64x2_t a, simde_int64x2_t b, simde_int64x2_t c) {
       b_ = simde_int64x2_to_private(b),
       c_ = simde_int64x2_to_private(c);
 
-    SIMDE_VECTORIZE
-    for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
-      r_.values[i] = a_.values[i] ^ b_.values[i] ^ c_.values[i];
-    }
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv128 = __riscv_vxor_vv_i64m1(__riscv_vxor_vv_i64m1(a_.sv128, b_.sv128, 2), c_.sv128, 2);
+    #elif defined(SIMDE_VECTOR_SUBSCRIPT_OPS)
+      r_.values = a_.values ^ b_.values ^ c_.values;
+    #else
+      SIMDE_VECTORIZE
+      for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
+        r_.values[i] = a_.values[i] ^ b_.values[i] ^ c_.values[i];
+      }
+    #endif
 
     return simde_int64x2_from_private(r_);
   #endif
@@ -27707,10 +28391,16 @@ simde_veor3q_u8(simde_uint8x16_t a, simde_uint8x16_t b, simde_uint8x16_t c) {
       b_ = simde_uint8x16_to_private(b),
       c_ = simde_uint8x16_to_private(c);
 
-    SIMDE_VECTORIZE
-    for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
-      r_.values[i] = a_.values[i] ^ b_.values[i] ^ c_.values[i];
-    }
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv128 = __riscv_vxor_vv_u8m1(__riscv_vxor_vv_u8m1(a_.sv128, b_.sv128, 16), c_.sv128, 16);
+    #elif defined(SIMDE_VECTOR_SUBSCRIPT_OPS)
+      r_.values = a_.values ^ b_.values ^ c_.values;
+    #else
+      SIMDE_VECTORIZE
+      for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
+        r_.values[i] = a_.values[i] ^ b_.values[i] ^ c_.values[i];
+      }
+    #endif
 
     return simde_uint8x16_from_private(r_);
   #endif
@@ -27732,10 +28422,16 @@ simde_veor3q_u16(simde_uint16x8_t a, simde_uint16x8_t b, simde_uint16x8_t c) {
       b_ = simde_uint16x8_to_private(b),
       c_ = simde_uint16x8_to_private(c);
 
-    SIMDE_VECTORIZE
-    for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
-      r_.values[i] = a_.values[i] ^ b_.values[i] ^ c_.values[i];
-    }
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv128 = __riscv_vxor_vv_u16m1(__riscv_vxor_vv_u16m1(a_.sv128, b_.sv128, 8), c_.sv128, 8);
+    #elif defined(SIMDE_VECTOR_SUBSCRIPT_OPS)
+      r_.values = a_.values ^ b_.values ^ c_.values;
+    #else
+      SIMDE_VECTORIZE
+      for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
+        r_.values[i] = a_.values[i] ^ b_.values[i] ^ c_.values[i];
+      }
+    #endif
 
     return simde_uint16x8_from_private(r_);
   #endif
@@ -27757,10 +28453,16 @@ simde_veor3q_u32(simde_uint32x4_t a, simde_uint32x4_t b, simde_uint32x4_t c) {
       b_ = simde_uint32x4_to_private(b),
       c_ = simde_uint32x4_to_private(c);
 
-    SIMDE_VECTORIZE
-    for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
-      r_.values[i] = a_.values[i] ^ b_.values[i] ^ c_.values[i];
-    }
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv128 = __riscv_vxor_vv_u32m1(__riscv_vxor_vv_u32m1(a_.sv128, b_.sv128, 4), c_.sv128, 4);
+    #elif defined(SIMDE_VECTOR_SUBSCRIPT_OPS)
+      r_.values = a_.values ^ b_.values ^ c_.values;
+    #else
+      SIMDE_VECTORIZE
+      for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
+        r_.values[i] = a_.values[i] ^ b_.values[i] ^ c_.values[i];
+      }
+    #endif
 
     return simde_uint32x4_from_private(r_);
   #endif
@@ -27782,10 +28484,16 @@ simde_veor3q_u64(simde_uint64x2_t a, simde_uint64x2_t b, simde_uint64x2_t c) {
       b_ = simde_uint64x2_to_private(b),
       c_ = simde_uint64x2_to_private(c);
 
-    SIMDE_VECTORIZE
-    for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
-      r_.values[i] = a_.values[i] ^ b_.values[i] ^ c_.values[i];
-    }
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv128 = __riscv_vxor_vv_u64m1(__riscv_vxor_vv_u64m1(a_.sv128, b_.sv128, 2), c_.sv128, 2);
+    #elif defined(SIMDE_VECTOR_SUBSCRIPT_OPS)
+      r_.values = a_.values ^ b_.values ^ c_.values;
+    #else
+      SIMDE_VECTORIZE
+      for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
+        r_.values[i] = a_.values[i] ^ b_.values[i] ^ c_.values[i];
+      }
+    #endif
 
     return simde_uint64x2_from_private(r_);
   #endif
@@ -27801,7 +28509,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_EOR_H) */
 /* :: End simde/arm/neon/eor.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/bic.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -27827,13 +28535,14 @@ HEDLEY_DIAGNOSTIC_POP
  *
  * Copyright:
  *   2020      Evan Nemerson <evan@nemerson.com>
+ *   2023      Chi-Wei Chu <wewe5215@gapp.nthu.edu.tw> (Copyright owned by NTHU pllab)
  */
 
 #if !defined(SIMDE_ARM_NEON_BIC_H)
 #define SIMDE_ARM_NEON_BIC_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/dup_n.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -27861,13 +28570,14 @@ HEDLEY_DIAGNOSTIC_POP
  *   2020      Sean Maher <seanptmaher@gmail.com> (Copyright owned by Google, LLC)
  *   2020      Evan Nemerson <evan@nemerson.com>
  *   2023      Yi-Yen Chung <eric681@andestech.com> (Copyright owned by Andes Technology)
+ *   2023      Chi-Wei Chu <wewe5215@gapp.nthu.edu.tw> (Copyright owned by NTHU pllab)
  */
 
 #if !defined(SIMDE_ARM_NEON_DUP_N_H)
 #define SIMDE_ARM_NEON_DUP_N_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -27880,12 +28590,14 @@ simde_vdup_n_f16(simde_float16_t value) {
     return vdup_n_f16(value);
   #else
     simde_float16x4_private r_;
-
-    SIMDE_VECTORIZE
-    for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
-      r_.values[i] = value;
-    }
-
+    #if defined(SIMDE_RISCV_V_NATIVE) && SIMDE_ARCH_RISCV_ZVFH
+      r_.sv64 = __riscv_vfmv_v_f_f16m1 (value, 4);
+    #else
+      SIMDE_VECTORIZE
+      for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
+        r_.values[i] = value;
+      }
+    #endif
     return simde_float16x4_from_private(r_);
   #endif
 }
@@ -27904,12 +28616,14 @@ simde_vdup_n_f32(float value) {
     return vdup_n_f32(value);
   #else
     simde_float32x2_private r_;
-
-    SIMDE_VECTORIZE
-    for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
-      r_.values[i] = value;
-    }
-
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv64 =  __riscv_vfmv_v_f_f32m1(value, 2);
+    #else
+      SIMDE_VECTORIZE
+      for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
+        r_.values[i] = value;
+      }
+    #endif
     return simde_float32x2_from_private(r_);
   #endif
 }
@@ -27928,12 +28642,14 @@ simde_vdup_n_f64(double value) {
     return vdup_n_f64(value);
   #else
     simde_float64x1_private r_;
-
-    SIMDE_VECTORIZE
-    for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
-      r_.values[i] = value;
-    }
-
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv64 =  __riscv_vfmv_v_f_f64m1(value, 1);
+    #else
+      SIMDE_VECTORIZE
+      for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
+        r_.values[i] = value;
+      }
+    #endif
     return simde_float64x1_from_private(r_);
   #endif
 }
@@ -27955,11 +28671,13 @@ simde_vdup_n_s8(int8_t value) {
 
     #if defined(SIMDE_X86_MMX_NATIVE)
       r_.m64 = _mm_set1_pi8(value);
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv64 =  __riscv_vmv_v_x_i8m1(value, 8);
     #else
-      SIMDE_VECTORIZE
-      for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
-        r_.values[i] = value;
-      }
+        SIMDE_VECTORIZE
+        for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
+          r_.values[i] = value;
+        }
     #endif
 
     return simde_int8x8_from_private(r_);
@@ -27983,6 +28701,8 @@ simde_vdup_n_s16(int16_t value) {
 
     #if defined(SIMDE_X86_MMX_NATIVE)
       r_.m64 = _mm_set1_pi16(value);
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv64 =  __riscv_vmv_v_x_i16m1(value, 4);
     #else
       SIMDE_VECTORIZE
       for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
@@ -28011,6 +28731,8 @@ simde_vdup_n_s32(int32_t value) {
 
     #if defined(SIMDE_X86_MMX_NATIVE)
       r_.m64 = _mm_set1_pi32(value);
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv64 =  __riscv_vmv_v_x_i32m1(value, 2);
     #else
       SIMDE_VECTORIZE
       for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
@@ -28037,11 +28759,14 @@ simde_vdup_n_s64(int64_t value) {
   #else
     simde_int64x1_private r_;
 
-    SIMDE_VECTORIZE
-    for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
-      r_.values[i] = value;
-    }
-
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv64 =  __riscv_vmv_v_x_i64m1(value, 1);
+    #else
+      SIMDE_VECTORIZE
+      for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
+        r_.values[i] = value;
+      }
+    #endif
     return simde_int64x1_from_private(r_);
   #endif
 }
@@ -28063,6 +28788,8 @@ simde_vdup_n_u8(uint8_t value) {
 
     #if defined(SIMDE_X86_MMX_NATIVE)
       r_.m64 = _mm_set1_pi8(HEDLEY_STATIC_CAST(int8_t, value));
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv64 =  __riscv_vmv_v_x_u8m1(value, 8);
     #else
       SIMDE_VECTORIZE
       for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
@@ -28091,6 +28818,8 @@ simde_vdup_n_u16(uint16_t value) {
 
     #if defined(SIMDE_X86_MMX_NATIVE)
       r_.m64 = _mm_set1_pi16(HEDLEY_STATIC_CAST(int16_t, value));
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv64 =  __riscv_vmv_v_x_u16m1(value, 4);
     #else
       SIMDE_VECTORIZE
       for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
@@ -28119,6 +28848,8 @@ simde_vdup_n_u32(uint32_t value) {
 
     #if defined(SIMDE_X86_MMX_NATIVE)
       r_.m64 = _mm_set1_pi32(HEDLEY_STATIC_CAST(int32_t, value));
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv64 =  __riscv_vmv_v_x_u32m1(value, 2);
     #else
       SIMDE_VECTORIZE
       for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
@@ -28144,12 +28875,14 @@ simde_vdup_n_u64(uint64_t value) {
     return vdup_n_u64(value);
   #else
     simde_uint64x1_private r_;
-
-    SIMDE_VECTORIZE
-    for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
-      r_.values[i] = value;
-    }
-
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv64 =  __riscv_vmv_v_x_u64m1(value, 1);
+    #else
+      SIMDE_VECTORIZE
+      for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
+        r_.values[i] = value;
+      }
+    #endif
     return simde_uint64x1_from_private(r_);
   #endif
 }
@@ -28168,12 +28901,14 @@ simde_vdupq_n_f16(simde_float16_t value) {
     return vdupq_n_f16(value);
   #else
     simde_float16x8_private r_;
-
-    SIMDE_VECTORIZE
-    for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
-      r_.values[i] = value;
-    }
-
+    #if defined(SIMDE_RISCV_V_NATIVE) && SIMDE_ARCH_RISCV_ZVFH
+      r_.sv128 =  __riscv_vfmv_v_f_f16m1(value, 8);
+    #else
+      SIMDE_VECTORIZE
+      for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
+        r_.values[i] = value;
+      }
+    #endif
     return simde_float16x8_from_private(r_);
   #endif
 }
@@ -28200,6 +28935,8 @@ simde_vdupq_n_f32(float value) {
       r_.m128 = _mm_set1_ps(value);
     #elif defined(SIMDE_WASM_SIMD128_NATIVE)
       r_.v128 = wasm_f32x4_splat(value);
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv128 =  __riscv_vfmv_v_f_f32m1(value, 4);
     #else
       SIMDE_VECTORIZE
       for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
@@ -28233,6 +28970,8 @@ simde_vdupq_n_f64(double value) {
       r_.m128d = _mm_set1_pd(value);
     #elif defined(SIMDE_WASM_SIMD128_NATIVE)
       r_.v128 = wasm_f64x2_splat(value);
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv128 =  __riscv_vfmv_v_f_f64m1(value, 2);
     #else
       SIMDE_VECTORIZE
       for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
@@ -28265,6 +29004,8 @@ simde_vdupq_n_s8(int8_t value) {
       r_.m128i = _mm_set1_epi8(value);
     #elif defined(SIMDE_WASM_SIMD128_NATIVE)
       r_.v128 = wasm_i8x16_splat(value);
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv128 =  __riscv_vmv_v_x_i8m1(value, 16);
     #else
       SIMDE_VECTORIZE
       for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
@@ -28297,6 +29038,8 @@ simde_vdupq_n_s16(int16_t value) {
       r_.m128i = _mm_set1_epi16(value);
     #elif defined(SIMDE_WASM_SIMD128_NATIVE)
       r_.v128 = wasm_i16x8_splat(value);
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv128 =  __riscv_vmv_v_x_i16m1(value, 8);
     #else
       SIMDE_VECTORIZE
       for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
@@ -28329,6 +29072,8 @@ simde_vdupq_n_s32(int32_t value) {
       r_.m128i = _mm_set1_epi32(value);
     #elif defined(SIMDE_WASM_SIMD128_NATIVE)
       r_.v128 = wasm_i32x4_splat(value);
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv128 =  __riscv_vmv_v_x_i32m1(value, 4);
     #else
       SIMDE_VECTORIZE
       for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
@@ -28361,6 +29106,8 @@ simde_vdupq_n_s64(int64_t value) {
       r_.m128i = _mm_set1_epi64x(value);
     #elif defined(SIMDE_WASM_SIMD128_NATIVE)
       r_.v128 = wasm_i64x2_splat(value);
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv128 =  __riscv_vmv_v_x_i64m1(value, 2);
     #else
       SIMDE_VECTORIZE
       for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
@@ -28393,6 +29140,8 @@ simde_vdupq_n_u8(uint8_t value) {
       r_.m128i = _mm_set1_epi8(HEDLEY_STATIC_CAST(int8_t, value));
     #elif defined (SIMDE_WASM_SIMD128_NATIVE)
       r_.v128 = wasm_i8x16_splat(HEDLEY_STATIC_CAST(int8_t, value));
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv128 =  __riscv_vmv_v_x_u8m1(value, 16);
     #else
       SIMDE_VECTORIZE
       for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
@@ -28425,6 +29174,8 @@ simde_vdupq_n_u16(uint16_t value) {
       r_.m128i = _mm_set1_epi16(HEDLEY_STATIC_CAST(int16_t, value));
     #elif defined (SIMDE_WASM_SIMD128_NATIVE)
       r_.v128 = wasm_i16x8_splat(HEDLEY_STATIC_CAST(int16_t, value));
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv128 =  __riscv_vmv_v_x_u16m1(value, 8);
     #else
       SIMDE_VECTORIZE
       for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
@@ -28457,6 +29208,8 @@ simde_vdupq_n_u32(uint32_t value) {
       r_.m128i = _mm_set1_epi32(HEDLEY_STATIC_CAST(int32_t, value));
     #elif defined (SIMDE_WASM_SIMD128_NATIVE)
       r_.v128 = wasm_i32x4_splat(HEDLEY_STATIC_CAST(int32_t, value));
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv128 =  __riscv_vmv_v_x_u32m1(value, 4);
     #else
       SIMDE_VECTORIZE
       for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
@@ -28489,6 +29242,8 @@ simde_vdupq_n_u64(uint64_t value) {
       r_.m128i = _mm_set1_epi64x(HEDLEY_STATIC_CAST(int64_t, value));
     #elif defined (SIMDE_WASM_SIMD128_NATIVE)
       r_.v128 = wasm_i64x2_splat(HEDLEY_STATIC_CAST(int64_t, value));
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv128 =  __riscv_vmv_v_x_u64m1(value, 2);
     #else
       SIMDE_VECTORIZE
       for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
@@ -28693,7 +29448,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_DUP_N_H) */
 /* :: End simde/arm/neon/dup_n.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -28713,9 +29468,13 @@ simde_vbic_s8(simde_int8x8_t a, simde_int8x8_t b) {
     #if defined(SIMDE_X86_MMX_NATIVE)
       r_.m64 = _mm_andnot_si64(b_.m64, a_.m64);
     #else
-      for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
-        r_.values[i] = a_.values[i] & ~b_.values[i];
-      }
+      #if defined(SIMDE_RISCV_V_NATIVE)
+        r_.sv64 = __riscv_vand_vv_i8m1(a_.sv64 , __riscv_vnot_v_i8m1(b_.sv64 , 8) , 8);
+      #else
+        for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
+          r_.values[i] = a_.values[i] & ~b_.values[i];
+        }
+      #endif
     #endif
 
     return simde_int8x8_from_private(r_);
@@ -28740,9 +29499,13 @@ simde_vbic_s16(simde_int16x4_t a, simde_int16x4_t b) {
     #if defined(SIMDE_X86_MMX_NATIVE)
       r_.m64 = _mm_andnot_si64(b_.m64, a_.m64);
     #else
-      for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
-        r_.values[i] = a_.values[i] & ~b_.values[i];
-      }
+      #if defined(SIMDE_RISCV_V_NATIVE)
+        r_.sv64 = __riscv_vand_vv_i16m1(a_.sv64 , __riscv_vnot_v_i16m1(b_.sv64 , 4) , 4);
+      #else
+        for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
+          r_.values[i] = a_.values[i] & ~b_.values[i];
+        }
+      #endif
     #endif
 
     return simde_int16x4_from_private(r_);
@@ -28767,9 +29530,13 @@ simde_vbic_s32(simde_int32x2_t a, simde_int32x2_t b) {
     #if defined(SIMDE_X86_MMX_NATIVE)
       r_.m64 = _mm_andnot_si64(b_.m64, a_.m64);
     #else
-      for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
-        r_.values[i] = a_.values[i] & ~b_.values[i];
-      }
+      #if defined(SIMDE_RISCV_V_NATIVE)
+        r_.sv64 = __riscv_vand_vv_i32m1(a_.sv64 , __riscv_vnot_v_i32m1(b_.sv64 , 2) , 2);
+      #else
+        for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
+          r_.values[i] = a_.values[i] & ~b_.values[i];
+        }
+      #endif
     #endif
 
     return simde_int32x2_from_private(r_);
@@ -28794,9 +29561,13 @@ simde_vbic_s64(simde_int64x1_t a, simde_int64x1_t b) {
     #if defined(SIMDE_X86_MMX_NATIVE)
       r_.m64 = _mm_andnot_si64(b_.m64, a_.m64);
     #else
-      for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
-        r_.values[i] = a_.values[i] & ~b_.values[i];
-      }
+      #if defined(SIMDE_RISCV_V_NATIVE)
+        r_.sv64 = __riscv_vand_vv_i64m1(a_.sv64 , __riscv_vnot_v_i64m1(b_.sv64 , 1) , 1);
+      #else
+        for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
+          r_.values[i] = a_.values[i] & ~b_.values[i];
+        }
+      #endif
     #endif
 
     return simde_int64x1_from_private(r_);
@@ -28821,9 +29592,13 @@ simde_vbic_u8(simde_uint8x8_t a, simde_uint8x8_t b) {
     #if defined(SIMDE_X86_MMX_NATIVE)
       r_.m64 = _mm_andnot_si64(b_.m64, a_.m64);
     #else
-      for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
-        r_.values[i] = a_.values[i] & ~b_.values[i];
-      }
+      #if defined(SIMDE_RISCV_V_NATIVE)
+        r_.sv64 = __riscv_vand_vv_u8m1(a_.sv64 , __riscv_vnot_v_u8m1(b_.sv64 , 8) , 8);
+      #else
+        for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
+          r_.values[i] = a_.values[i] & ~b_.values[i];
+        }
+      #endif
     #endif
 
     return simde_uint8x8_from_private(r_);
@@ -28848,9 +29623,13 @@ simde_vbic_u16(simde_uint16x4_t a, simde_uint16x4_t b) {
     #if defined(SIMDE_X86_MMX_NATIVE)
       r_.m64 = _mm_andnot_si64(b_.m64, a_.m64);
     #else
-      for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
-        r_.values[i] = a_.values[i] & ~b_.values[i];
-      }
+      #if defined(SIMDE_RISCV_V_NATIVE)
+        r_.sv64 = __riscv_vand_vv_u16m1(a_.sv64 , __riscv_vnot_v_u16m1(b_.sv64 , 4) , 4);
+      #else
+        for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
+          r_.values[i] = a_.values[i] & ~b_.values[i];
+        }
+      #endif
     #endif
 
     return simde_uint16x4_from_private(r_);
@@ -28875,9 +29654,13 @@ simde_vbic_u32(simde_uint32x2_t a, simde_uint32x2_t b) {
     #if defined(SIMDE_X86_MMX_NATIVE)
       r_.m64 = _mm_andnot_si64(b_.m64, a_.m64);
     #else
-      for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
-        r_.values[i] = a_.values[i] & ~b_.values[i];
-      }
+      #if defined(SIMDE_RISCV_V_NATIVE)
+        r_.sv64 = __riscv_vand_vv_u32m1(a_.sv64 , __riscv_vnot_v_u32m1(b_.sv64 , 2) , 2);
+      #else
+        for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
+          r_.values[i] = a_.values[i] & ~b_.values[i];
+        }
+      #endif
     #endif
 
     return simde_uint32x2_from_private(r_);
@@ -28902,9 +29685,13 @@ simde_vbic_u64(simde_uint64x1_t a, simde_uint64x1_t b) {
     #if defined(SIMDE_X86_MMX_NATIVE)
       r_.m64 = _mm_andnot_si64(b_.m64, a_.m64);
     #else
-      for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
-        r_.values[i] = a_.values[i] & ~b_.values[i];
-      }
+      #if defined(SIMDE_RISCV_V_NATIVE)
+        r_.sv64 = __riscv_vand_vv_u64m1(a_.sv64 , __riscv_vnot_v_u64m1(b_.sv64 , 1) , 1);
+      #else
+        for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
+          r_.values[i] = a_.values[i] & ~b_.values[i];
+        }
+      #endif
     #endif
 
     return simde_uint64x1_from_private(r_);
@@ -28928,7 +29715,9 @@ simde_vbicq_s8(simde_int8x16_t a, simde_int8x16_t b) {
       b_ = simde_int8x16_to_private(b),
       r_;
 
-    #if defined(SIMDE_X86_SSE2_NATIVE)
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv128 = __riscv_vand_vv_i8m1(a_.sv128 , __riscv_vnot_v_i8m1(b_.sv128 , 16) , 16);
+    #elif defined(SIMDE_X86_SSE2_NATIVE)
       r_.m128i = _mm_andnot_si128(b_.m128i, a_.m128i);
     #elif defined(SIMDE_WASM_SIMD128_NATIVE)
       r_.v128 = wasm_v128_andnot(a_.v128, b_.v128);
@@ -28959,7 +29748,9 @@ simde_vbicq_s16(simde_int16x8_t a, simde_int16x8_t b) {
       b_ = simde_int16x8_to_private(b),
       r_;
 
-    #if defined(SIMDE_X86_SSE2_NATIVE)
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv128 = __riscv_vand_vv_i16m1(a_.sv128 , __riscv_vnot_v_i16m1(b_.sv128 , 8) , 8);
+    #elif defined(SIMDE_X86_SSE2_NATIVE)
       r_.m128i = _mm_andnot_si128(b_.m128i, a_.m128i);
     #elif defined(SIMDE_WASM_SIMD128_NATIVE)
       r_.v128 = wasm_v128_andnot(a_.v128, b_.v128);
@@ -28990,7 +29781,9 @@ simde_vbicq_s32(simde_int32x4_t a, simde_int32x4_t b) {
       b_ = simde_int32x4_to_private(b),
       r_;
 
-    #if defined(SIMDE_X86_SSE2_NATIVE)
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv128 = __riscv_vand_vv_i32m1(a_.sv128 , __riscv_vnot_v_i32m1(b_.sv128 , 4) , 4);
+    #elif defined(SIMDE_X86_SSE2_NATIVE)
       r_.m128i = _mm_andnot_si128(b_.m128i, a_.m128i);
     #elif defined(SIMDE_WASM_SIMD128_NATIVE)
       r_.v128 = wasm_v128_andnot(a_.v128, b_.v128);
@@ -29021,7 +29814,9 @@ simde_vbicq_s64(simde_int64x2_t a, simde_int64x2_t b) {
       b_ = simde_int64x2_to_private(b),
       r_;
 
-    #if defined(SIMDE_X86_SSE2_NATIVE)
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv128 = __riscv_vand_vv_i64m1(a_.sv128 , __riscv_vnot_v_i64m1(b_.sv128 , 2) , 2);
+    #elif defined(SIMDE_X86_SSE2_NATIVE)
       r_.m128i = _mm_andnot_si128(b_.m128i, a_.m128i);
     #elif defined(SIMDE_WASM_SIMD128_NATIVE)
       r_.v128 = wasm_v128_andnot(a_.v128, b_.v128);
@@ -29052,7 +29847,9 @@ simde_vbicq_u8(simde_uint8x16_t a, simde_uint8x16_t b) {
       b_ = simde_uint8x16_to_private(b),
       r_;
 
-    #if defined(SIMDE_X86_SSE2_NATIVE)
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv128 = __riscv_vand_vv_u8m1(a_.sv128 , __riscv_vnot_v_u8m1(b_.sv128 , 16) , 16);
+    #elif defined(SIMDE_X86_SSE2_NATIVE)
       r_.m128i = _mm_andnot_si128(b_.m128i, a_.m128i);
     #elif defined(SIMDE_WASM_SIMD128_NATIVE)
       r_.v128 = wasm_v128_andnot(a_.v128, b_.v128);
@@ -29083,7 +29880,9 @@ simde_vbicq_u16(simde_uint16x8_t a, simde_uint16x8_t b) {
       b_ = simde_uint16x8_to_private(b),
       r_;
 
-    #if defined(SIMDE_X86_SSE2_NATIVE)
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv128 = __riscv_vand_vv_u16m1(a_.sv128 , __riscv_vnot_v_u16m1(b_.sv128 , 8) , 8);
+    #elif defined(SIMDE_X86_SSE2_NATIVE)
       r_.m128i = _mm_andnot_si128(b_.m128i, a_.m128i);
     #elif defined(SIMDE_WASM_SIMD128_NATIVE)
       r_.v128 = wasm_v128_andnot(a_.v128, b_.v128);
@@ -29114,7 +29913,9 @@ simde_vbicq_u32(simde_uint32x4_t a, simde_uint32x4_t b) {
       b_ = simde_uint32x4_to_private(b),
       r_;
 
-    #if defined(SIMDE_X86_SSE2_NATIVE)
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv128 = __riscv_vand_vv_u32m1(a_.sv128 , __riscv_vnot_v_u32m1(b_.sv128 , 4) , 4);
+    #elif defined(SIMDE_X86_SSE2_NATIVE)
       r_.m128i = _mm_andnot_si128(b_.m128i, a_.m128i);
     #elif defined(SIMDE_WASM_SIMD128_NATIVE)
       r_.v128 = wasm_v128_andnot(a_.v128, b_.v128);
@@ -29145,7 +29946,9 @@ simde_vbicq_u64(simde_uint64x2_t a, simde_uint64x2_t b) {
       b_ = simde_uint64x2_to_private(b),
       r_;
 
-    #if defined(SIMDE_X86_SSE2_NATIVE)
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv128 = __riscv_vand_vv_u64m1(a_.sv128 , __riscv_vnot_v_u64m1(b_.sv128 , 2) , 2);
+    #elif defined(SIMDE_X86_SSE2_NATIVE)
       r_.m128i = _mm_andnot_si128(b_.m128i, a_.m128i);
     #elif defined(SIMDE_WASM_SIMD128_NATIVE)
       r_.v128 = wasm_v128_andnot(a_.v128, b_.v128);
@@ -29178,6 +29981,15 @@ simde_uint8x16_t
 simde_vbcaxq_u8(simde_uint8x16_t a, simde_uint8x16_t b, simde_uint8x16_t c) {
   #if defined(SIMDE_ARM_NEON_A64V8_NATIVE) && defined(SIMDE_ARCH_ARM_SHA3)
     return vbcaxq_u8(a, b, c);
+  #elif defined(SIMDE_RISCV_V_NATIVE)
+    simde_uint8x16_private
+      r_,
+      a_ = simde_uint8x16_to_private(a),
+      b_ = simde_uint8x16_to_private(b),
+      c_ = simde_uint8x16_to_private(c);
+    r_.sv128 = __riscv_vxor_vv_u8m1(a_.sv128, __riscv_vand_vv_u8m1(b_.sv128 , \
+      __riscv_vnot_v_u8m1(c_.sv128 , 16), 16), 16);
+    return simde_uint8x16_from_private(r_);
   #else
     return simde_veorq_u8(a, simde_vbicq_u8(b, c));
   #endif
@@ -29192,6 +30004,15 @@ simde_uint16x8_t
 simde_vbcaxq_u16(simde_uint16x8_t a, simde_uint16x8_t b, simde_uint16x8_t c) {
   #if defined(SIMDE_ARM_NEON_A64V8_NATIVE) && defined(SIMDE_ARCH_ARM_SHA3)
     return vbcaxq_u16(a, b, c);
+  #elif defined(SIMDE_RISCV_V_NATIVE)
+    simde_uint16x8_private
+      r_,
+      a_ = simde_uint16x8_to_private(a),
+      b_ = simde_uint16x8_to_private(b),
+      c_ = simde_uint16x8_to_private(c);
+    r_.sv128 = __riscv_vxor_vv_u16m1(a_.sv128, __riscv_vand_vv_u16m1(b_.sv128 , \
+      __riscv_vnot_v_u16m1(c_.sv128 , 8), 8), 8);
+    return simde_uint16x8_from_private(r_);
   #else
     return simde_veorq_u16(a, simde_vbicq_u16(b, c));
   #endif
@@ -29206,6 +30027,15 @@ simde_uint32x4_t
 simde_vbcaxq_u32(simde_uint32x4_t a, simde_uint32x4_t b, simde_uint32x4_t c) {
   #if defined(SIMDE_ARM_NEON_A64V8_NATIVE) && defined(SIMDE_ARCH_ARM_SHA3)
     return vbcaxq_u32(a, b, c);
+  #elif defined(SIMDE_RISCV_V_NATIVE)
+    simde_uint32x4_private
+      r_,
+      a_ = simde_uint32x4_to_private(a),
+      b_ = simde_uint32x4_to_private(b),
+      c_ = simde_uint32x4_to_private(c);
+    r_.sv128 = __riscv_vxor_vv_u32m1(a_.sv128, __riscv_vand_vv_u32m1(b_.sv128 , \
+      __riscv_vnot_v_u32m1(c_.sv128 , 4), 4), 4);
+    return simde_uint32x4_from_private(r_);
   #else
     return simde_veorq_u32(a, simde_vbicq_u32(b, c));
   #endif
@@ -29220,6 +30050,15 @@ simde_uint64x2_t
 simde_vbcaxq_u64(simde_uint64x2_t a, simde_uint64x2_t b, simde_uint64x2_t c) {
   #if defined(SIMDE_ARM_NEON_A64V8_NATIVE) && defined(SIMDE_ARCH_ARM_SHA3)
     return vbcaxq_u64(a, b, c);
+  #elif defined(SIMDE_RISCV_V_NATIVE)
+    simde_uint64x2_private
+      r_,
+      a_ = simde_uint64x2_to_private(a),
+      b_ = simde_uint64x2_to_private(b),
+      c_ = simde_uint64x2_to_private(c);
+    r_.sv128 = __riscv_vxor_vv_u64m1(a_.sv128, __riscv_vand_vv_u64m1(b_.sv128 , \
+      __riscv_vnot_v_u64m1(c_.sv128 , 2), 2), 2);
+    return simde_uint64x2_from_private(r_);
   #else
     return simde_veorq_u64(a, simde_vbicq_u64(b, c));
   #endif
@@ -29234,6 +30073,15 @@ simde_int8x16_t
 simde_vbcaxq_s8(simde_int8x16_t a, simde_int8x16_t b, simde_int8x16_t c) {
   #if defined(SIMDE_ARM_NEON_A64V8_NATIVE) && defined(SIMDE_ARCH_ARM_SHA3)
     return vbcaxq_s8(a, b, c);
+  #elif defined(SIMDE_RISCV_V_NATIVE)
+    simde_int8x16_private
+      r_,
+      a_ = simde_int8x16_to_private(a),
+      b_ = simde_int8x16_to_private(b),
+      c_ = simde_int8x16_to_private(c);
+    r_.sv128 = __riscv_vxor_vv_i8m1(a_.sv128, __riscv_vand_vv_i8m1(b_.sv128 , \
+      __riscv_vnot_v_i8m1(c_.sv128 , 16), 16), 16);
+    return simde_int8x16_from_private(r_);
   #else
     return simde_veorq_s8(a, simde_vbicq_s8(b, c));
   #endif
@@ -29248,6 +30096,15 @@ simde_int16x8_t
 simde_vbcaxq_s16(simde_int16x8_t a, simde_int16x8_t b, simde_int16x8_t c) {
   #if defined(SIMDE_ARM_NEON_A64V8_NATIVE) && defined(SIMDE_ARCH_ARM_SHA3)
     return vbcaxq_s16(a, b, c);
+  #elif defined(SIMDE_RISCV_V_NATIVE)
+    simde_int16x8_private
+      r_,
+      a_ = simde_int16x8_to_private(a),
+      b_ = simde_int16x8_to_private(b),
+      c_ = simde_int16x8_to_private(c);
+    r_.sv128 = __riscv_vxor_vv_i16m1(a_.sv128, __riscv_vand_vv_i16m1(b_.sv128 , \
+      __riscv_vnot_v_i16m1(c_.sv128 , 8), 8), 8);
+    return simde_int16x8_from_private(r_);
   #else
     return simde_veorq_s16(a,simde_vbicq_s16(b, c));
   #endif
@@ -29262,6 +30119,15 @@ simde_int32x4_t
 simde_vbcaxq_s32(simde_int32x4_t a, simde_int32x4_t b, simde_int32x4_t c) {
   #if defined(SIMDE_ARM_NEON_A64V8_NATIVE) && defined(SIMDE_ARCH_ARM_SHA3)
     return vbcaxq_s32(a, b, c);
+  #elif defined(SIMDE_RISCV_V_NATIVE)
+    simde_int32x4_private
+      r_,
+      a_ = simde_int32x4_to_private(a),
+      b_ = simde_int32x4_to_private(b),
+      c_ = simde_int32x4_to_private(c);
+    r_.sv128 = __riscv_vxor_vv_i32m1(a_.sv128, __riscv_vand_vv_i32m1(b_.sv128 , \
+      __riscv_vnot_v_i32m1(c_.sv128 , 4), 4), 4);
+    return simde_int32x4_from_private(r_);
   #else
     return simde_veorq_s32(a, simde_vbicq_s32(b, c));
   #endif
@@ -29276,6 +30142,15 @@ simde_int64x2_t
 simde_vbcaxq_s64(simde_int64x2_t a, simde_int64x2_t b, simde_int64x2_t c) {
   #if defined(SIMDE_ARM_NEON_A64V8_NATIVE) && defined(SIMDE_ARCH_ARM_SHA3)
     return vbcaxq_s64(a, b, c);
+  #elif defined(SIMDE_RISCV_V_NATIVE)
+    simde_int64x2_private
+      r_,
+      a_ = simde_int64x2_to_private(a),
+      b_ = simde_int64x2_to_private(b),
+      c_ = simde_int64x2_to_private(c);
+    r_.sv128 = __riscv_vxor_vv_i64m1(a_.sv128, __riscv_vand_vv_i64m1(b_.sv128 , \
+      __riscv_vnot_v_i64m1(c_.sv128 , 2), 2), 2);
+    return simde_int64x2_from_private(r_);
   #else
     return simde_veorq_s64(a, simde_vbicq_s64(b, c));
   #endif
@@ -29291,9 +30166,9 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_BCAX_H) */
 /* :: End simde/arm/neon/bcax.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/bsl.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -29327,13 +30202,13 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_BSL_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -30213,7 +31088,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_BSL_H) */
 /* :: End simde/arm/neon/bsl.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/cadd_rot270.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -30238,16 +31113,16 @@ HEDLEY_DIAGNOSTIC_POP
  * SOFTWARE.
  *
  * Copyright:
- *   2023      Chi-Wei Chu <wewe5215@gapp.nthu.edu.tw>
+ *   2023      Chi-Wei Chu <wewe5215@gapp.nthu.edu.tw> (Copyright owned by NTHU pllab)
  */
 
 #if !defined(SIMDE_ARM_NEON_CADD_ROT270_H)
 #define SIMDE_ARM_NEON_CADD_ROT270_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
 SIMDE_BEGIN_DECLS_
@@ -30266,9 +31141,14 @@ simde_float16x4_t simde_vcadd_rot270_f16(simde_float16x4_t a, simde_float16x4_t 
     return vcadd_rot270_f16(a, b);
   #else
     simde_float16x4_private r_, a_ = simde_float16x4_to_private(a), b_ = simde_float16x4_to_private(b);
-    #if defined(SIMDE_SHUFFLE_VECTOR_) && !defined(SIMDE_BUG_GCC_100760) &&                                                     \
+    #if defined(SIMDE_RISCV_V_NATIVE) && SIMDE_ARCH_RISCV_ZVFH
+      uint16_t idx1[4] = {5, 0, 7, 2};
+      vfloat16m1_t op1 = __riscv_vrgather_vv_f16m1(__riscv_vslideup_vx_f16m1( \
+        __riscv_vfneg_v_f16m1(b_.sv64, 4), b_.sv64, 4, 8), __riscv_vle16_v_u16m1(idx1, 4), 4);
+      r_.sv64 = __riscv_vfadd_vv_f16m1(op1, a_.sv64, 4);
+    #elif defined(SIMDE_SHUFFLE_VECTOR_) && !defined(SIMDE_BUG_GCC_100760) &&                                                     \
         ((SIMDE_FLOAT16_API == SIMDE_FLOAT16_API_FP16) || (SIMDE_FLOAT16_API == SIMDE_FLOAT16_API_FLOAT16))
-      b_.values = SIMDE_SHUFFLE_VECTOR_(16, 4, -b_.values, b_.values, 5, 0, 7, 2);
+      b_.values = SIMDE_SHUFFLE_VECTOR_(16, 8, -b_.values, b_.values, 5, 0, 7, 2);
       r_.values = b_.values + a_.values;
     #else
       SIMDE_VECTORIZE
@@ -30296,9 +31176,15 @@ simde_float16x8_t simde_vcaddq_rot270_f16(simde_float16x8_t a, simde_float16x8_t
     return vcaddq_rot270_f16(a, b);
   #else
     simde_float16x8_private r_, a_ = simde_float16x8_to_private(a), b_ = simde_float16x8_to_private(b);
-    #if defined(SIMDE_SHUFFLE_VECTOR_) &&                                                                                       \
+    #if defined(SIMDE_RISCV_V_NATIVE) && SIMDE_ARCH_RISCV_ZVFH
+      uint16_t idx1[8] = {9, 0, 11, 2, 13, 4, 15, 6};
+      vfloat16m2_t b_tmp = __riscv_vlmul_ext_v_f16m1_f16m2 (b_.sv128);
+      vfloat16m1_t op1 = __riscv_vlmul_trunc_v_f16m2_f16m1(__riscv_vrgather_vv_f16m2(__riscv_vslideup_vx_f16m2( \
+        __riscv_vfneg_v_f16m2(b_tmp, 8), b_tmp, 8, 16), __riscv_vle16_v_u16m2(idx1, 8), 8));
+      r_.sv128 = __riscv_vfadd_vv_f16m1(op1, a_.sv128, 8);
+    #elif defined(SIMDE_SHUFFLE_VECTOR_) &&                                                                                       \
         ((SIMDE_FLOAT16_API == SIMDE_FLOAT16_API_FP16) || (SIMDE_FLOAT16_API == SIMDE_FLOAT16_API_FLOAT16))
-      b_.values = SIMDE_SHUFFLE_VECTOR_(16, 8, -b_.values, b_.values, 9, 0, 11, 2, 13, 4, 15, 6);
+      b_.values = SIMDE_SHUFFLE_VECTOR_(16, 16, -b_.values, b_.values, 9, 0, 11, 2, 13, 4, 15, 6);
       r_.values = b_.values + a_.values;
     #else
       SIMDE_VECTORIZE
@@ -30326,7 +31212,12 @@ simde_float32x2_t simde_vcadd_rot270_f32(simde_float32x2_t a, simde_float32x2_t 
     return vcadd_rot270_f32(a, b);
   #else
     simde_float32x2_private r_, a_ = simde_float32x2_to_private(a), b_ = simde_float32x2_to_private(b);
-    #if defined(SIMDE_SHUFFLE_VECTOR_) && !defined(SIMDE_BUG_GCC_100760)
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      uint32_t idx1[2] = {3, 0};
+      vfloat32m1_t op1 = __riscv_vrgather_vv_f32m1(__riscv_vslideup_vx_f32m1( \
+        __riscv_vfneg_v_f32m1(b_.sv64, 2), b_.sv64, 2, 4), __riscv_vle32_v_u32m1(idx1, 2), 2);
+      r_.sv64 = __riscv_vfadd_vv_f32m1(op1, a_.sv64, 2);
+    #elif defined(SIMDE_SHUFFLE_VECTOR_) && !defined(SIMDE_BUG_GCC_100760)
       b_.values = SIMDE_SHUFFLE_VECTOR_(32, 8, -b_.values, b_.values, 3, 0);
       r_.values = b_.values + a_.values;
     #else
@@ -30354,7 +31245,13 @@ simde_float32x4_t simde_vcaddq_rot270_f32(simde_float32x4_t a, simde_float32x4_t
     return vcaddq_rot270_f32(a, b);
   #else
     simde_float32x4_private r_, a_ = simde_float32x4_to_private(a), b_ = simde_float32x4_to_private(b);
-    #if defined(SIMDE_SHUFFLE_VECTOR_)
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      uint32_t idx1[4] = {5, 0, 7, 2};
+      vfloat32m2_t b_tmp = __riscv_vlmul_ext_v_f32m1_f32m2 (b_.sv128);
+      vfloat32m1_t op1 = __riscv_vlmul_trunc_v_f32m2_f32m1(__riscv_vrgather_vv_f32m2(__riscv_vslideup_vx_f32m2( \
+        __riscv_vfneg_v_f32m2(b_tmp, 4), b_tmp, 4, 8), __riscv_vle32_v_u32m2(idx1, 4), 4));
+      r_.sv128 = __riscv_vfadd_vv_f32m1(op1, a_.sv128, 4);
+    #elif defined(SIMDE_SHUFFLE_VECTOR_)
       b_.values = SIMDE_SHUFFLE_VECTOR_(32, 16, -b_.values, b_.values, 5, 0, 7, 2);
       r_.values = b_.values + a_.values;
     #else
@@ -30382,7 +31279,13 @@ simde_float64x2_t simde_vcaddq_rot270_f64(simde_float64x2_t a, simde_float64x2_t
     return vcaddq_rot270_f64(a, b);
   #else
     simde_float64x2_private r_, a_ = simde_float64x2_to_private(a), b_ = simde_float64x2_to_private(b);
-    #if defined(SIMDE_SHUFFLE_VECTOR_)
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      uint64_t idx1[2] = {3, 0};
+      vfloat64m2_t b_tmp = __riscv_vlmul_ext_v_f64m1_f64m2 (b_.sv128);
+      vfloat64m1_t op1 = __riscv_vlmul_trunc_v_f64m2_f64m1(__riscv_vrgather_vv_f64m2(__riscv_vslideup_vx_f64m2( \
+        __riscv_vfneg_v_f64m2(b_tmp, 2), b_tmp, 2, 4), __riscv_vle64_v_u64m2(idx1, 2), 2));
+      r_.sv128 = __riscv_vfadd_vv_f64m1(op1, a_.sv128, 2);
+    #elif defined(SIMDE_SHUFFLE_VECTOR_)
       b_.values = SIMDE_SHUFFLE_VECTOR_(64, 16, -b_.values, b_.values, 3, 0);
       r_.values = b_.values + a_.values;
     #else
@@ -30407,7 +31310,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_CADD_ROT270_H) */
 /* :: End simde/arm/neon/cadd_rot270.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/cadd_rot90.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -30432,16 +31335,16 @@ HEDLEY_DIAGNOSTIC_POP
  * SOFTWARE.
  *
  * Copyright:
- *   2023      Chi-Wei Chu <wewe5215@gapp.nthu.edu.tw>
+ *   2023      Chi-Wei Chu <wewe5215@gapp.nthu.edu.tw> (Copyright owned by NTHU pllab)
  */
 
 #if !defined(SIMDE_ARM_NEON_CADD_ROT90_H)
 #define SIMDE_ARM_NEON_CADD_ROT90_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
 SIMDE_BEGIN_DECLS_
@@ -30460,9 +31363,14 @@ simde_float16x4_t simde_vcadd_rot90_f16(simde_float16x4_t a, simde_float16x4_t b
     return vcadd_rot90_f16(a, b);
   #else
     simde_float16x4_private r_, a_ = simde_float16x4_to_private(a), b_ = simde_float16x4_to_private(b);
-    #if defined(SIMDE_SHUFFLE_VECTOR_) &&                                                                                       \
+    #if defined(SIMDE_RISCV_V_NATIVE) && SIMDE_ARCH_RISCV_ZVFH
+      uint16_t idx1[4] = {1, 4, 3, 6};
+      vfloat16m1_t op1 = __riscv_vrgather_vv_f16m1(__riscv_vslideup_vx_f16m1( \
+        __riscv_vfneg_v_f16m1(b_.sv64, 4), b_.sv64, 4, 8), __riscv_vle16_v_u16m1(idx1, 4), 4);
+      r_.sv64 = __riscv_vfadd_vv_f16m1(op1, a_.sv64, 4);
+    #elif defined(SIMDE_SHUFFLE_VECTOR_) &&                                                                                       \
         ((SIMDE_FLOAT16_API == SIMDE_FLOAT16_API_FP16) || (SIMDE_FLOAT16_API == SIMDE_FLOAT16_API_FLOAT16))
-      b_.values = SIMDE_SHUFFLE_VECTOR_(16, 4, -b_.values, b_.values, 1, 4, 3, 6);
+      b_.values = SIMDE_SHUFFLE_VECTOR_(16, 8, -b_.values, b_.values, 1, 4, 3, 6);
       r_.values = b_.values + a_.values;
     #else
       SIMDE_VECTORIZE
@@ -30490,9 +31398,15 @@ simde_float16x8_t simde_vcaddq_rot90_f16(simde_float16x8_t a, simde_float16x8_t 
     return vcaddq_rot90_f16(a, b);
   #else
     simde_float16x8_private r_, a_ = simde_float16x8_to_private(a), b_ = simde_float16x8_to_private(b);
-    #if defined(SIMDE_SHUFFLE_VECTOR_) &&                                                                                       \
+    #if defined(SIMDE_RISCV_V_NATIVE) && SIMDE_ARCH_RISCV_ZVFH
+      uint16_t idx1[8] = {1, 8, 3, 10, 5, 12, 7, 14};
+      vfloat16m2_t b_tmp = __riscv_vlmul_ext_v_f16m1_f16m2 (b_.sv128);
+      vfloat16m1_t op1 = __riscv_vlmul_trunc_v_f16m2_f16m1(__riscv_vrgather_vv_f16m2(__riscv_vslideup_vx_f16m2( \
+        __riscv_vfneg_v_f16m2(b_tmp, 8), b_tmp, 8, 16), __riscv_vle16_v_u16m2(idx1, 8), 8));
+      r_.sv128 = __riscv_vfadd_vv_f16m1(op1, a_.sv128, 8);
+    #elif defined(SIMDE_SHUFFLE_VECTOR_) &&                                                                                       \
         ((SIMDE_FLOAT16_API == SIMDE_FLOAT16_API_FP16) || (SIMDE_FLOAT16_API == SIMDE_FLOAT16_API_FLOAT16))
-      b_.values = SIMDE_SHUFFLE_VECTOR_(16, 8, -b_.values, b_.values, 1, 8, 3, 10, 5, 12, 7, 14);
+      b_.values = SIMDE_SHUFFLE_VECTOR_(16, 16, -b_.values, b_.values, 1, 8, 3, 10, 5, 12, 7, 14);
       r_.values = b_.values + a_.values;
     #else
       SIMDE_VECTORIZE
@@ -30520,7 +31434,12 @@ simde_float32x2_t simde_vcadd_rot90_f32(simde_float32x2_t a, simde_float32x2_t b
     return vcadd_rot90_f32(a, b);
   #else
     simde_float32x2_private r_, a_ = simde_float32x2_to_private(a), b_ = simde_float32x2_to_private(b);
-    #if defined(SIMDE_SHUFFLE_VECTOR_) && !defined(SIMDE_BUG_GCC_100760)
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      uint32_t idx1[2] = {1, 2};
+      vfloat32m1_t op1 = __riscv_vrgather_vv_f32m1(__riscv_vslideup_vx_f32m1( \
+        __riscv_vfneg_v_f32m1(b_.sv64, 2), b_.sv64, 2, 4), __riscv_vle32_v_u32m1(idx1, 2), 2);
+      r_.sv64 = __riscv_vfadd_vv_f32m1(op1, a_.sv64, 2);
+    #elif defined(SIMDE_SHUFFLE_VECTOR_) && !defined(SIMDE_BUG_GCC_100760)
       b_.values = SIMDE_SHUFFLE_VECTOR_(32, 8, -b_.values, b_.values, 1, 2);
       r_.values = b_.values + a_.values;
     #else
@@ -30548,7 +31467,13 @@ simde_float32x4_t simde_vcaddq_rot90_f32(simde_float32x4_t a, simde_float32x4_t 
     return vcaddq_rot90_f32(a, b);
   #else
     simde_float32x4_private r_, a_ = simde_float32x4_to_private(a), b_ = simde_float32x4_to_private(b);
-    #if defined(SIMDE_SHUFFLE_VECTOR_)
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      uint32_t idx1[4] = {1, 4, 3, 6};
+      vfloat32m2_t b_tmp = __riscv_vlmul_ext_v_f32m1_f32m2 (b_.sv128);
+      vfloat32m1_t op1 = __riscv_vlmul_trunc_v_f32m2_f32m1(__riscv_vrgather_vv_f32m2(__riscv_vslideup_vx_f32m2( \
+        __riscv_vfneg_v_f32m2(b_tmp, 4), b_tmp, 4, 8), __riscv_vle32_v_u32m2(idx1, 4), 4));
+      r_.sv128 = __riscv_vfadd_vv_f32m1(op1, a_.sv128, 4);
+    #elif defined(SIMDE_SHUFFLE_VECTOR_)
       b_.values = SIMDE_SHUFFLE_VECTOR_(32, 16, -b_.values, b_.values, 1, 4, 3, 6);
       r_.values = b_.values + a_.values;
     #else
@@ -30576,7 +31501,13 @@ simde_float64x2_t simde_vcaddq_rot90_f64(simde_float64x2_t a, simde_float64x2_t 
     return vcaddq_rot90_f64(a, b);
   #else
     simde_float64x2_private r_, a_ = simde_float64x2_to_private(a), b_ = simde_float64x2_to_private(b);
-    #if defined(SIMDE_SHUFFLE_VECTOR_)
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      uint64_t idx1[2] = {1, 2};
+      vfloat64m2_t b_tmp = __riscv_vlmul_ext_v_f64m1_f64m2 (b_.sv128);
+      vfloat64m1_t op1 = __riscv_vlmul_trunc_v_f64m2_f64m1(__riscv_vrgather_vv_f64m2(__riscv_vslideup_vx_f64m2( \
+        __riscv_vfneg_v_f64m2(b_tmp, 2), b_tmp, 2, 4), __riscv_vle64_v_u64m2(idx1, 2), 2));
+      r_.sv128 = __riscv_vfadd_vv_f64m1(op1, a_.sv128, 2);
+    #elif defined(SIMDE_SHUFFLE_VECTOR_)
       b_.values = SIMDE_SHUFFLE_VECTOR_(64, 16, -b_.values, b_.values, 1, 2);
       r_.values = b_.values + a_.values;
     #else
@@ -30601,7 +31532,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_CADD_ROT90_H) */
 /* :: End simde/arm/neon/cadd_rot90.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/cage.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -30634,11 +31565,11 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_CAGE_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/cge.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -30665,13 +31596,14 @@ HEDLEY_DIAGNOSTIC_POP
  * Copyright:
  *   2020      Evan Nemerson <evan@nemerson.com>
  *   2020      Christopher Moore <moore@free.fr>
+ *   2023      Ju-Hung Li <jhlee@pllab.cs.nthu.edu.tw> (Copyright owned by NTHU pllab)
  */
 
 #if !defined(SIMDE_ARM_NEON_CGE_H)
 #define SIMDE_ARM_NEON_CGE_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -30702,10 +31634,16 @@ simde_vcgeq_f16(simde_float16x8_t a, simde_float16x8_t b) {
       b_ = simde_float16x8_to_private(b);
     simde_uint16x8_private r_;
 
-    SIMDE_VECTORIZE
-    for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
-      r_.values[i] = simde_vcgeh_f16(a_.values[i], b_.values[i]);
-    }
+    #if defined(SIMDE_RISCV_V_NATIVE) && defined(SIMDE_ARCH_RISCV_ZVFH)
+      vbool16_t result = __riscv_vmfge_vv_f16m1_b16(a_.sv128, b_.sv128, 8);
+      r_.sv128 = __riscv_vmv_v_x_u16m1(0, 8);
+      r_.sv128 = __riscv_vmerge_vxm_u16m1(r_.sv128, -1, result, 8);
+    #else
+      SIMDE_VECTORIZE
+      for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
+        r_.values[i] = simde_vcgeh_f16(a_.values[i], b_.values[i]);
+      }
+    #endif
 
     return simde_uint16x8_from_private(r_);
   #endif
@@ -30728,10 +31666,15 @@ simde_vcgeq_f32(simde_float32x4_t a, simde_float32x4_t b) {
       b_ = simde_float32x4_to_private(b);
     simde_uint32x4_private r_;
 
+
     #if defined(SIMDE_X86_SSE2_NATIVE)
       r_.m128i = _mm_castps_si128(_mm_cmpge_ps(a_.m128, b_.m128));
     #elif defined(SIMDE_WASM_SIMD128_NATIVE)
       r_.v128 = wasm_f32x4_ge(a_.v128, b_.v128);
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      vbool32_t result = __riscv_vmfge_vv_f32m1_b32(a_.sv128, b_.sv128, 4);
+      r_.sv128 = __riscv_vmv_v_x_u32m1(0, 4);
+      r_.sv128 = __riscv_vmerge_vxm_u32m1(r_.sv128, -1, result, 4);
     #elif defined(SIMDE_VECTOR_SUBSCRIPT_OPS)
       r_.values = HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), a_.values >= b_.values);
     #else
@@ -30766,6 +31709,10 @@ simde_vcgeq_f64(simde_float64x2_t a, simde_float64x2_t b) {
       r_.m128i = _mm_castpd_si128(_mm_cmpge_pd(a_.m128d, b_.m128d));
     #elif defined(SIMDE_WASM_SIMD128_NATIVE)
       r_.v128 = wasm_f64x2_ge(a_.v128, b_.v128);
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      vbool64_t result = __riscv_vmfge_vv_f64m1_b64(a_.sv128, b_.sv128, 2);
+      r_.sv128 = __riscv_vmv_v_x_u64m1(0, 2);
+      r_.sv128 = __riscv_vmerge_vxm_u64m1(r_.sv128, -1, result, 2);
     #elif defined(SIMDE_VECTOR_SUBSCRIPT_OPS)
       r_.values = HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), a_.values >= b_.values);
     #else
@@ -30800,6 +31747,10 @@ simde_vcgeq_s8(simde_int8x16_t a, simde_int8x16_t b) {
       r_.m128i = _mm_or_si128(_mm_cmpgt_epi8(a_.m128i, b_.m128i), _mm_cmpeq_epi8(a_.m128i, b_.m128i));
     #elif defined(SIMDE_WASM_SIMD128_NATIVE)
       r_.v128 = wasm_i8x16_ge(a_.v128, b_.v128);
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      vbool8_t result = __riscv_vmsge_vv_i8m1_b8(a_.sv128, b_.sv128, 16);
+      r_.sv128 = __riscv_vmv_v_x_u8m1(0, 16);
+      r_.sv128 = __riscv_vmerge_vxm_u8m1(r_.sv128, -1, result, 16);
     #elif defined(SIMDE_VECTOR_SUBSCRIPT_OPS)
       r_.values = HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), a_.values >= b_.values);
     #else
@@ -30834,6 +31785,10 @@ simde_vcgeq_s16(simde_int16x8_t a, simde_int16x8_t b) {
       r_.m128i = _mm_or_si128(_mm_cmpgt_epi16(a_.m128i, b_.m128i), _mm_cmpeq_epi16(a_.m128i, b_.m128i));
     #elif defined(SIMDE_WASM_SIMD128_NATIVE)
       r_.v128 = wasm_i16x8_ge(a_.v128, b_.v128);
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      vbool16_t result = __riscv_vmsge_vv_i16m1_b16(a_.sv128, b_.sv128, 8);
+      r_.sv128 = __riscv_vmv_v_x_u16m1(0, 8);
+      r_.sv128 = __riscv_vmerge_vxm_u16m1(r_.sv128, -1, result, 8);
     #elif defined(SIMDE_VECTOR_SUBSCRIPT_OPS)
       r_.values = HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), a_.values >= b_.values);
     #else
@@ -30868,6 +31823,10 @@ simde_vcgeq_s32(simde_int32x4_t a, simde_int32x4_t b) {
       r_.m128i = _mm_or_si128(_mm_cmpgt_epi32(a_.m128i, b_.m128i), _mm_cmpeq_epi32(a_.m128i, b_.m128i));
     #elif defined(SIMDE_WASM_SIMD128_NATIVE)
       r_.v128 = wasm_i32x4_ge(a_.v128, b_.v128);
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      vbool32_t result = __riscv_vmsge_vv_i32m1_b32(a_.sv128, b_.sv128, 4);
+      r_.sv128 = __riscv_vmv_v_x_u32m1(0, 4);
+      r_.sv128 = __riscv_vmerge_vxm_u32m1(r_.sv128, -1, result, 4);
     #elif defined(SIMDE_VECTOR_SUBSCRIPT_OPS)
       r_.values = HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), a_.values >= b_.values);
     #else
@@ -30902,6 +31861,10 @@ simde_vcgeq_s64(simde_int64x2_t a, simde_int64x2_t b) {
 
     #if defined(SIMDE_X86_SSE4_2_NATIVE)
       r_.m128i = _mm_or_si128(_mm_cmpgt_epi64(a_.m128i, b_.m128i), _mm_cmpeq_epi64(a_.m128i, b_.m128i));
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      vbool64_t result = __riscv_vmsge_vv_i64m1_b64(a_.sv128, b_.sv128, 2);
+      r_.sv128 = __riscv_vmv_v_x_u64m1(0, 2);
+      r_.sv128 = __riscv_vmerge_vxm_u64m1(r_.sv128, -1, result, 2);
     #elif defined(SIMDE_VECTOR_SUBSCRIPT_OPS)
       r_.values = HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), a_.values >= b_.values);
     #else
@@ -30940,6 +31903,10 @@ simde_vcgeq_u8(simde_uint8x16_t a, simde_uint8x16_t b) {
         );
     #elif defined(SIMDE_WASM_SIMD128_NATIVE)
       r_.v128 = wasm_u8x16_ge(a_.v128, b_.v128);
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      vbool8_t result = __riscv_vmsgeu_vv_u8m1_b8(a_.sv128, b_.sv128, 16);
+      r_.sv128 = __riscv_vmv_v_x_u8m1(0, 16);
+      r_.sv128 = __riscv_vmerge_vxm_u8m1(r_.sv128, -1, result, 16);
     #elif defined(SIMDE_VECTOR_SUBSCRIPT_OPS)
       r_.values = HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), a_.values >= b_.values);
     #else
@@ -30981,6 +31948,10 @@ simde_vcgeq_u16(simde_uint16x8_t a, simde_uint16x8_t b) {
       r_.m128i = _mm_or_si128(_mm_cmpgt_epi16(_mm_xor_si128(a_.m128i, sign_bits), _mm_xor_si128(b_.m128i, sign_bits)), _mm_cmpeq_epi16(a_.m128i, b_.m128i));
     #elif defined(SIMDE_WASM_SIMD128_NATIVE)
       r_.v128 = wasm_u16x8_ge(a_.v128, b_.v128);
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      vbool16_t result = __riscv_vmsgeu_vv_u16m1_b16(a_.sv128, b_.sv128, 8);
+      r_.sv128 = __riscv_vmv_v_x_u16m1(0, 8);
+      r_.sv128 = __riscv_vmerge_vxm_u16m1(r_.sv128, -1, result, 8);
     #elif defined(SIMDE_VECTOR_SUBSCRIPT_OPS)
       r_.values = HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), a_.values >= b_.values);
     #else
@@ -31022,6 +31993,10 @@ simde_vcgeq_u32(simde_uint32x4_t a, simde_uint32x4_t b) {
       r_.m128i = _mm_or_si128(_mm_cmpgt_epi32(_mm_xor_si128(a_.m128i, sign_bits), _mm_xor_si128(b_.m128i, sign_bits)), _mm_cmpeq_epi32(a_.m128i, b_.m128i));
     #elif defined(SIMDE_WASM_SIMD128_NATIVE)
       r_.v128 = wasm_u32x4_ge(a_.v128, b_.v128);
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      vbool32_t result = __riscv_vmsgeu_vv_u32m1_b32(a_.sv128, b_.sv128, 4);
+      r_.sv128 = __riscv_vmv_v_x_u32m1(0, 4);
+      r_.sv128 = __riscv_vmerge_vxm_u32m1(r_.sv128, -1, result, 4);
     #elif defined(SIMDE_VECTOR_SUBSCRIPT_OPS)
       r_.values = HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), a_.values >= b_.values);
     #else
@@ -31061,6 +32036,10 @@ simde_vcgeq_u64(simde_uint64x2_t a, simde_uint64x2_t b) {
     #elif defined(SIMDE_X86_SSE4_2_NATIVE)
       __m128i sign_bits = _mm_set1_epi64x(INT64_MIN);
       r_.m128i = _mm_or_si128(_mm_cmpgt_epi64(_mm_xor_si128(a_.m128i, sign_bits), _mm_xor_si128(b_.m128i, sign_bits)), _mm_cmpeq_epi64(a_.m128i, b_.m128i));
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      vbool64_t result = __riscv_vmsgeu_vv_u64m1_b64(a_.sv128, b_.sv128, 2);
+      r_.sv128 = __riscv_vmv_v_x_u64m1(0, 2);
+      r_.sv128 = __riscv_vmerge_vxm_u64m1(r_.sv128, -1, result, 2);
     #elif defined(SIMDE_VECTOR_SUBSCRIPT_OPS)
       r_.values = HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), a_.values >= b_.values);
     #else
@@ -31089,10 +32068,16 @@ simde_vcge_f16(simde_float16x4_t a, simde_float16x4_t b) {
       b_ = simde_float16x4_to_private(b);
     simde_uint16x4_private r_;
 
-    SIMDE_VECTORIZE
-    for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
-      r_.values[i] = simde_vcgeh_f16(a_.values[i], b_.values[i]);
-    }
+    #if defined(SIMDE_RISCV_V_NATIVE) && defined(SIMDE_ARCH_RISCV_ZVFH)
+      vbool16_t result = __riscv_vmfge_vv_f16m1_b16(a_.sv64, b_.sv64, 4);
+      r_.sv64 = __riscv_vmv_v_x_u16m1(0, 4);
+      r_.sv64 = __riscv_vmerge_vxm_u16m1(r_.sv64, 0xffff, result, 4);
+    #else
+      SIMDE_VECTORIZE
+      for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
+        r_.values[i] = simde_vcgeh_f16(a_.values[i], b_.values[i]);
+      }
+    #endif
 
     return simde_uint16x4_from_private(r_);
   #endif
@@ -31113,7 +32098,11 @@ simde_vcge_f32(simde_float32x2_t a, simde_float32x2_t b) {
       b_ = simde_float32x2_to_private(b);
     simde_uint32x2_private r_;
 
-    #if defined(SIMDE_VECTOR_SUBSCRIPT_OPS) && !defined(SIMDE_BUG_GCC_100762)
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      vbool32_t result = __riscv_vmfge_vv_f32m1_b32(a_.sv64, b_.sv64, 2);
+      r_.sv64 = __riscv_vmv_v_x_u32m1(0, 2);
+      r_.sv64 = __riscv_vmerge_vxm_u32m1(r_.sv64, -1, result, 2);
+    #elif defined(SIMDE_VECTOR_SUBSCRIPT_OPS) && !defined(SIMDE_BUG_GCC_100762)
       r_.values = HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), a_.values >= b_.values);
     #else
       SIMDE_VECTORIZE
@@ -31141,7 +32130,11 @@ simde_vcge_f64(simde_float64x1_t a, simde_float64x1_t b) {
       b_ = simde_float64x1_to_private(b);
     simde_uint64x1_private r_;
 
-    #if defined(SIMDE_VECTOR_SUBSCRIPT_OPS) && !defined(SIMDE_BUG_GCC_100762)
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      vbool64_t result = __riscv_vmfge_vv_f64m1_b64(a_.sv64, b_.sv64, 1);
+      r_.sv64 = __riscv_vmv_v_x_u64m1(0, 1);
+      r_.sv64 = __riscv_vmerge_vxm_u64m1(r_.sv64, -1, result, 1);
+    #elif defined(SIMDE_VECTOR_SUBSCRIPT_OPS) && !defined(SIMDE_BUG_GCC_100762)
       r_.values = HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), a_.values >= b_.values);
     #else
       SIMDE_VECTORIZE
@@ -31171,6 +32164,10 @@ simde_vcge_s8(simde_int8x8_t a, simde_int8x8_t b) {
 
     #if defined(SIMDE_X86_MMX_NATIVE)
       r_.m64 = _mm_or_si64(_mm_cmpgt_pi8(a_.m64, b_.m64), _mm_cmpeq_pi8(a_.m64, b_.m64));
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      vbool8_t result = __riscv_vmsge_vv_i8m1_b8(a_.sv64, b_.sv64, 8);
+      r_.sv64 = __riscv_vmv_v_x_u8m1(0, 8);
+      r_.sv64 = __riscv_vmerge_vxm_u8m1(r_.sv64, -1, result, 8);
     #elif defined(SIMDE_VECTOR_SUBSCRIPT_OPS) && !defined(SIMDE_BUG_GCC_100762)
       r_.values = HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), a_.values >= b_.values);
     #else
@@ -31203,6 +32200,10 @@ simde_vcge_s16(simde_int16x4_t a, simde_int16x4_t b) {
       r_.m64 = _mm_or_si64(_mm_cmpgt_pi16(a_.m64, b_.m64), _mm_cmpeq_pi16(a_.m64, b_.m64));
     #elif defined(SIMDE_VECTOR_SUBSCRIPT_OPS) && !defined(SIMDE_BUG_GCC_100762)
       r_.values = HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), a_.values >= b_.values);
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      vbool16_t result = __riscv_vmsge_vv_i16m1_b16(a_.sv64, b_.sv64, 4);
+      r_.sv64 = __riscv_vmv_v_x_i16m1(0, 4);
+      r_.sv64 = __riscv_vmerge_vxm_i16m1(r_.sv64, -1, result, 4);
     #else
       SIMDE_VECTORIZE
       for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
@@ -31233,6 +32234,10 @@ simde_vcge_s32(simde_int32x2_t a, simde_int32x2_t b) {
       r_.m64 = _mm_or_si64(_mm_cmpgt_pi32(a_.m64, b_.m64), _mm_cmpeq_pi32(a_.m64, b_.m64));
     #elif defined(SIMDE_VECTOR_SUBSCRIPT_OPS) && !defined(SIMDE_BUG_GCC_100762)
       r_.values = HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), a_.values >= b_.values);
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      vbool32_t result = __riscv_vmsge_vv_i32m1_b32(a_.sv64, b_.sv64, 2);
+      r_.sv64 = __riscv_vmv_v_x_i32m1(0, 2);
+      r_.sv64 = __riscv_vmerge_vxm_i32m1(r_.sv64, -1, result, 2);
     #else
       SIMDE_VECTORIZE
       for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
@@ -31259,7 +32264,11 @@ simde_vcge_s64(simde_int64x1_t a, simde_int64x1_t b) {
       b_ = simde_int64x1_to_private(b);
     simde_uint64x1_private r_;
 
-    #if defined(SIMDE_VECTOR_SUBSCRIPT_OPS)
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      vbool64_t result = __riscv_vmsge_vv_i64m1_b64(a_.sv64, b_.sv64, 1);
+      r_.sv64 = __riscv_vmv_v_x_u64m1(0, 1);
+      r_.sv64 = __riscv_vmerge_vxm_u64m1(r_.sv64, -1, result, 1);
+    #elif defined(SIMDE_VECTOR_SUBSCRIPT_OPS)
       r_.values = HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), a_.values >= b_.values);
     #else
       SIMDE_VECTORIZE
@@ -31290,6 +32299,10 @@ simde_vcge_u8(simde_uint8x8_t a, simde_uint8x8_t b) {
     #if defined(SIMDE_X86_MMX_NATIVE)
       __m64 sign_bits = _mm_set1_pi8(INT8_MIN);
       r_.m64 = _mm_or_si64(_mm_cmpgt_pi8(_mm_xor_si64(a_.m64, sign_bits), _mm_xor_si64(b_.m64, sign_bits)), _mm_cmpeq_pi8(a_.m64, b_.m64));
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      vbool8_t result = __riscv_vmsgeu_vv_u8m1_b8(a_.sv64, b_.sv64, 8);
+      r_.sv64 = __riscv_vmv_v_x_u8m1(0, 8);
+      r_.sv64 = __riscv_vmerge_vxm_u8m1(r_.sv64, -1, result, 8);
     #elif defined(SIMDE_VECTOR_SUBSCRIPT_OPS) && !defined(SIMDE_BUG_GCC_100762)
       r_.values = HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), a_.values >= b_.values);
     #else
@@ -31321,6 +32334,10 @@ simde_vcge_u16(simde_uint16x4_t a, simde_uint16x4_t b) {
     #if defined(SIMDE_X86_MMX_NATIVE)
       __m64 sign_bits = _mm_set1_pi16(INT16_MIN);
       r_.m64 = _mm_or_si64(_mm_cmpgt_pi16(_mm_xor_si64(a_.m64, sign_bits), _mm_xor_si64(b_.m64, sign_bits)), _mm_cmpeq_pi16(a_.m64, b_.m64));
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      vbool16_t result = __riscv_vmsgeu_vv_u16m1_b16(a_.sv64, b_.sv64, 4);
+      r_.sv64 = __riscv_vmv_v_x_u16m1(0, 4);
+      r_.sv64 = __riscv_vmerge_vxm_u16m1(r_.sv64, -1, result, 4);
     #elif defined(SIMDE_VECTOR_SUBSCRIPT_OPS) && !defined(SIMDE_BUG_GCC_100762)
       r_.values = HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), a_.values >= b_.values);
     #else
@@ -31352,6 +32369,10 @@ simde_vcge_u32(simde_uint32x2_t a, simde_uint32x2_t b) {
     #if defined(SIMDE_X86_MMX_NATIVE)
       __m64 sign_bits = _mm_set1_pi32(INT32_MIN);
       r_.m64 = _mm_or_si64(_mm_cmpgt_pi32(_mm_xor_si64(a_.m64, sign_bits), _mm_xor_si64(b_.m64, sign_bits)), _mm_cmpeq_pi32(a_.m64, b_.m64));
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      vbool32_t result = __riscv_vmsgeu_vv_u32m1_b32(a_.sv64, b_.sv64, 2);
+      r_.sv64 = __riscv_vmv_v_x_u32m1(0, 2);
+      r_.sv64 = __riscv_vmerge_vxm_u32m1(r_.sv64, -1, result, 2);
     #elif defined(SIMDE_VECTOR_SUBSCRIPT_OPS) && !defined(SIMDE_BUG_GCC_100762)
       r_.values = HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), a_.values >= b_.values);
     #else
@@ -31380,7 +32401,11 @@ simde_vcge_u64(simde_uint64x1_t a, simde_uint64x1_t b) {
       a_ = simde_uint64x1_to_private(a),
       b_ = simde_uint64x1_to_private(b);
 
-    #if defined(SIMDE_VECTOR_SUBSCRIPT_OPS)
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      vbool64_t result = __riscv_vmsgeu_vv_u64m1_b64(a_.sv64, b_.sv64, 1);
+      r_.sv64 = __riscv_vmv_v_x_u64m1(0, 1);
+      r_.sv64 = __riscv_vmerge_vxm_u64m1(r_.sv64, -1, result, 1);
+    #elif defined(SIMDE_VECTOR_SUBSCRIPT_OPS)
       r_.values = HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), a_.values >= b_.values);
     #else
       SIMDE_VECTORIZE
@@ -31616,7 +32641,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_CAGE_H) */
 /* :: End simde/arm/neon/cage.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/cagt.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -31649,11 +32674,11 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_CAGT_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/cgt.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -31681,15 +32706,16 @@ HEDLEY_DIAGNOSTIC_POP
  *   2020      Evan Nemerson <evan@nemerson.com>
  *   2020      Christopher Moore <moore@free.fr>
  *   2023      Yi-Yen Chung <eric681@andestech.com> (Copyright owned by Andes Technology)
+ *   2023      Ju-Hung Li <jhlee@pllab.cs.nthu.edu.tw> (Copyright owned by NTHU pllab)
  */
 
 #if !defined(SIMDE_ARM_NEON_CGT_H)
 #define SIMDE_ARM_NEON_CGT_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/get_low.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -31717,13 +32743,14 @@ HEDLEY_DIAGNOSTIC_POP
  *   2020      Evan Nemerson <evan@nemerson.com>
  *   2020      Sean Maher <seanptmaher@gmail.com> (Copyright owned by Google, LLC)
  *   2023      Yi-Yen Chung <eric681@andestech.com> (Copyright owned by Andes Technology)
+ *   2023      Ju-Hung Li <jhlee@pllab.cs.nthu.edu.tw> (Copyright owned by NTHU pllab)
  */
 
 #if !defined(SIMDE_ARM_NEON_GET_LOW_H)
 #define SIMDE_ARM_NEON_GET_LOW_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -31738,10 +32765,14 @@ simde_vget_low_f16(simde_float16x8_t a) {
     simde_float16x4_private r_;
     simde_float16x8_private a_ = simde_float16x8_to_private(a);
 
-    SIMDE_VECTORIZE
-    for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
-      r_.values[i] = a_.values[i];
-    }
+    #if defined(SIMDE_RISCV_V_NATIVE) && defined(SIMDE_ARCH_RISCV_ZVFH)
+      r_.sv64 = a_.sv128;
+    #else
+      SIMDE_VECTORIZE
+      for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
+        r_.values[i] = a_.values[i];
+      }
+    #endif
 
     return simde_float16x4_from_private(r_);
   #endif
@@ -31760,7 +32791,9 @@ simde_vget_low_f32(simde_float32x4_t a) {
     simde_float32x2_private r_;
     simde_float32x4_private a_ = simde_float32x4_to_private(a);
 
-    #if HEDLEY_HAS_BUILTIN(__builtin_shufflevector)
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv64 = a_.sv128;
+    #elif HEDLEY_HAS_BUILTIN(__builtin_shufflevector)
       r_.values = __builtin_shufflevector(a_.values, a_.values, 0, 1);
     #else
       SIMDE_VECTORIZE
@@ -31786,7 +32819,9 @@ simde_vget_low_f64(simde_float64x2_t a) {
     simde_float64x1_private r_;
     simde_float64x2_private a_ = simde_float64x2_to_private(a);
 
-    #if HEDLEY_HAS_BUILTIN(__builtin_shufflevector)
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv64 = a_.sv128;
+    #elif HEDLEY_HAS_BUILTIN(__builtin_shufflevector)
       r_.values = __builtin_shufflevector(a_.values, a_.values, 0);
     #else
       SIMDE_VECTORIZE
@@ -31814,6 +32849,8 @@ simde_vget_low_s8(simde_int8x16_t a) {
 
     #if defined(SIMDE_X86_SSE2_NATIVE) && defined(SIMDE_X86_MMX_NATIVE)
       r_.m64 = _mm_movepi64_pi64(a_.m128i);
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv64 = a_.sv128;
     #else
       #if HEDLEY_HAS_BUILTIN(__builtin_shufflevector)
         r_.values = __builtin_shufflevector(a_.values, a_.values, 0, 1, 2, 3, 4, 5, 6, 7);
@@ -31844,6 +32881,8 @@ simde_vget_low_s16(simde_int16x8_t a) {
 
     #if defined(SIMDE_X86_SSE2_NATIVE) && defined(SIMDE_X86_MMX_NATIVE)
       r_.m64 = _mm_movepi64_pi64(a_.m128i);
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv64 = a_.sv128;
     #else
       #if HEDLEY_HAS_BUILTIN(__builtin_shufflevector)
         r_.values = __builtin_shufflevector(a_.values, a_.values, 0, 1, 2, 3);
@@ -31874,6 +32913,8 @@ simde_vget_low_s32(simde_int32x4_t a) {
 
     #if defined(SIMDE_X86_SSE2_NATIVE) && defined(SIMDE_X86_MMX_NATIVE)
       r_.m64 = _mm_movepi64_pi64(a_.m128i);
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv64 = a_.sv128;
     #else
       #if HEDLEY_HAS_BUILTIN(__builtin_shufflevector)
         r_.values = __builtin_shufflevector(a_.values, a_.values, 0, 1);
@@ -31904,6 +32945,8 @@ simde_vget_low_s64(simde_int64x2_t a) {
 
     #if defined(SIMDE_X86_SSE2_NATIVE) && defined(SIMDE_X86_MMX_NATIVE)
       r_.m64 = _mm_movepi64_pi64(a_.m128i);
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv64 = a_.sv128;
     #else
       #if HEDLEY_HAS_BUILTIN(__builtin_shufflevector)
         r_.values = __builtin_shufflevector(a_.values, a_.values, 0);
@@ -31934,6 +32977,8 @@ simde_vget_low_u8(simde_uint8x16_t a) {
 
     #if defined(SIMDE_X86_SSE2_NATIVE) && defined(SIMDE_X86_MMX_NATIVE)
       r_.m64 = _mm_movepi64_pi64(a_.m128i);
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv64 = a_.sv128;
     #else
       #if HEDLEY_HAS_BUILTIN(__builtin_shufflevector)
         r_.values = __builtin_shufflevector(a_.values, a_.values, 0, 1, 2, 3, 4, 5, 6, 7);
@@ -31964,6 +33009,8 @@ simde_vget_low_u16(simde_uint16x8_t a) {
 
     #if defined(SIMDE_X86_SSE2_NATIVE) && defined(SIMDE_X86_MMX_NATIVE)
       r_.m64 = _mm_movepi64_pi64(a_.m128i);
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv64 = a_.sv128;
     #else
       #if HEDLEY_HAS_BUILTIN(__builtin_shufflevector)
         r_.values = __builtin_shufflevector(a_.values, a_.values, 0, 1, 2, 3);
@@ -31994,6 +33041,8 @@ simde_vget_low_u32(simde_uint32x4_t a) {
 
     #if defined(SIMDE_X86_SSE2_NATIVE) && defined(SIMDE_X86_MMX_NATIVE)
       r_.m64 = _mm_movepi64_pi64(a_.m128i);
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv64 = a_.sv128;
     #else
       #if HEDLEY_HAS_BUILTIN(__builtin_shufflevector)
         r_.values = __builtin_shufflevector(a_.values, a_.values, 0, 1);
@@ -32024,6 +33073,8 @@ simde_vget_low_u64(simde_uint64x2_t a) {
 
     #if defined(SIMDE_X86_SSE2_NATIVE) && defined(SIMDE_X86_MMX_NATIVE)
       r_.m64 = _mm_movepi64_pi64(a_.m128i);
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv64 = a_.sv128;
     #else
       #if HEDLEY_HAS_BUILTIN(__builtin_shufflevector)
         r_.values = __builtin_shufflevector(a_.values, a_.values, 0);
@@ -32137,7 +33188,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_GET_LOW_H) */
 /* :: End simde/arm/neon/get_low.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -32227,10 +33278,16 @@ simde_vcgtq_f16(simde_float16x8_t a, simde_float16x8_t b) {
       b_ = simde_float16x8_to_private(b);
     simde_uint16x8_private r_;
 
-    SIMDE_VECTORIZE
-    for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
-      r_.values[i] = simde_vcgth_f16(a_.values[i], b_.values[i]);
-    }
+    #if defined(SIMDE_RISCV_V_NATIVE) && defined(SIMDE_ARCH_RISCV_ZVFH)
+      vbool16_t result = __riscv_vmfgt_vv_f16m1_b16(a_.sv128, b_.sv128, 8);
+      r_.sv128 = __riscv_vmv_v_x_u16m1(0, 8);
+      r_.sv128 = __riscv_vmerge_vxm_u16m1(r_.sv128, -1, result, 8);
+    #else
+      SIMDE_VECTORIZE
+      for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
+        r_.values[i] = simde_vcgth_f16(a_.values[i], b_.values[i]);
+      }
+    #endif
 
     return simde_uint16x8_from_private(r_);
   #endif
@@ -32257,6 +33314,10 @@ simde_vcgtq_f32(simde_float32x4_t a, simde_float32x4_t b) {
       r_.m128i = _mm_castps_si128(_mm_cmpgt_ps(a_.m128, b_.m128));
     #elif defined(SIMDE_WASM_SIMD128_NATIVE)
       r_.v128 = wasm_f32x4_gt(a_.v128, b_.v128);
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      vbool32_t result = __riscv_vmfgt_vv_f32m1_b32(a_.sv128, b_.sv128, 4);
+      r_.sv128 = __riscv_vmv_v_x_u32m1(0, 4);
+      r_.sv128 = __riscv_vmerge_vxm_u32m1(r_.sv128, -1, result, 4);
     #elif defined(SIMDE_VECTOR_SUBSCRIPT_OPS)
       r_.values = HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), a_.values > b_.values);
     #else
@@ -32291,6 +33352,10 @@ simde_vcgtq_f64(simde_float64x2_t a, simde_float64x2_t b) {
       r_.m128i = _mm_castpd_si128(_mm_cmpgt_pd(a_.m128d, b_.m128d));
     #elif defined(SIMDE_WASM_SIMD128_NATIVE)
       r_.v128 = wasm_f64x2_gt(a_.v128, b_.v128);
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      vbool64_t result = __riscv_vmfgt_vv_f64m1_b64(a_.sv128, b_.sv128, 2);
+      r_.sv128 = __riscv_vmv_v_x_u64m1(0, 2);
+      r_.sv128 = __riscv_vmerge_vxm_u64m1(r_.sv128, -1, result, 2);
     #elif defined(SIMDE_VECTOR_SUBSCRIPT_OPS)
       r_.values = HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), a_.values > b_.values);
     #else
@@ -32325,6 +33390,10 @@ simde_vcgtq_s8(simde_int8x16_t a, simde_int8x16_t b) {
       r_.m128i = _mm_cmpgt_epi8(a_.m128i, b_.m128i);
     #elif defined(SIMDE_WASM_SIMD128_NATIVE)
       r_.v128 = wasm_i8x16_gt(a_.v128, b_.v128);
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      vbool8_t result = __riscv_vmsgt_vv_i8m1_b8(a_.sv128, b_.sv128, 16);
+      r_.sv128 = __riscv_vmv_v_x_u8m1(0, 16);
+      r_.sv128 = __riscv_vmerge_vxm_u8m1(r_.sv128, -1, result, 16);
     #elif defined(SIMDE_VECTOR_SUBSCRIPT_OPS)
       r_.values = HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), a_.values > b_.values);
     #else
@@ -32359,6 +33428,10 @@ simde_vcgtq_s16(simde_int16x8_t a, simde_int16x8_t b) {
       r_.m128i = _mm_cmpgt_epi16(a_.m128i, b_.m128i);
     #elif defined(SIMDE_WASM_SIMD128_NATIVE)
       r_.v128 = wasm_i16x8_gt(a_.v128, b_.v128);
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      vbool16_t result = __riscv_vmsgt_vv_i16m1_b16(a_.sv128, b_.sv128, 8);
+      r_.sv128 = __riscv_vmv_v_x_u16m1(0, 8);
+      r_.sv128 = __riscv_vmerge_vxm_u16m1(r_.sv128, -1, result, 8);
     #elif defined(SIMDE_VECTOR_SUBSCRIPT_OPS)
       r_.values = HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), a_.values > b_.values);
     #else
@@ -32393,6 +33466,10 @@ simde_vcgtq_s32(simde_int32x4_t a, simde_int32x4_t b) {
       r_.m128i = _mm_cmpgt_epi32(a_.m128i, b_.m128i);
     #elif defined(SIMDE_WASM_SIMD128_NATIVE)
       r_.v128 = wasm_i32x4_gt(a_.v128, b_.v128);
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      vbool32_t result = __riscv_vmsgt_vv_i32m1_b32(a_.sv128, b_.sv128, 4);
+      r_.sv128 = __riscv_vmv_v_x_u32m1(0, 4);
+      r_.sv128 = __riscv_vmerge_vxm_u32m1(r_.sv128, -1, result, 4);
     #elif defined(SIMDE_VECTOR_SUBSCRIPT_OPS)
       r_.values = HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), a_.values > b_.values);
     #else
@@ -32432,6 +33509,10 @@ simde_vcgtq_s64(simde_int64x2_t a, simde_int64x2_t b) {
       __m128i r = _mm_and_si128(_mm_cmpeq_epi32(a_.m128i, b_.m128i), _mm_sub_epi64(b_.m128i, a_.m128i));
       r = _mm_or_si128(r, _mm_cmpgt_epi32(a_.m128i, b_.m128i));
       r_.m128i = _mm_shuffle_epi32(r, _MM_SHUFFLE(3,3,1,1));
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      vbool64_t result = __riscv_vmsgt_vv_i64m1_b64(a_.sv128, b_.sv128, 2);
+      r_.sv128 = __riscv_vmv_v_x_u64m1(0, 2);
+      r_.sv128 = __riscv_vmerge_vxm_u64m1(r_.sv128, -1, result, 2);
     #elif defined(SIMDE_VECTOR_SUBSCRIPT_OPS)
       r_.values = HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), a_.values > b_.values);
     #else
@@ -32467,6 +33548,10 @@ simde_vcgtq_u8(simde_uint8x16_t a, simde_uint8x16_t b) {
       r_.m128i = _mm_adds_epu8(tmp, _mm_sub_epi8(_mm_setzero_si128(), tmp));
     #elif defined(SIMDE_WASM_SIMD128_NATIVE)
       r_.v128 = wasm_u8x16_gt(a_.v128, b_.v128);
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      vbool8_t result = __riscv_vmsgtu_vv_u8m1_b8(a_.sv128, b_.sv128, 16);
+      r_.sv128 = __riscv_vmv_v_x_u8m1(0, 16);
+      r_.sv128 = __riscv_vmerge_vxm_u8m1(r_.sv128, -1, result, 16);
     #elif defined(SIMDE_VECTOR_SUBSCRIPT_OPS)
       r_.values = HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), a_.values > b_.values);
     #else
@@ -32502,6 +33587,10 @@ simde_vcgtq_u16(simde_uint16x8_t a, simde_uint16x8_t b) {
       r_.m128i = _mm_adds_epu16(tmp, _mm_sub_epi16(_mm_setzero_si128(), tmp));
     #elif defined(SIMDE_WASM_SIMD128_NATIVE)
       r_.v128 = wasm_u16x8_gt(a_.v128, b_.v128);
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      vbool16_t result = __riscv_vmsgtu_vv_u16m1_b16(a_.sv128, b_.sv128, 8);
+      r_.sv128 = __riscv_vmv_v_x_u16m1(0, 8);
+      r_.sv128 = __riscv_vmerge_vxm_u16m1(r_.sv128, -1, result, 8);
     #elif defined(SIMDE_VECTOR_SUBSCRIPT_OPS)
       r_.values = HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), a_.values > b_.values);
     #else
@@ -32540,6 +33629,10 @@ simde_vcgtq_u32(simde_uint32x4_t a, simde_uint32x4_t b) {
         );
     #elif defined(SIMDE_WASM_SIMD128_NATIVE)
       r_.v128 = wasm_u32x4_gt(a_.v128, b_.v128);
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      vbool32_t result = __riscv_vmsgtu_vv_u32m1_b32(a_.sv128, b_.sv128, 4);
+      r_.sv128 = __riscv_vmv_v_x_u32m1(0, 4);
+      r_.sv128 = __riscv_vmerge_vxm_u32m1(r_.sv128, -1, result, 4);
     #elif defined(SIMDE_VECTOR_SUBSCRIPT_OPS)
       r_.values = HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), a_.values > b_.values);
     #else
@@ -32573,6 +33666,10 @@ simde_vcgtq_u64(simde_uint64x2_t a, simde_uint64x2_t b) {
     #if defined(SIMDE_X86_SSE4_2_NATIVE)
       __m128i sign_bit = _mm_set1_epi64x(INT64_MIN);
       r_.m128i = _mm_cmpgt_epi64(_mm_xor_si128(a_.m128i, sign_bit), _mm_xor_si128(b_.m128i, sign_bit));
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      vbool64_t result = __riscv_vmsgtu_vv_u64m1_b64(a_.sv128, b_.sv128, 2);
+      r_.sv128 = __riscv_vmv_v_x_u64m1(0, 2);
+      r_.sv128 = __riscv_vmerge_vxm_u64m1(r_.sv128, -1, result, 2);
     #elif defined(SIMDE_VECTOR_SUBSCRIPT_OPS)
       r_.values = HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), a_.values > b_.values);
     #else
@@ -32601,10 +33698,16 @@ simde_vcgt_f16(simde_float16x4_t a, simde_float16x4_t b) {
       b_ = simde_float16x4_to_private(b);
     simde_uint16x4_private r_;
 
-    SIMDE_VECTORIZE
-    for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
-      r_.values[i] = simde_vcgth_f16(a_.values[i], b_.values[i]);
-    }
+    #if defined(SIMDE_RISCV_V_NATIVE) && defined(SIMDE_ARCH_RISCV_ZVFH)
+      vbool16_t result = __riscv_vmfgt_vv_f16m1_b16(a_.sv64, b_.sv64, 4);
+      r_.sv64 = __riscv_vmv_v_x_u16m1(0, 4);
+      r_.sv64 = __riscv_vmerge_vxm_u16m1(r_.sv64, -1, result, 4);
+    #else
+      SIMDE_VECTORIZE
+      for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
+        r_.values[i] = simde_vcgth_f16(a_.values[i], b_.values[i]);
+      }
+    #endif
 
     return simde_uint16x4_from_private(r_);
   #endif
@@ -32625,7 +33728,11 @@ simde_vcgt_f32(simde_float32x2_t a, simde_float32x2_t b) {
       b_ = simde_float32x2_to_private(b);
     simde_uint32x2_private r_;
 
-    #if defined(SIMDE_VECTOR_SUBSCRIPT_OPS) && !defined(SIMDE_BUG_GCC_100762)
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      vbool32_t result = __riscv_vmfgt_vv_f32m1_b32(a_.sv64, b_.sv64, 2);
+      r_.sv64 = __riscv_vmv_v_x_u32m1(0, 2);
+      r_.sv64 = __riscv_vmerge_vxm_u32m1(r_.sv64, -1, result, 2);
+    #elif defined(SIMDE_VECTOR_SUBSCRIPT_OPS) && !defined(SIMDE_BUG_GCC_100762)
       r_.values = HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), a_.values > b_.values);
     #else
       SIMDE_VECTORIZE
@@ -32653,7 +33760,11 @@ simde_vcgt_f64(simde_float64x1_t a, simde_float64x1_t b) {
       b_ = simde_float64x1_to_private(b);
     simde_uint64x1_private r_;
 
-    #if defined(SIMDE_VECTOR_SUBSCRIPT_OPS)
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      vbool64_t result = __riscv_vmfgt_vv_f64m1_b64(a_.sv64, b_.sv64, 1);
+      r_.sv64 = __riscv_vmv_v_x_u64m1(0, 1);
+      r_.sv64 = __riscv_vmerge_vxm_u64m1(r_.sv64, -1, result, 1);
+    #elif defined(SIMDE_VECTOR_SUBSCRIPT_OPS)
       r_.values = HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), a_.values > b_.values);
     #else
       SIMDE_VECTORIZE
@@ -32683,6 +33794,10 @@ simde_vcgt_s8(simde_int8x8_t a, simde_int8x8_t b) {
 
     #if defined(SIMDE_X86_MMX_NATIVE)
       r_.m64 = _mm_cmpgt_pi8(a_.m64, b_.m64);
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      vbool8_t result = __riscv_vmsgt_vv_i8m1_b8(a_.sv64, b_.sv64, 8);
+      r_.sv64 = __riscv_vmv_v_x_u8m1(0, 8);
+      r_.sv64 = __riscv_vmerge_vxm_u8m1(r_.sv64, -1, result, 8);
     #elif defined(SIMDE_VECTOR_SUBSCRIPT_OPS) && !defined(SIMDE_BUG_GCC_100762)
       r_.values = HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), a_.values > b_.values);
     #else
@@ -32713,6 +33828,10 @@ simde_vcgt_s16(simde_int16x4_t a, simde_int16x4_t b) {
 
     #if defined(SIMDE_X86_MMX_NATIVE)
       r_.m64 = _mm_cmpgt_pi16(a_.m64, b_.m64);
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      vbool16_t result = __riscv_vmsgt_vv_i16m1_b16(a_.sv64, b_.sv64, 4);
+      r_.sv64 = __riscv_vmv_v_x_u16m1(0, 4);
+      r_.sv64 = __riscv_vmerge_vxm_u16m1(r_.sv64, -1, result, 4);
     #elif defined(SIMDE_VECTOR_SUBSCRIPT_OPS) && !defined(SIMDE_BUG_GCC_100762)
       r_.values = HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), a_.values > b_.values);
     #else
@@ -32743,6 +33862,10 @@ simde_vcgt_s32(simde_int32x2_t a, simde_int32x2_t b) {
 
     #if defined(SIMDE_X86_MMX_NATIVE)
       r_.m64 = _mm_cmpgt_pi32(a_.m64, b_.m64);
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      vbool32_t result = __riscv_vmsgt_vv_i32m1_b32(a_.sv64, b_.sv64, 2);
+      r_.sv64 = __riscv_vmv_v_x_u32m1(0, 2);
+      r_.sv64 = __riscv_vmerge_vxm_u32m1(r_.sv64, -1, result, 2);
     #elif defined(SIMDE_VECTOR_SUBSCRIPT_OPS) && !defined(SIMDE_BUG_GCC_100762)
       r_.values = HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), a_.values > b_.values);
     #else
@@ -32771,7 +33894,11 @@ simde_vcgt_s64(simde_int64x1_t a, simde_int64x1_t b) {
       b_ = simde_int64x1_to_private(b);
     simde_uint64x1_private r_;
 
-    #if defined(SIMDE_VECTOR_SUBSCRIPT_OPS)
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      vbool64_t result = __riscv_vmsgt_vv_i64m1_b64(a_.sv64, b_.sv64, 1);
+      r_.sv64 = __riscv_vmv_v_x_u64m1(0, 1);
+      r_.sv64 = __riscv_vmerge_vxm_u64m1(r_.sv64, -1, result, 1);
+    #elif defined(SIMDE_VECTOR_SUBSCRIPT_OPS)
       r_.values = HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), a_.values > b_.values);
     #else
       SIMDE_VECTORIZE
@@ -32802,6 +33929,10 @@ simde_vcgt_u8(simde_uint8x8_t a, simde_uint8x8_t b) {
     #if defined(SIMDE_X86_MMX_NATIVE)
       __m64 sign_bit = _mm_set1_pi8(INT8_MIN);
       r_.m64 = _mm_cmpgt_pi8(_mm_xor_si64(a_.m64, sign_bit), _mm_xor_si64(b_.m64, sign_bit));
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      vbool8_t result = __riscv_vmsgtu_vv_u8m1_b8(a_.sv64, b_.sv64, 8);
+      r_.sv64 = __riscv_vmv_v_x_u8m1(0, 8);
+      r_.sv64 = __riscv_vmerge_vxm_u8m1(r_.sv64, -1, result, 8);
     #elif defined(SIMDE_VECTOR_SUBSCRIPT_OPS) && !defined(SIMDE_BUG_GCC_100762)
       r_.values = HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), a_.values > b_.values);
     #else
@@ -32833,6 +33964,10 @@ simde_vcgt_u16(simde_uint16x4_t a, simde_uint16x4_t b) {
     #if defined(SIMDE_X86_MMX_NATIVE)
       __m64 sign_bit = _mm_set1_pi16(INT16_MIN);
       r_.m64 = _mm_cmpgt_pi16(_mm_xor_si64(a_.m64, sign_bit), _mm_xor_si64(b_.m64, sign_bit));
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      vbool16_t result = __riscv_vmsgtu_vv_u16m1_b16(a_.sv64, b_.sv64, 4);
+      r_.sv64 = __riscv_vmv_v_x_u16m1(0, 4);
+      r_.sv64 = __riscv_vmerge_vxm_u16m1(r_.sv64, -1, result, 4);
     #elif defined(SIMDE_VECTOR_SUBSCRIPT_OPS) && !defined(SIMDE_BUG_GCC_100762)
       r_.values = HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), a_.values > b_.values);
     #else
@@ -32864,6 +33999,10 @@ simde_vcgt_u32(simde_uint32x2_t a, simde_uint32x2_t b) {
     #if defined(SIMDE_X86_MMX_NATIVE)
       __m64 sign_bit = _mm_set1_pi32(INT32_MIN);
       r_.m64 = _mm_cmpgt_pi32(_mm_xor_si64(a_.m64, sign_bit), _mm_xor_si64(b_.m64, sign_bit));
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      vbool32_t result = __riscv_vmsgtu_vv_u32m1_b32(a_.sv64, b_.sv64, 2);
+      r_.sv64 = __riscv_vmv_v_x_u32m1(0, 2);
+      r_.sv64 = __riscv_vmerge_vxm_u32m1(r_.sv64, -1, result, 2);
     #elif defined(SIMDE_VECTOR_SUBSCRIPT_OPS) && !defined(SIMDE_BUG_GCC_100762)
       r_.values = HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), a_.values > b_.values);
     #else
@@ -32892,7 +34031,11 @@ simde_vcgt_u64(simde_uint64x1_t a, simde_uint64x1_t b) {
       a_ = simde_uint64x1_to_private(a),
       b_ = simde_uint64x1_to_private(b);
 
-    #if defined(SIMDE_VECTOR_SUBSCRIPT_OPS)
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      vbool64_t result = __riscv_vmsgtu_vv_u64m1_b64(a_.sv64, b_.sv64, 1);
+      r_.sv64 = __riscv_vmv_v_x_u64m1(0, 1);
+      r_.sv64 = __riscv_vmerge_vxm_u64m1(r_.sv64, -1, result, 1);
+    #elif defined(SIMDE_VECTOR_SUBSCRIPT_OPS)
       r_.values = HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), a_.values > b_.values);
     #else
       SIMDE_VECTORIZE
@@ -33072,7 +34215,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_CAGT_H) */
 /* :: End simde/arm/neon/cagt.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/cale.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -33104,7 +34247,7 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_CALE_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -33242,7 +34385,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_cale_H) */
 /* :: End simde/arm/neon/cale.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/calt.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -33274,7 +34417,7 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_CALT_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -33412,7 +34555,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_CAGT_H) */
 /* :: End simde/arm/neon/calt.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/ceq.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -33445,7 +34588,7 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_CEQ_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -34286,7 +35429,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_CEQ_H) */
 /* :: End simde/arm/neon/ceq.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/ceqz.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -34320,13 +35463,13 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_CEQZ_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -34772,9 +35915,9 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_CEQZ_H) */
 /* :: End simde/arm/neon/ceqz.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/cgez.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -34808,11 +35951,11 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_CGEZ_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -35260,9 +36403,9 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_CGEZ_H) */
 /* :: End simde/arm/neon/cgez.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/cgtz.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -35296,15 +36439,15 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_CGTZ_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -35752,7 +36895,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_CGTZ_H) */
 /* :: End simde/arm/neon/cgtz.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/cle.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -35780,13 +36923,14 @@ HEDLEY_DIAGNOSTIC_POP
  *   2020      Evan Nemerson <evan@nemerson.com>
  *   2020      Christopher Moore <moore@free.fr>
  *   2023      Yi-Yen Chung <eric681@andestech.com> (Copyright owned by Andes Technology)
+ *   2023      Ju-Hung Li <jhlee@pllab.cs.nthu.edu.tw> (Copyright owned by NTHU pllab)
  */
 
 #if !defined(SIMDE_ARM_NEON_CLE_H)
 #define SIMDE_ARM_NEON_CLE_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -35873,10 +37017,16 @@ simde_vcleq_f16(simde_float16x8_t a, simde_float16x8_t b) {
       b_ = simde_float16x8_to_private(b);
     simde_uint16x8_private r_;
 
-    SIMDE_VECTORIZE
-    for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
-      r_.values[i] = simde_vcleh_f16(a_.values[i], b_.values[i]);
-    }
+    #if defined(SIMDE_RISCV_V_NATIVE) && defined(SIMDE_ARCH_RISCV_ZVFH)
+      vbool16_t result = __riscv_vmfle_vv_f16m1_b16(a_.sv128, b_.sv128, 8);
+      r_.sv128 = __riscv_vmv_v_x_u16m1(0, 8);
+      r_.sv128 = __riscv_vmerge_vxm_u16m1(r_.sv128, -1, result, 8);
+    #else
+      SIMDE_VECTORIZE
+      for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
+        r_.values[i] = simde_vcleh_f16(a_.values[i], b_.values[i]);
+      }
+    #endif
 
     return simde_uint16x8_from_private(r_);
   #endif
@@ -35903,6 +37053,10 @@ simde_vcleq_f32(simde_float32x4_t a, simde_float32x4_t b) {
       r_.m128i = _mm_castps_si128(_mm_cmple_ps(a_.m128, b_.m128));
     #elif defined(SIMDE_WASM_SIMD128_NATIVE)
       r_.v128 = wasm_f32x4_le(a_.v128, b_.v128);
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      vbool32_t result = __riscv_vmfle_vv_f32m1_b32(a_.sv128, b_.sv128, 4);
+      r_.sv128 = __riscv_vmv_v_x_u32m1(0, 4);
+      r_.sv128 = __riscv_vmerge_vxm_u32m1(r_.sv128, -1, result, 4);
     #elif defined(SIMDE_VECTOR_SUBSCRIPT_OPS)
       r_.values = HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), a_.values <= b_.values);
     #else
@@ -35937,6 +37091,10 @@ simde_vcleq_f64(simde_float64x2_t a, simde_float64x2_t b) {
       r_.m128i = _mm_castpd_si128(_mm_cmple_pd(a_.m128d, b_.m128d));
     #elif defined(SIMDE_WASM_SIMD128_NATIVE)
       r_.v128 = wasm_f64x2_le(a_.v128, b_.v128);
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      vbool64_t result = __riscv_vmfle_vv_f64m1_b64(a_.sv128, b_.sv128, 2);
+      r_.sv128 = __riscv_vmv_v_x_u64m1(0, 2);
+      r_.sv128 = __riscv_vmerge_vxm_u64m1(r_.sv128, -1, result, 2);
     #elif defined(SIMDE_VECTOR_SUBSCRIPT_OPS)
       r_.values = HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), a_.values <= b_.values);
     #else
@@ -35971,6 +37129,10 @@ simde_vcleq_s8(simde_int8x16_t a, simde_int8x16_t b) {
       r_.m128i = _mm_or_si128(_mm_cmpgt_epi8(b_.m128i, a_.m128i), _mm_cmpeq_epi8(a_.m128i, b_.m128i));
     #elif defined(SIMDE_WASM_SIMD128_NATIVE)
       r_.v128 = wasm_i8x16_le(a_.v128, b_.v128);
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      vbool8_t result = __riscv_vmsle_vv_i8m1_b8(a_.sv128, b_.sv128, 16);
+      r_.sv128 = __riscv_vmv_v_x_u8m1(0, 16);
+      r_.sv128 = __riscv_vmerge_vxm_u8m1(r_.sv128, -1, result, 16);
     #elif defined(SIMDE_VECTOR_SUBSCRIPT_OPS)
       r_.values = HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), a_.values <= b_.values);
     #else
@@ -36005,6 +37167,10 @@ simde_vcleq_s16(simde_int16x8_t a, simde_int16x8_t b) {
       r_.m128i = _mm_or_si128(_mm_cmpgt_epi16(b_.m128i, a_.m128i), _mm_cmpeq_epi16(a_.m128i, b_.m128i));
     #elif defined(SIMDE_WASM_SIMD128_NATIVE)
       r_.v128 = wasm_i16x8_le(a_.v128, b_.v128);
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      vbool16_t result = __riscv_vmsle_vv_i16m1_b16(a_.sv128, b_.sv128, 8);
+      r_.sv128 = __riscv_vmv_v_x_u16m1(0, 8);
+      r_.sv128 = __riscv_vmerge_vxm_u16m1(r_.sv128, -1, result, 8);
     #elif defined(SIMDE_VECTOR_SUBSCRIPT_OPS)
       r_.values = HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), a_.values <= b_.values);
     #else
@@ -36039,6 +37205,10 @@ simde_vcleq_s32(simde_int32x4_t a, simde_int32x4_t b) {
       r_.m128i = _mm_or_si128(_mm_cmpgt_epi32(b_.m128i, a_.m128i), _mm_cmpeq_epi32(a_.m128i, b_.m128i));
     #elif defined(SIMDE_WASM_SIMD128_NATIVE)
       r_.v128 = wasm_i32x4_le(a_.v128, b_.v128);
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      vbool32_t result = __riscv_vmsle_vv_i32m1_b32(a_.sv128, b_.sv128, 4);
+      r_.sv128 = __riscv_vmv_v_x_u32m1(0, 4);
+      r_.sv128 = __riscv_vmerge_vxm_u32m1(r_.sv128, -1, result, 4);
     #elif defined(SIMDE_VECTOR_SUBSCRIPT_OPS)
       r_.values = HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), a_.values <= b_.values);
     #else
@@ -36073,6 +37243,10 @@ simde_vcleq_s64(simde_int64x2_t a, simde_int64x2_t b) {
 
     #if defined(SIMDE_X86_SSE4_2_NATIVE)
       r_.m128i = _mm_or_si128(_mm_cmpgt_epi64(b_.m128i, a_.m128i), _mm_cmpeq_epi64(a_.m128i, b_.m128i));
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      vbool64_t result = __riscv_vmsle_vv_i64m1_b64(a_.sv128, b_.sv128, 2);
+      r_.sv128 = __riscv_vmv_v_x_u64m1(0, 2);
+      r_.sv128 = __riscv_vmerge_vxm_u64m1(r_.sv128, -1, result, 2);
     #elif defined(SIMDE_VECTOR_SUBSCRIPT_OPS)
       r_.values = HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), a_.values <= b_.values);
     #else
@@ -36112,6 +37286,10 @@ simde_vcleq_u8(simde_uint8x16_t a, simde_uint8x16_t b) {
         );
     #elif defined(SIMDE_WASM_SIMD128_NATIVE)
       r_.v128 = wasm_u8x16_le(a_.v128, b_.v128);
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      vbool8_t result = __riscv_vmsleu_vv_u8m1_b8(a_.sv128, b_.sv128, 16);
+      r_.sv128 = __riscv_vmv_v_x_u8m1(0, 16);
+      r_.sv128 = __riscv_vmerge_vxm_u8m1(r_.sv128, -1, result, 16);
     #elif defined(SIMDE_VECTOR_SUBSCRIPT_OPS)
       r_.values = HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), a_.values <= b_.values);
     #else
@@ -36160,6 +37338,10 @@ simde_vcleq_u16(simde_uint16x8_t a, simde_uint16x8_t b) {
         );
     #elif defined(SIMDE_WASM_SIMD128_NATIVE)
       r_.v128 = wasm_u16x8_le(a_.v128, b_.v128);
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      vbool16_t result = __riscv_vmsleu_vv_u16m1_b16(a_.sv128, b_.sv128, 8);
+      r_.sv128 = __riscv_vmv_v_x_u16m1(0, 8);
+      r_.sv128 = __riscv_vmerge_vxm_u16m1(r_.sv128, -1, result, 8);
     #elif defined(SIMDE_VECTOR_SUBSCRIPT_OPS)
       r_.values = HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), a_.values <= b_.values);
     #else
@@ -36208,6 +37390,10 @@ simde_vcleq_u32(simde_uint32x4_t a, simde_uint32x4_t b) {
         );
     #elif defined(SIMDE_WASM_SIMD128_NATIVE)
       r_.v128 = wasm_u32x4_le(a_.v128, b_.v128);
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      vbool32_t result = __riscv_vmsleu_vv_u32m1_b32(a_.sv128, b_.sv128, 4);
+      r_.sv128 = __riscv_vmv_v_x_u32m1(0, 4);
+      r_.sv128 = __riscv_vmerge_vxm_u32m1(r_.sv128, -1, result, 4);
     #elif defined(SIMDE_VECTOR_SUBSCRIPT_OPS)
       r_.values = HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), a_.values <= b_.values);
     #else
@@ -36254,6 +37440,10 @@ simde_vcleq_u64(simde_uint64x2_t a, simde_uint64x2_t b) {
           ),
           _mm_cmpeq_epi64(a_.m128i, b_.m128i)
         );
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      vbool64_t result = __riscv_vmsleu_vv_u64m1_b64(a_.sv128, b_.sv128, 2);
+      r_.sv128 = __riscv_vmv_v_x_u64m1(0, 2);
+      r_.sv128 = __riscv_vmerge_vxm_u64m1(r_.sv128, -1, result, 2);
     #elif defined(SIMDE_VECTOR_SUBSCRIPT_OPS)
       r_.values = HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), a_.values <= b_.values);
     #else
@@ -36282,10 +37472,16 @@ simde_vcle_f16(simde_float16x4_t a, simde_float16x4_t b) {
       b_ = simde_float16x4_to_private(b);
     simde_uint16x4_private r_;
 
-    SIMDE_VECTORIZE
-    for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
-      r_.values[i] = simde_vcleh_f16(a_.values[i], b_.values[i]);
-    }
+    #if defined(SIMDE_RISCV_V_NATIVE) && defined(SIMDE_ARCH_RISCV_ZVFH)
+      vbool16_t result = __riscv_vmfle_vv_f16m1_b16(a_.sv64, b_.sv64, 4);
+      r_.sv64 = __riscv_vmv_v_x_u16m1(0, 4);
+      r_.sv64 = __riscv_vmerge_vxm_u16m1(r_.sv64, -1, result, 4);
+    #else
+      SIMDE_VECTORIZE
+      for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
+        r_.values[i] = simde_vcleh_f16(a_.values[i], b_.values[i]);
+      }
+    #endif
 
     return simde_uint16x4_from_private(r_);
   #endif
@@ -36306,7 +37502,11 @@ simde_vcle_f32(simde_float32x2_t a, simde_float32x2_t b) {
       b_ = simde_float32x2_to_private(b);
     simde_uint32x2_private r_;
 
-    #if defined(SIMDE_VECTOR_SUBSCRIPT_OPS) && !defined(SIMDE_BUG_GCC_100762)
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      vbool32_t result = __riscv_vmfle_vv_f32m1_b32(a_.sv64, b_.sv64, 2);
+      r_.sv64 = __riscv_vmv_v_x_u32m1(0, 2);
+      r_.sv64 = __riscv_vmerge_vxm_u32m1(r_.sv64, -1, result, 2);
+    #elif defined(SIMDE_VECTOR_SUBSCRIPT_OPS) && !defined(SIMDE_BUG_GCC_100762)
       r_.values = HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), a_.values <= b_.values);
     #else
       SIMDE_VECTORIZE
@@ -36334,7 +37534,11 @@ simde_vcle_f64(simde_float64x1_t a, simde_float64x1_t b) {
       b_ = simde_float64x1_to_private(b);
     simde_uint64x1_private r_;
 
-    #if defined(SIMDE_VECTOR_SUBSCRIPT_OPS)
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      vbool64_t result = __riscv_vmfle_vv_f64m1_b64(a_.sv64, b_.sv64, 1);
+      r_.sv64 = __riscv_vmv_v_x_u64m1(0, 1);
+      r_.sv64 = __riscv_vmerge_vxm_u64m1(r_.sv64, -1, result, 1);
+    #elif defined(SIMDE_VECTOR_SUBSCRIPT_OPS)
       r_.values = HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), a_.values <= b_.values);
     #else
       SIMDE_VECTORIZE
@@ -36364,6 +37568,10 @@ simde_vcle_s8(simde_int8x8_t a, simde_int8x8_t b) {
 
     #if defined(SIMDE_X86_MMX_NATIVE)
       r_.m64 = _mm_or_si64(_mm_cmpgt_pi8(b_.m64, a_.m64), _mm_cmpeq_pi8(a_.m64, b_.m64));
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      vbool8_t result = __riscv_vmsle_vv_i8m1_b8(a_.sv64, b_.sv64, 8);
+      r_.sv64 = __riscv_vmv_v_x_u8m1(0, 8);
+      r_.sv64 = __riscv_vmerge_vxm_u8m1(r_.sv64, -1, result, 8);
     #elif defined(SIMDE_VECTOR_SUBSCRIPT_OPS) && !defined(SIMDE_BUG_GCC_100762)
       r_.values = HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), a_.values <= b_.values);
     #else
@@ -36394,6 +37602,10 @@ simde_vcle_s16(simde_int16x4_t a, simde_int16x4_t b) {
 
     #if defined(SIMDE_X86_MMX_NATIVE)
       r_.m64 = _mm_or_si64(_mm_cmpgt_pi16(b_.m64, a_.m64), _mm_cmpeq_pi16(a_.m64, b_.m64));
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      vbool16_t result = __riscv_vmsle_vv_i16m1_b16(a_.sv64, b_.sv64, 4);
+      r_.sv64 = __riscv_vmv_v_x_u16m1(0, 4);
+      r_.sv64 = __riscv_vmerge_vxm_u16m1(r_.sv64, -1, result, 4);
     #elif defined(SIMDE_VECTOR_SUBSCRIPT_OPS) && !defined(SIMDE_BUG_GCC_100762)
       r_.values = HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), a_.values <= b_.values);
     #else
@@ -36424,6 +37636,10 @@ simde_vcle_s32(simde_int32x2_t a, simde_int32x2_t b) {
 
     #if defined(SIMDE_X86_MMX_NATIVE)
       r_.m64 = _mm_or_si64(_mm_cmpgt_pi32(b_.m64, a_.m64), _mm_cmpeq_pi32(a_.m64, b_.m64));
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      vbool32_t result = __riscv_vmsle_vv_i32m1_b32(a_.sv64, b_.sv64, 2);
+      r_.sv64 = __riscv_vmv_v_x_u32m1(0, 2);
+      r_.sv64 = __riscv_vmerge_vxm_u32m1(r_.sv64, -1, result, 2);
     #elif defined(SIMDE_VECTOR_SUBSCRIPT_OPS) && !defined(SIMDE_BUG_GCC_100762)
       r_.values = HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), a_.values <= b_.values);
     #else
@@ -36452,7 +37668,11 @@ simde_vcle_s64(simde_int64x1_t a, simde_int64x1_t b) {
       b_ = simde_int64x1_to_private(b);
     simde_uint64x1_private r_;
 
-    #if defined(SIMDE_VECTOR_SUBSCRIPT_OPS)
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      vbool64_t result = __riscv_vmsle_vv_i64m1_b64(a_.sv64, b_.sv64, 1);
+      r_.sv64 = __riscv_vmv_v_x_u64m1(0, 1);
+      r_.sv64 = __riscv_vmerge_vxm_u64m1(r_.sv64, -1, result, 1);
+    #elif defined(SIMDE_VECTOR_SUBSCRIPT_OPS)
       r_.values = HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), a_.values <= b_.values);
     #else
       SIMDE_VECTORIZE
@@ -36483,6 +37703,10 @@ simde_vcle_u8(simde_uint8x8_t a, simde_uint8x8_t b) {
     #if defined(SIMDE_X86_MMX_NATIVE)
       __m64 sign_bits = _mm_set1_pi8(INT8_MIN);
       r_.m64 = _mm_or_si64(_mm_cmpgt_pi8(_mm_xor_si64(b_.m64, sign_bits), _mm_xor_si64(a_.m64, sign_bits)), _mm_cmpeq_pi8(a_.m64, b_.m64));
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      vbool8_t result = __riscv_vmsleu_vv_u8m1_b8(a_.sv64, b_.sv64, 8);
+      r_.sv64 = __riscv_vmv_v_x_u8m1(0, 8);
+      r_.sv64 = __riscv_vmerge_vxm_u8m1(r_.sv64, -1, result, 8);
     #elif defined(SIMDE_VECTOR_SUBSCRIPT_OPS) && !defined(SIMDE_BUG_GCC_100762)
       r_.values = HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), a_.values <= b_.values);
     #else
@@ -36514,6 +37738,10 @@ simde_vcle_u16(simde_uint16x4_t a, simde_uint16x4_t b) {
     #if defined(SIMDE_X86_MMX_NATIVE)
       __m64 sign_bits = _mm_set1_pi16(INT16_MIN);
       r_.m64 = _mm_or_si64(_mm_cmpgt_pi16(_mm_xor_si64(b_.m64, sign_bits), _mm_xor_si64(a_.m64, sign_bits)), _mm_cmpeq_pi16(a_.m64, b_.m64));
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      vbool16_t result = __riscv_vmsleu_vv_u16m1_b16(a_.sv64, b_.sv64, 4);
+      r_.sv64 = __riscv_vmv_v_x_u16m1(0, 4);
+      r_.sv64 = __riscv_vmerge_vxm_u16m1(r_.sv64, -1, result, 4);
     #elif defined(SIMDE_VECTOR_SUBSCRIPT_OPS) && !defined(SIMDE_BUG_GCC_100762)
       r_.values = HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), a_.values <= b_.values);
     #else
@@ -36545,6 +37773,10 @@ simde_vcle_u32(simde_uint32x2_t a, simde_uint32x2_t b) {
     #if defined(SIMDE_X86_MMX_NATIVE)
       __m64 sign_bits = _mm_set1_pi32(INT32_MIN);
       r_.m64 = _mm_or_si64(_mm_cmpgt_pi32(_mm_xor_si64(b_.m64, sign_bits), _mm_xor_si64(a_.m64, sign_bits)), _mm_cmpeq_pi32(a_.m64, b_.m64));
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      vbool32_t result = __riscv_vmsleu_vv_u32m1_b32(a_.sv64, b_.sv64, 2);
+      r_.sv64 = __riscv_vmv_v_x_u32m1(0, 2);
+      r_.sv64 = __riscv_vmerge_vxm_u32m1(r_.sv64, -1, result, 2);
     #elif defined(SIMDE_VECTOR_SUBSCRIPT_OPS) && !defined(SIMDE_BUG_GCC_100762)
       r_.values = HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), a_.values <= b_.values);
     #else
@@ -36573,7 +37805,11 @@ simde_vcle_u64(simde_uint64x1_t a, simde_uint64x1_t b) {
       a_ = simde_uint64x1_to_private(a),
       b_ = simde_uint64x1_to_private(b);
 
-    #if defined(SIMDE_VECTOR_SUBSCRIPT_OPS)
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      vbool64_t result = __riscv_vmsleu_vv_u64m1_b64(a_.sv64, b_.sv64, 1);
+      r_.sv64 = __riscv_vmv_v_x_u64m1(0, 1);
+      r_.sv64 = __riscv_vmerge_vxm_u64m1(r_.sv64, -1, result, 1);
+    #elif defined(SIMDE_VECTOR_SUBSCRIPT_OPS)
       r_.values = HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), a_.values <= b_.values);
     #else
       SIMDE_VECTORIZE
@@ -36596,7 +37832,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_CLE_H) */
 /* :: End simde/arm/neon/cle.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/clez.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -36624,17 +37860,18 @@ HEDLEY_DIAGNOSTIC_POP
  *   2020      Evan Nemerson <evan@nemerson.com>
  *   2020      Christopher Moore <moore@free.fr>
  *   2023      Yi-Yen Chung <eric681@andestech.com> (Copyright owned by Andes Technology)
+ *   2023      Ju-Hung Li <jhlee@pllab.cs.nthu.edu.tw> (Copyright owned by NTHU pllab)
  */
 
 #if !defined(SIMDE_ARM_NEON_CLEZ_H)
 #define SIMDE_ARM_NEON_CLEZ_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -36707,10 +37944,16 @@ simde_vclezq_f16(simde_float16x8_t a) {
     simde_float16x8_private a_ = simde_float16x8_to_private(a);
     simde_uint16x8_private r_;
 
-    SIMDE_VECTORIZE
-    for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
-      r_.values[i] = simde_vclezh_f16(a_.values[i]);
-    }
+    #if defined(SIMDE_RISCV_V_NATIVE) && defined(SIMDE_ARCH_RISCV_ZVFH)
+      vbool16_t result = __riscv_vmfle_vf_f16m1_b16(a_.sv128, 0, 8);
+      r_.sv128 = __riscv_vmv_v_x_u16m1(0, 8);
+      r_.sv128 = __riscv_vmerge_vxm_u16m1(r_.sv128, -1, result, 8);
+    #else
+      SIMDE_VECTORIZE
+      for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
+        r_.values[i] = simde_vclezh_f16(a_.values[i]);
+      }
+    #endif
 
     return simde_uint16x8_from_private(r_);
   #endif
@@ -36725,13 +37968,17 @@ simde_uint32x4_t
 simde_vclezq_f32(simde_float32x4_t a) {
   #if defined(SIMDE_ARM_NEON_A64V8_NATIVE)
     return vclezq_f32(a);
-  #elif SIMDE_NATURAL_VECTOR_SIZE > 0
+  #elif SIMDE_NATURAL_VECTOR_SIZE > 0 && !defined(SIMDE_RISCV_V_NATIVE)
     return simde_vcleq_f32(a, simde_vdupq_n_f32(SIMDE_FLOAT32_C(0.0)));
   #else
     simde_float32x4_private a_ = simde_float32x4_to_private(a);
     simde_uint32x4_private r_;
 
-    #if defined(SIMDE_VECTOR_SUBSCRIPT_SCALAR)
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      vbool32_t result = __riscv_vmfle_vf_f32m1_b32(a_.sv128, 0, 4);
+      r_.sv128 = __riscv_vmv_v_x_u32m1(0, 4);
+      r_.sv128 = __riscv_vmerge_vxm_u32m1(r_.sv128, -1, result, 4);
+    #elif defined(SIMDE_VECTOR_SUBSCRIPT_SCALAR)
       r_.values = HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), a_.values <= SIMDE_FLOAT32_C(0.0));
     #else
       SIMDE_VECTORIZE
@@ -36753,13 +38000,17 @@ simde_uint64x2_t
 simde_vclezq_f64(simde_float64x2_t a) {
   #if defined(SIMDE_ARM_NEON_A64V8_NATIVE)
     return vclezq_f64(a);
-  #elif SIMDE_NATURAL_VECTOR_SIZE > 0
+  #elif SIMDE_NATURAL_VECTOR_SIZE > 0 && !defined(SIMDE_RISCV_V_NATIVE)
     return simde_vcleq_f64(a, simde_vdupq_n_f64(SIMDE_FLOAT64_C(0.0)));
   #else
     simde_float64x2_private a_ = simde_float64x2_to_private(a);
     simde_uint64x2_private r_;
 
-    #if defined(SIMDE_VECTOR_SUBSCRIPT_SCALAR)
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      vbool64_t result = __riscv_vmfle_vf_f64m1_b64(a_.sv128, 0, 2);
+      r_.sv128 = __riscv_vmv_v_x_u64m1(0, 2);
+      r_.sv128 = __riscv_vmerge_vxm_u64m1(r_.sv128, -1, result, 2);
+    #elif defined(SIMDE_VECTOR_SUBSCRIPT_SCALAR)
       r_.values = HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), a_.values <= SIMDE_FLOAT64_C(0.0));
     #else
       SIMDE_VECTORIZE
@@ -36781,13 +38032,17 @@ simde_uint8x16_t
 simde_vclezq_s8(simde_int8x16_t a) {
   #if defined(SIMDE_ARM_NEON_A64V8_NATIVE)
     return vclezq_s8(a);
-  #elif SIMDE_NATURAL_VECTOR_SIZE > 0
+  #elif SIMDE_NATURAL_VECTOR_SIZE > 0 && !defined(SIMDE_RISCV_V_NATIVE)
     return simde_vcleq_s8(a, simde_vdupq_n_s8(0));
   #else
     simde_int8x16_private a_ = simde_int8x16_to_private(a);
     simde_uint8x16_private r_;
 
-    #if defined(SIMDE_VECTOR_SUBSCRIPT_SCALAR)
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      vbool8_t result = __riscv_vmsle_vx_i8m1_b8(a_.sv128, 0, 16);
+      r_.sv128 = __riscv_vmv_v_x_u8m1(0, 16);
+      r_.sv128 = __riscv_vmerge_vxm_u8m1(r_.sv128, -1, result, 16);
+    #elif defined(SIMDE_VECTOR_SUBSCRIPT_SCALAR)
       r_.values = HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), a_.values <= 0);
     #else
       SIMDE_VECTORIZE
@@ -36809,13 +38064,17 @@ simde_uint16x8_t
 simde_vclezq_s16(simde_int16x8_t a) {
   #if defined(SIMDE_ARM_NEON_A64V8_NATIVE)
     return vclezq_s16(a);
-  #elif SIMDE_NATURAL_VECTOR_SIZE > 0
+  #elif SIMDE_NATURAL_VECTOR_SIZE > 0 && !defined(SIMDE_RISCV_V_NATIVE)
     return simde_vcleq_s16(a, simde_vdupq_n_s16(0));
   #else
     simde_int16x8_private a_ = simde_int16x8_to_private(a);
     simde_uint16x8_private r_;
 
-    #if defined(SIMDE_VECTOR_SUBSCRIPT_SCALAR)
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      vbool16_t result = __riscv_vmsle_vx_i16m1_b16(a_.sv128, 0, 8);
+      r_.sv128 = __riscv_vmv_v_x_u16m1(0, 8);
+      r_.sv128 = __riscv_vmerge_vxm_u16m1(r_.sv128, -1, result, 8);
+    #elif defined(SIMDE_VECTOR_SUBSCRIPT_SCALAR)
       r_.values = HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), a_.values <= 0);
     #else
       SIMDE_VECTORIZE
@@ -36837,13 +38096,17 @@ simde_uint32x4_t
 simde_vclezq_s32(simde_int32x4_t a) {
   #if defined(SIMDE_ARM_NEON_A64V8_NATIVE)
     return vclezq_s32(a);
-  #elif SIMDE_NATURAL_VECTOR_SIZE > 0
+  #elif SIMDE_NATURAL_VECTOR_SIZE > 0 && !defined(SIMDE_RISCV_V_NATIVE)
     return simde_vcleq_s32(a, simde_vdupq_n_s32(0));
   #else
     simde_int32x4_private a_ = simde_int32x4_to_private(a);
     simde_uint32x4_private r_;
 
-    #if defined(SIMDE_VECTOR_SUBSCRIPT_SCALAR)
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      vbool32_t result = __riscv_vmsle_vx_i32m1_b32(a_.sv128, 0, 4);
+      r_.sv128 = __riscv_vmv_v_x_u32m1(0, 4);
+      r_.sv128 = __riscv_vmerge_vxm_u32m1(r_.sv128, -1, result, 4);
+    #elif defined(SIMDE_VECTOR_SUBSCRIPT_SCALAR)
       r_.values = HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), a_.values <= 0);
     #else
       SIMDE_VECTORIZE
@@ -36865,13 +38128,17 @@ simde_uint64x2_t
 simde_vclezq_s64(simde_int64x2_t a) {
   #if defined(SIMDE_ARM_NEON_A64V8_NATIVE)
     return vclezq_s64(a);
-  #elif SIMDE_NATURAL_VECTOR_SIZE > 0
+  #elif SIMDE_NATURAL_VECTOR_SIZE > 0 && !defined(SIMDE_RISCV_V_NATIVE)
     return simde_vcleq_s64(a, simde_vdupq_n_s64(0));
   #else
     simde_int64x2_private a_ = simde_int64x2_to_private(a);
     simde_uint64x2_private r_;
 
-    #if defined(SIMDE_VECTOR_SUBSCRIPT_SCALAR)
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      vbool64_t result = __riscv_vmsle_vx_i64m1_b64(a_.sv128, 0, 2);
+      r_.sv128 = __riscv_vmv_v_x_u64m1(0, 2);
+      r_.sv128 = __riscv_vmerge_vxm_u64m1(r_.sv128, -1, result, 2);
+    #elif defined(SIMDE_VECTOR_SUBSCRIPT_SCALAR)
       r_.values = HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), a_.values <= 0);
     #else
       SIMDE_VECTORIZE
@@ -36897,10 +38164,16 @@ simde_vclez_f16(simde_float16x4_t a) {
     simde_float16x4_private a_ = simde_float16x4_to_private(a);
     simde_uint16x4_private r_;
 
-    SIMDE_VECTORIZE
-    for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
-      r_.values[i] = simde_vclezh_f16(a_.values[i]);
-    }
+    #if defined(SIMDE_RISCV_V_NATIVE) && defined(SIMDE_ARCH_RISCV_ZVFH)
+      vbool16_t result = __riscv_vmfle_vf_f16m1_b16(a_.sv64, 0, 4);
+      r_.sv64 = __riscv_vmv_v_x_u16m1(0, 4);
+      r_.sv64 = __riscv_vmerge_vxm_u16m1(r_.sv64, -1, result, 4);
+    #else
+      SIMDE_VECTORIZE
+      for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
+        r_.values[i] = simde_vclezh_f16(a_.values[i]);
+      }
+    #endif
 
     return simde_uint16x4_from_private(r_);
   #endif
@@ -36915,13 +38188,17 @@ simde_uint32x2_t
 simde_vclez_f32(simde_float32x2_t a) {
   #if defined(SIMDE_ARM_NEON_A64V8_NATIVE)
     return vclez_f32(a);
-  #elif SIMDE_NATURAL_VECTOR_SIZE > 0
+  #elif SIMDE_NATURAL_VECTOR_SIZE > 0 && !defined(SIMDE_RISCV_V_NATIVE)
     return simde_vcle_f32(a, simde_vdup_n_f32(SIMDE_FLOAT32_C(0.0)));
   #else
     simde_float32x2_private a_ = simde_float32x2_to_private(a);
     simde_uint32x2_private r_;
 
-    #if defined(SIMDE_VECTOR_SUBSCRIPT_SCALAR) && !defined(SIMDE_BUG_GCC_100762)
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      vbool32_t result = __riscv_vmfle_vf_f32m1_b32(a_.sv64, 0, 2);
+      r_.sv64 = __riscv_vmv_v_x_u32m1(0, 2);
+      r_.sv64 = __riscv_vmerge_vxm_u32m1(r_.sv64, -1, result, 2);
+    #elif defined(SIMDE_VECTOR_SUBSCRIPT_SCALAR) && !defined(SIMDE_BUG_GCC_100762)
       r_.values = HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), a_.values <= SIMDE_FLOAT32_C(0.0));
     #else
       SIMDE_VECTORIZE
@@ -36943,13 +38220,17 @@ simde_uint64x1_t
 simde_vclez_f64(simde_float64x1_t a) {
   #if defined(SIMDE_ARM_NEON_A64V8_NATIVE)
     return vclez_f64(a);
-  #elif SIMDE_NATURAL_VECTOR_SIZE > 0
+  #elif SIMDE_NATURAL_VECTOR_SIZE > 0 && !defined(SIMDE_RISCV_V_NATIVE)
     return simde_vcle_f64(a, simde_vdup_n_f64(SIMDE_FLOAT64_C(0.0)));
   #else
     simde_float64x1_private a_ = simde_float64x1_to_private(a);
     simde_uint64x1_private r_;
 
-    #if defined(SIMDE_VECTOR_SUBSCRIPT_SCALAR)
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      vbool64_t result = __riscv_vmfle_vf_f64m1_b64(a_.sv64, 0, 1);
+      r_.sv64 = __riscv_vmv_v_x_u64m1(0, 1);
+      r_.sv64 = __riscv_vmerge_vxm_u64m1(r_.sv64, -1, result, 1);
+    #elif defined(SIMDE_VECTOR_SUBSCRIPT_SCALAR)
       r_.values =  HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), a_.values <= SIMDE_FLOAT64_C(0.0));
     #else
       SIMDE_VECTORIZE
@@ -36971,13 +38252,17 @@ simde_uint8x8_t
 simde_vclez_s8(simde_int8x8_t a) {
   #if defined(SIMDE_ARM_NEON_A64V8_NATIVE)
     return vclez_s8(a);
-  #elif SIMDE_NATURAL_VECTOR_SIZE > 0
+  #elif SIMDE_NATURAL_VECTOR_SIZE > 0 && !defined(SIMDE_RISCV_V_NATIVE)
     return simde_vcle_s8(a, simde_vdup_n_s8(0));
   #else
     simde_int8x8_private a_ = simde_int8x8_to_private(a);
     simde_uint8x8_private r_;
 
-    #if defined(SIMDE_VECTOR_SUBSCRIPT_SCALAR) && !defined(SIMDE_BUG_GCC_100762)
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      vbool8_t result = __riscv_vmsle_vx_i8m1_b8(a_.sv64, 0, 8);
+      r_.sv64 = __riscv_vmv_v_x_u8m1(0, 8);
+      r_.sv64 = __riscv_vmerge_vxm_u8m1(r_.sv64, -1, result, 8);
+    #elif defined(SIMDE_VECTOR_SUBSCRIPT_SCALAR) && !defined(SIMDE_BUG_GCC_100762)
       r_.values = HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), a_.values <= 0);
     #else
       SIMDE_VECTORIZE
@@ -36999,13 +38284,17 @@ simde_uint16x4_t
 simde_vclez_s16(simde_int16x4_t a) {
   #if defined(SIMDE_ARM_NEON_A64V8_NATIVE)
     return vclez_s16(a);
-  #elif SIMDE_NATURAL_VECTOR_SIZE > 0
+  #elif SIMDE_NATURAL_VECTOR_SIZE > 0 && !defined(SIMDE_RISCV_V_NATIVE)
     return simde_vcle_s16(a, simde_vdup_n_s16(0));
   #else
     simde_int16x4_private a_ = simde_int16x4_to_private(a);
     simde_uint16x4_private r_;
 
-    #if defined(SIMDE_VECTOR_SUBSCRIPT_SCALAR) && !defined(SIMDE_BUG_GCC_100762)
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      vbool16_t result = __riscv_vmsle_vx_i16m1_b16(a_.sv64, 0, 4);
+      r_.sv64 = __riscv_vmv_v_x_u16m1(0, 4);
+      r_.sv64 = __riscv_vmerge_vxm_u16m1(r_.sv64, -1, result, 4);
+    #elif defined(SIMDE_VECTOR_SUBSCRIPT_SCALAR) && !defined(SIMDE_BUG_GCC_100762)
       r_.values = HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), a_.values <= 0);
     #else
       SIMDE_VECTORIZE
@@ -37027,13 +38316,17 @@ simde_uint32x2_t
 simde_vclez_s32(simde_int32x2_t a) {
   #if defined(SIMDE_ARM_NEON_A64V8_NATIVE)
     return vclez_s32(a);
-  #elif SIMDE_NATURAL_VECTOR_SIZE > 0
+  #elif SIMDE_NATURAL_VECTOR_SIZE > 0 && !defined(SIMDE_RISCV_V_NATIVE)
     return simde_vcle_s32(a, simde_vdup_n_s32(0));
   #else
     simde_int32x2_private a_ = simde_int32x2_to_private(a);
     simde_uint32x2_private r_;
 
-    #if defined(SIMDE_VECTOR_SUBSCRIPT_SCALAR) && !defined(SIMDE_BUG_GCC_100762)
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      vbool32_t result = __riscv_vmsle_vx_i32m1_b32(a_.sv64, 0, 2);
+      r_.sv64 = __riscv_vmv_v_x_u32m1(0, 2);
+      r_.sv64 = __riscv_vmerge_vxm_u32m1(r_.sv64, -1, result, 2);
+    #elif defined(SIMDE_VECTOR_SUBSCRIPT_SCALAR) && !defined(SIMDE_BUG_GCC_100762)
       r_.values = HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), a_.values <= 0);
     #else
       SIMDE_VECTORIZE
@@ -37055,13 +38348,17 @@ simde_uint64x1_t
 simde_vclez_s64(simde_int64x1_t a) {
   #if defined(SIMDE_ARM_NEON_A64V8_NATIVE)
     return vclez_s64(a);
-  #elif SIMDE_NATURAL_VECTOR_SIZE > 0
+  #elif SIMDE_NATURAL_VECTOR_SIZE > 0 && !defined(SIMDE_RISCV_V_NATIVE)
     return simde_vcle_s64(a, simde_vdup_n_s64(0));
   #else
     simde_int64x1_private a_ = simde_int64x1_to_private(a);
     simde_uint64x1_private r_;
 
-    #if defined(SIMDE_VECTOR_SUBSCRIPT_SCALAR)
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      vbool64_t result = __riscv_vmsle_vx_i64m1_b64(a_.sv64, 0, 1);
+      r_.sv64 = __riscv_vmv_v_x_u64m1(0, 1);
+      r_.sv64 = __riscv_vmerge_vxm_u64m1(r_.sv64, -1, result, 1);
+    #elif defined(SIMDE_VECTOR_SUBSCRIPT_SCALAR)
       r_.values = HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), a_.values <= 0);
     #else
       SIMDE_VECTORIZE
@@ -37084,7 +38381,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_CLEZ_H) */
 /* :: End simde/arm/neon/clez.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/cls.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -37116,11 +38413,11 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_CLS_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/clz.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -37152,7 +38449,7 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_CLZ_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -37552,7 +38849,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_CLZ_H) */
 /* :: End simde/arm/neon/clz.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/cltz.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -37587,13 +38884,13 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_CLTZ_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/clt.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -37621,15 +38918,16 @@ HEDLEY_DIAGNOSTIC_POP
  *   2020      Evan Nemerson <evan@nemerson.com>
  *   2020      Christopher Moore <moore@free.fr>
  *   2023      Yi-Yen Chung <eric681@andestech.com> (Copyright owned by Andes Technology)
+ *   2023      Ju-Hung Li <jhlee@pllab.cs.nthu.edu.tw> (Copyright owned by NTHU pllab)
  */
 
 #if !defined(SIMDE_ARM_NEON_CLT_H)
 #define SIMDE_ARM_NEON_CLT_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -37719,10 +39017,16 @@ simde_vcltq_f16(simde_float16x8_t a, simde_float16x8_t b) {
       b_ = simde_float16x8_to_private(b);
     simde_uint16x8_private r_;
 
-    SIMDE_VECTORIZE
-    for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
-      r_.values[i] = simde_vclth_f16(a_.values[i], b_.values[i]);
-    }
+    #if defined(SIMDE_RISCV_V_NATIVE) && defined(SIMDE_ARCH_RISCV_ZVFH)
+      vbool16_t result = __riscv_vmflt_vv_f16m1_b16(a_.sv128, b_.sv128, 8);
+      r_.sv128 = __riscv_vmv_v_x_u16m1(0, 8);
+      r_.sv128 = __riscv_vmerge_vxm_u16m1(r_.sv128, -1, result, 8);
+    #else
+      SIMDE_VECTORIZE
+      for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
+        r_.values[i] = simde_vclth_f16(a_.values[i], b_.values[i]);
+      }
+    #endif
 
     return simde_uint16x8_from_private(r_);
   #endif
@@ -37749,6 +39053,10 @@ simde_vcltq_f32(simde_float32x4_t a, simde_float32x4_t b) {
       r_.m128i = _mm_castps_si128(_mm_cmplt_ps(a_.m128, b_.m128));
     #elif defined(SIMDE_WASM_SIMD128_NATIVE)
       r_.v128 = wasm_f32x4_lt(a_.v128, b_.v128);
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      vbool32_t result = __riscv_vmflt_vv_f32m1_b32(a_.sv128, b_.sv128, 4);
+      r_.sv128 = __riscv_vmv_v_x_u32m1(0, 4);
+      r_.sv128 = __riscv_vmerge_vxm_u32m1(r_.sv128, -1, result, 4);
     #elif defined(SIMDE_VECTOR_SUBSCRIPT_OPS)
       r_.values = HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), a_.values < b_.values);
     #else
@@ -37783,6 +39091,10 @@ simde_vcltq_f64(simde_float64x2_t a, simde_float64x2_t b) {
       r_.m128i = _mm_castpd_si128(_mm_cmplt_pd(a_.m128d, b_.m128d));
     #elif defined(SIMDE_WASM_SIMD128_NATIVE)
       r_.v128 = wasm_f64x2_lt(a_.v128, b_.v128);
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      vbool64_t result = __riscv_vmflt_vv_f64m1_b64(a_.sv128, b_.sv128, 2);
+      r_.sv128 = __riscv_vmv_v_x_u64m1(0, 2);
+      r_.sv128 = __riscv_vmerge_vxm_u64m1(r_.sv128, -1, result, 2);
     #elif defined(SIMDE_VECTOR_SUBSCRIPT_OPS)
       r_.values = HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), a_.values < b_.values);
     #else
@@ -37817,6 +39129,10 @@ simde_vcltq_s8(simde_int8x16_t a, simde_int8x16_t b) {
       r_.m128i = _mm_cmplt_epi8(a_.m128i, b_.m128i);
     #elif defined(SIMDE_WASM_SIMD128_NATIVE)
       r_.v128 = wasm_i8x16_lt(a_.v128, b_.v128);
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      vbool8_t result = __riscv_vmslt_vv_i8m1_b8(a_.sv128, b_.sv128, 16);
+      r_.sv128 = __riscv_vmv_v_x_u8m1(0, 16);
+      r_.sv128 = __riscv_vmerge_vxm_u8m1(r_.sv128, -1, result, 16);
     #elif defined(SIMDE_VECTOR_SUBSCRIPT_OPS)
       r_.values = HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), a_.values < b_.values);
     #else
@@ -37851,6 +39167,10 @@ simde_vcltq_s16(simde_int16x8_t a, simde_int16x8_t b) {
       r_.m128i = _mm_cmplt_epi16(a_.m128i, b_.m128i);
     #elif defined(SIMDE_WASM_SIMD128_NATIVE)
       r_.v128 = wasm_i16x8_lt(a_.v128, b_.v128);
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      vbool16_t result = __riscv_vmslt_vv_i16m1_b16(a_.sv128, b_.sv128, 8);
+      r_.sv128 = __riscv_vmv_v_x_u16m1(0, 8);
+      r_.sv128 = __riscv_vmerge_vxm_u16m1(r_.sv128, -1, result, 8);
     #elif defined(SIMDE_VECTOR_SUBSCRIPT_OPS)
       r_.values = HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), a_.values < b_.values);
     #else
@@ -37885,6 +39205,10 @@ simde_vcltq_s32(simde_int32x4_t a, simde_int32x4_t b) {
       r_.m128i = _mm_cmplt_epi32(a_.m128i, b_.m128i);
     #elif defined(SIMDE_WASM_SIMD128_NATIVE)
       r_.v128 = wasm_i32x4_lt(a_.v128, b_.v128);
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      vbool32_t result = __riscv_vmslt_vv_i32m1_b32(a_.sv128, b_.sv128, 4);
+      r_.sv128 = __riscv_vmv_v_x_u32m1(0, 4);
+      r_.sv128 = __riscv_vmerge_vxm_u32m1(r_.sv128, -1, result, 4);
     #elif defined(SIMDE_VECTOR_SUBSCRIPT_OPS)
       r_.values = HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), a_.values < b_.values);
     #else
@@ -37919,6 +39243,10 @@ simde_vcltq_s64(simde_int64x2_t a, simde_int64x2_t b) {
 
     #if defined(SIMDE_X86_SSE4_2_NATIVE)
       r_.m128i = _mm_cmpgt_epi64(b_.m128i, a_.m128i);
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      vbool64_t result = __riscv_vmslt_vv_i64m1_b64(a_.sv128, b_.sv128, 2);
+      r_.sv128 = __riscv_vmv_v_x_u64m1(0, 2);
+      r_.sv128 = __riscv_vmerge_vxm_u64m1(r_.sv128, -1, result, 2);
     #elif defined(SIMDE_VECTOR_SUBSCRIPT_OPS)
       r_.values = HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), a_.values < b_.values);
     #else
@@ -37956,6 +39284,10 @@ simde_vcltq_u8(simde_uint8x16_t a, simde_uint8x16_t b) {
       );
     #elif defined(SIMDE_WASM_SIMD128_NATIVE)
       r_.v128 = wasm_u8x16_lt(a_.v128, b_.v128);
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      vbool8_t result = __riscv_vmsltu_vv_u8m1_b8(a_.sv128, b_.sv128, 16);
+      r_.sv128 = __riscv_vmv_v_x_u8m1(0, 16);
+      r_.sv128 = __riscv_vmerge_vxm_u8m1(r_.sv128, -1, result, 16);
     #elif defined(SIMDE_VECTOR_SUBSCRIPT_OPS)
       r_.values = HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), a_.values < b_.values);
     #else
@@ -37996,6 +39328,10 @@ simde_vcltq_u16(simde_uint16x8_t a, simde_uint16x8_t b) {
       r_.m128i = _mm_cmplt_epi16(_mm_xor_si128(a_.m128i, sign_bits), _mm_xor_si128(b_.m128i, sign_bits));
     #elif defined(SIMDE_WASM_SIMD128_NATIVE)
       r_.v128 = wasm_u16x8_lt(a_.v128, b_.v128);
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      vbool16_t result = __riscv_vmsltu_vv_u16m1_b16(a_.sv128, b_.sv128, 8);
+      r_.sv128 = __riscv_vmv_v_x_u16m1(0, 8);
+      r_.sv128 = __riscv_vmerge_vxm_u16m1(r_.sv128, -1, result, 8);
     #elif defined(SIMDE_VECTOR_SUBSCRIPT_OPS)
       r_.values = HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), a_.values < b_.values);
     #else
@@ -38036,6 +39372,10 @@ simde_vcltq_u32(simde_uint32x4_t a, simde_uint32x4_t b) {
       r_.m128i = _mm_cmplt_epi32(_mm_xor_si128(a_.m128i, sign_bits), _mm_xor_si128(b_.m128i, sign_bits));
     #elif defined(SIMDE_WASM_SIMD128_NATIVE)
       r_.v128 = wasm_u32x4_lt(a_.v128, b_.v128);
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      vbool32_t result = __riscv_vmsltu_vv_u32m1_b32(a_.sv128, b_.sv128, 4);
+      r_.sv128 = __riscv_vmv_v_x_u32m1(0, 4);
+      r_.sv128 = __riscv_vmerge_vxm_u32m1(r_.sv128, -1, result, 4);
     #elif defined(SIMDE_VECTOR_SUBSCRIPT_OPS)
       r_.values = HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), a_.values < b_.values);
     #else
@@ -38074,6 +39414,10 @@ simde_vcltq_u64(simde_uint64x2_t a, simde_uint64x2_t b) {
     #elif defined(SIMDE_X86_SSE4_2_NATIVE)
       __m128i sign_bits = _mm_set1_epi64x(INT64_MIN);
       r_.m128i = _mm_cmpgt_epi64(_mm_xor_si128(b_.m128i, sign_bits), _mm_xor_si128(a_.m128i, sign_bits));
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      vbool64_t result = __riscv_vmsltu_vv_u64m1_b64(a_.sv128, b_.sv128, 2);
+      r_.sv128 = __riscv_vmv_v_x_u64m1(0, 2);
+      r_.sv128 = __riscv_vmerge_vxm_u64m1(r_.sv128, -1, result, 2);
     #elif defined(SIMDE_VECTOR_SUBSCRIPT_OPS)
       r_.values = HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), a_.values < b_.values);
     #else
@@ -38102,10 +39446,16 @@ simde_vclt_f16(simde_float16x4_t a, simde_float16x4_t b) {
       b_ = simde_float16x4_to_private(b);
     simde_uint16x4_private r_;
 
-    SIMDE_VECTORIZE
-    for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
-      r_.values[i] = simde_vclth_f16(a_.values[i], b_.values[i]);
-    }
+    #if defined(SIMDE_RISCV_V_NATIVE) && defined(SIMDE_ARCH_RISCV_ZVFH)
+      vbool16_t result = __riscv_vmflt_vv_f16m1_b16(a_.sv64, b_.sv64, 4);
+      r_.sv64 = __riscv_vmv_v_x_u16m1(0, 4);
+      r_.sv64 = __riscv_vmerge_vxm_u16m1(r_.sv64, -1, result, 4);
+    #else
+      SIMDE_VECTORIZE
+      for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
+        r_.values[i] = simde_vclth_f16(a_.values[i], b_.values[i]);
+      }
+    #endif
 
     return simde_uint16x4_from_private(r_);
   #endif
@@ -38126,7 +39476,11 @@ simde_vclt_f32(simde_float32x2_t a, simde_float32x2_t b) {
       b_ = simde_float32x2_to_private(b);
     simde_uint32x2_private r_;
 
-    #if defined(SIMDE_VECTOR_SUBSCRIPT_OPS) && !defined(SIMDE_BUG_GCC_100762)
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      vbool32_t result = __riscv_vmflt_vv_f32m1_b32(a_.sv64, b_.sv64, 2);
+      r_.sv64 = __riscv_vmv_v_x_u32m1(0, 2);
+      r_.sv64 = __riscv_vmerge_vxm_u32m1(r_.sv64, -1, result, 2);
+    #elif defined(SIMDE_VECTOR_SUBSCRIPT_OPS) && !defined(SIMDE_BUG_GCC_100762)
       r_.values = HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), a_.values < b_.values);
     #else
       SIMDE_VECTORIZE
@@ -38154,7 +39508,11 @@ simde_vclt_f64(simde_float64x1_t a, simde_float64x1_t b) {
       b_ = simde_float64x1_to_private(b);
     simde_uint64x1_private r_;
 
-    #if defined(SIMDE_VECTOR_SUBSCRIPT_OPS)
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      vbool64_t result = __riscv_vmflt_vv_f64m1_b64(a_.sv64, b_.sv64, 1);
+      r_.sv64 = __riscv_vmv_v_x_u64m1(0, 1);
+      r_.sv64 = __riscv_vmerge_vxm_u64m1(r_.sv64, -1, result, 1);
+    #elif defined(SIMDE_VECTOR_SUBSCRIPT_OPS)
       r_.values = HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), a_.values < b_.values);
     #else
       SIMDE_VECTORIZE
@@ -38184,6 +39542,10 @@ simde_vclt_s8(simde_int8x8_t a, simde_int8x8_t b) {
 
     #if defined(SIMDE_X86_MMX_NATIVE)
       r_.m64 = _mm_cmpgt_pi8(b_.m64, a_.m64);
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      vbool8_t result = __riscv_vmslt_vv_i8m1_b8(a_.sv64, b_.sv64, 8);
+      r_.sv64 = __riscv_vmv_v_x_u8m1(0, 8);
+      r_.sv64 = __riscv_vmerge_vxm_u8m1(r_.sv64, -1, result, 8);
     #elif defined(SIMDE_VECTOR_SUBSCRIPT_OPS) && !defined(SIMDE_BUG_GCC_100762)
       r_.values = HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), a_.values < b_.values);
     #else
@@ -38214,6 +39576,10 @@ simde_vclt_s16(simde_int16x4_t a, simde_int16x4_t b) {
 
     #if defined(SIMDE_X86_MMX_NATIVE)
       r_.m64 = _mm_cmpgt_pi16(b_.m64, a_.m64);
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      vbool16_t result = __riscv_vmslt_vv_i16m1_b16(a_.sv64, b_.sv64, 4);
+      r_.sv64 = __riscv_vmv_v_x_u16m1(0, 4);
+      r_.sv64 = __riscv_vmerge_vxm_u16m1(r_.sv64, -1, result, 4);
     #elif defined(SIMDE_VECTOR_SUBSCRIPT_OPS) && !defined(SIMDE_BUG_GCC_100762)
       r_.values = HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), a_.values < b_.values);
     #else
@@ -38244,6 +39610,10 @@ simde_vclt_s32(simde_int32x2_t a, simde_int32x2_t b) {
 
     #if defined(SIMDE_X86_MMX_NATIVE)
       r_.m64 = _mm_cmpgt_pi32(b_.m64, a_.m64);
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      vbool32_t result = __riscv_vmslt_vv_i32m1_b32(a_.sv64, b_.sv64, 2);
+      r_.sv64 = __riscv_vmv_v_x_u32m1(0, 2);
+      r_.sv64 = __riscv_vmerge_vxm_u32m1(r_.sv64, -1, result, 2);
     #elif defined(SIMDE_VECTOR_SUBSCRIPT_OPS) && !defined(SIMDE_BUG_GCC_100762)
       r_.values = HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), a_.values < b_.values);
     #else
@@ -38272,7 +39642,11 @@ simde_vclt_s64(simde_int64x1_t a, simde_int64x1_t b) {
       b_ = simde_int64x1_to_private(b);
     simde_uint64x1_private r_;
 
-    #if defined(SIMDE_VECTOR_SUBSCRIPT_OPS)
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      vbool64_t result = __riscv_vmslt_vv_i64m1_b64(a_.sv64, b_.sv64, 1);
+      r_.sv64 = __riscv_vmv_v_x_u64m1(0, 1);
+      r_.sv64 = __riscv_vmerge_vxm_u64m1(r_.sv64, -1, result, 1);
+    #elif defined(SIMDE_VECTOR_SUBSCRIPT_OPS)
       r_.values = HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), a_.values < b_.values);
     #else
       SIMDE_VECTORIZE
@@ -38303,6 +39677,10 @@ simde_vclt_u8(simde_uint8x8_t a, simde_uint8x8_t b) {
     #if defined(SIMDE_X86_MMX_NATIVE)
       __m64 sign_bits = _mm_set1_pi8(INT8_MIN);
       r_.m64 = _mm_cmpgt_pi8(_mm_xor_si64(b_.m64, sign_bits), _mm_xor_si64(a_.m64, sign_bits));
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      vbool8_t result = __riscv_vmsltu_vv_u8m1_b8(a_.sv64, b_.sv64, 8);
+      r_.sv64 = __riscv_vmv_v_x_u8m1(0, 8);
+      r_.sv64 = __riscv_vmerge_vxm_u8m1(r_.sv64, -1, result, 8);
     #elif defined(SIMDE_VECTOR_SUBSCRIPT_OPS) && !defined(SIMDE_BUG_GCC_100762)
       r_.values = HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), a_.values < b_.values);
     #else
@@ -38334,6 +39712,10 @@ simde_vclt_u16(simde_uint16x4_t a, simde_uint16x4_t b) {
     #if defined(SIMDE_X86_MMX_NATIVE)
       __m64 sign_bits = _mm_set1_pi16(INT16_MIN);
       r_.m64 = _mm_cmpgt_pi16(_mm_xor_si64(b_.m64, sign_bits), _mm_xor_si64(a_.m64, sign_bits));
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      vbool16_t result = __riscv_vmsltu_vv_u16m1_b16(a_.sv64, b_.sv64, 4);
+      r_.sv64 = __riscv_vmv_v_x_u16m1(0, 4);
+      r_.sv64 = __riscv_vmerge_vxm_u16m1(r_.sv64, -1, result, 4);
     #elif defined(SIMDE_VECTOR_SUBSCRIPT_OPS) && !defined(SIMDE_BUG_GCC_100762)
       r_.values = HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), a_.values < b_.values);
     #else
@@ -38365,6 +39747,10 @@ simde_vclt_u32(simde_uint32x2_t a, simde_uint32x2_t b) {
     #if defined(SIMDE_X86_MMX_NATIVE)
       __m64 sign_bits = _mm_set1_pi32(INT32_MIN);
       r_.m64 = _mm_cmpgt_pi32(_mm_xor_si64(b_.m64, sign_bits), _mm_xor_si64(a_.m64, sign_bits));
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      vbool32_t result = __riscv_vmsltu_vv_u32m1_b32(a_.sv64, b_.sv64, 2);
+      r_.sv64 = __riscv_vmv_v_x_u32m1(0, 2);
+      r_.sv64 = __riscv_vmerge_vxm_u32m1(r_.sv64, -1, result, 2);
     #elif defined(SIMDE_VECTOR_SUBSCRIPT_OPS) && !defined(SIMDE_BUG_GCC_100762)
       r_.values = HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), a_.values < b_.values);
     #else
@@ -38393,7 +39779,11 @@ simde_vclt_u64(simde_uint64x1_t a, simde_uint64x1_t b) {
       a_ = simde_uint64x1_to_private(a),
       b_ = simde_uint64x1_to_private(b);
 
-    #if defined(SIMDE_VECTOR_SUBSCRIPT_OPS)
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      vbool64_t result = __riscv_vmsltu_vv_u64m1_b64(a_.sv64, b_.sv64, 1);
+      r_.sv64 = __riscv_vmv_v_x_u64m1(0, 1);
+      r_.sv64 = __riscv_vmerge_vxm_u64m1(r_.sv64, -1, result, 1);
+    #elif defined(SIMDE_VECTOR_SUBSCRIPT_OPS)
       r_.values = HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), a_.values < b_.values);
     #else
       SIMDE_VECTORIZE
@@ -38416,7 +39806,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_CLT_H) */
 /* :: End simde/arm/neon/clt.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -38768,9 +40158,9 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_CLTZ_H) */
 /* :: End simde/arm/neon/cltz.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/mvn.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -38804,11 +40194,11 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_MVN_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -38834,6 +40224,8 @@ simde_vmvnq_s8(simde_int8x16_t a) {
       r_.v128 = wasm_v128_not(a_.v128);
     #elif defined(SIMDE_VECTOR_SUBSCRIPT_OPS)
       r_.values = ~a_.values;
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv128 = __riscv_vnot_v_i8m1(a_.sv128, b_.sv128, 16);
     #else
       SIMDE_VECTORIZE
       for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
@@ -38869,6 +40261,8 @@ simde_vmvnq_s16(simde_int16x8_t a) {
       r_.v128 = wasm_v128_not(a_.v128);
     #elif defined(SIMDE_VECTOR_SUBSCRIPT_OPS)
       r_.values = ~a_.values;
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv128 = __riscv_vnot_v_i16m1(a_.sv128, b_.sv128, 8);
     #else
       SIMDE_VECTORIZE
       for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
@@ -38904,6 +40298,8 @@ simde_vmvnq_s32(simde_int32x4_t a) {
       r_.v128 = wasm_v128_not(a_.v128);
     #elif defined(SIMDE_VECTOR_SUBSCRIPT_OPS)
       r_.values = ~a_.values;
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv128 = __riscv_vnot_v_i32m1(a_.sv128, b_.sv128, 4);
     #else
       SIMDE_VECTORIZE
       for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
@@ -38939,6 +40335,8 @@ simde_vmvnq_u8(simde_uint8x16_t a) {
       r_.v128 = wasm_v128_not(a_.v128);
     #elif defined(SIMDE_VECTOR_SUBSCRIPT_OPS)
       r_.values = ~a_.values;
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv128 = __riscv_vnot_v_u8m1(a_.sv128, b_.sv128, 16);
     #else
       SIMDE_VECTORIZE
       for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
@@ -38974,6 +40372,8 @@ simde_vmvnq_u16(simde_uint16x8_t a) {
       r_.v128 = wasm_v128_not(a_.v128);
     #elif defined(SIMDE_VECTOR_SUBSCRIPT_OPS)
       r_.values = ~a_.values;
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv128 = __riscv_vnot_v_u16m1(a_.sv128, b_.sv128, 8);
     #else
       SIMDE_VECTORIZE
       for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
@@ -39009,6 +40409,8 @@ simde_vmvnq_u32(simde_uint32x4_t a) {
       r_.v128 = wasm_v128_not(a_.v128);
     #elif defined(SIMDE_VECTOR_SUBSCRIPT_OPS)
       r_.values = ~a_.values;
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv128 = __riscv_vnot_v_u32m1(a_.sv128, b_.sv128, 4);
     #else
       SIMDE_VECTORIZE
       for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
@@ -39038,6 +40440,8 @@ simde_vmvn_s8(simde_int8x8_t a) {
       r_.m64 = _mm_andnot_si64(a_.m64, _mm_cmpeq_pi8(a_.m64, a_.m64));
     #elif defined(SIMDE_VECTOR_SUBSCRIPT_OPS)
       r_.values = ~a_.values;
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv64 = __riscv_vnot_v_i8m1(a_.sv64, b_.sv64, 8);
     #else
       SIMDE_VECTORIZE
       for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
@@ -39067,6 +40471,8 @@ simde_vmvn_s16(simde_int16x4_t a) {
       r_.m64 = _mm_andnot_si64(a_.m64, _mm_cmpeq_pi16(a_.m64, a_.m64));
     #elif defined(SIMDE_VECTOR_SUBSCRIPT_OPS)
       r_.values = ~a_.values;
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv64 = __riscv_vnot_v_i16m1(a_.sv64, b_.sv64, 4);
     #else
       SIMDE_VECTORIZE
       for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
@@ -39096,6 +40502,8 @@ simde_vmvn_s32(simde_int32x2_t a) {
       r_.m64 = _mm_andnot_si64(a_.m64, _mm_cmpeq_pi32(a_.m64, a_.m64));
     #elif defined(SIMDE_VECTOR_SUBSCRIPT_OPS)
       r_.values = ~a_.values;
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv64 = __riscv_vnot_v_i32m1(a_.sv64, b_.sv64, 2);
     #else
       SIMDE_VECTORIZE
       for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
@@ -39125,6 +40533,8 @@ simde_vmvn_u8(simde_uint8x8_t a) {
       r_.m64 = _mm_andnot_si64(a_.m64, _mm_cmpeq_pi8(a_.m64, a_.m64));
     #elif defined(SIMDE_VECTOR_SUBSCRIPT_OPS)
       r_.values = ~a_.values;
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv64 = __riscv_vnot_v_u8m1(a_.sv64, b_.sv64, 8);
     #else
       SIMDE_VECTORIZE
       for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
@@ -39154,6 +40564,8 @@ simde_vmvn_u16(simde_uint16x4_t a) {
       r_.m64 = _mm_andnot_si64(a_.m64, _mm_cmpeq_pi16(a_.m64, a_.m64));
     #elif defined(SIMDE_VECTOR_SUBSCRIPT_OPS)
       r_.values = ~a_.values;
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv64 = __riscv_vnot_v_u16m1(a_.sv64, b_.sv64, 4);
     #else
       SIMDE_VECTORIZE
       for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
@@ -39183,6 +40595,8 @@ simde_vmvn_u32(simde_uint32x2_t a) {
       r_.m64 = _mm_andnot_si64(a_.m64, _mm_cmpeq_pi32(a_.m64, a_.m64));
     #elif defined(SIMDE_VECTOR_SUBSCRIPT_OPS)
       r_.values = ~a_.values;
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv64 = __riscv_vnot_v_u32m1(a_.sv64, b_.sv64, 2);
     #else
       SIMDE_VECTORIZE
       for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
@@ -39250,9 +40664,9 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_MVN_H) */
 /* :: End simde/arm/neon/mvn.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -39366,13 +40780,13 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_CLS_H) */
 /* :: End simde/arm/neon/cls.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/cmla.h :: */
 /* SPDX-License-Identifier: MIT
 *
@@ -39405,7 +40819,7 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_CMLA_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -39585,7 +40999,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_CMLA_H) */
 /* :: End simde/arm/neon/cmla.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/cmla_lane.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -39610,18 +41024,18 @@ HEDLEY_DIAGNOSTIC_POP
  * SOFTWARE.
  *
  * Copyright:
- *   2023      Chi-Wei Chu <wewe5215@gapp.nthu.edu.tw>
+ *   2023      Chi-Wei Chu <wewe5215@gapp.nthu.edu.tw> (Copyright owned by NTHU pllab)
  */
 
 #if !defined(SIMDE_ARM_NEON_CMLA_LANE_H)
 #define SIMDE_ARM_NEON_CMLA_LANE_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/cvt.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -39655,7 +41069,7 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_CVT_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -39670,7 +41084,9 @@ simde_vcvt_f16_f32(simde_float32x4_t a) {
     simde_float32x4_private a_ = simde_float32x4_to_private(a);
     simde_float16x4_private r_;
 
-    #if defined(SIMDE_CONVERT_VECTOR_) && defined(SIMDE_FLOAT16_VECTOR)
+    #if defined(SIMDE_RISCV_V_NATIVE) && SIMDE_ARCH_RISCV_ZVFH
+      r_.sv64 = __riscv_vfncvt_f_f_w_f16m1(__riscv_vlmul_ext_v_f32m1_f32m2(a_.sv128), 4);
+    #elif defined(SIMDE_CONVERT_VECTOR_) && defined(SIMDE_FLOAT16_VECTOR)
       SIMDE_CONVERT_VECTOR_(r_.values, a_.values);
     #else
       SIMDE_VECTORIZE
@@ -39696,7 +41112,9 @@ simde_vcvt_f32_f16(simde_float16x4_t a) {
     simde_float16x4_private a_ = simde_float16x4_to_private(a);
     simde_float32x4_private r_;
 
-    #if defined(SIMDE_CONVERT_VECTOR_) && defined(SIMDE_FLOAT16_VECTOR)
+    #if defined(SIMDE_RISCV_V_NATIVE) && SIMDE_ARCH_RISCV_ZVFH
+      r_.sv128 = __riscv_vlmul_trunc_v_f32m2_f32m1(__riscv_vfwcvt_f_f_v_f32m2(a_.sv64, 4));
+    #elif defined(SIMDE_CONVERT_VECTOR_) && defined(SIMDE_FLOAT16_VECTOR)
       SIMDE_CONVERT_VECTOR_(r_.values, a_.values);
     #else
       SIMDE_VECTORIZE
@@ -39722,8 +41140,10 @@ simde_vcvt_f32_f64(simde_float64x2_t a) {
     simde_float64x2_private a_ = simde_float64x2_to_private(a);
     simde_float32x2_private r_;
 
-    #if defined(SIMDE_CONVERT_VECTOR_)
+    #if defined(SIMDE_CONVERT_VECTOR_) && !defined(SIMDE_RISCV_V_NATIVE)
       SIMDE_CONVERT_VECTOR_(r_.values, a_.values);
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv64 = __riscv_vfncvt_f_f_w_f32m1(__riscv_vlmul_ext_v_f64m1_f64m2(a_.sv128), 2);
     #else
       SIMDE_VECTORIZE
       for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
@@ -39748,8 +41168,10 @@ simde_vcvt_f64_f32(simde_float32x2_t a) {
     simde_float32x2_private a_ = simde_float32x2_to_private(a);
     simde_float64x2_private r_;
 
-    #if defined(SIMDE_CONVERT_VECTOR_)
+    #if defined(SIMDE_CONVERT_VECTOR_) && !defined(SIMDE_RISCV_V_NATIVE)
       SIMDE_CONVERT_VECTOR_(r_.values, a_.values);
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv128 = __riscv_vlmul_trunc_v_f64m2_f64m1(__riscv_vfwcvt_f_f_v_f64m2(a_.sv64, 2));
     #else
       SIMDE_VECTORIZE
       for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
@@ -40153,7 +41575,17 @@ simde_vcvt_s32_f32(simde_float32x2_t a) {
     simde_float32x2_private a_ = simde_float32x2_to_private(a);
     simde_int32x2_private r_;
 
-    #if defined(SIMDE_CONVERT_VECTOR_) && defined(SIMDE_FAST_CONVERSION_RANGE)
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      #if defined(SIMDE_FAST_CONVERSION_RANGE)
+        r_.sv64 = __riscv_vfcvt_rtz_x_f_v_i32m1(a_.sv64, 2);
+      #else
+        r_.sv64 = __riscv_vmerge_vxm_i32m1(
+          __riscv_vfcvt_rtz_x_f_v_i32m1(a_.sv64, 2),
+          0,
+          __riscv_vmseq_vx_u32m1_b32(__riscv_vfclass_v_u32m1(a_.sv64 , 2) , 512 , 2),
+          2);
+      #endif
+    #elif defined(SIMDE_CONVERT_VECTOR_) && defined(SIMDE_FAST_CONVERSION_RANGE)
       SIMDE_CONVERT_VECTOR_(r_.values, a_.values);
     #else
       SIMDE_VECTORIZE
@@ -40179,7 +41611,9 @@ simde_vcvt_u16_f16(simde_float16x4_t a) {
     simde_float16x4_private a_ = simde_float16x4_to_private(a);
     simde_uint16x4_private r_;
 
-    #if defined(SIMDE_CONVERT_VECTOR_) && defined(SIMDE_FAST_CONVERSION_RANGE) && defined(SIMDE_FLOAT16_VECTOR)
+    #if defined(SIMDE_RISCV_V_NATIVE) && SIMDE_ARCH_RISCV_ZVFH
+      r_.sv64 = __riscv_vfcvt_rtz_xu_f_v_u16m1(a_.sv64, 4);
+    #elif defined(SIMDE_CONVERT_VECTOR_) && defined(SIMDE_FAST_CONVERSION_RANGE) && defined(SIMDE_FLOAT16_VECTOR)
       SIMDE_CONVERT_VECTOR_(r_.values, a_.values);
     #else
       SIMDE_VECTORIZE
@@ -40205,7 +41639,17 @@ simde_vcvt_u32_f32(simde_float32x2_t a) {
     simde_float32x2_private a_ = simde_float32x2_to_private(a);
     simde_uint32x2_private r_;
 
-    #if defined(SIMDE_CONVERT_VECTOR_) && defined(SIMDE_FAST_CONVERSION_RANGE)
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      #if defined(SIMDE_FAST_CONVERSION_RANGE)
+        r_.sv64 = __riscv_vfcvt_rtz_xu_f_v_u32m1(a_.sv64, 2);
+      #else
+        r_.sv64 = __riscv_vmerge_vxm_u32m1(
+          __riscv_vfcvt_rtz_xu_f_v_u32m1(a_.sv64, 2),
+          0,
+          __riscv_vmseq_vx_u32m1_b32(__riscv_vfclass_v_u32m1(a_.sv64 , 2) , 512 , 2),
+          2);
+      #endif
+    #elif defined(SIMDE_CONVERT_VECTOR_) && defined(SIMDE_FAST_CONVERSION_RANGE)
       SIMDE_CONVERT_VECTOR_(r_.values, a_.values);
     #else
       SIMDE_VECTORIZE
@@ -40231,7 +41675,17 @@ simde_vcvt_s64_f64(simde_float64x1_t a) {
     simde_float64x1_private a_ = simde_float64x1_to_private(a);
     simde_int64x1_private r_;
 
-    #if defined(SIMDE_CONVERT_VECTOR_) && defined(SIMDE_FAST_CONVERSION_RANGE)
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      #if defined(SIMDE_FAST_CONVERSION_RANGE)
+        r_.sv64 = __riscv_vfcvt_rtz_x_f_v_i64m1(a_.sv64, 1);
+      #else
+        r_.sv64 = __riscv_vmerge_vxm_i64m1(
+          __riscv_vfcvt_rtz_x_f_v_i64m1(a_.sv64, 1),
+          0,
+          __riscv_vmseq_vx_u64m1_b64(__riscv_vfclass_v_u64m1(a_.sv64 , 1) , 512 , 1),
+          1);
+      #endif
+    #elif defined(SIMDE_CONVERT_VECTOR_) && defined(SIMDE_FAST_CONVERSION_RANGE)
       SIMDE_CONVERT_VECTOR_(r_.values, a_.values);
     #else
       SIMDE_VECTORIZE
@@ -40257,7 +41711,17 @@ simde_vcvt_u64_f64(simde_float64x1_t a) {
     simde_float64x1_private a_ = simde_float64x1_to_private(a);
     simde_uint64x1_private r_;
 
-    #if defined(SIMDE_CONVERT_VECTOR_) && defined(SIMDE_FAST_CONVERSION_RANGE)
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      #if defined(SIMDE_FAST_CONVERSION_RANGE)
+        r_.sv64 = __riscv_vfcvt_rtz_xu_f_v_u64m1(a_.sv64, 1);
+      #else
+        r_.sv64 = __riscv_vmerge_vxm_u64m1(
+          __riscv_vfcvt_rtz_xu_f_v_u64m1(a_.sv64, 1),
+          0,
+          __riscv_vmseq_vx_u64m1_b64(__riscv_vfclass_v_u64m1(a_.sv64 , 1) , 512 , 1),
+          1);
+      #endif
+    #elif defined(SIMDE_CONVERT_VECTOR_) && defined(SIMDE_FAST_CONVERSION_RANGE)
       SIMDE_CONVERT_VECTOR_(r_.values, a_.values);
       r_.values &= HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), (a_.values >= SIMDE_FLOAT64_C(0.0)));
     #else
@@ -40322,6 +41786,16 @@ simde_vcvtq_s32_f32(simde_float32x4_t a) {
       #if !defined(SIMDE_FAST_NANS)
         r_.m128i = _mm_and_si128(r_.m128i, _mm_castps_si128(_mm_cmpord_ps(a_.m128, a_.m128)));
       #endif
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      #if defined(SIMDE_FAST_CONVERSION_RANGE)
+        r_.sv128 = __riscv_vfcvt_rtz_x_f_v_i32m1(a_.sv128, 4);
+      #else
+        r_.sv128 = __riscv_vmerge_vxm_i32m1(
+          __riscv_vfcvt_rtz_x_f_v_i32m1(a_.sv128, 4),
+          0,
+          __riscv_vmseq_vx_u32m1_b32(__riscv_vfclass_v_u32m1(a_.sv128 , 4) , 512 , 4),
+          4);
+      #endif
     #elif defined(SIMDE_CONVERT_VECTOR_) && defined(SIMDE_FAST_CONVERSION_RANGE) && !defined(SIMDE_FAST_NANS)
       SIMDE_CONVERT_VECTOR_(r_.values, a_.values);
     #elif defined(SIMDE_CONVERT_VECTOR_) && defined(SIMDE_IEEE754_STORAGE)
@@ -40362,7 +41836,9 @@ simde_vcvtq_u16_f16(simde_float16x8_t a) {
     simde_float16x8_private a_ = simde_float16x8_to_private(a);
     simde_uint16x8_private r_;
 
-    #if defined(SIMDE_CONVERT_VECTOR_) && defined(SIMDE_FAST_CONVERSION_RANGE) && defined(SIMDE_FLOAT16_VECTOR)
+    #if defined(SIMDE_RISCV_V_NATIVE) && SIMDE_ARCH_RISCV_ZVFH
+      r_.sv128 = __riscv_vfcvt_rtz_xu_f_v_u16m1(a_.sv128, 8);
+    #elif defined(SIMDE_CONVERT_VECTOR_) && defined(SIMDE_FAST_CONVERSION_RANGE) && defined(SIMDE_FLOAT16_VECTOR)
       SIMDE_CONVERT_VECTOR_(r_.values, a_.values);
     #else
       SIMDE_VECTORIZE
@@ -40418,6 +41894,16 @@ simde_vcvtq_u32_f32(simde_float32x4_t a) {
 
       #if !defined(SIMDE_FAST_NANS)
         r_.m128i = _mm_and_si128(r_.m128i, _mm_castps_si128(_mm_cmpord_ps(a_.m128, a_.m128)));
+      #endif
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      #if defined(SIMDE_FAST_CONVERSION_RANGE)
+        r_.sv128 = __riscv_vfcvt_rtz_xu_f_v_u32m1(a_.sv128, 4);
+      #else
+        r_.sv128 = __riscv_vmerge_vxm_u32m1(
+          __riscv_vfcvt_rtz_xu_f_v_u32m1(a_.sv128, 4),
+          0,
+          __riscv_vmseq_vx_u32m1_b32(__riscv_vfclass_v_u32m1(a_.sv128 , 4) , 512 , 4),
+          4);
       #endif
     #elif defined(SIMDE_CONVERT_VECTOR_) && defined(SIMDE_FAST_CONVERSION_RANGE)
       SIMDE_CONVERT_VECTOR_(r_.values, a_.values);
@@ -40499,6 +41985,16 @@ simde_vcvtq_s64_f64(simde_float64x2_t a) {
       #if !defined(SIMDE_FAST_NANS)
         r_.m128i = _mm_and_si128(r_.m128i, _mm_castpd_si128(_mm_cmpord_pd(a_.m128d, a_.m128d)));
       #endif
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      #if defined(SIMDE_FAST_CONVERSION_RANGE)
+        r_.sv128 = __riscv_vfcvt_rtz_x_f_v_i64m1(a_.sv128, 2);
+      #else
+        r_.sv128 = __riscv_vmerge_vxm_i64m1(
+          __riscv_vfcvt_rtz_x_f_v_i64m1(a_.sv128, 2),
+          0,
+          __riscv_vmseq_vx_u64m1_b64(__riscv_vfclass_v_u64m1(a_.sv128 , 2) , 512 , 2),
+          2);
+      #endif
     #elif defined(SIMDE_CONVERT_VECTOR_) && defined(SIMDE_FAST_CONVERSION_RANGE)
       SIMDE_CONVERT_VECTOR_(r_.values, a_.values);
     #elif defined(SIMDE_CONVERT_VECTOR_) && defined(SIMDE_IEEE754_STORAGE)
@@ -40578,6 +42074,16 @@ simde_vcvtq_u64_f64(simde_float64x2_t a) {
       #if !defined(SIMDE_FAST_NANS)
         r_.m128i = _mm_and_si128(r_.m128i, _mm_castpd_si128(_mm_cmpord_pd(a_.m128d, a_.m128d)));
       #endif
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      #if defined(SIMDE_FAST_CONVERSION_RANGE)
+        r_.sv128 = __riscv_vfcvt_rtz_xu_f_v_u64m1(a_.sv128, 2);
+      #else
+        r_.sv128 = __riscv_vmerge_vxm_u64m1(
+          __riscv_vfcvt_rtz_xu_f_v_u64m1(a_.sv128, 2),
+          0,
+          __riscv_vmseq_vx_u64m1_b64(__riscv_vfclass_v_u64m1(a_.sv128 , 2) , 512 , 2),
+          2);
+      #endif
     #elif defined(SIMDE_CONVERT_VECTOR_) && defined(SIMDE_IEEE754_STORAGE)
       SIMDE_CONVERT_VECTOR_(r_.values, a_.values);
 
@@ -40612,7 +42118,9 @@ simde_vcvt_f16_s16(simde_int16x4_t a) {
     simde_int16x4_private a_ = simde_int16x4_to_private(a);
     simde_float16x4_private r_;
 
-    #if defined(SIMDE_CONVERT_VECTOR_) && defined(SIMDE_FLOAT16_VECTOR)
+    #if defined(SIMDE_RISCV_V_NATIVE) && SIMDE_ARCH_RISCV_ZVFH
+      r_.sv64 = __riscv_vfcvt_f_x_v_f16m1(a_.sv64, 4);
+    #elif defined(SIMDE_CONVERT_VECTOR_) && defined(SIMDE_FLOAT16_VECTOR)
       SIMDE_CONVERT_VECTOR_(r_.values, a_.values);
     #else
       SIMDE_VECTORIZE
@@ -40642,8 +42150,10 @@ simde_vcvt_f32_s32(simde_int32x2_t a) {
     simde_int32x2_private a_ = simde_int32x2_to_private(a);
     simde_float32x2_private r_;
 
-    #if defined(SIMDE_CONVERT_VECTOR_)
+    #if defined(SIMDE_CONVERT_VECTOR_) && !defined(SIMDE_RISCV_V_NATIVE)
       SIMDE_CONVERT_VECTOR_(r_.values, a_.values);
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv64 = __riscv_vfcvt_f_x_v_f32m1(a_.sv64, 2);
     #else
       SIMDE_VECTORIZE
       for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
@@ -40668,14 +42178,18 @@ simde_vcvt_f16_u16(simde_uint16x4_t a) {
     simde_uint16x4_private a_ = simde_uint16x4_to_private(a);
     simde_float16x4_private r_;
 
-    SIMDE_VECTORIZE
-    for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
-      #if SIMDE_FLOAT16_API != SIMDE_FLOAT16_API_PORTABLE && SIMDE_FLOAT16_API != SIMDE_FLOAT16_API_FP16_NO_ABI
-        r_.values[i] = HEDLEY_STATIC_CAST(simde_float16_t, a_.values[i]);
-      #else
-        r_.values[i] = simde_float16_from_float32(HEDLEY_STATIC_CAST(simde_float32_t, a_.values[i]));
-      #endif
-    }
+    #if defined(SIMDE_RISCV_V_NATIVE) && SIMDE_ARCH_RISCV_ZVFH
+      r_.sv64 = __riscv_vfcvt_f_xu_v_f16m1(a_.sv64, 4);
+    #else
+      SIMDE_VECTORIZE
+      for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
+        #if SIMDE_FLOAT16_API != SIMDE_FLOAT16_API_PORTABLE && SIMDE_FLOAT16_API != SIMDE_FLOAT16_API_FP16_NO_ABI
+          r_.values[i] = HEDLEY_STATIC_CAST(simde_float16_t, a_.values[i]);
+        #else
+          r_.values[i] = simde_float16_from_float32(HEDLEY_STATIC_CAST(simde_float32_t, a_.values[i]));
+        #endif
+      }
+    #endif
 
     return simde_float16x4_from_private(r_);
   #endif
@@ -40694,8 +42208,10 @@ simde_vcvt_f32_u32(simde_uint32x2_t a) {
     simde_uint32x2_private a_ = simde_uint32x2_to_private(a);
     simde_float32x2_private r_;
 
-    #if defined(SIMDE_CONVERT_VECTOR_)
+    #if defined(SIMDE_CONVERT_VECTOR_) && !defined(SIMDE_RISCV_V_NATIVE)
       SIMDE_CONVERT_VECTOR_(r_.values, a_.values);
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv64 = __riscv_vfcvt_f_xu_v_f32m1(a_.sv64, 2);
     #else
       SIMDE_VECTORIZE
       for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
@@ -40720,8 +42236,10 @@ simde_vcvt_f64_s64(simde_int64x1_t a) {
     simde_int64x1_private a_ = simde_int64x1_to_private(a);
     simde_float64x1_private r_;
 
-    #if defined(SIMDE_CONVERT_VECTOR_)
+    #if defined(SIMDE_CONVERT_VECTOR_) && !defined(SIMDE_RISCV_V_NATIVE)
       SIMDE_CONVERT_VECTOR_(r_.values, a_.values);
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv64 = __riscv_vfcvt_f_x_v_f64m1(a_.sv64, 1);
     #else
       SIMDE_VECTORIZE
       for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
@@ -40746,8 +42264,10 @@ simde_vcvt_f64_u64(simde_uint64x1_t a) {
     simde_uint64x1_private a_ = simde_uint64x1_to_private(a);
     simde_float64x1_private r_;
 
-    #if defined(SIMDE_CONVERT_VECTOR_)
+    #if defined(SIMDE_CONVERT_VECTOR_) && !defined(SIMDE_RISCV_V_NATIVE)
       SIMDE_CONVERT_VECTOR_(r_.values, a_.values);
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv64 = __riscv_vfcvt_f_xu_v_f64m1(a_.sv64, 1);
     #else
       SIMDE_VECTORIZE
       for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
@@ -40772,7 +42292,9 @@ simde_vcvtq_f16_s16(simde_int16x8_t a) {
     simde_int16x8_private a_ = simde_int16x8_to_private(a);
     simde_float16x8_private r_;
 
-    #if defined(SIMDE_CONVERT_VECTOR_) && defined(SIMDE_FLOAT16_VECTOR)
+    #if defined(SIMDE_RISCV_V_NATIVE) && SIMDE_ARCH_RISCV_ZVFH
+      r_.sv128 = __riscv_vfcvt_f_x_v_f16m1(a_.sv128, 8);
+    #elif defined(SIMDE_CONVERT_VECTOR_) && defined(SIMDE_FLOAT16_VECTOR)
       SIMDE_CONVERT_VECTOR_(r_.values, a_.values);
     #else
       SIMDE_VECTORIZE
@@ -40802,8 +42324,10 @@ simde_vcvtq_f32_s32(simde_int32x4_t a) {
     simde_int32x4_private a_ = simde_int32x4_to_private(a);
     simde_float32x4_private r_;
 
-    #if defined(SIMDE_CONVERT_VECTOR_)
+    #if defined(SIMDE_CONVERT_VECTOR_) && !defined(SIMDE_RISCV_V_NATIVE)
       SIMDE_CONVERT_VECTOR_(r_.values, a_.values);
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv128 = __riscv_vfcvt_f_x_v_f32m1(a_.sv128, 4);
     #else
       SIMDE_VECTORIZE
       for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
@@ -40828,7 +42352,9 @@ simde_vcvtq_f16_u16(simde_uint16x8_t a) {
     simde_uint16x8_private a_ = simde_uint16x8_to_private(a);
     simde_float16x8_private r_;
 
-    #if defined(SIMDE_CONVERT_VECTOR_) && defined(SIMDE_FLOAT16_VECTOR)
+    #if defined(SIMDE_RISCV_V_NATIVE) && SIMDE_ARCH_RISCV_ZVFH
+      r_.sv128 = __riscv_vfcvt_f_xu_v_f16m1(a_.sv128, 8);
+    #elif defined(SIMDE_CONVERT_VECTOR_) && defined(SIMDE_FLOAT16_VECTOR)
       SIMDE_CONVERT_VECTOR_(r_.values, a_.values);
     #else
       SIMDE_VECTORIZE
@@ -40858,8 +42384,10 @@ simde_vcvtq_f32_u32(simde_uint32x4_t a) {
     simde_uint32x4_private a_ = simde_uint32x4_to_private(a);
     simde_float32x4_private r_;
 
-    #if defined(SIMDE_CONVERT_VECTOR_)
+    #if defined(SIMDE_CONVERT_VECTOR_) && !defined(SIMDE_RISCV_V_NATIVE)
       SIMDE_CONVERT_VECTOR_(r_.values, a_.values);
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv128 = __riscv_vfcvt_f_xu_v_f32m1(a_.sv128, 4);
     #else
       SIMDE_VECTORIZE
       for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
@@ -40881,15 +42409,17 @@ simde_vcvtq_f64_s64(simde_int64x2_t a) {
   #if defined(SIMDE_ARM_NEON_A64V8_NATIVE)
     return vcvtq_f64_s64(a);
   #elif defined(SIMDE_ZARCH_ZVECTOR_13_NATIVE)
-    return vec_ctd(a, 0);
+    return vec_double(a);
   #else
     simde_int64x2_private a_ = simde_int64x2_to_private(a);
     simde_float64x2_private r_;
 
     #if defined(SIMDE_X86_AVX512VL_NATIVE) && defined(SIMDE_X86_AVX512DQ_NATIVE)
       r_.m128d = _mm_cvtepi64_pd(a_.m128i);
-    #elif defined(SIMDE_CONVERT_VECTOR_)
+    #elif defined(SIMDE_CONVERT_VECTOR_) && !defined(SIMDE_RISCV_V_NATIVE)
       SIMDE_CONVERT_VECTOR_(r_.values, a_.values);
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv128 = __riscv_vfcvt_f_x_v_f64m1(a_.sv128, 2);
     #else
       SIMDE_VECTORIZE
       for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
@@ -40914,8 +42444,10 @@ simde_vcvtq_f64_u64(simde_uint64x2_t a) {
     simde_uint64x2_private a_ = simde_uint64x2_to_private(a);
     simde_float64x2_private r_;
 
-    #if defined(SIMDE_CONVERT_VECTOR_)
+    #if defined(SIMDE_CONVERT_VECTOR_) && !defined(SIMDE_RISCV_V_NATIVE)
       SIMDE_CONVERT_VECTOR_(r_.values, a_.values);
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv128 = __riscv_vfcvt_f_xu_v_f64m1(a_.sv128, 2);
     #else
       SIMDE_VECTORIZE
       for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
@@ -41716,7 +43248,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* SIMDE_ARM_NEON_CVT_H */
 /* :: End simde/arm/neon/cvt.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/dup_lane.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -41749,9 +43281,9 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_DUP_LANE_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -43421,11 +44953,11 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_DUP_LANE_H) */
 /* :: End simde/arm/neon/dup_lane.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/mul.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -43460,10 +44992,10 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_MUL_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -44205,7 +45737,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_MUL_H) */
 /* :: End simde/arm/neon/mul.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
 SIMDE_BEGIN_DECLS_
@@ -44214,23 +45746,34 @@ SIMDE_FUNCTION_ATTRIBUTES
 simde_float16x4_t simde_vcmla_lane_f16(simde_float16x4_t r, simde_float16x4_t a, simde_float16x4_t b, const int lane)
     SIMDE_REQUIRE_CONSTANT_RANGE(lane, 0, 1)
 {
-  simde_float32x4_private r_ = simde_float32x4_to_private(simde_vcvt_f32_f16(r)),
+  #if defined(SIMDE_RISCV_V_NATIVE) && SIMDE_ARCH_RISCV_ZVFH
+      simde_float16x4_private r_ = simde_float16x4_to_private(r),
+                              a_ = simde_float16x4_to_private(a),
+                              b_ = simde_float16x4_to_private(b);
+      uint16_t idx1[4] = {0, 0, 2, 2};
+      vfloat16m1_t op1 = __riscv_vrgather_vv_f16m1(__riscv_vslideup_vx_f16m1( \
+        a_.sv64, a_.sv64, 4, 8), __riscv_vle16_v_u16m1(idx1, 4), 4);
+      r_.sv64 = __riscv_vfmacc_vf_f16m1(r_.sv64, b_.values[lane], op1, 4);
+      return simde_float16x4_from_private(r_);
+  #else
+    simde_float32x4_private r_ = simde_float32x4_to_private(simde_vcvt_f32_f16(r)),
                           a_ = simde_float32x4_to_private(simde_vcvt_f32_f16(a)),
                           b_ = simde_float32x4_to_private(
                               simde_vcvt_f32_f16(simde_vdup_n_f16(simde_float16x4_to_private(b).values[lane])));
-  #if defined(SIMDE_SHUFFLE_VECTOR_) &&                                                                                       \
-      ((SIMDE_FLOAT16_API == SIMDE_FLOAT16_API_FP16) || (SIMDE_FLOAT16_API == SIMDE_FLOAT16_API_FLOAT16))
-    a_.values = SIMDE_SHUFFLE_VECTOR_(16, 4, a_.values, a_.values, 0, 0, 2, 2);
-    r_.values += b_.values * a_.values;
-  #else
-    SIMDE_VECTORIZE
-    for (size_t i = 0; i < (sizeof(r_.values) / (2 * sizeof(r_.values[0]))); i++)
-    {
-      r_.values[2 * i] += b_.values[lane] * a_.values[2 * i];
-      r_.values[2 * i + 1] += b_.values[lane] * a_.values[2 * i];
-    }
+    #if defined(SIMDE_SHUFFLE_VECTOR_) &&                                                                                       \
+        ((SIMDE_FLOAT16_API == SIMDE_FLOAT16_API_FP16) || (SIMDE_FLOAT16_API == SIMDE_FLOAT16_API_FLOAT16))
+      a_.values = SIMDE_SHUFFLE_VECTOR_(32, 16, a_.values, a_.values, 0, 0, 2, 2);
+      r_.values += b_.values * a_.values;
+    #else
+      SIMDE_VECTORIZE
+      for (size_t i = 0; i < (sizeof(r_.values) / (2 * sizeof(r_.values[0]))); i++)
+      {
+        r_.values[2 * i] += b_.values[lane] * a_.values[2 * i];
+        r_.values[2 * i + 1] += b_.values[lane] * a_.values[2 * i];
+      }
+    #endif
+    return simde_vcvt_f16_f32(simde_float32x4_from_private(r_));
   #endif
-  return simde_vcvt_f16_f32(simde_float32x4_from_private(r_));
 }
 #if defined(SIMDE_ARM_NEON_A32V8_ENABLE_NATIVE_ALIASES)
   #undef vcmla_lane_f16
@@ -44246,20 +45789,31 @@ SIMDE_FUNCTION_ATTRIBUTES
 simde_float32x2_t simde_vcmla_lane_f32(simde_float32x2_t r, simde_float32x2_t a, simde_float32x2_t b, const int lane)
     SIMDE_REQUIRE_CONSTANT_RANGE(lane, 0, 0)
 {
-  simde_float32x2_private r_ = simde_float32x2_to_private(r), a_ = simde_float32x2_to_private(a),
-                          b_ = simde_float32x2_to_private(simde_vdup_n_f32(simde_float32x2_to_private(b).values[lane]));
-  #if defined(SIMDE_SHUFFLE_VECTOR_)
-    a_.values = SIMDE_SHUFFLE_VECTOR_(32, 8, a_.values, a_.values, 0, 0);
-    r_.values += b_.values * a_.values;
+  #if defined(SIMDE_RISCV_V_NATIVE)
+      simde_float32x2_private r_ = simde_float32x2_to_private(r),
+                              a_ = simde_float32x2_to_private(a),
+                              b_ = simde_float32x2_to_private(b);
+      uint32_t idx1[2] = {0, 0};
+      vfloat32m1_t op1 = __riscv_vrgather_vv_f32m1(__riscv_vslideup_vx_f32m1( \
+        a_.sv64, a_.sv64, 2, 4), __riscv_vle32_v_u32m1(idx1, 2), 2);
+      r_.sv64 = __riscv_vfmacc_vf_f32m1(r_.sv64, b_.values[lane], op1, 2);
+      return simde_float32x2_from_private(r_);
   #else
-    SIMDE_VECTORIZE
-    for (size_t i = 0; i < (sizeof(r_.values) / (2 * sizeof(r_.values[0]))); i++)
-    {
-      r_.values[2 * i] += b_.values[lane] * a_.values[2 * i];
-      r_.values[2 * i + 1] += b_.values[lane] * a_.values[2 * i];
-    }
+    simde_float32x2_private r_ = simde_float32x2_to_private(r), a_ = simde_float32x2_to_private(a),
+                            b_ = simde_float32x2_to_private(simde_vdup_n_f32(simde_float32x2_to_private(b).values[lane]));
+    #if defined(SIMDE_SHUFFLE_VECTOR_)
+      a_.values = SIMDE_SHUFFLE_VECTOR_(32, 8, a_.values, a_.values, 0, 0);
+      r_.values += b_.values * a_.values;
+    #else
+      SIMDE_VECTORIZE
+      for (size_t i = 0; i < (sizeof(r_.values) / (2 * sizeof(r_.values[0]))); i++)
+      {
+        r_.values[2 * i] += b_.values[lane] * a_.values[2 * i];
+        r_.values[2 * i + 1] += b_.values[lane] * a_.values[2 * i];
+      }
+    #endif
+    return simde_float32x2_from_private(r_);
   #endif
-  return simde_float32x2_from_private(r_);
 }
 #if defined(SIMDE_ARM_NEON_A32V8_ENABLE_NATIVE_ALIASES)
   #undef vcmla_lane_f32
@@ -44275,23 +45829,34 @@ SIMDE_FUNCTION_ATTRIBUTES
 simde_float16x4_t simde_vcmla_laneq_f16(simde_float16x4_t r, simde_float16x4_t a, simde_float16x8_t b, const int lane)
     SIMDE_REQUIRE_CONSTANT_RANGE(lane, 0, 1)
 {
-  simde_float32x4_private r_ = simde_float32x4_to_private(simde_vcvt_f32_f16(r)),
+  #if defined(SIMDE_RISCV_V_NATIVE) && SIMDE_ARCH_RISCV_ZVFH
+      simde_float16x4_private r_ = simde_float16x4_to_private(r),
+                              a_ = simde_float16x4_to_private(a);
+      simde_float16x8_private b_ = simde_float16x8_to_private(b);
+      uint16_t idx1[4] = {0, 0, 2, 2};
+      vfloat16m1_t op1 = __riscv_vrgather_vv_f16m1(__riscv_vslideup_vx_f16m1( \
+        a_.sv64, a_.sv64, 4, 8), __riscv_vle16_v_u16m1(idx1, 4), 4);
+      r_.sv64 = __riscv_vfmacc_vf_f16m1(r_.sv64, b_.values[lane], op1, 4);
+      return simde_float16x4_from_private(r_);
+  #else
+    simde_float32x4_private r_ = simde_float32x4_to_private(simde_vcvt_f32_f16(r)),
                           a_ = simde_float32x4_to_private(simde_vcvt_f32_f16(a)),
                           b_ = simde_float32x4_to_private(
                               simde_vcvt_f32_f16(simde_vdup_n_f16(simde_float16x8_to_private(b).values[lane])));
-  #if defined(SIMDE_SHUFFLE_VECTOR_) &&                                                                                       \
-      ((SIMDE_FLOAT16_API == SIMDE_FLOAT16_API_FP16) || (SIMDE_FLOAT16_API == SIMDE_FLOAT16_API_FLOAT16))
-    a_.values = SIMDE_SHUFFLE_VECTOR_(16, 4, a_.values, a_.values, 0, 0, 2, 2);
-    r_.values += b_.values * a_.values;
-  #else
-    SIMDE_VECTORIZE
-    for (size_t i = 0; i < (sizeof(r_.values) / (2 * sizeof(r_.values[0]))); i++)
-    {
-      r_.values[2 * i] += b_.values[lane] * a_.values[2 * i];
-      r_.values[2 * i + 1] += b_.values[lane] * a_.values[2 * i];
-    }
+    #if defined(SIMDE_SHUFFLE_VECTOR_) &&                                                                                       \
+        ((SIMDE_FLOAT16_API == SIMDE_FLOAT16_API_FP16) || (SIMDE_FLOAT16_API == SIMDE_FLOAT16_API_FLOAT16))
+      a_.values = SIMDE_SHUFFLE_VECTOR_(32, 16, a_.values, a_.values, 0, 0, 2, 2);
+      r_.values += b_.values * a_.values;
+    #else
+      SIMDE_VECTORIZE
+      for (size_t i = 0; i < (sizeof(r_.values) / (2 * sizeof(r_.values[0]))); i++)
+      {
+        r_.values[2 * i] += b_.values[lane] * a_.values[2 * i];
+        r_.values[2 * i + 1] += b_.values[lane] * a_.values[2 * i];
+      }
+    #endif
+    return simde_vcvt_f16_f32(simde_float32x4_from_private(r_));
   #endif
-  return simde_vcvt_f16_f32(simde_float32x4_from_private(r_));
 }
 #if defined(SIMDE_ARM_NEON_A32V8_ENABLE_NATIVE_ALIASES)
   #undef vcmla_laneq_f16
@@ -44307,20 +45872,31 @@ SIMDE_FUNCTION_ATTRIBUTES
 simde_float32x2_t simde_vcmla_laneq_f32(simde_float32x2_t r, simde_float32x2_t a, simde_float32x4_t b, const int lane)
     SIMDE_REQUIRE_CONSTANT_RANGE(lane, 0, 1)
 {
-  simde_float32x2_private r_ = simde_float32x2_to_private(r), a_ = simde_float32x2_to_private(a),
-                          b_ = simde_float32x2_to_private(simde_vdup_n_f32(simde_float32x4_to_private(b).values[lane]));
-  #if defined(SIMDE_SHUFFLE_VECTOR_)
-    a_.values = SIMDE_SHUFFLE_VECTOR_(32, 8, a_.values, a_.values, 0, 0);
-    r_.values += b_.values * a_.values;
+  #if defined(SIMDE_RISCV_V_NATIVE)
+      simde_float32x2_private r_ = simde_float32x2_to_private(r),
+                              a_ = simde_float32x2_to_private(a);
+      simde_float32x4_private b_ = simde_float32x4_to_private(b);
+      uint32_t idx1[2] = {0, 0};
+      vfloat32m1_t op1 = __riscv_vrgather_vv_f32m1(__riscv_vslideup_vx_f32m1( \
+        a_.sv64, a_.sv64, 2, 4), __riscv_vle32_v_u32m1(idx1, 2), 2);
+      r_.sv64 = __riscv_vfmacc_vf_f32m1(r_.sv64, b_.values[lane], op1, 2);
+      return simde_float32x2_from_private(r_);
   #else
-    SIMDE_VECTORIZE
-    for (size_t i = 0; i < (sizeof(r_.values) / (2 * sizeof(r_.values[0]))); i++)
-    {
-      r_.values[2 * i] += b_.values[lane] * a_.values[2 * i];
-      r_.values[2 * i + 1] += b_.values[lane] * a_.values[2 * i];
-    }
+    simde_float32x2_private r_ = simde_float32x2_to_private(r), a_ = simde_float32x2_to_private(a),
+                            b_ = simde_float32x2_to_private(simde_vdup_n_f32(simde_float32x4_to_private(b).values[lane]));
+    #if defined(SIMDE_SHUFFLE_VECTOR_)
+      a_.values = SIMDE_SHUFFLE_VECTOR_(32, 8, a_.values, a_.values, 0, 0);
+      r_.values += b_.values * a_.values;
+    #else
+      SIMDE_VECTORIZE
+      for (size_t i = 0; i < (sizeof(r_.values) / (2 * sizeof(r_.values[0]))); i++)
+      {
+        r_.values[2 * i] += b_.values[lane] * a_.values[2 * i];
+        r_.values[2 * i + 1] += b_.values[lane] * a_.values[2 * i];
+      }
+    #endif
+    return simde_float32x2_from_private(r_);
   #endif
-  return simde_float32x2_from_private(r_);
 }
 #if defined(SIMDE_ARM_NEON_A32V8_ENABLE_NATIVE_ALIASES)
   #undef vcmla_laneq_f32
@@ -44336,30 +45912,42 @@ SIMDE_FUNCTION_ATTRIBUTES
 simde_float16x8_t simde_vcmlaq_lane_f16(simde_float16x8_t r, simde_float16x8_t a, simde_float16x4_t b, const int lane)
     SIMDE_REQUIRE_CONSTANT_RANGE(lane, 0, 1)
 {
-  simde_float32x4_private r_low = simde_float32x4_to_private(simde_vcvt_f32_f16(simde_vget_low_f16(r))),
-                          a_low = simde_float32x4_to_private(simde_vcvt_f32_f16(simde_vget_low_f16(a))),
-                          r_high = simde_float32x4_to_private(simde_vcvt_f32_f16(simde_vget_high_f16(r))),
-                          a_high = simde_float32x4_to_private(simde_vcvt_f32_f16(simde_vget_high_f16(a))),
-                          b_ = simde_float32x4_to_private(
-                              simde_vcvt_f32_f16(simde_vdup_n_f16(simde_float16x4_to_private(b).values[lane])));
-  #if defined(SIMDE_SHUFFLE_VECTOR_) &&                                                                                       \
-      ((SIMDE_FLOAT16_API == SIMDE_FLOAT16_API_FP16) || (SIMDE_FLOAT16_API == SIMDE_FLOAT16_API_FLOAT16))
-    a_low.values = SIMDE_SHUFFLE_VECTOR_(16, 4, a_low.values, a_low.values, 0, 0, 2, 2);
-    a_high.values = SIMDE_SHUFFLE_VECTOR_(16, 4, a_high.values, a_high.values, 0, 0, 2, 2);
-    r_low.values += b_.values * a_low.values;
-    r_high.values += b_.values * a_high.values;
+  #if defined(SIMDE_RISCV_V_NATIVE) && SIMDE_ARCH_RISCV_ZVFH
+      simde_float16x8_private r_ = simde_float16x8_to_private(r),
+                              a_ = simde_float16x8_to_private(a);
+      simde_float16x4_private b_ = simde_float16x4_to_private(b);
+      uint16_t idx1[8] = {0, 0, 2, 2, 4, 4, 6, 6};
+      vfloat16m2_t a_tmp = __riscv_vlmul_ext_v_f16m1_f16m2 (a_.sv128);
+      vfloat16m1_t op1 = __riscv_vlmul_trunc_v_f16m2_f16m1(__riscv_vrgather_vv_f16m2( \
+        __riscv_vslideup_vx_f16m2(a_tmp, a_tmp, 8, 16), __riscv_vle16_v_u16m2(idx1, 8), 8));
+      r_.sv128 = __riscv_vfmacc_vf_f16m1(r_.sv128, b_.values[lane], op1, 8);
+      return simde_float16x8_from_private(r_);
   #else
-    SIMDE_VECTORIZE
-    for (size_t i = 0; i < (sizeof(r_low.values) / (2 * sizeof(r_low.values[0]))); i++)
-    {
-      r_low.values[2 * i] += b_.values[lane] * a_low.values[2 * i];
-      r_low.values[2 * i + 1] += b_.values[lane] * a_low.values[2 * i];
-      r_high.values[2 * i] += b_.values[lane] * a_high.values[2 * i];
-      r_high.values[2 * i + 1] += b_.values[lane] * a_high.values[2 * i];
-    }
+    simde_float32x4_private r_low = simde_float32x4_to_private(simde_vcvt_f32_f16(simde_vget_low_f16(r))),
+                            a_low = simde_float32x4_to_private(simde_vcvt_f32_f16(simde_vget_low_f16(a))),
+                            r_high = simde_float32x4_to_private(simde_vcvt_f32_f16(simde_vget_high_f16(r))),
+                            a_high = simde_float32x4_to_private(simde_vcvt_f32_f16(simde_vget_high_f16(a))),
+                            b_ = simde_float32x4_to_private(
+                                simde_vcvt_f32_f16(simde_vdup_n_f16(simde_float16x4_to_private(b).values[lane])));
+    #if defined(SIMDE_SHUFFLE_VECTOR_) &&                                                                                       \
+        ((SIMDE_FLOAT16_API == SIMDE_FLOAT16_API_FP16) || (SIMDE_FLOAT16_API == SIMDE_FLOAT16_API_FLOAT16))
+      a_low.values = SIMDE_SHUFFLE_VECTOR_(32, 16, a_low.values, a_low.values, 0, 0, 2, 2);
+      a_high.values = SIMDE_SHUFFLE_VECTOR_(32, 16, a_high.values, a_high.values, 0, 0, 2, 2);
+      r_low.values += b_.values * a_low.values;
+      r_high.values += b_.values * a_high.values;
+    #else
+      SIMDE_VECTORIZE
+      for (size_t i = 0; i < (sizeof(r_low.values) / (2 * sizeof(r_low.values[0]))); i++)
+      {
+        r_low.values[2 * i] += b_.values[lane] * a_low.values[2 * i];
+        r_low.values[2 * i + 1] += b_.values[lane] * a_low.values[2 * i];
+        r_high.values[2 * i] += b_.values[lane] * a_high.values[2 * i];
+        r_high.values[2 * i + 1] += b_.values[lane] * a_high.values[2 * i];
+      }
+    #endif
+    return simde_vcombine_f16(simde_vcvt_f16_f32(simde_float32x4_from_private(r_low)),
+                              simde_vcvt_f16_f32(simde_float32x4_from_private(r_high)));
   #endif
-  return simde_vcombine_f16(simde_vcvt_f16_f32(simde_float32x4_from_private(r_low)),
-                            simde_vcvt_f16_f32(simde_float32x4_from_private(r_high)));
 }
 #if defined(SIMDE_ARM_NEON_A32V8_ENABLE_NATIVE_ALIASES)
   #undef vcmlaq_lane_f16
@@ -44375,20 +45963,32 @@ SIMDE_FUNCTION_ATTRIBUTES
 simde_float32x4_t simde_vcmlaq_lane_f32(simde_float32x4_t r, simde_float32x4_t a, simde_float32x2_t b, const int lane)
     SIMDE_REQUIRE_CONSTANT_RANGE(lane, 0, 0)
 {
-  simde_float32x4_private r_ = simde_float32x4_to_private(r), a_ = simde_float32x4_to_private(a),
-                          b_ = simde_float32x4_to_private(simde_vdupq_n_f32(simde_float32x2_to_private(b).values[lane]));
-  #if defined(SIMDE_SHUFFLE_VECTOR_)
-    a_.values = SIMDE_SHUFFLE_VECTOR_(32, 16, a_.values, a_.values, 0, 0, 2, 2);
-    r_.values += b_.values * a_.values;
+  #if defined(SIMDE_RISCV_V_NATIVE)
+      simde_float32x4_private r_ = simde_float32x4_to_private(r),
+                              a_ = simde_float32x4_to_private(a);
+      simde_float32x2_private b_ = simde_float32x2_to_private(b);
+      uint32_t idx1[4] = {0, 0, 2, 2};
+      vfloat32m2_t a_tmp = __riscv_vlmul_ext_v_f32m1_f32m2 (a_.sv128);
+      vfloat32m1_t op1 = __riscv_vlmul_trunc_v_f32m2_f32m1(__riscv_vrgather_vv_f32m2( \
+        __riscv_vslideup_vx_f32m2(a_tmp, a_tmp, 4, 8), __riscv_vle32_v_u32m2(idx1, 4), 4));
+      r_.sv128 = __riscv_vfmacc_vf_f32m1(r_.sv128, b_.values[lane], op1, 4);
+      return simde_float32x4_from_private(r_);
   #else
-    SIMDE_VECTORIZE
-    for (size_t i = 0; i < (sizeof(r_.values) / (2 * sizeof(r_.values[0]))); i++)
-    {
-      r_.values[2 * i] += b_.values[lane] * a_.values[2 * i];
-      r_.values[2 * i + 1] += b_.values[lane] * a_.values[2 * i];
-    }
+    simde_float32x4_private r_ = simde_float32x4_to_private(r), a_ = simde_float32x4_to_private(a),
+                            b_ = simde_float32x4_to_private(simde_vdupq_n_f32(simde_float32x2_to_private(b).values[lane]));
+    #if defined(SIMDE_SHUFFLE_VECTOR_)
+      a_.values = SIMDE_SHUFFLE_VECTOR_(32, 16, a_.values, a_.values, 0, 0, 2, 2);
+      r_.values += b_.values * a_.values;
+    #else
+      SIMDE_VECTORIZE
+      for (size_t i = 0; i < (sizeof(r_.values) / (2 * sizeof(r_.values[0]))); i++)
+      {
+        r_.values[2 * i] += b_.values[lane] * a_.values[2 * i];
+        r_.values[2 * i + 1] += b_.values[lane] * a_.values[2 * i];
+      }
+    #endif
+    return simde_float32x4_from_private(r_);
   #endif
-  return simde_float32x4_from_private(r_);
 }
 #if defined(SIMDE_ARM_NEON_A32V8_ENABLE_NATIVE_ALIASES)
   #undef vcmlaq_lane_f32
@@ -44404,30 +46004,42 @@ SIMDE_FUNCTION_ATTRIBUTES
 simde_float16x8_t simde_vcmlaq_laneq_f16(simde_float16x8_t r, simde_float16x8_t a, simde_float16x8_t b, const int lane)
     SIMDE_REQUIRE_CONSTANT_RANGE(lane, 0, 3)
 {
-  simde_float32x4_private r_low = simde_float32x4_to_private(simde_vcvt_f32_f16(simde_vget_low_f16(r))),
-                          a_low = simde_float32x4_to_private(simde_vcvt_f32_f16(simde_vget_low_f16(a))),
-                          r_high = simde_float32x4_to_private(simde_vcvt_f32_f16(simde_vget_high_f16(r))),
-                          a_high = simde_float32x4_to_private(simde_vcvt_f32_f16(simde_vget_high_f16(a))),
-                          b_ = simde_float32x4_to_private(
-                              simde_vcvt_f32_f16(simde_vdup_n_f16(simde_float16x8_to_private(b).values[lane])));
-  #if defined(SIMDE_SHUFFLE_VECTOR_) &&                                                                                       \
-      ((SIMDE_FLOAT16_API == SIMDE_FLOAT16_API_FP16) || (SIMDE_FLOAT16_API == SIMDE_FLOAT16_API_FLOAT16))
-    a_low.values = SIMDE_SHUFFLE_VECTOR_(16, 4, a_low.values, a_low.values, 0, 0, 2, 2);
-    r_low.values += b_.values * a_low.values;
-    a_high.values = SIMDE_SHUFFLE_VECTOR_(16, 4, a_high.values, a_high.values, 0, 0, 2, 2);
-    r_high.values += b_.values * a_high.values;
+  #if defined(SIMDE_RISCV_V_NATIVE) && SIMDE_ARCH_RISCV_ZVFH
+      simde_float16x8_private r_ = simde_float16x8_to_private(r),
+                              a_ = simde_float16x8_to_private(a);
+      simde_float16x8_private b_ = simde_float16x8_to_private(b);
+      uint16_t idx1[8] = {0, 0, 2, 2, 4, 4, 6, 6};
+      vfloat16m2_t a_tmp = __riscv_vlmul_ext_v_f16m1_f16m2 (a_.sv128);
+      vfloat16m1_t op1 = __riscv_vlmul_trunc_v_f16m2_f16m1(__riscv_vrgather_vv_f16m2( \
+        __riscv_vslideup_vx_f16m2(a_tmp, a_tmp, 8, 16), __riscv_vle16_v_u16m2(idx1, 8), 8));
+      r_.sv128 = __riscv_vfmacc_vf_f16m1(r_.sv128, b_.values[lane], op1, 8);
+      return simde_float16x8_from_private(r_);
   #else
-    SIMDE_VECTORIZE
-    for (size_t i = 0; i < (sizeof(r_low.values) / (2 * sizeof(r_low.values[0]))); i++)
-    {
-      r_low.values[2 * i] += b_.values[lane] * a_low.values[2 * i];
-      r_low.values[2 * i + 1] += b_.values[lane] * a_low.values[2 * i];
-      r_high.values[2 * i] += b_.values[lane] * a_high.values[2 * i];
-      r_high.values[2 * i + 1] += b_.values[lane] * a_high.values[2 * i];
-    }
+    simde_float32x4_private r_low = simde_float32x4_to_private(simde_vcvt_f32_f16(simde_vget_low_f16(r))),
+                            a_low = simde_float32x4_to_private(simde_vcvt_f32_f16(simde_vget_low_f16(a))),
+                            r_high = simde_float32x4_to_private(simde_vcvt_f32_f16(simde_vget_high_f16(r))),
+                            a_high = simde_float32x4_to_private(simde_vcvt_f32_f16(simde_vget_high_f16(a))),
+                            b_ = simde_float32x4_to_private(
+                                simde_vcvt_f32_f16(simde_vdup_n_f16(simde_float16x8_to_private(b).values[lane])));
+    #if defined(SIMDE_SHUFFLE_VECTOR_) &&                                                                                       \
+        ((SIMDE_FLOAT16_API == SIMDE_FLOAT16_API_FP16) || (SIMDE_FLOAT16_API == SIMDE_FLOAT16_API_FLOAT16))
+      a_low.values = SIMDE_SHUFFLE_VECTOR_(32, 16, a_low.values, a_low.values, 0, 0, 2, 2);
+      r_low.values += b_.values * a_low.values;
+      a_high.values = SIMDE_SHUFFLE_VECTOR_(32, 16, a_high.values, a_high.values, 0, 0, 2, 2);
+      r_high.values += b_.values * a_high.values;
+    #else
+      SIMDE_VECTORIZE
+      for (size_t i = 0; i < (sizeof(r_low.values) / (2 * sizeof(r_low.values[0]))); i++)
+      {
+        r_low.values[2 * i] += b_.values[lane] * a_low.values[2 * i];
+        r_low.values[2 * i + 1] += b_.values[lane] * a_low.values[2 * i];
+        r_high.values[2 * i] += b_.values[lane] * a_high.values[2 * i];
+        r_high.values[2 * i + 1] += b_.values[lane] * a_high.values[2 * i];
+      }
+    #endif
+    return simde_vcombine_f16(simde_vcvt_f16_f32(simde_float32x4_from_private(r_low)),
+                              simde_vcvt_f16_f32(simde_float32x4_from_private(r_high)));
   #endif
-  return simde_vcombine_f16(simde_vcvt_f16_f32(simde_float32x4_from_private(r_low)),
-                            simde_vcvt_f16_f32(simde_float32x4_from_private(r_high)));
 }
 #if defined(SIMDE_ARM_NEON_A32V8_ENABLE_NATIVE_ALIASES)
   #undef vcmlaq_laneq_f16
@@ -44443,21 +46055,33 @@ SIMDE_FUNCTION_ATTRIBUTES
 simde_float32x4_t simde_vcmlaq_laneq_f32(simde_float32x4_t r, simde_float32x4_t a, simde_float32x4_t b, const int lane)
     SIMDE_REQUIRE_CONSTANT_RANGE(lane, 0, 1)
 {
-  simde_float32x4_private r_ = simde_float32x4_to_private(r), a_ = simde_float32x4_to_private(a),
-                          b_ = simde_float32x4_to_private(simde_vdupq_n_f32(simde_float32x4_to_private(b).values[lane]));
-
-  #if defined(SIMDE_SHUFFLE_VECTOR_)
-    a_.values = SIMDE_SHUFFLE_VECTOR_(32, 16, a_.values, a_.values, 0, 0, 2, 2);
-    r_.values += b_.values * a_.values;
+  #if defined(SIMDE_RISCV_V_NATIVE)
+      simde_float32x4_private r_ = simde_float32x4_to_private(r),
+                              a_ = simde_float32x4_to_private(a);
+      simde_float32x4_private b_ = simde_float32x4_to_private(b);
+      uint32_t idx1[4] = {0, 0, 2, 2};
+      vfloat32m2_t a_tmp = __riscv_vlmul_ext_v_f32m1_f32m2 (a_.sv128);
+      vfloat32m1_t op1 = __riscv_vlmul_trunc_v_f32m2_f32m1(__riscv_vrgather_vv_f32m2( \
+        __riscv_vslideup_vx_f32m2(a_tmp, a_tmp, 4, 8), __riscv_vle32_v_u32m2(idx1, 4), 4));
+      r_.sv128 = __riscv_vfmacc_vf_f32m1(r_.sv128, b_.values[lane], op1, 4);
+      return simde_float32x4_from_private(r_);
   #else
-    SIMDE_VECTORIZE
-    for (size_t i = 0; i < (sizeof(r_.values) / (2 * sizeof(r_.values[0]))); i++)
-    {
-      r_.values[2 * i] += b_.values[lane] * a_.values[2 * i];
-      r_.values[2 * i + 1] += b_.values[lane] * a_.values[2 * i];
-    }
+    simde_float32x4_private r_ = simde_float32x4_to_private(r), a_ = simde_float32x4_to_private(a),
+                            b_ = simde_float32x4_to_private(simde_vdupq_n_f32(simde_float32x4_to_private(b).values[lane]));
+
+    #if defined(SIMDE_SHUFFLE_VECTOR_)
+      a_.values = SIMDE_SHUFFLE_VECTOR_(32, 16, a_.values, a_.values, 0, 0, 2, 2);
+      r_.values += b_.values * a_.values;
+    #else
+      SIMDE_VECTORIZE
+      for (size_t i = 0; i < (sizeof(r_.values) / (2 * sizeof(r_.values[0]))); i++)
+      {
+        r_.values[2 * i] += b_.values[lane] * a_.values[2 * i];
+        r_.values[2 * i + 1] += b_.values[lane] * a_.values[2 * i];
+      }
+    #endif
+    return simde_float32x4_from_private(r_);
   #endif
-  return simde_float32x4_from_private(r_);
 }
 #if defined(SIMDE_ARM_NEON_A32V8_ENABLE_NATIVE_ALIASES)
   #undef vcmlaq_laneq_f32
@@ -44475,7 +46099,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_CMLA_LANE_H) */
 /* :: End simde/arm/neon/cmla_lane.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/cmla_rot180.h :: */
 /* SPDX-License-Identifier: MIT
 *
@@ -44508,7 +46132,7 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_CMLA_ROT180_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -44699,7 +46323,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_CMLA_ROT180_H) */
 /* :: End simde/arm/neon/cmla_rot180.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/cmla_rot180_lane.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -44724,28 +46348,28 @@ HEDLEY_DIAGNOSTIC_POP
  * SOFTWARE.
  *
  * Copyright:
- *   2023      Chi-Wei Chu <wewe5215@gapp.nthu.edu.tw>
+ *   2023      Chi-Wei Chu <wewe5215@gapp.nthu.edu.tw> (Copyright owned by NTHU pllab)
  */
 
 #if !defined(SIMDE_ARM_NEON_CMLA_ROT180_LANE_H)
 #define SIMDE_ARM_NEON_CMLA_ROT180_LANE_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
 SIMDE_BEGIN_DECLS_
@@ -44754,24 +46378,38 @@ SIMDE_FUNCTION_ATTRIBUTES
 simde_float16x4_t simde_vcmla_rot180_lane_f16(simde_float16x4_t r, simde_float16x4_t a, simde_float16x4_t b, const int lane)
     SIMDE_REQUIRE_CONSTANT_RANGE(lane, 0, 1)
 {
-  simde_float32x4_private r_ = simde_float32x4_to_private(simde_vcvt_f32_f16(r)),
-                          a_ = simde_float32x4_to_private(simde_vcvt_f32_f16(a)),
-                          b_ = simde_float32x4_to_private(
-                              simde_vcvt_f32_f16(simde_vdup_n_f16(simde_float16x4_to_private(b).values[lane])));
-  #if defined(SIMDE_SHUFFLE_VECTOR_) &&                                                                                       \
-      ((SIMDE_FLOAT16_API == SIMDE_FLOAT16_API_FP16) || (SIMDE_FLOAT16_API == SIMDE_FLOAT16_API_FLOAT16))
-    a_.values = SIMDE_SHUFFLE_VECTOR_(16, 4, a_.values, a_.values, 0, 0, 2, 2);
-    b_.values = SIMDE_SHUFFLE_VECTOR_(16, 4, -b_.values, b_.values, 0, 1, 2, 3);
-    r_.values += b_.values * a_.values;
+  #if defined(SIMDE_RISCV_V_NATIVE) && SIMDE_ARCH_RISCV_ZVFH
+      simde_float16x4_private r_ = simde_float16x4_to_private(r),
+                              a_ = simde_float16x4_to_private(a),
+                              b_ = simde_vdup_n_f16(simde_float16x4_to_private(b).values[lane]);
+      uint16_t idx1[4] = {0, 0, 2, 2};
+      uint16_t idx2[4] = {0, 1, 2, 3};
+      vfloat16m1_t op1 = __riscv_vrgather_vv_f16m1(__riscv_vslideup_vx_f16m1( \
+        a_.sv64, a_.sv64, 4, 8), __riscv_vle16_v_u16m1(idx1, 4), 4);
+      vfloat16m1_t op2 = __riscv_vrgather_vv_f16m1(__riscv_vslideup_vx_f16m1( \
+        __riscv_vfneg_v_f16m1(b_.sv64, 4), b_.sv64, 4, 8), __riscv_vle16_v_u16m1(idx2, 4), 4);
+      r_.sv64 = __riscv_vfmacc_vv_f16m1(r_.sv64, op1, op2, 4);
+      return simde_float16x4_from_private(r_);
   #else
-    SIMDE_VECTORIZE
-    for (size_t i = 0; i < (sizeof(r_.values) / (2 * sizeof(r_.values[0]))); i++)
-    {
-      r_.values[2 * i] += -(b_.values[2 * i]) * a_.values[2 * i];
-      r_.values[2 * i + 1] += -(b_.values[2 * i + 1]) * a_.values[2 * i];
-    }
+    simde_float32x4_private r_ = simde_float32x4_to_private(simde_vcvt_f32_f16(r)),
+                            a_ = simde_float32x4_to_private(simde_vcvt_f32_f16(a)),
+                            b_ = simde_float32x4_to_private(
+                                simde_vcvt_f32_f16(simde_vdup_n_f16(simde_float16x4_to_private(b).values[lane])));
+    #if defined(SIMDE_SHUFFLE_VECTOR_) &&                                                                                       \
+        ((SIMDE_FLOAT16_API == SIMDE_FLOAT16_API_FP16) || (SIMDE_FLOAT16_API == SIMDE_FLOAT16_API_FLOAT16))
+      a_.values = SIMDE_SHUFFLE_VECTOR_(32, 16, a_.values, a_.values, 0, 0, 2, 2);
+      b_.values = SIMDE_SHUFFLE_VECTOR_(32, 16, -b_.values, b_.values, 0, 1, 2, 3);
+      r_.values += b_.values * a_.values;
+    #else
+      SIMDE_VECTORIZE
+      for (size_t i = 0; i < (sizeof(r_.values) / (2 * sizeof(r_.values[0]))); i++)
+      {
+        r_.values[2 * i] += -(b_.values[2 * i]) * a_.values[2 * i];
+        r_.values[2 * i + 1] += -(b_.values[2 * i + 1]) * a_.values[2 * i];
+      }
+    #endif
+    return simde_vcvt_f16_f32(simde_float32x4_from_private(r_));
   #endif
-  return simde_vcvt_f16_f32(simde_float32x4_from_private(r_));
 }
 #if defined(SIMDE_ARM_NEON_A32V8_ENABLE_NATIVE_ALIASES)
   #undef vcmla_rot180_lane_f16
@@ -44789,7 +46427,15 @@ simde_float32x2_t simde_vcmla_rot180_lane_f32(simde_float32x2_t r, simde_float32
 {
   simde_float32x2_private r_ = simde_float32x2_to_private(r), a_ = simde_float32x2_to_private(a),
                           b_ = simde_float32x2_to_private(simde_vdup_n_f32(simde_float32x2_to_private(b).values[lane]));
-  #if defined(SIMDE_SHUFFLE_VECTOR_) && !defined(SIMDE_BUG_GCC_100760)
+  #if defined(SIMDE_RISCV_V_NATIVE)
+      uint32_t idx1[2] = {0, 0};
+      uint32_t idx2[2] = {0, 1};
+      vfloat32m1_t op1 = __riscv_vrgather_vv_f32m1(__riscv_vslideup_vx_f32m1( \
+        a_.sv64, a_.sv64, 2, 4), __riscv_vle32_v_u32m1(idx1, 2), 2);
+      vfloat32m1_t op2 = __riscv_vrgather_vv_f32m1(__riscv_vslideup_vx_f32m1( \
+        __riscv_vfneg_v_f32m1(b_.sv64, 2), b_.sv64, 2, 4), __riscv_vle32_v_u32m1(idx2, 2), 2);
+      r_.sv64 = __riscv_vfmacc_vv_f32m1(r_.sv64, op1, op2, 2);
+  #elif defined(SIMDE_SHUFFLE_VECTOR_) && !defined(SIMDE_BUG_GCC_100760)
     a_.values = SIMDE_SHUFFLE_VECTOR_(32, 8, a_.values, a_.values, 0, 0);
     b_.values = SIMDE_SHUFFLE_VECTOR_(32, 8, -b_.values, -b_.values, 0, 1);
     r_.values += b_.values * a_.values;
@@ -44817,31 +46463,47 @@ SIMDE_FUNCTION_ATTRIBUTES
 simde_float16x8_t simde_vcmlaq_rot180_lane_f16(simde_float16x8_t r, simde_float16x8_t a, simde_float16x4_t b, const int lane)
     SIMDE_REQUIRE_CONSTANT_RANGE(lane, 0, 1)
 {
-  simde_float32x4_private r_low = simde_float32x4_to_private(simde_vcvt_f32_f16(simde_vget_low_f16(r))),
-                          a_low = simde_float32x4_to_private(simde_vcvt_f32_f16(simde_vget_low_f16(a))),
-                          r_high = simde_float32x4_to_private(simde_vcvt_f32_f16(simde_vget_high_f16(r))),
-                          a_high = simde_float32x4_to_private(simde_vcvt_f32_f16(simde_vget_high_f16(a))),
-                          b_ = simde_float32x4_to_private(
-                              simde_vcvt_f32_f16(simde_vdup_n_f16(simde_float16x4_to_private(b).values[lane])));
-  #if defined(SIMDE_SHUFFLE_VECTOR_) && !defined(SIMDE_BUG_GCC_100760) &&                                                     \
-      ((SIMDE_FLOAT16_API == SIMDE_FLOAT16_API_FP16) || (SIMDE_FLOAT16_API == SIMDE_FLOAT16_API_FLOAT16))
-    a_low.values = SIMDE_SHUFFLE_VECTOR_(16, 4, a_low.values, a_low.values, 0, 0, 2, 2);
-    a_high.values = SIMDE_SHUFFLE_VECTOR_(16, 4, a_high.values, a_high.values, 0, 0, 2, 2);
-    b_.values = SIMDE_SHUFFLE_VECTOR_(16, 4, -b_.values, b_.values, 0, 1, 2, 3);
-    r_low.values += b_.values * a_low.values;
-    r_high.values += b_.values * a_high.values;
+  #if defined(SIMDE_RISCV_V_NATIVE) && SIMDE_ARCH_RISCV_ZVFH
+    simde_float16x8_private r_ = simde_float16x8_to_private(r),
+                            a_ = simde_float16x8_to_private(a),
+                            b_ = simde_vdupq_n_f16(simde_float16x4_to_private(b).values[lane]);
+    uint16_t idx1[8] = {0, 0, 2, 2, 4, 4, 6, 6};
+    uint16_t idx2[8] = {0, 1, 2, 3, 4, 5, 6, 7};
+    vfloat16m2_t a_tmp = __riscv_vlmul_ext_v_f16m1_f16m2 (a_.sv128);
+    vfloat16m2_t b_tmp = __riscv_vlmul_ext_v_f16m1_f16m2 (b_.sv128);
+    vfloat16m1_t op1 = __riscv_vlmul_trunc_v_f16m2_f16m1(__riscv_vrgather_vv_f16m2(__riscv_vslideup_vx_f16m2( \
+      a_tmp, a_tmp, 8, 16), __riscv_vle16_v_u16m2(idx1, 8), 8));
+    vfloat16m1_t op2 = __riscv_vlmul_trunc_v_f16m2_f16m1(__riscv_vrgather_vv_f16m2(__riscv_vslideup_vx_f16m2( \
+      __riscv_vfneg_v_f16m2(b_tmp, 8), b_tmp, 8, 16), __riscv_vle16_v_u16m2(idx2, 8), 8));
+    r_.sv128 = __riscv_vfmacc_vv_f16m1(r_.sv128, op1, op2, 8);
+    return simde_float16x8_from_private(r_);
   #else
-    SIMDE_VECTORIZE
-    for (size_t i = 0; i < (sizeof(r_low.values) / (2 * sizeof(r_low.values[0]))); i++)
-    {
-      r_low.values[2 * i] += -(b_.values[2 * i]) * a_low.values[2 * i];
-      r_low.values[2 * i + 1] += -(b_.values[2 * i + 1]) * a_low.values[2 * i];
-      r_high.values[2 * i] += -(b_.values[2 * i]) * a_high.values[2 * i];
-      r_high.values[2 * i + 1] += -(b_.values[2 * i + 1]) * a_high.values[2 * i];
-    }
+    simde_float32x4_private r_low = simde_float32x4_to_private(simde_vcvt_f32_f16(simde_vget_low_f16(r))),
+                            a_low = simde_float32x4_to_private(simde_vcvt_f32_f16(simde_vget_low_f16(a))),
+                            r_high = simde_float32x4_to_private(simde_vcvt_f32_f16(simde_vget_high_f16(r))),
+                            a_high = simde_float32x4_to_private(simde_vcvt_f32_f16(simde_vget_high_f16(a))),
+                            b_ = simde_float32x4_to_private(
+                                simde_vcvt_f32_f16(simde_vdup_n_f16(simde_float16x4_to_private(b).values[lane])));
+    #if defined(SIMDE_SHUFFLE_VECTOR_) && !defined(SIMDE_BUG_GCC_100760) &&                                                     \
+        ((SIMDE_FLOAT16_API == SIMDE_FLOAT16_API_FP16) || (SIMDE_FLOAT16_API == SIMDE_FLOAT16_API_FLOAT16))
+      a_low.values = SIMDE_SHUFFLE_VECTOR_(32, 16, a_low.values, a_low.values, 0, 0, 2, 2);
+      a_high.values = SIMDE_SHUFFLE_VECTOR_(32, 16, a_high.values, a_high.values, 0, 0, 2, 2);
+      b_.values = SIMDE_SHUFFLE_VECTOR_(32, 16, -b_.values, b_.values, 0, 1, 2, 3);
+      r_low.values += b_.values * a_low.values;
+      r_high.values += b_.values * a_high.values;
+    #else
+      SIMDE_VECTORIZE
+      for (size_t i = 0; i < (sizeof(r_low.values) / (2 * sizeof(r_low.values[0]))); i++)
+      {
+        r_low.values[2 * i] += -(b_.values[2 * i]) * a_low.values[2 * i];
+        r_low.values[2 * i + 1] += -(b_.values[2 * i + 1]) * a_low.values[2 * i];
+        r_high.values[2 * i] += -(b_.values[2 * i]) * a_high.values[2 * i];
+        r_high.values[2 * i + 1] += -(b_.values[2 * i + 1]) * a_high.values[2 * i];
+      }
+    #endif
+    return simde_vcombine_f16(simde_vcvt_f16_f32(simde_float32x4_from_private(r_low)),
+                              simde_vcvt_f16_f32(simde_float32x4_from_private(r_high)));
   #endif
-  return simde_vcombine_f16(simde_vcvt_f16_f32(simde_float32x4_from_private(r_low)),
-                            simde_vcvt_f16_f32(simde_float32x4_from_private(r_high)));
 }
 #if defined(SIMDE_ARM_NEON_A32V8_ENABLE_NATIVE_ALIASES)
   #undef vcmlaq_rot180_lane_f16
@@ -44859,7 +46521,17 @@ simde_float32x4_t simde_vcmlaq_rot180_lane_f32(simde_float32x4_t r, simde_float3
 {
   simde_float32x4_private r_ = simde_float32x4_to_private(r), a_ = simde_float32x4_to_private(a),
                           b_ = simde_float32x4_to_private(simde_vdupq_n_f32(simde_float32x2_to_private(b).values[lane]));
-  #if defined(SIMDE_SHUFFLE_VECTOR_) && !defined(SIMDE_BUG_GCC_100760)
+  #if defined(SIMDE_RISCV_V_NATIVE)
+      uint32_t idx1[4] = {0, 0, 2, 2};
+      uint32_t idx2[4] = {0, 1, 2, 3};
+      vfloat32m2_t a_tmp = __riscv_vlmul_ext_v_f32m1_f32m2 (a_.sv128);
+      vfloat32m2_t b_tmp = __riscv_vlmul_ext_v_f32m1_f32m2 (b_.sv128);
+      vfloat32m1_t op1 = __riscv_vlmul_trunc_v_f32m2_f32m1(__riscv_vrgather_vv_f32m2(__riscv_vslideup_vx_f32m2( \
+        a_tmp, a_tmp, 4, 8), __riscv_vle32_v_u32m2(idx1, 4), 4));
+      vfloat32m1_t op2 = __riscv_vlmul_trunc_v_f32m2_f32m1(__riscv_vrgather_vv_f32m2(__riscv_vslideup_vx_f32m2( \
+        __riscv_vfneg_v_f32m2(b_tmp, 4), b_tmp, 4, 8), __riscv_vle32_v_u32m2(idx2, 4), 4));
+      r_.sv128 = __riscv_vfmacc_vv_f32m1(r_.sv128, op1, op2, 4);
+  #elif defined(SIMDE_SHUFFLE_VECTOR_) && !defined(SIMDE_BUG_GCC_100760)
     a_.values = SIMDE_SHUFFLE_VECTOR_(32, 16, a_.values, a_.values, 0, 0, 2, 2);
     b_.values = SIMDE_SHUFFLE_VECTOR_(32, 16, -b_.values, b_.values, 0, 1, 2, 3);
     r_.values += b_.values * a_.values;
@@ -44887,24 +46559,38 @@ SIMDE_FUNCTION_ATTRIBUTES
 simde_float16x4_t simde_vcmla_rot180_laneq_f16(simde_float16x4_t r, simde_float16x4_t a, simde_float16x8_t b, const int lane)
     SIMDE_REQUIRE_CONSTANT_RANGE(lane, 0, 1)
 {
-  simde_float32x4_private r_ = simde_float32x4_to_private(simde_vcvt_f32_f16(r)),
-                          a_ = simde_float32x4_to_private(simde_vcvt_f32_f16(a)),
-                          b_ = simde_float32x4_to_private(
-                              simde_vcvt_f32_f16(simde_vdup_n_f16(simde_float16x8_to_private(b).values[lane])));
-  #if defined(SIMDE_SHUFFLE_VECTOR_) && !defined(SIMDE_BUG_GCC_100760) &&                                                     \
-      ((SIMDE_FLOAT16_API == SIMDE_FLOAT16_API_FP16) || (SIMDE_FLOAT16_API == SIMDE_FLOAT16_API_FLOAT16))
-    a_.values = SIMDE_SHUFFLE_VECTOR_(16, 4, a_.values, a_.values, 0, 0, 2, 2);
-    b_.values = SIMDE_SHUFFLE_VECTOR_(16, 4, -b_.values, b_.values, 0, 1, 2, 3);
-    r_.values += b_.values * a_.values;
+  #if defined(SIMDE_RISCV_V_NATIVE) && SIMDE_ARCH_RISCV_ZVFH
+    simde_float16x4_private r_ = simde_float16x4_to_private(r),
+                            a_ = simde_float16x4_to_private(a),
+                            b_ = simde_vdup_n_f16(simde_float16x8_to_private(b).values[lane]);
+    uint16_t idx1[4] = {0, 0, 2, 2};
+    uint16_t idx2[4] = {0, 1, 2, 3};
+    vfloat16m1_t op1 = __riscv_vrgather_vv_f16m1(__riscv_vslideup_vx_f16m1( \
+      a_.sv64, a_.sv64, 4, 8), __riscv_vle16_v_u16m1(idx1, 4), 4);
+    vfloat16m1_t op2 = __riscv_vrgather_vv_f16m1(__riscv_vslideup_vx_f16m1( \
+      __riscv_vfneg_v_f16m1(b_.sv64, 4), b_.sv64, 4, 8), __riscv_vle16_v_u16m1(idx2, 4), 4);
+    r_.sv64 = __riscv_vfmacc_vv_f16m1(r_.sv64, op1, op2, 4);
+    return simde_float16x4_from_private(r_);
   #else
-    SIMDE_VECTORIZE
-    for (size_t i = 0; i < (sizeof(r_.values) / (2 * sizeof(r_.values[0]))); i++)
-    {
-      r_.values[2 * i] += -(b_.values[2 * i]) * a_.values[2 * i];
-      r_.values[2 * i + 1] += -(b_.values[2 * i + 1]) * a_.values[2 * i];
-    }
+    simde_float32x4_private r_ = simde_float32x4_to_private(simde_vcvt_f32_f16(r)),
+                            a_ = simde_float32x4_to_private(simde_vcvt_f32_f16(a)),
+                            b_ = simde_float32x4_to_private(
+                                simde_vcvt_f32_f16(simde_vdup_n_f16(simde_float16x8_to_private(b).values[lane])));
+    #if defined(SIMDE_SHUFFLE_VECTOR_) && !defined(SIMDE_BUG_GCC_100760) &&                                                     \
+        ((SIMDE_FLOAT16_API == SIMDE_FLOAT16_API_FP16) || (SIMDE_FLOAT16_API == SIMDE_FLOAT16_API_FLOAT16))
+      a_.values = SIMDE_SHUFFLE_VECTOR_(32, 16, a_.values, a_.values, 0, 0, 2, 2);
+      b_.values = SIMDE_SHUFFLE_VECTOR_(32, 16, -b_.values, b_.values, 0, 1, 2, 3);
+      r_.values += b_.values * a_.values;
+    #else
+      SIMDE_VECTORIZE
+      for (size_t i = 0; i < (sizeof(r_.values) / (2 * sizeof(r_.values[0]))); i++)
+      {
+        r_.values[2 * i] += -(b_.values[2 * i]) * a_.values[2 * i];
+        r_.values[2 * i + 1] += -(b_.values[2 * i + 1]) * a_.values[2 * i];
+      }
+    #endif
+    return simde_vcvt_f16_f32(simde_float32x4_from_private(r_));
   #endif
-  return simde_vcvt_f16_f32(simde_float32x4_from_private(r_));
 }
 #if defined(SIMDE_ARM_NEON_A32V8_ENABLE_NATIVE_ALIASES)
   #undef vcmla_rot180_laneq_f16
@@ -44922,7 +46608,15 @@ simde_float32x2_t simde_vcmla_rot180_laneq_f32(simde_float32x2_t r, simde_float3
 {
   simde_float32x2_private r_ = simde_float32x2_to_private(r), a_ = simde_float32x2_to_private(a),
                           b_ = simde_float32x2_to_private(simde_vdup_n_f32(simde_float32x4_to_private(b).values[lane]));
-  #if defined(SIMDE_SHUFFLE_VECTOR_) && !defined(SIMDE_BUG_GCC_100760)
+  #if defined(SIMDE_RISCV_V_NATIVE)
+      uint32_t idx1[2] = {0, 0};
+      uint32_t idx2[2] = {0, 1};
+      vfloat32m1_t op1 = __riscv_vrgather_vv_f32m1(__riscv_vslideup_vx_f32m1( \
+        a_.sv64, a_.sv64, 2, 4), __riscv_vle32_v_u32m1(idx1, 2), 2);
+      vfloat32m1_t op2 = __riscv_vrgather_vv_f32m1(__riscv_vslideup_vx_f32m1( \
+        __riscv_vfneg_v_f32m1(b_.sv64, 2), b_.sv64, 2, 4), __riscv_vle32_v_u32m1(idx2, 2), 2);
+      r_.sv64 = __riscv_vfmacc_vv_f32m1(r_.sv64, op1, op2, 2);
+  #elif defined(SIMDE_SHUFFLE_VECTOR_) && !defined(SIMDE_BUG_GCC_100760)
     a_.values = SIMDE_SHUFFLE_VECTOR_(32, 8, a_.values, a_.values, 0, 0);
     b_.values = SIMDE_SHUFFLE_VECTOR_(32, 8, -b_.values, -b_.values, 0, 1);
     r_.values += b_.values * a_.values;
@@ -44950,31 +46644,47 @@ SIMDE_FUNCTION_ATTRIBUTES
 simde_float16x8_t simde_vcmlaq_rot180_laneq_f16(simde_float16x8_t r, simde_float16x8_t a, simde_float16x8_t b,
                                                 const int lane) SIMDE_REQUIRE_CONSTANT_RANGE(lane, 0, 3)
 {
-  simde_float32x4_private r_low = simde_float32x4_to_private(simde_vcvt_f32_f16(simde_vget_low_f16(r))),
-                          a_low = simde_float32x4_to_private(simde_vcvt_f32_f16(simde_vget_low_f16(a))),
-                          r_high = simde_float32x4_to_private(simde_vcvt_f32_f16(simde_vget_high_f16(r))),
-                          a_high = simde_float32x4_to_private(simde_vcvt_f32_f16(simde_vget_high_f16(a))),
-                          b_ = simde_float32x4_to_private(
-                              simde_vcvt_f32_f16(simde_vdup_n_f16(simde_float16x8_to_private(b).values[lane])));
-  #if defined(SIMDE_SHUFFLE_VECTOR_) && !defined(SIMDE_BUG_GCC_100760) &&                                                     \
-      ((SIMDE_FLOAT16_API == SIMDE_FLOAT16_API_FP16) || (SIMDE_FLOAT16_API == SIMDE_FLOAT16_API_FLOAT16))
-    a_low.values = SIMDE_SHUFFLE_VECTOR_(16, 4, a_low.values, a_low.values, 0, 0, 2, 2);
-    a_high.values = SIMDE_SHUFFLE_VECTOR_(16, 4, a_high.values, a_high.values, 0, 0, 2, 2);
-    b_.values = SIMDE_SHUFFLE_VECTOR_(16, 4, -b_.values, b_.values, 0, 1, 2, 3);
-    r_low.values += b_.values * a_low.values;
-    r_high.values += b_.values * a_high.values;
+  #if defined(SIMDE_RISCV_V_NATIVE) && SIMDE_ARCH_RISCV_ZVFH
+    simde_float16x8_private r_ = simde_float16x8_to_private(r),
+                            a_ = simde_float16x8_to_private(a),
+                            b_ = simde_vdupq_n_f16(simde_float16x8_to_private(b).values[lane]);
+    uint16_t idx1[8] = {0, 0, 2, 2, 4, 4, 6, 6};
+    uint16_t idx2[8] = {0, 1, 2, 3, 4, 5, 6, 7};
+    vfloat16m2_t a_tmp = __riscv_vlmul_ext_v_f16m1_f16m2 (a_.sv128);
+    vfloat16m2_t b_tmp = __riscv_vlmul_ext_v_f16m1_f16m2 (b_.sv128);
+    vfloat16m1_t op1 = __riscv_vlmul_trunc_v_f16m2_f16m1(__riscv_vrgather_vv_f16m2(__riscv_vslideup_vx_f16m2( \
+      a_tmp, a_tmp, 8, 16), __riscv_vle16_v_u16m2(idx1, 8), 8));
+    vfloat16m1_t op2 = __riscv_vlmul_trunc_v_f16m2_f16m1(__riscv_vrgather_vv_f16m2(__riscv_vslideup_vx_f16m2( \
+      __riscv_vfneg_v_f16m2(b_tmp, 8), b_tmp, 8, 16), __riscv_vle16_v_u16m2(idx2, 8), 8));
+    r_.sv128 = __riscv_vfmacc_vv_f16m1(r_.sv128, op1, op2, 8);
+    return simde_float16x8_from_private(r_);
   #else
-    SIMDE_VECTORIZE
-    for (size_t i = 0; i < (sizeof(r_low.values) / (2 * sizeof(r_low.values[0]))); i++)
-    {
-      r_low.values[2 * i] += -(b_.values[2 * i]) * a_low.values[2 * i];
-      r_low.values[2 * i + 1] += -(b_.values[2 * i + 1]) * a_low.values[2 * i];
-      r_high.values[2 * i] += -(b_.values[2 * i]) * a_high.values[2 * i];
-      r_high.values[2 * i + 1] += -(b_.values[2 * i + 1]) * a_high.values[2 * i];
-    }
+    simde_float32x4_private r_low = simde_float32x4_to_private(simde_vcvt_f32_f16(simde_vget_low_f16(r))),
+                            a_low = simde_float32x4_to_private(simde_vcvt_f32_f16(simde_vget_low_f16(a))),
+                            r_high = simde_float32x4_to_private(simde_vcvt_f32_f16(simde_vget_high_f16(r))),
+                            a_high = simde_float32x4_to_private(simde_vcvt_f32_f16(simde_vget_high_f16(a))),
+                            b_ = simde_float32x4_to_private(
+                                simde_vcvt_f32_f16(simde_vdup_n_f16(simde_float16x8_to_private(b).values[lane])));
+    #if defined(SIMDE_SHUFFLE_VECTOR_) && !defined(SIMDE_BUG_GCC_100760) &&                                                     \
+        ((SIMDE_FLOAT16_API == SIMDE_FLOAT16_API_FP16) || (SIMDE_FLOAT16_API == SIMDE_FLOAT16_API_FLOAT16))
+      a_low.values = SIMDE_SHUFFLE_VECTOR_(32, 16, a_low.values, a_low.values, 0, 0, 2, 2);
+      a_high.values = SIMDE_SHUFFLE_VECTOR_(32, 16, a_high.values, a_high.values, 0, 0, 2, 2);
+      b_.values = SIMDE_SHUFFLE_VECTOR_(32, 16, -b_.values, b_.values, 0, 1, 2, 3);
+      r_low.values += b_.values * a_low.values;
+      r_high.values += b_.values * a_high.values;
+    #else
+      SIMDE_VECTORIZE
+      for (size_t i = 0; i < (sizeof(r_low.values) / (2 * sizeof(r_low.values[0]))); i++)
+      {
+        r_low.values[2 * i] += -(b_.values[2 * i]) * a_low.values[2 * i];
+        r_low.values[2 * i + 1] += -(b_.values[2 * i + 1]) * a_low.values[2 * i];
+        r_high.values[2 * i] += -(b_.values[2 * i]) * a_high.values[2 * i];
+        r_high.values[2 * i + 1] += -(b_.values[2 * i + 1]) * a_high.values[2 * i];
+      }
+    #endif
+    return simde_vcombine_f16(simde_vcvt_f16_f32(simde_float32x4_from_private(r_low)),
+                              simde_vcvt_f16_f32(simde_float32x4_from_private(r_high)));
   #endif
-  return simde_vcombine_f16(simde_vcvt_f16_f32(simde_float32x4_from_private(r_low)),
-                            simde_vcvt_f16_f32(simde_float32x4_from_private(r_high)));
 }
 #if defined(SIMDE_ARM_NEON_A32V8_ENABLE_NATIVE_ALIASES)
   #undef vcmlaq_rot180_laneq_f16
@@ -44992,7 +46702,17 @@ simde_float32x4_t simde_vcmlaq_rot180_laneq_f32(simde_float32x4_t r, simde_float
 {
   simde_float32x4_private r_ = simde_float32x4_to_private(r), a_ = simde_float32x4_to_private(a),
                           b_ = simde_float32x4_to_private(simde_vdupq_n_f32(simde_float32x4_to_private(b).values[lane]));
-  #if defined(SIMDE_SHUFFLE_VECTOR_) && !defined(SIMDE_BUG_GCC_100760)
+  #if defined(SIMDE_RISCV_V_NATIVE)
+      uint32_t idx1[4] = {0, 0, 2, 2};
+      uint32_t idx2[4] = {0, 1, 2, 3};
+      vfloat32m2_t a_tmp = __riscv_vlmul_ext_v_f32m1_f32m2 (a_.sv128);
+      vfloat32m2_t b_tmp = __riscv_vlmul_ext_v_f32m1_f32m2 (b_.sv128);
+      vfloat32m1_t op1 = __riscv_vlmul_trunc_v_f32m2_f32m1(__riscv_vrgather_vv_f32m2(__riscv_vslideup_vx_f32m2( \
+        a_tmp, a_tmp, 4, 8), __riscv_vle32_v_u32m2(idx1, 4), 4));
+      vfloat32m1_t op2 = __riscv_vlmul_trunc_v_f32m2_f32m1(__riscv_vrgather_vv_f32m2(__riscv_vslideup_vx_f32m2( \
+        __riscv_vfneg_v_f32m2(b_tmp, 4), b_tmp, 4, 8), __riscv_vle32_v_u32m2(idx2, 4), 4));
+      r_.sv128 = __riscv_vfmacc_vv_f32m1(r_.sv128, op1, op2, 4);
+  #elif defined(SIMDE_SHUFFLE_VECTOR_) && !defined(SIMDE_BUG_GCC_100760)
     a_.values = SIMDE_SHUFFLE_VECTOR_(32, 16, a_.values, a_.values, 0, 0, 2, 2);
     b_.values = SIMDE_SHUFFLE_VECTOR_(32, 16, -b_.values, b_.values, 0, 1, 2, 3);
     r_.values += b_.values * a_.values;
@@ -45021,7 +46741,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_CMLA_ROT180_LANE_H) */
 /* :: End simde/arm/neon/cmla_rot180_lane.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/cmla_rot270.h :: */
 /* SPDX-License-Identifier: MIT
 *
@@ -45054,7 +46774,7 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_CMLA_ROT270_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -45244,7 +46964,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_CMLA_ROT270_H) */
 /* :: End simde/arm/neon/cmla_rot270.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/cmla_rot270_lane.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -45269,28 +46989,28 @@ HEDLEY_DIAGNOSTIC_POP
  * SOFTWARE.
  *
  * Copyright:
- *   2023      Chi-Wei Chu <wewe5215@gapp.nthu.edu.tw>
+ *   2023      Chi-Wei Chu <wewe5215@gapp.nthu.edu.tw> (Copyright owned by NTHU pllab)
  */
 
 #if !defined(SIMDE_ARM_NEON_CMLA_ROT270_LANE_H)
 #define SIMDE_ARM_NEON_CMLA_ROT270_LANE_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
 SIMDE_BEGIN_DECLS_
@@ -45299,24 +47019,38 @@ SIMDE_FUNCTION_ATTRIBUTES
 simde_float16x4_t simde_vcmla_rot270_lane_f16(simde_float16x4_t r, simde_float16x4_t a, simde_float16x4_t b, const int lane)
     SIMDE_REQUIRE_CONSTANT_RANGE(lane, 0, 1)
 {
-  simde_float32x4_private r_ = simde_float32x4_to_private(simde_vcvt_f32_f16(r)),
-                          a_ = simde_float32x4_to_private(simde_vcvt_f32_f16(a)),
-                          b_ = simde_float32x4_to_private(
-                              simde_vcvt_f32_f16(simde_vdup_n_f16(simde_float16x4_to_private(b).values[lane])));
-  #if defined(SIMDE_SHUFFLE_VECTOR_) && !defined(SIMDE_BUG_GCC_100760) &&                                                     \
-      ((SIMDE_FLOAT16_API == SIMDE_FLOAT16_API_FP16) || (SIMDE_FLOAT16_API == SIMDE_FLOAT16_API_FLOAT16))
-    a_.values = SIMDE_SHUFFLE_VECTOR_(16, 4, a_.values, a_.values, 1, 1, 3, 3);
-    b_.values = SIMDE_SHUFFLE_VECTOR_(16, 4, -b_.values, b_.values, 5, 0, 7, 2);
-    r_.values += b_.values * a_.values;
+  #if defined(SIMDE_RISCV_V_NATIVE) && SIMDE_ARCH_RISCV_ZVFH
+    simde_float16x4_private r_ = simde_float16x4_to_private(r),
+                            a_ = simde_float16x4_to_private(a),
+                            b_ = simde_vdup_n_f16(simde_float16x4_to_private(b).values[lane]);
+    uint16_t idx1[4] = {1, 1, 3, 3};
+    uint16_t idx2[4] = {5, 0, 7, 2};
+    vfloat16m1_t op1 = __riscv_vrgather_vv_f16m1(__riscv_vslideup_vx_f16m1( \
+      a_.sv64, a_.sv64, 4, 8), __riscv_vle16_v_u16m1(idx1, 4), 4);
+    vfloat16m1_t op2 = __riscv_vrgather_vv_f16m1(__riscv_vslideup_vx_f16m1( \
+      __riscv_vfneg_v_f16m1(b_.sv64, 4), b_.sv64, 4, 8), __riscv_vle16_v_u16m1(idx2, 4), 4);
+    r_.sv64 = __riscv_vfmacc_vv_f16m1(r_.sv64, op1, op2, 4);
+    return simde_float16x4_from_private(r_);
   #else
-    SIMDE_VECTORIZE
-    for (size_t i = 0; i < (sizeof(r_.values) / (2 * sizeof(r_.values[0]))); i++)
-    {
-      r_.values[2 * i] += b_.values[2 * i + 1] * a_.values[2 * i + 1];
-      r_.values[2 * i + 1] += -(b_.values[2 * i]) * a_.values[2 * i + 1];
-    }
+    simde_float32x4_private r_ = simde_float32x4_to_private(simde_vcvt_f32_f16(r)),
+                            a_ = simde_float32x4_to_private(simde_vcvt_f32_f16(a)),
+                            b_ = simde_float32x4_to_private(
+                                simde_vcvt_f32_f16(simde_vdup_n_f16(simde_float16x4_to_private(b).values[lane])));
+    #if defined(SIMDE_SHUFFLE_VECTOR_) && !defined(SIMDE_BUG_GCC_100760) &&                                                     \
+        ((SIMDE_FLOAT16_API == SIMDE_FLOAT16_API_FP16) || (SIMDE_FLOAT16_API == SIMDE_FLOAT16_API_FLOAT16))
+      a_.values = SIMDE_SHUFFLE_VECTOR_(32, 16, a_.values, a_.values, 1, 1, 3, 3);
+      b_.values = SIMDE_SHUFFLE_VECTOR_(32, 16, -b_.values, b_.values, 5, 0, 7, 2);
+      r_.values += b_.values * a_.values;
+    #else
+      SIMDE_VECTORIZE
+      for (size_t i = 0; i < (sizeof(r_.values) / (2 * sizeof(r_.values[0]))); i++)
+      {
+        r_.values[2 * i] += b_.values[2 * i + 1] * a_.values[2 * i + 1];
+        r_.values[2 * i + 1] += -(b_.values[2 * i]) * a_.values[2 * i + 1];
+      }
+    #endif
+    return simde_vcvt_f16_f32(simde_float32x4_from_private(r_));
   #endif
-  return simde_vcvt_f16_f32(simde_float32x4_from_private(r_));
 }
 #if defined(SIMDE_ARM_NEON_A32V8_ENABLE_NATIVE_ALIASES)
   #undef vcmla_rot270_lane_f16
@@ -45334,7 +47068,15 @@ simde_float32x2_t simde_vcmla_rot270_lane_f32(simde_float32x2_t r, simde_float32
 {
   simde_float32x2_private r_ = simde_float32x2_to_private(r), a_ = simde_float32x2_to_private(a),
                           b_ = simde_float32x2_to_private(simde_vdup_n_f32(simde_float32x2_to_private(b).values[lane]));
-  #if defined(SIMDE_SHUFFLE_VECTOR_) && !defined(SIMDE_BUG_GCC_100760)
+  #if defined(SIMDE_RISCV_V_NATIVE)
+      uint32_t idx1[2] = {1, 1};
+      uint32_t idx2[2] = {3, 0};
+      vfloat32m1_t op1 = __riscv_vrgather_vv_f32m1(__riscv_vslideup_vx_f32m1( \
+        a_.sv64, a_.sv64, 2, 4), __riscv_vle32_v_u32m1(idx1, 2), 2);
+      vfloat32m1_t op2 = __riscv_vrgather_vv_f32m1(__riscv_vslideup_vx_f32m1( \
+        __riscv_vfneg_v_f32m1(b_.sv64, 2), b_.sv64, 2, 4), __riscv_vle32_v_u32m1(idx2, 2), 2);
+      r_.sv64 = __riscv_vfmacc_vv_f32m1(r_.sv64, op1, op2, 2);
+  #elif defined(SIMDE_SHUFFLE_VECTOR_) && !defined(SIMDE_BUG_GCC_100760)
     a_.values = SIMDE_SHUFFLE_VECTOR_(32, 8, a_.values, a_.values, 1, 1);
     b_.values = SIMDE_SHUFFLE_VECTOR_(32, 8, -b_.values, b_.values, 3, 0);
     r_.values += b_.values * a_.values;
@@ -45362,31 +47104,47 @@ SIMDE_FUNCTION_ATTRIBUTES
 simde_float16x8_t simde_vcmlaq_rot270_lane_f16(simde_float16x8_t r, simde_float16x8_t a, simde_float16x4_t b, const int lane)
     SIMDE_REQUIRE_CONSTANT_RANGE(lane, 0, 1)
 {
-  simde_float32x4_private r_low = simde_float32x4_to_private(simde_vcvt_f32_f16(simde_vget_low_f16(r))),
-                          a_low = simde_float32x4_to_private(simde_vcvt_f32_f16(simde_vget_low_f16(a))),
-                          r_high = simde_float32x4_to_private(simde_vcvt_f32_f16(simde_vget_high_f16(r))),
-                          a_high = simde_float32x4_to_private(simde_vcvt_f32_f16(simde_vget_high_f16(a))),
-                          b_ = simde_float32x4_to_private(
-                              simde_vcvt_f32_f16(simde_vdup_n_f16(simde_float16x4_to_private(b).values[lane])));
-  #if defined(SIMDE_SHUFFLE_VECTOR_) && !defined(SIMDE_BUG_GCC_100760) &&                                                     \
-      ((SIMDE_FLOAT16_API == SIMDE_FLOAT16_API_FP16) || (SIMDE_FLOAT16_API == SIMDE_FLOAT16_API_FLOAT16))
-    a_low.values = SIMDE_SHUFFLE_VECTOR_(16, 4, a_low.values, a_low.values, 1, 1, 3, 3);
-    a_high.values = SIMDE_SHUFFLE_VECTOR_(16, 4, a_high.values, a_high.values, 1, 1, 3, 3);
-    b_.values = SIMDE_SHUFFLE_VECTOR_(16, 4, -b_.values, b_.values, 5, 0, 7, 2);
-    r_low.values += b_.values * a_low.values;
-    r_high.values += b_.values * a_high.values;
+  #if defined(SIMDE_RISCV_V_NATIVE) && SIMDE_ARCH_RISCV_ZVFH
+    simde_float16x8_private r_ = simde_float16x8_to_private(r),
+                            a_ = simde_float16x8_to_private(a),
+                            b_ = simde_vdupq_n_f16(simde_float16x4_to_private(b).values[lane]);
+    uint16_t idx1[8] = {1, 1, 3, 3, 5, 5, 7, 7};
+    uint16_t idx2[8] = {9, 0, 11, 2, 13, 4, 15, 6};
+    vfloat16m2_t a_tmp = __riscv_vlmul_ext_v_f16m1_f16m2 (a_.sv128);
+    vfloat16m2_t b_tmp = __riscv_vlmul_ext_v_f16m1_f16m2 (b_.sv128);
+    vfloat16m1_t op1 = __riscv_vlmul_trunc_v_f16m2_f16m1(__riscv_vrgather_vv_f16m2(__riscv_vslideup_vx_f16m2( \
+      a_tmp, a_tmp, 8, 16), __riscv_vle16_v_u16m2(idx1, 8), 8));
+    vfloat16m1_t op2 = __riscv_vlmul_trunc_v_f16m2_f16m1(__riscv_vrgather_vv_f16m2(__riscv_vslideup_vx_f16m2( \
+      __riscv_vfneg_v_f16m2(b_tmp, 8), b_tmp, 8, 16), __riscv_vle16_v_u16m2(idx2, 8), 8));
+    r_.sv128 = __riscv_vfmacc_vv_f16m1(r_.sv128, op1, op2, 8);
+    return simde_float16x8_from_private(r_);
   #else
-    SIMDE_VECTORIZE
-    for (size_t i = 0; i < (sizeof(r_low.values) / (2 * sizeof(r_low.values[0]))); i++)
-    {
-      r_low.values[2 * i] += b_.values[2 * i + 1] * a_low.values[2 * i + 1];
-      r_low.values[2 * i + 1] += -(b_.values[2 * i]) * a_low.values[2 * i + 1];
-      r_high.values[2 * i] += b_.values[2 * i + 1] * a_high.values[2 * i + 1];
-      r_high.values[2 * i + 1] += -(b_.values[2 * i]) * a_high.values[2 * i + 1];
-    }
+    simde_float32x4_private r_low = simde_float32x4_to_private(simde_vcvt_f32_f16(simde_vget_low_f16(r))),
+                            a_low = simde_float32x4_to_private(simde_vcvt_f32_f16(simde_vget_low_f16(a))),
+                            r_high = simde_float32x4_to_private(simde_vcvt_f32_f16(simde_vget_high_f16(r))),
+                            a_high = simde_float32x4_to_private(simde_vcvt_f32_f16(simde_vget_high_f16(a))),
+                            b_ = simde_float32x4_to_private(
+                                simde_vcvt_f32_f16(simde_vdup_n_f16(simde_float16x4_to_private(b).values[lane])));
+    #if defined(SIMDE_SHUFFLE_VECTOR_) && !defined(SIMDE_BUG_GCC_100760) &&                                                     \
+        ((SIMDE_FLOAT16_API == SIMDE_FLOAT16_API_FP16) || (SIMDE_FLOAT16_API == SIMDE_FLOAT16_API_FLOAT16))
+      a_low.values = SIMDE_SHUFFLE_VECTOR_(32, 16, a_low.values, a_low.values, 1, 1, 3, 3);
+      a_high.values = SIMDE_SHUFFLE_VECTOR_(32, 16, a_high.values, a_high.values, 1, 1, 3, 3);
+      b_.values = SIMDE_SHUFFLE_VECTOR_(32, 16, -b_.values, b_.values, 5, 0, 7, 2);
+      r_low.values += b_.values * a_low.values;
+      r_high.values += b_.values * a_high.values;
+    #else
+      SIMDE_VECTORIZE
+      for (size_t i = 0; i < (sizeof(r_low.values) / (2 * sizeof(r_low.values[0]))); i++)
+      {
+        r_low.values[2 * i] += b_.values[2 * i + 1] * a_low.values[2 * i + 1];
+        r_low.values[2 * i + 1] += -(b_.values[2 * i]) * a_low.values[2 * i + 1];
+        r_high.values[2 * i] += b_.values[2 * i + 1] * a_high.values[2 * i + 1];
+        r_high.values[2 * i + 1] += -(b_.values[2 * i]) * a_high.values[2 * i + 1];
+      }
+    #endif
+    return simde_vcombine_f16(simde_vcvt_f16_f32(simde_float32x4_from_private(r_low)),
+                              simde_vcvt_f16_f32(simde_float32x4_from_private(r_high)));
   #endif
-  return simde_vcombine_f16(simde_vcvt_f16_f32(simde_float32x4_from_private(r_low)),
-                            simde_vcvt_f16_f32(simde_float32x4_from_private(r_high)));
 }
 #if defined(SIMDE_ARM_NEON_A32V8_ENABLE_NATIVE_ALIASES)
   #undef vcmlaq_rot270_lane_f16
@@ -45404,7 +47162,17 @@ simde_float32x4_t simde_vcmlaq_rot270_lane_f32(simde_float32x4_t r, simde_float3
 {
   simde_float32x4_private r_ = simde_float32x4_to_private(r), a_ = simde_float32x4_to_private(a),
                           b_ = simde_float32x4_to_private(simde_vdupq_n_f32(simde_float32x2_to_private(b).values[lane]));
-  #if defined(SIMDE_SHUFFLE_VECTOR_) && !defined(SIMDE_BUG_GCC_100760)
+  #if defined(SIMDE_RISCV_V_NATIVE)
+    uint32_t idx1[4] = {1, 1, 3, 3};
+    uint32_t idx2[4] = {5, 0, 7, 2};
+    vfloat32m2_t a_tmp = __riscv_vlmul_ext_v_f32m1_f32m2 (a_.sv128);
+    vfloat32m2_t b_tmp = __riscv_vlmul_ext_v_f32m1_f32m2 (b_.sv128);
+    vfloat32m1_t op1 = __riscv_vlmul_trunc_v_f32m2_f32m1(__riscv_vrgather_vv_f32m2(__riscv_vslideup_vx_f32m2( \
+      a_tmp, a_tmp, 4, 8), __riscv_vle32_v_u32m2(idx1, 4), 4));
+    vfloat32m1_t op2 = __riscv_vlmul_trunc_v_f32m2_f32m1(__riscv_vrgather_vv_f32m2(__riscv_vslideup_vx_f32m2( \
+      __riscv_vfneg_v_f32m2(b_tmp, 4), b_tmp, 4, 8), __riscv_vle32_v_u32m2(idx2, 4), 4));
+    r_.sv128 = __riscv_vfmacc_vv_f32m1(r_.sv128, op1, op2, 4);
+  #elif defined(SIMDE_SHUFFLE_VECTOR_) && !defined(SIMDE_BUG_GCC_100760)
     a_.values = SIMDE_SHUFFLE_VECTOR_(32, 16, a_.values, a_.values, 1, 1, 3, 3);
     b_.values = SIMDE_SHUFFLE_VECTOR_(32, 16, -b_.values, b_.values, 5, 0, 7, 2);
     r_.values += b_.values * a_.values;
@@ -45432,24 +47200,38 @@ SIMDE_FUNCTION_ATTRIBUTES
 simde_float16x4_t simde_vcmla_rot270_laneq_f16(simde_float16x4_t r, simde_float16x4_t a, simde_float16x8_t b, const int lane)
     SIMDE_REQUIRE_CONSTANT_RANGE(lane, 0, 1)
 {
-  simde_float32x4_private r_ = simde_float32x4_to_private(simde_vcvt_f32_f16(r)),
-                          a_ = simde_float32x4_to_private(simde_vcvt_f32_f16(a)),
-                          b_ = simde_float32x4_to_private(
-                              simde_vcvt_f32_f16(simde_vdup_n_f16(simde_float16x8_to_private(b).values[lane])));
-  #if defined(SIMDE_SHUFFLE_VECTOR_) && !defined(SIMDE_BUG_GCC_100760) &&                                                     \
-      ((SIMDE_FLOAT16_API == SIMDE_FLOAT16_API_FP16) || (SIMDE_FLOAT16_API == SIMDE_FLOAT16_API_FLOAT16))
-    a_.values = SIMDE_SHUFFLE_VECTOR_(16, 4, a_.values, a_.values, 1, 1, 3, 3);
-    b_.values = SIMDE_SHUFFLE_VECTOR_(16, 4, -b_.values, b_.values, 5, 0, 7, 2);
-    r_.values += b_.values * a_.values;
+  #if defined(SIMDE_RISCV_V_NATIVE) && SIMDE_ARCH_RISCV_ZVFH
+    simde_float16x4_private r_ = simde_float16x4_to_private(r),
+                            a_ = simde_float16x4_to_private(a),
+                            b_ = simde_vdup_n_f16(simde_float16x8_to_private(b).values[lane]);
+    uint16_t idx1[4] = {1, 1, 3, 3};
+    uint16_t idx2[4] = {5, 0, 7, 2};
+    vfloat16m1_t op1 = __riscv_vrgather_vv_f16m1(__riscv_vslideup_vx_f16m1( \
+      a_.sv64, a_.sv64, 4, 8), __riscv_vle16_v_u16m1(idx1, 4), 4);
+    vfloat16m1_t op2 = __riscv_vrgather_vv_f16m1(__riscv_vslideup_vx_f16m1( \
+      __riscv_vfneg_v_f16m1(b_.sv64, 4), b_.sv64, 4, 8), __riscv_vle16_v_u16m1(idx2, 4), 4);
+    r_.sv64 = __riscv_vfmacc_vv_f16m1(r_.sv64, op1, op2, 4);
+    return simde_float16x4_from_private(r_);
   #else
-    SIMDE_VECTORIZE
-    for (size_t i = 0; i < (sizeof(r_.values) / (2 * sizeof(r_.values[0]))); i++)
-    {
-      r_.values[2 * i] += b_.values[2 * i + 1] * a_.values[2 * i + 1];
-      r_.values[2 * i + 1] += -(b_.values[2 * i]) * a_.values[2 * i + 1];
-    }
+    simde_float32x4_private r_ = simde_float32x4_to_private(simde_vcvt_f32_f16(r)),
+                            a_ = simde_float32x4_to_private(simde_vcvt_f32_f16(a)),
+                            b_ = simde_float32x4_to_private(
+                                simde_vcvt_f32_f16(simde_vdup_n_f16(simde_float16x8_to_private(b).values[lane])));
+    #if defined(SIMDE_SHUFFLE_VECTOR_) && !defined(SIMDE_BUG_GCC_100760) &&                                                     \
+        ((SIMDE_FLOAT16_API == SIMDE_FLOAT16_API_FP16) || (SIMDE_FLOAT16_API == SIMDE_FLOAT16_API_FLOAT16))
+      a_.values = SIMDE_SHUFFLE_VECTOR_(32, 16, a_.values, a_.values, 1, 1, 3, 3);
+      b_.values = SIMDE_SHUFFLE_VECTOR_(32, 16, -b_.values, b_.values, 5, 0, 7, 2);
+      r_.values += b_.values * a_.values;
+    #else
+      SIMDE_VECTORIZE
+      for (size_t i = 0; i < (sizeof(r_.values) / (2 * sizeof(r_.values[0]))); i++)
+      {
+        r_.values[2 * i] += b_.values[2 * i + 1] * a_.values[2 * i + 1];
+        r_.values[2 * i + 1] += -(b_.values[2 * i]) * a_.values[2 * i + 1];
+      }
+    #endif
+    return simde_vcvt_f16_f32(simde_float32x4_from_private(r_));
   #endif
-  return simde_vcvt_f16_f32(simde_float32x4_from_private(r_));
 }
 #if defined(SIMDE_ARM_NEON_A32V8_ENABLE_NATIVE_ALIASES)
   #undef vcmla_rot270_laneq_f16
@@ -45467,7 +47249,15 @@ simde_float32x2_t simde_vcmla_rot270_laneq_f32(simde_float32x2_t r, simde_float3
 {
   simde_float32x2_private r_ = simde_float32x2_to_private(r), a_ = simde_float32x2_to_private(a),
                           b_ = simde_float32x2_to_private(simde_vdup_n_f32(simde_float32x4_to_private(b).values[lane]));
-  #if defined(SIMDE_SHUFFLE_VECTOR_) && !defined(SIMDE_BUG_GCC_100760)
+  #if defined(SIMDE_RISCV_V_NATIVE)
+      uint32_t idx1[2] = {1, 1};
+      uint32_t idx2[2] = {3, 0};
+      vfloat32m1_t op1 = __riscv_vrgather_vv_f32m1(__riscv_vslideup_vx_f32m1( \
+        a_.sv64, a_.sv64, 2, 4), __riscv_vle32_v_u32m1(idx1, 2), 2);
+      vfloat32m1_t op2 = __riscv_vrgather_vv_f32m1(__riscv_vslideup_vx_f32m1( \
+        __riscv_vfneg_v_f32m1(b_.sv64, 2), b_.sv64, 2, 4), __riscv_vle32_v_u32m1(idx2, 2), 2);
+      r_.sv64 = __riscv_vfmacc_vv_f32m1(r_.sv64, op1, op2, 2);
+  #elif defined(SIMDE_SHUFFLE_VECTOR_) && !defined(SIMDE_BUG_GCC_100760)
     a_.values = SIMDE_SHUFFLE_VECTOR_(32, 8, a_.values, a_.values, 1, 1);
     b_.values = SIMDE_SHUFFLE_VECTOR_(32, 8, -b_.values, b_.values, 3, 0);
     r_.values += b_.values * a_.values;
@@ -45495,31 +47285,47 @@ SIMDE_FUNCTION_ATTRIBUTES
 simde_float16x8_t simde_vcmlaq_rot270_laneq_f16(simde_float16x8_t r, simde_float16x8_t a, simde_float16x8_t b,
                                                 const int lane) SIMDE_REQUIRE_CONSTANT_RANGE(lane, 0, 3)
 {
-  simde_float32x4_private r_low = simde_float32x4_to_private(simde_vcvt_f32_f16(simde_vget_low_f16(r))),
-                          a_low = simde_float32x4_to_private(simde_vcvt_f32_f16(simde_vget_low_f16(a))),
-                          r_high = simde_float32x4_to_private(simde_vcvt_f32_f16(simde_vget_high_f16(r))),
-                          a_high = simde_float32x4_to_private(simde_vcvt_f32_f16(simde_vget_high_f16(a))),
-                          b_ = simde_float32x4_to_private(
-                              simde_vcvt_f32_f16(simde_vdup_n_f16(simde_float16x8_to_private(b).values[lane])));
-  #if defined(SIMDE_SHUFFLE_VECTOR_) && !defined(SIMDE_BUG_GCC_100760) &&                                                     \
-      ((SIMDE_FLOAT16_API == SIMDE_FLOAT16_API_FP16) || (SIMDE_FLOAT16_API == SIMDE_FLOAT16_API_FLOAT16))
-    a_high.values = SIMDE_SHUFFLE_VECTOR_(16, 4, a_high.values, a_high.values, 1, 1, 3, 3);
-    a_low.values = SIMDE_SHUFFLE_VECTOR_(16, 4, a_low.values, a_low.values, 1, 1, 3, 3);
-    b_.values = SIMDE_SHUFFLE_VECTOR_(16, 4, -b_.values, b_.values, 5, 0, 7, 2);
-    r_high.values += b_.values * a_high.values;
-    r_low.values += b_.values * a_low.values;
+  #if defined(SIMDE_RISCV_V_NATIVE) && SIMDE_ARCH_RISCV_ZVFH
+    simde_float16x8_private r_ = simde_float16x8_to_private(r),
+                            a_ = simde_float16x8_to_private(a),
+                            b_ = simde_vdupq_n_f16(simde_float16x8_to_private(b).values[lane]);
+    uint16_t idx1[8] = {1, 1, 3, 3, 5, 5, 7, 7};
+    uint16_t idx2[8] = {9, 0, 11, 2, 13, 4, 15, 6};
+    vfloat16m2_t a_tmp = __riscv_vlmul_ext_v_f16m1_f16m2 (a_.sv128);
+    vfloat16m2_t b_tmp = __riscv_vlmul_ext_v_f16m1_f16m2 (b_.sv128);
+    vfloat16m1_t op1 = __riscv_vlmul_trunc_v_f16m2_f16m1(__riscv_vrgather_vv_f16m2(__riscv_vslideup_vx_f16m2( \
+      a_tmp, a_tmp, 8, 16), __riscv_vle16_v_u16m2(idx1, 8), 8));
+    vfloat16m1_t op2 = __riscv_vlmul_trunc_v_f16m2_f16m1(__riscv_vrgather_vv_f16m2(__riscv_vslideup_vx_f16m2( \
+      __riscv_vfneg_v_f16m2(b_tmp, 8), b_tmp, 8, 16), __riscv_vle16_v_u16m2(idx2, 8), 8));
+    r_.sv128 = __riscv_vfmacc_vv_f16m1(r_.sv128, op1, op2, 8);
+    return simde_float16x8_from_private(r_);
   #else
-    SIMDE_VECTORIZE
-    for (size_t i = 0; i < (sizeof(r_low.values) / (2 * sizeof(r_low.values[0]))); i++)
-    {
-      r_low.values[2 * i] += b_.values[2 * i + 1] * a_low.values[2 * i + 1];
-      r_low.values[2 * i + 1] += -(b_.values[2 * i]) * a_low.values[2 * i + 1];
-      r_high.values[2 * i] += b_.values[2 * i + 1] * a_high.values[2 * i + 1];
-      r_high.values[2 * i + 1] += -(b_.values[2 * i]) * a_high.values[2 * i + 1];
-    }
+    simde_float32x4_private r_low = simde_float32x4_to_private(simde_vcvt_f32_f16(simde_vget_low_f16(r))),
+                            a_low = simde_float32x4_to_private(simde_vcvt_f32_f16(simde_vget_low_f16(a))),
+                            r_high = simde_float32x4_to_private(simde_vcvt_f32_f16(simde_vget_high_f16(r))),
+                            a_high = simde_float32x4_to_private(simde_vcvt_f32_f16(simde_vget_high_f16(a))),
+                            b_ = simde_float32x4_to_private(
+                                simde_vcvt_f32_f16(simde_vdup_n_f16(simde_float16x8_to_private(b).values[lane])));
+    #if defined(SIMDE_SHUFFLE_VECTOR_) && !defined(SIMDE_BUG_GCC_100760) &&                                                     \
+        ((SIMDE_FLOAT16_API == SIMDE_FLOAT16_API_FP16) || (SIMDE_FLOAT16_API == SIMDE_FLOAT16_API_FLOAT16))
+      a_high.values = SIMDE_SHUFFLE_VECTOR_(32, 16, a_high.values, a_high.values, 1, 1, 3, 3);
+      a_low.values = SIMDE_SHUFFLE_VECTOR_(32, 16, a_low.values, a_low.values, 1, 1, 3, 3);
+      b_.values = SIMDE_SHUFFLE_VECTOR_(32, 16, -b_.values, b_.values, 5, 0, 7, 2);
+      r_high.values += b_.values * a_high.values;
+      r_low.values += b_.values * a_low.values;
+    #else
+      SIMDE_VECTORIZE
+      for (size_t i = 0; i < (sizeof(r_low.values) / (2 * sizeof(r_low.values[0]))); i++)
+      {
+        r_low.values[2 * i] += b_.values[2 * i + 1] * a_low.values[2 * i + 1];
+        r_low.values[2 * i + 1] += -(b_.values[2 * i]) * a_low.values[2 * i + 1];
+        r_high.values[2 * i] += b_.values[2 * i + 1] * a_high.values[2 * i + 1];
+        r_high.values[2 * i + 1] += -(b_.values[2 * i]) * a_high.values[2 * i + 1];
+      }
+    #endif
+    return simde_vcombine_f16(simde_vcvt_f16_f32(simde_float32x4_from_private(r_low)),
+                              simde_vcvt_f16_f32(simde_float32x4_from_private(r_high)));
   #endif
-  return simde_vcombine_f16(simde_vcvt_f16_f32(simde_float32x4_from_private(r_low)),
-                            simde_vcvt_f16_f32(simde_float32x4_from_private(r_high)));
 }
 #if defined(SIMDE_ARM_NEON_A32V8_ENABLE_NATIVE_ALIASES)
   #undef vcmlaq_rot270_laneq_f16
@@ -45537,7 +47343,17 @@ simde_float32x4_t simde_vcmlaq_rot270_laneq_f32(simde_float32x4_t r, simde_float
 {
   simde_float32x4_private r_ = simde_float32x4_to_private(r), a_ = simde_float32x4_to_private(a),
                           b_ = simde_float32x4_to_private(simde_vdupq_n_f32(simde_float32x4_to_private(b).values[lane]));
-  #if defined(SIMDE_SHUFFLE_VECTOR_) && !defined(SIMDE_BUG_GCC_100760)
+  #if defined(SIMDE_RISCV_V_NATIVE)
+    uint32_t idx1[4] = {1, 1, 3, 3};
+    uint32_t idx2[4] = {5, 0, 7, 2};
+    vfloat32m2_t a_tmp = __riscv_vlmul_ext_v_f32m1_f32m2 (a_.sv128);
+    vfloat32m2_t b_tmp = __riscv_vlmul_ext_v_f32m1_f32m2 (b_.sv128);
+    vfloat32m1_t op1 = __riscv_vlmul_trunc_v_f32m2_f32m1(__riscv_vrgather_vv_f32m2(__riscv_vslideup_vx_f32m2( \
+      a_tmp, a_tmp, 4, 8), __riscv_vle32_v_u32m2(idx1, 4), 4));
+    vfloat32m1_t op2 = __riscv_vlmul_trunc_v_f32m2_f32m1(__riscv_vrgather_vv_f32m2(__riscv_vslideup_vx_f32m2( \
+      __riscv_vfneg_v_f32m2(b_tmp, 4), b_tmp, 4, 8), __riscv_vle32_v_u32m2(idx2, 4), 4));
+    r_.sv128 = __riscv_vfmacc_vv_f32m1(r_.sv128, op1, op2, 4);
+  #elif defined(SIMDE_SHUFFLE_VECTOR_) && !defined(SIMDE_BUG_GCC_100760)
     a_.values = SIMDE_SHUFFLE_VECTOR_(32, 16, a_.values, a_.values, 1, 1, 3, 3);
     b_.values = SIMDE_SHUFFLE_VECTOR_(32, 16, -b_.values, b_.values, 5, 0, 7, 2);
     r_.values += b_.values * a_.values;
@@ -45567,7 +47383,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_CMLA_ROT270_LANE_H) */
 /* :: End simde/arm/neon/cmla_rot270_lane.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/cmla_rot90.h :: */
 /* SPDX-License-Identifier: MIT
 *
@@ -45600,7 +47416,7 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_CMLA_ROT90_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -45790,7 +47606,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_CMLA_ROT90_H) */
 /* :: End simde/arm/neon/cmla_rot90.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/cmla_rot90_lane.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -45815,28 +47631,28 @@ HEDLEY_DIAGNOSTIC_POP
  * SOFTWARE.
  *
  * Copyright:
- *   2023      Chi-Wei Chu <wewe5215@gapp.nthu.edu.tw>
+ *   2023      Chi-Wei Chu <wewe5215@gapp.nthu.edu.tw> (Copyright owned by NTHU pllab)
  */
 
 #if !defined(SIMDE_ARM_NEON_CMLA_ROT90_LANE_H)
 #define SIMDE_ARM_NEON_CMLA_ROT90_LANE_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
 SIMDE_BEGIN_DECLS_
@@ -45845,24 +47661,38 @@ SIMDE_FUNCTION_ATTRIBUTES
 simde_float16x4_t simde_vcmla_rot90_lane_f16(simde_float16x4_t r, simde_float16x4_t a, simde_float16x4_t b, const int lane)
     SIMDE_REQUIRE_CONSTANT_RANGE(lane, 0, 1)
 {
-  simde_float32x4_private r_ = simde_float32x4_to_private(simde_vcvt_f32_f16(r)),
-                          a_ = simde_float32x4_to_private(simde_vcvt_f32_f16(a)),
-                          b_ = simde_float32x4_to_private(
-                              simde_vcvt_f32_f16(simde_vdup_n_f16(simde_float16x4_to_private(b).values[lane])));
-  #if defined(SIMDE_SHUFFLE_VECTOR_) && !defined(SIMDE_BUG_GCC_100760) &&                                                     \
-      ((SIMDE_FLOAT16_API == SIMDE_FLOAT16_API_FP16) || (SIMDE_FLOAT16_API == SIMDE_FLOAT16_API_FLOAT16))
-    a_.values = SIMDE_SHUFFLE_VECTOR_(16, 4, a_.values, a_.values, 1, 1, 3, 3);
-    b_.values = SIMDE_SHUFFLE_VECTOR_(16, 4, -b_.values, b_.values, 1, 4, 3, 6);
-    r_.values += b_.values * a_.values;
+  #if defined(SIMDE_RISCV_V_NATIVE) && SIMDE_ARCH_RISCV_ZVFH
+      simde_float16x4_private r_ = simde_float16x4_to_private(r),
+                              a_ = simde_float16x4_to_private(a),
+                              b_ = simde_vdup_n_f16(simde_float16x4_to_private(b).values[lane]);
+      uint16_t idx1[4] = {1, 1, 3, 3};
+      uint16_t idx2[4] = {1, 4, 3, 6};
+      vfloat16m1_t op1 = __riscv_vrgather_vv_f16m1(__riscv_vslideup_vx_f16m1( \
+        a_.sv64, a_.sv64, 4, 8), __riscv_vle16_v_u16m1(idx1, 4), 4);
+      vfloat16m1_t op2 = __riscv_vrgather_vv_f16m1(__riscv_vslideup_vx_f16m1( \
+        __riscv_vfneg_v_f16m1(b_.sv64, 4), b_.sv64, 4, 8), __riscv_vle16_v_u16m1(idx2, 4), 4);
+      r_.sv64 = __riscv_vfmacc_vv_f16m1(r_.sv64, op1, op2, 4);
+      return simde_float16x4_from_private(r_);
   #else
-    SIMDE_VECTORIZE
-    for (size_t i = 0; i < (sizeof(r_.values) / (2 * sizeof(r_.values[0]))); i++)
-    {
-      r_.values[2 * i] += -(b_.values[2 * i + 1]) * a_.values[2 * i + 1];
-      r_.values[2 * i + 1] += b_.values[2 * i] * a_.values[2 * i + 1];
-    }
+    simde_float32x4_private r_ = simde_float32x4_to_private(simde_vcvt_f32_f16(r)),
+                            a_ = simde_float32x4_to_private(simde_vcvt_f32_f16(a)),
+                            b_ = simde_float32x4_to_private(
+                                simde_vcvt_f32_f16(simde_vdup_n_f16(simde_float16x4_to_private(b).values[lane])));
+    #if defined(SIMDE_SHUFFLE_VECTOR_) && !defined(SIMDE_BUG_GCC_100760) &&                                                     \
+        ((SIMDE_FLOAT16_API == SIMDE_FLOAT16_API_FP16) || (SIMDE_FLOAT16_API == SIMDE_FLOAT16_API_FLOAT16))
+      a_.values = SIMDE_SHUFFLE_VECTOR_(32, 16, a_.values, a_.values, 1, 1, 3, 3);
+      b_.values = SIMDE_SHUFFLE_VECTOR_(32, 16, -b_.values, b_.values, 1, 4, 3, 6);
+      r_.values += b_.values * a_.values;
+    #else
+      SIMDE_VECTORIZE
+      for (size_t i = 0; i < (sizeof(r_.values) / (2 * sizeof(r_.values[0]))); i++)
+      {
+        r_.values[2 * i] += -(b_.values[2 * i + 1]) * a_.values[2 * i + 1];
+        r_.values[2 * i + 1] += b_.values[2 * i] * a_.values[2 * i + 1];
+      }
+    #endif
+    return simde_vcvt_f16_f32(simde_float32x4_from_private(r_));
   #endif
-  return simde_vcvt_f16_f32(simde_float32x4_from_private(r_));
 }
 #if defined(SIMDE_ARM_NEON_A32V8_ENABLE_NATIVE_ALIASES)
   #undef vcmla_rot90_lane_f16
@@ -45880,7 +47710,15 @@ simde_float32x2_t simde_vcmla_rot90_lane_f32(simde_float32x2_t r, simde_float32x
 {
   simde_float32x2_private r_ = simde_float32x2_to_private(r), a_ = simde_float32x2_to_private(a),
                           b_ = simde_float32x2_to_private(simde_vdup_n_f32(simde_float32x2_to_private(b).values[lane]));
-  #if defined(SIMDE_SHUFFLE_VECTOR_) && !defined(SIMDE_BUG_GCC_100760)
+  #if defined(SIMDE_RISCV_V_NATIVE)
+      uint32_t idx1[2] = {1, 1};
+      uint32_t idx2[2] = {1, 2};
+      vfloat32m1_t op1 = __riscv_vrgather_vv_f32m1(__riscv_vslideup_vx_f32m1( \
+        a_.sv64, a_.sv64, 2, 4), __riscv_vle32_v_u32m1(idx1, 2), 2);
+      vfloat32m1_t op2 = __riscv_vrgather_vv_f32m1(__riscv_vslideup_vx_f32m1( \
+        __riscv_vfneg_v_f32m1(b_.sv64, 2), b_.sv64, 2, 4), __riscv_vle32_v_u32m1(idx2, 2), 2);
+      r_.sv64 = __riscv_vfmacc_vv_f32m1(r_.sv64, op1, op2, 2);
+  #elif defined(SIMDE_SHUFFLE_VECTOR_) && !defined(SIMDE_BUG_GCC_100760)
     a_.values = SIMDE_SHUFFLE_VECTOR_(32, 8, a_.values, a_.values, 1, 1);
     b_.values = SIMDE_SHUFFLE_VECTOR_(32, 8, -b_.values, b_.values, 1, 2);
     r_.values += b_.values * a_.values;
@@ -45908,24 +47746,38 @@ SIMDE_FUNCTION_ATTRIBUTES
 simde_float16x4_t simde_vcmla_rot90_laneq_f16(simde_float16x4_t r, simde_float16x4_t a, simde_float16x8_t b, const int lane)
     SIMDE_REQUIRE_CONSTANT_RANGE(lane, 0, 1)
 {
-  simde_float32x4_private r_ = simde_float32x4_to_private(simde_vcvt_f32_f16(r)),
-                          a_ = simde_float32x4_to_private(simde_vcvt_f32_f16(a)),
-                          b_ = simde_float32x4_to_private(
-                              simde_vcvt_f32_f16(simde_vdup_n_f16(simde_float16x8_to_private(b).values[lane])));
-  #if defined(SIMDE_SHUFFLE_VECTOR_) && !defined(SIMDE_BUG_GCC_100760) &&                                                     \
-      ((SIMDE_FLOAT16_API == SIMDE_FLOAT16_API_FP16) || (SIMDE_FLOAT16_API == SIMDE_FLOAT16_API_FLOAT16))
-    a_.values = SIMDE_SHUFFLE_VECTOR_(16, 4, a_.values, a_.values, 1, 1, 3, 3);
-    b_.values = SIMDE_SHUFFLE_VECTOR_(16, 4, -b_.values, b_.values, 1, 4, 3, 6);
-    r_.values += b_.values * a_.values;
+  #if defined(SIMDE_RISCV_V_NATIVE) && SIMDE_ARCH_RISCV_ZVFH
+      simde_float16x4_private r_ = simde_float16x4_to_private(r),
+                              a_ = simde_float16x4_to_private(a),
+                              b_ = simde_vdup_n_f16(simde_float16x8_to_private(b).values[lane]);
+      uint16_t idx1[4] = {1, 1, 3, 3};
+      uint16_t idx2[4] = {1, 4, 3, 6};
+      vfloat16m1_t op1 = __riscv_vrgather_vv_f16m1(__riscv_vslideup_vx_f16m1( \
+        a_.sv64, a_.sv64, 4, 8), __riscv_vle16_v_u16m1(idx1, 4), 4);
+      vfloat16m1_t op2 = __riscv_vrgather_vv_f16m1(__riscv_vslideup_vx_f16m1( \
+        __riscv_vfneg_v_f16m1(b_.sv64, 4), b_.sv64, 4, 8), __riscv_vle16_v_u16m1(idx2, 4), 4);
+      r_.sv64 = __riscv_vfmacc_vv_f16m1(r_.sv64, op1, op2, 4);
+      return simde_float16x4_from_private(r_);
   #else
-    SIMDE_VECTORIZE
-    for (size_t i = 0; i < (sizeof(r_.values) / (2 * sizeof(r_.values[0]))); i++)
-    {
-      r_.values[2 * i] += -(b_.values[2 * i + 1]) * a_.values[2 * i + 1];
-      r_.values[2 * i + 1] += b_.values[2 * i] * a_.values[2 * i + 1];
-    }
+    simde_float32x4_private r_ = simde_float32x4_to_private(simde_vcvt_f32_f16(r)),
+                            a_ = simde_float32x4_to_private(simde_vcvt_f32_f16(a)),
+                            b_ = simde_float32x4_to_private(
+                                simde_vcvt_f32_f16(simde_vdup_n_f16(simde_float16x8_to_private(b).values[lane])));
+    #if defined(SIMDE_SHUFFLE_VECTOR_) && !defined(SIMDE_BUG_GCC_100760) &&                                                     \
+        ((SIMDE_FLOAT16_API == SIMDE_FLOAT16_API_FP16) || (SIMDE_FLOAT16_API == SIMDE_FLOAT16_API_FLOAT16))
+      a_.values = SIMDE_SHUFFLE_VECTOR_(32, 16, a_.values, a_.values, 1, 1, 3, 3);
+      b_.values = SIMDE_SHUFFLE_VECTOR_(32, 16, -b_.values, b_.values, 1, 4, 3, 6);
+      r_.values += b_.values * a_.values;
+    #else
+      SIMDE_VECTORIZE
+      for (size_t i = 0; i < (sizeof(r_.values) / (2 * sizeof(r_.values[0]))); i++)
+      {
+        r_.values[2 * i] += -(b_.values[2 * i + 1]) * a_.values[2 * i + 1];
+        r_.values[2 * i + 1] += b_.values[2 * i] * a_.values[2 * i + 1];
+      }
+    #endif
+    return simde_vcvt_f16_f32(simde_float32x4_from_private(r_));
   #endif
-  return simde_vcvt_f16_f32(simde_float32x4_from_private(r_));
 }
 #if defined(SIMDE_ARM_NEON_A32V8_ENABLE_NATIVE_ALIASES)
   #undef vcmla_rot90_laneq_f16
@@ -45944,7 +47796,15 @@ simde_float32x2_t simde_vcmla_rot90_laneq_f32(simde_float32x2_t r, simde_float32
   simde_float32x2_private r_ = simde_float32x2_to_private(r), a_ = simde_float32x2_to_private(a),
                           b_ = simde_float32x2_to_private(simde_vdup_n_f32(simde_float32x4_to_private(b).values[lane]));
 
-  #if defined(SIMDE_SHUFFLE_VECTOR_) && !defined(SIMDE_BUG_GCC_100760)
+  #if defined(SIMDE_RISCV_V_NATIVE)
+      uint32_t idx1[2] = {1, 1};
+      uint32_t idx2[2] = {1, 2};
+      vfloat32m1_t op1 = __riscv_vrgather_vv_f32m1(__riscv_vslideup_vx_f32m1( \
+        a_.sv64, a_.sv64, 2, 4), __riscv_vle32_v_u32m1(idx1, 2), 2);
+      vfloat32m1_t op2 = __riscv_vrgather_vv_f32m1(__riscv_vslideup_vx_f32m1( \
+        __riscv_vfneg_v_f32m1(b_.sv64, 2), b_.sv64, 2, 4), __riscv_vle32_v_u32m1(idx2, 2), 2);
+      r_.sv64 = __riscv_vfmacc_vv_f32m1(r_.sv64, op1, op2, 2);
+  #elif defined(SIMDE_SHUFFLE_VECTOR_) && !defined(SIMDE_BUG_GCC_100760)
     a_.values = SIMDE_SHUFFLE_VECTOR_(32, 8, a_.values, a_.values, 1, 1);
     b_.values = SIMDE_SHUFFLE_VECTOR_(32, 8, -b_.values, b_.values, 1, 2);
     r_.values += b_.values * a_.values;
@@ -45972,31 +47832,47 @@ SIMDE_FUNCTION_ATTRIBUTES
 simde_float16x8_t simde_vcmlaq_rot90_lane_f16(simde_float16x8_t r, simde_float16x8_t a, simde_float16x4_t b, const int lane)
     SIMDE_REQUIRE_CONSTANT_RANGE(lane, 0, 1)
 {
-  simde_float32x4_private r_low = simde_float32x4_to_private(simde_vcvt_f32_f16(simde_vget_low_f16(r))),
-                          a_low = simde_float32x4_to_private(simde_vcvt_f32_f16(simde_vget_low_f16(a))),
-                          r_high = simde_float32x4_to_private(simde_vcvt_f32_f16(simde_vget_high_f16(r))),
-                          a_high = simde_float32x4_to_private(simde_vcvt_f32_f16(simde_vget_high_f16(a))),
-                          b_ = simde_float32x4_to_private(
-                              simde_vcvt_f32_f16(simde_vdup_n_f16(simde_float16x4_to_private(b).values[lane])));
-  #if defined(SIMDE_SHUFFLE_VECTOR_) && !defined(SIMDE_BUG_GCC_100760) &&                                                     \
-      ((SIMDE_FLOAT16_API == SIMDE_FLOAT16_API_FP16) || (SIMDE_FLOAT16_API == SIMDE_FLOAT16_API_FLOAT16))
-    a_low.values = SIMDE_SHUFFLE_VECTOR_(16, 4, a_low.values, a_low.values, 1, 1, 3, 3);
-    a_high.values = SIMDE_SHUFFLE_VECTOR_(16, 4, a_high.values, a_high.values, 1, 1, 3, 3);
-    b_.values = SIMDE_SHUFFLE_VECTOR_(16, 4, -b_.values, b_.values, 1, 4, 3, 6);
-    r_low.values += b_.values * a_low.values;
-    r_high.values += b_.values * a_high.values;
+  #if defined(SIMDE_RISCV_V_NATIVE) && SIMDE_ARCH_RISCV_ZVFH
+      simde_float16x8_private r_ = simde_float16x8_to_private(r),
+                              a_ = simde_float16x8_to_private(a),
+                              b_ = simde_vdupq_n_f16(simde_float16x4_to_private(b).values[lane]);
+      uint16_t idx1[8] = {1, 1, 3, 3, 5, 5, 7, 7};
+      uint16_t idx2[8] = {1, 8, 3, 10, 5, 12, 7, 14};
+      vfloat16m2_t a_tmp = __riscv_vlmul_ext_v_f16m1_f16m2 (a_.sv128);
+      vfloat16m2_t b_tmp = __riscv_vlmul_ext_v_f16m1_f16m2 (b_.sv128);
+      vfloat16m1_t op1 = __riscv_vlmul_trunc_v_f16m2_f16m1(__riscv_vrgather_vv_f16m2(__riscv_vslideup_vx_f16m2( \
+        a_tmp, a_tmp, 8, 16), __riscv_vle16_v_u16m2(idx1, 8), 8));
+      vfloat16m1_t op2 = __riscv_vlmul_trunc_v_f16m2_f16m1(__riscv_vrgather_vv_f16m2(__riscv_vslideup_vx_f16m2( \
+        __riscv_vfneg_v_f16m2(b_tmp, 8), b_tmp, 8, 16), __riscv_vle16_v_u16m2(idx2, 8), 8));
+      r_.sv128 = __riscv_vfmacc_vv_f16m1(r_.sv128, op1, op2, 8);
+      return simde_float16x8_from_private(r_);
   #else
-    SIMDE_VECTORIZE
-    for (size_t i = 0; i < (sizeof(r_low.values) / (2 * sizeof(r_low.values[0]))); i++)
-    {
-      r_low.values[2 * i] += -(b_.values[2 * i + 1]) * a_low.values[2 * i + 1];
-      r_low.values[2 * i + 1] += b_.values[2 * i] * a_low.values[2 * i + 1];
-      r_high.values[2 * i] += -(b_.values[2 * i + 1]) * a_high.values[2 * i + 1];
-      r_high.values[2 * i + 1] += b_.values[2 * i] * a_high.values[2 * i + 1];
-    }
+    simde_float32x4_private r_low = simde_float32x4_to_private(simde_vcvt_f32_f16(simde_vget_low_f16(r))),
+                            a_low = simde_float32x4_to_private(simde_vcvt_f32_f16(simde_vget_low_f16(a))),
+                            r_high = simde_float32x4_to_private(simde_vcvt_f32_f16(simde_vget_high_f16(r))),
+                            a_high = simde_float32x4_to_private(simde_vcvt_f32_f16(simde_vget_high_f16(a))),
+                            b_ = simde_float32x4_to_private(
+                                simde_vcvt_f32_f16(simde_vdup_n_f16(simde_float16x4_to_private(b).values[lane])));
+    #if defined(SIMDE_SHUFFLE_VECTOR_) && !defined(SIMDE_BUG_GCC_100760) &&                                                     \
+        ((SIMDE_FLOAT16_API == SIMDE_FLOAT16_API_FP16) || (SIMDE_FLOAT16_API == SIMDE_FLOAT16_API_FLOAT16))
+      a_low.values = SIMDE_SHUFFLE_VECTOR_(32, 16, a_low.values, a_low.values, 1, 1, 3, 3);
+      a_high.values = SIMDE_SHUFFLE_VECTOR_(32, 16, a_high.values, a_high.values, 1, 1, 3, 3);
+      b_.values = SIMDE_SHUFFLE_VECTOR_(32, 16, -b_.values, b_.values, 1, 4, 3, 6);
+      r_low.values += b_.values * a_low.values;
+      r_high.values += b_.values * a_high.values;
+    #else
+      SIMDE_VECTORIZE
+      for (size_t i = 0; i < (sizeof(r_low.values) / (2 * sizeof(r_low.values[0]))); i++)
+      {
+        r_low.values[2 * i] += -(b_.values[2 * i + 1]) * a_low.values[2 * i + 1];
+        r_low.values[2 * i + 1] += b_.values[2 * i] * a_low.values[2 * i + 1];
+        r_high.values[2 * i] += -(b_.values[2 * i + 1]) * a_high.values[2 * i + 1];
+        r_high.values[2 * i + 1] += b_.values[2 * i] * a_high.values[2 * i + 1];
+      }
+    #endif
+    return simde_vcombine_f16(simde_vcvt_f16_f32(simde_float32x4_from_private(r_low)),
+                              simde_vcvt_f16_f32(simde_float32x4_from_private(r_high)));
   #endif
-  return simde_vcombine_f16(simde_vcvt_f16_f32(simde_float32x4_from_private(r_low)),
-                            simde_vcvt_f16_f32(simde_float32x4_from_private(r_high)));
 }
 #if defined(SIMDE_ARM_NEON_A32V8_ENABLE_NATIVE_ALIASES)
   #undef vcmlaq_rot90_lane_f16
@@ -46014,7 +47890,17 @@ simde_float32x4_t simde_vcmlaq_rot90_lane_f32(simde_float32x4_t r, simde_float32
 {
   simde_float32x4_private r_ = simde_float32x4_to_private(r), a_ = simde_float32x4_to_private(a),
                           b_ = simde_float32x4_to_private(simde_vdupq_n_f32(simde_float32x2_to_private(b).values[lane]));
-  #if defined(SIMDE_SHUFFLE_VECTOR_) && !defined(SIMDE_BUG_GCC_100760)
+  #if defined(SIMDE_RISCV_V_NATIVE)
+      uint32_t idx1[4] = {1, 1, 3, 3};
+      uint32_t idx2[4] = {1, 4, 3, 6};
+      vfloat32m2_t a_tmp = __riscv_vlmul_ext_v_f32m1_f32m2 (a_.sv128);
+      vfloat32m2_t b_tmp = __riscv_vlmul_ext_v_f32m1_f32m2 (b_.sv128);
+      vfloat32m1_t op1 = __riscv_vlmul_trunc_v_f32m2_f32m1(__riscv_vrgather_vv_f32m2(__riscv_vslideup_vx_f32m2( \
+        a_tmp, a_tmp, 4, 8), __riscv_vle32_v_u32m2(idx1, 4), 4));
+      vfloat32m1_t op2 = __riscv_vlmul_trunc_v_f32m2_f32m1(__riscv_vrgather_vv_f32m2(__riscv_vslideup_vx_f32m2( \
+        __riscv_vfneg_v_f32m2(b_tmp, 4), b_tmp, 4, 8), __riscv_vle32_v_u32m2(idx2, 4), 4));
+      r_.sv128 = __riscv_vfmacc_vv_f32m1(r_.sv128, op1, op2, 4);
+  #elif defined(SIMDE_SHUFFLE_VECTOR_) && !defined(SIMDE_BUG_GCC_100760)
     a_.values = SIMDE_SHUFFLE_VECTOR_(32, 16, a_.values, a_.values, 1, 1, 3, 3);
     b_.values = SIMDE_SHUFFLE_VECTOR_(32, 16, -b_.values, b_.values, 1, 4, 3, 6);
     r_.values += b_.values * a_.values;
@@ -46042,31 +47928,47 @@ SIMDE_FUNCTION_ATTRIBUTES
 simde_float16x8_t simde_vcmlaq_rot90_laneq_f16(simde_float16x8_t r, simde_float16x8_t a, simde_float16x8_t b, const int lane)
     SIMDE_REQUIRE_CONSTANT_RANGE(lane, 0, 3)
 {
-  simde_float32x4_private r_low = simde_float32x4_to_private(simde_vcvt_f32_f16(simde_vget_low_f16(r))),
-                          a_low = simde_float32x4_to_private(simde_vcvt_f32_f16(simde_vget_low_f16(a))),
-                          r_high = simde_float32x4_to_private(simde_vcvt_f32_f16(simde_vget_high_f16(r))),
-                          a_high = simde_float32x4_to_private(simde_vcvt_f32_f16(simde_vget_high_f16(a))),
-                          b_ = simde_float32x4_to_private(
-                              simde_vcvt_f32_f16(simde_vdup_n_f16(simde_float16x8_to_private(b).values[lane])));
-  #if defined(SIMDE_SHUFFLE_VECTOR_) &&                                                                                       \
-      ((SIMDE_FLOAT16_API == SIMDE_FLOAT16_API_FP16) || (SIMDE_FLOAT16_API == SIMDE_FLOAT16_API_FLOAT16))
-    a_low.values = SIMDE_SHUFFLE_VECTOR_(16, 4, a_low.values, a_low.values, 1, 1, 3, 3);
-    a_high.values = SIMDE_SHUFFLE_VECTOR_(16, 4, a_high.values, a_high.values, 1, 1, 3, 3);
-    b_.values = SIMDE_SHUFFLE_VECTOR_(16, 4, -b_.values, b_.values, 1, 4, 3, 6);
-    r_low.values += b_.values * a_low.values;
-    r_high.values += b_.values * a_high.values;
+  #if defined(SIMDE_RISCV_V_NATIVE) && SIMDE_ARCH_RISCV_ZVFH && (SIMDE_NATURAL_VECTOR_SIZE > 128)
+      simde_float16x8_private r_ = simde_float16x8_to_private(r),
+                              a_ = simde_float16x8_to_private(a),
+                              b_ = simde_vdupq_n_f16(simde_float16x8_to_private(b).values[lane]);
+      uint16_t idx1[8] = {1, 1, 3, 3, 5, 5, 7, 7};
+      uint16_t idx2[8] = {1, 8, 3, 10, 5, 12, 7, 14};
+      vfloat16m2_t a_tmp = __riscv_vlmul_ext_v_f16m1_f16m2 (a_.sv128);
+      vfloat16m2_t b_tmp = __riscv_vlmul_ext_v_f16m1_f16m2 (b_.sv128);
+      vfloat16m1_t op1 = __riscv_vlmul_trunc_v_f16m2_f16m1(__riscv_vrgather_vv_f16m2(__riscv_vslideup_vx_f16m2( \
+        a_tmp, a_tmp, 8, 16), __riscv_vle16_v_u16m2(idx1, 8), 8));
+      vfloat16m1_t op2 = __riscv_vlmul_trunc_v_f16m2_f16m1(__riscv_vrgather_vv_f16m2(__riscv_vslideup_vx_f16m2( \
+        __riscv_vfneg_v_f16m2(b_tmp, 8), b_tmp, 8, 16), __riscv_vle16_v_u16m2(idx2, 8), 8));
+      r_.sv128 = __riscv_vfmacc_vv_f16m1(r_.sv128, op1, op2, 8);
+      return simde_float16x8_from_private(r_);
   #else
-    SIMDE_VECTORIZE
-    for (size_t i = 0; i < (sizeof(r_low.values) / (2 * sizeof(r_low.values[0]))); i++)
-    {
-      r_low.values[2 * i] += -(b_.values[2 * i + 1]) * a_low.values[2 * i + 1];
-      r_low.values[2 * i + 1] += b_.values[2 * i] * a_low.values[2 * i + 1];
-      r_high.values[2 * i] += -(b_.values[2 * i + 1]) * a_high.values[2 * i + 1];
-      r_high.values[2 * i + 1] += b_.values[2 * i] * a_high.values[2 * i + 1];
-    }
+    simde_float32x4_private r_low = simde_float32x4_to_private(simde_vcvt_f32_f16(simde_vget_low_f16(r))),
+                            a_low = simde_float32x4_to_private(simde_vcvt_f32_f16(simde_vget_low_f16(a))),
+                            r_high = simde_float32x4_to_private(simde_vcvt_f32_f16(simde_vget_high_f16(r))),
+                            a_high = simde_float32x4_to_private(simde_vcvt_f32_f16(simde_vget_high_f16(a))),
+                            b_ = simde_float32x4_to_private(
+                                simde_vcvt_f32_f16(simde_vdup_n_f16(simde_float16x8_to_private(b).values[lane])));
+    #if defined(SIMDE_SHUFFLE_VECTOR_) &&                                                                                       \
+        ((SIMDE_FLOAT16_API == SIMDE_FLOAT16_API_FP16) || (SIMDE_FLOAT16_API == SIMDE_FLOAT16_API_FLOAT16))
+      a_low.values = SIMDE_SHUFFLE_VECTOR_(32, 16, a_low.values, a_low.values, 1, 1, 3, 3);
+      a_high.values = SIMDE_SHUFFLE_VECTOR_(32, 16, a_high.values, a_high.values, 1, 1, 3, 3);
+      b_.values = SIMDE_SHUFFLE_VECTOR_(32, 16, -b_.values, b_.values, 1, 4, 3, 6);
+      r_low.values += b_.values * a_low.values;
+      r_high.values += b_.values * a_high.values;
+    #else
+      SIMDE_VECTORIZE
+      for (size_t i = 0; i < (sizeof(r_low.values) / (2 * sizeof(r_low.values[0]))); i++)
+      {
+        r_low.values[2 * i] += -(b_.values[2 * i + 1]) * a_low.values[2 * i + 1];
+        r_low.values[2 * i + 1] += b_.values[2 * i] * a_low.values[2 * i + 1];
+        r_high.values[2 * i] += -(b_.values[2 * i + 1]) * a_high.values[2 * i + 1];
+        r_high.values[2 * i + 1] += b_.values[2 * i] * a_high.values[2 * i + 1];
+      }
+    #endif
+    return simde_vcombine_f16(simde_vcvt_f16_f32(simde_float32x4_from_private(r_low)),
+                              simde_vcvt_f16_f32(simde_float32x4_from_private(r_high)));
   #endif
-  return simde_vcombine_f16(simde_vcvt_f16_f32(simde_float32x4_from_private(r_low)),
-                            simde_vcvt_f16_f32(simde_float32x4_from_private(r_high)));
 }
 #if defined(SIMDE_ARM_NEON_A32V8_ENABLE_NATIVE_ALIASES)
   #undef vcmlaq_rot90_laneq_f16
@@ -46084,7 +47986,17 @@ simde_float32x4_t simde_vcmlaq_rot90_laneq_f32(simde_float32x4_t r, simde_float3
 {
   simde_float32x4_private r_ = simde_float32x4_to_private(r), a_ = simde_float32x4_to_private(a),
                           b_ = simde_float32x4_to_private(simde_vdupq_n_f32(simde_float32x4_to_private(b).values[lane]));
-  #if defined(SIMDE_SHUFFLE_VECTOR_) && !defined(SIMDE_BUG_GCC_100760)
+  #if defined(SIMDE_RISCV_V_NATIVE)
+      uint32_t idx1[4] = {1, 1, 3, 3};
+      uint32_t idx2[4] = {1, 4, 3, 6};
+      vfloat32m2_t a_tmp = __riscv_vlmul_ext_v_f32m1_f32m2 (a_.sv128);
+      vfloat32m2_t b_tmp = __riscv_vlmul_ext_v_f32m1_f32m2 (b_.sv128);
+      vfloat32m1_t op1 = __riscv_vlmul_trunc_v_f32m2_f32m1(__riscv_vrgather_vv_f32m2(__riscv_vslideup_vx_f32m2( \
+        a_tmp, a_tmp, 4, 8), __riscv_vle32_v_u32m2(idx1, 4), 4));
+      vfloat32m1_t op2 = __riscv_vlmul_trunc_v_f32m2_f32m1(__riscv_vrgather_vv_f32m2(__riscv_vslideup_vx_f32m2( \
+        __riscv_vfneg_v_f32m2(b_tmp, 4), b_tmp, 4, 8), __riscv_vle32_v_u32m2(idx2, 4), 4));
+      r_.sv128 = __riscv_vfmacc_vv_f32m1(r_.sv128, op1, op2, 4);
+  #elif defined(SIMDE_SHUFFLE_VECTOR_) && !defined(SIMDE_BUG_GCC_100760)
     a_.values = SIMDE_SHUFFLE_VECTOR_(32, 16, a_.values, a_.values, 1, 1, 3, 3);
     b_.values = SIMDE_SHUFFLE_VECTOR_(32, 16, -b_.values, b_.values, 1, 4, 3, 6);
     r_.values += b_.values * a_.values;
@@ -46113,7 +48025,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_CMLA_ROT90_LANE_H) */
 /* :: End simde/arm/neon/cmla_rot90_lane.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/cnt.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -46140,15 +48052,16 @@ HEDLEY_DIAGNOSTIC_POP
  * Copyright:
  *   2020      Evan Nemerson <evan@nemerson.com>
  *   2023      Yi-Yen Chung <eric681@andestech.com> (Copyright owned by Andes Technology)
+ *   2023      Ju-Hung Li <jhlee@pllab.cs.nthu.edu.tw> (Copyright owned by NTHU pllab)
  */
 
 #if !defined(SIMDE_ARM_NEON_CNT_H)
 #define SIMDE_ARM_NEON_CNT_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 #include <limits.h>
 
 HEDLEY_DIAGNOSTIC_PUSH
@@ -46174,10 +48087,24 @@ simde_vcnt_s8(simde_int8x8_t a) {
       r_,
       a_ = simde_int8x8_to_private(a);
 
-    SIMDE_VECTORIZE
-    for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
-      r_.values[i] = HEDLEY_STATIC_CAST(int8_t, simde_x_arm_neon_cntb(HEDLEY_STATIC_CAST(uint8_t, a_.values[i])));
-    }
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      vuint8m1_t p = __riscv_vreinterpret_v_i8m1_u8m1(a_.sv64);
+      vuint8m1_t tmp = __riscv_vand_vv_u8m1(__riscv_vsrl_vx_u8m1(p , 1 , 8) , __riscv_vmv_v_x_u8m1(0x55 , 8) , 8);
+      p = __riscv_vsub_vv_u8m1(p , tmp , 8);
+      tmp = p;
+      p = __riscv_vand_vv_u8m1(p , __riscv_vmv_v_x_u8m1(0x33 , 8) , 8);
+      tmp = __riscv_vand_vv_u8m1(__riscv_vsrl_vx_u8m1(tmp , 2 , 8) , __riscv_vmv_v_x_u8m1(0x33 , 8) , 8);
+      p = __riscv_vadd_vv_u8m1(p , tmp , 8);
+      tmp = __riscv_vsrl_vx_u8m1(p, 4 , 8);
+      p = __riscv_vadd_vv_u8m1(p , tmp , 8);
+      p = __riscv_vand_vv_u8m1(p , __riscv_vmv_v_x_u8m1(0xf , 8) , 8);
+      r_.sv64 = __riscv_vreinterpret_v_u8m1_i8m1(p);
+    #else
+      SIMDE_VECTORIZE
+      for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
+        r_.values[i] = HEDLEY_STATIC_CAST(int8_t, simde_x_arm_neon_cntb(HEDLEY_STATIC_CAST(uint8_t, a_.values[i])));
+      }
+    #endif
 
     return simde_int8x8_from_private(r_);
   #endif
@@ -46259,6 +48186,16 @@ simde_vcntq_s8(simde_int8x16_t a) {
       tmp = _mm_srli_epi16(a_.m128i, 4);
       a_.m128i = _mm_add_epi8(a_.m128i, tmp);
       r_.m128i = _mm_and_si128(a_.m128i, _mm_set1_epi8(0x0f));
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      vint8m1_t tmp = __riscv_vand_vv_i8m1(__riscv_vsra_vx_i8m1(a_.sv128 , 1 , 16) , __riscv_vmv_v_x_i8m1(0x55 , 16) , 16);
+      a_.sv128 = __riscv_vsub_vv_i8m1(a_.sv128 , tmp , 16);
+      tmp = a_.sv128;
+      a_.sv128 = __riscv_vand_vv_i8m1(a_.sv128 , __riscv_vmv_v_x_i8m1(0x33 , 16) , 16);
+      tmp = __riscv_vand_vv_i8m1(__riscv_vsra_vx_i8m1(tmp , 2 , 16) , __riscv_vmv_v_x_i8m1(0x33 , 16) , 16);
+      a_.sv128 = __riscv_vadd_vv_i8m1(a_.sv128 , tmp , 16);
+      tmp = __riscv_vsra_vx_i8m1(a_.sv128, 4 , 16);
+      a_.sv128 = __riscv_vadd_vv_i8m1(a_.sv128 , tmp , 16);
+      r_.sv128 = __riscv_vand_vv_i8m1(a_.sv128 , __riscv_vmv_v_x_i8m1(0xf , 16) , 16);
     #else
       SIMDE_VECTORIZE
       for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
@@ -46318,9 +48255,9 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_CNT_H) */
 /* :: End simde/arm/neon/cnt.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/cvt_n.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -46352,9 +48289,9 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_CVT_N_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -46366,7 +48303,7 @@ simde_vcvth_n_u16_f16(simde_float16_t a, const int n)
     SIMDE_REQUIRE_CONSTANT_RANGE(n, 1, 16) {
   return simde_vcvth_u16_f16(
       simde_float16_from_float32(
-      simde_float16_to_float32(a) * HEDLEY_STATIC_CAST(simde_float32_t, pow(2, n))));
+      simde_float16_to_float32(a) * HEDLEY_STATIC_CAST(simde_float32_t, simde_math_pow(2, n))));
 }
 #if defined(SIMDE_ARM_NEON_A64V8_NATIVE) && defined(SIMDE_ARM_NEON_FP16)
   #define simde_vcvth_n_u16_f16(a, n) vcvth_n_u16_f16(a, n)
@@ -46382,7 +48319,7 @@ simde_vcvth_n_f16_s16(int16_t a, const int n)
    SIMDE_REQUIRE_CONSTANT_RANGE(n, 1, 16) {
   return simde_float16_from_float32(
       HEDLEY_STATIC_CAST(simde_float32_t,
-      HEDLEY_STATIC_CAST(simde_float64_t, a) / pow(2, n)));
+      HEDLEY_STATIC_CAST(simde_float64_t, a) / simde_math_pow(2, n)));
 }
 #if defined(SIMDE_ARM_NEON_A64V8_NATIVE) && defined(SIMDE_ARM_NEON_FP16)
   #define simde_vcvth_n_f16_s16(a, n) vcvth_n_f16_s16(a, n)
@@ -46398,7 +48335,7 @@ simde_vcvth_n_f16_u16(uint16_t a, const int n)
    SIMDE_REQUIRE_CONSTANT_RANGE(n, 1, 16) {
   return simde_float16_from_float32(
       HEDLEY_STATIC_CAST(simde_float32_t,
-      HEDLEY_STATIC_CAST(simde_float64_t, a) / pow(2, n)));
+      HEDLEY_STATIC_CAST(simde_float64_t, a) / simde_math_pow(2, n)));
 }
 #if defined(SIMDE_ARM_NEON_A64V8_NATIVE) && defined(SIMDE_ARM_NEON_FP16)
   #define simde_vcvth_n_f16_u16(a, n) vcvth_n_f16_u16(a, n)
@@ -46412,7 +48349,7 @@ SIMDE_FUNCTION_ATTRIBUTES
 int32_t
 simde_vcvts_n_s32_f32(simde_float32_t a, const int n)
    SIMDE_REQUIRE_CONSTANT_RANGE(n, 1, 32) {
-  return simde_vcvts_s32_f32(a * HEDLEY_STATIC_CAST(simde_float32_t, pow(2, n)));
+  return simde_vcvts_s32_f32(a * HEDLEY_STATIC_CAST(simde_float32_t, simde_math_pow(2, n)));
 }
 #if defined(SIMDE_ARM_NEON_A64V8_NATIVE)
   #define simde_vcvts_n_s32_f32(a, n) vcvts_n_s32_f32(a, n)
@@ -46426,7 +48363,7 @@ SIMDE_FUNCTION_ATTRIBUTES
 uint32_t
 simde_vcvts_n_u32_f32(simde_float32_t a, const int n)
    SIMDE_REQUIRE_CONSTANT_RANGE(n, 1, 32) {
-  return simde_vcvts_u32_f32(a * HEDLEY_STATIC_CAST(simde_float32_t, pow(2, n)));
+  return simde_vcvts_u32_f32(a * HEDLEY_STATIC_CAST(simde_float32_t, simde_math_pow(2, n)));
 }
 #if defined(SIMDE_ARM_NEON_A64V8_NATIVE)
   #define simde_vcvts_n_u32_f32(a, n) vcvts_n_u32_f32(a, n)
@@ -46441,7 +48378,7 @@ simde_float32_t
 simde_vcvts_n_f32_s32(int32_t a, const int n)
    SIMDE_REQUIRE_CONSTANT_RANGE(n, 1, 32) {
   return HEDLEY_STATIC_CAST(simde_float32_t,
-      HEDLEY_STATIC_CAST(simde_float64_t, a) / pow(2, n));
+      HEDLEY_STATIC_CAST(simde_float64_t, a) / simde_math_pow(2, n));
 }
 #if defined(SIMDE_ARM_NEON_A64V8_NATIVE)
   #define simde_vcvts_n_f32_s32(a, n) vcvts_n_f32_s32(a, n)
@@ -46456,7 +48393,7 @@ simde_float32_t
 simde_vcvts_n_f32_u32(uint32_t a, const int n)
    SIMDE_REQUIRE_CONSTANT_RANGE(n, 1, 32) {
   return HEDLEY_STATIC_CAST(simde_float32_t,
-      HEDLEY_STATIC_CAST(simde_float64_t, a) / pow(2, n));
+      HEDLEY_STATIC_CAST(simde_float64_t, a) / simde_math_pow(2, n));
 }
 #if defined(SIMDE_ARM_NEON_A64V8_NATIVE)
   #define simde_vcvts_n_f32_u32(a, n) vcvts_n_f32_u32(a, n)
@@ -46470,7 +48407,7 @@ SIMDE_FUNCTION_ATTRIBUTES
 int64_t
 simde_vcvtd_n_s64_f64(simde_float64_t a, const int n)
    SIMDE_REQUIRE_CONSTANT_RANGE(n, 1, 64) {
-  return simde_vcvtd_s64_f64(a * pow(2, n));
+  return simde_vcvtd_s64_f64(a * simde_math_pow(2, n));
 }
 #if defined(SIMDE_ARM_NEON_A64V8_NATIVE)
   #define simde_vcvtd_n_s64_f64(a, n) vcvtd_n_s64_f64(a, n)
@@ -46484,7 +48421,7 @@ SIMDE_FUNCTION_ATTRIBUTES
 uint64_t
 simde_vcvtd_n_u64_f64(simde_float64_t a, const int n)
    SIMDE_REQUIRE_CONSTANT_RANGE(n, 1, 64) {
-  return simde_vcvtd_u64_f64(a * pow(2, n));
+  return simde_vcvtd_u64_f64(a * simde_math_pow(2, n));
 }
 #if defined(SIMDE_ARM_NEON_A64V8_NATIVE)
   #define simde_vcvtd_n_u64_f64(a, n) vcvtd_n_u64_f64(a, n)
@@ -46498,7 +48435,7 @@ SIMDE_FUNCTION_ATTRIBUTES
 simde_float64_t
 simde_vcvtd_n_f64_s64(int64_t a, const int n)
    SIMDE_REQUIRE_CONSTANT_RANGE(n, 1, 64) {
-  return HEDLEY_STATIC_CAST(simde_float64_t, a) / pow(2, n);
+  return HEDLEY_STATIC_CAST(simde_float64_t, a) / simde_math_pow(2, n);
 }
 #if defined(SIMDE_ARM_NEON_A64V8_NATIVE)
   #define simde_vcvtd_n_f64_s64(a, n) vcvtd_n_f64_s64(a, n)
@@ -46512,7 +48449,7 @@ SIMDE_FUNCTION_ATTRIBUTES
 simde_float64_t
 simde_vcvtd_n_f64_u64(uint64_t a, const int n)
    SIMDE_REQUIRE_CONSTANT_RANGE(n, 1, 64) {
-  return HEDLEY_STATIC_CAST(simde_float64_t, a) / pow(2, n);
+  return HEDLEY_STATIC_CAST(simde_float64_t, a) / simde_math_pow(2, n);
 }
 #if defined(SIMDE_ARM_NEON_A64V8_NATIVE)
   #define simde_vcvtd_n_f64_u64(a, n) vcvtd_n_f64_u64(a, n)
@@ -46531,7 +48468,7 @@ simde_vcvt_n_s32_f32(simde_float32x2_t a, const int n)
 
   SIMDE_VECTORIZE
   for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
-    r_.values[i] = simde_vcvts_s32_f32(a_.values[i] * HEDLEY_STATIC_CAST(simde_float32_t, pow(2, n)));
+    r_.values[i] = simde_vcvts_s32_f32(a_.values[i] * HEDLEY_STATIC_CAST(simde_float32_t, simde_math_pow(2, n)));
   }
 
   return simde_int32x2_from_private(r_);
@@ -46553,7 +48490,7 @@ simde_vcvt_n_s64_f64(simde_float64x1_t a, const int n)
 
   SIMDE_VECTORIZE
   for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
-    r_.values[i] = simde_vcvtd_s64_f64(a_.values[i] * pow(2, n));
+    r_.values[i] = simde_vcvtd_s64_f64(a_.values[i] * simde_math_pow(2, n));
   }
 
   return simde_int64x1_from_private(r_);
@@ -46577,7 +48514,7 @@ simde_vcvt_n_u16_f16(simde_float16x4_t a, const int n)
   for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
     r_.values[i] = simde_vcvth_u16_f16(simde_float16_from_float32(
           simde_float16_to_float32(a_.values[i]) *
-          HEDLEY_STATIC_CAST(simde_float32_t, pow(2, n))));
+          HEDLEY_STATIC_CAST(simde_float32_t, simde_math_pow(2, n))));
   }
 
   return simde_uint16x4_from_private(r_);
@@ -46599,7 +48536,7 @@ simde_vcvt_n_u32_f32(simde_float32x2_t a, const int n)
 
   SIMDE_VECTORIZE
   for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
-    r_.values[i] = simde_vcvts_u32_f32(a_.values[i] * HEDLEY_STATIC_CAST(simde_float32_t, pow(2, n)));
+    r_.values[i] = simde_vcvts_u32_f32(a_.values[i] * HEDLEY_STATIC_CAST(simde_float32_t, simde_math_pow(2, n)));
   }
 
   return simde_uint32x2_from_private(r_);
@@ -46621,7 +48558,7 @@ simde_vcvt_n_u64_f64(simde_float64x1_t a, const int n)
 
   SIMDE_VECTORIZE
   for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
-    r_.values[i] = simde_vcvtd_u64_f64(a_.values[i] * pow(2, n));
+    r_.values[i] = simde_vcvtd_u64_f64(a_.values[i] * simde_math_pow(2, n));
   }
 
   return simde_uint64x1_from_private(r_);
@@ -46643,7 +48580,7 @@ simde_vcvtq_n_s32_f32(simde_float32x4_t a, const int n)
 
   SIMDE_VECTORIZE
   for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
-    r_.values[i] = simde_vcvts_s32_f32(a_.values[i] * HEDLEY_STATIC_CAST(simde_float32_t, pow(2, n)));
+    r_.values[i] = simde_vcvts_s32_f32(a_.values[i] * HEDLEY_STATIC_CAST(simde_float32_t, simde_math_pow(2, n)));
   }
 
   return simde_int32x4_from_private(r_);
@@ -46665,7 +48602,7 @@ simde_vcvtq_n_s64_f64(simde_float64x2_t a, const int n)
 
   SIMDE_VECTORIZE
   for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
-    r_.values[i] = simde_vcvtd_s64_f64(a_.values[i] * pow(2, n));
+    r_.values[i] = simde_vcvtd_s64_f64(a_.values[i] * simde_math_pow(2, n));
   }
 
   return simde_int64x2_from_private(r_);
@@ -46689,7 +48626,7 @@ simde_vcvtq_n_u16_f16(simde_float16x8_t a, const int n)
   for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
     r_.values[i] = simde_vcvth_u16_f16(simde_float16_from_float32(
           simde_float16_to_float32(a_.values[i]) *
-          HEDLEY_STATIC_CAST(simde_float32_t, pow(2, n))));
+          HEDLEY_STATIC_CAST(simde_float32_t, simde_math_pow(2, n))));
   }
 
   return simde_uint16x8_from_private(r_);
@@ -46711,7 +48648,7 @@ simde_vcvtq_n_u32_f32(simde_float32x4_t a, const int n)
 
   SIMDE_VECTORIZE
   for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
-    r_.values[i] = simde_vcvts_u32_f32(a_.values[i] * HEDLEY_STATIC_CAST(simde_float32_t, pow(2, n)));
+    r_.values[i] = simde_vcvts_u32_f32(a_.values[i] * HEDLEY_STATIC_CAST(simde_float32_t, simde_math_pow(2, n)));
   }
 
   return simde_uint32x4_from_private(r_);
@@ -46733,7 +48670,7 @@ simde_vcvtq_n_u64_f64(simde_float64x2_t a, const int n)
 
   SIMDE_VECTORIZE
   for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
-    r_.values[i] = simde_vcvtd_u64_f64(a_.values[i] * pow(2, n));
+    r_.values[i] = simde_vcvtd_u64_f64(a_.values[i] * simde_math_pow(2, n));
   }
 
   return simde_uint64x2_from_private(r_);
@@ -46755,7 +48692,7 @@ simde_vcvt_n_f16_u16(simde_uint16x4_t a, const int n)
 
   SIMDE_VECTORIZE
   for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
-    r_.values[i] = simde_float16_from_float32(HEDLEY_STATIC_CAST(simde_float32, HEDLEY_STATIC_CAST(simde_float64_t, a_.values[i]) / pow(2, n)));
+    r_.values[i] = simde_float16_from_float32(HEDLEY_STATIC_CAST(simde_float32, HEDLEY_STATIC_CAST(simde_float64_t, a_.values[i]) / simde_math_pow(2, n)));
   }
 
   return simde_float16x4_from_private(r_);
@@ -46777,7 +48714,7 @@ simde_vcvt_n_f16_s16(simde_int16x4_t a, const int n)
 
   SIMDE_VECTORIZE
   for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
-    r_.values[i] = simde_float16_from_float32(HEDLEY_STATIC_CAST(simde_float32_t, HEDLEY_STATIC_CAST(simde_float64_t, a_.values[i]) / pow(2, n)));
+    r_.values[i] = simde_float16_from_float32(HEDLEY_STATIC_CAST(simde_float32_t, HEDLEY_STATIC_CAST(simde_float64_t, a_.values[i]) / simde_math_pow(2, n)));
   }
 
   return simde_float16x4_from_private(r_);
@@ -46799,7 +48736,7 @@ simde_vcvtq_n_f16_u16(simde_uint16x8_t a, const int n)
 
   SIMDE_VECTORIZE
   for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
-    r_.values[i] = simde_float16_from_float32(HEDLEY_STATIC_CAST(simde_float32_t, HEDLEY_STATIC_CAST(simde_float64_t, a_.values[i]) / pow(2, n)));
+    r_.values[i] = simde_float16_from_float32(HEDLEY_STATIC_CAST(simde_float32_t, HEDLEY_STATIC_CAST(simde_float64_t, a_.values[i]) / simde_math_pow(2, n)));
   }
 
   return simde_float16x8_from_private(r_);
@@ -46821,7 +48758,7 @@ simde_vcvtq_n_f16_s16(simde_int16x8_t a, const int n)
 
   SIMDE_VECTORIZE
   for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
-    r_.values[i] = simde_float16_from_float32(HEDLEY_STATIC_CAST(simde_float32_t, (a_.values[i] / pow(2, n))));
+    r_.values[i] = simde_float16_from_float32(HEDLEY_STATIC_CAST(simde_float32_t, (a_.values[i] / simde_math_pow(2, n))));
   }
 
   return simde_float16x8_from_private(r_);
@@ -46843,7 +48780,7 @@ simde_vcvt_n_f32_u32(simde_uint32x2_t a, const int n)
 
   SIMDE_VECTORIZE
   for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
-    r_.values[i] = HEDLEY_STATIC_CAST(simde_float32_t, HEDLEY_STATIC_CAST(simde_float64_t, a_.values[i]) / pow(2, n));
+    r_.values[i] = HEDLEY_STATIC_CAST(simde_float32_t, HEDLEY_STATIC_CAST(simde_float64_t, a_.values[i]) / simde_math_pow(2, n));
   }
 
   return simde_float32x2_from_private(r_);
@@ -46865,7 +48802,7 @@ simde_vcvt_n_f32_s32(simde_int32x2_t a, const int n)
 
   SIMDE_VECTORIZE
   for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
-    r_.values[i] = HEDLEY_STATIC_CAST(simde_float32_t, HEDLEY_STATIC_CAST(simde_float64_t, a_.values[i]) / pow(2, n));
+    r_.values[i] = HEDLEY_STATIC_CAST(simde_float32_t, HEDLEY_STATIC_CAST(simde_float64_t, a_.values[i]) / simde_math_pow(2, n));
   }
 
   return simde_float32x2_from_private(r_);
@@ -46887,7 +48824,7 @@ simde_vcvt_n_f64_u64(simde_uint64x1_t a, const int n)
 
   SIMDE_VECTORIZE
   for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
-    r_.values[i] = HEDLEY_STATIC_CAST(simde_float64_t, HEDLEY_STATIC_CAST(simde_float64_t, a_.values[i]) / pow(2, n));
+    r_.values[i] = HEDLEY_STATIC_CAST(simde_float64_t, HEDLEY_STATIC_CAST(simde_float64_t, a_.values[i]) / simde_math_pow(2, n));
   }
 
   return simde_float64x1_from_private(r_);
@@ -46909,7 +48846,7 @@ simde_vcvtq_n_f64_u64(simde_uint64x2_t a, const int n)
 
   SIMDE_VECTORIZE
   for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
-    r_.values[i] = HEDLEY_STATIC_CAST(simde_float64_t, HEDLEY_STATIC_CAST(simde_float64_t, a_.values[i]) / pow(2, n));
+    r_.values[i] = HEDLEY_STATIC_CAST(simde_float64_t, HEDLEY_STATIC_CAST(simde_float64_t, a_.values[i]) / simde_math_pow(2, n));
   }
 
   return simde_float64x2_from_private(r_);
@@ -46931,7 +48868,7 @@ simde_vcvt_n_f64_s64(simde_int64x1_t a, const int n)
 
   SIMDE_VECTORIZE
   for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
-    r_.values[i] = HEDLEY_STATIC_CAST(simde_float64_t, HEDLEY_STATIC_CAST(simde_float64_t, a_.values[i]) / pow(2, n));
+    r_.values[i] = HEDLEY_STATIC_CAST(simde_float64_t, HEDLEY_STATIC_CAST(simde_float64_t, a_.values[i]) / simde_math_pow(2, n));
   }
 
   return simde_float64x1_from_private(r_);
@@ -46953,7 +48890,7 @@ simde_vcvtq_n_f64_s64(simde_int64x2_t a, const int n)
 
   SIMDE_VECTORIZE
   for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
-    r_.values[i] = HEDLEY_STATIC_CAST(simde_float64_t, HEDLEY_STATIC_CAST(simde_float64_t, a_.values[i]) / pow(2, n));
+    r_.values[i] = HEDLEY_STATIC_CAST(simde_float64_t, HEDLEY_STATIC_CAST(simde_float64_t, a_.values[i]) / simde_math_pow(2, n));
   }
 
   return simde_float64x2_from_private(r_);
@@ -46975,7 +48912,7 @@ simde_vcvtq_n_f32_s32(simde_int32x4_t a, const int n)
 
   SIMDE_VECTORIZE
   for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
-    r_.values[i] = HEDLEY_STATIC_CAST(simde_float32_t, HEDLEY_STATIC_CAST(simde_float64_t, a_.values[i]) / pow(2, n));
+    r_.values[i] = HEDLEY_STATIC_CAST(simde_float32_t, HEDLEY_STATIC_CAST(simde_float64_t, a_.values[i]) / simde_math_pow(2, n));
   }
 
   return simde_float32x4_from_private(r_);
@@ -46997,7 +48934,7 @@ simde_vcvtq_n_f32_u32(simde_uint32x4_t a, const int n)
 
   SIMDE_VECTORIZE
   for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
-    r_.values[i] = HEDLEY_STATIC_CAST(simde_float32_t, HEDLEY_STATIC_CAST(simde_float64_t, a_.values[i]) / pow(2, n));
+    r_.values[i] = HEDLEY_STATIC_CAST(simde_float32_t, HEDLEY_STATIC_CAST(simde_float64_t, a_.values[i]) / simde_math_pow(2, n));
   }
 
   return simde_float32x4_from_private(r_);
@@ -47017,7 +48954,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* SIMDE_ARM_NEON_CVT_N_H */
 /* :: End simde/arm/neon/cvt_n.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/cvtm.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -47049,9 +48986,9 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_CVTM_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -47404,7 +49341,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* SIMDE_ARM_NEON_CVTM_H */
 /* :: End simde/arm/neon/cvtm.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/cvtn.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -47437,13 +49374,13 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_CVTN_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -47942,7 +49879,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* SIMDE_ARM_NEON_CVTN_H */
 /* :: End simde/arm/neon/cvtn.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/cvtp.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -47974,9 +49911,9 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_CVTP_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -48327,9 +50264,9 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* SIMDE_ARM_NEON_CVTP_H */
 /* :: End simde/arm/neon/cvtp.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/copy_lane.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -48361,9 +50298,9 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_COPY_LANE_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -49519,7 +51456,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* SIMDE_ARM_NEON_COPY_LANE_H */
 /* :: End simde/arm/neon/copy_lane.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/crc32.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -49551,7 +51488,12 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_CRC32_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
+
+#if defined(__ARM_ACLE) || (defined(__GNUC__) && defined(SIMDE_ARCH_ARM_CRC32))
+  #include <arm_acle.h>
+#endif
+//                         ^^ Due to https://gcc.gnu.org/bugzilla/show_bug.cgi?id=70974
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -49579,7 +51521,7 @@ uint32_t simde_crc32_eor_mask(uint32_t a, uint32_t b, uint32_t mask) {
 SIMDE_FUNCTION_ATTRIBUTES
 uint32_t
 simde___crc32b(uint32_t a, uint8_t b) {
-  #if defined(SIMDE_ARM_NEON_A32V8_NATIVE) && defined(__ARM_ACLE) && defined(__ARM_FEATURE_CRC32)
+  #if defined(SIMDE_ARM_NEON_A32V8_NATIVE) && defined(SIMDE_ARCH_ARM_CRC32)
     return __crc32b(a, b);
   #else
     uint32_t r_acc = HEDLEY_STATIC_CAST(uint32_t, simde_crc32_reverseBits(a, 32));
@@ -49605,7 +51547,7 @@ simde___crc32b(uint32_t a, uint8_t b) {
 SIMDE_FUNCTION_ATTRIBUTES
 uint32_t
 simde___crc32h(uint32_t a, uint16_t b) {
-  #if defined(SIMDE_ARM_NEON_A32V8_NATIVE) && defined(__ARM_ACLE) && defined(__ARM_FEATURE_CRC32)
+  #if defined(SIMDE_ARM_NEON_A32V8_NATIVE) && defined(SIMDE_ARCH_ARM_CRC32)
     return __crc32h(a, b);
   #else
     uint32_t r_acc = HEDLEY_STATIC_CAST(uint32_t, simde_crc32_reverseBits(a, 32));
@@ -49631,7 +51573,7 @@ simde___crc32h(uint32_t a, uint16_t b) {
 SIMDE_FUNCTION_ATTRIBUTES
 uint32_t
 simde___crc32w(uint32_t a, uint32_t b) {
-  #if defined(SIMDE_ARM_NEON_A32V8_NATIVE) && defined(__ARM_ACLE) && defined(__ARM_FEATURE_CRC32)
+  #if defined(SIMDE_ARM_NEON_A32V8_NATIVE) && defined(SIMDE_ARCH_ARM_CRC32)
     return __crc32w(a, b);
   #else
     uint32_t r_acc = HEDLEY_STATIC_CAST(uint32_t, simde_crc32_reverseBits(a, 32));
@@ -49656,7 +51598,7 @@ simde___crc32w(uint32_t a, uint32_t b) {
 SIMDE_FUNCTION_ATTRIBUTES
 uint32_t
 simde___crc32d(uint32_t a, uint64_t b) {
-  #if defined(SIMDE_ARM_NEON_A32V8_NATIVE) && defined(__ARM_ACLE) && defined(__ARM_FEATURE_CRC32)
+  #if defined(SIMDE_ARM_NEON_A32V8_NATIVE) && defined(SIMDE_ARCH_ARM_CRC32)
     return __crc32d(a, b);
   #else
     uint32_t r_acc = HEDLEY_STATIC_CAST(uint32_t, simde_crc32_reverseBits(a, 32));
@@ -49691,7 +51633,7 @@ simde___crc32d(uint32_t a, uint64_t b) {
 SIMDE_FUNCTION_ATTRIBUTES
 uint32_t
 simde___crc32cb(uint32_t a, uint8_t b) {
-  #if defined(SIMDE_ARM_NEON_A32V8_NATIVE) && defined(__ARM_ACLE) && defined(__ARM_FEATURE_CRC32)
+  #if defined(SIMDE_ARM_NEON_A32V8_NATIVE) && defined(SIMDE_ARCH_ARM_CRC32)
     return __crc32cb(a, b);
   #else
     uint32_t r_acc = HEDLEY_STATIC_CAST(uint32_t, simde_crc32_reverseBits(a, 32));
@@ -49717,7 +51659,7 @@ simde___crc32cb(uint32_t a, uint8_t b) {
 SIMDE_FUNCTION_ATTRIBUTES
 uint32_t
 simde___crc32ch(uint32_t a, uint16_t b) {
-  #if defined(SIMDE_ARM_NEON_A32V8_NATIVE) && defined(__ARM_ACLE) && defined(__ARM_FEATURE_CRC32)
+  #if defined(SIMDE_ARM_NEON_A32V8_NATIVE) && defined(SIMDE_ARCH_ARM_CRC32)
     return __crc32ch(a, b);
   #else
     uint32_t r_acc = HEDLEY_STATIC_CAST(uint32_t, simde_crc32_reverseBits(a, 32));
@@ -49743,7 +51685,7 @@ simde___crc32ch(uint32_t a, uint16_t b) {
 SIMDE_FUNCTION_ATTRIBUTES
 uint32_t
 simde___crc32cw(uint32_t a, uint32_t b) {
-  #if defined(SIMDE_ARM_NEON_A32V8_NATIVE) && defined(__ARM_ACLE) && defined(__ARM_FEATURE_CRC32)
+  #if defined(SIMDE_ARM_NEON_A32V8_NATIVE) && defined(SIMDE_ARCH_ARM_CRC32)
     return __crc32cw(a, b);
   #else
     uint32_t r_acc = HEDLEY_STATIC_CAST(uint32_t, simde_crc32_reverseBits(a, 32));
@@ -49768,7 +51710,7 @@ simde___crc32cw(uint32_t a, uint32_t b) {
 SIMDE_FUNCTION_ATTRIBUTES
 uint32_t
 simde___crc32cd(uint32_t a, uint64_t b) {
-  #if defined(SIMDE_ARM_NEON_A32V8_NATIVE) && defined(__ARM_ACLE) && defined(__ARM_FEATURE_CRC32)
+  #if defined(SIMDE_ARM_NEON_A32V8_NATIVE) && defined(SIMDE_ARCH_ARM_CRC32)
     return __crc32cd(a, b);
   #else
     uint32_t r_acc = HEDLEY_STATIC_CAST(uint32_t, simde_crc32_reverseBits(a, 32));
@@ -49806,7 +51748,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_CRC32_H) */
 /* :: End simde/arm/neon/crc32.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/create.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -49840,11 +51782,11 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_CREATE_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -50066,7 +52008,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_CREATE_H) */
 /* :: End simde/arm/neon/create.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/div.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -50098,10 +52040,10 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_DIV_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -50271,7 +52213,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_MUL_H) */
 /* :: End simde/arm/neon/div.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/dot.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -50298,26 +52240,27 @@ HEDLEY_DIAGNOSTIC_POP
  * Copyright:
  *   2020      Evan Nemerson <evan@nemerson.com>
  *   2020      Sean Maher <seanptmaher@gmail.com> (Copyright owned by Google, LLC)
+ *   2023      Chi-Wei Chu <wewe5215@gapp.nthu.edu.tw> (Copyright owned by NTHU pllab)
  */
 
 #if !defined(SIMDE_ARM_NEON_DOT_H)
 #define SIMDE_ARM_NEON_DOT_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/paddl.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -50350,17 +52293,17 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_PADDL_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/padd.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -50394,9 +52337,9 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_PADD_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/uzp1.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -50430,7 +52373,7 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_UZP1_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -51249,7 +53192,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_UZP1_H) */
 /* :: End simde/arm/neon/uzp1.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/uzp2.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -51283,7 +53226,7 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_UZP2_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -52106,9 +54049,9 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_UZP2_H) */
 /* :: End simde/arm/neon/uzp2.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/get_lane.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -52142,7 +54085,7 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_GET_LANE_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -53212,9 +55155,9 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_PADD_H) */
 /* :: End simde/arm/neon/padd.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/shl_n.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -53241,13 +55184,14 @@ HEDLEY_DIAGNOSTIC_POP
  * Copyright:
  *   2020      Evan Nemerson <evan@nemerson.com>
  *   2020      Christopher Moore <moore@free.fr>
+ *   2023      Chi-Wei Chu <wewe5215@gapp.nthu.edu.tw> (Copyright owned by NTHU pllab)
  */
 
 #if !defined(SIMDE_ARM_NEON_SHL_N_H)
 #define SIMDE_ARM_NEON_SHL_N_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -53288,8 +55232,9 @@ simde_vshl_n_s8 (const simde_int8x8_t a, const int n)
   simde_int8x8_private
     r_,
     a_ = simde_int8x8_to_private(a);
-
-  #if defined(SIMDE_VECTOR_SUBSCRIPT_SCALAR) && !defined(SIMDE_BUG_GCC_100762)
+  #if defined(SIMDE_RISCV_V_NATIVE)
+    r_.sv64 =  __riscv_vsll_vx_i8m1 (a_.sv64, n, 8);
+  #elif defined(SIMDE_VECTOR_SUBSCRIPT_SCALAR) && !defined(SIMDE_BUG_GCC_100762)
     r_.values = a_.values << HEDLEY_STATIC_CAST(int8_t, n);
   #else
     SIMDE_VECTORIZE
@@ -53319,7 +55264,9 @@ simde_vshl_n_s16 (const simde_int16x4_t a, const int n)
     r_,
     a_ = simde_int16x4_to_private(a);
 
-  #if defined(SIMDE_VECTOR_SUBSCRIPT_SCALAR)
+  #if defined(SIMDE_RISCV_V_NATIVE)
+    r_.sv64 =  __riscv_vsll_vx_i16m1 (a_.sv64, n, 4);
+  #elif defined(SIMDE_VECTOR_SUBSCRIPT_SCALAR)
     r_.values = a_.values << HEDLEY_STATIC_CAST(int16_t, n);
   #else
     SIMDE_VECTORIZE
@@ -53348,7 +55295,9 @@ simde_vshl_n_s32 (const simde_int32x2_t a, const int n)
     r_,
     a_ = simde_int32x2_to_private(a);
 
-  #if defined(SIMDE_VECTOR_SUBSCRIPT_SCALAR)
+  #if defined(SIMDE_RISCV_V_NATIVE)
+    r_.sv64 =  __riscv_vsll_vx_i32m1 (a_.sv64, n, 2);
+  #elif defined(SIMDE_VECTOR_SUBSCRIPT_SCALAR)
     r_.values = a_.values << n;
   #else
     SIMDE_VECTORIZE
@@ -53377,7 +55326,9 @@ simde_vshl_n_s64 (const simde_int64x1_t a, const int n)
     r_,
     a_ = simde_int64x1_to_private(a);
 
-  #if defined(SIMDE_VECTOR_SUBSCRIPT_SCALAR)
+  #if defined(SIMDE_RISCV_V_NATIVE)
+    r_.sv64 =  __riscv_vsll_vx_i64m1 (a_.sv64, n, 1);
+  #elif defined(SIMDE_VECTOR_SUBSCRIPT_SCALAR)
     r_.values = a_.values << n;
   #else
     SIMDE_VECTORIZE
@@ -53406,7 +55357,9 @@ simde_vshl_n_u8 (const simde_uint8x8_t a, const int n)
     r_,
     a_ = simde_uint8x8_to_private(a);
 
-  #if defined(SIMDE_VECTOR_SUBSCRIPT_SCALAR) && !defined(SIMDE_BUG_GCC_100762)
+  #if defined(SIMDE_RISCV_V_NATIVE)
+    r_.sv64 =  __riscv_vsll_vx_u8m1 (a_.sv64, n, 8);
+  #elif defined(SIMDE_VECTOR_SUBSCRIPT_SCALAR) && !defined(SIMDE_BUG_GCC_100762)
     r_.values = a_.values << HEDLEY_STATIC_CAST(uint8_t, n);
   #else
     SIMDE_VECTORIZE
@@ -53436,7 +55389,9 @@ simde_vshl_n_u16 (const simde_uint16x4_t a, const int n)
     r_,
     a_ = simde_uint16x4_to_private(a);
 
-  #if defined(SIMDE_VECTOR_SUBSCRIPT_SCALAR)
+  #if defined(SIMDE_RISCV_V_NATIVE)
+    r_.sv64 =  __riscv_vsll_vx_u16m1 (a_.sv64, n, 4);
+  #elif defined(SIMDE_VECTOR_SUBSCRIPT_SCALAR)
     r_.values = a_.values << HEDLEY_STATIC_CAST(uint16_t, n);
   #else
     SIMDE_VECTORIZE
@@ -53465,7 +55420,9 @@ simde_vshl_n_u32 (const simde_uint32x2_t a, const int n)
     r_,
     a_ = simde_uint32x2_to_private(a);
 
-  #if defined(SIMDE_VECTOR_SUBSCRIPT_SCALAR)
+  #if defined(SIMDE_RISCV_V_NATIVE)
+    r_.sv64 =  __riscv_vsll_vx_u32m1 (a_.sv64, n, 2);
+  #elif defined(SIMDE_VECTOR_SUBSCRIPT_SCALAR)
     r_.values = a_.values << n;
   #else
     SIMDE_VECTORIZE
@@ -53494,7 +55451,9 @@ simde_vshl_n_u64 (const simde_uint64x1_t a, const int n)
     r_,
     a_ = simde_uint64x1_to_private(a);
 
-  #if defined(SIMDE_VECTOR_SUBSCRIPT_SCALAR)
+  #if defined(SIMDE_RISCV_V_NATIVE)
+    r_.sv64 =  __riscv_vsll_vx_u64m1 (a_.sv64, n, 1);
+  #elif defined(SIMDE_VECTOR_SUBSCRIPT_SCALAR)
     r_.values = a_.values << n;
   #else
     SIMDE_VECTORIZE
@@ -53530,6 +55489,8 @@ simde_vshlq_n_s8 (const simde_int8x16_t a, const int n)
     r_.m128i = _mm_andnot_si128(_mm_set1_epi8(HEDLEY_STATIC_CAST(int8_t, (1 << n) - 1)), _mm_slli_epi64(a_.m128i, n));
   #elif defined(SIMDE_WASM_SIMD128_NATIVE)
     r_.v128 = wasm_i8x16_shl(a_.v128, HEDLEY_STATIC_CAST(uint32_t, n));
+  #elif defined(SIMDE_RISCV_V_NATIVE)
+    r_.sv128 =  __riscv_vsll_vx_i8m1 (a_.sv128, n, 16);
   #elif defined(SIMDE_VECTOR_SUBSCRIPT_SCALAR)
     r_.values = a_.values << HEDLEY_STATIC_CAST(int8_t, n);
   #else
@@ -53563,6 +55524,8 @@ simde_vshlq_n_s16 (const simde_int16x8_t a, const int n)
     r_.m128i = _mm_slli_epi16(a_.m128i, (n));
   #elif defined(SIMDE_WASM_SIMD128_NATIVE)
     r_.v128 = wasm_i16x8_shl(a_.v128, HEDLEY_STATIC_CAST(uint32_t, n));
+  #elif defined(SIMDE_RISCV_V_NATIVE)
+    r_.sv128 =  __riscv_vsll_vx_i16m1 (a_.sv128, n, 8);
   #elif defined(SIMDE_VECTOR_SUBSCRIPT_SCALAR)
     r_.values = a_.values << HEDLEY_STATIC_CAST(int16_t, n);
   #else
@@ -53596,6 +55559,8 @@ simde_vshlq_n_s32 (const simde_int32x4_t a, const int n)
     r_.m128i = _mm_slli_epi32(a_.m128i, (n));
   #elif defined(SIMDE_WASM_SIMD128_NATIVE)
     r_.v128 = wasm_i32x4_shl(a_.v128, HEDLEY_STATIC_CAST(uint32_t, n));
+  #elif defined(SIMDE_RISCV_V_NATIVE)
+    r_.sv128 =  __riscv_vsll_vx_i32m1 (a_.sv128, n, 4);
   #elif defined(SIMDE_VECTOR_SUBSCRIPT_SCALAR)
     r_.values = a_.values << n;
   #else
@@ -53629,6 +55594,8 @@ simde_vshlq_n_s64 (const simde_int64x2_t a, const int n)
     r_.m128i = _mm_slli_epi64(a_.m128i, (n));
   #elif defined(SIMDE_WASM_SIMD128_NATIVE)
     r_.v128 = wasm_i64x2_shl(a_.v128, HEDLEY_STATIC_CAST(uint32_t, n));
+  #elif defined(SIMDE_RISCV_V_NATIVE)
+    r_.sv128 =  __riscv_vsll_vx_i64m1 (a_.sv128, n, 2);
   #elif defined(SIMDE_VECTOR_SUBSCRIPT_SCALAR)
     r_.values = a_.values << n;
   #else
@@ -53665,6 +55632,8 @@ simde_vshlq_n_u8 (const simde_uint8x16_t a, const int n)
     r_.m128i = _mm_andnot_si128(_mm_set1_epi8(HEDLEY_STATIC_CAST(int8_t, (1 << n) - 1)), _mm_slli_epi64(a_.m128i, (n)));
   #elif defined(SIMDE_WASM_SIMD128_NATIVE)
     r_.v128 = wasm_i8x16_shl(a_.v128, HEDLEY_STATIC_CAST(uint32_t, n));
+  #elif defined(SIMDE_RISCV_V_NATIVE)
+    r_.sv128 =  __riscv_vsll_vx_u8m1 (a_.sv128, n, 16);
   #elif defined(SIMDE_VECTOR_SUBSCRIPT_SCALAR)
     r_.values = a_.values << HEDLEY_STATIC_CAST(uint8_t, n);
   #else
@@ -53698,6 +55667,8 @@ simde_vshlq_n_u16 (const simde_uint16x8_t a, const int n)
       r_.m128i = _mm_slli_epi16(a_.m128i, (n));
     #elif defined(SIMDE_WASM_SIMD128_NATIVE)
       r_.v128 = wasm_i16x8_shl(a_.v128, HEDLEY_STATIC_CAST(uint32_t, n));
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv128 =  __riscv_vsll_vx_u16m1 (a_.sv128, n, 8);
     #elif defined(SIMDE_VECTOR_SUBSCRIPT_SCALAR)
       r_.values = a_.values << HEDLEY_STATIC_CAST(uint16_t, n);
     #else
@@ -53731,6 +55702,8 @@ simde_vshlq_n_u32 (const simde_uint32x4_t a, const int n)
     r_.m128i = _mm_slli_epi32(a_.m128i, (n));
   #elif defined(SIMDE_WASM_SIMD128_NATIVE)
     r_.v128 = wasm_i32x4_shl(a_.v128, HEDLEY_STATIC_CAST(uint32_t, n));
+  #elif defined(SIMDE_RISCV_V_NATIVE)
+    r_.sv128 =  __riscv_vsll_vx_u32m1 (a_.sv128, n, 4);
   #elif defined(SIMDE_VECTOR_SUBSCRIPT_SCALAR)
     r_.values = a_.values << n;
   #else
@@ -53764,6 +55737,8 @@ simde_vshlq_n_u64 (const simde_uint64x2_t a, const int n)
     r_.m128i = _mm_slli_epi64(a_.m128i, (n));
   #elif defined(SIMDE_WASM_SIMD128_NATIVE)
     r_.v128 = wasm_i64x2_shl(a_.v128, HEDLEY_STATIC_CAST(uint32_t, n));
+  #elif defined(SIMDE_RISCV_V_NATIVE)
+    r_.sv128 =  __riscv_vsll_vx_u64m1 (a_.sv128, n, 2);
   #elif defined(SIMDE_VECTOR_SUBSCRIPT_SCALAR)
     r_.values = a_.values << n;
   #else
@@ -53791,9 +55766,9 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_SHL_N_H) */
 /* :: End simde/arm/neon/shl_n.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -54103,9 +56078,9 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* SIMDE_ARM_NEON_PADDL_H */
 /* :: End simde/arm/neon/paddl.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/mull.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -54139,11 +56114,11 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_MULL_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -54421,16 +56396,32 @@ simde_vdot_s32(simde_int32x2_t r, simde_int8x8_t a, simde_int8x8_t b) {
     simde_int8x8_private
       a_ = simde_int8x8_to_private(a),
       b_ = simde_int8x8_to_private(b);
-    for (int i = 0 ; i < 2 ; i++) {
-      int32_t acc = 0;
-      SIMDE_VECTORIZE_REDUCTION(+:acc)
-      for (int j = 0 ; j < 4 ; j++) {
-        const int idx = j + (i << 2);
-        acc += HEDLEY_STATIC_CAST(int32_t, a_.values[idx]) * HEDLEY_STATIC_CAST(int32_t, b_.values[idx]);
-      }
-      r_.values[i] = acc;
-    }
-    return simde_vadd_s32(r, simde_int32x2_from_private(r_));
+      #if defined(SIMDE_RISCV_V_NATIVE)
+        simde_int32x2_private r_tmp = simde_int32x2_to_private(r);
+        vint16m2_t vd_low = __riscv_vwmul_vv_i16m2 (a_.sv64, b_.sv64, 8);
+        vint16m2_t vd_high = __riscv_vslidedown_vx_i16m2(vd_low, 4, 8);
+        vint32m1_t vd = __riscv_vmv_v_x_i32m1(0, 4);
+        vint32m1_t vd_low_wide = __riscv_vwcvt_x_x_v_i32m1 (__riscv_vlmul_trunc_v_i16m2_i16mf2(vd_low), 4);
+        vint32m1_t rst0 = __riscv_vredsum_vs_i32m1_i32m1(vd_low_wide, vd, 4);
+        vint32m1_t vd_high_wide = __riscv_vwcvt_x_x_v_i32m1 (__riscv_vlmul_trunc_v_i16m2_i16mf2(vd_high), 4);
+        vint32m1_t rst1 = __riscv_vredsum_vs_i32m1_i32m1(vd_high_wide, vd, 4);
+        r_.sv64 = __riscv_vslideup_vx_i32m1(
+          __riscv_vadd_vx_i32m1(rst0, r_tmp.values[0], 2),
+          __riscv_vadd_vx_i32m1(rst1, r_tmp.values[1], 2),
+          1, 2);
+        return simde_int32x2_from_private(r_);
+      #else
+        for (int i = 0 ; i < 2 ; i++) {
+          int32_t acc = 0;
+          SIMDE_VECTORIZE_REDUCTION(+:acc)
+          for (int j = 0 ; j < 4 ; j++) {
+            const int idx = j + (i << 2);
+            acc += HEDLEY_STATIC_CAST(int32_t, a_.values[idx]) * HEDLEY_STATIC_CAST(int32_t, b_.values[idx]);
+          }
+          r_.values[i] = acc;
+        }
+        #endif
+      return simde_vadd_s32(r, simde_int32x2_from_private(r_));
   #endif
 }
 #if defined(SIMDE_ARM_NEON_A32V8_ENABLE_NATIVE_ALIASES)
@@ -54451,15 +56442,31 @@ simde_vdot_u32(simde_uint32x2_t r, simde_uint8x8_t a, simde_uint8x8_t b) {
       a_ = simde_uint8x8_to_private(a),
       b_ = simde_uint8x8_to_private(b);
 
-    for (int i = 0 ; i < 2 ; i++) {
-      uint32_t acc = 0;
-      SIMDE_VECTORIZE_REDUCTION(+:acc)
-      for (int j = 0 ; j < 4 ; j++) {
-        const int idx = j + (i << 2);
-        acc += HEDLEY_STATIC_CAST(uint32_t, a_.values[idx]) * HEDLEY_STATIC_CAST(uint32_t, b_.values[idx]);
-      }
-      r_.values[i] = acc;
-    }
+      #if defined(SIMDE_RISCV_V_NATIVE)
+        simde_uint32x2_private r_tmp = simde_uint32x2_to_private(r);
+        vuint16m2_t vd_low = __riscv_vwmulu_vv_u16m2 (a_.sv64, b_.sv64, 8);
+        vuint16m2_t vd_high = __riscv_vslidedown_vx_u16m2(vd_low, 4, 8);
+        vuint32m1_t vd = __riscv_vmv_v_x_u32m1(0, 4);
+        vuint32m1_t vd_low_wide = __riscv_vwcvtu_x_x_v_u32m1 (__riscv_vlmul_trunc_v_u16m2_u16mf2(vd_low), 4);
+        vuint32m1_t rst0 = __riscv_vredsum_vs_u32m1_u32m1(vd_low_wide, vd, 4);
+        vuint32m1_t vd_high_wide = __riscv_vwcvtu_x_x_v_u32m1 (__riscv_vlmul_trunc_v_u16m2_u16mf2(vd_high), 4);
+        vuint32m1_t rst1 = __riscv_vredsum_vs_u32m1_u32m1(vd_high_wide, vd, 4);
+        r_.sv64 = __riscv_vslideup_vx_u32m1(
+          __riscv_vadd_vx_u32m1(rst0, r_tmp.values[0], 2),
+          __riscv_vadd_vx_u32m1(rst1, r_tmp.values[1], 2),
+          1, 2);
+        return simde_uint32x2_from_private(r_);
+      #else
+        for (int i = 0 ; i < 2 ; i++) {
+          uint32_t acc = 0;
+          SIMDE_VECTORIZE_REDUCTION(+:acc)
+          for (int j = 0 ; j < 4 ; j++) {
+            const int idx = j + (i << 2);
+            acc += HEDLEY_STATIC_CAST(uint32_t, a_.values[idx]) * HEDLEY_STATIC_CAST(uint32_t, b_.values[idx]);
+          }
+          r_.values[i] = acc;
+        }
+      #endif
     return simde_vadd_u32(r, simde_uint32x2_from_private(r_));
   #endif
 }
@@ -54482,15 +56489,33 @@ simde_vdotq_s32(simde_int32x4_t r, simde_int8x16_t a, simde_int8x16_t b) {
     simde_int8x16_private
       a_ = simde_int8x16_to_private(a),
       b_ = simde_int8x16_to_private(b);
-    for (int i = 0 ; i < 4 ; i++) {
-      int32_t acc = 0;
-      SIMDE_VECTORIZE_REDUCTION(+:acc)
-      for (int j = 0 ; j < 4 ; j++) {
-        const int idx = j + (i << 2);
-        acc += HEDLEY_STATIC_CAST(int32_t, a_.values[idx]) * HEDLEY_STATIC_CAST(int32_t, b_.values[idx]);
-      }
-      r_.values[i] = acc;
-    }
+      #if defined(SIMDE_RISCV_V_NATIVE)
+        simde_int32x4_private r_tmp = simde_int32x4_to_private(r);
+        vint16m2_t vd_low = __riscv_vwmul_vv_i16m2 (a_.sv128, b_.sv128, 16);
+        vint32m1_t vd = __riscv_vmv_v_x_i32m1(0, 4);
+        vint32m1_t rst0 = __riscv_vredsum_vs_i32m1_i32m1(__riscv_vwcvt_x_x_v_i32m1(__riscv_vlmul_trunc_v_i16m2_i16mf2( \
+          vd_low), 4), vd, 4);
+        vint32m1_t rst1 = __riscv_vredsum_vs_i32m1_i32m1(__riscv_vwcvt_x_x_v_i32m1(__riscv_vlmul_trunc_v_i16m2_i16mf2( \
+          __riscv_vslidedown_vx_i16m2(vd_low, 4, 4)), 4), vd, 4);
+        vint32m1_t rst2 = __riscv_vredsum_vs_i32m1_i32m1(__riscv_vwcvt_x_x_v_i32m1(__riscv_vlmul_trunc_v_i16m2_i16mf2( \
+          __riscv_vslidedown_vx_i16m2(vd_low, 8, 4)), 4), vd, 4);
+        vint32m1_t rst3 = __riscv_vredsum_vs_i32m1_i32m1(__riscv_vwcvt_x_x_v_i32m1(__riscv_vlmul_trunc_v_i16m2_i16mf2( \
+          __riscv_vslidedown_vx_i16m2(vd_low, 12, 4)), 4), vd, 4);
+        vint32m1_t r0 = __riscv_vslideup_vx_i32m1(__riscv_vadd_vx_i32m1(rst0, r_tmp.values[0], 2), __riscv_vadd_vx_i32m1(rst1, r_tmp.values[1], 2), 1, 2);
+        vint32m1_t r1 = __riscv_vslideup_vx_i32m1(r0, __riscv_vadd_vx_i32m1(rst2, r_tmp.values[2], 2), 2, 3);
+        r_.sv128 = __riscv_vslideup_vx_i32m1(r1, __riscv_vadd_vx_i32m1(rst3, r_tmp.values[3], 2), 3, 4);
+       return simde_int32x4_from_private(r_);
+    #else
+        for (int i = 0 ; i < 4 ; i++) {
+          int32_t acc = 0;
+          SIMDE_VECTORIZE_REDUCTION(+:acc)
+          for (int j = 0 ; j < 4 ; j++) {
+            const int idx = j + (i << 2);
+            acc += HEDLEY_STATIC_CAST(int32_t, a_.values[idx]) * HEDLEY_STATIC_CAST(int32_t, b_.values[idx]);
+          }
+          r_.values[i] = acc;
+        }
+    #endif
     return simde_vaddq_s32(r, simde_int32x4_from_private(r_));
   #endif
 }
@@ -54513,15 +56538,33 @@ simde_vdotq_u32(simde_uint32x4_t r, simde_uint8x16_t a, simde_uint8x16_t b) {
     simde_uint8x16_private
       a_ = simde_uint8x16_to_private(a),
       b_ = simde_uint8x16_to_private(b);
-    for (int i = 0 ; i < 4 ; i++) {
-      uint32_t acc = 0;
-      SIMDE_VECTORIZE_REDUCTION(+:acc)
-      for (int j = 0 ; j < 4 ; j++) {
-        const int idx = j + (i << 2);
-        acc += HEDLEY_STATIC_CAST(uint32_t, a_.values[idx]) * HEDLEY_STATIC_CAST(uint32_t, b_.values[idx]);
+      #if defined(SIMDE_RISCV_V_NATIVE)
+        simde_uint32x4_private r_tmp = simde_uint32x4_to_private(r);
+        vuint16m2_t vd_low = __riscv_vwmulu_vv_u16m2 (a_.sv128, b_.sv128, 16);
+        vuint32m1_t vd = __riscv_vmv_v_x_u32m1(0, 4);
+        vuint32m1_t rst0 = __riscv_vredsum_vs_u32m1_u32m1(__riscv_vwcvtu_x_x_v_u32m1(__riscv_vlmul_trunc_v_u16m2_u16mf2( \
+          vd_low), 4), vd, 4);
+        vuint32m1_t rst1 = __riscv_vredsum_vs_u32m1_u32m1(__riscv_vwcvtu_x_x_v_u32m1(__riscv_vlmul_trunc_v_u16m2_u16mf2( \
+          __riscv_vslidedown_vx_u16m2(vd_low, 4, 4)), 4), vd, 4);
+        vuint32m1_t rst2 = __riscv_vredsum_vs_u32m1_u32m1(__riscv_vwcvtu_x_x_v_u32m1(__riscv_vlmul_trunc_v_u16m2_u16mf2( \
+          __riscv_vslidedown_vx_u16m2(vd_low, 8, 4)), 4), vd, 4);
+        vuint32m1_t rst3 = __riscv_vredsum_vs_u32m1_u32m1(__riscv_vwcvtu_x_x_v_u32m1(__riscv_vlmul_trunc_v_u16m2_u16mf2( \
+          __riscv_vslidedown_vx_u16m2(vd_low, 12, 4)), 4), vd, 4);
+        vuint32m1_t r0 = __riscv_vslideup_vx_u32m1(__riscv_vadd_vx_u32m1(rst0, r_tmp.values[0], 2), __riscv_vadd_vx_u32m1(rst1, r_tmp.values[1], 2), 1, 2);
+        vuint32m1_t r1 = __riscv_vslideup_vx_u32m1(r0, __riscv_vadd_vx_u32m1(rst2, r_tmp.values[2], 2), 2, 3);
+        r_.sv128 = __riscv_vslideup_vx_u32m1(r1, __riscv_vadd_vx_u32m1(rst3, r_tmp.values[3], 2), 3, 4);
+        return simde_uint32x4_from_private(r_);
+    #else
+      for (int i = 0 ; i < 4 ; i++) {
+        uint32_t acc = 0;
+        SIMDE_VECTORIZE_REDUCTION(+:acc)
+        for (int j = 0 ; j < 4 ; j++) {
+          const int idx = j + (i << 2);
+          acc += HEDLEY_STATIC_CAST(uint32_t, a_.values[idx]) * HEDLEY_STATIC_CAST(uint32_t, b_.values[idx]);
+        }
+        r_.values[i] = acc;
       }
-      r_.values[i] = acc;
-    }
+    #endif
     return simde_vaddq_u32(r, simde_uint32x4_from_private(r_));
   #endif
 }
@@ -54590,7 +56633,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_DOT_H) */
 /* :: End simde/arm/neon/dot.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/dot_lane.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -54617,24 +56660,25 @@ HEDLEY_DIAGNOSTIC_POP
  * Copyright:
  *   2020      Evan Nemerson <evan@nemerson.com>
  *   2020      Sean Maher <seanptmaher@gmail.com> (Copyright owned by Google, LLC)
+ *   2023      Chi-Wei Chu <wewe5215@gapp.nthu.edu.tw> (Copyright owned by NTHU pllab)
  */
 
 #if !defined(SIMDE_ARM_NEON_DOT_LANE_H)
 #define SIMDE_ARM_NEON_DOT_LANE_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -54669,18 +56713,31 @@ simde_vdot_lane_s32(simde_int32x2_t r, simde_int8x8_t a, simde_int8x8_t b, const
     simde_int8x8_private
       a_ = simde_int8x8_to_private(a),
       b_ = simde_int8x8_to_private(b);
-
-    for (int i = 0 ; i < 2 ; i++) {
-      int32_t acc = 0;
-      SIMDE_VECTORIZE_REDUCTION(+:acc)
-      for (int j = 0 ; j < 4 ; j++) {
-        const int idx_b = j + (lane << 2);
-        const int idx_a = j + (i << 2);
-        acc += HEDLEY_STATIC_CAST(int32_t, a_.values[idx_a]) * HEDLEY_STATIC_CAST(int32_t, b_.values[idx_b]);
+    #if  defined(SIMDE_RISCV_V_NATIVE)
+        simde_int32x2_private r_tmp = simde_int32x2_to_private(r);
+        vint8mf4_t vb_low = __riscv_vlmul_trunc_v_i8m1_i8mf4(__riscv_vslidedown_vx_i8m1(b_.sv64, lane*4, 4));
+        vint16mf2_t vd_high = __riscv_vwmul_vv_i16mf2(__riscv_vlmul_trunc_v_i8m1_i8mf4 \
+          (__riscv_vslidedown_vx_i8m1(a_.sv64, 4, 4)), vb_low, 4);
+        vint32m1_t vd = __riscv_vmv_v_x_i32m1(0, 4);
+        vint32m1_t rst0 = __riscv_vredsum_vs_i32m1_i32m1(__riscv_vwcvt_x_x_v_i32m1(__riscv_vwmul_vv_i16mf2( \
+          __riscv_vlmul_trunc_v_i8m1_i8mf4(__riscv_vslidedown_vx_i8m1(a_.sv64, 0, 4)), vb_low, 4), 4), vd, 4);
+        vint32m1_t rst1 = __riscv_vredsum_vs_i32m1_i32m1(__riscv_vwcvt_x_x_v_i32m1 (vd_high, 4), vd, 4);
+        r_.sv64 = __riscv_vslideup_vx_i32m1(
+          __riscv_vadd_vx_i32m1(rst0, r_tmp.values[0], 2),
+          __riscv_vadd_vx_i32m1(rst1, r_tmp.values[1], 2),
+          1, 2);
+    #else
+      for (int i = 0 ; i < 2 ; i++) {
+        int32_t acc = 0;
+        SIMDE_VECTORIZE_REDUCTION(+:acc)
+        for (int j = 0 ; j < 4 ; j++) {
+          const int idx_b = j + (lane << 2);
+          const int idx_a = j + (i << 2);
+          acc += HEDLEY_STATIC_CAST(int32_t, a_.values[idx_a]) * HEDLEY_STATIC_CAST(int32_t, b_.values[idx_b]);
+        }
+        r_.values[i] += acc;
       }
-      r_.values[i] += acc;
-    }
-
+    #endif
     result = simde_int32x2_from_private(r_);
   #endif
 
@@ -54720,18 +56777,31 @@ simde_vdot_lane_u32(simde_uint32x2_t r, simde_uint8x8_t a, simde_uint8x8_t b, co
     simde_uint8x8_private
       a_ = simde_uint8x8_to_private(a),
       b_ = simde_uint8x8_to_private(b);
-
-    for (int i = 0 ; i < 2 ; i++) {
-      uint32_t acc = 0;
-      SIMDE_VECTORIZE_REDUCTION(+:acc)
-      for (int j = 0 ; j < 4 ; j++) {
-        const int idx_b = j + (lane << 2);
-        const int idx_a = j + (i << 2);
-        acc += HEDLEY_STATIC_CAST(uint32_t, a_.values[idx_a]) * HEDLEY_STATIC_CAST(uint32_t, b_.values[idx_b]);
+    #if  defined(SIMDE_RISCV_V_NATIVE)
+        simde_uint32x2_private r_tmp = simde_uint32x2_to_private(r);
+        vuint8mf4_t vb_low = __riscv_vlmul_trunc_v_u8m1_u8mf4 (
+          __riscv_vslidedown_vx_u8m1(b_.sv64, lane*4, 4));
+        vuint32m1_t vd = __riscv_vmv_v_x_u32m1(0, 4);
+        vuint32m1_t rst0 = __riscv_vredsum_vs_u32m1_u32m1(__riscv_vwcvtu_x_x_v_u32m1 (__riscv_vwmulu_vv_u16mf2 \
+        (__riscv_vlmul_trunc_v_u8m1_u8mf4(__riscv_vslidedown_vx_u8m1(a_.sv64, 0, 4)), vb_low, 4), 4), vd, 4);
+        vuint32m1_t rst1 = __riscv_vredsum_vs_u32m1_u32m1(__riscv_vwcvtu_x_x_v_u32m1 (__riscv_vwmulu_vv_u16mf2 \
+        (__riscv_vlmul_trunc_v_u8m1_u8mf4(__riscv_vslidedown_vx_u8m1(a_.sv64, 4, 4)), vb_low, 4), 4), vd, 4);
+        r_.sv64 = __riscv_vslideup_vx_u32m1(
+          __riscv_vadd_vx_u32m1(rst0, r_tmp.values[0], 2),
+          __riscv_vadd_vx_u32m1(rst1, r_tmp.values[1], 2),
+          1, 2);
+    #else
+      for (int i = 0 ; i < 2 ; i++) {
+        uint32_t acc = 0;
+        SIMDE_VECTORIZE_REDUCTION(+:acc)
+        for (int j = 0 ; j < 4 ; j++) {
+          const int idx_b = j + (lane << 2);
+          const int idx_a = j + (i << 2);
+          acc += HEDLEY_STATIC_CAST(uint32_t, a_.values[idx_a]) * HEDLEY_STATIC_CAST(uint32_t, b_.values[idx_b]);
+        }
+        r_.values[i] += acc;
       }
-      r_.values[i] += acc;
-    }
-
+    #endif
     result = simde_uint32x2_from_private(r_);
   #endif
 
@@ -54769,18 +56839,31 @@ simde_vdot_laneq_s32(simde_int32x2_t r, simde_int8x8_t a, simde_int8x16_t b, con
     simde_int32x2_private r_ = simde_int32x2_to_private(r);
     simde_int8x8_private a_ = simde_int8x8_to_private(a);
     simde_int8x16_private b_ = simde_int8x16_to_private(b);
-
-    for (int i = 0 ; i < 2 ; i++) {
-      int32_t acc = 0;
-      SIMDE_VECTORIZE_REDUCTION(+:acc)
-      for (int j = 0 ; j < 4 ; j++) {
-        const int idx_b = j + (lane << 2);
-        const int idx_a = j + (i << 2);
-        acc += HEDLEY_STATIC_CAST(int32_t, a_.values[idx_a]) * HEDLEY_STATIC_CAST(int32_t, b_.values[idx_b]);
+    #if  defined(SIMDE_RISCV_V_NATIVE)
+        simde_int32x2_private r_tmp = simde_int32x2_to_private(r);
+        vint8mf4_t vb_low = __riscv_vlmul_trunc_v_i8m1_i8mf4(
+          __riscv_vslidedown_vx_i8m1(b_.sv128, lane*4, 4));
+        vint32m1_t vd = __riscv_vmv_v_x_i32m1(0, 4);
+        vint32m1_t rst0 = __riscv_vredsum_vs_i32m1_i32m1(__riscv_vwcvt_x_x_v_i32m1 (__riscv_vwmul_vv_i16mf2 ( \
+        __riscv_vlmul_trunc_v_i8m1_i8mf4(__riscv_vslidedown_vx_i8m1(a_.sv64, 0, 4)), vb_low, 4), 4), vd, 4);
+        vint32m1_t rst1 = __riscv_vredsum_vs_i32m1_i32m1(__riscv_vwcvt_x_x_v_i32m1 (__riscv_vwmul_vv_i16mf2 ( \
+        __riscv_vlmul_trunc_v_i8m1_i8mf4(__riscv_vslidedown_vx_i8m1(a_.sv64, 4, 4)), vb_low, 4), 4), vd, 4);
+        r_.sv64 = __riscv_vslideup_vx_i32m1(
+          __riscv_vadd_vx_i32m1(rst0, r_tmp.values[0], 2),
+          __riscv_vadd_vx_i32m1(rst1, r_tmp.values[1], 2),
+          1, 2);
+    #else
+      for (int i = 0 ; i < 2 ; i++) {
+        int32_t acc = 0;
+        SIMDE_VECTORIZE_REDUCTION(+:acc)
+        for (int j = 0 ; j < 4 ; j++) {
+          const int idx_b = j + (lane << 2);
+          const int idx_a = j + (i << 2);
+          acc += HEDLEY_STATIC_CAST(int32_t, a_.values[idx_a]) * HEDLEY_STATIC_CAST(int32_t, b_.values[idx_b]);
+        }
+        r_.values[i] += acc;
       }
-      r_.values[i] += acc;
-    }
-
+    #endif
     result = simde_int32x2_from_private(r_);
   #endif
 
@@ -54818,18 +56901,31 @@ simde_vdot_laneq_u32(simde_uint32x2_t r, simde_uint8x8_t a, simde_uint8x16_t b, 
     simde_uint32x2_private r_ = simde_uint32x2_to_private(r);
     simde_uint8x8_private a_ = simde_uint8x8_to_private(a);
     simde_uint8x16_private b_ = simde_uint8x16_to_private(b);
-
-    for (int i = 0 ; i < 2 ; i++) {
-      uint32_t acc = 0;
-      SIMDE_VECTORIZE_REDUCTION(+:acc)
-      for (int j = 0 ; j < 4 ; j++) {
-        const int idx_b = j + (lane << 2);
-        const int idx_a = j + (i << 2);
-        acc += HEDLEY_STATIC_CAST(uint32_t, a_.values[idx_a]) * HEDLEY_STATIC_CAST(uint32_t, b_.values[idx_b]);
+    #if  defined(SIMDE_RISCV_V_NATIVE)
+        simde_uint32x2_private r_tmp = simde_uint32x2_to_private(r);
+        vuint8mf4_t vb_low = __riscv_vlmul_trunc_v_u8m1_u8mf4 (
+          __riscv_vslidedown_vx_u8m1(b_.sv128, lane*4, 4));
+        vuint32m1_t vd = __riscv_vmv_v_x_u32m1(0, 4);
+        vuint32m1_t rst0 = __riscv_vredsum_vs_u32m1_u32m1(__riscv_vwcvtu_x_x_v_u32m1 (__riscv_vwmulu_vv_u16mf2 \
+          (__riscv_vlmul_trunc_v_u8m1_u8mf4 (__riscv_vslidedown_vx_u8m1(a_.sv64, 0, 4)), vb_low, 4), 4), vd, 4);
+        vuint32m1_t rst1 = __riscv_vredsum_vs_u32m1_u32m1(__riscv_vwcvtu_x_x_v_u32m1 (__riscv_vwmulu_vv_u16mf2 \
+          (__riscv_vlmul_trunc_v_u8m1_u8mf4 (__riscv_vslidedown_vx_u8m1(a_.sv64, 4, 4)), vb_low, 4), 4), vd, 4);
+        r_.sv64 = __riscv_vslideup_vx_u32m1(
+          __riscv_vadd_vx_u32m1(rst0, r_tmp.values[0], 2),
+          __riscv_vadd_vx_u32m1(rst1, r_tmp.values[1], 2),
+          1, 2);
+    #else
+      for (int i = 0 ; i < 2 ; i++) {
+        uint32_t acc = 0;
+        SIMDE_VECTORIZE_REDUCTION(+:acc)
+        for (int j = 0 ; j < 4 ; j++) {
+          const int idx_b = j + (lane << 2);
+          const int idx_a = j + (i << 2);
+          acc += HEDLEY_STATIC_CAST(uint32_t, a_.values[idx_a]) * HEDLEY_STATIC_CAST(uint32_t, b_.values[idx_b]);
+        }
+        r_.values[i] += acc;
       }
-      r_.values[i] += acc;
-    }
-
+    #endif
     result = simde_uint32x2_from_private(r_);
   #endif
   return result;
@@ -54880,18 +56976,34 @@ simde_vdotq_laneq_u32(simde_uint32x4_t r, simde_uint8x16_t a, simde_uint8x16_t b
     simde_uint8x16_private
       a_ = simde_uint8x16_to_private(a),
       b_ = simde_uint8x16_to_private(b);
-
-    for(int i = 0 ; i < 4 ; i++) {
-      uint32_t acc = 0;
-      SIMDE_VECTORIZE_REDUCTION(+:acc)
-      for(int j = 0 ; j < 4 ; j++) {
-        const int idx_b = j + (lane << 2);
-        const int idx_a = j + (i << 2);
-        acc += HEDLEY_STATIC_CAST(uint32_t, a_.values[idx_a]) * HEDLEY_STATIC_CAST(uint32_t, b_.values[idx_b]);
+    #if  defined(SIMDE_RISCV_V_NATIVE)
+        simde_uint32x4_private r_tmp = simde_uint32x4_to_private(r);
+        vuint8mf4_t vb_low = __riscv_vlmul_trunc_v_u8m1_u8mf4(
+          __riscv_vslidedown_vx_u8m1(b_.sv128, lane*4, 4));
+        vuint32m1_t vd = __riscv_vmv_v_x_u32m1(0, 4);
+        vuint32m1_t rst0 = __riscv_vredsum_vs_u32m1_u32m1(__riscv_vwcvtu_x_x_v_u32m1(__riscv_vwmulu_vv_u16mf2 \
+          (__riscv_vlmul_trunc_v_u8m1_u8mf4(__riscv_vslidedown_vx_u8m1(a_.sv128, 0, 4)), vb_low, 4), 4), vd, 4);
+        vuint32m1_t rst1 = __riscv_vredsum_vs_u32m1_u32m1(__riscv_vwcvtu_x_x_v_u32m1 (__riscv_vwmulu_vv_u16mf2 \
+          (__riscv_vlmul_trunc_v_u8m1_u8mf4(__riscv_vslidedown_vx_u8m1(a_.sv128, 4, 4)), vb_low, 4), 4), vd, 4);
+        vuint32m1_t rst2 = __riscv_vredsum_vs_u32m1_u32m1(__riscv_vwcvtu_x_x_v_u32m1 (__riscv_vwmulu_vv_u16mf2 \
+          (__riscv_vlmul_trunc_v_u8m1_u8mf4(__riscv_vslidedown_vx_u8m1(a_.sv128, 8, 4)), vb_low, 4), 4), vd, 4);
+        vuint32m1_t rst3 = __riscv_vredsum_vs_u32m1_u32m1(__riscv_vwcvtu_x_x_v_u32m1 (__riscv_vwmulu_vv_u16mf2 \
+          (__riscv_vlmul_trunc_v_u8m1_u8mf4(__riscv_vslidedown_vx_u8m1(a_.sv128, 12, 4)), vb_low, 4), 4), vd, 4);
+        vuint32m1_t r0 = __riscv_vslideup_vx_u32m1(__riscv_vadd_vx_u32m1(rst0, r_tmp.values[0], 2), __riscv_vadd_vx_u32m1(rst1, r_tmp.values[1], 2), 1, 2);
+        vuint32m1_t r1 = __riscv_vslideup_vx_u32m1(r0, __riscv_vadd_vx_u32m1(rst2, r_tmp.values[2], 2), 2, 3);
+        r_.sv128 = __riscv_vslideup_vx_u32m1(r1, __riscv_vadd_vx_u32m1(rst3, r_tmp.values[3], 2), 3, 4);
+    #else
+      for(int i = 0 ; i < 4 ; i++) {
+        uint32_t acc = 0;
+        SIMDE_VECTORIZE_REDUCTION(+:acc)
+        for(int j = 0 ; j < 4 ; j++) {
+          const int idx_b = j + (lane << 2);
+          const int idx_a = j + (i << 2);
+          acc += HEDLEY_STATIC_CAST(uint32_t, a_.values[idx_a]) * HEDLEY_STATIC_CAST(uint32_t, b_.values[idx_b]);
+        }
+        r_.values[i] += acc;
       }
-      r_.values[i] += acc;
-    }
-
+    #endif
     result = simde_uint32x4_from_private(r_);
   #endif
   return result;
@@ -54942,18 +57054,38 @@ simde_vdotq_laneq_s32(simde_int32x4_t r, simde_int8x16_t a, simde_int8x16_t b, c
     simde_int8x16_private
       a_ = simde_int8x16_to_private(a),
       b_ = simde_int8x16_to_private(b);
-
-    for(int i = 0 ; i < 4 ; i++) {
-      int32_t acc = 0;
-      SIMDE_VECTORIZE_REDUCTION(+:acc)
-      for(int j = 0 ; j < 4 ; j++) {
-        const int idx_b = j + (lane << 2);
-        const int idx_a = j + (i << 2);
-        acc += HEDLEY_STATIC_CAST(int32_t, a_.values[idx_a]) * HEDLEY_STATIC_CAST(int32_t, b_.values[idx_b]);
+    #if defined(SIMDE_RISCV_V_NATIVE)
+        simde_int32x4_private r_tmp = simde_int32x4_to_private(r);
+        vint8mf4_t vb_low = __riscv_vlmul_trunc_v_i8m1_i8mf4(
+          __riscv_vslidedown_vx_i8m1(b_.sv128, lane*4, 4));
+        vint32m1_t vd = __riscv_vmv_v_x_i32m1(0, 4);
+        vint32m1_t rst0 = __riscv_vredsum_vs_i32m1_i32m1(__riscv_vwcvt_x_x_v_i32m1 \
+          (__riscv_vwmul_vv_i16mf2 (__riscv_vlmul_trunc_v_i8m1_i8mf4(__riscv_vslidedown_vx_i8m1(a_.sv128, 0, 4)), \
+            vb_low, 4), 4), vd, 4);
+        vint32m1_t rst1 = __riscv_vredsum_vs_i32m1_i32m1(__riscv_vwcvt_x_x_v_i32m1 \
+          (__riscv_vwmul_vv_i16mf2 (__riscv_vlmul_trunc_v_i8m1_i8mf4(__riscv_vslidedown_vx_i8m1(a_.sv128, 4, 4)), \
+            vb_low, 4), 4), vd, 4);
+        vint32m1_t rst2 = __riscv_vredsum_vs_i32m1_i32m1(__riscv_vwcvt_x_x_v_i32m1 \
+          (__riscv_vwmul_vv_i16mf2 (__riscv_vlmul_trunc_v_i8m1_i8mf4(__riscv_vslidedown_vx_i8m1(a_.sv128, 8, 4)), \
+            vb_low, 4), 4), vd, 4);
+        vint32m1_t rst3 = __riscv_vredsum_vs_i32m1_i32m1(__riscv_vwcvt_x_x_v_i32m1 \
+          (__riscv_vwmul_vv_i16mf2 (__riscv_vlmul_trunc_v_i8m1_i8mf4(__riscv_vslidedown_vx_i8m1(a_.sv128, 12, 4)), \
+            vb_low, 4), 4), vd, 4);
+        vint32m1_t r0 = __riscv_vslideup_vx_i32m1(__riscv_vadd_vx_i32m1(rst0, r_tmp.values[0], 2), __riscv_vadd_vx_i32m1(rst1, r_tmp.values[1], 2), 1, 2);
+        vint32m1_t r1 = __riscv_vslideup_vx_i32m1(r0, __riscv_vadd_vx_i32m1(rst2, r_tmp.values[2], 2), 2, 3);
+        r_.sv128 = __riscv_vslideup_vx_i32m1(r1, __riscv_vadd_vx_i32m1(rst3, r_tmp.values[3], 2), 3, 4);
+    #else
+      for(int i = 0 ; i < 4 ; i++) {
+        int32_t acc = 0;
+        SIMDE_VECTORIZE_REDUCTION(+:acc)
+        for(int j = 0 ; j < 4 ; j++) {
+          const int idx_b = j + (lane << 2);
+          const int idx_a = j + (i << 2);
+          acc += HEDLEY_STATIC_CAST(int32_t, a_.values[idx_a]) * HEDLEY_STATIC_CAST(int32_t, b_.values[idx_b]);
+        }
+        r_.values[i] += acc;
       }
-      r_.values[i] += acc;
-    }
-
+    #endif
     result = simde_int32x4_from_private(r_);
   #endif
   return result;
@@ -55003,18 +57135,33 @@ simde_vdotq_lane_u32(simde_uint32x4_t r, simde_uint8x16_t a, simde_uint8x8_t b, 
     simde_uint32x4_private r_ = simde_uint32x4_to_private(r);
     simde_uint8x16_private a_ = simde_uint8x16_to_private(a);
     simde_uint8x8_private b_ = simde_uint8x8_to_private(b);
-
-    for(int i = 0 ; i < 4 ; i++) {
-      uint32_t acc = 0;
-      SIMDE_VECTORIZE_REDUCTION(+:acc)
-      for(int j = 0 ; j < 4 ; j++) {
-        const int idx_b = j + (lane << 2);
-        const int idx_a = j + (i << 2);
-        acc += HEDLEY_STATIC_CAST(uint32_t, a_.values[idx_a]) * HEDLEY_STATIC_CAST(uint32_t, b_.values[idx_b]);
+    #if defined(SIMDE_RISCV_V_NATIVE)
+        simde_uint32x4_private r_tmp = simde_uint32x4_to_private(r);
+        vuint8mf4_t vb_low = __riscv_vlmul_trunc_v_u8m1_u8mf4(__riscv_vslidedown_vx_u8m1(b_.sv64, lane*4, 4));
+        vuint32m1_t vd = __riscv_vmv_v_x_u32m1(0, 4);
+        vuint32m1_t rst0 = __riscv_vredsum_vs_u32m1_u32m1(__riscv_vwcvtu_x_x_v_u32m1(__riscv_vwmulu_vv_u16mf2 \
+          (__riscv_vlmul_trunc_v_u8m1_u8mf4(__riscv_vslidedown_vx_u8m1(a_.sv128, 0, 4)), vb_low, 4), 4), vd, 4);
+        vuint32m1_t rst1 = __riscv_vredsum_vs_u32m1_u32m1(__riscv_vwcvtu_x_x_v_u32m1(__riscv_vwmulu_vv_u16mf2 \
+          (__riscv_vlmul_trunc_v_u8m1_u8mf4(__riscv_vslidedown_vx_u8m1(a_.sv128, 4, 4)), vb_low, 4), 4), vd, 4);
+        vuint32m1_t rst2 = __riscv_vredsum_vs_u32m1_u32m1(__riscv_vwcvtu_x_x_v_u32m1(__riscv_vwmulu_vv_u16mf2 \
+          (__riscv_vlmul_trunc_v_u8m1_u8mf4(__riscv_vslidedown_vx_u8m1(a_.sv128, 8, 4)), vb_low, 4), 4), vd, 4);
+        vuint32m1_t rst3 = __riscv_vredsum_vs_u32m1_u32m1(__riscv_vwcvtu_x_x_v_u32m1(__riscv_vwmulu_vv_u16mf2 \
+          (__riscv_vlmul_trunc_v_u8m1_u8mf4(__riscv_vslidedown_vx_u8m1(a_.sv128, 12, 4)), vb_low, 4), 4), vd, 4);
+        vuint32m1_t r0 = __riscv_vslideup_vx_u32m1(__riscv_vadd_vx_u32m1(rst0, r_tmp.values[0], 2), __riscv_vadd_vx_u32m1(rst1, r_tmp.values[1], 2), 1, 2);
+        vuint32m1_t r1 = __riscv_vslideup_vx_u32m1(r0, __riscv_vadd_vx_u32m1(rst2, r_tmp.values[2], 2), 2, 3);
+        r_.sv128 = __riscv_vslideup_vx_u32m1(r1, __riscv_vadd_vx_u32m1(rst3, r_tmp.values[3], 2), 3, 4);
+    #else
+      for(int i = 0 ; i < 4 ; i++) {
+        uint32_t acc = 0;
+        SIMDE_VECTORIZE_REDUCTION(+:acc)
+        for(int j = 0 ; j < 4 ; j++) {
+          const int idx_b = j + (lane << 2);
+          const int idx_a = j + (i << 2);
+          acc += HEDLEY_STATIC_CAST(uint32_t, a_.values[idx_a]) * HEDLEY_STATIC_CAST(uint32_t, b_.values[idx_b]);
+        }
+        r_.values[i] += acc;
       }
-      r_.values[i] += acc;
-    }
-
+    #endif
     result = simde_uint32x4_from_private(r_);
   #endif
   return result;
@@ -55064,18 +57211,34 @@ simde_vdotq_lane_s32(simde_int32x4_t r, simde_int8x16_t a, simde_int8x8_t b, con
     simde_int32x4_private r_ = simde_int32x4_to_private(r);
     simde_int8x16_private a_ = simde_int8x16_to_private(a);
     simde_int8x8_private b_ = simde_int8x8_to_private(b);
-
-    for(int i = 0 ; i < 4 ; i++) {
-      int32_t acc = 0;
-      SIMDE_VECTORIZE_REDUCTION(+:acc)
-      for(int j = 0 ; j < 4 ; j++) {
-        const int idx_b = j + (lane << 2);
-        const int idx_a = j + (i << 2);
-        acc += HEDLEY_STATIC_CAST(int32_t, a_.values[idx_a]) * HEDLEY_STATIC_CAST(int32_t, b_.values[idx_b]);
+    #if  defined(SIMDE_RISCV_V_NATIVE)
+        simde_int32x4_private r_tmp = simde_int32x4_to_private(r);
+        vint8mf4_t vb_low = __riscv_vlmul_trunc_v_i8m1_i8mf4(
+          __riscv_vslidedown_vx_i8m1(b_.sv64, lane*4, 4));
+        vint32m1_t vd = __riscv_vmv_v_x_i32m1(0, 4);
+        vint32m1_t rst0 = __riscv_vredsum_vs_i32m1_i32m1(__riscv_vwcvt_x_x_v_i32m1(__riscv_vwmul_vv_i16mf2 \
+          (__riscv_vlmul_trunc_v_i8m1_i8mf4(__riscv_vslidedown_vx_i8m1(a_.sv128, 0, 4)), vb_low, 4), 4), vd, 4);
+        vint32m1_t rst1 = __riscv_vredsum_vs_i32m1_i32m1(__riscv_vwcvt_x_x_v_i32m1(__riscv_vwmul_vv_i16mf2 \
+          (__riscv_vlmul_trunc_v_i8m1_i8mf4(__riscv_vslidedown_vx_i8m1(a_.sv128, 4, 4)), vb_low, 4), 4), vd, 4);
+        vint32m1_t rst2 = __riscv_vredsum_vs_i32m1_i32m1(__riscv_vwcvt_x_x_v_i32m1(__riscv_vwmul_vv_i16mf2 \
+          (__riscv_vlmul_trunc_v_i8m1_i8mf4(__riscv_vslidedown_vx_i8m1(a_.sv128, 8, 4)), vb_low, 4), 4), vd, 4);
+        vint32m1_t rst3 = __riscv_vredsum_vs_i32m1_i32m1(__riscv_vwcvt_x_x_v_i32m1(__riscv_vwmul_vv_i16mf2 \
+          (__riscv_vlmul_trunc_v_i8m1_i8mf4(__riscv_vslidedown_vx_i8m1(a_.sv128, 12, 4)), vb_low, 4), 4), vd, 4);
+        vint32m1_t r0 = __riscv_vslideup_vx_i32m1(__riscv_vadd_vx_i32m1(rst0, r_tmp.values[0], 2), __riscv_vadd_vx_i32m1(rst1, r_tmp.values[1], 2), 1, 2);
+        vint32m1_t r1 = __riscv_vslideup_vx_i32m1(r0, __riscv_vadd_vx_i32m1(rst2, r_tmp.values[2], 2), 2, 3);
+        r_.sv128 = __riscv_vslideup_vx_i32m1(r1, __riscv_vadd_vx_i32m1(rst3, r_tmp.values[3], 2), 3, 4);
+    #else
+      for(int i = 0 ; i < 4 ; i++) {
+        int32_t acc = 0;
+        SIMDE_VECTORIZE_REDUCTION(+:acc)
+        for(int j = 0 ; j < 4 ; j++) {
+          const int idx_b = j + (lane << 2);
+          const int idx_a = j + (i << 2);
+          acc += HEDLEY_STATIC_CAST(int32_t, a_.values[idx_a]) * HEDLEY_STATIC_CAST(int32_t, b_.values[idx_b]);
+        }
+        r_.values[i] += acc;
       }
-      r_.values[i] += acc;
-    }
-
+    #endif
     result = simde_int32x4_from_private(r_);
   #endif
   return result;
@@ -55217,13 +57380,13 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_DOT_LANE_H) */
 /* :: End simde/arm/neon/dot_lane.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/ext.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -55251,12 +57414,13 @@ HEDLEY_DIAGNOSTIC_POP
  *   2020      Evan Nemerson <evan@nemerson.com>
  *   2020      Sean Maher <seanptmaher@gmail.com> (Copyright owned by Google, LLC)
  *   2023      Yi-Yen Chung <eric681@andestech.com> (Copyright owned by Andes Technology)
+ *   2023      Chi-Wei Chu <wewe5215@gapp.nthu.edu.tw> (Copyright owned by NTHU pllab)
  */
 
 #if !defined(SIMDE_ARM_NEON_EXT_H)
 #define SIMDE_ARM_NEON_EXT_H
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -55275,11 +57439,16 @@ simde_vext_f16(simde_float16x4_t a, simde_float16x4_t b, const int n)
       a_ = simde_float16x4_to_private(a),
       b_ = simde_float16x4_to_private(b),
       r_ = a_;
-    const size_t n_ = HEDLEY_STATIC_CAST(size_t, n);
-    for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
-      size_t src = i + n_;
-      r_.values[i] = (src < (sizeof(r_.values) / sizeof(r_.values[0]))) ? a_.values[src] : b_.values[src & 3];
-    }
+    #if defined(SIMDE_RISCV_V_NATIVE) && SIMDE_ARCH_RISCV_ZVFH
+      a_.sv64 = __riscv_vslidedown_vx_f16m1(a_.sv64, n, 4);
+      r_.sv64 = __riscv_vslideup_vx_f16m1(a_.sv64, b_.sv64, 4-n, 4);
+    #else
+      const size_t n_ = HEDLEY_STATIC_CAST(size_t, n);
+      for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
+        size_t src = i + n_;
+        r_.values[i] = (src < (sizeof(r_.values) / sizeof(r_.values[0]))) ? a_.values[src] : b_.values[src & 3];
+      }
+    #endif
     return simde_float16x4_from_private(r_);
   #endif
 }
@@ -55301,11 +57470,16 @@ simde_vext_f32(simde_float32x2_t a, simde_float32x2_t b, const int n)
       a_ = simde_float32x2_to_private(a),
       b_ = simde_float32x2_to_private(b),
       r_ = a_;
-    const size_t n_ = HEDLEY_STATIC_CAST(size_t, n);
-    for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
-      size_t src = i + n_;
-      r_.values[i] = (src < (sizeof(r_.values) / sizeof(r_.values[0]))) ? a_.values[src] : b_.values[src & 1];
-    }
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      a_.sv64 = __riscv_vslidedown_vx_f32m1(a_.sv64, n, 2);
+      r_.sv64 = __riscv_vslideup_vx_f32m1(a_.sv64, b_.sv64, 2-n, 2);
+    #else
+      const size_t n_ = HEDLEY_STATIC_CAST(size_t, n);
+      for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
+        size_t src = i + n_;
+        r_.values[i] = (src < (sizeof(r_.values) / sizeof(r_.values[0]))) ? a_.values[src] : b_.values[src & 1];
+      }
+    #endif
     return simde_float32x2_from_private(r_);
   #endif
 }
@@ -55336,11 +57510,16 @@ simde_vext_f64(simde_float64x1_t a, simde_float64x1_t b, const int n)
       a_ = simde_float64x1_to_private(a),
       b_ = simde_float64x1_to_private(b),
       r_ = a_;
-    const size_t n_ = HEDLEY_STATIC_CAST(size_t, n);
-    for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
-      size_t src = i + n_;
-      r_.values[i] = (src < (sizeof(r_.values) / sizeof(r_.values[0]))) ? a_.values[src] : b_.values[src & 0];
-    }
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      a_.sv64 = __riscv_vslidedown_vx_f64m1(a_.sv64, n, 1);
+      r_.sv64 = __riscv_vslideup_vx_f64m1(a_.sv64, b_.sv64, 1-n, 1);
+    #else
+      const size_t n_ = HEDLEY_STATIC_CAST(size_t, n);
+      for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
+        size_t src = i + n_;
+        r_.values[i] = (src < (sizeof(r_.values) / sizeof(r_.values[0]))) ? a_.values[src] : b_.values[src & 0];
+      }
+    #endif
     return simde_float64x1_from_private(r_);
   #endif
 }
@@ -55372,11 +57551,16 @@ simde_vext_s8(simde_int8x8_t a, simde_int8x8_t b, const int n)
       a_ = simde_int8x8_to_private(a),
       b_ = simde_int8x8_to_private(b),
       r_ = a_;
-    const size_t n_ = HEDLEY_STATIC_CAST(size_t, n);
-    for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
-      size_t src = i + n_;
-      r_.values[i] = (src < (sizeof(r_.values) / sizeof(r_.values[0]))) ? a_.values[src] : b_.values[src & 7];
-    }
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      a_.sv64 = __riscv_vslidedown_vx_i8m1(a_.sv64, n, 8);
+      r_.sv64 = __riscv_vslideup_vx_i8m1(a_.sv64, b_.sv64, 8-n, 8);
+    #else
+      const size_t n_ = HEDLEY_STATIC_CAST(size_t, n);
+      for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
+        size_t src = i + n_;
+        r_.values[i] = (src < (sizeof(r_.values) / sizeof(r_.values[0]))) ? a_.values[src] : b_.values[src & 7];
+      }
+    #endif
     return simde_int8x8_from_private(r_);
   #endif
 }
@@ -55411,11 +57595,16 @@ simde_vext_s16(simde_int16x4_t a, simde_int16x4_t b, const int n)
       a_ = simde_int16x4_to_private(a),
       b_ = simde_int16x4_to_private(b),
       r_ = a_;
-    const size_t n_ = HEDLEY_STATIC_CAST(size_t, n);
-    for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
-      size_t src = i + n_;
-      r_.values[i] = (src < (sizeof(r_.values) / sizeof(r_.values[0]))) ? a_.values[src] : b_.values[src & 3];
-    }
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      a_.sv64 = __riscv_vslidedown_vx_i16m1(a_.sv64, n, 4);
+      r_.sv64 = __riscv_vslideup_vx_i16m1(a_.sv64, b_.sv64, 4-n, 4);
+    #else
+      const size_t n_ = HEDLEY_STATIC_CAST(size_t, n);
+      for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
+        size_t src = i + n_;
+        r_.values[i] = (src < (sizeof(r_.values) / sizeof(r_.values[0]))) ? a_.values[src] : b_.values[src & 3];
+      }
+    #endif
     return simde_int16x4_from_private(r_);
   #endif
 }
@@ -55448,11 +57637,16 @@ simde_vext_s32(simde_int32x2_t a, simde_int32x2_t b, const int n)
       a_ = simde_int32x2_to_private(a),
       b_ = simde_int32x2_to_private(b),
       r_ = a_;
-    const size_t n_ = HEDLEY_STATIC_CAST(size_t, n);
-    for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
-      size_t src = i + n_;
-      r_.values[i] = (src < (sizeof(r_.values) / sizeof(r_.values[0]))) ? a_.values[src] : b_.values[src & 1];
-    }
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      a_.sv64 = __riscv_vslidedown_vx_i32m1(a_.sv64, n, 2);
+      r_.sv64 = __riscv_vslideup_vx_i32m1(a_.sv64, b_.sv64, 2-n, 2);
+    #else
+      const size_t n_ = HEDLEY_STATIC_CAST(size_t, n);
+      for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
+        size_t src = i + n_;
+        r_.values[i] = (src < (sizeof(r_.values) / sizeof(r_.values[0]))) ? a_.values[src] : b_.values[src & 1];
+      }
+    #endif
     return simde_int32x2_from_private(r_);
   #endif
 }
@@ -55483,11 +57677,16 @@ simde_vext_s64(simde_int64x1_t a, simde_int64x1_t b, const int n)
       a_ = simde_int64x1_to_private(a),
       b_ = simde_int64x1_to_private(b),
       r_ = a_;
-    const size_t n_ = HEDLEY_STATIC_CAST(size_t, n);
-    for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
-      size_t src = i + n_;
-      r_.values[i] = (src < (sizeof(r_.values) / sizeof(r_.values[0]))) ? a_.values[src] : b_.values[src & 0];
-    }
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      a_.sv64 = __riscv_vslidedown_vx_i64m1(a_.sv64, n, 1);
+      r_.sv64 = __riscv_vslideup_vx_i64m1(a_.sv64, b_.sv64, 1-n, 1);
+    #else
+      const size_t n_ = HEDLEY_STATIC_CAST(size_t, n);
+      for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
+        size_t src = i + n_;
+        r_.values[i] = (src < (sizeof(r_.values) / sizeof(r_.values[0]))) ? a_.values[src] : b_.values[src & 0];
+      }
+    #endif
     return simde_int64x1_from_private(r_);
   #endif
 }
@@ -55519,11 +57718,16 @@ simde_vext_u8(simde_uint8x8_t a, simde_uint8x8_t b, const int n)
       a_ = simde_uint8x8_to_private(a),
       b_ = simde_uint8x8_to_private(b),
       r_ = a_;
-    const size_t n_ = HEDLEY_STATIC_CAST(size_t, n);
-    for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
-      size_t src = i + n_;
-      r_.values[i] = (src < (sizeof(r_.values) / sizeof(r_.values[0]))) ? a_.values[src] : b_.values[src & 7];
-    }
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      a_.sv64 = __riscv_vslidedown_vx_u8m1(a_.sv64, n, 8);
+      r_.sv64 = __riscv_vslideup_vx_u8m1(a_.sv64, b_.sv64, 8-n, 8);
+    #else
+      const size_t n_ = HEDLEY_STATIC_CAST(size_t, n);
+      for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
+        size_t src = i + n_;
+        r_.values[i] = (src < (sizeof(r_.values) / sizeof(r_.values[0]))) ? a_.values[src] : b_.values[src & 7];
+      }
+    #endif
     return simde_uint8x8_from_private(r_);
   #endif
 }
@@ -55558,11 +57762,16 @@ simde_vext_u16(simde_uint16x4_t a, simde_uint16x4_t b, const int n)
       a_ = simde_uint16x4_to_private(a),
       b_ = simde_uint16x4_to_private(b),
       r_ = a_;
-    const size_t n_ = HEDLEY_STATIC_CAST(size_t, n);
-    for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
-      size_t src = i + n_;
-      r_.values[i] = (src < (sizeof(r_.values) / sizeof(r_.values[0]))) ? a_.values[src] : b_.values[src & 3];
-    }
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      a_.sv64 = __riscv_vslidedown_vx_u16m1(a_.sv64, n, 4);
+      r_.sv64 = __riscv_vslideup_vx_u16m1(a_.sv64, b_.sv64, 4-n, 4);
+    #else
+      const size_t n_ = HEDLEY_STATIC_CAST(size_t, n);
+      for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
+        size_t src = i + n_;
+        r_.values[i] = (src < (sizeof(r_.values) / sizeof(r_.values[0]))) ? a_.values[src] : b_.values[src & 3];
+      }
+    #endif
     return simde_uint16x4_from_private(r_);
   #endif
 }
@@ -55595,11 +57804,16 @@ simde_vext_u32(simde_uint32x2_t a, simde_uint32x2_t b, const int n)
       a_ = simde_uint32x2_to_private(a),
       b_ = simde_uint32x2_to_private(b),
       r_ = a_;
-    const size_t n_ = HEDLEY_STATIC_CAST(size_t, n);
-    for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
-      size_t src = i + n_;
-      r_.values[i] = (src < (sizeof(r_.values) / sizeof(r_.values[0]))) ? a_.values[src] : b_.values[src & 1];
-    }
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      a_.sv64 = __riscv_vslidedown_vx_u32m1(a_.sv64, n, 2);
+      r_.sv64 = __riscv_vslideup_vx_u32m1(a_.sv64, b_.sv64, 2-n, 2);
+    #else
+      const size_t n_ = HEDLEY_STATIC_CAST(size_t, n);
+      for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
+        size_t src = i + n_;
+        r_.values[i] = (src < (sizeof(r_.values) / sizeof(r_.values[0]))) ? a_.values[src] : b_.values[src & 1];
+      }
+    #endif
     return simde_uint32x2_from_private(r_);
   #endif
 }
@@ -55630,11 +57844,16 @@ simde_vext_u64(simde_uint64x1_t a, simde_uint64x1_t b, const int n)
       a_ = simde_uint64x1_to_private(a),
       b_ = simde_uint64x1_to_private(b),
       r_ = a_;
-    const size_t n_ = HEDLEY_STATIC_CAST(size_t, n);
-    for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
-      size_t src = i + n_;
-      r_.values[i] = (src < (sizeof(r_.values) / sizeof(r_.values[0]))) ? a_.values[src] : b_.values[src & 0];
-    }
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      a_.sv64 = __riscv_vslidedown_vx_u64m1(a_.sv64, n, 1);
+      r_.sv64 = __riscv_vslideup_vx_u64m1(a_.sv64, b_.sv64, 1-n, 1);
+    #else
+      const size_t n_ = HEDLEY_STATIC_CAST(size_t, n);
+      for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
+        size_t src = i + n_;
+        r_.values[i] = (src < (sizeof(r_.values) / sizeof(r_.values[0]))) ? a_.values[src] : b_.values[src & 0];
+      }
+    #endif
     return simde_uint64x1_from_private(r_);
   #endif
 }
@@ -55666,11 +57885,16 @@ simde_vextq_f16(simde_float16x8_t a, simde_float16x8_t b, const int n)
       a_ = simde_float16x8_to_private(a),
       b_ = simde_float16x8_to_private(b),
       r_ = a_;
-    const size_t n_ = HEDLEY_STATIC_CAST(size_t, n);
-    for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
-      size_t src = i + n_;
-      r_.values[i] = (src < (sizeof(r_.values) / sizeof(r_.values[0]))) ? a_.values[src] : b_.values[src & 7];
-    }
+    #if defined(SIMDE_RISCV_V_NATIVE) && SIMDE_ARCH_RISCV_ZVFH
+      a_.sv128 = __riscv_vslidedown_vx_f16m1(a_.sv128, n, 8);
+      r_.sv128 = __riscv_vslideup_vx_f16m1(a_.sv128, b_.sv128, 8-n, 8);
+    #else
+      const size_t n_ = HEDLEY_STATIC_CAST(size_t, n);
+      for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
+        size_t src = i + n_;
+        r_.values[i] = (src < (sizeof(r_.values) / sizeof(r_.values[0]))) ? a_.values[src] : b_.values[src & 7];
+      }
+    #endif
     return simde_float16x8_from_private(r_);
   #endif
 }
@@ -55692,11 +57916,16 @@ simde_vextq_f32(simde_float32x4_t a, simde_float32x4_t b, const int n)
       a_ = simde_float32x4_to_private(a),
       b_ = simde_float32x4_to_private(b),
       r_ = a_;
-    const size_t n_ = HEDLEY_STATIC_CAST(size_t, n);
-    for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
-      size_t src = i + n_;
-      r_.values[i] = (src < (sizeof(r_.values) / sizeof(r_.values[0]))) ? a_.values[src] : b_.values[src & 3];
-    }
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      a_.sv128 = __riscv_vslidedown_vx_f32m1(a_.sv128, n, 4);
+      r_.sv128 = __riscv_vslideup_vx_f32m1(a_.sv128, b_.sv128, 4-n, 4);
+    #else
+      const size_t n_ = HEDLEY_STATIC_CAST(size_t, n);
+      for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
+        size_t src = i + n_;
+        r_.values[i] = (src < (sizeof(r_.values) / sizeof(r_.values[0]))) ? a_.values[src] : b_.values[src & 3];
+      }
+    #endif
     return simde_float32x4_from_private(r_);
   #endif
 }
@@ -55737,11 +57966,16 @@ simde_vextq_f64(simde_float64x2_t a, simde_float64x2_t b, const int n)
       a_ = simde_float64x2_to_private(a),
       b_ = simde_float64x2_to_private(b),
       r_ = a_;
-    const size_t n_ = HEDLEY_STATIC_CAST(size_t, n);
-    for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
-      size_t src = i + n_;
-      r_.values[i] = (src < (sizeof(r_.values) / sizeof(r_.values[0]))) ? a_.values[src] : b_.values[src & 1];
-    }
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      a_.sv128 = __riscv_vslidedown_vx_f64m1(a_.sv128, n, 2);
+      r_.sv128 = __riscv_vslideup_vx_f64m1(a_.sv128, b_.sv128, 2-n, 2);
+    #else
+      const size_t n_ = HEDLEY_STATIC_CAST(size_t, n);
+      for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
+        size_t src = i + n_;
+        r_.values[i] = (src < (sizeof(r_.values) / sizeof(r_.values[0]))) ? a_.values[src] : b_.values[src & 1];
+      }
+    #endif
     return simde_float64x2_from_private(r_);
   #endif
 }
@@ -55780,11 +58014,16 @@ simde_vextq_s8(simde_int8x16_t a, simde_int8x16_t b, const int n)
       a_ = simde_int8x16_to_private(a),
       b_ = simde_int8x16_to_private(b),
       r_ = a_;
-    const size_t n_ = HEDLEY_STATIC_CAST(size_t, n);
-    for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
-      size_t src = i + n_;
-      r_.values[i] = (src < (sizeof(r_.values) / sizeof(r_.values[0]))) ? a_.values[src] : b_.values[src & 15];
-    }
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      a_.sv128 = __riscv_vslidedown_vx_i8m1(a_.sv128, n, 16);
+      r_.sv128 = __riscv_vslideup_vx_i8m1(a_.sv128, b_.sv128, 16-n, 16);
+    #else
+      const size_t n_ = HEDLEY_STATIC_CAST(size_t, n);
+      for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
+        size_t src = i + n_;
+        r_.values[i] = (src < (sizeof(r_.values) / sizeof(r_.values[0]))) ? a_.values[src] : b_.values[src & 15];
+      }
+    #endif
     return simde_int8x16_from_private(r_);
   #endif
 }
@@ -55837,11 +58076,16 @@ simde_vextq_s16(simde_int16x8_t a, simde_int16x8_t b, const int n)
       a_ = simde_int16x8_to_private(a),
       b_ = simde_int16x8_to_private(b),
       r_ = a_;
-    const size_t n_ = HEDLEY_STATIC_CAST(size_t, n);
-    for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
-      size_t src = i + n_;
-      r_.values[i] = (src < (sizeof(r_.values) / sizeof(r_.values[0]))) ? a_.values[src] : b_.values[src & 7];
-    }
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      a_.sv128 = __riscv_vslidedown_vx_i16m1(a_.sv128, n, 8);
+      r_.sv128 = __riscv_vslideup_vx_i16m1(a_.sv128, b_.sv128, 8-n, 8);
+    #else
+      const size_t n_ = HEDLEY_STATIC_CAST(size_t, n);
+      for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
+        size_t src = i + n_;
+        r_.values[i] = (src < (sizeof(r_.values) / sizeof(r_.values[0]))) ? a_.values[src] : b_.values[src & 7];
+      }
+    #endif
     return simde_int16x8_from_private(r_);
   #endif
 }
@@ -55886,11 +58130,16 @@ simde_vextq_s32(simde_int32x4_t a, simde_int32x4_t b, const int n)
       a_ = simde_int32x4_to_private(a),
       b_ = simde_int32x4_to_private(b),
       r_ = a_;
-    const size_t n_ = HEDLEY_STATIC_CAST(size_t, n);
-    for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
-      size_t src = i + n_;
-      r_.values[i] = (src < (sizeof(r_.values) / sizeof(r_.values[0]))) ? a_.values[src] : b_.values[src & 3];
-    }
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      a_.sv128 = __riscv_vslidedown_vx_i32m1(a_.sv128, n, 4);
+      r_.sv128 = __riscv_vslideup_vx_i32m1(a_.sv128, b_.sv128, 4-n, 4);
+    #else
+      const size_t n_ = HEDLEY_STATIC_CAST(size_t, n);
+      for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
+        size_t src = i + n_;
+        r_.values[i] = (src < (sizeof(r_.values) / sizeof(r_.values[0]))) ? a_.values[src] : b_.values[src & 3];
+      }
+    #endif
     return simde_int32x4_from_private(r_);
   #endif
 }
@@ -55931,11 +58180,16 @@ simde_vextq_s64(simde_int64x2_t a, simde_int64x2_t b, const int n)
       a_ = simde_int64x2_to_private(a),
       b_ = simde_int64x2_to_private(b),
       r_ = a_;
-    const size_t n_ = HEDLEY_STATIC_CAST(size_t, n);
-    for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
-      size_t src = i + n_;
-      r_.values[i] = (src < (sizeof(r_.values) / sizeof(r_.values[0]))) ? a_.values[src] : b_.values[src & 1];
-    }
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      a_.sv128 = __riscv_vslidedown_vx_i64m1(a_.sv128, n, 2);
+      r_.sv128 = __riscv_vslideup_vx_i64m1(a_.sv128, b_.sv128, 2-n, 2);
+    #else
+      const size_t n_ = HEDLEY_STATIC_CAST(size_t, n);
+      for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
+        size_t src = i + n_;
+        r_.values[i] = (src < (sizeof(r_.values) / sizeof(r_.values[0]))) ? a_.values[src] : b_.values[src & 1];
+      }
+    #endif
     return simde_int64x2_from_private(r_);
   #endif
 }
@@ -55974,11 +58228,16 @@ simde_vextq_u8(simde_uint8x16_t a, simde_uint8x16_t b, const int n)
       a_ = simde_uint8x16_to_private(a),
       b_ = simde_uint8x16_to_private(b),
       r_ = a_;
-    const size_t n_ = HEDLEY_STATIC_CAST(size_t, n);
-    for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
-      size_t src = i + n_;
-      r_.values[i] = (src < (sizeof(r_.values) / sizeof(r_.values[0]))) ? a_.values[src] : b_.values[src & 15];
-    }
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      a_.sv128 = __riscv_vslidedown_vx_u8m1(a_.sv128, n, 16);
+      r_.sv128 = __riscv_vslideup_vx_u8m1(a_.sv128, b_.sv128, 16-n, 16);
+    #else
+      const size_t n_ = HEDLEY_STATIC_CAST(size_t, n);
+      for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
+        size_t src = i + n_;
+        r_.values[i] = (src < (sizeof(r_.values) / sizeof(r_.values[0]))) ? a_.values[src] : b_.values[src & 15];
+      }
+    #endif
     return simde_uint8x16_from_private(r_);
   #endif
 }
@@ -56017,11 +58276,16 @@ simde_vextq_u16(simde_uint16x8_t a, simde_uint16x8_t b, const int n)
       a_ = simde_uint16x8_to_private(a),
       b_ = simde_uint16x8_to_private(b),
       r_ = a_;
-    const size_t n_ = HEDLEY_STATIC_CAST(size_t, n);
-    for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
-      size_t src = i + n_;
-      r_.values[i] = (src < (sizeof(r_.values) / sizeof(r_.values[0]))) ? a_.values[src] : b_.values[src & 7];
-    }
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      a_.sv128 = __riscv_vslidedown_vx_u16m1(a_.sv128, n, 8);
+      r_.sv128 = __riscv_vslideup_vx_u16m1(a_.sv128, b_.sv128, 8-n, 8);
+    #else
+      const size_t n_ = HEDLEY_STATIC_CAST(size_t, n);
+      for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
+        size_t src = i + n_;
+        r_.values[i] = (src < (sizeof(r_.values) / sizeof(r_.values[0]))) ? a_.values[src] : b_.values[src & 7];
+      }
+    #endif
     return simde_uint16x8_from_private(r_);
   #endif
 }
@@ -56065,11 +58329,16 @@ simde_vextq_u32(simde_uint32x4_t a, simde_uint32x4_t b, const int n)
       a_ = simde_uint32x4_to_private(a),
       b_ = simde_uint32x4_to_private(b),
       r_ = a_;
-    const size_t n_ = HEDLEY_STATIC_CAST(size_t, n);
-    for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
-      size_t src = i + n_;
-      r_.values[i] = (src < (sizeof(r_.values) / sizeof(r_.values[0]))) ? a_.values[src] : b_.values[src & 3];
-    }
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      a_.sv128 = __riscv_vslidedown_vx_u32m1(a_.sv128, n, 4);
+      r_.sv128 = __riscv_vslideup_vx_u32m1(a_.sv128, b_.sv128, 4-n, 4);
+    #else
+      const size_t n_ = HEDLEY_STATIC_CAST(size_t, n);
+      for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
+        size_t src = i + n_;
+        r_.values[i] = (src < (sizeof(r_.values) / sizeof(r_.values[0]))) ? a_.values[src] : b_.values[src & 3];
+      }
+    #endif
     return simde_uint32x4_from_private(r_);
   #endif
 }
@@ -56102,11 +58371,16 @@ simde_vextq_u64(simde_uint64x2_t a, simde_uint64x2_t b, const int n)
       a_ = simde_uint64x2_to_private(a),
       b_ = simde_uint64x2_to_private(b),
       r_ = a_;
-    const size_t n_ = HEDLEY_STATIC_CAST(size_t, n);
-    for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
-      size_t src = i + n_;
-      r_.values[i] = (src < (sizeof(r_.values) / sizeof(r_.values[0]))) ? a_.values[src] : b_.values[src & 1];
-    }
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      a_.sv128 = __riscv_vslidedown_vx_u64m1(a_.sv128, n, 2);
+      r_.sv128 = __riscv_vslideup_vx_u64m1(a_.sv128, b_.sv128, 2-n, 2);
+    #else
+      const size_t n_ = HEDLEY_STATIC_CAST(size_t, n);
+      for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
+        size_t src = i + n_;
+        r_.values[i] = (src < (sizeof(r_.values) / sizeof(r_.values[0]))) ? a_.values[src] : b_.values[src & 1];
+      }
+    #endif
     return simde_uint64x2_from_private(r_);
   #endif
 }
@@ -56286,7 +58560,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_EXT_H) */
 /* :: End simde/arm/neon/ext.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/fma.h :: */
 /* SPDX-License-Identifier: MIT
 *
@@ -56313,15 +58587,16 @@ HEDLEY_DIAGNOSTIC_POP
 * Copyright:
 *   2021      Atharva Nimbalkar <atharvakn@gmail.com>
 *   2023      Yi-Yen Chung <eric681@andestech.com> (Copyright owned by Andes Technology)
+*   2023      Ju-Hung Li <jhlee@pllab.cs.nthu.edu.tw> (Copyright owned by NTHU pllab)
 */
 
 #if !defined(SIMDE_ARM_NEON_FMA_H)
 #define SIMDE_ARM_NEON_FMA_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -56346,6 +58621,15 @@ simde_float32x2_t
 simde_vfma_f32(simde_float32x2_t a, simde_float32x2_t b, simde_float32x2_t c) {
   #if defined(SIMDE_ARM_NEON_A32V7_NATIVE) && defined(SIMDE_ARCH_ARM_FMA)
     return vfma_f32(a, b, c);
+  #elif defined(SIMDE_RISCV_V_NATIVE)
+    simde_float32x2_private
+      r_,
+      a_ = simde_float32x2_to_private(a),
+      b_ = simde_float32x2_to_private(b),
+      c_ = simde_float32x2_to_private(c);
+
+    r_.sv64 = __riscv_vfmacc_vv_f32m1(a_.sv64 , b_.sv64 , c_.sv64 , 2);
+    return simde_float32x2_from_private(r_);
   #else
     return simde_vadd_f32(a, simde_vmul_f32(b, c));
   #endif
@@ -56360,6 +58644,15 @@ simde_float64x1_t
 simde_vfma_f64(simde_float64x1_t a, simde_float64x1_t b, simde_float64x1_t c) {
   #if defined(SIMDE_ARM_NEON_A64V8_NATIVE) && defined(SIMDE_ARCH_ARM_FMA)
     return vfma_f64(a, b, c);
+  #elif defined(SIMDE_RISCV_V_NATIVE)
+    simde_float64x1_private
+      r_,
+      a_ = simde_float64x1_to_private(a),
+      b_ = simde_float64x1_to_private(b),
+      c_ = simde_float64x1_to_private(c);
+
+    r_.sv64 = __riscv_vfmacc_vv_f64m1(a_.sv64 , b_.sv64 , c_.sv64 , 1);
+    return simde_float64x1_from_private(r_);
   #else
     return simde_vadd_f64(a, simde_vmul_f64(b, c));
   #endif
@@ -56374,6 +58667,15 @@ simde_float16x4_t
 simde_vfma_f16(simde_float16x4_t a, simde_float16x4_t b, simde_float16x4_t c) {
   #if defined(SIMDE_ARM_NEON_A32V8_NATIVE) && defined(SIMDE_ARCH_ARM_FMA) && defined(SIMDE_ARM_NEON_FP16)
     return vfma_f16(a, b, c);
+  #elif defined(SIMDE_RISCV_V_NATIVE) && defined(SIMDE_ARCH_RISCV_ZVFH)
+    simde_float16x4_private
+      r_,
+      a_ = simde_float16x4_to_private(a),
+      b_ = simde_float16x4_to_private(b),
+      c_ = simde_float16x4_to_private(c);
+
+    r_.sv64 = __riscv_vfmacc_vv_f16m1(a_.sv64 , b_.sv64 , c_.sv64 , 4);
+    return simde_float16x4_from_private(r_);
   #else
     return simde_vadd_f16(a, simde_vmul_f16(b, c));
   #endif
@@ -56388,6 +58690,15 @@ simde_float16x8_t
 simde_vfmaq_f16(simde_float16x8_t a, simde_float16x8_t b, simde_float16x8_t c) {
   #if defined(SIMDE_ARM_NEON_A32V8_NATIVE) && defined(SIMDE_ARCH_ARM_FMA) && defined(SIMDE_ARM_NEON_FP16)
     return vfmaq_f16(a, b, c);
+  #elif defined(SIMDE_RISCV_V_NATIVE) && defined(SIMDE_ARCH_RISCV_ZVFH)
+    simde_float16x8_private
+      r_,
+      a_ = simde_float16x8_to_private(a),
+      b_ = simde_float16x8_to_private(b),
+      c_ = simde_float16x8_to_private(c);
+
+    r_.sv128 = __riscv_vfmacc_vv_f16m1(a_.sv128 , b_.sv128 , c_.sv128 , 8);
+    return simde_float16x8_from_private(r_);
   #else
     return simde_vaddq_f16(a, simde_vmulq_f16(b, c));
   #endif
@@ -56405,7 +58716,7 @@ simde_vfmaq_f32(simde_float32x4_t a, simde_float32x4_t b, simde_float32x4_t c) {
   #elif defined(SIMDE_POWER_ALTIVEC_P6_NATIVE)
     return vec_madd(b, c, a);
   #elif \
-      defined(SIMDE_X86_FMA_NATIVE)
+      defined(SIMDE_X86_FMA_NATIVE) || defined(SIMDE_RISCV_V_NATIVE)
     simde_float32x4_private
       r_,
       a_ = simde_float32x4_to_private(a),
@@ -56414,6 +58725,8 @@ simde_vfmaq_f32(simde_float32x4_t a, simde_float32x4_t b, simde_float32x4_t c) {
 
     #if defined(SIMDE_X86_FMA_NATIVE)
       r_.m128 = _mm_fmadd_ps(b_.m128, c_.m128, a_.m128);
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv128 = __riscv_vfmacc_vv_f32m1(a_.sv128 , b_.sv128 , c_.sv128 , 4);
     #endif
 
     return simde_float32x4_from_private(r_);
@@ -56434,7 +58747,7 @@ simde_vfmaq_f64(simde_float64x2_t a, simde_float64x2_t b, simde_float64x2_t c) {
   #elif defined(SIMDE_POWER_ALTIVEC_P7_NATIVE) || defined(SIMDE_ZARCH_ZVECTOR_13_NATIVE)
     return vec_madd(b, c, a);
   #elif \
-      defined(SIMDE_X86_FMA_NATIVE)
+      defined(SIMDE_X86_FMA_NATIVE) || defined(SIMDE_RISCV_V_NATIVE)
     simde_float64x2_private
       r_,
       a_ = simde_float64x2_to_private(a),
@@ -56443,6 +58756,8 @@ simde_vfmaq_f64(simde_float64x2_t a, simde_float64x2_t b, simde_float64x2_t c) {
 
     #if defined(SIMDE_X86_FMA_NATIVE)
       r_.m128d = _mm_fmadd_pd(b_.m128d, c_.m128d, a_.m128d);
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv128 = __riscv_vfmacc_vv_f64m1(a_.sv128 , b_.sv128 , c_.sv128 , 2);
     #endif
 
     return simde_float64x2_from_private(r_);
@@ -56461,7 +58776,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_CMLA_H) */
 /* :: End simde/arm/neon/fma.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/fma_lane.h :: */
 /* SPDX-License-Identifier: MIT
 *
@@ -56494,15 +58809,15 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_FMA_LANE_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/mul_lane.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -56536,9 +58851,9 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_MUL_LANE_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -57719,7 +60034,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_FMA_LANE_H) */
 /* :: End simde/arm/neon/fma_lane.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/fma_n.h :: */
 /* SPDX-License-Identifier: MIT
 *
@@ -57752,11 +60067,11 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_FMA_N_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -57852,7 +60167,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_CMLA_H) */
 /* :: End simde/arm/neon/fma_n.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/fmlal.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -57884,7 +60199,7 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_FMLAL_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -58384,7 +60699,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_FMLAL_H) */
 /* :: End simde/arm/neon/fmlal.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/fmlsl.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -58416,7 +60731,7 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_FMLSL_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -58762,7 +61077,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_FMLSL_H) */
 /* :: End simde/arm/neon/fmlsl.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/fms.h :: */
 /* SPDX-License-Identifier: MIT
 *
@@ -58788,17 +61103,18 @@ HEDLEY_DIAGNOSTIC_POP
 *
 * Copyright:
 *   2023      Yi-Yen Chung <eric681@andestech.com> (Copyright owned by Andes Technology)
+*   2023      Ju-Hung Li <jhlee@pllab.cs.nthu.edu.tw> (Copyright owned by NTHU pllab)
 */
 
 #if !defined(SIMDE_ARM_NEON_FMS_H)
 #define SIMDE_ARM_NEON_FMS_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/neg.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -58831,7 +61147,7 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_NEG_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -59300,6 +61616,14 @@ simde_float32x2_t
 simde_vfms_f32(simde_float32x2_t a, simde_float32x2_t b, simde_float32x2_t c) {
   #if defined(SIMDE_ARM_NEON_A32V7_NATIVE) && defined(SIMDE_ARCH_ARM_FMA)
     return vfms_f32(a, b, c);
+  #elif defined(SIMDE_RISCV_V_NATIVE)
+    simde_float32x2_private
+      r_,
+      a_ = simde_float32x2_to_private(a),
+      b_ = simde_float32x2_to_private(b),
+      c_ = simde_float32x2_to_private(c);
+    r_.sv64 = __riscv_vfnmsac_vv_f32m1(a_.sv64 , b_.sv64 , c_.sv64 , 2);
+    return simde_float32x2_from_private(r_);
   #else
     return simde_vadd_f32(a, simde_vneg_f32(simde_vmul_f32(b, c)));
   #endif
@@ -59314,6 +61638,14 @@ simde_float64x1_t
 simde_vfms_f64(simde_float64x1_t a, simde_float64x1_t b, simde_float64x1_t c) {
   #if defined(SIMDE_ARM_NEON_A64V8_NATIVE) && defined(SIMDE_ARCH_ARM_FMA)
     return vfms_f64(a, b, c);
+  #elif defined(SIMDE_RISCV_V_NATIVE)
+    simde_float64x1_private
+      r_,
+      a_ = simde_float64x1_to_private(a),
+      b_ = simde_float64x1_to_private(b),
+      c_ = simde_float64x1_to_private(c);
+    r_.sv64 = __riscv_vfnmsac_vv_f64m1(a_.sv64 , b_.sv64 , c_.sv64 , 1);
+    return simde_float64x1_from_private(r_);
   #else
     return simde_vadd_f64(a, simde_vneg_f64(simde_vmul_f64(b, c)));
   #endif
@@ -59328,6 +61660,14 @@ simde_float16x4_t
 simde_vfms_f16(simde_float16x4_t a, simde_float16x4_t b, simde_float16x4_t c) {
   #if defined(SIMDE_ARM_NEON_A32V8_NATIVE) && defined(SIMDE_ARCH_ARM_FMA) && defined(SIMDE_ARM_NEON_FP16)
     return vfms_f16(a, b, c);
+  #elif defined(SIMDE_RISCV_V_NATIVE) && defined(SIMDE_ARCH_RISCV_ZVFH)
+    simde_float16x4_private
+      r_,
+      a_ = simde_float16x4_to_private(a),
+      b_ = simde_float16x4_to_private(b),
+      c_ = simde_float16x4_to_private(c);
+    r_.sv64 = __riscv_vfnmsac_vv_f16m1(a_.sv64 , b_.sv64 , c_.sv64 , 4);
+    return simde_float16x4_from_private(r_);
   #else
     return simde_vadd_f16(a, simde_vneg_f16(simde_vmul_f16(b, c)));
   #endif
@@ -59342,6 +61682,14 @@ simde_float16x8_t
 simde_vfmsq_f16(simde_float16x8_t a, simde_float16x8_t b, simde_float16x8_t c) {
   #if defined(SIMDE_ARM_NEON_A32V8_NATIVE) && defined(SIMDE_ARCH_ARM_FMA) && defined(SIMDE_ARM_NEON_FP16)
     return vfmsq_f16(a, b, c);
+  #elif defined(SIMDE_RISCV_V_NATIVE) && defined(SIMDE_ARCH_RISCV_ZVFH)
+    simde_float16x8_private
+      r_,
+      a_ = simde_float16x8_to_private(a),
+      b_ = simde_float16x8_to_private(b),
+      c_ = simde_float16x8_to_private(c);
+    r_.sv128 = __riscv_vfnmsac_vv_f16m1(a_.sv128 , b_.sv128 , c_.sv128 , 8);
+    return simde_float16x8_from_private(r_);
   #else
     return simde_vaddq_f16(a, simde_vnegq_f16(simde_vmulq_f16(b, c)));
   #endif
@@ -59356,6 +61704,14 @@ simde_float32x4_t
 simde_vfmsq_f32(simde_float32x4_t a, simde_float32x4_t b, simde_float32x4_t c) {
   #if defined(SIMDE_ARM_NEON_A32V7_NATIVE) && defined(SIMDE_ARCH_ARM_FMA)
     return vfmsq_f32(a, b, c);
+  #elif defined(SIMDE_RISCV_V_NATIVE)
+    simde_float32x4_private
+      r_,
+      a_ = simde_float32x4_to_private(a),
+      b_ = simde_float32x4_to_private(b),
+      c_ = simde_float32x4_to_private(c);
+    r_.sv128 = __riscv_vfnmsac_vv_f32m1(a_.sv128 , b_.sv128 , c_.sv128 , 4);
+    return simde_float32x4_from_private(r_);
   #else
     return simde_vaddq_f32(a, simde_vnegq_f32(simde_vmulq_f32(b, c)));
   #endif
@@ -59370,6 +61726,14 @@ simde_float64x2_t
 simde_vfmsq_f64(simde_float64x2_t a, simde_float64x2_t b, simde_float64x2_t c) {
   #if defined(SIMDE_ARM_NEON_A64V8_NATIVE) && defined(SIMDE_ARCH_ARM_FMA)
     return vfmsq_f64(a, b, c);
+  #elif defined(SIMDE_RISCV_V_NATIVE)
+    simde_float64x2_private
+      r_,
+      a_ = simde_float64x2_to_private(a),
+      b_ = simde_float64x2_to_private(b),
+      c_ = simde_float64x2_to_private(c);
+    r_.sv128 = __riscv_vfnmsac_vv_f64m1(a_.sv128 , b_.sv128 , c_.sv128 , 2);
+    return simde_float64x2_from_private(r_);
   #else
     return simde_vaddq_f64(a, simde_vnegq_f64(simde_vmulq_f64(b, c)));
   #endif
@@ -59385,7 +61749,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_FMS_H) */
 /* :: End simde/arm/neon/fms.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/fms_lane.h :: */
 /* SPDX-License-Identifier: MIT
 *
@@ -59417,15 +61781,15 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_FMS_LANE_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -59710,7 +62074,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_FMS_LANE_H) */
 /* :: End simde/arm/neon/fms_lane.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/fms_n.h :: */
 /* SPDX-License-Identifier: MIT
 *
@@ -59736,17 +62100,18 @@ HEDLEY_DIAGNOSTIC_POP
 *
 * Copyright:
 *   2023      Yi-Yen Chung <eric681@andestech.com> (Copyright owned by Andes Technology)
+*   2023      Ju-Hung Li <jhlee@pllab.cs.nthu.edu.tw> (Copyright owned by NTHU pllab)
 */
 
 #if !defined(SIMDE_ARM_NEON_FMS_N_H)
 #define SIMDE_ARM_NEON_FMS_N_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -59757,6 +62122,13 @@ simde_float16x4_t
 simde_vfms_n_f16(simde_float16x4_t a, simde_float16x4_t b, simde_float16_t c) {
   #if defined(SIMDE_ARM_NEON_A64V8_NATIVE) && defined(SIMDE_ARCH_ARM_FMA) && (!defined(__clang__) || SIMDE_DETECT_CLANG_VERSION_CHECK(7,0,0)) && !defined(SIMDE_BUG_GCC_95399) && defined(SIMDE_ARM_NEON_FP16)
     return vfms_n_f16(a, b, c);
+  #elif defined(SIMDE_RISCV_V_NATIVE) && defined(SIMDE_ARCH_RISCV_ZVFH)
+    simde_float16x4_private
+      r_,
+      a_ = simde_float16x4_to_private(a),
+      b_ = simde_float16x4_to_private(b);
+      r_.sv64 = __riscv_vfnmsac_vf_f16m1(a_.sv64 , c , b_.sv64 , 4);
+    return simde_float16x4_from_private(r_);
   #else
     return simde_vfms_f16(a, b, simde_vdup_n_f16(c));
   #endif
@@ -59771,6 +62143,13 @@ simde_float16x8_t
 simde_vfmsq_n_f16(simde_float16x8_t a, simde_float16x8_t b, simde_float16_t c) {
   #if defined(SIMDE_ARM_NEON_A64V8_NATIVE) && defined(SIMDE_ARCH_ARM_FMA) && (!defined(__clang__) || SIMDE_DETECT_CLANG_VERSION_CHECK(7,0,0)) && !defined(SIMDE_BUG_GCC_95399) && defined(SIMDE_ARM_NEON_FP16)
     return vfmsq_n_f16(a, b, c);
+  #elif defined(SIMDE_RISCV_V_NATIVE) && defined(SIMDE_ARCH_RISCV_ZVFH)
+    simde_float16x8_private
+      r_,
+      a_ = simde_float16x8_to_private(a),
+      b_ = simde_float16x8_to_private(b);
+      r_.sv128 = __riscv_vfnmsac_vf_f16m1(a_.sv128 , c , b_.sv128 , 8);
+    return simde_float16x8_from_private(r_);
   #else
     return simde_vfmsq_f16(a, b, simde_vdupq_n_f16(c));
   #endif
@@ -59785,6 +62164,13 @@ simde_float32x2_t
 simde_vfms_n_f32(simde_float32x2_t a, simde_float32x2_t b, simde_float32_t c) {
   #if defined(SIMDE_ARM_NEON_A64V8_NATIVE) && defined(SIMDE_ARCH_ARM_FMA) && (!defined(__clang__) || SIMDE_DETECT_CLANG_VERSION_CHECK(7,0,0)) && !defined(SIMDE_BUG_GCC_95399)
     return vfms_n_f32(a, b, c);
+  #elif defined(SIMDE_RISCV_V_NATIVE)
+    simde_float32x2_private
+      r_,
+      a_ = simde_float32x2_to_private(a),
+      b_ = simde_float32x2_to_private(b);
+      r_.sv64 = __riscv_vfnmsac_vf_f32m1(a_.sv64 , c , b_.sv64 , 2);
+    return simde_float32x2_from_private(r_);
   #else
     return simde_vfms_f32(a, b, simde_vdup_n_f32(c));
   #endif
@@ -59799,6 +62185,13 @@ simde_float64x1_t
 simde_vfms_n_f64(simde_float64x1_t a, simde_float64x1_t b, simde_float64_t c) {
   #if defined(SIMDE_ARM_NEON_A64V8_NATIVE) && defined(SIMDE_ARCH_ARM_FMA) && (!defined(__clang__) || SIMDE_DETECT_CLANG_VERSION_CHECK(7,0,0))
     return vfms_n_f64(a, b, c);
+  #elif defined(SIMDE_RISCV_V_NATIVE)
+    simde_float64x1_private
+      r_,
+      a_ = simde_float64x1_to_private(a),
+      b_ = simde_float64x1_to_private(b);
+      r_.sv64 = __riscv_vfnmsac_vf_f64m1(a_.sv64 , c , b_.sv64 , 1);
+    return simde_float64x1_from_private(r_);
   #else
     return simde_vfms_f64(a, b, simde_vdup_n_f64(c));
   #endif
@@ -59813,6 +62206,13 @@ simde_float32x4_t
 simde_vfmsq_n_f32(simde_float32x4_t a, simde_float32x4_t b, simde_float32_t c) {
   #if defined(SIMDE_ARM_NEON_A64V8_NATIVE) && defined(SIMDE_ARCH_ARM_FMA) && (!defined(__clang__) || SIMDE_DETECT_CLANG_VERSION_CHECK(7,0,0)) && !defined(SIMDE_BUG_GCC_95399)
     return vfmsq_n_f32(a, b, c);
+  #elif defined(SIMDE_RISCV_V_NATIVE)
+    simde_float32x4_private
+      r_,
+      a_ = simde_float32x4_to_private(a),
+      b_ = simde_float32x4_to_private(b);
+      r_.sv128 = __riscv_vfnmsac_vf_f32m1(a_.sv128 , c , b_.sv128 , 4);
+    return simde_float32x4_from_private(r_);
   #else
     return simde_vfmsq_f32(a, b, simde_vdupq_n_f32(c));
   #endif
@@ -59827,6 +62227,13 @@ simde_float64x2_t
 simde_vfmsq_n_f64(simde_float64x2_t a, simde_float64x2_t b, simde_float64_t c) {
   #if defined(SIMDE_ARM_NEON_A64V8_NATIVE) && defined(SIMDE_ARCH_ARM_FMA) && (!defined(__clang__) || SIMDE_DETECT_CLANG_VERSION_CHECK(7,0,0))
     return vfmsq_n_f64(a, b, c);
+  #elif defined(SIMDE_RISCV_V_NATIVE)
+    simde_float64x2_private
+      r_,
+      a_ = simde_float64x2_to_private(a),
+      b_ = simde_float64x2_to_private(b);
+    r_.sv128 = __riscv_vfnmsac_vf_f64m1(a_.sv128 , c , b_.sv128 , 2);
+    return simde_float64x2_from_private(r_);
   #else
     return simde_vfmsq_f64(a, b, simde_vdupq_n_f64(c));
   #endif
@@ -59842,13 +62249,13 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_FMS_N_H) */
 /* :: End simde/arm/neon/fms_n.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/hadd.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -59886,11 +62293,11 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_HADD_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -60225,7 +62632,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_HADD_H) */
 /* :: End simde/arm/neon/hadd.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/hsub.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -60251,6 +62658,7 @@ HEDLEY_DIAGNOSTIC_POP
  *
  * Copyright:
  *   2020      Evan Nemerson <evan@nemerson.com>
+ *   2023      Ju-Hung Li <jhlee@pllab.cs.nthu.edu.tw> (Copyright owned by NTHU pllab)
  */
 
 /* TODO: the 128-bit versions only require AVX-512 because of the final
@@ -60263,11 +62671,11 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_HSUB_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -60278,6 +62686,14 @@ simde_int8x8_t
 simde_vhsub_s8(simde_int8x8_t a, simde_int8x8_t b) {
   #if defined(SIMDE_ARM_NEON_A32V7_NATIVE)
     return vhsub_s8(a, b);
+  #elif defined(SIMDE_RISCV_V_NATIVE)
+    simde_int8x8_private
+      r_,
+      a_ = simde_int8x8_to_private(a),
+      b_ = simde_int8x8_to_private(b);
+
+    r_.sv64 = __riscv_vasub_vv_i8m1(a_.sv64, b_.sv64, 2, 8);
+    return simde_int8x8_from_private(r_);
   #else
     return simde_vmovn_s16(simde_vshrq_n_s16(simde_vsubl_s8(a, b), 1));
   #endif
@@ -60292,6 +62708,14 @@ simde_int16x4_t
 simde_vhsub_s16(simde_int16x4_t a, simde_int16x4_t b) {
   #if defined(SIMDE_ARM_NEON_A32V7_NATIVE)
     return vhsub_s16(a, b);
+  #elif defined(SIMDE_RISCV_V_NATIVE)
+    simde_int16x4_private
+      r_,
+      a_ = simde_int16x4_to_private(a),
+      b_ = simde_int16x4_to_private(b);
+
+    r_.sv64 = __riscv_vasub_vv_i16m1(a_.sv64, b_.sv64, 2, 4);
+    return simde_int16x4_from_private(r_);
   #else
     return simde_vmovn_s32(simde_vshrq_n_s32(simde_vsubl_s16(a, b), 1));
   #endif
@@ -60306,6 +62730,14 @@ simde_int32x2_t
 simde_vhsub_s32(simde_int32x2_t a, simde_int32x2_t b) {
   #if defined(SIMDE_ARM_NEON_A32V7_NATIVE)
     return vhsub_s32(a, b);
+  #elif defined(SIMDE_RISCV_V_NATIVE)
+    simde_int32x2_private
+      r_,
+      a_ = simde_int32x2_to_private(a),
+      b_ = simde_int32x2_to_private(b);
+
+    r_.sv64 = __riscv_vasub_vv_i32m1(a_.sv64, b_.sv64, 2, 2);
+    return simde_int32x2_from_private(r_);
   #else
     return simde_vmovn_s64(simde_vshrq_n_s64(simde_vsubl_s32(a, b), 1));
   #endif
@@ -60320,6 +62752,14 @@ simde_uint8x8_t
 simde_vhsub_u8(simde_uint8x8_t a, simde_uint8x8_t b) {
   #if defined(SIMDE_ARM_NEON_A32V7_NATIVE)
     return vhsub_u8(a, b);
+  #elif defined(SIMDE_RISCV_V_NATIVE)
+    simde_uint8x8_private
+      r_,
+      a_ = simde_uint8x8_to_private(a),
+      b_ = simde_uint8x8_to_private(b);
+
+    r_.sv64 = __riscv_vasubu_vv_u8m1(a_.sv64, b_.sv64, 2, 8);
+    return simde_uint8x8_from_private(r_);
   #else
     return simde_vmovn_u16(simde_vshrq_n_u16(simde_vsubl_u8(a, b), 1));
   #endif
@@ -60334,6 +62774,14 @@ simde_uint16x4_t
 simde_vhsub_u16(simde_uint16x4_t a, simde_uint16x4_t b) {
   #if defined(SIMDE_ARM_NEON_A32V7_NATIVE)
     return vhsub_u16(a, b);
+  #elif defined(SIMDE_RISCV_V_NATIVE)
+    simde_uint16x4_private
+      r_,
+      a_ = simde_uint16x4_to_private(a),
+      b_ = simde_uint16x4_to_private(b);
+
+    r_.sv64 = __riscv_vasubu_vv_u16m1(a_.sv64, b_.sv64, 2, 4);
+    return simde_uint16x4_from_private(r_);
   #else
     return simde_vmovn_u32(simde_vshrq_n_u32(simde_vsubl_u16(a, b), 1));
   #endif
@@ -60348,6 +62796,14 @@ simde_uint32x2_t
 simde_vhsub_u32(simde_uint32x2_t a, simde_uint32x2_t b) {
   #if defined(SIMDE_ARM_NEON_A32V7_NATIVE)
     return vhsub_u32(a, b);
+  #elif defined(SIMDE_RISCV_V_NATIVE)
+    simde_uint32x2_private
+      r_,
+      a_ = simde_uint32x2_to_private(a),
+      b_ = simde_uint32x2_to_private(b);
+
+    r_.sv64 = __riscv_vasubu_vv_u32m1(a_.sv64, b_.sv64, 2, 2);
+    return simde_uint32x2_from_private(r_);
   #else
     return simde_vmovn_u64(simde_vshrq_n_u64(simde_vsubl_u32(a, b), 1));
   #endif
@@ -60370,6 +62826,8 @@ simde_vhsubq_s8(simde_int8x16_t a, simde_int8x16_t b) {
 
     #if defined(SIMDE_X86_AVX512VL_NATIVE) && defined(SIMDE_X86_AVX512BW_NATIVE)
       r_.m128i = _mm256_cvtepi16_epi8(_mm256_srai_epi16(_mm256_sub_epi16(_mm256_cvtepi8_epi16(a_.m128i), _mm256_cvtepi8_epi16(b_.m128i)), 1));
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv128 = __riscv_vasub_vv_i8m1(a_.sv128, b_.sv128, 2, 16);
     #else
       SIMDE_VECTORIZE
       for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
@@ -60398,6 +62856,8 @@ simde_vhsubq_s16(simde_int16x8_t a, simde_int16x8_t b) {
 
     #if defined(SIMDE_X86_AVX512VL_NATIVE)
       r_.m128i = _mm256_cvtepi32_epi16(_mm256_srai_epi32(_mm256_sub_epi32(_mm256_cvtepi16_epi32(a_.m128i), _mm256_cvtepi16_epi32(b_.m128i)), 1));
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv128 = __riscv_vasub_vv_i16m1(a_.sv128, b_.sv128, 2, 8);
     #else
       SIMDE_VECTORIZE
       for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
@@ -60426,6 +62886,8 @@ simde_vhsubq_s32(simde_int32x4_t a, simde_int32x4_t b) {
 
     #if defined(SIMDE_X86_AVX512VL_NATIVE)
       r_.m128i = _mm256_cvtepi64_epi32(_mm256_srai_epi64(_mm256_sub_epi64(_mm256_cvtepi32_epi64(a_.m128i), _mm256_cvtepi32_epi64(b_.m128i)), 1));
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv128 = __riscv_vasub_vv_i32m1(a_.sv128, b_.sv128, 2, 4);
     #else
       SIMDE_VECTORIZE
       for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
@@ -60454,6 +62916,8 @@ simde_vhsubq_u8(simde_uint8x16_t a, simde_uint8x16_t b) {
 
     #if defined(SIMDE_X86_AVX512VL_NATIVE) && defined(SIMDE_X86_AVX512BW_NATIVE)
       r_.m128i = _mm256_cvtepi16_epi8(_mm256_srli_epi16(_mm256_sub_epi16(_mm256_cvtepu8_epi16(a_.m128i), _mm256_cvtepu8_epi16(b_.m128i)), 1));
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv128 = __riscv_vasubu_vv_u8m1(a_.sv128, b_.sv128, 2, 16);
     #elif defined(SIMDE_WASM_SIMD128_NATIVE)
       v128_t lo =
           wasm_u16x8_shr(wasm_i16x8_sub(wasm_u16x8_extend_low_u8x16(a_.v128),
@@ -60493,6 +62957,8 @@ simde_vhsubq_u16(simde_uint16x8_t a, simde_uint16x8_t b) {
 
     #if defined(SIMDE_X86_AVX512VL_NATIVE)
       r_.m128i = _mm256_cvtepi32_epi16(_mm256_srli_epi32(_mm256_sub_epi32(_mm256_cvtepu16_epi32(a_.m128i), _mm256_cvtepu16_epi32(b_.m128i)), 1));
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv128 = __riscv_vasubu_vv_u16m1(a_.sv128, b_.sv128, 2, 8);
     #else
       SIMDE_VECTORIZE
       for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
@@ -60521,6 +62987,8 @@ simde_vhsubq_u32(simde_uint32x4_t a, simde_uint32x4_t b) {
 
     #if defined(SIMDE_X86_AVX512VL_NATIVE)
       r_.m128i = _mm256_cvtepi64_epi32(_mm256_srli_epi64(_mm256_sub_epi64(_mm256_cvtepu32_epi64(a_.m128i), _mm256_cvtepu32_epi64(b_.m128i)), 1));
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv128 = __riscv_vasubu_vv_u32m1(a_.sv128, b_.sv128, 2, 4);
     #else
       SIMDE_VECTORIZE
       for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
@@ -60542,7 +63010,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_HSUB_H) */
 /* :: End simde/arm/neon/hsub.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/ld1.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -60577,7 +63045,7 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_LD1_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -61222,7 +63690,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_LD1_H) */
 /* :: End simde/arm/neon/ld1.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/ld1_dup.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -61256,9 +63724,9 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_LD1_DUP_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -61776,7 +64244,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_LD1_DUP_H) */
 /* :: End simde/arm/neon/ld1_dup.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/ld1_lane.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -61809,7 +64277,7 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_LD1_LANE_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -62306,7 +64774,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_LD1_LANE_H) */
 /* :: End simde/arm/neon/ld1_lane.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/ld1_x2.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -62342,7 +64810,7 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_LD1_X2_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -62767,7 +65235,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_LD1_X2_H) */
 /* :: End simde/arm/neon/ld1_x2.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/ld1_x3.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -62802,7 +65270,7 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_LD1_X3_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -63258,7 +65726,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_LD1_X3_H) */
 /* :: End simde/arm/neon/ld1_x3.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/ld1_x4.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -63294,7 +65762,7 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_LD1_X4_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -63779,7 +66247,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_LD1_X4_H) */
 /* :: End simde/arm/neon/ld1_x4.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/ld1q_x2.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -63815,7 +66283,7 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_LD1Q_X2_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -64245,7 +66713,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_LD1Q_X2_H) */
 /* :: End simde/arm/neon/ld1q_x2.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/ld1q_x3.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -64280,7 +66748,7 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_LD1Q_X3_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -64737,7 +67205,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_LD1Q_X3_H) */
 /* :: End simde/arm/neon/ld1q_x3.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/ld1q_x4.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -64773,7 +67241,7 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_LD1Q_X4_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -65259,7 +67727,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_LD1Q_X4_H) */
 /* :: End simde/arm/neon/ld1q_x4.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/ld2.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -65293,13 +67761,13 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_LD2_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/uzp.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -65333,11 +67801,11 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_UZP_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -66944,7 +69412,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_LD2_H) */
 /* :: End simde/arm/neon/ld2.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/ld2_dup.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -66976,9 +69444,9 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_LD2_DUP_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -67562,7 +70030,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_LD2_DUP_H) */
 /* :: End simde/arm/neon/ld2_dup.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/ld2_lane.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -67594,7 +70062,7 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_LD2_LANE_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -68205,7 +70673,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_LD2_LANE_H) */
 /* :: End simde/arm/neon/ld2_lane.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/ld3.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -68240,9 +70708,9 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_LD3_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -69324,7 +71792,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_LD3_H) */
 /* :: End simde/arm/neon/ld3.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/ld3_dup.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -69356,9 +71824,9 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_LD3_DUP_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -69940,7 +72408,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_LD3_DUP_H) */
 /* :: End simde/arm/neon/ld3_dup.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/ld3_lane.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -69972,7 +72440,7 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_LD3_LANE_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -70583,7 +73051,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_LD3_LANE_H) */
 /* :: End simde/arm/neon/ld3_lane.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/ld4.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -70618,7 +73086,7 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_LD4_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -71505,7 +73973,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_LD4_H) */
 /* :: End simde/arm/neon/ld4.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/ld4_dup.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -71537,9 +74005,9 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_LD4_DUP_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -72121,7 +74589,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_LD3_DUP_H) */
 /* :: End simde/arm/neon/ld4_dup.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/ld4_lane.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -72164,7 +74632,7 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_LD4_LANE_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -72951,7 +75419,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_LD4_LANE_H) */
 /* :: End simde/arm/neon/ld4_lane.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/max.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -72985,11 +75453,11 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_MAX_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -73653,7 +76121,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_MAX_H) */
 /* :: End simde/arm/neon/max.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/maxnm.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -73686,11 +76154,11 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_MAXNM_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -73956,7 +76424,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_MAXNM_H) */
 /* :: End simde/arm/neon/maxnm.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/maxnmv.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -73982,13 +76450,14 @@ HEDLEY_DIAGNOSTIC_POP
  *
  * Copyright:
  *   2023      Yi-Yen Chung <eric681@andestech.com> (Copyright owned by Andes Technology)
+ *   2023      Chi-Wei Chu <wewe5215@gapp.nthu.edu.tw> (Copyright owned by NTHU pllab)
  */
 
 #if !defined(SIMDE_ARM_NEON_MAXNMV_H)
 #define SIMDE_ARM_NEON_MAXNMV_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 #include <float.h>
 
 HEDLEY_DIAGNOSTIC_PUSH
@@ -74006,10 +76475,15 @@ simde_vmaxnmv_f32(simde_float32x2_t a) {
     simde_float32x2_private a_ = simde_float32x2_to_private(a);
 
     r = -SIMDE_MATH_INFINITYF;
-    SIMDE_VECTORIZE_REDUCTION(max:r)
-    for (size_t i = 0 ; i < (sizeof(a_.values) / sizeof(a_.values[0])) ; i++) {
-      r = a_.values[i] > r ? a_.values[i] : r;
-    }
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      r = __riscv_vfmv_f_s_f32m1_f32(__riscv_vfredmax_vs_f32m1_f32m1(a_.sv64, \
+        __riscv_vfmv_v_f_f32m1(r, 2), 2));
+    #else
+      SIMDE_VECTORIZE_REDUCTION(max:r)
+      for (size_t i = 0 ; i < (sizeof(a_.values) / sizeof(a_.values[0])) ; i++) {
+        r = a_.values[i] > r ? a_.values[i] : r;
+      }
+    #endif
   #endif
 
   return r;
@@ -74030,10 +76504,18 @@ simde_vmaxnmvq_f32(simde_float32x4_t a) {
     simde_float32x4_private a_ = simde_float32x4_to_private(a);
 
     r = -SIMDE_MATH_INFINITYF;
-    SIMDE_VECTORIZE_REDUCTION(max:r)
-    for (size_t i = 0 ; i < (sizeof(a_.values) / sizeof(a_.values[0])) ; i++) {
-      r = a_.values[i] > r ? a_.values[i] : r;
-    }
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      r = __riscv_vfmv_f_s_f32m1_f32(__riscv_vfredmax_vs_f32m1_f32m1(a_.sv128, \
+        __riscv_vfmv_v_f_f32m1(r, 4), 4));
+    #elif defined(SIMDE_VECTOR_SUBSCRIPT_OPS) && HEDLEY_HAS_BUILTIN(__builtin_reduce_max)
+      simde_float32_t rst = __builtin_reduce_max(a_.values);
+      r = (rst > r) ? rst : r;
+    #else
+      SIMDE_VECTORIZE_REDUCTION(max:r)
+      for (size_t i = 0 ; i < (sizeof(a_.values) / sizeof(a_.values[0])) ; i++) {
+        r = a_.values[i] > r ? a_.values[i] : r;
+      }
+    #endif
   #endif
 
   return r;
@@ -74054,10 +76536,15 @@ simde_vmaxnmvq_f64(simde_float64x2_t a) {
     simde_float64x2_private a_ = simde_float64x2_to_private(a);
 
     r = -SIMDE_MATH_INFINITY;
-    SIMDE_VECTORIZE_REDUCTION(max:r)
-    for (size_t i = 0 ; i < (sizeof(a_.values) / sizeof(a_.values[0])) ; i++) {
-      r = a_.values[i] > r ? a_.values[i] : r;
-    }
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      r = __riscv_vfmv_f_s_f64m1_f64(__riscv_vfredmax_vs_f64m1_f64m1(a_.sv128, \
+        __riscv_vfmv_v_f_f64m1(r, 2), 2));
+    #else
+      SIMDE_VECTORIZE_REDUCTION(max:r)
+      for (size_t i = 0 ; i < (sizeof(a_.values) / sizeof(a_.values[0])) ; i++) {
+        r = a_.values[i] > r ? a_.values[i] : r;
+      }
+    #endif
   #endif
 
   return r;
@@ -74073,23 +76560,28 @@ simde_vmaxnmv_f16(simde_float16x4_t a) {
   #if defined(SIMDE_ARM_NEON_A64V8_NATIVE) && defined(SIMDE_ARM_NEON_FP16)
     return vmaxnmv_f16(a);
   #else
-    simde_float32_t r_ = simde_float16_to_float32(SIMDE_NINFINITYHF);
     simde_float16x4_private a_ = simde_float16x4_to_private(a);
 
-    #if defined(SIMDE_FAST_NANS)
-      SIMDE_VECTORIZE_REDUCTION(max:r_)
+    #if defined(SIMDE_RISCV_V_NATIVE) && defined(SIMDE_ARCH_RISCV_ZVFH)
+      return __riscv_vfmv_f_s_f16m1_f16(__riscv_vfredmax_vs_f16m1_f16m1(a_.sv64, \
+        __riscv_vfmv_v_f_f16m1(SIMDE_NINFINITYHF, 4), 4));
     #else
-      SIMDE_VECTORIZE
-    #endif
-    for (size_t i = 0 ; i < (sizeof(a_.values) / sizeof(a_.values[0])) ; i++) {
-      simde_float32_t tmp_a = simde_float16_to_float32(a_.values[i]);
+      simde_float32_t r_ = simde_float16_to_float32(SIMDE_NINFINITYHF);
       #if defined(SIMDE_FAST_NANS)
-        r_ = tmp_a > r_ ? tmp_a : r_;
+        SIMDE_VECTORIZE_REDUCTION(max:r_)
       #else
-        r_ = (tmp_a > r_) ? tmp_a : ((tmp_a <= r_) ? r_ : ((tmp_a == tmp_a) ? r_ : tmp_a));
+        SIMDE_VECTORIZE
       #endif
-    }
-    return simde_float16_from_float32(r_);
+      for (size_t i = 0 ; i < (sizeof(a_.values) / sizeof(a_.values[0])) ; i++) {
+        simde_float32_t tmp_a = simde_float16_to_float32(a_.values[i]);
+        #if defined(SIMDE_FAST_NANS)
+          r_ = tmp_a > r_ ? tmp_a : r_;
+        #else
+          r_ = (tmp_a > r_) ? tmp_a : ((tmp_a <= r_) ? r_ : ((tmp_a == tmp_a) ? r_ : tmp_a));
+        #endif
+      }
+      return simde_float16_from_float32(r_);
+    #endif
   #endif
 }
 #if defined(SIMDE_ARM_NEON_A64V8_ENABLE_NATIVE_ALIASES)
@@ -74103,23 +76595,28 @@ simde_vmaxnmvq_f16(simde_float16x8_t a) {
   #if defined(SIMDE_ARM_NEON_A64V8_NATIVE) && defined(SIMDE_ARM_NEON_FP16)
     return vmaxnmvq_f16(a);
   #else
-    simde_float32_t r_ = simde_float16_to_float32(SIMDE_NINFINITYHF);
     simde_float16x8_private a_ = simde_float16x8_to_private(a);
 
-    #if defined(SIMDE_FAST_NANS)
-      SIMDE_VECTORIZE_REDUCTION(max:r_)
+    #if defined(SIMDE_RISCV_V_NATIVE) && defined(SIMDE_ARCH_RISCV_ZVFH)
+      return __riscv_vfmv_f_s_f16m1_f16(__riscv_vfredmax_vs_f16m1_f16m1(a_.sv128, \
+        __riscv_vfmv_v_f_f16m1(SIMDE_NINFINITYHF, 8), 8));
     #else
-      SIMDE_VECTORIZE
-    #endif
-    for (size_t i = 0 ; i < (sizeof(a_.values) / sizeof(a_.values[0])) ; i++) {
-      simde_float32_t tmp_a = simde_float16_to_float32(a_.values[i]);
+      simde_float32_t r_ = simde_float16_to_float32(SIMDE_NINFINITYHF);
       #if defined(SIMDE_FAST_NANS)
-        r_ = tmp_a > r_ ? tmp_a : r_;
+        SIMDE_VECTORIZE_REDUCTION(max:r_)
       #else
-        r_ = (tmp_a > r_) ? tmp_a : ((tmp_a <= r_) ? r_ : ((tmp_a == tmp_a) ? r_ : tmp_a));
+        SIMDE_VECTORIZE
       #endif
-    }
-    return simde_float16_from_float32(r_);
+      for (size_t i = 0 ; i < (sizeof(a_.values) / sizeof(a_.values[0])) ; i++) {
+        simde_float32_t tmp_a = simde_float16_to_float32(a_.values[i]);
+        #if defined(SIMDE_FAST_NANS)
+          r_ = tmp_a > r_ ? tmp_a : r_;
+        #else
+          r_ = (tmp_a > r_) ? tmp_a : ((tmp_a <= r_) ? r_ : ((tmp_a == tmp_a) ? r_ : tmp_a));
+        #endif
+      }
+      return simde_float16_from_float32(r_);
+    #endif
   #endif
 }
 #if defined(SIMDE_ARM_NEON_A64V8_ENABLE_NATIVE_ALIASES)
@@ -74133,7 +76630,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_MAXNMV_H) */
 /* :: End simde/arm/neon/maxnmv.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/maxv.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -74166,7 +76663,7 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_MAXV_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 #include <float.h>
 
 HEDLEY_DIAGNOSTIC_PUSH
@@ -74603,7 +77100,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_MAXV_H) */
 /* :: End simde/arm/neon/maxv.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/min.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -74636,13 +77133,13 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_MIN_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -75359,7 +77856,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_MIN_H) */
 /* :: End simde/arm/neon/min.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/minnm.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -75392,11 +77889,11 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_MINNM_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -75664,7 +78161,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_MINNM_H) */
 /* :: End simde/arm/neon/minnm.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/minnmv.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -75690,13 +78187,14 @@ HEDLEY_DIAGNOSTIC_POP
  *
  * Copyright:
  *   2023      Yi-Yen Chung <eric681@andestech.com> (Copyright owned by Andes Technology)
+ *   2023      Chi-Wei Chu <wewe5215@gapp.nthu.edu.tw> (Copyright owned by NTHU pllab)
  */
 
 #if !defined(SIMDE_ARM_NEON_MINNMV_H)
 #define SIMDE_ARM_NEON_MINNMV_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 #include <float.h>
 
 HEDLEY_DIAGNOSTIC_PUSH
@@ -75709,23 +78207,28 @@ simde_vminnmv_f16(simde_float16x4_t a) {
   #if defined(SIMDE_ARM_NEON_A64V8_NATIVE) && defined(SIMDE_ARM_NEON_FP16)
     return vminnmv_f16(a);
   #else
-    simde_float32_t r_ = simde_float16_to_float32(SIMDE_INFINITYHF);
     simde_float16x4_private a_ = simde_float16x4_to_private(a);
-
-    #if defined(SIMDE_FAST_NANS)
-      SIMDE_VECTORIZE_REDUCTION(min:r_)
+    #if defined(SIMDE_RISCV_V_NATIVE) && defined(SIMDE_ARCH_RISCV_ZVFH)
+      return __riscv_vfmv_f_s_f16m1_f16(__riscv_vfredmin_vs_f16m1_f16m1(a_.sv64, \
+        __riscv_vfmv_v_f_f16m1(SIMDE_INFINITYHF, 4), 4));
     #else
-      SIMDE_VECTORIZE
-    #endif
-    for (size_t i = 0 ; i < (sizeof(a_.values) / sizeof(a_.values[0])) ; i++) {
-      simde_float32_t tmp_a = simde_float16_to_float32(a_.values[i]);
+      simde_float32_t r_ = simde_float16_to_float32(SIMDE_INFINITYHF);
+
       #if defined(SIMDE_FAST_NANS)
-        r_ = tmp_a < r_ ? tmp_a : r_;
+        SIMDE_VECTORIZE_REDUCTION(min:r_)
       #else
-        r_ = (tmp_a < r_) ? tmp_a : ((tmp_a >= r_) ? r_ : ((tmp_a == tmp_a) ? r_ : tmp_a));
+        SIMDE_VECTORIZE
       #endif
-    }
-    return simde_float16_from_float32(r_);
+      for (size_t i = 0 ; i < (sizeof(a_.values) / sizeof(a_.values[0])) ; i++) {
+        simde_float32_t tmp_a = simde_float16_to_float32(a_.values[i]);
+        #if defined(SIMDE_FAST_NANS)
+          r_ = tmp_a < r_ ? tmp_a : r_;
+        #else
+          r_ = (tmp_a < r_) ? tmp_a : ((tmp_a >= r_) ? r_ : ((tmp_a == tmp_a) ? r_ : tmp_a));
+        #endif
+      }
+      return simde_float16_from_float32(r_);
+    #endif
   #endif
 }
 #if defined(SIMDE_ARM_NEON_A64V8_ENABLE_NATIVE_ALIASES)
@@ -75744,18 +78247,23 @@ simde_vminnmv_f32(simde_float32x2_t a) {
     simde_float32x2_private a_ = simde_float32x2_to_private(a);
 
     r = SIMDE_MATH_INFINITYF;
-    #if defined(SIMDE_FAST_NANS)
-      SIMDE_VECTORIZE_REDUCTION(min:r)
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      r = __riscv_vfmv_f_s_f32m1_f32(__riscv_vfredmin_vs_f32m1_f32m1(a_.sv64, \
+        __riscv_vfmv_v_f_f32m1(r, 2), 2));
     #else
-      SIMDE_VECTORIZE
-    #endif
-    for (size_t i = 0 ; i < (sizeof(a_.values) / sizeof(a_.values[0])) ; i++) {
       #if defined(SIMDE_FAST_NANS)
-        r = a_.values[i] < r ? a_.values[i] : r;
+        SIMDE_VECTORIZE_REDUCTION(min:r)
       #else
-        r = (a_.values[i] < r) ? a_.values[i] : ((a_.values[i] >= r) ? r : ((a_.values[i] == a_.values[i]) ? r : a_.values[i]));
+        SIMDE_VECTORIZE
       #endif
-    }
+      for (size_t i = 0 ; i < (sizeof(a_.values) / sizeof(a_.values[0])) ; i++) {
+        #if defined(SIMDE_FAST_NANS)
+          r = a_.values[i] < r ? a_.values[i] : r;
+        #else
+          r = (a_.values[i] < r) ? a_.values[i] : ((a_.values[i] >= r) ? r : ((a_.values[i] == a_.values[i]) ? r : a_.values[i]));
+        #endif
+      }
+    #endif
   #endif
 
   return r;
@@ -75771,23 +78279,28 @@ simde_vminnmvq_f16(simde_float16x8_t a) {
   #if defined(SIMDE_ARM_NEON_A64V8_NATIVE) && defined(SIMDE_ARM_NEON_FP16)
     return vminnmvq_f16(a);
   #else
-    simde_float32_t r_ = simde_float16_to_float32(SIMDE_INFINITYHF);
     simde_float16x8_private a_ = simde_float16x8_to_private(a);
 
-    #if defined(SIMDE_FAST_NANS)
-      SIMDE_VECTORIZE_REDUCTION(min:r_)
+    #if defined(SIMDE_RISCV_V_NATIVE) && defined(SIMDE_ARCH_RISCV_ZVFH)
+      return __riscv_vfmv_f_s_f16m1_f16(__riscv_vfredmin_vs_f16m1_f16m1(a_.sv128, \
+        __riscv_vfmv_v_f_f16m1(SIMDE_INFINITYHF, 8), 8));
     #else
-      SIMDE_VECTORIZE
-    #endif
-    for (size_t i = 0 ; i < (sizeof(a_.values) / sizeof(a_.values[0])) ; i++) {
-      simde_float32_t tmp_a = simde_float16_to_float32(a_.values[i]);
+      simde_float32_t r_ = simde_float16_to_float32(SIMDE_INFINITYHF);
       #if defined(SIMDE_FAST_NANS)
-        r_ = tmp_a < r_ ? tmp_a : r_;
+        SIMDE_VECTORIZE_REDUCTION(min:r_)
       #else
-        r_ = (tmp_a < r_) ? tmp_a : ((tmp_a >= r_) ? r_ : ((tmp_a == tmp_a) ? r_ : tmp_a));
+        SIMDE_VECTORIZE
       #endif
-    }
-    return simde_float16_from_float32(r_);
+      for (size_t i = 0 ; i < (sizeof(a_.values) / sizeof(a_.values[0])) ; i++) {
+        simde_float32_t tmp_a = simde_float16_to_float32(a_.values[i]);
+        #if defined(SIMDE_FAST_NANS)
+          r_ = tmp_a < r_ ? tmp_a : r_;
+        #else
+          r_ = (tmp_a < r_) ? tmp_a : ((tmp_a >= r_) ? r_ : ((tmp_a == tmp_a) ? r_ : tmp_a));
+        #endif
+      }
+      return simde_float16_from_float32(r_);
+    #endif
   #endif
 }
 #if defined(SIMDE_ARM_NEON_A64V8_ENABLE_NATIVE_ALIASES)
@@ -75806,18 +78319,23 @@ simde_vminnmvq_f32(simde_float32x4_t a) {
     simde_float32x4_private a_ = simde_float32x4_to_private(a);
 
     r = SIMDE_MATH_INFINITYF;
-    #if defined(SIMDE_FAST_NANS)
-      SIMDE_VECTORIZE_REDUCTION(min:r)
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      r = __riscv_vfmv_f_s_f32m1_f32(__riscv_vfredmin_vs_f32m1_f32m1(a_.sv128, \
+        __riscv_vfmv_v_f_f32m1(r, 4), 4));
     #else
-      SIMDE_VECTORIZE
-    #endif
-    for (size_t i = 0 ; i < (sizeof(a_.values) / sizeof(a_.values[0])) ; i++) {
       #if defined(SIMDE_FAST_NANS)
-        r = a_.values[i] < r ? a_.values[i] : r;
+        SIMDE_VECTORIZE_REDUCTION(min:r)
       #else
-        r = (a_.values[i] < r) ? a_.values[i] : ((a_.values[i] >= r) ? r : ((a_.values[i] == a_.values[i]) ? r : a_.values[i]));
+        SIMDE_VECTORIZE
       #endif
-    }
+      for (size_t i = 0 ; i < (sizeof(a_.values) / sizeof(a_.values[0])) ; i++) {
+        #if defined(SIMDE_FAST_NANS)
+          r = a_.values[i] < r ? a_.values[i] : r;
+        #else
+          r = (a_.values[i] < r) ? a_.values[i] : ((a_.values[i] >= r) ? r : ((a_.values[i] == a_.values[i]) ? r : a_.values[i]));
+        #endif
+      }
+    #endif
   #endif
 
   return r;
@@ -75838,18 +78356,23 @@ simde_vminnmvq_f64(simde_float64x2_t a) {
     simde_float64x2_private a_ = simde_float64x2_to_private(a);
 
     r = SIMDE_MATH_INFINITY;
-    #if defined(SIMDE_FAST_NANS)
-      SIMDE_VECTORIZE_REDUCTION(min:r)
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      r = __riscv_vfmv_f_s_f64m1_f64(__riscv_vfredmin_vs_f64m1_f64m1(a_.sv128, \
+        __riscv_vfmv_v_f_f64m1(r, 2), 2));
     #else
-      SIMDE_VECTORIZE
-    #endif
-    for (size_t i = 0 ; i < (sizeof(a_.values) / sizeof(a_.values[0])) ; i++) {
       #if defined(SIMDE_FAST_NANS)
-        r = a_.values[i] < r ? a_.values[i] : r;
+        SIMDE_VECTORIZE_REDUCTION(min:r)
       #else
-        r = (a_.values[i] < r) ? a_.values[i] : ((a_.values[i] >= r) ? r : ((a_.values[i] == a_.values[i]) ? r : a_.values[i]));
+        SIMDE_VECTORIZE
       #endif
-    }
+      for (size_t i = 0 ; i < (sizeof(a_.values) / sizeof(a_.values[0])) ; i++) {
+        #if defined(SIMDE_FAST_NANS)
+          r = a_.values[i] < r ? a_.values[i] : r;
+        #else
+          r = (a_.values[i] < r) ? a_.values[i] : ((a_.values[i] >= r) ? r : ((a_.values[i] == a_.values[i]) ? r : a_.values[i]));
+        #endif
+      }
+    #endif
   #endif
 
   return r;
@@ -75865,7 +78388,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_MINNMV_H) */
 /* :: End simde/arm/neon/minnmv.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/minv.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -75898,7 +78421,7 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_MINV_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 #include <float.h>
 
 HEDLEY_DIAGNOSTIC_PUSH
@@ -76359,7 +78882,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_MINV_H) */
 /* :: End simde/arm/neon/minv.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/mla.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -76386,17 +78909,18 @@ HEDLEY_DIAGNOSTIC_POP
  * Copyright:
  *   2020      Evan Nemerson <evan@nemerson.com>
  *   2020      Sean Maher <seanptmaher@gmail.com> (Copyright owned by Google, LLC)
+ *   2023      Ju-Hung Li <jhlee@pllab.cs.nthu.edu.tw> (Copyright owned by NTHU pllab)
  */
 
 #if !defined(SIMDE_ARM_NEON_MLA_H)
 #define SIMDE_ARM_NEON_MLA_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -76407,6 +78931,15 @@ simde_float32x2_t
 simde_vmla_f32(simde_float32x2_t a, simde_float32x2_t b, simde_float32x2_t c) {
   #if defined(SIMDE_ARM_NEON_A32V7_NATIVE)
     return vmla_f32(a, b, c);
+  #elif defined(SIMDE_RISCV_V_NATIVE)
+    simde_float32x2_private
+      r_,
+      a_ = simde_float32x2_to_private(a),
+      b_ = simde_float32x2_to_private(b),
+      c_ = simde_float32x2_to_private(c);
+
+    r_.sv64 = __riscv_vfmacc_vv_f32m1(a_.sv64 , b_.sv64 , c_.sv64 , 2);
+    return simde_float32x2_from_private(r_);
   #else
     return simde_vadd_f32(simde_vmul_f32(b, c), a);
   #endif
@@ -76421,6 +78954,15 @@ simde_float64x1_t
 simde_vmla_f64(simde_float64x1_t a, simde_float64x1_t b, simde_float64x1_t c) {
   #if defined(SIMDE_ARM_NEON_A64V8_NATIVE)
     return vmla_f64(a, b, c);
+  #elif defined(SIMDE_RISCV_V_NATIVE)
+    simde_float64x1_private
+      r_,
+      a_ = simde_float64x1_to_private(a),
+      b_ = simde_float64x1_to_private(b),
+      c_ = simde_float64x1_to_private(c);
+
+    r_.sv64 = __riscv_vfmacc_vv_f64m1(a_.sv64 , b_.sv64 , c_.sv64 , 1);
+    return simde_float64x1_from_private(r_);
   #else
     return simde_vadd_f64(simde_vmul_f64(b, c), a);
   #endif
@@ -76435,6 +78977,15 @@ simde_int8x8_t
 simde_vmla_s8(simde_int8x8_t a, simde_int8x8_t b, simde_int8x8_t c) {
   #if defined(SIMDE_ARM_NEON_A32V7_NATIVE)
     return vmla_s8(a, b, c);
+  #elif defined(SIMDE_RISCV_V_NATIVE)
+      simde_int8x8_private
+        r_,
+        a_ = simde_int8x8_to_private(a),
+        b_ = simde_int8x8_to_private(b),
+        c_ = simde_int8x8_to_private(c);
+
+      r_.sv64 = __riscv_vmacc_vv_i8m1(a_.sv64 , b_.sv64 , c_.sv64 , 8);
+      return simde_int8x8_from_private(r_);
   #else
     return simde_vadd_s8(simde_vmul_s8(b, c), a);
   #endif
@@ -76449,6 +79000,15 @@ simde_int16x4_t
 simde_vmla_s16(simde_int16x4_t a, simde_int16x4_t b, simde_int16x4_t c) {
   #if defined(SIMDE_ARM_NEON_A32V7_NATIVE)
     return vmla_s16(a, b, c);
+  #elif defined(SIMDE_RISCV_V_NATIVE)
+      simde_int16x4_private
+        r_,
+        a_ = simde_int16x4_to_private(a),
+        b_ = simde_int16x4_to_private(b),
+        c_ = simde_int16x4_to_private(c);
+
+      r_.sv64 = __riscv_vmacc_vv_i16m1(a_.sv64 , b_.sv64 , c_.sv64 , 4);
+      return simde_int16x4_from_private(r_);
   #else
     return simde_vadd_s16(simde_vmul_s16(b, c), a);
   #endif
@@ -76463,6 +79023,15 @@ simde_int32x2_t
 simde_vmla_s32(simde_int32x2_t a, simde_int32x2_t b, simde_int32x2_t c) {
   #if defined(SIMDE_ARM_NEON_A32V7_NATIVE)
     return vmla_s32(a, b, c);
+  #elif defined(SIMDE_RISCV_V_NATIVE)
+      simde_int32x2_private
+        r_,
+        a_ = simde_int32x2_to_private(a),
+        b_ = simde_int32x2_to_private(b),
+        c_ = simde_int32x2_to_private(c);
+
+      r_.sv64 = __riscv_vmacc_vv_i32m1(a_.sv64 , b_.sv64 , c_.sv64 , 2);
+      return simde_int32x2_from_private(r_);
   #else
     return simde_vadd_s32(simde_vmul_s32(b, c), a);
   #endif
@@ -76477,6 +79046,15 @@ simde_uint8x8_t
 simde_vmla_u8(simde_uint8x8_t a, simde_uint8x8_t b, simde_uint8x8_t c) {
   #if defined(SIMDE_ARM_NEON_A32V7_NATIVE)
     return vmla_u8(a, b, c);
+  #elif defined(SIMDE_RISCV_V_NATIVE)
+      simde_uint8x8_private
+        r_,
+        a_ = simde_uint8x8_to_private(a),
+        b_ = simde_uint8x8_to_private(b),
+        c_ = simde_uint8x8_to_private(c);
+
+      r_.sv64 = __riscv_vmacc_vv_u8m1(a_.sv64 , b_.sv64 , c_.sv64 , 8);
+      return simde_uint8x8_from_private(r_);
   #else
     return simde_vadd_u8(simde_vmul_u8(b, c), a);
   #endif
@@ -76491,6 +79069,15 @@ simde_uint16x4_t
 simde_vmla_u16(simde_uint16x4_t a, simde_uint16x4_t b, simde_uint16x4_t c) {
   #if defined(SIMDE_ARM_NEON_A32V7_NATIVE)
     return vmla_u16(a, b, c);
+  #elif defined(SIMDE_RISCV_V_NATIVE)
+      simde_uint16x4_private
+        r_,
+        a_ = simde_uint16x4_to_private(a),
+        b_ = simde_uint16x4_to_private(b),
+        c_ = simde_uint16x4_to_private(c);
+
+      r_.sv64 = __riscv_vmacc_vv_u16m1(a_.sv64 , b_.sv64 , c_.sv64 , 4);
+      return simde_uint16x4_from_private(r_);
   #else
     return simde_vadd_u16(simde_vmul_u16(b, c), a);
   #endif
@@ -76505,6 +79092,15 @@ simde_uint32x2_t
 simde_vmla_u32(simde_uint32x2_t a, simde_uint32x2_t b, simde_uint32x2_t c) {
   #if defined(SIMDE_ARM_NEON_A32V7_NATIVE)
     return vmla_u32(a, b, c);
+  #elif defined(SIMDE_RISCV_V_NATIVE)
+      simde_uint32x2_private
+        r_,
+        a_ = simde_uint32x2_to_private(a),
+        b_ = simde_uint32x2_to_private(b),
+        c_ = simde_uint32x2_to_private(c);
+
+      r_.sv64 = __riscv_vmacc_vv_u32m1(a_.sv64 , b_.sv64 , c_.sv64 , 2);
+      return simde_uint32x2_from_private(r_);
   #else
     return simde_vadd_u32(simde_vmul_u32(b, c), a);
   #endif
@@ -76522,7 +79118,7 @@ simde_vmlaq_f32(simde_float32x4_t a, simde_float32x4_t b, simde_float32x4_t c) {
   #elif defined(SIMDE_POWER_ALTIVEC_P6_NATIVE)
     return vec_madd(b, c, a);
   #elif \
-      defined(SIMDE_X86_FMA_NATIVE)
+      defined(SIMDE_X86_FMA_NATIVE) || defined(SIMDE_RISCV_V_NATIVE)
     simde_float32x4_private
       r_,
       a_ = simde_float32x4_to_private(a),
@@ -76531,6 +79127,8 @@ simde_vmlaq_f32(simde_float32x4_t a, simde_float32x4_t b, simde_float32x4_t c) {
 
     #if defined(SIMDE_X86_FMA_NATIVE)
       r_.m128 = _mm_fmadd_ps(b_.m128, c_.m128, a_.m128);
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv128 = __riscv_vfmacc_vv_f32m1(a_.sv128 , b_.sv128 , c_.sv128 , 4);
     #endif
 
     return simde_float32x4_from_private(r_);
@@ -76551,7 +79149,7 @@ simde_vmlaq_f64(simde_float64x2_t a, simde_float64x2_t b, simde_float64x2_t c) {
   #elif defined(SIMDE_POWER_ALTIVEC_P7_NATIVE)
     return vec_madd(b, c, a);
   #elif \
-      defined(SIMDE_X86_FMA_NATIVE)
+      defined(SIMDE_X86_FMA_NATIVE) || defined(SIMDE_RISCV_V_NATIVE)
     simde_float64x2_private
       r_,
       a_ = simde_float64x2_to_private(a),
@@ -76560,6 +79158,8 @@ simde_vmlaq_f64(simde_float64x2_t a, simde_float64x2_t b, simde_float64x2_t c) {
 
     #if defined(SIMDE_X86_FMA_NATIVE)
       r_.m128d = _mm_fmadd_pd(b_.m128d, c_.m128d, a_.m128d);
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv128 = __riscv_vfmacc_vv_f64m1(a_.sv128 , b_.sv128 , c_.sv128 , 2);
     #endif
 
     return simde_float64x2_from_private(r_);
@@ -76577,6 +79177,15 @@ simde_int8x16_t
 simde_vmlaq_s8(simde_int8x16_t a, simde_int8x16_t b, simde_int8x16_t c) {
   #if defined(SIMDE_ARM_NEON_A32V7_NATIVE)
     return vmlaq_s8(a, b, c);
+  #elif defined(SIMDE_RISCV_V_NATIVE)
+      simde_int8x16_private
+        r_,
+        a_ = simde_int8x16_to_private(a),
+        b_ = simde_int8x16_to_private(b),
+        c_ = simde_int8x16_to_private(c);
+
+      r_.sv128 = __riscv_vmacc_vv_i8m1(a_.sv128 , b_.sv128 , c_.sv128 , 16);
+      return simde_int8x16_from_private(r_);
   #else
     return simde_vaddq_s8(simde_vmulq_s8(b, c), a);
   #endif
@@ -76591,6 +79200,15 @@ simde_int16x8_t
 simde_vmlaq_s16(simde_int16x8_t a, simde_int16x8_t b, simde_int16x8_t c) {
   #if defined(SIMDE_ARM_NEON_A32V7_NATIVE)
     return vmlaq_s16(a, b, c);
+  #elif defined(SIMDE_RISCV_V_NATIVE)
+      simde_int16x8_private
+        r_,
+        a_ = simde_int16x8_to_private(a),
+        b_ = simde_int16x8_to_private(b),
+        c_ = simde_int16x8_to_private(c);
+
+      r_.sv128 = __riscv_vmacc_vv_i16m1(a_.sv128 , b_.sv128 , c_.sv128 , 8);
+      return simde_int16x8_from_private(r_);
   #else
     return simde_vaddq_s16(simde_vmulq_s16(b, c), a);
   #endif
@@ -76605,6 +79223,15 @@ simde_int32x4_t
 simde_vmlaq_s32(simde_int32x4_t a, simde_int32x4_t b, simde_int32x4_t c) {
   #if defined(SIMDE_ARM_NEON_A32V7_NATIVE)
     return vmlaq_s32(a, b, c);
+  #elif defined(SIMDE_RISCV_V_NATIVE)
+      simde_int32x4_private
+        r_,
+        a_ = simde_int32x4_to_private(a),
+        b_ = simde_int32x4_to_private(b),
+        c_ = simde_int32x4_to_private(c);
+
+      r_.sv128 = __riscv_vmacc_vv_i32m1(a_.sv128 , b_.sv128 , c_.sv128 , 4);
+      return simde_int32x4_from_private(r_);
   #else
     return simde_vaddq_s32(simde_vmulq_s32(b, c), a);
   #endif
@@ -76619,6 +79246,15 @@ simde_uint8x16_t
 simde_vmlaq_u8(simde_uint8x16_t a, simde_uint8x16_t b, simde_uint8x16_t c) {
   #if defined(SIMDE_ARM_NEON_A32V7_NATIVE)
     return vmlaq_u8(a, b, c);
+  #elif defined(SIMDE_RISCV_V_NATIVE)
+      simde_uint8x16_private
+        r_,
+        a_ = simde_uint8x16_to_private(a),
+        b_ = simde_uint8x16_to_private(b),
+        c_ = simde_uint8x16_to_private(c);
+
+      r_.sv128 = __riscv_vmacc_vv_u8m1(a_.sv128 , b_.sv128 , c_.sv128 , 16);
+      return simde_uint8x16_from_private(r_);
   #else
     return simde_vaddq_u8(simde_vmulq_u8(b, c), a);
   #endif
@@ -76633,6 +79269,15 @@ simde_uint16x8_t
 simde_vmlaq_u16(simde_uint16x8_t a, simde_uint16x8_t b, simde_uint16x8_t c) {
   #if defined(SIMDE_ARM_NEON_A32V7_NATIVE)
     return vmlaq_u16(a, b, c);
+  #elif defined(SIMDE_RISCV_V_NATIVE)
+      simde_uint16x8_private
+        r_,
+        a_ = simde_uint16x8_to_private(a),
+        b_ = simde_uint16x8_to_private(b),
+        c_ = simde_uint16x8_to_private(c);
+
+      r_.sv128 = __riscv_vmacc_vv_u16m1(a_.sv128 , b_.sv128 , c_.sv128 , 8);
+      return simde_uint16x8_from_private(r_);
   #else
     return simde_vaddq_u16(simde_vmulq_u16(b, c), a);
   #endif
@@ -76647,6 +79292,15 @@ simde_uint32x4_t
 simde_vmlaq_u32(simde_uint32x4_t a, simde_uint32x4_t b, simde_uint32x4_t c) {
   #if defined(SIMDE_ARM_NEON_A32V7_NATIVE)
     return vmlaq_u32(a, b, c);
+  #elif defined(SIMDE_RISCV_V_NATIVE)
+      simde_uint32x4_private
+        r_,
+        a_ = simde_uint32x4_to_private(a),
+        b_ = simde_uint32x4_to_private(b),
+        c_ = simde_uint32x4_to_private(c);
+
+      r_.sv128 = __riscv_vmacc_vv_u32m1(a_.sv128 , b_.sv128 , c_.sv128 , 4);
+      return simde_uint32x4_from_private(r_);
   #else
     return simde_vaddq_u32(simde_vmulq_u32(b, c), a);
   #endif
@@ -76662,7 +79316,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_MLA_H) */
 /* :: End simde/arm/neon/mla.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/mla_lane.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -76695,9 +79349,9 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_MLA_LANE_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -76909,7 +79563,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_MLA_LANE_H) */
 /* :: End simde/arm/neon/mla_lane.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/mla_n.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -76936,19 +79590,20 @@ HEDLEY_DIAGNOSTIC_POP
  * Copyright:
  *   2020      Evan Nemerson <evan@nemerson.com>
  *   2020      Sean Maher <seanptmaher@gmail.com> (Copyright owned by Google, LLC)
+ *   2023      Ju-Hung Li <jhlee@pllab.cs.nthu.edu.tw> (Copyright owned by NTHU pllab)
  */
 
 #if !defined(SIMDE_ARM_NEON_MLA_N_H)
 #define SIMDE_ARM_NEON_MLA_N_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/mul_n.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -76982,11 +79637,11 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_MUL_N_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -77209,7 +79864,9 @@ simde_vmla_n_f32(simde_float32x2_t a, simde_float32x2_t b, simde_float32 c) {
       a_ = simde_float32x2_to_private(a),
       b_ = simde_float32x2_to_private(b);
 
-    #if defined(SIMDE_VECTOR_SUBSCRIPT_SCALAR) && !defined(SIMDE_BUG_GCC_53784)
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv64 = __riscv_vfmacc_vf_f32m1(a_.sv64 , c , b_.sv64 , 2);
+    #elif defined(SIMDE_VECTOR_SUBSCRIPT_SCALAR) && !defined(SIMDE_BUG_GCC_53784)
       r_.values = (b_.values * c) + a_.values;
     #else
       SIMDE_VECTORIZE
@@ -77237,7 +79894,9 @@ simde_vmla_n_s16(simde_int16x4_t a, simde_int16x4_t b, int16_t c) {
       a_ = simde_int16x4_to_private(a),
       b_ = simde_int16x4_to_private(b);
 
-    #if defined(SIMDE_VECTOR_SUBSCRIPT_SCALAR) && !defined(SIMDE_BUG_GCC_53784) && !defined(SIMDE_BUG_GCC_100762)
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv64 = __riscv_vmacc_vx_i16m1(a_.sv64 , c , b_.sv64  , 4);
+    #elif defined(SIMDE_VECTOR_SUBSCRIPT_SCALAR) && !defined(SIMDE_BUG_GCC_53784) && !defined(SIMDE_BUG_GCC_100762)
       r_.values = (b_.values * c) + a_.values;
     #else
       SIMDE_VECTORIZE
@@ -77265,7 +79924,9 @@ simde_vmla_n_s32(simde_int32x2_t a, simde_int32x2_t b, int32_t c) {
       a_ = simde_int32x2_to_private(a),
       b_ = simde_int32x2_to_private(b);
 
-    #if defined(SIMDE_VECTOR_SUBSCRIPT_SCALAR) && !defined(SIMDE_BUG_GCC_100762)
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv64 = __riscv_vmacc_vx_i32m1(a_.sv64 , c , b_.sv64 , 2);
+    #elif defined(SIMDE_VECTOR_SUBSCRIPT_SCALAR) && !defined(SIMDE_BUG_GCC_100762)
       r_.values = (b_.values * c) + a_.values;
     #else
       SIMDE_VECTORIZE
@@ -77293,7 +79954,9 @@ simde_vmla_n_u16(simde_uint16x4_t a, simde_uint16x4_t b, uint16_t c) {
       a_ = simde_uint16x4_to_private(a),
       b_ = simde_uint16x4_to_private(b);
 
-    #if defined(SIMDE_VECTOR_SUBSCRIPT_SCALAR) && !defined(SIMDE_BUG_GCC_100762)
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv64 = __riscv_vmacc_vx_u16m1(a_.sv64 , c , b_.sv64 , 4);
+    #elif defined(SIMDE_VECTOR_SUBSCRIPT_SCALAR) && !defined(SIMDE_BUG_GCC_100762)
       r_.values = (b_.values * c) + a_.values;
     #else
       SIMDE_VECTORIZE
@@ -77321,7 +79984,9 @@ simde_vmla_n_u32(simde_uint32x2_t a, simde_uint32x2_t b, uint32_t c) {
       a_ = simde_uint32x2_to_private(a),
       b_ = simde_uint32x2_to_private(b);
 
-    #if defined(SIMDE_VECTOR_SUBSCRIPT_SCALAR) && !defined(SIMDE_BUG_GCC_100762)
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv64 = __riscv_vmacc_vx_u32m1(a_.sv64 , c , b_.sv64 , 2);
+    #elif defined(SIMDE_VECTOR_SUBSCRIPT_SCALAR) && !defined(SIMDE_BUG_GCC_100762)
       r_.values = (b_.values * c) + a_.values;
     #else
       SIMDE_VECTORIZE
@@ -77343,7 +80008,7 @@ simde_float32x4_t
 simde_vmlaq_n_f32(simde_float32x4_t a, simde_float32x4_t b, simde_float32 c) {
   #if defined(SIMDE_ARM_NEON_A32V7_NATIVE)
     return vmlaq_n_f32(a, b, c);
-  #elif SIMDE_NATURAL_VECTOR_SIZE_LE(128)
+  #elif SIMDE_NATURAL_VECTOR_SIZE_LE(128) && !defined(SIMDE_RISCV_V_NATIVE)
     return simde_vaddq_f32(simde_vmulq_n_f32(b, c), a);
   #else
     simde_float32x4_private
@@ -77351,7 +80016,9 @@ simde_vmlaq_n_f32(simde_float32x4_t a, simde_float32x4_t b, simde_float32 c) {
       a_ = simde_float32x4_to_private(a),
       b_ = simde_float32x4_to_private(b);
 
-    #if defined(SIMDE_VECTOR_SUBSCRIPT_SCALAR) && !defined(SIMDE_BUG_GCC_53784)
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv128 = __riscv_vfmacc_vf_f32m1(a_.sv128 , c , b_.sv128 , 4);
+    #elif defined(SIMDE_VECTOR_SUBSCRIPT_SCALAR) && !defined(SIMDE_BUG_GCC_53784)
       r_.values = (b_.values * c) + a_.values;
     #else
       SIMDE_VECTORIZE
@@ -77373,7 +80040,7 @@ simde_int16x8_t
 simde_vmlaq_n_s16(simde_int16x8_t a, simde_int16x8_t b, int16_t c) {
   #if defined(SIMDE_ARM_NEON_A32V7_NATIVE)
     return vmlaq_n_s16(a, b, c);
-  #elif SIMDE_NATURAL_VECTOR_SIZE_LE(128)
+  #elif SIMDE_NATURAL_VECTOR_SIZE_LE(128) && !defined(SIMDE_RISCV_V_NATIVE)
     return simde_vaddq_s16(simde_vmulq_n_s16(b, c), a);
   #else
     simde_int16x8_private
@@ -77381,7 +80048,9 @@ simde_vmlaq_n_s16(simde_int16x8_t a, simde_int16x8_t b, int16_t c) {
       a_ = simde_int16x8_to_private(a),
       b_ = simde_int16x8_to_private(b);
 
-    #if defined(SIMDE_VECTOR_SUBSCRIPT_SCALAR) && !defined(SIMDE_BUG_GCC_53784)
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv128 = __riscv_vmacc_vx_i16m1(a_.sv128 , c , b_.sv128  , 8);
+    #elif defined(SIMDE_VECTOR_SUBSCRIPT_SCALAR) && !defined(SIMDE_BUG_GCC_53784)
       r_.values = (b_.values * c) + a_.values;
     #else
       SIMDE_VECTORIZE
@@ -77403,7 +80072,7 @@ simde_int32x4_t
 simde_vmlaq_n_s32(simde_int32x4_t a, simde_int32x4_t b, int32_t c) {
   #if defined(SIMDE_ARM_NEON_A32V7_NATIVE)
     return vmlaq_n_s32(a, b, c);
-  #elif SIMDE_NATURAL_VECTOR_SIZE_LE(128)
+  #elif SIMDE_NATURAL_VECTOR_SIZE_LE(128) && !defined(SIMDE_RISCV_V_NATIVE)
     return simde_vaddq_s32(simde_vmulq_n_s32(b, c), a);
   #else
     simde_int32x4_private
@@ -77411,7 +80080,9 @@ simde_vmlaq_n_s32(simde_int32x4_t a, simde_int32x4_t b, int32_t c) {
       a_ = simde_int32x4_to_private(a),
       b_ = simde_int32x4_to_private(b);
 
-    #if defined(SIMDE_VECTOR_SUBSCRIPT_SCALAR)
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv128 = __riscv_vmacc_vx_i32m1(a_.sv128 , c , b_.sv128 , 4);
+    #elif defined(SIMDE_VECTOR_SUBSCRIPT_SCALAR)
       r_.values = (b_.values * c) + a_.values;
     #else
       SIMDE_VECTORIZE
@@ -77433,7 +80104,7 @@ simde_uint16x8_t
 simde_vmlaq_n_u16(simde_uint16x8_t a, simde_uint16x8_t b, uint16_t c) {
   #if defined(SIMDE_ARM_NEON_A32V7_NATIVE)
     return vmlaq_n_u16(a, b, c);
-  #elif SIMDE_NATURAL_VECTOR_SIZE_LE(128)
+  #elif SIMDE_NATURAL_VECTOR_SIZE_LE(128) && !defined(SIMDE_RISCV_V_NATIVE)
     return simde_vaddq_u16(simde_vmulq_n_u16(b, c), a);
   #else
     simde_uint16x8_private
@@ -77441,7 +80112,9 @@ simde_vmlaq_n_u16(simde_uint16x8_t a, simde_uint16x8_t b, uint16_t c) {
       a_ = simde_uint16x8_to_private(a),
       b_ = simde_uint16x8_to_private(b);
 
-    #if defined(SIMDE_VECTOR_SUBSCRIPT_SCALAR)
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv128 = __riscv_vmacc_vx_u16m1(a_.sv128 , c , b_.sv128 , 8);
+    #elif defined(SIMDE_VECTOR_SUBSCRIPT_SCALAR)
       r_.values = (b_.values * c) + a_.values;
     #else
       SIMDE_VECTORIZE
@@ -77471,7 +80144,9 @@ simde_vmlaq_n_u32(simde_uint32x4_t a, simde_uint32x4_t b, uint32_t c) {
       a_ = simde_uint32x4_to_private(a),
       b_ = simde_uint32x4_to_private(b);
 
-    #if defined(SIMDE_VECTOR_SUBSCRIPT_SCALAR)
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv128 = __riscv_vmacc_vx_u32m1(a_.sv128 , c , b_.sv128 , 4);
+    #elif defined(SIMDE_VECTOR_SUBSCRIPT_SCALAR)
       r_.values = (b_.values * c) + a_.values;
     #else
       SIMDE_VECTORIZE
@@ -77494,7 +80169,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_MLA_N_H) */
 /* :: End simde/arm/neon/mla_n.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/mlal.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -77521,17 +80196,18 @@ HEDLEY_DIAGNOSTIC_POP
  * Copyright:
  *   2020      Evan Nemerson <evan@nemerson.com>
  *   2020      Sean Maher <seanptmaher@gmail.com> (Copyright owned by Google, LLC)
+ *   2023      Ju-Hung Li <jhlee@pllab.cs.nthu.edu.tw> (Copyright owned by NTHU pllab)
  */
 
 #if !defined(SIMDE_ARM_NEON_MLAL_H)
 #define SIMDE_ARM_NEON_MLAL_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -77542,6 +80218,15 @@ simde_int16x8_t
 simde_vmlal_s8(simde_int16x8_t a, simde_int8x8_t b, simde_int8x8_t c) {
   #if defined(SIMDE_ARM_NEON_A32V7_NATIVE)
     return vmlal_s8(a, b, c);
+  #elif defined(SIMDE_RISCV_V_NATIVE)
+    simde_int16x8_private r_;
+    simde_int16x8_private a_ = simde_int16x8_to_private(a);
+    simde_int8x8_private b_ = simde_int8x8_to_private(b);
+    simde_int8x8_private c_ = simde_int8x8_to_private(c);
+    vint8mf2_t vb = __riscv_vlmul_trunc_v_i8m1_i8mf2 (b_.sv64);
+    vint8mf2_t vc = __riscv_vlmul_trunc_v_i8m1_i8mf2 (c_.sv64);
+    r_.sv128 = __riscv_vwmacc_vv_i16m1(a_.sv128 , vb , vc , 8);
+    return simde_int16x8_from_private(r_);
   #else
     return simde_vmlaq_s16(a, simde_vmovl_s8(b), simde_vmovl_s8(c));
   #endif
@@ -77556,6 +80241,15 @@ simde_int32x4_t
 simde_vmlal_s16(simde_int32x4_t a, simde_int16x4_t b, simde_int16x4_t c) {
   #if defined(SIMDE_ARM_NEON_A32V7_NATIVE)
     return vmlal_s16(a, b, c);
+  #elif defined(SIMDE_RISCV_V_NATIVE)
+    simde_int32x4_private r_;
+    simde_int32x4_private a_ = simde_int32x4_to_private(a);
+    simde_int16x4_private b_ = simde_int16x4_to_private(b);
+    simde_int16x4_private c_ = simde_int16x4_to_private(c);
+    vint16mf2_t vb = __riscv_vlmul_trunc_v_i16m1_i16mf2 (b_.sv64);
+    vint16mf2_t vc = __riscv_vlmul_trunc_v_i16m1_i16mf2 (c_.sv64);
+    r_.sv128 = __riscv_vwmacc_vv_i32m1(a_.sv128 , vb , vc , 4);
+    return simde_int32x4_from_private(r_);
   #else
     return simde_vmlaq_s32(a, simde_vmovl_s16(b), simde_vmovl_s16(c));
   #endif
@@ -77570,6 +80264,15 @@ simde_int64x2_t
 simde_vmlal_s32(simde_int64x2_t a, simde_int32x2_t b, simde_int32x2_t c) {
   #if defined(SIMDE_ARM_NEON_A32V7_NATIVE)
     return vmlal_s32(a, b, c);
+  #elif defined(SIMDE_RISCV_V_NATIVE)
+    simde_int64x2_private r_;
+    simde_int64x2_private a_ = simde_int64x2_to_private(a);
+    simde_int32x2_private b_ = simde_int32x2_to_private(b);
+    simde_int32x2_private c_ = simde_int32x2_to_private(c);
+    vint32mf2_t vb = __riscv_vlmul_trunc_v_i32m1_i32mf2 (b_.sv64);
+    vint32mf2_t vc = __riscv_vlmul_trunc_v_i32m1_i32mf2 (c_.sv64);
+    r_.sv128 = __riscv_vwmacc_vv_i64m1(a_.sv128 , vb , vc , 2);
+    return simde_int64x2_from_private(r_);
   #else
     simde_int64x2_private
       r_,
@@ -77599,6 +80302,15 @@ simde_uint16x8_t
 simde_vmlal_u8(simde_uint16x8_t a, simde_uint8x8_t b, simde_uint8x8_t c) {
   #if defined(SIMDE_ARM_NEON_A32V7_NATIVE)
     return vmlal_u8(a, b, c);
+  #elif defined(SIMDE_RISCV_V_NATIVE)
+    simde_uint16x8_private r_;
+    simde_uint16x8_private a_ = simde_uint16x8_to_private(a);
+    simde_uint8x8_private b_ = simde_uint8x8_to_private(b);
+    simde_uint8x8_private c_ = simde_uint8x8_to_private(c);
+    vuint8mf2_t vb = __riscv_vlmul_trunc_v_u8m1_u8mf2 (b_.sv64);
+    vuint8mf2_t vc = __riscv_vlmul_trunc_v_u8m1_u8mf2 (c_.sv64);
+    r_.sv128 = __riscv_vwmaccu_vv_u16m1(a_.sv128 , vb , vc , 8);
+    return simde_uint16x8_from_private(r_);
   #else
     return simde_vmlaq_u16(a, simde_vmovl_u8(b), simde_vmovl_u8(c));
   #endif
@@ -77613,6 +80325,15 @@ simde_uint32x4_t
 simde_vmlal_u16(simde_uint32x4_t a, simde_uint16x4_t b, simde_uint16x4_t c) {
   #if defined(SIMDE_ARM_NEON_A32V7_NATIVE)
     return vmlal_u16(a, b, c);
+  #elif defined(SIMDE_RISCV_V_NATIVE)
+    simde_uint32x4_private r_;
+    simde_uint32x4_private a_ = simde_uint32x4_to_private(a);
+    simde_uint16x4_private b_ = simde_uint16x4_to_private(b);
+    simde_uint16x4_private c_ = simde_uint16x4_to_private(c);
+    vuint16mf2_t vb = __riscv_vlmul_trunc_v_u16m1_u16mf2 (b_.sv64);
+    vuint16mf2_t vc = __riscv_vlmul_trunc_v_u16m1_u16mf2 (c_.sv64);
+    r_.sv128 = __riscv_vwmaccu_vv_u32m1(a_.sv128 , vb , vc , 4);
+    return simde_uint32x4_from_private(r_);
   #else
     return simde_vmlaq_u32(a, simde_vmovl_u16(b), simde_vmovl_u16(c));
   #endif
@@ -77627,6 +80348,15 @@ simde_uint64x2_t
 simde_vmlal_u32(simde_uint64x2_t a, simde_uint32x2_t b, simde_uint32x2_t c) {
   #if defined(SIMDE_ARM_NEON_A32V7_NATIVE)
     return vmlal_u32(a, b, c);
+  #elif defined(SIMDE_RISCV_V_NATIVE)
+    simde_uint64x2_private r_;
+    simde_uint64x2_private a_ = simde_uint64x2_to_private(a);
+    simde_uint32x2_private b_ = simde_uint32x2_to_private(b);
+    simde_uint32x2_private c_ = simde_uint32x2_to_private(c);
+    vuint32mf2_t vb = __riscv_vlmul_trunc_v_u32m1_u32mf2 (b_.sv64);
+    vuint32mf2_t vc = __riscv_vlmul_trunc_v_u32m1_u32mf2 (c_.sv64);
+    r_.sv128 = __riscv_vwmaccu_vv_u64m1(a_.sv128 , vb , vc , 2);
+    return simde_uint64x2_from_private(r_);
   #else
     simde_uint64x2_private
       r_,
@@ -77657,7 +80387,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_MLAL_H) */
 /* :: End simde/arm/neon/mlal.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/mlal_high.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -77684,17 +80414,18 @@ HEDLEY_DIAGNOSTIC_POP
  * Copyright:
  *   2020      Evan Nemerson <evan@nemerson.com>
  *   2020      Sean Maher <seanptmaher@gmail.com> (Copyright owned by Google, LLC)
+ *   2023      Ju-Hung Li <jhlee@pllab.cs.nthu.edu.tw> (Copyright owned by NTHU pllab)
  */
 
 #if !defined(SIMDE_ARM_NEON_MLAL_HIGH_H)
 #define SIMDE_ARM_NEON_MLAL_HIGH_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -77705,6 +80436,15 @@ simde_int16x8_t
 simde_vmlal_high_s8(simde_int16x8_t a, simde_int8x16_t b, simde_int8x16_t c) {
   #if defined(SIMDE_ARM_NEON_A64V8_NATIVE)
     return vmlal_high_s8(a, b, c);
+  #elif defined(SIMDE_RISCV_V_NATIVE)
+    simde_int16x8_private r_;
+    simde_int16x8_private a_ = simde_int16x8_to_private(a);
+    simde_int8x16_private b_ = simde_int8x16_to_private(b);
+    simde_int8x16_private c_ = simde_int8x16_to_private(c);
+    b_.sv128 = __riscv_vslidedown_vx_i8m1(b_.sv128 , 8 , 16);
+    c_.sv128 = __riscv_vslidedown_vx_i8m1(c_.sv128 , 8 , 16);
+    r_.sv128 = __riscv_vwmacc_vv_i16m1(a_.sv128 , __riscv_vlmul_trunc_v_i8m1_i8mf2 (b_.sv128) , __riscv_vlmul_trunc_v_i8m1_i8mf2 (c_.sv128) , 8);
+    return simde_int16x8_from_private(r_);
   #else
     return simde_vmlaq_s16(a, simde_vmovl_high_s8(b), simde_vmovl_high_s8(c));
   #endif
@@ -77719,6 +80459,15 @@ simde_int32x4_t
 simde_vmlal_high_s16(simde_int32x4_t a, simde_int16x8_t b, simde_int16x8_t c) {
   #if defined(SIMDE_ARM_NEON_A64V8_NATIVE)
     return vmlal_high_s16(a, b, c);
+  #elif defined(SIMDE_RISCV_V_NATIVE)
+    simde_int32x4_private r_;
+    simde_int32x4_private a_ = simde_int32x4_to_private(a);
+    simde_int16x8_private b_ = simde_int16x8_to_private(b);
+    simde_int16x8_private c_ = simde_int16x8_to_private(c);
+    b_.sv128 = __riscv_vslidedown_vx_i16m1(b_.sv128 , 4 , 8);
+    c_.sv128 = __riscv_vslidedown_vx_i16m1(c_.sv128 , 4 , 8);
+    r_.sv128 = __riscv_vwmacc_vv_i32m1(a_.sv128 , __riscv_vlmul_trunc_v_i16m1_i16mf2 (b_.sv128) , __riscv_vlmul_trunc_v_i16m1_i16mf2 (c_.sv128) , 4);
+    return simde_int32x4_from_private(r_);
   #else
     return simde_vmlaq_s32(a, simde_vmovl_high_s16(b), simde_vmovl_high_s16(c));
   #endif
@@ -77733,6 +80482,15 @@ simde_int64x2_t
 simde_vmlal_high_s32(simde_int64x2_t a, simde_int32x4_t b, simde_int32x4_t c) {
   #if defined(SIMDE_ARM_NEON_A64V8_NATIVE)
     return vmlal_high_s32(a, b, c);
+  #elif defined(SIMDE_RISCV_V_NATIVE)
+    simde_int64x2_private r_;
+    simde_int64x2_private a_ = simde_int64x2_to_private(a);
+    simde_int32x4_private b_ = simde_int32x4_to_private(b);
+    simde_int32x4_private c_ = simde_int32x4_to_private(c);
+    b_.sv128 = __riscv_vslidedown_vx_i32m1(b_.sv128 , 2, 4);
+    c_.sv128 = __riscv_vslidedown_vx_i32m1(c_.sv128 , 2, 4);
+    r_.sv128 = __riscv_vwmacc_vv_i64m1(a_.sv128 , __riscv_vlmul_trunc_v_i32m1_i32mf2 (b_.sv128) , __riscv_vlmul_trunc_v_i32m1_i32mf2 (c_.sv128) , 2);
+    return simde_int64x2_from_private(r_);
   #else
     simde_int64x2_private
       r_,
@@ -77762,6 +80520,15 @@ simde_uint16x8_t
 simde_vmlal_high_u8(simde_uint16x8_t a, simde_uint8x16_t b, simde_uint8x16_t c) {
   #if defined(SIMDE_ARM_NEON_A64V8_NATIVE)
     return vmlal_high_u8(a, b, c);
+  #elif defined(SIMDE_RISCV_V_NATIVE)
+    simde_uint16x8_private r_;
+    simde_uint16x8_private a_ = simde_uint16x8_to_private(a);
+    simde_uint8x16_private b_ = simde_uint8x16_to_private(b);
+    simde_uint8x16_private c_ = simde_uint8x16_to_private(c);
+    b_.sv128 = __riscv_vslidedown_vx_u8m1(b_.sv128 , 8 , 16);
+    c_.sv128 = __riscv_vslidedown_vx_u8m1(c_.sv128 , 8 , 16);
+    r_.sv128 = __riscv_vwmaccu_vv_u16m1(a_.sv128 , __riscv_vlmul_trunc_v_u8m1_u8mf2 (b_.sv128) , __riscv_vlmul_trunc_v_u8m1_u8mf2 (c_.sv128) , 8);
+    return simde_uint16x8_from_private(r_);
   #else
     return simde_vmlaq_u16(a, simde_vmovl_high_u8(b), simde_vmovl_high_u8(c));
   #endif
@@ -77776,6 +80543,15 @@ simde_uint32x4_t
 simde_vmlal_high_u16(simde_uint32x4_t a, simde_uint16x8_t b, simde_uint16x8_t c) {
   #if defined(SIMDE_ARM_NEON_A64V8_NATIVE)
     return vmlal_high_u16(a, b, c);
+  #elif defined(SIMDE_RISCV_V_NATIVE)
+    simde_uint32x4_private r_;
+    simde_uint32x4_private a_ = simde_uint32x4_to_private(a);
+    simde_uint16x8_private b_ = simde_uint16x8_to_private(b);
+    simde_uint16x8_private c_ = simde_uint16x8_to_private(c);
+    b_.sv128 = __riscv_vslidedown_vx_u16m1(b_.sv128 , 4 , 8);
+    c_.sv128 = __riscv_vslidedown_vx_u16m1(c_.sv128 , 4 , 8);
+    r_.sv128 = __riscv_vwmaccu_vv_u32m1(a_.sv128 , __riscv_vlmul_trunc_v_u16m1_u16mf2 (b_.sv128) , __riscv_vlmul_trunc_v_u16m1_u16mf2 (c_.sv128) , 4);
+    return simde_uint32x4_from_private(r_);
   #else
     return simde_vmlaq_u32(a, simde_vmovl_high_u16(b), simde_vmovl_high_u16(c));
   #endif
@@ -77790,6 +80566,15 @@ simde_uint64x2_t
 simde_vmlal_high_u32(simde_uint64x2_t a, simde_uint32x4_t b, simde_uint32x4_t c) {
   #if defined(SIMDE_ARM_NEON_A64V8_NATIVE)
     return vmlal_high_u32(a, b, c);
+  #elif defined(SIMDE_RISCV_V_NATIVE)
+    simde_uint64x2_private r_;
+    simde_uint64x2_private a_ = simde_uint64x2_to_private(a);
+    simde_uint32x4_private b_ = simde_uint32x4_to_private(b);
+    simde_uint32x4_private c_ = simde_uint32x4_to_private(c);
+    b_.sv128 = __riscv_vslidedown_vx_u32m1(b_.sv128 , 2, 4);
+    c_.sv128 = __riscv_vslidedown_vx_u32m1(c_.sv128 , 2, 4);
+    r_.sv128 = __riscv_vwmaccu_vv_u64m1(a_.sv128 , __riscv_vlmul_trunc_v_u32m1_u32mf2 (b_.sv128) , __riscv_vlmul_trunc_v_u32m1_u32mf2 (c_.sv128) , 2);
+    return simde_uint64x2_from_private(r_);
   #else
     simde_uint64x2_private
       r_,
@@ -77820,7 +80605,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_MLAL_HIGH_H) */
 /* :: End simde/arm/neon/mlal_high.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/mlal_high_lane.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -77852,15 +80637,15 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_MLAL_HIGH_LANE_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -77976,7 +80761,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_MLAL_HIGH_LANE_H) */
 /* :: End simde/arm/neon/mlal_high_lane.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/mlal_high_n.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -78002,19 +80787,20 @@ HEDLEY_DIAGNOSTIC_POP
  *
  * Copyright:
  *   2021      Décio Luiz Gazzoni Filho <decio@decpp.net>
+ *   2023      Ju-Hung Li <jhlee@pllab.cs.nthu.edu.tw> (Copyright owned by NTHU pllab)
  */
 
 #if !defined(SIMDE_ARM_NEON_MLAL_HIGH_N_H)
 #define SIMDE_ARM_NEON_MLAL_HIGH_N_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -78025,6 +80811,13 @@ simde_int32x4_t
 simde_vmlal_high_n_s16(simde_int32x4_t a, simde_int16x8_t b, int16_t c) {
   #if defined(SIMDE_ARM_NEON_A64V8_NATIVE)
     return vmlal_high_n_s16(a, b, c);
+  #elif defined(SIMDE_RISCV_V_NATIVE)
+    simde_int32x4_private r_;
+    simde_int32x4_private a_ = simde_int32x4_to_private(a);
+    simde_int16x8_private b_ = simde_int16x8_to_private(b);
+    b_.sv128 = __riscv_vslidedown_vx_i16m1(b_.sv128 , 4 , 8);
+    r_.sv128 = __riscv_vwmacc_vx_i32m1(a_.sv128 , c , __riscv_vlmul_trunc_v_i16m1_i16mf2 (b_.sv128) , 4);
+    return simde_int32x4_from_private(r_);
   #else
     return simde_vmlaq_s32(a, simde_vmovl_high_s16(b), simde_vdupq_n_s32(c));
   #endif
@@ -78039,6 +80832,13 @@ simde_int64x2_t
 simde_vmlal_high_n_s32(simde_int64x2_t a, simde_int32x4_t b, int32_t c) {
   #if defined(SIMDE_ARM_NEON_A64V8_NATIVE)
     return vmlal_high_n_s32(a, b, c);
+  #elif defined(SIMDE_RISCV_V_NATIVE)
+    simde_int64x2_private r_;
+    simde_int64x2_private a_ = simde_int64x2_to_private(a);
+    simde_int32x4_private b_ = simde_int32x4_to_private(b);
+    b_.sv128 = __riscv_vslidedown_vx_i32m1(b_.sv128 , 2, 4);
+    r_.sv128 = __riscv_vwmacc_vx_i64m1(a_.sv128 , c , __riscv_vlmul_trunc_v_i32m1_i32mf2 (b_.sv128)  , 2);
+    return simde_int64x2_from_private(r_);
   #else
     simde_int64x2_private
       r_,
@@ -78068,6 +80868,13 @@ simde_uint32x4_t
 simde_vmlal_high_n_u16(simde_uint32x4_t a, simde_uint16x8_t b, uint16_t c) {
   #if defined(SIMDE_ARM_NEON_A64V8_NATIVE)
     return vmlal_high_n_u16(a, b, c);
+  #elif defined(SIMDE_RISCV_V_NATIVE)
+    simde_uint32x4_private r_;
+    simde_uint32x4_private a_ = simde_uint32x4_to_private(a);
+    simde_uint16x8_private b_ = simde_uint16x8_to_private(b);
+    b_.sv128 = __riscv_vslidedown_vx_u16m1(b_.sv128 , 4 , 8);
+    r_.sv128 = __riscv_vwmaccu_vx_u32m1(a_.sv128 , c , __riscv_vlmul_trunc_v_u16m1_u16mf2 (b_.sv128) , 4);
+    return simde_uint32x4_from_private(r_);
   #else
     return simde_vmlaq_u32(a, simde_vmovl_high_u16(b), simde_vdupq_n_u32(c));
   #endif
@@ -78082,6 +80889,13 @@ simde_uint64x2_t
 simde_vmlal_high_n_u32(simde_uint64x2_t a, simde_uint32x4_t b, uint32_t c) {
   #if defined(SIMDE_ARM_NEON_A64V8_NATIVE)
     return vmlal_high_n_u32(a, b, c);
+  #elif defined(SIMDE_RISCV_V_NATIVE)
+    simde_uint64x2_private r_;
+    simde_uint64x2_private a_ = simde_uint64x2_to_private(a);
+    simde_uint32x4_private b_ = simde_uint32x4_to_private(b);
+    b_.sv128 = __riscv_vslidedown_vx_u32m1(b_.sv128 , 2, 4);
+    r_.sv128 = __riscv_vwmaccu_vx_u64m1(a_.sv128 , c , __riscv_vlmul_trunc_v_u32m1_u32mf2 (b_.sv128) , 2);
+    return simde_uint64x2_from_private(r_);
   #else
     simde_uint64x2_private
       r_,
@@ -78112,7 +80926,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_MLAL_HIGH_N_H) */
 /* :: End simde/arm/neon/mlal_high_n.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/mlal_lane.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -78144,9 +80958,9 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_MLAL_LANE_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -78238,7 +81052,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_MLAL_LANE_H) */
 /* :: End simde/arm/neon/mlal_lane.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/mlal_n.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -78264,19 +81078,20 @@ HEDLEY_DIAGNOSTIC_POP
  *
  * Copyright:
  *   2020      Evan Nemerson <evan@nemerson.com>
+ *   2023      Ju-Hung Li <jhlee@pllab.cs.nthu.edu.tw> (Copyright owned by NTHU pllab)
  */
 
 #if !defined(SIMDE_ARM_NEON_MLAL_N_H)
 #define SIMDE_ARM_NEON_MLAL_N_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -78287,6 +81102,13 @@ simde_int32x4_t
 simde_vmlal_n_s16(simde_int32x4_t a, simde_int16x4_t b, int16_t c) {
   #if defined(SIMDE_ARM_NEON_A32V7_NATIVE)
     return vmlal_n_s16(a, b, c);
+  #elif defined(SIMDE_RISCV_V_NATIVE)
+    simde_int32x4_private r_;
+    simde_int32x4_private a_ = simde_int32x4_to_private(a);
+    simde_int16x4_private b_ = simde_int16x4_to_private(b);
+    vint16mf2_t vb = __riscv_vlmul_trunc_v_i16m1_i16mf2 (b_.sv64);
+    r_.sv128 = __riscv_vwmacc_vx_i32m1(a_.sv128 , c , vb , 4);
+    return simde_int32x4_from_private(r_);
   #else
     return simde_vmlaq_s32(a, simde_vmovl_s16(b), simde_vdupq_n_s32(c));
   #endif
@@ -78301,13 +81123,19 @@ simde_int64x2_t
 simde_vmlal_n_s32(simde_int64x2_t a, simde_int32x2_t b, int32_t c) {
   #if defined(SIMDE_ARM_NEON_A32V7_NATIVE)
     return vmlal_n_s32(a, b, c);
+  #elif defined(SIMDE_RISCV_V_NATIVE)
+    simde_int64x2_private r_;
+    simde_int64x2_private a_ = simde_int64x2_to_private(a);
+    simde_int32x2_private b_ = simde_int32x2_to_private(b);
+    vint32mf2_t vb = __riscv_vlmul_trunc_v_i32m1_i32mf2 (b_.sv64);
+    r_.sv128 = __riscv_vwmacc_vx_i64m1(a_.sv128 , c , vb , 2);
+    return simde_int64x2_from_private(r_);
   #else
     simde_int64x2_private
       r_,
       a_ = simde_int64x2_to_private(a),
       b_ = simde_int64x2_to_private(simde_vmovl_s32(b)),
       c_ = simde_int64x2_to_private(simde_vdupq_n_s64(c));
-
     #if defined(SIMDE_VECTOR_SUBSCRIPT_OPS)
       r_.values = (b_.values * c_.values) + a_.values;
     #else
@@ -78330,6 +81158,13 @@ simde_uint32x4_t
 simde_vmlal_n_u16(simde_uint32x4_t a, simde_uint16x4_t b, uint16_t c) {
   #if defined(SIMDE_ARM_NEON_A32V7_NATIVE)
     return vmlal_n_u16(a, b, c);
+  #elif defined(SIMDE_RISCV_V_NATIVE)
+    simde_uint32x4_private r_;
+    simde_uint32x4_private a_ = simde_uint32x4_to_private(a);
+    simde_uint16x4_private b_ = simde_uint16x4_to_private(b);
+    vuint16mf2_t vb = __riscv_vlmul_trunc_v_u16m1_u16mf2 (b_.sv64);
+    r_.sv128 = __riscv_vwmaccu_vx_u32m1(a_.sv128 , c , vb , 4);
+    return simde_uint32x4_from_private(r_);
   #else
     return simde_vmlaq_u32(a, simde_vmovl_u16(b), simde_vdupq_n_u32(c));
   #endif
@@ -78344,6 +81179,13 @@ simde_uint64x2_t
 simde_vmlal_n_u32(simde_uint64x2_t a, simde_uint32x2_t b, uint32_t c) {
   #if defined(SIMDE_ARM_NEON_A32V7_NATIVE)
     return vmlal_n_u32(a, b, c);
+  #elif defined(SIMDE_RISCV_V_NATIVE)
+    simde_uint64x2_private r_;
+    simde_uint64x2_private a_ = simde_uint64x2_to_private(a);
+    simde_uint32x2_private b_ = simde_uint32x2_to_private(b);
+    vuint32mf2_t vb = __riscv_vlmul_trunc_v_u32m1_u32mf2 (b_.sv64);
+    r_.sv128 = __riscv_vwmaccu_vx_u64m1(a_.sv128 , c , vb , 2);
+    return simde_uint64x2_from_private(r_);
   #else
     simde_uint64x2_private
       r_,
@@ -78374,7 +81216,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_MLAL_N_H) */
 /* :: End simde/arm/neon/mlal_n.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/mls.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -78400,15 +81242,16 @@ HEDLEY_DIAGNOSTIC_POP
  *
  * Copyright:
  *   2020      Evan Nemerson <evan@nemerson.com>
+ *   2023      Ju-Hung Li <jhlee@pllab.cs.nthu.edu.tw> (Copyright owned by NTHU pllab)
  */
 
 #if !defined(SIMDE_ARM_NEON_MLS_H)
 #define SIMDE_ARM_NEON_MLS_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -78419,6 +81262,14 @@ simde_float32x2_t
 simde_vmls_f32(simde_float32x2_t a, simde_float32x2_t b, simde_float32x2_t c) {
   #if defined(SIMDE_ARM_NEON_A32V7_NATIVE)
     return vmls_f32(a, b, c);
+  #elif defined(SIMDE_RISCV_V_NATIVE)
+    simde_float32x2_private
+      r_,
+      a_ = simde_float32x2_to_private(a),
+      b_ = simde_float32x2_to_private(b),
+      c_ = simde_float32x2_to_private(c);
+    r_.sv64 = __riscv_vfnmsac_vv_f32m1(a_.sv64 , b_.sv64 , c_.sv64 , 2);
+    return simde_float32x2_from_private(r_);
   #else
     return simde_vsub_f32(a, simde_vmul_f32(b, c));
   #endif
@@ -78433,6 +81284,14 @@ simde_float64x1_t
 simde_vmls_f64(simde_float64x1_t a, simde_float64x1_t b, simde_float64x1_t c) {
   #if defined(SIMDE_ARM_NEON_A64V8_NATIVE)
     return vmls_f64(a, b, c);
+  #elif defined(SIMDE_RISCV_V_NATIVE)
+    simde_float64x1_private
+      r_,
+      a_ = simde_float64x1_to_private(a),
+      b_ = simde_float64x1_to_private(b),
+      c_ = simde_float64x1_to_private(c);
+    r_.sv64 = __riscv_vfnmsac_vv_f64m1(a_.sv64 , b_.sv64 , c_.sv64 , 1);
+    return simde_float64x1_from_private(r_);
   #else
     return simde_vsub_f64(a, simde_vmul_f64(b, c));
   #endif
@@ -78447,6 +81306,14 @@ simde_int8x8_t
 simde_vmls_s8(simde_int8x8_t a, simde_int8x8_t b, simde_int8x8_t c) {
   #if defined(SIMDE_ARM_NEON_A32V7_NATIVE)
     return vmls_s8(a, b, c);
+  #elif defined(SIMDE_RISCV_V_NATIVE)
+    simde_int8x8_private
+      r_,
+      a_ = simde_int8x8_to_private(a),
+      b_ = simde_int8x8_to_private(b),
+      c_ = simde_int8x8_to_private(c);
+    r_.sv64 = __riscv_vnmsac_vv_i8m1(a_.sv64 , b_.sv64 , c_.sv64 , 8);
+    return simde_int8x8_from_private(r_);
   #else
     return simde_vsub_s8(a, simde_vmul_s8(b, c));
   #endif
@@ -78461,6 +81328,14 @@ simde_int16x4_t
 simde_vmls_s16(simde_int16x4_t a, simde_int16x4_t b, simde_int16x4_t c) {
   #if defined(SIMDE_ARM_NEON_A32V7_NATIVE)
     return vmls_s16(a, b, c);
+  #elif defined(SIMDE_RISCV_V_NATIVE)
+    simde_int16x4_private
+      r_,
+      a_ = simde_int16x4_to_private(a),
+      b_ = simde_int16x4_to_private(b),
+      c_ = simde_int16x4_to_private(c);
+    r_.sv64 = __riscv_vnmsac_vv_i16m1(a_.sv64 , b_.sv64 , c_.sv64 , 4);
+    return simde_int16x4_from_private(r_);
   #else
     return simde_vsub_s16(a, simde_vmul_s16(b, c));
   #endif
@@ -78475,6 +81350,14 @@ simde_int32x2_t
 simde_vmls_s32(simde_int32x2_t a, simde_int32x2_t b, simde_int32x2_t c) {
   #if defined(SIMDE_ARM_NEON_A32V7_NATIVE)
     return vmls_s32(a, b, c);
+  #elif defined(SIMDE_RISCV_V_NATIVE)
+    simde_int32x2_private
+      r_,
+      a_ = simde_int32x2_to_private(a),
+      b_ = simde_int32x2_to_private(b),
+      c_ = simde_int32x2_to_private(c);
+    r_.sv64 = __riscv_vnmsac_vv_i32m1(a_.sv64 , b_.sv64 , c_.sv64 , 2);
+    return simde_int32x2_from_private(r_);
   #else
     return simde_vsub_s32(a, simde_vmul_s32(b, c));
   #endif
@@ -78489,6 +81372,14 @@ simde_uint8x8_t
 simde_vmls_u8(simde_uint8x8_t a, simde_uint8x8_t b, simde_uint8x8_t c) {
   #if defined(SIMDE_ARM_NEON_A32V7_NATIVE)
     return vmls_u8(a, b, c);
+  #elif defined(SIMDE_RISCV_V_NATIVE)
+    simde_uint8x8_private
+      r_,
+      a_ = simde_uint8x8_to_private(a),
+      b_ = simde_uint8x8_to_private(b),
+      c_ = simde_uint8x8_to_private(c);
+    r_.sv64 = __riscv_vnmsac_vv_u8m1(a_.sv64 , b_.sv64 , c_.sv64 , 8);
+    return simde_uint8x8_from_private(r_);
   #else
     return simde_vsub_u8(a, simde_vmul_u8(b, c));
   #endif
@@ -78503,6 +81394,14 @@ simde_uint16x4_t
 simde_vmls_u16(simde_uint16x4_t a, simde_uint16x4_t b, simde_uint16x4_t c) {
   #if defined(SIMDE_ARM_NEON_A32V7_NATIVE)
     return vmls_u16(a, b, c);
+  #elif defined(SIMDE_RISCV_V_NATIVE)
+    simde_uint16x4_private
+      r_,
+      a_ = simde_uint16x4_to_private(a),
+      b_ = simde_uint16x4_to_private(b),
+      c_ = simde_uint16x4_to_private(c);
+    r_.sv64 = __riscv_vnmsac_vv_u16m1(a_.sv64 , b_.sv64 , c_.sv64 , 4);
+    return simde_uint16x4_from_private(r_);
   #else
     return simde_vsub_u16(a, simde_vmul_u16(b, c));
   #endif
@@ -78517,6 +81416,14 @@ simde_uint32x2_t
 simde_vmls_u32(simde_uint32x2_t a, simde_uint32x2_t b, simde_uint32x2_t c) {
   #if defined(SIMDE_ARM_NEON_A32V7_NATIVE)
     return vmls_u32(a, b, c);
+  #elif defined(SIMDE_RISCV_V_NATIVE)
+    simde_uint32x2_private
+      r_,
+      a_ = simde_uint32x2_to_private(a),
+      b_ = simde_uint32x2_to_private(b),
+      c_ = simde_uint32x2_to_private(c);
+    r_.sv64 = __riscv_vnmsac_vv_u32m1(a_.sv64 , b_.sv64 , c_.sv64 , 2);
+    return simde_uint32x2_from_private(r_);
   #else
     return simde_vsub_u32(a, simde_vmul_u32(b, c));
   #endif
@@ -78531,13 +81438,19 @@ simde_float32x4_t
 simde_vmlsq_f32(simde_float32x4_t a, simde_float32x4_t b, simde_float32x4_t c) {
   #if defined(SIMDE_ARM_NEON_A32V7_NATIVE)
     return vmlsq_f32(a, b, c);
-  #elif defined(SIMDE_X86_FMA_NATIVE)
+  #elif defined(SIMDE_X86_FMA_NATIVE) || defined(SIMDE_RISCV_V_NATIVE)
     simde_float32x4_private
       r_,
       a_ = simde_float32x4_to_private(a),
       b_ = simde_float32x4_to_private(b),
       c_ = simde_float32x4_to_private(c);
-    r_.m128 = _mm_fnmadd_ps(b_.m128, c_.m128, a_.m128);
+
+    #if defined(SIMDE_X86_FMA_NATIVE)
+      r_.m128 = _mm_fnmadd_ps(b_.m128, c_.m128, a_.m128);
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv128 = __riscv_vfnmsac_vv_f32m1(a_.sv128 , b_.sv128 , c_.sv128 , 4);
+    #endif
+
     return simde_float32x4_from_private(r_);
   #else
     return simde_vsubq_f32(a, simde_vmulq_f32(b, c));
@@ -78553,13 +81466,19 @@ simde_float64x2_t
 simde_vmlsq_f64(simde_float64x2_t a, simde_float64x2_t b, simde_float64x2_t c) {
   #if defined(SIMDE_ARM_NEON_A64V8_NATIVE)
     return vmlsq_f64(a, b, c);
-  #elif defined(SIMDE_X86_FMA_NATIVE)
+  #elif defined(SIMDE_X86_FMA_NATIVE) || defined(SIMDE_X86_FMA_NATIVE)
     simde_float64x2_private
       r_,
       a_ = simde_float64x2_to_private(a),
       b_ = simde_float64x2_to_private(b),
       c_ = simde_float64x2_to_private(c);
-    r_.m128d = _mm_fnmadd_pd(b_.m128d, c_.m128d, a_.m128d);
+
+    #if defined(SIMDE_X86_FMA_NATIVE)
+      r_.m128d = _mm_fnmadd_pd(b_.m128d, c_.m128d, a_.m128d);
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv128 = __riscv_vfnmsac_vv_f64m1(a_.sv128 , b_.sv128 , c_.sv128 , 2);
+    #endif
+
     return simde_float64x2_from_private(r_);
   #else
     return simde_vsubq_f64(a, simde_vmulq_f64(b, c));
@@ -78575,6 +81494,14 @@ simde_int8x16_t
 simde_vmlsq_s8(simde_int8x16_t a, simde_int8x16_t b, simde_int8x16_t c) {
   #if defined(SIMDE_ARM_NEON_A32V7_NATIVE)
     return vmlsq_s8(a, b, c);
+  #elif defined(SIMDE_RISCV_V_NATIVE)
+    simde_int8x16_private
+      r_,
+      a_ = simde_int8x16_to_private(a),
+      b_ = simde_int8x16_to_private(b),
+      c_ = simde_int8x16_to_private(c);
+    r_.sv128 = __riscv_vnmsac_vv_i8m1(a_.sv128 , b_.sv128 , c_.sv128 , 16);
+    return simde_int8x16_from_private(r_);
   #else
     return simde_vsubq_s8(a, simde_vmulq_s8(b, c));
   #endif
@@ -78589,6 +81516,14 @@ simde_int16x8_t
 simde_vmlsq_s16(simde_int16x8_t a, simde_int16x8_t b, simde_int16x8_t c) {
   #if defined(SIMDE_ARM_NEON_A32V7_NATIVE)
     return vmlsq_s16(a, b, c);
+  #elif defined(SIMDE_RISCV_V_NATIVE)
+    simde_int16x8_private
+      r_,
+      a_ = simde_int16x8_to_private(a),
+      b_ = simde_int16x8_to_private(b),
+      c_ = simde_int16x8_to_private(c);
+    r_.sv128 = __riscv_vnmsac_vv_i16m1(a_.sv128 , b_.sv128 , c_.sv128 , 8);
+    return simde_int16x8_from_private(r_);
   #else
     return simde_vsubq_s16(a, simde_vmulq_s16(b, c));
   #endif
@@ -78603,6 +81538,14 @@ simde_int32x4_t
 simde_vmlsq_s32(simde_int32x4_t a, simde_int32x4_t b, simde_int32x4_t c) {
   #if defined(SIMDE_ARM_NEON_A32V7_NATIVE)
     return vmlsq_s32(a, b, c);
+  #elif defined(SIMDE_RISCV_V_NATIVE)
+    simde_int32x4_private
+      r_,
+      a_ = simde_int32x4_to_private(a),
+      b_ = simde_int32x4_to_private(b),
+      c_ = simde_int32x4_to_private(c);
+    r_.sv128 = __riscv_vnmsac_vv_i32m1(a_.sv128 , b_.sv128 , c_.sv128 , 4);
+    return simde_int32x4_from_private(r_);
   #else
     return simde_vsubq_s32(a, simde_vmulq_s32(b, c));
   #endif
@@ -78617,6 +81560,14 @@ simde_uint8x16_t
 simde_vmlsq_u8(simde_uint8x16_t a, simde_uint8x16_t b, simde_uint8x16_t c) {
   #if defined(SIMDE_ARM_NEON_A32V7_NATIVE)
     return vmlsq_u8(a, b, c);
+  #elif defined(SIMDE_RISCV_V_NATIVE)
+    simde_uint8x16_private
+      r_,
+      a_ = simde_uint8x16_to_private(a),
+      b_ = simde_uint8x16_to_private(b),
+      c_ = simde_uint8x16_to_private(c);
+    r_.sv128 = __riscv_vnmsac_vv_u8m1(a_.sv128 , b_.sv128 , c_.sv128 , 16);
+    return simde_uint8x16_from_private(r_);
   #else
     return simde_vsubq_u8(a, simde_vmulq_u8(b, c));
   #endif
@@ -78631,6 +81582,14 @@ simde_uint16x8_t
 simde_vmlsq_u16(simde_uint16x8_t a, simde_uint16x8_t b, simde_uint16x8_t c) {
   #if defined(SIMDE_ARM_NEON_A32V7_NATIVE)
     return vmlsq_u16(a, b, c);
+  #elif defined(SIMDE_RISCV_V_NATIVE)
+    simde_uint16x8_private
+      r_,
+      a_ = simde_uint16x8_to_private(a),
+      b_ = simde_uint16x8_to_private(b),
+      c_ = simde_uint16x8_to_private(c);
+    r_.sv128 = __riscv_vnmsac_vv_u16m1(a_.sv128 , b_.sv128 , c_.sv128 , 8);
+    return simde_uint16x8_from_private(r_);
   #else
     return simde_vsubq_u16(a, simde_vmulq_u16(b, c));
   #endif
@@ -78645,6 +81604,14 @@ simde_uint32x4_t
 simde_vmlsq_u32(simde_uint32x4_t a, simde_uint32x4_t b, simde_uint32x4_t c) {
   #if defined(SIMDE_ARM_NEON_A32V7_NATIVE)
     return vmlsq_u32(a, b, c);
+  #elif defined(SIMDE_RISCV_V_NATIVE)
+    simde_uint32x4_private
+      r_,
+      a_ = simde_uint32x4_to_private(a),
+      b_ = simde_uint32x4_to_private(b),
+      c_ = simde_uint32x4_to_private(c);
+    r_.sv128 = __riscv_vnmsac_vv_u32m1(a_.sv128 , b_.sv128 , c_.sv128 , 4);
+    return simde_uint32x4_from_private(r_);
   #else
     return simde_vsubq_u32(a, simde_vmulq_u32(b, c));
   #endif
@@ -78660,7 +81627,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_MLS_H) */
 /* :: End simde/arm/neon/mls.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/mls_lane.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -78692,9 +81659,9 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_MLS_LANE_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -78906,7 +81873,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_MLS_LANE_H) */
 /* :: End simde/arm/neon/mls_lane.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/mls_n.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -78932,17 +81899,18 @@ HEDLEY_DIAGNOSTIC_POP
  *
  * Copyright:
  *   2020      Evan Nemerson <evan@nemerson.com>
+ *   2023      Ju-Hung Li <jhlee@pllab.cs.nthu.edu.tw> (Copyright owned by NTHU pllab)
  */
 
 #if !defined(SIMDE_ARM_NEON_MLS_N_H)
 #define SIMDE_ARM_NEON_MLS_N_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -78953,6 +81921,13 @@ simde_float32x2_t
 simde_vmls_n_f32(simde_float32x2_t a, simde_float32x2_t b, simde_float32 c) {
   #if defined(SIMDE_ARM_NEON_A32V7_NATIVE)
     return vmls_n_f32(a, b, c);
+  #elif defined(SIMDE_RISCV_V_NATIVE)
+    simde_float32x2_private
+      r_,
+      a_ = simde_float32x2_to_private(a),
+      b_ = simde_float32x2_to_private(b);
+    r_.sv64 = __riscv_vfnmsac_vf_f32m1(a_.sv64 , c , b_.sv64 , 2);
+    return simde_float32x2_from_private(r_);
   #else
     return simde_vmls_f32(a, b, simde_vdup_n_f32(c));
   #endif
@@ -78967,6 +81942,13 @@ simde_int16x4_t
 simde_vmls_n_s16(simde_int16x4_t a, simde_int16x4_t b, int16_t c) {
   #if defined(SIMDE_ARM_NEON_A32V7_NATIVE)
     return vmls_n_s16(a, b, c);
+  #elif defined(SIMDE_RISCV_V_NATIVE)
+    simde_int16x4_private
+      r_,
+      a_ = simde_int16x4_to_private(a),
+      b_ = simde_int16x4_to_private(b);
+    r_.sv64 = __riscv_vnmsac_vx_i16m1(a_.sv64 , c , b_.sv64  , 4);
+    return simde_int16x4_from_private(r_);
   #else
     return simde_vmls_s16(a, b, simde_vdup_n_s16(c));
   #endif
@@ -78981,6 +81963,13 @@ simde_int32x2_t
 simde_vmls_n_s32(simde_int32x2_t a, simde_int32x2_t b, int32_t c) {
   #if defined(SIMDE_ARM_NEON_A32V7_NATIVE)
     return vmls_n_s32(a, b, c);
+  #elif defined(SIMDE_RISCV_V_NATIVE)
+      simde_int32x2_private
+        r_,
+        a_ = simde_int32x2_to_private(a),
+        b_ = simde_int32x2_to_private(b);
+      r_.sv64 = __riscv_vnmsac_vx_i32m1(a_.sv64 , c , b_.sv64 , 2);
+      return simde_int32x2_from_private(r_);
   #else
     return simde_vmls_s32(a, b, simde_vdup_n_s32(c));
   #endif
@@ -78995,6 +81984,13 @@ simde_uint16x4_t
 simde_vmls_n_u16(simde_uint16x4_t a, simde_uint16x4_t b, uint16_t c) {
   #if defined(SIMDE_ARM_NEON_A32V7_NATIVE)
     return vmls_n_u16(a, b, c);
+  #elif defined(SIMDE_RISCV_V_NATIVE) && (SIMDE_NATURAL_VECTOR_SIZE == 128)
+    simde_uint16x4_private
+      r_,
+      a_ = simde_uint16x4_to_private(a),
+      b_ = simde_uint16x4_to_private(b);
+    r_.sv64 = __riscv_vnmsac_vx_u16m1(a_.sv64 , c , b_.sv64 , 4);
+    return simde_uint16x4_from_private(r_);
   #else
     return simde_vmls_u16(a, b, simde_vdup_n_u16(c));
   #endif
@@ -79009,6 +82005,13 @@ simde_uint32x2_t
 simde_vmls_n_u32(simde_uint32x2_t a, simde_uint32x2_t b, uint32_t c) {
   #if defined(SIMDE_ARM_NEON_A32V7_NATIVE)
     return vmls_n_u32(a, b, c);
+  #elif defined(SIMDE_RISCV_V_NATIVE) && (SIMDE_NATURAL_VECTOR_SIZE == 128)
+    simde_uint32x2_private
+      r_,
+      a_ = simde_uint32x2_to_private(a),
+      b_ = simde_uint32x2_to_private(b);
+    r_.sv64 = __riscv_vnmsac_vx_u32m1(a_.sv64 , c , b_.sv64 , 2);
+    return simde_uint32x2_from_private(r_);
   #else
     return simde_vmls_u32(a, b, simde_vdup_n_u32(c));
   #endif
@@ -79023,6 +82026,13 @@ simde_float32x4_t
 simde_vmlsq_n_f32(simde_float32x4_t a, simde_float32x4_t b, simde_float32 c) {
   #if defined(SIMDE_ARM_NEON_A32V7_NATIVE)
     return vmlsq_n_f32(a, b, c);
+  #elif defined(SIMDE_RISCV_V_NATIVE) && (SIMDE_NATURAL_VECTOR_SIZE == 128)
+    simde_float32x4_private
+      r_,
+      a_ = simde_float32x4_to_private(a),
+      b_ = simde_float32x4_to_private(b);
+    r_.sv128 = __riscv_vfnmsac_vf_f32m1(a_.sv128 , c , b_.sv128 , 4);
+    return simde_float32x4_from_private(r_);
   #else
     return simde_vmlsq_f32(a, b, simde_vdupq_n_f32(c));
   #endif
@@ -79037,6 +82047,13 @@ simde_int16x8_t
 simde_vmlsq_n_s16(simde_int16x8_t a, simde_int16x8_t b, int16_t c) {
   #if defined(SIMDE_ARM_NEON_A32V7_NATIVE)
     return vmlsq_n_s16(a, b, c);
+  #elif defined(SIMDE_RISCV_V_NATIVE)
+    simde_int16x8_private
+      r_,
+      a_ = simde_int16x8_to_private(a),
+      b_ = simde_int16x8_to_private(b);
+    r_.sv128 = __riscv_vnmsac_vx_i16m1(a_.sv128 , c , b_.sv128  , 8);
+    return simde_int16x8_from_private(r_);
   #else
     return simde_vmlsq_s16(a, b, simde_vdupq_n_s16(c));
   #endif
@@ -79051,6 +82068,13 @@ simde_int32x4_t
 simde_vmlsq_n_s32(simde_int32x4_t a, simde_int32x4_t b, int32_t c) {
   #if defined(SIMDE_ARM_NEON_A32V7_NATIVE)
     return vmlsq_n_s32(a, b, c);
+  #elif defined(SIMDE_RISCV_V_NATIVE)
+    simde_int32x4_private
+      r_,
+      a_ = simde_int32x4_to_private(a),
+      b_ = simde_int32x4_to_private(b);
+    r_.sv128 = __riscv_vnmsac_vx_i32m1(a_.sv128 , c , b_.sv128 , 4);
+    return simde_int32x4_from_private(r_);
   #else
     return simde_vmlsq_s32(a, b, simde_vdupq_n_s32(c));
   #endif
@@ -79065,6 +82089,13 @@ simde_uint16x8_t
 simde_vmlsq_n_u16(simde_uint16x8_t a, simde_uint16x8_t b, uint16_t c) {
   #if defined(SIMDE_ARM_NEON_A32V7_NATIVE)
     return vmlsq_n_u16(a, b, c);
+  #elif defined(SIMDE_RISCV_V_NATIVE)
+    simde_uint16x8_private
+      r_,
+      a_ = simde_uint16x8_to_private(a),
+      b_ = simde_uint16x8_to_private(b);
+    r_.sv128 = __riscv_vnmsac_vx_u16m1(a_.sv128 , c , b_.sv128 , 8);
+    return simde_uint16x8_from_private(r_);
   #else
     return simde_vmlsq_u16(a, b, simde_vdupq_n_u16(c));
   #endif
@@ -79079,6 +82110,13 @@ simde_uint32x4_t
 simde_vmlsq_n_u32(simde_uint32x4_t a, simde_uint32x4_t b, uint32_t c) {
   #if defined(SIMDE_ARM_NEON_A32V7_NATIVE)
     return vmlsq_n_u32(a, b, c);
+  #elif defined(SIMDE_RISCV_V_NATIVE)
+    simde_uint32x4_private
+      r_,
+      a_ = simde_uint32x4_to_private(a),
+      b_ = simde_uint32x4_to_private(b);
+    r_.sv128 = __riscv_vnmsac_vx_u32m1(a_.sv128 , c , b_.sv128 , 4);
+    return simde_uint32x4_from_private(r_);
   #else
     return simde_vmlsq_u32(a, b, simde_vdupq_n_u32(c));
   #endif
@@ -79094,7 +82132,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_MLS_N_H) */
 /* :: End simde/arm/neon/mls_n.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/mlsl.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -79120,15 +82158,16 @@ HEDLEY_DIAGNOSTIC_POP
  *
  * Copyright:
  *   2020      Evan Nemerson <evan@nemerson.com>
+ *   2023      Ju-Hung Li <jhlee@pllab.cs.nthu.edu.tw> (Copyright owned by NTHU pllab)
  */
 
 #if !defined(SIMDE_ARM_NEON_MLSL_H)
 #define SIMDE_ARM_NEON_MLSL_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -79139,6 +82178,15 @@ simde_int16x8_t
 simde_vmlsl_s8(simde_int16x8_t a, simde_int8x8_t b, simde_int8x8_t c) {
   #if defined(SIMDE_ARM_NEON_A32V7_NATIVE)
     return vmlsl_s8(a, b, c);
+  #elif defined(SIMDE_RISCV_V_NATIVE) && (SIMDE_NATURAL_VECTOR_SIZE == 128)
+    simde_int16x8_private r_;
+    simde_int16x8_private a_ = simde_int16x8_to_private(a);
+    simde_int8x8_private b_ = simde_int8x8_to_private(b);
+    simde_int8x8_private c_ = simde_int8x8_to_private(c);
+    vint8mf2_t vb = __riscv_vlmul_trunc_v_i8m1_i8mf2 (b_.sv64);
+    vint8mf2_t vc = __riscv_vlmul_trunc_v_i8m1_i8mf2 (c_.sv64);
+    r_.sv128 = __riscv_vsub_vv_i16m1(a_.sv128 , __riscv_vwmul_vv_i16m1(vb , vc , 8) , 8);
+    return simde_int16x8_from_private(r_);
   #else
     return simde_vsubq_s16(a, simde_vmull_s8(b, c));
   #endif
@@ -79153,6 +82201,15 @@ simde_int32x4_t
 simde_vmlsl_s16(simde_int32x4_t a, simde_int16x4_t b, simde_int16x4_t c) {
   #if defined(SIMDE_ARM_NEON_A32V7_NATIVE)
     return vmlsl_s16(a, b, c);
+  #elif defined(SIMDE_RISCV_V_NATIVE) && (SIMDE_NATURAL_VECTOR_SIZE == 128)
+    simde_int32x4_private r_;
+    simde_int32x4_private a_ = simde_int32x4_to_private(a);
+    simde_int16x4_private b_ = simde_int16x4_to_private(b);
+    simde_int16x4_private c_ = simde_int16x4_to_private(c);
+    vint16mf2_t vb = __riscv_vlmul_trunc_v_i16m1_i16mf2 (b_.sv64);
+    vint16mf2_t vc = __riscv_vlmul_trunc_v_i16m1_i16mf2 (c_.sv64);
+    r_.sv128 = __riscv_vsub_vv_i32m1(a_.sv128 , __riscv_vwmul_vv_i32m1(vb , vc , 4) , 4);
+    return simde_int32x4_from_private(r_);
   #else
     return simde_vsubq_s32(a, simde_vmull_s16(b, c));
   #endif
@@ -79167,6 +82224,15 @@ simde_int64x2_t
 simde_vmlsl_s32(simde_int64x2_t a, simde_int32x2_t b, simde_int32x2_t c) {
   #if defined(SIMDE_ARM_NEON_A32V7_NATIVE)
     return vmlsl_s32(a, b, c);
+  #elif defined(SIMDE_RISCV_V_NATIVE) && (SIMDE_NATURAL_VECTOR_SIZE == 128)
+    simde_int64x2_private r_;
+    simde_int64x2_private a_ = simde_int64x2_to_private(a);
+    simde_int32x2_private b_ = simde_int32x2_to_private(b);
+    simde_int32x2_private c_ = simde_int32x2_to_private(c);
+    vint32mf2_t vb = __riscv_vlmul_trunc_v_i32m1_i32mf2 (b_.sv64);
+    vint32mf2_t vc = __riscv_vlmul_trunc_v_i32m1_i32mf2 (c_.sv64);
+    r_.sv128 = __riscv_vsub_vv_i64m1(a_.sv128 , __riscv_vwmul_vv_i64m1(vb , vc , 2) , 2);
+    return simde_int64x2_from_private(r_);
   #else
     return simde_vsubq_s64(a, simde_vmull_s32(b, c));
   #endif
@@ -79181,6 +82247,15 @@ simde_uint16x8_t
 simde_vmlsl_u8(simde_uint16x8_t a, simde_uint8x8_t b, simde_uint8x8_t c) {
   #if defined(SIMDE_ARM_NEON_A32V7_NATIVE)
     return vmlsl_u8(a, b, c);
+  #elif defined(SIMDE_RISCV_V_NATIVE) && (SIMDE_NATURAL_VECTOR_SIZE == 128)
+    simde_uint16x8_private r_;
+    simde_uint16x8_private a_ = simde_uint16x8_to_private(a);
+    simde_uint8x8_private b_ = simde_uint8x8_to_private(b);
+    simde_uint8x8_private c_ = simde_uint8x8_to_private(c);
+    vuint8mf2_t vb = __riscv_vlmul_trunc_v_u8m1_u8mf2 (b_.sv64);
+    vuint8mf2_t vc = __riscv_vlmul_trunc_v_u8m1_u8mf2 (c_.sv64);
+    r_.sv128 = __riscv_vsub_vv_u16m1(a_.sv128 , __riscv_vwmulu_vv_u16m1(vb , vc , 8) , 8);
+    return simde_uint16x8_from_private(r_);
   #else
     return simde_vsubq_u16(a, simde_vmull_u8(b, c));
   #endif
@@ -79195,6 +82270,15 @@ simde_uint32x4_t
 simde_vmlsl_u16(simde_uint32x4_t a, simde_uint16x4_t b, simde_uint16x4_t c) {
   #if defined(SIMDE_ARM_NEON_A32V7_NATIVE)
     return vmlsl_u16(a, b, c);
+  #elif defined(SIMDE_RISCV_V_NATIVE) && (SIMDE_NATURAL_VECTOR_SIZE == 128)
+    simde_uint32x4_private r_;
+    simde_uint32x4_private a_ = simde_uint32x4_to_private(a);
+    simde_uint16x4_private b_ = simde_uint16x4_to_private(b);
+    simde_uint16x4_private c_ = simde_uint16x4_to_private(c);
+    vuint16mf2_t vb = __riscv_vlmul_trunc_v_u16m1_u16mf2 (b_.sv64);
+    vuint16mf2_t vc = __riscv_vlmul_trunc_v_u16m1_u16mf2 (c_.sv64);
+    r_.sv128 = __riscv_vsub_vv_u32m1(a_.sv128 , __riscv_vwmulu_vv_u32m1(vb , vc , 4) , 4);
+    return simde_uint32x4_from_private(r_);
   #else
     return simde_vsubq_u32(a, simde_vmull_u16(b, c));
   #endif
@@ -79209,6 +82293,15 @@ simde_uint64x2_t
 simde_vmlsl_u32(simde_uint64x2_t a, simde_uint32x2_t b, simde_uint32x2_t c) {
   #if defined(SIMDE_ARM_NEON_A32V7_NATIVE)
     return vmlsl_u32(a, b, c);
+  #elif defined(SIMDE_RISCV_V_NATIVE) && (SIMDE_NATURAL_VECTOR_SIZE == 128)
+    simde_uint64x2_private r_;
+    simde_uint64x2_private a_ = simde_uint64x2_to_private(a);
+    simde_uint32x2_private b_ = simde_uint32x2_to_private(b);
+    simde_uint32x2_private c_ = simde_uint32x2_to_private(c);
+    vuint32mf2_t vb = __riscv_vlmul_trunc_v_u32m1_u32mf2 (b_.sv64);
+    vuint32mf2_t vc = __riscv_vlmul_trunc_v_u32m1_u32mf2 (c_.sv64);
+    r_.sv128 = __riscv_vsub_vv_u64m1(a_.sv128 , __riscv_vwmulu_vv_u64m1(vb , vc , 2) , 2);
+    return simde_uint64x2_from_private(r_);
   #else
     return simde_vsubq_u64(a, simde_vmull_u32(b, c));
   #endif
@@ -79224,7 +82317,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_MLSL_H) */
 /* :: End simde/arm/neon/mlsl.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/mlsl_high.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -79250,13 +82343,14 @@ HEDLEY_DIAGNOSTIC_POP
  *
  * Copyright:
  *   2020      Evan Nemerson <evan@nemerson.com>
+ *   2023      Ju-Hung Li <jhlee@pllab.cs.nthu.edu.tw> (Copyright owned by NTHU pllab)
  */
 
 #if !defined(SIMDE_ARM_NEON_MLSL_HIGH_H)
 #define SIMDE_ARM_NEON_MLSL_HIGH_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/mull_high.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -79289,13 +82383,13 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_MULL_HIGH_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -79442,7 +82536,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_MULL_HIGH_H) */
 /* :: End simde/arm/neon/mull_high.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -79453,6 +82547,17 @@ simde_int16x8_t
 simde_vmlsl_high_s8(simde_int16x8_t a, simde_int8x16_t b, simde_int8x16_t c) {
   #if defined(SIMDE_ARM_NEON_A64V8_NATIVE)
     return vmlsl_high_s8(a, b, c);
+  #elif defined(SIMDE_RISCV_V_NATIVE)
+    simde_int16x8_private r_;
+    simde_int16x8_private a_ = simde_int16x8_to_private(a);
+    simde_int8x16_private b_ = simde_int8x16_to_private(b);
+    simde_int8x16_private c_ = simde_int8x16_to_private(c);
+    b_.sv128 = __riscv_vslidedown_vx_i8m1(b_.sv128 , 8 , 16);
+    c_.sv128 = __riscv_vslidedown_vx_i8m1(c_.sv128 , 8 , 16);
+    vint8mf2_t vb = __riscv_vlmul_trunc_v_i8m1_i8mf2 (b_.sv128);
+    vint8mf2_t vc = __riscv_vlmul_trunc_v_i8m1_i8mf2 (c_.sv128);
+    r_.sv128 = __riscv_vsub_vv_i16m1(a_.sv128 , __riscv_vwmul_vv_i16m1(vb , vc , 8) , 8);
+    return simde_int16x8_from_private(r_);
   #else
     return simde_vsubq_s16(a, simde_vmull_high_s8(b, c));
   #endif
@@ -79467,6 +82572,17 @@ simde_int32x4_t
 simde_vmlsl_high_s16(simde_int32x4_t a, simde_int16x8_t b, simde_int16x8_t c) {
   #if defined(SIMDE_ARM_NEON_A64V8_NATIVE)
     return vmlsl_high_s16(a, b, c);
+  #elif defined(SIMDE_RISCV_V_NATIVE)
+    simde_int32x4_private r_;
+    simde_int32x4_private a_ = simde_int32x4_to_private(a);
+    simde_int16x8_private b_ = simde_int16x8_to_private(b);
+    simde_int16x8_private c_ = simde_int16x8_to_private(c);
+    b_.sv128 = __riscv_vslidedown_vx_i16m1(b_.sv128 , 4 , 8);
+    c_.sv128 = __riscv_vslidedown_vx_i16m1(c_.sv128 , 4 , 8);
+    vint16mf2_t vb = __riscv_vlmul_trunc_v_i16m1_i16mf2 (b_.sv128);
+    vint16mf2_t vc = __riscv_vlmul_trunc_v_i16m1_i16mf2 (c_.sv128);
+    r_.sv128 = __riscv_vsub_vv_i32m1(a_.sv128 , __riscv_vwmul_vv_i32m1(vb , vc , 4) , 4);
+    return simde_int32x4_from_private(r_);
   #else
     return simde_vsubq_s32(a, simde_vmull_high_s16(b, c));
   #endif
@@ -79481,6 +82597,17 @@ simde_int64x2_t
 simde_vmlsl_high_s32(simde_int64x2_t a, simde_int32x4_t b, simde_int32x4_t c) {
   #if defined(SIMDE_ARM_NEON_A64V8_NATIVE)
     return vmlsl_high_s32(a, b, c);
+  #elif defined(SIMDE_RISCV_V_NATIVE)
+    simde_int64x2_private r_;
+    simde_int64x2_private a_ = simde_int64x2_to_private(a);
+    simde_int32x4_private b_ = simde_int32x4_to_private(b);
+    simde_int32x4_private c_ = simde_int32x4_to_private(c);
+    b_.sv128 = __riscv_vslidedown_vx_i32m1(b_.sv128 , 2, 4);
+    c_.sv128 = __riscv_vslidedown_vx_i32m1(c_.sv128 , 2, 4);
+    vint32mf2_t vb = __riscv_vlmul_trunc_v_i32m1_i32mf2 (b_.sv128);
+    vint32mf2_t vc = __riscv_vlmul_trunc_v_i32m1_i32mf2 (c_.sv128);
+    r_.sv128 = __riscv_vsub_vv_i64m1(a_.sv128 , __riscv_vwmul_vv_i64m1(vb , vc , 2) , 2);
+    return simde_int64x2_from_private(r_);
   #else
     return simde_vsubq_s64(a, simde_vmull_high_s32(b, c));
   #endif
@@ -79495,6 +82622,17 @@ simde_uint16x8_t
 simde_vmlsl_high_u8(simde_uint16x8_t a, simde_uint8x16_t b, simde_uint8x16_t c) {
   #if defined(SIMDE_ARM_NEON_A64V8_NATIVE)
     return vmlsl_high_u8(a, b, c);
+  #elif defined(SIMDE_RISCV_V_NATIVE)
+    simde_uint16x8_private r_;
+    simde_uint16x8_private a_ = simde_uint16x8_to_private(a);
+    simde_uint8x16_private b_ = simde_uint8x16_to_private(b);
+    simde_uint8x16_private c_ = simde_uint8x16_to_private(c);
+    b_.sv128 = __riscv_vslidedown_vx_u8m1(b_.sv128 , 8 , 16);
+    c_.sv128 = __riscv_vslidedown_vx_u8m1(c_.sv128 , 8 , 16);
+    vuint8mf2_t vb = __riscv_vlmul_trunc_v_u8m1_u8mf2 (b_.sv128);
+    vuint8mf2_t vc = __riscv_vlmul_trunc_v_u8m1_u8mf2 (c_.sv128);
+    r_.sv128 = __riscv_vsub_vv_u16m1(a_.sv128 , __riscv_vwmulu_vv_u16m1(vb , vc , 8) , 8);
+    return simde_uint16x8_from_private(r_);
   #else
     return simde_vsubq_u16(a, simde_vmull_high_u8(b, c));
   #endif
@@ -79509,6 +82647,17 @@ simde_uint32x4_t
 simde_vmlsl_high_u16(simde_uint32x4_t a, simde_uint16x8_t b, simde_uint16x8_t c) {
   #if defined(SIMDE_ARM_NEON_A64V8_NATIVE)
     return vmlsl_high_u16(a, b, c);
+  #elif defined(SIMDE_RISCV_V_NATIVE)
+    simde_uint32x4_private r_;
+    simde_uint32x4_private a_ = simde_uint32x4_to_private(a);
+    simde_uint16x8_private b_ = simde_uint16x8_to_private(b);
+    simde_uint16x8_private c_ = simde_uint16x8_to_private(c);
+    b_.sv128 = __riscv_vslidedown_vx_u16m1(b_.sv128 , 4 , 8);
+    c_.sv128 = __riscv_vslidedown_vx_u16m1(c_.sv128 , 4 , 8);
+    vuint16mf2_t vb = __riscv_vlmul_trunc_v_u16m1_u16mf2 (b_.sv128);
+    vuint16mf2_t vc = __riscv_vlmul_trunc_v_u16m1_u16mf2 (c_.sv128);
+    r_.sv128 = __riscv_vsub_vv_u32m1(a_.sv128 , __riscv_vwmulu_vv_u32m1(vb , vc , 4) , 4);
+    return simde_uint32x4_from_private(r_);
   #else
     return simde_vsubq_u32(a, simde_vmull_high_u16(b, c));
   #endif
@@ -79523,6 +82672,17 @@ simde_uint64x2_t
 simde_vmlsl_high_u32(simde_uint64x2_t a, simde_uint32x4_t b, simde_uint32x4_t c) {
   #if defined(SIMDE_ARM_NEON_A64V8_NATIVE)
     return vmlsl_high_u32(a, b, c);
+  #elif defined(SIMDE_RISCV_V_NATIVE)
+    simde_uint64x2_private r_;
+    simde_uint64x2_private a_ = simde_uint64x2_to_private(a);
+    simde_uint32x4_private b_ = simde_uint32x4_to_private(b);
+    simde_uint32x4_private c_ = simde_uint32x4_to_private(c);
+    b_.sv128 = __riscv_vslidedown_vx_u32m1(b_.sv128 , 2, 4);
+    c_.sv128 = __riscv_vslidedown_vx_u32m1(c_.sv128 , 2, 4);
+    vuint32mf2_t vb = __riscv_vlmul_trunc_v_u32m1_u32mf2 (b_.sv128);
+    vuint32mf2_t vc = __riscv_vlmul_trunc_v_u32m1_u32mf2 (c_.sv128);
+    r_.sv128 = __riscv_vsub_vv_u64m1(a_.sv128 , __riscv_vwmulu_vv_u64m1(vb , vc , 2) , 2);
+    return simde_uint64x2_from_private(r_);
   #else
     return simde_vsubq_u64(a, simde_vmull_high_u32(b, c));
   #endif
@@ -79538,7 +82698,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_MLSL_HIGH_H) */
 /* :: End simde/arm/neon/mlsl_high.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/mlsl_high_lane.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -79570,15 +82730,15 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_MLSL_HIGH_LANE_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -79694,7 +82854,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_MLSL_HIGH_LANE_H) */
 /* :: End simde/arm/neon/mlsl_high_lane.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/mlsl_high_n.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -79720,19 +82880,20 @@ HEDLEY_DIAGNOSTIC_POP
  *
  * Copyright:
  *   2021      Décio Luiz Gazzoni Filho <decio@decpp.net>
+ *   2023      Ju-Hung Li <jhlee@pllab.cs.nthu.edu.tw> (Copyright owned by NTHU pllab)
  */
 
 #if !defined(SIMDE_ARM_NEON_MLSL_HIGH_N_H)
 #define SIMDE_ARM_NEON_MLSL_HIGH_N_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -79743,6 +82904,14 @@ simde_int32x4_t
 simde_vmlsl_high_n_s16(simde_int32x4_t a, simde_int16x8_t b, int16_t c) {
   #if defined(SIMDE_ARM_NEON_A64V8_NATIVE)
     return vmlsl_high_n_s16(a, b, c);
+  #elif defined(SIMDE_RISCV_V_NATIVE)
+    simde_int32x4_private r_;
+    simde_int32x4_private a_ = simde_int32x4_to_private(a);
+    simde_int16x8_private b_ = simde_int16x8_to_private(b);
+    b_.sv128 = __riscv_vslidedown_vx_i16m1(b_.sv128 , 4 , 8);
+    vint16mf2_t vb = __riscv_vlmul_trunc_v_i16m1_i16mf2 (b_.sv128);
+    r_.sv128 = __riscv_vsub_vv_i32m1(a_.sv128 , __riscv_vwmul_vx_i32m1(vb , c , 4) , 4);
+    return simde_int32x4_from_private(r_);
   #else
     return simde_vmlsq_s32(a, simde_vmovl_high_s16(b), simde_vdupq_n_s32(c));
   #endif
@@ -79757,6 +82926,14 @@ simde_int64x2_t
 simde_vmlsl_high_n_s32(simde_int64x2_t a, simde_int32x4_t b, int32_t c) {
   #if defined(SIMDE_ARM_NEON_A64V8_NATIVE)
     return vmlsl_high_n_s32(a, b, c);
+  #elif defined(SIMDE_RISCV_V_NATIVE)
+    simde_int64x2_private r_;
+    simde_int64x2_private a_ = simde_int64x2_to_private(a);
+    simde_int32x4_private b_ = simde_int32x4_to_private(b);
+    b_.sv128 = __riscv_vslidedown_vx_i32m1(b_.sv128 , 2, 4);
+    vint32mf2_t vb = __riscv_vlmul_trunc_v_i32m1_i32mf2 (b_.sv128);
+    r_.sv128 = __riscv_vsub_vv_i64m1(a_.sv128 , __riscv_vwmul_vx_i64m1(vb , c , 2) , 2);
+    return simde_int64x2_from_private(r_);
   #else
     simde_int64x2_private
       r_,
@@ -79786,6 +82963,14 @@ simde_uint32x4_t
 simde_vmlsl_high_n_u16(simde_uint32x4_t a, simde_uint16x8_t b, uint16_t c) {
   #if defined(SIMDE_ARM_NEON_A64V8_NATIVE)
     return vmlsl_high_n_u16(a, b, c);
+  #elif defined(SIMDE_RISCV_V_NATIVE)
+    simde_uint32x4_private r_;
+    simde_uint32x4_private a_ = simde_uint32x4_to_private(a);
+    simde_uint16x8_private b_ = simde_uint16x8_to_private(b);
+    b_.sv128 = __riscv_vslidedown_vx_u16m1(b_.sv128 , 4 , 8);
+    vuint16mf2_t vb = __riscv_vlmul_trunc_v_u16m1_u16mf2 (b_.sv128);
+    r_.sv128 = __riscv_vsub_vv_u32m1(a_.sv128 , __riscv_vwmulu_vx_u32m1(vb , c , 4) , 4);
+    return simde_uint32x4_from_private(r_);
   #else
     return simde_vmlsq_u32(a, simde_vmovl_high_u16(b), simde_vdupq_n_u32(c));
   #endif
@@ -79800,6 +82985,14 @@ simde_uint64x2_t
 simde_vmlsl_high_n_u32(simde_uint64x2_t a, simde_uint32x4_t b, uint32_t c) {
   #if defined(SIMDE_ARM_NEON_A64V8_NATIVE)
     return vmlsl_high_n_u32(a, b, c);
+  #elif defined(SIMDE_RISCV_V_NATIVE)
+    simde_uint64x2_private r_;
+    simde_uint64x2_private a_ = simde_uint64x2_to_private(a);
+    simde_uint32x4_private b_ = simde_uint32x4_to_private(b);
+    b_.sv128 = __riscv_vslidedown_vx_u32m1(b_.sv128 , 2, 4);
+    vuint32mf2_t vb = __riscv_vlmul_trunc_v_u32m1_u32mf2 (b_.sv128);
+    r_.sv128 = __riscv_vsub_vv_u64m1(a_.sv128 , __riscv_vwmulu_vx_u64m1(vb , c , 2) , 2);
+    return simde_uint64x2_from_private(r_);
   #else
     simde_uint64x2_private
       r_,
@@ -79830,7 +83023,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_MLSL_HIGH_N_H) */
 /* :: End simde/arm/neon/mlsl_high_n.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/mlsl_lane.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -79862,9 +83055,9 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_MLSL_LANE_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -79956,7 +83149,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_MLSL_LANE_H) */
 /* :: End simde/arm/neon/mlsl_lane.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/mlsl_n.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -79982,13 +83175,14 @@ HEDLEY_DIAGNOSTIC_POP
  *
  * Copyright:
  *   2020      Evan Nemerson <evan@nemerson.com>
+ *   2023      Ju-Hung Li <jhlee@pllab.cs.nthu.edu.tw> (Copyright owned by NTHU pllab)
  */
 
 #if !defined(SIMDE_ARM_NEON_MLSL_N_H)
 #define SIMDE_ARM_NEON_MLSL_N_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/mull_n.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -80021,11 +83215,11 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_MULL_N_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -80153,7 +83347,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_MULL_H) */
 /* :: End simde/arm/neon/mull_n.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -80164,6 +83358,13 @@ simde_int32x4_t
 simde_vmlsl_n_s16(simde_int32x4_t a, simde_int16x4_t b, int16_t c) {
   #if defined(SIMDE_ARM_NEON_A32V7_NATIVE)
     return vmlsl_n_s16(a, b, c);
+  #elif defined(SIMDE_RISCV_V_NATIVE)
+    simde_int32x4_private r_;
+    simde_int32x4_private a_ = simde_int32x4_to_private(a);
+    simde_int16x4_private b_ = simde_int16x4_to_private(b);
+    vint16mf2_t vb = __riscv_vlmul_trunc_v_i16m1_i16mf2 (b_.sv64);
+    r_.sv128 = __riscv_vsub_vv_i32m1(a_.sv128 , __riscv_vwmul_vx_i32m1(vb , c , 4) , 4);
+    return simde_int32x4_from_private(r_);
   #else
     return simde_vsubq_s32(a, simde_vmull_n_s16(b, c));
   #endif
@@ -80178,6 +83379,13 @@ simde_int64x2_t
 simde_vmlsl_n_s32(simde_int64x2_t a, simde_int32x2_t b, int32_t c) {
   #if defined(SIMDE_ARM_NEON_A32V7_NATIVE)
     return vmlsl_n_s32(a, b, c);
+  #elif defined(SIMDE_RISCV_V_NATIVE)
+    simde_int64x2_private r_;
+    simde_int64x2_private a_ = simde_int64x2_to_private(a);
+    simde_int32x2_private b_ = simde_int32x2_to_private(b);
+    vint32mf2_t vb = __riscv_vlmul_trunc_v_i32m1_i32mf2 (b_.sv64);
+    r_.sv128 = __riscv_vsub_vv_i64m1(a_.sv128 , __riscv_vwmul_vx_i64m1(vb , c , 2) , 2);
+    return simde_int64x2_from_private(r_);
   #else
     return simde_vsubq_s64(a, simde_vmull_n_s32(b, c));
   #endif
@@ -80192,6 +83400,13 @@ simde_uint32x4_t
 simde_vmlsl_n_u16(simde_uint32x4_t a, simde_uint16x4_t b, uint16_t c) {
   #if defined(SIMDE_ARM_NEON_A32V7_NATIVE)
     return vmlsl_n_u16(a, b, c);
+  #elif defined(SIMDE_RISCV_V_NATIVE)
+    simde_uint32x4_private r_;
+    simde_uint32x4_private a_ = simde_uint32x4_to_private(a);
+    simde_uint16x4_private b_ = simde_uint16x4_to_private(b);
+    vuint16mf2_t vb = __riscv_vlmul_trunc_v_u16m1_u16mf2 (b_.sv64);
+    r_.sv128 = __riscv_vsub_vv_u32m1(a_.sv128 , __riscv_vwmulu_vx_u32m1(vb , c , 4) , 4);
+    return simde_uint32x4_from_private(r_);
   #else
     return simde_vsubq_u32(a, simde_vmull_n_u16(b, c));
   #endif
@@ -80206,6 +83421,13 @@ simde_uint64x2_t
 simde_vmlsl_n_u32(simde_uint64x2_t a, simde_uint32x2_t b, uint32_t c) {
   #if defined(SIMDE_ARM_NEON_A32V7_NATIVE)
     return vmlsl_n_u32(a, b, c);
+  #elif defined(SIMDE_RISCV_V_NATIVE)
+    simde_uint64x2_private r_;
+    simde_uint64x2_private a_ = simde_uint64x2_to_private(a);
+    simde_uint32x2_private b_ = simde_uint32x2_to_private(b);
+    vuint32mf2_t vb = __riscv_vlmul_trunc_v_u32m1_u32mf2 (b_.sv64);
+    r_.sv128 = __riscv_vsub_vv_u64m1(a_.sv128 , __riscv_vwmulu_vx_u64m1(vb , c , 2) , 2);
+    return simde_uint64x2_from_private(r_);
   #else
     return simde_vsubq_u64(a, simde_vmull_n_u32(b, c));
   #endif
@@ -80221,7 +83443,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_MLSL_N_H) */
 /* :: End simde/arm/neon/mlsl_n.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/mmlaq.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -80253,11 +83475,11 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_MMLAQ_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -80381,13 +83603,13 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_MMLAQ_H) */
 /* :: End simde/arm/neon/mmlaq.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/movn_high.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -80419,11 +83641,11 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_MOVN_HIGH_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -80519,17 +83741,17 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_MOVN_HIGH_H) */
 /* :: End simde/arm/neon/movn_high.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/mull_high_lane.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -80561,13 +83783,13 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_MULL_HIGH_LANE_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -80707,7 +83929,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_QDMULL_HIGH_LANE_H) */
 /* :: End simde/arm/neon/mull_high_lane.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/mull_high_n.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -80739,13 +83961,13 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_MULL_HIGH_N_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -80813,7 +84035,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_MULL_HIGH_N_H) */
 /* :: End simde/arm/neon/mull_high_n.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/mull_lane.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -80845,9 +84067,9 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_MULL_LANE_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -80939,9 +84161,9 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_MULL_LANE_H) */
 /* :: End simde/arm/neon/mull_lane.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/mulx.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -80973,10 +84195,10 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_MULX_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -81184,7 +84406,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_MULX_H) */
 /* :: End simde/arm/neon/mulx.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/mulx_lane.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -81216,7 +84438,7 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_MULX_LANE_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -81644,7 +84866,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_MULX_LANE_H) */
 /* :: End simde/arm/neon/mulx_lane.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/mulx_n.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -81676,11 +84898,11 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_MULX_N_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -81720,11 +84942,11 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_MULX_N_H) */
 /* :: End simde/arm/neon/mulx_n.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/orn.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -81756,7 +84978,7 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_ORN_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/orr.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -81789,7 +85011,7 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_ORR_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -82313,9 +85535,9 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_ORR_H) */
 /* :: End simde/arm/neon/orr.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -82791,9 +86013,9 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_ORN_H) */
 /* :: End simde/arm/neon/orn.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/padal.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -82826,12 +86048,12 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_PADAL_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -83011,11 +86233,11 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* SIMDE_ARM_NEON_PADAL_H */
 /* :: End simde/arm/neon/padal.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/pmax.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -83049,13 +86271,13 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_PMAX_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -83335,7 +86557,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_PMAX_H) */
 /* :: End simde/arm/neon/pmax.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/pmaxnm.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -83367,13 +86589,13 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_PMAXNM_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -83485,7 +86707,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_PMAXNM_H) */
 /* :: End simde/arm/neon/pmaxnm.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/pmin.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -83518,13 +86740,13 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_PMIN_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -83830,7 +87052,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_PMIN_H) */
 /* :: End simde/arm/neon/pmin.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/pminnm.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -83862,13 +87084,13 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_PMINNM_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -83980,7 +87202,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_PMINNM_H) */
 /* :: End simde/arm/neon/pminnm.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/qabs.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -84012,22 +87234,22 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_QABS_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -84306,7 +87528,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_QABS_H) */
 /* :: End simde/arm/neon/qabs.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/qadd.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -84339,18 +87561,18 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_QADD_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 #include <limits.h>
 
@@ -84460,6 +87682,8 @@ simde_vqadd_s8(simde_int8x8_t a, simde_int8x8_t b) {
 
       uint8_t m SIMDE_VECTOR(8) = HEDLEY_REINTERPRET_CAST(__typeof__(m), HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), (au ^ bu) | ~(bu ^ ru)) < 0);
       r_.values = HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), (au & ~m) | (ru & m));
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv64 = __riscv_vsadd_vv_i8m1(a_.sv64, b_.sv64, 8);
     #else
       SIMDE_VECTORIZE
       for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
@@ -84497,6 +87721,8 @@ simde_vqadd_s16(simde_int16x4_t a, simde_int16x4_t b) {
 
       uint16_t m SIMDE_VECTOR(8) = HEDLEY_REINTERPRET_CAST(__typeof__(m), HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), (au ^ bu) | ~(bu ^ ru)) < 0);
       r_.values = HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), (au & ~m) | (ru & m));
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv64 = __riscv_vsadd_vv_i16m1(a_.sv64, b_.sv64, 4);
     #else
       SIMDE_VECTORIZE
       for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
@@ -84532,6 +87758,8 @@ simde_vqadd_s32(simde_int32x2_t a, simde_int32x2_t b) {
 
       uint32_t m SIMDE_VECTOR(8) = HEDLEY_REINTERPRET_CAST(__typeof__(m), HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), (au ^ bu) | ~(bu ^ ru)) < 0);
       r_.values = HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), (au & ~m) | (ru & m));
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv64 = __riscv_vsadd_vv_i32m1(a_.sv64, b_.sv64, 2);
     #else
       SIMDE_VECTORIZE
       for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
@@ -84567,6 +87795,8 @@ simde_vqadd_s64(simde_int64x1_t a, simde_int64x1_t b) {
 
       uint64_t m SIMDE_VECTOR(8) = HEDLEY_REINTERPRET_CAST(__typeof__(m), HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), (au ^ bu) | ~(bu ^ ru)) < 0);
       r_.values = HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), (au & ~m) | (ru & m));
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv64 = __riscv_vsadd_vv_i64m1(a_.sv64, b_.sv64, 1);
     #else
       SIMDE_VECTORIZE
       for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
@@ -84598,6 +87828,8 @@ simde_vqadd_u8(simde_uint8x8_t a, simde_uint8x8_t b) {
     #elif defined(SIMDE_VECTOR_SUBSCRIPT) && !defined(SIMDE_BUG_GCC_100762)
       r_.values = a_.values + b_.values;
       r_.values |= HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), r_.values < a_.values);
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv64 = __riscv_vsaddu_vv_u8m1(a_.sv64, b_.sv64, 8);
     #else
       SIMDE_VECTORIZE
       for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
@@ -84629,6 +87861,8 @@ simde_vqadd_u16(simde_uint16x4_t a, simde_uint16x4_t b) {
     #elif defined(SIMDE_VECTOR_SUBSCRIPT) && !defined(SIMDE_BUG_GCC_100762)
       r_.values = a_.values + b_.values;
       r_.values |= HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), r_.values < a_.values);
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv64 = __riscv_vsaddu_vv_u16m1(a_.sv64, b_.sv64, 4);
     #else
       SIMDE_VECTORIZE
       for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
@@ -84658,6 +87892,8 @@ simde_vqadd_u32(simde_uint32x2_t a, simde_uint32x2_t b) {
     #if defined(SIMDE_VECTOR_SUBSCRIPT) && !defined(SIMDE_BUG_GCC_100762)
       r_.values = a_.values + b_.values;
       r_.values |= HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), r_.values < a_.values);
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv64 = __riscv_vsaddu_vv_u32m1(a_.sv64, b_.sv64, 2);
     #else
       SIMDE_VECTORIZE
       for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
@@ -84687,6 +87923,8 @@ simde_vqadd_u64(simde_uint64x1_t a, simde_uint64x1_t b) {
     #if defined(SIMDE_VECTOR_SUBSCRIPT)
       r_.values = a_.values + b_.values;
       r_.values |= HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), r_.values < a_.values);
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv64 = __riscv_vsaddu_vv_u64m1(a_.sv64, b_.sv64, 1);
     #else
       SIMDE_VECTORIZE
       for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
@@ -84728,6 +87966,8 @@ simde_vqaddq_s8(simde_int8x16_t a, simde_int8x16_t b) {
 
       uint8_t m SIMDE_VECTOR(16) = HEDLEY_REINTERPRET_CAST(__typeof__(m), HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), (au ^ bu) | ~(bu ^ ru)) < 0);
       r_.values = HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), (au & ~m) | (ru & m));
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv128 = __riscv_vsadd_vv_i8m1(a_.sv128, b_.sv128, 16);
     #else
       SIMDE_VECTORIZE
       for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
@@ -84769,6 +88009,8 @@ simde_vqaddq_s16(simde_int16x8_t a, simde_int16x8_t b) {
 
       uint16_t m SIMDE_VECTOR(16) = HEDLEY_REINTERPRET_CAST(__typeof__(m), HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), (au ^ bu) | ~(bu ^ ru)) < 0);
       r_.values = HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), (au & ~m) | (ru & m));
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv128 = __riscv_vsadd_vv_i16m1(a_.sv128, b_.sv128, 8);
     #else
       SIMDE_VECTORIZE
       for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
@@ -84846,6 +88088,8 @@ simde_vqaddq_s32(simde_int32x4_t a, simde_int32x4_t b) {
 
       uint32_t m SIMDE_VECTOR(16) = HEDLEY_REINTERPRET_CAST(__typeof__(m), HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), (au ^ bu) | ~(bu ^ ru)) < 0);
       r_.values = HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), (au & ~m) | (ru & m));
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv128 = __riscv_vsadd_vv_i32m1(a_.sv128, b_.sv128, 4);
     #else
       SIMDE_VECTORIZE
       for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
@@ -84912,6 +88156,8 @@ simde_vqaddq_s64(simde_int64x2_t a, simde_int64x2_t b) {
 
       uint64_t m SIMDE_VECTOR(16) = HEDLEY_REINTERPRET_CAST(__typeof__(m), HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), (au ^ bu) | ~(bu ^ ru)) < 0);
       r_.values = HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), (au & ~m) | (ru & m));
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv128 = __riscv_vsadd_vv_i64m1(a_.sv128, b_.sv128, 2);
     #else
       SIMDE_VECTORIZE
       for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
@@ -84947,6 +88193,8 @@ simde_vqaddq_u8(simde_uint8x16_t a, simde_uint8x16_t b) {
     #elif defined(SIMDE_VECTOR_SUBSCRIPT)
       r_.values = a_.values + b_.values;
       r_.values |= HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), r_.values < a_.values);
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv128 = __riscv_vsaddu_vv_u8m1(a_.sv128, b_.sv128, 16);
     #else
       SIMDE_VECTORIZE
       for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
@@ -84982,6 +88230,8 @@ simde_vqaddq_u16(simde_uint16x8_t a, simde_uint16x8_t b) {
     #elif defined(SIMDE_VECTOR_SUBSCRIPT)
       r_.values = a_.values + b_.values;
       r_.values |= HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), r_.values < a_.values);
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv128 = __riscv_vsaddu_vv_u16m1(a_.sv128, b_.sv128, 8);
     #else
       SIMDE_VECTORIZE
       for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
@@ -85032,6 +88282,8 @@ simde_vqaddq_u32(simde_uint32x4_t a, simde_uint32x4_t b) {
     #elif defined(SIMDE_VECTOR_SUBSCRIPT)
       r_.values = a_.values + b_.values;
       r_.values |= HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), r_.values < a_.values);
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv128 = __riscv_vsaddu_vv_u32m1(a_.sv128, b_.sv128, 4);
     #else
       SIMDE_VECTORIZE
       for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
@@ -85061,6 +88313,8 @@ simde_vqaddq_u64(simde_uint64x2_t a, simde_uint64x2_t b) {
     #if defined(SIMDE_VECTOR_SUBSCRIPT)
       r_.values = a_.values + b_.values;
       r_.values |= HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), r_.values < a_.values);
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv128 = __riscv_vsaddu_vv_u64m1(a_.sv128, b_.sv128, 2);
     #else
       SIMDE_VECTORIZE
       for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
@@ -85082,7 +88336,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_QADD_H) */
 /* :: End simde/arm/neon/qadd.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/qdmlal.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -85114,17 +88368,17 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_QDMLAL_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -85197,7 +88451,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_QDMLAL_H) */
 /* :: End simde/arm/neon/qdmlal.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/qdmlal_high.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -85229,13 +88483,13 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_QDMLAL_HIGH_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -85288,7 +88542,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_QDMLAL_HIGH_H) */
 /* :: End simde/arm/neon/qdmlal_high.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/qdmlal_high_lane.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -85320,19 +88574,19 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_QDMLAL_HIGH_LANE_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -85424,7 +88678,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_QDMLAL_HIGH_LANE_H) */
 /* :: End simde/arm/neon/qdmlal_high_lane.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/qdmlal_high_n.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -85456,17 +88710,17 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_QDMLAL_HIGH_N_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -85520,7 +88774,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_QDMLAL_HIGH_N_H) */
 /* :: End simde/arm/neon/qdmlal_high_n.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/qdmlal_lane.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -85552,13 +88806,13 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_QDMLAL_LANE_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -85650,7 +88904,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_QDMLAL_LANE_H) */
 /* :: End simde/arm/neon/qdmlal_lane.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/qdmlal_n.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -85682,11 +88936,11 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_QDMLAL_N_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -85726,7 +88980,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_QDMLAL_N_H) */
 /* :: End simde/arm/neon/qdmlal_n.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/qdmlsl.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -85758,17 +89012,17 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_QDMLSL_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/qsub.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -85794,24 +89048,25 @@ HEDLEY_DIAGNOSTIC_POP
  *
  * Copyright:
  *   2020      Evan Nemerson <evan@nemerson.com>
+ *   2023      Ju-Hung Li <jhlee@pllab.cs.nthu.edu.tw> (Copyright owned by NTHU pllab)
  */
 
 #if !defined(SIMDE_ARM_NEON_QSUB_H)
 #define SIMDE_ARM_NEON_QSUB_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 #include <limits.h>
 
@@ -85912,6 +89167,8 @@ simde_vqsub_s8(simde_int8x8_t a, simde_int8x8_t b) {
 
     #if defined(SIMDE_X86_MMX_NATIVE)
       r_.m64 = _mm_subs_pi8(a_.m64, b_.m64);
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv64 = __riscv_vssub_vv_i8m1(a_.sv64, b_.sv64, 8);
     #elif defined(SIMDE_VECTOR_SUBSCRIPT_SCALAR)
       const __typeof__(r_.values) diff_sat = HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), (b_.values > a_.values) ^ INT8_MAX);
       const __typeof__(r_.values) diff = a_.values - b_.values;
@@ -85946,6 +89203,8 @@ simde_vqsub_s16(simde_int16x4_t a, simde_int16x4_t b) {
 
     #if defined(SIMDE_X86_MMX_NATIVE)
       r_.m64 = _mm_subs_pi16(a_.m64, b_.m64);
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv64 = __riscv_vssub_vv_i16m1(a_.sv64, b_.sv64, 4);
     #elif defined(SIMDE_VECTOR_SUBSCRIPT_SCALAR)
       const __typeof__(r_.values) diff_sat = HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), (b_.values > a_.values) ^ INT16_MAX);
       const __typeof__(r_.values) diff = a_.values - b_.values;
@@ -85978,7 +89237,9 @@ simde_vqsub_s32(simde_int32x2_t a, simde_int32x2_t b) {
       a_ = simde_int32x2_to_private(a),
       b_ = simde_int32x2_to_private(b);
 
-    #if defined(SIMDE_VECTOR_SUBSCRIPT_SCALAR)
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv64 = __riscv_vssub_vv_i32m1(a_.sv64, b_.sv64, 2);
+    #elif defined(SIMDE_VECTOR_SUBSCRIPT_SCALAR)
       const __typeof__(r_.values) diff_sat = HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), (b_.values > a_.values) ^ INT32_MAX);
       const __typeof__(r_.values) diff = a_.values - b_.values;
       const __typeof__(r_.values) saturate = diff_sat ^ diff;
@@ -86010,7 +89271,9 @@ simde_vqsub_s64(simde_int64x1_t a, simde_int64x1_t b) {
       a_ = simde_int64x1_to_private(a),
       b_ = simde_int64x1_to_private(b);
 
-    #if defined(SIMDE_VECTOR_SUBSCRIPT_SCALAR)
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv64 = __riscv_vssub_vv_i64m1(a_.sv64, b_.sv64, 1);
+    #elif defined(SIMDE_VECTOR_SUBSCRIPT_SCALAR)
       const __typeof__(r_.values) diff_sat = HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), (b_.values > a_.values) ^ INT64_MAX);
       const __typeof__(r_.values) diff = a_.values - b_.values;
       const __typeof__(r_.values) saturate = diff_sat ^ diff;
@@ -86044,6 +89307,8 @@ simde_vqsub_u8(simde_uint8x8_t a, simde_uint8x8_t b) {
 
     #if defined(SIMDE_X86_MMX_NATIVE)
       r_.m64 = _mm_subs_pu8(a_.m64, b_.m64);
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv64 = __riscv_vssubu_vv_u8m1(a_.sv64, b_.sv64, 8);
     #elif defined(SIMDE_VECTOR_SUBSCRIPT_SCALAR)
       r_.values  = a_.values - b_.values;
       r_.values &= HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), (r_.values <= a_.values));
@@ -86075,6 +89340,8 @@ simde_vqsub_u16(simde_uint16x4_t a, simde_uint16x4_t b) {
 
     #if defined(SIMDE_X86_MMX_NATIVE)
       r_.m64 = _mm_subs_pu16(a_.m64, b_.m64);
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv64 = __riscv_vssubu_vv_u16m1(a_.sv64, b_.sv64, 4);
     #elif defined(SIMDE_VECTOR_SUBSCRIPT_SCALAR)
       r_.values  = a_.values - b_.values;
       r_.values &= HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), (r_.values <= a_.values));
@@ -86104,7 +89371,9 @@ simde_vqsub_u32(simde_uint32x2_t a, simde_uint32x2_t b) {
       a_ = simde_uint32x2_to_private(a),
       b_ = simde_uint32x2_to_private(b);
 
-    #if defined(SIMDE_VECTOR_SUBSCRIPT_SCALAR)
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv64 = __riscv_vssubu_vv_u32m1(a_.sv64, b_.sv64, 2);
+    #elif defined(SIMDE_VECTOR_SUBSCRIPT_SCALAR)
       r_.values  = a_.values - b_.values;
       r_.values &= HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), (r_.values <= a_.values));
     #else
@@ -86133,7 +89402,9 @@ simde_vqsub_u64(simde_uint64x1_t a, simde_uint64x1_t b) {
       a_ = simde_uint64x1_to_private(a),
       b_ = simde_uint64x1_to_private(b);
 
-    #if defined(SIMDE_VECTOR_SUBSCRIPT_SCALAR)
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv64 = __riscv_vssubu_vv_u64m1(a_.sv64, b_.sv64, 1);
+    #elif defined(SIMDE_VECTOR_SUBSCRIPT_SCALAR)
       r_.values  = a_.values - b_.values;
       r_.values &= HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), (r_.values <= a_.values));
     #else
@@ -86168,6 +89439,8 @@ simde_vqsubq_s8(simde_int8x16_t a, simde_int8x16_t b) {
       r_.v128 = wasm_i8x16_sub_sat(a_.v128, b_.v128);
     #elif defined(SIMDE_X86_SSE2_NATIVE)
       r_.m128i = _mm_subs_epi8(a_.m128i, b_.m128i);
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv128 = __riscv_vssub_vv_i8m1(a_.sv128 , b_.sv128 , 16);
     #elif defined(SIMDE_VECTOR_SUBSCRIPT_SCALAR)
       const __typeof__(r_.values) diff_sat = HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), (b_.values > a_.values) ^ INT8_MAX);
       const __typeof__(r_.values) diff = a_.values - b_.values;
@@ -86206,6 +89479,8 @@ simde_vqsubq_s16(simde_int16x8_t a, simde_int16x8_t b) {
       r_.v128 = wasm_i16x8_sub_sat(a_.v128, b_.v128);
     #elif defined(SIMDE_X86_SSE2_NATIVE)
       r_.m128i = _mm_subs_epi16(a_.m128i, b_.m128i);
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv128 = __riscv_vssub_vv_i16m1(a_.sv128 , b_.sv128 , 8);
     #elif defined(SIMDE_VECTOR_SUBSCRIPT_SCALAR)
       const __typeof__(r_.values) diff_sat = HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), (b_.values > a_.values) ^ INT16_MAX);
       const __typeof__(r_.values) diff = a_.values - b_.values;
@@ -86257,6 +89532,8 @@ simde_vqsubq_s32(simde_int32x4_t a, simde_int32x4_t b) {
       #else
         r_.m128i = _mm_xor_si128(diff, _mm_and_si128(t, _mm_srai_epi32(t, 31)));
       #endif
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv128 = __riscv_vssub_vv_i32m1(a_.sv128 , b_.sv128 , 4);
     #elif defined(SIMDE_VECTOR_SUBSCRIPT_SCALAR)
       const __typeof__(r_.values) diff_sat = HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), (b_.values > a_.values) ^ INT32_MAX);
       const __typeof__(r_.values) diff = a_.values - b_.values;
@@ -86289,7 +89566,9 @@ simde_vqsubq_s64(simde_int64x2_t a, simde_int64x2_t b) {
       a_ = simde_int64x2_to_private(a),
       b_ = simde_int64x2_to_private(b);
 
-    #if defined(SIMDE_VECTOR_SUBSCRIPT_SCALAR)
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv128 = __riscv_vssub_vv_i64m1(a_.sv128 , b_.sv128 , 2);
+    #elif defined(SIMDE_VECTOR_SUBSCRIPT_SCALAR)
       const __typeof__(r_.values) diff_sat = HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), (b_.values > a_.values) ^ INT64_MAX);
       const __typeof__(r_.values) diff = a_.values - b_.values;
       const __typeof__(r_.values) saturate = diff_sat ^ diff;
@@ -86327,6 +89606,8 @@ simde_vqsubq_u8(simde_uint8x16_t a, simde_uint8x16_t b) {
       r_.v128 = wasm_u8x16_sub_sat(a_.v128, b_.v128);
     #elif defined(SIMDE_X86_SSE2_NATIVE)
       r_.m128i = _mm_subs_epu8(a_.m128i, b_.m128i);
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv128 = __riscv_vssubu_vv_u8m1(a_.sv128 , b_.sv128 , 16);
     #elif defined(SIMDE_VECTOR_SUBSCRIPT_SCALAR)
       r_.values  = a_.values - b_.values;
       r_.values &= HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), r_.values <= a_.values);
@@ -86362,6 +89643,8 @@ simde_vqsubq_u16(simde_uint16x8_t a, simde_uint16x8_t b) {
       r_.v128 = wasm_u16x8_sub_sat(a_.v128, b_.v128);
     #elif defined(SIMDE_X86_SSE2_NATIVE)
       r_.m128i = _mm_subs_epu16(a_.m128i, b_.m128i);
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv128 = __riscv_vssubu_vv_u16m1(a_.sv128 , b_.sv128 , 8);
     #elif defined(SIMDE_VECTOR_SUBSCRIPT_SCALAR)
       r_.values  = a_.values - b_.values;
       r_.values &= HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), r_.values <= a_.values);
@@ -86407,6 +89690,8 @@ simde_vqsubq_u32(simde_uint32x4_t a, simde_uint32x4_t b) {
             _mm_set1_epi32(~INT32_C(0))
           )
         );
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv128 = __riscv_vssubu_vv_u32m1(a_.sv128 , b_.sv128 , 4);
     #elif defined(SIMDE_VECTOR_SUBSCRIPT_SCALAR)
       r_.values  = a_.values - b_.values;
       r_.values &= HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), (r_.values <= a_.values));
@@ -86439,7 +89724,9 @@ simde_vqsubq_u64(simde_uint64x2_t a, simde_uint64x2_t b) {
       a_ = simde_uint64x2_to_private(a),
       b_ = simde_uint64x2_to_private(b);
 
-    #if defined(SIMDE_VECTOR_SUBSCRIPT_SCALAR)
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv128 = __riscv_vssubu_vv_u64m1(a_.sv128 , b_.sv128 , 2);
+    #elif defined(SIMDE_VECTOR_SUBSCRIPT_SCALAR)
       r_.values  = a_.values - b_.values;
       r_.values &= HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), (r_.values <= a_.values));
     #else
@@ -86463,7 +89750,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_QSUB_H) */
 /* :: End simde/arm/neon/qsub.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -86536,7 +89823,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_QDMLSL_H) */
 /* :: End simde/arm/neon/qdmlsl.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/qdmlsl_high.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -86568,15 +89855,15 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_QDMLSL_HIGH_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -86626,7 +89913,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_QDMLSL_HIGH_H) */
 /* :: End simde/arm/neon/qdmlsl_high.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/qdmlsl_high_lane.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -86658,17 +89945,17 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_QDMLSL_HIGH_LANE_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -86760,7 +90047,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_QDMLSL_HIGH_LANE_H) */
 /* :: End simde/arm/neon/qdmlsl_high_lane.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/qdmlsl_high_n.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -86792,17 +90079,17 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_QDMLSL_HIGH_N_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -86856,7 +90143,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_QDMLSL_HIGH_N_H) */
 /* :: End simde/arm/neon/qdmlsl_high_n.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/qdmlsl_lane.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -86888,13 +90175,13 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_QDMLSL_LANE_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -86986,7 +90273,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_QDmlsl_LANE_H) */
 /* :: End simde/arm/neon/qdmlsl_lane.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/qdmlsl_n.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -87018,11 +90305,11 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_QDMLSL_N_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -87062,7 +90349,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_QDMLSL_N_H) */
 /* :: End simde/arm/neon/qdmlsl_n.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/qdmulh.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -87096,16 +90383,16 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_QDMULH_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/qdmull.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -87133,6 +90420,7 @@ HEDLEY_DIAGNOSTIC_POP
  *   2020      Evan Nemerson <evan@nemerson.com>
  *   2020      Sean Maher <seanptmaher@gmail.com> (Copyright owned by Google, LLC)
  *   2023      Yi-Yen Chung <eric681@andestech.com> (Copyright owned by Andes Technology)
+ *   2023      Chi-Wei Chu <wewe5215@gapp.nthu.edu.tw> (Copyright owned by NTHU pllab)
  */
 
 /* Implementation notes (seanptmaher):
@@ -87146,7 +90434,7 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_QDMULL_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -87207,11 +90495,17 @@ simde_vqdmull_s16(simde_int16x4_t a, simde_int16x4_t b) {
     simde_int16x4_private
       a_ = simde_int16x4_to_private(a),
       b_ = simde_int16x4_to_private(b);
-
-    SIMDE_VECTORIZE
-    for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
-      r_.values[i] = simde_vqdmullh_s16(a_.values[i], b_.values[i]);
-    }
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      vint32m2_t mul = __riscv_vwmul_vv_i32m2(a_.sv64, b_.sv64, 4);
+      r_.sv128 = __riscv_vlmul_trunc_v_i32m2_i32m1(__riscv_vmerge_vxm_i32m2(__riscv_vmerge_vxm_i32m2(
+            __riscv_vsll_vx_i32m2(mul, 1, 4), INT32_MAX,  __riscv_vmsgt_vx_i32m2_b16(mul, INT32_C(0x3FFFFFFF), 4), 4),
+            INT32_MIN, __riscv_vmslt_vx_i32m2_b16(mul, -INT32_C(0x40000000), 4), 4));
+    #else
+      SIMDE_VECTORIZE
+      for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
+        r_.values[i] = simde_vqdmullh_s16(a_.values[i], b_.values[i]);
+      }
+    #endif
 
     return simde_int32x4_from_private(r_);
   #endif
@@ -87247,10 +90541,17 @@ simde_vqdmull_s32(simde_int32x2_t a, simde_int32x2_t b) {
       a_ = simde_int32x2_to_private(a),
       b_ = simde_int32x2_to_private(b);
 
-    SIMDE_VECTORIZE
-    for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
-      r_.values[i] = simde_vqdmulls_s32(a_.values[i], b_.values[i]);
-    }
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      vint64m2_t mul = __riscv_vwmul_vv_i64m2(a_.sv64, b_.sv64, 2);
+      r_.sv128 = __riscv_vlmul_trunc_v_i64m2_i64m1(__riscv_vmerge_vxm_i64m2(__riscv_vmerge_vxm_i64m2(
+            __riscv_vsll_vx_i64m2(mul, 1, 2), INT64_MAX,  __riscv_vmsgt_vx_i64m2_b32(mul, INT64_C(0x3FFFFFFFFFFFFFFF), 2), 2),
+            INT64_MIN, __riscv_vmslt_vx_i64m2_b32(mul, -INT64_C(0x4000000000000000), 2), 2));
+    #else
+      SIMDE_VECTORIZE
+      for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
+        r_.values[i] = simde_vqdmulls_s32(a_.values[i], b_.values[i]);
+      }
+    #endif
 
     return simde_int64x2_from_private(r_);
   #endif
@@ -87266,7 +90567,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_QDMULL_H) */
 /* :: End simde/arm/neon/qdmull.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -87407,7 +90708,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_QDMULH_H) */
 /* :: End simde/arm/neon/qdmulh.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/qdmulh_lane.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -87441,10 +90742,10 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_QDMULH_LANE_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/qdmulh_n.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -87476,9 +90777,9 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_QDMULH_N_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -87530,7 +90831,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_QDMULH_N_H) */
 /* :: End simde/arm/neon/qdmulh_n.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -87684,11 +90985,11 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_QDMULH_LANE_H) */
 /* :: End simde/arm/neon/qdmulh_lane.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/qdmull_high.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -87720,11 +91021,11 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_QDMULL_HIGH_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -87764,7 +91065,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_QDMULL_HIGH_H) */
 /* :: End simde/arm/neon/qdmull_high.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/qdmull_high_lane.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -87796,13 +91097,13 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_QDMULL_HIGH_LANE_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -87879,7 +91180,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_QDMULL_HIGH_LANE_H) */
 /* :: End simde/arm/neon/qdmull_high_lane.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/qdmull_high_n.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -87911,13 +91212,13 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_QDMULL_HIGH_N_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -87957,7 +91258,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_QDMULL_HIGH_N_H) */
 /* :: End simde/arm/neon/qdmull_high_n.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/qdmull_lane.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -87989,9 +91290,9 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_QDMULL_LANE_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -88169,7 +91470,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_QDMULL_H) */
 /* :: End simde/arm/neon/qdmull_lane.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/qdmull_n.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -88201,11 +91502,11 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_QDMULL_N_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -88245,7 +91546,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_QDMULL_N_H) */
 /* :: End simde/arm/neon/qdmull_n.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/qrdmlah.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -88277,9 +91578,9 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_QRDMLAH_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/qmovn.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -88312,15 +91613,15 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_QMOVN_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -88717,7 +92018,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_QRDMLAH_H) */
 /* :: End simde/arm/neon/qrdmlah.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/qrdmlah_lane.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -88749,13 +92050,13 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_QRDMLAH_LANE_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -88887,7 +92188,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_QRDMLAH_LANE_H) */
 /* :: End simde/arm/neon/qrdmlah_lane.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/qrdmlsh.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -88919,9 +92220,9 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_QRDMLSH_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -89079,7 +92380,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_QRDMLSH_H) */
 /* :: End simde/arm/neon/qrdmlsh.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/qrdmlsh_lane.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -89111,13 +92412,13 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_QRDMLSH_LANE_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -89249,7 +92550,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_QRDMLSH_LANE_H) */
 /* :: End simde/arm/neon/qrdmlsh_lane.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/qrdmulh.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -89282,7 +92583,7 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_QRDMULH_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -89450,7 +92751,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_QRDMULH_H) */
 /* :: End simde/arm/neon/qrdmulh.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/qrdmulh_lane.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -89483,13 +92784,13 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_QRDMULH_LANE_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -89631,7 +92932,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_QRDMULH_LANE_H) */
 /* :: End simde/arm/neon/qrdmulh_lane.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/qrdmulh_n.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -89664,12 +92965,12 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_QRDMULH_N_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -89774,7 +93075,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_QRDMULH_H) */
 /* :: End simde/arm/neon/qrdmulh_n.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/qrshl.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -89805,7 +93106,7 @@ HEDLEY_DIAGNOSTIC_POP
 #if !defined(SIMDE_ARM_NEON_QRSHL_H)
 #define SIMDE_ARM_NEON_QRSHL_H
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/x86/avx.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -89835,7 +93136,7 @@ HEDLEY_DIAGNOSTIC_POP
  */
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/x86/sse.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -89870,7 +93171,7 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_X86_SSE_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/x86/mmx.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -89902,7 +93203,7 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_X86_MMX_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -92273,15 +95574,60 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_X86_MMX_H) */
 /* :: End simde/x86/mmx.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
-
-#if defined(_WIN32) && !defined(SIMDE_X86_SSE_NATIVE) && defined(_MSC_VER)
-  #define NOMINMAX
-  #include <windows.h>
-#endif
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 #if defined(__ARM_ACLE)
   #include <arm_acle.h>
+#endif
+
+#ifdef _MSC_VER
+  #if defined(SIMDE_ARCH_AARCH64)
+    #include <intrin.h>
+
+    typedef enum simde_tag_ARM64INTR_BARRIER_TYPE
+    {
+      SIMDE_ARM64_BARRIER_SY    = 0xF,
+    }
+    SIMDE_ARM64INTR_BARRIER_TYPE;
+
+    HEDLEY_ALWAYS_INLINE
+    void simde_MemoryBarrier(void) {
+      __dmb(SIMDE_ARM64_BARRIER_SY);
+    }
+  #elif defined(SIMDE_ARCH_ARM)
+    #include <intrin.h>
+
+    typedef enum simde_tag_ARMINTR_BARRIER_TYPE
+    {
+      SIMDE_ARM_BARRIER_SY    = 0xF,
+    }
+    SIMDE_ARMINTR_BARRIER_TYPE;
+
+    HEDLEY_ALWAYS_INLINE
+    void simde_MemoryBarrier(void) {
+      __dmb(SIMDE_ARM_BARRIER_SY);
+    }
+  #elif defined(SIMDE_ARCH_X86) || defined(SIMDE_ARCH_AMD64) || defined(SIMDE_ARCH_E2K)
+    #if !defined(SIMDE_X86_SSE_NO_NATIVE)
+      #include <intrin.h>
+    #endif
+
+    HEDLEY_ALWAYS_INLINE
+    void simde_MemoryBarrier(void) {
+      #if defined(SIMDE_X86_SSE_NO_NATIVE)
+         ((void)0); // intentionally no-op
+      #elif defined(SIMDE_ARCH_AMD64)
+        __faststorefence();
+      #elif defined(SIMDE_ARCH_IA64)
+        __mf();
+      #else
+        long Barrier;
+        __asm { xchg Barrier, eax }
+      #endif
+    }
+  #else
+    #error "Missing implementation"
+  #endif
 #endif
 
 HEDLEY_DIAGNOSTIC_PUSH
@@ -92861,7 +96207,7 @@ simde_x_mm_round_ps (simde__m128 a, int rounding, int lax_rounding)
           r_.f32[i] = simde_math_nearbyintf(a_.f32[i]);
         }
       #else
-        HEDLEY_UNREACHABLE_RETURN(simde_mm_undefined_pd());
+        HEDLEY_UNREACHABLE_RETURN(simde_mm_undefined_ps());
       #endif
       break;
 
@@ -92871,7 +96217,7 @@ simde_x_mm_round_ps (simde__m128 a, int rounding, int lax_rounding)
       #elif defined(SIMDE_ARM_NEON_A32V8_NATIVE)
         r_.neon_f32 = vrndnq_f32(a_.neon_f32);
       #elif defined(SIMDE_LOONGARCH_LSX_NATIVE)
-        r_.lsx_i64 = __lsx_vfrintrne_s(a_.lsx_f32);
+        r_.lsx_f32 = __lsx_vfrintrne_s(a_.lsx_f32);
       #elif defined(SIMDE_WASM_SIMD128_NATIVE)
         r_.wasm_v128 = wasm_f32x4_nearest(a_.wasm_v128);
       #elif defined(simde_math_roundevenf)
@@ -92880,7 +96226,7 @@ simde_x_mm_round_ps (simde__m128 a, int rounding, int lax_rounding)
           r_.f32[i] = simde_math_roundevenf(a_.f32[i]);
         }
       #else
-        HEDLEY_UNREACHABLE_RETURN(simde_mm_undefined_pd());
+        HEDLEY_UNREACHABLE_RETURN(simde_mm_undefined_ps());
       #endif
       break;
 
@@ -92890,7 +96236,7 @@ simde_x_mm_round_ps (simde__m128 a, int rounding, int lax_rounding)
       #elif defined(SIMDE_ARM_NEON_A32V8_NATIVE)
         r_.neon_f32 = vrndmq_f32(a_.neon_f32);
       #elif defined(SIMDE_LOONGARCH_LSX_NATIVE)
-        r_.lsx_i64 = __lsx_vfrintrm_s(a_.lsx_f32);
+        r_.lsx_f32 = __lsx_vfrintrm_s(a_.lsx_f32);
       #elif defined(SIMDE_WASM_SIMD128_NATIVE)
         r_.wasm_v128 = wasm_f32x4_floor(a_.wasm_v128);
       #elif defined(simde_math_floorf)
@@ -92899,7 +96245,7 @@ simde_x_mm_round_ps (simde__m128 a, int rounding, int lax_rounding)
           r_.f32[i] = simde_math_floorf(a_.f32[i]);
         }
       #else
-        HEDLEY_UNREACHABLE_RETURN(simde_mm_undefined_pd());
+        HEDLEY_UNREACHABLE_RETURN(simde_mm_undefined_ps());
       #endif
       break;
 
@@ -92909,7 +96255,7 @@ simde_x_mm_round_ps (simde__m128 a, int rounding, int lax_rounding)
       #elif defined(SIMDE_ARM_NEON_A32V8_NATIVE)
         r_.neon_f32 = vrndpq_f32(a_.neon_f32);
       #elif defined(SIMDE_LOONGARCH_LSX_NATIVE)
-        r_.lsx_i64 = __lsx_vfrintrp_s(a_.lsx_f32);
+        r_.lsx_f32 = __lsx_vfrintrp_s(a_.lsx_f32);
       #elif defined(SIMDE_WASM_SIMD128_NATIVE)
         r_.wasm_v128 = wasm_f32x4_ceil(a_.wasm_v128);
       #elif defined(simde_math_ceilf)
@@ -92918,7 +96264,7 @@ simde_x_mm_round_ps (simde__m128 a, int rounding, int lax_rounding)
           r_.f32[i] = simde_math_ceilf(a_.f32[i]);
         }
       #else
-        HEDLEY_UNREACHABLE_RETURN(simde_mm_undefined_pd());
+        HEDLEY_UNREACHABLE_RETURN(simde_mm_undefined_ps());
       #endif
       break;
 
@@ -92928,7 +96274,7 @@ simde_x_mm_round_ps (simde__m128 a, int rounding, int lax_rounding)
       #elif defined(SIMDE_ARM_NEON_A32V8_NATIVE)
         r_.neon_f32 = vrndq_f32(a_.neon_f32);
       #elif defined(SIMDE_LOONGARCH_LSX_NATIVE)
-        r_.lsx_i64 = __lsx_vfrintrz_s(a_.lsx_f32);
+        r_.lsx_f32 = __lsx_vfrintrz_s(a_.lsx_f32);
       #elif defined(SIMDE_WASM_SIMD128_NATIVE)
         r_.wasm_v128 = wasm_f32x4_trunc(a_.wasm_v128);
       #elif defined(simde_math_truncf)
@@ -92937,12 +96283,12 @@ simde_x_mm_round_ps (simde__m128 a, int rounding, int lax_rounding)
           r_.f32[i] = simde_math_truncf(a_.f32[i]);
         }
       #else
-        HEDLEY_UNREACHABLE_RETURN(simde_mm_undefined_pd());
+        HEDLEY_UNREACHABLE_RETURN(simde_mm_undefined_ps());
       #endif
       break;
 
     default:
-      HEDLEY_UNREACHABLE_RETURN(simde_mm_undefined_pd());
+      HEDLEY_UNREACHABLE_RETURN(simde_mm_undefined_ps());
   }
 
   return simde__m128_from_private(r_);
@@ -96249,7 +99595,7 @@ simde_mm_sfence (void) {
       atomic_thread_fence(memory_order_seq_cst);
     #endif
   #elif defined(_MSC_VER)
-    MemoryBarrier();
+    simde_MemoryBarrier();
   #elif HEDLEY_HAS_EXTENSION(c_atomic)
     __c11_atomic_thread_fence(__ATOMIC_SEQ_CST);
   #elif defined(__GNUC__) && ((__GNUC__ > 4) || (__GNUC__ == 4 && __GNUC_MINOR__ >= 1))
@@ -97075,7 +100421,7 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_X86_AVX_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/x86/sse4.2.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -97108,7 +100454,7 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_X86_SSE4_2_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/x86/sse4.1.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -97137,12 +100483,12 @@ HEDLEY_DIAGNOSTIC_POP
  */
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 #if !defined(SIMDE_X86_SSE4_1_H)
 #define SIMDE_X86_SSE4_1_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/x86/ssse3.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -97174,7 +100520,7 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_X86_SSSE3_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/x86/sse3.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -97206,7 +100552,7 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_X86_SSE3_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/x86/sse2.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -97243,9 +100589,9 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_X86_SSE2_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -97886,8 +101232,6 @@ simde_mm_add_pd (simde__m128d a, simde__m128d b) {
 
     #if defined(SIMDE_ARM_NEON_A64V8_NATIVE)
       r_.neon_f64 = vaddq_f64(a_.neon_f64, b_.neon_f64);
-    #elif defined(SIMDE_WASM_SIMD128_NATIVE)
-      r_.wasm_v128 = wasm_f64x2_add(a_.wasm_v128, b_.wasm_v128);
     #elif defined(SIMDE_POWER_ALTIVEC_P7_NATIVE)
       r_.altivec_f64 = vec_add(a_.altivec_f64, b_.altivec_f64);
     #elif defined(SIMDE_WASM_SIMD128_NATIVE)
@@ -100762,12 +104106,11 @@ simde_mm_loadl_epi64 (simde__m128i const* mem_addr) {
   #else
     simde__m128i_private r_;
 
-    int64_t value;
-    simde_memcpy(&value, mem_addr, sizeof(value));
-
     #if defined(SIMDE_ARM_NEON_A32V7_NATIVE)
       r_.neon_i64 = vcombine_s64(vld1_s64(HEDLEY_REINTERPRET_CAST(int64_t const *, mem_addr)), vdup_n_s64(0));
     #else
+      int64_t value;
+      simde_memcpy(&value, mem_addr, sizeof(value));
       r_.i64[0] = value;
       r_.i64[1] = 0;
     #endif
@@ -101990,7 +105333,7 @@ simde_mm_pause (void) {
     #endif
   #elif defined(SIMDE_ARCH_ARM_NEON)
     #if defined(_MSC_VER)
-      __isb(_ARM64_BARRIER_SY);
+      __isb(SIMDE_ARM64_BARRIER_SY);
     #else
       __asm__ __volatile__("isb\n");
     #endif
@@ -102026,6 +105369,14 @@ simde_mm_sad_epu8 (simde__m128i a, simde__m128i b) {
       r_.neon_u64 = vcombine_u64(
         vpaddl_u32(vpaddl_u16(vget_low_u16(t))),
         vpaddl_u32(vpaddl_u16(vget_high_u16(t))));
+    #elif defined(SIMDE_WASM_SIMD128_NATIVE)
+      v128_t tmp = wasm_v128_or(wasm_u8x16_sub_sat(a_.wasm_v128, b_.wasm_v128),
+                                wasm_u8x16_sub_sat(b_.wasm_v128, a_.wasm_v128));
+      tmp = wasm_i16x8_add(wasm_u16x8_shr(tmp, 8),
+                           wasm_v128_and(tmp, wasm_i16x8_splat(0x00FF)));
+      tmp = wasm_i16x8_add(tmp, wasm_i32x4_shl(tmp, 16));
+      tmp = wasm_i16x8_add(tmp, wasm_i64x2_shl(tmp, 32));
+      r_.wasm_v128 = wasm_u64x2_shr(tmp, 48);
     #else
       for (size_t i = 0 ; i < (sizeof(r_.i64) / sizeof(r_.i64[0])) ; i++) {
         uint16_t tmp = 0;
@@ -108804,9 +112155,10 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_X86_SSE4_1_H) */
 /* :: End simde/x86/sse4.1.h :: */
 
-#if defined(__ARM_ACLE) || (defined(__GNUC__) && defined(__ARM_FEATURE_CRC32))
+#if defined(__ARM_ACLE) || (defined(__GNUC__) && defined(SIMDE_ARCH_ARM_CRC32))
   #include <arm_acle.h>
 #endif
+//                         ^^ Due to https://gcc.gnu.org/bugzilla/show_bug.cgi?id=70974
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -109069,17 +112421,25 @@ simde_mm_crc32_u8(uint32_t prevcrc, uint8_t v) {
   #if defined(SIMDE_X86_SSE4_2_NATIVE)
     return _mm_crc32_u8(prevcrc, v);
   #else
-    #if defined(SIMDE_ARM_NEON_A64V8_NATIVE) && defined(__ARM_FEATURE_CRC32)
+    #if defined(SIMDE_ARM_NEON_A64V8_NATIVE) && defined(SIMDE_ARCH_ARM_CRC32)
       return __crc32cb(prevcrc, v);
     #else
       uint32_t crc = prevcrc;
       crc ^= v;
-      for(int bit = 0 ; bit < 8 ; bit++) {
-        if (crc & 1)
-          crc = (crc >> 1) ^ UINT32_C(0x82f63b78);
-        else
-          crc = (crc >> 1);
-      }
+      // Adapted from: https://create.stephan-brumme.com/crc32/
+      // Apply half-byte comparision algorithm for the best ratio between
+      // performance and lookup table.
+
+      // The lookup table just needs to store every 16th entry
+      // of the standard look-up table.
+      static const uint32_t crc32_half_byte_tbl[] = {
+        0x00000000, 0x105ec76f, 0x20bd8ede, 0x30e349b1, 0x417b1dbc, 0x5125dad3,
+        0x61c69362, 0x7198540d, 0x82f63b78, 0x92a8fc17, 0xa24bb5a6, 0xb21572c9,
+        0xc38d26c4, 0xd3d3e1ab, 0xe330a81a, 0xf36e6f75,
+      };
+
+      crc = (crc >> 4) ^ crc32_half_byte_tbl[crc & 0x0f];
+      crc = (crc >> 4) ^ crc32_half_byte_tbl[crc & 0x0f];
       return crc;
     #endif
   #endif
@@ -109094,7 +112454,7 @@ simde_mm_crc32_u16(uint32_t prevcrc, uint16_t v) {
   #if defined(SIMDE_X86_SSE4_2_NATIVE)
     return _mm_crc32_u16(prevcrc, v);
   #else
-    #if defined(SIMDE_ARM_NEON_A64V8_NATIVE) && defined(__ARM_FEATURE_CRC32)
+    #if defined(SIMDE_ARM_NEON_A64V8_NATIVE) && defined(SIMDE_ARCH_ARM_CRC32)
       return __crc32ch(prevcrc, v);
     #else
       uint32_t crc = prevcrc;
@@ -109114,7 +112474,7 @@ simde_mm_crc32_u32(uint32_t prevcrc, uint32_t v) {
   #if defined(SIMDE_X86_SSE4_2_NATIVE)
     return _mm_crc32_u32(prevcrc, v);
   #else
-    #if defined(SIMDE_ARM_NEON_A64V8_NATIVE) && defined(__ARM_FEATURE_CRC32)
+    #if defined(SIMDE_ARM_NEON_A64V8_NATIVE) && defined(SIMDE_ARCH_ARM_CRC32)
       return __crc32cw(prevcrc, v);
     #else
       uint32_t crc = prevcrc;
@@ -109134,7 +112494,7 @@ simde_mm_crc32_u64(uint64_t prevcrc, uint64_t v) {
   #if defined(SIMDE_X86_SSE4_2_NATIVE) && defined(SIMDE_ARCH_AMD64)
     return _mm_crc32_u64(prevcrc, v);
   #else
-    #if defined(SIMDE_ARM_NEON_A64V8_NATIVE) && defined(__ARM_FEATURE_CRC32)
+    #if defined(SIMDE_ARM_NEON_A64V8_NATIVE) && defined(SIMDE_ARCH_ARM_CRC32)
       return __crc32cd(HEDLEY_STATIC_CAST(uint32_t, prevcrc), v);
     #else
       uint64_t crc = prevcrc;
@@ -109155,7 +112515,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_X86_SSE4_2_H) */
 /* :: End simde/x86/sse4.2.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -111208,7 +114568,11 @@ simde_mm256_round_ps (simde__m256 a, const int rounding) {
   simde__m256_private
     r_,
     a_ = simde__m256_to_private(a);
-
+  #if SIMDE_NATURAL_VECTOR_SIZE_LE(128) && !defined(SIMDE_STATEMENT_EXPR_)
+    for (size_t i = 0 ; i < (sizeof(r_.m128) / sizeof(r_.m128[0])) ; i++) {
+      SIMDE_CONSTIFY_16_(simde_mm_round_ps, r_.m128[i], (HEDLEY_UNREACHABLE(), simde_mm_undefined_ps()), rounding, a_.m128[i]);
+    }
+  #else
   switch (rounding & ~SIMDE_MM_FROUND_NO_EXC) {
     #if defined(simde_math_nearbyintf)
       case SIMDE_MM_FROUND_CUR_DIRECTION:
@@ -111253,7 +114617,7 @@ simde_mm256_round_ps (simde__m256 a, const int rounding) {
     default:
       HEDLEY_UNREACHABLE_RETURN(simde_mm256_undefined_ps());
   }
-
+  #endif
   return simde__m256_from_private(r_);
 }
 #if defined(SIMDE_X86_AVX_NATIVE)
@@ -111282,6 +114646,11 @@ simde_mm256_round_pd (simde__m256d a, const int rounding) {
   simde__m256d_private
     r_,
     a_ = simde__m256d_to_private(a);
+  #if SIMDE_NATURAL_VECTOR_SIZE_LE(128) && !defined(SIMDE_STATEMENT_EXPR_)
+    for (size_t i = 0 ; i < (sizeof(r_.m128d) / sizeof(r_.m128d[0])) ; i++) {
+      SIMDE_CONSTIFY_16_(simde_mm_round_pd, r_.m128d[i], (HEDLEY_UNREACHABLE(), simde_mm_undefined_pd()), rounding, a_.m128d[i]);
+    }
+  #else
 
   switch (rounding & ~SIMDE_MM_FROUND_NO_EXC) {
     #if defined(simde_math_nearbyint)
@@ -111327,7 +114696,7 @@ simde_mm256_round_pd (simde__m256d a, const int rounding) {
     default:
       HEDLEY_UNREACHABLE_RETURN(simde_mm256_undefined_pd());
   }
-
+  #endif
   return simde__m256d_from_private(r_);
 }
 #if defined(SIMDE_X86_AVX_NATIVE)
@@ -112019,6 +115388,11 @@ simde_mm256_cmp_ps
     a_ = simde__m256_to_private(a),
     b_ = simde__m256_to_private(b);
 
+  #if defined(SIMDE_STATEMENT_EXPR_) && SIMDE_NATURAL_VECTOR_SIZE_LE(128)
+    for (size_t i = 0 ; i < (sizeof(r_.m128) / sizeof(r_.m128[0])) ; i++) {
+      SIMDE_CONSTIFY_32_(simde_mm_cmp_ps, r_.m128[i], (HEDLEY_UNREACHABLE(), simde_mm_undefined_ps()), imm8, a_.m128[i], b_.m128[i]);
+    }
+  #else
   switch (imm8) {
     case SIMDE_CMP_EQ_OQ:
     case SIMDE_CMP_EQ_OS:
@@ -112201,7 +115575,7 @@ simde_mm256_cmp_ps
     default:
       HEDLEY_UNREACHABLE();
   }
-
+  #endif
   return simde__m256_from_private(r_);
 }
 #if defined(__clang__) && defined(__AVX512DQ__)
@@ -112223,7 +115597,7 @@ simde_mm256_cmp_ps
     simde_mm256_cmp_ps_r; \
   }))
 #elif defined(SIMDE_X86_AVX_NATIVE)
-  #define simde_mm256_cmp_ps(a, b, imm8) _mm256_cmp_ps(a, b, imm8)
+  #define simde_mm256_cmp_ps(a, b, imm8) _mm256_cmp_ps((a), (b), (imm8))
 #elif defined(SIMDE_STATEMENT_EXPR_) && SIMDE_NATURAL_VECTOR_SIZE_LE(128)
   #define simde_mm256_cmp_ps(a, b, imm8) SIMDE_STATEMENT_EXPR_(({ \
     simde__m256_private \
@@ -112909,6 +116283,12 @@ simde__m256d
 simde_mm256_loadu_pd (const double a[HEDLEY_ARRAY_PARAM(4)]) {
   #if defined(SIMDE_X86_AVX_NATIVE)
     return _mm256_loadu_pd(a);
+  #elif SIMDE_NATURAL_VECTOR_SIZE_LE(128)
+    simde__m256d_private r_;
+    for (size_t i = 0 ; i < (sizeof(r_.m128d) / sizeof(r_.m128d[0])) ; i++) {
+      r_.m128d[i] = simde_mm_loadu_pd(a + 2*i);
+    }
+    return simde__m256d_from_private(r_);
   #else
     simde__m256d r;
     simde_memcpy(&r, a, sizeof(r));
@@ -114397,6 +117777,11 @@ void
 simde_mm256_storeu_pd (simde_float64 mem_addr[4], simde__m256d a) {
   #if defined(SIMDE_X86_AVX_NATIVE)
     _mm256_storeu_pd(mem_addr, a);
+  #elif SIMDE_NATURAL_VECTOR_SIZE_LE(128)
+    simde__m256d_private a_ = simde__m256d_to_private(a);
+    for (size_t i = 0 ; i < (sizeof(a_.m128d) / sizeof(a_.m128d[0])) ; i++) {
+      simde_mm_storeu_pd(mem_addr + 2*i, a_.m128d[i]);
+    }
   #else
     simde_memcpy(mem_addr, &a, sizeof(a));
   #endif
@@ -115392,7 +118777,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_X86_AVX_H) */
 /* :: End simde/x86/avx.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -116109,7 +119494,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_QRSHL_H) */
 /* :: End simde/arm/neon/qrshl.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/qrshrn_high_n.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -116141,11 +119526,11 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_QRSHRN_HIGH_N_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -116305,7 +119690,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_RSHRN_HIGH_N_H) */
 /* :: End simde/arm/neon/qrshrn_high_n.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/qrshrn_n.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -116338,9 +119723,9 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_QRSHRN_N_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/rshr_n.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -116374,19 +119759,19 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_RSHR_N_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/tst.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -116420,23 +119805,23 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_TST_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -117064,7 +120449,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_TST_H) */
 /* :: End simde/arm/neon/tst.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -117556,7 +120941,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_RSHR_N_H) */
 /* :: End simde/arm/neon/rshr_n.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -117689,7 +121074,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_QRSHRN_N_H) */
 /* :: End simde/arm/neon/qrshrn_n.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/qrshrun_high_n.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -117721,11 +121106,11 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_QRSHRUN_HIGH_N_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -117809,7 +121194,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_QRSHRUN_HIGH_N_H) */
 /* :: End simde/arm/neon/qrshrun_high_n.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/qrshrun_n.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -117842,11 +121227,11 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_QRSHRUN_N_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/qmovun.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -117879,15 +121264,15 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_QMOVUN_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -118096,9 +121481,9 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_QRSHRUN_N_H) */
 /* :: End simde/arm/neon/qrshrun_n.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/qmovn_high.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -118131,12 +121516,12 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_QMOVN_HIGH_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -118232,9 +121617,9 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_QMOVN_HIGH_H) */
 /* :: End simde/arm/neon/qmovn_high.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/qmovun_high.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -118266,12 +121651,12 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_QMOVUN_HIGH_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -118325,7 +121710,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_QMOVUN_HIGH_H) */
 /* :: End simde/arm/neon/qmovun_high.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/qneg.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -118357,15 +121742,15 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_QNEG_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 #if !defined(SIMDE_ARM_NEON_A64V8_ENABLE_NATIVE) || 1
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 #endif
 
 HEDLEY_DIAGNOSTIC_PUSH
@@ -118634,9 +122019,9 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_QNEG_H) */
 /* :: End simde/arm/neon/qneg.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/qshl.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -118670,9 +122055,9 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_QSHL_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -119375,7 +122760,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_QSHL_H) */
 /* :: End simde/arm/neon/qshl.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/qshl_n.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -119407,11 +122792,11 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_QSHL_N_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -119895,7 +123280,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_QSHL_N_H) */
 /* :: End simde/arm/neon/qshl_n.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/qshlu_n.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -119922,24 +123307,25 @@ HEDLEY_DIAGNOSTIC_POP
  * Copyright:
  *   2021      Atharva Nimbalkar <atharvakn@gmail.com>
  *   2023      Yi-Yen Chung <eric681@andestech.com> (Copyright owned by Andes Technology)
+ *   2023      Chi-Wei Chu <wewe5215@gapp.nthu.edu.tw> (Copyright owned by NTHU pllab)
  */
 
 #if !defined(SIMDE_ARM_NEON_QSHLU_N_H)
 #define SIMDE_ARM_NEON_QSHLU_N_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 #if defined(SIMDE_WASM_SIMD128_NATIVE)
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 #endif
 
 HEDLEY_DIAGNOSTIC_PUSH
@@ -120027,8 +123413,11 @@ simde_vqshlu_n_s8(simde_int8x8_t a, const int n)
   #else
     simde_int8x8_private a_ = simde_int8x8_to_private(a);
     simde_uint8x8_private r_;
-
-    #if defined(SIMDE_VECTOR_SUBSCRIPT_SCALAR) && !defined(SIMDE_BUG_GCC_100762)
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      vuint8m1_t shift = __riscv_vsll_vx_u8m1(__riscv_vreinterpret_v_i8m1_u8m1(a_.sv64), n, 8);
+      r_.sv64 = __riscv_vmerge_vxm_u8m1(shift, UINT8_MAX, __riscv_vmsne_vv_u8m1_b8(__riscv_vsrl_vx_u8m1(shift, n, 8), __riscv_vreinterpret_v_i8m1_u8m1(a_.sv64), 8), 8);
+      r_.sv64 = __riscv_vmerge_vxm_u8m1(r_.sv64, 0, __riscv_vmslt_vx_i8m1_b8(a_.sv64, 0, 8), 8);
+    #elif defined(SIMDE_VECTOR_SUBSCRIPT_SCALAR) && !defined(SIMDE_BUG_GCC_100762)
       __typeof__(r_.values) shifted = HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), a_.values) << n;
 
       __typeof__(r_.values) overflow = HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), (shifted >> n) != HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), a_.values));
@@ -120073,8 +123462,11 @@ simde_vqshlu_n_s16(simde_int16x4_t a, const int n)
   #else
     simde_int16x4_private a_ = simde_int16x4_to_private(a);
     simde_uint16x4_private r_;
-
-    #if defined(SIMDE_VECTOR_SUBSCRIPT_SCALAR) && !defined(SIMDE_BUG_GCC_100762)
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      vuint16m1_t shift = __riscv_vsll_vx_u16m1(__riscv_vreinterpret_v_i16m1_u16m1(a_.sv64), n, 4);
+      r_.sv64 = __riscv_vmerge_vxm_u16m1(shift, UINT16_MAX, __riscv_vmsne_vv_u16m1_b16(__riscv_vsrl_vx_u16m1(shift, n, 4), __riscv_vreinterpret_v_i16m1_u16m1(a_.sv64), 4), 4);
+      r_.sv64 = __riscv_vmerge_vxm_u16m1(r_.sv64, 0, __riscv_vmslt_vx_i16m1_b16(a_.sv64, 0, 4), 4);
+    #elif defined(SIMDE_VECTOR_SUBSCRIPT_SCALAR) && !defined(SIMDE_BUG_GCC_100762)
       __typeof__(r_.values) shifted = HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), a_.values) << n;
 
       __typeof__(r_.values) overflow = HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), (shifted >> n) != HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), a_.values));
@@ -120122,7 +123514,11 @@ simde_vqshlu_n_s32(simde_int32x2_t a, const int n)
     simde_int32x2_private a_ = simde_int32x2_to_private(a);
     simde_uint32x2_private r_;
 
-    #if defined(SIMDE_VECTOR_SUBSCRIPT_SCALAR) && !defined(SIMDE_BUG_GCC_100762)
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      vuint32m1_t shift = __riscv_vsll_vx_u32m1(__riscv_vreinterpret_v_i32m1_u32m1(a_.sv64), n, 2);
+      r_.sv64 = __riscv_vmerge_vxm_u32m1(shift, UINT32_MAX, __riscv_vmsne_vv_u32m1_b32(__riscv_vsrl_vx_u32m1(shift, n, 2), __riscv_vreinterpret_v_i32m1_u32m1(a_.sv64), 2), 2);
+      r_.sv64 = __riscv_vmerge_vxm_u32m1(r_.sv64, 0, __riscv_vmslt_vx_i32m1_b32(a_.sv64, 0, 2), 2);
+    #elif defined(SIMDE_VECTOR_SUBSCRIPT_SCALAR) && !defined(SIMDE_BUG_GCC_100762)
       __typeof__(r_.values) shifted = HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), a_.values) << n;
 
       __typeof__(r_.values) overflow = HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), (shifted >> n) != HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), a_.values));
@@ -120169,7 +123565,11 @@ simde_vqshlu_n_s64(simde_int64x1_t a, const int n)
     simde_int64x1_private a_ = simde_int64x1_to_private(a);
     simde_uint64x1_private r_;
 
-    #if defined(SIMDE_VECTOR_SUBSCRIPT_SCALAR)
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      vuint64m1_t shift = __riscv_vsll_vx_u64m1(__riscv_vreinterpret_v_i64m1_u64m1(a_.sv64), n, 1);
+      r_.sv64 = __riscv_vmerge_vxm_u64m1(shift, UINT64_MAX, __riscv_vmsne_vv_u64m1_b64(__riscv_vsrl_vx_u64m1(shift, n, 1), __riscv_vreinterpret_v_i64m1_u64m1(a_.sv64), 1), 1);
+      r_.sv64 = __riscv_vmerge_vxm_u64m1(r_.sv64, 0, __riscv_vmslt_vx_i64m1_b64(a_.sv64, 0, 1), 1);
+    #elif defined(SIMDE_VECTOR_SUBSCRIPT_SCALAR)
       __typeof__(r_.values) shifted = HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), a_.values) << n;
 
       __typeof__(r_.values) overflow = HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), (shifted >> n) != HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), a_.values));
@@ -120209,6 +123609,10 @@ simde_vqshluq_n_s8(simde_int8x16_t a, const int n)
     const v128_t overflow = wasm_i8x16_ne(a_.v128, wasm_u8x16_shr(r_.v128, HEDLEY_STATIC_CAST(uint32_t, n)));
     r_.v128 = wasm_v128_or(r_.v128, overflow);
     r_.v128 = wasm_v128_andnot(r_.v128, wasm_i8x16_shr(a_.v128, 7));
+  #elif defined(SIMDE_RISCV_V_NATIVE)
+      vuint8m1_t shift = __riscv_vsll_vx_u8m1(__riscv_vreinterpret_v_i8m1_u8m1(a_.sv128), n, 16);
+      r_.sv128 = __riscv_vmerge_vxm_u8m1(shift, UINT8_MAX, __riscv_vmsne_vv_u8m1_b8(__riscv_vsrl_vx_u8m1(shift, n, 16), __riscv_vreinterpret_v_i8m1_u8m1(a_.sv128), 16), 16);
+      r_.sv128 = __riscv_vmerge_vxm_u8m1(r_.sv128, 0, __riscv_vmslt_vx_i8m1_b8(a_.sv128, 0, 16), 16);
   #elif defined(SIMDE_VECTOR_SUBSCRIPT_SCALAR)
     __typeof__(r_.values) shifted = HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), a_.values) << n;
 
@@ -120248,6 +123652,10 @@ simde_vqshluq_n_s16(simde_int16x8_t a, const int n)
     const v128_t overflow = wasm_i16x8_ne(a_.v128, wasm_u16x8_shr(r_.v128, HEDLEY_STATIC_CAST(uint32_t, n)));
     r_.v128 = wasm_v128_or(r_.v128, overflow);
     r_.v128 = wasm_v128_andnot(r_.v128, wasm_i16x8_shr(a_.v128, 15));
+  #elif defined(SIMDE_RISCV_V_NATIVE)
+      vuint16m1_t shift = __riscv_vsll_vx_u16m1(__riscv_vreinterpret_v_i16m1_u16m1(a_.sv128), n, 8);
+      r_.sv128 = __riscv_vmerge_vxm_u16m1(shift, UINT16_MAX, __riscv_vmsne_vv_u16m1_b16(__riscv_vsrl_vx_u16m1(shift, n, 8), __riscv_vreinterpret_v_i16m1_u16m1(a_.sv128), 8), 8);
+      r_.sv128 = __riscv_vmerge_vxm_u16m1(r_.sv128, 0, __riscv_vmslt_vx_i16m1_b16(a_.sv128, 0, 8), 8);
   #elif defined(SIMDE_VECTOR_SUBSCRIPT_SCALAR)
     __typeof__(r_.values) shifted = HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), a_.values) << n;
 
@@ -120287,6 +123695,10 @@ simde_vqshluq_n_s32(simde_int32x4_t a, const int n)
     const v128_t overflow = wasm_i32x4_ne(a_.v128, wasm_u32x4_shr(r_.v128, HEDLEY_STATIC_CAST(uint32_t, n)));
     r_.v128 = wasm_v128_or(r_.v128, overflow);
     r_.v128 = wasm_v128_andnot(r_.v128, wasm_i32x4_shr(a_.v128, 31));
+  #elif defined(SIMDE_RISCV_V_NATIVE)
+      vuint32m1_t shift = __riscv_vsll_vx_u32m1(__riscv_vreinterpret_v_i32m1_u32m1(a_.sv128), n, 4);
+      r_.sv128 = __riscv_vmerge_vxm_u32m1(shift, UINT32_MAX, __riscv_vmsne_vv_u32m1_b32(__riscv_vsrl_vx_u32m1(shift, n, 4), __riscv_vreinterpret_v_i32m1_u32m1(a_.sv128), 4), 4);
+      r_.sv128 = __riscv_vmerge_vxm_u32m1(r_.sv128, 0, __riscv_vmslt_vx_i32m1_b32(a_.sv128, 0, 4), 4);
   #elif defined(SIMDE_VECTOR_SUBSCRIPT_SCALAR)
     __typeof__(r_.values) shifted = HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), a_.values) << n;
 
@@ -120326,6 +123738,10 @@ simde_vqshluq_n_s64(simde_int64x2_t a, const int n)
     const v128_t overflow = wasm_i64x2_ne(a_.v128, wasm_u64x2_shr(r_.v128, HEDLEY_STATIC_CAST(uint32_t, n)));
     r_.v128 = wasm_v128_or(r_.v128, overflow);
     r_.v128 = wasm_v128_andnot(r_.v128, wasm_i64x2_shr(a_.v128, 63));
+  #elif defined(SIMDE_RISCV_V_NATIVE)
+      vuint64m1_t shift = __riscv_vsll_vx_u64m1(__riscv_vreinterpret_v_i64m1_u64m1(a_.sv128), n, 2);
+      r_.sv128 = __riscv_vmerge_vxm_u64m1(shift, UINT64_MAX, __riscv_vmsne_vv_u64m1_b64(__riscv_vsrl_vx_u64m1(shift, n, 2), __riscv_vreinterpret_v_i64m1_u64m1(a_.sv128), 2), 2);
+      r_.sv128 = __riscv_vmerge_vxm_u64m1(r_.sv128, 0, __riscv_vmslt_vx_i64m1_b64(a_.sv128, 0, 2), 2);
   #elif defined(SIMDE_VECTOR_SUBSCRIPT_SCALAR)
     __typeof__(r_.values) shifted = HEDLEY_REINTERPRET_CAST(__typeof__(r_.values), a_.values) << n;
 
@@ -120359,7 +123775,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_QSHLU_N_H) */
 /* :: End simde/arm/neon/qshlu_n.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/qshrn_high_n.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -120391,11 +123807,11 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_QSHRN_HIGH_N_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -120467,7 +123883,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_QSHRN_HIGH_N_H) */
 /* :: End simde/arm/neon/qshrn_high_n.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/qshrn_n.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -120501,11 +123917,11 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_QSHRN_N_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -120638,7 +124054,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_QSHRN_N_H) */
 /* :: End simde/arm/neon/qshrn_n.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/qshrun_high_n.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -120670,11 +124086,11 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_QSHRUN_HIGH_N_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -120758,7 +124174,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_QSHRUN_HIGH_N_H) */
 /* :: End simde/arm/neon/qshrun_high_n.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/qshrun_n.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -120791,11 +124207,11 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_QSHRUN_N_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -120867,7 +124283,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_QSHRUN_N_H) */
 /* :: End simde/arm/neon/qshrun_n.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/qtbl.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -120895,15 +124311,16 @@ HEDLEY_DIAGNOSTIC_POP
  *   2020      Evan Nemerson <evan@nemerson.com>
  *   2020      Christopher Moore <moore@free.fr>
  *   2023      Yi-Yen Chung <eric681@andestech.com> (Copyright owned by Andes Technology)
+ *   2023      Ju-Hung Li <jhlee@pllab.cs.nthu.edu.tw> (Copyright owned by NTHU pllab)
  */
 
 #if !defined(SIMDE_ARM_NEON_QTBL_H)
 #define SIMDE_ARM_NEON_QTBL_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -120928,6 +124345,10 @@ simde_vqtbl1_u8(simde_uint8x16_t t, simde_uint8x8_t idx) {
       __m128i idx128 = _mm_set1_epi64(idx_.m64);
       __m128i r128 = _mm_shuffle_epi8(t_.m128i, _mm_or_si128(idx128, _mm_cmpgt_epi8(idx128, _mm_set1_epi8(15))));
       r_.m64 = _mm_movepi64_pi64(r128);
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      vbool8_t mask = __riscv_vmsgeu_vx_u8m1_b8 (idx_.sv64, 16, 8);
+      r_.sv64 = __riscv_vrgather_vv_u8m1(t_.sv128 , idx_.sv64 , 8);
+      r_.sv64 = __riscv_vmerge_vxm_u8m1(r_.sv64, 0, mask, 8);
     #else
       SIMDE_VECTORIZE
       for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
@@ -120981,6 +124402,14 @@ simde_vqtbl2_u8(simde_uint8x16x2_t t, simde_uint8x8_t idx) {
       __m128i r128_1 = _mm_shuffle_epi8(t_[1].m128i, idx128);
       __m128i r128 = _mm_blendv_epi8(r128_0, r128_1, _mm_slli_epi32(idx128, 3));
       r_.m64 = _mm_movepi64_pi64(r128);
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      vuint8m2_t t1 = __riscv_vlmul_ext_v_u8m1_u8m2 (t_[0].sv128);
+      vuint8m2_t t2 = __riscv_vlmul_ext_v_u8m1_u8m2 (t_[1].sv128);
+      vuint8m2_t t_combine = __riscv_vslideup_vx_u8m2(t1 , t2 , 16 , 32);
+      vuint8m2_t idxm2 = __riscv_vlmul_ext_v_u8m1_u8m2(idx_.sv64);
+      vbool4_t mask = __riscv_vmsgeu_vx_u8m2_b4 (idxm2, 32, 8);
+      vuint8m2_t r_tmp = __riscv_vrgather_vv_u8m2(t_combine , idxm2 , 8);
+      r_.sv64 = __riscv_vlmul_trunc_v_u8m2_u8m1(__riscv_vmerge_vxm_u8m2(r_tmp, 0, mask, 8));
     #else
       SIMDE_VECTORIZE
       for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
@@ -121042,6 +124471,16 @@ simde_vqtbl3_u8(simde_uint8x16x3_t t, simde_uint8x8_t idx) {
       __m128i r128_2 = _mm_shuffle_epi8(t_[2].m128i, idx128);
       __m128i r128 = _mm_blendv_epi8(r128_01, r128_2, _mm_slli_epi32(idx128, 2));
       r_.m64 = _mm_movepi64_pi64(r128);
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      vuint8m4_t t1 = __riscv_vlmul_ext_v_u8m1_u8m4 (t_[0].sv128);
+      vuint8m4_t t2 = __riscv_vlmul_ext_v_u8m1_u8m4 (t_[1].sv128);
+      vuint8m4_t t3 = __riscv_vlmul_ext_v_u8m1_u8m4 (t_[2].sv128);
+      vuint8m4_t t_combine = __riscv_vslideup_vx_u8m4(t2 , t3 , 16 , 48);
+      t_combine = __riscv_vslideup_vx_u8m4(t1 , t_combine , 16 , 48);
+      vuint8m4_t idxm4 = __riscv_vlmul_ext_v_u8m1_u8m4(idx_.sv64);
+      vbool2_t mask = __riscv_vmsgeu_vx_u8m4_b2 (idxm4, 48, 8);
+      vuint8m4_t r_tmp = __riscv_vrgather_vv_u8m4(t_combine , idxm4 , 8);
+      r_.sv64 = __riscv_vlmul_trunc_v_u8m4_u8m1(__riscv_vmerge_vxm_u8m4(r_tmp, 0, mask, 8));
     #else
       SIMDE_VECTORIZE
       for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
@@ -121106,6 +124545,18 @@ simde_vqtbl4_u8(simde_uint8x16x4_t t, simde_uint8x8_t idx) {
       __m128i r128_23 = _mm_blendv_epi8(r128_2, r128_3, idx128_shl3);
       __m128i r128 = _mm_blendv_epi8(r128_01, r128_23, _mm_slli_epi32(idx128, 2));
       r_.m64 = _mm_movepi64_pi64(r128);
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      vuint8m4_t t1 = __riscv_vlmul_ext_v_u8m1_u8m4 (t_[0].sv128);
+      vuint8m4_t t2 = __riscv_vlmul_ext_v_u8m1_u8m4 (t_[1].sv128);
+      vuint8m4_t t3 = __riscv_vlmul_ext_v_u8m1_u8m4 (t_[2].sv128);
+      vuint8m4_t t4 = __riscv_vlmul_ext_v_u8m1_u8m4 (t_[3].sv128);
+      vuint8m4_t t_combine = __riscv_vslideup_vx_u8m4(t3 , t4 , 16 , 64);
+      t_combine = __riscv_vslideup_vx_u8m4(t2 , t_combine , 16 , 64);
+      t_combine = __riscv_vslideup_vx_u8m4(t1 , t_combine , 16 , 64);
+      vuint8m4_t idxm4 = __riscv_vlmul_ext_v_u8m1_u8m4(idx_.sv64);
+      vbool2_t mask = __riscv_vmsgeu_vx_u8m4_b2 (idxm4, 64, 8);
+      vuint8m4_t r_tmp = __riscv_vrgather_vv_u8m4(t_combine , idxm4 , 8);
+      r_.sv64 = __riscv_vlmul_trunc_v_u8m4_u8m1(__riscv_vmerge_vxm_u8m4(r_tmp, 0, mask, 8));
     #else
       SIMDE_VECTORIZE
       for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
@@ -121162,6 +124613,10 @@ simde_vqtbl1q_u8(simde_uint8x16_t t, simde_uint8x16_t idx) {
       r_.m128i = _mm_shuffle_epi8(t_.m128i, _mm_or_si128(idx_.m128i, _mm_cmpgt_epi8(idx_.m128i, _mm_set1_epi8(15))));
     #elif defined(SIMDE_WASM_SIMD128_NATIVE)
       r_.v128 = wasm_i8x16_swizzle(t_.v128, idx_.v128);
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      vbool8_t mask = __riscv_vmsgeu_vx_u8m1_b8 (idx_.sv128, 16, 16);
+      r_.sv128 = __riscv_vrgather_vv_u8m1(t_.sv128 , idx_.sv128 , 16);
+      r_.sv128 = __riscv_vmerge_vxm_u8m1(r_.sv128, 0, mask, 16);
     #else
       SIMDE_VECTORIZE
       for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
@@ -121221,6 +124676,14 @@ simde_vqtbl2q_u8(simde_uint8x16x2_t t, simde_uint8x16_t idx) {
     #elif defined(SIMDE_WASM_SIMD128_NATIVE)
       r_.v128 = wasm_v128_or(wasm_i8x16_swizzle(t_[0].v128, idx_.v128),
                              wasm_i8x16_swizzle(t_[1].v128, wasm_i8x16_sub(idx_.v128, wasm_i8x16_splat(16))));
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      vuint8m2_t t1 = __riscv_vlmul_ext_v_u8m1_u8m2 (t_[0].sv128);
+      vuint8m2_t t2 = __riscv_vlmul_ext_v_u8m1_u8m2 (t_[1].sv128);
+      vuint8m2_t t_combine = __riscv_vslideup_vx_u8m2(t1 , t2 , 16 , 32);
+      vuint8m2_t idxm2 = __riscv_vlmul_ext_v_u8m1_u8m2(idx_.sv128);
+      vbool4_t mask = __riscv_vmsgeu_vx_u8m2_b4 (idxm2, 32, 16);
+      vuint8m2_t r_tmp = __riscv_vrgather_vv_u8m2(t_combine , idxm2 , 16);
+      r_.sv128 = __riscv_vlmul_trunc_v_u8m2_u8m1(__riscv_vmerge_vxm_u8m2(r_tmp, 0, mask, 16));
     #else
       SIMDE_VECTORIZE
       for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
@@ -121291,6 +124754,16 @@ simde_vqtbl3q_u8(simde_uint8x16x3_t t, simde_uint8x16_t idx) {
       r_.v128 = wasm_v128_or(wasm_v128_or(wasm_i8x16_swizzle(t_[0].v128, idx_.v128),
                                           wasm_i8x16_swizzle(t_[1].v128, wasm_i8x16_sub(idx_.v128, wasm_i8x16_splat(16)))),
                              wasm_i8x16_swizzle(t_[2].v128, wasm_i8x16_sub(idx_.v128, wasm_i8x16_splat(32))));
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      vuint8m4_t t1 = __riscv_vlmul_ext_v_u8m1_u8m4 (t_[0].sv128);
+      vuint8m4_t t2 = __riscv_vlmul_ext_v_u8m1_u8m4 (t_[1].sv128);
+      vuint8m4_t t3 = __riscv_vlmul_ext_v_u8m1_u8m4 (t_[2].sv128);
+      vuint8m4_t t_combine = __riscv_vslideup_vx_u8m4(t2 , t3 , 16 , 48);
+      t_combine = __riscv_vslideup_vx_u8m4(t1 , t_combine , 16 , 48);
+      vuint8m4_t idxm4 = __riscv_vlmul_ext_v_u8m1_u8m4(idx_.sv128);
+      vbool2_t mask = __riscv_vmsgeu_vx_u8m4_b2 (idxm4, 48, 16);
+      vuint8m4_t r_tmp = __riscv_vrgather_vv_u8m4(t_combine , idxm4 , 16);
+      r_.sv128 = __riscv_vlmul_trunc_v_u8m4_u8m1(__riscv_vmerge_vxm_u8m4(r_tmp, 0, mask, 16));
     #else
       SIMDE_VECTORIZE
       for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
@@ -121365,6 +124838,18 @@ simde_vqtbl4q_u8(simde_uint8x16x4_t t, simde_uint8x16_t idx) {
                                           wasm_i8x16_swizzle(t_[1].v128, wasm_i8x16_sub(idx_.v128, wasm_i8x16_splat(16)))),
                              wasm_v128_or(wasm_i8x16_swizzle(t_[2].v128, wasm_i8x16_sub(idx_.v128, wasm_i8x16_splat(32))),
                                           wasm_i8x16_swizzle(t_[3].v128, wasm_i8x16_sub(idx_.v128, wasm_i8x16_splat(48)))));
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      vuint8m4_t t1 = __riscv_vlmul_ext_v_u8m1_u8m4 (t_[0].sv128);
+      vuint8m4_t t2 = __riscv_vlmul_ext_v_u8m1_u8m4 (t_[1].sv128);
+      vuint8m4_t t3 = __riscv_vlmul_ext_v_u8m1_u8m4 (t_[2].sv128);
+      vuint8m4_t t4 = __riscv_vlmul_ext_v_u8m1_u8m4 (t_[3].sv128);
+      vuint8m4_t t_combine = __riscv_vslideup_vx_u8m4(t3 , t4 , 16 , 64);
+      t_combine = __riscv_vslideup_vx_u8m4(t2 , t_combine , 16 , 64);
+      t_combine = __riscv_vslideup_vx_u8m4(t1 , t_combine , 16 , 64);
+      vuint8m4_t idxm4 = __riscv_vlmul_ext_v_u8m1_u8m4(idx_.sv128);
+      vbool2_t mask = __riscv_vmsgeu_vx_u8m4_b2 (idxm4, 64, 16);
+      vuint8m4_t r_tmp = __riscv_vrgather_vv_u8m4(t_combine , idxm4 , 16);
+      r_.sv128 = __riscv_vlmul_trunc_v_u8m4_u8m1(__riscv_vmerge_vxm_u8m4(r_tmp, 0, mask, 16));
     #else
       SIMDE_VECTORIZE
       for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
@@ -121528,7 +125013,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_QTBL_H) */
 /* :: End simde/arm/neon/qtbl.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/qtbx.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -121556,15 +125041,16 @@ HEDLEY_DIAGNOSTIC_POP
  *   2020      Evan Nemerson <evan@nemerson.com>
  *   2020      Christopher Moore <moore@free.fr>
  *   2023      Yi-Yen Chung <eric681@andestech.com> (Copyright owned by Andes Technology)
+ *   2023      Ju-Hung Li <jhlee@pllab.cs.nthu.edu.tw> (Copyright owned by NTHU pllab)
  */
 
 #if !defined(SIMDE_ARM_NEON_QTBX_H)
 #define SIMDE_ARM_NEON_QTBX_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -121592,6 +125078,10 @@ simde_vqtbx1_u8(simde_uint8x8_t a, simde_uint8x16_t t, simde_uint8x8_t idx) {
       __m128i r128 = _mm_shuffle_epi8(t_.m128i, idx128);
       r128 =  _mm_blendv_epi8(r128, _mm_set1_epi64(a_.m64), idx128);
       r_.m64 = _mm_movepi64_pi64(r128);
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      vbool8_t mask = __riscv_vmsgeu_vx_u8m1_b8 (idx_.sv64, 16, 8);
+      r_.sv64 = __riscv_vrgather_vv_u8m1(t_.sv128 , idx_.sv64 , 8);
+      r_.sv64 = __riscv_vmerge_vvm_u8m1(r_.sv64, a_.sv64, mask, 8);
     #else
       SIMDE_VECTORIZE
       for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
@@ -121647,6 +125137,15 @@ simde_vqtbx2_u8(simde_uint8x8_t a, simde_uint8x16x2_t t, simde_uint8x8_t idx) {
       __m128i r128 = _mm_blendv_epi8(r128_0, r128_1, _mm_slli_epi32(idx128, 3));
       r128 =  _mm_blendv_epi8(r128, _mm_set1_epi64(a_.m64), idx128);
       r_.m64 = _mm_movepi64_pi64(r128);
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      vuint8m2_t t1 = __riscv_vlmul_ext_v_u8m1_u8m2 (t_[0].sv128);
+      vuint8m2_t t2 = __riscv_vlmul_ext_v_u8m1_u8m2 (t_[1].sv128);
+      vuint8m2_t am2 = __riscv_vlmul_ext_v_u8m1_u8m2(a_.sv64);
+      vuint8m2_t t_combine = __riscv_vslideup_vx_u8m2(t1 , t2 , 16 , 32);
+      vuint8m2_t idxm2 = __riscv_vlmul_ext_v_u8m1_u8m2(idx_.sv64);
+      vbool4_t mask = __riscv_vmsgeu_vx_u8m2_b4 (idxm2, 32, 8);
+      vuint8m2_t r_tmp = __riscv_vrgather_vv_u8m2(t_combine , idxm2 , 8);
+      r_.sv64 = __riscv_vlmul_trunc_v_u8m2_u8m1(__riscv_vmerge_vvm_u8m2(r_tmp, am2, mask, 8));
     #else
       SIMDE_VECTORIZE
       for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
@@ -121708,6 +125207,17 @@ simde_vqtbx3_u8(simde_uint8x8_t a, simde_uint8x16x3_t t, simde_uint8x8_t idx) {
       __m128i r128 = _mm_blendv_epi8(r128_01, r128_2, _mm_slli_epi32(idx128, 2));
       r128 =  _mm_blendv_epi8(r128, _mm_set1_epi64(a_.m64), idx128);
       r_.m64 = _mm_movepi64_pi64(r128);
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      vuint8m4_t t1 = __riscv_vlmul_ext_v_u8m1_u8m4 (t_[0].sv128);
+      vuint8m4_t t2 = __riscv_vlmul_ext_v_u8m1_u8m4 (t_[1].sv128);
+      vuint8m4_t t3 = __riscv_vlmul_ext_v_u8m1_u8m4 (t_[2].sv128);
+      vuint8m4_t am4 = __riscv_vlmul_ext_v_u8m1_u8m4 (a_.sv64);
+      vuint8m4_t t_combine = __riscv_vslideup_vx_u8m4(t2 , t3 , 16 , 48);
+      t_combine = __riscv_vslideup_vx_u8m4(t1 , t_combine , 16 , 48);
+      vuint8m4_t idxm4 = __riscv_vlmul_ext_v_u8m1_u8m4(idx_.sv64);
+      vbool2_t mask = __riscv_vmsgeu_vx_u8m4_b2 (idxm4, 48, 8);
+      vuint8m4_t r_tmp = __riscv_vrgather_vv_u8m4(t_combine , idxm4 , 8);
+      r_.sv64 = __riscv_vlmul_trunc_v_u8m4_u8m1(__riscv_vmerge_vvm_u8m4(r_tmp, am4, mask, 8));
     #else
       SIMDE_VECTORIZE
       for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
@@ -121772,6 +125282,19 @@ simde_vqtbx4_u8(simde_uint8x8_t a, simde_uint8x16x4_t t, simde_uint8x8_t idx) {
       __m128i r128 = _mm_blendv_epi8(r128_01, r128_23, _mm_slli_epi32(idx128, 2));
       r128 =  _mm_blendv_epi8(r128, _mm_set1_epi64(a_.m64), idx128);
       r_.m64 = _mm_movepi64_pi64(r128);
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      vuint8m4_t t1 = __riscv_vlmul_ext_v_u8m1_u8m4 (t_[0].sv128);
+      vuint8m4_t t2 = __riscv_vlmul_ext_v_u8m1_u8m4 (t_[1].sv128);
+      vuint8m4_t t3 = __riscv_vlmul_ext_v_u8m1_u8m4 (t_[2].sv128);
+      vuint8m4_t t4 = __riscv_vlmul_ext_v_u8m1_u8m4 (t_[3].sv128);
+      vuint8m4_t am4 = __riscv_vlmul_ext_v_u8m1_u8m4 (a_.sv64);
+      vuint8m4_t t_combine = __riscv_vslideup_vx_u8m4(t3 , t4 , 16 , 64);
+      t_combine = __riscv_vslideup_vx_u8m4(t2 , t_combine , 16 , 64);
+      t_combine = __riscv_vslideup_vx_u8m4(t1 , t_combine , 16 , 64);
+      vuint8m4_t idxm4 = __riscv_vlmul_ext_v_u8m1_u8m4(idx_.sv64);
+      vbool2_t mask = __riscv_vmsgeu_vx_u8m4_b2 (idxm4, 64, 8);
+      vuint8m4_t r_tmp = __riscv_vrgather_vv_u8m4(t_combine , idxm4 , 8);
+      r_.sv64 = __riscv_vlmul_trunc_v_u8m4_u8m1(__riscv_vmerge_vvm_u8m4(r_tmp, am4, mask, 8));
     #else
       SIMDE_VECTORIZE
       for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
@@ -121833,6 +125356,10 @@ simde_vqtbx1q_u8(simde_uint8x16_t a, simde_uint8x16_t t, simde_uint8x16_t idx) {
     #elif defined(SIMDE_WASM_SIMD128_NATIVE)
       r_.v128 = wasm_v128_or(wasm_i8x16_swizzle(t_.v128, idx_.v128),
                              wasm_v128_and(a_.v128, wasm_u8x16_gt(idx_.v128, wasm_i8x16_splat(15))));
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      vbool8_t mask = __riscv_vmsgeu_vx_u8m1_b8 (idx_.sv128, 16, 16);
+      r_.sv128 = __riscv_vrgather_vv_u8m1(t_.sv128 , idx_.sv128 , 16);
+      r_.sv128 = __riscv_vmerge_vvm_u8m1(r_.sv128, a_.sv128, mask, 16);
     #else
       SIMDE_VECTORIZE
       for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
@@ -121895,6 +125422,15 @@ simde_vqtbx2q_u8(simde_uint8x16_t a, simde_uint8x16x2_t t, simde_uint8x16_t idx)
       r_.v128 = wasm_v128_or(wasm_v128_or(wasm_i8x16_swizzle(t_[0].v128, idx_.v128),
                                           wasm_i8x16_swizzle(t_[1].v128, wasm_i8x16_sub(idx_.v128, wasm_i8x16_splat(16)))),
                               wasm_v128_and(a_.v128, wasm_u8x16_gt(idx_.v128, wasm_i8x16_splat(31))));
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      vuint8m2_t t1 = __riscv_vlmul_ext_v_u8m1_u8m2 (t_[0].sv128);
+      vuint8m2_t t2 = __riscv_vlmul_ext_v_u8m1_u8m2 (t_[1].sv128);
+      vuint8m2_t am2 = __riscv_vlmul_ext_v_u8m1_u8m2 (a_.sv128);
+      vuint8m2_t t_combine = __riscv_vslideup_vx_u8m2(t1 , t2 , 16 , 32);
+      vuint8m2_t idxm2 = __riscv_vlmul_ext_v_u8m1_u8m2(idx_.sv128);
+      vbool4_t mask = __riscv_vmsgeu_vx_u8m2_b4 (idxm2, 32, 16);
+      vuint8m2_t r_tmp = __riscv_vrgather_vv_u8m2(t_combine , idxm2 , 16);
+      r_.sv128 = __riscv_vlmul_trunc_v_u8m2_u8m1(__riscv_vmerge_vvm_u8m2(r_tmp, am2, mask, 16));
     #else
       SIMDE_VECTORIZE
       for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
@@ -121968,6 +125504,17 @@ simde_vqtbx3q_u8(simde_uint8x16_t a, simde_uint8x16x3_t t, simde_uint8x16_t idx)
                                           wasm_i8x16_swizzle(t_[1].v128, wasm_i8x16_sub(idx_.v128, wasm_i8x16_splat(16)))),
                              wasm_v128_or(wasm_i8x16_swizzle(t_[2].v128, wasm_i8x16_sub(idx_.v128, wasm_i8x16_splat(32))) ,
                                           wasm_v128_and(a_.v128, wasm_u8x16_gt(idx_.v128, wasm_i8x16_splat(47)))));
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      vuint8m4_t t1 = __riscv_vlmul_ext_v_u8m1_u8m4 (t_[0].sv128);
+      vuint8m4_t t2 = __riscv_vlmul_ext_v_u8m1_u8m4 (t_[1].sv128);
+      vuint8m4_t t3 = __riscv_vlmul_ext_v_u8m1_u8m4 (t_[2].sv128);
+      vuint8m4_t am4 = __riscv_vlmul_ext_v_u8m1_u8m4 (a_.sv128);
+      vuint8m4_t t_combine = __riscv_vslideup_vx_u8m4(t2 , t3 , 16 , 48);
+      t_combine = __riscv_vslideup_vx_u8m4(t1 , t_combine , 16 , 48);
+      vuint8m4_t idxm4 = __riscv_vlmul_ext_v_u8m1_u8m4(idx_.sv128);
+      vbool2_t mask = __riscv_vmsgeu_vx_u8m4_b2 (idxm4, 48, 16);
+      vuint8m4_t r_tmp = __riscv_vrgather_vv_u8m4(t_combine , idxm4 , 16);
+      r_.sv128 = __riscv_vlmul_trunc_v_u8m4_u8m1(__riscv_vmerge_vvm_u8m4(r_tmp, am4, mask, 16));
     #else
       SIMDE_VECTORIZE
       for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
@@ -122045,6 +125592,19 @@ simde_vqtbx4q_u8(simde_uint8x16_t a, simde_uint8x16x4_t t, simde_uint8x16_t idx)
                                           wasm_v128_or(wasm_i8x16_swizzle(t_[2].v128, wasm_i8x16_sub(idx_.v128, wasm_i8x16_splat(32))),
                                                        wasm_i8x16_swizzle(t_[3].v128, wasm_i8x16_sub(idx_.v128, wasm_i8x16_splat(48))))),
                              wasm_v128_and(a_.v128, wasm_u8x16_gt(idx_.v128, wasm_i8x16_splat(63))));
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      vuint8m4_t t1 = __riscv_vlmul_ext_v_u8m1_u8m4 (t_[0].sv128);
+      vuint8m4_t t2 = __riscv_vlmul_ext_v_u8m1_u8m4 (t_[1].sv128);
+      vuint8m4_t t3 = __riscv_vlmul_ext_v_u8m1_u8m4 (t_[2].sv128);
+      vuint8m4_t t4 = __riscv_vlmul_ext_v_u8m1_u8m4 (t_[3].sv128);
+      vuint8m4_t am4 = __riscv_vlmul_ext_v_u8m1_u8m4 (a_.sv128);
+      vuint8m4_t t_combine = __riscv_vslideup_vx_u8m4(t3 , t4 , 16 , 64);
+      t_combine = __riscv_vslideup_vx_u8m4(t2 , t_combine , 16 , 64);
+      t_combine = __riscv_vslideup_vx_u8m4(t1 , t_combine , 16 , 64);
+      vuint8m4_t idxm4 = __riscv_vlmul_ext_v_u8m1_u8m4(idx_.sv128);
+      vbool2_t mask = __riscv_vmsgeu_vx_u8m4_b2 (idxm4, 64, 16);
+      vuint8m4_t r_tmp = __riscv_vrgather_vv_u8m4(t_combine , idxm4 , 16);
+      r_.sv128 = __riscv_vlmul_trunc_v_u8m4_u8m1(__riscv_vmerge_vvm_u8m4(r_tmp, am4, mask, 16));
     #else
       SIMDE_VECTORIZE
       for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
@@ -122208,7 +125768,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_QTBX_H) */
 /* :: End simde/arm/neon/qtbx.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/raddhn.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -122240,14 +125800,14 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_RADDHN_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -122398,7 +125958,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_RADDHN_H) */
 /* :: End simde/arm/neon/raddhn.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/raddhn_high.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -122430,12 +125990,12 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_RADDHN_HIGH_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -122507,7 +126067,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_RADDHN_HIGH_H) */
 /* :: End simde/arm/neon/raddhn_high.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/rax.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -122539,7 +126099,7 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_RAX_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -122576,7 +126136,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_RAX_H) */
 /* :: End simde/arm/neon/rax.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/rbit.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -122604,6 +126164,7 @@ HEDLEY_DIAGNOSTIC_POP
  *   2020      Evan Nemerson <evan@nemerson.com>
  *   2020      Christopher Moore <moore@free.fr>
  *   2023      Yi-Yen Chung <eric681@andestech.com> (Copyright owned by Andes Technology)
+ *   2023      Ju-Hung Li <jhlee@pllab.cs.nthu.edu.tw> (Copyright owned by NTHU pllab)
  */
 
 /* The GFNI implementation is based on Wojciech Muła's work at
@@ -122614,9 +126175,9 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_RBIT_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -122644,6 +126205,13 @@ simde_vrbit_u8(simde_uint8x8_t a) {
       a_.m64 = _mm_or_si64(_mm_andnot_si64(mask, _mm_slli_pi16(a_.m64, 2)), _mm_and_si64(mask, _mm_srli_pi16(a_.m64, 2)));
       mask = _mm_set1_pi8(0x0F);
       r_.m64 = _mm_or_si64(_mm_andnot_si64(mask, _mm_slli_pi16(a_.m64, 4)), _mm_and_si64(mask, _mm_srli_pi16(a_.m64, 4)));
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      vuint8m1_t mask;
+      mask = __riscv_vmv_v_x_u8m1(0x55 , 8);
+      a_.sv64 = __riscv_vor_vv_u8m1(__riscv_vand_vv_u8m1(mask , __riscv_vsrl_vx_u8m1(a_.sv64 , 1 , 8) , 8)  , __riscv_vsll_vx_u8m1(__riscv_vand_vv_u8m1(mask , a_.sv64 , 8) , 1 , 8) , 8);
+      mask = __riscv_vmv_v_x_u8m1(0x33 , 8);
+      a_.sv64 = __riscv_vor_vv_u8m1(__riscv_vand_vv_u8m1(mask , __riscv_vsrl_vx_u8m1(a_.sv64 , 2 , 8) , 8)  , __riscv_vsll_vx_u8m1(__riscv_vand_vv_u8m1(mask , a_.sv64 , 8) , 2 , 8) , 8);
+      r_.sv64 = __riscv_vor_vv_u8m1(__riscv_vsrl_vx_u8m1(a_.sv64 , 4 , 8) , __riscv_vsll_vx_u8m1(a_.sv64 , 4 , 8) , 8);
     #else
       SIMDE_VECTORIZE
       for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
@@ -122709,6 +126277,13 @@ simde_vrbitq_u8(simde_uint8x16_t a) {
       a_.v128 = wasm_v128_bitselect(wasm_u8x16_shr(a_.v128, 1), wasm_i8x16_shl(a_.v128, 1), wasm_i8x16_splat(0x55));
       a_.v128 = wasm_v128_bitselect(wasm_u8x16_shr(a_.v128, 2), wasm_i8x16_shl(a_.v128, 2), wasm_i8x16_splat(0x33));
       r_.v128 = wasm_v128_or(wasm_u8x16_shr(a_.v128, 4), wasm_i8x16_shl(a_.v128, 4));
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      vuint8m1_t mask;
+      mask = __riscv_vmv_v_x_u8m1(0x55 , 16);
+      a_.sv128 = __riscv_vor_vv_u8m1(__riscv_vand_vv_u8m1(mask , __riscv_vsrl_vx_u8m1(a_.sv128 , 1 , 16) , 16)  , __riscv_vsll_vx_u8m1(__riscv_vand_vv_u8m1(mask , a_.sv128 , 16) , 1 , 16) , 16);
+      mask = __riscv_vmv_v_x_u8m1(0x33 , 16);
+      a_.sv128 = __riscv_vor_vv_u8m1(__riscv_vand_vv_u8m1(mask , __riscv_vsrl_vx_u8m1(a_.sv128 , 2 , 16) , 16)  , __riscv_vsll_vx_u8m1(__riscv_vand_vv_u8m1(mask , a_.sv128 , 16) , 2 , 16) , 16);
+      r_.sv128 = __riscv_vor_vv_u8m1(__riscv_vsrl_vx_u8m1(a_.sv128 , 4 , 16) , __riscv_vsll_vx_u8m1(a_.sv128 , 4 , 16) , 16);
     #else
       SIMDE_VECTORIZE
       for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
@@ -122776,7 +126351,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_RBIT_H) */
 /* :: End simde/arm/neon/rbit.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/recpe.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -122804,13 +126379,14 @@ HEDLEY_DIAGNOSTIC_POP
  *   2020      Evan Nemerson <evan@nemerson.com>
  *   2021      Zhi An Ng <zhin@google.com> (Copyright owned by Google, LLC)
  *   2023      Yi-Yen Chung <eric681@andestech.com> (Copyright owned by Andes Technology)
+ *   2023      Ju-Hung Li <jhlee@pllab.cs.nthu.edu.tw> (Copyright owned by NTHU pllab)
  */
 
 #if !defined(SIMDE_ARM_NEON_RECPE_H)
 #define SIMDE_ARM_NEON_RECPE_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -122871,10 +126447,14 @@ simde_vrecpe_f16(simde_float16x4_t a) {
       r_,
       a_ = simde_float16x4_to_private(a);
 
-    SIMDE_VECTORIZE
-    for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
-      r_.values[i] = simde_vrecpeh_f16(a_.values[i]);
-    }
+    #if defined(SIMDE_RISCV_V_NATIVE) && defined(SIMDE_ARCH_RISCV_ZVFH)
+      r_.sv64 = __riscv_vfrec7_v_f16m1(a_.sv64 , 4);
+    #else
+      SIMDE_VECTORIZE
+      for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
+        r_.values[i] = simde_vrecpeh_f16(a_.values[i]);
+      }
+    #endif
 
     return simde_float16x4_from_private(r_);
   #endif
@@ -122894,7 +126474,9 @@ simde_vrecpe_f32(simde_float32x2_t a) {
       r_,
       a_ = simde_float32x2_to_private(a);
 
-    #if defined(SIMDE_IEEE754_STORAGE)
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv64 = __riscv_vfrec7_v_f32m1(a_.sv64 , 2);
+    #elif defined(SIMDE_IEEE754_STORAGE)
       /* https://stackoverflow.com/questions/12227126/division-as-multiply-and-lut-fast-float-division-reciprocal/12228234#12228234 */
       SIMDE_VECTORIZE
       for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
@@ -122933,7 +126515,9 @@ simde_vrecpe_f64(simde_float64x1_t a) {
       r_,
       a_ = simde_float64x1_to_private(a);
 
-    #if defined(SIMDE_VECTOR_SUBSCRIPT_SCALAR)
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv64 = __riscv_vfrec7_v_f64m1(a_.sv64 , 1);
+    #elif defined(SIMDE_VECTOR_SUBSCRIPT_SCALAR)
       r_.values = 1.0 / a_.values;
     #else
       SIMDE_VECTORIZE
@@ -122960,7 +126544,9 @@ simde_vrecpeq_f64(simde_float64x2_t a) {
       r_,
       a_ = simde_float64x2_to_private(a);
 
-    #if defined(SIMDE_VECTOR_SUBSCRIPT_SCALAR)
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv128 = __riscv_vfrec7_v_f64m1(a_.sv128 , 2);
+    #elif defined(SIMDE_VECTOR_SUBSCRIPT_SCALAR)
       r_.values = 1.0 / a_.values;
     #else
       SIMDE_VECTORIZE
@@ -122989,8 +126575,11 @@ simde_vrecpeq_f32(simde_float32x4_t a) {
       r_,
       a_ = simde_float32x4_to_private(a);
 
+
     #if defined(SIMDE_X86_SSE_NATIVE)
       r_.m128 = _mm_rcp_ps(a_.m128);
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv128 = __riscv_vfrec7_v_f32m1(a_.sv128 , 4);
     #elif defined(SIMDE_IEEE754_STORAGE)
       /* https://stackoverflow.com/questions/12227126/division-as-multiply-and-lut-fast-float-division-reciprocal/12228234#12228234 */
       SIMDE_VECTORIZE
@@ -123030,10 +126619,14 @@ simde_vrecpeq_f16(simde_float16x8_t a) {
       r_,
       a_ = simde_float16x8_to_private(a);
 
-    SIMDE_VECTORIZE
-    for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
-      r_.values[i] = simde_vrecpeh_f16(a_.values[i]);
-    }
+    #if defined(SIMDE_RISCV_V_NATIVE) && defined(SIMDE_ARCH_RISCV_ZVFH)
+      r_.sv128 = __riscv_vfrec7_v_f16m1(a_.sv128 , 8);
+    #else
+      SIMDE_VECTORIZE
+      for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
+        r_.values[i] = simde_vrecpeh_f16(a_.values[i]);
+      }
+    #endif
 
     return simde_float16x8_from_private(r_);
   #endif
@@ -123110,7 +126703,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_RECPE_H) */
 /* :: End simde/arm/neon/recpe.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/recps.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -123143,11 +126736,11 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_RECPS_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -123305,7 +126898,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_RECPS_H) */
 /* :: End simde/arm/neon/recps.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/recpx.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -123339,7 +126932,7 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_RECPX_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -123443,9 +127036,9 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_RECPX_H) */
 /* :: End simde/arm/neon/recpx.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/rev16.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -123473,15 +127066,16 @@ HEDLEY_DIAGNOSTIC_POP
  *   2020      Evan Nemerson <evan@nemerson.com>
  *   2020      Christopher Moore <moore@free.fr>
  *   2023      Yi-Yen Chung <eric681@andestech.com> (Copyright owned by Andes Technology)
+ *   2023      Ju-Hung Li <jhlee@pllab.cs.nthu.edu.tw> (Copyright owned by NTHU pllab)
  */
 
 #if !defined(SIMDE_ARM_NEON_REV16_H)
 #define SIMDE_ARM_NEON_REV16_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -123499,6 +127093,9 @@ simde_vrev16_s8(simde_int8x8_t a) {
 
     #if defined(SIMDE_X86_SSSE3_NATIVE) && defined(SIMDE_X86_MMX_NATIVE)
       r_.m64 = _mm_shuffle_pi8(a_.m64, _mm_set_pi8(6, 7, 4, 5, 2, 3, 0, 1));
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      uint8_t shuffle_idx[] = {1, 0, 3, 2, 5, 4, 7, 6};
+      r_.sv64 = __riscv_vrgather_vv_i8m1(a_.sv64, __riscv_vle8_v_u8m1(shuffle_idx, 8), 8);
     #elif defined(SIMDE_SHUFFLE_VECTOR_) && !defined(SIMDE_BUG_GCC_100762)
       r_.values = SIMDE_SHUFFLE_VECTOR_(8, 8, a_.values, a_.values, 1, 0, 3, 2, 5, 4, 7, 6);
     #else
@@ -123550,6 +127147,9 @@ simde_vrev16q_s8(simde_int8x16_t a) {
       r_.m128i = _mm_shuffle_epi8(a_.m128i, _mm_set_epi8(14, 15, 12, 13, 10, 11, 8, 9, 6, 7, 4, 5, 2, 3, 0, 1));
     #elif defined(SIMDE_WASM_SIMD128_NATIVE)
       r_.v128 = wasm_i8x16_shuffle(a_.v128, a_.v128, 1, 0, 3, 2, 5, 4, 7, 6, 9, 8, 11, 10, 13, 12, 15, 14);
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      uint8_t shuffle_idx[] = {1, 0, 3, 2, 5, 4, 7, 6, 9, 8, 11, 10, 13, 12, 15, 14};
+      r_.sv128 = __riscv_vrgather_vv_i8m1(a_.sv128, __riscv_vle8_v_u8m1(shuffle_idx, 16), 16);
     #elif defined(SIMDE_SHUFFLE_VECTOR_)
       r_.values = SIMDE_SHUFFLE_VECTOR_(8, 16, a_.values, a_.values, 1, 0, 3, 2, 5, 4, 7, 6, 9, 8, 11, 10, 13, 12, 15, 14);
     #else
@@ -123615,7 +127215,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_REV16_H) */
 /* :: End simde/arm/neon/rev16.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/rev32.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -123643,15 +127243,16 @@ HEDLEY_DIAGNOSTIC_POP
  *   2020      Evan Nemerson <evan@nemerson.com>
  *   2020      Christopher Moore <moore@free.fr>
  *   2023      Yi-Yen Chung <eric681@andestech.com> (Copyright owned by Andes Technology)
+ *   2023      Ju-Hung Li <jhlee@pllab.cs.nthu.edu.tw> (Copyright owned by NTHU pllab)
  */
 
 #if !defined(SIMDE_ARM_NEON_REV32_H)
 #define SIMDE_ARM_NEON_REV32_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -123669,6 +127270,9 @@ simde_vrev32_s8(simde_int8x8_t a) {
 
     #if defined(SIMDE_X86_SSSE3_NATIVE) && defined(SIMDE_X86_MMX_NATIVE)
       r_.m64 = _mm_shuffle_pi8(a_.m64, _mm_set_pi8(4, 5, 6, 7, 0, 1, 2, 3));
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      uint8_t shuffle_idx[] = {3, 2, 1, 0, 7, 6, 5, 4};
+      r_.sv64 = __riscv_vrgather_vv_i8m1(a_.sv64, __riscv_vle8_v_u8m1(shuffle_idx, 8), 8);
     #elif defined(SIMDE_SHUFFLE_VECTOR_) && !defined(SIMDE_BUG_GCC_100762)
       r_.values = SIMDE_SHUFFLE_VECTOR_(8, 8, a_.values, a_.values, 3, 2, 1, 0, 7, 6, 5, 4);
     #else
@@ -123698,6 +127302,9 @@ simde_vrev32_s16(simde_int16x4_t a) {
 
     #if defined(SIMDE_X86_SSE_NATIVE) && defined(SIMDE_X86_MMX_NATIVE)
       r_.m64 = _mm_shuffle_pi16(a_.m64, (2 << 6) | (3 << 4) | (0 << 2) | (1 << 0));
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      uint16_t shuffle_idx[] = {1, 0, 3, 2};
+      r_.sv64 = __riscv_vrgather_vv_i16m1(a_.sv64, __riscv_vle16_v_u16m1(shuffle_idx, 4), 4);
     #elif defined(SIMDE_SHUFFLE_VECTOR_)
       r_.values = SIMDE_SHUFFLE_VECTOR_(16, 8, a_.values, a_.values, 1, 0, 3, 2);
     #else
@@ -123764,6 +127371,9 @@ simde_vrev32q_s8(simde_int8x16_t a) {
                                                           4,  5,  6,  7, 0, 1,  2,  3));
     #elif defined(SIMDE_WASM_SIMD128_NATIVE)
       r_.v128 = wasm_i8x16_shuffle(a_.v128, a_.v128, 3, 2, 1, 0, 7, 6, 5, 4, 11, 10, 9, 8, 15, 14, 13, 12);
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      uint8_t shuffle_idx[] = {3, 2, 1, 0, 7, 6, 5, 4, 11, 10, 9, 8, 15, 14, 13, 12};
+      r_.sv128 = __riscv_vrgather_vv_i8m1(a_.sv128, __riscv_vle8_v_u8m1(shuffle_idx, 16), 16);
     #elif defined(SIMDE_SHUFFLE_VECTOR_)
       r_.values = SIMDE_SHUFFLE_VECTOR_(8, 16, a_.values, a_.values, 3, 2, 1, 0, 7, 6, 5, 4, 11, 10, 9, 8, 15, 14, 13, 12);
     #else
@@ -123794,7 +127404,10 @@ simde_vrev32q_s16(simde_int16x8_t a) {
       r_,
       a_ = simde_int16x8_to_private(a);
 
-    #if defined(SIMDE_X86_SSSE3_NATIVE)
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      uint16_t shuffle_idx[] = {1, 0, 3, 2, 5, 4, 7, 6};
+      r_.sv128 = __riscv_vrgather_vv_i16m1(a_.sv128, __riscv_vle16_v_u16m1(shuffle_idx, 8), 8);
+    #elif defined(SIMDE_X86_SSSE3_NATIVE)
       r_.m128i = _mm_shuffle_epi8(a_.m128i, _mm_set_epi8(13, 12, 15, 14, 9, 8, 11, 10,
                                                           5,  4,  7,  6, 1, 0,  3,  2));
     #elif defined(SIMDE_X86_SSE2_NATIVE)
@@ -123910,7 +127523,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_REV32_H) */
 /* :: End simde/arm/neon/rev32.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/rev64.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -123938,15 +127551,16 @@ HEDLEY_DIAGNOSTIC_POP
  *   2020      Evan Nemerson <evan@nemerson.com>
  *   2020      Christopher Moore <moore@free.fr>
  *   2023      Yi-Yen Chung <eric681@andestech.com> (Copyright owned by Andes Technology)
+ *   2023      Ju-Hung Li <jhlee@pllab.cs.nthu.edu.tw> (Copyright owned by NTHU pllab)
  */
 
 #if !defined(SIMDE_ARM_NEON_REV64_H)
 #define SIMDE_ARM_NEON_REV64_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -123964,6 +127578,9 @@ simde_vrev64_s8(simde_int8x8_t a) {
 
     #if defined(SIMDE_X86_SSSE3_NATIVE) && defined(SIMDE_X86_MMX_NATIVE)
       r_.m64 = _mm_shuffle_pi8(a_.m64, _mm_set_pi8(0, 1, 2, 3, 4, 5, 6, 7));
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      uint8_t shuffle_idx[] = {7, 6, 5, 4, 3, 2, 1, 0};
+      r_.sv64 = __riscv_vrgather_vv_i8m1(a_.sv64, __riscv_vle8_v_u8m1(shuffle_idx, 8), 8);
     #elif defined(SIMDE_SHUFFLE_VECTOR_) && !defined(SIMDE_BUG_GCC_100762)
       r_.values = SIMDE_SHUFFLE_VECTOR_(8, 8, a_.values, a_.values, 7, 6, 5, 4, 3, 2, 1, 0);
     #else
@@ -123993,6 +127610,9 @@ simde_vrev64_s16(simde_int16x4_t a) {
 
     #if defined(SIMDE_X86_SSE_NATIVE) && defined(SIMDE_X86_MMX_NATIVE)
       r_.m64 = _mm_shuffle_pi16(a_.m64, (0 << 6) | (1 << 4) | (2 << 2) | (3 << 0));
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      uint16_t shuffle_idx[] = {3, 2, 1, 0};
+      r_.sv64 = __riscv_vrgather_vv_i16m1(a_.sv64, __riscv_vle16_v_u16m1(shuffle_idx, 4), 4);
     #elif defined(SIMDE_SHUFFLE_VECTOR_)
       r_.values = SIMDE_SHUFFLE_VECTOR_(16, 8, a_.values, a_.values, 3, 2, 1, 0);
     #else
@@ -124022,6 +127642,9 @@ simde_vrev64_s32(simde_int32x2_t a) {
 
     #if defined(SIMDE_X86_SSE_NATIVE) && defined(SIMDE_X86_MMX_NATIVE)
       r_.m64 =  _mm_shuffle_pi16(a_.m64, (1 << 6) | (0 << 4) | (3 << 2) | (2 << 0));
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      uint32_t shuffle_idx[] = {1, 0};
+      r_.sv64 = __riscv_vrgather_vv_i32m1(a_.sv64, __riscv_vle32_v_u32m1(shuffle_idx, 2), 2);
     #elif defined(SIMDE_SHUFFLE_VECTOR_) && !defined(SIMDE_BUG_GCC_100762)
       r_.values = SIMDE_SHUFFLE_VECTOR_(32, 8, a_.values, a_.values, 1, 0);
     #else
@@ -124130,6 +127753,9 @@ simde_vrev64q_s8(simde_int8x16_t a) {
                                                          0, 1,  2,  3,  4,  5,  6,  7));
     #elif defined(SIMDE_WASM_SIMD128_NATIVE)
       r_.v128 = wasm_i8x16_shuffle(a_.v128, a_.v128, 7, 6, 5, 4, 3, 2, 1, 0, 15, 14, 13, 12, 11, 10, 9, 8);
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      uint8_t shuffle_idx[] = {7, 6, 5, 4, 3, 2, 1, 0, 15, 14, 13, 12, 11, 10, 9, 8};
+      r_.sv128 = __riscv_vrgather_vv_i8m1(a_.sv128, __riscv_vle8_v_u8m1(shuffle_idx, 16), 16);
     #elif defined(SIMDE_SHUFFLE_VECTOR_)
       r_.values = SIMDE_SHUFFLE_VECTOR_(8, 16, a_.values, a_.values, 7, 6, 5, 4, 3, 2, 1, 0, 15, 14, 13, 12, 11, 10, 9, 8);
     #else
@@ -124169,6 +127795,9 @@ simde_vrev64q_s16(simde_int16x8_t a) {
                                                         (0 << 6) | (1 << 4) | (2 << 2) | (3 << 0));
     #elif defined(SIMDE_WASM_SIMD128_NATIVE)
       r_.v128 = wasm_i8x16_shuffle(a_.v128, a_.v128, 6, 7, 4, 5, 2, 3, 0, 1, 14, 15, 12, 13, 10, 11, 8, 9);
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      uint16_t shuffle_idx[] = {3, 2, 1, 0, 7, 6, 5, 4};
+      r_.sv128 = __riscv_vrgather_vv_i16m1(a_.sv128, __riscv_vle16_v_u16m1(shuffle_idx, 8), 8);
     #elif defined(SIMDE_SHUFFLE_VECTOR_)
       r_.values = SIMDE_SHUFFLE_VECTOR_(16, 16, a_.values, a_.values, 3, 2, 1, 0, 7, 6, 5, 4);
     #else
@@ -124203,6 +127832,9 @@ simde_vrev64q_s32(simde_int32x4_t a) {
       r_.m128i = _mm_shuffle_epi32(a_.m128i, (2 << 6) | (3 << 4) | (0 << 2) | (1 << 0));
     #elif defined(SIMDE_WASM_SIMD128_NATIVE)
       r_.v128 = wasm_i8x16_shuffle(a_.v128, a_.v128, 4, 5, 6, 7, 0, 1, 2, 3, 12, 13, 14, 15, 8, 9, 10, 11);
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      uint32_t shuffle_idx[] = {1, 0, 3, 2};
+      r_.sv128 = __riscv_vrgather_vv_i32m1(a_.sv128, __riscv_vle32_v_u32m1(shuffle_idx, 4), 4);
     #elif defined(SIMDE_SHUFFLE_VECTOR_)
       r_.values = SIMDE_SHUFFLE_VECTOR_(32, 16, a_.values, a_.values, 1, 0, 3, 2);
     #else
@@ -124352,7 +127984,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_REV64_H) */
 /* :: End simde/arm/neon/rev64.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/rhadd.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -124399,7 +128031,7 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_RHADD_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -124789,7 +128421,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_RHADD_H) */
 /* :: End simde/arm/neon/rhadd.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/rnd.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -124822,7 +128454,7 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_RND_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -125002,7 +128634,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_RND_H) */
 /* :: End simde/arm/neon/rnd.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/rnd32x.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -125034,7 +128666,7 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_RND32X_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -125167,7 +128799,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_RND32X_H) */
 /* :: End simde/arm/neon/rnd32x.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/rnd32z.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -125199,7 +128831,7 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_RND32Z_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -125332,7 +128964,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_RND32Z_H) */
 /* :: End simde/arm/neon/rnd32z.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/rnd64x.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -125364,7 +128996,7 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_RND64X_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -125497,7 +129129,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_RND64X_H) */
 /* :: End simde/arm/neon/rnd64x.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/rnd64z.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -125529,7 +129161,7 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_RND64Z_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -125662,7 +129294,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_RND64Z_H) */
 /* :: End simde/arm/neon/rnd64z.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/rnda.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -125688,13 +129320,14 @@ HEDLEY_DIAGNOSTIC_POP
  *
  * Copyright:
  *   2023      Yi-Yen Chung <eric681@andestech.com> (Copyright owned by Andes Technology)
+ *   2023      Chi-Wei Chu <wewe5215@gapp.nthu.edu.tw> (Copyright owned by NTHU pllab)
  */
 
 #if !defined(SIMDE_ARM_NEON_RNDA_H)
 #define SIMDE_ARM_NEON_RNDA_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -125723,11 +129356,14 @@ simde_vrnda_f16(simde_float16x4_t a) {
     simde_float16x4_private
       r_,
       a_ = simde_float16x4_to_private(a);
-
-    SIMDE_VECTORIZE
-    for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
-      r_.values[i] = simde_vrndah_f16(a_.values[i]);
-    }
+    #if defined(SIMDE_RISCV_V_NATIVE) && defined(SIMDE_ARCH_RISCV_ZVFH)
+      r_.sv64 = __riscv_vfcvt_f_x_v_f16m1(__riscv_vfcvt_x_f_v_i16m1_rm(a_.sv64, 0, 4), 4);
+    #else
+      SIMDE_VECTORIZE
+      for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
+        r_.values[i] = simde_vrndah_f16(a_.values[i]);
+      }
+    #endif
 
     return simde_float16x4_from_private(r_);
   #endif
@@ -125747,10 +129383,21 @@ simde_vrnda_f32(simde_float32x2_t a) {
       r_,
       a_ = simde_float32x2_to_private(a);
 
-    SIMDE_VECTORIZE
-    for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
-      r_.values[i] = simde_math_roundf(a_.values[i]);
-    }
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      #if defined(SIMDE_FAST_NANS)
+        r_.sv64 = __riscv_vfcvt_f_x_v_f32m1(__riscv_vfcvt_x_f_v_i32m1_rm(a_.sv64, 0, 2), 2);
+      #else
+        simde_float32 nan = SIMDE_MATH_NAN;
+        vbool32_t mask = __riscv_vmseq_vx_u32m1_b32(__riscv_vfclass_v_u32m1(a_.sv64 , 2) , 512 , 2);
+        r_.sv64 = __riscv_vfmerge_vfm_f32m1(__riscv_vfcvt_f_x_v_f32m1(__riscv_vfcvt_x_f_v_i32m1_rm(a_.sv64, 0, 2), 2), \
+                  nan, mask, 2);
+      #endif
+    #else
+      SIMDE_VECTORIZE
+      for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
+        r_.values[i] = simde_math_roundf(a_.values[i]);
+      }
+    #endif
 
     return simde_float32x2_from_private(r_);
   #endif
@@ -125770,10 +129417,21 @@ simde_vrnda_f64(simde_float64x1_t a) {
       r_,
       a_ = simde_float64x1_to_private(a);
 
-    SIMDE_VECTORIZE
-    for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
-      r_.values[i] = simde_math_round(a_.values[i]);
-    }
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      #if defined(SIMDE_FAST_NANS)
+        r_.sv64 = __riscv_vfcvt_f_x_v_f64m1(__riscv_vfcvt_x_f_v_i64m1_rm(a_.sv64, 0, 1), 1);
+      #else
+        simde_float64 nan = SIMDE_MATH_NAN;
+        vbool64_t mask = __riscv_vmseq_vx_u64m1_b64(__riscv_vfclass_v_u64m1(a_.sv64 , 1) , 512 , 1);
+        r_.sv64 = __riscv_vfmerge_vfm_f64m1(__riscv_vfcvt_f_x_v_f64m1(__riscv_vfcvt_x_f_v_i64m1_rm(a_.sv64, 0, 1), 1), \
+                  nan, mask, 1);
+      #endif
+    #else
+      SIMDE_VECTORIZE
+      for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
+        r_.values[i] = simde_math_round(a_.values[i]);
+      }
+    #endif
 
     return simde_float64x1_from_private(r_);
   #endif
@@ -125792,11 +129450,14 @@ simde_vrndaq_f16(simde_float16x8_t a) {
     simde_float16x8_private
       r_,
       a_ = simde_float16x8_to_private(a);
-
-    SIMDE_VECTORIZE
-    for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
-      r_.values[i] = simde_vrndah_f16(a_.values[i]);
-    }
+    #if defined(SIMDE_RISCV_V_NATIVE) && defined(SIMDE_ARCH_RISCV_ZVFH)
+      r_.sv128 = __riscv_vfcvt_f_x_v_f16m1(__riscv_vfcvt_x_f_v_i16m1_rm(a_.sv128, 0, 8), 8);
+    #else
+      SIMDE_VECTORIZE
+      for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
+        r_.values[i] = simde_vrndah_f16(a_.values[i]);
+      }
+    #endif
 
     return simde_float16x8_from_private(r_);
   #endif
@@ -125816,10 +129477,21 @@ simde_vrndaq_f32(simde_float32x4_t a) {
       r_,
       a_ = simde_float32x4_to_private(a);
 
-    SIMDE_VECTORIZE
-    for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
-      r_.values[i] = simde_math_roundf(a_.values[i]);
-    }
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      #if defined(SIMDE_FAST_NANS)
+        r_.sv128 = __riscv_vfcvt_f_x_v_f32m1(__riscv_vfcvt_x_f_v_i32m1_rm(a_.sv128, 0, 4), 4);
+      #else
+        simde_float32 nan = SIMDE_MATH_NAN;
+        vbool32_t mask = __riscv_vmseq_vx_u32m1_b32(__riscv_vfclass_v_u32m1(a_.sv128 , 4) , 512 , 4);
+        r_.sv128 = __riscv_vfmerge_vfm_f32m1(__riscv_vfcvt_f_x_v_f32m1(__riscv_vfcvt_x_f_v_i32m1_rm(a_.sv128, 0, 4), 4), \
+                  nan, mask, 4);
+      #endif
+    #else
+      SIMDE_VECTORIZE
+      for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
+        r_.values[i] = simde_math_roundf(a_.values[i]);
+      }
+    #endif
 
     return simde_float32x4_from_private(r_);
   #endif
@@ -125839,10 +129511,21 @@ simde_vrndaq_f64(simde_float64x2_t a) {
       r_,
       a_ = simde_float64x2_to_private(a);
 
-    SIMDE_VECTORIZE
-    for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
-      r_.values[i] = simde_math_round(a_.values[i]);
-    }
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      #if defined(SIMDE_FAST_NANS)
+        r_.sv128 = __riscv_vfcvt_f_x_v_f64m1(__riscv_vfcvt_x_f_v_i64m1_rm(a_.sv128, 0, 2), 2);
+      #else
+        simde_float64 nan = SIMDE_MATH_NAN;
+        vbool64_t mask = __riscv_vmseq_vx_u64m1_b64(__riscv_vfclass_v_u64m1(a_.sv128 , 2) , 512 , 2);
+        r_.sv128 = __riscv_vfmerge_vfm_f64m1(__riscv_vfcvt_f_x_v_f64m1(__riscv_vfcvt_x_f_v_i64m1_rm(a_.sv128, 0, 2), 2), \
+                  nan, mask, 2);
+      #endif
+    #else
+      SIMDE_VECTORIZE
+      for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
+        r_.values[i] = simde_math_round(a_.values[i]);
+      }
+    #endif
 
     return simde_float64x2_from_private(r_);
   #endif
@@ -125858,7 +129541,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_RNDA_H) */
 /* :: End simde/arm/neon/rnda.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/rndm.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -125891,7 +129574,7 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_RNDM_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -126071,7 +129754,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_RNDM_H) */
 /* :: End simde/arm/neon/rndm.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/rndi.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -126104,7 +129787,7 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_RNDI_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -126276,7 +129959,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_RNDI_H) */
 /* :: End simde/arm/neon/rndi.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/rndn.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -126309,7 +129992,7 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_RNDN_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -126504,7 +130187,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_RNDN_H) */
 /* :: End simde/arm/neon/rndn.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/rndp.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -126537,7 +130220,7 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_RNDP_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -126717,7 +130400,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_RNDP_H) */
 /* :: End simde/arm/neon/rndp.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/rndx.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -126749,7 +130432,7 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_RNDX_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -126913,7 +130596,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_RNDX_H) */
 /* :: End simde/arm/neon/rndx.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/rshl.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -126945,9 +130628,9 @@ HEDLEY_DIAGNOSTIC_POP
 #if !defined(SIMDE_ARM_NEON_RSHL_H)
 #define SIMDE_ARM_NEON_RSHL_H
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 /* Notes from the implementer (Christopher Moore aka rosbif)
  *
@@ -127888,9 +131571,9 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_RSHL_H) */
 /* :: End simde/arm/neon/rshl.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/rshrn_high_n.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -127922,7 +131605,7 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_RSHRN_HIGH_N_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/rshrn_n.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -127954,11 +131637,11 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_RSHRN_N_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -128030,9 +131713,9 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_RSHRN_N_H) */
 /* :: End simde/arm/neon/rshrn_n.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -128104,9 +131787,9 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_RSHRN_HIGH_N_H) */
 /* :: End simde/arm/neon/rshrn_high_n.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/rsqrte.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -128140,7 +131823,7 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_RSQRTE_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -128574,7 +132257,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_RSQRTE_H) */
 /* :: End simde/arm/neon/rsqrte.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/rsqrts.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -128608,13 +132291,13 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_RSQRTS_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -128797,7 +132480,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_RSQRTS_H) */
 /* :: End simde/arm/neon/rsqrts.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/rsra_n.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -128830,15 +132513,15 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_RSRA_N_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -129035,7 +132718,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_RSRA_N_H) */
 /* :: End simde/arm/neon/rsra_n.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/rsubhn.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -129061,20 +132744,21 @@ HEDLEY_DIAGNOSTIC_POP
  *
  * Copyright:
  *   2023      Yi-Yen Chung <eric681@andestech.com> (Copyright owned by Andes Technology)
+ *   2023      Chi-Wei Chu <wewe5215@gapp.nthu.edu.tw> (Copyright owned by NTHU pllab)
  */
 
 #if !defined(SIMDE_ARM_NEON_RSUBHN_H)
 #define SIMDE_ARM_NEON_RSUBHN_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -129091,10 +132775,14 @@ simde_vrsubhn_s16(simde_int16x8_t a, simde_int16x8_t b) {
       a_ = simde_int16x8_to_private(a),
       b_ = simde_int16x8_to_private(b);
     int16_t round_cast = 1 << 7;
-    SIMDE_VECTORIZE
-    for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
-      r_.values[i] = HEDLEY_STATIC_CAST(int16_t, a_.values[i] - b_.values[i] + round_cast);
-    }
+    #if defined(SIMDE_RISCV_V_NATIVE)
+        r_.sv128 = __riscv_vadd_vx_i16m1(__riscv_vsub_vv_i16m1(a_.sv128, b_.sv128, 8), round_cast, 8);
+    #else
+      SIMDE_VECTORIZE
+      for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
+        r_.values[i] = HEDLEY_STATIC_CAST(int16_t, a_.values[i] - b_.values[i] + round_cast);
+      }
+    #endif
     return simde_vmovn_s16(simde_vshrq_n_s16(simde_int16x8_from_private(r_), 8));
   #endif
 }
@@ -129114,10 +132802,14 @@ simde_vrsubhn_s32(simde_int32x4_t a, simde_int32x4_t b) {
       a_ = simde_int32x4_to_private(a),
       b_ = simde_int32x4_to_private(b);
     int round_cast = 1 << 15;
-    SIMDE_VECTORIZE
-    for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
-      r_.values[i] = a_.values[i] - b_.values[i] + round_cast;
-    }
+    #if defined(SIMDE_RISCV_V_NATIVE)
+        r_.sv128 = __riscv_vadd_vx_i32m1(__riscv_vsub_vv_i32m1(a_.sv128, b_.sv128, 4), round_cast, 4);
+    #else
+      SIMDE_VECTORIZE
+      for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
+        r_.values[i] = a_.values[i] - b_.values[i] + round_cast;
+      }
+    #endif
     return simde_vmovn_s32(simde_vshrq_n_s32(simde_int32x4_from_private(r_), 16));
   #endif
 }
@@ -129136,12 +132828,17 @@ simde_vrsubhn_s64(simde_int64x2_t a, simde_int64x2_t b) {
       r_,
       a_ = simde_int64x2_to_private(a),
       b_ = simde_int64x2_to_private(b);
-    int64_t round_cast = 1ll << 31;
-    SIMDE_VECTORIZE
-    for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
-      r_.values[i] = ((a_.values[i] - b_.values[i] + round_cast) >> 32);
-    }
-    return simde_vmovn_s64(simde_int64x2_from_private(r_));
+    #if defined(SIMDE_RISCV_V_NATIVE)
+        r_.sv128 = __riscv_vadd_vx_i64m1(__riscv_vsub_vv_i64m1(a_.sv128, b_.sv128, 2), 0x80000000, 2);
+        return simde_vmovn_s64(simde_vshrq_n_s64(simde_int64x2_from_private(r_), 32));
+    #else
+      int64_t round_cast = 1ll << 31;
+      SIMDE_VECTORIZE
+      for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
+        r_.values[i] = ((a_.values[i] - b_.values[i] + round_cast) >> 32);
+      }
+      return simde_vmovn_s64(simde_int64x2_from_private(r_));
+    #endif
   #endif
 }
 #if defined(SIMDE_ARM_NEON_A32V7_ENABLE_NATIVE_ALIASES)
@@ -129160,10 +132857,14 @@ simde_vrsubhn_u16(simde_uint16x8_t a, simde_uint16x8_t b) {
       a_ = simde_uint16x8_to_private(a),
       b_ = simde_uint16x8_to_private(b);
     uint16_t round_cast = 1 << 7;
-    SIMDE_VECTORIZE
-    for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
-      r_.values[i] = HEDLEY_STATIC_CAST(uint16_t, a_.values[i] - b_.values[i] + round_cast);
-    }
+    #if defined(SIMDE_RISCV_V_NATIVE)
+        r_.sv128 = __riscv_vadd_vx_u16m1(__riscv_vsub_vv_u16m1(a_.sv128, b_.sv128, 8), round_cast, 8);
+    #else
+      SIMDE_VECTORIZE
+      for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
+        r_.values[i] = HEDLEY_STATIC_CAST(uint16_t, a_.values[i] - b_.values[i] + round_cast);
+      }
+    #endif
     return simde_vmovn_u16(simde_vshrq_n_u16(simde_uint16x8_from_private(r_), 8));
   #endif
 }
@@ -129183,10 +132884,14 @@ simde_vrsubhn_u32(simde_uint32x4_t a, simde_uint32x4_t b) {
       a_ = simde_uint32x4_to_private(a),
       b_ = simde_uint32x4_to_private(b);
     uint32_t round_cast = 1 << 15;
-    SIMDE_VECTORIZE
-    for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
-      r_.values[i] = a_.values[i] - b_.values[i] + round_cast;
-    }
+    #if defined(SIMDE_RISCV_V_NATIVE)
+        r_.sv128 = __riscv_vadd_vx_u32m1(__riscv_vsub_vv_u32m1(a_.sv128, b_.sv128, 4), round_cast, 4);
+    #else
+      SIMDE_VECTORIZE
+      for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
+        r_.values[i] = a_.values[i] - b_.values[i] + round_cast;
+      }
+    #endif
     return simde_vmovn_u32(simde_vshrq_n_u32(simde_uint32x4_from_private(r_), 16));
   #endif
 }
@@ -129205,12 +132910,17 @@ simde_vrsubhn_u64(simde_uint64x2_t a, simde_uint64x2_t b) {
       r_,
       a_ = simde_uint64x2_to_private(a),
       b_ = simde_uint64x2_to_private(b);
-    uint64_t round_cast = 1ull << 31;
-    SIMDE_VECTORIZE
-    for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
-      r_.values[i] = ((a_.values[i] - b_.values[i] + round_cast) >> 32);
-    }
-    return simde_vmovn_u64(simde_uint64x2_from_private(r_));
+    #if defined(SIMDE_RISCV_V_NATIVE)
+        r_.sv128 = __riscv_vadd_vx_u64m1(__riscv_vsub_vv_u64m1(a_.sv128, b_.sv128, 2), 0x80000000, 2);
+        return simde_vmovn_u64(simde_vshrq_n_u64(simde_uint64x2_from_private(r_), 32));
+    #else
+      uint64_t round_cast = 1ull << 31;
+      SIMDE_VECTORIZE
+      for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
+        r_.values[i] = ((a_.values[i] - b_.values[i] + round_cast) >> 32);
+      }
+      return simde_vmovn_u64(simde_uint64x2_from_private(r_));
+    #endif
   #endif
 }
 #if defined(SIMDE_ARM_NEON_A32V7_ENABLE_NATIVE_ALIASES)
@@ -129225,7 +132935,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_RSUBHN_H) */
 /* :: End simde/arm/neon/rsubhn.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/rsubhn_high.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -129257,12 +132967,12 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_RSUBHN_HIGH_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -129334,7 +133044,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_RSUBHN_HIGH_H) */
 /* :: End simde/arm/neon/rsubhn_high.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/set_lane.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -129367,7 +133077,7 @@ HEDLEY_DIAGNOSTIC_POP
 #if !defined(SIMDE_ARM_NEON_SET_LANE_H)
 #define SIMDE_ARM_NEON_SET_LANE_H
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -129946,7 +133656,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_SET_LANE_H) */
 /* :: End simde/arm/neon/set_lane.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/sha1.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -129978,7 +133688,7 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_SHA1_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -130153,7 +133863,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_SHA1_H) */
 /* :: End simde/arm/neon/sha1.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/sha256.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -130185,7 +133895,7 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_SHA256_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -130351,7 +134061,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_SHA256_H) */
 /* :: End simde/arm/neon/sha256.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/sha512.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -130383,7 +134093,7 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_SHA512_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -130509,7 +134219,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_SHA512_H) */
 /* :: End simde/arm/neon/sha512.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/shl.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -130536,15 +134246,16 @@ HEDLEY_DIAGNOSTIC_POP
  * Copyright:
  *   2020      Evan Nemerson <evan@nemerson.com>
  *   2020      Christopher Moore <moore@free.fr>
+ *   2023      Chi-Wei Chu <wewe5215@gapp.nthu.edu.tw> (Copyright owned by NTHU pllab)
  */
 
 #if !defined(SIMDE_ARM_NEON_SHL_H)
 #define SIMDE_ARM_NEON_SHL_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 /* Notes from the implementer (Christopher Moore aka rosbif)
  *
@@ -130658,13 +134369,23 @@ simde_vshl_s8 (const simde_int8x8_t a, const simde_int8x8_t b) {
       r256 = _mm256_shuffle_epi8(r256, _mm256_set1_epi32(0x0C080400));
       r_.m64 = _mm_set_pi32(simde_mm256_extract_epi32(r256, 4), simde_mm256_extract_epi32(r256, 0));
     #else
-      SIMDE_VECTORIZE
-      for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
-        r_.values[i] = HEDLEY_STATIC_CAST(int8_t,
-          (b_.values[i] >=  0) ?
-          (b_.values[i] >=  8) ?                   0 : (a_.values[i] <<  b_.values[i]) :
-          (b_.values[i] <= -8) ? (a_.values[i] >> 7) : (a_.values[i] >> -b_.values[i]));
-      }
+      #if defined(SIMDE_RISCV_V_NATIVE)
+        vint8m1_t bit_shift_rst = __riscv_vmerge_vxm_i8m1(
+         __riscv_vsll_vv_i8m1 (a_.sv64, __riscv_vreinterpret_v_i8m1_u8m1(b_.sv64), 8), 0, __riscv_vmsge_vx_i8m1_b8(b_.sv64, 8, 8), 8);
+        vint8m1_t b_abs =  __riscv_vmax_vv_i8m1 (b_.sv64, __riscv_vneg_v_i8m1 (b_.sv64, 8), 8);
+        vuint8m1_t u_b_abs = __riscv_vreinterpret_v_i8m1_u8m1 (b_abs);
+        vint8m1_t scal_shift_rst = __riscv_vmerge_vvm_i8m1(__riscv_vsra_vv_i8m1 (a_.sv64, u_b_abs, 8), \
+          __riscv_vsra_vx_i8m1(a_.sv64, 7, 8), __riscv_vmsle_vx_i8m1_b8(b_.sv64, -8, 8), 8);
+        r_.sv64 = __riscv_vmerge_vvm_i8m1 (bit_shift_rst, scal_shift_rst, __riscv_vmslt_vx_i8m1_b8 (b_.sv64, 0, 8), 8);
+      #else
+        SIMDE_VECTORIZE
+        for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
+          r_.values[i] = HEDLEY_STATIC_CAST(int8_t,
+            (b_.values[i] >=  0) ?
+            (b_.values[i] >=  8) ?                   0 : (a_.values[i] <<  b_.values[i]) :
+            (b_.values[i] <= -8) ? (a_.values[i] >> 7) : (a_.values[i] >> -b_.values[i]));
+        }
+      #endif
     #endif
 
     return simde_int8x8_from_private(r_);
@@ -130695,14 +134416,25 @@ simde_vshl_s16 (const simde_int16x4_t a, const simde_int16x4_t b) {
                                     _mm_cmpgt_epi32(_mm_setzero_si128(), b128));
       r_.m64 = _mm_movepi64_pi64(_mm_shuffle_epi8(r128, _mm_set1_epi64x(0x0D0C090805040100)));
     #else
-      SIMDE_VECTORIZE
-      for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
-        b_.values[i] = HEDLEY_STATIC_CAST(int8_t, b_.values[i]);
-        r_.values[i] = HEDLEY_STATIC_CAST(int16_t,
-          (b_.values[i] >=   0) ?
-          (b_.values[i] >=  16) ?                    0 : (a_.values[i] <<  b_.values[i]) :
-          (b_.values[i] <= -16) ? (a_.values[i] >> 15) : (a_.values[i] >> -b_.values[i]));
-      }
+      #if defined(SIMDE_RISCV_V_NATIVE)
+        vint8mf2_t b_8mf2 = __riscv_vncvt_x_x_w_i8mf2 (b_.sv64, 4);
+        vint16m1_t bit_shift_rst = __riscv_vmerge_vxm_i16m1(__riscv_vsll_vv_i16m1 (a_.sv64, __riscv_vreinterpret_v_i16m1_u16m1(b_.sv64), 4), 0 \
+          , __riscv_vmsge_vx_i8mf2_b16(b_8mf2, 16, 8), 4);
+        vint16m1_t b_abs =  __riscv_vmax_vv_i16m1 (b_.sv64, __riscv_vneg_v_i16m1 (b_.sv64, 4), 4);
+        vuint16m1_t u_b_abs = __riscv_vreinterpret_v_i16m1_u16m1 (b_abs);
+        vint16m1_t scal_shift_rst = __riscv_vmerge_vvm_i16m1(__riscv_vsra_vv_i16m1 (a_.sv64, u_b_abs, 4)
+          , __riscv_vsra_vx_i16m1(a_.sv64, 15, 4), __riscv_vmsle_vx_i8mf2_b16(b_8mf2, -16, 8), 4);
+        r_.sv64 = __riscv_vmerge_vvm_i16m1 (bit_shift_rst, scal_shift_rst, __riscv_vmslt_vx_i8mf2_b16 (b_8mf2, 0, 8), 4);
+      #else
+        SIMDE_VECTORIZE
+        for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
+          b_.values[i] = HEDLEY_STATIC_CAST(int8_t, b_.values[i]);
+          r_.values[i] = HEDLEY_STATIC_CAST(int16_t,
+            (b_.values[i] >=   0) ?
+            (b_.values[i] >=  16) ?                    0 : (a_.values[i] <<  b_.values[i]) :
+            (b_.values[i] <= -16) ? (a_.values[i] >> 15) : (a_.values[i] >> -b_.values[i]));
+        }
+      #endif
     #endif
 
     return simde_int16x4_from_private(r_);
@@ -130733,14 +134465,25 @@ simde_vshl_s32 (const simde_int32x2_t a, const simde_int32x2_t b) {
                                     _mm_cmpgt_epi32(_mm_setzero_si128(), b128));
       r_.m64 = _mm_movepi64_pi64(r128);
     #else
-      SIMDE_VECTORIZE
-      for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
-        b_.values[i] = HEDLEY_STATIC_CAST(int8_t, b_.values[i]);
-        r_.values[i] =
-          (b_.values[i] >=   0) ?
-          (b_.values[i] >=  32) ?                    0 : (a_.values[i] <<  b_.values[i]) :
-          (b_.values[i] <= -32) ? (a_.values[i] >> 31) : (a_.values[i] >> -b_.values[i]);
-      }
+      #if defined(SIMDE_RISCV_V_NATIVE)
+        vint8mf4_t b_8mf4 = __riscv_vncvt_x_x_w_i8mf4 (__riscv_vncvt_x_x_w_i16mf2 (b_.sv64, 2), 4);
+        vint32m1_t bit_shift_rst = __riscv_vmerge_vxm_i32m1(__riscv_vsll_vv_i32m1 (a_.sv64, __riscv_vreinterpret_v_i32m1_u32m1(b_.sv64), 2), 0
+          , __riscv_vmsge_vx_i8mf4_b32(b_8mf4, 32, 2), 2);
+        vint32m1_t b_abs =  __riscv_vmax_vv_i32m1 (b_.sv64, __riscv_vneg_v_i32m1 (b_.sv64, 2), 2);
+        vuint32m1_t u_b_abs = __riscv_vreinterpret_v_i32m1_u32m1 (b_abs);
+        vint32m1_t scal_shift_rst = __riscv_vmerge_vvm_i32m1(__riscv_vsra_vv_i32m1 (a_.sv64, u_b_abs, 2)
+          , __riscv_vsra_vx_i32m1(a_.sv64, 31, 2), __riscv_vmsle_vx_i8mf4_b32(b_8mf4, -32, 2), 2);
+        r_.sv64 = __riscv_vmerge_vvm_i32m1 (bit_shift_rst, scal_shift_rst, __riscv_vmslt_vx_i8mf4_b32 (b_8mf4, 0, 8), 2);
+      #else
+        SIMDE_VECTORIZE
+        for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
+          b_.values[i] = HEDLEY_STATIC_CAST(int8_t, b_.values[i]);
+          r_.values[i] =
+            (b_.values[i] >=   0) ?
+            (b_.values[i] >=  32) ?                    0 : (a_.values[i] <<  b_.values[i]) :
+            (b_.values[i] <= -32) ? (a_.values[i] >> 31) : (a_.values[i] >> -b_.values[i]);
+        }
+      #endif
     #endif
 
     return simde_int32x2_from_private(r_);
@@ -130782,10 +134525,21 @@ simde_vshl_s64 (const simde_int64x1_t a, const simde_int64x1_t b) {
                                     _mm_cmpgt_epi64(zero, _mm_slli_epi64(b128, 56)));
       r_.m64 = _mm_movepi64_pi64(r128);
     #else
-      SIMDE_VECTORIZE
-      for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
-        r_.values[i] = simde_vshld_s64(a_.values[i], b_.values[i]);
-      }
+      #if defined(SIMDE_RISCV_V_NATIVE)
+        vint8mf8_t b_8mf8 = __riscv_vncvt_x_x_w_i8mf8 (__riscv_vncvt_x_x_w_i16mf4 (__riscv_vncvt_x_x_w_i32mf2 (b_.sv64, 1), 2), 4);
+        vint64m1_t bit_shift_rst = __riscv_vmerge_vxm_i64m1(__riscv_vsll_vv_i64m1 (a_.sv64, __riscv_vreinterpret_v_i64m1_u64m1(b_.sv64), 1), 0
+          , __riscv_vmsge_vx_i8mf8_b64(b_8mf8, 64, 1), 1);
+        vint64m1_t b_abs =  __riscv_vmax_vv_i64m1 (b_.sv64, __riscv_vneg_v_i64m1 (b_.sv64, 1), 1);
+        vuint64m1_t u_b_abs = __riscv_vreinterpret_v_i64m1_u64m1 (b_abs);
+        vint64m1_t scal_shift_rst = __riscv_vmerge_vvm_i64m1(__riscv_vsra_vv_i64m1 (a_.sv64, u_b_abs, 1)
+          , __riscv_vsra_vx_i64m1(a_.sv64, 63, 1), __riscv_vmsle_vx_i8mf8_b64(b_8mf8, -64, 1), 1);
+        r_.sv64 = __riscv_vmerge_vvm_i64m1 (bit_shift_rst, scal_shift_rst, __riscv_vmslt_vx_i8mf8_b64 (b_8mf8, 0, 8), 1);
+      #else
+        SIMDE_VECTORIZE
+        for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
+          r_.values[i] = simde_vshld_s64(a_.values[i], b_.values[i]);
+        }
+      #endif
     #endif
 
     return simde_int64x1_from_private(r_);
@@ -130823,13 +134577,22 @@ simde_vshl_u8 (const simde_uint8x8_t a, const simde_int8x8_t b) {
       r256 = _mm256_shuffle_epi8(r256, _mm256_set1_epi32(0x0C080400));
       r_.m64 = _mm_set_pi32(simde_mm256_extract_epi32(r256, 4), simde_mm256_extract_epi32(r256, 0));
     #else
-      SIMDE_VECTORIZE
-      for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
-        r_.values[i] = HEDLEY_STATIC_CAST(uint8_t,
-          (simde_math_abs(b_.values[i]) >= 8) ? 0 :
-              (b_.values[i]  >= 0) ? (a_.values[i] <<  b_.values[i]) :
-                                    (a_.values[i] >> -b_.values[i]));
-      }
+      #if defined(SIMDE_RISCV_V_NATIVE)
+        vuint8m1_t u_b = __riscv_vreinterpret_v_i8m1_u8m1 (b_.sv64);
+        vint8m1_t b_abs =  __riscv_vmax_vv_i8m1 (b_.sv64, __riscv_vneg_v_i8m1 (b_.sv64, 8), 8);
+        vuint8m1_t u_b_abs = __riscv_vreinterpret_v_i8m1_u8m1 (b_abs);
+        r_.sv64 = __riscv_vmerge_vxm_u8m1(__riscv_vmerge_vvm_u8m1(__riscv_vsrl_vv_u8m1(a_.sv64, u_b_abs, 8)
+            , __riscv_vsll_vv_u8m1 (a_.sv64, u_b, 8), __riscv_vmsge_vx_i8m1_b8(b_.sv64, 0, 8), 8), 0 \
+            ,__riscv_vmsgeu_vx_u8m1_b8(u_b_abs, 8, 8), 8);
+      #else
+        SIMDE_VECTORIZE
+        for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
+          r_.values[i] = HEDLEY_STATIC_CAST(uint8_t,
+            (simde_math_abs(b_.values[i]) >= 8) ? 0 :
+                (b_.values[i]  >= 0) ? (a_.values[i] <<  b_.values[i]) :
+                                      (a_.values[i] >> -b_.values[i]));
+        }
+      #endif
     #endif
 
     return simde_uint8x8_from_private(r_);
@@ -130860,14 +134623,26 @@ simde_vshl_u16 (const simde_uint16x4_t a, const simde_int16x4_t b) {
                                     _mm_cmpgt_epi32(_mm_setzero_si128(), b128));
       r_.m64 = _mm_movepi64_pi64(_mm_shuffle_epi8(r128, _mm_set1_epi64x(0x0D0C090805040100)));
     #else
-      SIMDE_VECTORIZE
-      for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
-        b_.values[i] = HEDLEY_STATIC_CAST(int8_t, b_.values[i]);
-        r_.values[i] = HEDLEY_STATIC_CAST(uint16_t,
-          (simde_math_abs(b_.values[i]) >= 16) ? 0 :
-              (b_.values[i]  >=  0) ? (a_.values[i] <<  b_.values[i]) :
-                                      (a_.values[i] >> -b_.values[i]));
-      }
+      #if defined(SIMDE_RISCV_V_NATIVE)
+        vint8mf2_t b_8mf2 = __riscv_vncvt_x_x_w_i8mf2 (b_.sv64, 4);
+        vint8mf2_t b_8mf2_abs = __riscv_vmax_vv_i8mf2 (b_8mf2, __riscv_vneg_v_i8mf2 (b_8mf2, 8), 8);
+        vuint8mf2_t u_b_8mf2_abs = __riscv_vreinterpret_v_i8mf2_u8mf2 (b_8mf2_abs);
+        vuint16m1_t u_b = __riscv_vreinterpret_v_i16m1_u16m1 (b_.sv64);
+        vint16m1_t b_abs =  __riscv_vmax_vv_i16m1 (b_.sv64, __riscv_vneg_v_i16m1 (b_.sv64, 4), 4);
+        vuint16m1_t u_b_abs = __riscv_vreinterpret_v_i16m1_u16m1 (b_abs);
+        r_.sv64 = __riscv_vmerge_vxm_u16m1(__riscv_vmerge_vvm_u16m1(__riscv_vsrl_vv_u16m1(a_.sv64, u_b_abs, 4)
+          , __riscv_vsll_vv_u16m1 (a_.sv64, u_b, 4), __riscv_vmsge_vx_i16m1_b16(b_.sv64, 0, 4), 4)
+          , 0, __riscv_vmsgeu_vx_u8mf2_b16(u_b_8mf2_abs, 16, 8), 4);
+      #else
+        SIMDE_VECTORIZE
+        for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
+          b_.values[i] = HEDLEY_STATIC_CAST(int8_t, b_.values[i]);
+          r_.values[i] = HEDLEY_STATIC_CAST(uint16_t,
+            (simde_math_abs(b_.values[i]) >= 16) ? 0 :
+                (b_.values[i]  >=  0) ? (a_.values[i] <<  b_.values[i]) :
+                                        (a_.values[i] >> -b_.values[i]));
+        }
+      #endif
     #endif
 
     return simde_uint16x4_from_private(r_);
@@ -130898,14 +134673,26 @@ simde_vshl_u32 (const simde_uint32x2_t a, const simde_int32x2_t b) {
                                     _mm_cmpgt_epi32(_mm_setzero_si128(), b128));
       r_.m64 = _mm_movepi64_pi64(r128);
     #else
-      SIMDE_VECTORIZE
-      for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
-        b_.values[i] = HEDLEY_STATIC_CAST(int8_t, b_.values[i]);
-        r_.values[i] =
-          (simde_math_abs(b_.values[i]) >= 32) ? 0 :
-              (b_.values[i]  >=  0) ? (a_.values[i] <<  b_.values[i]) :
-                                      (a_.values[i] >> -b_.values[i]);
-      }
+      #if defined(SIMDE_RISCV_V_NATIVE)
+        vint8mf4_t b_8mf4 = __riscv_vncvt_x_x_w_i8mf4 (__riscv_vncvt_x_x_w_i16mf2 (b_.sv64, 2), 4);
+        vint8mf4_t b_8mf4_abs = __riscv_vmax_vv_i8mf4 (b_8mf4, __riscv_vneg_v_i8mf4 (b_8mf4, 8), 8);
+        vuint8mf4_t u_b_8mf4_abs = __riscv_vreinterpret_v_i8mf4_u8mf4 (b_8mf4_abs);
+        vuint32m1_t u_b = __riscv_vreinterpret_v_i32m1_u32m1 (b_.sv64);
+        vint32m1_t b_abs =  __riscv_vmax_vv_i32m1 (b_.sv64, __riscv_vneg_v_i32m1 (b_.sv64, 2), 2);
+        vuint32m1_t u_b_abs = __riscv_vreinterpret_v_i32m1_u32m1 (b_abs);
+        r_.sv64 = __riscv_vmerge_vxm_u32m1(__riscv_vmerge_vvm_u32m1(__riscv_vsrl_vv_u32m1(a_.sv64, u_b_abs, 2)
+          , __riscv_vsll_vv_u32m1 (a_.sv64, u_b, 2), __riscv_vmsge_vx_i32m1_b32(b_.sv64, 0, 2), 2), 0
+          , __riscv_vmsgeu_vx_u8mf4_b32(u_b_8mf4_abs, 32, 8), 2);
+      #else
+        SIMDE_VECTORIZE
+        for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
+          b_.values[i] = HEDLEY_STATIC_CAST(int8_t, b_.values[i]);
+          r_.values[i] =
+            (simde_math_abs(b_.values[i]) >= 32) ? 0 :
+                (b_.values[i]  >=  0) ? (a_.values[i] <<  b_.values[i]) :
+                                        (a_.values[i] >> -b_.values[i]);
+        }
+      #endif
     #endif
 
     return simde_uint32x2_from_private(r_);
@@ -130945,10 +134732,24 @@ simde_vshl_u64 (const simde_uint64x1_t a, const simde_int64x1_t b) {
                                     _mm_cmpgt_epi64(_mm_setzero_si128(), _mm_slli_epi64(b128, 56)));
       r_.m64 = _mm_movepi64_pi64(r128);
     #else
-      SIMDE_VECTORIZE
-      for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
-        r_.values[i] = simde_vshld_u64(a_.values[i], b_.values[i]);
-      }
+      #if defined(SIMDE_RISCV_V_NATIVE)
+        //  change b_ to int8_t
+        vint8mf8_t b_8mf8 = __riscv_vncvt_x_x_w_i8mf8(__riscv_vncvt_x_x_w_i16mf4 \
+          (__riscv_vncvt_x_x_w_i32mf2 (b_.sv64, 1), 2), 4);
+        vint8mf8_t b_8mf8_abs = __riscv_vmax_vv_i8mf8(b_8mf8, __riscv_vneg_v_i8mf8 (b_8mf8, 8), 8);
+        vuint8mf8_t u_b_8mf8_abs = __riscv_vreinterpret_v_i8mf8_u8mf8 (b_8mf8_abs);
+        vuint64m1_t u_b = __riscv_vreinterpret_v_i64m1_u64m1 (b_.sv64);
+        vint64m1_t b_abs =  __riscv_vmax_vv_i64m1 (b_.sv64, __riscv_vneg_v_i64m1 (b_.sv64, 1), 1);
+        vuint64m1_t u_b_abs = __riscv_vreinterpret_v_i64m1_u64m1 (b_abs);
+        r_.sv64 = __riscv_vmerge_vxm_u64m1(__riscv_vmerge_vvm_u64m1(__riscv_vsrl_vv_u64m1(a_.sv64, u_b_abs, 1)
+            , __riscv_vsll_vv_u64m1 (a_.sv64, u_b, 1), __riscv_vmsge_vx_i64m1_b64(b_.sv64, 0, 1), 1), 0
+            , __riscv_vmsgeu_vx_u8mf8_b64(u_b_8mf8_abs, 64, 8), 1);
+      #else
+        SIMDE_VECTORIZE
+        for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
+          r_.values[i] = simde_vshld_u64(a_.values[i], b_.values[i]);
+        }
+      #endif
     #endif
 
   return simde_uint64x1_from_private(r_);
@@ -130992,13 +134793,23 @@ simde_vshlq_s8 (const simde_int8x16_t a, const simde_int8x16_t b) {
                                         _mm256_cmpgt_epi16(_mm256_setzero_si256(), b256));
       r_.m128i = _mm256_cvtepi16_epi8(r256);
     #else
-      SIMDE_VECTORIZE
-      for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
-        r_.values[i] = HEDLEY_STATIC_CAST(int8_t,
-          (b_.values[i] >=  0) ?
-          (b_.values[i] >=  8) ?                   0 : (a_.values[i] <<  b_.values[i]) :
-          (b_.values[i] <= -8) ? (a_.values[i] >> 7) : (a_.values[i] >> -b_.values[i]));
-      }
+      #if defined(SIMDE_RISCV_V_NATIVE)
+        vint8m1_t bit_shift_rst = __riscv_vmerge_vxm_i8m1(__riscv_vsll_vv_i8m1 (a_.sv128, __riscv_vreinterpret_v_i8m1_u8m1(b_.sv128), 16), \
+          0, __riscv_vmsge_vx_i8m1_b8(b_.sv128, 8, 16), 16);
+        vint8m1_t b_abs =  __riscv_vmax_vv_i8m1 (b_.sv128, __riscv_vneg_v_i8m1 (b_.sv128, 16), 16);
+        vuint8m1_t u_b_abs = __riscv_vreinterpret_v_i8m1_u8m1 (b_abs);
+        vint8m1_t scal_shift_rst = __riscv_vmerge_vvm_i8m1(__riscv_vsra_vv_i8m1 (a_.sv128, u_b_abs, 16)
+          , __riscv_vsra_vx_i8m1(a_.sv128, 7, 16), __riscv_vmsle_vx_i8m1_b8(b_.sv128, -8, 16), 16);
+        r_.sv128 = __riscv_vmerge_vvm_i8m1 (bit_shift_rst, scal_shift_rst, __riscv_vmslt_vx_i8m1_b8 (b_.sv128, 0, 16), 16);
+      #else
+        SIMDE_VECTORIZE
+        for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
+          r_.values[i] = HEDLEY_STATIC_CAST(int8_t,
+            (b_.values[i] >=  0) ?
+            (b_.values[i] >=  8) ?                   0 : (a_.values[i] <<  b_.values[i]) :
+            (b_.values[i] <= -8) ? (a_.values[i] >> 7) : (a_.values[i] >> -b_.values[i]));
+        }
+      #endif
     #endif
 
     return simde_int8x16_from_private(r_);
@@ -131051,14 +134862,26 @@ simde_vshlq_s16 (const simde_int16x8_t a, const simde_int16x8_t b) {
       r256 = _mm256_shuffle_epi8(r256, _mm256_set1_epi64x(0x0D0C090805040100));
       r_.m128i = _mm_set_epi64x(simde_mm256_extract_epi64(r256, 2), simde_mm256_extract_epi64(r256, 0));
     #else
-      SIMDE_VECTORIZE
-      for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
-        b_.values[i] = HEDLEY_STATIC_CAST(int8_t, b_.values[i]);
-        r_.values[i] = HEDLEY_STATIC_CAST(int16_t,
-          (b_.values[i] >=   0) ?
-          (b_.values[i] >=  16) ?                    0 : (a_.values[i] <<  b_.values[i]) :
-          (b_.values[i] <= -16) ? (a_.values[i] >> 15) : (a_.values[i] >> -b_.values[i]));
-      }
+      #if defined(SIMDE_RISCV_V_NATIVE)
+        vint8mf2_t b_8mf2 = __riscv_vncvt_x_x_w_i8mf2 (b_.sv128, 8);
+        vint8mf2_t b_8mf2_abs = __riscv_vmax_vv_i8mf2 (b_8mf2, __riscv_vneg_v_i8mf2 (b_8mf2, 16), 16);
+        vuint8mf2_t u_b_8mf2_abs = __riscv_vreinterpret_v_i8mf2_u8mf2(b_8mf2_abs);
+        vuint16m1_t u_b_abs = __riscv_vwcvtu_x_x_v_u16m1 (u_b_8mf2_abs, 16);
+        vint16m1_t bit_shift_rst = __riscv_vmerge_vxm_i16m1(__riscv_vsll_vv_i16m1 (a_.sv128, __riscv_vreinterpret_v_i16m1_u16m1(b_.sv128), 8), 0, \
+          __riscv_vmsge_vx_i8mf2_b16(b_8mf2, 16, 16), 8);
+        vint16m1_t scal_shift_rst = __riscv_vmerge_vvm_i16m1(__riscv_vsra_vv_i16m1 (a_.sv128, u_b_abs, 8),
+          __riscv_vsra_vx_i16m1(a_.sv128, 15, 8), __riscv_vmsle_vx_i8mf2_b16(b_8mf2, -16, 16), 8);
+        r_.sv128 = __riscv_vmerge_vvm_i16m1 (bit_shift_rst, scal_shift_rst, __riscv_vmslt_vx_i8mf2_b16 (b_8mf2, 0, 16), 8);
+      #else
+        SIMDE_VECTORIZE
+        for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
+          b_.values[i] = HEDLEY_STATIC_CAST(int8_t, b_.values[i]);
+          r_.values[i] = HEDLEY_STATIC_CAST(int16_t,
+            (b_.values[i] >=   0) ?
+            (b_.values[i] >=  16) ?                    0 : (a_.values[i] <<  b_.values[i]) :
+            (b_.values[i] <= -16) ? (a_.values[i] >> 15) : (a_.values[i] >> -b_.values[i]));
+        }
+      #endif
     #endif
 
     return simde_int16x8_from_private(r_);
@@ -131103,14 +134926,26 @@ simde_vshlq_s32 (const simde_int32x4_t a, const simde_int32x4_t b) {
                                  _mm_srav_epi32(a_.m128i, _mm_abs_epi32(B)),
                                  _mm_cmpgt_epi32(_mm_setzero_si128(), B));
     #else
-      SIMDE_VECTORIZE
-      for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
-        b_.values[i] = HEDLEY_STATIC_CAST(int8_t, b_.values[i]);
-        r_.values[i] =
-          (b_.values[i] >=   0) ?
-          (b_.values[i] >=  32) ?                    0 : (a_.values[i] <<  b_.values[i]) :
-          (b_.values[i] <= -32) ? (a_.values[i] >> 31) : (a_.values[i] >> -b_.values[i]);
-      }
+      #if defined(SIMDE_RISCV_V_NATIVE)
+        vint8mf4_t b_8mf4 = __riscv_vncvt_x_x_w_i8mf4 (__riscv_vncvt_x_x_w_i16mf2 (b_.sv128, 4), 8);
+        vint8mf4_t b_8mf4_abs =  __riscv_vmax_vv_i8mf4 (b_8mf4, __riscv_vneg_v_i8mf4 (b_8mf4, 16), 16);
+        vuint8mf4_t u_b_8mf4_abs = __riscv_vreinterpret_v_i8mf4_u8mf4 (b_8mf4_abs);
+        vuint32m1_t u_b_abs = __riscv_vwcvtu_x_x_v_u32m1 (__riscv_vwcvtu_x_x_v_u16mf2 (u_b_8mf4_abs, 16), 8);
+        vint32m1_t bit_shift_rst = __riscv_vmerge_vxm_i32m1(__riscv_vsll_vv_i32m1 (a_.sv128, __riscv_vreinterpret_v_i32m1_u32m1(b_.sv128), 4), 0,
+          __riscv_vmsge_vx_i8mf4_b32(b_8mf4, 32, 16), 4);
+        vint32m1_t scal_shift_rst = __riscv_vmerge_vvm_i32m1(__riscv_vsra_vv_i32m1 (a_.sv128, u_b_abs, 4), \
+          __riscv_vsra_vx_i32m1(a_.sv128, 31, 4), __riscv_vmsle_vx_i8mf4_b32(b_8mf4, -32, 4), 4);
+        r_.sv128 = __riscv_vmerge_vvm_i32m1 (bit_shift_rst, scal_shift_rst, __riscv_vmslt_vx_i8mf4_b32 (b_8mf4, 0, 16), 4);
+      #else
+        SIMDE_VECTORIZE
+        for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
+          b_.values[i] = HEDLEY_STATIC_CAST(int8_t, b_.values[i]);
+          r_.values[i] =
+            (b_.values[i] >=   0) ?
+            (b_.values[i] >=  32) ?                    0 : (a_.values[i] <<  b_.values[i]) :
+            (b_.values[i] <= -32) ? (a_.values[i] >> 31) : (a_.values[i] >> -b_.values[i]);
+        }
+      #endif
     #endif
 
     return simde_int32x4_from_private(r_);
@@ -131164,10 +134999,21 @@ simde_vshlq_s64 (const simde_int64x2_t a, const simde_int64x2_t b) {
                                  _mm_xor_si128(_mm_srlv_epi64(_mm_xor_si128(a_.m128i, maska), b_abs), maska),
                                  _mm_cmpgt_epi64(zero, _mm_slli_epi64(b_.m128i, 56)));
     #else
-      SIMDE_VECTORIZE
-      for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
-        r_.values[i] = simde_vshld_s64(a_.values[i], b_.values[i]);
-      }
+      #if defined(SIMDE_RISCV_V_NATIVE)
+        vint8mf8_t b_8mf8 = __riscv_vncvt_x_x_w_i8mf8 (__riscv_vncvt_x_x_w_i16mf4 (__riscv_vncvt_x_x_w_i32mf2 (b_.sv128, 2), 4), 8);
+        vint8mf8_t b_8mf8_abs =  __riscv_vmax_vv_i8mf8 (b_8mf8, __riscv_vneg_v_i8mf8 (b_8mf8, 16), 16);
+        vuint8mf8_t u_b_8mf8_abs = __riscv_vreinterpret_v_i8mf8_u8mf8 (b_8mf8_abs);
+        vuint64m1_t u_b_abs = __riscv_vwcvtu_x_x_v_u64m1(__riscv_vwcvtu_x_x_v_u32mf2 (__riscv_vwcvtu_x_x_v_u16mf4(u_b_8mf8_abs, 16), 8), 4);
+        vint64m1_t bit_shift_rst = __riscv_vmerge_vxm_i64m1(__riscv_vsll_vv_i64m1 (a_.sv128, __riscv_vreinterpret_v_i64m1_u64m1(b_.sv128), 2), 0, __riscv_vmsge_vx_i8mf8_b64(b_8mf8, 64, 2), 2);
+        vint64m1_t scal_shift_rst = __riscv_vmerge_vvm_i64m1(__riscv_vsra_vv_i64m1 (a_.sv128, u_b_abs, 2)
+          , __riscv_vsra_vx_i64m1(a_.sv128, 63, 2), __riscv_vmsle_vx_i8mf8_b64(b_8mf8, -64, 2), 2);
+        r_.sv128 = __riscv_vmerge_vvm_i64m1 (bit_shift_rst, scal_shift_rst, __riscv_vmslt_vx_i8mf8_b64 (b_8mf8, 0, 16), 2);
+      #else
+        SIMDE_VECTORIZE
+        for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
+          r_.values[i] = simde_vshld_s64(a_.values[i], b_.values[i]);
+        }
+        #endif
     #endif
 
     return simde_int64x2_from_private(r_);
@@ -131204,13 +135050,22 @@ simde_vshlq_u8 (const simde_uint8x16_t a, const simde_int8x16_t b) {
                                         _mm256_cmpgt_epi16(_mm256_setzero_si256(), b256));
       r_.m128i = _mm256_cvtepi16_epi8(r256);
     #else
-      SIMDE_VECTORIZE
-      for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
-        r_.values[i] = HEDLEY_STATIC_CAST(uint8_t,
-          (simde_math_abs(b_.values[i]) >= 8) ? 0 :
-              (b_.values[i]  >= 0) ? (a_.values[i] <<  b_.values[i]) :
-                                    (a_.values[i] >> -b_.values[i]));
-      }
+      #if defined(SIMDE_RISCV_V_NATIVE)
+        vuint8m1_t u_b = __riscv_vreinterpret_v_i8m1_u8m1 (b_.sv128);
+        vint8m1_t b_abs =  __riscv_vmax_vv_i8m1 (b_.sv128, __riscv_vneg_v_i8m1 (b_.sv128, 16), 16);
+        vuint8m1_t u_b_abs = __riscv_vreinterpret_v_i8m1_u8m1 (b_abs);
+        r_.sv128 = __riscv_vmerge_vxm_u8m1(__riscv_vmerge_vvm_u8m1(__riscv_vsrl_vv_u8m1(a_.sv128, u_b_abs, 16)
+          , __riscv_vsll_vv_u8m1 (a_.sv128, u_b, 16), __riscv_vmsge_vx_i8m1_b8(b_.sv128, 0, 16), 16), 0
+          , __riscv_vmsgeu_vx_u8m1_b8(u_b_abs, 8, 16), 16);
+      #else
+        SIMDE_VECTORIZE
+        for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
+          r_.values[i] = HEDLEY_STATIC_CAST(uint8_t,
+            (simde_math_abs(b_.values[i]) >= 8) ? 0 :
+                (b_.values[i]  >= 0) ? (a_.values[i] <<  b_.values[i]) :
+                                      (a_.values[i] >> -b_.values[i]));
+        }
+      #endif
     #endif
 
     return simde_uint8x16_from_private(r_);
@@ -131261,14 +135116,25 @@ simde_vshlq_u16 (const simde_uint16x8_t a, const simde_int16x8_t b) {
       r256 = _mm256_shuffle_epi8(r256, _mm256_set1_epi64x(0x0D0C090805040100));
       r_.m128i = _mm_set_epi64x(simde_mm256_extract_epi64(r256, 2), simde_mm256_extract_epi64(r256, 0));
     #else
-      SIMDE_VECTORIZE
-      for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
-        b_.values[i] = HEDLEY_STATIC_CAST(int8_t, b_.values[i]);
-        r_.values[i] = HEDLEY_STATIC_CAST(uint16_t,
-          (simde_math_abs(b_.values[i]) >= 16) ? 0 :
-              (b_.values[i]  >=  0) ? (a_.values[i] <<  b_.values[i]) :
-                                      (a_.values[i] >> -b_.values[i]));
-      }
+      #if defined(SIMDE_RISCV_V_NATIVE)
+        vint8mf2_t b_8mf2 = __riscv_vncvt_x_x_w_i8mf2 (b_.sv128, 8);
+        vint8mf2_t b_8mf2_abs = __riscv_vmax_vv_i8mf2 (b_8mf2, __riscv_vneg_v_i8mf2 (b_8mf2, 16), 16);
+        vuint8mf2_t u_b_8mf2_abs = __riscv_vreinterpret_v_i8mf2_u8mf2 (b_8mf2_abs);
+        vuint16m1_t u_b = __riscv_vreinterpret_v_i16m1_u16m1 (b_.sv128);
+        vuint16m1_t u_b_abs = __riscv_vwcvtu_x_x_v_u16m1 (u_b_8mf2_abs, 16);
+        r_.sv128 = __riscv_vmerge_vxm_u16m1(__riscv_vmerge_vvm_u16m1(__riscv_vsrl_vv_u16m1(a_.sv128, u_b_abs, 8),
+          __riscv_vsll_vv_u16m1 (a_.sv128, u_b, 8), __riscv_vmsge_vx_i8mf2_b16(b_8mf2, 0, 8), 8),
+          0, __riscv_vmsgeu_vx_u8mf2_b16(u_b_8mf2_abs, 16, 16), 8);
+      #else
+        SIMDE_VECTORIZE
+        for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
+          b_.values[i] = HEDLEY_STATIC_CAST(int8_t, b_.values[i]);
+          r_.values[i] = HEDLEY_STATIC_CAST(uint16_t,
+            (simde_math_abs(b_.values[i]) >= 16) ? 0 :
+                (b_.values[i]  >=  0) ? (a_.values[i] <<  b_.values[i]) :
+                                        (a_.values[i] >> -b_.values[i]));
+        }
+      #endif
     #endif
 
     return simde_uint16x8_from_private(r_);
@@ -131305,13 +135171,26 @@ simde_vshlq_u32 (const simde_uint32x4_t a, const simde_int32x4_t b) {
                                  _mm_srlv_epi32(a_.m128i, _mm_abs_epi32(B)),
                                  _mm_cmpgt_epi32(_mm_setzero_si128(), B));
     #else
-      SIMDE_VECTORIZE
-      for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
-        b_.values[i] = HEDLEY_STATIC_CAST(int8_t, b_.values[i]);
-        r_.values[i] = (simde_math_abs(b_.values[i]) >= 32) ? 0 :
-                          (b_.values[i]  >=  0) ? (a_.values[i] <<  b_.values[i]) :
-                                                  (a_.values[i] >> -b_.values[i]);
-      }
+      #if defined(SIMDE_RISCV_V_NATIVE)
+        vint8mf4_t b_8mf4 = __riscv_vncvt_x_x_w_i8mf4 (
+          __riscv_vncvt_x_x_w_i16mf2 (b_.sv128, 4), 8);
+        vint8mf4_t b_8mf4_abs = __riscv_vmax_vv_i8mf4 (b_8mf4, __riscv_vneg_v_i8mf4 (b_8mf4, 16), 16);
+        vuint8mf4_t u_b_8mf4_abs = __riscv_vreinterpret_v_i8mf4_u8mf4 (b_8mf4_abs);
+        vuint32m1_t u_b = __riscv_vreinterpret_v_i32m1_u32m1 (b_.sv128);
+        vint32m1_t b_abs =  __riscv_vmax_vv_i32m1 (b_.sv128, __riscv_vneg_v_i32m1 (b_.sv128, 4), 4);
+        vuint32m1_t u_b_abs = __riscv_vreinterpret_v_i32m1_u32m1 (b_abs);
+        r_.sv128 = __riscv_vmerge_vxm_u32m1(__riscv_vmerge_vvm_u32m1(__riscv_vsrl_vv_u32m1(a_.sv128, u_b_abs, 4)
+            , __riscv_vsll_vv_u32m1 (a_.sv128, u_b, 4), __riscv_vmsge_vx_i8mf4_b32(b_8mf4, 0, 4), 4), 0
+         , __riscv_vmsgeu_vx_u8mf4_b32(u_b_8mf4_abs, 32, 16), 4);
+      #else
+        SIMDE_VECTORIZE
+        for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
+          b_.values[i] = HEDLEY_STATIC_CAST(int8_t, b_.values[i]);
+          r_.values[i] = (simde_math_abs(b_.values[i]) >= 32) ? 0 :
+                            (b_.values[i]  >=  0) ? (a_.values[i] <<  b_.values[i]) :
+                                                    (a_.values[i] >> -b_.values[i]);
+        }
+      #endif
     #endif
 
     return simde_uint32x4_from_private(r_);
@@ -131360,10 +135239,24 @@ simde_vshlq_u64 (const simde_uint64x2_t a, const simde_int64x2_t b) {
                                  _mm_srlv_epi64(a_.m128i, b_abs),
                                  _mm_cmpgt_epi64(_mm_setzero_si128(), _mm_slli_epi64(b_.m128i, 56)));
     #else
-      SIMDE_VECTORIZE
-      for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
-        r_.values[i] = simde_vshld_u64(a_.values[i], b_.values[i]);
-      }
+      #if defined(SIMDE_RISCV_V_NATIVE)
+        vint8mf8_t b_8mf8 = __riscv_vncvt_x_x_w_i8mf8 (
+          __riscv_vncvt_x_x_w_i16mf4 (
+          __riscv_vncvt_x_x_w_i32mf2 (b_.sv128, 2), 4), 8);
+        vint8mf8_t b_8mf8_abs = __riscv_vmax_vv_i8mf8 (b_8mf8, __riscv_vneg_v_i8mf8 (b_8mf8, 16), 16);
+        vuint8mf8_t u_b_8mf8_abs = __riscv_vreinterpret_v_i8mf8_u8mf8 (b_8mf8_abs);
+        vuint64m1_t u_b = __riscv_vreinterpret_v_i64m1_u64m1 (b_.sv128);
+        vint64m1_t b_abs =  __riscv_vmax_vv_i64m1 (b_.sv128, __riscv_vneg_v_i64m1 (b_.sv128, 2), 2);
+        vuint64m1_t u_b_abs = __riscv_vreinterpret_v_i64m1_u64m1 (b_abs);
+        r_.sv128 = __riscv_vmerge_vxm_u64m1(__riscv_vmerge_vvm_u64m1(__riscv_vsrl_vv_u64m1(a_.sv128, u_b_abs, 2)
+            , __riscv_vsll_vv_u64m1 (a_.sv128, u_b, 2), __riscv_vmsge_vx_i8mf8_b64(b_8mf8, 0, 2), 2), 0
+         , __riscv_vmsgeu_vx_u8mf8_b64(u_b_8mf8_abs, 64, 16), 2);
+      #else
+        SIMDE_VECTORIZE
+        for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
+          r_.values[i] = simde_vshld_u64(a_.values[i], b_.values[i]);
+        }
+      #endif
     #endif
 
     return simde_uint64x2_from_private(r_);
@@ -131380,9 +135273,9 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_SHL_H) */
 /* :: End simde/arm/neon/shl.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/shll_high_n.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -131414,7 +135307,7 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_SHLL_HIGH_N_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 /*
  * The constant range requirements for the shift amount *n* looks strange.
@@ -131567,7 +135460,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_SHLL_HIGH_N_H) */
 /* :: End simde/arm/neon/shll_high_n.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/shll_n.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -131594,13 +135487,14 @@ HEDLEY_DIAGNOSTIC_POP
  * Copyright:
  *   2020      Evan Nemerson <evan@nemerson.com>
  *   2020      Christopher Moore <moore@free.fr>
+ *   2023      Chi-Wei Chu <wewe5215@gapp.nthu.edu.tw> (Copyright owned by NTHU pllab)
  */
 
 #if !defined(SIMDE_ARM_NEON_SHLL_N_H)
 #define SIMDE_ARM_NEON_SHLL_N_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 /*
  * The constant range requirements for the shift amount *n* looks strange.
@@ -131621,12 +135515,19 @@ simde_vshll_n_s8 (const simde_int8x8_t a, const int n)
     SIMDE_REQUIRE_CONSTANT_RANGE(n, 0, 8) {
   simde_int16x8_private r_;
   simde_int8x8_private a_ = simde_int8x8_to_private(a);
-
-  SIMDE_VECTORIZE
-  for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
-    r_.values[i] = HEDLEY_STATIC_CAST(int16_t, HEDLEY_STATIC_CAST(int16_t, a_.values[i]) << n);
-  }
-
+  #if defined(SIMDE_RISCV_V_NATIVE)
+    vint16m2_t va_wide = __riscv_vwcvt_x_x_v_i16m2 (a_.sv64, 8);
+    vint16m2_t rst = __riscv_vsll_vx_i16m2 (va_wide, n, 8);
+    r_.sv128 =  __riscv_vlmul_trunc_v_i16m2_i16m1 (rst);
+  #elif defined(SIMDE_WASM_SIMD128_NATIVE)
+    v128_t tmp = wasm_i16x8_load8x8(&a_.values);
+    r_.v128 = wasm_i16x8_shl(tmp, HEDLEY_STATIC_CAST(uint32_t, n));
+  #else
+    SIMDE_VECTORIZE
+    for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
+      r_.values[i] = HEDLEY_STATIC_CAST(int16_t, HEDLEY_STATIC_CAST(int16_t, a_.values[i]) << n);
+    }
+  #endif
   return simde_int16x8_from_private(r_);
 }
 #if defined(SIMDE_ARM_NEON_A32V7_NATIVE)
@@ -131643,12 +135544,19 @@ simde_vshll_n_s16 (const simde_int16x4_t a, const int n)
     SIMDE_REQUIRE_CONSTANT_RANGE(n, 0, 16) {
   simde_int32x4_private r_;
   simde_int16x4_private a_ = simde_int16x4_to_private(a);
-
-  SIMDE_VECTORIZE
-  for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
-    r_.values[i] = HEDLEY_STATIC_CAST(int32_t, a_.values[i]) << n;
-  }
-
+  #if defined(SIMDE_RISCV_V_NATIVE)
+    vint32m2_t va_wide = __riscv_vwcvt_x_x_v_i32m2 (a_.sv64, 4);
+    vint32m2_t rst = __riscv_vsll_vx_i32m2 (va_wide, n, 4);
+    r_.sv128 =  __riscv_vlmul_trunc_v_i32m2_i32m1 (rst);
+  #elif defined(SIMDE_WASM_SIMD128_NATIVE)
+    v128_t tmp = wasm_i32x4_load16x4(&a_.values);
+    r_.v128 = wasm_i32x4_shl(tmp, HEDLEY_STATIC_CAST(uint32_t, n));
+  #else
+    SIMDE_VECTORIZE
+    for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
+      r_.values[i] = HEDLEY_STATIC_CAST(int32_t, a_.values[i]) << n;
+    }
+  #endif
   return simde_int32x4_from_private(r_);
 }
 #if defined(SIMDE_ARM_NEON_A32V7_NATIVE)
@@ -131665,12 +135573,19 @@ simde_vshll_n_s32 (const simde_int32x2_t a, const int n)
     SIMDE_REQUIRE_CONSTANT_RANGE(n, 0, 32) {
   simde_int64x2_private r_;
   simde_int32x2_private a_ = simde_int32x2_to_private(a);
-
-  SIMDE_VECTORIZE
-  for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
-    r_.values[i] = HEDLEY_STATIC_CAST(int64_t, a_.values[i]) << n;
-  }
-
+  #if defined(SIMDE_RISCV_V_NATIVE)
+    vint64m2_t va_wide = __riscv_vwcvt_x_x_v_i64m2 (a_.sv64, 2);
+    vint64m2_t rst = __riscv_vsll_vx_i64m2 (va_wide, n, 2);
+    r_.sv128 =  __riscv_vlmul_trunc_v_i64m2_i64m1 (rst);
+  #elif defined(SIMDE_WASM_SIMD128_NATIVE)
+    v128_t tmp = wasm_i64x2_load32x2(&a_.values);
+    r_.v128 = wasm_i64x2_shl(tmp, HEDLEY_STATIC_CAST(uint32_t, n));
+  #else
+    SIMDE_VECTORIZE
+    for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
+      r_.values[i] = HEDLEY_STATIC_CAST(int64_t, a_.values[i]) << n;
+    }
+  #endif
   return simde_int64x2_from_private(r_);
 }
 #if defined(SIMDE_ARM_NEON_A32V7_NATIVE)
@@ -131687,12 +135602,19 @@ simde_vshll_n_u8 (const simde_uint8x8_t a, const int n)
     SIMDE_REQUIRE_CONSTANT_RANGE(n, 0, 8) {
   simde_uint16x8_private r_;
   simde_uint8x8_private a_ = simde_uint8x8_to_private(a);
-
-  SIMDE_VECTORIZE
-  for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
-    r_.values[i] = HEDLEY_STATIC_CAST(uint16_t, HEDLEY_STATIC_CAST(uint16_t, a_.values[i]) << n);
-  }
-
+  #if defined(SIMDE_RISCV_V_NATIVE)
+    vuint16m2_t va_wide = __riscv_vwcvtu_x_x_v_u16m2 (a_.sv64, 8);
+    vuint16m2_t rst = __riscv_vsll_vx_u16m2 (va_wide, n, 8);
+    r_.sv128 =  __riscv_vlmul_trunc_v_u16m2_u16m1 (rst);
+  #elif defined(SIMDE_WASM_SIMD128_NATIVE)
+    v128_t tmp = wasm_u16x8_load8x8(&a_.values);
+    r_.v128 = wasm_i16x8_shl(tmp, HEDLEY_STATIC_CAST(uint32_t, n));
+  #else
+    SIMDE_VECTORIZE
+    for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
+      r_.values[i] = HEDLEY_STATIC_CAST(uint16_t, HEDLEY_STATIC_CAST(uint16_t, a_.values[i]) << n);
+    }
+  #endif
   return simde_uint16x8_from_private(r_);
 }
 #if defined(SIMDE_ARM_NEON_A32V7_NATIVE)
@@ -131709,12 +135631,19 @@ simde_vshll_n_u16 (const simde_uint16x4_t a, const int n)
     SIMDE_REQUIRE_CONSTANT_RANGE(n, 0, 16) {
   simde_uint32x4_private r_;
   simde_uint16x4_private a_ = simde_uint16x4_to_private(a);
-
-  SIMDE_VECTORIZE
-  for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
-    r_.values[i] = HEDLEY_STATIC_CAST(uint32_t, a_.values[i]) << n;
-  }
-
+  #if defined(SIMDE_RISCV_V_NATIVE)
+    vuint32m2_t va_wide = __riscv_vwcvtu_x_x_v_u32m2 (a_.sv64, 4);
+    vuint32m2_t rst = __riscv_vsll_vx_u32m2 (va_wide, n, 4);
+    r_.sv128 =  __riscv_vlmul_trunc_v_u32m2_u32m1 (rst);
+  #elif defined(SIMDE_WASM_SIMD128_NATIVE)
+    v128_t tmp = wasm_u32x4_load16x4(&a_.values);
+    r_.v128 = wasm_i32x4_shl(tmp, HEDLEY_STATIC_CAST(uint32_t, n));
+  #else
+    SIMDE_VECTORIZE
+    for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
+      r_.values[i] = HEDLEY_STATIC_CAST(uint32_t, a_.values[i]) << n;
+    }
+  #endif
   return simde_uint32x4_from_private(r_);
 }
 #if defined(SIMDE_ARM_NEON_A32V7_NATIVE)
@@ -131731,12 +135660,19 @@ simde_vshll_n_u32 (const simde_uint32x2_t a, const int n)
     SIMDE_REQUIRE_CONSTANT_RANGE(n, 0, 32) {
   simde_uint64x2_private r_;
   simde_uint32x2_private a_ = simde_uint32x2_to_private(a);
-
-  SIMDE_VECTORIZE
-  for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
-    r_.values[i] = HEDLEY_STATIC_CAST(uint64_t, a_.values[i]) << n;
-  }
-
+  #if defined(SIMDE_RISCV_V_NATIVE)
+    vuint64m2_t va_wide = __riscv_vwcvtu_x_x_v_u64m2 (a_.sv64, 2);
+    vuint64m2_t rst = __riscv_vsll_vx_u64m2 (va_wide, n, 2);
+    r_.sv128 =  __riscv_vlmul_trunc_v_u64m2_u64m1 (rst);
+  #elif defined(SIMDE_WASM_SIMD128_NATIVE)
+    v128_t tmp = wasm_u64x2_load32x2(&a_.values);
+    r_.v128 = wasm_i64x2_shl(tmp, HEDLEY_STATIC_CAST(uint32_t, n));
+  #else
+    SIMDE_VECTORIZE
+    for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
+      r_.values[i] = HEDLEY_STATIC_CAST(uint64_t, a_.values[i]) << n;
+    }
+  #endif
   return simde_uint64x2_from_private(r_);
 }
 #if defined(SIMDE_ARM_NEON_A32V7_NATIVE)
@@ -131753,9 +135689,9 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_SHLL_N_H) */
 /* :: End simde/arm/neon/shll_n.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/shrn_high_n.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -131787,13 +135723,13 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_SHRN_HIGH_N_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/shrn_n.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -131821,19 +135757,20 @@ HEDLEY_DIAGNOSTIC_POP
  *   2020      Evan Nemerson <evan@nemerson.com>
  *   2021      Zhi An Ng <zhin@google.com> (Copyright owned by Google, LLC)
  *   2023      Yi-Yen Chung <eric681@andestech.com> (Copyright owned by Andes Technology)
+ *   2023      Chi-Wei Chu <wewe5215@gapp.nthu.edu.tw> (Copyright owned by NTHU pllab)
  */
 
 #if !defined(SIMDE_ARM_NEON_SHRN_N_H)
 #define SIMDE_ARM_NEON_SHRN_N_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -131845,10 +135782,16 @@ simde_vshrn_n_s16 (const simde_int16x8_t a, const int n)
     SIMDE_REQUIRE_CONSTANT_RANGE(n, 1, 8) {
   simde_int8x8_private r_;
   simde_int16x8_private a_ = simde_int16x8_to_private(a);
-  SIMDE_VECTORIZE
-  for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
-    r_.values[i] = HEDLEY_STATIC_CAST(int8_t, (a_.values[i] >> n) & UINT8_MAX);
-  }
+
+  #if defined(SIMDE_RISCV_V_NATIVE)
+    vint16m1_t shift = __riscv_vand_vx_i16m1(__riscv_vsll_vx_i16m1 (a_.sv128, n, 8), UINT8_MAX, 8);
+    r_.sv64 = __riscv_vlmul_ext_v_i8mf2_i8m1(__riscv_vncvt_x_x_w_i8mf2(shift, 8));
+  #else
+    SIMDE_VECTORIZE
+    for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
+      r_.values[i] = HEDLEY_STATIC_CAST(int8_t, (a_.values[i] >> n) & UINT8_MAX);
+    }
+  #endif
   return simde_int8x8_from_private(r_);
 }
 #if defined(SIMDE_ARM_NEON_A32V7_NATIVE)
@@ -131867,12 +135810,15 @@ simde_vshrn_n_s32 (const simde_int32x4_t a, const int n)
     SIMDE_REQUIRE_CONSTANT_RANGE(n, 1, 16) {
   simde_int16x4_private r_;
   simde_int32x4_private a_ = simde_int32x4_to_private(a);
-
-  SIMDE_VECTORIZE
-  for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
-    r_.values[i] = HEDLEY_STATIC_CAST(int16_t, (a_.values[i] >> n) & UINT16_MAX);
-  }
-
+  #if defined(SIMDE_RISCV_V_NATIVE)
+    vint32m1_t shift = __riscv_vand_vx_i32m1(__riscv_vsll_vx_i32m1 (a_.sv128, n, 4), UINT16_MAX, 4);
+    r_.sv64 = __riscv_vlmul_ext_v_i16mf2_i16m1(__riscv_vncvt_x_x_w_i16mf2(shift, 4));
+  #else
+    SIMDE_VECTORIZE
+    for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
+      r_.values[i] = HEDLEY_STATIC_CAST(int16_t, (a_.values[i] >> n) & UINT16_MAX);
+    }
+  #endif
   return simde_int16x4_from_private(r_);
 }
 #if defined(SIMDE_ARM_NEON_A32V7_NATIVE)
@@ -131892,11 +135838,15 @@ simde_vshrn_n_s64 (const simde_int64x2_t a, const int n)
   simde_int32x2_private r_;
   simde_int64x2_private a_ = simde_int64x2_to_private(a);
 
-  SIMDE_VECTORIZE
-  for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
-    r_.values[i] = HEDLEY_STATIC_CAST(int32_t, (a_.values[i] >> n) & UINT32_MAX);
-  }
-
+  #if defined(SIMDE_RISCV_V_NATIVE)
+    vint64m1_t shift = __riscv_vand_vx_i64m1(__riscv_vsll_vx_i64m1 (a_.sv128, n, 2), UINT32_MAX, 2);
+    r_.sv64 = __riscv_vlmul_ext_v_i32mf2_i32m1(__riscv_vncvt_x_x_w_i32mf2(shift, 2));
+  #else
+    SIMDE_VECTORIZE
+    for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
+      r_.values[i] = HEDLEY_STATIC_CAST(int32_t, (a_.values[i] >> n) & UINT32_MAX);
+    }
+  #endif
   return simde_int32x2_from_private(r_);
 }
 #if defined(SIMDE_ARM_NEON_A32V7_NATIVE)
@@ -132033,9 +135983,9 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_SHRN_HIGH_N_H) */
 /* :: End simde/arm/neon/shrn_high_n.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/sli_n.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -132067,17 +136017,17 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_SLI_N_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -132388,7 +136338,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_SLI_N_H) */
 /* :: End simde/arm/neon/sli_n.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/sm3.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -132420,10 +136370,14 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_SM3_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
+#if HEDLEY_GCC_VERSION_CHECK(14,0,0)
+  SIMDE_DIAGNOSTIC_DISABLE_MAYBE_UNINITIAZILED_
+#endif
+
 SIMDE_BEGIN_DECLS_
 
 #define ROR32(operand, shift) (((operand) >> (shift)) | ((operand) << (32-shift)))
@@ -132644,7 +136598,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_SM3_H) */
 /* :: End simde/arm/neon/sm3.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/sm4.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -132676,7 +136630,7 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_SM4_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -132804,7 +136758,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_SM4_H) */
 /* :: End simde/arm/neon/sm4.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/sqadd.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -132830,13 +136784,14 @@ HEDLEY_DIAGNOSTIC_POP
  *
  * Copyright:
  *   2021      Atharva Nimbalkar <atharvakn@gmail.com>
+ *   2023      Chi-Wei Chu <wewe5215@gapp.nthu.edu.tw> (Copyright owned by NTHU pllab)
  */
 
 #if !defined(SIMDE_ARM_NEON_SQADD_H)
 #define SIMDE_ARM_NEON_SQADD_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 #include <limits.h>
 
 // Workaround on ARM64 windows due to windows SDK bug
@@ -132951,12 +136906,20 @@ simde_vsqadd_u8(simde_uint8x8_t a, simde_int8x8_t b) {
       r_,
       a_ = simde_uint8x8_to_private(a);
     simde_int8x8_private b_ = simde_int8x8_to_private(b);
-
-    SIMDE_VECTORIZE
-    for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
-      r_.values[i] = simde_vsqaddb_u8(a_.values[i], b_.values[i]);
-    }
-
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      vint16m2_t sum = __riscv_vreinterpret_v_u16m2_i16m2(
+        __riscv_vadd_vv_u16m2 (
+          __riscv_vwcvtu_x_x_v_u16m2 (a_.sv64, 8), __riscv_vreinterpret_v_i16m2_u16m2( \
+          __riscv_vwcvt_x_x_v_i16m2 (b_.sv64, 8)),8));
+      r_.sv64 = __riscv_vmerge_vxm_u8m1(__riscv_vmerge_vxm_u8m1(__riscv_vncvt_x_x_w_u8m1 \
+        (__riscv_vreinterpret_v_i16m2_u16m2(sum), 8),255, __riscv_vmsgt_vx_i16m2_b8(sum, 255, 8),
+        8), 0, __riscv_vmslt_vx_i16m2_b8(sum, 0, 8), 8);
+    #else
+      SIMDE_VECTORIZE
+      for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
+        r_.values[i] = simde_vsqaddb_u8(a_.values[i], b_.values[i]);
+      }
+    #endif
     return simde_uint8x8_from_private(r_);
   #endif
 }
@@ -132975,12 +136938,19 @@ simde_vsqadd_u16(simde_uint16x4_t a, simde_int16x4_t b) {
       r_,
       a_ = simde_uint16x4_to_private(a);
     simde_int16x4_private b_ = simde_int16x4_to_private(b);
-
-    SIMDE_VECTORIZE
-    for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
-      r_.values[i] = simde_vsqaddh_u16(a_.values[i], b_.values[i]);
-    }
-
+      #if defined(SIMDE_RISCV_V_NATIVE)
+      vint32m2_t sum = __riscv_vreinterpret_v_u32m2_i32m2(__riscv_vadd_vv_u32m2 \
+        (__riscv_vwcvtu_x_x_v_u32m2 (a_.sv64, 4), __riscv_vreinterpret_v_i32m2_u32m2( \
+        __riscv_vwcvt_x_x_v_i32m2 (b_.sv64, 4)), 4));
+      r_.sv64 = __riscv_vmerge_vxm_u16m1(__riscv_vmerge_vxm_u16m1(__riscv_vncvt_x_x_w_u16m1( \
+        __riscv_vreinterpret_v_i32m2_u32m2(sum), 4),UINT16_MAX,__riscv_vmsgt_vx_i32m2_b16(sum, UINT16_MAX, 4),
+        4), 0, __riscv_vmslt_vx_i32m2_b16(sum, 0, 4), 4);
+    #else
+      SIMDE_VECTORIZE
+      for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
+        r_.values[i] = simde_vsqaddh_u16(a_.values[i], b_.values[i]);
+      }
+    #endif
     return simde_uint16x4_from_private(r_);
   #endif
 }
@@ -132999,12 +136969,19 @@ simde_vsqadd_u32(simde_uint32x2_t a, simde_int32x2_t b) {
       r_,
       a_ = simde_uint32x2_to_private(a);
     simde_int32x2_private b_ = simde_int32x2_to_private(b);
+    #if defined(SIMDE_RISCV_V_NATIVE)
+    vint64m2_t sum = __riscv_vreinterpret_v_u64m2_i64m2(__riscv_vadd_vv_u64m2 (__riscv_vwcvtu_x_x_v_u64m2 (a_.sv64, 2), \
+      __riscv_vreinterpret_v_i64m2_u64m2(__riscv_vwcvt_x_x_v_i64m2 (b_.sv64, 2)), 2));
+      r_.sv64 = __riscv_vmerge_vxm_u32m1(
+      __riscv_vmerge_vxm_u32m1(__riscv_vncvt_x_x_w_u32m1(__riscv_vreinterpret_v_i64m2_u64m2(sum), 2),
+        UINT32_MAX,__riscv_vmsgt_vx_i64m2_b32(sum, UINT32_MAX, 2),2), 0, __riscv_vmslt_vx_i64m2_b32(sum, 0, 2), 2);
 
-    SIMDE_VECTORIZE
-    for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
-      r_.values[i] = simde_vsqadds_u32(a_.values[i], b_.values[i]);
-    }
-
+    #else
+      SIMDE_VECTORIZE
+      for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
+        r_.values[i] = simde_vsqadds_u32(a_.values[i], b_.values[i]);
+      }
+    #endif
     return simde_uint32x2_from_private(r_);
   #endif
 }
@@ -133023,12 +137000,18 @@ simde_vsqadd_u64(simde_uint64x1_t a, simde_int64x1_t b) {
       r_,
       a_ = simde_uint64x1_to_private(a);
     simde_int64x1_private b_ = simde_int64x1_to_private(b);
-
-    SIMDE_VECTORIZE
-    for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
-      r_.values[i] = simde_vsqaddd_u64(a_.values[i], b_.values[i]);
-    }
-
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      vuint64m1_t sum = __riscv_vreinterpret_v_i64m1_u64m1(__riscv_vadd_vx_i64m1(b_.sv64, (int64_t)a_.values[0], 1));
+      r_.sv64 = __riscv_vmerge_vvm_u64m1(__riscv_vmerge_vxm_u64m1(sum,UINT64_MAX,__riscv_vmsgtu_vx_u64m1_b64( \
+        __riscv_vreinterpret_v_i64m1_u64m1(b_.sv64), UINT64_MAX - a_.values[0], 1), 1), __riscv_vmerge_vxm_u64m1( \
+        sum, 0, __riscv_vmsgtu_vx_u64m1_b64(__riscv_vreinterpret_v_i64m1_u64m1(__riscv_vneg_v_i64m1(b_.sv64, 1)), \
+        a_.values[0], 1), 1), __riscv_vmsle_vx_i64m1_b64(b_.sv64, 0, 1), 1);
+    #else
+      SIMDE_VECTORIZE
+      for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
+        r_.values[i] = simde_vsqaddd_u64(a_.values[i], b_.values[i]);
+      }
+    #endif
     return simde_uint64x1_from_private(r_);
   #endif
 }
@@ -133047,12 +137030,18 @@ simde_vsqaddq_u8(simde_uint8x16_t a, simde_int8x16_t b) {
       r_,
       a_ = simde_uint8x16_to_private(a);
     simde_int8x16_private b_ = simde_int8x16_to_private(b);
-
-    SIMDE_VECTORIZE
-    for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
-      r_.values[i] = simde_vsqaddb_u8(a_.values[i], b_.values[i]);
-    }
-
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      vint16m2_t sum = __riscv_vreinterpret_v_u16m2_i16m2(__riscv_vadd_vv_u16m2 (__riscv_vwcvtu_x_x_v_u16m2 \
+        (a_.sv128, 16), __riscv_vreinterpret_v_i16m2_u16m2(__riscv_vwcvt_x_x_v_i16m2 (b_.sv128, 16)), 16));
+      r_.sv128 = __riscv_vmerge_vxm_u8m1(__riscv_vmerge_vxm_u8m1(__riscv_vncvt_x_x_w_u8m1( \
+        __riscv_vreinterpret_v_i16m2_u16m2(sum), 16), 255, __riscv_vmsgt_vx_i16m2_b8(sum, 255, 16), 16), 0, \
+      __riscv_vmslt_vx_i16m2_b8(sum, 0, 16), 16);
+    #else
+      SIMDE_VECTORIZE
+      for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
+        r_.values[i] = simde_vsqaddb_u8(a_.values[i], b_.values[i]);
+      }
+    #endif
     return simde_uint8x16_from_private(r_);
   #endif
 }
@@ -133071,12 +137060,18 @@ simde_vsqaddq_u16(simde_uint16x8_t a, simde_int16x8_t b) {
       r_,
       a_ = simde_uint16x8_to_private(a);
     simde_int16x8_private  b_ = simde_int16x8_to_private(b);
-
-    SIMDE_VECTORIZE
-    for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
-      r_.values[i] = simde_vsqaddh_u16(a_.values[i], b_.values[i]);
-    }
-
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      vint32m2_t sum = __riscv_vreinterpret_v_u32m2_i32m2(__riscv_vadd_vv_u32m2 (__riscv_vwcvtu_x_x_v_u32m2 \
+        (a_.sv128, 8), __riscv_vreinterpret_v_i32m2_u32m2(__riscv_vwcvt_x_x_v_i32m2 (b_.sv128, 8)), 8));
+      r_.sv128 = __riscv_vmerge_vxm_u16m1(__riscv_vmerge_vxm_u16m1(__riscv_vncvt_x_x_w_u16m1( \
+        __riscv_vreinterpret_v_i32m2_u32m2(sum), 8), UINT16_MAX, __riscv_vmsgt_vx_i32m2_b16(sum, UINT16_MAX, 8), \
+        8), 0, __riscv_vmslt_vx_i32m2_b16(sum, 0, 8), 8);
+    #else
+      SIMDE_VECTORIZE
+      for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
+        r_.values[i] = simde_vsqaddh_u16(a_.values[i], b_.values[i]);
+      }
+    #endif
     return simde_uint16x8_from_private(r_);
   #endif
 }
@@ -133095,12 +137090,19 @@ simde_vsqaddq_u32(simde_uint32x4_t a, simde_int32x4_t b) {
       r_,
       a_ = simde_uint32x4_to_private(a);
     simde_int32x4_private  b_ = simde_int32x4_to_private(b);
-
-    SIMDE_VECTORIZE
-    for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
-      r_.values[i] = simde_vsqadds_u32(a_.values[i], b_.values[i]);
-    }
-
+    #if defined(SIMDE_RISCV_V_NATIVE)
+    vint64m2_t sum = __riscv_vreinterpret_v_u64m2_i64m2(__riscv_vadd_vv_u64m2 (
+          __riscv_vwcvtu_x_x_v_u64m2 (a_.sv128, 4), __riscv_vreinterpret_v_i64m2_u64m2( \
+          __riscv_vwcvt_x_x_v_i64m2 (b_.sv128, 4)), 4));
+      r_.sv128 = __riscv_vmerge_vxm_u32m1(__riscv_vmerge_vxm_u32m1(
+        __riscv_vncvt_x_x_w_u32m1(__riscv_vreinterpret_v_i64m2_u64m2(sum), 4), UINT32_MAX,
+        __riscv_vmsgt_vx_i64m2_b32(sum, UINT32_MAX, 4), 4), 0, __riscv_vmslt_vx_i64m2_b32(sum, 0, 4), 4);
+    #else
+      SIMDE_VECTORIZE
+      for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
+        r_.values[i] = simde_vsqadds_u32(a_.values[i], b_.values[i]);
+      }
+    #endif
     return simde_uint32x4_from_private(r_);
   #endif
 }
@@ -133119,12 +137121,21 @@ simde_vsqaddq_u64(simde_uint64x2_t a, simde_int64x2_t b) {
       r_,
       a_ = simde_uint64x2_to_private(a);
     simde_int64x2_private  b_ = simde_int64x2_to_private(b);
-
-    SIMDE_VECTORIZE
-    for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
-      r_.values[i] = simde_vsqaddd_u64(a_.values[i], b_.values[i]);
-    }
-
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      vuint64m1_t sum = __riscv_vreinterpret_v_i64m1_u64m1(__riscv_vadd_vv_i64m1(b_.sv128, \
+        __riscv_vreinterpret_v_u64m1_i64m1(a_.sv128), 2));
+      r_.sv128 = __riscv_vmerge_vvm_u64m1(
+        __riscv_vmerge_vxm_u64m1(sum, UINT64_MAX, __riscv_vmsgtu_vv_u64m1_b64(
+        __riscv_vreinterpret_v_i64m1_u64m1(b_.sv128), __riscv_vsub_vv_u64m1(__riscv_vmv_v_x_u64m1(UINT64_MAX, 2), \
+        a_.sv128, 2), 2), 2), __riscv_vmerge_vxm_u64m1(sum, 0, __riscv_vmsgtu_vv_u64m1_b64 \
+        (__riscv_vreinterpret_v_i64m1_u64m1(__riscv_vneg_v_i64m1(b_.sv128, 2)), a_.sv128, 2), 2), \
+        __riscv_vmsle_vx_i64m1_b64(b_.sv128, 0, 2), 2);
+    #else
+      SIMDE_VECTORIZE
+      for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
+        r_.values[i] = simde_vsqaddd_u64(a_.values[i], b_.values[i]);
+      }
+    #endif
     return simde_uint64x2_from_private(r_);
   #endif
 }
@@ -133139,7 +137150,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_SQADD_H) */
 /* :: End simde/arm/neon/sqadd.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/sqrt.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -133165,13 +137176,14 @@ HEDLEY_DIAGNOSTIC_POP
  *
  * Copyright:
  *   2023      Yi-Yen Chung <eric681@andestech.com> (Copyright owned by Andes Technology)
+ *   2023      Chi-Wei Chu <wewe5215@gapp.nthu.edu.tw> (Copyright owned by NTHU pllab)
  */
 
 #if !defined(SIMDE_ARM_NEON_SQRT_H)
 #define SIMDE_ARM_NEON_SQRT_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -133204,10 +137216,14 @@ simde_vsqrt_f16(simde_float16x4_t a) {
       r_,
       a_ = simde_float16x4_to_private(a);
 
-    SIMDE_VECTORIZE
-    for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
-      r_.values[i] = simde_vsqrth_f16(a_.values[i]);
-    }
+    #if defined(SIMDE_RISCV_V_NATIVE) && SIMDE_ARCH_RISCV_ZVFH
+        r_.sv64 = __riscv_vfsqrt_v_f16m1(a_.sv64, 4);
+    #else
+      SIMDE_VECTORIZE
+      for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
+        r_.values[i] = simde_vsqrth_f16(a_.values[i]);
+      }
+    #endif
 
     return simde_float16x4_from_private(r_);
   #endif
@@ -133227,11 +137243,14 @@ simde_vsqrt_f32(simde_float32x2_t a) {
       r_,
       a_ = simde_float32x2_to_private(a);
 
-    SIMDE_VECTORIZE
-    for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
-      r_.values[i] = simde_math_sqrtf(a_.values[i]);
-    }
-
+    #if defined(SIMDE_RISCV_V_NATIVE)
+        r_.sv64 = __riscv_vfsqrt_v_f32m1(a_.sv64, 2);
+    #else
+      SIMDE_VECTORIZE
+      for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
+        r_.values[i] = simde_math_sqrtf(a_.values[i]);
+      }
+    #endif
     return simde_float32x2_from_private(r_);
   #else
     HEDLEY_UNREACHABLE();
@@ -133252,10 +137271,14 @@ simde_vsqrt_f64(simde_float64x1_t a) {
       r_,
       a_ = simde_float64x1_to_private(a);
 
-    SIMDE_VECTORIZE
-    for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
-      r_.values[i] = simde_math_sqrt(a_.values[i]);
-    }
+    #if defined(SIMDE_RISCV_V_NATIVE)
+        r_.sv64 = __riscv_vfsqrt_v_f64m1(a_.sv64, 1);
+    #else
+      SIMDE_VECTORIZE
+      for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
+        r_.values[i] = simde_math_sqrt(a_.values[i]);
+      }
+    #endif
 
     return simde_float64x1_from_private(r_);
   #else
@@ -133276,11 +137299,14 @@ simde_vsqrtq_f16(simde_float16x8_t a) {
     simde_float16x8_private
       r_,
       a_ = simde_float16x8_to_private(a);
-    SIMDE_VECTORIZE
-    for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
-      r_.values[i] = simde_vsqrth_f16(a_.values[i]);
-    }
-
+    #if defined(SIMDE_RISCV_V_NATIVE) && SIMDE_ARCH_RISCV_ZVFH
+        r_.sv128 = __riscv_vfsqrt_v_f16m1(a_.sv128, 8);
+    #else
+      SIMDE_VECTORIZE
+      for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
+        r_.values[i] = simde_vsqrth_f16(a_.values[i]);
+      }
+    #endif
     return simde_float16x8_from_private(r_);
   #endif
 }
@@ -133299,11 +137325,14 @@ simde_vsqrtq_f32(simde_float32x4_t a) {
       r_,
       a_ = simde_float32x4_to_private(a);
 
-    SIMDE_VECTORIZE
-    for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
-      r_.values[i] = simde_math_sqrtf(a_.values[i]);
-    }
-
+    #if defined(SIMDE_RISCV_V_NATIVE)
+        r_.sv128 = __riscv_vfsqrt_v_f32m1(a_.sv128, 4);
+    #else
+      SIMDE_VECTORIZE
+      for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
+        r_.values[i] = simde_math_sqrtf(a_.values[i]);
+      }
+    #endif
     return simde_float32x4_from_private(r_);
   #else
     HEDLEY_UNREACHABLE();
@@ -133324,11 +137353,14 @@ simde_vsqrtq_f64(simde_float64x2_t a) {
       r_,
       a_ = simde_float64x2_to_private(a);
 
-    SIMDE_VECTORIZE
-    for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
-      r_.values[i] = simde_math_sqrt(a_.values[i]);
-    }
-
+    #if defined(SIMDE_RISCV_V_NATIVE)
+        r_.sv128 = __riscv_vfsqrt_v_f64m1(a_.sv128, 2);
+    #else
+      SIMDE_VECTORIZE
+      for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
+        r_.values[i] = simde_math_sqrt(a_.values[i]);
+      }
+    #endif
     return simde_float64x2_from_private(r_);
   #else
     HEDLEY_UNREACHABLE();
@@ -133345,7 +137377,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_SQRT_H) */
 /* :: End simde/arm/neon/sqrt.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/sra_n.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -133378,11 +137410,11 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_SRA_N_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -133574,7 +137606,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_SRA_N_H) */
 /* :: End simde/arm/neon/sra_n.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/sri_n.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -133608,17 +137640,17 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_SRI_N_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -133929,7 +137961,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_SRI_N_H) */
 /* :: End simde/arm/neon/sri_n.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/st1.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -133963,7 +137995,7 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_ST1_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -134586,7 +138618,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_ST1_H) */
 /* :: End simde/arm/neon/st1.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/st1_lane.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -134619,7 +138651,7 @@ HEDLEY_DIAGNOSTIC_POP
 #if !defined(SIMDE_ARM_NEON_ST1_LANE_H)
 #define SIMDE_ARM_NEON_ST1_LANE_H
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -135116,7 +139148,7 @@ HEDLEY_DIAGNOSTIC_POP
 
 /* :: End simde/arm/neon/st1_lane.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/st1_x2.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -135151,7 +139183,7 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_ST1_X2_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -135432,7 +139464,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_ST1_X2_H) */
 /* :: End simde/arm/neon/st1_x2.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/st1_x3.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -135467,7 +139499,7 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_ST1_X3_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -135763,7 +139795,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_ST1_X3_H) */
 /* :: End simde/arm/neon/st1_x3.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/st1_x4.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -135798,7 +139830,7 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_ST1_X4_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -135836,7 +139868,8 @@ simde_vst1_f16_x4(simde_float16_t ptr[HEDLEY_ARRAY_PARAM(16)], simde_float16x4x4
 SIMDE_FUNCTION_ATTRIBUTES
 void
 simde_vst1_f32_x4(simde_float32 ptr[HEDLEY_ARRAY_PARAM(8)], simde_float32x2x4_t val) {
-  #if defined(SIMDE_ARM_NEON_A32V7_NATIVE) && !defined(SIMDE_BUG_GCC_REV_260989)
+  #if defined(SIMDE_ARM_NEON_A32V7_NATIVE) && !defined(SIMDE_BUG_GCC_REV_260989) \
+    && !defined(SIMDE_BUG_GCC_114521)
     vst1_f32_x4(ptr, val);
   #else
     simde_vst1_f32(ptr, val.val[0]);
@@ -135853,7 +139886,7 @@ simde_vst1_f32_x4(simde_float32 ptr[HEDLEY_ARRAY_PARAM(8)], simde_float32x2x4_t 
 SIMDE_FUNCTION_ATTRIBUTES
 void
 simde_vst1_f64_x4(simde_float64 ptr[HEDLEY_ARRAY_PARAM(4)], simde_float64x1x4_t val) {
-  #if defined(SIMDE_ARM_NEON_A64V8_NATIVE)
+  #if defined(SIMDE_ARM_NEON_A64V8_NATIVE) && !defined(SIMDE_BUG_GCC_114521)
     vst1_f64_x4(ptr, val);
   #else
     simde_vst1_f64(ptr, val.val[0]);
@@ -135870,7 +139903,8 @@ simde_vst1_f64_x4(simde_float64 ptr[HEDLEY_ARRAY_PARAM(4)], simde_float64x1x4_t 
 SIMDE_FUNCTION_ATTRIBUTES
 void
 simde_vst1_s8_x4(int8_t ptr[HEDLEY_ARRAY_PARAM(32)], simde_int8x8x4_t val) {
-  #if defined(SIMDE_ARM_NEON_A32V7_NATIVE) && !defined(SIMDE_BUG_GCC_REV_260989)
+  #if defined(SIMDE_ARM_NEON_A32V7_NATIVE) && !defined(SIMDE_BUG_GCC_REV_260989) \
+    && !defined(SIMDE_BUG_GCC_114521)
     vst1_s8_x4(ptr, val);
   #else
     simde_vst1_s8(ptr, val.val[0]);
@@ -135887,7 +139921,8 @@ simde_vst1_s8_x4(int8_t ptr[HEDLEY_ARRAY_PARAM(32)], simde_int8x8x4_t val) {
 SIMDE_FUNCTION_ATTRIBUTES
 void
 simde_vst1_s16_x4(int16_t ptr[HEDLEY_ARRAY_PARAM(16)], simde_int16x4x4_t val) {
-  #if defined(SIMDE_ARM_NEON_A32V7_NATIVE) && !defined(SIMDE_BUG_GCC_REV_260989)
+  #if defined(SIMDE_ARM_NEON_A32V7_NATIVE) && !defined(SIMDE_BUG_GCC_REV_260989) \
+    && !defined(SIMDE_BUG_GCC_114521)
     vst1_s16_x4(ptr, val);
   #else
     simde_vst1_s16(ptr, val.val[0]);
@@ -135904,7 +139939,8 @@ simde_vst1_s16_x4(int16_t ptr[HEDLEY_ARRAY_PARAM(16)], simde_int16x4x4_t val) {
 SIMDE_FUNCTION_ATTRIBUTES
 void
 simde_vst1_s32_x4(int32_t ptr[HEDLEY_ARRAY_PARAM(8)], simde_int32x2x4_t val) {
-  #if defined(SIMDE_ARM_NEON_A32V7_NATIVE) && !defined(SIMDE_BUG_GCC_REV_260989)
+  #if defined(SIMDE_ARM_NEON_A32V7_NATIVE) && !defined(SIMDE_BUG_GCC_REV_260989) \
+    && !defined(SIMDE_BUG_GCC_114521)
     vst1_s32_x4(ptr, val);
   #else
     simde_vst1_s32(ptr, val.val[0]);
@@ -135921,7 +139957,8 @@ simde_vst1_s32_x4(int32_t ptr[HEDLEY_ARRAY_PARAM(8)], simde_int32x2x4_t val) {
 SIMDE_FUNCTION_ATTRIBUTES
 void
 simde_vst1_s64_x4(int64_t ptr[HEDLEY_ARRAY_PARAM(4)], simde_int64x1x4_t val) {
-  #if defined(SIMDE_ARM_NEON_A32V7_NATIVE) && !defined(SIMDE_BUG_GCC_REV_260989)
+  #if defined(SIMDE_ARM_NEON_A32V7_NATIVE) && !defined(SIMDE_BUG_GCC_REV_260989) \
+    && !defined(SIMDE_BUG_GCC_114521)
     vst1_s64_x4(ptr, val);
   #else
     simde_vst1_s64(ptr, val.val[0]);
@@ -135938,7 +139975,8 @@ simde_vst1_s64_x4(int64_t ptr[HEDLEY_ARRAY_PARAM(4)], simde_int64x1x4_t val) {
 SIMDE_FUNCTION_ATTRIBUTES
 void
 simde_vst1_u8_x4(uint8_t ptr[HEDLEY_ARRAY_PARAM(32)], simde_uint8x8x4_t val) {
-  #if defined(SIMDE_ARM_NEON_A32V7_NATIVE) && !defined(SIMDE_BUG_GCC_REV_260989)
+  #if defined(SIMDE_ARM_NEON_A32V7_NATIVE) && !defined(SIMDE_BUG_GCC_REV_260989) \
+    && !defined(SIMDE_BUG_GCC_114521)
     vst1_u8_x4(ptr, val);
   #else
     simde_vst1_u8(ptr, val.val[0]);
@@ -135955,7 +139993,8 @@ simde_vst1_u8_x4(uint8_t ptr[HEDLEY_ARRAY_PARAM(32)], simde_uint8x8x4_t val) {
 SIMDE_FUNCTION_ATTRIBUTES
 void
 simde_vst1_u16_x4(uint16_t ptr[HEDLEY_ARRAY_PARAM(16)], simde_uint16x4x4_t val) {
-  #if defined(SIMDE_ARM_NEON_A32V7_NATIVE) && !defined(SIMDE_BUG_GCC_REV_260989)
+  #if defined(SIMDE_ARM_NEON_A32V7_NATIVE) && !defined(SIMDE_BUG_GCC_REV_260989) \
+    && !defined(SIMDE_BUG_GCC_114521)
     vst1_u16_x4(ptr, val);
   #else
     simde_vst1_u16(ptr, val.val[0]);
@@ -135972,7 +140011,8 @@ simde_vst1_u16_x4(uint16_t ptr[HEDLEY_ARRAY_PARAM(16)], simde_uint16x4x4_t val) 
 SIMDE_FUNCTION_ATTRIBUTES
 void
 simde_vst1_u32_x4(uint32_t ptr[HEDLEY_ARRAY_PARAM(8)], simde_uint32x2x4_t val) {
-  #if defined(SIMDE_ARM_NEON_A32V7_NATIVE) && !defined(SIMDE_BUG_GCC_REV_260989)
+  #if defined(SIMDE_ARM_NEON_A32V7_NATIVE) && !defined(SIMDE_BUG_GCC_REV_260989) \
+    && !defined(SIMDE_BUG_GCC_114521)
     vst1_u32_x4(ptr, val);
   #else
     simde_vst1_u32(ptr, val.val[0]);
@@ -135989,7 +140029,8 @@ simde_vst1_u32_x4(uint32_t ptr[HEDLEY_ARRAY_PARAM(8)], simde_uint32x2x4_t val) {
 SIMDE_FUNCTION_ATTRIBUTES
 void
 simde_vst1_u64_x4(uint64_t ptr[HEDLEY_ARRAY_PARAM(4)], simde_uint64x1x4_t val) {
-  #if defined(SIMDE_ARM_NEON_A32V7_NATIVE) && !defined(SIMDE_BUG_GCC_REV_260989)
+  #if defined(SIMDE_ARM_NEON_A32V7_NATIVE) && !defined(SIMDE_BUG_GCC_REV_260989) \
+    && !defined(SIMDE_BUG_GCC_114521)
     vst1_u64_x4(ptr, val);
   #else
     simde_vst1_u64(ptr, val.val[0]);
@@ -136007,7 +140048,8 @@ SIMDE_FUNCTION_ATTRIBUTES
 void
 simde_vst1_p8_x4(simde_poly8_t ptr[HEDLEY_ARRAY_PARAM(32)], simde_poly8x8x4_t val) {
   #if defined(SIMDE_ARM_NEON_A32V7_NATIVE) && \
-      (!defined(HEDLEY_GCC_VERSION) || (HEDLEY_GCC_VERSION_CHECK(8,5,0) && defined(SIMDE_ARM_NEON_A64V8_NATIVE)))
+      (!defined(HEDLEY_GCC_VERSION) || (HEDLEY_GCC_VERSION_CHECK(8,5,0) && defined(SIMDE_ARM_NEON_A64V8_NATIVE))) \
+      && !defined(SIMDE_BUG_GCC_114521)
     vst1_p8_x4(ptr, val);
   #else
     simde_poly8x8_private val_[4];
@@ -136033,7 +140075,8 @@ SIMDE_FUNCTION_ATTRIBUTES
 void
 simde_vst1_p16_x4(simde_poly16_t ptr[HEDLEY_ARRAY_PARAM(16)], simde_poly16x4x4_t val) {
   #if defined(SIMDE_ARM_NEON_A32V7_NATIVE) && \
-      (!defined(HEDLEY_GCC_VERSION) || (HEDLEY_GCC_VERSION_CHECK(8,5,0) && defined(SIMDE_ARM_NEON_A64V8_NATIVE)))
+      (!defined(HEDLEY_GCC_VERSION) || (HEDLEY_GCC_VERSION_CHECK(8,5,0) && defined(SIMDE_ARM_NEON_A64V8_NATIVE))) \
+      && !defined(SIMDE_BUG_GCC_114521)
     vst1_p16_x4(ptr, val);
   #else
     simde_poly16x4_private val_[4];
@@ -136059,7 +140102,8 @@ SIMDE_FUNCTION_ATTRIBUTES
 void
 simde_vst1_p64_x4(simde_poly64_t ptr[HEDLEY_ARRAY_PARAM(4)], simde_poly64x1x4_t val) {
   #if defined(SIMDE_ARM_NEON_A32V8_NATIVE) && \
-      (!defined(HEDLEY_GCC_VERSION) || (HEDLEY_GCC_VERSION_CHECK(8,5,0) && defined(SIMDE_ARM_NEON_A64V8_NATIVE)))
+      (!defined(HEDLEY_GCC_VERSION) || (HEDLEY_GCC_VERSION_CHECK(8,5,0) && defined(SIMDE_ARM_NEON_A64V8_NATIVE))) \
+      && !defined(SIMDE_BUG_GCC_114521)
     vst1_p64_x4(ptr, val);
   #else
     simde_poly64x1_private val_[4];
@@ -136107,7 +140151,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_ST1_X4_H) */
 /* :: End simde/arm/neon/st1_x4.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/st1q_x2.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -136140,7 +140184,7 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_ST1Q_X2_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -136421,7 +140465,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_ST1Q_X2_H) */
 /* :: End simde/arm/neon/st1q_x2.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/st1q_x3.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -136454,7 +140498,7 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_ST1Q_X3_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -136750,7 +140794,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_ST1Q_X3_H) */
 /* :: End simde/arm/neon/st1q_x3.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/st1q_x4.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -136785,7 +140829,7 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_ST1Q_X4_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -137094,7 +141138,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_ST1Q_X4_H) */
 /* :: End simde/arm/neon/st1q_x4.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/st2.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -137129,9 +141173,9 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_ST2_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/zip.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -137165,9 +141209,9 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_ZIP_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/zip1.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -137201,7 +141245,7 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_ZIP1_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -138034,7 +142078,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_ZIP1_H) */
 /* :: End simde/arm/neon/zip1.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/zip2.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -138068,7 +142112,7 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_ZIP2_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -139357,6 +143401,22 @@ void
 simde_vst2_u8(uint8_t *ptr, simde_uint8x8x2_t val) {
   #if defined(SIMDE_ARM_NEON_A32V7_NATIVE)
     vst2_u8(ptr, val);
+  #elif defined(SIMDE_WASM_SIMD128_NATIVE)
+    simde_uint8x16_private r0_;
+    simde_uint8x16_private ab_ = simde_uint8x16_to_private(simde_vcombine_u8(val.val[0], val.val[1]));
+
+    r0_.v128 = wasm_i8x16_shuffle(ab_.v128, ab_.v128,
+      0,  8,
+      1,  9,
+      2, 10,
+      3, 11,
+      4, 12,
+      5, 13,
+      6, 14,
+      7, 15
+    );
+
+    wasm_v128_store(ptr, r0_.v128);
   #else
     simde_uint8x8_private a_[2] = {simde_uint8x8_to_private(val.val[0]),
                                    simde_uint8x8_to_private(val.val[1])};
@@ -139935,7 +143995,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_ST2_H) */
 /* :: End simde/arm/neon/st2.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/st2_lane.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -139968,7 +144028,7 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_ST2_LANE_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -140558,7 +144618,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_ST2_LANE_H) */
 /* :: End simde/arm/neon/st2_lane.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/st3.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -140593,9 +144653,9 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_ST3_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -141742,7 +145802,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_ST3_H) */
 /* :: End simde/arm/neon/st3.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/st3_lane.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -141775,7 +145835,7 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_ST3_LANE_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -142365,7 +146425,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_ST3_LANE_H) */
 /* :: End simde/arm/neon/st3_lane.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/st4.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -142400,7 +146460,7 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_ST4_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -142616,6 +146676,27 @@ void
 simde_vst4_u8(uint8_t *ptr, simde_uint8x8x4_t val) {
   #if defined(SIMDE_ARM_NEON_A32V7_NATIVE)
     vst4_u8(ptr, val);
+  #elif defined(SIMDE_WASM_SIMD128_NATIVE)
+    simde_uint16x8_private r0_, r1_;
+    simde_uint8x16_private ab_ = simde_uint8x16_to_private(simde_vcombine_u8(val.val[0], val.val[1]));
+    simde_uint8x16_private cd_ = simde_uint8x16_to_private(simde_vcombine_u8(val.val[2], val.val[3]));
+
+    // Perform the interleaving
+    r0_.v128 = wasm_i8x16_shuffle(ab_.v128, cd_.v128,
+      0,  8, 16, 24,
+      1,  9, 17, 25,
+      2, 10, 18, 26,
+      3, 11, 19, 27
+    );
+    r1_.v128 = wasm_i8x16_shuffle(ab_.v128, cd_.v128,
+      4, 12, 20, 28,
+      5, 13, 21, 29,
+      6, 14, 22, 30,
+      7, 15, 23, 31
+    );
+
+    wasm_v128_store(ptr, r0_.v128);
+    wasm_v128_store(ptr + sizeof(r0_), r1_.v128);
   #else
     simde_uint8x8_private a_[4] = { simde_uint8x8_to_private(val.val[0]), simde_uint8x8_to_private(val.val[1]),
                                     simde_uint8x8_to_private(val.val[2]), simde_uint8x8_to_private(val.val[3]) };
@@ -143269,7 +147350,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_ST4_H) */
 /* :: End simde/arm/neon/st4.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/st4_lane.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -143303,7 +147384,7 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_ST4_LANE_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -143893,9 +147974,9 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_ST4_LANE_H) */
 /* :: End simde/arm/neon/st4_lane.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/subhn.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -143927,14 +148008,14 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_SUBHN_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -144114,7 +148195,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_SUBHN_H) */
 /* :: End simde/arm/neon/subhn.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/subhn_high.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -144146,12 +148227,12 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_SUBHN_HIGH_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -144223,9 +148304,9 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_SUBHN_HIGH_H) */
 /* :: End simde/arm/neon/subhn_high.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/subl_high.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -144251,19 +148332,20 @@ HEDLEY_DIAGNOSTIC_POP
  *
  * Copyright:
  *   2021      Décio Luiz Gazzoni Filho <decio@decpp.net>
+ *   2023      Ju-Hung Li <jhlee@pllab.cs.nthu.edu.tw> (Copyright owned by NTHU pllab)
  */
 
 #if !defined(SIMDE_ARM_NEON_SUBL_HIGH_H)
 #define SIMDE_ARM_NEON_SUBL_HIGH_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -144274,6 +148356,14 @@ simde_int16x8_t
 simde_vsubl_high_s8(simde_int8x16_t a, simde_int8x16_t b) {
   #if defined(SIMDE_ARM_NEON_A64V8_NATIVE)
     return vsubl_high_s8(a, b);
+  #elif defined(SIMDE_RISCV_V_NATIVE) && (SIMDE_NATURAL_VECTOR_SIZE == 128)
+    simde_int16x8_private r_;
+    simde_int8x16_private a_ = simde_int8x16_to_private(a);
+    simde_int8x16_private b_ = simde_int8x16_to_private(b);
+    a_.sv128 = __riscv_vslidedown_vx_i8m1(a_.sv128 , 8 , 16);
+    b_.sv128 = __riscv_vslidedown_vx_i8m1(b_.sv128 , 8 , 16);
+    r_.sv128 = __riscv_vwsub_vv_i16m1(__riscv_vlmul_trunc_v_i8m1_i8mf2(a_.sv128) , __riscv_vlmul_trunc_v_i8m1_i8mf2(b_.sv128) , 8);
+    return simde_int16x8_from_private(r_);
   #else
     return simde_vsubq_s16(simde_vmovl_high_s8(a), simde_vmovl_high_s8(b));
   #endif
@@ -144288,6 +148378,14 @@ simde_int32x4_t
 simde_vsubl_high_s16(simde_int16x8_t a, simde_int16x8_t b) {
   #if defined(SIMDE_ARM_NEON_A64V8_NATIVE)
     return vsubl_high_s16(a, b);
+  #elif defined(SIMDE_RISCV_V_NATIVE) && (SIMDE_NATURAL_VECTOR_SIZE == 128)
+    simde_int32x4_private r_;
+    simde_int16x8_private a_ = simde_int16x8_to_private(a);
+    simde_int16x8_private b_ = simde_int16x8_to_private(b);
+    a_.sv128 = __riscv_vslidedown_vx_i16m1(a_.sv128 , 4 , 8);
+    b_.sv128 = __riscv_vslidedown_vx_i16m1(b_.sv128 , 4 , 8);
+    r_.sv128 = __riscv_vwsub_vv_i32m1(__riscv_vlmul_trunc_v_i16m1_i16mf2(a_.sv128) , __riscv_vlmul_trunc_v_i16m1_i16mf2(b_.sv128) , 4);
+    return simde_int32x4_from_private(r_);
   #else
     return simde_vsubq_s32(simde_vmovl_high_s16(a), simde_vmovl_high_s16(b));
   #endif
@@ -144302,6 +148400,14 @@ simde_int64x2_t
 simde_vsubl_high_s32(simde_int32x4_t a, simde_int32x4_t b) {
   #if defined(SIMDE_ARM_NEON_A64V8_NATIVE)
     return vsubl_high_s32(a, b);
+  #elif defined(SIMDE_RISCV_V_NATIVE) && (SIMDE_NATURAL_VECTOR_SIZE == 128)
+    simde_int64x2_private r_;
+    simde_int32x4_private a_ = simde_int32x4_to_private(a);
+    simde_int32x4_private b_ = simde_int32x4_to_private(b);
+    a_.sv128 = __riscv_vslidedown_vx_i32m1(a_.sv128 , 2, 4);
+    b_.sv128 = __riscv_vslidedown_vx_i32m1(b_.sv128 , 2, 4);
+    r_.sv128 = __riscv_vwsub_vv_i64m1(__riscv_vlmul_trunc_v_i32m1_i32mf2(a_.sv128) , __riscv_vlmul_trunc_v_i32m1_i32mf2(b_.sv128) , 2);
+    return simde_int64x2_from_private(r_);
   #else
     return simde_vsubq_s64(simde_vmovl_high_s32(a), simde_vmovl_high_s32(b));
   #endif
@@ -144316,6 +148422,14 @@ simde_uint16x8_t
 simde_vsubl_high_u8(simde_uint8x16_t a, simde_uint8x16_t b) {
   #if defined(SIMDE_ARM_NEON_A64V8_NATIVE)
     return vsubl_high_u8(a, b);
+  #elif defined(SIMDE_RISCV_V_NATIVE) && (SIMDE_NATURAL_VECTOR_SIZE == 128)
+    simde_uint16x8_private r_;
+    simde_uint8x16_private a_ = simde_uint8x16_to_private(a);
+    simde_uint8x16_private b_ = simde_uint8x16_to_private(b);
+    a_.sv128 = __riscv_vslidedown_vx_u8m1(a_.sv128 , 8 , 16);
+    b_.sv128 = __riscv_vslidedown_vx_u8m1(b_.sv128 , 8 , 16);
+    r_.sv128 = __riscv_vwsubu_vv_u16m1(__riscv_vlmul_trunc_v_u8m1_u8mf2 (a_.sv128) , __riscv_vlmul_trunc_v_u8m1_u8mf2 (b_.sv128) , 8);
+    return simde_uint16x8_from_private(r_);
   #else
     return simde_vsubq_u16(simde_vmovl_high_u8(a), simde_vmovl_high_u8(b));
   #endif
@@ -144330,6 +148444,14 @@ simde_uint32x4_t
 simde_vsubl_high_u16(simde_uint16x8_t a, simde_uint16x8_t b) {
   #if defined(SIMDE_ARM_NEON_A64V8_NATIVE)
     return vsubl_high_u16(a, b);
+  #elif defined(SIMDE_RISCV_V_NATIVE) && (SIMDE_NATURAL_VECTOR_SIZE == 128)
+    simde_uint32x4_private r_;
+    simde_uint16x8_private a_ = simde_uint16x8_to_private(a);
+    simde_uint16x8_private b_ = simde_uint16x8_to_private(b);
+    a_.sv128 = __riscv_vslidedown_vx_u16m1(a_.sv128 , 4 , 8);
+    b_.sv128 = __riscv_vslidedown_vx_u16m1(b_.sv128 , 4 , 8);
+    r_.sv128 = __riscv_vwsubu_vv_u32m1(__riscv_vlmul_trunc_v_u16m1_u16mf2 (a_.sv128) , __riscv_vlmul_trunc_v_u16m1_u16mf2 (b_.sv128) , 4);
+    return simde_uint32x4_from_private(r_);
   #else
     return simde_vsubq_u32(simde_vmovl_high_u16(a), simde_vmovl_high_u16(b));
   #endif
@@ -144344,6 +148466,14 @@ simde_uint64x2_t
 simde_vsubl_high_u32(simde_uint32x4_t a, simde_uint32x4_t b) {
   #if defined(SIMDE_ARM_NEON_A64V8_NATIVE)
     return vsubl_high_u32(a, b);
+  #elif defined(SIMDE_RISCV_V_NATIVE) && (SIMDE_NATURAL_VECTOR_SIZE == 128)
+    simde_uint64x2_private r_;
+    simde_uint32x4_private a_ = simde_uint32x4_to_private(a);
+    simde_uint32x4_private b_ = simde_uint32x4_to_private(b);
+    a_.sv128 = __riscv_vslidedown_vx_u32m1(a_.sv128 , 2, 4);
+    b_.sv128 = __riscv_vslidedown_vx_u32m1(b_.sv128 , 2, 4);
+    r_.sv128 = __riscv_vwsubu_vv_u64m1(__riscv_vlmul_trunc_v_u32m1_u32mf2 (a_.sv128) , __riscv_vlmul_trunc_v_u32m1_u32mf2 (b_.sv128) , 2);
+    return simde_uint64x2_from_private(r_);
   #else
     return simde_vsubq_u64(simde_vmovl_high_u32(a), simde_vmovl_high_u32(b));
   #endif
@@ -144359,7 +148489,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_SUBL_HIGH_H) */
 /* :: End simde/arm/neon/subl_high.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/subw.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -144385,17 +148515,18 @@ HEDLEY_DIAGNOSTIC_POP
  *
  * Copyright:
  *   2020      Evan Nemerson <evan@nemerson.com>
+ *   2023      Ju-Hung Li <jhlee@pllab.cs.nthu.edu.tw> (Copyright owned by NTHU pllab)
  */
 
 #if !defined(SIMDE_ARM_NEON_SUBW_H)
 #define SIMDE_ARM_NEON_SUBW_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -144406,14 +148537,16 @@ simde_int16x8_t
 simde_vsubw_s8(simde_int16x8_t a, simde_int8x8_t b) {
   #if defined(SIMDE_ARM_NEON_A32V7_NATIVE)
     return vsubw_s8(a, b);
-  #elif SIMDE_NATURAL_VECTOR_SIZE_GE(128)
+  #elif SIMDE_NATURAL_VECTOR_SIZE_GE(128) && !defined(SIMDE_RISCV_V_NATIVE)
     return simde_vsubq_s16(a, simde_vmovl_s8(b));
   #else
     simde_int16x8_private r_;
     simde_int16x8_private a_ = simde_int16x8_to_private(a);
     simde_int8x8_private b_ = simde_int8x8_to_private(b);
 
-    #if (SIMDE_NATURAL_VECTOR_SIZE > 0) && defined(SIMDE_VECTOR_SUBSCRIPT_OPS) && defined(SIMDE_CONVERT_VECTOR_)
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv128 = __riscv_vwsub_wv_i16m1(a_.sv128 , __riscv_vlmul_trunc_v_i8m1_i8mf2(b_.sv64) , 8);
+    #elif (SIMDE_NATURAL_VECTOR_SIZE > 0) && defined(SIMDE_VECTOR_SUBSCRIPT_OPS) && defined(SIMDE_CONVERT_VECTOR_)
       SIMDE_CONVERT_VECTOR_(r_.values, b_.values);
       r_.values -= a_.values;
     #else
@@ -144436,14 +148569,16 @@ simde_int32x4_t
 simde_vsubw_s16(simde_int32x4_t a, simde_int16x4_t b) {
   #if defined(SIMDE_ARM_NEON_A32V7_NATIVE)
     return vsubw_s16(a, b);
-  #elif SIMDE_NATURAL_VECTOR_SIZE_GE(128)
+  #elif SIMDE_NATURAL_VECTOR_SIZE_GE(128) && !defined(SIMDE_RISCV_V_NATIVE)
     return simde_vsubq_s32(a, simde_vmovl_s16(b));
   #else
     simde_int32x4_private r_;
     simde_int32x4_private a_ = simde_int32x4_to_private(a);
     simde_int16x4_private b_ = simde_int16x4_to_private(b);
 
-    #if (SIMDE_NATURAL_VECTOR_SIZE > 0) && defined(SIMDE_VECTOR_SUBSCRIPT_OPS) && defined(SIMDE_CONVERT_VECTOR_)
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv128 = __riscv_vwsub_wv_i32m1(a_.sv128 , __riscv_vlmul_trunc_v_i16m1_i16mf2(b_.sv64) , 4);
+    #elif (SIMDE_NATURAL_VECTOR_SIZE > 0) && defined(SIMDE_VECTOR_SUBSCRIPT_OPS) && defined(SIMDE_CONVERT_VECTOR_)
       SIMDE_CONVERT_VECTOR_(r_.values, b_.values);
       r_.values -= a_.values;
     #else
@@ -144466,14 +148601,16 @@ simde_int64x2_t
 simde_vsubw_s32(simde_int64x2_t a, simde_int32x2_t b) {
   #if defined(SIMDE_ARM_NEON_A32V7_NATIVE)
     return vsubw_s32(a, b);
-  #elif SIMDE_NATURAL_VECTOR_SIZE_GE(128)
+  #elif SIMDE_NATURAL_VECTOR_SIZE_GE(128) && !defined(SIMDE_RISCV_V_NATIVE)
     return simde_vsubq_s64(a, simde_vmovl_s32(b));
   #else
     simde_int64x2_private r_;
     simde_int64x2_private a_ = simde_int64x2_to_private(a);
     simde_int32x2_private b_ = simde_int32x2_to_private(b);
 
-    #if (SIMDE_NATURAL_VECTOR_SIZE > 0) && defined(SIMDE_VECTOR_SUBSCRIPT_OPS) && defined(SIMDE_CONVERT_VECTOR_)
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv128 = __riscv_vwsub_wv_i64m1(a_.sv128 , __riscv_vlmul_trunc_v_i32m1_i32mf2(b_.sv64) , 2);
+    #elif (SIMDE_NATURAL_VECTOR_SIZE > 0) && defined(SIMDE_VECTOR_SUBSCRIPT_OPS) && defined(SIMDE_CONVERT_VECTOR_)
       SIMDE_CONVERT_VECTOR_(r_.values, b_.values);
       r_.values -= a_.values;
     #else
@@ -144496,14 +148633,16 @@ simde_uint16x8_t
 simde_vsubw_u8(simde_uint16x8_t a, simde_uint8x8_t b) {
   #if defined(SIMDE_ARM_NEON_A32V7_NATIVE)
     return vsubw_u8(a, b);
-  #elif SIMDE_NATURAL_VECTOR_SIZE_GE(128)
+  #elif SIMDE_NATURAL_VECTOR_SIZE_GE(128) && !defined(SIMDE_RISCV_V_NATIVE)
     return simde_vsubq_u16(a, simde_vmovl_u8(b));
   #else
     simde_uint16x8_private r_;
     simde_uint16x8_private a_ = simde_uint16x8_to_private(a);
     simde_uint8x8_private b_ = simde_uint8x8_to_private(b);
 
-    #if (SIMDE_NATURAL_VECTOR_SIZE > 0) && defined(SIMDE_VECTOR_SUBSCRIPT_OPS) && defined(SIMDE_CONVERT_VECTOR_)
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv128 = __riscv_vwsubu_wv_u16m1(a_.sv128 , __riscv_vlmul_trunc_v_u8m1_u8mf2(b_.sv64) , 8);
+    #elif (SIMDE_NATURAL_VECTOR_SIZE > 0) && defined(SIMDE_VECTOR_SUBSCRIPT_OPS) && defined(SIMDE_CONVERT_VECTOR_)
       SIMDE_CONVERT_VECTOR_(r_.values, b_.values);
       r_.values -= a_.values;
     #else
@@ -144526,14 +148665,16 @@ simde_uint32x4_t
 simde_vsubw_u16(simde_uint32x4_t a, simde_uint16x4_t b) {
   #if defined(SIMDE_ARM_NEON_A32V7_NATIVE)
     return vsubw_u16(a, b);
-  #elif SIMDE_NATURAL_VECTOR_SIZE_GE(128)
+  #elif SIMDE_NATURAL_VECTOR_SIZE_GE(128) && !defined(SIMDE_RISCV_V_NATIVE)
     return simde_vsubq_u32(a, simde_vmovl_u16(b));
   #else
     simde_uint32x4_private r_;
     simde_uint32x4_private a_ = simde_uint32x4_to_private(a);
     simde_uint16x4_private b_ = simde_uint16x4_to_private(b);
 
-    #if (SIMDE_NATURAL_VECTOR_SIZE > 0) && defined(SIMDE_VECTOR_SUBSCRIPT_OPS) && defined(SIMDE_CONVERT_VECTOR_)
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv128 = __riscv_vwsubu_wv_u32m1(a_.sv128 , __riscv_vlmul_trunc_v_u16m1_u16mf2(b_.sv64) , 4);
+    #elif (SIMDE_NATURAL_VECTOR_SIZE > 0) && defined(SIMDE_VECTOR_SUBSCRIPT_OPS) && defined(SIMDE_CONVERT_VECTOR_)
       SIMDE_CONVERT_VECTOR_(r_.values, b_.values);
       r_.values -= a_.values;
     #else
@@ -144556,14 +148697,16 @@ simde_uint64x2_t
 simde_vsubw_u32(simde_uint64x2_t a, simde_uint32x2_t b) {
   #if defined(SIMDE_ARM_NEON_A32V7_NATIVE)
     return vsubw_u32(a, b);
-  #elif SIMDE_NATURAL_VECTOR_SIZE_GE(128)
+  #elif SIMDE_NATURAL_VECTOR_SIZE_GE(128) && !defined(SIMDE_RISCV_V_NATIVE)
     return simde_vsubq_u64(a, simde_vmovl_u32(b));
   #else
     simde_uint64x2_private r_;
     simde_uint64x2_private a_ = simde_uint64x2_to_private(a);
     simde_uint32x2_private b_ = simde_uint32x2_to_private(b);
 
-    #if (SIMDE_NATURAL_VECTOR_SIZE > 0) && defined(SIMDE_VECTOR_SUBSCRIPT_OPS) && defined(SIMDE_CONVERT_VECTOR_)
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      r_.sv128 = __riscv_vwsubu_wv_u64m1(a_.sv128 , __riscv_vlmul_trunc_v_u32m1_u32mf2(b_.sv64) , 2);
+    #elif (SIMDE_NATURAL_VECTOR_SIZE > 0) && defined(SIMDE_VECTOR_SUBSCRIPT_OPS) && defined(SIMDE_CONVERT_VECTOR_)
       SIMDE_CONVERT_VECTOR_(r_.values, b_.values);
       r_.values -= a_.values;
     #else
@@ -144587,7 +148730,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_SUBW_H) */
 /* :: End simde/arm/neon/subw.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/subw_high.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -144613,17 +148756,18 @@ HEDLEY_DIAGNOSTIC_POP
  *
  * Copyright:
  *   2020      Evan Nemerson <evan@nemerson.com>
+ *   2023      Ju-Hung Li <jhlee@pllab.cs.nthu.edu.tw> (Copyright owned by NTHU pllab)
  */
 
 #if !defined(SIMDE_ARM_NEON_SUBW_HIGH_H)
 #define SIMDE_ARM_NEON_SUBW_HIGH_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -144634,14 +148778,17 @@ simde_int16x8_t
 simde_vsubw_high_s8(simde_int16x8_t a, simde_int8x16_t b) {
   #if defined(SIMDE_ARM_NEON_A64V8_NATIVE)
     return vsubw_high_s8(a, b);
-  #elif SIMDE_NATURAL_VECTOR_SIZE_GE(128)
+  #elif SIMDE_NATURAL_VECTOR_SIZE_GE(128) && !defined(SIMDE_RISCV_V_NATIVE)
     return simde_vsubq_s16(a, simde_vmovl_high_s8(b));
   #else
     simde_int16x8_private r_;
     simde_int16x8_private a_ = simde_int16x8_to_private(a);
     simde_int8x16_private b_ = simde_int8x16_to_private(b);
 
-    #if (SIMDE_NATURAL_VECTOR_SIZE > 0) && defined(SIMDE_VECTOR_SUBSCRIPT_OPS) && defined(SIMDE_CONVERT_VECTOR_)
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      b_.sv128 = __riscv_vslidedown_vx_i8m1(b_.sv128 , 8 , 16);
+      r_.sv128 = __riscv_vwsub_wv_i16m1(a_.sv128 , __riscv_vlmul_trunc_v_i8m1_i8mf2(b_.sv128) , 8);
+    #elif (SIMDE_NATURAL_VECTOR_SIZE > 0) && defined(SIMDE_VECTOR_SUBSCRIPT_OPS) && defined(SIMDE_CONVERT_VECTOR_)
       SIMDE_CONVERT_VECTOR_(r_.values, b_.values);
       r_.values -= a_.values;
     #else
@@ -144664,14 +148811,17 @@ simde_int32x4_t
 simde_vsubw_high_s16(simde_int32x4_t a, simde_int16x8_t b) {
   #if defined(SIMDE_ARM_NEON_A64V8_NATIVE)
     return vsubw_high_s16(a, b);
-  #elif SIMDE_NATURAL_VECTOR_SIZE_GE(128)
+  #elif SIMDE_NATURAL_VECTOR_SIZE_GE(128) && !defined(SIMDE_RISCV_V_NATIVE)
     return simde_vsubq_s32(a, simde_vmovl_high_s16(b));
   #else
     simde_int32x4_private r_;
     simde_int32x4_private a_ = simde_int32x4_to_private(a);
     simde_int16x8_private b_ = simde_int16x8_to_private(b);
 
-    #if (SIMDE_NATURAL_VECTOR_SIZE > 0) && defined(SIMDE_VECTOR_SUBSCRIPT_OPS) && defined(SIMDE_CONVERT_VECTOR_)
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      b_.sv128 = __riscv_vslidedown_vx_i16m1(b_.sv128 , 4 , 8);
+      r_.sv128 = __riscv_vwsub_wv_i32m1(a_.sv128 , __riscv_vlmul_trunc_v_i16m1_i16mf2(b_.sv128) , 4);
+    #elif (SIMDE_NATURAL_VECTOR_SIZE > 0) && defined(SIMDE_VECTOR_SUBSCRIPT_OPS) && defined(SIMDE_CONVERT_VECTOR_)
       SIMDE_CONVERT_VECTOR_(r_.values, b_.values);
       r_.values -= a_.values;
     #else
@@ -144694,14 +148844,16 @@ simde_int64x2_t
 simde_vsubw_high_s32(simde_int64x2_t a, simde_int32x4_t b) {
   #if defined(SIMDE_ARM_NEON_A64V8_NATIVE)
     return vsubw_high_s32(a, b);
-  #elif SIMDE_NATURAL_VECTOR_SIZE_GE(128)
+  #elif SIMDE_NATURAL_VECTOR_SIZE_GE(128) && !defined(SIMDE_RISCV_V_NATIVE)
     return simde_vsubq_s64(a, simde_vmovl_high_s32(b));
   #else
     simde_int64x2_private r_;
     simde_int64x2_private a_ = simde_int64x2_to_private(a);
     simde_int32x4_private b_ = simde_int32x4_to_private(b);
-
-    #if (SIMDE_NATURAL_VECTOR_SIZE > 0) && defined(SIMDE_VECTOR_SUBSCRIPT_OPS) && defined(SIMDE_CONVERT_VECTOR_)
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      b_.sv128 = __riscv_vslidedown_vx_i32m1(b_.sv128 , 2 , 4);
+      r_.sv128 = __riscv_vwsub_wv_i64m1(a_.sv128 , __riscv_vlmul_trunc_v_i32m1_i32mf2(b_.sv128) , 2);
+    #elif (SIMDE_NATURAL_VECTOR_SIZE > 0) && defined(SIMDE_VECTOR_SUBSCRIPT_OPS) && defined(SIMDE_CONVERT_VECTOR_)
       SIMDE_CONVERT_VECTOR_(r_.values, b_.values);
       r_.values -= a_.values;
     #else
@@ -144724,14 +148876,17 @@ simde_uint16x8_t
 simde_vsubw_high_u8(simde_uint16x8_t a, simde_uint8x16_t b) {
   #if defined(SIMDE_ARM_NEON_A64V8_NATIVE)
     return vsubw_high_u8(a, b);
-  #elif SIMDE_NATURAL_VECTOR_SIZE_GE(128)
+  #elif SIMDE_NATURAL_VECTOR_SIZE_GE(128) && !defined(SIMDE_RISCV_V_NATIVE)
     return simde_vsubq_u16(a, simde_vmovl_high_u8(b));
   #else
     simde_uint16x8_private r_;
     simde_uint16x8_private a_ = simde_uint16x8_to_private(a);
     simde_uint8x16_private b_ = simde_uint8x16_to_private(b);
 
-    #if (SIMDE_NATURAL_VECTOR_SIZE > 0) && defined(SIMDE_VECTOR_SUBSCRIPT_OPS) && defined(SIMDE_CONVERT_VECTOR_)
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      b_.sv128 = __riscv_vslidedown_vx_u8m1(b_.sv128 , 8 , 16);
+      r_.sv128 = __riscv_vwsubu_wv_u16m1(a_.sv128 , __riscv_vlmul_trunc_v_u8m1_u8mf2(b_.sv128) , 8);
+    #elif (SIMDE_NATURAL_VECTOR_SIZE > 0) && defined(SIMDE_VECTOR_SUBSCRIPT_OPS) && defined(SIMDE_CONVERT_VECTOR_)
       SIMDE_CONVERT_VECTOR_(r_.values, b_.values);
       r_.values -= a_.values;
     #else
@@ -144754,14 +148909,17 @@ simde_uint32x4_t
 simde_vsubw_high_u16(simde_uint32x4_t a, simde_uint16x8_t b) {
   #if defined(SIMDE_ARM_NEON_A64V8_NATIVE)
     return vsubw_high_u16(a, b);
-  #elif SIMDE_NATURAL_VECTOR_SIZE_GE(128)
+  #elif SIMDE_NATURAL_VECTOR_SIZE_GE(128) && !defined(SIMDE_RISCV_V_NATIVE)
     return simde_vsubq_u32(a, simde_vmovl_high_u16(b));
   #else
     simde_uint32x4_private r_;
     simde_uint32x4_private a_ = simde_uint32x4_to_private(a);
     simde_uint16x8_private b_ = simde_uint16x8_to_private(b);
 
-    #if (SIMDE_NATURAL_VECTOR_SIZE > 0) && defined(SIMDE_VECTOR_SUBSCRIPT_OPS) && defined(SIMDE_CONVERT_VECTOR_)
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      b_.sv128 = __riscv_vslidedown_vx_u16m1(b_.sv128 , 4 , 8);
+      r_.sv128 = __riscv_vwsubu_wv_u32m1(a_.sv128 , __riscv_vlmul_trunc_v_u16m1_u16mf2(b_.sv128) , 4);
+    #elif (SIMDE_NATURAL_VECTOR_SIZE > 0) && defined(SIMDE_VECTOR_SUBSCRIPT_OPS) && defined(SIMDE_CONVERT_VECTOR_)
       SIMDE_CONVERT_VECTOR_(r_.values, b_.values);
       r_.values -= a_.values;
     #else
@@ -144784,14 +148942,17 @@ simde_uint64x2_t
 simde_vsubw_high_u32(simde_uint64x2_t a, simde_uint32x4_t b) {
   #if defined(SIMDE_ARM_NEON_A64V8_NATIVE)
     return vsubw_high_u32(a, b);
-  #elif SIMDE_NATURAL_VECTOR_SIZE_GE(128)
+  #elif SIMDE_NATURAL_VECTOR_SIZE_GE(128) && !defined(SIMDE_RISCV_V_NATIVE)
     return simde_vsubq_u64(a, simde_vmovl_high_u32(b));
   #else
     simde_uint64x2_private r_;
     simde_uint64x2_private a_ = simde_uint64x2_to_private(a);
     simde_uint32x4_private b_ = simde_uint32x4_to_private(b);
 
-    #if (SIMDE_NATURAL_VECTOR_SIZE > 0) && defined(SIMDE_VECTOR_SUBSCRIPT_OPS) && defined(SIMDE_CONVERT_VECTOR_)
+    #if defined(SIMDE_RISCV_V_NATIVE)
+      b_.sv128 = __riscv_vslidedown_vx_u32m1(b_.sv128 , 2 , 4);
+      r_.sv128 = __riscv_vwsubu_wv_u64m1(a_.sv128 , __riscv_vlmul_trunc_v_u32m1_u32mf2(b_.sv128) , 2);
+    #elif (SIMDE_NATURAL_VECTOR_SIZE > 0) && defined(SIMDE_VECTOR_SUBSCRIPT_OPS) && defined(SIMDE_CONVERT_VECTOR_)
       SIMDE_CONVERT_VECTOR_(r_.values, b_.values);
       r_.values -= a_.values;
     #else
@@ -144815,7 +148976,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_SUBW_HIGH_H) */
 /* :: End simde/arm/neon/subw_high.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/sudot_lane.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -144847,7 +149008,7 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_SUDOT_LANE_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -144985,7 +149146,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_SUDOT_LANE_H) */
 /* :: End simde/arm/neon/sudot_lane.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/tbl.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -145013,17 +149174,18 @@ HEDLEY_DIAGNOSTIC_POP
  *   2020      Evan Nemerson <evan@nemerson.com>
  *   2020      Christopher Moore <moore@free.fr>
  *   2023      Yi-Yen Chung <eric681@andestech.com> (Copyright owned by Andes Technology)
+ *   2023      Ju-Hung Li <jhlee@pllab.cs.nthu.edu.tw> (Copyright owned by NTHU pllab)
  */
 
 #if !defined(SIMDE_ARM_NEON_TBL_H)
 #define SIMDE_ARM_NEON_TBL_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -145052,6 +149214,10 @@ simde_vtbl1_u8(simde_uint8x8_t a, simde_uint8x8_t b) {
 
     #if defined(SIMDE_X86_SSSE3_NATIVE) && defined(SIMDE_X86_MMX_NATIVE)
       r_.m64 = _mm_shuffle_pi8(a_.m64, _mm_or_si64(b_.m64, _mm_cmpgt_pi8(b_.m64, _mm_set1_pi8(7))));
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      vbool8_t mask = __riscv_vmsgeu_vx_u8m1_b8 (b_.sv64, 8, 8);
+      r_.sv64 = __riscv_vrgather_vv_u8m1(a_.sv64 , b_.sv64 , 8);
+      r_.sv64 = __riscv_vmerge_vxm_u8m1(r_.sv64, 0, mask, 8);
     #else
       SIMDE_VECTORIZE
       for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
@@ -145099,6 +149265,11 @@ simde_vtbl2_u8(simde_uint8x8x2_t a, simde_uint8x8_t b) {
       __m128i b128 = _mm_set1_epi64(b_.m64);
       __m128i r128 = _mm_shuffle_epi8(a128, _mm_or_si128(b128, _mm_cmpgt_epi8(b128, _mm_set1_epi8(15))));
       r_.m64 = _mm_movepi64_pi64(r128);
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      vuint8m1_t t_combine = __riscv_vslideup_vx_u8m1(a_[0].sv64 , a_[1].sv64 , 8 , 16);
+      vbool8_t mask = __riscv_vmsgeu_vx_u8m1_b8 (b_.sv64 , 16 , 8);
+      vuint8m1_t r_tmp = __riscv_vrgather_vv_u8m1(t_combine , b_.sv64 , 8);
+      r_.sv64 = __riscv_vmerge_vxm_u8m1(r_tmp, 0, mask, 8);
     #else
       SIMDE_VECTORIZE
       for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
@@ -145148,6 +149319,16 @@ simde_vtbl3_u8(simde_uint8x8x3_t a, simde_uint8x8_t b) {
       __m128i r128_2  = _mm_shuffle_epi8(_mm_set1_epi64(a_[2].m64), b128);
       __m128i r128 = _mm_blendv_epi8(r128_01, r128_2, _mm_slli_epi32(b128, 3));
       r_.m64 = _mm_movepi64_pi64(r128);
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      vuint8m2_t t1 = __riscv_vlmul_ext_v_u8m1_u8m2 (a_[0].sv64);
+      vuint8m2_t t2 = __riscv_vlmul_ext_v_u8m1_u8m2 (a_[1].sv64);
+      vuint8m2_t t3 = __riscv_vlmul_ext_v_u8m1_u8m2 (a_[2].sv64);
+      vuint8m2_t t_combine = __riscv_vslideup_vx_u8m2(t2 , t3 , 8 , 24);
+      t_combine = __riscv_vslideup_vx_u8m2(t1 , t_combine , 8 , 24);
+      vuint8m2_t idxm2 = __riscv_vlmul_ext_v_u8m1_u8m2(b_.sv64);
+      vbool4_t mask = __riscv_vmsgeu_vx_u8m2_b4 (idxm2, 24, 8);
+      vuint8m2_t r_tmp = __riscv_vrgather_vv_u8m2(t_combine , idxm2 , 8);
+      r_.sv64 = __riscv_vlmul_trunc_v_u8m2_u8m1(__riscv_vmerge_vxm_u8m2(r_tmp, 0, mask, 8));
     #else
       SIMDE_VECTORIZE
       for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
@@ -145197,6 +149378,18 @@ simde_vtbl4_u8(simde_uint8x8x4_t a, simde_uint8x8_t b) {
       __m128i r128_23 = _mm_shuffle_epi8(_mm_set_epi64(a_[3].m64, a_[2].m64), b128);
       __m128i r128 = _mm_blendv_epi8(r128_01, r128_23, _mm_slli_epi32(b128, 3));
       r_.m64 = _mm_movepi64_pi64(r128);
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      vuint8m2_t t1 = __riscv_vlmul_ext_v_u8m1_u8m2 (a_[0].sv64);
+      vuint8m2_t t2 = __riscv_vlmul_ext_v_u8m1_u8m2 (a_[1].sv64);
+      vuint8m2_t t3 = __riscv_vlmul_ext_v_u8m1_u8m2 (a_[2].sv64);
+      vuint8m2_t t4 = __riscv_vlmul_ext_v_u8m1_u8m2 (a_[3].sv64);
+      vuint8m2_t t_combine = __riscv_vslideup_vx_u8m2(t3 , t4 , 8 , 32);
+      t_combine = __riscv_vslideup_vx_u8m2(t2 , t_combine , 8 , 32);
+      t_combine = __riscv_vslideup_vx_u8m2(t1 , t_combine , 8 , 32);
+      vuint8m2_t idxm2 = __riscv_vlmul_ext_v_u8m1_u8m2(b_.sv64);
+      vbool4_t mask = __riscv_vmsgeu_vx_u8m2_b4 (idxm2, 32, 8);
+      vuint8m2_t r_tmp = __riscv_vrgather_vv_u8m2(t_combine , idxm2 , 8);
+      r_.sv64 = __riscv_vlmul_trunc_v_u8m2_u8m1(__riscv_vmerge_vxm_u8m2(r_tmp, 0, mask, 8));
     #else
       SIMDE_VECTORIZE
       for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
@@ -145298,7 +149491,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_TBL_H) */
 /* :: End simde/arm/neon/tbl.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/tbx.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -145326,15 +149519,16 @@ HEDLEY_DIAGNOSTIC_POP
  *   2020      Evan Nemerson <evan@nemerson.com>
  *   2020      Christopher Moore <moore@free.fr>
  *   2023      Yi-Yen Chung <eric681@andestech.com> (Copyright owned by Andes Technology)
+ *   2023      Ju-Hung Li <jhlee@pllab.cs.nthu.edu.tw> (Copyright owned by NTHU pllab)
  */
 
 #if !defined(SIMDE_ARM_NEON_TBX_H)
 #define SIMDE_ARM_NEON_TBX_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -145360,6 +149554,10 @@ simde_vtbx1_u8(simde_uint8x8_t a, simde_uint8x8_t b, simde_uint8x8_t c) {
       __m128i r128 = _mm_shuffle_epi8(b128, c128);
       r128 =  _mm_blendv_epi8(r128, a128, c128);
       r_.m64 = _mm_movepi64_pi64(r128);
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      vbool8_t mask = __riscv_vmsgeu_vx_u8m1_b8 (c_.sv64, 8, 16);
+      r_.sv64 = __riscv_vrgather_vv_u8m1(b_.sv64 , c_.sv64 , 8);
+      r_.sv64 = __riscv_vmerge_vvm_u8m1(r_.sv64, a_.sv64, mask, 8);
     #else
       SIMDE_VECTORIZE
       for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
@@ -145411,6 +149609,11 @@ simde_vtbx2_u8(simde_uint8x8_t a, simde_uint8x8x2_t b, simde_uint8x8_t c) {
       __m128i r128 = _mm_shuffle_epi8(b128, c128);
       r128 =  _mm_blendv_epi8(r128, a128, c128);
       r_.m64 = _mm_movepi64_pi64(r128);
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      vuint8m1_t t_combine = __riscv_vslideup_vx_u8m1(b_[0].sv64 , b_[1].sv64 , 8 , 16);
+      vbool8_t mask = __riscv_vmsgeu_vx_u8m1_b8 (c_.sv64 , 16 , 8);
+      vuint8m1_t r_tmp = __riscv_vrgather_vv_u8m1(t_combine , c_.sv64 , 8);
+      r_.sv64 = __riscv_vmerge_vvm_u8m1(r_tmp, a_.sv64, mask, 8);
     #else
       SIMDE_VECTORIZE
       for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
@@ -145465,6 +149668,17 @@ simde_vtbx3_u8(simde_uint8x8_t a, simde_uint8x8x3_t b, simde_uint8x8_t c) {
       __m128i r128 = _mm_blendv_epi8(r128_01, r128_2, _mm_slli_epi32(c128, 3));
       r128 =  _mm_blendv_epi8(r128, a128, c128);
       r_.m64 = _mm_movepi64_pi64(r128);
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      vuint8m2_t t1 = __riscv_vlmul_ext_v_u8m1_u8m2 (b_[0].sv64);
+      vuint8m2_t t2 = __riscv_vlmul_ext_v_u8m1_u8m2 (b_[1].sv64);
+      vuint8m2_t t3 = __riscv_vlmul_ext_v_u8m1_u8m2 (b_[2].sv64);
+      vuint8m2_t am2 = __riscv_vlmul_ext_v_u8m1_u8m2 (a_.sv64);
+      vuint8m2_t t_combine = __riscv_vslideup_vx_u8m2(t2 , t3 , 8 , 24);
+      t_combine = __riscv_vslideup_vx_u8m2(t1 , t_combine , 8 , 24);
+      vuint8m2_t idxm2 = __riscv_vlmul_ext_v_u8m1_u8m2(c_.sv64);
+      vbool4_t mask = __riscv_vmsgeu_vx_u8m2_b4 (idxm2, 24, 8);
+      vuint8m2_t r_tmp = __riscv_vrgather_vv_u8m2(t_combine , idxm2 , 8);
+      r_.sv64 = __riscv_vlmul_trunc_v_u8m2_u8m1(__riscv_vmerge_vvm_u8m2(r_tmp, am2, mask, 8));
     #else
       SIMDE_VECTORIZE
       for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
@@ -145519,6 +149733,19 @@ simde_vtbx4_u8(simde_uint8x8_t a, simde_uint8x8x4_t b, simde_uint8x8_t c) {
       __m128i r128 = _mm_blendv_epi8(r128_01, r128_23,  _mm_slli_epi32(c128, 3));
       r128 =  _mm_blendv_epi8(r128, a128, c128);
       r_.m64 = _mm_movepi64_pi64(r128);
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      vuint8m2_t t1 = __riscv_vlmul_ext_v_u8m1_u8m2 (b_[0].sv64);
+      vuint8m2_t t2 = __riscv_vlmul_ext_v_u8m1_u8m2 (b_[1].sv64);
+      vuint8m2_t t3 = __riscv_vlmul_ext_v_u8m1_u8m2 (b_[2].sv64);
+      vuint8m2_t t4 = __riscv_vlmul_ext_v_u8m1_u8m2 (b_[3].sv64);
+      vuint8m2_t am2 = __riscv_vlmul_ext_v_u8m1_u8m2 (a_.sv64);
+      vuint8m2_t t_combine = __riscv_vslideup_vx_u8m2(t3 , t4 , 8 , 32);
+      t_combine = __riscv_vslideup_vx_u8m2(t2 , t_combine , 8 , 32);
+      t_combine = __riscv_vslideup_vx_u8m2(t1 , t_combine , 8 , 32);
+      vuint8m2_t idxm2 = __riscv_vlmul_ext_v_u8m1_u8m2(c_.sv64);
+      vbool4_t mask = __riscv_vmsgeu_vx_u8m2_b4 (idxm2, 32, 8);
+      vuint8m2_t r_tmp = __riscv_vrgather_vv_u8m2(t_combine , idxm2 , 8);
+      r_.sv64 = __riscv_vlmul_trunc_v_u8m2_u8m1(__riscv_vmerge_vvm_u8m2(r_tmp, am2, mask, 8));
     #else
       SIMDE_VECTORIZE
       for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
@@ -145628,7 +149855,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_TBX_H) */
 /* :: End simde/arm/neon/tbx.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/trn.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -145662,9 +149889,9 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_TRN_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/trn1.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -145698,7 +149925,7 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_TRN1_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -146359,7 +150586,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_TRN1_H) */
 /* :: End simde/arm/neon/trn1.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/trn2.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -146393,7 +150620,7 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_TRN2_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -147363,13 +151590,13 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_TRN_H) */
 /* :: End simde/arm/neon/trn.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/uqadd.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -147401,7 +151628,7 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_UQADD_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -147711,7 +151938,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_UQADD_H) */
 /* :: End simde/arm/neon/uqadd.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/usdot.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -147743,10 +151970,10 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_USDOT_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -147810,7 +152037,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_USDOT_H) */
 /* :: End simde/arm/neon/usdot.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/usdot_lane.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -147842,7 +152069,7 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_USDOT_LANE_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -147980,13 +152207,13 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_USDOT_LANE_H) */
 /* :: End simde/arm/neon/usdot_lane.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/neon/xar.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -148018,9 +152245,9 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_NEON_XAR_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -148055,11 +152282,11 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARM_NEON_XAR_H) */
 /* :: End simde/arm/neon/xar.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 #endif /* SIMDE_ARM_NEON_H */
 /* :: End simde/arm/neon.h :: */

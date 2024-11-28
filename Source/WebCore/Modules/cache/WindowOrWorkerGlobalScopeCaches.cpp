@@ -66,7 +66,7 @@ public:
 private:
     static ASCIILiteral supplementName() { return "WorkerGlobalScopeCaches"_s; }
 
-    WorkerGlobalScope& m_scope;
+    WeakRef<WorkerGlobalScope, WeakPtrImplWithEventTargetData> m_scope;
     mutable RefPtr<DOMCacheStorage> m_caches;
 };
 
@@ -121,8 +121,10 @@ WorkerGlobalScopeCaches* WorkerGlobalScopeCaches::from(WorkerGlobalScope& scope)
 
 DOMCacheStorage* WorkerGlobalScopeCaches::caches() const
 {
-    if (!m_caches)
-        m_caches = DOMCacheStorage::create(m_scope, m_scope.cacheStorageConnection());
+    if (!m_caches) {
+        Ref scope = m_scope.get();
+        m_caches = DOMCacheStorage::create(scope, scope->cacheStorageConnection());
+    }
     return m_caches.get();
 }
 

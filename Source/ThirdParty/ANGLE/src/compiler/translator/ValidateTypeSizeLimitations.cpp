@@ -100,15 +100,40 @@ class ValidateTypeSizeLimitationsTraverser : public TIntermTraverser
         ShaderVariable shaderVar;
         setCommonVariableProperties(variableType, variable, &shaderVar);
 
-        // Compute the std140 layout of this variable, assuming
-        // it's a member of a block (which it might not be).
-        Std140BlockEncoder layoutEncoder;
-        BlockEncoderVisitor visitor("", "", &layoutEncoder);
-        // Since the size limit's arbitrary, it doesn't matter
-        // whether the row-major layout is correctly determined.
-        bool isRowMajorLayout = false;
-        TraverseShaderVariable(shaderVar, isRowMajorLayout, &visitor);
-        if (layoutEncoder.getCurrentOffset() > kMaxVariableSizeInBytes)
+        size_t variableSize;
+        {
+            // Compute the std140 layout of this variable, assuming
+            // it's a member of a block (which it might not be).
+            Std140BlockEncoder layoutEncoder;
+            BlockEncoderVisitor visitor("", "", &layoutEncoder);
+            // Since the size limit's arbitrary, it doesn't matter
+            // whether the row-major layout is correctly determined.
+            constexpr bool isRowMajorLayout = false;
+
+            // For efficiency, don't actually iterate over all array elements, as only the size
+            // calculation matters.  Instead, for arrays, the size is reduced to 2 (so array-ness
+            // and padding is taken into account), and the total size is derived from the array
+            // size.
+            const uint32_t arraySizeProduct =
+                shaderVar.isArray() ? shaderVar.getArraySizeProduct() : 1;
+            if (arraySizeProduct > 1)
+            {
+                shaderVar.arraySizes.resize(1);
+                shaderVar.arraySizes[0] = 2;
+            }
+
+            TraverseShaderVariable(shaderVar, isRowMajorLayout, &visitor);
+            variableSize = layoutEncoder.getCurrentOffset();
+
+            if (arraySizeProduct > 1)
+            {
+                // Calculate the actual size of the variable.
+                ASSERT(variableSize % 2 == 0);
+                variableSize = variableSize / 2 * arraySizeProduct;
+            }
+        }
+
+        if (variableSize > kMaxVariableSizeInBytes)
         {
             error(location, "Size of declared variable exceeds implementation-defined limit",
                   variable.name());
@@ -169,14 +194,14 @@ class ValidateTypeSizeLimitationsTraverser : public TIntermTraverser
             case EvqTessEvaluationIn:
             case EvqTessEvaluationOut:
 
-                if (layoutEncoder.getCurrentOffset() > kMaxPrivateVariableSizeInBytes)
+                if (variableSize > kMaxPrivateVariableSizeInBytes)
                 {
                     error(location,
                           "Size of declared private variable exceeds implementation-defined limit",
                           variable.name());
                     return false;
                 }
-                mTotalPrivateVariablesSize += layoutEncoder.getCurrentOffset();
+                mTotalPrivateVariablesSize += variableSize;
                 break;
             default:
                 break;

@@ -40,7 +40,7 @@ void CheckCreateEvent(cl_event nativeEvent, CLEventImpl::CreateFunc *createFunc)
 CLCommandQueueCL::CLCommandQueueCL(const cl::CommandQueue &commandQueue, cl_command_queue native)
     : CLCommandQueueImpl(commandQueue), mNative(native)
 {
-    if (commandQueue.getProperties().isSet(CL_QUEUE_ON_DEVICE))
+    if (commandQueue.getProperties().intersects(CL_QUEUE_ON_DEVICE))
     {
         commandQueue.getContext().getImpl<CLContextCL>().mData->mDeviceQueues.emplace(
             commandQueue.getNative());
@@ -49,7 +49,7 @@ CLCommandQueueCL::CLCommandQueueCL(const cl::CommandQueue &commandQueue, cl_comm
 
 CLCommandQueueCL::~CLCommandQueueCL()
 {
-    if (mCommandQueue.getProperties().isSet(CL_QUEUE_ON_DEVICE))
+    if (mCommandQueue.getProperties().intersects(CL_QUEUE_ON_DEVICE))
     {
         const size_t numRemoved =
             mCommandQueue.getContext().getImpl<CLContextCL>().mData->mDeviceQueues.erase(

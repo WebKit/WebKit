@@ -49,6 +49,7 @@
 #include <wtf/HashTraits.h>
 #include <wtf/RefPtr.h>
 #include <wtf/SHA1.h>
+#include <wtf/StdLibExtras.h>
 #include <wtf/text/Base64.h>
 #include <wtf/text/CString.h>
 
@@ -234,7 +235,7 @@ DOMPatchSupport::diff(const Vector<std::unique_ptr<Digest>>& oldList, const Vect
         newMap[newIndex].second = oldIndex;
     }
 
-    typedef HashMap<String, Vector<size_t>> DiffTable;
+    using DiffTable = HashMap<String, Vector<size_t>>;
     DiffTable newTable;
     DiffTable oldTable;
 
@@ -407,8 +408,7 @@ std::unique_ptr<DOMPatchSupport::Digest> DOMPatchSupport::createDigest(Node& nod
     digest->node = &node;
     SHA1 sha1;
 
-    auto nodeType = node.nodeType();
-    sha1.addBytes(std::span { reinterpret_cast<const uint8_t*>(&nodeType), sizeof(nodeType) });
+    sha1.addBytes(asByteSpan(node.nodeType()));
     addStringToSHA1(sha1, node.nodeName());
     addStringToSHA1(sha1, node.nodeValue());
 

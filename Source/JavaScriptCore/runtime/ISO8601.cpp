@@ -37,6 +37,8 @@
 #include <wtf/text/StringParsingBuffer.h>
 #include <wtf/unicode/CharacterNames.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 namespace ISO8601 {
 
@@ -1396,22 +1398,6 @@ uint8_t monthFromCode(StringView monthCode)
     return result;
 }
 
-// IsValidDuration ( years, months, weeks, days, hours, minutes, seconds, milliseconds, microseconds, nanoseconds )
-// https://tc39.es/proposal-temporal/#sec-temporal-isvalidduration
-bool isValidDuration(const Duration& duration)
-{
-    int sign = 0;
-    for (auto value : duration) {
-        if (!std::isfinite(value) || (value < 0 && sign > 0) || (value > 0 && sign < 0))
-            return false;
-
-        if (!sign && value)
-            sign = value > 0 ? 1 : -1;
-    }
-
-    return true;
-}
-
 ExactTime ExactTime::fromISOPartsAndOffset(int32_t year, uint8_t month, uint8_t day, unsigned hour, unsigned minute, unsigned second, unsigned millisecond, unsigned microsecond, unsigned nanosecond, int64_t offset)
 {
     ASSERT(month >= 1 && month <= 12);
@@ -1468,6 +1454,87 @@ static CheckedInt128 checkedCastDoubleToInt128(double n)
         result <<= exponent - significandBits;
     result *= sign;
     return { result };
+}
+
+template<TemporalUnit unit>
+std::optional<Int128> Duration::totalNanoseconds() const
+{
+    ASSERT(unit >= TemporalUnit::Day);
+
+    CheckedInt128 resultNs { 0 };
+
+    if constexpr (unit <= TemporalUnit::Day) {
+        CheckedInt128 days = checkedCastDoubleToInt128(this->days());
+        resultNs += days * ExactTime::nsPerDay;
+    }
+    if constexpr (unit <= TemporalUnit::Hour) {
+        CheckedInt128 hours = checkedCastDoubleToInt128(this->hours());
+        resultNs += hours * ExactTime::nsPerHour;
+    }
+    if constexpr (unit <= TemporalUnit::Minute) {
+        CheckedInt128 minutes = checkedCastDoubleToInt128(this->minutes());
+        resultNs += minutes * ExactTime::nsPerMinute;
+    }
+    if constexpr (unit <= TemporalUnit::Second) {
+        CheckedInt128 seconds = checkedCastDoubleToInt128(this->seconds());
+        resultNs += seconds * ExactTime::nsPerSecond;
+    }
+    if constexpr (unit <= TemporalUnit::Millisecond) {
+        CheckedInt128 milliseconds = checkedCastDoubleToInt128(this->milliseconds());
+        resultNs += milliseconds * ExactTime::nsPerMillisecond;
+    }
+    if constexpr (unit <= TemporalUnit::Microsecond) {
+        CheckedInt128 microseconds = checkedCastDoubleToInt128(this->microseconds());
+        resultNs += microseconds * ExactTime::nsPerMicrosecond;
+    }
+    if constexpr (unit <= TemporalUnit::Nanosecond)
+        resultNs += checkedCastDoubleToInt128(this->nanoseconds());
+
+    if (resultNs.hasOverflowed())
+        return std::nullopt;
+
+    return resultNs;
+}
+template std::optional<Int128> Duration::totalNanoseconds<TemporalUnit::Day>() const;
+template std::optional<Int128> Duration::totalNanoseconds<TemporalUnit::Second>() const;
+template std::optional<Int128> Duration::totalNanoseconds<TemporalUnit::Millisecond>() const;
+template std::optional<Int128> Duration::totalNanoseconds<TemporalUnit::Microsecond>() const;
+
+static constexpr Int128 absInt128(const Int128& value)
+{
+    if (value < 0)
+        return -value;
+    return value;
+}
+
+// IsValidDuration ( years, months, weeks, days, hours, minutes, seconds, milliseconds, microseconds, nanoseconds )
+// https://tc39.es/proposal-temporal/#sec-temporal-isvalidduration
+bool isValidDuration(const Duration& duration)
+{
+    int sign = 0;
+    for (auto value : duration) {
+        if (!std::isfinite(value) || (value < 0 && sign > 0) || (value > 0 && sign < 0))
+            return false;
+
+        if (!sign && value)
+            sign = value > 0 ? 1 : -1;
+    }
+
+    // 3. If abs(years) ≥ 2^32, return false.
+    // 4. If abs(months) ≥ 2^32, return false.
+    // 5. If abs(weeks) ≥ 2^32, return false.
+    constexpr double limit = 1ULL << 32;
+    if (std::abs(duration[TemporalUnit::Year]) >= limit || std::abs(duration[TemporalUnit::Month]) >= limit || std::abs(duration[TemporalUnit::Week]) >= limit)
+        return false;
+
+    // 6. Let normalizedSeconds be days × 86,400 + hours × 3600 + minutes × 60 + seconds + ℝ(𝔽(milliseconds)) × 10^-3 + ℝ(𝔽(microseconds)) × 10^-6 + ℝ(𝔽(nanoseconds)) × 10^-9.
+    auto normalizedNanoseconds = duration.totalNanoseconds<TemporalUnit::Day>();
+    // 8. If abs(normalizedSeconds) ≥ 2^53, return false.
+    constexpr Int128 nanosecondsLimit = (Int128(1) << 53) * 1000000000;
+    if (!normalizedNanoseconds || absInt128(normalizedNanoseconds.value()) >= nanosecondsLimit)
+        return false;
+
+    return true;
 }
 
 std::optional<ExactTime> ExactTime::add(Duration duration) const
@@ -1557,3 +1624,5 @@ bool isYearWithinLimits(double year)
 
 } // namespace ISO8601
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

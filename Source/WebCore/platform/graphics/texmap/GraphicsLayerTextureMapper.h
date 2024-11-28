@@ -26,6 +26,7 @@
 #include "GraphicsLayerContentsDisplayDelegate.h"
 #include "Image.h"
 #include "NativeImage.h"
+#include "TextureMapperAnimation.h"
 #include "TextureMapperLayer.h"
 #include "TextureMapperPlatformLayer.h"
 #include "TextureMapperTiledBackingStore.h"
@@ -170,7 +171,7 @@ private:
 
     TextureMapperPlatformLayer* m_contentsLayer;
     FloatRect m_needsDisplayRect;
-    Nicosia::Animations m_animations;
+    TextureMapperAnimations m_animations;
     MonotonicTime m_animationStartTime;
 };
 

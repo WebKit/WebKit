@@ -37,7 +37,7 @@ namespace WebCore {
 class ContentType;
 
 class WEBCORE_EXPORT MIMETypeCache {
-    WTF_MAKE_TZONE_ALLOCATED(MIMETypeCache);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(MIMETypeCache, WEBCORE_EXPORT);
 public:
     MIMETypeCache() = default;
     virtual ~MIMETypeCache() = default;
@@ -61,7 +61,7 @@ private:
     bool shouldOverrideExtendedType(const ContentType&);
 
     std::optional<HashSet<String>> m_supportedTypes;
-    std::optional<HashMap<String, MediaPlayerEnums::SupportsType>> m_cachedResults;
+    std::optional<UncheckedKeyHashMap<String, MediaPlayerEnums::SupportsType>> m_cachedResults;
 };
 
 } // namespace WebCore

@@ -15,6 +15,12 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/mathml/relations/text-and-math/basic-mathematical-alphanumeric-symbols-with-default-font.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/relations/text-and-math/mi-automatic-italic-with-default-font-expected-mismatch.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/relations/text-and-math/mi-automatic-italic-with-default-font-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/relations/text-and-math/mi-automatic-italic-with-default-font.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/relations/text-and-math/mo-glyph-height-with-default-font-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/relations/text-and-math/mo-glyph-height-with-default-font-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/relations/text-and-math/mo-glyph-height-with-default-font.html
 /LayoutTests/imported/w3c/web-platform-tests/mathml/relations/text-and-math/use-typo-metrics-1-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/mathml/relations/text-and-math/use-typo-metrics-1-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/mathml/relations/text-and-math/use-typo-metrics-1.html

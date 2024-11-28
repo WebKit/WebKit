@@ -30,6 +30,6 @@
 namespace WebKit {
 
 struct DataTaskIdentifierType;
-using DataTaskIdentifier = LegacyNullableObjectIdentifier<DataTaskIdentifierType>;
+using DataTaskIdentifier = ObjectIdentifier<DataTaskIdentifierType>;
 
 }

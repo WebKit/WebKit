@@ -45,6 +45,8 @@ struct TextAnimationData {
     TextAnimationType style;
     TextAnimationRunMode runMode;
     WTF::UUID unanimatedRangeUUID { WTF::UUID::emptyValue };
+    WTF::UUID sourceAnimationUUID { WTF::UUID::emptyValue };
+    WTF::UUID destinationAnimationUUID { WTF::UUID::emptyValue };
 
 };
 

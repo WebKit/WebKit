@@ -66,7 +66,7 @@ inline void ObjectAdaptiveStructureWatchpoint::install(VM&)
 
 inline void ObjectAdaptiveStructureWatchpoint::fireInternal(VM& vm, const FireDetail&)
 {
-    if (!m_owner->isLive())
+    if (m_owner->isPendingDestruction())
         return;
 
     if (m_key.isWatchable(PropertyCondition::EnsureWatchability)) {

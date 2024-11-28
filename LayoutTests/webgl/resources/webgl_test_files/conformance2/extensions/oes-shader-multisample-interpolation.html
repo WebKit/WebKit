@@ -298,6 +298,7 @@ function runTest() {
         testPassed("No OES_shader_multisample_interpolation support -- this is legal");
     } else {
         testPassed("Successfully enabled OES_shader_multisample_interpolation extension");
+        checkEnums();
         runQueryTests(true);
         runShaderTests(true);
         runInterpolationTest();

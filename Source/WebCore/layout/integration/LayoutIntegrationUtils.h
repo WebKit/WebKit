@@ -40,7 +40,9 @@ public:
     IntegrationUtils(const LayoutState&);
 
     void layoutWithFormattingContextForBox(const ElementBox&, std::optional<LayoutUnit> widthConstraint = { }) const;
-    std::pair<LayoutUnit, LayoutUnit> preferredWidthWithFormattingContextForBox(const ElementBox&) const;
+    LayoutUnit maxContentWidth(const ElementBox&) const;
+    LayoutUnit minContentWidth(const ElementBox&) const;
+    LayoutUnit minContentHeight(const ElementBox&) const;
 
 private:
     const LayoutState& m_globalLayoutState;

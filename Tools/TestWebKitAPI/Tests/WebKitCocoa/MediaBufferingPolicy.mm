@@ -47,7 +47,12 @@ static void waitUntilBufferingPolicyIsEqualTo(WKWebView* webView, const char* ex
     EXPECT_WK_STREQ(expected, observed);
 }
 
+// rdar://136704178
+#if PLATFORM(MAC)
+TEST(WebKit, DISABLED_MediaBufferingPolicy)
+#else
 TEST(WebKit, MediaBufferingPolicy)
+#endif
 {
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     auto context = adoptWK(TestWebKitAPI::Util::createContextForInjectedBundleTest("InternalsInjectedBundleTest"));

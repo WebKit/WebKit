@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -115,7 +115,7 @@ void RemoteAudioSourceProviderManager::audioSamplesAvailable(MediaPlayerIdentifi
     iterator->value->audioSamplesAvailable(startFrame, numberOfFrames);
 }
 
-WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(RemoteAudioSourceProviderManagerRemoteAudio, RemoteAudioSourceProviderManager::RemoteAudio);
+WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(RemoteAudioSourceProviderManager, RemoteAudio);
 
 RemoteAudioSourceProviderManager::RemoteAudio::RemoteAudio(Ref<RemoteAudioSourceProvider>&& provider)
     : m_provider(WTFMove(provider))

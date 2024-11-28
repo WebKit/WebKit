@@ -32,7 +32,7 @@
     FillMode fill = "auto";
     double iterationStart = 0.0;
     unrestricted double iterations = 1.0;
-    (unrestricted double or DOMString) duration = "auto";
+    (unrestricted double or CSSNumericValue or DOMString) duration = "auto";
     PlaybackDirection direction = "normal";
     DOMString easing = "linear";
 };

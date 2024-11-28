@@ -345,7 +345,7 @@ def gen_image_map_switch_mac_case(angle_format, actual_angle_format_info, angle_
                                      gen_format_assign_code)
 
 
-# Generate format conversion switch case (non-desktop ES 3.0 case)
+# Generate format conversion switch case (ES 3.0 case)
 def gen_image_map_switch_es3_case(angle_format, actual_angle_format_info, angle_to_gl,
                                   angle_to_mtl_map, mac_fallbacks):
     gl_format = angle_to_gl[angle_format]

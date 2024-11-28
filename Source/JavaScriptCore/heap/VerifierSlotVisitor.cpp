@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,12 +36,14 @@
 #include <wtf/StackTrace.h>
 #include <wtf/TZoneMallocInlines.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(VerifierSlotVisitor);
-WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(VerifierSlotVisitorMarkedBlockData, VerifierSlotVisitor::MarkedBlockData);
-WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(VerifierSlotVisitorOpaqueRootData, VerifierSlotVisitor::OpaqueRootData);
-WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(VerifierSlotVisitorPreciseAllocationData, VerifierSlotVisitor::PreciseAllocationData);
+WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(VerifierSlotVisitor, MarkedBlockData);
+WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(VerifierSlotVisitor, OpaqueRootData);
+WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(VerifierSlotVisitor, PreciseAllocationData);
 
 using MarkerData = VerifierSlotVisitor::MarkerData;
 
@@ -322,7 +324,7 @@ bool VerifierSlotVisitor::isFirstVisit() const
 
 bool VerifierSlotVisitor::isMarked(const void* rawCell) const
 {
-    HeapCell* cell = bitwise_cast<HeapCell*>(rawCell);
+    HeapCell* cell = std::bit_cast<HeapCell*>(rawCell);
     if (cell->isPreciseAllocation())
         return isMarked(cell->preciseAllocation(), cell);
     return isMarked(cell->markedBlock(), cell);
@@ -346,7 +348,7 @@ bool VerifierSlotVisitor::isMarked(MarkedBlock& block, HeapCell* cell) const
 
 void VerifierSlotVisitor::markAuxiliary(const void* base)
 {
-    HeapCell* cell = bitwise_cast<HeapCell*>(base);
+    HeapCell* cell = std::bit_cast<HeapCell*>(base);
 
     ASSERT(cell->heap() == heap());
     testAndSetMarked(cell);
@@ -359,7 +361,7 @@ bool VerifierSlotVisitor::mutatorIsStopped() const
 
 bool VerifierSlotVisitor::testAndSetMarked(const void* rawCell)
 {
-    HeapCell* cell = bitwise_cast<HeapCell*>(rawCell);
+    HeapCell* cell = std::bit_cast<HeapCell*>(rawCell);
     if (cell->isPreciseAllocation())
         return testAndSetMarked(cell->preciseAllocation());
     return testAndSetMarked(cell->markedBlock(), cell);
@@ -416,3 +418,5 @@ void VerifierSlotVisitor::visitChildren(const JSCell* cell)
 }
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

@@ -21,7 +21,7 @@
 #pragma once
 
 #include "GStreamerCommon.h"
-#include "VideoEncoder.h"
+#include "VideoEncoderScalabilityMode.h"
 #include <wtf/TZoneMalloc.h>
 
 #define WEBKIT_TYPE_VIDEO_ENCODER (webkit_video_encoder_get_type())
@@ -51,7 +51,7 @@ class WebKitVideoEncoderBitRateAllocation : public RefCounted<WebKitVideoEncoder
     WTF_MAKE_NONCOPYABLE(WebKitVideoEncoderBitRateAllocation);
 
 public:
-    static Ref<WebKitVideoEncoderBitRateAllocation> create(WebCore::VideoEncoder::ScalabilityMode scalabilityMode)
+    static Ref<WebKitVideoEncoderBitRateAllocation> create(WebCore::VideoEncoderScalabilityMode scalabilityMode)
     {
         return adoptRef(*new WebKitVideoEncoderBitRateAllocation(scalabilityMode));
     }
@@ -63,7 +63,9 @@ public:
     {
         RELEASE_ASSERT(spatialLayerIndex < MaxSpatialLayers);
         RELEASE_ASSERT(temporalLayerIndex < MaxTemporalLayers);
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib port
         m_bitRates[spatialLayerIndex][temporalLayerIndex].emplace(bitRate);
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     }
 
     std::optional<uint32_t> getBitRate(unsigned spatialLayerIndex, unsigned temporalLayerIndex) const
@@ -72,17 +74,19 @@ public:
             return std::nullopt;
         if (UNLIKELY(temporalLayerIndex >= MaxTemporalLayers))
             return std::nullopt;
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib port
         return m_bitRates[spatialLayerIndex][temporalLayerIndex];
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     }
 
-    WebCore::VideoEncoder::ScalabilityMode scalabilityMode() const { return m_scalabilityMode; }
+    WebCore::VideoEncoderScalabilityMode scalabilityMode() const { return m_scalabilityMode; }
 
 private:
-    WebKitVideoEncoderBitRateAllocation(WebCore::VideoEncoder::ScalabilityMode scalabilityMode)
+    WebKitVideoEncoderBitRateAllocation(WebCore::VideoEncoderScalabilityMode scalabilityMode)
         : m_scalabilityMode(scalabilityMode)
     { }
 
-    WebCore::VideoEncoder::ScalabilityMode m_scalabilityMode;
+    WebCore::VideoEncoderScalabilityMode m_scalabilityMode;
     std::optional<uint32_t> m_bitRates[MaxSpatialLayers][MaxTemporalLayers];
 };
 

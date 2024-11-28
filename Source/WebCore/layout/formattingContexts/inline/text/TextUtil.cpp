@@ -42,6 +42,8 @@
 #include <unicode/ubidi.h>
 #include <wtf/text/TextBreakIterator.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 namespace Layout {
 
@@ -80,7 +82,7 @@ InlineLayoutUnit TextUtil::width(const InlineTextBox& inlineTextBox, const FontC
     } else {
         auto& style = inlineTextBox.style();
         auto directionalOverride = style.unicodeBidi() == UnicodeBidi::Override;
-        auto run = WebCore::TextRun { StringView(text).substring(from, to - from), contentLogicalLeft, { }, ExpansionBehavior::defaultBehavior(), directionalOverride ? style.direction() : TextDirection::LTR, directionalOverride };
+        auto run = WebCore::TextRun { StringView(text).substring(from, to - from), contentLogicalLeft, { }, ExpansionBehavior::defaultBehavior(), directionalOverride ? style.writingMode().bidiDirection() : TextDirection::LTR, directionalOverride };
         if (!style.collapseWhiteSpace() && style.tabSize())
             run.setTabSize(true, style.tabSize());
         // FIXME: consider moving this to TextRun ctor
@@ -183,8 +185,8 @@ TextUtil::FallbackFontList TextUtil::fallbackFontsForText(StringView textContent
     };
 
     if (includeHyphen == IncludeHyphen::Yes)
-        collectFallbackFonts(TextRun { StringView(style.hyphenString().string()), { }, { }, ExpansionBehavior::defaultBehavior(), style.direction() });
-    collectFallbackFonts(TextRun { textContent, { }, { }, ExpansionBehavior::defaultBehavior(), style.direction() });
+        collectFallbackFonts(TextRun { StringView(style.hyphenString().string()), { }, { }, ExpansionBehavior::defaultBehavior(), style.writingMode().bidiDirection() });
+    collectFallbackFonts(TextRun { textContent, { }, { }, ExpansionBehavior::defaultBehavior(), style.writingMode().bidiDirection() });
     return fallbackFonts;
 }
 
@@ -225,10 +227,10 @@ TextUtil::EnclosingAscentDescent TextUtil::enclosingGlyphBoundsForText(StringVie
 
     if (textContent.is8Bit()) {
         Latin1TextIterator textIterator { textContent.span8(), 0, textContent.length() };
-        return enclosingGlyphBoundsForRunWithIterator(style.fontCascade(), !style.isLeftToRightDirection(), textIterator);
+        return enclosingGlyphBoundsForRunWithIterator(style.fontCascade(), style.writingMode().isBidiRTL(), textIterator);
     }
     SurrogatePairAwareTextIterator textIterator { textContent.span16(), 0, textContent.length() };
-    return enclosingGlyphBoundsForRunWithIterator(style.fontCascade(), !style.isLeftToRightDirection(), textIterator);
+    return enclosingGlyphBoundsForRunWithIterator(style.fontCascade(), style.writingMode().isBidiRTL(), textIterator);
 }
 
 TextUtil::WordBreakLeft TextUtil::breakWord(const InlineTextItem& inlineTextItem, const FontCascade& fontCascade, InlineLayoutUnit textWidth, InlineLayoutUnit availableWidth, InlineLayoutUnit contentLogicalLeft)
@@ -334,9 +336,11 @@ bool TextUtil::mayBreakInBetween(const InlineTextItem& previousInlineItem, const
 {
     // Check if these 2 adjacent non-whitespace inline items are connected at a breakable position.
     ASSERT(!previousInlineItem.isWhitespace() && !nextInlineItem.isWhitespace());
+    return mayBreakInBetween(previousInlineItem.inlineTextBox().content(), previousInlineItem.style(), nextInlineItem.inlineTextBox().content(), nextInlineItem.style());
+}
 
-    auto previousContent = previousInlineItem.inlineTextBox().content();
-    auto nextContent = nextInlineItem.inlineTextBox().content();
+bool TextUtil::mayBreakInBetween(String previousContent, const RenderStyle& previousContentStyle, String nextContent, const RenderStyle& nextContentStyle)
+{
     // Now we need to collect at least 3 adjacent characters to be able to make a decision whether the previous text item ends with breaking opportunity.
     // [ex-][ample] <- second to last[x] last[-] current[a]
     // We need at least 1 character in the current inline text item and 2 more from previous inline items.
@@ -345,8 +349,6 @@ bool TextUtil::mayBreakInBetween(const InlineTextItem& previousInlineItem, const
         // See the templated CharacterType in nextBreakablePosition for last and lastlast characters.
         nextContent.convertTo16Bit();
     }
-    auto& previousContentStyle = previousInlineItem.style();
-    auto& nextContentStyle = nextInlineItem.style();
     auto lineBreakIteratorFactory = CachedLineBreakIteratorFactory { nextContent, nextContentStyle.computedLocale(), TextUtil::lineBreakIteratorMode(nextContentStyle.lineBreak()), TextUtil::contentAnalysis(nextContentStyle.wordBreak()) };
     auto previousContentLength = previousContent.length();
     // FIXME: We should look into the entire uncommitted content for more text context.
@@ -503,7 +505,7 @@ bool TextUtil::containsStrongDirectionalityText(StringView text)
             constexpr auto cD7FF = SIMD::splat<UnsignedType>(0xD7FF);
             constexpr auto cFF00 = SIMD::splat<UnsignedType>(0xFF00);
             auto maybeBidiRTL = [&](auto* cursor) ALWAYS_INLINE_LAMBDA {
-                auto input = SIMD::load(bitwise_cast<const UnsignedType*>(cursor));
+                auto input = SIMD::load(std::bit_cast<const UnsignedType*>(cursor));
                 // ch < 0x0590
                 auto cond0 = SIMD::lessThan(input, c0590);
                 // General Punctuation such as curly quotes.
@@ -586,6 +588,11 @@ AtomString TextUtil::ellipsisTextInInlineDirection(bool isHorizontal)
     }
     static MainThreadNeverDestroyed<const AtomString> verticalEllipsisStr(span(verticalEllipsis));
     return verticalEllipsisStr;
+}
+
+InlineLayoutUnit TextUtil::hyphenWidth(const RenderStyle& style)
+{
+    return std::max(0.f, style.fontCascade().width(TextRun { StringView { style.hyphenString() } }));
 }
 
 bool TextUtil::hasHangablePunctuationStart(const InlineTextItem& inlineTextItem, const RenderStyle& style)
@@ -693,3 +700,5 @@ bool TextUtil::hasPositionDependentContentWidth(StringView textContent)
 
 }
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

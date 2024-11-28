@@ -30,12 +30,12 @@
 
 namespace WebCore {
 
-Ref<HashMapStylePropertyMapReadOnly> HashMapStylePropertyMapReadOnly::create(HashMap<AtomString, RefPtr<CSSValue>>&& map)
+Ref<HashMapStylePropertyMapReadOnly> HashMapStylePropertyMapReadOnly::create(UncheckedKeyHashMap<AtomString, RefPtr<CSSValue>>&& map)
 {
     return adoptRef(*new HashMapStylePropertyMapReadOnly(WTFMove(map)));
 }
 
-HashMapStylePropertyMapReadOnly::HashMapStylePropertyMapReadOnly(HashMap<AtomString, RefPtr<CSSValue>>&& map)
+HashMapStylePropertyMapReadOnly::HashMapStylePropertyMapReadOnly(UncheckedKeyHashMap<AtomString, RefPtr<CSSValue>>&& map)
     : m_map(WTFMove(map))
 {
 }

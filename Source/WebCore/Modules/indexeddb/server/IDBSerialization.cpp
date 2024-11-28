@@ -29,6 +29,7 @@
 #include "IDBKeyData.h"
 #include "IDBKeyPath.h"
 #include "KeyedCoding.h"
+#include <wtf/StdLibExtras.h>
 
 #if USE(GLIB)
 #include <glib.h>
@@ -206,7 +207,7 @@ template <typename T> static bool readLittleEndian(std::span<const uint8_t>& dat
 #else
 template <typename T> static void writeLittleEndian(Vector<uint8_t>& buffer, T value)
 {
-    buffer.append(std::span { reinterpret_cast<uint8_t*>(&value), sizeof(value) });
+    buffer.append(asByteSpan(value));
 }
 
 template <typename T> static bool readLittleEndian(std::span<const uint8_t>& data, T& value)
@@ -214,7 +215,7 @@ template <typename T> static bool readLittleEndian(std::span<const uint8_t>& dat
     if (data.size() < sizeof(value))
         return false;
 
-    value = *reinterpret_cast<const T*>(data.data());
+    value = reinterpretCastSpanStartTo<T>(data);
     data = data.subspan(sizeof(T));
 
     return true;

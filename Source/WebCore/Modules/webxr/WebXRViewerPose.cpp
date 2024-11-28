@@ -25,9 +25,10 @@
 
 #include "config.h"
 #include "WebXRViewerPose.h"
-#include <wtf/TZoneMallocInlines.h>
 
 #if ENABLE(WEBXR)
+
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 

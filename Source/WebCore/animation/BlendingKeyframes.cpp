@@ -31,6 +31,7 @@
 #include "CSSPropertyNames.h"
 #include "CSSValue.h"
 #include "CompositeOperation.h"
+#include "ComputedStyleDependencies.h"
 #include "Element.h"
 #include "KeyframeEffect.h"
 #include "RenderObject.h"
@@ -39,6 +40,8 @@
 #include "StyleResolver.h"
 #include "TransformOperations.h"
 #include "TranslateTransformOperation.h"
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace WebCore {
 
@@ -52,6 +55,7 @@ void BlendingKeyframes::clear()
     m_propertiesSetToCurrentColor.clear();
     m_usesRelativeFontWeight = false;
     m_containsCSSVariableReferences = false;
+    m_usesAnchorFunctions = false;
 }
 
 bool BlendingKeyframes::operator==(const BlendingKeyframes& o) const
@@ -147,6 +151,9 @@ void BlendingKeyframes::fillImplicitKeyframes(const KeyframeEffect& effect, cons
 
     ASSERT(effect.target());
     auto& element = *effect.target();
+    if (!element.isConnected())
+        return;
+
     auto& styleResolver = element.styleResolver();
 
     // We need to establish which properties are implicit for 0% and 100%.
@@ -311,6 +318,11 @@ void BlendingKeyframes::updatePropertiesMetadata(const StyleProperties& properti
                 m_propertiesSetToCurrentColor.add(propertyReference.id());
             else if (!m_usesRelativeFontWeight && propertyReference.id() == CSSPropertyFontWeight && (valueId == CSSValueBolder || valueId == CSSValueLighter))
                 m_usesRelativeFontWeight = true;
+            if (CSSProperty::isInsetProperty(propertyReference.id())) {
+                auto dependencies = cssValue->computedStyleDependencies();
+                if (dependencies.anchors)
+                    m_usesAnchorFunctions = true;
+            }
         } else if (auto* customPropertyValue = dynamicDowncast<CSSCustomPropertyValue>(cssValue)) {
             if (customPropertyValue->isInherit())
                 m_propertiesSetToInherit.add(customPropertyValue->name());
@@ -392,3 +404,5 @@ bool BlendingKeyframe::animatesProperty(KeyframeInterpolation::Property property
 }
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

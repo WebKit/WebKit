@@ -30,6 +30,7 @@
 #import <dispatch/dispatch.h>
 #import <sys/mman.h>
 #import <sys/stat.h>
+#import <wtf/cocoa/SpanCocoa.h>
 
 namespace WebKit {
 namespace NetworkCache {
@@ -56,7 +57,7 @@ std::span<const uint8_t> Data::span() const
         const void* data = nullptr;
         size_t size = 0;
         m_dispatchData = adoptOSObject(dispatch_data_create_map(m_dispatchData.get(), &data, &size));
-        m_data = { static_cast<const uint8_t*>(data), size };
+        m_data = unsafeMakeSpan(static_cast<const uint8_t*>(data), size);
     }
     return m_data;
 }
@@ -77,9 +78,7 @@ bool Data::apply(const Function<bool(std::span<const uint8_t>)>& applier) const
 {
     if (!size())
         return false;
-    return dispatch_data_apply(m_dispatchData.get(), [&applier](dispatch_data_t, size_t, const void* data, size_t size) {
-        return applier({ static_cast<const uint8_t*>(data), size });
-    });
+    return dispatch_data_apply_span(m_dispatchData.get(), applier);
 }
 
 Data Data::subrange(size_t offset, size_t size) const
@@ -98,13 +97,12 @@ Data concatenate(const Data& a, const Data& b)
 
 Data Data::adoptMap(FileSystem::MappedFileData&& mappedFile, FileSystem::PlatformFileHandle fd)
 {
-    size_t size = mappedFile.size();
-    void* map = mappedFile.leakHandle();
-    ASSERT(map);
-    ASSERT(map != MAP_FAILED);
+    auto span = mappedFile.leakHandle();
+    ASSERT(span.data());
+    ASSERT(span.data() != MAP_FAILED);
     FileSystem::closeFile(fd);
-    auto bodyMap = adoptOSObject(dispatch_data_create(map, size, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), [map, size] {
-        munmap(map, size);
+    auto bodyMap = adoptOSObject(dispatch_data_create(span.data(), span.size(), dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), [span] {
+        munmap(span.data(), span.size());
     }));
     return { WTFMove(bodyMap), Data::Backing::Map };
 }

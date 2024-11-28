@@ -56,9 +56,15 @@ PASS background-repeat uses discrete animation when animating between "space" an
 PASS background-repeat uses discrete animation when animating between "space" and "round" with effect easing
 PASS background-repeat uses discrete animation when animating between "space" and "round" with keyframe easing
 PASS block-step-insert (type: discrete) has testInterpolation function
-PASS block-step-insert uses discrete animation when animating between "margin" and "padding" with linear easing
-PASS block-step-insert uses discrete animation when animating between "margin" and "padding" with effect easing
-PASS block-step-insert uses discrete animation when animating between "margin" and "padding" with keyframe easing
+PASS block-step-insert uses discrete animation when animating between "margin-box" and "padding-box" with linear easing
+PASS block-step-insert uses discrete animation when animating between "margin-box" and "padding-box" with effect easing
+PASS block-step-insert uses discrete animation when animating between "margin-box" and "padding-box" with keyframe easing
+PASS block-step-insert uses discrete animation when animating between "margin-box" and "content-box" with linear easing
+PASS block-step-insert uses discrete animation when animating between "margin-box" and "content-box" with effect easing
+PASS block-step-insert uses discrete animation when animating between "margin-box" and "content-box" with keyframe easing
+PASS block-step-insert uses discrete animation when animating between "padding-box" and "content-box" with linear easing
+PASS block-step-insert uses discrete animation when animating between "padding-box" and "content-box" with effect easing
+PASS block-step-insert uses discrete animation when animating between "padding-box" and "content-box" with keyframe easing
 PASS block-step-size (type: length) has testInterpolation function
 PASS block-step-size supports animating as a length
 PASS block-step-size supports animating as a length of rem

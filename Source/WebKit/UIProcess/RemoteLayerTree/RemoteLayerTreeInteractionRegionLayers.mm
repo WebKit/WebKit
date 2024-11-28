@@ -266,6 +266,7 @@ void updateLayersForInteractionRegions(RemoteLayerTreeNode& node)
 
         if (didReuseLayer) {
             auto layerKey = std::make_pair(enclosingIntRect([regionLayer frame]), region.type);
+            auto reuseKey = std::make_pair(interactionRegionGroupNameForLayer(regionLayer.get()), region.type);
             existingLayers.remove(layerKey);
             reusableLayers.remove(reuseKey);
 

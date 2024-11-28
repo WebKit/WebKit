@@ -27,6 +27,8 @@
 #include "config.h"
 #include "JSWebAssemblyArray.h"
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 #if ENABLE(WEBASSEMBLY)
 
 #include "JSCInlines.h"
@@ -209,7 +211,7 @@ void JSWebAssemblyArray::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 
     if (isRefType(thisObject->elementType().type)) {
         for (unsigned i = 0; i < thisObject->size(); ++i)
-            visitor.append(bitwise_cast<WriteBarrier<Unknown>>(thisObject->get(i)));
+            visitor.append(std::bit_cast<WriteBarrier<Unknown>>(thisObject->get(i)));
     }
 }
 
@@ -218,3 +220,5 @@ DEFINE_VISIT_CHILDREN(JSWebAssemblyArray);
 } // namespace JSC
 
 #endif // ENABLE(WEBASSEMBLY)
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

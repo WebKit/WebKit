@@ -74,7 +74,7 @@
 #  - lr is defined on non-X86 architectures (ARM64, ARM64E, ARMv7, and CLOOP)
 #  and holds the return PC
 #
-#  - t0, t1, t2, t3, t4, and optionally t5, t6, and t7 are temporary registers that can get trashed on
+#  - t0, t1, t2, t3, t4, t5, and optionally t6 and t7 are temporary registers that can get trashed on
 #  calls, and are pairwise distinct registers. t4 holds the JS program counter, so use
 #  with caution in opcodes (actually, don't use it in opcodes at all, except as PC).
 #
@@ -153,6 +153,7 @@ end
 const PtrSize = constexpr (sizeof(void*))
 const MachineRegisterSize = constexpr (sizeof(CPURegister))
 const SlotSize = constexpr (sizeof(Register))
+const SeenMultipleCalleeObjects = 1
 
 if JSVALUE64
     const CallFrameHeaderSlots = 5
@@ -322,6 +323,12 @@ const WTFConfig = _g_config + constexpr WTF::startOffsetOfWTFConfig
 const GigacageConfig = _g_config + constexpr Gigacage::startOffsetOfGigacageConfig
 const JSCConfigOffset = constexpr WTF::offsetOfWTFConfigExtension
 const JSCConfigGateMapOffset = JSCConfigOffset + constexpr JSC::offsetOfJSCConfigGateMap
+
+
+macro loadBoolJSCOption(name, reg)
+    leap _g_config, reg
+    loadb JSCConfigOffset + JSC::Config::options + OptionsStorage::%name%[reg], reg
+end
 
 macro nextInstruction()
     loadb [PB, PC, 1], t0
@@ -525,8 +532,6 @@ macro llintOpWithProfile(opcodeName, opcodeStruct, fn)
         end)
     end)
 end
-
-const extraTempReg = t5
 
 # Constants for reasoning about value representation.
 const TagOffset = constexpr TagOffset
@@ -853,6 +858,45 @@ macro restoreCalleeSavesUsedByLLInt()
         loadp -24[cfr], csr7
         loadp -16[cfr], csr8
         loadp -8[cfr], csr9
+    end
+end
+
+macro forEachGPCalleeSave(func)
+    if ARM64 or ARM64E
+        func(csr0, 0)
+        func(csr1, 1)
+        func(csr2, 2)
+        func(csr3, 3)
+        func(csr4, 4)
+        func(csr5, 5)
+        func(csr6, 6)
+        func(csr7, 7)
+        func(csr8, 8)
+        func(csr9, 9)
+    elsif X86_64
+        func(csr0, 0)
+        func(csr1, 1)
+        func(csr2, 2)
+        func(csr3, 3)
+        func(csr4, 4)
+    else
+        error
+    end
+end
+
+macro forEachFPCalleeSave(func)
+    if ARM64 or ARM64E
+        func(csfr0, 0)
+        func(csfr1, 1)
+        func(csfr2, 2)
+        func(csfr3, 3)
+        func(csfr4, 4)
+        func(csfr5, 5)
+        func(csfr6, 6)
+        func(csfr7, 7)
+    elsif X86_64
+    else
+        error
     end
 end
 
@@ -1604,16 +1648,63 @@ end
 # EncodedJSValue vmEntryToJavaScript(void* code, VM* vm, ProtoCallFrame* protoFrame)
 # EncodedJSValue vmEntryToNativeFunction(void* code, VM* vm, ProtoCallFrame* protoFrame)
 
+macro frameForCalleeSaveVerification()
+    if ARM64 or ARM64E
+        const scratch = t9
+    else
+        const scratch = t5
+    end
+
+    # Don't do this always since it screws up btjs.
+    loadBoolJSCOption(validateVMEntryCalleeSaves, scratch)
+    btbz scratch, .continue
+
+    functionPrologue()
+    # This VMEntryRecord is used to record what our callee saves were originally so we can check we didn't screw up somewhere.
+    vmEntryRecord(cfr, sp)
+    checkStackPointerAlignment(scratch, 0xbad0dc02)
+    move cfr, scratch
+    copyCalleeSavesToEntryFrameCalleeSavesBuffer(scratch)
+
+    call .continue
+
+    vmEntryRecord(cfr, scratch)
+    leap VMEntryRecord::calleeSaveRegistersBuffer[scratch], scratch
+    forEachGPCalleeSave(macro (reg, index)
+        bqeq index * MachineRegisterSize[scratch], reg, .ok
+        break
+    .ok:
+    end)
+    forEachFPCalleeSave(macro (reg, index)
+        fd2q reg, t3
+        bqeq (index + (constexpr GPRInfo::numberOfCalleeSaveRegisters)) * MachineRegisterSize[scratch], t3, .ok
+        break
+    .ok:
+    end)
+
+    move cfr, sp
+    functionEpilogue()
+    ret
+.continue:
+end
+
 if C_LOOP
     _llint_vm_entry_to_javascript:
 else
     global _vmEntryToJavaScript
     _vmEntryToJavaScript:
+
+    if ASSERT_ENABLED and (ARM64 or ARM64E or X86_64)
+        frameForCalleeSaveVerification()
+    end
 end
     doVMEntry(makeJavaScriptCall)
 
 if (ARM64E or ARM64) and ADDRESS64
     macro vmEntryToJavaScriptSetup()
+        if ASSERT_ENABLED
+            frameForCalleeSaveVerification()
+        end
         functionPrologue()
         pushCalleeSaves()
         vmEntryRecord(cfr, sp)
@@ -1627,6 +1718,9 @@ if (ARM64E or ARM64) and ADDRESS64
     global _vmEntryToJavaScriptWith0Arguments
     _vmEntryToJavaScriptWith0Arguments:
         # entry must be a0
+        if ASSERT_ENABLED
+            frameForCalleeSaveVerification()
+        end
         vmEntryToJavaScriptSetup()
         move 1, t8 # argumentCountIncludingThis
         subp ((CallFrameHeaderSize + 1 * SlotSize + StackAlignment - 1) & ~StackAlignmentMask), sp
@@ -1641,6 +1735,9 @@ if (ARM64E or ARM64) and ADDRESS64
     global _vmEntryToJavaScriptWith1Arguments
     _vmEntryToJavaScriptWith1Arguments:
         # entry must be a0
+        if ASSERT_ENABLED
+            frameForCalleeSaveVerification()
+        end
         vmEntryToJavaScriptSetup()
         move 2, t8 # argumentCountIncludingThis
         subp ((CallFrameHeaderSize + 2 * SlotSize + StackAlignment - 1) & ~StackAlignmentMask), sp
@@ -1656,6 +1753,9 @@ if (ARM64E or ARM64) and ADDRESS64
     global _vmEntryToJavaScriptWith2Arguments
     _vmEntryToJavaScriptWith2Arguments:
         # entry must be a0
+        if ASSERT_ENABLED
+            frameForCalleeSaveVerification()
+        end
         vmEntryToJavaScriptSetup()
         move 3, t8 # argumentCountIncludingThis
         subp ((CallFrameHeaderSize + 3 * SlotSize + StackAlignment - 1) & ~StackAlignmentMask), sp
@@ -1671,6 +1771,9 @@ if (ARM64E or ARM64) and ADDRESS64
     global _vmEntryToJavaScriptWith3Arguments
     _vmEntryToJavaScriptWith3Arguments:
         # entry must be a0
+        if ASSERT_ENABLED
+            frameForCalleeSaveVerification()
+        end
         vmEntryToJavaScriptSetup()
         move 4, t8 # argumentCountIncludingThis
         subp ((CallFrameHeaderSize + 4 * SlotSize + StackAlignment - 1) & ~StackAlignmentMask), sp
@@ -2062,7 +2165,6 @@ if not JSVALUE64
     slowPathOp(get_prototype_of)
 end
 
-slowPathOp(instanceof_custom)
 slowPathOp(is_callable)
 slowPathOp(is_constructor)
 slowPathOp(new_array_buffer)
@@ -2092,7 +2194,6 @@ llintSlowPathOp(has_private_name)
 llintSlowPathOp(has_private_brand)
 llintSlowPathOp(del_by_id)
 llintSlowPathOp(del_by_val)
-llintSlowPathOp(instanceof)
 llintSlowPathOp(create_lexical_environment)
 llintSlowPathOp(create_direct_arguments)
 llintSlowPathOp(create_scoped_arguments)
@@ -2300,6 +2401,24 @@ end, dispatchAfterRegularCall)
 commonCallOp(op_construct, OpConstruct, prepareForRegularCall, invokeForRegularCall, prepareForSlowRegularCall, macro (getu, metadata)
 end, dispatchAfterRegularCall)
 
+commonCallOp(op_super_construct, OpSuperConstruct, prepareForRegularCall, invokeForRegularCall, prepareForSlowRegularCall, macro (getu, metadata)
+    if JSVALUE64
+        getu(m_argv, t1)
+        lshifti 3, t1
+        negp t1
+        addp cfr, t1
+        loadp ThisArgumentOffset + PayloadOffset[t1], t1
+        loadp OpSuperConstruct::Metadata::m_cachedCallee[t5], t2
+        bqeq t1, t2, .done
+        btqz t2, .store
+    .invalidate:
+        move SeenMultipleCalleeObjects, t1
+    .store:
+        storep t1, OpSuperConstruct::Metadata::m_cachedCallee[t5]
+    .done:
+    end
+end, dispatchAfterRegularCall)
+
 commonCallOp(op_tail_call, OpTailCall, prepareForTailCall, invokeForTailCall, prepareForSlowTailCall, macro (getu, metadata)
     arrayProfileForCall(OpTailCall, getu)
     checkSwitchToJITForEpilogue()
@@ -2343,7 +2462,6 @@ end)
 llintOpWithMetadata(op_construct_varargs, OpConstructVarargs, macro (size, get, dispatch, metadata, return)
     doCallVarargs(op_construct_varargs, size, get, OpConstructVarargs, m_valueProfile, m_dst, dispatch, metadata, _llint_slow_path_size_frame_for_varargs, _llint_slow_path_construct_varargs, prepareForRegularCall, invokeForRegularCall, prepareForSlowRegularCall, dispatchAfterRegularCall)
 end)
-
 
 # Eval is executed in one of two modes:
 #
@@ -2757,10 +2875,6 @@ _wasmLLIntPCRangeEnd:
 else
 
 # These need to be defined even when WebAssembly is disabled
-op(js_to_wasm_wrapper_entry_crash_for_simd_parameters, macro ()
-    crash()
-end)
-
 op(js_to_wasm_wrapper_entry, macro ()
     crash()
 end)
@@ -2789,6 +2903,14 @@ op(wasm_function_prologue_simd, macro ()
     crash()
 end)
 
+op(ipint_trampoline, macro ()
+    crash()
+end)
+
+op(ipint_entry, macro ()
+    crash()
+end)
+
 _wasm_trampoline_wasm_call:
 _wasm_trampoline_wasm_call_indirect:
 _wasm_trampoline_wasm_call_ref:
@@ -2807,6 +2929,16 @@ _wasm_trampoline_wasm_tail_call_ref_wide16:
 _wasm_trampoline_wasm_tail_call_wide32:
 _wasm_trampoline_wasm_tail_call_indirect_wide32:
 _wasm_trampoline_wasm_tail_call_ref_wide32:
+_wasm_trampoline_wasm_ipint_call:
+_wasm_trampoline_wasm_ipint_call_wide16:
+_wasm_trampoline_wasm_ipint_call_wide32:
+_wasm_trampoline_wasm_ipint_tail_call:
+_wasm_trampoline_wasm_ipint_tail_call_wide16:
+_wasm_trampoline_wasm_ipint_tail_call_wide32:
+
+_wasm_ipint_call_return_location:
+_wasm_ipint_call_return_location_wide16:
+_wasm_ipint_call_return_location_wide32:
     crash()
 
 end # WEBASSEMBLY

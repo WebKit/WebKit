@@ -90,6 +90,8 @@ Ref<WebAnimation> WebAnimation::create(Document& document, AnimationEffect* effe
     result->setEffect(effect);
     if (timeline)
         result->setTimeline(timeline);
+    else
+        AnimationTimeline::updateGlobalPosition(result);
 
     InspectorInstrumentation::didCreateWebAnimation(result.get());
 
@@ -238,19 +240,49 @@ void WebAnimation::setEffectInternal(RefPtr<AnimationEffect>&& newEffect, bool d
     InspectorInstrumentation::didSetWebAnimationEffect(*this);
 }
 
+void WebAnimation::setBindingsTimeline(RefPtr<AnimationTimeline>&& timeline)
+{
+    setTimeline(WTFMove(timeline));
+}
+
 void WebAnimation::setTimeline(RefPtr<AnimationTimeline>&& timeline)
 {
     // 3.4.1. Setting the timeline of an animation
     // https://drafts.csswg.org/web-animations-1/#setting-the-timeline
 
+    // 1. Let old timeline be the current timeline of animation, if any.
+    RefPtr oldTimeline = m_timeline;
+
     // 2. If new timeline is the same object as old timeline, abort this procedure.
-    if (timeline == m_timeline)
+    if (timeline == oldTimeline)
         return;
 
-    // 4. If the animation start time of animation is resolved, make animation's hold time unresolved.
-    if (m_startTime)
-        m_holdTime = std::nullopt;
+    // 3. Let previous play state be animation’s play state.
+    auto previousPlayState = playState();
 
+    // 4. Let previous current time be the animation’s current time.
+    auto previousCurrentTime = currentTime();
+
+    // 5. Set previous progress based in the first condition that applies:
+    auto previousProgress = [&]() -> std::optional<double> {
+        // If previous current time is unresolved: Set previous progress to unresolved.
+        if (!previousCurrentTime)
+            return std::nullopt;
+        // If end time is zero: Set previous progress to zero.
+        auto endTime = effectEndTime();
+        if (endTime.isZero())
+            return 0.0;
+        // Otherwise: Set previous progress = previous current time / end time
+        return *previousCurrentTime / endTime;
+    }();
+
+    // 6. Let from finite timeline be true if old timeline is not null and not monotonically increasing.
+    auto fromFiniteTimeline = oldTimeline && !oldTimeline->isMonotonic();
+
+    // 7. Let to finite timeline be true if timeline is not null and not monotonically increasing.
+    auto toFiniteTimeline = timeline && !timeline->isMonotonic();
+
+    // 8. Let the timeline of animation be new timeline.
     if (auto keyframeEffect = dynamicDowncast<KeyframeEffect>(m_effect.get())) {
         if (auto target = keyframeEffect->targetStyleable()) {
             // In the case of a dstyle-originated animation, we don't want to remove the animation from the relevant maps because
@@ -269,7 +301,41 @@ void WebAnimation::setTimeline(RefPtr<AnimationTimeline>&& timeline)
     auto* documentTimeline = dynamicDowncast<DocumentTimeline>(m_timeline.get());
     setSuspended(documentTimeline && documentTimeline->animationsAreSuspended());
 
-    // 5. Run the procedure to update an animation's finished state for animation with the did seek flag set to false,
+    // 9. Perform the steps corresponding to the first matching condition from the following, if any:
+    if (toFiniteTimeline) {
+        // If to finite timeline,
+        // 1. Apply any pending playback rate on animation.
+        applyPendingPlaybackRate();
+
+        // 2. Set auto align start time to true.
+        m_autoAlignStartTime = true;
+
+        // 3. Set start time to unresolved.
+        m_startTime = std::nullopt;
+
+        // 4. Set hold time to unresolved.
+        m_holdTime = std::nullopt;
+
+        if (previousPlayState == PlayState::Finished || previousPlayState == PlayState::Running) {
+            // 5. If previous play state is "finished" or "running":
+            //    Schedule a pending play task.
+            m_timeToRunPendingPlayTask = TimeToRunPendingTask::WhenReady;
+        } else if (previousPlayState == PlayState::Paused && previousProgress) {
+            // 6. If previous play state is "paused" and previous progress is resolved:
+            //    Set hold time to previous progress * end time.
+            m_holdTime = effectEndTime() * *previousProgress;
+        }
+    } else if (fromFiniteTimeline && previousProgress) {
+        // If from finite timeline and previous progress is resolved,
+        // Run the procedure to set the current time to previous progress * end time.
+        setCurrentTime(effectEndTime() * *previousProgress);
+    }
+
+    // 10. If the start time of animation is resolved, make animation’s hold time unresolved.
+    if (m_startTime)
+        m_holdTime = std::nullopt;
+
+    // 11. Run the procedure to update an animation's finished state for animation with the did seek flag set to false,
     // and the synchronously notify flag set to false.
     timingDidChange(DidSeek::No, SynchronouslyNotify::No);
 
@@ -306,68 +372,57 @@ void WebAnimation::effectTargetDidChange(const std::optional<const Styleable>& p
     InspectorInstrumentation::didChangeWebAnimationEffectTarget(*this);
 }
 
-ExceptionOr<std::optional<Seconds>> WebAnimation::validateCSSNumberishValue(const std::optional<CSSNumberish>& optionalCSSNumberish) const
+bool WebAnimation::isTimeValid(const std::optional<WebAnimationTime>& time) const
 {
-    // https://drafts.csswg.org/web-animations/#validating-a-css-numberish-time
-    // FIXME: Revisit this when we know how to deal with a progress-based (ie. scroll) timeline.
-
-    if (!optionalCSSNumberish)
-        return { std::nullopt };
-
-    if (std::holds_alternative<double>(*optionalCSSNumberish))
-        return { Seconds::fromMilliseconds(std::get<double>(*optionalCSSNumberish)) };
-
-    auto numericValue = std::get<RefPtr<CSSNumericValue>>(*optionalCSSNumberish);
-    if (auto* unitValue = dynamicDowncast<CSSUnitValue>(numericValue.get())) {
-        if (unitValue->unitEnum() == CSSUnitType::CSS_NUMBER)
-            return { Seconds::fromMilliseconds(unitValue->value()) };
-        if (auto milliseconds = unitValue->convertTo(CSSUnitType::CSS_MS))
-            return { Seconds::fromMilliseconds(milliseconds->value()) };
-    }
-
-    return Exception { ExceptionCode::TypeError };
+    // https://drafts.csswg.org/web-animations-2/#validating-a-css-numberish-time
+    if (time && !time->isValid())
+        return false;
+    if (m_timeline && m_timeline->isProgressBased() && time && time->time())
+        return false;
+    if ((!m_timeline || m_timeline->isMonotonic()) && time && time->percentage())
+        return false;
+    return true;
 }
 
-std::optional<double> WebAnimation::bindingsStartTime() const
+ExceptionOr<void> WebAnimation::setBindingsStartTime(const std::optional<WebAnimationTime>& startTime)
 {
-    if (!m_startTime)
-        return std::nullopt;
-    return secondsToWebAnimationsAPITime(*m_startTime);
-}
-
-ExceptionOr<void> WebAnimation::setBindingsStartTime(const std::optional<CSSNumberish>& startTime)
-{
-    auto validStartTimeOrException = validateCSSNumberishValue(startTime);
-    if (validStartTimeOrException.hasException())
-        return validStartTimeOrException.releaseException();
-    setStartTime(validStartTimeOrException.releaseReturnValue());
+    if (!isTimeValid(startTime))
+        return Exception { ExceptionCode::TypeError };
+    setStartTime(startTime);
     return { };
 }
 
-void WebAnimation::setStartTime(std::optional<Seconds> newStartTime)
+void WebAnimation::setStartTime(std::optional<WebAnimationTime> newStartTime)
 {
-    // 3.4.6 The procedure to set the start time of animation, animation, to new start time, is as follows:
-    // https://drafts.csswg.org/web-animations/#setting-the-start-time-of-an-animation
+    // https://drafts.csswg.org/web-animations-2/#setting-the-start-time-of-an-animation
 
-    // 1. Let timeline time be the current time value of the timeline that animation is associated with. If
+    // 1. Let valid start time be the result of running the validate a CSSNumberish time
+    // procedure with new start time as the input.
+    // 2. If valid start time is false, abort this procedure.
+    // (We do this in setBindingsStartTime())
+
+    // 3. Set auto align start time to false.
+    m_autoAlignStartTime = false;
+
+    // 4. Let timeline time be the current time value of the timeline that animation is associated with. If
     //    there is no timeline associated with animation or the associated timeline is inactive, let the timeline
     //    time be unresolved.
     auto timelineTime = m_timeline ? m_timeline->currentTime() : std::nullopt;
 
-    // 2. If timeline time is unresolved and new start time is resolved, make animation's hold time unresolved.
+    // 5. If timeline time is unresolved and new start time is resolved, make animation's hold time unresolved.
     if (!timelineTime && newStartTime)
         m_holdTime = std::nullopt;
 
-    // 3. Let previous current time be animation's current time.
+    // 6. Let previous current time be animation's current time.
     auto previousCurrentTime = currentTime();
 
-    // 4. Apply any pending playback rate on animation.
+    // 7. Apply any pending playback rate on animation.
     applyPendingPlaybackRate();
 
-    // 5. Set animation's start time to new start time.
+    // 8. Set animation's start time to new start time.
     m_startTime = newStartTime;
 
-    // 6. Update animation's hold time based on the first matching condition from the following,
+    // 9. Update animation's hold time based on the first matching condition from the following,
     if (newStartTime) {
         // If new start time is resolved,
         // If animation's playback rate is not zero, make animation's hold time unresolved.
@@ -379,41 +434,32 @@ void WebAnimation::setStartTime(std::optional<Seconds> newStartTime)
         m_holdTime = previousCurrentTime;
     }
 
-    // 7. If animation has a pending play task or a pending pause task, cancel that task and resolve animation's current ready promise with animation.
+    // 10. If animation has a pending play task or a pending pause task, cancel that task and resolve animation's current ready promise with animation.
     if (pending()) {
         m_timeToRunPendingPauseTask = TimeToRunPendingTask::NotScheduled;
         m_timeToRunPendingPlayTask = TimeToRunPendingTask::NotScheduled;
         m_readyPromise->resolve(*this);
     }
 
-    // 8. Run the procedure to update an animation's finished state for animation with the did seek flag set to true, and the synchronously notify flag set to false.
+    // 11. Run the procedure to update an animation's finished state for animation with the did seek flag set to true, and the synchronously notify flag set to false.
     timingDidChange(DidSeek::Yes, SynchronouslyNotify::No);
 
     invalidateEffect();
 }
 
-std::optional<double> WebAnimation::bindingsCurrentTime() const
+ExceptionOr<void> WebAnimation::setBindingsCurrentTime(const std::optional<WebAnimationTime>& currentTime)
 {
-    auto time = currentTime();
-    if (!time)
-        return std::nullopt;
-    return secondsToWebAnimationsAPITime(time.value());
+    if (!isTimeValid(currentTime))
+        return Exception { ExceptionCode::TypeError };
+    return setCurrentTime(currentTime);
 }
 
-ExceptionOr<void> WebAnimation::setBindingsCurrentTime(const std::optional<CSSNumberish>& currentTime)
-{
-    auto validCurrentTimeOrException = validateCSSNumberishValue(currentTime);
-    if (validCurrentTimeOrException.hasException())
-        return validCurrentTimeOrException.releaseException();
-    return setCurrentTime(validCurrentTimeOrException.releaseReturnValue());
-}
-
-std::optional<Seconds> WebAnimation::currentTime(std::optional<Seconds> startTime) const
+std::optional<WebAnimationTime> WebAnimation::currentTime(std::optional<WebAnimationTime> startTime) const
 {
     return currentTime(RespectHoldTime::Yes, startTime);
 }
 
-std::optional<Seconds> WebAnimation::currentTime(RespectHoldTime respectHoldTime, std::optional<Seconds> startTime) const
+std::optional<WebAnimationTime> WebAnimation::currentTime(RespectHoldTime respectHoldTime, std::optional<WebAnimationTime> startTime) const
 {
     // 3.4.4. The current time of an animation
     // https://drafts.csswg.org/web-animations-1/#the-current-time-of-an-animation
@@ -429,19 +475,18 @@ std::optional<Seconds> WebAnimation::currentTime(RespectHoldTime respectHoldTime
     //     2. the associated timeline is inactive, or
     //     3. the animation's start time is unresolved.
     // The current time is an unresolved time value.
-    if (!m_timeline || !m_timeline->currentTime() || !m_startTime)
+    if (!m_timeline || !m_timeline->currentTime(m_timelineRange) || !m_startTime)
         return std::nullopt;
 
     // Otherwise, current time = (timeline time - start time) * playback rate
-    return (*m_timeline->currentTime() - startTime.value_or(*m_startTime)) * m_playbackRate;
+    return (*m_timeline->currentTime(m_timelineRange) - startTime.value_or(*m_startTime)) * m_playbackRate;
 }
 
-ExceptionOr<void> WebAnimation::silentlySetCurrentTime(std::optional<Seconds> seekTime)
+ExceptionOr<void> WebAnimation::silentlySetCurrentTime(std::optional<WebAnimationTime> seekTime)
 {
     LOG_WITH_STREAM(Animations, stream << "WebAnimation " << this << " silentlySetCurrentTime " << seekTime);
 
-    // 3.4.5. Setting the current time of an animation
-    // https://drafts.csswg.org/web-animations-1/#setting-the-current-time-of-an-animation
+    // https://drafts.csswg.org/web-animations-2/#silently-set-the-current-time
 
     // 1. If seek time is an unresolved time value, then perform the following steps.
     if (!seekTime) {
@@ -452,7 +497,15 @@ ExceptionOr<void> WebAnimation::silentlySetCurrentTime(std::optional<Seconds> se
         return { };
     }
 
-    // 2. Update either animation's hold time or start time as follows:
+    // 2. Let valid seek time be the result of running the validate a CSSNumberish time procedure
+    // with seek time as the input.
+    // 3. If valid seek time is false, abort this procedure.
+    // (We do this up front in setBindingsCurrentTime()).
+
+    // 4. Set auto align start time to false.
+    m_autoAlignStartTime = false;
+
+    // 5. Update either animation's hold time or start time as follows:
     // If any of the following conditions are true:
     //     - animation's hold time is resolved, or
     //     - animation's start time is unresolved, or
@@ -466,22 +519,22 @@ ExceptionOr<void> WebAnimation::silentlySetCurrentTime(std::optional<Seconds> se
     else
         m_startTime = m_timeline->currentTime().value() - (seekTime.value() / m_playbackRate);
 
-    // 3. If animation has no associated timeline or the associated timeline is inactive, make animation's start time unresolved.
+    // 6. If animation has no associated timeline or the associated timeline is inactive, make animation's start time unresolved.
     if (!m_timeline || !m_timeline->currentTime())
         m_startTime = std::nullopt;
 
-    // 4. Make animation's previous current time unresolved.
+    // 7. Make animation's previous current time unresolved.
     m_previousCurrentTime = std::nullopt;
 
     return { };
 }
 
-ExceptionOr<void> WebAnimation::setCurrentTime(std::optional<Seconds> seekTime)
+ExceptionOr<void> WebAnimation::setCurrentTime(std::optional<WebAnimationTime> seekTime)
 {
     LOG_WITH_STREAM(Animations, stream << "WebAnimation " << this << " setCurrentTime " << seekTime);
 
-    // 3.4.5. Setting the current time of an animation
-    // https://drafts.csswg.org/web-animations-1/#setting-the-current-time-of-an-animation
+    // Setting the current time of an animation
+    // https://drafts.csswg.org/web-animations-2/#setting-the-current-time-of-an-animation
 
     // 1. Run the steps to silently set the current time of animation to seek time.
     auto silentResult = silentlySetCurrentTime(seekTime);
@@ -693,18 +746,25 @@ auto WebAnimation::playState() const -> PlayState
     // animation's effective playback rate > 0 and current time ≥ target effect end; or
     // animation's effective playback rate < 0 and current time ≤ 0,
     // → finished
-    if (animationCurrentTime && ((effectivePlaybackRate() > 0 && (*animationCurrentTime + timeEpsilon) >= effectEndTime()) || (effectivePlaybackRate() < 0 && (*animationCurrentTime - timeEpsilon) <= 0_s)))
+    if (animationCurrentTime && ((effectivePlaybackRate() > 0 && (*animationCurrentTime + animationCurrentTime->matchingEpsilon()) >= effectEndTime()) || (effectivePlaybackRate() < 0 && (*animationCurrentTime - animationCurrentTime->matchingEpsilon()) <= zeroTime())))
         return PlayState::Finished;
 
     // Otherwise → running
     return PlayState::Running;
 }
 
-Seconds WebAnimation::effectEndTime() const
+WebAnimationTime WebAnimation::zeroTime() const
+{
+    if ((m_timeline && m_timeline->isProgressBased()) || (m_startTime && m_startTime->percentage()) || (m_holdTime && m_holdTime->percentage()))
+        return WebAnimationTime::fromPercentage(0);
+    return { 0_s };
+}
+
+WebAnimationTime WebAnimation::effectEndTime() const
 {
     // The target effect end of an animation is equal to the end time of the animation's target effect.
     // If the animation has no target effect, the target effect end is zero.
-    return m_effect ? m_effect->endTime() : 0_s;
+    return m_effect ? m_effect->endTime() : zeroTime();
 }
 
 void WebAnimation::cancel(Silently silently)
@@ -746,7 +806,7 @@ void WebAnimation::cancel(Silently silently)
             //    to origin-relative time, let the scheduled event time be the result of applying that procedure to timeline time. Otherwise, the
             //    scheduled event time is an unresolved time value.
             // Otherwise, queue a task to dispatch cancelEvent at animation. The task source for this task is the DOM manipulation task source.
-            auto scheduledTime = [&]() -> std::optional<Seconds> {
+            auto scheduledTime = [&]() -> std::optional<WebAnimationTime> {
                 if (auto* documentTimeline = dynamicDowncast<DocumentTimeline>(m_timeline.get())) {
                     if (auto currentTime = documentTimeline->currentTime())
                         return documentTimeline->convertTimelineTimeToOriginRelativeTime(*currentTime);
@@ -777,7 +837,7 @@ void WebAnimation::willChangeRenderer()
         keyframeEffect->willChangeRenderer();
 }
 
-void WebAnimation::enqueueAnimationPlaybackEvent(const AtomString& type, std::optional<Seconds> currentTime, std::optional<Seconds> scheduledTime)
+void WebAnimation::enqueueAnimationPlaybackEvent(const AtomString& type, std::optional<WebAnimationTime> currentTime, std::optional<WebAnimationTime> scheduledTime)
 {
     auto timelineTime = m_timeline ? m_timeline->currentTime() : std::nullopt;
     auto event = AnimationPlaybackEvent::create(type, this, scheduledTime, timelineTime, currentTime);
@@ -787,7 +847,17 @@ void WebAnimation::enqueueAnimationPlaybackEvent(const AtomString& type, std::op
 
 void WebAnimation::enqueueAnimationEvent(Ref<AnimationEventBase>&& event)
 {
-    if (auto* timeline = dynamicDowncast<DocumentTimeline>(m_timeline.get())) {
+    auto documentTimeline = [&]() -> DocumentTimeline* {
+        if (auto* timeline = dynamicDowncast<DocumentTimeline>(m_timeline.get()))
+            return timeline;
+        if (RefPtr scrollTimeline = dynamicDowncast<ScrollTimeline>(m_timeline.get())) {
+            if (RefPtr source = scrollTimeline->source())
+                return Ref { source->document() }->existingTimeline();
+        }
+        return nullptr;
+    };
+
+    if (RefPtr timeline = documentTimeline()) {
         // If animation has a document for timing, then append event to its document for timing's pending animation event queue along
         // with its target, animation. If animation is associated with an active timeline that defines a procedure to convert timeline times
         // to origin-relative time, let the scheduled event time be the result of applying that procedure to timeline time. Otherwise, the
@@ -830,7 +900,8 @@ void WebAnimation::resetPendingTasks()
     // 6. Set the [[PromiseIsHandled]] internal slot of animation’s current ready promise to true.
     if (auto* context = scriptExecutionContext()) {
         context->eventLoop().queueMicrotask([readyPromise = WTFMove(m_readyPromise)]() mutable {
-            readyPromise->reject(Exception { ExceptionCode::AbortError }, RejectAsHandled::Yes);
+            if (!readyPromise->isFulfilled())
+                readyPromise->reject(Exception { ExceptionCode::AbortError }, RejectAsHandled::Yes);
         });
     }
 
@@ -849,7 +920,7 @@ ExceptionOr<void> WebAnimation::finish()
     // An animation can be advanced to the natural end of its current playback direction by using the procedure to finish an animation for animation defined below:
     //
     // 1. If animation's effective playback rate is zero, or if animation's effective playback rate > 0 and target effect end is infinity, throw an InvalidStateError and abort these steps.
-    if (!effectivePlaybackRate() || (effectivePlaybackRate() > 0 && effectEndTime() == Seconds::infinity()))
+    if (!effectivePlaybackRate() || (effectivePlaybackRate() > 0 && effectEndTime().isInfinity()))
         return Exception { ExceptionCode::InvalidStateError };
 
     // 2. Apply any pending playback rate to animation.
@@ -858,7 +929,7 @@ ExceptionOr<void> WebAnimation::finish()
     // 3. Set limit as follows:
     // If animation playback rate > 0, let limit be target effect end.
     // Otherwise, let limit be zero.
-    auto limit = m_playbackRate > 0 ? effectEndTime() : 0_s;
+    auto limit = m_playbackRate > 0 ? effectEndTime() : zeroTime();
 
     // 4. Silently set the current time to limit.
     silentlySetCurrentTime(limit);
@@ -941,16 +1012,16 @@ void WebAnimation::updateFinishedState(DidSeek didSeek, SynchronouslyNotify sync
                 m_holdTime = endTime;
             else
                 m_holdTime = std::max(m_previousCurrentTime.value(), endTime);
-        } else if (m_playbackRate < 0 && unconstrainedCurrentTime <= 0_s) {
+        } else if (m_playbackRate < 0 && unconstrainedCurrentTime <= zeroTime()) {
             // If animation playback rate < 0 and unconstrained current time is less than or equal to 0,
             // If did seek is true, let the hold time be the value of unconstrained current time.
             if (didSeek == DidSeek::Yes)
                 m_holdTime = unconstrainedCurrentTime;
             // If did seek is false, let the hold time be the minimum value of previous current time and zero. If the previous current time is unresolved, let the hold time be zero.
             else if (!m_previousCurrentTime)
-                m_holdTime = 0_s;
+                m_holdTime = zeroTime();
             else
-                m_holdTime = std::min(m_previousCurrentTime.value(), 0_s);
+                m_holdTime = std::min(m_previousCurrentTime.value(), zeroTime());
         } else if (m_playbackRate && m_timeline && m_timeline->currentTime()) {
             // If animation playback rate ≠ 0, and animation is associated with an active timeline,
             // Perform the following steps:
@@ -1023,7 +1094,7 @@ void WebAnimation::finishNotificationSteps()
     //    effect end to an origin-relative time.
     //    Otherwise, queue a task to dispatch finishEvent at animation. The task source for this task is the DOM manipulation task source.
     if (hasEventListeners(eventNames().finishEvent)) {
-        auto scheduledTime = [&]() -> std::optional<Seconds> {
+        auto scheduledTime = [&]() -> std::optional<WebAnimationTime> {
             if (auto* documentTimeline = dynamicDowncast<DocumentTimeline>(m_timeline.get())) {
                 if (auto animationEndTime = convertAnimationTimeToTimelineTime(effectEndTime()))
                     return documentTimeline->convertTimelineTimeToOriginRelativeTime(*animationEndTime);
@@ -1049,10 +1120,10 @@ ExceptionOr<void> WebAnimation::play(AutoRewind autoRewind)
 {
     LOG_WITH_STREAM(Animations, stream << "WebAnimation " << this << " play(autoRewind " << (autoRewind == AutoRewind::Yes) << ") (current time is " << currentTime() << ")");
 
-    // 3.4.10. Playing an animation
-    // https://drafts.csswg.org/web-animations-1/#play-an-animation
+    // Playing an animation
+    // https://drafts.csswg.org/web-animations-2/#playing-an-animation-section
 
-    auto localTime = currentTime();
+    auto playbackRate = effectivePlaybackRate();
     auto endTime = effectEndTime();
 
     // 1. Let aborted pause be a boolean flag that is true if animation has a pending pause task, and false otherwise.
@@ -1061,82 +1132,69 @@ ExceptionOr<void> WebAnimation::play(AutoRewind autoRewind)
     // 2. Let has pending ready promise be a boolean flag that is initially false.
     bool hasPendingReadyPromise = false;
 
-    // 3. Let seek time be a time value that is initially unresolved.
-    Markable<Seconds, Seconds::MarkableTraits> seekTime;
+    // 3. Let has finite timeline be true if animation has an associated timeline that is not monotonically increasing.
+    auto hasFiniteTimeline = m_timeline && !m_timeline->isMonotonic();
 
-    // 4. If the auto-rewind flag is true, perform the steps corresponding to the first matching condition from the following, if any:
-    if (autoRewind == AutoRewind::Yes) {
-        if (effectivePlaybackRate() >= 0 && (!localTime || *localTime < 0_s || (*localTime + timeEpsilon) >= endTime)) {
-            // If animation's effective playback rate ≥ 0, and animation's current time is either:
-            //     - unresolved, or
-            //     - less than zero, or
-            //     - greater than or equal to associated effect end,
-            // Set seek time to zero.
-            seekTime = 0_s;
-        } else if (effectivePlaybackRate() < 0 && (!localTime || *localTime <= 0_s || *localTime > endTime)) {
-            // If animation's effective playback rate < 0, and animation's current time is either:
-            //     - unresolved, or
-            //     - less than or equal to zero, or
-            //     - greater than associated effect end,
-            // If associated effect end is positive infinity,
-            //     throw an "InvalidStateError" DOMException and abort these steps.
-            // Otherwise,
-            //     Set seek time to animation's associated effect end.
-            if (endTime == Seconds::infinity())
-                return Exception { ExceptionCode::InvalidStateError };
-            seekTime = endTime;
-        }
+    // 4. Let previous current time be the animation’s current time
+    auto previousCurrentTime = currentTime();
+
+    // 5. Let enable seek be true if the auto-rewind flag is true and has finite timeline is false. Otherwise, initialize to false.
+    auto enableSeek = autoRewind == AutoRewind::Yes && !hasFiniteTimeline;
+
+    // 6. Perform the steps corresponding to the first matching condition from the following, if any::
+    if ((playbackRate > 0 && enableSeek) && (!previousCurrentTime || *previousCurrentTime < 0_s || (*previousCurrentTime + previousCurrentTime->matchingEpsilon()) >= endTime)) {
+        // If animation’s effective playback rate > 0, enable seek is true and either animation’s:
+        //     - previous current time is unresolved, or
+        //     - previous current time < zero, or
+        //     - previous current time ≥ associated effect end,
+        // Set the animation’s hold time to zero.
+        m_holdTime = 0_s;
+    } else if ((playbackRate < 0 && enableSeek) && (!previousCurrentTime || *previousCurrentTime <= 0_s || *previousCurrentTime > endTime)) {
+        // If animation’s effective playback rate < 0, enable seek is true and either animation’s:
+        //     - previous current time is unresolved, or
+        //     - previous current time ≤ zero, or
+        //     - previous current time > associated effect end,
+        // If associated effect end is positive infinity, throw an "InvalidStateError" DOMException and abort these steps.
+        //     throw an "InvalidStateError" DOMException and abort these steps.
+        // Otherwise,
+        //     Set the animation’s hold time to the animation’s associated effect end.
+        if (endTime.isInfinity())
+            return Exception { ExceptionCode::InvalidStateError };
+        m_holdTime = endTime;
+    } else if (!playbackRate && !previousCurrentTime) {
+        // If animation’s effective playback rate = 0 and animation’s current time is unresolved,
+        // Set the animation’s hold time to zero.
+        m_holdTime = zeroTime();
     }
 
-    // 5. If the following three conditions are all satisfied:
-    //    - seek time is unresolved, and
-    //    - animation’s start time is unresolved, and
-    //    - animation’s current time is unresolved,
-    // set seek time to zero.
-    if (!seekTime && !m_startTime && !localTime)
-        seekTime = 0_s;
+    // 7. If has finite timeline and previous current time is unresolved:
+    // Set the flag auto align start time to true.
+    if (hasFiniteTimeline && !previousCurrentTime)
+        m_autoAlignStartTime = true;
 
-    // 6. Let has finite timeline be true if animation has an associated timeline that is not monotonically increasing.
-    // FIXME: revisit this when we support scroll timelines.
-    auto hasFiniteTimeline = !m_timeline;
-
-    // 7. If seek time is resolved,
-    if (seekTime) {
-        if (hasFiniteTimeline) {
-            // If has finite timeline is true,
-            //     1. Set animation's start time to seek time.
-            //     2. Let animation's hold time be unresolved.
-            //     3. Apply any pending playback rate on animation.
-            m_startTime = seekTime;
-            m_holdTime = std::nullopt;
-            applyPendingPlaybackRate();
-        } else {
-            // Otherwise,
-            //     Set animation's hold time to seek time.
-            m_holdTime = seekTime;
-        }
-    }
-
-    // 8. If animation's hold time is resolved, let its start time be unresolved.
+    // 8. If animation’s hold time is resolved, let its start time be unresolved.
     if (m_holdTime)
         m_startTime = std::nullopt;
 
     // 9. If animation has a pending play task or a pending pause task,
+    //     - Cancel that task.
+    //     - Set has pending ready promise to true.
     if (pending()) {
-        // 1. Cancel that task.
         m_timeToRunPendingPauseTask = TimeToRunPendingTask::NotScheduled;
         m_timeToRunPendingPlayTask = TimeToRunPendingTask::NotScheduled;
-        // 2. Set has pending ready promise to true.
         hasPendingReadyPromise = true;
     }
 
-    // 10. If the following four conditions are all satisfied:
-    //     - animation's hold time is unresolved, and
-    //     - seek time is unresolved, and
-    //     - aborted pause is false, and
-    //     - animation does not have a pending playback rate,
+    // 10. If the following three conditions are all satisfied:
+    //    - animation's hold time is unresolved, and
+    //    - aborted pause is false, and
+    //    - animation does not have a pending playback rate,
     // abort this procedure.
-    if (!m_holdTime && !seekTime && !abortedPause && !m_pendingPlaybackRate)
+    // FIXME: the spec does not require the computation of pendingAutoAlignedStartTime
+    // and accounting for it, but without it we never schedule a pending play task for
+    // scroll-driven animations.
+    auto pendingAutoAlignedStartTime = m_autoAlignStartTime && !m_startTime;
+    if (!m_holdTime && !abortedPause && !m_pendingPlaybackRate && !pendingAutoAlignedStartTime)
         return { };
 
     // 11. If has pending ready promise is false, let animation's current ready promise be
@@ -1159,12 +1217,12 @@ void WebAnimation::runPendingPlayTask()
 {
     LOG_WITH_STREAM(Animations, stream << "WebAnimation " << this << " runPendingPlayTask (current time is " << currentTime() << ")");
 
-    // 3.4.10. Playing an animation, step 12.
-    // https://drafts.csswg.org/web-animations-1/#play-an-animation
+    // Playing an animation, step 12.
+    // https://drafts.csswg.org/web-animations-2/#playing-an-animation-section
 
     m_timeToRunPendingPlayTask = TimeToRunPendingTask::NotScheduled;
 
-    // 1. Assert that at least one of animation's start time or hold time is resolved.
+    // 1. Assert that at least one of animation’s start time or hold time is resolved.
     ASSERT(m_startTime || m_holdTime);
 
     // 2. Let ready time be the time value of the timeline associated with animation at the moment when animation became ready.
@@ -1221,8 +1279,8 @@ ExceptionOr<void> WebAnimation::pause()
 {
     LOG_WITH_STREAM(Animations, stream << "WebAnimation " << this << " pause (current time is " << currentTime() << ")");
 
-    // 3.4.11. Pausing an animation
-    // https://drafts.csswg.org/web-animations-1/#pause-an-animation
+    // Pausing an animation
+    // https://drafts.csswg.org/web-animations-2/#pausing-an-animation-section
 
     // 1. If animation has a pending pause task, abort these steps.
     if (hasPendingPauseTask())
@@ -1232,14 +1290,17 @@ ExceptionOr<void> WebAnimation::pause()
     if (playState() == PlayState::Paused)
         return { };
 
-    auto localTime = currentTime();
+    // 3. Let has finite timeline be true if animation has an associated timeline that is not monotonically increasing.
+    auto hasFiniteTimeline = m_timeline && !m_timeline->isMonotonic();
 
-    // 3. If the animation's current time is unresolved, perform the steps according to the first matching condition from below:
-    if (!localTime) {
+    auto localTime = currentTime();
+    // 4. If the animation’s current time is unresolved and has finite timeline is false, perform the steps according
+    // to the first matching condition below:
+    if (!localTime && !hasFiniteTimeline) {
         if (m_playbackRate >= 0) {
             // If animation's playback rate is ≥ 0, let animation's hold time be zero.
-            m_holdTime = 0_s;
-        } else if (effectEndTime() == Seconds::infinity()) {
+            m_holdTime = zeroTime();
+        } else if (effectEndTime().isInfinity()) {
             // Otherwise, if target effect end for animation is positive infinity, throw an InvalidStateError and abort these steps.
             return Exception { ExceptionCode::InvalidStateError };
         } else {
@@ -1248,21 +1309,28 @@ ExceptionOr<void> WebAnimation::pause()
         }
     }
 
-    // 4. Let has pending ready promise be a boolean flag that is initially false.
+    // 5. If has finite timeline is true, and the animation’s current time is unresolved,
+    // Set the auto align start time flag to true.
+    if (hasFiniteTimeline && !localTime)
+        m_autoAlignStartTime = true;
+
+    // 6. Let has pending ready promise be a boolean flag that is initially false.
     bool hasPendingReadyPromise = false;
 
-    // 5. If animation has a pending play task, cancel that task and let has pending ready promise be true.
+    // 7. If animation has a pending play task, cancel that task and let has pending ready promise be true.
     if (hasPendingPlayTask()) {
         m_timeToRunPendingPlayTask = TimeToRunPendingTask::NotScheduled;
         hasPendingReadyPromise = true;
     }
 
-    // 6. If has pending ready promise is false, set animation's current ready promise to a new (pending) Promise object.
+    // 8. If has pending ready promise is false, set animation's current ready promise to a new (pending) Promise object.
     if (!hasPendingReadyPromise)
         m_readyPromise = makeUniqueRef<ReadyPromise>(*this, &WebAnimation::readyPromiseResolve);
 
-    // 7. Schedule a task to be executed at the first possible moment after the user agent has performed any processing necessary
-    //    to suspend the playback of animation's target effect, if any.
+    // 9. Schedule a task to be executed at the first possible moment where all of the following conditions are true:
+    //     - the user agent has performed any processing necessary to suspend the playback of animation’s associated effect, if any.
+    //     - the animation is associated with a timeline that is not inactive.
+    //     - the animation has a resolved hold time or start time.
     m_timeToRunPendingPauseTask = TimeToRunPendingTask::ASAP;
 
     // 8. Run the procedure to update an animation's finished state for animation with the did seek flag set to false, and the synchronously notify flag set to false.
@@ -1318,7 +1386,7 @@ void WebAnimation::runPendingPauseTask()
 {
     LOG_WITH_STREAM(Animations, stream << "WebAnimation " << this << " runPendingPauseTask (current time is " << currentTime() << ")");
 
-    // 3.4.11. Pausing an animation, step 7.
+    // 3.4.11. Pausing an animation, step 10.
     // https://drafts.csswg.org/web-animations-1/#pause-an-animation
 
     m_timeToRunPendingPauseTask = TimeToRunPendingTask::NotScheduled;
@@ -1357,6 +1425,57 @@ void WebAnimation::runPendingPauseTask()
     invalidateEffect();
 }
 
+void WebAnimation::autoAlignStartTime()
+{
+    // https://drafts.csswg.org/web-animations-2/#auto-aligning-start-time
+
+    // When attached to a non-monotonic timeline, the start time of the animation may be layout dependent.
+    // In this case, we defer calculation of the start time until the timeline has been updated post layout.
+    // When updating timeline current time, the start time of any attached animation is conditionally updated.
+    // The procedure for calculating an auto-aligned start time is as follows:
+
+    // 1. If the auto-align start time flag is false, abort this procedure.
+    if (!m_autoAlignStartTime)
+        return;
+
+    // 2. If the timeline is inactive, abort this procedure.
+    if (!m_timeline || !m_timeline->currentTime())
+        return;
+
+    auto playState = this->playState();
+
+    // 3. If play state is idle, abort this procedure.
+    if (playState == PlayState::Idle)
+        return;
+
+    // 4. If play state is paused, and hold time is resolved, abort this procedure.
+    if (playState == PlayState::Paused && m_holdTime)
+        return;
+
+    // 5. Let start offset be the resolved timeline time corresponding to the start of the animation
+    // attachment range. In the case of view timelines, it requires a calculation based on the proportion
+    // of the cover range.
+    // FIXME: this is a placeholder implementation.
+    auto startOffset = WebAnimationTime::fromPercentage(0);
+
+    // 6. Let end offset be the resolved timeline time corresponding to the end of the animation attachment
+    // range. In the case of view timelines, it requires a calculation based on the proportion of the cover
+    // range.
+    // FIXME: this is a placeholder implementation.
+    ASSERT(m_timeline->duration());
+    ASSERT(m_timeline->duration()->percentage());
+    auto endOffset = *m_timeline->duration();
+
+    // 7. Set start time to start offset if effective playback rate ≥ 0, and end offset otherwise.
+    m_startTime = effectivePlaybackRate() >= 0 ? startOffset : endOffset;
+
+    // 8. Clear hold time.
+    m_holdTime = std::nullopt;
+
+    // https://github.com/w3c/csswg-drafts/issues/11018
+    m_autoAlignStartTime = false;
+}
+
 bool WebAnimation::needsTick() const
 {
     return pending() || playState() == PlayState::Running || m_hasScheduledEventsDuringTick;
@@ -1364,11 +1483,26 @@ bool WebAnimation::needsTick() const
 
 void WebAnimation::tick()
 {
+    // https://drafts.csswg.org/scroll-animations-1/#event-loop
+    // When updating timeline current time, the start time of any attached animation is
+    // conditionally updated. For each attached animation, run the procedure for calculating
+    // an auto-aligned start time.
+    if (m_timeline && m_timeline->isProgressBased())
+        autoAlignStartTime();
+
     m_hasScheduledEventsDuringTick = false;
     updateFinishedState(DidSeek::No, SynchronouslyNotify::Yes);
     m_shouldSkipUpdatingFinishedStateWhenResolving = true;
 
-    if (!m_effect || !m_effect->preventsAnimationReadiness()) {
+    // https://drafts.csswg.org/web-animations-2/#ready
+    // An animation is ready at the first moment where all of the following conditions are true:
+    //     - the user agent has completed any setup required to begin the playback of each inclusive
+    //       descendant of the animation’s associated effect including rendering the first frame of
+    //       any keyframe effect or executing any custom effects associated with an animation effect.
+    //     - the animation is associated with a timeline that is not inactive.
+    //     - the animation’s hold time or start time is resolved.
+    auto isReady = m_timeline && m_timeline->currentTime() && (m_holdTime || m_startTime);
+    if (isReady && (!m_effect || !m_effect->preventsAnimationReadiness())) {
         if (hasPendingPauseTask())
             runPendingPauseTask();
         if (hasPendingPlayTask())
@@ -1450,6 +1584,10 @@ void WebAnimation::updateRelevance()
 
 bool WebAnimation::computeRelevance()
 {
+    // https://drafts.csswg.org/web-animations-1/#relevant-animations-section
+    // https://drafts.csswg.org/web-animations-1/#current
+    // https://drafts.csswg.org/web-animations-1/#in-effect
+
     // An animation is relevant if:
     // - its associated effect is current or in effect, and
     if (!m_effect)
@@ -1475,6 +1613,11 @@ bool WebAnimation::computeRelevance()
 
     // - the animation effect is associated with an animation with a playback rate < 0 and the animation effect is in the after phase.
     if (m_playbackRate < 0 && timing.phase == AnimationEffectPhase::After)
+        return true;
+
+    // - the animation effect is associated with an animation not in the idle play state with a non-null
+    // associated timeline that is not monotonically increasing.
+    if (m_timeline && !m_timeline->isMonotonic() && playState() != PlayState::Idle)
         return true;
 
     // An animation effect is in effect if its active time, as calculated according to the procedure in
@@ -1665,7 +1808,7 @@ std::optional<Seconds> WebAnimation::convertAnimationTimeToTimelineTime(Seconds 
     // 2. If time is infinity, return an unresolved time value.
     // 3. If animation's playback rate is zero, return an unresolved time value.
     // 4. If animation's start time is unresolved, return an unresolved time value.
-    if (!m_playbackRate || !m_startTime || animationTime == Seconds::infinity())
+    if (!m_playbackRate || !m_startTime || animationTime.isInfinity())
         return std::nullopt;
     // 5. Return the result of calculating: time × (1 / playback rate) + start time (where playback rate and start time are the playback rate and start time of animation, respectively).
     return animationTime * (1 / m_playbackRate) + *m_startTime;
@@ -1673,11 +1816,60 @@ std::optional<Seconds> WebAnimation::convertAnimationTimeToTimelineTime(Seconds 
 
 bool WebAnimation::isSkippedContentAnimation() const
 {
+    if (pending())
+        return false;
     if (auto animation = dynamicDowncast<StyleOriginatedAnimation>(this)) {
         if (auto element = animation->owningElement())
             return element->element.renderer() && element->element.renderer()->isSkippedContent();
     }
     return false;
 }
+
+std::optional<double> WebAnimation::overallProgress() const
+{
+    // https://drafts.csswg.org/web-animations-2/#the-overall-progress-of-an-animation
+    // An animation's overallProgress is the ratio of its current time to its associated effect end.
+    //
+    // The overallProgress of an animation, animation, is calculated as follows:
+    //
+    // If any of the following are true:
+    //     - animation does not have an associated effect, or
+    //     - animation's current time is an unresolved time value,
+    // animation's overallProgress is null.
+    if (!m_effect)
+        return std::nullopt;
+
+    auto currentTime = this->currentTime();
+    if (!currentTime)
+        return std::nullopt;
+
+    auto endTime = effectEndTime();
+
+    // If animation's associated effect end is zero,
+    //     - If animation's current time is negative, animation's overallProgress is zero.
+    //     - Otherwise, animation's overallProgress is one.
+    if (endTime.isZero())
+        return *currentTime < zeroTime() ? 0 : 1;
+
+    // If animation's associated effect end is infinite, animation's overallProgress is zero.
+    if (endTime.isInfinity())
+        return 0;
+
+    // Otherwise, overallProgress = min(max(current time / animation's associated effect end, 0), 1)
+    return std::min(std::max(*currentTime / endTime, 0.0), 1.0);
+}
+
+void WebAnimation::setBindingsRangeStart(TimelineRangeValue&& rangeStart)
+{
+    if (RefPtr keyframeEffect = dynamicDowncast<KeyframeEffect>(m_effect.get()))
+        m_timelineRange.start = SingleTimelineRange::parse(WTFMove(rangeStart), keyframeEffect->target(), SingleTimelineRange::Type::Start);
+}
+
+void WebAnimation::setBindingsRangeEnd(TimelineRangeValue&& rangeEnd)
+{
+    if (RefPtr keyframeEffect = dynamicDowncast<KeyframeEffect>(m_effect.get()))
+        m_timelineRange.end = SingleTimelineRange::parse(WTFMove(rangeEnd), keyframeEffect->target(), SingleTimelineRange::Type::End);
+}
+
 
 } // namespace WebCore

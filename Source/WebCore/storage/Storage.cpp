@@ -30,6 +30,7 @@
 #include "LegacySchemeRegistry.h"
 #include "LocalFrame.h"
 #include "Page.h"
+#include "ScriptTelemetryCategory.h"
 #include "SecurityOrigin.h"
 #include "StorageArea.h"
 #include "StorageType.h"
@@ -61,16 +62,25 @@ Storage::~Storage()
 
 unsigned Storage::length() const
 {
+    if (requiresScriptExecutionTelemetry())
+        return 0;
+
     return m_storageArea->length();
 }
 
 String Storage::key(unsigned index) const
 {
+    if (requiresScriptExecutionTelemetry())
+        return { };
+
     return m_storageArea->key(index);
 }
 
 String Storage::getItem(const String& key) const
 {
+    if (requiresScriptExecutionTelemetry())
+        return { };
+
     return m_storageArea->item(key);
 }
 
@@ -79,6 +89,9 @@ ExceptionOr<void> Storage::setItem(const String& key, const String& value)
     auto* frame = this->frame();
     if (!frame)
         return Exception { ExceptionCode::InvalidAccessError };
+
+    if (requiresScriptExecutionTelemetry())
+        return { };
 
     bool quotaException = false;
     m_storageArea->setItem(*frame, key, value, quotaException);
@@ -92,6 +105,9 @@ ExceptionOr<void> Storage::removeItem(const String& key)
     auto* frame = this->frame();
     if (!frame)
         return Exception { ExceptionCode::InvalidAccessError };
+
+    if (requiresScriptExecutionTelemetry())
+        return { };
 
     m_storageArea->removeItem(*frame, key);
     return { };
@@ -128,6 +144,12 @@ Vector<AtomString> Storage::supportedPropertyNames() const
 Ref<StorageArea> Storage::protectedArea() const
 {
     return m_storageArea;
+}
+
+bool Storage::requiresScriptExecutionTelemetry() const
+{
+    RefPtr document = window() ? window()->document() : nullptr;
+    return document && document->requiresScriptExecutionTelemetry(ScriptTelemetryCategory::LocalStorage);
 }
 
 } // namespace WebCore

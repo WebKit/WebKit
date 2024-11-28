@@ -1,0 +1,55 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<style>
+@keyframes move {
+  0% { transform: translateX(-2000px); }
+  100% { transform: translateX(-2000px); }
+}
+
+div {
+  width: 200px;
+  height: 200px;
+}
+
+.fixed {
+  position:fixed;
+}
+
+.composited {
+  transform: translateZ(0px);
+}
+
+.animated {
+  animation: 10s both move;
+}
+
+</style>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+window.onload = function() {
+    if (!window.testRunner)
+        return;
+
+    let output = document.getElementById('layers');
+    output.textContent = internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_BACKING_STORE_ATTACHED);
+    testRunner.notifyDone();
+};
+</script>
+</head>
+<body>
+
+<div class="fixed">
+  <div class="animated">
+    <div class="composited">Hi</div>
+  </div>
+</div>
+
+<pre id="layers"></pre>
+
+</body>
+</html>

@@ -31,6 +31,7 @@
 #include "CacheStorageProvider.h"
 #include "Chrome.h"
 #include "CommonVM.h"
+#include "DOMParser.h"
 #include "DocumentLoader.h"
 #include "DocumentSVG.h"
 #include "EditorClient.h"
@@ -221,7 +222,7 @@ RefPtr<NativeImage> SVGImage::nativeImage(const DestinationColorSpace& colorSpac
         bufferOptions.add(ImageBufferOptions::Accelerated);
 
     HostWindow* hostWindow = nullptr;
-    if (auto contentRenderer = embeddedContentBox())
+    if (CheckedPtr contentRenderer = embeddedContentBox())
         hostWindow = contentRenderer->hostWindow();
 
     RefPtr imageBuffer = ImageBuffer::create(size(), RenderingPurpose::DOM, 1, colorSpace, ImageBufferPixelFormat::BGRA8, bufferOptions, hostWindow);
@@ -254,15 +255,12 @@ void SVGImage::drawPatternForContainer(GraphicsContext& context, const FloatSize
     imageBufferSize.scale(imageBufferScale.width(), imageBufferScale.height());
 
     RefPtr buffer = context.createImageBuffer(expandedIntSize(imageBufferSize.size()));
-    if (!buffer) // Failed to allocate buffer.
+    if (!buffer)
         return;
+
     drawForContainer(buffer->context(), containerSize, containerZoom, initialFragmentURL, imageBufferSize, zoomedContainerRect);
     if (context.drawLuminanceMask())
         buffer->convertToLuminanceMask();
-
-    RefPtr image = ImageBuffer::sinkIntoNativeImage(WTFMove(buffer));
-    if (!image)
-        return;
 
     // Adjust the source rect and transform due to the image buffer's scaling.
     FloatRect scaledSrcRect = srcRect;
@@ -271,7 +269,7 @@ void SVGImage::drawPatternForContainer(GraphicsContext& context, const FloatSize
     unscaledPatternTransform.scale(1 / imageBufferScale.width(), 1 / imageBufferScale.height());
 
     context.setDrawLuminanceMask(false);
-    context.drawPattern(*image, dstRect, scaledSrcRect, unscaledPatternTransform, phase, spacing, options);
+    context.drawPattern(*buffer, dstRect, scaledSrcRect, unscaledPatternTransform, phase, spacing, options);
 }
 
 ImageDrawResult SVGImage::draw(GraphicsContext& context, const FloatRect& dstRect, const FloatRect& srcRect, ImagePaintingOptions options)
@@ -489,8 +487,8 @@ EncodedDataStatus SVGImage::dataChanged(bool allDataReceived)
 
         localMainFrame->setView(LocalFrameView::create(*localMainFrame));
         localMainFrame->init();
-        CheckedRef loader = localMainFrame->loader();
-        loader->forceSandboxFlags(SandboxFlags::all());
+        Ref loader = localMainFrame->loader();
+        ASSERT(localMainFrame->effectiveSandboxFlags() == SandboxFlags::all());
 
         RefPtr frameView = localMainFrame->view();
         frameView->setCanHaveScrollbars(false); // SVG Images will always synthesize a viewBox, if it's not available, and thus never see scrollbars.
@@ -529,6 +527,18 @@ bool isInSVGImage(const Element* element)
         return false;
 
     return page->chrome().client().isSVGImageChromeClient();
+}
+
+bool SVGImage::isDataDecodable(const Settings& settings, std::span<const uint8_t> data)
+{
+    auto document = Document::create(settings, aboutBlankURL());
+    auto domParser = DOMParser::create(document.get());
+    auto parseResult = domParser->parseFromString(String::fromUTF8(data), imageSVGContentTypeAtom());
+    if (parseResult.hasException())
+        return false;
+
+    Ref result = parseResult.returnValue();
+    return result->hasSVGRootNode();
 }
 
 }

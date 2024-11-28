@@ -40,6 +40,7 @@
 #include "NodeRenderStyle.h"
 #include "PseudoElement.h"
 #include "RenderDescendantIterator.h"
+#include "RenderElementInlines.h"
 #include "RenderFlexibleBox.h"
 #include "RenderInline.h"
 #include "RenderLayer.h"
@@ -378,12 +379,12 @@ static bool pseudoStyleCacheIsInvalid(RenderElement* renderer, RenderStyle* newS
     if (!pseudoStyleCache)
         return false;
 
-    for (auto& cache : pseudoStyleCache->styles) {
-        Style::PseudoElementIdentifier pseudoElementIdentifier { cache->pseudoElementType(), cache->pseudoElementNameArgument() };
+    for (auto& [key, value] : pseudoStyleCache->styles) {
+        Style::PseudoElementIdentifier pseudoElementIdentifier { value->pseudoElementType(), value->pseudoElementNameArgument() };
         auto newPseudoStyle = renderer->getUncachedPseudoStyle(pseudoElementIdentifier, newStyle, newStyle);
         if (!newPseudoStyle)
             return true;
-        if (*newPseudoStyle != *cache) {
+        if (*newPseudoStyle != *value) {
             newStyle->addCachedPseudoStyle(WTFMove(newPseudoStyle));
             return true;
         }
@@ -468,7 +469,7 @@ void RenderTreeUpdater::updateElementRenderer(Element& element, const Style::Ele
     auto scopeExit = makeScopeExit([&] {
         if (!hasDisplayContentsOrNone) {
             auto* box = element.renderBox();
-            if (box && box->style().hasAutoLengthContainIntrinsicSize() && !box->isSkippedContentRoot())
+            if (box && box->style().hasAutoLengthContainIntrinsicSize() && !isSkippedContentRoot(*box))
                 m_document->observeForContainIntrinsicSize(element);
             else
                 m_document->unobserveForContainIntrinsicSize(element);
@@ -711,7 +712,7 @@ void RenderTreeUpdater::tearDownRenderer(Text& text)
     invalidateRebuildRootIfNeeded(text);
 }
 
-enum class DidRepaintAndMarkContainingBlock : bool { Yes, No };
+enum class DidRepaintAndMarkContainingBlock : bool { No, Yes };
 static std::optional<DidRepaintAndMarkContainingBlock> repaintAndMarkContainingBlockDirtyBeforeTearDown(const Element& root, auto composedTreeDescendantsIterator)
 {
     auto* destroyRootRenderer = root.renderer();

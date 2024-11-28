@@ -1323,9 +1323,6 @@ TEST_P(TinyDepthStencilWorkaroundTest, DepthTexturesStick)
     // http://anglebug.com/40096654
     ANGLE_SKIP_TEST_IF((IsAndroid() && IsOpenGLES()) || (IsLinux() && IsVulkan()));
 
-    // TODO(anglebug.com/42264029)
-    ANGLE_SKIP_TEST_IF(IsIOS() && IsOpenGLES());
-
     constexpr char kDrawVS[] =
         "#version 100\n"
         "attribute vec3 vertex;\n"

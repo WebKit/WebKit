@@ -26,6 +26,7 @@
 #pragma once
 
 #include "WebGPUCanvasAlphaMode.h"
+#include "WebGPUCanvasToneMappingMode.h"
 #include "WebGPUDevice.h"
 #include "WebGPUPredefinedColorSpace.h"
 #include "WebGPUTextureFormat.h"
@@ -41,8 +42,11 @@ struct CanvasConfiguration {
     TextureUsageFlags usage { TextureUsage::RenderAttachment };
     Vector<TextureFormat> viewFormats;
     PredefinedColorSpace colorSpace { PredefinedColorSpace::SRGB };
+    CanvasToneMappingMode toneMappingMode { CanvasToneMappingMode::Standard };
     CanvasAlphaMode compositingAlphaMode { CanvasAlphaMode::Opaque };
     bool reportValidationErrors { true };
+
+    Ref<Device> protectedDevice() const { return device.get(); }
 };
 
 } // namespace WebCore::WebGPU

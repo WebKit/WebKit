@@ -67,8 +67,7 @@ ExceptionOr<unsigned> CSSGroupingRule::insertRule(const String& ruleString, unsi
     }
 
     CSSStyleSheet* styleSheet = parentStyleSheet();
-    auto isNestedContext = hasStyleRuleAncestor() ? CSSParserEnum::IsNestedContext::Yes : CSSParserEnum::IsNestedContext::No;
-    RefPtr<StyleRuleBase> newRule = CSSParser::parseRule(parserContext(), styleSheet ? &styleSheet->contents() : nullptr, ruleString, isNestedContext);
+    RefPtr newRule = CSSParser::parseRule(parserContext(), styleSheet ? &styleSheet->contents() : nullptr, ruleString, nestedContext());
     if (!newRule) {
         if (!hasStyleRuleAncestor())
             return Exception { ExceptionCode::SyntaxError };
@@ -147,14 +146,14 @@ void CSSGroupingRule::cssTextForRules(StringBuilder& rules) const
     }
 }
 
-void CSSGroupingRule::appendCSSTextWithReplacementURLsForItems(StringBuilder& builder, const HashMap<String, String>& replacementURLStrings, const HashMap<RefPtr<CSSStyleSheet>, String>& replacementURLStringsForCSSStyleSheet) const
+void CSSGroupingRule::appendCSSTextWithReplacementURLsForItems(StringBuilder& builder, const UncheckedKeyHashMap<String, String>& replacementURLStrings, const UncheckedKeyHashMap<RefPtr<CSSStyleSheet>, String>& replacementURLStringsForCSSStyleSheet) const
 {
     StringBuilder rules;
     cssTextForRulesWithReplacementURLs(rules, replacementURLStrings, replacementURLStringsForCSSStyleSheet);
     appendCSSTextForItemsInternal(builder, rules);
 }
 
-void CSSGroupingRule::cssTextForRulesWithReplacementURLs(StringBuilder& rules, const HashMap<String, String>& replacementURLStrings, const HashMap<RefPtr<CSSStyleSheet>, String>& replacementURLStringsForCSSStyleSheet) const
+void CSSGroupingRule::cssTextForRulesWithReplacementURLs(StringBuilder& rules, const UncheckedKeyHashMap<String, String>& replacementURLStrings, const UncheckedKeyHashMap<RefPtr<CSSStyleSheet>, String>& replacementURLStringsForCSSStyleSheet) const
 {
     auto& childRules = m_groupRule->childRules();
     for (unsigned index = 0; index < childRules.size(); index++) {

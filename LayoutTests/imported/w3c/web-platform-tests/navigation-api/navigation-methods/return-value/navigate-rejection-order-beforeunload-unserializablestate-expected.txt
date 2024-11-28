@@ -1,4 +1,4 @@
 
 
-FAIL navigate() with an unserializable state inside onbeforeunload "DataCloneError", not "InvalidStateError" assert_not_equals: got disallowed value undefined
+PASS navigate() with an unserializable state inside onbeforeunload "DataCloneError", not "InvalidStateError"
 

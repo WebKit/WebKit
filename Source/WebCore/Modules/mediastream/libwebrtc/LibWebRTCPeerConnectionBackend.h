@@ -66,6 +66,8 @@ public:
     LibWebRTCPeerConnectionBackend(RTCPeerConnection&, LibWebRTCProvider&);
     ~LibWebRTCPeerConnectionBackend();
 
+    bool shouldEnableWebRTCL4S() const;
+
 private:
     void close() final;
     void doCreateOffer(RTCOfferOptions&&) final;

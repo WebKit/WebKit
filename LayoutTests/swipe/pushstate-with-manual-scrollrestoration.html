@@ -40,14 +40,14 @@ window.onload = async function () {
         return;
     }
 
-    initializeSwipeTest();
-
     testRunner.installDidBeginSwipeCallback(didBeginSwipeCallback);
     testRunner.installDidEndSwipeCallback(didEndSwipeCallback);
     testRunner.installDidRemoveSwipeSnapshotCallback(didRemoveSwipeSnapshotCallback);
 
     testRunner.dumpAsText();
     testRunner.waitUntilDone();
+
+    await initializeSwipeTest();
 
     await UIHelper.delayFor(0);
     history.pushState({page: "second"}, "second", "?second");

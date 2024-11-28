@@ -1,5 +1,4 @@
-CONSOLE MESSAGE: Unhandled Promise Rejection: Error: assert_not_equals: speculative case did not fetch got disallowed value ""
 
 
-FAIL Speculative parsing, page load: video-poster Unhandled rejection: assert_not_equals: speculative case did not fetch got disallowed value ""
+PASS Speculative parsing, page load: video-poster
 

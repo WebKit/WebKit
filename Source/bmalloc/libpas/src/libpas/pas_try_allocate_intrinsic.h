@@ -85,7 +85,7 @@ pas_try_allocate_intrinsic_impl_casual_case(
     pas_try_allocate_common_slow try_allocate_common_slow,
     pas_intrinsic_heap_designation_mode designation_mode)
 {
-    static const bool verbose = false;
+    static const bool verbose = PAS_SHOULD_LOG(PAS_LOG_OTHER);
     
     size_t aligned_size;
     size_t index;
@@ -185,7 +185,7 @@ pas_try_allocate_intrinsic_impl_inline_only(
     pas_try_allocate_common_fast_inline_only try_allocate_common_fast_inline_only,
     pas_intrinsic_heap_designation_mode designation_mode)
 {
-    static const bool verbose = false;
+    static const bool verbose = PAS_SHOULD_LOG(PAS_LOG_OTHER);
     
     size_t aligned_size;
     size_t index;
@@ -291,7 +291,7 @@ pas_try_allocate_intrinsic_impl_inline_only(
     \
     static PAS_ALWAYS_INLINE pas_allocation_result name(size_t size, size_t alignment, pas_allocation_mode allocation_mode) \
     { \
-        static const bool verbose = false; \
+        static const bool verbose = PAS_SHOULD_LOG(PAS_LOG_OTHER); \
         pas_allocation_result result; \
         result = name ## _inline_only(size, alignment, allocation_mode); \
         if (PAS_LIKELY(result.did_succeed)) { \
@@ -305,7 +305,7 @@ pas_try_allocate_intrinsic_impl_inline_only(
     static PAS_UNUSED PAS_NEVER_INLINE pas_allocation_result \
     name ## _for_realloc(size_t size, pas_allocation_mode allocation_mode) \
     { \
-        static const bool verbose = false; \
+        static const bool verbose = PAS_SHOULD_LOG(PAS_LOG_OTHER); \
         pas_allocation_result result = name(size, 1, allocation_mode); \
         if (verbose) \
             pas_log("result.begin = %p\n", (void*)result.begin); \

@@ -42,24 +42,26 @@ class Device;
 namespace WebKit::WebGPU {
 
 class ConvertToBackingContext;
+class RemoteTextureProxy;
 
 class RemoteXRSubImageProxy final : public WebCore::WebGPU::XRSubImage {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(RemoteXRSubImageProxy);
 public:
-    static Ref<RemoteXRSubImageProxy> create(RemoteGPUProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier)
+    static Ref<RemoteXRSubImageProxy> create(Ref<RemoteGPUProxy>&& parent, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier)
     {
-        return adoptRef(*new RemoteXRSubImageProxy(parent, convertToBackingContext, identifier));
+        return adoptRef(*new RemoteXRSubImageProxy(WTFMove(parent), convertToBackingContext, identifier));
     }
 
     virtual ~RemoteXRSubImageProxy();
 
     RemoteGPUProxy& parent() { return m_parent; }
     RemoteGPUProxy& root() { return m_parent; }
+    Ref<RemoteGPUProxy> protectedRoot() { return m_parent; }
 
 private:
     friend class DowncastConvertToBackingContext;
 
-    RemoteXRSubImageProxy(RemoteGPUProxy&, ConvertToBackingContext&, WebGPUIdentifier);
+    RemoteXRSubImageProxy(Ref<RemoteGPUProxy>&&, ConvertToBackingContext&, WebGPUIdentifier);
 
     RemoteXRSubImageProxy(const RemoteXRSubImageProxy&) = delete;
     RemoteXRSubImageProxy(RemoteXRSubImageProxy&&) = delete;
@@ -67,21 +69,27 @@ private:
     RemoteXRSubImageProxy& operator=(RemoteXRSubImageProxy&&) = delete;
 
     WebGPUIdentifier backing() const { return m_backing; }
+    RefPtr<WebCore::WebGPU::Texture> colorTexture() final;
+    RefPtr<WebCore::WebGPU::Texture> depthStencilTexture() final;
+    RefPtr<WebCore::WebGPU::Texture> motionVectorTexture() final;
 
     template<typename T>
     WARN_UNUSED_RETURN IPC::Error send(T&& message)
     {
-        return root().streamClientConnection().send(WTFMove(message), backing());
+        return root().protectedStreamClientConnection()->send(WTFMove(message), backing());
     }
     template<typename T>
     WARN_UNUSED_RETURN IPC::Connection::SendSyncResult<T> sendSync(T&& message)
     {
-        return root().streamClientConnection().sendSync(WTFMove(message), backing());
+        return root().protectedStreamClientConnection()->sendSync(WTFMove(message), backing());
     }
 
     WebGPUIdentifier m_backing;
     Ref<ConvertToBackingContext> m_convertToBackingContext;
     Ref<RemoteGPUProxy> m_parent;
+
+    RefPtr<RemoteTextureProxy> m_currentTexture;
+    RefPtr<RemoteTextureProxy> m_currentDepthTexture;
 };
 
 } // namespace WebKit::WebGPU

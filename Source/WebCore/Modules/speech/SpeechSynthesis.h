@@ -48,7 +48,6 @@ public:
     static Ref<SpeechSynthesis> create(ScriptExecutionContext&);
     virtual ~SpeechSynthesis();
 
-    // ActiveDOMObject.
     void ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }
 

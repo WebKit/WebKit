@@ -42,7 +42,7 @@ Ref<CSSImageSetValue> CSSImageSetValue::create(CSSValueListBuilder builder)
 }
 
 CSSImageSetValue::CSSImageSetValue(CSSValueListBuilder builder)
-    : CSSValueContainingVector(ImageSetClass, CommaSeparator, WTFMove(builder))
+    : CSSValueContainingVector(ClassType::ImageSet, CommaSeparator, WTFMove(builder))
 {
 }
 
@@ -60,7 +60,7 @@ String CSSImageSetValue::customCSSText() const
     return result.toString();
 }
 
-RefPtr<StyleImage> CSSImageSetValue::createStyleImage(Style::BuilderState& state) const
+RefPtr<StyleImage> CSSImageSetValue::createStyleImage(const Style::BuilderState& state) const
 {
     size_t length = this->length();
 

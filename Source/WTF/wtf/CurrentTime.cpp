@@ -56,6 +56,10 @@
 #include <zircon/syscalls.h>
 #endif
 
+#if OS(HAIKU)
+#include <OS.h>
+#endif
+
 #if USE(GLIB)
 #include <glib.h>
 #endif
@@ -192,6 +196,18 @@ Int128 currentTimeInNanoseconds()
     return static_cast<Int128>(currentTime() * 1'000'000'000);
 }
 
+#elif OS(HAIKU)
+
+Int128 currentTimeInNanoseconds()
+{
+    return static_cast<Int128>(real_time_clock_usecs() * 1000.0);
+}
+
+double currentTime()
+{
+    return (double)real_time_clock_usecs() / 1'000'000.0;
+}
+
 #else
 
 Int128 currentTimeInNanoseconds()
@@ -266,6 +282,8 @@ MonotonicTime MonotonicTime::now()
     struct timespec ts { };
     clock_gettime(CLOCK_MONOTONIC, &ts);
     return fromRawSeconds(static_cast<double>(ts.tv_sec) + ts.tv_nsec / 1.0e9);
+#elif OS(HAIKU)
+    return fromRawSeconds(static_cast<double>(system_time_nsecs() / 1.0e9));
 #else
     static double lastTime = 0;
     double currentTimeNow = currentTime();
@@ -288,6 +306,8 @@ ApproximateTime ApproximateTime::now()
     struct timespec ts { };
     clock_gettime(CLOCK_MONOTONIC_FAST, &ts);
     return fromRawSeconds(static_cast<double>(ts.tv_sec) + ts.tv_nsec / 1.0e9);
+#elif OS(HAIKU)
+    return fromRawSeconds(static_cast<double>(system_time() / 1.0e6));
 #else
     return ApproximateTime::fromRawSeconds(MonotonicTime::now().secondsSinceEpoch().value());
 #endif

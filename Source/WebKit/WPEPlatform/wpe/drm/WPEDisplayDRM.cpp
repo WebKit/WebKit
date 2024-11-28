@@ -31,7 +31,7 @@
 #include "WPEDRMSession.h"
 #include "WPEDisplayDRMPrivate.h"
 #include "WPEExtensions.h"
-#include "WPEMonitorDRMPrivate.h"
+#include "WPEScreenDRMPrivate.h"
 #include "WPEToplevelDRM.h"
 #include "WPEViewDRM.h"
 #include <fcntl.h>
@@ -56,7 +56,7 @@ struct _WPEDisplayDRMPrivate {
     uint32_t cursorWidth;
     uint32_t cursorHeight;
     std::unique_ptr<WPE::DRM::Connector> connector;
-    GRefPtr<WPEMonitor> monitor;
+    GRefPtr<WPEScreen> screen;
     std::unique_ptr<WPE::DRM::Plane> primaryPlane;
     std::unique_ptr<WPE::DRM::Cursor> cursor;
     std::unique_ptr<WPE::DRM::Seat> seat;
@@ -231,7 +231,7 @@ static std::unique_ptr<WPE::DRM::Plane> choosePlaneForCrtc(int fd, WPE::DRM::Pla
     return nullptr;
 }
 
-static gboolean wpeDisplayDRMConnect(WPEDisplay* display, GError** error)
+static gboolean wpeDisplayDRMSetup(WPEDisplayDRM* displayDRM, const char* deviceName, GError** error)
 {
     RefPtr<struct udev> udev = adoptRef(udev_new());
     if (!udev) {
@@ -240,19 +240,28 @@ static gboolean wpeDisplayDRMConnect(WPEDisplay* display, GError** error)
     }
 
     auto session = WPE::DRM::Session::create();
-    auto displayDevice = findDevice(udev.get(), session->seatID());
-    if (displayDevice.isNull()) {
-        g_set_error_literal(error, WPE_DISPLAY_ERROR, WPE_DISPLAY_ERROR_CONNECTION_FAILED, "No suitable DRM device found");
-        return FALSE;
+    DisplayDevice displayDevice;
+    if (!deviceName) {
+        displayDevice = findDevice(udev.get(), session->seatID());
+        if (displayDevice.isNull()) {
+            g_set_error_literal(error, WPE_DISPLAY_ERROR, WPE_DISPLAY_ERROR_CONNECTION_FAILED, "No suitable DRM device found");
+            return FALSE;
+        }
+    } else {
+        int fd = open(deviceName, O_RDWR | O_CLOEXEC);
+        if (fd < 0) {
+            g_set_error_literal(error, WPE_DISPLAY_ERROR, WPE_DISPLAY_ERROR_CONNECTION_FAILED, "Failed to open DRM device");
+            return FALSE;
+        }
+        WTF::UnixFileDescriptor unixFd(fd, WTF::UnixFileDescriptor::Adopt);
+        displayDevice = { deviceName, WTFMove(unixFd) };
     }
-
     auto fd = WTFMove(displayDevice.fd);
     if (drmSetMaster(fd.value()) == -1) {
         g_set_error_literal(error, WPE_DISPLAY_ERROR, WPE_DISPLAY_ERROR_CONNECTION_FAILED, "Failed to become DRM master");
         return FALSE;
     }
 
-    auto displayDRM = WPE_DISPLAY_DRM(display);
     if (!wpeDisplayDRMInitializeCapabilities(displayDRM, fd.value(), error))
         return FALSE;
 
@@ -296,13 +305,18 @@ static gboolean wpeDisplayDRMConnect(WPEDisplay* display, GError** error)
     displayDRM->priv->drmRenderNode = renderNodePath.get();
     displayDRM->priv->device = device;
     displayDRM->priv->connector = WTFMove(connector);
-    displayDRM->priv->monitor = wpeMonitorDRMCreate(WTFMove(crtc), *displayDRM->priv->connector);
+    displayDRM->priv->screen = wpeScreenDRMCreate(WTFMove(crtc), *displayDRM->priv->connector);
     displayDRM->priv->primaryPlane = WTFMove(primaryPlane);
     displayDRM->priv->seat = WTFMove(seat);
     if (cursorPlane)
         displayDRM->priv->cursor = makeUnique<WPE::DRM::Cursor>(WTFMove(cursorPlane), device, displayDRM->priv->cursorWidth, displayDRM->priv->cursorHeight);
 
     return TRUE;
+}
+
+static gboolean wpeDisplayDRMConnect(WPEDisplay* display, GError** error)
+{
+    return wpeDisplayDRMSetup(WPE_DISPLAY_DRM(display), nullptr, error);
 }
 
 static WPEView* wpeDisplayDRMCreateView(WPEDisplay* display)
@@ -330,16 +344,16 @@ static WPEBufferDMABufFormats* wpeDisplayDRMGetPreferredDMABufFormats(WPEDisplay
     return wpe_buffer_dma_buf_formats_builder_end(builder);
 }
 
-static guint wpeDisplayDRMGetNMonitors(WPEDisplay*)
+static guint wpeDisplayDRMGetNScreens(WPEDisplay*)
 {
     return 1;
 }
 
-static WPEMonitor* wpeDisplayDRMGetMonitor(WPEDisplay* display, guint index)
+static WPEScreen* wpeDisplayDRMGetScreen(WPEDisplay* display, guint index)
 {
     if (index)
         return nullptr;
-    return WPE_DISPLAY_DRM(display)->priv->monitor.get();
+    return WPE_DISPLAY_DRM(display)->priv->screen.get();
 }
 
 static const char* wpeDisplayDRMGetDRMDevice(WPEDisplay* display)
@@ -369,8 +383,8 @@ static void wpe_display_drm_class_init(WPEDisplayDRMClass* displayDRMClass)
     displayClass->connect = wpeDisplayDRMConnect;
     displayClass->create_view = wpeDisplayDRMCreateView;
     displayClass->get_preferred_dma_buf_formats = wpeDisplayDRMGetPreferredDMABufFormats;
-    displayClass->get_n_monitors = wpeDisplayDRMGetNMonitors;
-    displayClass->get_monitor = wpeDisplayDRMGetMonitor;
+    displayClass->get_n_screens = wpeDisplayDRMGetNScreens;
+    displayClass->get_screen = wpeDisplayDRMGetScreen;
     displayClass->get_drm_device = wpeDisplayDRMGetDRMDevice;
     displayClass->get_drm_render_node = wpeDisplayDRMGetDRMRenderNode;
     displayClass->use_explicit_sync = wpeDisplayDRMUseExplicitSync;
@@ -381,9 +395,9 @@ const WPE::DRM::Connector& wpeDisplayDRMGetConnector(WPEDisplayDRM* display)
     return *display->priv->connector;
 }
 
-WPEMonitor* wpeDisplayDRMGetMonitor(WPEDisplayDRM* display)
+WPEScreen* wpeDisplayDRMGetScreen(WPEDisplayDRM* display)
 {
-    return display->priv->monitor.get();
+    return display->priv->screen.get();
 }
 
 const WPE::DRM::Plane& wpeDisplayDRMGetPrimaryPlane(WPEDisplayDRM* display)
@@ -411,6 +425,23 @@ const WPE::DRM::Seat& wpeDisplayDRMGetSeat(WPEDisplayDRM* display)
 WPEDisplay* wpe_display_drm_new(void)
 {
     return WPE_DISPLAY(g_object_new(WPE_TYPE_DISPLAY_DRM, nullptr));
+}
+
+/**
+ * wpe_display_drm_connect:
+ * @display: a #WPEDisplayDRM
+ * @name: (nullable): the name of the DRM device to connect to, or %NULL
+ * @error: return location for error or %NULL to ignore
+ *
+ * Connect to the DRM device named @name. If @name is %NULL it
+ * connects to the default device.
+ *
+ * Returns: %TRUE if connection succeeded, or %FALSE in case of error.
+ */
+gboolean wpe_display_drm_connect(WPEDisplayDRM* display, const char* name, GError** error)
+{
+    g_return_val_if_fail(WPE_IS_DISPLAY_DRM(display), FALSE);
+    return wpeDisplayDRMSetup(display, name, error);
 }
 
 /**

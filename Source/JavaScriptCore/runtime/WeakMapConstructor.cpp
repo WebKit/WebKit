@@ -83,7 +83,7 @@ JSC_DEFINE_HOST_FUNCTION(constructWeakMap, (JSGlobalObject* globalObject, CallFr
     forEachInIterable(globalObject, iterable, [&](VM& vm, JSGlobalObject* globalObject, JSValue nextItem) {
         auto scope = DECLARE_THROW_SCOPE(vm);
         if (!nextItem.isObject()) {
-            throwTypeError(globalObject, scope);
+            throwTypeError(globalObject, scope, "WeakMap requires that an entry be an Object."_s);
             return;
         }
 

@@ -1,9 +1,9 @@
 
-FAIL Initial axis assert_equals: expected "175px" but got "100.03125px"
-FAIL Vertical axis assert_equals: expected "175px" but got "100.359375px"
-FAIL Horizontal axis assert_equals: expected "125px" but got "100.703125px"
-FAIL Block axis in horizontal writing-mode assert_equals: expected "175px" but got "101.03125px"
-FAIL Inline axis in horizontal writing-mode assert_equals: expected "125px" but got "101.359375px"
-FAIL Block axis in vertical writing-mode assert_equals: expected "125px" but got "101.703125px"
-FAIL Inline axis in vertical writing-mode assert_equals: expected "175px" but got "102.03125px"
+PASS Initial axis
+FAIL Vertical axis assert_equals: expected "175px" but got "100px"
+PASS Horizontal axis
+PASS Block axis in horizontal writing-mode
+PASS Inline axis in horizontal writing-mode
+FAIL Block axis in vertical writing-mode assert_equals: expected "125px" but got "100px"
+FAIL Inline axis in vertical writing-mode assert_equals: expected "175px" but got "100px"
 

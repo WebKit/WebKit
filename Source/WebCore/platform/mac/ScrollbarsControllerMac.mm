@@ -934,23 +934,8 @@ void ScrollbarsControllerMac::notifyContentAreaScrolled(const FloatSize& delta)
         sendContentAreaScrolledSoon(delta);
 }
 
-void ScrollbarsControllerMac::updateScrollerStyle()
+void ScrollbarsControllerMac::updateScrollerImps()
 {
-    if ([m_scrollerImpPair overlayScrollerStateIsLocked]) {
-        m_needsScrollerStyleUpdate = true;
-        return;
-    }
-
-    auto* macTheme = macScrollbarTheme();
-    if (!macTheme) {
-        m_needsScrollerStyleUpdate = false;
-        return;
-    }
-    
-    macTheme->usesOverlayScrollbarsChanged();
-
-    NSScrollerStyle newStyle = [m_scrollerImpPair scrollerStyle];
-
     Scrollbar* verticalScrollbar = scrollableArea().verticalScrollbar();
     if (verticalScrollbar && !verticalScrollbar->isCustomScrollbar()) {
         verticalScrollbar->invalidate();
@@ -970,6 +955,26 @@ void ScrollbarsControllerMac::updateScrollerStyle()
         horizontalScrollbarMac->createScrollerImp(WTFMove(oldHorizontalPainter));
         [m_scrollerImpPair setHorizontalScrollerImp:horizontalScrollbarMac->scrollerImp()];
     }
+}
+
+void ScrollbarsControllerMac::updateScrollerStyle()
+{
+    if ([m_scrollerImpPair overlayScrollerStateIsLocked]) {
+        m_needsScrollerStyleUpdate = true;
+        return;
+    }
+
+    auto* macTheme = macScrollbarTheme();
+    if (!macTheme) {
+        m_needsScrollerStyleUpdate = false;
+        return;
+    }
+
+    macTheme->usesOverlayScrollbarsChanged();
+
+    NSScrollerStyle newStyle = [m_scrollerImpPair scrollerStyle];
+
+    updateScrollerImps();
 
     // The different scrollbar styles have different thicknesses, so we must re-set the
     // frameRect to the new thickness, and the re-layout below will ensure the position
@@ -1036,7 +1041,7 @@ void ScrollbarsControllerMac::sendContentAreaScrolled(const FloatSize& delta)
 void ScrollbarsControllerMac::scrollbarWidthChanged(WebCore::ScrollbarWidth)
 {
     updateScrollbarsThickness();
-    updateScrollerStyle();
+    updateScrollerImps();
 }
 
 static String scrollbarState(Scrollbar* scrollbar)

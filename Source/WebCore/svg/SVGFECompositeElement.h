@@ -63,13 +63,13 @@ struct SVGPropertyTraits<CompositeOperationType> {
     static CompositeOperationType fromString(const String& value)
     {
         static constexpr std::pair<ComparableASCIILiteral, CompositeOperationType> mappings[] = {
-            { "arithmetic", CompositeOperationType::FECOMPOSITE_OPERATOR_ARITHMETIC },
-            { "atop", CompositeOperationType::FECOMPOSITE_OPERATOR_ATOP },
-            { "in", CompositeOperationType::FECOMPOSITE_OPERATOR_IN },
-            { "lighter", CompositeOperationType::FECOMPOSITE_OPERATOR_LIGHTER },
-            { "out", CompositeOperationType::FECOMPOSITE_OPERATOR_OUT },
-            { "over", CompositeOperationType::FECOMPOSITE_OPERATOR_OVER },
-            { "xor", CompositeOperationType::FECOMPOSITE_OPERATOR_XOR },
+            { "arithmetic"_s, CompositeOperationType::FECOMPOSITE_OPERATOR_ARITHMETIC },
+            { "atop"_s, CompositeOperationType::FECOMPOSITE_OPERATOR_ATOP },
+            { "in"_s, CompositeOperationType::FECOMPOSITE_OPERATOR_IN },
+            { "lighter"_s, CompositeOperationType::FECOMPOSITE_OPERATOR_LIGHTER },
+            { "out"_s, CompositeOperationType::FECOMPOSITE_OPERATOR_OUT },
+            { "over"_s, CompositeOperationType::FECOMPOSITE_OPERATOR_OVER },
+            { "xor"_s, CompositeOperationType::FECOMPOSITE_OPERATOR_XOR },
         };
         static constexpr SortedArrayMap map { mappings };
         return map.get(value, CompositeOperationType::FECOMPOSITE_OPERATOR_UNKNOWN);

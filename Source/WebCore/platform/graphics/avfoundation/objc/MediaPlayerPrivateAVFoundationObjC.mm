@@ -60,7 +60,6 @@
 #import "PlatformTextTrack.h"
 #import "PlatformTimeRanges.h"
 #import "QueuedVideoOutput.h"
-#import "RuntimeApplicationChecks.h"
 #import "ScriptDisallowedScope.h"
 #import "SecurityOrigin.h"
 #import "SerializedPlatformDataCueMac.h"
@@ -107,6 +106,8 @@
 #import <wtf/NativePromise.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/OSObjectPtr.h>
+#import <wtf/RuntimeApplicationChecks.h>
+#import <wtf/TZoneMallocInlines.h>
 #import <wtf/URL.h>
 #import <wtf/WorkQueue.h>
 #import <wtf/cocoa/VectorCocoa.h>
@@ -133,6 +134,8 @@
 #import "MediaRemoteSoftLink.h"
 
 #import <pal/cocoa/MediaToolboxSoftLink.h>
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace std {
 template <> struct iterator_traits<HashSet<RefPtr<WebCore::MediaSelectionOptionAVFObjC>>::iterator> {
@@ -163,15 +166,15 @@ SOFT_LINK_OPTIONAL(MediaToolbox, MTEnableCaption2015Behavior, Boolean, (), ())
 
 #if PLATFORM(IOS_FAMILY)
 
-#if HAVE(CELESTIAL)
-SOFT_LINK_PRIVATE_FRAMEWORK(Celestial)
-SOFT_LINK_CONSTANT(Celestial, AVController_RouteDescriptionKey_RouteCurrentlyPicked, NSString *)
-SOFT_LINK_CONSTANT(Celestial, AVController_RouteDescriptionKey_RouteName, NSString *)
-SOFT_LINK_CONSTANT(Celestial, AVController_RouteDescriptionKey_AVAudioRouteName, NSString *)
+#if HAVE(MEDIAEXPERIENCE_AVSYSTEMCONTROLLER)
+SOFT_LINK_PRIVATE_FRAMEWORK(MediaExperience)
+SOFT_LINK_CONSTANT(MediaExperience, AVController_RouteDescriptionKey_RouteCurrentlyPicked, NSString *)
+SOFT_LINK_CONSTANT(MediaExperience, AVController_RouteDescriptionKey_RouteName, NSString *)
+SOFT_LINK_CONSTANT(MediaExperience, AVController_RouteDescriptionKey_AVAudioRouteName, NSString *)
 #define AVController_RouteDescriptionKey_RouteCurrentlyPicked getAVController_RouteDescriptionKey_RouteCurrentlyPicked()
 #define AVController_RouteDescriptionKey_RouteName getAVController_RouteDescriptionKey_RouteName()
 #define AVController_RouteDescriptionKey_AVAudioRouteName getAVController_RouteDescriptionKey_AVAudioRouteName()
-#endif // HAVE(CELESTIAL)
+#endif // HAVE(MEDIAEXPERIENCE_AVSYSTEMCONTROLLER)
 
 #endif // PLATFORM(IOS_FAMILY)
 
@@ -256,6 +259,7 @@ static dispatch_queue_t globalLoaderDelegateQueue()
 }
 
 class MediaPlayerPrivateAVFoundationObjC::Factory final : public MediaPlayerFactory {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(Factory);
 public:
     Factory()
     {
@@ -1018,7 +1022,7 @@ void MediaPlayerPrivateAVFoundationObjC::createAVAssetForURL(const URL& url, Ret
     AVAssetResourceLoader *resourceLoader = [m_avAsset resourceLoader];
     [resourceLoader setDelegate:m_loaderDelegate.get() queue:globalLoaderDelegateQueue()];
 
-    Ref mediaResourceLoader = player->createResourceLoader();
+    Ref mediaResourceLoader = player->mediaResourceLoader();
     m_targetDispatcher = mediaResourceLoader->targetDispatcher();
     resourceLoader.URLSession = (NSURLSession *)adoptNS([[WebCoreNSURLSession alloc] initWithResourceLoader:mediaResourceLoader delegate:resourceLoader.URLSessionDataDelegate delegateQueue:resourceLoader.URLSessionDataDelegateQueue]).get();
 
@@ -2928,11 +2932,11 @@ void MediaPlayerPrivateAVFoundationObjC::keyAdded()
         m_keyURIToRequestMap.remove(keyId);
 }
 
-std::unique_ptr<LegacyCDMSession> MediaPlayerPrivateAVFoundationObjC::createSession(const String& keySystem, LegacyCDMSessionClient& client)
+RefPtr<LegacyCDMSession> MediaPlayerPrivateAVFoundationObjC::createSession(const String& keySystem, LegacyCDMSessionClient& client)
 {
     if (!keySystemIsSupported(keySystem))
         return nullptr;
-    auto session = makeUnique<CDMSessionAVFoundationObjC>(this, client);
+    RefPtr session = CDMSessionAVFoundationObjC::create(this, client);
     m_session = *session;
     return WTFMove(session);
 }
@@ -3338,7 +3342,7 @@ MediaPlayer::WirelessPlaybackTargetType MediaPlayerPrivateAVFoundationObjC::wire
 #if PLATFORM(IOS_FAMILY)
 static NSString *exernalDeviceDisplayNameForPlayer(AVPlayer *player)
 {
-#if HAVE(CELESTIAL)
+#if HAVE(MEDIAEXPERIENCE_AVSYSTEMCONTROLLER)
     if (!PAL::isAVFoundationFrameworkAvailable())
         return nil;
 
@@ -4457,5 +4461,7 @@ NSArray* playerKVOProperties()
 }
 
 @end
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif

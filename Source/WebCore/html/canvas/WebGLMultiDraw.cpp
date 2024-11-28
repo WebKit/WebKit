@@ -32,6 +32,8 @@
 #include "WebGLUtilities.h"
 #include <wtf/TZoneMallocInlines.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(WebGLMultiDraw);
@@ -199,5 +201,7 @@ bool WebGLMultiDraw::validateOffset(WebGLRenderingContextBase& context, ASCIILit
 }
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ENABLE(WEBGL)

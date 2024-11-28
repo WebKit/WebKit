@@ -64,7 +64,7 @@ void BackgroundFetchEngine::startBackgroundFetch(SWServerRegistration& registrat
     }
 
     auto result = iterator->value.ensure(backgroundFetchIdentifier, [&]() {
-        return makeUnique<BackgroundFetch>(registration, backgroundFetchIdentifier, WTFMove(requests), WTFMove(options), Ref { m_store }, [weakThis = WeakPtr { *this }](auto& fetch) {
+        return BackgroundFetch::create(registration, backgroundFetchIdentifier, WTFMove(requests), WTFMove(options), Ref { m_store }, [weakThis = WeakPtr { *this }](auto& fetch) {
             if (weakThis)
                 weakThis->notifyBackgroundFetchUpdate(fetch);
         });
@@ -74,8 +74,8 @@ void BackgroundFetchEngine::startBackgroundFetch(SWServerRegistration& registrat
         return;
     }
 
-    auto& fetch = *result.iterator->value;
-    fetch.doStore([server = m_server, fetch = WeakPtr { fetch }, callback = WTFMove(callback)](auto result) mutable {
+    auto fetch = result.iterator->value;
+    fetch->doStore([server = m_server, fetch = WeakPtr { fetch }, callback = WTFMove(callback)](auto result) mutable {
         if (!fetch || !server) {
             callback(makeUnexpected(ExceptionData { ExceptionCode::TypeError, "Background fetch is gone"_s }));
             return;
@@ -90,7 +90,7 @@ void BackgroundFetchEngine::startBackgroundFetch(SWServerRegistration& registrat
         case BackgroundFetchStore::StoreResult::OK:
             if (!fetch->pausedFlagIsSet()) {
                 fetch->perform([server = WTFMove(server)](auto& client, auto& request, auto responseDataSize, auto& origin) mutable {
-                    return server ? server->createBackgroundFetchRecordLoader(client, request, responseDataSize, origin) : nullptr;
+                    return server ? RefPtr { server->createBackgroundFetchRecordLoader(client, request, responseDataSize, origin) } : nullptr;
                 });
             }
             callback(std::optional { fetch->information() });
@@ -289,7 +289,7 @@ void BackgroundFetchEngine::addFetchFromStore(std::span<const uint8_t> data, Com
 
     auto backgroundFetchIdentifier = fetch->identifier();
     ASSERT(!fetchMap.contains(backgroundFetchIdentifier));
-    fetchMap.add(WTFMove(backgroundFetchIdentifier), WTFMove(fetch));
+    fetchMap.add(WTFMove(backgroundFetchIdentifier), fetch.releaseNonNull());
 }
 
 void BackgroundFetchEngine::abortBackgroundFetch(const ServiceWorkerRegistrationKey& key, const String& identifier)
@@ -332,7 +332,7 @@ void BackgroundFetchEngine::resumeBackgroundFetch(const ServiceWorkerRegistratio
         return;
 
     fetchIterator->value->resume([server = m_server](auto& client, auto& request, auto responseDataSize, auto& origin) mutable {
-        return server ? server->createBackgroundFetchRecordLoader(client, request, responseDataSize, origin) : nullptr;
+        return server ? RefPtr { server->createBackgroundFetchRecordLoader(client, request, responseDataSize, origin) } : nullptr;
     });
 }
 

@@ -75,7 +75,7 @@ static void testAFewStrings(Vector<Vector<UInt16>> testStrings)
     RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
 
-    [webView loadRequest:[NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"LineBreaking" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]]];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"LineBreaking" withExtension:@"html"]]];
     [webView _test_waitForDidFinishNavigation];
 
     for (auto& testCodePoints : testStrings) {

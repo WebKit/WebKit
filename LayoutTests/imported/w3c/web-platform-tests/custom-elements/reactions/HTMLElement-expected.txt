@@ -1,8 +1,4 @@
 
-PASS cue on HTMLElement must enqueue an attributeChanged reaction when adding cue content attribute
-PASS cue on HTMLElement must enqueue an attributeChanged reaction when replacing an existing attribute
-PASS cuebackground on HTMLElement must enqueue an attributeChanged reaction when adding cuebackground content attribute
-PASS cuebackground on HTMLElement must enqueue an attributeChanged reaction when replacing an existing attribute
 PASS title on HTMLElement must enqueue an attributeChanged reaction when adding title content attribute
 PASS title on HTMLElement must enqueue an attributeChanged reaction when replacing an existing attribute
 PASS lang on HTMLElement must enqueue an attributeChanged reaction when adding lang content attribute
@@ -21,6 +17,8 @@ PASS draggable on HTMLElement must enqueue an attributeChanged reaction when add
 PASS draggable on HTMLElement must enqueue an attributeChanged reaction when replacing an existing attribute
 PASS spellcheck on HTMLElement must enqueue an attributeChanged reaction when adding spellcheck content attribute
 PASS spellcheck on HTMLElement must enqueue an attributeChanged reaction when replacing an existing attribute
+PASS popover on HTMLElement must enqueue an attributeChanged reaction when adding popover content attribute
+PASS popover on HTMLElement must enqueue an attributeChanged reaction when replacing an existing attribute
 PASS innerText on HTMLElement must enqueue a disconnected reaction
 PASS outerText on HTMLElement must enqueue a disconnected reaction
 

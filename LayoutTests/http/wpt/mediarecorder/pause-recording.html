@@ -7,7 +7,6 @@
     <script src="/resources/testharnessreport.js"></script>
 </head>
 <body>
-    <video id="video1" controls></video>
     <script>
 function waitFor(duration)
 {
@@ -32,10 +31,11 @@ promise_test(async (test) => {
     const blob = await dataPromise;
 
     const url = URL.createObjectURL(blob);
-    video1.src = url;
-    await video1.play();
+    const video = document.createElement("video");
+    video.src = url;
+    await new Promise((resolve) => video.addEventListener("loadedmetadata", resolve, { once: true }));
 
-    assert_less_than(video1.duration, 1.5);
+    assert_less_than(video.duration, 1.5);
 
     URL.revokeObjectURL(url);
 }, "Pausing and resuming the recording should impact the video duration");
@@ -91,6 +91,100 @@ promise_test(async (test) => {
     assert_equals(blobWithNoData.size, 0);
 
 }, "Once paused, the second requestData call should lead to a zero size blob");
+
+promise_test(async (test) => {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: true });
+
+    const recorder = new MediaRecorder(stream, { mimeType: "video/webm" });
+    const dataPromise = new Promise(resolve => recorder.ondataavailable = (e) => resolve(e.data));
+
+    const startPromise = new Promise(resolve => recorder.onstart = resolve);
+    recorder.start();
+    await startPromise;
+
+    setTimeout(() => recorder.pause(), 50);
+    setTimeout(() => recorder.resume(), 950);
+
+    await waitFor(2000);
+    recorder.stop();
+    const blob = await dataPromise;
+
+    const video = document.createElement("video");
+    video.disableRemotePlayback = true;
+    const metadataPromise = new Promise((resolve) => video.addEventListener("loadedmetadata", resolve, { once: true }));
+
+    // webm generated don't have a duration located in the metadata. Determine the duration with MediaSource.
+    if (!window.ManagedMediaSource?.isTypeSupported(blob.type)) {
+        const url = URL.createObjectURL(blob);
+        video.src = url;
+        await metadatapromise;
+        URL.revokeObjectURL(url);
+        return ;
+    }
+    const source = new ManagedMediaSource();
+    video.srcObject = source;
+    await new Promise((resolve) => source.addEventListener("sourceopen", resolve, { once: true }));
+    const buffer = source.addSourceBuffer(blob.type);
+    buffer.appendBuffer(await blob.arrayBuffer());
+    await new Promise((resolve) => buffer.addEventListener("update", resolve, { once: true }));
+    await metadataPromise;
+    source.endOfStream();
+    await new Promise((resolve) => source.addEventListener("sourceended", resolve, { once: true }));
+    assert_less_than(video.duration, 1.5);
+}, "Pausing and resuming the WebM recording should impact the video duration");
+
+promise_test(async (test) => {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: true });
+
+    const recorder = new MediaRecorder(stream, { mimeType: "video/webm" });
+    const dataPromise = new Promise(resolve => recorder.ondataavailable = (e) => resolve(e.data));
+
+    const startPromise = new Promise(resolve => recorder.onstart = resolve);
+    recorder.start();
+    await startPromise;
+
+    await waitFor(1000);
+
+    const pausePromise = new Promise(resolve => recorder.onpause = resolve);
+    recorder.pause();
+    await pausePromise;
+
+    recorder.requestData();
+
+    const blob = await dataPromise;
+    assert_greater_than(blob.size, 1400);
+}, "Calling requestData with WebM once after pausing should lead to more than header data");
+
+promise_test(async (test) => {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: true });
+
+    const recorder = new MediaRecorder(stream, { mimeType: "video/webm" });
+    let dataPromise = new Promise(resolve => recorder.ondataavailable = (e) => resolve(e.data));
+
+    const startPromise = new Promise(resolve => recorder.onstart = resolve);
+    recorder.start();
+    await startPromise;
+
+    await waitFor(1000);
+
+    const pausePromise = new Promise(resolve => recorder.onpause = resolve);
+    recorder.pause();
+
+    recorder.requestData();
+
+    await pausePromise;
+    const blobWithData = await dataPromise;
+    assert_greater_than(blobWithData.size, 0);
+
+    recorder.requestData();
+    const blobWithNoDataPromise = new Promise(resolve => recorder.ondataavailable = (e) => resolve(e.data));
+    await waitFor(100);
+
+    const blobWithNoData = await blobWithNoDataPromise;
+    assert_equals(blobWithNoData.size, 0);
+
+}, "Once paused, the second requestData with WebM call should lead to a zero size blob");
+
     </script>
 </body>
 </html>

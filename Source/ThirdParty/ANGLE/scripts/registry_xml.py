@@ -47,6 +47,7 @@ angle_toggleable_extensions = [
 angle_requestable_extensions = [
     "GL_ANGLE_base_vertex_base_instance",
     "GL_ANGLE_base_vertex_base_instance_shader_builtin",
+    "GL_ANGLE_blob_cache",
     "GL_ANGLE_clip_cull_distance",
     "GL_ANGLE_compressed_texture_etc",
     "GL_ANGLE_copy_texture_3d",
@@ -91,6 +92,7 @@ gles_requestable_extensions = [
     "GL_APPLE_clip_distance",
     "GL_ARB_sync",
     "GL_ARM_shader_framebuffer_fetch",
+    "GL_ARM_shader_framebuffer_fetch_depth_stencil",
     "GL_EXT_base_instance",
     "GL_EXT_blend_func_extended",
     "GL_EXT_blend_minmax",
@@ -131,6 +133,7 @@ gles_requestable_extensions = [
     "GL_EXT_render_snorm",
     "GL_EXT_semaphore",
     "GL_EXT_semaphore_fd",
+    "GL_EXT_separate_depth_stencil",
     "GL_EXT_separate_shader_objects",
     "GL_EXT_shader_framebuffer_fetch",
     "GL_EXT_shader_framebuffer_fetch_non_coherent",
@@ -155,7 +158,9 @@ gles_requestable_extensions = [
     "GL_EXT_texture_format_BGRA8888",
     "GL_EXT_texture_mirror_clamp_to_edge",
     "GL_EXT_texture_norm16",
+    "GL_EXT_texture_query_lod",
     "GL_EXT_texture_rg",
+    "GL_EXT_texture_shadow_lod",
     "GL_EXT_texture_sRGB_R8",
     "GL_EXT_texture_sRGB_RG8",
     "GL_EXT_texture_storage",
@@ -436,13 +441,8 @@ unsupported_enum_group_names = {
 }
 
 # Versions (major, minor). Note that GLES intentionally places 1.0 last.
-DESKTOP_GL_VERSIONS = [(1, 0), (1, 1), (1, 2), (1, 3), (1, 4), (1, 5), (2, 0), (2, 1), (3, 0),
-                       (3, 1), (3, 2), (3, 3), (4, 0), (4, 1), (4, 2), (4, 3), (4, 4), (4, 5),
-                       (4, 6)]
 GLES_VERSIONS = [(2, 0), (3, 0), (3, 1), (3, 2), (1, 0)]
 EGL_VERSIONS = [(1, 0), (1, 1), (1, 2), (1, 3), (1, 4), (1, 5)]
-WGL_VERSIONS = [(1, 0)]
-GLX_VERSIONS = [(1, 0), (1, 1), (1, 2), (1, 3), (1, 4)]
 CL_VERSIONS = [(1, 0), (1, 1), (1, 2), (2, 0), (2, 1), (2, 2), (3, 0)]
 
 
@@ -523,6 +523,10 @@ class RegistryXML:
     def _AppendANGLEExts(self, ext_file):
         angle_ext_tree = etree.parse(script_relative(ext_file))
         angle_ext_root = angle_ext_tree.getroot()
+
+        insertion_point = self.root.findall("./types")[0]
+        for t in angle_ext_root.iter('types'):
+            insertion_point.extend(t)
 
         insertion_point = self.root.findall("./commands")[0]
         for command in angle_ext_root.iter('commands'):

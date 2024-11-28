@@ -44,8 +44,12 @@
 #import <WebCore/ScrollingTreePluginScrollingNode.h>
 #import <WebCore/ScrollingTreePositionedNode.h>
 #import <WebCore/WheelEventDeltaFilter.h>
+#import <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteScrollingCoordinatorProxyMac);
+
 using namespace WebCore;
 
 RemoteScrollingCoordinatorProxyMac::RemoteScrollingCoordinatorProxyMac(WebPageProxy& webPageProxy)

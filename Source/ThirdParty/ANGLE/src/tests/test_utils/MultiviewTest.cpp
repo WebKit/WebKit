@@ -231,44 +231,36 @@ std::ostream &operator<<(std::ostream &os, const MultiviewImplementationParams &
     return os;
 }
 
-MultiviewImplementationParams VertexShaderOpenGL(EGLenum clientType,
-                                                 GLint majorVersion,
+MultiviewImplementationParams VertexShaderOpenGL(GLint majorVersion,
                                                  GLint minorVersion,
-                                                 EGLint profileMask,
                                                  ExtensionName multiviewExtension)
 {
-    return MultiviewImplementationParams(clientType, majorVersion, minorVersion, profileMask,
-                                         egl_platform::OPENGL(), multiviewExtension);
+    return MultiviewImplementationParams(majorVersion, minorVersion, egl_platform::OPENGL(),
+                                         multiviewExtension);
 }
 
-MultiviewImplementationParams VertexShaderVulkan(EGLenum clientType,
-                                                 GLint majorVersion,
+MultiviewImplementationParams VertexShaderVulkan(GLint majorVersion,
                                                  GLint minorVersion,
-                                                 EGLint profileMask,
                                                  ExtensionName multiviewExtension)
 {
-    return MultiviewImplementationParams(clientType, majorVersion, minorVersion, profileMask,
-                                         egl_platform::VULKAN(), multiviewExtension);
+    return MultiviewImplementationParams(majorVersion, minorVersion, egl_platform::VULKAN(),
+                                         multiviewExtension);
 }
 
-MultiviewImplementationParams VertexShaderD3D11(EGLenum clientType,
-                                                GLint majorVersion,
+MultiviewImplementationParams VertexShaderD3D11(GLint majorVersion,
                                                 GLint minorVersion,
-                                                EGLint profileMask,
                                                 ExtensionName multiviewExtension)
 {
-    return MultiviewImplementationParams(clientType, majorVersion, minorVersion, profileMask,
-                                         egl_platform::D3D11(), multiviewExtension);
+    return MultiviewImplementationParams(majorVersion, minorVersion, egl_platform::D3D11(),
+                                         multiviewExtension);
 }
 
-MultiviewImplementationParams GeomShaderD3D11(EGLenum clientType,
-                                              GLint majorVersion,
+MultiviewImplementationParams GeomShaderD3D11(GLint majorVersion,
                                               GLint minorVersion,
-                                              EGLint profileMask,
                                               ExtensionName multiviewExtension)
 {
     return MultiviewImplementationParams(
-        clientType, majorVersion, minorVersion, profileMask,
+        majorVersion, minorVersion,
         egl_platform::D3D11().enable(Feature::SelectViewInGeometryShader), multiviewExtension);
 }
 

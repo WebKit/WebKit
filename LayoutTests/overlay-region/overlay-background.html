@@ -1,0 +1,95 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ AsyncOverflowScrollingEnabled=true AsyncFrameScrollingEnabled=true ] -->
+<html>
+<head>
+    <meta charset="utf-8" />
+    <style>
+        body { margin: 0; padding: 0; font-family: -apple-system; }
+        h1, h2 { margin: 0; padding: 0; line-height: 50px; }
+        h2 { font-size: 1.1em; }
+
+        .fixed {
+            position: fixed;
+            left: 0;
+            right: 0;
+            height: 50px;
+            background: #F67280;
+            z-index: -1;
+        }
+
+        #header {
+            top: 0;
+        }
+        #footer {
+            top: unset;
+            bottom: 0;
+        }
+
+        .long {
+            position: relative;
+            height: 1000px;
+            background: #355C7D;
+            opacity: 0.5;
+        }
+        .long::before {
+            content: "↓";
+            color: white;
+            font-size: 20em;
+            text-align: center;
+            position: absolute;
+            top: 400px;
+            left: 0;
+            right: 0;
+        }
+
+        #test::after {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            content: "";
+            z-index: -1;
+            background: red;
+        }
+    </style>
+    <script src="../resources/ui-helper.js"></script>
+</head>
+<body>
+<section id="test">
+    <div class="long">
+    </div>
+    <div class="long">
+    </div>
+    <div class="long">
+    </div>
+    <div class="long">
+    </div>
+    <div class="long">
+    </div>
+    <div class="long">
+    </div>
+    <div class="long">
+    </div>
+</section>
+
+<pre id="results"></pre>
+<script>
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}
+
+window.onload = async function () {
+    if (!window.internals)
+        return;
+
+    await UIHelper.ensureStablePresentationUpdate();
+    results.textContent = await UIHelper.getUIViewTree();
+    document.getElementById('test').remove();
+
+    testRunner.notifyDone();
+};
+</script>
+</body>
+</html>
+

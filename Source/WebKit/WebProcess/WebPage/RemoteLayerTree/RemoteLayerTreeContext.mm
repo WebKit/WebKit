@@ -51,8 +51,8 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteLayerTreeContext);
 
 RemoteLayerTreeContext::RemoteLayerTreeContext(WebPage& webPage)
     : m_webPage(webPage)
+    , m_backingStoreCollection(makeUniqueRefWithoutRefCountedCheck<RemoteLayerBackingStoreCollection>(*this))
 {
-    m_backingStoreCollection = makeUnique<RemoteLayerBackingStoreCollection>(*this);
 }
 
 RemoteLayerTreeContext::~RemoteLayerTreeContext()
@@ -76,24 +76,24 @@ void RemoteLayerTreeContext::adoptLayersFromContext(RemoteLayerTreeContext& oldC
 
 float RemoteLayerTreeContext::deviceScaleFactor() const
 {
-    return m_webPage.deviceScaleFactor();
+    return m_webPage->deviceScaleFactor();
 }
 
 LayerHostingMode RemoteLayerTreeContext::layerHostingMode() const
 {
-    return m_webPage.layerHostingMode();
+    return m_webPage->layerHostingMode();
 }
 
-DrawingAreaIdentifier RemoteLayerTreeContext::drawingAreaIdentifier() const
+std::optional<DrawingAreaIdentifier> RemoteLayerTreeContext::drawingAreaIdentifier() const
 {
-    if (!m_webPage.drawingArea())
-        return DrawingAreaIdentifier();
-    return m_webPage.drawingArea()->identifier();
+    if (!m_webPage->drawingArea())
+        return std::nullopt;
+    return m_webPage->drawingArea()->identifier();
 }
 
 std::optional<WebCore::DestinationColorSpace> RemoteLayerTreeContext::displayColorSpace() const
 {
-    if (auto* drawingArea = m_webPage.drawingArea())
+    if (auto* drawingArea = m_webPage->drawingArea())
         return drawingArea->displayColorSpace();
     
     return { };
@@ -102,7 +102,7 @@ std::optional<WebCore::DestinationColorSpace> RemoteLayerTreeContext::displayCol
 #if PLATFORM(IOS_FAMILY)
 bool RemoteLayerTreeContext::canShowWhileLocked() const
 {
-    return m_webPage.canShowWhileLocked();
+    return m_webPage->canShowWhileLocked();
 }
 #endif
 
@@ -131,13 +131,23 @@ void RemoteLayerTreeContext::layerDidEnterContext(PlatformCALayerRemote& layer, 
         videoElement.naturalSize()
     };
 
-    m_webPage.videoPresentationManager().setupRemoteLayerHosting(videoElement);
+    protectedWebPage()->protectedVideoPresentationManager()->setupRemoteLayerHosting(videoElement);
     m_videoLayers.add(layerID, videoElement.identifier());
 
     m_createdLayers.add(layerID, WTFMove(creationProperties));
     m_livePlatformLayers.add(layerID, &layer);
 }
 #endif
+
+WebPage& RemoteLayerTreeContext::webPage()
+{
+    return m_webPage.get();
+}
+
+Ref<WebPage> RemoteLayerTreeContext::protectedWebPage()
+{
+    return m_webPage.get();
+}
 
 void RemoteLayerTreeContext::layerWillLeaveContext(PlatformCALayerRemote& layer)
 {
@@ -146,7 +156,7 @@ void RemoteLayerTreeContext::layerWillLeaveContext(PlatformCALayerRemote& layer)
 #if HAVE(AVKIT)
     auto videoLayerIter = m_videoLayers.find(layerID);
     if (videoLayerIter != m_videoLayers.end()) {
-        m_webPage.videoPresentationManager().willRemoveLayerForID(videoLayerIter->value);
+        protectedWebPage()->protectedVideoPresentationManager()->willRemoveLayerForID(videoLayerIter->value);
         m_videoLayers.remove(videoLayerIter);
     }
 #endif
@@ -225,7 +235,7 @@ void RemoteLayerTreeContext::animationDidEnd(WebCore::PlatformLayerIdentifier la
 
 RemoteRenderingBackendProxy& RemoteLayerTreeContext::ensureRemoteRenderingBackendProxy()
 {
-    return m_webPage.ensureRemoteRenderingBackendProxy();
+    return protectedWebPage()->ensureRemoteRenderingBackendProxy();
 }
 
 void RemoteLayerTreeContext::gpuProcessConnectionWasDestroyed()

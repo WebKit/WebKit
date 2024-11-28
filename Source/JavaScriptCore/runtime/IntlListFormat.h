@@ -28,12 +28,6 @@
 #include "JSObject.h"
 #include <wtf/unicode/icu/ICUHelpers.h>
 
-#if !defined(HAVE_ICU_U_LIST_FORMATTER)
-#if U_ICU_VERSION_MAJOR_NUM >= 67 || (U_ICU_VERSION_MAJOR_NUM >= 66 && USE(APPLE_INTERNAL_SDK))
-#define HAVE_ICU_U_LIST_FORMATTER 1
-#endif
-#endif
-
 struct UListFormatter;
 
 namespace JSC {

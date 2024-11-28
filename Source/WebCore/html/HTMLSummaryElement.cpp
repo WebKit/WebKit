@@ -21,7 +21,6 @@
 #include "config.h"
 #include "HTMLSummaryElement.h"
 
-#include "DetailsMarkerControl.h"
 #include "ElementInlines.h"
 #include "EventNames.h"
 #include "HTMLDetailsElement.h"
@@ -34,7 +33,6 @@
 #include "SVGAElement.h"
 #include "SVGElementTypeHelpers.h"
 #include "ShadowRoot.h"
-#include "SlotAssignment.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -43,39 +41,15 @@ WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(HTMLSummaryElement);
 
 using namespace HTMLNames;
 
-class SummarySlotAssignment final : public NamedSlotAssignment {
-private:
-    void hostChildElementDidChange(const Element&, ShadowRoot& shadowRoot) final
-    {
-        didChangeSlot(NamedSlotAssignment::defaultSlotName(), shadowRoot);
-    }
-
-    const AtomString& slotNameForHostChild(const Node&) const final { return NamedSlotAssignment::defaultSlotName(); }
-};
-
 Ref<HTMLSummaryElement> HTMLSummaryElement::create(const QualifiedName& tagName, Document& document)
 {
-    Ref<HTMLSummaryElement> summary = adoptRef(*new HTMLSummaryElement(tagName, document));
-    summary->addShadowRoot(ShadowRoot::create(document, makeUnique<SummarySlotAssignment>()));
-    return summary;
+    return adoptRef(*new HTMLSummaryElement(tagName, document));
 }
 
 HTMLSummaryElement::HTMLSummaryElement(const QualifiedName& tagName, Document& document)
     : HTMLElement(tagName, document)
 {
     ASSERT(hasTagName(summaryTag));
-}
-
-RenderPtr<RenderElement> HTMLSummaryElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
-{
-    // <summary> elements with display:list-item should not be rendered as list items because they'd end up with two markers before the text (one from summary element and the other as a list item).
-    return RenderElement::createFor(*this, WTFMove(style), { RenderElement::ConstructBlockLevelRendererFor::ListItem, RenderElement::ConstructBlockLevelRendererFor::Inline, RenderElement::ConstructBlockLevelRendererFor::TableOrTablePart });
-}
-
-void HTMLSummaryElement::didAddUserAgentShadowRoot(ShadowRoot& root)
-{
-    root.appendChild(DetailsMarkerControl::create(document()));
-    root.appendChild(HTMLSlotElement::create(slotTag, document()));
 }
 
 RefPtr<HTMLDetailsElement> HTMLSummaryElement::detailsElement() const

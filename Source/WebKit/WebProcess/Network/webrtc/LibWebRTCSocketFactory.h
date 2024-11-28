@@ -32,24 +32,25 @@
 #include "WebPageProxyIdentifier.h"
 #include <WebCore/LibWebRTCMacros.h>
 #include <WebCore/LibWebRTCSocketIdentifier.h>
+#include <wtf/CheckedPtr.h>
 #include <wtf/Deque.h>
 #include <wtf/Function.h>
 #include <wtf/HashMap.h>
 #include <wtf/WeakRef.h>
 
-ALLOW_COMMA_BEGIN
-
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
 #include <webrtc/rtc_base/net_helpers.h>
 #include <webrtc/api/packet_socket_factory.h>
-
-ALLOW_COMMA_END
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 
 namespace WebKit {
 
 class LibWebRTCNetwork;
 class LibWebRTCSocket;
 
-class LibWebRTCSocketFactory {
+class LibWebRTCSocketFactory : public CanMakeThreadSafeCheckedPtr<LibWebRTCSocketFactory> {
+    WTF_MAKE_FAST_ALLOCATED;
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(LibWebRTCSocketFactory);
 public:
     LibWebRTCSocketFactory() = default;
 
@@ -61,7 +62,7 @@ public:
     rtc::AsyncPacketSocket* createUdpSocket(WebCore::ScriptExecutionContextIdentifier, const rtc::SocketAddress&, uint16_t minPort, uint16_t maxPort, WebPageProxyIdentifier, bool isFirstParty, bool isRelayDisabled, const WebCore::RegistrableDomain&);
     rtc::AsyncPacketSocket* createClientTcpSocket(WebCore::ScriptExecutionContextIdentifier, const rtc::SocketAddress& localAddress, const rtc::SocketAddress& remoteAddress, String&& userAgent, const rtc::PacketSocketTcpOptions&, WebPageProxyIdentifier, bool isFirstParty, bool isRelayDisabled, const WebCore::RegistrableDomain&);
 
-    WeakPtr<LibWebRTCResolver> resolver(LibWebRTCResolverIdentifier identifier) { return m_resolvers.get(identifier); }
+    CheckedPtr<LibWebRTCResolver> resolver(LibWebRTCResolverIdentifier identifier) { return m_resolvers.get(identifier); }
     void removeResolver(LibWebRTCResolverIdentifier identifier) { m_resolvers.remove(identifier); }
 
     std::unique_ptr<LibWebRTCResolver> createAsyncDnsResolver();
@@ -73,9 +74,9 @@ public:
 
 private:
     // We cannot own sockets, clients of the factory are responsible to free them.
-    HashMap<WebCore::LibWebRTCSocketIdentifier, WeakRef<LibWebRTCSocket>> m_sockets;
+    HashMap<WebCore::LibWebRTCSocketIdentifier, CheckedRef<LibWebRTCSocket>> m_sockets;
 
-    HashMap<LibWebRTCResolverIdentifier, WeakRef<LibWebRTCResolver>> m_resolvers;
+    HashMap<LibWebRTCResolverIdentifier, CheckedRef<LibWebRTCResolver>> m_resolvers;
     bool m_disableNonLocalhostConnections { false };
 
     RefPtr<IPC::Connection> m_connection;

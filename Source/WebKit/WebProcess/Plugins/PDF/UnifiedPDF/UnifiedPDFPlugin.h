@@ -49,9 +49,9 @@ class TextStream;
 
 namespace WebCore {
 class FrameView;
-class KeyboardScrollingAnimator;
 class PageOverlay;
 class PlatformWheelEvent;
+class ShadowRoot;
 
 enum class DelegatedScrollingMode : uint8_t;
 
@@ -144,6 +144,7 @@ public:
     void repaintAnnotationsForFormField(NSString *fieldName);
 
     Vector<WebCore::FloatRect> annotationRectsForTesting() const final;
+    void setTextAnnotationValueForTesting(unsigned pageIndex, unsigned annotationIndex, const String& value) final;
 
     void attemptToUnlockPDF(const String& password) final;
     void windowActivityDidChange() final;
@@ -206,6 +207,9 @@ public:
     RetainPtr<PDFPage> pageAtIndex(PDFDocumentLayout::PageIndex) const;
 
     void setPDFDisplayModeForTesting(const String&) final;
+
+    double minScaleFactor() const final;
+    double maxScaleFactor() const final;
 
 private:
     explicit UnifiedPDFPlugin(WebCore::HTMLPlugInElement&);
@@ -318,8 +322,6 @@ private:
     [[maybe_unused]] bool performCopyEditingOperation() const;
     void performCopyLinkOperation(const WebCore::IntPoint& contextMenuEventRootViewPoint) const;
 
-    void animatedScrollDidEnd() final;
-
     void setDisplayMode(PDFDocumentLayout::DisplayMode);
     void setDisplayModeAndUpdateLayout(PDFDocumentLayout::DisplayMode);
 
@@ -410,6 +412,14 @@ private:
     void collectFindMatchRects(const String&, WebCore::FindOptions);
     void updateFindOverlay(HideFindIndicator = HideFindIndicator::No);
 
+    Vector<WebFoundTextRange::PDFData> findTextMatches(const String&, WebCore::FindOptions) final;
+    Vector<WebCore::FloatRect> rectsForTextMatch(const WebFoundTextRange::PDFData&) final;
+    RefPtr<WebCore::TextIndicator> textIndicatorForTextMatch(const WebFoundTextRange::PDFData&, WebCore::TextIndicatorPresentationTransition) final;
+    void scrollToRevealTextMatch(const WebFoundTextRange::PDFData&) final;
+
+    Vector<WebCore::FloatRect> visibleRectsForFindMatchRects(PDFPageCoverage) const;
+    PDFSelection *selectionFromWebFoundTextRangePDFData(const WebFoundTextRange::PDFData&) const;
+
     RefPtr<WebCore::TextIndicator> textIndicatorForCurrentSelection(OptionSet<WebCore::TextIndicatorOption>, WebCore::TextIndicatorPresentationTransition) final;
     RefPtr<WebCore::TextIndicator> textIndicatorForSelection(PDFSelection *, OptionSet<WebCore::TextIndicatorOption>, WebCore::TextIndicatorPresentationTransition);
 
@@ -460,7 +470,7 @@ private:
     void createScrollbarsController() override;
 
     bool usesAsyncScrolling() const final { return true; }
-    WebCore::ScrollingNodeID scrollingNodeID() const final;
+    std::optional<WebCore::ScrollingNodeID> scrollingNodeID() const final { return m_scrollingNodeID; }
 
     void invalidateScrollbarRect(WebCore::Scrollbar&, const WebCore::IntRect&) override;
     void invalidateScrollCornerRect(const WebCore::IntRect&) override;
@@ -505,6 +515,9 @@ private:
     void resetZoom();
 #endif
 
+    bool supportsPasswordForm() const;
+    void installAnnotationContainer();
+
     std::optional<PDFDocumentLayout::PageIndex> pageIndexForAnnotation(PDFAnnotation *) const;
     std::optional<PDFDocumentLayout::PageIndex> pageIndexWithHoveredAnnotation() const;
     void paintHoveredAnnotationOnPage(PDFDocumentLayout::PageIndex, WebCore::GraphicsContext&, const WebCore::FloatRect& clipRect);
@@ -548,9 +561,8 @@ private:
 
     float scaleForPagePreviews() const;
 
-#if PLATFORM(MAC)
     void createPasswordEntryForm();
-#endif
+    void teardownPasswordEntryForm() override;
 
     bool isInDiscreteDisplayMode() const;
     bool isShowingTwoPages() const;
@@ -573,7 +585,7 @@ private:
     RefPtr<WebCore::GraphicsLayer> m_layerForVerticalScrollbar;
     RefPtr<WebCore::GraphicsLayer> m_layerForScrollCorner;
 
-    WebCore::ScrollingNodeID m_scrollingNodeID;
+    Markable<WebCore::ScrollingNodeID> m_scrollingNodeID;
 
     double m_scaleFactor { 1 };
     double m_scaleNormalizationFactor { 1 };
@@ -611,19 +623,21 @@ private:
 
     RetainPtr<WKPDFFormMutationObserver> m_pdfMutationObserver;
 
-#if PLATFORM(MAC)
     RefPtr<PDFPluginPasswordField> m_passwordField;
     RefPtr<PDFPluginPasswordForm> m_passwordForm;
-
-    bool m_isScrollingWithAnimationToPageExtent { false };
-    std::optional<WebCore::ScrollDirection> m_animatedKeyboardScrollingDirection;
-#endif
 
     PDFPageCoverage m_findMatchRects;
 
 #if ENABLE(UNIFIED_PDF_DATA_DETECTION)
     std::unique_ptr<PDFDataDetectorOverlayController> m_dataDetectorOverlayController;
 #endif
+
+    RefPtr<WebCore::ShadowRoot> m_shadowRoot;
+
+    // FIXME: We should rationalize these with the values in ViewGestureController.
+    // For now, we'll leave them differing as they do in PDFPlugin.
+    static constexpr double minimumZoomScale = 0.2;
+    static constexpr double maximumZoomScale = 6.0;
 };
 
 WTF::TextStream& operator<<(WTF::TextStream&, RepaintRequirement);

@@ -49,7 +49,7 @@ private:
     void drawRect(WebCore::PageOverlay&, WebCore::GraphicsContext&, const WebCore::IntRect& dirtyRect) override;
     bool mouseEvent(WebCore::PageOverlay&, const WebCore::PlatformMouseEvent&) override { return false; }
 
-    WebCore::LocalFrame& m_frame;
+    WeakRef<WebCore::LocalFrame> m_frame;
     RefPtr<WebCore::TextIndicator> m_textIndicator;
 };
 

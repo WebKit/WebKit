@@ -35,14 +35,19 @@
 #include <wtf/FunctionDispatcher.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/UniqueRef.h>
+#include <wtf/WeakRef.h>
 
 namespace WebKit {
+class WebProcess;
 
-class LibWebRTCNetwork : private FunctionDispatcher, private IPC::MessageReceiver {
+class LibWebRTCNetwork final : private FunctionDispatcher, public IPC::MessageReceiver {
     WTF_MAKE_TZONE_ALLOCATED(LibWebRTCNetwork);
 public:
-    static UniqueRef<LibWebRTCNetwork> create() { return UniqueRef { *new LibWebRTCNetwork() }; }
+    explicit LibWebRTCNetwork(WebProcess&);
     ~LibWebRTCNetwork();
+
+    void ref() const;
+    void deref() const;
 
     IPC::Connection* connection() { return m_connection.get(); }
     void setConnection(RefPtr<IPC::Connection>&&);
@@ -62,12 +67,12 @@ public:
 
 #if ENABLE(WEB_RTC)
     WebMDNSRegister& mdnsRegister() { return m_mdnsRegister; }
+    Ref<WebMDNSRegister> protectedMDNSRegister() { return m_mdnsRegister; }
 #endif
 
     void setAsActive();
 
 private:
-    LibWebRTCNetwork() = default;
 #if USE(LIBWEBRTC)
     void setSocketFactoryConnection();
 
@@ -86,6 +91,8 @@ private:
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
 #endif
+
+    WeakRef<WebProcess> m_webProcess;
 
 #if USE(LIBWEBRTC)
     LibWebRTCSocketFactory m_socketFactory;

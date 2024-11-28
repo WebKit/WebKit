@@ -38,11 +38,11 @@
 #include "OriginAccessPatterns.h"
 #include "Page.h"
 #include "ResourceRequest.h"
-#include "RuntimeApplicationChecks.h"
 #include "SecurityOrigin.h"
 #include "SecurityPolicy.h"
 #include <mutex>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/RuntimeApplicationChecks.h>
 #include <wtf/text/AtomString.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
@@ -152,7 +152,7 @@ CachedResourceRequest createPotentialAccessControlRequest(ResourceRequest&& requ
         options.mode = FetchOptions::Mode::SameOrigin;
 
     if (options.mode != FetchOptions::Mode::NoCors) {
-        if (auto* page = document.page()) {
+        if (RefPtr page = document.page()) {
             if (page->shouldDisableCorsForRequestTo(request.url()))
                 options.mode = FetchOptions::Mode::NoCors;
         }
@@ -293,7 +293,7 @@ Expected<void, String> passesAccessControlCheck(const ResourceResponse& response
     return { };
 }
 
-Expected<void, String> validatePreflightResponse(PAL::SessionID sessionID, const ResourceRequest& request, const ResourceResponse& response, StoredCredentialsPolicy storedCredentialsPolicy, const SecurityOrigin& securityOrigin, const CrossOriginAccessControlCheckDisabler* checkDisabler)
+Expected<void, String> validatePreflightResponse(PAL::SessionID sessionID, const ResourceRequest& request, const ResourceResponse& response, StoredCredentialsPolicy storedCredentialsPolicy, const SecurityOrigin& topOrigin, const SecurityOrigin& securityOrigin, const CrossOriginAccessControlCheckDisabler* checkDisabler)
 {
     if (!response.isSuccessful())
         return makeUnexpected(makeString("Preflight response is not successful. Status code: "_s, response.httpStatusCode()));
@@ -308,7 +308,7 @@ Expected<void, String> validatePreflightResponse(PAL::SessionID sessionID, const
 
     auto entry = WTFMove(result.value());
     auto errorDescription = entry->validateMethodAndHeaders(request.httpMethod(), request.httpHeaderFields());
-    CrossOriginPreflightResultCache::singleton().appendEntry(sessionID, securityOrigin.toString(), request.url(), entry.moveToUniquePtr());
+    CrossOriginPreflightResultCache::singleton().appendEntry(sessionID, { topOrigin.data(), securityOrigin.data(), }, request.url(), entry.moveToUniquePtr());
 
     if (errorDescription)
         return makeUnexpected(WTFMove(*errorDescription));

@@ -261,10 +261,12 @@ static void getPropertyNames(JSContextRef callerContext, JSObjectRef object, JSP
             GUniquePtr<char*> properties(enumeratePropertiesFunction(jscClass, context.get(), instance));
             if (properties) {
                 unsigned i = 0;
+                WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib port
                 while (const auto* name = properties.get()[i++]) {
                     JSRetainPtr<JSStringRef> propertyName(Adopt, JSStringCreateWithUTF8CString(name));
                     JSPropertyNameAccumulatorAddName(propertyNames, propertyName.get());
                 }
+                WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
             }
         }
     }
@@ -447,6 +449,7 @@ static void jsc_class_class_init(JSCClassClass* klass)
 
 GRefPtr<JSCClass> jscClassCreate(JSCContext* context, const char* name, JSCClass* parentClass, JSCClassVTable* vtable, GDestroyNotify destroyFunction)
 {
+    JSC::JSLockHolder locker(toJS(jscContextGetJSContext(context))->vm());
     GRefPtr<JSCClass> jscClass = adoptGRef(JSC_CLASS(g_object_new(JSC_TYPE_CLASS, "context", context, "name", name, "parent", parentClass, nullptr)));
 
     JSCClassPrivate* priv = jscClass->priv;
@@ -645,7 +648,9 @@ JSCValue* jsc_class_add_constructorv(JSCClass* jscClass, const char* name, GCall
         name = priv->name.data();
 
     Vector<GType> parameters(parametersCount, [&](size_t i) -> GType {
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib port
         return parameterTypes[i];
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     });
 
     return jscClassCreateConstructor(jscClass, name ? name : priv->name.data(), callback, userData, destroyNotify, returnType, WTFMove(parameters)).leakRef();
@@ -771,7 +776,9 @@ void jsc_class_add_methodv(JSCClass* jscClass, const char* name, GCallback callb
     g_return_if_fail(jscClass->priv->context);
 
     Vector<GType> parameters(parametersCount, [&](size_t i) -> GType {
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib port
         return parameterTypes[i];
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     });
 
     jscClassAddMethod(jscClass, name, callback, userData, destroyNotify, returnType, WTFMove(parameters));

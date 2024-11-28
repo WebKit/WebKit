@@ -61,12 +61,13 @@ public:
 
     using OutputCallback = Function<void(Expected<DecodedData, String>&&)>;
     using CreateResult = Expected<UniqueRef<AudioDecoder>, String>;
+    using CreatePromise = NativePromise<UniqueRef<AudioDecoder>, String>;
     using CreateCallback = Function<void(CreateResult&&)>;
 
     using CreatorFunction = void(*)(const String&, const Config&, CreateCallback&&, OutputCallback&&);
     WEBCORE_EXPORT static void setCreatorCallback(CreatorFunction&&);
 
-    static void create(const String&, const Config&, CreateCallback&&, OutputCallback&&);
+    static Ref<CreatePromise> create(const String&, const Config&, OutputCallback&&);
 
     using DecodePromise = NativePromise<void, String>;
     virtual Ref<DecodePromise> decode(EncodedData&&) = 0;

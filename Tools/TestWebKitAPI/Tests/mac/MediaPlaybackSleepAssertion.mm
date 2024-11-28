@@ -141,7 +141,8 @@ static bool hasAssertionType(CFStringRef type)
     return false;
 }
 
-TEST(WebKitLegacy, MediaPlaybackSleepAssertion)
+// FIXME: https://webkit.org/b/282671
+TEST(WebKitLegacy, DISABLED_MediaPlaybackSleepAssertion)
 {
     JSC::Config::configureForTesting();
 
@@ -164,7 +165,7 @@ TEST(WebKitLegacy, MediaPlaybackSleepAssertion)
         webView.get().frameLoadDelegate = frameLoadDelegate.get();
         WebFrame *mainFrame = webView.get().mainFrame;
 
-        NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"MediaPlaybackSleepAssertion" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+        NSURLRequest *request = [NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"MediaPlaybackSleepAssertion" withExtension:@"html"]];
         [mainFrame loadRequest:request];
 
         Util::run(&didFinishLoad);

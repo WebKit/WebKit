@@ -29,10 +29,12 @@
 
 #import "ControlMac.h"
 #import "MeterPart.h"
+#import <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class MeterMac final : public ControlMac {
+    WTF_MAKE_TZONE_ALLOCATED(MeterMac);
 public:
     MeterMac(MeterPart& owningMeterPart, ControlFactoryMac&, NSLevelIndicatorCell*);
 

@@ -52,8 +52,8 @@ public:
     WARN_UNUSED_RETURN bool configure(const GPUCanvasConfiguration&, GPUIntegerCoordinate, GPUIntegerCoordinate, bool);
     void unconfigure();
 
-    RefPtr<GPUTexture> getCurrentTexture();
-    void present(bool presentBacking = false);
+    RefPtr<GPUTexture> getCurrentTexture(uint32_t);
+    void present(uint32_t frameIndex, bool presentBacking = false);
 
     WebGPU::PresentationContext& backing() { return m_backing; }
     const WebGPU::PresentationContext& backing() const { return m_backing; }

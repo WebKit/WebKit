@@ -136,6 +136,12 @@
         "DeviceDefault": "CL_QUEUE_DEVICE_DEFAULT",
         "PropertiesArray": "CL_QUEUE_PROPERTIES_ARRAY"
     },
+    "ExecutionStatus": {
+        "Complete": "CL_COMPLETE",
+        "Running": "CL_RUNNING",
+        "Submitted": "CL_SUBMITTED",
+        "Queued": "CL_QUEUED"
+    },
     "MemObjectType": {
         "Buffer": "CL_MEM_OBJECT_BUFFER",
         "Image2D": "CL_MEM_OBJECT_IMAGE2D",

@@ -304,7 +304,7 @@ public:
 
     void resolve(typename IDLType::ParameterType value)
     {
-        m_promise->resolve<IDLType>(std::forward<typename IDLType::ParameterType>(value));
+        m_promise->template resolve<IDLType>(std::forward<typename IDLType::ParameterType>(value));
     }
 
     template<typename U>

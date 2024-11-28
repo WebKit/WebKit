@@ -286,8 +286,8 @@ ViewLegacy::ViewLegacy(struct wpe_view_backend* backend, const API::PageConfigur
 
     wpe_view_backend_initialize(m_backend);
 
-    auto& openerInfo = m_pageProxy->configuration().openerInfo();
-    m_pageProxy->initializeWebPage(openerInfo ? openerInfo->site : Site(aboutBlankURL()));
+    auto& pageConfiguration = m_pageProxy->configuration();
+    m_pageProxy->initializeWebPage(pageConfiguration.openedSite(), pageConfiguration.initialSandboxFlags());
 
     viewsVector().append(this);
 }

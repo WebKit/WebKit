@@ -37,19 +37,26 @@
 
 namespace WebCore {
 
-void AudioEncoder::create(const String& codecName, const Config& config, CreateCallback&& callback, DescriptionCallback&& descriptionCallback, OutputCallback&& outputCallback)
+Ref<AudioEncoder::CreatePromise> AudioEncoder::create(const String& codecName, const Config& config, DescriptionCallback&& descriptionCallback, OutputCallback&& outputCallback)
 {
+    CreatePromise::Producer producer;
+    Ref promise = producer.promise();
+    CreateCallback callback = [producer = WTFMove(producer)] (auto&& result) mutable {
+        producer.settle(WTFMove(result));
+    };
+
 #if USE(GSTREAMER)
     GStreamerAudioEncoder::create(codecName, config, WTFMove(callback), WTFMove(descriptionCallback), WTFMove(outputCallback));
-    return;
 #else
     UNUSED_PARAM(codecName);
     UNUSED_PARAM(config);
     UNUSED_PARAM(descriptionCallback);
     UNUSED_PARAM(outputCallback);
-#endif
 
     callback(makeUnexpected("Not supported"_s));
+#endif
+
+    return promise;
 }
 
 } // namespace WebCore

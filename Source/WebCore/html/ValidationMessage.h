@@ -33,19 +33,11 @@
 #include "Timer.h"
 #include <memory>
 #include <wtf/Noncopyable.h>
+#include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/RefPtr.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
-
-namespace WebCore {
-class ValidationMessage;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::ValidationMessage> : std::true_type { };
-}
 
 namespace WebCore {
 
@@ -56,11 +48,11 @@ class ValidationMessageClient;
 
 // FIXME: We should remove the code for !validationMessageClient() when all
 // ports supporting interactive validation switch to ValidationMessageClient.
-class ValidationMessage : public CanMakeWeakPtr<ValidationMessage> {
+class ValidationMessage : public RefCountedAndCanMakeWeakPtr<ValidationMessage> {
     WTF_MAKE_TZONE_ALLOCATED(ValidationMessage);
     WTF_MAKE_NONCOPYABLE(ValidationMessage);
 public:
-    explicit ValidationMessage(HTMLElement&);
+    static Ref<ValidationMessage> create(HTMLElement&);
     ~ValidationMessage();
 
     void updateValidationMessage(HTMLElement&, const String&);
@@ -70,6 +62,8 @@ public:
     void adjustBubblePosition();
 
 private:
+    explicit ValidationMessage(HTMLElement&);
+
     ValidationMessageClient* validationMessageClient() const;
     void setMessage(const String&);
     void setMessageDOMAndStartTimer();

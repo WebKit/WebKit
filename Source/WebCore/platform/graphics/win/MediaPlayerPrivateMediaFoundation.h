@@ -56,11 +56,13 @@ class MediaPlayerPrivateMediaFoundation final
     , public RefCounted<MediaPlayerPrivateMediaFoundation> {
     WTF_MAKE_TZONE_ALLOCATED(MediaPlayerPrivateMediaFoundation);
 public:
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
+
     explicit MediaPlayerPrivateMediaFoundation(MediaPlayer*);
     ~MediaPlayerPrivateMediaFoundation();
 
-    void ref() final { RefCounted::ref(); }
-    void deref() final { RefCounted::deref(); }
+    constexpr MediaPlayerType mediaPlayerType() const final { return MediaPlayerType::MediaFoundation; }
 
     static void registerMediaEngine(MediaEngineRegistrar);
 
@@ -107,8 +109,6 @@ public:
 
     bool didLoadingProgress() const final;
 
-    void setPresentationSize(const IntSize&) final;
-
     void paint(GraphicsContext&, const FloatRect&) final;
 
     DestinationColorSpace colorSpace() final;
@@ -128,7 +128,6 @@ private:
 
     WeakPtr<MediaPlayerPrivateMediaFoundation> m_weakThis;
     ThreadSafeWeakPtr<MediaPlayer> m_player;
-    IntSize m_size;
     bool m_visible;
     bool m_loadingProgress;
     bool m_paused;

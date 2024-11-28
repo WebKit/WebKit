@@ -192,7 +192,7 @@ private:
         PackedRefPtr<ExecutableMemoryHandle> handle;
         bool needsCrossModifyingCodeFence;
     };
-    using CTIStubMap = HashMap<ThunkGenerator, Entry>;
+    using CTIStubMap = UncheckedKeyHashMap<ThunkGenerator, Entry>;
 
     using HostFunctionKey = std::tuple<TaggedNativeFunction, TaggedNativeFunction, ImplementationVisibility, String>;
 

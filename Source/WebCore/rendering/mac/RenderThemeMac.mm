@@ -48,6 +48,7 @@
 #import "LocalFrame.h"
 #import "LocalFrameView.h"
 #import "LocalizedStrings.h"
+#import "Logging.h"
 #import "PaintInfo.h"
 #import "PathUtilities.h"
 #import "RenderAttachment.h"
@@ -81,6 +82,8 @@
 #if ENABLE(SERVICE_CONTROLS)
 #include "ImageControlsMac.h"
 #endif
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 @interface WebCoreRenderThemeNotificationObserver : NSObject
 @end
@@ -480,12 +483,16 @@ Color RenderThemeMac::systemColor(CSSValueID cssValueID, OptionSet<StyleColorOpt
     auto color = [this, cssValueID, options, useDarkAppearance]() -> Color {
         LocalDefaultSystemAppearance localAppearance(useDarkAppearance);
 
-        auto selectCocoaColor = [cssValueID] () -> SEL {
+        auto selectCocoaColor = [cssValueID, useDarkAppearance] () -> SEL {
             switch (cssValueID) {
             case CSSValueActivecaption:
                 return @selector(windowFrameTextColor);
             case CSSValueAppworkspace:
                 return @selector(headerColor);
+            case CSSValueButtonface:
+            case CSSValueThreedface:
+                // Fallback to hardcoded color below in light mode.
+                return useDarkAppearance ? @selector(controlColor) : nullptr;
             case CSSValueButtonhighlight:
                 return @selector(controlHighlightColor);
             case CSSValueButtonshadow:
@@ -614,8 +621,10 @@ Color RenderThemeMac::systemColor(CSSValueID cssValueID, OptionSet<StyleColorOpt
 
         case CSSValueButtonface:
         case CSSValueThreedface:
+            // Dark mode uses [NSColor controlColor].
             // We selected this value instead of [NSColor controlColor] to avoid website incompatibilities.
             // We may want to consider changing to [NSColor controlColor] some day.
+            ASSERT(!localAppearance.usingDarkAppearance());
             return Color::lightGray;
 
         case CSSValueInfobackground:
@@ -685,7 +694,7 @@ bool RenderThemeMac::usesTestModeFocusRingColor() const
 
 bool RenderThemeMac::searchFieldShouldAppearAsTextField(const RenderStyle& style) const
 {
-    return !style.isHorizontalWritingMode();
+    return !style.writingMode().isHorizontal();
 }
 
 bool RenderThemeMac::isControlStyled(const RenderStyle& style, const RenderStyle& userAgentStyle) const
@@ -699,7 +708,7 @@ bool RenderThemeMac::isControlStyled(const RenderStyle& style, const RenderStyle
     // adjustment time so that will just have to stay broken.  We can however detect that we're zooming.  If zooming
     // is in effect we treat it like the control is styled. Additionally, treat the control like it is styled when
     // using a vertical writing mode, since the AppKit control is not height resizable.
-    if (appearance == StyleAppearance::Menulist && (style.usedZoom() != 1.0f || !style.isHorizontalWritingMode()))
+    if (appearance == StyleAppearance::Menulist && (style.usedZoom() != 1.0f || !style.writingMode().isHorizontal()))
         return true;
 
     return RenderTheme::isControlStyled(style, userAgentStyle);
@@ -790,7 +799,7 @@ void RenderThemeMac::inflateRectForControlRenderer(const RenderObject& renderer,
     case StyleAppearance::PushButton:
     case StyleAppearance::Radio:
     case StyleAppearance::Switch:
-        ThemeMac::inflateControlPaintRect(renderer.style().usedAppearance(), rect, renderer.style().usedZoom(), !renderer.style().isHorizontalWritingMode());
+        ThemeMac::inflateControlPaintRect(renderer.style().usedAppearance(), rect, renderer.style().usedZoom(), !renderer.writingMode().isHorizontal());
         break;
     case StyleAppearance::Menulist: {
         auto zoomLevel = renderer.style().usedZoom();
@@ -989,7 +998,7 @@ void RenderThemeMac::adjustMenuListStyle(RenderStyle& style, const Element* e) c
 LengthBox RenderThemeMac::popupInternalPaddingBox(const RenderStyle& style) const
 {
     if (style.usedAppearance() == StyleAppearance::Menulist) {
-        const int* padding = popupButtonPadding(controlSizeForFont(style), style.direction() == TextDirection::RTL);
+        const int* padding = popupButtonPadding(controlSizeForFont(style), style.writingMode().isBidiRTL());
         return { static_cast<int>(padding[topPadding] * style.usedZoom()),
             static_cast<int>(padding[rightPadding] * style.usedZoom()),
             static_cast<int>(padding[bottomPadding] * style.usedZoom()),
@@ -1000,7 +1009,7 @@ LengthBox RenderThemeMac::popupInternalPaddingBox(const RenderStyle& style) cons
         float arrowWidth = baseArrowWidth * (style.computedFontSize() / baseFontSize);
         float rightPadding = ceilf(arrowWidth + (arrowPaddingBefore + arrowPaddingAfter + paddingBeforeSeparator) * style.usedZoom());
         float leftPadding = styledPopupPaddingLeft * style.usedZoom();
-        if (style.direction() == TextDirection::RTL)
+        if (style.writingMode().isBidiRTL())
             std::swap(rightPadding, leftPadding);
         return { static_cast<int>(styledPopupPaddingTop * style.usedZoom()),
             static_cast<int>(rightPadding),
@@ -1138,7 +1147,7 @@ void RenderThemeMac::adjustSearchFieldDecorationPartStyle(RenderStyle& style, co
     IntSize size = sizeForSystemFont(style, resultsButtonSizes());
     int widthOffset = 0;
     int heightOffset = 0;
-    if (style.isHorizontalWritingMode())
+    if (style.writingMode().isHorizontal())
         widthOffset = emptyResultsOffset;
     else
         heightOffset = emptyResultsOffset;
@@ -1226,13 +1235,19 @@ LayoutSize RenderThemeMac::attachmentIntrinsicSize(const RenderAttachment& attac
 
 static RefPtr<Icon> iconForAttachment(const String& fileName, const String& attachmentType, const String& title)
 {
+// FIXME: Remove after rdar://136373445 is fixed.
+#define LOG_ATTACHMENT(fmt, ...) RELEASE_LOG(Editing, "iconForAttachment(type='%s') " fmt, attachmentType.utf8().data(), ##__VA_ARGS__);
+
     if (!attachmentType.isEmpty() && !equalLettersIgnoringASCIICase(attachmentType, "public.data"_s)) {
         if (equalLettersIgnoringASCIICase(attachmentType, "public.directory"_s) || equalLettersIgnoringASCIICase(attachmentType, "multipart/x-folder"_s) || equalLettersIgnoringASCIICase(attachmentType, "application/vnd.apple.folder"_s)) {
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
             auto type = kUTTypeFolder;
 ALLOW_DEPRECATED_DECLARATIONS_END
-            if (auto icon = Icon::createIconForUTI(type))
+            if (auto icon = Icon::createIconForUTI(type)) {
+                LOG_ATTACHMENT("-> Got icon for kUTTypeFolder");
                 return icon;
+            }
+            LOG_ATTACHMENT("-> No icon for kUTTypeFolder! Will fallback to filename or title...");
         } else {
             String type;
             if (isDeclaredUTI(attachmentType))
@@ -1240,23 +1255,34 @@ ALLOW_DEPRECATED_DECLARATIONS_END
             else
                 type = UTIFromMIMEType(attachmentType);
 
-            if (auto icon = Icon::createIconForUTI(type))
+            if (auto icon = Icon::createIconForUTI(type)) {
+                LOG_ATTACHMENT("-> Got icon for %s '%s'", type == attachmentType ? "declared UTI" : "UTI-from-MIMEtype", type.utf8().data());
                 return icon;
+            }
+            LOG_ATTACHMENT("-> No icon for %s '%s'! Will fallback to filename or title...", type == attachmentType ? "declared UTI" : "UTI-from-MIMEtype", type.utf8().data());
         }
     }
 
     if (!fileName.isEmpty()) {
-        if (auto icon = Icon::createIconForFiles({ fileName }))
+        if (auto icon = Icon::createIconForFiles({ fileName })) {
+            LOG_ATTACHMENT("-> Got icon for filename");
             return icon;
+        }
+        LOG_ATTACHMENT("-> No icon for filename! Will fallback to title...");
     }
 
     NSString *cocoaTitle = title;
     if (auto fileExtension = cocoaTitle.pathExtension; fileExtension.length) {
-        if (auto icon = Icon::createIconForFileExtension(fileExtension))
+        if (auto icon = Icon::createIconForFileExtension(fileExtension)) {
+            LOG_ATTACHMENT("-> Got icon for title file extension '%s'", String(fileExtension).utf8().data());
             return icon;
-    }
+        }
+        LOG_ATTACHMENT("-> No icon for title file extension '%s'! Will fallback to public.data icon", String(fileExtension).utf8().data());
+    } else
+        LOG_ATTACHMENT("-> No file extension in title! Will fallback to public.data icon");
 
     return Icon::createIconForUTI("public.data"_s);
+#undef LOG_ATTACHMENT
 }
 
 RetainPtr<NSImage> RenderThemeMac::iconForAttachment(const String& fileName, const String& attachmentType, const String& title)
@@ -1499,5 +1525,7 @@ bool RenderThemeMac::paintAttachment(const RenderObject& renderer, const PaintIn
 #endif // ENABLE(ATTACHMENT_ELEMENT)
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // PLATFORM(MAC)

@@ -25,6 +25,10 @@
 
 #pragma once
 
+#include <wtf/Compiler.h>
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WTF {
 
 #if CPU(NEEDS_ALIGNED_ACCESS)
@@ -194,3 +198,5 @@ ALWAYS_INLINE static bool compareCharacters(const CharacterType* source, char c0
 } // namespace WTF
 
 using WTF::compareCharacters;
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

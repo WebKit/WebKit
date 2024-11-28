@@ -39,8 +39,7 @@ constexpr auto CaptivePortalConfigurationIgnoreFileName = @"com.apple.WebKit.cpm
 
 + (BOOL)isCaptivePortalModeEnabled
 {
-    auto key = adoptCF(CFStringCreateWithCStringNoCopy(kCFAllocatorDefault, WKLockdownModeEnabledKey.characters(), kCFStringEncodingUTF8, kCFAllocatorNull));
-    auto preferenceValue = adoptCF(CFPreferencesCopyValue(key.get(), kCFPreferencesAnyApplication, kCFPreferencesCurrentUser, kCFPreferencesAnyHost));
+    auto preferenceValue = adoptCF(CFPreferencesCopyValue(WKLockdownModeEnabledKeyCFString, kCFPreferencesAnyApplication, kCFPreferencesCurrentUser, kCFPreferencesAnyHost));
     if (preferenceValue.get() == kCFBooleanTrue)
         return true;
 
@@ -54,8 +53,7 @@ constexpr auto CaptivePortalConfigurationIgnoreFileName = @"com.apple.WebKit.cpm
 
 + (void)setCaptivePortalModeEnabled:(BOOL)enabled
 {
-    auto key = adoptCF(CFStringCreateWithCStringNoCopy(kCFAllocatorDefault, WKLockdownModeEnabledKey.characters(), kCFStringEncodingUTF8, kCFAllocatorNull));
-    CFPreferencesSetValue(key.get(), enabled ? kCFBooleanTrue : kCFBooleanFalse, kCFPreferencesAnyApplication, kCFPreferencesCurrentUser, kCFPreferencesAnyHost);
+    CFPreferencesSetValue(WKLockdownModeEnabledKeyCFString, enabled ? kCFBooleanTrue : kCFBooleanFalse, kCFPreferencesAnyApplication, kCFPreferencesCurrentUser, kCFPreferencesAnyHost);
     CFPreferencesSynchronize(kCFPreferencesAnyApplication, kCFPreferencesCurrentUser, kCFPreferencesAnyHost);
     CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(), (__bridge CFStringRef)WKLockdownModeContainerConfigurationChangedNotification, nullptr, nullptr, true);
 }

@@ -82,19 +82,19 @@ private:
     template<typename T>
     WARN_UNUSED_RETURN IPC::Error send(T&& message)
     {
-        return root().streamClientConnection().send(WTFMove(message), backing());
+        return root().protectedStreamClientConnection()->send(WTFMove(message), backing());
     }
     template<typename T>
     WARN_UNUSED_RETURN IPC::Connection::SendSyncResult<T> sendSync(T&& message)
     {
-        return root().streamClientConnection().sendSync(WTFMove(message), backing());
+        return root().protectedStreamClientConnection()->sendSync(WTFMove(message), backing());
     }
 
 #if PLATFORM(COCOA)
     Vector<MachSendRight> recreateRenderBuffers(int width, int height, WebCore::DestinationColorSpace&&, WebCore::AlphaPremultiplication, WebCore::WebGPU::TextureFormat, WebCore::WebGPU::Device&) override;
 #endif
 
-    void prepareForDisplay(CompletionHandler<void()>&&) override;
+    void prepareForDisplay(uint32_t frameIndex, CompletionHandler<void()>&&) override;
 
     WebGPUIdentifier m_backing;
     Ref<ConvertToBackingContext> m_convertToBackingContext;

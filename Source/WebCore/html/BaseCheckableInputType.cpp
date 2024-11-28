@@ -39,8 +39,11 @@
 #include "HTMLNames.h"
 #include "KeyboardEvent.h"
 #include <wtf/NeverDestroyed.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(BaseCheckableInputType);
 
 using namespace HTMLNames;
 

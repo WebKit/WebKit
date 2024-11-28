@@ -46,6 +46,11 @@ namespace WebCore {
 
 class Document;
 
+namespace LayoutIntegration {
+enum class LogicalWidthType : uint8_t;
+enum class LogicalHeightType : uint8_t;
+}
+
 namespace Layout {
 
 class BlockFormattingState;
@@ -63,9 +68,10 @@ public:
     enum class Type { Primary, Secondary };
 
     using FormattingContextLayoutFunction = Function<void(const ElementBox&, std::optional<LayoutUnit>, LayoutState&)>;
-    using FormattingContextPreferredWidthsFunction = Function<std::pair<LayoutUnit, LayoutUnit>(const ElementBox&)>;
+    using FormattingContextLogicalWidthFunction = Function<LayoutUnit(const ElementBox&, LayoutIntegration::LogicalWidthType)>;
+    using FormattingContextLogicalHeightFunction = Function<LayoutUnit(const ElementBox&, LayoutIntegration::LogicalHeightType)>;
 
-    LayoutState(const Document&, const ElementBox& rootContainer, Type, FormattingContextLayoutFunction&&, FormattingContextPreferredWidthsFunction&&);
+    LayoutState(const Document&, const ElementBox& rootContainer, Type, FormattingContextLayoutFunction&&, FormattingContextLogicalWidthFunction&&, FormattingContextLogicalHeightFunction&&);
     ~LayoutState();
 
     Type type() const { return m_type; }
@@ -107,7 +113,8 @@ public:
     const ElementBox& root() const { return m_rootContainer; }
 
     void layoutWithFormattingContextForBox(const ElementBox&, std::optional<LayoutUnit> widthConstraint) const;
-    std::pair<LayoutUnit, LayoutUnit> preferredWidthWithFormattingContextForBox(const ElementBox&) const;
+    LayoutUnit logicalWidthWithFormattingContextForBox(const ElementBox&, LayoutIntegration::LogicalWidthType) const;
+    LayoutUnit logicalHeightWithFormattingContextForBox(const ElementBox&, LayoutIntegration::LogicalHeightType) const;
 
 private:
     void setQuirksMode(QuirksMode quirksMode) { m_quirksMode = quirksMode; }
@@ -115,22 +122,23 @@ private:
 
     const Type m_type;
 
-    HashMap<const ElementBox*, std::unique_ptr<InlineContentCache>> m_inlineContentCaches;
+    UncheckedKeyHashMap<const ElementBox*, std::unique_ptr<InlineContentCache>> m_inlineContentCaches;
 
-    HashMap<const ElementBox*, std::unique_ptr<BlockFormattingState>> m_blockFormattingStates;
-    HashMap<const ElementBox*, std::unique_ptr<TableFormattingState>> m_tableFormattingStates;
+    UncheckedKeyHashMap<const ElementBox*, std::unique_ptr<BlockFormattingState>> m_blockFormattingStates;
+    UncheckedKeyHashMap<const ElementBox*, std::unique_ptr<TableFormattingState>> m_tableFormattingStates;
 
 #ifndef NDEBUG
     HashSet<const FormattingContext*> m_formattingContextList;
 #endif
-    HashMap<const Box*, std::unique_ptr<BoxGeometry>> m_layoutBoxToBoxGeometry;
+    UncheckedKeyHashMap<const Box*, std::unique_ptr<BoxGeometry>> m_layoutBoxToBoxGeometry;
     QuirksMode m_quirksMode { QuirksMode::No };
 
     CheckedRef<const ElementBox> m_rootContainer;
     Ref<SecurityOrigin> m_securityOrigin;
 
     FormattingContextLayoutFunction m_formattingContextLayoutFunction;
-    FormattingContextPreferredWidthsFunction m_formattingContextPreferredWidthsFunction;
+    FormattingContextLogicalWidthFunction m_formattingContextLogicalWidthFunction;
+    FormattingContextLogicalHeightFunction m_formattingContextLogicalHeightFunction;
 };
 
 inline bool LayoutState::hasBoxGeometry(const Box& layoutBox) const

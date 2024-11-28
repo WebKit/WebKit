@@ -40,7 +40,7 @@ struct WebsitePoliciesData;
     
 class WebLocalFrameLoaderClient final : public WebCore::LocalFrameLoaderClient, public WebFrameLoaderClient {
 public:
-    explicit WebLocalFrameLoaderClient(WebCore::LocalFrame&, Ref<WebFrame>&&, ScopeExit<Function<void()>>&&);
+    WebLocalFrameLoaderClient(WebCore::LocalFrame&, WebCore::FrameLoader&, Ref<WebFrame>&&, ScopeExit<Function<void()>>&&);
     ~WebLocalFrameLoaderClient();
 
     bool frameHasCustomContentProvider() const { return m_frameHasCustomContentProvider; }
@@ -78,7 +78,7 @@ private:
     void detachedFromParent2() final;
     void detachedFromParent3() final;
     
-    void assignIdentifierToInitialRequest(WebCore::ResourceLoaderIdentifier, WebCore::DocumentLoader*, const WebCore::ResourceRequest&) final;
+    void assignIdentifierToInitialRequest(WebCore::ResourceLoaderIdentifier, WebCore::IsMainResourceLoad, WebCore::DocumentLoader*, const WebCore::ResourceRequest&) final;
     
     void dispatchWillSendRequest(WebCore::DocumentLoader*, WebCore::ResourceLoaderIdentifier, WebCore::ResourceRequest&, const WebCore::ResourceResponse& redirectResponse) final;
     bool shouldUseCredentialStorage(WebCore::DocumentLoader*, WebCore::ResourceLoaderIdentifier) final;
@@ -91,8 +91,8 @@ private:
 #endif
     void dispatchDidReceiveResponse(WebCore::DocumentLoader*, WebCore::ResourceLoaderIdentifier, const WebCore::ResourceResponse&) final;
     void dispatchDidReceiveContentLength(WebCore::DocumentLoader*, WebCore::ResourceLoaderIdentifier, int dataLength) final;
-    void dispatchDidFinishLoading(WebCore::DocumentLoader*, WebCore::ResourceLoaderIdentifier) final;
-    void dispatchDidFailLoading(WebCore::DocumentLoader*, WebCore::ResourceLoaderIdentifier, const WebCore::ResourceError&) final;
+    void dispatchDidFinishLoading(WebCore::DocumentLoader*, WebCore::IsMainResourceLoad, WebCore::ResourceLoaderIdentifier) final;
+    void dispatchDidFailLoading(WebCore::DocumentLoader*, WebCore::IsMainResourceLoad, WebCore::ResourceLoaderIdentifier, const WebCore::ResourceError&) final;
     bool dispatchDidLoadResourceFromMemoryCache(WebCore::DocumentLoader*, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&, int length) final;
 #if ENABLE(DATA_DETECTION)
     void dispatchDidFinishDataDetection(NSArray *detectionResults) final;
@@ -106,10 +106,11 @@ private:
     void dispatchDidCancelClientRedirect() final;
     void dispatchWillPerformClientRedirect(const URL&, double interval, WallTime fireDate, WebCore::LockBackForwardList) final;
     void dispatchDidChangeLocationWithinPage() final;
+    void dispatchDidNavigateWithinPage() final;
     void dispatchDidPushStateWithinPage() final;
     void dispatchDidReplaceStateWithinPage() final;
     void dispatchDidPopStateWithinPage() final;
-    void didSameDocumentNavigationForFrameViaJSHistoryAPI(SameDocumentNavigationType);
+    void didSameDocumentNavigationForFrameViaJS(SameDocumentNavigationType);
     void dispatchWillClose() final;
     void dispatchDidStartProvisionalLoad() final;
     void dispatchDidReceiveTitle(const WebCore::StringWithDirection&) final;
@@ -130,6 +131,8 @@ private:
     void dispatchDecidePolicyForResponse(const WebCore::ResourceResponse&, const WebCore::ResourceRequest&, const String&, WebCore::FramePolicyFunction&&) final;
     void dispatchDecidePolicyForNewWindowAction(const WebCore::NavigationAction&, const WebCore::ResourceRequest&, WebCore::FormState*, const String& frameName, std::optional<WebCore::HitTestResult>&&, WebCore::FramePolicyFunction&&) final;
     void dispatchDecidePolicyForNavigationAction(const WebCore::NavigationAction&, const WebCore::ResourceRequest&, const WebCore::ResourceResponse& redirectResponse, WebCore::FormState*, const String& clientRedirectSourceForHistory, std::optional<WebCore::NavigationIdentifier>, std::optional<WebCore::HitTestResult>&&, bool hasOpener, WebCore::IsPerformingHTTPFallback, WebCore::SandboxFlags, WebCore::PolicyDecisionMode, WebCore::FramePolicyFunction&&) final;
+    void updateSandboxFlags(WebCore::SandboxFlags) final;
+    void updateOpener(const WebCore::Frame&) final;
     void cancelPolicyCheck() final;
     
     void dispatchUnableToImplementPolicy(const WebCore::ResourceError&) final;
@@ -142,7 +145,7 @@ private:
     
     void setMainFrameDocumentReady(bool) final;
     
-    void startDownload(const WebCore::ResourceRequest&, const String& suggestedName = String()) final;
+    void startDownload(const WebCore::ResourceRequest&, const String& suggestedName = String(), WebCore::FromDownloadAttribute = WebCore::FromDownloadAttribute::No) final;
     
     void willChangeTitle(WebCore::DocumentLoader*) final;
     void didChangeTitle(WebCore::DocumentLoader*) final;
@@ -273,13 +276,13 @@ private:
 
     inline bool hasPlugInView() const;
 
-    void broadcastMainFrameURLChangeToOtherProcesses(const URL&) final;
-
     void documentLoaderDetached(WebCore::NavigationIdentifier, WebCore::LoadWillContinueInAnotherProcess) final;
 
 #if ENABLE(WINDOW_PROXY_PROPERTY_ACCESS_NOTIFICATION)
     void didAccessWindowProxyPropertyViaOpener(WebCore::SecurityOriginData&&, WebCore::WindowProxyProperty) final;
 #endif
+
+    bool siteIsolationEnabled() const;
 
 #if ENABLE(PDF_PLUGIN)
     RefPtr<PluginView> m_pluginView;

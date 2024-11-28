@@ -108,6 +108,11 @@ public:
     static bool isAccessibilityIsolatedTreeEnabled() { return shared().m_accessibilityIsolatedTree; }
 #endif
 
+#if ENABLE(AX_THREAD_TEXT_APIS)
+    static void setAccessibilityThreadTextApisEnabled(bool isEnabled) { shared().m_accessibilityThreadTextApis = isEnabled; }
+    static bool accessibilityThreadTextApisEnabled() { return shared().m_accessibilityThreadTextApis; }
+#endif
+
     static void setArePDFImagesEnabled(bool isEnabled) { shared().m_arePDFImagesEnabled = isEnabled; }
     static bool arePDFImagesEnabled() { return shared().m_arePDFImagesEnabled; }
 
@@ -124,11 +129,6 @@ public:
 #if ENABLE(OPUS)
     WEBCORE_EXPORT static void setOpusDecoderEnabled(bool);
     static bool opusDecoderEnabled() { return shared().m_opusDecoderEnabled; }
-#endif
-
-#if ENABLE(MEDIA_SOURCE) && (HAVE(AVSAMPLEBUFFERVIDEOOUTPUT) || USE(GSTREAMER))
-    WEBCORE_EXPORT static void setMediaSourceInlinePaintingEnabled(bool);
-    static bool mediaSourceInlinePaintingEnabled() { return shared().m_mediaSourceInlinePaintingEnabled; }
 #endif
 
 #if ENABLE(WEB_PUSH_NOTIFICATIONS)
@@ -186,6 +186,10 @@ private:
     bool m_accessibilityIsolatedTree { false };
 #endif
 
+#if ENABLE(AX_THREAD_TEXT_APIS)
+    bool m_accessibilityThreadTextApis { false };
+#endif
+
     bool m_arePDFImagesEnabled { true };
 
 #if ENABLE(MEDIA_SOURCE)
@@ -198,10 +202,6 @@ private:
 
 #if ENABLE(OPUS)
     bool m_opusDecoderEnabled { false };
-#endif
-
-#if ENABLE(MEDIA_SOURCE) && (HAVE(AVSAMPLEBUFFERVIDEOOUTPUT) || USE(GSTREAMER))
-    bool m_mediaSourceInlinePaintingEnabled { false };
 #endif
 
 #if ENABLE(WEB_PUSH_NOTIFICATIONS)

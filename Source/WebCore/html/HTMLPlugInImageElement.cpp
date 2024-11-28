@@ -218,7 +218,7 @@ void HTMLPlugInImageElement::updateAfterStyleResolution()
     if (renderer() && !useFallbackContent()) {
         if (isImageType()) {
             if (!m_imageLoader)
-                m_imageLoader = makeUnique<HTMLImageLoader>(*this);
+                m_imageLoader = makeUniqueWithoutRefCountedCheck<HTMLImageLoader>(*this);
             if (m_needsImageReload)
                 m_imageLoader->updateFromElementIgnoringPreviousError();
             else
@@ -313,7 +313,7 @@ bool HTMLPlugInImageElement::requestObject(const String& relativeURL, const Stri
         return false;
 
     if (!canLoadPlugInContent(relativeURL, mimeType)) {
-        renderEmbeddedObject()->setPluginUnavailabilityReason(RenderEmbeddedObject::PluginBlockedByContentSecurityPolicy);
+        renderEmbeddedObject()->setPluginUnavailabilityReason(PluginUnavailabilityReason::PluginBlockedByContentSecurityPolicy);
         return false;
     }
 
@@ -330,7 +330,7 @@ bool HTMLPlugInImageElement::requestObject(const String& relativeURL, const Stri
         RefPtr frame = this->document().frame();
         if (!frame)
             return;
-        frame->checkedLoader()->subframeLoader().requestObject(*this, relativeURL, nameAttribute, mimeType, paramNames, paramValues);
+        frame->protectedLoader()->subframeLoader().requestObject(*this, relativeURL, nameAttribute, mimeType, paramNames, paramValues);
     });
     return true;
 }

@@ -29,6 +29,7 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "RemoteGPUProxy.h"
+#include "RemoteTextureProxy.h"
 #include "RemoteXRSubImageMessages.h"
 #include "WebGPUConvertToBackingContext.h"
 #include <WebCore/ImageBuffer.h>
@@ -36,10 +37,12 @@
 
 namespace WebKit::WebGPU {
 
-RemoteXRSubImageProxy::RemoteXRSubImageProxy(RemoteGPUProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier)
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteXRSubImageProxy);
+
+RemoteXRSubImageProxy::RemoteXRSubImageProxy(Ref<RemoteGPUProxy>&& parent, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier)
     : m_backing(identifier)
     , m_convertToBackingContext(convertToBackingContext)
-    , m_parent(parent)
+    , m_parent(WTFMove(parent))
 {
 }
 
@@ -48,6 +51,40 @@ RemoteXRSubImageProxy::~RemoteXRSubImageProxy()
     auto sendResult = send(Messages::RemoteXRSubImage::Destruct());
     UNUSED_VARIABLE(sendResult);
 }
+
+RefPtr<WebCore::WebGPU::Texture> RemoteXRSubImageProxy::colorTexture()
+{
+    if (m_currentTexture)
+        return m_currentTexture;
+
+    auto identifier = WebGPUIdentifier::generate();
+    auto sendResult = send(Messages::RemoteXRSubImage::GetColorTexture(identifier));
+    if (sendResult != IPC::Error::NoError)
+        return nullptr;
+
+    m_currentTexture = RemoteTextureProxy::create(protectedRoot(), m_convertToBackingContext, identifier);
+    return m_currentTexture;
+}
+
+RefPtr<WebCore::WebGPU::Texture> RemoteXRSubImageProxy::depthStencilTexture()
+{
+    if (m_currentDepthTexture)
+        return m_currentDepthTexture;
+
+    auto identifier = WebGPUIdentifier::generate();
+    auto sendResult = send(Messages::RemoteXRSubImage::GetDepthTexture(identifier));
+    if (sendResult != IPC::Error::NoError)
+        return nullptr;
+
+    m_currentDepthTexture = RemoteTextureProxy::create(protectedRoot(), m_convertToBackingContext, identifier);
+    return m_currentDepthTexture;
+}
+
+RefPtr<WebCore::WebGPU::Texture> RemoteXRSubImageProxy::motionVectorTexture()
+{
+    return nullptr;
+}
+
 
 } // namespace WebKit::WebGPU
 

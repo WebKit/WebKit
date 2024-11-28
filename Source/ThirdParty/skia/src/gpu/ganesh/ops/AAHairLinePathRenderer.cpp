@@ -15,13 +15,13 @@
 #include "include/core/SkScalar.h"
 #include "include/core/SkString.h"
 #include "include/core/SkStrokeRec.h"
-#include "include/gpu/GrRecordingContext.h"
-#include "include/gpu/GrTypes.h"
+#include "include/gpu/ganesh/GrRecordingContext.h"
 #include "include/private/SkColorData.h"
 #include "include/private/base/SkAlignedStorage.h"
 #include "include/private/base/SkAssert.h"
 #include "include/private/base/SkDebug.h"
 #include "include/private/base/SkFloatingPoint.h"
+#include "include/private/base/SkMacros.h"
 #include "include/private/base/SkMath.h"
 #include "include/private/base/SkOnce.h"
 #include "include/private/base/SkPoint_impl.h"
@@ -975,7 +975,7 @@ private:
         return CombineResult::kMerged;
     }
 
-#if defined(GR_TEST_UTILS)
+#if defined(GPU_TEST_UTILS)
     SkString onDumpInfo() const override {
         return SkStringPrintf("Color: 0x%08x Coverage: 0x%02x, Count: %d\n%s",
                               fColor.toBytes_RGBA(), fCoverage, fPaths.size(),
@@ -1006,7 +1006,7 @@ private:
     using INHERITED = GrMeshDrawOp;
 };
 
-GR_MAKE_BITFIELD_CLASS_OPS(AAHairlineOp::Program)
+SK_MAKE_BITFIELD_CLASS_OPS(AAHairlineOp::Program)
 
 void AAHairlineOp::makeLineProgramInfo(const GrCaps& caps, SkArenaAlloc* arena,
                                        const GrPipeline* pipeline,
@@ -1336,7 +1336,7 @@ void AAHairlineOp::onExecute(GrOpFlushState* flushState, const SkRect& chainBoun
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-#if defined(GR_TEST_UTILS)
+#if defined(GPU_TEST_UTILS)
 
 GR_DRAW_OP_TEST_DEFINE(AAHairlineOp) {
     SkMatrix viewMatrix = GrTest::TestMatrix(random);

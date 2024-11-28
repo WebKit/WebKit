@@ -252,6 +252,10 @@ namespace WebCore {
     macro(GamepadButton) \
     macro(GamepadEvent) \
     macro(GamepadHapticActuator) \
+    macro(Geolocation) \
+    macro(GeolocationCoordinates) \
+    macro(GeolocationPosition) \
+    macro(GeolocationPositionError) \
     macro(HighlightRegistry) \
     macro(Highlight) \
     macro(HTMLAttachmentElement) \
@@ -455,6 +459,7 @@ namespace WebCore {
     macro(TrustedTypePolicy) \
     macro(TrustedTypePolicyFactory) \
     macro(TrustedTypePolicyOptions) \
+    macro(URLPattern) \
     macro(UndoItem) \
     macro(UndoManager) \
     macro(VideoDecoder) \

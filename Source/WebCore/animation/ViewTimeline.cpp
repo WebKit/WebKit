@@ -26,13 +26,24 @@
 #include "config.h"
 #include "ViewTimeline.h"
 
+#include "AnimationTimelinesController.h"
 #include "CSSNumericFactory.h"
+#include "CSSParserTokenRange.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSPrimitiveValueMappings.h"
+#include "CSSPropertyParserConsumer+Timeline.h"
+#include "CSSTokenizer.h"
 #include "CSSUnits.h"
+#include "CSSValueList.h"
 #include "CSSValuePool.h"
 #include "CSSViewValue.h"
+#include "Document.h"
 #include "Element.h"
+#include "LegacyRenderSVGModelObject.h"
+#include "RenderBox.h"
+#include "RenderInline.h"
+#include "RenderSVGModelObject.h"
+#include "ScrollAnchoringController.h"
 #include "StyleBuilderConverter.h"
 
 namespace WebCore {
@@ -47,7 +58,7 @@ Ref<ViewTimeline> ViewTimeline::create(const AtomString& name, ScrollAxis axis, 
     return adoptRef(*new ViewTimeline(name, axis, WTFMove(insets)));
 }
 
-Ref<ViewTimeline> ViewTimeline::createFromCSSValue(Style::BuilderState& builderState, const CSSViewValue& cssViewValue)
+Ref<ViewTimeline> ViewTimeline::createFromCSSValue(const Style::BuilderState& builderState, const CSSViewValue& cssViewValue)
 {
     auto axisValue = cssViewValue.axis();
     auto axis = axisValue ? fromCSSValueID<ScrollAxis>(axisValue->valueID()) : ScrollAxis::Block;
@@ -69,21 +80,86 @@ Ref<ViewTimeline> ViewTimeline::createFromCSSValue(Style::BuilderState& builderS
     return adoptRef(*new ViewTimeline(nullAtom(), axis, { startInset, endInset }));
 }
 
-// FIXME: compute offset values from options.
+static std::optional<Length> lengthForInset(std::variant<RefPtr<CSSNumericValue>, RefPtr<CSSKeywordValue>> inset)
+{
+    // TODO: Need to test this
+    if (auto* numericInset = std::get_if<RefPtr<CSSNumericValue>>(&inset)) {
+        if (RefPtr insetValue = dynamicDowncast<CSSUnitValue>(*numericInset)) {
+            if (auto length = insetValue->convertTo(CSSUnitType::CSS_PX))
+                return Length(length->value(), LengthType::Fixed);
+            return { };
+        }
+    }
+    ASSERT(std::holds_alternative<RefPtr<CSSKeywordValue>>(inset));
+    return { };
+}
+
+static ViewTimelineInsets insetsFromOptions(const std::variant<String, Vector<std::variant<RefPtr<CSSNumericValue>, RefPtr<CSSKeywordValue>>>> inset, RefPtr<Element> element)
+{
+    if (auto* insetString = std::get_if<String>(&inset)) {
+        if (insetString->isEmpty())
+            return { };
+        CSSTokenizer tokenizer(*insetString);
+        auto tokenRange = tokenizer.tokenRange();
+        tokenRange.consumeWhitespace();
+        auto consumedInset = CSSPropertyParserHelpers::consumeViewTimelineInsetListItem(tokenRange, element->protectedDocument()->cssParserContext());
+        if (auto insetPair = dynamicDowncast<CSSValuePair>(consumedInset)) {
+            return {
+                SingleTimelineRange::lengthForCSSValue(dynamicDowncast<CSSPrimitiveValue>(insetPair->protectedFirst()), element),
+                SingleTimelineRange::lengthForCSSValue(dynamicDowncast<CSSPrimitiveValue>(insetPair->protectedSecond()), element)
+            };
+        }
+        return {
+            SingleTimelineRange::lengthForCSSValue(dynamicDowncast<CSSPrimitiveValue>(consumedInset), element),
+            std::nullopt
+        };
+    }
+    auto insetList = std::get<Vector<std::variant<RefPtr<CSSNumericValue>, RefPtr<CSSKeywordValue>>>>(inset);
+
+    if (!insetList.size())
+        return { };
+    if (insetList.size() == 2)
+        return { lengthForInset(insetList.at(0)), lengthForInset(insetList.at(1)) };
+    return { lengthForInset(insetList.at(0)), std::nullopt };
+}
+
 ViewTimeline::ViewTimeline(ViewTimelineOptions&& options)
     : ScrollTimeline(nullAtom(), options.axis)
     , m_subject(WTFMove(options.subject))
-    , m_startOffset(CSSNumericFactory::px(0))
-    , m_endOffset(CSSNumericFactory::px(0))
 {
+    if (m_subject) {
+        auto document = m_subject->protectedDocument();
+        document->ensureTimelinesController().addTimeline(*this);
+        m_insets = insetsFromOptions(options.inset, RefPtr { m_subject.get() });
+        cacheCurrentTime();
+    }
 }
 
 ViewTimeline::ViewTimeline(const AtomString& name, ScrollAxis axis, ViewTimelineInsets&& insets)
     : ScrollTimeline(name, axis)
-    , m_startOffset(CSSNumericFactory::px(0))
-    , m_endOffset(CSSNumericFactory::px(0))
     , m_insets(WTFMove(insets))
 {
+}
+
+void ViewTimeline::setSubject(const Element* subject)
+{
+    if (subject == m_subject)
+        return;
+
+    RefPtr previousSubject = m_subject.get();
+    m_subject = subject;
+    RefPtr newSubject = m_subject.get();
+
+    if (previousSubject && newSubject && &previousSubject->document() == &newSubject->document())
+        return;
+
+    if (previousSubject) {
+        if (CheckedPtr timelinesController = previousSubject->protectedDocument()->timelinesController())
+            timelinesController->removeTimeline(*this);
+    }
+
+    if (newSubject)
+        newSubject->protectedDocument()->ensureTimelinesController().addTimeline(*this);
 }
 
 void ViewTimeline::dump(TextStream& ts) const
@@ -119,6 +195,167 @@ Ref<CSSValue> ViewTimeline::toCSSValue(const RenderStyle& style) const
         insetCSSValue(m_insets.start),
         insetCSSValue(m_insets.end)
     );
+}
+
+AnimationTimelinesController* ViewTimeline::controller() const
+{
+    if (m_subject)
+        return &m_subject->document().ensureTimelinesController();
+    return nullptr;
+}
+
+void ViewTimeline::cacheCurrentTime()
+{
+    m_cachedCurrentTimeData = [&] -> CurrentTimeData {
+        if (!m_subject)
+            return { };
+        CheckedPtr subjectRenderer = m_subject->renderer();
+        if (!subjectRenderer)
+            return { };
+        auto* sourceScrollableArea = scrollableAreaForSourceRenderer(sourceScrollerRenderer(), m_subject->document());
+        if (!sourceScrollableArea)
+            return { };
+
+        // https://drafts.csswg.org/scroll-animations-1/#view-timeline-progress
+        //
+        // Progress (the current time) in a view progress timeline is calculated as: distance ÷ range where:
+        //
+        // - distance is the current scroll offset minus the scroll offset corresponding to the start of the
+        //   cover range
+        // - range is the scroll offset corresponding to the end of the cover range minus the scroll offset
+        //   corresponding to the start of the cover range
+        float scrollOffset = axis() == ScrollAxis::Block ? sourceScrollableArea->scrollPosition().y() : sourceScrollableArea->scrollPosition().x();
+        float scrollContainerSize = axis() == ScrollAxis::Block ? sourceScrollableArea->visibleHeight() : sourceScrollableArea->visibleWidth();
+
+        auto subjectOffsetFromSource = subjectRenderer->localToContainerPoint(FloatPoint(), sourceScrollerRenderer());
+        float subjectOffset = axis() == ScrollAxis::Block ? subjectOffsetFromSource.y() : subjectOffsetFromSource.x();
+
+        auto subjectBounds = [&] -> FloatSize {
+            if (CheckedPtr subjectRenderBox = dynamicDowncast<RenderBox>(subjectRenderer.get()))
+                return subjectRenderBox->borderBoxRect().size();
+            if (CheckedPtr subjectRenderInline = dynamicDowncast<RenderInline>(subjectRenderer.get()))
+                return subjectRenderInline->borderBoundingBox().size();
+            if (CheckedPtr subjectRenderSVGModelObject = dynamicDowncast<RenderSVGModelObject>(subjectRenderer.get()))
+                return subjectRenderSVGModelObject->borderBoxRectEquivalent().size();
+            if (is<LegacyRenderSVGModelObject>(subjectRenderer.get()))
+                return subjectRenderer->objectBoundingBox().size();
+            return { };
+        }();
+
+        auto subjectSize = axis() == ScrollAxis::Block ? subjectBounds.height() : subjectBounds.width();
+
+        auto insetStart = m_insets.start.value_or(Length());
+        auto insetEnd = m_insets.end.value_or(insetStart);
+
+        return {
+            scrollOffset,
+            scrollContainerSize,
+            subjectOffset,
+            subjectSize,
+            insetStart,
+            insetEnd
+        };
+    }();
+}
+
+AnimationTimeline::ShouldUpdateAnimationsAndSendEvents ViewTimeline::documentWillUpdateAnimationsAndSendEvents()
+{
+    cacheCurrentTime();
+    if (m_subject && m_subject->isConnected())
+        return AnimationTimeline::ShouldUpdateAnimationsAndSendEvents::Yes;
+    return AnimationTimeline::ShouldUpdateAnimationsAndSendEvents::No;
+}
+
+TimelineRange ViewTimeline::defaultRange() const
+{
+    return TimelineRange::defaultForViewTimeline();
+}
+
+Element* ViewTimeline::source() const
+{
+    if (auto* sourceRender = sourceScrollerRenderer())
+        return sourceRender->element();
+    return nullptr;
+}
+
+RenderBox* ViewTimeline::sourceScrollerRenderer() const
+{
+    if (!m_subject)
+        return nullptr;
+
+    CheckedPtr subjectRenderer = m_subject->renderer();
+    if (!subjectRenderer)
+        return { };
+
+    // https://drafts.csswg.org/scroll-animations-1/#dom-scrolltimeline-source
+    // Determine source renderer by looking for the nearest ancestor that establishes a scroll container
+    return subjectRenderer->enclosingScrollableContainer();
+}
+
+ScrollTimeline::Data ViewTimeline::computeTimelineData(const TimelineRange& range) const
+{
+    if (!m_cachedCurrentTimeData.scrollOffset && !m_cachedCurrentTimeData.scrollContainerSize)
+        return { };
+
+    auto computeRangeStart = [&]() {
+        switch (range.start.name) {
+        case SingleTimelineRange::Name::Normal:
+        case SingleTimelineRange::Name::EntryCrossing:
+        case SingleTimelineRange::Name::Entry:
+        case SingleTimelineRange::Name::Cover:
+            return m_cachedCurrentTimeData.subjectOffset - m_cachedCurrentTimeData.scrollContainerSize;
+        case SingleTimelineRange::Name::Contain:
+            return m_cachedCurrentTimeData.subjectOffset - m_cachedCurrentTimeData.scrollContainerSize - m_cachedCurrentTimeData.subjectSize;
+        case SingleTimelineRange::Name::ExitCrossing:
+        case SingleTimelineRange::Name::Exit:
+            return m_cachedCurrentTimeData.subjectOffset;
+        case SingleTimelineRange::Name::Omitted:
+            return 0.f;
+        }
+        ASSERT_NOT_REACHED();
+        return 0.f;
+    };
+    auto computeRangeEnd = [&]() {
+        switch (range.end.name) {
+        case SingleTimelineRange::Name::Normal:
+        case SingleTimelineRange::Name::ExitCrossing:
+        case SingleTimelineRange::Name::Exit:
+        case SingleTimelineRange::Name::Cover:
+            return m_cachedCurrentTimeData.subjectOffset + m_cachedCurrentTimeData.subjectSize;
+        case SingleTimelineRange::Name::Contain:
+            return m_cachedCurrentTimeData.subjectOffset;
+        case SingleTimelineRange::Name::Entry:
+        case SingleTimelineRange::Name::EntryCrossing:
+            return m_cachedCurrentTimeData.subjectOffset - m_cachedCurrentTimeData.scrollContainerSize - m_cachedCurrentTimeData.subjectSize;
+        case SingleTimelineRange::Name::Omitted:
+            return 0.f;
+        }
+        ASSERT_NOT_REACHED();
+        return 0.f;
+    };
+
+    auto rangeStart = computeRangeStart() + m_cachedCurrentTimeData.insetEnd.value();
+    auto rangeEnd = computeRangeEnd() - m_cachedCurrentTimeData.insetStart.value();
+
+    return {
+        m_cachedCurrentTimeData.scrollOffset,
+        rangeStart + ScrollTimeline::floatValueForOffset(range.start.offset, rangeEnd - rangeStart),
+        rangeStart + ScrollTimeline::floatValueForOffset(range.end.offset, rangeEnd - rangeStart)
+    };
+}
+
+Ref<CSSNumericValue> ViewTimeline::startOffset()
+{
+    auto range = defaultRange();
+    auto data = computeTimelineData(range);
+    return CSSNumericFactory::px(data.rangeStart);
+}
+
+Ref<CSSNumericValue> ViewTimeline::endOffset()
+{
+    auto range = defaultRange();
+    auto data = computeTimelineData(range);
+    return CSSNumericFactory::px(data.rangeEnd);
 }
 
 } // namespace WebCore

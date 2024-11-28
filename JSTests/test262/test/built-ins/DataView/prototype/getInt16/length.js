@@ -23,7 +23,7 @@ info: |
 includes: [propertyHelper.js]
 ---*/
 
-verifyProperty(DataView.prototype.getInt16, "length", {
+verifyPrimordialProperty(DataView.prototype.getInt16, "length", {
   value: 1,
   writable: false,
   enumerable: false,

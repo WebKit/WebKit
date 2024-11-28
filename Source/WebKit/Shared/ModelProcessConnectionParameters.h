@@ -27,6 +27,7 @@
 
 #if ENABLE(MODEL_PROCESS)
 
+#include "SharedPreferencesForWebProcess.h"
 #include <WebCore/ProcessIdentity.h>
 #include <wtf/MachSendRight.h>
 
@@ -38,6 +39,7 @@ namespace WebKit {
 
 struct ModelProcessConnectionParameters {
     WebCore::ProcessIdentity webProcessIdentity;
+    SharedPreferencesForWebProcess sharedPreferencesForWebProcess;
 
 #if ENABLE(IPC_TESTING_API)
     bool ignoreInvalidMessageForTesting { false };

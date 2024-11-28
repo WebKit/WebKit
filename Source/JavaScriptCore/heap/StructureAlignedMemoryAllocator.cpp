@@ -108,8 +108,9 @@ public:
             // If we can't find a free block then `freeIndex == m_usedBlocks.bitCount()` and this set will grow the bit vector.
             m_usedBlocks.set(freeIndex);
         }
-
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
         auto* block = reinterpret_cast<uint8_t*>(g_jscConfig.startOfStructureHeap) + freeIndex * MarkedBlock::blockSize;
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
         commitBlock(block);
         return block;
     }
@@ -215,4 +216,3 @@ void StructureAlignedMemoryAllocator::decommitBlock(void* block)
 #endif // CPU(ADDRESS64)
 
 } // namespace JSC
-

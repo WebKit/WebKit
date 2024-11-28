@@ -31,10 +31,17 @@
 #include "Exception.h"
 #include "ExceptionCode.h"
 #include "InternalObserverDrop.h"
+#include "InternalObserverEvery.h"
 #include "InternalObserverFilter.h"
+#include "InternalObserverFind.h"
+#include "InternalObserverFirst.h"
+#include "InternalObserverForEach.h"
 #include "InternalObserverFromScript.h"
+#include "InternalObserverLast.h"
 #include "InternalObserverMap.h"
+#include "InternalObserverSome.h"
 #include "InternalObserverTake.h"
+#include "JSDOMPromiseDeferred.h"
 #include "JSSubscriptionObserverCallback.h"
 #include "MapperCallback.h"
 #include "PredicateCallback.h"
@@ -42,6 +49,7 @@
 #include "Subscriber.h"
 #include "SubscriberCallback.h"
 #include "SubscriptionObserver.h"
+#include "VisitorCallback.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -69,28 +77,25 @@ void Observable::subscribe(ScriptExecutionContext& context, std::optional<Observ
         subscribeInternal(context, InternalObserverFromScript::create(context, nullptr), options);
 }
 
-void Observable::subscribeInternal(ScriptExecutionContext& context, Ref<InternalObserver> observer, SubscribeOptions options)
+void Observable::subscribeInternal(ScriptExecutionContext& context, Ref<InternalObserver>&& observer, const SubscribeOptions& options)
 {
     RefPtr document = dynamicDowncast<Document>(context);
     if (document && !document->isFullyActive())
         return;
 
-    auto subscriber = Subscriber::create(context, observer);
-
-    if (options.signal)
-        subscriber->followSignal(*options.signal.get());
+    Ref subscriber = Subscriber::create(context, WTFMove(observer), options);
 
     Ref vm = context.globalObject()->vm();
     JSC::JSLockHolder lock(vm);
 
     // The exception is not reported, instead it is forwarded to the
-    // error handler. As such, SusbcribeCallback `[RethrowsException]` and
+    // error handler. As such, SusbcribeCallback has `[RethrowException]` and
     // here a catch scope is declared so the error can be passed to the
     // subscription error handler.
     JSC::Exception* previousException = nullptr;
     {
         auto catchScope = DECLARE_CATCH_SCOPE(vm);
-        m_subscriberCallback->handleEvent(subscriber);
+        m_subscriberCallback->handleEventRethrowingException(subscriber);
         previousException = catchScope.exception();
         if (previousException) {
             catchScope.clearException();
@@ -117,6 +122,36 @@ Ref<Observable> Observable::take(ScriptExecutionContext& context, uint64_t amoun
 Ref<Observable> Observable::drop(ScriptExecutionContext& context, uint64_t amount)
 {
     return create(createSubscriberCallbackDrop(context, *this, amount));
+}
+
+void Observable::first(ScriptExecutionContext& context, const SubscribeOptions& options, Ref<DeferredPromise>&& promise)
+{
+    return createInternalObserverOperatorFirst(context, *this, options, WTFMove(promise));
+}
+
+void Observable::forEach(ScriptExecutionContext& context, Ref<VisitorCallback>&& callback, const SubscribeOptions& options, Ref<DeferredPromise>&& promise)
+{
+    return createInternalObserverOperatorForEach(context, *this, WTFMove(callback), options, WTFMove(promise));
+}
+
+void Observable::last(ScriptExecutionContext& context, const SubscribeOptions& options, Ref<DeferredPromise>&& promise)
+{
+    return createInternalObserverOperatorLast(context, *this, options, WTFMove(promise));
+}
+
+void Observable::find(ScriptExecutionContext& context, Ref<PredicateCallback>&& callback, const SubscribeOptions& options, Ref<DeferredPromise>&& promise)
+{
+    return createInternalObserverOperatorFind(context, *this, WTFMove(callback), options, WTFMove(promise));
+}
+
+void Observable::every(ScriptExecutionContext& context, Ref<PredicateCallback>&& callback, const SubscribeOptions& options, Ref<DeferredPromise>&& promise)
+{
+    return createInternalObserverOperatorEvery(context, *this, WTFMove(callback), options, WTFMove(promise));
+}
+
+void Observable::some(ScriptExecutionContext& context, Ref<PredicateCallback>&& callback, const SubscribeOptions& options, Ref<DeferredPromise>&& promise)
+{
+    return createInternalObserverOperatorSome(context, *this, WTFMove(callback), options, WTFMove(promise));
 }
 
 Observable::Observable(Ref<SubscriberCallback> callback)

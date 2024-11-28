@@ -15,7 +15,19 @@ features: [Temporal]
 assert.throws(RangeError, () => Temporal.PlainMonthDay.from({ year: 2021, month: 12, monthCode: "M11", day: 17 }),
   "monthCode and month conflict");
 
-["M00", "M19", "M99", "M13"].forEach((monthCode) => {
+["M00", "M19", "M99", "M13", "M00L", "M05L", "M13L"].forEach((monthCode) => {
   assert.throws(RangeError, () => Temporal.PlainMonthDay.from({ monthCode, day: 17 }),
     `monthCode '${monthCode}' is not valid for ISO 8601 calendar`);
 });
+
+assert.throws(
+  RangeError,
+  () => Temporal.PlainMonthDay.from({ day: 1, monthCode: "L99M", year: Symbol() }),
+  "Month code syntax is validated before year type is validated"
+);
+
+assert.throws(
+  TypeError,
+  () => Temporal.PlainMonthDay.from({ day: 1, monthCode: "M99L", year: Symbol() }),
+  "Month code suitability is validated after year type is validated"
+);

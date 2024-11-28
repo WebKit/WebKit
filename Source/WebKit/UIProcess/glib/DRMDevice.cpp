@@ -66,10 +66,9 @@ static EGLDeviceEXT eglDisplayDevice(EGLDisplay eglDisplay)
 #if USE(LIBDRM)
 static void drmForeachDevice(Function<bool(drmDevice*)>&& functor)
 {
-    drmDevicePtr devices[64];
-    memset(devices, 0, sizeof(devices));
+    std::array<drmDevicePtr, 64> devices = { };
 
-    int numDevices = drmGetDevices2(0, devices, std::size(devices));
+    int numDevices = drmGetDevices2(0, devices.data(), devices.size());
     if (numDevices <= 0)
         return;
 
@@ -77,7 +76,7 @@ static void drmForeachDevice(Function<bool(drmDevice*)>&& functor)
         if (!functor(devices[i]))
             break;
     }
-    drmFreeDevices(devices, numDevices);
+    drmFreeDevices(devices.data(), numDevices);
 }
 
 static String drmFirstRenderNode()
@@ -87,7 +86,9 @@ static String drmFirstRenderNode()
         if (!(device->available_nodes & (1 << DRM_NODE_RENDER)))
             return true;
 
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GTK/WPE Port
         renderNodeDeviceFile = String::fromUTF8(device->nodes[DRM_NODE_RENDER]);
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
         return false;
     });
     return renderNodeDeviceFile;
@@ -103,10 +104,12 @@ static String drmRenderNodeFromPrimaryDeviceFile(const String& primaryDeviceFile
         if (!(device->available_nodes & (1 << DRM_NODE_PRIMARY | 1 << DRM_NODE_RENDER)))
             return true;
 
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GTK/WPE Port
         if (String::fromUTF8(device->nodes[DRM_NODE_PRIMARY]) == primaryDeviceFile) {
             renderNodeDeviceFile = String::fromUTF8(device->nodes[DRM_NODE_RENDER]);
             return false;
         }
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
         return true;
     });

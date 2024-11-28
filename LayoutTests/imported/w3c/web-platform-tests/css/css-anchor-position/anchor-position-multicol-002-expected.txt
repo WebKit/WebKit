@@ -3,30 +3,30 @@ The green box should be a union of blue boxes, and the purple box should be at t
 
 FAIL .target 1 assert_equals:
 <div class="target target1" data-offset-x="18" data-offset-y="65" data-expected-width="160" data-expected-height="100"></div>
-width expected 160 but got 0
+width expected 160 but got 50
 FAIL .target 2 assert_equals:
 <div class="target target1-rb" data-offset-x="168" data-offset-y="155"></div>
 offsetLeft expected 168 but got 278
 FAIL .target 3 assert_equals:
 <div class="target fixed target1" data-offset-x="26" data-offset-y="70" data-expected-width="160" data-expected-height="100"></div>
-width expected 160 but got 0
+width expected 160 but got 50
 FAIL .target 4 assert_equals:
 <div class="target fixed target1-rb" data-offset-x="176" data-offset-y="160"></div>
 offsetLeft expected 176 but got 286
 FAIL .target 5 assert_equals:
 <div class="target target1" data-offset-x="144" data-offset-y="5" data-expected-width="160" data-expected-height="100"></div>
-width expected 160 but got 0
+width expected 160 but got 50
 PASS .target 6
 FAIL .target 7 assert_equals:
 <div class="target fixed target1" data-offset-x="152" data-offset-y="10" data-expected-width="160" data-expected-height="100"></div>
-width expected 160 but got 0
+width expected 160 but got 50
 PASS .target 8
 FAIL .target 9 assert_equals:
 <div class="target target1" data-offset-x="144" data-offset-y="5" data-expected-width="160" data-expected-height="100"></div>
-width expected 160 but got 0
+width expected 160 but got 50
 PASS .target 10
 FAIL .target 11 assert_equals:
 <div class="target fixed target1" data-offset-x="152" data-offset-y="10" data-expected-width="160" data-expected-height="100"></div>
-width expected 160 but got 0
+width expected 160 but got 50
 PASS .target 12
 

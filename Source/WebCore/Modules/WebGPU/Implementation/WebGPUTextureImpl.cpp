@@ -53,24 +53,31 @@ RefPtr<TextureView> TextureImpl::createView(const std::optional<TextureViewDescr
 {
     CString label = descriptor ? descriptor->label.utf8() : CString("");
 
+    Ref convertToBackingContext = m_convertToBackingContext;
+
     WGPUTextureViewDescriptor backingDescriptor {
         .nextInChain = nullptr,
         .label = label.data(),
-        .format = descriptor && descriptor->format ? m_convertToBackingContext->convertToBacking(*descriptor->format) : WGPUTextureFormat_Undefined,
-        .dimension = descriptor && descriptor->dimension ? m_convertToBackingContext->convertToBacking(*descriptor->dimension) : WGPUTextureViewDimension_Undefined,
+        .format = descriptor && descriptor->format ? convertToBackingContext->convertToBacking(*descriptor->format) : WGPUTextureFormat_Undefined,
+        .dimension = descriptor && descriptor->dimension ? convertToBackingContext->convertToBacking(*descriptor->dimension) : WGPUTextureViewDimension_Undefined,
         .baseMipLevel = descriptor ? descriptor->baseMipLevel : 0,
         .mipLevelCount = descriptor && descriptor->mipLevelCount ? *descriptor->mipLevelCount : static_cast<uint32_t>(WGPU_MIP_LEVEL_COUNT_UNDEFINED),
         .baseArrayLayer = descriptor ? descriptor->baseArrayLayer : 0,
         .arrayLayerCount = descriptor && descriptor->arrayLayerCount ? *descriptor->arrayLayerCount : static_cast<uint32_t>(WGPU_ARRAY_LAYER_COUNT_UNDEFINED),
-        .aspect = descriptor ? m_convertToBackingContext->convertToBacking(descriptor->aspect) : WGPUTextureAspect_All,
+        .aspect = descriptor ? convertToBackingContext->convertToBacking(descriptor->aspect) : WGPUTextureAspect_All,
     };
 
-    return TextureViewImpl::create(adoptWebGPU(wgpuTextureCreateView(m_backing.get(), &backingDescriptor)), m_convertToBackingContext);
+    return TextureViewImpl::create(adoptWebGPU(wgpuTextureCreateView(m_backing.get(), &backingDescriptor)), convertToBackingContext);
 }
 
 void TextureImpl::destroy()
 {
     wgpuTextureDestroy(m_backing.get());
+}
+
+void TextureImpl::undestroy()
+{
+    wgpuTextureUndestroy(m_backing.get());
 }
 
 void TextureImpl::setLabelInternal(const String& label)

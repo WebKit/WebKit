@@ -60,7 +60,7 @@ public:
         return adoptRef(*new RemoteTextDetector(WTFMove(textDetector), objectHeap, backend, identifier, webProcessIdentifier));
     }
 
-    const SharedPreferencesForWebProcess& sharedPreferencesForWebProcess() const;
+    std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess() const;
 
     virtual ~RemoteTextDetector();
 
@@ -72,9 +72,9 @@ private:
     RemoteTextDetector& operator=(const RemoteTextDetector&) = delete;
     RemoteTextDetector& operator=(RemoteTextDetector&&) = delete;
 
-    WebCore::ShapeDetection::TextDetector& backing() { return m_backing; }
-    Ref<WebCore::ShapeDetection::TextDetector> protectedBacking();
-    Ref<RemoteRenderingBackend> protectedBackend();
+    WebCore::ShapeDetection::TextDetector& backing() const { return m_backing; }
+    Ref<WebCore::ShapeDetection::TextDetector> protectedBacking() const;
+    Ref<RemoteRenderingBackend> protectedBackend() const;
 
     void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;
 

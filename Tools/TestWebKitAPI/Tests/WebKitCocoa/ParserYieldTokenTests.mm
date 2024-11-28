@@ -176,7 +176,7 @@ TEST(ParserYieldTokenTests, AsyncScriptRunsWhenFetched)
 
     [[webView bundle] takeDocumentParserTokenAfterCommittingLoad];
 
-    NSURL *pageURL = [[NSBundle mainBundle] URLForResource:@"text-with-async-script" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+    NSURL *pageURL = [NSBundle.test_resourcesBundle URLForResource:@"text-with-async-script" withExtension:@"html"];
     [webView loadHTMLString:[NSString stringWithContentsOfURL:pageURL encoding:NSUTF8StringEncoding error:nil] baseURL:[NSURL URLWithString:@"custom://"]];
 
     waitForDelay(0.5_s);

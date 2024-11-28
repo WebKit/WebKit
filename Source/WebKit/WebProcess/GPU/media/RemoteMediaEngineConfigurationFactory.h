@@ -35,15 +35,6 @@
 #include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
-namespace WebKit {
-class RemoteMediaEngineConfigurationFactory;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::RemoteMediaEngineConfigurationFactory> : std::true_type { };
-}
-
 namespace IPC {
 class Connection;
 class Decoder;
@@ -62,6 +53,10 @@ public:
     explicit RemoteMediaEngineConfigurationFactory(WebProcess&);
     virtual ~RemoteMediaEngineConfigurationFactory();
 
+    // This is a supplement to WebProcess, which is a singleton.
+    void ref() const { }
+    void deref() const { }
+
     void registerFactory();
 
     static ASCIILiteral supplementName();
@@ -73,6 +68,8 @@ public:
 private:
     void createDecodingConfiguration(WebCore::MediaDecodingConfiguration&&, WebCore::MediaEngineConfigurationFactory::DecodingConfigurationCallback&&);
     void createEncodingConfiguration(WebCore::MediaEncodingConfiguration&&, WebCore::MediaEngineConfigurationFactory::EncodingConfigurationCallback&&);
+
+    WeakRef<WebProcess> m_webProcess;
 };
 
 }

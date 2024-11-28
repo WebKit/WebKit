@@ -351,7 +351,7 @@ async function testRefTypesInTables() {
   assert.throws(
     () => wasmTableFuncref.set(0, console.log),
     TypeError,
-    "WebAssembly.Table.prototype.set expects the second argument to be null or an instance of WebAssembly.Function"
+    "Argument value did not match the reference type"
   );
 
   const wasmTableExternref = new WebAssembly.Table({ initial: 1, maximum: 1, element: "externref" });

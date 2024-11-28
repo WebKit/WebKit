@@ -37,6 +37,8 @@
 #include <JavaScriptCore/JSGenericTypedArrayViewInlines.h>
 #include <wtf/MainThread.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 // OID rsaEncryption: 1.2.840.113549.1.1.1. Per https://tools.ietf.org/html/rfc3279#section-2.3.1
@@ -419,3 +421,5 @@ ExceptionOr<Vector<uint8_t>> CryptoKeyRSA::exportPkcs8() const
 }
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

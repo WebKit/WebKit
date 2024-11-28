@@ -134,11 +134,7 @@ TEST_P(RendererTest, RequestedRendererCreated)
     EGLint glesMinorVersion = GetParam().minorVersion;
 
     std::ostringstream expectedVersionString;
-    if (GetParam().clientType == EGL_OPENGL_ES_API)
-    {
-        expectedVersionString << "es ";
-    }
-    expectedVersionString << glesMajorVersion << "." << glesMinorVersion;
+    expectedVersionString << "es " << glesMajorVersion << "." << glesMinorVersion;
 
     ASSERT_NE(versionString.find(expectedVersionString.str()), std::string::npos);
 
@@ -221,6 +217,5 @@ TEST_P(RendererTest, Draw)
 // TODO(http://anglebug.com/42266907): move ES2_WEBGPU to the definition of
 // ANGLE_ALL_TEST_PLATFORMS_ES2 once webgpu is developed enough to run more tests.
 ANGLE_INSTANTIATE_TEST_ES2_AND_ES3_AND_ES31_AND_NULL_AND(RendererTest,
-                                                         ANGLE_ALL_TEST_PLATFORMS_GL32_CORE,
                                                          ES2_WEBGPU());
 }  // namespace angle

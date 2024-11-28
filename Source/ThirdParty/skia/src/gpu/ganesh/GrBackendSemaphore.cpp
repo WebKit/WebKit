@@ -5,14 +5,14 @@
  * found in the LICENSE file.
  */
 
-#include "include/gpu/GrBackendSemaphore.h"
+#include "include/gpu/ganesh/GrBackendSemaphore.h"
 
 #include "include/private/base/SkAssert.h"
 #include "include/private/base/SkDebug.h"
 #include "src/gpu/ganesh/GrBackendSemaphorePriv.h"
 
 #ifdef SK_DIRECT3D
-#include "include/gpu/d3d/GrD3DTypes.h"
+#include "include/gpu/ganesh/d3d/GrD3DTypes.h"
 #endif
 
 GrBackendSemaphore::GrBackendSemaphore()

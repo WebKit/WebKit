@@ -38,15 +38,15 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(ManagedMediaSource);
 
-Ref<ManagedMediaSource> ManagedMediaSource::create(ScriptExecutionContext& context)
+Ref<ManagedMediaSource> ManagedMediaSource::create(ScriptExecutionContext& context, MediaSourceInit&& options)
 {
-    auto mediaSource = adoptRef(*new ManagedMediaSource(context));
+    auto mediaSource = adoptRef(*new ManagedMediaSource(context, WTFMove(options)));
     mediaSource->suspendIfNeeded();
     return mediaSource;
 }
 
-ManagedMediaSource::ManagedMediaSource(ScriptExecutionContext& context)
-    : MediaSource(context)
+ManagedMediaSource::ManagedMediaSource(ScriptExecutionContext& context, MediaSourceInit&& options)
+    : MediaSource(context, WTFMove(options))
     , m_streamingTimer(*this, &ManagedMediaSource::streamingTimerFired)
 {
 }
@@ -77,8 +77,8 @@ void ManagedMediaSource::setStreaming(bool streaming)
         return;
     ALWAYS_LOG(LOGIDENTIFIER, streaming);
     m_streaming = streaming;
-    if (m_private)
-        m_private->setStreaming(streaming);
+    if (RefPtr msp = protectedPrivate())
+        msp->setStreaming(streaming);
     if (streaming) {
         scheduleEvent(eventNames().startstreamingEvent);
         if (m_streamingAllowed) {
@@ -108,13 +108,15 @@ void ManagedMediaSource::monitorSourceBuffers()
 {
     MediaSource::monitorSourceBuffers();
 
-    if (!activeSourceBuffers() || !activeSourceBuffers()->length()) {
+    if (!activeSourceBuffers()->length()) {
         setStreaming(true);
         return;
     }
-    auto currentTime = this->currentTime();
 
     ensurePrefsRead();
+
+    auto currentTime = this->currentTime();
+    ASSERT(currentTime.isValid());
 
     auto limitAhead = [&] (double upper) {
         MediaTime aheadTime = currentTime + MediaTime::createWithDouble(upper);
@@ -138,8 +140,8 @@ void ManagedMediaSource::streamingTimerFired()
 {
     ALWAYS_LOG(LOGIDENTIFIER, "Disabling streaming due to policy ", *m_highThreshold);
     m_streamingAllowed = false;
-    if (m_private)
-        m_private->setStreamingAllowed(false);
+    if (RefPtr msp = protectedPrivate())
+        msp->setStreamingAllowed(false);
     notifyElementUpdateMediaState();
 }
 

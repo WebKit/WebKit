@@ -35,6 +35,8 @@
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/StringParsingBuffer.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(CSSStyleDeclaration);
@@ -119,7 +121,7 @@ static inline void writeEpubPrefix(char*& buffer)
 
 static CSSPropertyID parseJavaScriptCSSPropertyName(const AtomString& propertyName)
 {
-    using CSSPropertyIDMap = HashMap<AtomString, CSSPropertyID>;
+    using CSSPropertyIDMap = UncheckedKeyHashMap<AtomString, CSSPropertyID>;
     static NeverDestroyed<CSSPropertyIDMap> propertyIDCache;
 
     auto* propertyNameString = propertyName.impl();
@@ -207,7 +209,7 @@ enum class CSSPropertyLookupMode { ConvertUsingDashPrefix, ConvertUsingNoDashPre
 
 template<CSSPropertyLookupMode mode> static CSSPropertyID lookupCSSPropertyFromIDLAttribute(const AtomString& attribute)
 {
-    static NeverDestroyed<HashMap<AtomString, CSSPropertyID>> cache;
+    static NeverDestroyed<UncheckedKeyHashMap<AtomString, CSSPropertyID>> cache;
 
     if (auto id = cache.get().get(attribute))
         return id;
@@ -317,3 +319,5 @@ ExceptionOr<void> CSSStyleDeclaration::setCssFloat(const String& value)
 }
 
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

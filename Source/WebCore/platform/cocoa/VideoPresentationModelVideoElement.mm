@@ -410,12 +410,12 @@ const Logger* VideoPresentationModelVideoElement::loggerPtr() const
     return m_videoElement ? &m_videoElement->logger() : nullptr;
 }
 
-const void* VideoPresentationModelVideoElement::logIdentifier() const
+uint64_t VideoPresentationModelVideoElement::logIdentifier() const
 {
-    return m_videoElement ? m_videoElement->logIdentifier() : nullptr;
+    return m_videoElement ? m_videoElement->logIdentifier() : 0;
 }
 
-const void* VideoPresentationModelVideoElement::nextChildIdentifier() const
+uint64_t VideoPresentationModelVideoElement::nextChildIdentifier() const
 {
     return LoggerHelper::childLogIdentifier(logIdentifier(), ++m_childIdentifierSeed);
 }

@@ -83,14 +83,23 @@ RefPtr<CSSPrimitiveValue> consumeCustomIdent(CSSParserTokenRange& range, bool sh
 // MARK: <dashed-ident>
 // https://drafts.csswg.org/css-values/#dashed-idents
 
-RefPtr<CSSPrimitiveValue> consumeDashedIdent(CSSParserTokenRange& range, bool shouldLowercase)
+String consumeDashedIdentRaw(CSSParserTokenRange& range, bool shouldLowercase)
 {
     auto rangeCopy = range;
-    auto result = consumeCustomIdent(range, shouldLowercase);
-    if (result && result->stringValue().startsWith("--"_s))
-        return result;
-    range = rangeCopy;
-    return nullptr;
+    auto identifier = consumeCustomIdentRaw(range, shouldLowercase);
+    if (!identifier.startsWith("--"_s)) {
+        range = rangeCopy;
+        return { };
+    }
+    return identifier;
+}
+
+RefPtr<CSSPrimitiveValue> consumeDashedIdent(CSSParserTokenRange& range, bool shouldLowercase)
+{
+    auto identifier = consumeDashedIdentRaw(range, shouldLowercase);
+    if (identifier.isNull())
+        return nullptr;
+    return CSSPrimitiveValue::createCustomIdent(WTFMove(identifier));
 }
 
 } // namespace CSSPropertyParserHelpers

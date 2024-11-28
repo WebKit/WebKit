@@ -90,7 +90,7 @@ void AuthenticationManager::initializeConnection(IPC::Connection* connection)
                 certificates = [NSMutableArray arrayWithCapacity:total];
                 for (size_t i = 0; i < total; i++) {
                     auto certificateData = xpc_array_get_value(certificateDataArray, i);
-                    auto cfData = adoptCF(CFDataCreate(nullptr, reinterpret_cast<const UInt8*>(xpc_data_get_bytes_ptr(certificateData)), xpc_data_get_length(certificateData)));
+                    auto cfData = adoptCF(CFDataCreate(nullptr, static_cast<const UInt8*>(xpc_data_get_bytes_ptr(certificateData)), xpc_data_get_length(certificateData)));
                     auto certificate = adoptCF(SecCertificateCreateWithData(nullptr, cfData.get()));
                     if (!certificate)
                         return;

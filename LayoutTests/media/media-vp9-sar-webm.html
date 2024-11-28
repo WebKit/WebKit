@@ -1,0 +1,26 @@
+<html>
+<head>
+<title>webm file with vp9 with SAR 16:9</title>
+<script src="../media/video-test.js"></script>
+<script>
+    async function runTest()
+    {
+        findMediaElement();
+        run('video.src = "content/test-par-16-9.webm"');
+        waitFor(video, 'error').then(failTest);
+        await waitFor(video, 'loadedmetadata');
+        testExpected('video.videoWidth', 320);
+        testExpected('video.videoHeight', 240);
+        testExpected('video.clientWidth', 320);
+        testExpected('video.clientHeight', 240);
+    }
+
+    window.addEventListener('load', event => {
+        runTest().then(endTest).catch(failTest);
+    });
+</script>
+</head>
+<body>
+<video id="video"/>
+</body>
+</html>

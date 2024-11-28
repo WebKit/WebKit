@@ -1,3 +1,3 @@
 
-PASS Unrelated style mutation does not affect anonymous timeline (root)
+FAIL Unrelated style mutation does not affect anonymous timeline (root) assert_equals: expected "100" but got "auto"
 

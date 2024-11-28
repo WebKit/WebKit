@@ -35,9 +35,12 @@
 #include "HTMLInputElement.h"
 #include "InputTypeNames.h"
 #include "LocalizedStrings.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/URL.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(URLInputType);
 
 const AtomString& URLInputType::formControlType() const
 {

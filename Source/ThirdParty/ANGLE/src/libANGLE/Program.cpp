@@ -1050,11 +1050,11 @@ angle::Result Program::linkJobImpl(const Caps &caps,
     linkShaders();
 
     linkingVariables->initForProgram(mState);
-    resources->init(&mState.mExecutable->mUniformBlocks, &mState.mExecutable->mUniforms,
-                    &mState.mExecutable->mUniformNames, &mState.mExecutable->mUniformMappedNames,
-                    &mState.mExecutable->mShaderStorageBlocks,
-                    &mState.mExecutable->mBufferVariables,
-                    &mState.mExecutable->mAtomicCounterBuffers);
+    resources->init(
+        &mState.mExecutable->mUniformBlocks, &mState.mExecutable->mUniforms,
+        &mState.mExecutable->mUniformNames, &mState.mExecutable->mUniformMappedNames,
+        &mState.mExecutable->mShaderStorageBlocks, &mState.mExecutable->mBufferVariables,
+        &mState.mExecutable->mAtomicCounterBuffers, &mState.mExecutable->mPixelLocalStorageFormats);
 
     updateLinkedShaderStages();
 
@@ -1156,6 +1156,10 @@ angle::Result Program::linkJobImpl(const Caps &caps,
                 fragmentShader->metadataFlags.test(sh::MetadataFlags::HasDiscard);
             mState.mExecutable->mPod.enablesPerSampleShading =
                 fragmentShader->metadataFlags.test(sh::MetadataFlags::EnablesPerSampleShading);
+            mState.mExecutable->mPod.hasDepthInputAttachment =
+                fragmentShader->metadataFlags.test(sh::MetadataFlags::HasDepthInputAttachment);
+            mState.mExecutable->mPod.hasStencilInputAttachment =
+                fragmentShader->metadataFlags.test(sh::MetadataFlags::HasStencilInputAttachment);
             mState.mExecutable->mPod.advancedBlendEquations =
                 fragmentShader->advancedBlendEquations;
             mState.mExecutable->mPod.specConstUsageBits |= fragmentShader->specConstUsageBits;

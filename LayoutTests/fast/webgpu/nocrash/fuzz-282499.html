@@ -1,0 +1,19 @@
+<script>
+async function run() {
+  let adapter = await navigator.gpu.requestAdapter();
+  let device = await adapter.requestDevice({ requiredFeatures: ['texture-compression-etc2'] });
+  let texture = device.createTexture({
+    size: { width: 660, height: 32 },
+    mipLevelCount: 2,
+    format: 'eac-r11snorm',
+    usage: GPUTextureUsage.COPY_DST
+  });
+  device.queue.writeTexture({
+    texture: texture,
+    mipLevel: 1,
+    origin: { x: 316 }
+  }, new Uint8Array(32), {}, {width: 16, height: 4 });
+}
+testRunner?.waitUntilDone();
+run().then(() => testRunner?.notifyDone());
+</script>

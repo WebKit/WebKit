@@ -62,7 +62,7 @@ inline EventSource::EventSource(ScriptExecutionContext& context, const URL& url,
     : ActiveDOMObject(&context)
     , m_url(url)
     , m_withCredentials(eventSourceInit.withCredentials)
-    , m_decoder(TextResourceDecoder::create("text/plain"_s, "UTF-8"))
+    , m_decoder(TextResourceDecoder::create("text/plain"_s, "UTF-8"_s))
 {
 }
 
@@ -198,7 +198,7 @@ bool EventSource::responseIsValid(const ResourceResponse& response) const
     return true;
 }
 
-void EventSource::didReceiveResponse(ScriptExecutionContextIdentifier, ResourceLoaderIdentifier, const ResourceResponse& response)
+void EventSource::didReceiveResponse(ScriptExecutionContextIdentifier, std::optional<ResourceLoaderIdentifier>, const ResourceResponse& response)
 {
     ASSERT(m_state == CONNECTING);
     ASSERT(m_requestInFlight);
@@ -230,7 +230,7 @@ void EventSource::didReceiveData(const SharedBuffer& buffer)
     parseEventStream();
 }
 
-void EventSource::didFinishLoading(ScriptExecutionContextIdentifier, ResourceLoaderIdentifier, const NetworkLoadMetrics&)
+void EventSource::didFinishLoading(ScriptExecutionContextIdentifier, std::optional<ResourceLoaderIdentifier>, const NetworkLoadMetrics&)
 {
     ASSERT(m_state == OPEN);
     ASSERT(m_requestInFlight);
@@ -250,7 +250,7 @@ void EventSource::didFinishLoading(ScriptExecutionContextIdentifier, ResourceLoa
     networkRequestEnded();
 }
 
-void EventSource::didFail(ScriptExecutionContextIdentifier, const ResourceError& error)
+void EventSource::didFail(std::optional<ScriptExecutionContextIdentifier>, const ResourceError& error)
 {
     ASSERT(m_state != CLOSED);
 

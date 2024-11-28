@@ -175,6 +175,7 @@ private:
 
     // ImageFrame metadata
     ImageOrientation frameOrientationAtIndex(unsigned index) const final;
+    Headroom frameHeadroomAtIndex(unsigned index) const final;
 
     // BitmapImage metadata
     RefPtr<ImageObserver> imageObserver() const;

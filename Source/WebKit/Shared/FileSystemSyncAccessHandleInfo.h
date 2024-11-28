@@ -27,11 +27,12 @@
 
 #include "SharedFileHandle.h"
 #include <WebCore/FileSystemSyncAccessHandleIdentifier.h>
+#include <wtf/Markable.h>
 
 namespace WebKit {
 
 struct FileSystemSyncAccessHandleInfo {
-    WebCore::FileSystemSyncAccessHandleIdentifier identifier;
+    Markable<WebCore::FileSystemSyncAccessHandleIdentifier> identifier;
     IPC::SharedFileHandle handle;
     uint64_t capacity { 0 };
 };

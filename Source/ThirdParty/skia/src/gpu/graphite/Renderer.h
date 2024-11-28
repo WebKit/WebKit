@@ -11,6 +11,7 @@
 #include "include/core/SkSpan.h"
 #include "include/core/SkString.h"
 #include "include/core/SkTypes.h"
+#include "include/gpu/graphite/GraphiteTypes.h"
 #include "src/base/SkEnumBitMask.h"
 #include "src/base/SkVx.h"
 #include "src/gpu/graphite/Attribute.h"
@@ -66,7 +67,7 @@ public:
     // The DrawWriter is configured with the vertex and instance strides of the RenderStep, and its
     // primitive type. The recorded draws will be executed with a graphics pipeline compatible with
     // this RenderStep.
-    virtual void writeVertices(DrawWriter*, const DrawParams&, skvx::ushort2 ssboIndices) const = 0;
+    virtual void writeVertices(DrawWriter*, const DrawParams&, skvx::uint2 ssboIndices) const = 0;
 
     // Write out the uniform values (aligned for the layout), textures, and samplers. The uniform
     // values will be de-duplicated across all draws using the RenderStep before uploading to the

@@ -40,6 +40,7 @@
 #include <wtf/Scope.h>
 
 #if USE(LIBWEBRTC)
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 ALLOW_UNUSED_PARAMETERS_BEGIN
 ALLOW_COMMA_BEGIN
 
@@ -47,12 +48,15 @@ ALLOW_COMMA_BEGIN
 
 ALLOW_UNUSED_PARAMETERS_END
 ALLOW_COMMA_END
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 #endif
 
 #include <pal/cf/AudioToolboxSoftLink.h>
 #include <pal/cf/CoreMediaSoftLink.h>
 
 #include "CoreVideoSoftLink.h"
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace WebCore {
 
@@ -460,7 +464,7 @@ void VideoFrame::copyTo(std::span<uint8_t> span, VideoPixelFormat format, Vector
     callback({ });
 }
 
-void VideoFrame::paintInContext(GraphicsContext& context, const FloatRect& destination, const ImageOrientation& destinationImageRotation, bool shouldDiscardAlpha)
+void VideoFrame::draw(GraphicsContext& context, const FloatRect& destination, ImageOrientation destinationImageRotation, bool shouldDiscardAlpha)
 {
     // FIXME: Handle alpha discarding.
     UNUSED_PARAM(shouldDiscardAlpha);
@@ -583,9 +587,9 @@ VideoFrameCV::VideoFrameCV(MediaTime presentationTime, bool isMirrored, Rotation
 
 VideoFrameCV::~VideoFrameCV() = default;
 
-WebCore::FloatSize VideoFrameCV::presentationSize() const
+WebCore::IntSize VideoFrameCV::presentationSize() const
 {
-    return { static_cast<float>(CVPixelBufferGetWidth(m_pixelBuffer.get())), static_cast<float>(CVPixelBufferGetHeight(m_pixelBuffer.get())) };
+    return { static_cast<int>(CVPixelBufferGetWidth(m_pixelBuffer.get())), static_cast<int>(CVPixelBufferGetHeight(m_pixelBuffer.get())) };
 }
 
 uint32_t VideoFrameCV::pixelFormat() const
@@ -622,5 +626,7 @@ Ref<VideoFrame> VideoFrameCV::clone()
 }
 
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif

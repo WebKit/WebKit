@@ -66,6 +66,14 @@ private:
     friend class WebExtensionAPIMenus;
 
     static bool isValidDimensionKey(NSString *);
+    static NSString *parseIconPath(NSString *path, const URL& baseURL);
+    static NSMutableDictionary *parseIconPathsDictionary(NSDictionary *, const URL& baseURL, bool forVariants, NSString *inputKey, NSString **outExceptionString);
+    static NSMutableDictionary *parseIconImageDataDictionary(NSDictionary *, bool forVariants, NSString *inputKey, NSString **outExceptionString);
+
+#if ENABLE(WK_WEB_EXTENSIONS_ICON_VARIANTS)
+    static NSArray *parseIconVariants(NSArray *, const URL& baseURL, NSString *inputKey, NSString **outExceptionString);
+#endif
+
     static bool parseActionDetails(NSDictionary *, std::optional<WebExtensionWindowIdentifier>&, std::optional<WebExtensionTabIdentifier>&, NSString **outExceptionString);
 
     RefPtr<WebExtensionAPIEvent> m_onClicked;

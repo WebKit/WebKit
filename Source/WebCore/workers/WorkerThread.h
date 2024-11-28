@@ -38,6 +38,7 @@
 #include <JavaScriptCore/RuntimeFlags.h>
 #include <memory>
 #include <pal/SessionID.h>
+#include <wtf/CheckedPtr.h>
 #include <wtf/URL.h>
 
 namespace WebCore {
@@ -85,7 +86,7 @@ public:
     WorkerThreadMode workerThreadMode { WorkerThreadMode::CreateNewThread };
     PAL::SessionID sessionID;
     std::optional<ServiceWorkerData> serviceWorkerData;
-    ScriptExecutionContextIdentifier clientIdentifier;
+    Markable<ScriptExecutionContextIdentifier> clientIdentifier;
     OptionSet<AdvancedPrivacyProtections> advancedPrivacyProtections;
     std::optional<uint64_t> noiseInjectionHashSalt;
 
@@ -96,11 +97,10 @@ class WorkerThread : public WorkerOrWorkletThread {
 public:
     virtual ~WorkerThread();
 
-    WorkerBadgeProxy* workerBadgeProxy() const { return m_workerBadgeProxy; }
-    WorkerDebuggerProxy* workerDebuggerProxy() const final { return m_workerDebuggerProxy; }
-    WorkerLoaderProxy* workerLoaderProxy() final { return m_workerLoaderProxy; }
-    WorkerReportingProxy* workerReportingProxy() const { return m_workerReportingProxy; }
-
+    WorkerBadgeProxy* workerBadgeProxy() const;
+    WorkerDebuggerProxy* workerDebuggerProxy() const final;
+    WorkerLoaderProxy* workerLoaderProxy() final;
+    WorkerReportingProxy* workerReportingProxy() const;
 
     // Number of active worker threads.
     WEBCORE_EXPORT static unsigned workerThreadCount();
@@ -139,10 +139,10 @@ private:
     void evaluateScriptIfNecessary(String& exceptionMessage) final;
     bool shouldWaitForWebInspectorOnStartup() const final;
 
-    WorkerLoaderProxy* m_workerLoaderProxy; // FIXME: Use CheckedPtr.
-    WorkerDebuggerProxy* m_workerDebuggerProxy; // FIXME: Use CheckedPtr.
-    WorkerReportingProxy* m_workerReportingProxy; // FIXME: Use CheckedPtr.
-    WorkerBadgeProxy* m_workerBadgeProxy; // FIXME: Use CheckedPtr.
+    CheckedPtr<WorkerLoaderProxy> m_workerLoaderProxy;
+    CheckedPtr<WorkerDebuggerProxy> m_workerDebuggerProxy;
+    CheckedPtr<WorkerReportingProxy> m_workerReportingProxy;
+    CheckedPtr<WorkerBadgeProxy> m_workerBadgeProxy;
     JSC::RuntimeFlags m_runtimeFlags;
 
     std::unique_ptr<WorkerThreadStartupData> m_startupData;

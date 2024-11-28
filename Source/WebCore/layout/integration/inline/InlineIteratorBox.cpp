@@ -62,6 +62,22 @@ bool BoxIterator::atEnd() const
     });
 }
 
+BoxIterator& BoxIterator::traverseNextOnLine()
+{
+    WTF::switchOn(m_box.m_pathVariant, [](auto& path) {
+        path.traverseNextBoxOnLine();
+    });
+    return *this;
+}
+
+BoxIterator& BoxIterator::traverseNextOnLineSkippingChildren()
+{
+    WTF::switchOn(m_box.m_pathVariant, [](auto& path) {
+        path.traverseNextBoxOnLineSkippingChildren();
+    });
+    return *this;
+}
+
 bool Box::isSVGText() const
 {
     return isText() && renderer().isRenderSVGInlineText();
@@ -137,7 +153,7 @@ LeafBoxIterator::LeafBoxIterator(const Box& run)
 LeafBoxIterator& LeafBoxIterator::traverseNextOnLine()
 {
     WTF::switchOn(m_box.m_pathVariant, [](auto& path) {
-        path.traverseNextOnLine();
+        path.traverseNextLeafOnLine();
     });
     return *this;
 }
@@ -145,7 +161,7 @@ LeafBoxIterator& LeafBoxIterator::traverseNextOnLine()
 LeafBoxIterator& LeafBoxIterator::traversePreviousOnLine()
 {
     WTF::switchOn(m_box.m_pathVariant, [](auto& path) {
-        path.traversePreviousOnLine();
+        path.traversePreviousLeafOnLine();
     });
     return *this;
 }

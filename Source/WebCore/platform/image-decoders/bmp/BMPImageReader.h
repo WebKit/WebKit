@@ -225,13 +225,17 @@ private:
     // in the given pixel data.
     inline unsigned getComponent(uint32_t pixel, int component) const
     {
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
         return ((pixel & m_bitMasks[component]) >> m_bitShiftsRight[component]) << m_bitShiftsLeft[component];
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     }
 
     inline unsigned getAlpha(uint32_t pixel) const
     {
         // For images without alpha, return alpha of 0xff.
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
         return m_bitMasks[3] ? getComponent(pixel, 3) : 0xff;
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     }
 
     // Sets the current pixel to the color given by |colorIndex|. This also

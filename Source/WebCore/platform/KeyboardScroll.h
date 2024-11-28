@@ -28,6 +28,10 @@
 #include "FloatSize.h"
 #include "ScrollTypes.h"
 
+namespace WTF {
+class TextStream;
+}
+
 namespace WebCore {
 
 WEBCORE_EXPORT FloatSize unitVectorForScrollDirection(ScrollDirection);
@@ -76,5 +80,8 @@ struct KeyboardScrollParameters {
 #endif
     }
 };
+
+WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const KeyboardScroll&);
+WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const KeyboardScrollParameters&);
 
 } // namespace WebCore

@@ -27,6 +27,7 @@
 
 #include "CSSCursorImageValue.h"
 #include "CSSImageValue.h"
+#include "CSSValuePair.h"
 #include "CachedImage.h"
 #include "FloatSize.h"
 #include "RenderElement.h"
@@ -80,8 +81,12 @@ bool StyleCursorImage::equalInputImages(const StyleCursorImage& other) const
 }
 
 Ref<CSSValue> StyleCursorImage::computedStyleValue(const RenderStyle& style) const
-{ 
-    return CSSCursorImageValue::create(m_image->computedStyleValue(style), m_hotSpot, m_originalURL, m_loadedFromOpaqueSource );
+{
+    RefPtr<CSSValuePair> hotSpot;
+    if (m_hotSpot)
+        hotSpot = CSSValuePair::createNoncoalescing(CSSPrimitiveValue::create(m_hotSpot->x()), CSSPrimitiveValue::create(m_hotSpot->y()));
+
+    return CSSCursorImageValue::create(m_image->computedStyleValue(style), WTFMove(hotSpot), m_originalURL, m_loadedFromOpaqueSource );
 }
 
 ImageWithScale StyleCursorImage::selectBestFitImage(const Document& document)

@@ -39,6 +39,7 @@ enum ExitKind : uint8_t {
     BadConstantCache, // We exited because a cache on a weak constant (usually a prototype) was wrong.
     BadIndexingType, // We exited because an indexing type was wrong.
     BadTypeInfoFlags, // We exited because we made an incorrect assumption about what TypeInfo flags we would see.
+    BadStringType, // We exited because we made an incorrect assumption about StringIdent v.s. StringVar
     Overflow, // We exited because of overflow.
     NegativeZero, // We exited because we encountered negative zero.
     NegativeIndex, // We exited because we encountered a negative index in a place we didn't want to see it.

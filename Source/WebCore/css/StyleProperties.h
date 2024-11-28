@@ -130,7 +130,7 @@ public:
     bool isMutable() const { return m_isMutable; }
 
     bool traverseSubresources(const Function<bool(const CachedResource&)>& handler) const;
-    void setReplacementURLForSubresources(const HashMap<String, String>&);
+    void setReplacementURLForSubresources(const UncheckedKeyHashMap<String, String>&);
     void clearReplacementURLForSubresources();
     bool mayDependOnBaseURL() const;
 

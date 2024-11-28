@@ -30,6 +30,7 @@
 #include "DOMFormData.h"
 #include "Event.h"
 #include "EventInit.h"
+#include "JSValueInWrappedObject.h"
 #include "LocalDOMWindowProperty.h"
 #include "NavigationDestination.h"
 #include "NavigationInterceptHandler.h"
@@ -42,6 +43,16 @@ enum class InterceptionState : uint8_t {
     Committed,
     Scrolled,
     Finished,
+};
+
+enum class InterceptionHandlersDidFulfill : bool {
+    No,
+    Yes
+};
+
+enum class FocusDidChange : bool {
+    No,
+    Yes
 };
 
 class NavigateEvent final : public Event {
@@ -79,32 +90,35 @@ public:
     static Ref<NavigateEvent> create(const AtomString& type, const Init&);
     static Ref<NavigateEvent> create(const AtomString& type, const Init&, AbortController*);
 
-    NavigationNavigationType navigationType() const { return m_navigationType; };
-    bool canIntercept() const { return m_canIntercept; };
-    bool userInitiated() const { return m_userInitiated; };
-    bool hashChange() const { return m_hashChange; };
-    bool hasUAVisualTransition() const { return m_hasUAVisualTransition; };
-    NavigationDestination* destination() { return m_destination.get(); };
-    AbortSignal* signal() { return m_signal.get(); };
-    DOMFormData* formData() { return m_formData.get(); };
-    String downloadRequest() { return m_downloadRequest; };
-    JSC::JSValue info() { return m_info; };
+    NavigationNavigationType navigationType() const { return m_navigationType; }
+    bool canIntercept() const { return m_canIntercept; }
+    bool userInitiated() const { return m_userInitiated; }
+    bool hashChange() const { return m_hashChange; }
+    bool hasUAVisualTransition() const { return m_hasUAVisualTransition; }
+    NavigationDestination* destination() { return m_destination.get(); }
+    AbortSignal* signal() { return m_signal.get(); }
+    DOMFormData* formData() { return m_formData.get(); }
+    String downloadRequest() { return m_downloadRequest; }
+    JSC::JSValue info() { return m_info.getValue(); }
+    JSValueInWrappedObject& infoWrapper() { return m_info; }
 
     ExceptionOr<void> intercept(Document&, NavigationInterceptOptions&&);
     ExceptionOr<void> scroll(Document&);
 
-    bool wasIntercepted() const { return m_interceptionState.has_value(); };
-    void setCanIntercept(bool canIntercept) { m_canIntercept = canIntercept; };
-    void setInterceptionState(InterceptionState interceptionState) { m_interceptionState = interceptionState; };
+    bool wasIntercepted() const { return m_interceptionState.has_value(); }
+    void setCanIntercept(bool canIntercept) { m_canIntercept = canIntercept; }
+    void setInterceptionState(InterceptionState interceptionState) { m_interceptionState = interceptionState; }
 
-    void finish();
+    void finish(Document&, InterceptionHandlersDidFulfill, FocusDidChange);
 
-    Vector<Ref<NavigationInterceptHandler>>& handlers() { return m_handlers; };
+    Vector<Ref<NavigationInterceptHandler>>& handlers() { return m_handlers; }
 
 private:
-    NavigateEvent(const AtomString& type, const Init&, AbortController*);
+    NavigateEvent(const AtomString& type, const Init&, EventIsTrusted, AbortController*);
 
     ExceptionOr<void> sharedChecks(Document&);
+    void potentiallyProcessScrollBehavior(Document&);
+    void processScrollBehavior(Document&);
 
     NavigationNavigationType m_navigationType;
     RefPtr<NavigationDestination> m_destination;
@@ -112,7 +126,7 @@ private:
     RefPtr<DOMFormData> m_formData;
     String m_downloadRequest;
     Vector<Ref<NavigationInterceptHandler>> m_handlers;
-    JSC::JSValue m_info;
+    JSValueInWrappedObject m_info;
     bool m_canIntercept { false };
     bool m_userInitiated { false };
     bool m_hashChange { false };

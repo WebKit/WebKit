@@ -44,11 +44,11 @@ PageGroupLoadDeferrer::PageGroupLoadDeferrer(Page& page, bool deferSelf)
 
         // This code is not logically part of load deferring, but we do not want JS code executed beneath modal
         // windows or sheets, which is exactly when PageGroupLoadDeferrer is used.
-        for (Frame* frame = localMainFrame; frame; frame = frame->tree().traverseNext()) {
-            auto* localFrame = dynamicDowncast<LocalFrame>(frame);
+        for (RefPtr<Frame> frame = localMainFrame; frame; frame = frame->tree().traverseNext()) {
+            RefPtr localFrame = dynamicDowncast<LocalFrame>(frame);
             if (!localFrame)
                 continue;
-            localFrame->document()->suspendScheduledTasks(ReasonForSuspension::WillDeferLoading);
+            localFrame->protectedDocument()->suspendScheduledTasks(ReasonForSuspension::WillDeferLoading);
         }
     }
 
@@ -66,11 +66,11 @@ PageGroupLoadDeferrer::~PageGroupLoadDeferrer()
             continue;
         page->setDefersLoading(false);
 
-        for (Frame* frame = &page->mainFrame(); frame; frame = frame->tree().traverseNext()) {
-            auto* localFrame = dynamicDowncast<LocalFrame>(frame);
+        for (RefPtr frame = &page->mainFrame(); frame; frame = frame->tree().traverseNext()) {
+            RefPtr localFrame = dynamicDowncast<LocalFrame>(frame);
             if (!localFrame)
                 continue;
-            localFrame->document()->resumeScheduledTasks(ReasonForSuspension::WillDeferLoading);
+            localFrame->protectedDocument()->resumeScheduledTasks(ReasonForSuspension::WillDeferLoading);
         }
     }
 }

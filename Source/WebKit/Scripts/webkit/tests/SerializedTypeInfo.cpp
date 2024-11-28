@@ -406,6 +406,12 @@ Vector<SerializedTypeInfo> allSerializedTypes()
         { "NSSomeFoundationType"_s, {
             { "WebKit::CoreIPCNSSomeFoundationType"_s, "wrapper"_s }
         } },
+        { "WebKit::CoreIPCclass NSSomeOtherFoundationType"_s, {
+            { "RetainPtr<NSDictionary>"_s , "DictionaryKey"_s },
+        } },
+        { "class NSSomeOtherFoundationType"_s, {
+            { "WebKit::CoreIPCclass NSSomeOtherFoundationType"_s, "wrapper"_s }
+        } },
 #if ENABLE(DATA_DETECTION)
         { "WebKit::CoreIPCDDScannerResult"_s, {
             { "RetainPtr<NSString>"_s , "StringKey"_s },

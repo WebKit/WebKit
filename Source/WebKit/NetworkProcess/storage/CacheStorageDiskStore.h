@@ -31,11 +31,20 @@
 #include <wtf/WorkQueue.h>
 #include <wtf/text/WTFString.h>
 
+namespace WebCore {
+class FormData;
+class SharedBuffer;
+namespace DOMCacheEngine {
+using ResponseBody = std::variant<std::nullptr_t, Ref<FormData>, Ref<SharedBuffer>>;
+}
+}
+
 namespace WebKit {
 
 class CacheStorageDiskStore final : public CacheStorageStore {
 public:
     static Ref<CacheStorageDiskStore> create(const String& cacheName, const String& path, Ref<WorkQueue>&&);
+    static size_t computeRealBodySizeForStorage(const WebCore::DOMCacheEngine::ResponseBody&);
 
 private:
     CacheStorageDiskStore(const String& cacheName, const String& path, Ref<WorkQueue>&&);

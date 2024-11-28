@@ -36,7 +36,6 @@ namespace API {
 
 class TargetedElementRequest final : public ObjectImpl<Object::Type::TargetedElementRequest> {
 public:
-
     bool shouldIgnorePointerEventsNone() const { return m_request.shouldIgnorePointerEventsNone; }
     void setShouldIgnorePointerEventsNone(bool value) { m_request.shouldIgnorePointerEventsNone = value; }
 

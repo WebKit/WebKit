@@ -83,9 +83,9 @@ private:
 
                 Value* mask = nullptr;
                 if (m_value->type() == Double)
-                    mask = m_insertionSet.insert<ConstDoubleValue>(m_index, m_origin, bitwise_cast<double>(~(1ll << 63)));
+                    mask = m_insertionSet.insert<ConstDoubleValue>(m_index, m_origin, std::bit_cast<double>(~(1ll << 63)));
                 else if (m_value->type() == Float)
-                    mask = m_insertionSet.insert<ConstFloatValue>(m_index, m_origin, bitwise_cast<float>(~(1 << 31)));
+                    mask = m_insertionSet.insert<ConstFloatValue>(m_index, m_origin, std::bit_cast<float>(~(1 << 31)));
                 else
                     RELEASE_ASSERT_NOT_REACHED();
                 Value* result = m_insertionSet.insert<Value>(m_index, BitAnd, m_origin, m_value->child(0), mask);

@@ -132,6 +132,7 @@ private:
 };
 
 class ProcessAndUIAssertion final : public ProcessAssertion {
+    WTF_MAKE_TZONE_ALLOCATED(ProcessAndUIAssertion);
 public:
     static Ref<ProcessAndUIAssertion> create(AuxiliaryProcessProxy& process, const String& reason, ProcessAssertionType type, Mode mode = Mode::Async, CompletionHandler<void()>&& acquisisionHandler = nullptr)
     {

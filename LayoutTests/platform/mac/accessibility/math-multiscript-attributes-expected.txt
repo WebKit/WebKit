@@ -51,7 +51,7 @@ AXChildren:
 AXChildrenInNavigationOrder:
 AXHelp:
 AXParent:
-AXSize: NSSize: {10, 13}
+AXSize: NSSize: {9, 13}
 AXTitle:
 AXDescription:
 AXValue:
@@ -153,7 +153,7 @@ AXChildren:
 AXChildrenInNavigationOrder:
 AXHelp:
 AXParent:
-AXSize: NSSize: {10, 12}
+AXSize: NSSize: {9, 12}
 AXTitle:
 AXDescription:
 AXValue:

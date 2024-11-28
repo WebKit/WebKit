@@ -20,6 +20,10 @@
 
 #pragma once
 
+#include <wtf/Compiler.h>
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 #include <initializer_list>
 #include <wtf/Forward.h>
 #include <wtf/GetPtr.h>
@@ -113,7 +117,7 @@ public:
     // function members:
     //   static unsigned hash(const T&);
     //   static bool equal(const ValueType&, const T&);
-    template<typename HashTranslator> AddResult ensure(auto&&, const Invocable<ValueType()> auto&);
+    template<typename HashTranslator> AddResult ensure(auto&&, NOESCAPE const Invocable<ValueType()> auto&);
 
     // Attempts to add a list of things to the set. Returns true if any of
     // them are new to the set. Returns false if the set is unchanged.
@@ -124,12 +128,15 @@ public:
 
     bool remove(const ValueType&);
     bool remove(iterator);
-    bool removeIf(const Invocable<bool(const ValueType&)> auto&);
+    bool removeIf(NOESCAPE const Invocable<bool(const ValueType&)> auto&);
     void clear();
 
     TakeType take(const ValueType&);
     TakeType take(iterator);
     TakeType takeAny();
+
+    template<size_t inlineCapacity = 0>
+    Vector<TakeType, inlineCapacity> takeIf(NOESCAPE const Invocable<bool(const ValueType&)> auto& functor) { return m_impl.template takeIf<inlineCapacity>(functor); }
 
     // Returns a new set with the elements of both this and the given
     // collection (a.k.a. OR).
@@ -143,6 +150,13 @@ public:
     template<typename OtherCollection>
     HashSet intersectionWith(const OtherCollection&) const;
 
+    // Returns a new set with the elements of this set that are not in
+    // the given collection (a.k.a. A - B).
+    //
+    // NOTE: OtherCollection is required to implement `bool contains(Value)`.
+    template<typename OtherCollection>
+    HashSet differenceWith(const OtherCollection&) const;
+
     // Returns a new set with the elements that are either in this set or
     // in the given collection, but not in both. (a.k.a. XOR).
     template<typename OtherCollection>
@@ -151,6 +165,12 @@ public:
     // Adds the elements of the given collection to the set (a.k.a. OR).
     template<typename OtherCollection>
     void formUnion(const OtherCollection&);
+
+    // Removes the elements of this set that are in the given collection (a.k.a. A - B).
+    //
+    // NOTE: OtherCollection is required to implement `bool contains(Value)`.
+    template<typename OtherCollection>
+    void formDifference(const OtherCollection&);
 
     // Removes the elements of this set that aren't also in the given
     // collection (a.k.a. AND).
@@ -200,7 +220,7 @@ template<typename ValueTraits, typename HashFunctions>
 struct HashSetTranslator {
     static unsigned hash(const auto& key) { return HashFunctions::hash(key); }
     static bool equal(const auto& a, const auto& b) { return HashFunctions::equal(a, b); }
-    static void translate(auto& location, auto&&, const Invocable<typename ValueTraits::TraitType()> auto& functor)
+    static void translate(auto& location, auto&&, NOESCAPE const Invocable<typename ValueTraits::TraitType()> auto& functor)
     { 
         ValueTraits::assignToEmpty(location, functor());
     }
@@ -220,7 +240,7 @@ template<typename ValueTraits, typename Translator>
 struct HashSetEnsureTranslatorAdaptor {
     static unsigned hash(const auto& key) { return Translator::hash(key); }
     static bool equal(const auto& a, const auto& b) { return Translator::equal(a, b); }
-    static void translate(auto& location, auto&&, const Invocable<typename ValueTraits::TraitType()> auto& functor)
+    static void translate(auto& location, auto&&, NOESCAPE const Invocable<typename ValueTraits::TraitType()> auto& functor)
     {
         ValueTraits::assignToEmpty(location, functor());
     }
@@ -296,7 +316,7 @@ inline bool HashSet<Value, HashFunctions, Traits, TableTraits>::contains(const T
 
 template<typename Value, typename HashFunctions, typename Traits, typename TableTraits>
 template<typename HashTranslator, typename T>
-inline auto HashSet<Value, HashFunctions, Traits, TableTraits>::ensure(T&& key, const Invocable<ValueType()> auto& functor) -> AddResult
+inline auto HashSet<Value, HashFunctions, Traits, TableTraits>::ensure(T&& key, NOESCAPE const Invocable<ValueType()> auto& functor) -> AddResult
 {
     return m_impl.template add<HashSetEnsureTranslatorAdaptor<Traits, HashTranslator>>(std::forward<T>(key), functor);
 }
@@ -369,7 +389,7 @@ inline bool HashSet<T, U, V, W>::remove(const ValueType& value)
 }
 
 template<typename T, typename U, typename V, typename W>
-inline bool HashSet<T, U, V, W>::removeIf(const Invocable<bool(const ValueType&)> auto& functor)
+inline bool HashSet<T, U, V, W>::removeIf(NOESCAPE const Invocable<bool(const ValueType&)> auto& functor)
 {
     return m_impl.removeIf(functor);
 }
@@ -426,6 +446,18 @@ inline auto HashSet<T, U, V, W>::intersectionWith(const OtherCollection& other) 
 
 template<typename T, typename U, typename V, typename W>
 template<typename OtherCollection>
+inline auto HashSet<T, U, V, W>::differenceWith(const OtherCollection& other) const -> HashSet<T, U, V, W>
+{
+    HashSet result;
+    for (const auto& value : *this) {
+        if (!other.contains(value))
+            result.add(value);
+    }
+    return result;
+}
+
+template<typename T, typename U, typename V, typename W>
+template<typename OtherCollection>
 inline auto HashSet<T, U, V, W>::symmetricDifferenceWith(const OtherCollection& other) const -> HashSet<T, U, V, W>
 {
     auto copy = *this;
@@ -445,6 +477,13 @@ template<typename OtherCollection>
 inline void HashSet<T, U, V, W>::formIntersection(const OtherCollection& other)
 {
     *this = intersectionWith(other);
+}
+
+template<typename T, typename U, typename V, typename W>
+template<typename OtherCollection>
+inline void HashSet<T, U, V, W>::formDifference(const OtherCollection& other)
+{
+    *this = differenceWith(other);
 }
 
 template<typename T, typename U, typename V, typename W>
@@ -566,3 +605,5 @@ inline void HashSet<T, U, V, W>::checkConsistency() const
 } // namespace WTF
 
 using WTF::HashSet;
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

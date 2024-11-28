@@ -76,7 +76,6 @@ list(APPEND WebKit_SOURCES
 
     WebProcess/WebPage/AcceleratedSurface.cpp
 
-    WebProcess/WebPage/CoordinatedGraphics/CompositingCoordinator.cpp
     WebProcess/WebPage/CoordinatedGraphics/DrawingAreaCoordinatedGraphics.cpp
 
     WebProcess/WebPage/win/WebPageWin.cpp
@@ -93,8 +92,6 @@ list(APPEND WebKit_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBKIT_DIR}/Platform/generic"
     "${WEBKIT_DIR}/PluginProcess/win"
     "${WEBKIT_DIR}/Shared/API/c/win"
-    "${WEBKIT_DIR}/Shared/CoordinatedGraphics"
-    "${WEBKIT_DIR}/Shared/CoordinatedGraphics/threadedcompositor"
     "${WEBKIT_DIR}/Shared/win"
     "${WEBKIT_DIR}/UIProcess/API/C/win"
     "${WEBKIT_DIR}/UIProcess/API/cpp/win"
@@ -165,5 +162,13 @@ if (USE_CAIRO)
     )
     list(APPEND WebKit_PUBLIC_FRAMEWORK_HEADERS
         Shared/API/c/cairo/WKImageCairo.h
+    )
+endif ()
+
+if (USE_SKIA)
+    include(Platform/Skia.cmake)
+
+    list(APPEND WebKit_PUBLIC_FRAMEWORK_HEADERS
+        Shared/API/c/skia/WKImageSkia.h
     )
 endif ()

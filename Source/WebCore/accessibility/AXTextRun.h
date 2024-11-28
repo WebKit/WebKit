@@ -28,6 +28,7 @@
 #if ENABLE(AX_THREAD_TEXT_APIS)
 
 #include <wtf/text/MakeString.h>
+#include <wtf/text/TextStream.h>
 
 namespace WebCore {
 
@@ -66,8 +67,12 @@ struct AXTextRun {
     String debugDescription(void* containingBlock) const
     {
         AXTextRunLineID lineID = { containingBlock, lineIndex };
-        return makeString(lineID.debugDescription(), ": |", makeStringByReplacingAll(text, '\n', "{newline}"_s), "|(len ", text.length(), ")");
+        return makeString(lineID.debugDescription(), ": |"_s, makeStringByReplacingAll(text, '\n', "{newline}"_s), "|(len "_s, text.length(), ")"_s);
     }
+
+    // Convenience methods for TextUnit movement.
+    bool startsWithLineBreak() const { return text.startsWith('\n'); }
+    bool endsWithLineBreak() const { return text.endsWith('\n'); }
 };
 
 struct AXTextRuns {
@@ -99,6 +104,8 @@ struct AXTextRuns {
     unsigned runLength(size_t index) const
     {
         RELEASE_ASSERT(index < runs.size());
+        // Runs should have a non-zero length. This is important because several parts of AXTextMarker rely on this assumption.
+        RELEASE_ASSERT(runs[index].text.length());
         return runs[index].text.length();
     }
     unsigned lastRunLength() const
@@ -121,6 +128,7 @@ struct AXTextRuns {
         return { containingBlock, runs[index].lineIndex };
     }
     String substring(unsigned start, unsigned length = StringImpl::MaxLength) const;
+    String toString() const { return substring(0); }
 };
 
 } // namespace WebCore

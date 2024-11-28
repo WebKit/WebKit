@@ -1,0 +1,53 @@
+<script>
+async function run() {
+    let adapter = await navigator.gpu.requestAdapter();
+    let device = await adapter.requestDevice();
+    let pipelineLayout = device.createPipelineLayout({ bindGroupLayouts: [] });
+    let shaderModule = device.createShaderModule({ code: ` 
+        struct h {
+            @location(5) @interpolate(linear, centroid) i: vec3h,
+            @builtin(position) j: vec4f,
+            @location(0) @interpolate(flat) k: vec4f,
+            @location(1) l: vec4f,
+            @location(14) @interpolate(perspective) f9: vec4f,
+            @location(4) m: i32,
+        }
+        @vertex fn n() -> h {
+            var o: h;
+            return o;
+        }
+    `
+    });
+    let shaderModule2 = device.createShaderModule({
+    code: ` 
+        struct ab {
+            @location(0) @interpolate(flat) q: vec4f
+        }
+        struct s {
+            @location(0) @interpolate(flat) q: vec4u,
+            @location(5) t: vec2u,
+        }
+        @fragment fn u(@location(9) v: vec4f, @location(5) ac: vec3h, ad: ab) -> s {
+            var o: s;
+            return o;
+        }
+    `
+    });
+    let renderPipeline = device.createRenderPipeline({
+        layout: pipelineLayout,
+        fragment: { module: shaderModule2, targets: [{ format: 'rgb10a2uint' }] },
+        vertex: { module: shaderModule }
+    });
+    let texture = device.createTexture({ size: { width: 20 }, dimension: '3d', format: 'rgb10a2uint', usage: GPUTextureUsage.RENDER_ATTACHMENT });
+    let renderPassEncoder = device.createCommandEncoder().beginRenderPass({
+        colorAttachments: [
+            { view: texture.createView(), depthSlice: 0, loadOp: 'load', storeOp: 'store' }
+        ]
+    });
+    renderPassEncoder.setPipeline(renderPipeline);
+    renderPassEncoder.draw(3, 1, 4_294_967_295);
+}
+
+globalThis.testRunner?.waitUntilDone();
+run().finally(() => globalThis.testRunner?.notifyDone());
+</script>

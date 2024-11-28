@@ -34,7 +34,7 @@ angle::Result SecondaryCommandPool::init(Context *context,
     poolInfo.sType                   = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
     poolInfo.flags                   = VK_COMMAND_POOL_CREATE_TRANSIENT_BIT;
     poolInfo.queueFamilyIndex        = queueFamilyIndex;
-    if (context->getRenderer()->getFeatures().useResetCommandBufferBitForSecondaryPools.enabled)
+    if (context->getFeatures().useResetCommandBufferBitForSecondaryPools.enabled)
     {
         poolInfo.flags |= VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
     }

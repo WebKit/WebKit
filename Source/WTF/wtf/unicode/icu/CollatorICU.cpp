@@ -33,6 +33,8 @@
 
 #if !UCONFIG_NO_COLLATION
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 #include <mutex>
 #include <unicode/ucol.h>
 #include <wtf/Lock.h>
@@ -271,5 +273,7 @@ int Collator::collate(const char8_t* a, const char8_t* b) const
 }
 
 } // namespace WTF
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif

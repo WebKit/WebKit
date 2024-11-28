@@ -1,9 +1,9 @@
 <script>
-    onload = function()
+    onload = async function()
     {
         if (window.testRunner) {
             testRunner.waitUntilDone();
-            testRunner.displayAndTrackRepaints();
+            await testRunner.displayAndTrackRepaints();
         }
         setTimeout(changeColor, 0);
     }

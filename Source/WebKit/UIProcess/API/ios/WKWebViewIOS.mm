@@ -33,6 +33,7 @@
 #import "LayerProperties.h"
 #import "NativeWebWheelEvent.h"
 #import "NavigationState.h"
+#import "PointerTouchCompatibilitySimulator.h"
 #import "RemoteLayerTreeDrawingAreaProxy.h"
 #import "RemoteLayerTreeScrollingPerformanceData.h"
 #import "RemoteLayerTreeViews.h"
@@ -65,11 +66,11 @@
 #import "_WKActivatedElementInfoInternal.h"
 #import "_WKWarningView.h"
 #import <WebCore/ColorCocoa.h>
+#import <WebCore/ContentsFormatCocoa.h>
 #import <WebCore/GraphicsContextCG.h>
 #import <WebCore/IOSurfacePool.h>
 #import <WebCore/LocalCurrentTraitCollection.h>
 #import <WebCore/MIMETypeRegistry.h>
-#import <WebCore/RuntimeApplicationChecks.h>
 #import <WebCore/UserInterfaceLayoutDirection.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <pal/spi/ios/GraphicsServicesSPI.h>
@@ -79,6 +80,7 @@
 #import <wtf/FixedVector.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/RefCounted.h>
+#import <wtf/RuntimeApplicationChecks.h>
 #import <wtf/SystemTracing.h>
 #import <wtf/cf/TypeCastsCF.h>
 #import <wtf/cocoa/Entitlements.h>
@@ -855,7 +857,7 @@ static WebCore::Color scrollViewBackgroundColor(WKWebView *webView, AllowPageBac
 
 - (void)_didCommitLoadForMainFrame
 {
-    _perProcessState.firstPaintAfterCommitLoadTransactionID = downcast<WebKit::RemoteLayerTreeDrawingAreaProxy>(*_page->drawingArea()).nextLayerTreeTransactionID();
+    _perProcessState.firstPaintAfterCommitLoadTransactionID = downcast<WebKit::RemoteLayerTreeDrawingAreaProxy>(*_page->drawingArea()).nextMainFrameLayerTreeTransactionID();
 
     _perProcessState.hasCommittedLoadForMainFrame = YES;
     _perProcessState.needsResetViewStateAfterCommitLoadForMainFrame = YES;
@@ -1006,13 +1008,15 @@ static void changeContentOffsetBoundedInValidRange(UIScrollView *scrollView, Web
         LOG_WITH_STREAM(VisibleRects, stream << " updating scroll view with pageScaleFactor " << layerTreeTransaction.pageScaleFactor());
 
         // When web-process-originated scale changes occur, pin the
-        // vertical scroll position to the top edge of the content,
+        // scroll position to the top edge of the content,
         // instead of the center (which UIScrollView does by default).
-        CGFloat contentOffsetY = [_scrollView contentOffset].y * layerTreeTransaction.pageScaleFactor() / [_scrollView zoomScale];
+        CGFloat scaleRatio = layerTreeTransaction.pageScaleFactor() / [_scrollView zoomScale];
+        CGFloat contentOffsetY = [_scrollView contentOffset].y * scaleRatio;
+        CGFloat contentOffsetX = [_scrollView contentOffset].x * scaleRatio;
 
         [_scrollView setZoomScale:layerTreeTransaction.pageScaleFactor()];
 
-        changeContentOffsetBoundedInValidRange(_scrollView.get(), CGPointMake([_scrollView contentOffset].x, contentOffsetY));
+        changeContentOffsetBoundedInValidRange(_scrollView.get(), CGPointMake(contentOffsetX, contentOffsetY));
     }
 }
 
@@ -1159,7 +1163,7 @@ static void addOverlayEventRegions(WebCore::PlatformLayerIdentifier layerID, con
 
     const auto& layerProperties = *it->value;
     if (layerProperties.changedProperties & WebKit::LayerChange::EventRegionChanged) {
-        CGRect rect = layerProperties.eventRegion.region().bounds();
+        CGRect rect = layerProperties.eventRegion.scrollOverlayRegion().bounds();
         if (!CGRectIsEmpty(rect))
             overlayRegionsIDs.add(layerID);
     }
@@ -1208,8 +1212,8 @@ static void configureScrollViewWithOverlayRegionsIDs(WKBaseScrollView* scrollVie
         HashSet<UIView *> overlayAncestorsChain;
         for (UIView *overlayAncestor = (UIView *)overlayView; overlayAncestor; overlayAncestor = [overlayAncestor superview]) {
             overlayAncestorsChain.add(overlayAncestor);
-            if ([overlayAncestor isKindOfClass:[WKBaseScrollView class]]) {
-                enclosingScrollView = (WKBaseScrollView *)overlayAncestor;
+            if (auto *layer = dynamic_objc_cast<WKBaseScrollView>(overlayAncestor)) {
+                enclosingScrollView = layer;
                 break;
             }
         }
@@ -1406,7 +1410,7 @@ static void configureScrollViewWithOverlayRegionsIDs(WKBaseScrollView* scrollVie
     if (![self usesStandardContentView])
         return;
 
-    _perProcessState.firstTransactionIDAfterPageRestore = downcast<WebKit::RemoteLayerTreeDrawingAreaProxy>(*_page->drawingArea()).nextLayerTreeTransactionID();
+    _perProcessState.firstTransactionIDAfterPageRestore = downcast<WebKit::RemoteLayerTreeDrawingAreaProxy>(*_page->drawingArea()).nextMainFrameLayerTreeTransactionID();
     if (scrollPosition)
         _perProcessState.scrollOffsetToRestore = WebCore::ScrollableArea::scrollOffsetFromPosition(WebCore::FloatPoint(scrollPosition.value()), WebCore::toFloatSize(scrollOrigin));
     else
@@ -1430,7 +1434,7 @@ static void configureScrollViewWithOverlayRegionsIDs(WKBaseScrollView* scrollVie
     if (![self usesStandardContentView])
         return;
 
-    _perProcessState.firstTransactionIDAfterPageRestore = downcast<WebKit::RemoteLayerTreeDrawingAreaProxy>(*_page->drawingArea()).nextLayerTreeTransactionID();
+    _perProcessState.firstTransactionIDAfterPageRestore = downcast<WebKit::RemoteLayerTreeDrawingAreaProxy>(*_page->drawingArea()).nextMainFrameLayerTreeTransactionID();
     _perProcessState.unobscuredCenterToRestore = center;
 
     _scaleToRestore = scale;
@@ -1446,16 +1450,13 @@ static void configureScrollViewWithOverlayRegionsIDs(WKBaseScrollView* scrollVie
     if (snapshotSize.isEmpty())
         return nullptr;
 
-    CATransform3D transform = CATransform3DMakeScale(deviceScale, deviceScale, 1);
+    auto transform = CATransform3DMakeScale(deviceScale, deviceScale, 1);
 
-#if HAVE(IOSURFACE_RGB10)
-    WebCore::IOSurface::Format snapshotFormat = WebCore::screenSupportsExtendedColor() ? WebCore::IOSurface::Format::RGB10 : WebCore::IOSurface::Format::BGRA;
-#else
-    WebCore::IOSurface::Format snapshotFormat = WebCore::IOSurface::Format::BGRA;
-#endif
+    auto snapshotFormat = WebCore::convertToIOSurfaceFormat(WebCore::screenContentsFormat());
     auto surface = WebCore::IOSurface::create(nullptr, WebCore::expandedIntSize(snapshotSize), WebCore::DestinationColorSpace::SRGB(), WebCore::IOSurface::Name::Snapshot, snapshotFormat);
     if (!surface)
         return nullptr;
+
     CARenderServerRenderLayerWithTransform(MACH_PORT_NULL, self.layer.context.contextId, reinterpret_cast<uint64_t>(self.layer), surface->surface(), 0, 0, &transform);
 
 #if HAVE(IOSURFACE_ACCELERATOR)
@@ -2071,6 +2072,12 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
 
     if (scrollView.pinchGestureRecognizer.state == UIGestureRecognizerStateBegan) {
         _page->willStartUserTriggeredZooming();
+
+#if ENABLE(PDF_PLUGIN)
+        if (_page->mainFramePluginHandlesPageScaleGesture())
+            return;
+#endif
+
         [_contentView scrollViewWillStartPanOrPinchGesture];
     }
     [_contentView willStartZoomOrScroll];
@@ -2182,6 +2189,9 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
 
 - (void)scrollView:(WKBaseScrollView *)scrollView handleScrollUpdate:(WKBEScrollViewScrollUpdate *)update completion:(void (^)(BOOL handled))completion
 {
+    if (_pointerTouchCompatibilitySimulator)
+        _pointerTouchCompatibilitySimulator->handleScrollUpdate(scrollView, update);
+
     BOOL isHandledByDefault = !scrollView.scrollEnabled;
 
 #if ENABLE(OVERLAY_REGIONS_IN_EVENT_REGION)
@@ -2277,6 +2287,14 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     if (![self usesStandardContentView] && [_customContentView respondsToSelector:@selector(web_scrollViewDidZoom:)])
         [_customContentView web_scrollViewDidZoom:scrollView];
 
+#if ENABLE(PDF_PLUGIN)
+    if (_page->mainFramePluginHandlesPageScaleGesture()) {
+        auto gestureOrigin = WebCore::IntPoint([scrollView.pinchGestureRecognizer locationInView:self]);
+        _page->setPluginScaleFactor(contentZoomScale(self), gestureOrigin);
+        return;
+    }
+#endif
+
     [self _updateScrollViewBackground];
     [self _scheduleVisibleContentRectUpdateAfterScrollInView:scrollView];
 }
@@ -2287,6 +2305,14 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
         [_customContentView web_scrollViewDidEndZooming:scrollView withView:view atScale:scale];
 
     ASSERT(scrollView == _scrollView);
+
+#if ENABLE(PDF_PLUGIN)
+    if (_page->mainFramePluginHandlesPageScaleGesture()) {
+        _page->didEndUserTriggeredZooming();
+        return;
+    }
+#endif
+
     // FIXME: remove when rdar://problem/36065495 is fixed.
     // When rotating with two fingers down, UIScrollView can set a bogus content view position.
     // "Center" is top left because we set the anchorPoint to 0,0.
@@ -3617,7 +3643,7 @@ static bool isLockdownModeWarningNeeded()
 {
     // Only present the alert if the app is not Safari
     // and we've never presented the alert before
-    if (WebCore::IOSApplication::isMobileSafari())
+    if (WTF::IOSApplication::isMobileSafari())
         return false;
 
     if (![WKProcessPool _lockdownModeEnabledGloballyForTesting] || [[NSUserDefaults standardUserDefaults] boolForKey:WebKitLockdownModeAlertShownKey])
@@ -3827,6 +3853,13 @@ static bool isLockdownModeWarningNeeded()
     _overriddenZoomScaleParameters = std::nullopt;
 }
 
+#if ENABLE(PDF_PLUGIN)
+- (void)_pluginDidInstallPDFDocument:(double)initialScale
+{
+    [_scrollView setZoomScale:initialScale];
+}
+#endif
+
 #if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/WKWebViewIOSInternalAdditionsAfter.mm>)
 #import <WebKitAdditions/WKWebViewIOSInternalAdditionsAfter.mm>
 #endif
@@ -3844,7 +3877,7 @@ static bool isLockdownModeWarningNeeded()
             WebCore::PrivateClickMeasurement::SourceID(attribution.sourceIdentifier),
             WebCore::PCM::SourceSite(attribution.reportEndpoint),
             WebCore::PCM::AttributionDestinationSite(attribution.destinationURL),
-            WebCore::applicationBundleIdentifier(),
+            applicationBundleIdentifier(),
             WallTime::now(),
             WebCore::PCM::AttributionEphemeral::No
         );

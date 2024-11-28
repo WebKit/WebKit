@@ -3,7 +3,7 @@ CONSOLE MESSAGE: Visited fragment and waited.
 PASS
 
 ============== Back Forward List ==============
-        http://127.0.0.1:8000/history/back-with-fragment-change.py  **nav target**
-        http://127.0.0.1:8000/history/resources/back-with-fragment-change-target.html  **nav target**
-curr->  http://127.0.0.1:8000/history/resources/back-with-fragment-change-target.html#foo  **nav target**
+        http://127.0.0.1:8000/history/back-with-fragment-change.py
+        http://127.0.0.1:8000/history/resources/back-with-fragment-change-target.html
+curr->  http://127.0.0.1:8000/history/resources/back-with-fragment-change-target.html#foo
 ===============================================

@@ -45,7 +45,7 @@
 #include "pas_thread_local_cache_layout.h"
 #include "pas_thread_local_cache_node.h"
 
-static const bool verbose = false;
+static const bool verbose = PAS_SHOULD_LOG(PAS_LOG_SEGREGATED_HEAPS);
 
 struct enumeration_context;
 struct local_allocator_node;

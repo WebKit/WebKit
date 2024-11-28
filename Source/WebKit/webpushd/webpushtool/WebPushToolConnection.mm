@@ -45,9 +45,9 @@ namespace WebPushTool {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(Connection);
 
-std::unique_ptr<Connection> Connection::create(PreferTestService preferTestService, String bundleIdentifier, String pushPartition)
+Ref<Connection> Connection::create(PreferTestService preferTestService, String bundleIdentifier, String pushPartition)
 {
-    return makeUnique<Connection>(preferTestService, bundleIdentifier, pushPartition);
+    return adoptRef(*new Connection(preferTestService, bundleIdentifier, pushPartition));
 }
 
 static mach_port_t maybeConnectToService(const char* serviceName)
@@ -179,9 +179,8 @@ bool Connection::performSendWithAsyncReplyWithoutUsingIPCConnection(UniqueRef<IP
             return completionHandler(nullptr);
         }
 
-        size_t dataSize { 0 };
-        const uint8_t* data = static_cast<const uint8_t *>(xpc_dictionary_get_data(reply, WebKit::WebPushD::protocolEncodedMessageKey, &dataSize));
-        auto decoder = IPC::Decoder::create({ data, dataSize }, { });
+        auto data = xpc_dictionary_get_data_span(reply, WebKit::WebPushD::protocolEncodedMessageKey);
+        auto decoder = IPC::Decoder::create(data, { });
         ASSERT(decoder);
 
         completionHandler(decoder.get());
@@ -194,4 +193,3 @@ bool Connection::performSendWithAsyncReplyWithoutUsingIPCConnection(UniqueRef<IP
 } // namespace WebPushTool
 
 #endif // ENABLE(WEB_PUSH_NOTIFICATIONS)
-

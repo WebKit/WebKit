@@ -416,6 +416,22 @@ bool Device::supportsImageDimensions(const ImageDescriptor &desc) const
     return false;
 }
 
+bool Device::hasDeviceEnqueueCaps() const
+{
+    return mInfo.queueOnDeviceMaxSize > 0;
+}
+
+bool Device::supportsNonUniformWorkGroups() const
+{
+    cl_bool support = false;
+
+    if (IsError(mImpl->getInfoUInt(DeviceInfo::NonUniformWorkGroupSupport, &support)))
+    {
+        UNREACHABLE();
+    }
+    return support;
+}
+
 Device::Device(Platform &platform,
                Device *parent,
                DeviceType type,

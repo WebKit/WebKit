@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include "TimelineRange.h"
+
 #include <wtf/Forward.h>
 
 namespace WebCore {
@@ -37,6 +39,9 @@ namespace CSSPropertyParserHelpers {
 
 // MARK: - Consumer functions
 
+RefPtr<CSSValue> consumeAnimationRange(CSSParserTokenRange&, const CSSParserContext&, SingleTimelineRange::Type);
+RefPtr<CSSValue> consumeAnimationRangeStart(CSSParserTokenRange&, const CSSParserContext&);
+RefPtr<CSSValue> consumeAnimationRangeEnd(CSSParserTokenRange&, const CSSParserContext&);
 RefPtr<CSSValue> consumeAnimationTimeline(CSSParserTokenRange&, const CSSParserContext&);
 RefPtr<CSSValue> consumeViewTimelineInsetListItem(CSSParserTokenRange&, const CSSParserContext&);
 RefPtr<CSSValue> consumeViewTimelineInset(CSSParserTokenRange&, const CSSParserContext&);

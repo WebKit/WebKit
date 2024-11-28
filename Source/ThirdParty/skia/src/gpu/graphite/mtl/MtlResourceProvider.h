@@ -30,12 +30,16 @@ public:
 
     sk_sp<MtlGraphicsPipeline> findOrCreateLoadMSAAPipeline(const RenderPassDesc&);
 
+    sk_cfp<id<MTLDepthStencilState>> findOrCreateCompatibleDepthStencilState(
+            const DepthStencilSettings&);
+
 private:
     const MtlSharedContext* mtlSharedContext();
 
     sk_sp<GraphicsPipeline> createGraphicsPipeline(const RuntimeEffectDictionary*,
                                                    const GraphicsPipelineDesc&,
-                                                   const RenderPassDesc&) override;
+                                                   const RenderPassDesc&,
+                                                   SkEnumBitMask<PipelineCreationFlags>) override;
     sk_sp<ComputePipeline> createComputePipeline(const ComputePipelineDesc&) override;
 
     sk_sp<Texture> createTexture(SkISize,
@@ -47,9 +51,6 @@ private:
 
     BackendTexture onCreateBackendTexture(SkISize dimensions, const TextureInfo&) override;
     void onDeleteBackendTexture(const BackendTexture&) override;
-
-    sk_cfp<id<MTLDepthStencilState>> findOrCreateCompatibleDepthStencilState(
-            const DepthStencilSettings&);
 
     skia_private::THashMap<DepthStencilSettings, sk_cfp<id<MTLDepthStencilState>>>
             fDepthStencilStates;

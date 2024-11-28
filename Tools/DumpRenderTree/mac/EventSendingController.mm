@@ -257,7 +257,6 @@ static NSDraggingSession *drt_WebHTMLView_beginDraggingSessionWithItemsEventSour
             || aSelector == @selector(textZoomOut)
             || aSelector == @selector(zoomPageIn)
             || aSelector == @selector(zoomPageOut)
-            || aSelector == @selector(scalePageBy:atX:andY:)
             || aSelector == @selector(mouseScrollByX:andY:)
             || aSelector == @selector(mouseScrollByX:andY:withWheel:andMomentumPhases:)
             || aSelector == @selector(continuousMouseScrollByX:andY:)
@@ -334,8 +333,6 @@ static NSDraggingSession *drt_WebHTMLView_beginDraggingSessionWithItemsEventSour
         return @"mouseScrollByWithWheelAndMomentumPhases";
     if (aSelector == @selector(continuousMouseScrollByX:andY:))
         return @"continuousMouseScrollBy";
-    if (aSelector == @selector(scalePageBy:atX:andY:))
-        return @"scalePageBy";
     if (aSelector == @selector(monitorWheelEventsWithOptions:))
         return @"monitorWheelEvents";
     if (aSelector == @selector(callAfterScrollingCompletes:))
@@ -664,15 +661,6 @@ static NSUInteger swizzledEventPressedMouseButtons()
 - (void)zoomPageOut
 {
     [[mainFrame webView] zoomPageOut:self];
-}
-
-- (void)scalePageBy:(float)scale atX:(float)x andY:(float)y
-{
-#if !PLATFORM(IOS_FAMILY)
-    // -[WebView _scaleWebView:] is Mac-specific API, and calls functions that
-    // assert to not be used in iOS.
-    [[mainFrame webView] _scaleWebView:scale atOrigin:NSMakePoint(x, y)];
-#endif
 }
 
 - (void)asyncMouseUp:(int)buttonNumber withModifiers:(WebScriptObject*)modifiers

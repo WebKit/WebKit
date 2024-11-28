@@ -142,7 +142,11 @@ void IDBServer::openDatabase(const IDBOpenRequestData& requestData)
 
     auto& uniqueIDBDatabase = getOrCreateUniqueIDBDatabase(requestData.databaseIdentifier());
 
-    auto connection = m_connectionMap.get(requestData.requestIdentifier().connectionIdentifier());
+    auto connectionIdentifier = requestData.requestIdentifier().connectionIdentifier();
+    if (!connectionIdentifier)
+        return;
+
+    auto connection = m_connectionMap.get(*connectionIdentifier);
     if (!connection) {
         // If the connection back to the client is gone, there's no way to open the database as
         // well as no way to message back failure.
@@ -158,7 +162,11 @@ void IDBServer::deleteDatabase(const IDBOpenRequestData& requestData)
     ASSERT(!isMainThread());
     ASSERT(m_lock.isHeld());
 
-    auto connection = m_connectionMap.get(requestData.requestIdentifier().connectionIdentifier());
+    auto connectionIdentifier = requestData.requestIdentifier().connectionIdentifier();
+    if (!connectionIdentifier)
+        return;
+
+    auto connection = m_connectionMap.get(*connectionIdentifier);
     if (!connection) {
         // If the connection back to the client is gone, there's no way to delete the database as
         // well as no way to message back failure.
@@ -278,7 +286,7 @@ void IDBServer::deleteIndex(const IDBRequestData& requestData, IDBObjectStoreIde
     transaction->deleteIndex(requestData, objectStoreIdentifier, indexName);
 }
 
-void IDBServer::renameIndex(const IDBRequestData& requestData, IDBObjectStoreIdentifier objectStoreIdentifier, uint64_t indexIdentifier, const String& newName)
+void IDBServer::renameIndex(const IDBRequestData& requestData, IDBObjectStoreIdentifier objectStoreIdentifier, IDBIndexIdentifier indexIdentifier, const String& newName)
 {
     LOG(IndexedDB, "IDBServer::renameIndex");
     ASSERT(!isMainThread());

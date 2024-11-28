@@ -36,26 +36,26 @@ class HTMLElement;
 class AccessibilityMenuListPopup final : public AccessibilityMockObject {
     friend class AXObjectCache;
 public:
-    static Ref<AccessibilityMenuListPopup> create() { return adoptRef(*new AccessibilityMenuListPopup); }
+    static Ref<AccessibilityMenuListPopup> create(AXID axID) { return adoptRef(*new AccessibilityMenuListPopup(axID)); }
 
-    bool isEnabled() const override;
-    bool isOffScreen() const override;
+    bool isEnabled() const final;
+    bool isOffScreen() const final;
 
     void didUpdateActiveOption(int optionIndex);
 
 private:
-    AccessibilityMenuListPopup();
+    explicit AccessibilityMenuListPopup(AXID);
 
     bool isMenuListPopup() const final { return true; }
 
     LayoutRect elementRect() const final { return LayoutRect(); }
     AccessibilityRole determineAccessibilityRole() final { return AccessibilityRole::MenuListPopup; }
 
-    bool isVisible() const override;
-    bool press() override;
-    void addChildren() override;
+    bool isVisible() const final;
+    bool press() final;
+    void addChildren() final;
     void handleChildrenChanged();
-    bool computeIsIgnored() const override;
+    bool computeIsIgnored() const final;
     std::optional<AccessibilityChildrenVector> selectedChildren() final;
 
     AccessibilityMenuListOption* menuListOptionAccessibilityObject(HTMLElement*) const;

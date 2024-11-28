@@ -67,7 +67,6 @@
 #include "JSTestDefaultToJSONEnum.h"
 #endif
 
-
 namespace WebCore {
 using namespace JSC;
 
@@ -165,31 +164,30 @@ template<> void JSTestDefaultToJSONDOMConstructor::initializeProperties(VM& vm, 
 
 /* Hash table for prototype */
 
-static const HashTableValue JSTestDefaultToJSONPrototypeTableValues[] =
-{
-    { "constructor"_s, static_cast<unsigned>(PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestDefaultToJSONConstructor, 0 } },
-    { "longAttribute"_s, JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { HashTableValue::GetterSetterType, jsTestDefaultToJSON_longAttribute, 0 } },
-    { "enabledBySettingsAttribute"_s, JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { HashTableValue::GetterSetterType, jsTestDefaultToJSON_enabledBySettingsAttribute, 0 } },
+static const std::array<HashTableValue, 19> JSTestDefaultToJSONPrototypeTableValues {
+    HashTableValue { "constructor"_s, static_cast<unsigned>(PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestDefaultToJSONConstructor, 0 } },
+    HashTableValue { "longAttribute"_s, JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { HashTableValue::GetterSetterType, jsTestDefaultToJSON_longAttribute, 0 } },
+    HashTableValue { "enabledBySettingsAttribute"_s, JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { HashTableValue::GetterSetterType, jsTestDefaultToJSON_enabledBySettingsAttribute, 0 } },
 #if ENABLE(TEST_CONDITIONAL)
-    { "enabledByConditionalAttribute"_s, JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { HashTableValue::GetterSetterType, jsTestDefaultToJSON_enabledByConditionalAttribute, 0 } },
+    HashTableValue { "enabledByConditionalAttribute"_s, JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { HashTableValue::GetterSetterType, jsTestDefaultToJSON_enabledByConditionalAttribute, 0 } },
 #else
-    { { }, 0, NoIntrinsic, { HashTableValue::End } },
+    HashTableValue { { }, 0, NoIntrinsic, { HashTableValue::End } },
 #endif
-    { "eventHandlerAttribute"_s, JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { HashTableValue::GetterSetterType, jsTestDefaultToJSON_eventHandlerAttribute, setJSTestDefaultToJSON_eventHandlerAttribute } },
-    { "firstStringAttribute"_s, JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { HashTableValue::GetterSetterType, jsTestDefaultToJSON_firstStringAttribute, setJSTestDefaultToJSON_firstStringAttribute } },
-    { "secondLongAttribute"_s, JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { HashTableValue::GetterSetterType, jsTestDefaultToJSON_secondLongAttribute, setJSTestDefaultToJSON_secondLongAttribute } },
-    { "thirdUnJSONableAttribute"_s, JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { HashTableValue::GetterSetterType, jsTestDefaultToJSON_thirdUnJSONableAttribute, setJSTestDefaultToJSON_thirdUnJSONableAttribute } },
-    { "fourthUnrestrictedDoubleAttribute"_s, JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { HashTableValue::GetterSetterType, jsTestDefaultToJSON_fourthUnrestrictedDoubleAttribute, setJSTestDefaultToJSON_fourthUnrestrictedDoubleAttribute } },
-    { "fifthLongClampedAttribute"_s, JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { HashTableValue::GetterSetterType, jsTestDefaultToJSON_fifthLongClampedAttribute, setJSTestDefaultToJSON_fifthLongClampedAttribute } },
-    { "sixthTypedefAttribute"_s, JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { HashTableValue::GetterSetterType, jsTestDefaultToJSON_sixthTypedefAttribute, setJSTestDefaultToJSON_sixthTypedefAttribute } },
-    { "seventhDirectlyToJSONableAttribute"_s, JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { HashTableValue::GetterSetterType, jsTestDefaultToJSON_seventhDirectlyToJSONableAttribute, setJSTestDefaultToJSON_seventhDirectlyToJSONableAttribute } },
-    { "eighthIndirectlyAttribute"_s, JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { HashTableValue::GetterSetterType, jsTestDefaultToJSON_eighthIndirectlyAttribute, setJSTestDefaultToJSON_eighthIndirectlyAttribute } },
-    { "ninthOptionalDirectlyToJSONableAttribute"_s, JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { HashTableValue::GetterSetterType, jsTestDefaultToJSON_ninthOptionalDirectlyToJSONableAttribute, setJSTestDefaultToJSON_ninthOptionalDirectlyToJSONableAttribute } },
-    { "tenthFrozenArrayAttribute"_s, JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { HashTableValue::GetterSetterType, jsTestDefaultToJSON_tenthFrozenArrayAttribute, setJSTestDefaultToJSON_tenthFrozenArrayAttribute } },
-    { "eleventhSequenceAttribute"_s, JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { HashTableValue::GetterSetterType, jsTestDefaultToJSON_eleventhSequenceAttribute, setJSTestDefaultToJSON_eleventhSequenceAttribute } },
-    { "twelfthInterfaceSequenceAttribute"_s, JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { HashTableValue::GetterSetterType, jsTestDefaultToJSON_twelfthInterfaceSequenceAttribute, setJSTestDefaultToJSON_twelfthInterfaceSequenceAttribute } },
-    { "thirteenthRecordAttribute"_s, JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { HashTableValue::GetterSetterType, jsTestDefaultToJSON_thirteenthRecordAttribute, setJSTestDefaultToJSON_thirteenthRecordAttribute } },
-    { "toJSON"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestDefaultToJSONPrototypeFunction_toJSON, 0 } },
+    HashTableValue { "eventHandlerAttribute"_s, JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { HashTableValue::GetterSetterType, jsTestDefaultToJSON_eventHandlerAttribute, setJSTestDefaultToJSON_eventHandlerAttribute } },
+    HashTableValue { "firstStringAttribute"_s, JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { HashTableValue::GetterSetterType, jsTestDefaultToJSON_firstStringAttribute, setJSTestDefaultToJSON_firstStringAttribute } },
+    HashTableValue { "secondLongAttribute"_s, JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { HashTableValue::GetterSetterType, jsTestDefaultToJSON_secondLongAttribute, setJSTestDefaultToJSON_secondLongAttribute } },
+    HashTableValue { "thirdUnJSONableAttribute"_s, JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { HashTableValue::GetterSetterType, jsTestDefaultToJSON_thirdUnJSONableAttribute, setJSTestDefaultToJSON_thirdUnJSONableAttribute } },
+    HashTableValue { "fourthUnrestrictedDoubleAttribute"_s, JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { HashTableValue::GetterSetterType, jsTestDefaultToJSON_fourthUnrestrictedDoubleAttribute, setJSTestDefaultToJSON_fourthUnrestrictedDoubleAttribute } },
+    HashTableValue { "fifthLongClampedAttribute"_s, JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { HashTableValue::GetterSetterType, jsTestDefaultToJSON_fifthLongClampedAttribute, setJSTestDefaultToJSON_fifthLongClampedAttribute } },
+    HashTableValue { "sixthTypedefAttribute"_s, JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { HashTableValue::GetterSetterType, jsTestDefaultToJSON_sixthTypedefAttribute, setJSTestDefaultToJSON_sixthTypedefAttribute } },
+    HashTableValue { "seventhDirectlyToJSONableAttribute"_s, JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { HashTableValue::GetterSetterType, jsTestDefaultToJSON_seventhDirectlyToJSONableAttribute, setJSTestDefaultToJSON_seventhDirectlyToJSONableAttribute } },
+    HashTableValue { "eighthIndirectlyAttribute"_s, JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { HashTableValue::GetterSetterType, jsTestDefaultToJSON_eighthIndirectlyAttribute, setJSTestDefaultToJSON_eighthIndirectlyAttribute } },
+    HashTableValue { "ninthOptionalDirectlyToJSONableAttribute"_s, JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { HashTableValue::GetterSetterType, jsTestDefaultToJSON_ninthOptionalDirectlyToJSONableAttribute, setJSTestDefaultToJSON_ninthOptionalDirectlyToJSONableAttribute } },
+    HashTableValue { "tenthFrozenArrayAttribute"_s, JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { HashTableValue::GetterSetterType, jsTestDefaultToJSON_tenthFrozenArrayAttribute, setJSTestDefaultToJSON_tenthFrozenArrayAttribute } },
+    HashTableValue { "eleventhSequenceAttribute"_s, JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { HashTableValue::GetterSetterType, jsTestDefaultToJSON_eleventhSequenceAttribute, setJSTestDefaultToJSON_eleventhSequenceAttribute } },
+    HashTableValue { "twelfthInterfaceSequenceAttribute"_s, JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { HashTableValue::GetterSetterType, jsTestDefaultToJSON_twelfthInterfaceSequenceAttribute, setJSTestDefaultToJSON_twelfthInterfaceSequenceAttribute } },
+    HashTableValue { "thirteenthRecordAttribute"_s, JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { HashTableValue::GetterSetterType, jsTestDefaultToJSON_thirteenthRecordAttribute, setJSTestDefaultToJSON_thirteenthRecordAttribute } },
+    HashTableValue { "toJSON"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestDefaultToJSONPrototypeFunction_toJSON, 0 } },
 };
 
 const ClassInfo JSTestDefaultToJSONPrototype::s_info = { "TestDefaultToJSON"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestDefaultToJSONPrototype) };
@@ -252,7 +250,7 @@ void JSTestDefaultToJSON::destroy(JSC::JSCell* cell)
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestDefaultToJSONConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
-    auto& vm = JSC::getVM(lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto* prototype = jsDynamicCast<JSTestDefaultToJSONPrototype*>(JSValue::decode(thisValue));
     if (UNLIKELY(!prototype))
@@ -262,9 +260,9 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestDefaultToJSONConstructor, (JSGlobalObject* lexica
 
 static inline JSValue jsTestDefaultToJSON_longAttributeGetter(JSGlobalObject& lexicalGlobalObject, JSTestDefaultToJSON& thisObject)
 {
-    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto& impl = thisObject.wrapped();
+    SUPPRESS_UNCOUNTED_LOCAL auto& impl = thisObject.wrapped();
     RELEASE_AND_RETURN(throwScope, (toJS<IDLLong>(lexicalGlobalObject, throwScope, impl.longAttribute())));
 }
 
@@ -275,9 +273,9 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestDefaultToJSON_longAttribute, (JSGlobalObject* lex
 
 static inline JSValue jsTestDefaultToJSON_enabledBySettingsAttributeGetter(JSGlobalObject& lexicalGlobalObject, JSTestDefaultToJSON& thisObject)
 {
-    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto& impl = thisObject.wrapped();
+    SUPPRESS_UNCOUNTED_LOCAL auto& impl = thisObject.wrapped();
     RELEASE_AND_RETURN(throwScope, (toJS<IDLUnsignedShort>(lexicalGlobalObject, throwScope, impl.enabledBySettingsAttribute())));
 }
 
@@ -289,9 +287,9 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestDefaultToJSON_enabledBySettingsAttribute, (JSGlob
 #if ENABLE(TEST_CONDITIONAL)
 static inline JSValue jsTestDefaultToJSON_enabledByConditionalAttributeGetter(JSGlobalObject& lexicalGlobalObject, JSTestDefaultToJSON& thisObject)
 {
-    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto& impl = thisObject.wrapped();
+    SUPPRESS_UNCOUNTED_LOCAL auto& impl = thisObject.wrapped();
     RELEASE_AND_RETURN(throwScope, (toJS<IDLEnumeration<TestDefaultToJSONEnum>>(lexicalGlobalObject, throwScope, impl.enabledByConditionalAttribute())));
 }
 
@@ -315,7 +313,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestDefaultToJSON_eventHandlerAttribute, (JSGlobalObj
 
 static inline bool setJSTestDefaultToJSON_eventHandlerAttributeSetter(JSGlobalObject& lexicalGlobalObject, JSTestDefaultToJSON& thisObject, JSValue value)
 {
-    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(&lexicalGlobalObject);
     UNUSED_PARAM(vm);
     setEventHandlerAttribute<JSEventListener>(thisObject.protectedWrapped(), eventNames().entHandlerAttributeEvent, value, thisObject);
     vm.writeBarrier(&thisObject, value);
@@ -331,9 +329,9 @@ JSC_DEFINE_CUSTOM_SETTER(setJSTestDefaultToJSON_eventHandlerAttribute, (JSGlobal
 
 static inline JSValue jsTestDefaultToJSON_firstStringAttributeGetter(JSGlobalObject& lexicalGlobalObject, JSTestDefaultToJSON& thisObject)
 {
-    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto& impl = thisObject.wrapped();
+    SUPPRESS_UNCOUNTED_LOCAL auto& impl = thisObject.wrapped();
     RELEASE_AND_RETURN(throwScope, (toJS<IDLDOMString>(lexicalGlobalObject, throwScope, impl.firstStringAttribute())));
 }
 
@@ -344,10 +342,10 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestDefaultToJSON_firstStringAttribute, (JSGlobalObje
 
 static inline bool setJSTestDefaultToJSON_firstStringAttributeSetter(JSGlobalObject& lexicalGlobalObject, JSTestDefaultToJSON& thisObject, JSValue value)
 {
-    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(&lexicalGlobalObject);
     UNUSED_PARAM(vm);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto& impl = thisObject.wrapped();
+    SUPPRESS_UNCOUNTED_LOCAL auto& impl = thisObject.wrapped();
     auto nativeValueConversionResult = convert<IDLDOMString>(lexicalGlobalObject, value);
     if (UNLIKELY(nativeValueConversionResult.hasException(throwScope)))
         return false;
@@ -364,9 +362,9 @@ JSC_DEFINE_CUSTOM_SETTER(setJSTestDefaultToJSON_firstStringAttribute, (JSGlobalO
 
 static inline JSValue jsTestDefaultToJSON_secondLongAttributeGetter(JSGlobalObject& lexicalGlobalObject, JSTestDefaultToJSON& thisObject)
 {
-    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto& impl = thisObject.wrapped();
+    SUPPRESS_UNCOUNTED_LOCAL auto& impl = thisObject.wrapped();
     RELEASE_AND_RETURN(throwScope, (toJS<IDLLong>(lexicalGlobalObject, throwScope, impl.secondLongAttribute())));
 }
 
@@ -377,10 +375,10 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestDefaultToJSON_secondLongAttribute, (JSGlobalObjec
 
 static inline bool setJSTestDefaultToJSON_secondLongAttributeSetter(JSGlobalObject& lexicalGlobalObject, JSTestDefaultToJSON& thisObject, JSValue value)
 {
-    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(&lexicalGlobalObject);
     UNUSED_PARAM(vm);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto& impl = thisObject.wrapped();
+    SUPPRESS_UNCOUNTED_LOCAL auto& impl = thisObject.wrapped();
     auto nativeValueConversionResult = convert<IDLLong>(lexicalGlobalObject, value);
     if (UNLIKELY(nativeValueConversionResult.hasException(throwScope)))
         return false;
@@ -397,9 +395,9 @@ JSC_DEFINE_CUSTOM_SETTER(setJSTestDefaultToJSON_secondLongAttribute, (JSGlobalOb
 
 static inline JSValue jsTestDefaultToJSON_thirdUnJSONableAttributeGetter(JSGlobalObject& lexicalGlobalObject, JSTestDefaultToJSON& thisObject)
 {
-    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto& impl = thisObject.wrapped();
+    SUPPRESS_UNCOUNTED_LOCAL auto& impl = thisObject.wrapped();
     RELEASE_AND_RETURN(throwScope, (toJS<IDLInterface<TestException>>(lexicalGlobalObject, *thisObject.globalObject(), throwScope, impl.thirdUnJSONableAttribute())));
 }
 
@@ -410,10 +408,10 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestDefaultToJSON_thirdUnJSONableAttribute, (JSGlobal
 
 static inline bool setJSTestDefaultToJSON_thirdUnJSONableAttributeSetter(JSGlobalObject& lexicalGlobalObject, JSTestDefaultToJSON& thisObject, JSValue value)
 {
-    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(&lexicalGlobalObject);
     UNUSED_PARAM(vm);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto& impl = thisObject.wrapped();
+    SUPPRESS_UNCOUNTED_LOCAL auto& impl = thisObject.wrapped();
     auto nativeValueConversionResult = convert<IDLInterface<TestException>>(lexicalGlobalObject, value, [](JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope) { throwAttributeTypeError(lexicalGlobalObject, scope, "TestDefaultToJSON"_s, "thirdUnJSONableAttribute"_s, "TestException"_s); });
     if (UNLIKELY(nativeValueConversionResult.hasException(throwScope)))
         return false;
@@ -430,9 +428,9 @@ JSC_DEFINE_CUSTOM_SETTER(setJSTestDefaultToJSON_thirdUnJSONableAttribute, (JSGlo
 
 static inline JSValue jsTestDefaultToJSON_fourthUnrestrictedDoubleAttributeGetter(JSGlobalObject& lexicalGlobalObject, JSTestDefaultToJSON& thisObject)
 {
-    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto& impl = thisObject.wrapped();
+    SUPPRESS_UNCOUNTED_LOCAL auto& impl = thisObject.wrapped();
     RELEASE_AND_RETURN(throwScope, (toJS<IDLUnrestrictedDouble>(lexicalGlobalObject, throwScope, impl.fourthUnrestrictedDoubleAttribute())));
 }
 
@@ -443,10 +441,10 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestDefaultToJSON_fourthUnrestrictedDoubleAttribute, 
 
 static inline bool setJSTestDefaultToJSON_fourthUnrestrictedDoubleAttributeSetter(JSGlobalObject& lexicalGlobalObject, JSTestDefaultToJSON& thisObject, JSValue value)
 {
-    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(&lexicalGlobalObject);
     UNUSED_PARAM(vm);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto& impl = thisObject.wrapped();
+    SUPPRESS_UNCOUNTED_LOCAL auto& impl = thisObject.wrapped();
     auto nativeValueConversionResult = convert<IDLUnrestrictedDouble>(lexicalGlobalObject, value);
     if (UNLIKELY(nativeValueConversionResult.hasException(throwScope)))
         return false;
@@ -463,9 +461,9 @@ JSC_DEFINE_CUSTOM_SETTER(setJSTestDefaultToJSON_fourthUnrestrictedDoubleAttribut
 
 static inline JSValue jsTestDefaultToJSON_fifthLongClampedAttributeGetter(JSGlobalObject& lexicalGlobalObject, JSTestDefaultToJSON& thisObject)
 {
-    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto& impl = thisObject.wrapped();
+    SUPPRESS_UNCOUNTED_LOCAL auto& impl = thisObject.wrapped();
     RELEASE_AND_RETURN(throwScope, (toJS<IDLClampAdaptor<IDLLong>>(lexicalGlobalObject, throwScope, impl.fifthLongClampedAttribute())));
 }
 
@@ -476,10 +474,10 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestDefaultToJSON_fifthLongClampedAttribute, (JSGloba
 
 static inline bool setJSTestDefaultToJSON_fifthLongClampedAttributeSetter(JSGlobalObject& lexicalGlobalObject, JSTestDefaultToJSON& thisObject, JSValue value)
 {
-    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(&lexicalGlobalObject);
     UNUSED_PARAM(vm);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto& impl = thisObject.wrapped();
+    SUPPRESS_UNCOUNTED_LOCAL auto& impl = thisObject.wrapped();
     auto nativeValueConversionResult = convert<IDLClampAdaptor<IDLLong>>(lexicalGlobalObject, value);
     if (UNLIKELY(nativeValueConversionResult.hasException(throwScope)))
         return false;
@@ -496,9 +494,9 @@ JSC_DEFINE_CUSTOM_SETTER(setJSTestDefaultToJSON_fifthLongClampedAttribute, (JSGl
 
 static inline JSValue jsTestDefaultToJSON_sixthTypedefAttributeGetter(JSGlobalObject& lexicalGlobalObject, JSTestDefaultToJSON& thisObject)
 {
-    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto& impl = thisObject.wrapped();
+    SUPPRESS_UNCOUNTED_LOCAL auto& impl = thisObject.wrapped();
     RELEASE_AND_RETURN(throwScope, (toJS<IDLDouble>(lexicalGlobalObject, throwScope, impl.sixthTypedefAttribute())));
 }
 
@@ -509,10 +507,10 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestDefaultToJSON_sixthTypedefAttribute, (JSGlobalObj
 
 static inline bool setJSTestDefaultToJSON_sixthTypedefAttributeSetter(JSGlobalObject& lexicalGlobalObject, JSTestDefaultToJSON& thisObject, JSValue value)
 {
-    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(&lexicalGlobalObject);
     UNUSED_PARAM(vm);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto& impl = thisObject.wrapped();
+    SUPPRESS_UNCOUNTED_LOCAL auto& impl = thisObject.wrapped();
     auto nativeValueConversionResult = convert<IDLDouble>(lexicalGlobalObject, value);
     if (UNLIKELY(nativeValueConversionResult.hasException(throwScope)))
         return false;
@@ -529,9 +527,9 @@ JSC_DEFINE_CUSTOM_SETTER(setJSTestDefaultToJSON_sixthTypedefAttribute, (JSGlobal
 
 static inline JSValue jsTestDefaultToJSON_seventhDirectlyToJSONableAttributeGetter(JSGlobalObject& lexicalGlobalObject, JSTestDefaultToJSON& thisObject)
 {
-    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto& impl = thisObject.wrapped();
+    SUPPRESS_UNCOUNTED_LOCAL auto& impl = thisObject.wrapped();
     RELEASE_AND_RETURN(throwScope, (toJS<IDLInterface<TestDefaultToJSONInheritFinal>>(lexicalGlobalObject, *thisObject.globalObject(), throwScope, impl.seventhDirectlyToJSONableAttribute())));
 }
 
@@ -542,10 +540,10 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestDefaultToJSON_seventhDirectlyToJSONableAttribute,
 
 static inline bool setJSTestDefaultToJSON_seventhDirectlyToJSONableAttributeSetter(JSGlobalObject& lexicalGlobalObject, JSTestDefaultToJSON& thisObject, JSValue value)
 {
-    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(&lexicalGlobalObject);
     UNUSED_PARAM(vm);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto& impl = thisObject.wrapped();
+    SUPPRESS_UNCOUNTED_LOCAL auto& impl = thisObject.wrapped();
     auto nativeValueConversionResult = convert<IDLInterface<TestDefaultToJSONInheritFinal>>(lexicalGlobalObject, value, [](JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope) { throwAttributeTypeError(lexicalGlobalObject, scope, "TestDefaultToJSON"_s, "seventhDirectlyToJSONableAttribute"_s, "TestDefaultToJSONInheritFinal"_s); });
     if (UNLIKELY(nativeValueConversionResult.hasException(throwScope)))
         return false;
@@ -562,9 +560,9 @@ JSC_DEFINE_CUSTOM_SETTER(setJSTestDefaultToJSON_seventhDirectlyToJSONableAttribu
 
 static inline JSValue jsTestDefaultToJSON_eighthIndirectlyAttributeGetter(JSGlobalObject& lexicalGlobalObject, JSTestDefaultToJSON& thisObject)
 {
-    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto& impl = thisObject.wrapped();
+    SUPPRESS_UNCOUNTED_LOCAL auto& impl = thisObject.wrapped();
     RELEASE_AND_RETURN(throwScope, (toJS<IDLInterface<TestDefaultToJSONIndirectInheritance>>(lexicalGlobalObject, *thisObject.globalObject(), throwScope, impl.eighthIndirectlyAttribute())));
 }
 
@@ -575,10 +573,10 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestDefaultToJSON_eighthIndirectlyAttribute, (JSGloba
 
 static inline bool setJSTestDefaultToJSON_eighthIndirectlyAttributeSetter(JSGlobalObject& lexicalGlobalObject, JSTestDefaultToJSON& thisObject, JSValue value)
 {
-    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(&lexicalGlobalObject);
     UNUSED_PARAM(vm);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto& impl = thisObject.wrapped();
+    SUPPRESS_UNCOUNTED_LOCAL auto& impl = thisObject.wrapped();
     auto nativeValueConversionResult = convert<IDLInterface<TestDefaultToJSONIndirectInheritance>>(lexicalGlobalObject, value, [](JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope) { throwAttributeTypeError(lexicalGlobalObject, scope, "TestDefaultToJSON"_s, "eighthIndirectlyAttribute"_s, "TestDefaultToJSONIndirectInheritance"_s); });
     if (UNLIKELY(nativeValueConversionResult.hasException(throwScope)))
         return false;
@@ -595,9 +593,9 @@ JSC_DEFINE_CUSTOM_SETTER(setJSTestDefaultToJSON_eighthIndirectlyAttribute, (JSGl
 
 static inline JSValue jsTestDefaultToJSON_ninthOptionalDirectlyToJSONableAttributeGetter(JSGlobalObject& lexicalGlobalObject, JSTestDefaultToJSON& thisObject)
 {
-    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto& impl = thisObject.wrapped();
+    SUPPRESS_UNCOUNTED_LOCAL auto& impl = thisObject.wrapped();
     RELEASE_AND_RETURN(throwScope, (toJS<IDLNullable<IDLInterface<TestDefaultToJSONInheritFinal>>>(lexicalGlobalObject, *thisObject.globalObject(), throwScope, impl.ninthOptionalDirectlyToJSONableAttribute())));
 }
 
@@ -608,10 +606,10 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestDefaultToJSON_ninthOptionalDirectlyToJSONableAttr
 
 static inline bool setJSTestDefaultToJSON_ninthOptionalDirectlyToJSONableAttributeSetter(JSGlobalObject& lexicalGlobalObject, JSTestDefaultToJSON& thisObject, JSValue value)
 {
-    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(&lexicalGlobalObject);
     UNUSED_PARAM(vm);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto& impl = thisObject.wrapped();
+    SUPPRESS_UNCOUNTED_LOCAL auto& impl = thisObject.wrapped();
     auto nativeValueConversionResult = convert<IDLNullable<IDLInterface<TestDefaultToJSONInheritFinal>>>(lexicalGlobalObject, value, [](JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope) { throwAttributeTypeError(lexicalGlobalObject, scope, "TestDefaultToJSON"_s, "ninthOptionalDirectlyToJSONableAttribute"_s, "TestDefaultToJSONInheritFinal"_s); });
     if (UNLIKELY(nativeValueConversionResult.hasException(throwScope)))
         return false;
@@ -628,9 +626,9 @@ JSC_DEFINE_CUSTOM_SETTER(setJSTestDefaultToJSON_ninthOptionalDirectlyToJSONableA
 
 static inline JSValue jsTestDefaultToJSON_tenthFrozenArrayAttributeGetter(JSGlobalObject& lexicalGlobalObject, JSTestDefaultToJSON& thisObject)
 {
-    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto& impl = thisObject.wrapped();
+    SUPPRESS_UNCOUNTED_LOCAL auto& impl = thisObject.wrapped();
     RELEASE_AND_RETURN(throwScope, (toJS<IDLFrozenArray<IDLBoolean>>(lexicalGlobalObject, *thisObject.globalObject(), throwScope, impl.tenthFrozenArrayAttribute())));
 }
 
@@ -641,10 +639,10 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestDefaultToJSON_tenthFrozenArrayAttribute, (JSGloba
 
 static inline bool setJSTestDefaultToJSON_tenthFrozenArrayAttributeSetter(JSGlobalObject& lexicalGlobalObject, JSTestDefaultToJSON& thisObject, JSValue value)
 {
-    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(&lexicalGlobalObject);
     UNUSED_PARAM(vm);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto& impl = thisObject.wrapped();
+    SUPPRESS_UNCOUNTED_LOCAL auto& impl = thisObject.wrapped();
     auto nativeValueConversionResult = convert<IDLFrozenArray<IDLBoolean>>(lexicalGlobalObject, value);
     if (UNLIKELY(nativeValueConversionResult.hasException(throwScope)))
         return false;
@@ -661,9 +659,9 @@ JSC_DEFINE_CUSTOM_SETTER(setJSTestDefaultToJSON_tenthFrozenArrayAttribute, (JSGl
 
 static inline JSValue jsTestDefaultToJSON_eleventhSequenceAttributeGetter(JSGlobalObject& lexicalGlobalObject, JSTestDefaultToJSON& thisObject)
 {
-    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto& impl = thisObject.wrapped();
+    SUPPRESS_UNCOUNTED_LOCAL auto& impl = thisObject.wrapped();
     RELEASE_AND_RETURN(throwScope, (toJS<IDLSequence<IDLDOMString>>(lexicalGlobalObject, *thisObject.globalObject(), throwScope, impl.eleventhSequenceAttribute())));
 }
 
@@ -674,10 +672,10 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestDefaultToJSON_eleventhSequenceAttribute, (JSGloba
 
 static inline bool setJSTestDefaultToJSON_eleventhSequenceAttributeSetter(JSGlobalObject& lexicalGlobalObject, JSTestDefaultToJSON& thisObject, JSValue value)
 {
-    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(&lexicalGlobalObject);
     UNUSED_PARAM(vm);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto& impl = thisObject.wrapped();
+    SUPPRESS_UNCOUNTED_LOCAL auto& impl = thisObject.wrapped();
     auto nativeValueConversionResult = convert<IDLSequence<IDLDOMString>>(lexicalGlobalObject, value);
     if (UNLIKELY(nativeValueConversionResult.hasException(throwScope)))
         return false;
@@ -694,9 +692,9 @@ JSC_DEFINE_CUSTOM_SETTER(setJSTestDefaultToJSON_eleventhSequenceAttribute, (JSGl
 
 static inline JSValue jsTestDefaultToJSON_twelfthInterfaceSequenceAttributeGetter(JSGlobalObject& lexicalGlobalObject, JSTestDefaultToJSON& thisObject)
 {
-    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto& impl = thisObject.wrapped();
+    SUPPRESS_UNCOUNTED_LOCAL auto& impl = thisObject.wrapped();
     RELEASE_AND_RETURN(throwScope, (toJS<IDLSequence<IDLInterface<TestDefaultToJSONInheritFinal>>>(lexicalGlobalObject, *thisObject.globalObject(), throwScope, impl.twelfthInterfaceSequenceAttribute())));
 }
 
@@ -707,10 +705,10 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestDefaultToJSON_twelfthInterfaceSequenceAttribute, 
 
 static inline bool setJSTestDefaultToJSON_twelfthInterfaceSequenceAttributeSetter(JSGlobalObject& lexicalGlobalObject, JSTestDefaultToJSON& thisObject, JSValue value)
 {
-    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(&lexicalGlobalObject);
     UNUSED_PARAM(vm);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto& impl = thisObject.wrapped();
+    SUPPRESS_UNCOUNTED_LOCAL auto& impl = thisObject.wrapped();
     auto nativeValueConversionResult = convert<IDLSequence<IDLInterface<TestDefaultToJSONInheritFinal>>>(lexicalGlobalObject, value);
     if (UNLIKELY(nativeValueConversionResult.hasException(throwScope)))
         return false;
@@ -727,9 +725,9 @@ JSC_DEFINE_CUSTOM_SETTER(setJSTestDefaultToJSON_twelfthInterfaceSequenceAttribut
 
 static inline JSValue jsTestDefaultToJSON_thirteenthRecordAttributeGetter(JSGlobalObject& lexicalGlobalObject, JSTestDefaultToJSON& thisObject)
 {
-    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto& impl = thisObject.wrapped();
+    SUPPRESS_UNCOUNTED_LOCAL auto& impl = thisObject.wrapped();
     RELEASE_AND_RETURN(throwScope, (toJS<IDLRecord<IDLDOMString, IDLUnsignedShort>>(lexicalGlobalObject, *thisObject.globalObject(), throwScope, impl.thirteenthRecordAttribute())));
 }
 
@@ -740,10 +738,10 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestDefaultToJSON_thirteenthRecordAttribute, (JSGloba
 
 static inline bool setJSTestDefaultToJSON_thirteenthRecordAttributeSetter(JSGlobalObject& lexicalGlobalObject, JSTestDefaultToJSON& thisObject, JSValue value)
 {
-    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(&lexicalGlobalObject);
     UNUSED_PARAM(vm);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto& impl = thisObject.wrapped();
+    SUPPRESS_UNCOUNTED_LOCAL auto& impl = thisObject.wrapped();
     auto nativeValueConversionResult = convert<IDLRecord<IDLDOMString, IDLUnsignedShort>>(lexicalGlobalObject, value);
     if (UNLIKELY(nativeValueConversionResult.hasException(throwScope)))
         return false;
@@ -760,10 +758,10 @@ JSC_DEFINE_CUSTOM_SETTER(setJSTestDefaultToJSON_thirteenthRecordAttribute, (JSGl
 
 static inline EncodedJSValue jsTestDefaultToJSONPrototypeFunction_toJSONBody(JSGlobalObject* lexicalGlobalObject, CallFrame*, JSTestDefaultToJSON* castedThis)
 {
-    auto& vm = JSC::getVM(lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     UNUSED_PARAM(throwScope);
-    auto& impl = castedThis->wrapped();
+    SUPPRESS_UNCOUNTED_LOCAL auto& impl = castedThis->wrapped();
     auto* result = constructEmptyObject(lexicalGlobalObject);
     if (DeprecatedGlobalSettings::testDeprecatedGlobalSettingEnabled()) {
         auto longAttributeValue = toJS<IDLLong>(*lexicalGlobalObject, throwScope, impl.longAttribute());
@@ -839,8 +837,8 @@ void JSTestDefaultToJSON::analyzeHeap(JSCell* cell, HeapAnalyzer& analyzer)
 {
     auto* thisObject = jsCast<JSTestDefaultToJSON*>(cell);
     analyzer.setWrappedObjectForCell(cell, &thisObject->wrapped());
-    if (thisObject->scriptExecutionContext())
-        analyzer.setLabelForCell(cell, makeString("url "_s, thisObject->scriptExecutionContext()->url().string()));
+    if (RefPtr context = thisObject->scriptExecutionContext())
+        analyzer.setLabelForCell(cell, makeString("url "_s, context->url().string()));
     Base::analyzeHeap(cell, analyzer);
 }
 
@@ -859,6 +857,7 @@ void JSTestDefaultToJSONOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* 
     uncacheWrapper(world, jsTestDefaultToJSON->protectedWrapped().ptr(), jsTestDefaultToJSON);
 }
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 #if ENABLE(BINDING_INTEGRITY)
 #if PLATFORM(WIN)
 #pragma warning(disable: 4483)
@@ -883,6 +882,8 @@ template<typename T, typename = std::enable_if_t<std::is_same_v<T, TestDefaultTo
     }
 }
 #endif
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+
 JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject*, JSDOMGlobalObject* globalObject, Ref<TestDefaultToJSON>&& impl)
 {
 #if ENABLE(BINDING_INTEGRITY)

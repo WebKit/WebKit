@@ -51,7 +51,7 @@ MemoryBackingStoreTransaction::MemoryBackingStoreTransaction(MemoryIDBBackingSto
 {
     if (m_info.mode() == IDBTransactionMode::Versionchange) {
         IDBDatabaseInfo info;
-        auto error = m_backingStore.getOrEstablishDatabaseInfo(info);
+        auto error = m_backingStore->getOrEstablishDatabaseInfo(info);
         if (error.isNull())
             m_originalDatabaseInfo = makeUnique<IDBDatabaseInfo>(info);
     }
@@ -242,18 +242,18 @@ void MemoryBackingStoreTransaction::abort()
     m_originalIndexNames.clear();
 
     for (const auto& iterator : m_originalObjectStoreNames)
-        m_backingStore.renameObjectStoreForVersionChangeAbort(*iterator.key, iterator.value);
+        m_backingStore->renameObjectStoreForVersionChangeAbort(*iterator.key, iterator.value);
     m_originalObjectStoreNames.clear();
 
     for (const auto& objectStore : m_versionChangeAddedObjectStores)
-        m_backingStore.removeObjectStoreForVersionChangeAbort(*objectStore);
+        m_backingStore->removeObjectStoreForVersionChangeAbort(*objectStore);
     m_deletedIndexes.removeIf([&](auto& entry) {
         return m_versionChangeAddedObjectStores.contains(entry.value->objectStore().get());
     });
     m_versionChangeAddedObjectStores.clear();
 
     for (auto& objectStore : m_deletedObjectStores.values()) {
-        m_backingStore.restoreObjectStoreForVersionChangeAbort(*objectStore);
+        m_backingStore->restoreObjectStoreForVersionChangeAbort(*objectStore);
         ASSERT(!m_objectStores.contains(objectStore.get()));
         m_objectStores.add(objectStore);
     }
@@ -261,7 +261,7 @@ void MemoryBackingStoreTransaction::abort()
 
     if (m_originalDatabaseInfo) {
         ASSERT(m_info.mode() == IDBTransactionMode::Versionchange);
-        m_backingStore.setDatabaseInfo(*m_originalDatabaseInfo);
+        m_backingStore->setDatabaseInfo(*m_originalDatabaseInfo);
     }
 
     // Restore cleared index value stores before we re-insert values into object stores
@@ -291,7 +291,7 @@ void MemoryBackingStoreTransaction::abort()
     }
 
     for (auto& index : m_deletedIndexes.values()) {
-        RELEASE_ASSERT(m_backingStore.hasObjectStore(index->info().objectStoreIdentifier()));
+        RELEASE_ASSERT(m_backingStore->hasObjectStore(index->info().objectStoreIdentifier()));
         index->objectStore()->maybeRestoreDeletedIndex(*index);
     }
     m_deletedIndexes.clear();

@@ -188,10 +188,6 @@ TEST_P(BlendMinMaxTest, RGBA16F)
     ANGLE_SKIP_TEST_IF(getClientMajorVersion() < 3 &&
                        !IsGLExtensionEnabled("GL_EXT_color_buffer_half_float"));
 
-    // TODO(anglebug.com/42264029) Context.cpp disallows GL_EXT_color_buffer_half_float on iOS
-    // because it doesn't support GL_EXT_color_buffer_float.
-    ANGLE_SKIP_TEST_IF(IsIOS() && IsOpenGLES());
-
     runTest(GL_RGBA16F, GL_FLOAT);
 }
 

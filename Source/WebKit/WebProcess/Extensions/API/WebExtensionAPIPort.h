@@ -50,8 +50,8 @@ public:
     static PortSet get(WebExtensionPortChannelIdentifier);
 
     WebExtensionContentWorldType targetContentWorldType() const { return m_targetContentWorldType; }
-    WebExtensionPortChannelIdentifier channelIdentifier() const { return m_channelIdentifier; }
-    WebPageProxyIdentifier owningPageProxyIdentifier() const { return m_owningPageProxyIdentifier; }
+    WebExtensionPortChannelIdentifier channelIdentifier() const { return *m_channelIdentifier; }
+    std::optional<WebPageProxyIdentifier> owningPageProxyIdentifier() const { return m_owningPageProxyIdentifier; }
     const std::optional<WebExtensionMessageSenderParameters>& senderParameters() const { return m_senderParameters; }
 
     void postMessage(WebFrame&, NSString *, NSString **outExceptionString);
@@ -138,8 +138,8 @@ private:
     void fireDisconnectEventIfNeeded();
 
     WebExtensionContentWorldType m_targetContentWorldType;
-    WebPageProxyIdentifier m_owningPageProxyIdentifier;
-    WebExtensionPortChannelIdentifier m_channelIdentifier;
+    Markable<WebPageProxyIdentifier> m_owningPageProxyIdentifier;
+    Markable<WebExtensionPortChannelIdentifier> m_channelIdentifier;
     bool m_disconnected { false };
 
     String m_name;

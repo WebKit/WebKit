@@ -126,7 +126,7 @@ void SVGFilterElement::childrenChanged(const ChildChange& change)
         return;
 
     if (document().settings().layerBasedSVGEngineEnabled()) {
-        if (auto* filterRenderer = dynamicDowncast<RenderSVGResourceFilter>(renderer()))
+        if (CheckedPtr filterRenderer = dynamicDowncast<RenderSVGResourceFilter>(renderer()))
             filterRenderer->invalidateFilter();
         return;
     }

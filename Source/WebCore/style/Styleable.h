@@ -85,6 +85,7 @@ struct Styleable {
     bool hasRunningAcceleratedAnimations() const;
 
     bool capturedInViewTransition() const;
+    void setCapturedInViewTransition(AtomString);
 
     KeyframeEffectStack* keyframeEffectStack() const
     {
@@ -193,6 +194,8 @@ struct Styleable {
 
     void updateCSSAnimations(const RenderStyle* currentStyle, const RenderStyle& afterChangeStyle, const Style::ResolutionContext&, WeakStyleOriginatedAnimations&, Style::IsInDisplayNoneTree) const;
     void updateCSSTransitions(const RenderStyle& currentStyle, const RenderStyle& newStyle, WeakStyleOriginatedAnimations&) const;
+    void updateCSSScrollTimelines(const RenderStyle* currentStyle, const RenderStyle& afterChangeStyle) const;
+    void updateCSSViewTimelines(const RenderStyle* currentStyle, const RenderStyle& afterChangeStyle) const;
 };
 
 class WeakStyleable {

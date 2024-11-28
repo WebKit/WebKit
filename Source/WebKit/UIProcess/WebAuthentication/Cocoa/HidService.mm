@@ -50,6 +50,11 @@ static void deviceRemovedCallback(void* context, IOReturn, void*, IOHIDDeviceRef
 }
 #endif // HAVE(SECURITY_KEY_API)
 
+Ref<HidService> HidService::create(AuthenticatorTransportServiceObserver& observer)
+{
+    return adoptRef(*new HidService(observer));
+}
+
 HidService::HidService(AuthenticatorTransportServiceObserver& observer)
     : FidoService(observer)
 {
@@ -86,15 +91,15 @@ void HidService::platformStartDiscovery()
 #endif
 }
 
-UniqueRef<HidConnection> HidService::createHidConnection(IOHIDDeviceRef device) const
+Ref<HidConnection> HidService::createHidConnection(IOHIDDeviceRef device) const
 {
-    return makeUniqueRef<HidConnection>(device);
+    return HidConnection::create(device);
 }
 
 void HidService::deviceAdded(IOHIDDeviceRef device)
 {
 #if HAVE(SECURITY_KEY_API)
-    getInfo(WTF::makeUnique<CtapHidDriver>(createHidConnection(device)));
+    getInfo(CtapHidDriver::create(createHidConnection(device)));
 #endif
 }
 

@@ -84,7 +84,7 @@ function runFloatTextureRenderTargetTest(enabled, internalFormatString, format, 
     }
 
     if (completeStatus != gl.FRAMEBUFFER_COMPLETE) {
-        if (version == 1 && format == gl.RGB)
+        if (!wtu.isWebGL2(gl) && format == gl.RGB)
             testPassed("floating-point " + internalFormatString + " render target not supported; this is allowed.")
         else
             testFailed("floating-point " + internalFormatString + " render target not supported");
@@ -133,7 +133,7 @@ function runFloatRenderbufferRenderTargetTest(enabled, internalFormatString, tes
 {
     var internalFormat = eval(internalFormatString);
     var samples = [0];
-    if (enabled && version > 1) {
+    if (enabled && wtu.isWebGL2(gl)) {
         samples = Array.prototype.slice.call(gl.getInternalformatParameter(gl.RENDERBUFFER, internalFormat, gl.SAMPLES));
         samples.push(0);
     }
@@ -296,7 +296,7 @@ function runCopyTexImageTest(enabled)
         { internalformat: "R16F", format: "RED", destFormat: "RGB16F", valid: false, renderable: true, },
         { internalformat: "R16F", format: "RED", destFormat: "RGBA16F", valid: false, renderable: true, },
     ];
-    if (version == 1) {
+    if (!wtu.isWebGL2(gl)) {
         cases = [
             { valid:  true, renderable: true, format: "RGBA",  destFormat: "LUMINANCE", },
             { valid:  true, renderable: true, format: "RGBA",  destFormat: "ALPHA", },
@@ -318,8 +318,8 @@ function runCopyTexImageTest(enabled)
         debug(`Testing CopyTexImage2D for format: ${testcase.format}, internalformat: ${testcase.internalformat}, destformat: ${testcase.destFormat}`);
 
         var format = gl[testcase.format];
-        var internalformat = version > 1 ? gl[testcase.internalformat] : format;
-        var type = version > 1 ? gl.HALF_FLOAT : 0x8D61 /* HALF_FLOAT_OES */;
+        var internalformat = wtu.isWebGL2(gl) ? gl[testcase.internalformat] : format;
+        var type = wtu.isWebGL2(gl) ? gl.HALF_FLOAT : 0x8D61 /* HALF_FLOAT_OES */;
         var destFormat = gl[testcase.destFormat];
         var texSrc = gl.createTexture();
         gl.bindTexture(gl.TEXTURE_2D, texSrc);
@@ -334,7 +334,7 @@ function runCopyTexImageTest(enabled)
         gl.bindTexture(gl.TEXTURE_2D, texDest);
         wtu.glErrorShouldBe(gl, gl.NO_ERROR, "Setup framebuffer with texture should succeed.");
         if (enabled && testcase.renderable) {
-            if (version == 1 && format == gl.RGB && gl.checkFramebufferStatus(gl.FRAMEBUFFER) == gl.FRAMEBUFFER_INCOMPLETE_ATTACHMENT) {
+            if (!wtu.isWebGL2(gl) && format == gl.RGB && gl.checkFramebufferStatus(gl.FRAMEBUFFER) == gl.FRAMEBUFFER_INCOMPLETE_ATTACHMENT) {
                 testPassed("RGB framebuffer attachment not supported. This is allowed.")
             } else {
                 shouldBe("gl.checkFramebufferStatus(gl.FRAMEBUFFER)", "gl.FRAMEBUFFER_COMPLETE");
@@ -359,9 +359,9 @@ debug("");
 
 var wtu = WebGLTestUtils;
 var canvas = document.getElementById("canvas");
-var gl = wtu.create3DContext(canvas, null, version);
+var gl = wtu.create3DContext(canvas);
 
-if (version < 2) {
+if (!wtu.isWebGL2(gl)) {
     // These are exposed on the extension, but we need them before the extension has been requested so we can
     // make sure they don't work.
     gl.R16F = 0x822D;
@@ -401,7 +401,7 @@ if (!gl) {
                        [0, 1]);
   var quadParameters = wtu.setupUnitQuad(gl, 0, 1);
 
-  if (version > 1) {
+  if (wtu.isWebGL2(gl)) {
     // Ensure these formats can't be used for rendering if the extension is disabled
     runFloatTextureRenderTargetTest(false, "gl.R16F", gl.RED, gl.FLOAT);
     runFloatTextureRenderTargetTest(false, "gl.RG16F", gl.RG, gl.FLOAT);
@@ -416,13 +416,13 @@ if (!gl) {
   runFloatRenderbufferRenderTargetTest(false, "gl.RGBA32F");
   runFloatRenderbufferRenderTargetTest(false, "gl.R11F_G11F_B10F");
 
-  if (version > 1) {
+  if (wtu.isWebGL2(gl)) {
       runCopyTexImageTest(false);
       // Ensure RGB16F can't be used for rendering.
       runRGB16FNegativeTest();
   }
 
-  if (version == 1) {
+  if (!wtu.isWebGL2(gl)) {
       debug("");
       debug("Testing that component type framebuffer attachment queries are rejected with the extension disabled");
       const fbo = gl.createFramebuffer();
@@ -450,7 +450,7 @@ if (!gl) {
   }
 
   let oesTextureHalfFloat = null;
-  if (version == 1) {
+  if (!wtu.isWebGL2(gl)) {
     // oesTextureHalfFloat implicitly enables EXT_color_buffer_half_float if supported
     oesTextureHalfFloat = gl.getExtension("OES_texture_half_float");
     if (oesTextureHalfFloat && gl.getSupportedExtensions().includes("EXT_color_buffer_half_float")) {
@@ -470,7 +470,7 @@ if (!gl) {
       shouldBe("ext.FRAMEBUFFER_ATTACHMENT_COMPONENT_TYPE_EXT", "0x8211");
       shouldBe("ext.UNSIGNED_NORMALIZED_EXT", "0x8C17");
 
-      if (version > 1) {
+      if (wtu.isWebGL2(gl)) {
           runInternalFormatQueryTest();
           runFloatTextureRenderTargetTest(true, "gl.R16F", gl.RED, gl.FLOAT, testProgram, 1, [1000, 1, 1, 1], 0);
           runFloatTextureRenderTargetTest(true, "gl.RG16F", gl.RG, gl.FLOAT, testProgram, 2, [1000, 1000, 1, 1], 0);
@@ -479,7 +479,7 @@ if (!gl) {
           runFloatRenderbufferRenderTargetTest(true, "gl.RG16F", testProgram, 2, [1000, 1000, 1, 1]);
           runFloatRenderbufferRenderTargetTest(true, "gl.RGBA16F", testProgram, 4, [1000, 1000, 1000, 1000]);
       }
-      if (version == 1) {
+      if (!wtu.isWebGL2(gl)) {
           shouldBeNonNull(oesTextureHalfFloat); // Required by spec
           runFloatTextureRenderTargetTest(true, "gl.RGBA", gl.RGBA, oesTextureHalfFloat.HALF_FLOAT_OES, testProgram, 4, [1000, 1000, 1000, 1000], 0);
           runFloatTextureRenderTargetTest(true, "gl.RGB", gl.RGB, oesTextureHalfFloat.HALF_FLOAT_OES, testProgram, 3, [1000, 1000, 1000, 1], 0);
@@ -487,7 +487,7 @@ if (!gl) {
           runFloatTextureRenderTargetTest(false, "gl.LUMINANCE", gl.LUMINANCE, oesTextureHalfFloat.HALF_FLOAT_OES, testProgram, 1, [1000, 1, 1, 1], 0);
       }
 
-      if (version > 1)
+      if (wtu.isWebGL2(gl))
           runRGB16FNegativeTest(); // Ensure EXT_color_buffer_half_float does not enable RGB16F as color renderable.
 
       runCopyTexImageTest(true);
@@ -522,8 +522,8 @@ if (!gl) {
           gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 8, 8, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
           shouldBe('gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, ext.FRAMEBUFFER_ATTACHMENT_COMPONENT_TYPE_EXT)', 'ext.UNSIGNED_NORMALIZED_EXT');
           const tex_ext = gl.getExtension("OES_texture_half_float");
-          if (version > 1 || tex_ext) {
-              if (version > 1)
+          if (wtu.isWebGL2(gl) || tex_ext) {
+              if (wtu.isWebGL2(gl))
                   gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA16F, 8, 8, 0, gl.RGBA, gl.HALF_FLOAT, null);
               else
                   gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 8, 8, 0, gl.RGBA, tex_ext.HALF_FLOAT_OES, null);

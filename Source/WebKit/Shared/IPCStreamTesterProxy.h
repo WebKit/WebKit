@@ -28,6 +28,7 @@
 #if ENABLE(IPC_TESTING_API)
 
 #include "MessageReceiver.h"
+#include <wtf/RefCounted.h>
 
 namespace IPC {
 class Connection;
@@ -40,13 +41,15 @@ namespace WebKit {
 // Currently this is not instantiated. This only exists due to the IPCStreamTesterProxy
 // messages that are caught in the JS IPC_TESTING_API tests. The messages need to
 // compile the IPCStreamTesterProxyMessageReceiver.cpp, so this class definition is needed.
-class IPCStreamTesterProxy final : public IPC::MessageReceiver {
+class IPCStreamTesterProxy final : public IPC::MessageReceiver, public RefCounted<IPCStreamTesterProxy> {
 public:
+    ~IPCStreamTesterProxy() = default;
+
     // IPC::MessageReceiver overrides.
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
+
 private:
     IPCStreamTesterProxy() = default;
-    ~IPCStreamTesterProxy() = default;
 
     // Messages.
     void wasCreated(IPC::Semaphore&&, IPC::Semaphore&&) { }

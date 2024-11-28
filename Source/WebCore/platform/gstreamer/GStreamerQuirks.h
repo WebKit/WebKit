@@ -25,11 +25,15 @@
 #include "GStreamerCommon.h"
 #include "MediaPlayer.h"
 #include <wtf/Forward.h>
+#include <wtf/Noncopyable.h>
+#include <wtf/Nonmovable.h>
 #include <wtf/RefCounted.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
+
+class MediaPlayerPrivateGStreamer;
 
 enum class ElementRuntimeCharacteristics : uint8_t {
     IsMediaStream = 1 << 0,
@@ -45,7 +49,20 @@ public:
     GStreamerQuirkBase() = default;
     virtual ~GStreamerQuirkBase() = default;
 
-    virtual const char* identifier() = 0;
+    virtual const ASCIILiteral identifier() const = 0;
+
+    // Interface of classes supplied to MediaPlayerPrivateGStreamer to store values that the quirks will need for their job.
+    class GStreamerQuirkState {
+        WTF_MAKE_FAST_ALLOCATED;
+        // Prevent accidental https://en.wikipedia.org/wiki/Object_slicing.
+        WTF_MAKE_NONCOPYABLE(GStreamerQuirkState);
+        WTF_MAKE_NONMOVABLE(GStreamerQuirkState);
+    public:
+        GStreamerQuirkState()
+        {
+        }
+        virtual ~GStreamerQuirkState() = default;
+    };
 };
 
 class GStreamerQuirk : public GStreamerQuirkBase {
@@ -63,6 +80,13 @@ public:
     virtual Vector<String> disallowedWebAudioDecoders() const { return { }; }
     virtual unsigned getAdditionalPlaybinFlags() const { return 0; }
     virtual bool shouldParseIncomingLibWebRTCBitStream() const { return true; }
+
+    virtual bool needsBufferingPercentageCorrection() const { return false; }
+    // Returns name of the queried GstElement, or nullptr if no element was queried.
+    virtual ASCIILiteral queryBufferingPercentage(MediaPlayerPrivateGStreamer*, const GRefPtr<GstQuery>&) const { return nullptr; }
+    virtual int correctBufferingPercentage(MediaPlayerPrivateGStreamer*, int originalBufferingPercentage, GstBufferingMode) const { return originalBufferingPercentage; }
+    virtual void resetBufferingPercentage(MediaPlayerPrivateGStreamer*, int) const { };
+    virtual void setupBufferingPercentageCorrection(MediaPlayerPrivateGStreamer*, GstState, GstState, GRefPtr<GstElement>&&) const { }
 };
 
 class GStreamerHolePunchQuirk : public GStreamerQuirkBase {
@@ -107,6 +131,13 @@ public:
     unsigned getAdditionalPlaybinFlags() const;
 
     bool shouldParseIncomingLibWebRTCBitStream() const;
+
+    bool needsBufferingPercentageCorrection() const;
+    // Returns name of the queried GstElement, or nullptr if no element was queried.
+    ASCIILiteral queryBufferingPercentage(MediaPlayerPrivateGStreamer*, const GRefPtr<GstQuery>&) const;
+    int correctBufferingPercentage(MediaPlayerPrivateGStreamer*, int originalBufferingPercentage, GstBufferingMode) const;
+    void resetBufferingPercentage(MediaPlayerPrivateGStreamer*, int bufferingPercentage) const;
+    void setupBufferingPercentageCorrection(MediaPlayerPrivateGStreamer*, GstState currentState, GstState newState, GRefPtr<GstElement>&&) const;
 
 private:
     GStreamerQuirksManager(bool, bool);

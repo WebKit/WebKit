@@ -12,10 +12,6 @@ const expected = [
   // RejectObjectWithCalendarOrTimeZone
   "get fields.calendar",
   "get fields.timeZone",
-  // CopyDataProperties
-  "get options.overflow",
-  "get options.overflow.toString",
-  "call options.overflow.toString",
   // PrepareTemporalFields on argument
   "get fields.day",
   "get fields.day.valueOf",
@@ -47,6 +43,10 @@ const expected = [
   "get fields.year",
   "get fields.year.valueOf",
   "call fields.year.valueOf",
+  // GetTemporalOverflowOption
+  "get options.overflow",
+  "get options.overflow.toString",
+  "call options.overflow.toString",
 ];
 const actual = [];
 

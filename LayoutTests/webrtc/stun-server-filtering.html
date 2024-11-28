@@ -3,12 +3,13 @@
 <script src='../resources/testharnessreport.js'></script>
 <script>
 promise_test(async (test) => {
-    let pc = new RTCPeerConnection({iceServers:[{urls:['stun:foo.com', 'stun:blabla.local']}]});
+    let pc = new RTCPeerConnection({iceServers:[{urls:['stun:foo.com', 'stun:blabla.local', 'stuns:bar.com']}]});
     let promise = new Promise(resolve => pc.onicecandidateerror = resolve);
     let configuration = pc.getConfiguration();
 
-    assert_equals(configuration.iceServers[0].urls.length, 1);
+    assert_equals(configuration.iceServers[0].urls.length, 2);
     assert_equals(configuration.iceServers[0].urls[0], 'stun:foo.com');
+    assert_equals(configuration.iceServers[0].urls[1], 'stuns:bar.com');
 
     const event = await promise;
     assert_equals(event.url, 'stun:blabla.local');

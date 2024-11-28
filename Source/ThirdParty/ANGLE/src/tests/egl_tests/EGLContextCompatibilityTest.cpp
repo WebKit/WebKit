@@ -109,8 +109,7 @@ std::vector<EGLConfig> GetConfigs(EGLDisplay display)
 
 PlatformParameters FromRenderer(EGLint renderer)
 {
-    return WithNoFixture(
-        PlatformParameters(EGL_OPENGL_ES_API, 2, 0, 0, EGLPlatformParameters(renderer)));
+    return WithNoFixture(PlatformParameters(2, 0, EGLPlatformParameters(renderer)));
 }
 
 std::string EGLConfigName(EGLDisplay display, EGLConfig config)
@@ -483,6 +482,7 @@ void RegisterContextCompatibilityTests()
     std::vector<EGLint> renderers = {{
         EGL_PLATFORM_ANGLE_TYPE_D3D9_ANGLE,
         EGL_PLATFORM_ANGLE_TYPE_D3D11_ANGLE,
+        EGL_PLATFORM_ANGLE_TYPE_METAL_ANGLE,
         EGL_PLATFORM_ANGLE_TYPE_OPENGL_ANGLE,
         EGL_PLATFORM_ANGLE_TYPE_OPENGLES_ANGLE,
         EGL_PLATFORM_ANGLE_TYPE_VULKAN_ANGLE,

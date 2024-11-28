@@ -49,5 +49,4 @@ sub get_login_info {
 
     return { user_id => $api_key->user_id };
 }
-
 1;

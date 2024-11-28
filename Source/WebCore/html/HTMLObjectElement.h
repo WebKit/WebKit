@@ -93,7 +93,6 @@ private:
 
     bool isFormListedElement() const final { return true; }
     bool isValidatedFormListedElement() const final { return false; }
-    bool isFormControlElement() const final { return false; }
 
     bool isEnumeratable() const final { return true; }
 

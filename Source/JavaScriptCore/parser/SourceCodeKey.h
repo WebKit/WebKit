@@ -113,7 +113,7 @@ public:
             && m_functionConstructorParametersEndPosition == other.m_functionConstructorParametersEndPosition
             && m_name == other.m_name
             && host() == other.host()
-            && string() == other.string();
+            && (m_sourceCode == other.m_sourceCode || string() == other.string());
     }
 
     struct Hash {

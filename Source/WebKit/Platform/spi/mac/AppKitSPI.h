@@ -31,6 +31,7 @@
 
 #import <AppKit/NSInspectorBar.h>
 #import <AppKit/NSMenu_Private.h>
+#import <AppKit/NSPreviewRepresentingActivityItem_Private.h>
 #import <AppKit/NSTextInputClient_Private.h>
 #import <AppKit/NSWindow_Private.h>
 
@@ -75,6 +76,12 @@ typedef NS_OPTIONS(NSUInteger, NSWindowShadowOptions) {
 - (void)unregisterScrollViewSeparatorTrackingAdapter:(NSObject<NSScrollViewSeparatorTrackingAdapter> *)adapter;
 #endif
 
+@end
+
+@class LPLinkMetadata;
+
+@interface NSPreviewRepresentingActivityItem ()
+- (instancetype)initWithItem:(id)item linkMetadata:(LPLinkMetadata *)linkMetadata;
 @end
 
 #endif

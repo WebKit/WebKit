@@ -34,10 +34,6 @@
 #include <wtf/TZoneMalloc.h>
 #include <wtf/spi/cocoa/IOSurfaceSPI.h>
 
-#if PLATFORM(IOS_FAMILY) && !PLATFORM(MACCATALYST) && !PLATFORM(IOS_FAMILY_SIMULATOR)
-#define HAVE_IOSURFACE_RGB10 1
-#endif
-
 namespace WTF {
 class MachSendRight;
 class TextStream;
@@ -69,6 +65,7 @@ public:
         Snapshot,
         ShareableSnapshot,
         ShareableLocalSnapshot,
+        WebGPU,
     };
 
     enum class Format {
@@ -81,6 +78,9 @@ public:
 #endif
         RGBA, // NOLINT
         RGBX, // NOLINT
+#if HAVE(HDR_SUPPORT)
+        RGBA16F,
+#endif
     };
 
     enum class AccessMode : uint32_t {

@@ -504,7 +504,7 @@ class Bugzilla(object):
                     commit_flag=commit_flag,
                     is_patch=True)
 
-        response = self.browser.submit()
+        response = self.browser.submit(id="submitbug")
 
         bug_id = self._check_create_bug_response(response.read())
         _log.info("Bug %s created." % bug_id)

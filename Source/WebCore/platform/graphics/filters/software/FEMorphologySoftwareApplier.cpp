@@ -31,6 +31,8 @@
 #include <wtf/ParallelJobs.h>
 #include <wtf/TZoneMallocInlines.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(FEMorphologySoftwareApplier);
@@ -192,3 +194,5 @@ bool FEMorphologySoftwareApplier::apply(const Filter& filter, const FilterImageV
 }
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

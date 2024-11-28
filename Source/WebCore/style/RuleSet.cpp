@@ -147,7 +147,8 @@ void RuleSet::addRule(RuleData&& ruleData, CascadeLayerIdentifier cascadeLayerId
         if (identifier) {
             auto oldSize = container.size();
             container.grow(m_ruleCount);
-            std::fill(container.begin() + oldSize, container.end(), 0);
+            auto newlyAllocated = container.mutableSpan().subspan(oldSize);
+            std::fill(newlyAllocated.begin(), newlyAllocated.end(), 0);
             container.last() = identifier;
         }
     };
@@ -229,7 +230,7 @@ void RuleSet::addRule(RuleData&& ruleData, CascadeLayerIdentifier cascadeLayerId
             case CSSSelector::PseudoElement::ViewTransitionImagePair:
             case CSSSelector::PseudoElement::ViewTransitionOld:
             case CSSSelector::PseudoElement::ViewTransitionNew:
-                if (selector->argumentList()->first().identifier != starAtom())
+                if (selector->argumentList()->first() != starAtom())
                     namedPseudoElementSelector = selector;
                 break;
             default:
@@ -367,7 +368,7 @@ void RuleSet::addRule(RuleData&& ruleData, CascadeLayerIdentifier cascadeLayerId
     }
 
     if (namedPseudoElementSelector) {
-        addToRuleSet(namedPseudoElementSelector->argumentList()->first().identifier, m_namedPseudoElementRules, ruleData);
+        addToRuleSet(namedPseudoElementSelector->argumentList()->first(), m_namedPseudoElementRules, ruleData);
         return;
     }
 
@@ -454,14 +455,14 @@ std::optional<DynamicMediaQueryEvaluationChanges> RuleSet::evaluateDynamicMediaQ
         return ruleSet;
     }).iterator->value;
 
-    return { { DynamicMediaQueryEvaluationChanges::Type::InvalidateStyle, { ruleSet.copyRef() } } };
+    return { { DynamicMediaQueryEvaluationChanges::Type::InvalidateStyle, { { ruleSet.copyRef() } } } };
 }
 
 RuleSet::CollectedMediaQueryChanges RuleSet::evaluateDynamicMediaQueryRules(const MQ::MediaQueryEvaluator& evaluator, size_t startIndex)
 {
     CollectedMediaQueryChanges collectedChanges;
 
-    HashMap<size_t, bool, DefaultHash<size_t>, WTF::UnsignedWithZeroKeyHashTraits<size_t>> affectedRulePositionsAndResults;
+    UncheckedKeyHashMap<size_t, bool, DefaultHash<size_t>, WTF::UnsignedWithZeroKeyHashTraits<size_t>> affectedRulePositionsAndResults;
 
     for (size_t i = startIndex; i < m_dynamicMediaQueryRules.size(); ++i) {
         auto& dynamicRules = m_dynamicMediaQueryRules[i];

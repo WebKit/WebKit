@@ -45,7 +45,7 @@ namespace WebCore {
 class WorkerDebuggerProxy;
 class WorkerLoaderProxy;
 
-class WorkerOrWorkletThread : public SerialFunctionDispatcher, public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<WorkerOrWorkletThread> {
+class WorkerOrWorkletThread : public SerialFunctionDispatcher {
 public:
     virtual ~WorkerOrWorkletThread();
 

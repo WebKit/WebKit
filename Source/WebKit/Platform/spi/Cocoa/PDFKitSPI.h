@@ -92,7 +92,6 @@
 - (void)drawForPage:(PDFPage *)page withBox:(CGPDFBox)box active:(BOOL)active inContext:(CGContextRef)context;
 - (PDFPoint)firstCharCenter;
 - (/*nullable*/ NSString *)html;
-- (/*nullable*/ NSData *)webArchive;
 - (NSAttributedString *)attributedStringScaled:(CGFloat)scale;
 - (BOOL)isEmpty;
 @end
@@ -180,6 +179,15 @@ typedef NS_ENUM(NSUInteger, PDFSelectionGranularity);
 
 @interface PDFSelection (Staging_125426369)
 - (void)enumerateRectsAndTransformsForPage:(PDFPage *)page usingBlock:(void (^)(CGRect rect, CGAffineTransform transform))block;
+@end
+
+#endif
+
+#if HAVE(PDFSELECTION_HTMLDATA_RTFDATA)
+
+@interface PDFSelection (Staging_136075998)
+- (/*nullable*/ NSData *)htmlData;
+- (/*nullable*/ NSData *)rtfData;
 @end
 
 #endif

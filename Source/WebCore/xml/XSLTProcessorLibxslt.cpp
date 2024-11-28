@@ -53,6 +53,8 @@
 #include <wtf/Assertions.h>
 #include <wtf/CheckedArithmetic.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 void XSLTProcessor::genericErrorFunc(void*, const char*, ...)
@@ -362,5 +364,7 @@ bool XSLTProcessor::transformToString(Node& sourceNode, String& mimeType, String
 }
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ENABLE(XSLT)

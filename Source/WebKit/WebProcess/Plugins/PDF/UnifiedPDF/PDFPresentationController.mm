@@ -88,9 +88,6 @@ void PDFPresentationController::clearAsyncRenderer()
 RefPtr<GraphicsLayer> PDFPresentationController::createGraphicsLayer(const String& name, GraphicsLayer::Type layerType)
 {
     auto* graphicsLayerFactory = m_plugin->graphicsLayerFactory();
-    if (!graphicsLayerFactory)
-        return nullptr;
-
     Ref graphicsLayer = GraphicsLayer::create(graphicsLayerFactory, graphicsLayerClient(), layerType);
     graphicsLayer->setName(name);
     return graphicsLayer;

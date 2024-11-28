@@ -54,7 +54,7 @@ typedef struct OpaqueFigVideoTarget *FigVideoTargetRef;
 namespace WebCore {
 
 class AudioTrackPrivate;
-class CDMSessionMediaSourceAVFObjC;
+class CDMSessionAVContentKeySession;
 class EffectiveRateChangedListener;
 class InbandTextTrackPrivate;
 class MediaSourcePrivateAVFObjC;
@@ -70,11 +70,13 @@ class MediaPlayerPrivateMediaSourceAVFObjC
     , private LoggerHelper
 {
 public:
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
+
     explicit MediaPlayerPrivateMediaSourceAVFObjC(MediaPlayer*);
     virtual ~MediaPlayerPrivateMediaSourceAVFObjC();
 
-    void ref() final { RefCounted::ref(); }
-    void deref() final { RefCounted::deref(); }
+    constexpr MediaPlayerType mediaPlayerType() const final { return MediaPlayerType::AVFObjCMSE; }
 
     static void registerMediaEngine(MediaEngineRegistrar);
 
@@ -132,7 +134,8 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
     void setCDMSession(LegacyCDMSession*) override;
-    CDMSessionMediaSourceAVFObjC* cdmSession() const;
+    CDMSessionAVContentKeySession* cdmSession() const;
+    void keyAdded() final;
 #endif
 
 #if ENABLE(ENCRYPTED_MEDIA)
@@ -167,10 +170,10 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const final { return m_logger.get(); }
     ASCIILiteral logClassName() const override { return "MediaPlayerPrivateMediaSourceAVFObjC"_s; }
-    const void* logIdentifier() const final { return reinterpret_cast<const void*>(m_logIdentifier); }
+    uint64_t logIdentifier() const final { return m_logIdentifier; }
     WTFLogChannel& logChannel() const final;
 
-    const void* mediaPlayerLogIdentifier() { return logIdentifier(); }
+    uint64_t mediaPlayerLogIdentifier() { return logIdentifier(); }
     const Logger& mediaPlayerLogger() { return logger(); }
 #endif
 
@@ -239,9 +242,6 @@ private:
     void maybePurgeLastImage();
     void paint(GraphicsContext&, const FloatRect&) override;
     void paintCurrentFrameInContext(GraphicsContext&, const FloatRect&) override;
-#if PLATFORM(COCOA) && !HAVE(AVSAMPLEBUFFERDISPLAYLAYER_COPYDISPLAYEDPIXELBUFFER)
-    void willBeAskedToPaintGL() final;
-#endif
     RefPtr<VideoFrame> videoFrameForCurrentTime() final;
     DestinationColorSpace colorSpace() final;
 
@@ -355,7 +355,7 @@ private:
         bool hasAudibleSample { false };
     };
 ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
-    HashMap<RetainPtr<CFTypeRef>, AudioRendererProperties> m_sampleBufferAudioRendererMap;
+    UncheckedKeyHashMap<RetainPtr<CFTypeRef>, AudioRendererProperties> m_sampleBufferAudioRendererMap;
     RetainPtr<AVSampleBufferRenderSynchronizer> m_synchronizer;
 ALLOW_NEW_API_WITHOUT_GUARDS_END
     mutable MediaPlayer::CurrentTimeDidChangeCallback m_currentTimeDidChangeCallback;
@@ -370,7 +370,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     Deque<RetainPtr<id>> m_sizeChangeObservers;
     Timer m_seekTimer;
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
-    WeakPtr<CDMSessionMediaSourceAVFObjC> m_session;
+    WeakPtr<CDMSessionAVContentKeySession> m_session;
 #endif
     MediaPlayer::NetworkState m_networkState;
     MediaPlayer::ReadyState m_readyState;
@@ -383,9 +383,6 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     bool m_isSynchronizerSeeking { false };
     SeekState m_seekState { SeekCompleted };
     mutable bool m_loadingProgressed { false };
-#if !HAVE(AVSAMPLEBUFFERDISPLAYLAYER_COPYDISPLAYEDPIXELBUFFER)
-    bool m_hasBeenAskedToPaintGL { false };
-#endif
     bool m_hasAvailableVideoFrame { false };
     bool m_allRenderersHaveAvailableSamples { false };
     bool m_visible { false };
@@ -396,7 +393,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     bool m_shouldPlayToTarget { false };
 #endif
     Ref<const Logger> m_logger;
-    const void* m_logIdentifier;
+    const uint64_t m_logIdentifier;
     std::unique_ptr<VideoLayerManagerObjC> m_videoLayerManager;
     Ref<EffectiveRateChangedListener> m_effectiveRateChangedListener;
     uint64_t m_sampleCount { 0 };
@@ -435,5 +432,9 @@ struct LogArgument<WebCore::MediaPlayerPrivateMediaSourceAVFObjC::SeekState> {
 };
 
 } // namespace WTF
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::MediaPlayerPrivateMediaSourceAVFObjC)
+static bool isType(const WebCore::MediaPlayerPrivateInterface& player) { return player.mediaPlayerType() == WebCore::MediaPlayerType::AVFObjCMSE; }
+SPECIALIZE_TYPE_TRAITS_END()
 
 #endif // ENABLE(MEDIA_SOURCE) && USE(AVFOUNDATION)

@@ -43,7 +43,10 @@ class DisplayList {
     WTF_MAKE_TZONE_ALLOCATED_EXPORT(DisplayList, WEBCORE_EXPORT);
     WTF_MAKE_NONCOPYABLE(DisplayList);
 public:
-    DisplayList() = default;
+    DisplayList(OptionSet<ReplayOption> options = { })
+        : m_options(options)
+    {
+    }
 
     WEBCORE_EXPORT void append(Item&&);
     void shrinkToFit();
@@ -65,9 +68,12 @@ public:
     WEBCORE_EXPORT String asText(OptionSet<AsTextFlag>) const;
     void dump(WTF::TextStream&) const;
 
+    const OptionSet<ReplayOption>& replayOptions() const { return m_options; }
+
 private:
     Vector<Item> m_items;
     ResourceHeap m_resourceHeap;
+    OptionSet<ReplayOption> m_options;
 };
 
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const DisplayList&);

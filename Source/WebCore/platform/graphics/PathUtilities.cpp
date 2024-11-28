@@ -35,6 +35,7 @@
 #include "GeometryUtilities.h"
 #include <math.h>
 #include <wtf/MathExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
@@ -44,6 +45,7 @@ public:
     FloatPointGraph() = default;
 
     class Node : public FloatPoint {
+        WTF_MAKE_TZONE_ALLOCATED_INLINE(Node);
         WTF_MAKE_NONCOPYABLE(Node);
     public:
         Node(FloatPoint point)
@@ -503,7 +505,7 @@ static std::optional<FloatRect> rectFromPolygon(const FloatPointGraph::Polygon& 
 }
 
 Path PathUtilities::pathWithShrinkWrappedRectsForOutline(const Vector<FloatRect>& rects, const BorderData& borderData,
-    float outlineOffset, TextDirection direction, WritingMode writingMode, float deviceScaleFactor)
+    float outlineOffset, WritingMode writingMode, float deviceScaleFactor)
 {
     FloatSize topLeftRadius { borderData.topLeftRadius().width.value(), borderData.topLeftRadius().height.value() };
     FloatSize topRightRadius { borderData.topRightRadius().width.value(), borderData.topRightRadius().height.value() };
@@ -537,7 +539,7 @@ Path PathUtilities::pathWithShrinkWrappedRectsForOutline(const Vector<FloatRect>
 
     Path path;
     // Multiline outline needs to match multiline border painting. Only first and last lines are getting rounded borders.
-    auto isLeftToRight = isLeftToRightDirection(direction);
+    auto isLeftToRight = writingMode.isBidiLTR();
     auto firstLineRect = isLeftToRight ? rects.at(0) : rects.at(rects.size() - 1);
     auto lastLineRect = isLeftToRight ? rects.at(rects.size() - 1) : rects.at(0);
     // Adjust radius so that it matches the box border.
@@ -550,7 +552,7 @@ Path PathUtilities::pathWithShrinkWrappedRectsForOutline(const Vector<FloatRect>
     topRightRadius = lastLineRadii.topRight();
     bottomRightRadius = lastLineRadii.bottomRight();
     // physical topLeft/topRight/bottomRight/bottomLeft
-    auto isHorizontal = isHorizontalWritingMode(writingMode);
+    auto isHorizontal = writingMode.isHorizontal();
     auto corners = Vector<FloatPoint>::from(
         firstLineRect.minXMinYCorner(),
         isHorizontal ? lastLineRect.maxXMinYCorner() : firstLineRect.maxXMinYCorner(),

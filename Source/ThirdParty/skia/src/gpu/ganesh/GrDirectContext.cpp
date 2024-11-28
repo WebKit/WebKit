@@ -4,7 +4,7 @@
  * Use of this source code is governed by a BSD-style license that can be
  * found in the LICENSE file.
  */
-#include "include/gpu/GrDirectContext.h"
+#include "include/gpu/ganesh/GrDirectContext.h"
 
 #include "include/core/SkImageInfo.h"
 #include "include/core/SkPixmap.h"
@@ -13,9 +13,9 @@
 #include "include/core/SkTextureCompressionType.h"
 #include "include/core/SkTraceMemoryDump.h"
 #include "include/gpu/GpuTypes.h"
-#include "include/gpu/GrBackendSemaphore.h"
-#include "include/gpu/GrBackendSurface.h"
-#include "include/gpu/GrContextThreadSafeProxy.h"
+#include "include/gpu/ganesh/GrBackendSemaphore.h"
+#include "include/gpu/ganesh/GrBackendSurface.h"
+#include "include/gpu/ganesh/GrContextThreadSafeProxy.h"
 #include "include/private/base/SingleOwner.h"
 #include "include/private/base/SkTArray.h"
 #include "include/private/base/SkTemplates.h"
@@ -261,7 +261,7 @@ bool GrDirectContext::init() {
                                                        this->contextID());
     fResourceCache->setProxyProvider(this->proxyProvider());
     fResourceCache->setThreadSafeCache(this->threadSafeCache());
-#if defined(GR_TEST_UTILS)
+#if defined(GPU_TEST_UTILS)
     if (this->options().fResourceCacheLimitOverride != -1) {
         this->setResourceCacheLimit(this->options().fResourceCacheLimitOverride);
     }
@@ -445,7 +445,7 @@ GrSemaphoresSubmitted GrDirectContext::flush(const GrFlushInfo& info) {
             {}, SkSurfaces::BackendSurfaceAccess::kNoAccess, info, nullptr);
 }
 
-bool GrDirectContext::submit(GrSyncCpu sync) {
+bool GrDirectContext::submit(const GrSubmitInfo& info) {
     ASSERT_SINGLE_OWNER
     if (this->abandoned()) {
         return false;
@@ -455,7 +455,7 @@ bool GrDirectContext::submit(GrSyncCpu sync) {
         return false;
     }
 
-    return fGpu->submitToGpu(sync);
+    return fGpu->submitToGpu(info);
 }
 
 GrSemaphoresSubmitted GrDirectContext::flush(const sk_sp<const SkImage>& image,
@@ -1127,9 +1127,11 @@ bool GrDirectContext::precompileShader(const SkData& key, const SkData& data) {
     return fGpu->precompileShader(key, data);
 }
 
-#ifdef SK_ENABLE_DUMP_GPU
+#if defined(SK_ENABLE_DUMP_GPU)
 #include "include/core/SkString.h"
+#include "src/gpu/ganesh/GrUtil.h"
 #include "src/utils/SkJSONWriter.h"
+
 SkString GrDirectContext::dump() const {
     SkDynamicMemoryWStream stream;
     SkJSONWriter writer(&stream, SkJSONWriter::Mode::kPretty);

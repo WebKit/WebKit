@@ -31,6 +31,7 @@
 #include "CSSPropertyParser.h"
 #include "CSSStyleValueFactory.h"
 #include "CSSUnparsedValue.h"
+#include "CSSValueList.h"
 #include "CSSValuePair.h"
 #include "CSSVariableReferenceValue.h"
 #include "Document.h"

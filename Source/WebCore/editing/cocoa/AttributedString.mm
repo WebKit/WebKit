@@ -41,15 +41,19 @@
 #import <AppKit/AppKit.h>
 #import <pal/spi/mac/NSTextTableSPI.h>
 #else
+#import "WAKAppKitStubs.h"
 #import <pal/ios/UIKitSoftLink.h>
 #import "UIFoundationSoftLink.h"
 #endif
 
+OBJC_CLASS NSTextTab;
+
 namespace WebCore {
 
-using IdentifierToTableMap = HashMap<AttributedString::TextTableID, NSTextTable *>;
-using IdentifierToTableBlockMap = HashMap<AttributedString::TextTableBlockID, NSTextTableBlock *>;
-using IdentifierToListMap = HashMap<AttributedString::TextListID, NSTextList *>;
+using IdentifierToTableMap = HashMap<AttributedStringTextTableID, RetainPtr<NSTextTable>>;
+using IdentifierToTableBlockMap = HashMap<AttributedStringTextTableBlockID, RetainPtr<NSTextTableBlock>>;
+using IdentifierToListMap = HashMap<AttributedStringTextListID, RetainPtr<NSTextList>>;
+
 
 using TableToIdentifierMap = HashMap<NSTextTable *, AttributedString::TextTableID>;
 using TableBlockToIdentifierMap = HashMap<NSTextTableBlock *, AttributedString::TextTableBlockID>;
@@ -85,79 +89,173 @@ bool AttributedString::rangesAreSafe(const String& string, const Vector<std::pai
     return true;
 }
 
-inline static RetainPtr<NSParagraphStyle> reconstructStyle(const AttributedString::ParagraphStyleWithTableAndListIDs& styleInfo, IdentifierToTableMap& tables, IdentifierToTableBlockMap& tableBlocks, IdentifierToListMap& lists)
+inline static void configureNSTextBlockFromParagraphStyleCommonTableAttributes(NSTextBlock* table, const ParagraphStyleCommonTableAttributes& item)
 {
-    auto style = styleInfo.style;
-    auto textBlocks = [style textBlocks];
-    auto textLists = [style textLists];
-    RetainPtr<NSMutableArray<NSTextBlock *>> adjustedTextBlocks;
-    RetainPtr<NSMutableArray<NSTextList *>> adjustedTextLists;
+    [table setValue:item.width type:NSTextBlockAbsoluteValueType forDimension:NSTextBlockWidth];
+    [table setValue:item.minimumWidth type:NSTextBlockAbsoluteValueType forDimension:NSTextBlockMinimumWidth];
+    [table setValue:item.maximumWidth type:NSTextBlockAbsoluteValueType forDimension:NSTextBlockMaximumWidth];
+    [table setValue:item.minimumHeight type:NSTextBlockAbsoluteValueType forDimension:NSTextBlockMinimumHeight];
+    [table setValue:item.maximumHeight type:NSTextBlockAbsoluteValueType forDimension:NSTextBlockMaximumHeight];
 
-    if (UNLIKELY(styleInfo.tableBlockAndTableIDs.size() != textBlocks.count || styleInfo.listIDs.size() != textLists.count)) {
-        ASSERT_NOT_REACHED();
-        return style;
+    [table setWidth:item.paddingMinXEdge type:NSTextBlockAbsoluteValueType forLayer:NSTextBlockPadding edge:NSMinXEdge];
+    [table setWidth:item.paddingMinYEdge type:NSTextBlockAbsoluteValueType forLayer:NSTextBlockPadding edge:NSMinYEdge];
+    [table setWidth:item.paddingMaxXEdge type:NSTextBlockAbsoluteValueType forLayer:NSTextBlockPadding edge:NSMaxXEdge];
+    [table setWidth:item.paddingMaxYEdge type:NSTextBlockAbsoluteValueType forLayer:NSTextBlockPadding edge:NSMaxYEdge];
+
+    [table setWidth:item.borderMinXEdge type:NSTextBlockAbsoluteValueType forLayer:NSTextBlockBorder edge:NSMinXEdge];
+    [table setWidth:item.borderMinYEdge type:NSTextBlockAbsoluteValueType forLayer:NSTextBlockBorder edge:NSMinYEdge];
+    [table setWidth:item.borderMaxXEdge type:NSTextBlockAbsoluteValueType forLayer:NSTextBlockBorder edge:NSMaxXEdge];
+    [table setWidth:item.borderMaxYEdge type:NSTextBlockAbsoluteValueType forLayer:NSTextBlockBorder edge:NSMaxYEdge];
+
+    [table setWidth:item.marginMinXEdge type:NSTextBlockAbsoluteValueType forLayer:NSTextBlockMargin edge:NSMinXEdge];
+    [table setWidth:item.marginMinYEdge type:NSTextBlockAbsoluteValueType forLayer:NSTextBlockMargin edge:NSMinYEdge];
+    [table setWidth:item.marginMaxXEdge type:NSTextBlockAbsoluteValueType forLayer:NSTextBlockMargin edge:NSMaxXEdge];
+    [table setWidth:item.marginMaxYEdge type:NSTextBlockAbsoluteValueType forLayer:NSTextBlockMargin edge:NSMaxYEdge];
+
+    if (item.backgroundColor)
+        [table setBackgroundColor:item.backgroundColor.get()];
+
+    if (item.borderMinXEdgeColor)
+        [table setBorderColor:item.borderMinXEdgeColor.get() forEdge:NSMinXEdge];
+
+    if (item.borderMinYEdgeColor)
+        [table setBorderColor:item.borderMinYEdgeColor.get() forEdge:NSMinYEdge];
+
+    if (item.borderMaxXEdgeColor)
+        [table setBorderColor:item.borderMaxXEdgeColor.get() forEdge:NSMaxXEdge];
+
+    if (item.borderMaxYEdgeColor)
+        [table setBorderColor:item.borderMaxYEdgeColor.get() forEdge:NSMaxYEdge];
+}
+
+inline static NSTextAlignment reconstructNSTextAlignment(ParagraphStyleAlignment alignment)
+{
+    switch (alignment) {
+    case ParagraphStyleAlignment::Left:
+        return NSTextAlignmentLeft;
+    case ParagraphStyleAlignment::Right:
+        return NSTextAlignmentRight;
+    case ParagraphStyleAlignment::Centre:
+        return NSTextAlignmentCenter;
+    case ParagraphStyleAlignment::Justified:
+        return NSTextAlignmentJustified;
+    case ParagraphStyleAlignment::Natural:
+        return NSTextAlignmentNatural;
+    };
+    ASSERT_NOT_REACHED();
+    return NSTextAlignmentLeft;
+}
+
+inline static NSTextBlockVerticalAlignment reconstructNSTextBlockVerticalAlignment(TextTableBlockVerticalAlignment alignment)
+{
+    switch (alignment) {
+    case TextTableBlockVerticalAlignment::Top:
+        return NSTextBlockTopAlignment;
+    case TextTableBlockVerticalAlignment::Middle:
+        return NSTextBlockMiddleAlignment;
+    case TextTableBlockVerticalAlignment::Bottom:
+        return NSTextBlockBottomAlignment;
+    case TextTableBlockVerticalAlignment::Baseline:
+        return NSTextBlockBaselineAlignment;
     }
+    ASSERT_NOT_REACHED();
+    return NSTextBlockTopAlignment;
+}
 
-    for (size_t index = 0; index < styleInfo.tableBlockAndTableIDs.size(); ++index) {
-        auto block = textBlocks[index];
-        if (![block isKindOfClass:PlatformNSTextTableBlock])
-            continue;
-
-        auto identifierPair = styleInfo.tableBlockAndTableIDs[index];
-        if (!identifierPair)
-            continue;
-
-        auto [tableBlockID, tableID] = *identifierPair;
-        auto ensureTableBlockResult = tableBlocks.ensure(tableBlockID, [&] {
-            return static_cast<NSTextTableBlock *>(block);
-        });
-
-        auto tableBlock = ensureTableBlockResult.iterator->value;
-        if (!tableBlock.table)
-            continue;
-
-        auto ensureTableResult = tables.ensure(tableID, [&] {
-            return tableBlock.table;
-        });
-
-        auto table = ensureTableResult.iterator->value;
-        RetainPtr<NSTextTableBlock> replacementBlock;
-        if (!ensureTableBlockResult.isNewEntry)
-            replacementBlock = tableBlock;
-        else if (!ensureTableResult.isNewEntry) {
-            replacementBlock = adoptNS([[PlatformNSTextTableBlock alloc] initWithTable:table startingRow:tableBlock.startingRow rowSpan:tableBlock.rowSpan startingColumn:tableBlock.startingColumn columnSpan:tableBlock.columnSpan]);
-            [replacementBlock _takeValuesFromTextBlock:tableBlock];
-            tableBlocks.set(tableBlockID, replacementBlock.get());
-        }
-
-        if (replacementBlock) {
-            if (!adjustedTextBlocks)
-                adjustedTextBlocks = adoptNS((NSMutableArray<NSTextBlock *> *)[[style textBlocks] mutableCopy]);
-            [adjustedTextBlocks setObject:replacementBlock.get() atIndexedSubscript:index];
-        }
+inline static NSTextTableLayoutAlgorithm reconstructNSTextTableLayoutAlgorithm(TextTableLayoutAlgorithm layout)
+{
+    switch (layout) {
+    case TextTableLayoutAlgorithm::Automatic:
+        return NSTextTableAutomaticLayoutAlgorithm;
+    case TextTableLayoutAlgorithm::Fixed:
+        return NSTextTableFixedLayoutAlgorithm;
     }
+    ASSERT_NOT_REACHED();
+    return NSTextTableAutomaticLayoutAlgorithm;
+}
 
-    for (size_t index = 0; index < styleInfo.listIDs.size(); ++index) {
-        auto list = textLists[index];
-        auto listID = styleInfo.listIDs[index];
-        auto ensureListResult = lists.ensure(listID, [&] {
+inline static NSWritingDirection reconstructNSWritingDirection(ParagraphStyleWritingDirection writingDirection)
+{
+    switch (writingDirection) {
+    case ParagraphStyleWritingDirection::LeftToRight:
+        return NSWritingDirectionLeftToRight;
+    case ParagraphStyleWritingDirection::RightToLeft:
+        return NSWritingDirectionRightToLeft;
+    case ParagraphStyleWritingDirection::Natural:
+        return NSWritingDirectionNatural;
+    }
+    ASSERT_NOT_REACHED();
+    return NSWritingDirectionLeftToRight;
+}
+
+inline static RetainPtr<NSParagraphStyle> reconstructStyle(const ParagraphStyle& style, IdentifierToTableMap& tables, IdentifierToTableBlockMap& tableBlocks, IdentifierToListMap& lists)
+{
+    for (const auto& item : style.textLists) {
+        lists.ensure(item.thisID, [&] {
+            RetainPtr list = adoptNS([[PlatformNSTextList alloc] initWithMarkerFormat:item.markerFormat options:0]);
+            [list setStartingItemNumber:item.startingItemNumber];
             return list;
         });
-        if (!ensureListResult.isNewEntry) {
-            if (!adjustedTextLists)
-                adjustedTextLists = adoptNS((NSMutableArray<NSTextList *> *)[[style textLists] mutableCopy]);
-            [adjustedTextLists setObject:ensureListResult.iterator->value atIndexedSubscript:index];
-        }
     }
 
-    if (!adjustedTextBlocks && !adjustedTextLists)
-        return style;
+    for (const auto& item : style.textTables) {
+        tables.ensure(item.thisID, [&] {
+            RetainPtr table = adoptNS([PlatformNSTextTable new]);
+            [table setNumberOfColumns:item.numberOfColumns];
+            [table setLayoutAlgorithm:reconstructNSTextTableLayoutAlgorithm(item.layout)];
+            [table setCollapsesBorders:item.collapsesBorders];
+            [table setHidesEmptyCells:item.hidesEmptyCells];
+            configureNSTextBlockFromParagraphStyleCommonTableAttributes(table.get(), item);
+            return table;
+        });
+    };
 
-    auto mutableStyle = adoptNS([style mutableCopy]);
-    if (adjustedTextBlocks)
-        [mutableStyle setTextBlocks:adjustedTextBlocks.get()];
-    if (adjustedTextLists)
-        [mutableStyle setTextLists:adjustedTextLists.get()];
+    for (const auto& item : style.textTableBlocks) {
+        tableBlocks.ensure(item.thisID, [&] {
+            auto foundTable = tables.find(item.tableID);
+            if (foundTable == tables.end()) {
+                RELEASE_LOG_ERROR(Editing, "Table not found when trying to reconstruct NSParagraphStyle");
+                return adoptNS([PlatformNSTextTableBlock new]);
+            }
+
+            RetainPtr tableBlock = adoptNS([[PlatformNSTextTableBlock alloc] initWithTable:foundTable->value.get() startingRow:item.startingRow rowSpan:item.rowSpan startingColumn:item.startingColumn columnSpan:item.columnSpan]);
+            [tableBlock setVerticalAlignment:reconstructNSTextBlockVerticalAlignment(item.verticalAlignment)];
+            configureNSTextBlockFromParagraphStyleCommonTableAttributes(tableBlock.get(), item);
+            return tableBlock;
+        });
+    };
+
+    RetainPtr<NSMutableParagraphStyle> mutableStyle = adoptNS([[PlatformNSParagraphStyle defaultParagraphStyle] mutableCopy]);
+    [mutableStyle setDefaultTabInterval:style.defaultTabInterval];
+    [mutableStyle setHyphenationFactor:style.hyphenationFactor];
+    [mutableStyle setFirstLineHeadIndent:style.firstLineHeadIndent];
+    [mutableStyle setHeadIndent:style.headIndent];
+    [mutableStyle setHeaderLevel:style.headerLevel];
+    [mutableStyle setTailIndent:style.tailIndent];
+    [mutableStyle setParagraphSpacing:style.paragraphSpacing];
+    [mutableStyle setAlignment:reconstructNSTextAlignment(style.alignment)];
+    [mutableStyle setBaseWritingDirection:reconstructNSWritingDirection(style.writingDirection)];
+    [mutableStyle setTabStops:adoptNS([NSMutableArray new]).get()];
+
+    if (!style.textTableBlockIDs.isEmpty()) {
+        RetainPtr blocks = createNSArray(style.textTableBlockIDs, [&] (auto& object) -> id {
+            return tableBlocks.get(object).get();
+        });
+        [mutableStyle setTextBlocks:blocks.get()];
+    }
+
+    if (!style.textListIDs.isEmpty()) {
+        RetainPtr textLists = createNSArray(style.textListIDs, [&] (auto& object) -> id {
+            return lists.get(object).get();
+        });
+        [mutableStyle setTextLists:textLists.get()];
+    }
+
+    if (!style.textTabs.isEmpty()) {
+        for (const auto& item : style.textTabs)
+            [mutableStyle addTabStop:adoptNS([[PlatformNSTextTab alloc] initWithTextAlignment:reconstructNSTextAlignment(item.alignment) location:item.location options:@{ }]).get()];
+    }
+
     return mutableStyle;
 }
 
@@ -168,6 +266,13 @@ static MultiRepresentationHEICAttachmentData toMultiRepresentationHEICAttachment
     MultiRepresentationHEICAttachmentData attachmentData;
     attachmentData.identifier = attachment.contentIdentifier;
     attachmentData.description = attachment.contentDescription;
+
+#if HAVE(NS_EMOJI_IMAGE_STRIKE_PROVENANCE)
+    if (RetainPtr<NSDictionary<NSString *, NSString *>> provenance = attachment.strikes.firstObject.provenance) {
+        attachmentData.credit = [provenance objectForKey:(__bridge NSString *)kCGImagePropertyIPTCCredit];
+        attachmentData.digitalSourceType = [provenance objectForKey:(__bridge NSString *)kCGImagePropertyIPTCExtDigitalSourceType];
+    }
+#endif
 
     for (NSEmojiImageStrike *strike in attachment.strikes) {
         MultiRepresentationHEICAttachmentSingleImage image;
@@ -196,11 +301,27 @@ static RetainPtr<NSAdaptiveImageGlyph> toWebMultiRepresentationHEICAttachment(co
     if (!description.length)
         description = @"Apple Emoji";
 
+#if HAVE(NS_EMOJI_IMAGE_STRIKE_PROVENANCE)
+    RetainPtr<NSMutableDictionary<NSString *, NSString *>> provenanceInfo = [NSMutableDictionary dictionaryWithCapacity:2];
+
+    NSString *credit = attachmentData.credit;
+    NSString *digitalSourceType = attachmentData.digitalSourceType;
+    if (identifier.length && digitalSourceType.length) {
+        [provenanceInfo setObject:credit forKey:(__bridge NSString *)kCGImagePropertyIPTCCredit];
+        [provenanceInfo setObject:digitalSourceType forKey:(__bridge NSString *)kCGImagePropertyIPTCExtDigitalSourceType];
+    }
+#endif
+
     NSMutableArray *images = [NSMutableArray arrayWithCapacity:attachmentData.images.size()];
     for (auto& singleImage : attachmentData.images) {
+#if HAVE(NS_EMOJI_IMAGE_STRIKE_PROVENANCE)
+        RetainPtr strike = adoptNS([[CTEmojiImageStrike alloc] initWithImage:singleImage.image->nativeImage()->platformImage().get() alignmentInset:singleImage.size provenanceInfo:provenanceInfo.get()]);
+#else
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         RetainPtr strike = adoptNS([[CTEmojiImageStrike alloc] initWithImage:singleImage.image->nativeImage()->platformImage().get() alignmentInset:singleImage.size]);
 ALLOW_DEPRECATED_DECLARATIONS_END
+#endif
+
         [images addObject:strike.get()];
     }
 
@@ -222,7 +343,7 @@ static RetainPtr<id> toNSObject(const AttributedString::AttributeValue& value, I
         return adoptNS([[NSNumber alloc] initWithDouble:value]);
     }, [] (const String& value) -> RetainPtr<id> {
         return (NSString *)value;
-    }, [&] (const AttributedString::ParagraphStyleWithTableAndListIDs& value) -> RetainPtr<id> {
+    }, [&] (const ParagraphStyle& value) -> RetainPtr<id> {
         return reconstructStyle(value, tables, tableBlocks, lists);
     }, [] (const RetainPtr<NSPresentationIntent>& value) -> RetainPtr<id> {
         return value;
@@ -354,26 +475,219 @@ inline static Vector<AttributedString::TextListID> extractListIDs(NSParagraphSty
     });
 }
 
-inline static Vector<std::optional<AttributedString::TableBlockAndTableIDPair>> extractTableBlockAndTableIDs(NSParagraphStyle *style, TableToIdentifierMap& tableIDs, TableBlockToIdentifierMap& tableBlockIDs)
+inline static ParagraphStyleAlignment extractParagraphStyleAlignment(NSTextAlignment alignment)
 {
-    return makeVector(style.textBlocks, [&](NSTextBlock *block) -> std::optional<std::optional<AttributedString::TableBlockAndTableIDPair>> {
-        if (![block isKindOfClass:PlatformNSTextTableBlock])
-            return std::nullopt;
+    switch (alignment) {
+    case NSTextAlignmentLeft:
+        return ParagraphStyleAlignment::Left;
+    case NSTextAlignmentRight:
+        return ParagraphStyleAlignment::Right;
+    case NSTextAlignmentCenter:
+        return ParagraphStyleAlignment::Centre;
+    case NSTextAlignmentJustified:
+        return ParagraphStyleAlignment::Justified;
+    case NSTextAlignmentNatural:
+        return ParagraphStyleAlignment::Natural;
+    }
+    ASSERT_NOT_REACHED();
+    return ParagraphStyleAlignment::Left;
+}
 
-        auto tableBlock = static_cast<NSTextTableBlock *>(block);
+inline static TextTableBlockVerticalAlignment extractTextTableBlockVerticalAlignment(NSTextBlockVerticalAlignment verticalAlignment)
+{
+    switch (verticalAlignment) {
+    case NSTextBlockTopAlignment:
+        return TextTableBlockVerticalAlignment::Top;
+    case NSTextBlockMiddleAlignment:
+        return TextTableBlockVerticalAlignment::Middle;
+    case NSTextBlockBottomAlignment:
+        return TextTableBlockVerticalAlignment::Bottom;
+    case NSTextBlockBaselineAlignment:
+        return TextTableBlockVerticalAlignment::Baseline;
+    }
+    ASSERT_NOT_REACHED();
+    return TextTableBlockVerticalAlignment::Top;
+}
+
+inline static TextTableLayoutAlgorithm extractTextTableLayoutAlgorithm(NSTextTableLayoutAlgorithm layout)
+{
+    switch (layout) {
+    case NSTextTableAutomaticLayoutAlgorithm:
+        return TextTableLayoutAlgorithm::Automatic;
+    case NSTextTableFixedLayoutAlgorithm:
+        return TextTableLayoutAlgorithm::Fixed;
+    }
+    ASSERT_NOT_REACHED();
+    return TextTableLayoutAlgorithm::Automatic;
+}
+
+inline static ParagraphStyleWritingDirection extractParagraphStyleWritingDirection(NSWritingDirection writingDirection)
+{
+    switch (writingDirection) {
+    case NSWritingDirectionLeftToRight:
+        return ParagraphStyleWritingDirection::LeftToRight;
+    case NSWritingDirectionRightToLeft:
+        return ParagraphStyleWritingDirection::RightToLeft;
+    case NSWritingDirectionNatural:
+        return ParagraphStyleWritingDirection::Natural;
+    }
+    return ParagraphStyleWritingDirection::LeftToRight;
+}
+
+inline static ParagraphStyle extractParagraphStyle(NSParagraphStyle *style, TableToIdentifierMap& tableIDs, TableBlockToIdentifierMap& tableBlockIDs, ListToIdentifierMap& listIDs)
+{
+    Vector<AttributedStringTextTableBlockID> sentTextTableBlockIDs;
+    Vector<AttributedStringTextListID> sentTextListIDs;
+    Vector<TextTableBlock> newTextTableBlocks;
+    Vector<TextTable> newTextTables;
+    Vector<ParagraphStyleTextList> newTextLists;
+    Vector<TextTab> newTextTabs;
+
+    for (NSTextList *list in style.textLists) {
+        if (![list isKindOfClass:PlatformNSTextList])
+            return { };
+
+        auto listResult = listIDs.ensure(list, [] {
+            return AttributedString::TextListID::generate();
+        });
+        auto listID = listResult.iterator->value;
+
+        if (listResult.isNewEntry) {
+            newTextLists.append(ParagraphStyleTextList {
+                listID,
+                list.markerFormat,
+                list.startingItemNumber
+            });
+        }
+        sentTextListIDs.append(listID);
+    }
+
+    for (NSTextTableBlock* item in style.textBlocks) {
+        if (![item isKindOfClass:PlatformNSTextTableBlock])
+            return { };
+
+        auto tableBlock = static_cast<NSTextTableBlock *>(item);
         if (!tableBlock.table)
-            return std::nullopt;
+            return { };
 
-        auto tableBlockID = tableBlockIDs.ensure(tableBlock, [] {
+        auto tableBlockEnsureResult = tableBlockIDs.ensure(tableBlock, [&] {
             return AttributedString::TextTableBlockID::generate();
-        }).iterator->value;
+        });
+        auto tableBlockID = tableBlockEnsureResult.iterator->value;
 
-        auto tableID = tableIDs.ensure(tableBlock.table, [] {
+        sentTextTableBlockIDs.append(tableBlockID);
+
+        auto nsTable = tableBlock.table;
+        auto tableEnsureResults = tableIDs.ensure(nsTable, [&] {
             return AttributedString::TextTableID::generate();
-        }).iterator->value;
+        });
+        auto tableID = tableEnsureResults.iterator->value;
 
-        return std::optional { std::pair { tableBlockID, tableID } };
-    });
+        if (tableEnsureResults.isNewEntry) {
+            newTextTables.append(TextTable {
+                {
+                    [nsTable valueForDimension:NSTextBlockWidth],
+                    [nsTable valueForDimension:NSTextBlockMinimumWidth],
+                    [nsTable valueForDimension:NSTextBlockMaximumWidth],
+                    [nsTable valueForDimension:NSTextBlockMinimumHeight],
+                    [nsTable valueForDimension:NSTextBlockMaximumHeight],
+
+                    [nsTable widthForLayer:NSTextBlockPadding edge:NSMinXEdge],
+                    [nsTable widthForLayer:NSTextBlockPadding edge:NSMinYEdge],
+                    [nsTable widthForLayer:NSTextBlockPadding edge:NSMaxXEdge],
+                    [nsTable widthForLayer:NSTextBlockPadding edge:NSMaxYEdge],
+
+                    [nsTable widthForLayer:NSTextBlockBorder edge:NSMinXEdge],
+                    [nsTable widthForLayer:NSTextBlockBorder edge:NSMinYEdge],
+                    [nsTable widthForLayer:NSTextBlockBorder edge:NSMaxXEdge],
+                    [nsTable widthForLayer:NSTextBlockBorder edge:NSMaxYEdge],
+
+                    [nsTable widthForLayer:NSTextBlockMargin edge:NSMinXEdge],
+                    [nsTable widthForLayer:NSTextBlockMargin edge:NSMinYEdge],
+                    [nsTable widthForLayer:NSTextBlockMargin edge:NSMaxXEdge],
+                    [nsTable widthForLayer:NSTextBlockMargin edge:NSMaxYEdge],
+
+                    [nsTable backgroundColor],
+                    [nsTable borderColorForEdge:NSMinXEdge],
+                    [nsTable borderColorForEdge:NSMinYEdge],
+                    [nsTable borderColorForEdge:NSMaxXEdge],
+                    [nsTable borderColorForEdge:NSMaxYEdge]
+                },
+                tableID,
+                [nsTable numberOfColumns],
+                extractTextTableLayoutAlgorithm([nsTable layoutAlgorithm]),
+                !![nsTable collapsesBorders],
+                !![nsTable hidesEmptyCells],
+            });
+        }
+
+        if (tableBlockEnsureResult.isNewEntry) {
+            newTextTableBlocks.append(TextTableBlock {
+                {
+                    [item valueForDimension:NSTextBlockWidth],
+                    [item valueForDimension:NSTextBlockMinimumWidth],
+                    [item valueForDimension:NSTextBlockMaximumWidth],
+                    [item valueForDimension:NSTextBlockMinimumHeight],
+                    [item valueForDimension:NSTextBlockMaximumHeight],
+
+                    [item widthForLayer:NSTextBlockPadding edge:NSMinXEdge],
+                    [item widthForLayer:NSTextBlockPadding edge:NSMinYEdge],
+                    [item widthForLayer:NSTextBlockPadding edge:NSMaxXEdge],
+                    [item widthForLayer:NSTextBlockPadding edge:NSMaxYEdge],
+
+                    [item widthForLayer:NSTextBlockBorder edge:NSMinXEdge],
+                    [item widthForLayer:NSTextBlockBorder edge:NSMinYEdge],
+                    [item widthForLayer:NSTextBlockBorder edge:NSMaxXEdge],
+                    [item widthForLayer:NSTextBlockBorder edge:NSMaxYEdge],
+
+                    [item widthForLayer:NSTextBlockMargin edge:NSMinXEdge],
+                    [item widthForLayer:NSTextBlockMargin edge:NSMinYEdge],
+                    [item widthForLayer:NSTextBlockMargin edge:NSMaxXEdge],
+                    [item widthForLayer:NSTextBlockMargin edge:NSMaxYEdge],
+
+                    [item backgroundColor],
+                    [item borderColorForEdge:NSMinXEdge],
+                    [item borderColorForEdge:NSMinYEdge],
+                    [item borderColorForEdge:NSMaxXEdge],
+                    [item borderColorForEdge:NSMaxYEdge]
+                },
+                tableBlockID,
+                tableID,
+                [item startingRow],
+                [item rowSpan],
+                [item startingColumn],
+                [item columnSpan],
+                extractTextTableBlockVerticalAlignment([item verticalAlignment]),
+            });
+        }
+    };
+
+    auto tabStops = [style tabStops];
+    newTextTabs.reserveInitialCapacity([tabStops count]);
+    for (NSTextTab *textTab : tabStops) {
+        newTextTabs.append(TextTab {
+            [textTab location],
+            extractParagraphStyleAlignment([textTab alignment])
+        });
+    }
+
+    return ParagraphStyle {
+        [style defaultTabInterval],
+        extractParagraphStyleAlignment([style alignment]),
+        extractParagraphStyleWritingDirection([style baseWritingDirection]),
+        [style hyphenationFactor],
+        [style firstLineHeadIndent],
+        [style headIndent],
+        [style headerLevel],
+        [style tailIndent],
+        [style paragraphSpacing],
+        WTFMove(sentTextTableBlockIDs),
+        WTFMove(sentTextListIDs),
+        WTFMove(newTextTableBlocks),
+        WTFMove(newTextTables),
+        WTFMove(newTextLists),
+        WTFMove(newTextTabs)
+    };
 }
 
 static std::optional<AttributedString::AttributeValue> extractValue(id value, TableToIdentifierMap& tableIDs, TableBlockToIdentifierMap& tableBlockIDs, ListToIdentifierMap& listIDs)
@@ -394,11 +708,7 @@ static std::optional<AttributedString::AttributeValue> extractValue(id value, Ta
         return { { { RetainPtr { (NSShadow *)value } } } };
     if ([value isKindOfClass:PlatformNSParagraphStyle]) {
         auto style = static_cast<NSParagraphStyle *>(value);
-        return { { AttributedString::ParagraphStyleWithTableAndListIDs {
-            RetainPtr { style },
-            extractTableBlockAndTableIDs(style, tableIDs, tableBlockIDs),
-            extractListIDs(style, listIDs)
-        } } };
+        return { { extractParagraphStyle(style, tableIDs, tableBlockIDs, listIDs) } };
     }
     if ([value isKindOfClass:PlatformNSPresentationIntent])
         return { { { RetainPtr { (NSPresentationIntent *)value } } } };

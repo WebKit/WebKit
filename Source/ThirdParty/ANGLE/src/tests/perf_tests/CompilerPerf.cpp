@@ -212,8 +212,6 @@ bool IsPlatformAvailable(const CompilerParameters &param)
             }
             break;
         }
-        case SH_HLSL_4_0_FL9_3_OUTPUT:
-            return false;
         default:
             break;
     }

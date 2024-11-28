@@ -88,7 +88,9 @@ void ClipStack::addRoundedRect(const FloatRoundedRect& roundedRect, const Transf
 
     // Copy the TransformationMatrix components to the appropriate position in the array.
     basePosition = clipState.roundedRectCount * s_roundedRectInverseTransformComponentsPerRect;
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib/Win port
     memcpy(m_roundedRectInverseTransformComponents.data() + basePosition, matrix.toColumnMajorFloatArray().data(), s_roundedRectInverseTransformComponentsPerRect * sizeof(float));
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
     clipState.roundedRectCount++;
 }

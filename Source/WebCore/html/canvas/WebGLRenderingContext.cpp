@@ -114,7 +114,7 @@ WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(WebGLRenderingContext);
 
 std::unique_ptr<WebGLRenderingContext> WebGLRenderingContext::create(CanvasBase& canvas, WebGLContextAttributes&& attributes)
 {
-    return std::unique_ptr<WebGLRenderingContext>(new WebGLRenderingContext(canvas, WTFMove(attributes)));
+    return std::unique_ptr<WebGLRenderingContext>(new WebGLRenderingContext(canvas, Type::WebGL1, WTFMove(attributes)));
 }
 
 WebGLRenderingContext::~WebGLRenderingContext()

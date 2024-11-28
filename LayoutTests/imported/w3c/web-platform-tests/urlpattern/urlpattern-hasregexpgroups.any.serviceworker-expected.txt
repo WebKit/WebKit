@@ -1,0 +1,3 @@
+
+FAIL urlpattern-hasregexpgroups assert_true: named regexp group in protocol expected true got false
+

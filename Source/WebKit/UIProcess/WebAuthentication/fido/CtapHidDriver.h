@@ -34,13 +34,11 @@
 #include <wtf/UniqueRef.h>
 
 namespace WebKit {
-class CtapHidDriver;
 class CtapHidDriverWorker;
 }
 
 namespace WTF {
 template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::CtapHidDriver> : std::true_type { };
 template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::CtapHidDriverWorker> : std::true_type { };
 }
 
@@ -61,7 +59,7 @@ public:
         Read
     };
 
-    explicit CtapHidDriverWorker(UniqueRef<HidConnection>&&);
+    explicit CtapHidDriverWorker(Ref<HidConnection>&&);
     ~CtapHidDriverWorker();
 
     void transact(fido::FidoHidMessage&&, MessageCallback&&);
@@ -73,7 +71,9 @@ private:
     void returnMessage();
     void reset();
 
-    UniqueRef<HidConnection> m_connection;
+    Ref<HidConnection> protectedConnection() { return m_connection; }
+
+    Ref<HidConnection> m_connection;
     State m_state { State::Idle };
     std::optional<fido::FidoHidMessage> m_requestMessage;
     std::optional<fido::FidoHidMessage> m_responseMessage;
@@ -93,12 +93,14 @@ public:
         Busy
     };
 
-    explicit CtapHidDriver(UniqueRef<HidConnection>&&);
+    static Ref<CtapHidDriver> create(Ref<HidConnection>&&);
 
     void transact(Vector<uint8_t>&& data, ResponseCallback&&) final;
     void cancel() final;
 
 private:
+    explicit CtapHidDriver(Ref<HidConnection>&&);
+
     void continueAfterChannelAllocated(std::optional<fido::FidoHidMessage>&&);
     void continueAfterResponseReceived(std::optional<fido::FidoHidMessage>&&);
     void returnResponse(Vector<uint8_t>&&);

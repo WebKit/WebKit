@@ -288,6 +288,9 @@ webkit_web_context_get_tls_errors_policy            (WebKitWebContext           
  * otherwise it will not have any effect. You can connect to
  * #WebKitWebContext::initialize-web-process-extensions to call this method
  * before anything is loaded.
+ *
+ * If your web process extension is installed to an unusual location,
+ * then you may also need to call webkit_web_context_add_path_to_sandbox().
  */
 WEBKIT_API void
 webkit_web_context_set_web_process_extensions_directory (WebKitWebContext              *context,

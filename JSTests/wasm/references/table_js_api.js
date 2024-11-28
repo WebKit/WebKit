@@ -24,7 +24,7 @@ function testTableGrowForExternrefTables() {
 async function testTableGrowForFuncrefTables() {
   const table = new WebAssembly.Table({initial:1, maximum:10, element: "funcref"});
   const calories = 100;
-  assert.throws(() => table.grow(3, new Pelmen(calories)), Error, "WebAssembly.Table.prototype.grow expects the second argument to be null or an instance of WebAssembly.Function");
+  assert.throws(() => table.grow(3, new Pelmen(calories)), Error, "Argument value did not match the reference type");
 
   table.grow(3, null);
   assert.eq(table.get(1), null);
@@ -75,7 +75,7 @@ async function testTableSetForFuncrefTables() {
   table.set(0, instance.exports.foo);
   assert.eq(table.get(0), instance.exports.foo);
 
-  assert.throws(() => table.set(0, {}), TypeError, "WebAssembly.Table.prototype.set expects the second argument to be null or an instance of WebAssembly.Function");
+  assert.throws(() => table.set(0, {}), TypeError, "Argument value did not match the reference type");
 }
 
 testTableGrowForExternrefTables();

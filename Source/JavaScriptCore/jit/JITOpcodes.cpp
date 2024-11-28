@@ -145,57 +145,6 @@ void JIT::emit_op_overrides_has_instance(const JSInstruction* currentInstruction
     emitPutVirtualRegister(dst, jsRegT10);
 }
 
-
-void JIT::emit_op_instanceof(const JSInstruction* currentInstruction)
-{
-    auto bytecode = currentInstruction->as<OpInstanceof>();
-    VirtualRegister dst = bytecode.m_dst;
-    VirtualRegister value = bytecode.m_value;
-    VirtualRegister proto = bytecode.m_prototype;
-
-    using BaselineJITRegisters::Instanceof::resultJSR;
-    using BaselineJITRegisters::Instanceof::valueJSR;
-    using BaselineJITRegisters::Instanceof::protoJSR;
-    using BaselineJITRegisters::Instanceof::stubInfoGPR;
-
-    emitGetVirtualRegister(value, valueJSR);
-    emitGetVirtualRegister(proto, protoJSR);
-
-    auto [ stubInfo, stubInfoIndex ] = addUnlinkedStructureStubInfo();
-    loadStructureStubInfo(stubInfoIndex, stubInfoGPR);
-
-    // Check that proto are cells. baseVal must be a cell - this is checked by the get_by_id for Symbol.hasInstance.
-    emitJumpSlowCaseIfNotJSCell(valueJSR, value);
-    emitJumpSlowCaseIfNotJSCell(protoJSR, proto);
-
-    JITInstanceOfGenerator gen(
-        nullptr, stubInfo, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex),
-        RegisterSetBuilder::stubUnavailableRegisters(),
-        resultJSR.payloadGPR(),
-        valueJSR.payloadGPR(),
-        protoJSR.payloadGPR(),
-        stubInfoGPR);
-
-    gen.generateDataICFastPath(*this);
-#if USE(JSVALUE32_64)
-    boxBoolean(resultJSR.payloadGPR(), resultJSR);
-#endif
-    addSlowCase();
-    m_instanceOfs.append(gen);
-
-    setFastPathResumePoint();
-    emitPutVirtualRegister(dst, resultJSR);
-}
-
-void JIT::emitSlow_op_instanceof(const JSInstruction*, Vector<SlowCaseEntry>::iterator& iter)
-{
-    ASSERT(BytecodeIndex(m_bytecodeIndex.offset()) == m_bytecodeIndex);
-    JITInstanceOfGenerator& gen = m_instanceOfs[m_instanceOfIndex++];
-    linkAllSlowCases(iter);
-    gen.reportBaselineDataICSlowPathBegin(label());
-    nearCallThunk(CodeLocationLabel { InlineCacheCompiler::generateSlowPathCode(vm(), gen.accessType()).retaggedCode<NoPtrTag>() });
-}
-
 void JIT::emit_op_is_empty(const JSInstruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpIsEmpty>();
@@ -1310,11 +1259,11 @@ void JIT::emit_op_switch_imm(const JSInstruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpSwitchImm>();
     size_t tableIndex = bytecode.m_tableIndex;
-    unsigned defaultOffset = jumpTarget(currentInstruction, bytecode.m_defaultOffset);
     VirtualRegister scrutinee = bytecode.m_scrutinee;
 
     // create jump table for switch destinations, track this switch statement.
     const UnlinkedSimpleJumpTable& unlinkedTable = m_unlinkedCodeBlock->unlinkedSwitchJumpTable(tableIndex);
+    int32_t defaultOffset = unlinkedTable.defaultOffset();
     SimpleJumpTable& linkedTable = m_switchJumpTables[tableIndex];
     m_switches.append(SwitchRecord(tableIndex, m_bytecodeIndex, defaultOffset, SwitchRecord::Immediate));
     linkedTable.ensureCTITable(unlinkedTable);
@@ -1339,11 +1288,11 @@ void JIT::emit_op_switch_char(const JSInstruction* currentInstruction)
     // https://bugs.webkit.org/show_bug.cgi?id=224521
     auto bytecode = currentInstruction->as<OpSwitchChar>();
     size_t tableIndex = bytecode.m_tableIndex;
-    unsigned defaultOffset = jumpTarget(currentInstruction, bytecode.m_defaultOffset);
     VirtualRegister scrutinee = bytecode.m_scrutinee;
 
     // create jump table for switch destinations, track this switch statement.
     const UnlinkedSimpleJumpTable& unlinkedTable = m_unlinkedCodeBlock->unlinkedSwitchJumpTable(tableIndex);
+    int32_t defaultOffset = unlinkedTable.defaultOffset();
     SimpleJumpTable& linkedTable = m_switchJumpTables[tableIndex];
     m_switches.append(SwitchRecord(tableIndex, m_bytecodeIndex, defaultOffset, SwitchRecord::Character));
     linkedTable.ensureCTITable(unlinkedTable);
@@ -1362,11 +1311,11 @@ void JIT::emit_op_switch_string(const JSInstruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpSwitchString>();
     size_t tableIndex = bytecode.m_tableIndex;
-    unsigned defaultOffset = jumpTarget(currentInstruction, bytecode.m_defaultOffset);
     VirtualRegister scrutinee = bytecode.m_scrutinee;
 
     // create jump table for switch destinations, track this switch statement.
     const UnlinkedStringJumpTable& unlinkedTable = m_unlinkedCodeBlock->unlinkedStringSwitchJumpTable(tableIndex);
+    int32_t defaultOffset = unlinkedTable.defaultOffset();
     StringJumpTable& linkedTable = m_stringSwitchJumpTables[tableIndex];
     m_switches.append(SwitchRecord(tableIndex, m_bytecodeIndex, defaultOffset, SwitchRecord::String));
     linkedTable.ensureCTITable(unlinkedTable);
@@ -1525,9 +1474,9 @@ void JIT::emit_op_enter(const JSInstruction*)
 #if ENABLE(DFG_JIT)
     if (Options::useDFGJIT()) {
         if (canBeOptimized()) {
-            load32(Address(argumentGPR1, CodeBlock::offsetOfJITExecuteCounter()), argumentGPR2);
+            load32(Address(GPRInfo::jitDataRegister, BaselineJITData::offsetOfJITExecuteCounter()), argumentGPR2);
             addSlowCase(branchAdd32(PositiveOrZero, TrustedImm32(Options::executionCounterIncrementForEntry()), argumentGPR2));
-            store32(argumentGPR2, Address(argumentGPR1, CodeBlock::offsetOfJITExecuteCounter()));
+            store32(argumentGPR2, Address(GPRInfo::jitDataRegister, BaselineJITData::offsetOfJITExecuteCounter()));
         }
     }
 #endif
@@ -1569,8 +1518,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JIT::op_enter_handlerGenerator(VM& vm)
         // emitEnterOptimizationCheck().
         JumpList skipOptimize;
 
-        jit.loadPtr(addressFor(CallFrameSlot::codeBlock), argumentGPR1);
-        skipOptimize.append(jit.branchAdd32(Signed, TrustedImm32(Options::executionCounterIncrementForEntry()), Address(argumentGPR1, CodeBlock::offsetOfJITExecuteCounter())));
+        skipOptimize.append(jit.branchAdd32(Signed, TrustedImm32(Options::executionCounterIncrementForEntry()), Address(GPRInfo::jitDataRegister, BaselineJITData::offsetOfJITExecuteCounter())));
 
         jit.copyLLIntBaselineCalleeSavesFromFrameOrRegisterToEntryFrameCalleeSavesBuffer(vm.topEntryFrame);
         jit.prepareCallOperation(vm);
@@ -1746,11 +1694,8 @@ void JIT::emit_op_loop_hint(const JSInstruction* instruction)
     }
 
     // Emit the JIT optimization check: 
-    if (canBeOptimized()) {
-        loadPtr(addressFor(CallFrameSlot::codeBlock), regT0);
-        addSlowCase(branchAdd32(PositiveOrZero, TrustedImm32(Options::executionCounterIncrementForLoop()),
-            Address(regT0, CodeBlock::offsetOfJITExecuteCounter())));
-    }
+    if (canBeOptimized())
+        addSlowCase(branchAdd32(PositiveOrZero, TrustedImm32(Options::executionCounterIncrementForLoop()), Address(GPRInfo::jitDataRegister, BaselineJITData::offsetOfJITExecuteCounter())));
 }
 
 void JIT::emitSlow_op_loop_hint(const JSInstruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
@@ -1765,7 +1710,7 @@ void JIT::emitSlow_op_loop_hint(const JSInstruction* currentInstruction, Vector<
         callOperationNoExceptionCheck(operationOptimize, TrustedImmPtr(&vm()), m_bytecodeIndex.asBits());
         Jump noOptimizedEntry = branchTestPtr(Zero, returnValueGPR);
         if (ASSERT_ENABLED) {
-            Jump ok = branchPtr(MacroAssembler::Above, returnValueGPR, TrustedImmPtr(bitwise_cast<void*>(static_cast<intptr_t>(1000))));
+            Jump ok = branchPtr(MacroAssembler::Above, returnValueGPR, TrustedImmPtr(std::bit_cast<void*>(static_cast<intptr_t>(1000))));
             abortWithReason(JITUnreasonableLoopHintJumpTarget);
             ok.link(this);
         }
@@ -1791,12 +1736,12 @@ void JIT::emit_op_nop(const JSInstruction*)
 
 void JIT::emit_op_super_sampler_begin(const JSInstruction*)
 {
-    add32(TrustedImm32(1), AbsoluteAddress(bitwise_cast<void*>(&g_superSamplerCount)));
+    add32(TrustedImm32(1), AbsoluteAddress(std::bit_cast<void*>(&g_superSamplerCount)));
 }
 
 void JIT::emit_op_super_sampler_end(const JSInstruction*)
 {
-    sub32(TrustedImm32(1), AbsoluteAddress(bitwise_cast<void*>(&g_superSamplerCount)));
+    sub32(TrustedImm32(1), AbsoluteAddress(std::bit_cast<void*>(&g_superSamplerCount)));
 }
 
 void JIT::emitSlow_op_enter(const JSInstruction*, Vector<SlowCaseEntry>::iterator& iter)
@@ -1864,7 +1809,7 @@ void JIT::emitNewFuncCommon(const JSInstruction* currentInstruction)
 
     loadGlobalObject(argumentGPR0);
     emitGetVirtualRegisterPayload(bytecode.m_scope, argumentGPR1);
-    auto constant = addToConstantPool(JITConstantPool::Type::FunctionDecl, bitwise_cast<void*>(static_cast<uintptr_t>(bytecode.m_functionDecl)));
+    auto constant = addToConstantPool(JITConstantPool::Type::FunctionDecl, std::bit_cast<void*>(static_cast<uintptr_t>(bytecode.m_functionDecl)));
     loadConstant(constant, argumentGPR2);
 
     OpcodeID opcodeID = Op::opcodeID;
@@ -1911,7 +1856,7 @@ void JIT::emitNewFuncExprCommon(const JSInstruction* currentInstruction)
 
     loadGlobalObject(argumentGPR0);
     emitGetVirtualRegisterPayload(bytecode.m_scope, argumentGPR1);
-    auto constant = addToConstantPool(JITConstantPool::Type::FunctionExpr, bitwise_cast<void*>(static_cast<uintptr_t>(bytecode.m_functionDecl)));
+    auto constant = addToConstantPool(JITConstantPool::Type::FunctionExpr, std::bit_cast<void*>(static_cast<uintptr_t>(bytecode.m_functionDecl)));
     loadConstant(constant, argumentGPR2);
 
     OpcodeID opcodeID = Op::opcodeID;

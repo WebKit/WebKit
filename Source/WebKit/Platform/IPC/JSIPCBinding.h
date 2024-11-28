@@ -27,6 +27,8 @@
 
 #if ENABLE(IPC_TESTING_API)
 
+#include <wtf/Compiler.h>
+
 #include "Decoder.h"
 #include "HandleMessage.h"
 #include <JavaScriptCore/JSArray.h>
@@ -96,18 +98,6 @@ template<> JSC::JSValue jsValueForDecodedArgumentValue(JSC::JSGlobalObject*, uin
 template<> JSC::JSValue jsValueForDecodedArgumentValue(JSC::JSGlobalObject*, uint32_t);
 template<> JSC::JSValue jsValueForDecodedArgumentValue(JSC::JSGlobalObject*, uint64_t);
 template<> JSC::JSValue jsValueForDecodedArgumentValue(JSC::JSGlobalObject*, size_t);
-
-template<typename U>
-JSC::JSValue jsValueForDecodedArgumentValue(JSC::JSGlobalObject* globalObject, LegacyNullableObjectIdentifier<U>&& value)
-{
-    return jsValueForDecodedArgumentValue(globalObject, value.toUInt64());
-}
-
-template<typename U>
-JSC::JSValue jsValueForDecodedArgumentValue(JSC::JSGlobalObject* globalObject, LegacyNullableAtomicObjectIdentifier<U>&& value)
-{
-    return jsValueForDecodedArgumentValue(globalObject, value.toUInt64());
-}
 
 template<typename U>
 JSC::JSValue jsValueForDecodedArgumentValue(JSC::JSGlobalObject* globalObject, ObjectIdentifier<U>&& value)

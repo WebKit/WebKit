@@ -437,6 +437,10 @@ void ProgramPipeline::updateFragmentInoutRangeAndEnablesPerSampleShading()
     mState.mExecutable->mPod.hasDiscard           = fragmentExecutable->mPod.hasDiscard;
     mState.mExecutable->mPod.enablesPerSampleShading =
         fragmentExecutable->mPod.enablesPerSampleShading;
+    mState.mExecutable->mPod.hasDepthInputAttachment =
+        fragmentExecutable->mPod.hasDepthInputAttachment;
+    mState.mExecutable->mPod.hasStencilInputAttachment =
+        fragmentExecutable->mPod.hasStencilInputAttachment;
 }
 
 void ProgramPipeline::updateLinkedVaryings()

@@ -24,13 +24,10 @@
 #include "include/docs/SkMultiPictureDocument.h"
 #include "include/docs/SkPDFDocument.h"
 #include "include/encode/SkPngEncoder.h"
-#include "include/gpu/GrBackendSurface.h"
-#include "include/gpu/GrDirectContext.h"
+#include "include/gpu/ganesh/GrBackendSurface.h"
+#include "include/gpu/ganesh/GrDirectContext.h"
 #include "include/gpu/ganesh/SkImageGanesh.h"
 #include "include/gpu/ganesh/SkSurfaceGanesh.h"
-#include "include/ports/SkImageGeneratorCG.h"
-#include "include/ports/SkImageGeneratorNDK.h"
-#include "include/ports/SkImageGeneratorWIC.h"
 #include "include/private/base/SkTLogic.h"
 #include "include/private/chromium/GrDeferredDisplayList.h"
 #include "include/private/chromium/GrSurfaceCharacterization.h"
@@ -59,7 +56,6 @@
 #include "src/utils/SkJSONWriter.h"
 #include "src/utils/SkMultiPictureDocumentPriv.h"
 #include "src/utils/SkOSPath.h"
-#include "src/utils/SkTestCanvas.h"
 #include "tools/DDLPromiseImageHelper.h"
 #include "tools/DDLTileHelper.h"
 #include "tools/EncodeUtils.h"
@@ -72,9 +68,19 @@
 #include "tools/fonts/FontToolUtils.h"
 #include "tools/gpu/BackendSurfaceFactory.h"
 #include "tools/gpu/MemoryCache.h"
+#include "tools/gpu/TestCanvas.h"
+
+#if defined(SK_BUILD_FOR_ANDROID)
+#include "include/ports/SkImageGeneratorNDK.h"
+#endif
+
+#if defined(SK_BUILD_FOR_MAC) || defined(SK_BUILD_FOR_IOS)
+#include "include/ports/SkImageGeneratorCG.h"
+#endif
 
 #if defined(SK_BUILD_FOR_WIN)
 #include "include/docs/SkXPSDocument.h"
+#include "include/ports/SkImageGeneratorWIC.h"
 #include "src/utils/win/SkAutoCoInitialize.h"
 #include "src/utils/win/SkHRESULT.h"
 #include "src/utils/win/SkTScopedComPtr.h"
@@ -124,7 +130,10 @@
 #if defined(SK_ENABLE_ANDROID_UTILS)
     #include "client_utils/android/BitmapRegionDecoder.h"
 #endif
-#include "tests/TestUtils.h"
+
+#if !defined(SK_DISABLE_LEGACY_TESTS)
+    #include "tests/TestUtils.h"
+#endif
 
 #include <cmath>
 #include <functional>
@@ -1652,7 +1661,7 @@ Result GPUSlugSink::draw(const Src& src, SkBitmap* dst, SkWStream* write, SkStri
     // Force padded atlas entries for slug drawing.
     grOptions.fSupportBilerpFromGlyphAtlas |= true;
 
-    SkTLazy<SkTestCanvas<SkSlugTestKey>> testCanvas;
+    SkTLazy<skiatest::TestCanvas<skiatest::SkSlugTestKey>> testCanvas;
 
     return onDraw(src, dst, write, log, grOptions, nullptr,
         [&](SkCanvas* canvas){
@@ -1672,7 +1681,7 @@ Result GPUSerializeSlugSink::draw(
     // Force padded atlas entries for slug drawing.
     grOptions.fSupportBilerpFromGlyphAtlas |= true;
 
-    SkTLazy<SkTestCanvas<SkSerializeSlugTestKey>> testCanvas;
+    SkTLazy<skiatest::TestCanvas<skiatest::SkSerializeSlugTestKey>> testCanvas;
 
     return onDraw(src, dst, write, log, grOptions, nullptr,
                   [&](SkCanvas* canvas){
@@ -1692,7 +1701,7 @@ Result GPURemoteSlugSink::draw(
     // Force padded atlas entries for slug drawing.
     grOptions.fSupportBilerpFromGlyphAtlas |= true;
 
-    SkTLazy<SkTestCanvas<SkRemoteSlugTestKey>> testCanvas;
+    SkTLazy<skiatest::TestCanvas<skiatest::SkRemoteSlugTestKey>> testCanvas;
 
     return onDraw(src, dst, write, log, grOptions, nullptr,
                   [&](SkCanvas* canvas) {
@@ -2139,10 +2148,10 @@ Result RasterSink::draw(const Src& src, SkBitmap* dst, SkWStream*, SkString*) co
 
 #if defined(SK_GRAPHITE)
 
-GraphiteSink::GraphiteSink(const SkCommandLineConfigGraphite* config)
-        : fOptions(config->getOptions())
+GraphiteSink::GraphiteSink(const SkCommandLineConfigGraphite* config,
+                           const skiatest::graphite::TestOptions& options)
+        : fOptions(options)
         , fContextType(config->getContextType())
-        , fSurfaceType(config->getSurfaceType())
         , fColorType(config->getColorType())
         , fAlphaType(config->getAlphaType()) {}
 
@@ -2209,18 +2218,18 @@ sk_sp<SkSurface> GraphiteSink::makeSurface(skgpu::graphite::Recorder* recorder,
                                            SkISize dimensions) const {
     SkSurfaceProps props(0, kRGB_H_SkPixelGeometry);
     auto ii = SkImageInfo::Make(dimensions, this->colorInfo());
-    switch (fSurfaceType) {
-        case SurfaceType::kDefault:
-            return SkSurfaces::RenderTarget(recorder, ii, skgpu::Mipmapped::kNo, &props);
 
-        case SurfaceType::kWrapTextureView:
-            return sk_gpu_test::MakeBackendTextureViewSurface(recorder,
-                                                              ii,
-                                                              skgpu::Mipmapped::kNo,
-                                                              skgpu::Protected::kNo,
-                                                              &props);
+#if defined(SK_DAWN)
+    if (fOptions.fUseWGPUTextureView) {
+        return sk_gpu_test::MakeBackendTextureViewSurface(recorder,
+                                                          ii,
+                                                          skgpu::Mipmapped::kNo,
+                                                          skgpu::Protected::kNo,
+                                                          &props);
     }
-    SkUNREACHABLE;
+#endif // SK_DAWN
+
+    return SkSurfaces::RenderTarget(recorder, ii, skgpu::Mipmapped::kNo, &props);
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
@@ -2228,7 +2237,8 @@ sk_sp<SkSurface> GraphiteSink::makeSurface(skgpu::graphite::Recorder* recorder,
 #if defined(SK_ENABLE_PRECOMPILE)
 
 GraphitePrecompileTestingSink::GraphitePrecompileTestingSink(
-        const SkCommandLineConfigGraphite* config) : GraphiteSink(config) {}
+        const SkCommandLineConfigGraphite* config,
+        const skiatest::graphite::TestOptions& options) : GraphiteSink(config, options) {}
 
 GraphitePrecompileTestingSink::~GraphitePrecompileTestingSink() {}
 

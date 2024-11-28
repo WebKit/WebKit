@@ -33,9 +33,10 @@ namespace WebCore {
 
 class HashMapStylePropertyMapReadOnly final : public MainThreadStylePropertyMapReadOnly {
 public:
-    static Ref<HashMapStylePropertyMapReadOnly> create(HashMap<AtomString, RefPtr<CSSValue>>&&);
+    static Ref<HashMapStylePropertyMapReadOnly> create(UncheckedKeyHashMap<AtomString, RefPtr<CSSValue>>&&);
     ~HashMapStylePropertyMapReadOnly();
 
+    Type type() const final { return Type::UncheckedKeyHashMap; }
     RefPtr<CSSValue> propertyValue(CSSPropertyID) const final;
     String shorthandPropertySerialization(CSSPropertyID) const final;
     RefPtr<CSSValue> customPropertyValue(const AtomString& property) const final;
@@ -43,9 +44,11 @@ public:
     Vector<StylePropertyMapEntry> entries(ScriptExecutionContext*) const final;
 
 private:
-    HashMapStylePropertyMapReadOnly(HashMap<AtomString, RefPtr<CSSValue>>&&);
+    HashMapStylePropertyMapReadOnly(UncheckedKeyHashMap<AtomString, RefPtr<CSSValue>>&&);
 
-    HashMap<AtomString, RefPtr<CSSValue>> m_map;
+    UncheckedKeyHashMap<AtomString, RefPtr<CSSValue>> m_map;
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_CSSOM_STYLE_PROPERTY_MAP(HashMapStylePropertyMapReadOnly, WebCore::StylePropertyMapReadOnly::Type::UncheckedKeyHashMap);

@@ -61,7 +61,7 @@ set(SysProfCapture_VERSION ${PC_SYSPROF_CAPTURE_VERSION})
 find_path(SysProfCapture_INCLUDE_DIR
     NAMES sysprof-capture.h
     HINTS ${PC_SYSPROF_CAPTURE_INCLUDEDIR} ${PC_SYSPROF_CAPTURE_INCLUDE_DIR}
-    PATH_SUFFIXES sysprof-6
+    PATH_SUFFIXES sysprof-6 sysprof-4
 )
 
 find_library(SysProfCapture_LIBRARY

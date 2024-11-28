@@ -35,6 +35,8 @@
 #include "StrongInlines.h"
 #include "VMTrapsInlines.h"
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 class JSMicrotask final : public Microtask {
@@ -112,3 +114,5 @@ void JSMicrotask::run(JSGlobalObject* globalObject)
 }
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

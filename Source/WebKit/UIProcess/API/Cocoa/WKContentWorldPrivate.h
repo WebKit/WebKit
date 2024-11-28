@@ -24,10 +24,13 @@
  */
 
 #import <WebKit/WKContentWorld.h>
+#import <WebKit/_WKContentWorldConfiguration.h>
 
 @class _WKUserContentWorld;
 
 @interface WKContentWorld (WKPrivate)
+
++ (WKContentWorld *)_worldWithConfiguration:(_WKContentWorldConfiguration *)configuration NS_SWIFT_NAME(worldWithConfiguration(configuration:)) WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"

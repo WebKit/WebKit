@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -46,14 +46,13 @@
 #include <WebCore/VP9UtilitiesCocoa.h>
 #include <WebCore/VideoFrameCV.h>
 #include <wtf/MainThread.h>
+#include <wtf/StdLibExtras.h>
 #include <wtf/TZoneMallocInlines.h>
 
-ALLOW_COMMA_BEGIN
-
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
 #include <webrtc/webkit_sdk/WebKit/WebKitDecoder.h>
 #include <webrtc/webkit_sdk/WebKit/WebKitEncoder.h>
-
-ALLOW_COMMA_END
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 
 #include <pal/cf/CoreMediaSoftLink.h>
 
@@ -89,8 +88,8 @@ static webrtc::WebKitVideoDecoder createVideoDecoder(const webrtc::SdpVideoForma
 }
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(LibWebRTCCodecs);
-WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(LibWebRTCCodecsDecoder, LibWebRTCCodecs::Decoder);
-WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(LibWebRTCCodecsEncoder, LibWebRTCCodecs::Encoder);
+WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(LibWebRTCCodecs, Decoder);
+WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(LibWebRTCCodecs, Encoder);
 
 std::optional<WebCore::VideoCodecType> LibWebRTCCodecs::videoCodecTypeFromWebCodec(const String& codec)
 {
@@ -152,7 +151,7 @@ static int32_t releaseVideoDecoder(webrtc::WebKitVideoDecoder::Value decoder)
 
 static int32_t decodeVideoFrame(webrtc::WebKitVideoDecoder::Value decoder, uint32_t timeStamp, const uint8_t* data, size_t size, uint16_t width,  uint16_t height)
 {
-    return WebProcess::singleton().libWebRTCCodecs().decodeWebRTCFrame(*static_cast<LibWebRTCCodecs::Decoder*>(decoder), timeStamp, { data, size }, width, height);
+    return WebProcess::singleton().libWebRTCCodecs().decodeWebRTCFrame(*static_cast<LibWebRTCCodecs::Decoder*>(decoder), timeStamp, unsafeMakeSpan(data, size), width, height);
 }
 
 static int32_t registerDecodeCompleteCallback(webrtc::WebKitVideoDecoder::Value decoder, void* decodedImageCallback)
@@ -343,9 +342,8 @@ void LibWebRTCCodecs::createDecoderAndWaitUntilReady(WebCore::VideoCodecType typ
 
 LibWebRTCCodecs::Decoder* LibWebRTCCodecs::createDecoderInternal(WebCore::VideoCodecType type, const String& codec, Function<void(Decoder*)>&& callback)
 {
-    auto decoder = makeUnique<Decoder>();
+    auto decoder = makeUnique<Decoder>(VideoDecoderIdentifier::generate());
     auto* result = decoder.get();
-    decoder->identifier = VideoDecoderIdentifier::generate();
     decoder->type = type;
     decoder->codec = codec.isolatedCopy();
 
@@ -594,9 +592,8 @@ static void createRemoteEncoder(LibWebRTCCodecs::Encoder& encoder, IPC::Connecti
 
 LibWebRTCCodecs::Encoder* LibWebRTCCodecs::createEncoderInternal(WebCore::VideoCodecType type, const String& codec, const std::map<std::string, std::string>& formatParameters, bool isRealtime, bool useAnnexB, VideoEncoderScalabilityMode scalabilityMode, Function<void(Encoder*)>&& callback)
 {
-    auto encoder = makeUnique<Encoder>();
+    auto encoder = makeUnique<Encoder>(VideoEncoderIdentifier::generate());
     auto* result = encoder.get();
-    encoder->identifier = VideoEncoderIdentifier::generate();
     encoder->type = type;
     encoder->useAnnexB = useAnnexB;
     encoder->isRealtime = isRealtime;
@@ -807,7 +804,7 @@ void LibWebRTCCodecs::completedEncoding(VideoEncoderIdentifier identifier, std::
 
     if (encoder->encoderCallback) {
         auto temporalIndex = info.temporalIndex >= 0 ? std::make_optional<unsigned>(info.temporalIndex) : std::nullopt;
-        encoder->encoderCallback({ data.data(), data.size() }, info.frameType == webrtc::VideoFrameType::kVideoFrameKey, info.timeStamp, info.duration, temporalIndex);
+        encoder->encoderCallback(data, info.frameType == webrtc::VideoFrameType::kVideoFrameKey, info.timeStamp, info.duration, temporalIndex);
         return;
     }
 

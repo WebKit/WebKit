@@ -69,7 +69,7 @@ struct JsonWebKey;
 
 class CryptoKeyEC final : public CryptoKey {
 public:
-    enum class NamedCurve {
+    enum class NamedCurve : uint8_t {
         P256,
         P384,
         P521,

@@ -28,6 +28,7 @@
 #if ENABLE(MEDIA_SESSION)
 
 #include "Supplementable.h"
+#include <wtf/CheckedRef.h>
 #include <wtf/Forward.h>
 #include <wtf/TZoneMalloc.h>
 
@@ -52,7 +53,7 @@ private:
     static ASCIILiteral supplementName();
 
     RefPtr<MediaSession> m_mediaSession;
-    Navigator& m_navigator;
+    CheckedRef<Navigator> m_navigator;
 };
 
 }

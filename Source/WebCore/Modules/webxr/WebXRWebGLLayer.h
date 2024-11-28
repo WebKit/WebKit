@@ -85,7 +85,7 @@ public:
     void sessionEnded();
 
     // WebXRLayer
-    void startFrame(const PlatformXR::FrameData&) final;
+    void startFrame(PlatformXR::FrameData&) final;
     PlatformXR::Device::Layer endFrame() final;
 
 private:

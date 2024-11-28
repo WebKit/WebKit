@@ -6,10 +6,24 @@ webkit.org/b/268789 [ Debug ] imported/w3c/web-platform-tests/css/css-break/tabl
 # Instead of skipping them, we let them run atleast so that we have logs for the test cases in those logs that do actually work correctly.
 imported/w3c/web-platform-tests/WebCryptoAPI/import_export/ec_importKey.https.any.html [ Failure ]
 imported/w3c/web-platform-tests/WebCryptoAPI/import_export/ec_importKey.https.any.worker.html [ Failure ]
+imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/cfrg_curves_bits_curve25519.https.any.html [ Failure ]
+imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/cfrg_curves_bits_curve25519.https.any.worker.html [ Failure ]
+imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/eddsa_small_order_points.https.any.html [ Failure ]
+imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/eddsa_small_order_points.https.any.worker.html [ Failure ]
+
+# HAVE(VOICEACTIVITYDETECTION) is false in Ventura.
+http/wpt/mediasession/voiceActivityDetection.html [ Skip ]
 
 # Skip these tests that enable UnifiedPDFPlugin, since it's only meaningful for macOS 14+.
 http/tests/pdf/linearized-pdf-in-iframe.html [ Skip ]
 http/tests/pdf/linearized-pdf-in-display-none-iframe.html [ Skip ]
-pdf/unifiedpdf/annotations/checkbox-set-active.html [ Skip ]
-pdf/unifiedpdf/annotations/radio-buttons-select-second.html [ Skip ]
-pdf/unifiedpdf/annotations/dropdown-select-second-option.html [ Skip ]
+http/tests/pdf/page-in-window-update-with-linearized-pdf-in-display-none-iframe.html [ Skip ]
+pdf/pdf-in-embed-rounded-border.html [ Skip ]
+pdf/pdf-plugin-printing.html [ Skip ]
+pdf/annotations/checkbox-set-active.html [ Skip ]
+pdf/annotations/radio-buttons-select-second.html [ Skip ]
+pdf/annotations/dropdown-select-second-option.html [ Skip ]
+
+# linkedOnOrAfter(Sequoa) for Cross Origin Redirect Downloads.
+http/tests/download/anchor-download-redirect-cross-origin.html
+http/tests/download/anchor-download-redirect-cross-origin-top-level.html

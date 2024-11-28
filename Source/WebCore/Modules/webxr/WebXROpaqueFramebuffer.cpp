@@ -76,7 +76,7 @@ WebXROpaqueFramebuffer::~WebXROpaqueFramebuffer()
     }
 }
 
-void WebXROpaqueFramebuffer::startFrame(const PlatformXR::FrameData::LayerData& data)
+void WebXROpaqueFramebuffer::startFrame(PlatformXR::FrameData::LayerData& data)
 {
     RefPtr gl = m_context.graphicsContextGL();
     if (!gl)

@@ -39,15 +39,6 @@
 @class WKWebView;
 @protocol WKUIDelegate;
 
-namespace WebKit {
-class UIDelegate;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::UIDelegate> : std::true_type { };
-}
-
 namespace API {
 class FrameInfo;
 class SecurityOrigin;
@@ -68,6 +59,9 @@ public:
     explicit UIDelegate(WKWebView *);
     ~UIDelegate();
 
+    void ref() const;
+    void deref() const;
+
 #if ENABLE(CONTEXT_MENUS)
     std::unique_ptr<API::ContextMenuClient> createContextMenuClient();
 #endif
@@ -79,6 +73,7 @@ public:
 private:
 #if ENABLE(CONTEXT_MENUS)
     class ContextMenuClient : public API::ContextMenuClient {
+        WTF_MAKE_TZONE_ALLOCATED(ContextMenuClient);
     public:
         explicit ContextMenuClient(UIDelegate&);
         ~ContextMenuClient();
@@ -92,13 +87,14 @@ private:
 #endif
 
     class UIClient : public API::UIClient, public CanMakeWeakPtr<UIClient> {
+        WTF_MAKE_TZONE_ALLOCATED(UIClient);
     public:
         explicit UIClient(UIDelegate&);
         ~UIClient();
 
     private:
         // API::UIClient
-        void createNewPage(WebKit::WebPageProxy&, Ref<API::PageConfiguration>&&, WebCore::WindowFeatures&&, Ref<API::NavigationAction>&&, CompletionHandler<void(RefPtr<WebPageProxy>&&)>&&) final;
+        void createNewPage(WebKit::WebPageProxy&, Ref<API::PageConfiguration>&&, Ref<API::NavigationAction>&&, CompletionHandler<void(RefPtr<WebPageProxy>&&)>&&) final;
         void close(WebPageProxy*) final;
         void fullscreenMayReturnToInline(WebPageProxy*) final;
         void didEnterFullscreen(WebPageProxy*) final;
@@ -120,6 +116,7 @@ private:
         void decidePolicyForNotificationPermissionRequest(WebPageProxy&, API::SecurityOrigin&, CompletionHandler<void(bool allowed)>&&) final;
         void requestCookieConsent(CompletionHandler<void(WebCore::CookieConsentDecisionResult)>&&) final;
         bool focusFromServiceWorker(WebKit::WebPageProxy&) final;
+        bool runOpenPanel(WebPageProxy&, WebFrameProxy*, FrameInfoData&&, API::OpenPanelParameters*, WebOpenPanelResultListenerProxy*) final;
 #if PLATFORM(MAC) || HAVE(UIKIT_WITH_MOUSE_SUPPORT)
         void mouseDidMoveOverElement(WebPageProxy&, const WebHitTestResultData&, OptionSet<WebEventModifier>, API::Object*);
 #endif
@@ -145,7 +142,6 @@ private:
 
         void didClickAutoFillButton(WebPageProxy&, API::Object*) final;
         void toolbarsAreVisible(WebPageProxy&, Function<void(bool)>&&) final;
-        bool runOpenPanel(WebPageProxy&, WebFrameProxy*, FrameInfoData&&, API::OpenPanelParameters*, WebOpenPanelResultListenerProxy*) final;
         void saveDataToFileInDownloadsFolder(WebPageProxy*, const WTF::String&, const WTF::String&, const URL&, API::Data&) final;
         Ref<API::InspectorConfiguration> configurationForLocalInspector(WebPageProxy&, WebInspectorUIProxy&) final;
         void didAttachLocalInspector(WebPageProxy&, WebInspectorUIProxy&) final;
@@ -157,6 +153,7 @@ private:
         bool needsFontAttributes() const final { return m_uiDelegate ? m_uiDelegate->m_delegateMethods.webViewDidChangeFontAttributes : false; }
         void didChangeFontAttributes(const WebCore::FontAttributes&) final;
         void decidePolicyForUserMediaPermissionRequest(WebPageProxy&, WebFrameProxy&, API::SecurityOrigin&, API::SecurityOrigin&, UserMediaPermissionRequestProxy&) final;
+        void decidePolicyForScreenCaptureUnmuting(WebKit::WebPageProxy&, WebKit::WebFrameProxy&, API::SecurityOrigin&, API::SecurityOrigin&, CompletionHandler<void(bool isAllowed)>&&) final;
         void checkUserMediaPermissionForOrigin(WebPageProxy&, WebFrameProxy&, API::SecurityOrigin&, API::SecurityOrigin&, UserMediaPermissionCheckProxy&) final;
         void mediaCaptureStateDidChange(WebCore::MediaProducerMediaStateFlags) final;
         void callDisplayCapturePermissionDelegate(WebPageProxy&, WebFrameProxy&, API::SecurityOrigin&, API::SecurityOrigin&, UserMediaPermissionRequestProxy&);
@@ -231,6 +228,7 @@ private:
         bool webViewDidResignInputElementStrongPasswordAppearanceWithUserInfo : 1;
         bool webViewTakeFocus : 1;
         bool webViewHandleAutoplayEventWithFlags : 1;
+        bool webViewRunOpenPanelWithParametersInitiatedByFrameCompletionHandler : 1;
         bool focusWebViewFromServiceWorker : 1;
 #if PLATFORM(MAC) || HAVE(UIKIT_WITH_MOUSE_SUPPORT)
         bool webViewMouseDidMoveOverElementWithFlagsUserInfo : 1;
@@ -253,7 +251,6 @@ private:
         bool webViewGetWindowFrameWithCompletionHandler : 1;
         bool webViewGetToolbarsAreVisibleWithCompletionHandler : 1;
         bool webViewSaveDataToFileSuggestedFilenameMimeTypeOriginatingURL : 1;
-        bool webViewRunOpenPanelWithParametersInitiatedByFrameCompletionHandler : 1;
         bool webViewConfigurationForLocalInspector : 1;
         bool webViewDidAttachLocalInspector : 1;
         bool webViewWillCloseLocalInspector : 1;

@@ -20,7 +20,7 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-messages -> WebSharedWorkerServerConnection NotRefCounted {
+messages -> WebSharedWorkerServerConnection {
     RequestSharedWorker(struct WebCore::SharedWorkerKey sharedWorkerKey, WebCore::SharedWorkerObjectIdentifier sharedWorkerObjectIdentifier, WebCore::TransferredMessagePort port, struct WebCore::WorkerOptions workerOptions)
     SharedWorkerObjectIsGoingAway(struct WebCore::SharedWorkerKey sharedWorkerKey, WebCore::SharedWorkerObjectIdentifier sharedWorkerObjectIdentifier)
     SuspendForBackForwardCache(struct WebCore::SharedWorkerKey sharedWorkerKey, WebCore::SharedWorkerObjectIdentifier sharedWorkerObjectIdentifier)

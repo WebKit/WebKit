@@ -79,7 +79,10 @@ private:
     class InspectorAuditCachedFontClient : public CachedFontClient { };
     InspectorAuditCachedFontClient m_cachedFontClient;
 
-    class InspectorAuditCachedImageClient : public CachedImageClient { };
+    class InspectorAuditCachedImageClient final : public CachedImageClient {
+        WTF_MAKE_FAST_ALLOCATED;
+        WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(InspectorAuditCachedImageClient);
+    };
     InspectorAuditCachedImageClient m_cachedImageClient;
 
     class InspectorAuditCachedRawResourceClient : public CachedRawResourceClient { };

@@ -26,8 +26,7 @@
 #pragma once
 
 #include "CSSColorDescriptors.h"
-#include "CSSPropertyParserConsumer+RawTypes.h"
-#include "CSSPropertyParserConsumer+UnevaluatedCalc.h"
+#include "CSSPrimitiveNumericTypes+Serialization.h"
 #include "ColorSerialization.h"
 #include <optional>
 #include <variant>

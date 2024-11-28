@@ -39,9 +39,9 @@ static String readFileIntoString(const char* fileName)
     RELEASE_ASSERT(bufferCapacity != -1);
     RELEASE_ASSERT(fseek(file, 0, SEEK_SET) != -1);
 
-    LChar* buffer;
+    std::span<LChar> buffer;
     String string = String::createUninitialized(bufferCapacity, buffer);
-    size_t readSize = fread(buffer, 1, bufferCapacity, file);
+    size_t readSize = fread(buffer.data(), 1, buffer.size(), file);
     fclose(file);
     RELEASE_ASSERT(readSize == static_cast<size_t>(bufferCapacity));
     return string;

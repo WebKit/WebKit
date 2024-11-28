@@ -25,7 +25,7 @@ def main():
 
     args, extra_args = parser.parse_known_args()
 
-    return angle_android_test_runner.RunAndroidTestSuite(args, extra_args)
+    return angle_android_test_runner.RunWithAngleTestRunner(args, extra_args)
 
 
 if __name__ == '__main__':

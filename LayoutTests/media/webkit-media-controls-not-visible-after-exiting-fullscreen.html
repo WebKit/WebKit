@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>webkit-media-controls-not-visible-after-exiting-fullscreen</title>
+    <script src=video-test.js></script>
+    <script src=media-file.js></script>
+    <script>
+    var shadow;
+    async function runTest() {
+        findMediaElement();
+        run('video.src = findMediaFile("video", "content/test")');
+        await waitFor(video, 'canplay');
+        run('video.controls = false');
+        runWithKeyDown('video.webkitEnterFullscreen()');
+        await waitFor(document, 'fullscreenchange');
+
+        await sleepFor(100);
+
+        runWithKeyDown('video.webkitExitFullscreen()');
+        await waitFor(document, 'fullscreenchange');
+
+        if (window.internals) {
+            shadow = internals.shadowRoot(mediaElement);
+            await testExpectedEventually('shadow.querySelector(".media-controls").children.length', 0, '==', 1000);
+        }
+    }
+
+    window.addEventListener('load', event => {
+        runTest().then(endTest).catch(failTest);
+    });
+    </script>
+</head>
+<body>
+    <div>
+        This tests that when controls have been shown and hidden, they continue to be hidden after exiting fullscreen.
+    </div>
+    <video controls></video>
+</body>
+</html>

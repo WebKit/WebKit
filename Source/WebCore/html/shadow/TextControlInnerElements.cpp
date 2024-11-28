@@ -85,7 +85,7 @@ RenderPtr<RenderElement> TextControlInnerContainer::createElementRenderer(Render
 static inline bool isStrongPasswordTextField(const Element* element)
 {
     RefPtr inputElement = dynamicDowncast<HTMLInputElement>(element);
-    return inputElement && inputElement->hasAutoFillStrongPasswordButton();
+    return inputElement && inputElement->hasAutofillStrongPasswordButton();
 }
 
 std::optional<Style::ResolvedStyle> TextControlInnerContainer::resolveCustomStyle(const Style::ResolutionContext& resolutionContext, const RenderStyle*)
@@ -116,7 +116,7 @@ std::optional<Style::ResolvedStyle> TextControlInnerElement::resolveCustomStyle(
     newStyle->setFlexGrow(1);
 
     // Needed for correct shrinking.
-    if (newStyle->isHorizontalWritingMode())
+    if (newStyle->writingMode().isHorizontal())
         newStyle->setMinWidth(Length { 0, LengthType::Fixed });
     else
         newStyle->setMinHeight(Length { 0, LengthType::Fixed });
@@ -244,8 +244,6 @@ static inline bool searchFieldStyleHasExplicitlySpecifiedTextFieldAppearance(con
 inline SearchFieldResultsButtonElement::SearchFieldResultsButtonElement(Document& document)
     : HTMLDivElement(divTag, document, TypeFlag::HasCustomStyleResolveCallbacks)
 {
-    if (document.quirks().shouldHideSearchFieldResultsButton())
-        setInlineStyleProperty(CSSPropertyDisplay, CSSValueNone);
 }
 
 Ref<SearchFieldResultsButtonElement> SearchFieldResultsButtonElement::create(Document& document)

@@ -99,21 +99,19 @@ float computedFontSizeFromSpecifiedSizeForSVGInlineText(float specifiedSize, boo
     return computedFontSizeFromSpecifiedSize(specifiedSize, isAbsoluteSize, zoomFactor, MinimumFontSizeRule::Absolute, document.settingsValues());
 }
 
-const int fontSizeTableMax = 16;
-const int fontSizeTableMin = 9;
-const int totalKeywords = 8;
+constexpr int fontSizeTableMax = 16;
+constexpr int fontSizeTableMin = 9;
 
 // WinIE/Nav4 table for font sizes. Designed to match the legacy font mapping system of HTML.
-static const int quirksFontSizeTable[fontSizeTableMax - fontSizeTableMin + 1][totalKeywords] =
-{
-    { 9,    9,     9,     9,    11,    14,    18,    28 },
-    { 9,    9,     9,    10,    12,    15,    20,    31 },
-    { 9,    9,     9,    11,    13,    17,    22,    34 },
-    { 9,    9,    10,    12,    14,    18,    24,    37 },
-    { 9,    9,    10,    13,    16,    20,    26,    40 }, // fixed font default (13)
-    { 9,    9,    11,    14,    17,    21,    28,    42 },
-    { 9,   10,    12,    15,    17,    23,    30,    45 },
-    { 9,   10,    13,    16,    18,    24,    32,    48 } // proportional font default (16)
+static constexpr std::array quirksFontSizeTable {
+    std::array { 9,    9,     9,     9,    11,    14,    18,    28 },
+    std::array { 9,    9,     9,    10,    12,    15,    20,    31 },
+    std::array { 9,    9,     9,    11,    13,    17,    22,    34 },
+    std::array { 9,    9,    10,    12,    14,    18,    24,    37 },
+    std::array { 9,    9,    10,    13,    16,    20,    26,    40 }, // fixed font default (13)
+    std::array { 9,    9,    11,    14,    17,    21,    28,    42 },
+    std::array { 9,   10,    12,    15,    17,    23,    30,    45 },
+    std::array { 9,   10,    13,    16,    18,    24,    32,    48 } // proportional font default (16)
 };
 // HTML       1      2      3      4      5      6      7
 // CSS  xxs   xs     s      m      l     xl     xxl
@@ -121,16 +119,15 @@ static const int quirksFontSizeTable[fontSizeTableMax - fontSizeTableMin + 1][to
 //                      user pref
 
 // Strict mode table matches MacIE and Mozilla's settings exactly.
-static const int strictFontSizeTable[fontSizeTableMax - fontSizeTableMin + 1][totalKeywords] =
-{
-    { 9,    9,     9,     9,    11,    14,    18,    27 },
-    { 9,    9,     9,    10,    12,    15,    20,    30 },
-    { 9,    9,    10,    11,    13,    17,    22,    33 },
-    { 9,    9,    10,    12,    14,    18,    24,    36 },
-    { 9,   10,    12,    13,    16,    20,    26,    39 }, // fixed font default (13)
-    { 9,   10,    12,    14,    17,    21,    28,    42 },
-    { 9,   10,    13,    15,    18,    23,    30,    45 },
-    { 9,   10,    13,    16,    18,    24,    32,    48 } // proportional font default (16)
+static constexpr std::array strictFontSizeTable {
+    std::array { 9,    9,     9,     9,    11,    14,    18,    27 },
+    std::array { 9,    9,     9,    10,    12,    15,    20,    30 },
+    std::array { 9,    9,    10,    11,    13,    17,    22,    33 },
+    std::array { 9,    9,    10,    12,    14,    18,    24,    36 },
+    std::array { 9,   10,    12,    13,    16,    20,    26,    39 }, // fixed font default (13)
+    std::array { 9,   10,    12,    14,    17,    21,    28,    42 },
+    std::array { 9,   10,    13,    15,    18,    23,    30,    45 },
+    std::array { 9,   10,    13,    16,    18,    24,    32,    48 } // proportional font default (16)
 };
 // HTML       1      2      3      4      5      6      7
 // CSS  xxs   xs     s      m      l     xl     xxl
@@ -139,7 +136,7 @@ static const int strictFontSizeTable[fontSizeTableMax - fontSizeTableMin + 1][to
 
 // For values outside the range of the table, we use Todd Fahrner's suggested scale
 // factors for each keyword value.
-static const float fontSizeFactors[totalKeywords] = { 0.60f, 0.75f, 0.89f, 1.0f, 1.2f, 1.5f, 2.0f, 3.0f };
+static constexpr std::array fontSizeFactors { 0.60f, 0.75f, 0.89f, 1.0f, 1.2f, 1.5f, 2.0f, 3.0f };
 
 float fontSizeForKeyword(unsigned keywordID, bool shouldUseFixedDefaultSize, const Settings::Values& settings, bool inQuirksMode)
 {
@@ -161,15 +158,15 @@ float fontSizeForKeyword(unsigned keywordID, bool shouldUseFixedDefaultSize, con
     return fontSizeForKeyword(keywordID, shouldUseFixedDefaultSize, document.settingsValues(), document.inQuirksMode());
 }
 
-template<typename T>
-static int findNearestLegacyFontSize(int pixelFontSize, const T* table, int multiplier)
+template<typename T, std::size_t Extent>
+static int findNearestLegacyFontSize(int pixelFontSize, std::span<const T, Extent> table, int multiplier)
 {
     // Ignore table[0] because xx-small does not correspond to any legacy font size.
-    for (int i = 1; i < totalKeywords - 1; i++) {
+    for (size_t i = 1; i < table.size() - 1; ++i) {
         if (pixelFontSize * 2 < (table[i] + table[i + 1]) * multiplier)
             return i;
     }
-    return totalKeywords - 1;
+    return table.size() - 1;
 }
 
 int legacyFontSizeForPixelSize(int pixelFontSize, bool shouldUseFixedDefaultSize, const Document& document)
@@ -178,10 +175,10 @@ int legacyFontSizeForPixelSize(int pixelFontSize, bool shouldUseFixedDefaultSize
     int mediumSize = shouldUseFixedDefaultSize ? document.settings().defaultFixedFontSize() : document.settings().defaultFontSize();
     if (mediumSize >= fontSizeTableMin && mediumSize <= fontSizeTableMax) {
         int row = mediumSize - fontSizeTableMin;
-        return findNearestLegacyFontSize<int>(pixelFontSize, quirksMode ? quirksFontSizeTable[row] : strictFontSizeTable[row], 1);
+        return findNearestLegacyFontSize(pixelFontSize, std::span { quirksMode ? quirksFontSizeTable[row] : strictFontSizeTable[row] }, 1);
     }
 
-    return findNearestLegacyFontSize<float>(pixelFontSize, fontSizeFactors, mediumSize);
+    return findNearestLegacyFontSize(pixelFontSize, std::span { fontSizeFactors }, mediumSize);
 }
 
 static float adjustedFontSize(float size, float sizeAdjust, float metricValue)

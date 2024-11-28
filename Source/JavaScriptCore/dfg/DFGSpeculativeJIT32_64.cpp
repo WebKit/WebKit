@@ -2921,8 +2921,8 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
 
-    case ArraySpliceExtract: {
-        compileArraySpliceExtract(node);
+    case ArraySplice: {
+        compileArraySplice(node);
         break;
     }
 
@@ -3172,6 +3172,11 @@ void SpeculativeJIT::compile(Node* node)
 
     case NewArrayWithSpecies: {
         compileNewArrayWithSpecies(node);
+        break;
+    }
+
+    case NewArrayWithSizeAndStructure: {
+        compileNewArrayWithSizeAndStructure(node);
         break;
     }
 
@@ -4219,11 +4224,11 @@ void SpeculativeJIT::compile(Node* node)
         break;
 
     case SuperSamplerBegin:
-        add32(TrustedImm32(1), AbsoluteAddress(bitwise_cast<void*>(&g_superSamplerCount)));
+        add32(TrustedImm32(1), AbsoluteAddress(std::bit_cast<void*>(&g_superSamplerCount)));
         break;
 
     case SuperSamplerEnd:
-        sub32(TrustedImm32(1), AbsoluteAddress(bitwise_cast<void*>(&g_superSamplerCount)));
+        sub32(TrustedImm32(1), AbsoluteAddress(std::bit_cast<void*>(&g_superSamplerCount)));
         break;
 
     case Phantom:

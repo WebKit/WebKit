@@ -37,6 +37,7 @@
 #include "DataListSuggestionsClient.h"
 #include "InputType.h"
 #include "SpinButtonElement.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -50,6 +51,10 @@ class TextFieldInputType : public InputType, protected SpinButtonOwner, protecte
     , private DataListSuggestionsClient, protected DataListButtonElement::DataListButtonOwner
 #endif
 {
+    WTF_MAKE_TZONE_ALLOCATED(TextFieldInputType);
+#if ENABLE(DATALIST_ELEMENT)
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(TextFieldInputType);
+#endif
 public:
     bool valueMissing(const String&) const final;
 
@@ -145,7 +150,7 @@ private:
     RefPtr<DataListButtonElement> m_dataListDropdownIndicator;
 
     std::pair<String, Vector<DataListSuggestion>> m_cachedSuggestions;
-    std::unique_ptr<DataListSuggestionPicker> m_suggestionPicker;
+    RefPtr<DataListSuggestionPicker> m_suggestionPicker;
 #endif
 
     RefPtr<HTMLElement> m_container;

@@ -32,6 +32,8 @@
 #include "ScriptExecutionContext.h"
 #include <wtf/CrossThreadCopier.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 namespace CryptoAlgorithmAESGCMInternal {
@@ -235,9 +237,11 @@ void CryptoAlgorithmAESGCM::exportKey(CryptoKeyFormat format, Ref<CryptoKey>&& k
     callback(format, WTFMove(result));
 }
 
-ExceptionOr<size_t> CryptoAlgorithmAESGCM::getKeyLength(const CryptoAlgorithmParameters& parameters)
+ExceptionOr<std::optional<size_t>> CryptoAlgorithmAESGCM::getKeyLength(const CryptoAlgorithmParameters& parameters)
 {
     return CryptoKeyAES::getKeyLength(parameters);
 }
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

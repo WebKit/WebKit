@@ -148,8 +148,8 @@ static NSDictionary *convertRequestBodyToWebExtensionFormat(NSData *requestBody)
 static NSMutableDictionary *webRequestDetailsForResourceLoad(const ResourceLoadInfo& resourceLoad)
 {
     return [@{
-        @"frameId": resourceLoad.parentFrameID ? @(toWebAPI(toWebExtensionFrameIdentifier(resourceLoad.frameID.value()))) : @(toWebAPI(WebExtensionFrameConstants::MainFrameIdentifier)),
-        @"parentFrameId": resourceLoad.parentFrameID ? @(toWebAPI(toWebExtensionFrameIdentifier(resourceLoad.parentFrameID.value()))) : @(toWebAPI(WebExtensionFrameConstants::NoneIdentifier)),
+        @"frameId": resourceLoad.parentFrameID ? @(toWebAPI(toWebExtensionFrameIdentifier(resourceLoad.frameID))) : @(toWebAPI(WebExtensionFrameConstants::MainFrameIdentifier)),
+        @"parentFrameId": resourceLoad.parentFrameID ? @(toWebAPI(toWebExtensionFrameIdentifier(resourceLoad.parentFrameID))) : @(toWebAPI(WebExtensionFrameConstants::NoneIdentifier)),
         @"requestId": [NSString stringWithFormat:@"%llu", resourceLoad.resourceLoadID.toUInt64()],
         @"timeStamp": @(floor(resourceLoad.eventTimestamp.approximateWallTime().secondsSinceEpoch().milliseconds())),
         @"url": resourceLoad.originalURL.string(),

@@ -28,22 +28,23 @@
 #include "CSSCalcSymbolsAllowed.h"
 #include "CSSParserTokenRange.h"
 #include "CSSPropertyParserConsumer+Ident.h"
+#include "CSSPropertyParserOptions.h"
 
 namespace WebCore {
 namespace CSSPropertyParserHelpers {
 
-std::optional<NoneRaw> validatedNoneRaw(NoneRaw value, CSSPropertyParserOptions)
+std::optional<CSS::NoneRaw> validatedNoneRaw(CSS::NoneRaw value, CSSPropertyParserOptions)
 {
     return value;
 }
 
-std::optional<NoneRaw> NoneKnownTokenTypeIdentConsumer::consume(CSSParserTokenRange& range, CSSCalcSymbolsAllowed, CSSPropertyParserOptions)
+std::optional<CSS::NoneRaw> NoneKnownTokenTypeIdentConsumer::consume(CSSParserTokenRange& range, const CSSParserContext&, CSSCalcSymbolsAllowed, CSSPropertyParserOptions)
 {
     ASSERT(range.peek().type() == IdentToken);
 
     if (range.peek().id() == CSSValueNone) {
         range.consumeIncludingWhitespace();
-        return NoneRaw { };
+        return CSS::NoneRaw { };
     }
 
     return std::nullopt;

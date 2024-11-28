@@ -90,8 +90,12 @@ std::span<const uint8_t> SharedBufferReference::span() const
     if (m_memory)
         return m_memory->span().first(m_size);
 #endif
-    if (!m_buffer || !m_buffer->isContiguous())
+    if (!m_buffer)
         return { };
+
+    if (!m_buffer->isContiguous())
+        m_buffer = m_buffer->makeContiguous();
+
     return downcast<SharedBuffer>(m_buffer.get())->span().first(m_size);
 }
 

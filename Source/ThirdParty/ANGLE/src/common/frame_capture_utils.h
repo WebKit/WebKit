@@ -429,6 +429,16 @@ void WriteParamValueReplay<ParamType::TEGLTimeKHR>(std::ostream &os,
                                                    const CallCapture &call,
                                                    EGLTimeKHR value);
 
+template <>
+void WriteParamValueReplay<ParamType::TGLGETBLOBPROCANGLE>(std::ostream &os,
+                                                           const CallCapture &call,
+                                                           GLGETBLOBPROCANGLE value);
+
+template <>
+void WriteParamValueReplay<ParamType::TGLSETBLOBPROCANGLE>(std::ostream &os,
+                                                           const CallCapture &call,
+                                                           GLSETBLOBPROCANGLE value);
+
 // General fallback for any unspecific type.
 template <ParamType ParamT, typename T>
 void WriteParamValueReplay(std::ostream &os, const CallCapture &call, T value)

@@ -111,7 +111,8 @@ private:
     void keyboardAccessoryBarPrevious() override;
     bool isShowingKeyboard() const override;
     bool hasInputSession() const override;
-    void applyAutocorrection(JSStringRef newString, JSStringRef oldString, JSValueRef) override;
+    void selectWordForReplacement() override;
+    void applyAutocorrection(JSStringRef newString, JSStringRef oldString, JSValueRef, bool) override;
     double minimumZoomScale() const override;
     double maximumZoomScale() const override;
     std::optional<bool> stableStateOverride() const override;
@@ -204,7 +205,7 @@ private:
 
     int64_t pasteboardChangeCount() const final;
 
-    void clipSelectionViewRectToContentView(CGRect&) const;
+    CGRect selectionViewBoundsClippedToContentView(UIView *, std::optional<CGRect>&& = std::nullopt) const;
 
     JSRetainPtr<JSStringRef> scrollbarStateForScrollingNodeID(unsigned long long scrollingNodeID, unsigned long long processID, bool) const override;
 

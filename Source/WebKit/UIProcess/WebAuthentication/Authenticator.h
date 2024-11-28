@@ -31,21 +31,13 @@
 #include "WebAuthenticationRequestData.h"
 #include <WebCore/AuthenticatorResponse.h>
 #include <WebCore/ExceptionData.h>
+#include <wtf/AbstractRefCountedAndCanMakeWeakPtr.h>
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/spi/cocoa/SecuritySPI.h>
 
 OBJC_CLASS LAContext;
-
-namespace WebKit {
-class AuthenticatorObserver;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::AuthenticatorObserver> : std::true_type { };
-}
 
 namespace WebCore {
 class AuthenticatorAssertionResponse;
@@ -56,7 +48,7 @@ namespace WebKit {
 class Authenticator;
 using AuthenticatorObserverRespond = std::variant<Ref<WebCore::AuthenticatorResponse>, WebCore::ExceptionData>;
 
-class AuthenticatorObserver : public CanMakeWeakPtr<AuthenticatorObserver> {
+class AuthenticatorObserver : public AbstractRefCountedAndCanMakeWeakPtr<AuthenticatorObserver> {
 public:
     virtual ~AuthenticatorObserver() = default;
     virtual void respondReceived(AuthenticatorObserverRespond&&) = 0;
@@ -69,7 +61,7 @@ public:
     virtual void cancelRequest() = 0;
 };
 
-class Authenticator : public RefCounted<Authenticator>, public CanMakeWeakPtr<Authenticator> {
+class Authenticator : public RefCountedAndCanMakeWeakPtr<Authenticator> {
 public:
     virtual ~Authenticator() = default;
 

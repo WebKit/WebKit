@@ -84,7 +84,7 @@ public:
 private:
     static UniquedStringImpl* deletedUID()
     {
-        return bitwise_cast<UniquedStringImpl*>(static_cast<intptr_t>(1));
+        return std::bit_cast<UniquedStringImpl*>(static_cast<intptr_t>(1));
     }
     
     Structure* m_structure;

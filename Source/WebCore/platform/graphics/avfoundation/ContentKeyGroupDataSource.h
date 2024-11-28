@@ -54,7 +54,7 @@ public:
 
     virtual Vector<RetainPtr<AVContentKey>> contentKeyGroupDataSourceKeys() const = 0;
 #if !RELEASE_LOG_DISABLED
-    virtual const void* contentKeyGroupDataSourceLogIdentifier() const = 0;
+    virtual uint64_t contentKeyGroupDataSourceLogIdentifier() const = 0;
     virtual const Logger& contentKeyGroupDataSourceLogger() const = 0;
     virtual WTFLogChannel& contentKeyGroupDataSourceLogChannel() const = 0;
 #endif // !RELEASE_LOG_DISABLED

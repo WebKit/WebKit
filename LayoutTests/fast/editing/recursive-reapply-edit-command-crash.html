@@ -1,0 +1,32 @@
+<body onload="x21.addEventListener('DOMNodeInserted', f4); x21.text='A'; document.execCommand('undo');">
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+function f2() {
+    x2.textContent = "A";
+    x43.contentDocument.execCommand("selectAll");
+    x43.contentDocument.execCommand("italic");
+    x43.contentDocument.designMode = "on";
+}
+
+function f4() {
+    x2.addEventListener("DOMNodeInserted", () => {
+        x41.addEventListener("DOMSubtreeModified", f2);
+        x41.text = "A";
+    });
+    setTimeout(() => {
+        document.designMode = "on";
+        document.execCommand("redo");
+    });
+}
+</script>
+<select id="x2">
+    <option id="x21">
+</select>
+<div id="x3" contenteditable hidden>
+    <title id="x41"></title>
+    <iframe id="x43" srcdoc="A"></iframe>
+</div>
+<input onblur="x3.remove()" autofocus></input>
+<p>This test passes if it does not crash.</p>

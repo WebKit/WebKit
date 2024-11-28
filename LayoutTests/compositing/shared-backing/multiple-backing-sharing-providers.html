@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Multiple backing store providers, checks that overlap test is checked before adding to the back one.</title>
+  <style type="text/css">
+    div {
+      width: 200px;
+      height: 200px;
+      position: relative;
+    }
+
+    /* Composited layer behind to force the rest to composite due to overlap */
+    .composited {
+      position: fixed;
+      background-color: orange;
+      transform: translateZ(0px);
+      height: 250px;
+    }
+
+    /* Composited, but not stacking. Backing store provider. */
+    .provider {
+      background-color: green;
+    }
+    .second {
+      height: 50px;
+      background-color: red;
+    }
+
+    /* Child of first provider, but can't share due to overlapping second provider */
+    .target {
+      background-color: green;
+      top: 50px;
+      z-index: 5;
+    }
+  </style>
+</head>
+<body>
+<div class="composited"></div>
+<div class="provider">
+  <div class="target"></div>
+</div>
+<div class="provider second"></div>
+
+</body>
+</html>

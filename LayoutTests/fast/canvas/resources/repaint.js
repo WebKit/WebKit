@@ -1,8 +1,8 @@
-function runRepaintTest()
+async function runRepaintTest()
 {
     if (window.testRunner) {
         document.body.offsetTop;
-        testRunner.displayAndTrackRepaints();
+        await testRunner.displayAndTrackRepaints();
         repaintTest();
     } else {
         setTimeout(repaintTest, 100);

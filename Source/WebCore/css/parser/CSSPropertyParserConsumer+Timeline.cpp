@@ -29,11 +29,13 @@
 #include "CSSParserContext.h"
 #include "CSSParserTokenRange.h"
 #include "CSSPropertyParserConsumer+Ident.h"
+#include "CSSPropertyParserConsumer+LengthPercentage.h"
 #include "CSSPropertyParserConsumer+List.h"
 #include "CSSPropertyParsing.h"
 #include "CSSScrollValue.h"
 #include "CSSValuePair.h"
 #include "CSSViewValue.h"
+#include "TimelineRange.h"
 
 namespace WebCore {
 namespace CSSPropertyParserHelpers {
@@ -147,6 +149,46 @@ RefPtr<CSSValue> consumeViewTimelineInset(CSSParserTokenRange& range, const CSSP
 
     return consumeCommaSeparatedListWithoutSingleValueOptimization(range, [context](CSSParserTokenRange& range) {
         return consumeViewTimelineInsetListItem(range, context);
+    });
+}
+
+static bool isAnimationRangeKeyword(CSSValueID id)
+{
+    return identMatches<CSSValueNormal, CSSValueCover, CSSValueContain, CSSValueEntry, CSSValueExit, CSSValueEntryCrossing, CSSValueExitCrossing>(id);
+}
+
+RefPtr<CSSValue> consumeAnimationRange(CSSParserTokenRange& range, const CSSParserContext& context, SingleTimelineRange::Type type)
+{
+    // https://drafts.csswg.org/scroll-animations-1/#propdef-animation-range-start
+    // normal | <length-percentage> | <timeline-range-name> <length-percentage>?
+    // FIXME: Add extra handling for animation range sequences.
+
+    if (auto name = consumeIdent(range)) {
+        if (name->valueID() == CSSValueNormal)
+            return name;
+        if (!isAnimationRangeKeyword(name->valueID()))
+            return nullptr;
+        if (auto offset = consumeLengthPercentage(range, context, ValueRange::All, UnitlessQuirk::Forbid)) {
+            if (SingleTimelineRange::isDefault(*offset, type))
+                return name;
+            return CSSValuePair::createNoncoalescing(name.releaseNonNull(), offset.releaseNonNull());
+        }
+        return name;
+    }
+    return consumeLengthPercentage(range, context, ValueRange::All, UnitlessQuirk::Forbid);
+}
+
+RefPtr<CSSValue> consumeAnimationRangeStart(CSSParserTokenRange& range, const CSSParserContext& context)
+{
+    return consumeCommaSeparatedListWithSingleValueOptimization(range, [&](CSSParserTokenRange& range) -> RefPtr<CSSValue> {
+        return consumeAnimationRange(range, context, SingleTimelineRange::Type::Start);
+    });
+}
+
+RefPtr<CSSValue> consumeAnimationRangeEnd(CSSParserTokenRange& range, const CSSParserContext& context)
+{
+    return consumeCommaSeparatedListWithSingleValueOptimization(range, [&](CSSParserTokenRange& range) -> RefPtr<CSSValue> {
+        return consumeAnimationRange(range, context, SingleTimelineRange::Type::End);
     });
 }
 

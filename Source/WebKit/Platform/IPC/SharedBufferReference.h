@@ -90,7 +90,7 @@ private:
         , m_memory(WTFMove(memory)) { }
 
     size_t m_size { 0 };
-    RefPtr<WebCore::FragmentedSharedBuffer> m_buffer;
+    mutable RefPtr<WebCore::FragmentedSharedBuffer> m_buffer;
     RefPtr<WebCore::SharedMemory> m_memory; // Only set on the receiver side and if m_size isn't 0.
 };
 

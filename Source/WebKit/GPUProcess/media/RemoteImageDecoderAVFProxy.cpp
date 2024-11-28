@@ -50,6 +50,16 @@ RemoteImageDecoderAVFProxy::RemoteImageDecoderAVFProxy(GPUConnectionToWebProcess
 {
 }
 
+void RemoteImageDecoderAVFProxy::ref() const
+{
+    m_connectionToWebProcess.get()->ref();
+}
+
+void RemoteImageDecoderAVFProxy::deref() const
+{
+    m_connectionToWebProcess.get()->deref();
+}
+
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteImageDecoderAVFProxy);
 
 void RemoteImageDecoderAVFProxy::createDecoder(const IPC::SharedBufferReference& data, const String& mimeType, CompletionHandler<void(std::optional<ImageDecoderIdentifier>&&)>&& completionHandler)
@@ -79,23 +89,24 @@ void RemoteImageDecoderAVFProxy::deleteDecoder(ImageDecoderIdentifier identifier
         return;
 
     m_imageDecoders.take(identifier);
-    auto connection = m_connectionToWebProcess.get();
+    RefPtr connection = m_connectionToWebProcess.get();
     if (!connection)
         return;
     if (allowsExitUnderMemoryPressure())
-        connection->gpuProcess().tryExitIfUnusedAndUnderMemoryPressure();
+        connection->protectedGPUProcess()->tryExitIfUnusedAndUnderMemoryPressure();
 }
 
 void RemoteImageDecoderAVFProxy::encodedDataStatusChanged(ImageDecoderIdentifier identifier)
 {
-    auto connection = m_connectionToWebProcess.get();
+    RefPtr connection = m_connectionToWebProcess.get();
     if (!connection)
         return;
-    if (!m_imageDecoders.contains(identifier))
+
+    RefPtr imageDecoder = m_imageDecoders.get(identifier);
+    if (!imageDecoder)
         return;
 
-    auto imageDecoder = m_imageDecoders.get(identifier);
-    connection->connection().send(Messages::RemoteImageDecoderAVFManager::EncodedDataStatusChanged(identifier, imageDecoder->frameCount(), imageDecoder->size(), imageDecoder->hasTrack()), 0);
+    connection->protectedConnection()->send(Messages::RemoteImageDecoderAVFManager::EncodedDataStatusChanged(identifier, imageDecoder->frameCount(), imageDecoder->size(), imageDecoder->hasTrack()), 0);
 }
 
 void RemoteImageDecoderAVFProxy::setExpectedContentSize(ImageDecoderIdentifier identifier, long long expectedContentSize)
@@ -104,7 +115,7 @@ void RemoteImageDecoderAVFProxy::setExpectedContentSize(ImageDecoderIdentifier i
     if (!m_imageDecoders.contains(identifier))
         return;
 
-    m_imageDecoders.get(identifier)->setExpectedContentSize(expectedContentSize);
+    RefPtr { m_imageDecoders.get(identifier) }->setExpectedContentSize(expectedContentSize);
 }
 
 void RemoteImageDecoderAVFProxy::setData(ImageDecoderIdentifier identifier, const IPC::SharedBufferReference& data, bool allDataReceived, CompletionHandler<void(size_t frameCount, const IntSize& size, bool hasTrack, std::optional<Vector<ImageDecoder::FrameInfo>>&&)>&& completionHandler)
@@ -115,7 +126,7 @@ void RemoteImageDecoderAVFProxy::setData(ImageDecoderIdentifier identifier, cons
         return;
     }
 
-    auto imageDecoder = m_imageDecoders.get(identifier);
+    RefPtr imageDecoder = m_imageDecoders.get(identifier);
     imageDecoder->setData(data.isNull() ? SharedBuffer::create() : data.unsafeBuffer().releaseNonNull(), allDataReceived);
 
     auto frameCount = imageDecoder->frameCount();
@@ -137,10 +148,11 @@ void RemoteImageDecoderAVFProxy::createFrameImageAtIndex(ImageDecoderIdentifier 
         completionHandler(WTFMove(imageHandle));
     });
 
-    if (!m_imageDecoders.contains(identifier))
+    RefPtr imageDecoder = m_imageDecoders.get(identifier);
+    if (!imageDecoder)
         return;
 
-    auto nativeImage = NativeImage::createTransient(m_imageDecoders.get(identifier)->createFrameImageAtIndex(index));
+    auto nativeImage = NativeImage::createTransient(imageDecoder->createFrameImageAtIndex(index));
     if (!nativeImage)
         return;
     bool isOpaque = false;
@@ -160,7 +172,7 @@ void RemoteImageDecoderAVFProxy::createFrameImageAtIndex(ImageDecoderIdentifier 
 void RemoteImageDecoderAVFProxy::clearFrameBufferCache(ImageDecoderIdentifier identifier, size_t index)
 {
     ASSERT(m_imageDecoders.contains(identifier));
-    if (auto* imageDecoder = m_imageDecoders.get(identifier))
+    if (RefPtr imageDecoder = m_imageDecoders.get(identifier))
         imageDecoder->clearFrameBufferCache(std::min(index, imageDecoder->frameCount() - 1));
 }
 

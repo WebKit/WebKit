@@ -46,6 +46,8 @@ public:
     void setClient(TextureMapperPlatformLayer::Client* client) { m_client = client; }
 
     virtual bool isHolePunchBuffer() const { return false; }
+    virtual void notifyVideoPosition(const FloatRect&, const TransformationMatrix&) { };
+    virtual void paintTransparentRectangle(TextureMapper&, const FloatRect&, const TransformationMatrix&) { };
 
 protected:
     TextureMapperPlatformLayer::Client* client() { return m_client; }

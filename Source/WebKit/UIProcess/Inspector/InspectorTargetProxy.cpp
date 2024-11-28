@@ -48,8 +48,11 @@ std::unique_ptr<InspectorTargetProxy> InspectorTargetProxy::create(WebPageProxy&
 
 std::unique_ptr<InspectorTargetProxy> InspectorTargetProxy::create(ProvisionalPageProxy& provisionalPage, const String& targetId, Inspector::InspectorTargetType type)
 {
-    Ref page = provisionalPage.page();
-    auto target = InspectorTargetProxy::create(page, targetId, type);
+    RefPtr page = provisionalPage.page();
+    if (!page)
+        return nullptr;
+
+    auto target = InspectorTargetProxy::create(*page, targetId, type);
     target->m_provisionalPage = provisionalPage;
     return target;
 }
@@ -63,8 +66,8 @@ InspectorTargetProxy::InspectorTargetProxy(WebPageProxy& page, const String& tar
 
 void InspectorTargetProxy::connect(Inspector::FrontendChannel::ConnectionType connectionType)
 {
-    if (m_provisionalPage) {
-        m_provisionalPage->send(Messages::WebPage::ConnectInspector(identifier(), connectionType));
+    if (RefPtr provisionalPage = m_provisionalPage.get()) {
+        provisionalPage->send(Messages::WebPage::ConnectInspector(identifier(), connectionType));
         return;
     }
 
@@ -77,8 +80,8 @@ void InspectorTargetProxy::disconnect()
     if (isPaused())
         resume();
 
-    if (m_provisionalPage) {
-        m_provisionalPage->send(Messages::WebPage::DisconnectInspector(identifier()));
+    if (RefPtr provisionalPage = m_provisionalPage.get()) {
+        provisionalPage->send(Messages::WebPage::DisconnectInspector(identifier()));
         return;
     }
 
@@ -88,8 +91,8 @@ void InspectorTargetProxy::disconnect()
 
 void InspectorTargetProxy::sendMessageToTargetBackend(const String& message)
 {
-    if (m_provisionalPage) {
-        m_provisionalPage->send(Messages::WebPage::SendMessageToTargetBackend(identifier(), message));
+    if (RefPtr provisionalPage = m_provisionalPage.get()) {
+        provisionalPage->send(Messages::WebPage::SendMessageToTargetBackend(identifier(), message));
         return;
     }
 

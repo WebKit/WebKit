@@ -75,7 +75,7 @@ public:
 
 private:
     CSSViewValue(RefPtr<CSSValue>&& axis, RefPtr<CSSValue>&& startInset, RefPtr<CSSValue>&& endInset)
-        : CSSValue(ViewClass)
+        : CSSValue(ClassType::View)
         , m_axis(WTFMove(axis))
         , m_startInset(WTFMove(startInset))
         , m_endInset(WTFMove(endInset))

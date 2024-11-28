@@ -73,6 +73,7 @@ class FormSubmission;
 class FrameLoadRequest;
 class FrameNetworkingContext;
 class HistoryItem;
+class LocalDOMWindow;
 class LocalFrameLoaderClient;
 class NavigationAction;
 class NetworkingContext;
@@ -93,7 +94,6 @@ enum class UsedLegacyTLS : bool;
 enum class WasPrivateRelayed : bool;
 enum class IsMainResource : bool { No, Yes };
 enum class ShouldUpdateAppInitiatedValue : bool { No, Yes };
-enum class NavigationNavigationType : uint8_t;
 
 struct WindowFeatures;
 
@@ -102,14 +102,16 @@ WEBCORE_EXPORT bool isReload(FrameLoadType);
 
 using ContentPolicyDecisionFunction = CompletionHandler<void(PolicyAction)>;
 
-class FrameLoader final : public CanMakeCheckedPtr<FrameLoader> {
+class FrameLoader final : public CanMakeWeakPtr<FrameLoader> {
     WTF_MAKE_NONCOPYABLE(FrameLoader);
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Loader);
-    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(FrameLoader);
     friend class PolicyChecker;
 public:
-    FrameLoader(LocalFrame&, UniqueRef<LocalFrameLoaderClient>&&);
+    FrameLoader(LocalFrame&, CompletionHandler<UniqueRef<LocalFrameLoaderClient>(LocalFrame&, FrameLoader&)>&& clientCreator);
     ~FrameLoader();
+
+    WEBCORE_EXPORT void ref() const;
+    WEBCORE_EXPORT void deref() const;
 
     WEBCORE_EXPORT void init();
     void initForSynthesizedDocument(const URL&);
@@ -141,7 +143,7 @@ public:
     void changeLocation(FrameLoadRequest&&, Event* = nullptr, std::optional<PrivateClickMeasurement>&& = std::nullopt);
     void submitForm(Ref<FormSubmission>&&);
 
-    WEBCORE_EXPORT void reload(OptionSet<ReloadOption> = { });
+    WEBCORE_EXPORT void reload(OptionSet<ReloadOption> = { }, bool isRequestFromClientOrUserInput = false);
     WEBCORE_EXPORT void reloadWithOverrideEncoding(const String& overrideEncoding);
 
     void open(CachedFrameBase&);
@@ -231,6 +233,8 @@ public:
 
     const LocalFrameLoaderClient& client() const { return m_client.get(); }
     LocalFrameLoaderClient& client() { return m_client.get(); }
+    WEBCORE_EXPORT Ref<const LocalFrameLoaderClient> protectedClient() const;
+    WEBCORE_EXPORT Ref<LocalFrameLoaderClient> protectedClient();
 
     WEBCORE_EXPORT FrameIdentifier frameID() const;
 
@@ -241,7 +245,7 @@ public:
     void didExplicitOpen();
 
     // Callbacks from DocumentWriter
-    void didBeginDocument(bool dispatchWindowObjectAvailable);
+    void didBeginDocument(bool dispatchWindowObjectAvailable, LocalDOMWindow* previousWindow);
 
     void receivedFirstData();
 
@@ -251,11 +255,6 @@ public:
 
     void dispatchDidClearWindowObjectInWorld(DOMWrapperWorld&);
     void dispatchDidClearWindowObjectsInAllWorlds();
-
-    // The following sandbox flags will be forced, regardless of changes to
-    // the sandbox attribute of any parent frames.
-    void forceSandboxFlags(SandboxFlags flags) { m_forcedSandboxFlags.add(flags); }
-    WEBCORE_EXPORT SandboxFlags effectiveSandboxFlags() const;
 
     bool checkIfFormActionAllowedByCSP(const URL&, bool didReceiveRedirectResponse, const URL& preRedirectURL) const;
 
@@ -423,7 +422,7 @@ private:
 
     bool shouldReload(const URL& currentURL, const URL& destinationURL);
 
-    void requestFromDelegate(ResourceRequest&, ResourceLoaderIdentifier&, ResourceError&);
+    ResourceLoaderIdentifier requestFromDelegate(ResourceRequest&, IsMainResourceLoad, ResourceError&);
 
     WEBCORE_EXPORT void detachChildren();
     void closeAndRemoveChild(LocalFrame&);
@@ -457,10 +456,9 @@ private:
     void clearProvisionalLoadForPolicyCheck();
     bool hasOpenedFrames() const;
 
-    void updateNavigationAPIEntries(std::optional<NavigationNavigationType>);
     void updateRequestAndAddExtraFields(Frame&, ResourceRequest&, IsMainResource, FrameLoadType, ShouldUpdateAppInitiatedValue, IsServiceWorkerNavigationLoad, WillOpenInNewWindow, Document*);
 
-    bool dispatchNavigateEvent(const URL& newURL, FrameLoadType, const NavigationAction&, NavigationHistoryBehavior, bool isSameDocument, FormState* = nullptr);
+    bool dispatchNavigateEvent(const URL& newURL, FrameLoadType, const AtomString&, NavigationHistoryBehavior, bool isSameDocument, FormState* = nullptr, SerializedScriptValue* classicHistoryAPIState = nullptr);
 
     WeakRef<LocalFrame> m_frame;
     UniqueRef<LocalFrameLoaderClient> m_client;
@@ -517,8 +515,6 @@ private:
 
     bool m_loadsSynchronously { false };
 
-    SandboxFlags m_forcedSandboxFlags;
-
     RefPtr<FrameNetworkingContext> m_networkingContext;
 
     std::optional<ResourceRequestCachePolicy> m_overrideCachePolicyForTesting;
@@ -540,6 +536,7 @@ private:
     bool m_shouldRestoreScrollPositionAndViewState { false };
 
     bool m_errorOccurredInLoading { false };
+    bool m_doNotAbortNavigationAPI { false };
 };
 
 // This function is called by createWindow() in JSDOMWindowBase.cpp, for example, for
@@ -549,6 +546,7 @@ private:
 //
 // FIXME: Consider making this function part of an appropriate class (not FrameLoader)
 // and moving it to a more appropriate location.
-RefPtr<Frame> createWindow(LocalFrame& openerFrame, FrameLoadRequest&&, WindowFeatures&, bool& created);
+enum class CreatedNewPage : bool { No, Yes };
+std::pair<RefPtr<Frame>, CreatedNewPage> createWindow(LocalFrame& openerFrame, FrameLoadRequest&&, WindowFeatures&&);
 
 } // namespace WebCore

@@ -28,6 +28,7 @@
 #include "IDBCursorInfo.h"
 #include "IDBKeyData.h"
 #include "IndexValueEntry.h"
+#include <wtf/CheckedPtr.h>
 #include <wtf/HashMap.h>
 #include <wtf/TZoneMalloc.h>
 
@@ -43,8 +44,9 @@ class MemoryIndex;
 
 typedef HashMap<IDBKeyData, std::unique_ptr<IndexValueEntry>, IDBKeyDataHash, IDBKeyDataHashTraits> IndexKeyValueMap;
 
-class IndexValueStore {
+class IndexValueStore final : public CanMakeThreadSafeCheckedPtr<IndexValueStore> {
     WTF_MAKE_TZONE_ALLOCATED(IndexValueStore);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(IndexValueStore);
 public:
     explicit IndexValueStore(bool unique);
 
@@ -80,7 +82,7 @@ public:
         Iterator& nextIndexEntry();
 
     private:
-        IndexValueStore* m_store { nullptr };
+        CheckedPtr<IndexValueStore> m_store;
         bool m_forward { true };
         CursorDuplicity m_duplicity { CursorDuplicity::Duplicates };
         IDBKeyDataSet::iterator m_forwardIterator;

@@ -77,7 +77,7 @@ private:
     std::span<const uint8_t> m_data;
     float m_sampleRate { 0 };
     int m_channels { 0 };
-    HashMap<int, GRefPtr<GstBufferList>> m_buffers;
+    UncheckedKeyHashMap<int, GRefPtr<GstBufferList>> m_buffers;
     GRefPtr<GstElement> m_pipeline;
     std::optional<int> m_firstChannelType;
     unsigned m_channelSize { 0 };
@@ -113,7 +113,9 @@ int decodebinAutoplugSelectCallback(GstElement*, GstPad*, GstCaps*, GstElementFa
 
 static void copyGstreamerBuffersToAudioChannel(const GRefPtr<GstBufferList>& buffers, AudioChannel* audioChannel)
 {
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib port
     float* destination = audioChannel->mutableData();
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     unsigned bufferCount = gst_buffer_list_length(buffers.get());
     for (unsigned i = 0; i < bufferCount; ++i) {
         GstBuffer* buffer = gst_buffer_list_get(buffers.get(), i);

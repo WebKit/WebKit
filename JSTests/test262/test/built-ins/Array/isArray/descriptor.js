@@ -7,6 +7,8 @@ includes: [propertyHelper.js]
 esid: sec-array.isarray
 ---*/
 
-verifyWritable(Array, "isArray");
-verifyNotEnumerable(Array, "isArray");
-verifyConfigurable(Array, "isArray");
+verifyProperty(Array, "isArray", {
+  writable: true,
+  enumerable: false,
+  configurable: true
+});

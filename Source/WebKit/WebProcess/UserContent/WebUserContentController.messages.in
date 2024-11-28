@@ -24,7 +24,7 @@
  */
 
 messages -> WebUserContentController {
-    AddContentWorlds(Vector<std::pair<WebKit::ContentWorldIdentifier, String>> worlds);
+    AddContentWorlds(Vector<WebKit::ContentWorldData> worlds);
     RemoveContentWorlds(Vector<WebKit::ContentWorldIdentifier> worldIdentifiers);
 
     AddUserScripts(Vector<WebKit::WebUserScriptData> userScripts, enum:bool WebKit::InjectUserScriptImmediately immediately);

@@ -124,7 +124,7 @@ void ServiceWorkerSoftUpdateLoader::loadFromNetwork(NetworkSession& session, Res
     parameters.contentEncodingSniffingPolicy = ContentEncodingSniffingPolicy::Default;
     parameters.needsCertificateInfo = true;
     parameters.request = WTFMove(request);
-    m_networkLoad = makeUnique<NetworkLoad>(*this, WTFMove(parameters), session);
+    m_networkLoad = NetworkLoad::create(*this, WTFMove(parameters), session);
     m_networkLoad->start();
 
 #if PLATFORM(COCOA)
@@ -182,7 +182,7 @@ void ServiceWorkerSoftUpdateLoader::didReceiveBuffer(const WebCore::FragmentedSh
         if (!m_responseEncoding.isEmpty())
             m_decoder = TextResourceDecoder::create("text/javascript"_s, m_responseEncoding);
         else
-            m_decoder = TextResourceDecoder::create("text/javascript"_s, "UTF-8");
+            m_decoder = TextResourceDecoder::create("text/javascript"_s, "UTF-8"_s);
     }
 
     buffer.forEachSegment([&](auto segment) {

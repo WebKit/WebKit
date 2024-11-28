@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
- *  Copyright (C) 2003-2019 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2024 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -99,7 +99,7 @@ static String stringifyFunction(JSGlobalObject* globalObject, const ArgList& arg
             return { };
         }
     } else {
-        StringBuilder builder(StringBuilder::OverflowHandler::RecordOverflow);
+        StringBuilder builder(OverflowPolicy::RecordOverflow);
         builder.append(prefix, functionName.string(), '(');
 
         auto* jsString = args.at(0).toString(globalObject);

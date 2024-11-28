@@ -40,6 +40,8 @@
 #include "WasmTypeDefinitionInlines.h"
 #include <wtf/text/MakeString.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 template<typename InstructionStreamType>
@@ -185,14 +187,15 @@ void CodeBlockBytecodeDumper<Block>::dumpSwitchJumpTables()
         unsigned i = 0;
         do {
             this->m_out.printf("  %1d = {\n", i);
-            const auto& switchJumpTable = this->block()->unlinkedSwitchJumpTable(i);
+            const auto& unlinkedTable = this->block()->unlinkedSwitchJumpTable(i);
             int entry = 0;
-            auto end = switchJumpTable.m_branchOffsets.end();
-            for (auto iter = switchJumpTable.m_branchOffsets.begin(); iter != end; ++iter, ++entry) {
+            auto end = unlinkedTable.m_branchOffsets.end();
+            for (auto iter = unlinkedTable.m_branchOffsets.begin(); iter != end; ++iter, ++entry) {
                 if (!*iter)
                     continue;
-                this->m_out.printf("\t\t%4d => %04d\n", entry + switchJumpTable.m_min, *iter);
+                this->m_out.printf("\t\t%4d => %04d\n", entry + unlinkedTable.m_min, *iter);
             }
+            this->m_out.printf("\t\tdefault => %04d\n", unlinkedTable.m_defaultOffset);
             this->m_out.printf("      }\n");
             ++i;
         } while (i < count);
@@ -207,8 +210,10 @@ void CodeBlockBytecodeDumper<Block>::dumpStringSwitchJumpTables()
         unsigned i = 0;
         do {
             this->m_out.printf("  %1d = {\n", i);
-            for (const auto& entry : this->block()->unlinkedStringSwitchJumpTable(i).m_offsetTable)
+            auto& unlinkedTable = this->block()->unlinkedStringSwitchJumpTable(i);
+            for (const auto& entry : unlinkedTable.m_offsetTable)
                 this->m_out.printf("\t\t\"%s\" => %04d\n", entry.key->utf8().data(), entry.value.m_branchOffset);
+            this->m_out.printf("\t\tdefault => %04d\n", unlinkedTable.m_defaultOffset);
             this->m_out.printf("      }\n");
             ++i;
         } while (i < count);
@@ -420,10 +425,10 @@ CString BytecodeDumper::formatConstant(Type type, uint64_t constant) const
     case TypeKind::I64:
         return toCString(constant);
     case TypeKind::F32:
-        return toCString(bitwise_cast<float>(static_cast<int32_t>(constant)));
+        return toCString(std::bit_cast<float>(static_cast<int32_t>(constant)));
         break;
     case TypeKind::F64:
-        return toCString(bitwise_cast<double>(constant));
+        return toCString(std::bit_cast<double>(constant));
         break;
     case TypeKind::V128:
         return toCString(constant);
@@ -461,3 +466,5 @@ int BytecodeDumper::outOfLineJumpOffset(WasmInstructionStream::Offset offset) co
 
 #endif // ENABLE(WEBASSEMBLY)
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

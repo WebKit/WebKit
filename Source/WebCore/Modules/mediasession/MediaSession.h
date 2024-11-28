@@ -79,12 +79,11 @@ public:
 class MediaSession : public RefCounted<MediaSession>, public ActiveDOMObject, public CanMakeWeakPtr<MediaSession> {
     WTF_MAKE_TZONE_ALLOCATED(MediaSession);
 public:
-    static Ref<MediaSession> create(Navigator&);
-    ~MediaSession();
-
-    // ActiveDOMObject.
     void ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }
+
+    static Ref<MediaSession> create(Navigator&);
+    ~MediaSession();
 
     MediaMetadata* metadata() const { return m_metadata.get(); };
     void setMetadata(RefPtr<MediaMetadata>&&);
@@ -149,7 +148,7 @@ public:
 private:
     explicit MediaSession(Navigator&);
 
-    const void* logIdentifier() const { return m_logIdentifier; }
+    uint64_t logIdentifier() const { return m_logIdentifier; }
 
     void updateReportedPosition();
 
@@ -178,7 +177,7 @@ private:
     MonotonicTime m_timeAtLastPositionUpdate;
     HashMap<MediaSessionAction, RefPtr<MediaSessionActionHandler>, IntHash<MediaSessionAction>, WTF::StrongEnumHashTraits<MediaSessionAction>> m_actionHandlers WTF_GUARDED_BY_LOCK(m_actionHandlersLock);
     RefPtr<const Logger> m_logger;
-    const void* m_logIdentifier;
+    uint64_t m_logIdentifier { 0 };
 
     WeakHashSet<MediaSessionObserver> m_observers;
 
@@ -191,6 +190,7 @@ private:
     Vector<Ref<MediaMetadata>> m_playlist;
 #endif
     mutable Lock m_actionHandlersLock;
+    mutable bool m_defaultArtworkAttempted { false };
 };
 
 String convertEnumerationToString(MediaSessionPlaybackState);

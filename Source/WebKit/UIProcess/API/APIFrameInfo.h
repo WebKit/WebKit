@@ -61,6 +61,8 @@ public:
     bool errorOccurred() const { return m_data.errorOccurred; }
     WTF::String title() const;
 
+    const WebKit::FrameInfoData& frameInfoData() const { return m_data; }
+
 private:
     FrameInfo(WebKit::FrameInfoData&&, RefPtr<WebKit::WebPageProxy>&&);
 

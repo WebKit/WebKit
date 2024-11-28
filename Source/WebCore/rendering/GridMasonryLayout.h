@@ -26,6 +26,7 @@
 
 #include "GridArea.h"
 #include "GridPositionsResolver.h"
+#include "GridTrackSizingAlgorithm.h"
 #include "LayoutUnit.h"
 #include "RenderBox.h"
 
@@ -40,8 +41,14 @@ public:
     {
     }
 
+    enum class MasonryLayoutPhase : uint8_t {
+        LayoutPhase,
+        MinContentPhase,
+        MaxContentPhase
+    };
+
     void initializeMasonry(unsigned gridAxisTracks, GridTrackSizingDirection masonryAxisDirection);
-    void performMasonryPlacement(unsigned gridAxisTracks, GridTrackSizingDirection masonryAxisDirection);
+    void performMasonryPlacement(const GridTrackSizingAlgorithm&, unsigned gridAxisTracks, GridTrackSizingDirection masonryAxisDirection, GridMasonryLayout::MasonryLayoutPhase);
     LayoutUnit offsetForGridItem(const RenderBox&) const;
     LayoutUnit gridContentSize() const { return m_gridContentSize; };
     LayoutUnit gridGap() const { return m_masonryAxisGridGap; };
@@ -53,11 +60,12 @@ private:
     GridArea gridAreaForDefiniteGridAxisItem(const RenderBox&) const;
 
     void collectMasonryItems();
-    void placeItemsUsingOrderModifiedDocumentOrder(); 
-    void placeItemsWithDefiniteGridAxisPosition();
-    void placeItemsWithIndefiniteGridAxisPosition();
-    void setItemGridAxisContainingBlockToGridArea(RenderBox&);
-    void insertIntoGridAndLayoutItem(RenderBox&, const GridArea&);
+    void placeItemsUsingOrderModifiedDocumentOrder(const GridTrackSizingAlgorithm&, GridMasonryLayout::MasonryLayoutPhase);
+    void placeItemsWithDefiniteGridAxisPosition(const GridTrackSizingAlgorithm&, GridMasonryLayout::MasonryLayoutPhase);
+    void placeItemsWithIndefiniteGridAxisPosition(const GridTrackSizingAlgorithm&, GridMasonryLayout::MasonryLayoutPhase);
+    void setItemGridAxisContainingBlockToGridArea(const GridTrackSizingAlgorithm&, RenderBox&);
+    void insertIntoGridAndLayoutItem(const GridTrackSizingAlgorithm&, RenderBox&, const GridArea&, GridMasonryLayout::MasonryLayoutPhase);
+    LayoutUnit calculateMasonryIntrinsicLogicalWidth(RenderBox&, GridMasonryLayout::MasonryLayoutPhase);
 
     void resizeAndResetRunningPositions();
     void allocateCapacityForMasonryVectors();
@@ -77,7 +85,7 @@ private:
     Vector<RenderBox*> m_itemsWithIndefiniteGridAxisPosition;
 
     Vector<LayoutUnit> m_runningPositions;
-    HashMap<SingleThreadWeakRef<const RenderBox>, LayoutUnit> m_itemOffsets;
+    UncheckedKeyHashMap<SingleThreadWeakRef<const RenderBox>, LayoutUnit> m_itemOffsets;
     RenderGrid& m_renderGrid;
     LayoutUnit m_masonryAxisGridGap;
     LayoutUnit m_gridContentSize;

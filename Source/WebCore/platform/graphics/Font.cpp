@@ -50,6 +50,8 @@
 #include "OpenTypeVerticalData.h"
 #endif
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 unsigned GlyphPage::s_count = 0;
@@ -101,6 +103,13 @@ Font::Font(const FontPlatformData& platformData, Origin origin, IsInterstitial i
         m_hasVerticalGlyphs = m_verticalData.get() && m_verticalData->hasVerticalMetrics();
     }
 #endif
+}
+
+Font::Font(IsSystemFallbackFontPlaceholder isSystemFontFallbackPlaceholder)
+    : m_isSystemFontFallbackPlaceholder(isSystemFontFallbackPlaceholder == IsSystemFallbackFontPlaceholder::Yes)
+{
+    // This ctor is to be used only for representing a system font fallback placeholder (createSystemFallbackFontPlaceholder)
+    ASSERT(isSystemFontFallbackPlaceholder == IsSystemFallbackFontPlaceholder::Yes);
 }
 
 // Estimates of avgCharWidth and maxCharWidth for platforms that don't support accessing these values from the font.
@@ -176,7 +185,8 @@ void Font::platformGlyphInit()
 
 Font::~Font()
 {
-    SystemFallbackFontCache::forCurrentThread().remove(this);
+    if (auto* cache = SystemFallbackFontCache::forCurrentThreadIfExists())
+        cache->remove(this);
 }
 
 RenderingResourceIdentifier Font::renderingResourceIdentifier() const
@@ -478,6 +488,19 @@ const Font* Font::smallCapsFont(const FontDescription& fontDescription) const
     return derivedFontData.smallCapsFont.get();
 }
 
+const RefPtr<Font> Font::halfWidthFont() const
+{
+    if (isSystemFontFallbackPlaceholder()) {
+        ASSERT_NOT_REACHED();
+        return nullptr;
+    }
+    DerivedFonts& derivedFontData = ensureDerivedFontData();
+    if (!derivedFontData.halfWidthFont)
+        derivedFontData.halfWidthFont = createHalfWidthFont();
+    ASSERT(derivedFontData.halfWidthFont.get() != this);
+    return derivedFontData.halfWidthFont;
+}
+
 const Font& Font::noSynthesizableFeaturesFont() const
 {
 #if PLATFORM(COCOA)
@@ -548,6 +571,11 @@ const OpenTypeMathData* Font::mathData() const
 RefPtr<Font> Font::createScaledFont(const FontDescription& fontDescription, float scaleFactor) const
 {
     return platformCreateScaledFont(fontDescription, scaleFactor);
+}
+
+RefPtr<Font> Font::createHalfWidthFont() const
+{
+    return platformCreateHalfWidthFont();
 }
 
 #if !USE(CORE_TEXT)
@@ -660,3 +688,5 @@ TextStream& operator<<(TextStream& ts, const Font& font)
 #endif
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

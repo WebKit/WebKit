@@ -41,7 +41,7 @@ TEST(WKWebView, PrepareForMoveToWindow)
 {
     auto webView = adoptNS([[WKWebView alloc] init]);
 
-    NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"simple" withExtension:@"html"]];
     [webView loadRequest:request];
 
     [webView _test_waitForDidFinishNavigation];
@@ -91,7 +91,7 @@ TEST(WKWebView, PrepareForMoveToWindowThenClose)
 {
     auto webView = adoptNS([[WKWebView alloc] init]);
 
-    NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"simple" withExtension:@"html"]];
     [webView loadRequest:request];
 
     [webView _test_waitForDidFinishNavigation];

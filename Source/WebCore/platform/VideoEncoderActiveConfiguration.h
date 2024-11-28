@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(WEB_CODECS)
+#if ENABLE(VIDEO)
 
 #include "PlatformVideoColorSpace.h"
 
@@ -45,4 +45,4 @@ struct VideoEncoderActiveConfiguration {
 
 }
 
-#endif // ENABLE(WEB_CODECS)
+#endif // ENABLE(VIDEO)

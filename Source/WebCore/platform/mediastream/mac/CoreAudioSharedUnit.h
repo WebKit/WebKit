@@ -32,6 +32,8 @@
 #include "CAAudioStreamDescription.h"
 #include "Timer.h"
 
+OBJC_CLASS WebCoreAudioInputMuteChangeListener;
+
 namespace WebCore {
 class CoreAudioSharedUnit;
 }
@@ -82,10 +84,11 @@ public:
         virtual OSStatus defaultOutputDevice(uint32_t*) = 0;
         virtual void delaySamples(Seconds) { }
         virtual Seconds verifyCaptureInterval(bool isProducingSamples) const { return isProducingSamples ? 20_s : 2_s; }
+        virtual bool setVoiceActivityDetection(bool) = 0;
+        virtual bool canRenderAudio() const { return true; }
     };
 
-    WEBCORE_EXPORT static CoreAudioSharedUnit& unit();
-    static BaseAudioSharedUnit& singleton()  { return unit(); }
+    WEBCORE_EXPORT static CoreAudioSharedUnit& singleton();
     ~CoreAudioSharedUnit();
 
     using CreationCallback = Function<Expected<UniqueRef<InternalUnit>, OSStatus>(bool enableEchoCancellation)>;
@@ -103,7 +106,7 @@ public:
     void setStatusBarWasTappedCallback(Function<void(CompletionHandler<void()>&&)>&& callback) { m_statusBarWasTappedCallback = WTFMove(callback); }
 #endif
 
-    bool isUsingVPIO() const { return m_shouldUseVPIO; }
+    bool canRenderAudio() const { return m_canRenderAudio; }
 
     struct AudioUnitDeallocator {
         void operator()(AudioUnit) const;
@@ -115,10 +118,23 @@ public:
     StoredAudioUnit takeStoredVPIOUnit();
 #endif
 
+    WEBCORE_EXPORT void enableMutedSpeechActivityEventListener(Function<void()>&&);
+    WEBCORE_EXPORT void disableMutedSpeechActivityEventListener();
+
+#if PLATFORM(MAC)
+    static void processVoiceActivityEvent(uint32_t);
+    WEBCORE_EXPORT void prewarmAudioUnitCreation(CompletionHandler<void()>&&) final;
+#endif
+
+    WEBCORE_EXPORT void setMuteStatusChangedCallback(Function<void(bool)>&&);
+    void handleMuteStatusChangedNotification(bool);
+
 private:
     CoreAudioSharedUnit();
 
     friend class NeverDestroyed<CoreAudioSharedUnit>;
+    friend class MockAudioSharedInternalUnit;
+    friend class CoreAudioSharedInternalUnit;
 
     static size_t preferredIOBufferSize();
 
@@ -139,11 +155,12 @@ private:
     void validateOutputDevice(uint32_t deviceID) final;
 #if PLATFORM(MAC)
     bool migrateToNewDefaultDevice(const CaptureDevice&) final;
-    void prewarmAudioUnitCreation(CompletionHandler<void()>&&) final;
     void deallocateStoredVPIOUnit();
 #endif
     int actualSampleRate() const final;
     void resetSampleRate();
+
+    void willChangeCaptureDevice() final;
 
     OSStatus configureSpeakerProc(int sampleRate);
     OSStatus configureMicrophoneProc(int sampleRate);
@@ -157,6 +174,12 @@ private:
     void unduck();
 
     void verifyIsCapturing();
+
+    void updateVoiceActivityDetection(bool shouldDisableVoiceActivityDetection = false);
+    bool shouldEnableVoiceActivityDetection() const;
+    RetainPtr<WebCoreAudioInputMuteChangeListener> createAudioInputMuteChangeListener();
+    void setMutedState(bool isMuted);
+    void updateMutedState();
 
     CreationCallback m_creationCallback;
     GetSampleRateCallback m_getSampleRateCallback;
@@ -204,11 +227,18 @@ private:
 #endif
 
     bool m_shouldUseVPIO { true };
+    bool m_canRenderAudio { true };
+    bool m_shouldSetVoiceActivityListener { false };
+    bool m_voiceActivityDetectionEnabled { false };
 #if PLATFORM(MAC)
     StoredAudioUnit m_storedVPIOUnit { nullptr };
     Timer m_storedVPIOUnitDeallocationTimer;
     RefPtr<GenericNonExclusivePromise> m_audioUnitCreationWarmupPromise;
 #endif
+#if HAVE(AVAUDIOAPPLICATION)
+    RetainPtr<WebCoreAudioInputMuteChangeListener> m_inputMuteChangeListener;
+#endif
+    Function<void(bool)> m_muteStatusChangedCallback;
 };
 
 } // namespace WebCore

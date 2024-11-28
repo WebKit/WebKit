@@ -46,7 +46,7 @@ import socket
 import sys
 import time
 
-if sys.version_info < (3, 9):
+if sys.version_info < (3, 9):  # noqa: UP036
     print('ERROR: Minimum supported Python version for this code is Python 3.9')
     sys.exit(1)
 
@@ -75,6 +75,9 @@ MAX_COMMITS_IN_PR_SERIES = 50
 QUEUES_WITH_PUSH_ACCESS = ('commit-queue', 'merge-queue', 'unsafe-merge-queue')
 THRESHOLD_FOR_EXCESSIVE_LOGS_DEFAULT = 1000000
 MSG_FOR_EXCESSIVE_LOGS = f'Stopped due to excessive logging, limit: {THRESHOLD_FOR_EXCESSIVE_LOGS_DEFAULT}'
+SCAN_BUILD_OUTPUT_DIR = 'scan-build-output'
+LLVM_DIR = 'llvm-project'
+STATIC_ANALYSIS_ARCHIVE_PATH = '/tmp/static-analysis.zip'
 
 if CURRENT_HOSTNAME in EWS_BUILD_HOSTNAMES:
     CURRENT_HOSTNAME = 'ews-build.webkit.org'
@@ -252,19 +255,31 @@ class GitHubMixin(object):
             defer.returnValue(data)
 
     @defer.inlineCallbacks
-    def get_number_of_prs_with_label(self, label):
+    def get_number_of_prs_with_label(self, label, retry=0):
         project = self.getProperty('project') or GITHUB_PROJECTS[0]
         owner, name = project.split('/', 1)
         query_body = '{repository(owner:"%s", name:"%s") { pullRequests(labels: "%s") { totalCount } } }' % (owner, name, label)
         query = {'query': query_body}
-        response = yield self.query_graph_ql(query)
-        if response:
-            num_prs = response['data']['repository']['pullRequests']['totalCount']
-            yield self._addToLog('stdio', 'There are {} PR(s) in safe-merge-queue.\n'.format(num_prs))
-            defer.returnValue(num_prs)
-        else:
-            yield self._addToLog('stdio', 'Failed to retrieve number of PRs.\n')
-            defer.returnValue(None)
+
+        for attempt in range(retry + 1):
+            try:
+                response = yield self.query_graph_ql(query)
+                if 'errors' in response:
+                    yield self._addToLog('stdio', response['errors'][0]['message'])
+                else:
+                    num_prs = response['data']['repository']['pullRequests']['totalCount']
+                    break
+            except Exception as e:
+                yield self._addToLog('stdio', 'Failed to retrieve number of PRs.\n')
+
+            if attempt > retry:
+                return defer.returnValue(None)
+            wait_for = (attempt + 1) * 15
+            yield self._addToLog('stdio', 'Backing off for {} seconds before retrying.\n'.format(wait_for))
+            yield task.deferLater(reactor, wait_for, lambda: None)
+
+        yield self._addToLog('stdio', 'There are {} PR(s) in safe-merge-queue.\n'.format(num_prs))
+        defer.returnValue(num_prs)
 
     @defer.inlineCallbacks
     def get_pr_json(self, pr_number, repository_url=None, retry=0):
@@ -536,7 +551,7 @@ class GitHubMixin(object):
 
 
 class ShellMixin(object):
-    WINDOWS_SHELL_PLATFORMS = ['wincairo']
+    WINDOWS_SHELL_PLATFORMS = ['win']
 
     def has_windows_shell(self):
         return self.getProperty('platform', '*') in self.WINDOWS_SHELL_PLATFORMS
@@ -819,7 +834,7 @@ class CleanUpGitIndexLock(shell.ShellCommand):
 
     def start(self):
         platform = self.getProperty('platform', '*')
-        if platform == 'wincairo':
+        if platform == 'win':
             self.command = ['del', r'.git\index.lock']
 
         self.send_email_for_git_issue()
@@ -1279,12 +1294,23 @@ class CheckChangeRelevance(AnalyzeChange):
         re.compile(rb'Source/', re.IGNORECASE),
         re.compile(rb'Tools/', re.IGNORECASE),
     ]
+
     webkitpy_path_regexes = [
         re.compile(rb'Tools/Scripts/webkitpy', re.IGNORECASE),
         re.compile(rb'Tools/Scripts/libraries', re.IGNORECASE),
         re.compile(rb'Tools/Scripts/commit-log-editor', re.IGNORECASE),
         re.compile(rb'Source/WebKit/Scripts', re.IGNORECASE),
         re.compile(rb'metadata/contributors.json', re.IGNORECASE),
+    ]
+
+    safer_cpp_path_regexes = [
+        re.compile(rb'Source/WebKit', re.IGNORECASE),
+        re.compile(rb'Source/WebCore', re.IGNORECASE),
+        re.compile(rb'Tools/Scripts/build-and-analyze', re.IGNORECASE),
+        re.compile(rb'Tools/Scripts/generate-dirty-files', re.IGNORECASE),
+        re.compile(rb'Tools/Scripts/compare-static-analysis-results', re.IGNORECASE),
+        re.compile(rb'Tools/Scripts/generate-dirty-files', re.IGNORECASE),
+        re.compile(rb'Tools/CISupport/Shared/download-and-install-build-tools', re.IGNORECASE),
     ]
 
     group_to_paths_mapping = {
@@ -1294,6 +1320,7 @@ class CheckChangeRelevance(AnalyzeChange):
         'jsc': jsc_path_regexes,
         'webkitpy': webkitpy_path_regexes,
         'wk1-tests': wk1_path_regexes,
+        'safer-cpp': safer_cpp_path_regexes,
     }
 
     def _patch_is_relevant(self, patch, builderName, timeout=30):
@@ -1417,7 +1444,7 @@ class FindModifiedLayoutTests(shell.ShellCommandNewStyle, AnalyzeChange):
     RE_LAYOUT_TEST = br'^(\+\+\+).*(LayoutTests.*\.html|LayoutTests.*\.svg|LayoutTests.*\.xml)'
     DIRECTORIES_TO_IGNORE = ['reference', 'reftest', 'resources', 'support', 'script-tests', 'tools']
     SUFFIXES_TO_IGNORE = ['-expected', '-expected-mismatch', '-ref', '-notref']
-    command = ['diff', '-u', 'base-expectations.txt', 'new-expectations.txt']
+    command = ['diff', '-u', '-w', 'base-expectations.txt', 'new-expectations.txt']
 
     def __init__(self, skipBuildIfNoResult=True):
         self.skipBuildIfNoResult = skipBuildIfNoResult
@@ -2463,7 +2490,7 @@ class RetrievePRDataFromLabel(buildstep.BuildStep, GitHubMixin, AddToLogMixin):
         project = self.getProperty('project')
         self.setProperty('repository', f'{GITHUB_URL}{project}')
 
-        num_prs = yield self.get_number_of_prs_with_label(self.label)
+        num_prs = yield self.get_number_of_prs_with_label(self.label, retry=3)
         if num_prs == 0:
             yield self._addToLog('stdio', f'Ending process as there are no PRs in {self.label}.\n')
             return defer.returnValue(SUCCESS)
@@ -2519,8 +2546,8 @@ class CheckStatusOfPR(buildstep.BuildStep, GitHubMixin, AddToLogMixin):
     haltOnFailure = False
     EMBEDDED_CHECKS = ['ios', 'ios-sim', 'ios-wk2', 'ios-wk2-wpt', 'api-ios', 'vision', 'vision-sim', 'vision-wk2', 'tv', 'tv-sim', 'watch', 'watch-sim']
     MACOS_CHECKS = ['mac', 'mac-AS-debug', 'api-mac', 'mac-wk1', 'mac-wk2', 'mac-AS-debug-wk2', 'mac-wk2-stress', 'jsc', 'jsc-arm64']
-    LINUX_CHECKS = ['gtk', 'gtk-wk2', 'api-gtk', 'wpe', 'wpe-cairo', 'wpe-wk2', 'api-wpe', 'jsc-armv7', 'jsc-armv7-tests']
-    WINDOWS_CHECKS = ['wincairo']
+    LINUX_CHECKS = ['gtk', 'gtk-wk2', 'api-gtk', 'wpe', 'wpe-cairo', 'wpe-wk2', 'api-wpe']
+    WINDOWS_CHECKS = ['win']
     EWS_WEBKIT_FAILED = 0
     EWS_WEBKIT_PASSED = 1
     EWS_WEBKIT_PENDING = 2
@@ -2776,13 +2803,17 @@ class RevertAppliedChanges(steps.ShellSequence):
     flunkOnFailure = True
     haltOnFailure = True
 
-    def __init__(self, **kwargs):
+    def __init__(self, exclude=None, **kwargs):
         super().__init__(timeout=5 * 60, logEnviron=False, **kwargs)
+        self.exclude = exclude or []  # Pattern(s) to ignore for git clean
 
     def run(self):
         self.commands = []
+        exclude_patterns = []
+        for pattern in self.exclude:
+            exclude_patterns.extend(('-e', pattern))
         for command in [
-            ['git', 'clean', '-f', '-d'],
+            ['git', 'clean', '-f', '-d'] + exclude_patterns,
             ['git', 'checkout', self.getProperty('ews_revision') or self.getProperty('got_revision')],
         ]:
             self.commands.append(util.ShellArg(command=command, logname='stdio'))
@@ -3133,7 +3164,7 @@ class InstallWinDependencies(shell.ShellCommandNewStyle):
 
 def customBuildFlag(platform, fullPlatform):
     # FIXME: Make a common 'supported platforms' list.
-    if platform not in ('gtk', 'wincairo', 'ios', 'visionos', 'jsc-only', 'wpe', 'playstation', 'tvos', 'watchos'):
+    if platform not in ('gtk', 'ios', 'visionos', 'jsc-only', 'wpe', 'playstation', 'tvos', 'watchos'):
         return []
     if 'simulator' in fullPlatform:
         platform = platform + '-simulator'
@@ -3205,7 +3236,7 @@ class CompileWebKit(shell.Compile, AddToLogMixin, ShellMixin):
         architecture = self.getProperty('architecture')
         configuration = self.getProperty('configuration')
 
-        if platform in ['wincairo']:
+        if platform == 'win':
             self.addLogObserver('stdio', BuildLogLineObserver(self.errorReceived, searchString='error ', includeRelatedLines=False, thresholdExceedCallBack=self.handleExcessiveLogging))
         else:
             self.addLogObserver('stdio', BuildLogLineObserver(self.errorReceived, thresholdExceedCallBack=self.handleExcessiveLogging))
@@ -3233,9 +3264,6 @@ class CompileWebKit(shell.Compile, AddToLogMixin, ShellMixin):
                 # this much faster than full debug info, and crash logs still have line numbers.
                 # Some projects (namely lldbWebKitTester) require full debug info, and may override this.
                 build_command += ['DEBUG_INFORMATION_FORMAT=dwarf-with-dsym', 'CLANG_DEBUG_INFORMATION_LEVEL=$(WK_OVERRIDE_DEBUG_INFORMATION_LEVEL:default=line-tables-only)']
-        if platform == 'gtk':
-            prefix = os.path.join("/app", "webkit", "WebKitBuild", self.getProperty("configuration"), "install")
-            build_command += [f'--prefix={prefix}']
 
         build_command += customBuildFlag(platform, self.getProperty('fullPlatform'))
 
@@ -3504,7 +3532,7 @@ class AnalyzeCompileWebKitResults(buildstep.BuildStep, BugzillaMixin, GitHubMixi
             platform = self.getProperty('platform', '')
             build_url = '{}#/builders/{}/builds/{}'.format(self.master.config.buildbotURL, self.build._builderid, self.build.number)
             logs = self.error_logs.get(self.compile_webkit_step)
-            if platform in ['wincairo']:
+            if platform == 'win':
                 logs = self.filter_logs_containing_error(logs, searchString='error ')
             else:
                 logs = self.filter_logs_containing_error(logs)
@@ -3537,7 +3565,7 @@ class AnalyzeCompileWebKitResults(buildstep.BuildStep, BugzillaMixin, GitHubMixi
             identifier = self.getProperty('identifier', None)
             build_url = '{}#/builders/{}/builds/{}'.format(self.master.config.buildbotURL, self.build._builderid, self.build.number)
             logs = self.error_logs.get(self.compile_webkit_step)
-            if platform in ['wincairo']:
+            if platform == 'win':
                 logs = self.filter_logs_containing_error(logs, searchString='error ')
             else:
                 logs = self.filter_logs_containing_error(logs)
@@ -3847,14 +3875,6 @@ class AnalyzeJSCTestsResults(buildstep.BuildStep, AddToLogMixin):
             send_email_to_bot_watchers(email_subject, email_text, builder_name, 'preexisting-{}'.format(test_name))
         except Exception as e:
             print('Error in sending email for pre-existing failure: {}'.format(e))
-
-
-class InstallBuiltProduct(shell.ShellCommandNewStyle):
-    name = 'install-built-product'
-    description = ['Installing Built Product']
-    descriptionDone = ['Installed Built Product']
-    command = ["python3", "Tools/Scripts/install-built-product",
-               WithProperties("--platform=%(fullPlatform)s"), WithProperties("--%(configuration)s")]
 
 
 class CleanBuild(shell.Compile):
@@ -5870,10 +5890,9 @@ class PrintConfiguration(steps.ShellSequence):
             return 'Unknown'
 
         build_to_name_mapping = {
+            '15': 'Sequoia',
             '14': 'Sonoma',
-            '13': 'Ventura',
-            '12': 'Monterey',
-            '11': 'Big Sur'
+            '13': 'Ventura'
         }
 
         for key, value in build_to_name_mapping.items():
@@ -5882,7 +5901,7 @@ class PrintConfiguration(steps.ShellSequence):
         return 'Unknown'
 
     def parseAndValidate(self, logText):
-        os_version, xcode_version = '', ''
+        os_version, os_name, xcode_version = '', '', ''
         match = re.search('ProductVersion:[ \t]*(.+?)\n', logText)
         if match:
             os_version = match.group(1).strip()
@@ -5893,7 +5912,13 @@ class PrintConfiguration(steps.ShellSequence):
         if match:
             xcode_version = match.group(1).strip()
 
+        match = re.search('BuildVersion:[ \t]*(.+?)\n', logText)
+        if match:
+            build_version = match.group(1).strip()
+            self.setProperty('build_version', build_version)
+
         self.setProperty('os_version', os_version)
+        self.setProperty('os_name', os_name)
         self.setProperty('xcode_version', xcode_version)
         os_version_builder = self.getProperty('os_version_builder', '')
         xcode_version_builder = self.getProperty('xcode_version_builder', '')
@@ -5937,7 +5962,7 @@ class CleanGitRepo(steps.ShellSequence, ShellMixin):
 
     def run(self):
         self.commands = []
-        if self.getProperty('platform', '*') == 'wincairo':
+        if self.getProperty('platform', '*') == 'win':
             self.commands.append(util.ShellArg(
                 command=self.shell_command(r'del .git\gc.log || {}'.format(self.shell_exit_0())),
                 logname='stdio',
@@ -6874,3 +6899,391 @@ class UpdatePullRequest(shell.ShellCommandNewStyle, GitHubMixin, AddToLogMixin):
 
     def hideStepIf(self, results, step):
         return not self.doStepIf(step)
+
+
+# FIXME: Share static analyzer steps with build-webkit-org since they have a lot of similarities
+class ScanBuild(steps.ShellSequence, ShellMixin):
+    name = "scan-build"
+    description = ["scanning with static analyzer"]
+    descriptionDone = ["scanned with static analyzer"]
+    flunkOnFailure = True
+    analyzeFailed = False
+    bugs = 0
+    output_directory = SCAN_BUILD_OUTPUT_DIR
+
+    def __init__(self, **kwargs):
+        super().__init__(logEnviron=False, timeout=2 * 60 * 60, **kwargs)
+        self.commandFailed = False
+
+    @defer.inlineCallbacks
+    def run(self):
+        self.commands = []
+        build_command = f"Tools/Scripts/build-and-analyze --output-dir {os.path.join(self.getProperty('builddir'), f'build/{self.output_directory}')} --configuration {self.build.getProperty('configuration')} "
+        build_command += f"--only-smart-pointers --analyzer-path={os.path.join(self.getProperty('builddir'), 'llvm-project/build/bin/clang')} "
+        build_command += '--scan-build-path=../llvm-project/clang/tools/scan-build/bin/scan-build --sdkroot=macosx --preprocessor-additions=CLANG_WEBKIT_BRANCH=1 '
+        build_command += '2>&1 | python3 Tools/Scripts/filter-test-logs scan-build --output build-log.txt'
+
+        for command in [
+            self.shell_command(f"/bin/rm -rf {os.path.join(self.getProperty('builddir'), f'build/{self.output_directory}')}"),
+            self.shell_command(build_command)
+        ]:
+            self.commands.append(util.ShellArg(command=command, logname='stdio'))
+
+        self.log_observer = logobserver.BufferLogObserver()
+        self.addLogObserver('stdio', self.log_observer)
+
+        rc = yield super().run()
+
+        log_text = self.log_observer.getStdout()
+        index = log_text.rfind('Total issue count:')
+        if index != -1:
+            total_issue_count_regex = re.compile(r'^Total issue count: (\d+)$', re.MULTILINE)
+            match = total_issue_count_regex.search(log_text[index:])
+            if match:
+                self.bugs += int(match.group(1))
+
+        f_index = log_text.rfind('ANALYZE SUCCEEDED')
+        if f_index == -1:
+            self.analyzeFailed = True
+            rc = FAILURE
+
+        steps_to_add = [
+            GenerateS3URL(
+                f"{self.getProperty('fullPlatform')}-{self.getProperty('architecture')}-{self.getProperty('configuration')}-{self.name}",
+                extension='txt',
+                content_type='text/plain',
+            ), UploadFileToS3(
+                'build-log.txt',
+                links={self.name: 'Full build log'},
+                content_type='text/plain',
+            )
+        ]
+
+        if rc == SUCCESS:
+            steps_to_add += self.addResultsSteps()
+        self.build.addStepsAfterCurrentStep(steps_to_add)
+
+        defer.returnValue(rc)
+
+    def addResultsSteps(self):
+        return [ParseStaticAnalyzerResults(), FindUnexpectedStaticAnalyzerResults(expectations=True)]
+
+    def getResultSummary(self):
+        status = ''
+        if self.analyzeFailed or self.commandFailed:
+            status += 'Failed to build and analyze WebKit'
+        if self.results == SUCCESS:
+            status += f'Found {self.bugs} issues'
+        return {'step': status}
+
+
+class ScanBuildWithoutChange(ScanBuild):
+    name = 'scan-build-without-change'
+    output_directory = SCAN_BUILD_OUTPUT_DIR + '-baseline'
+
+    def addResultsSteps(self):
+        return [ParseStaticAnalyzerResultsWithoutChange(), FindUnexpectedStaticAnalyzerResults(expectations=False)]
+
+
+class ParseStaticAnalyzerResults(shell.ShellCommandNewStyle):
+    name = 'parse-static-analyzer-results'
+    description = ['parsing static analyzer results']
+    descriptionDone = ['parsed static analyzer results']
+    haltOnFailure = True
+    result_message = ''
+    output_dir = 'new'
+    scan_build_output = SCAN_BUILD_OUTPUT_DIR
+
+    def __init__(self, baseline=False, **kwargs):
+        self.baseline = baseline  # True if built without PR changes applied
+        super().__init__(logEnviron=False, **kwargs)
+
+    @defer.inlineCallbacks
+    def run(self):
+        self.command = ['python3', 'Tools/Scripts/generate-dirty-files']
+        self.command += [os.path.join(self.getProperty('builddir'), f'build/{self.scan_build_output}')]
+        self.command += ['--output-dir', os.path.join(self.getProperty('builddir'), f'build/{self.output_dir}')]
+        self.command += ['--build-dir', os.path.join(self.getProperty('builddir'), 'build')]
+
+        self.log_observer = logobserver.BufferLogObserver()
+        self.addLogObserver('stdio', self.log_observer)
+
+        rc = yield super().run()
+        if rc != SUCCESS:
+            return defer.returnValue(rc)
+
+        log_text = self.log_observer.getStdout()
+        index = log_text.rfind('Total')
+        self.result_message = log_text[index:].strip()
+
+        return defer.returnValue(rc)
+
+    def evaluateCommand(self, cmd):
+        if cmd.rc != 0:
+            self.commandFailed = True
+            return FAILURE
+        return SUCCESS
+
+    def getResultSummary(self):
+        status = ''
+        if self.result_message:
+            status += f' Issues: {self.result_message}'
+        if self.results != SUCCESS:
+            status += f' ({Results[self.results]})'
+
+        return {u'step': status}
+
+
+class ParseStaticAnalyzerResultsWithoutChange(ParseStaticAnalyzerResults):
+    name = 'parse-static-analyzer-results-without-change'
+    output_dir = 'baseline'
+    scan_build_output = SCAN_BUILD_OUTPUT_DIR + '-baseline'
+
+
+class FindUnexpectedStaticAnalyzerResults(shell.ShellCommandNewStyle):
+    name = 'find-unexpected-static-analyzer-results'
+    description = ['finding unexpected static analyzer results']
+    descriptionDone = ['found unexpected static analyzer results']
+    result_message = ''
+
+    def __init__(self, expectations=False, **kwargs):
+        self.expectations = expectations  # If true, results will be compared against checked-in expectations. Otherwise, they're compared against a previous run.
+        super().__init__(logEnviron=False, **kwargs)
+
+    @defer.inlineCallbacks
+    def run(self):
+        api_key = os.getenv(RESULTS_SERVER_API_KEY)
+        if api_key:
+            self.env[RESULTS_SERVER_API_KEY] = api_key
+        else:
+            self._addToLog('stdio', 'No API key for {} found'.format(RESULTS_DB_URL))
+
+        self.command = ['python3', 'Tools/Scripts/compare-static-analysis-results', os.path.join(self.getProperty('builddir'), 'build/new')]
+        self.command += ['--build-output', SCAN_BUILD_OUTPUT_DIR]
+        if not self.expectations:
+            self.command += ['--archived-dir', os.path.join(self.getProperty('builddir'), 'build/baseline')]
+            self.command += ['--scan-build-path', '../llvm-project/clang/tools/scan-build/bin/scan-build']  # Only generate results page on the second comparison
+            self.command += ['--delete-results']
+            if CURRENT_HOSTNAME in EWS_BUILD_HOSTNAMES and self.getProperty('github.base.ref', DEFAULT_BRANCH) == DEFAULT_BRANCH:
+                self.command += [
+                    '--builder-name', self.getProperty('buildername', ''),
+                    '--build-number', self.getProperty('buildnumber', ''),
+                    '--buildbot-worker', self.getProperty('workername', ''),
+                    '--buildbot-master', CURRENT_HOSTNAME,
+                    '--report', RESULTS_DB_URL,
+                    '--architecture', self.getProperty('architecture', ''),
+                    '--platform', self.getProperty('platform', ''),
+                    '--version', self.getProperty('os_version', ''),
+                    '--version-name', self.getProperty('os_name', ''),
+                    '--style', self.getProperty('configuration', ''),
+                    '--sdk', self.getProperty('build_version', '')
+                ]
+        else:
+            self.command += ['--check-expectations']
+
+        self.log_observer = logobserver.BufferLogObserver()
+        self.addLogObserver('stdio', self.log_observer)
+
+        rc = yield super().run()
+        if rc != SUCCESS:
+            return defer.returnValue(rc)
+
+        self.createResultMessage()
+
+        unexpected_results = self.getProperty('unexpected_failing_files', 0) or self.getProperty('unexpected_new_issues', 0) or self.getProperty('unexpected_passing_files', 0)
+        if self.expectations and unexpected_results:
+            # If there are unexpected results, rebuild without changes to verify causation
+            self.build.addStepsAfterCurrentStep([ValidateChange(verifyBugClosed=False, addURLs=False), RevertAppliedChanges(exclude=['new*', 'scan-build-output*']), ScanBuildWithoutChange()])
+        elif unexpected_results:
+            # Only save the results if there are failures and it is not the first run
+            self.build.addStepsAfterCurrentStep([ArchiveStaticAnalyzerResults(), UploadStaticAnalyzerResults(), ExtractStaticAnalyzerTestResults(), DisplaySaferCPPResults()])
+        return defer.returnValue(rc)
+
+    def createResultMessage(self):
+        log_text = self.log_observer.getStdout()
+        match = re.search(r'^Total (new issues|unexpected issues): (\d+)', log_text, re.MULTILINE)
+        if match:
+            self.result_message += f"{match.group(2)} new issue{'s' if int(match.group(2)) > 1 else ''} "
+            self.setProperty('unexpected_new_issues', int(match.group(2)))
+        else:
+            self.setProperty('unexpected_new_issues', 0)
+
+        match = re.search(r'^Total (new files|unexpected failing files): (\d+)', log_text, re.MULTILINE)
+        if match:
+            self.result_message += f"{match.group(2)} failing file{'s' if int(match.group(2)) > 1 else ''} "
+            self.setProperty('unexpected_failing_files', int(match.group(2)))
+        else:
+            self.setProperty('unexpected_failing_files', 0)
+
+        match = re.search(r'^Total (fixed files|unexpected passing files): (\d+)', log_text, re.MULTILINE)
+        if match:
+            self.result_message += f"{match.group(2)} fixed file{'s' if int(match.group(2)) > 1 else ''}"
+            self.setProperty('unexpected_passing_files', int(match.group(2)))
+        else:
+            self.setProperty('unexpected_passing_files', 0)
+
+    def getResultSummary(self):
+        status = ''
+        if self.result_message:
+            status = f'{self.result_message}'
+        elif self.results == SUCCESS:
+            status = 'Found no unexpected results'
+        if self.results != SUCCESS:
+            status += f' ({Results[self.results]})'
+
+        return {u'step': status}
+
+
+class DisplaySaferCPPResults(buildstep.BuildStep, AddToLogMixin):
+    name = 'display-safer-cpp-results'
+    resultDirectory = ''
+    NUM_TO_DISPLAY = 10
+    UPDATE_COMMAND = 'Tools/Scripts/update-safer-cpp-expectations -p {project}'
+    CHECKER_ARGS = '--{checker} {files}'
+
+    def __init___(self, **kwargs):
+        super().__init__(logEnviron=False, **kwargs)
+
+    @defer.inlineCallbacks
+    def run(self):
+        commands_for_comment = set()
+        num_issues = self.getProperty('unexpected_new_issues', 0)
+        self.resultDirectory = f"public_html/results/{self.getProperty('buildername')}/{self.getProperty('change_id')}-{self.getProperty('buildnumber')}"
+        unexpected_results_data = self.loadResultsData(os.path.join(self.resultDirectory, SCAN_BUILD_OUTPUT_DIR, 'unexpected_results.json'))
+        is_log = yield self.getFilesPerProject(unexpected_results_data, 'passes', commands_for_comment)
+        is_log += yield self.getFilesPerProject(unexpected_results_data, 'failures', commands_for_comment)
+        if num_issues:
+            if not is_log:
+                pluralSuffix = 's' if num_issues > 1 else ''
+                yield self._addToLog('stdio', f'Ignored {num_issues} pre-existing failure{pluralSuffix}')
+            self.addURL("View failures", self.resultDirectoryURL() + SCAN_BUILD_OUTPUT_DIR + "/new-results.html")
+        self.createComment(commands_for_comment)
+        if self.getProperty('unexpected_failing_files', 0):
+            return defer.returnValue(FAILURE)
+        return defer.returnValue(SUCCESS)
+
+    def loadResultsData(self, unexpected_results_path):
+        with open(unexpected_results_path) as f:
+            unexpected_results_data = json.load(f)
+        return unexpected_results_data
+
+    @defer.inlineCallbacks
+    def getFilesPerProject(self, unexpected_results_data, type, commands_for_comment):
+        total_file_list = set()
+        is_log = 0
+        for project, data in unexpected_results_data[type].items():
+            command = self.UPDATE_COMMAND.format(project=project)
+            log_content = ''
+            for checker, files in data.items():
+                if files:
+                    total_file_list.update(files)
+                    file_str = '\n'.join(files)
+                    log_content += f'=> {checker}\n\n{file_str}\n\n'
+                    command += ' ' + self.CHECKER_ARGS.format(checker=checker, files=' '.join(files))
+            if log_content:
+                yield self._addToLog(f'{project}-unexpected-{type}', log_content)
+                is_log += 1
+                if type == 'passes':
+                    commands_for_comment.add(command)
+        self.setProperty(f'{type}', list(total_file_list))
+        return defer.returnValue(is_log)
+
+    def createComment(self, commands_for_comment):
+        num_failures = self.getProperty('unexpected_failing_files', 0)
+        num_passes = self.getProperty('unexpected_passing_files', 0)
+        num_issues = self.getProperty('unexpected_new_issues', 0)
+
+        if not num_failures and not num_passes:
+            return
+
+        results_link = self.resultDirectoryURL() + SCAN_BUILD_OUTPUT_DIR + "/new-results.html"
+        build_link = f'{self.master.config.buildbotURL}#/builders/{self.build._builderid}/builds/{self.build.number}'
+        formatted_build_link = f'[#{self.getProperty("buildnumber", "")}]({build_link})'
+        comment = f'### Safer C++ Build {formatted_build_link}\n'
+
+        if num_failures:
+            pluralSuffix = 's' if num_issues > 1 else ''
+            comment += f":x: Found [{num_issues} new failure{pluralSuffix}]({results_link}). "
+            comment += 'Please address these issues before landing. See [WebKit Guidelines for Safer C++ Programming](https://github.com/WebKit/WebKit/wiki/Safer-CPP-Guidelines).\n(cc @rniwa)\n'
+        if num_passes:
+            pluralSuffix = 's' if num_passes > 1 else ''
+            pluralCommand = 's' if len(commands_for_comment) > 1 else ''
+            comment += f'\n:warning: Found {num_passes} fixed file{pluralSuffix}! Please update expectations in `Source/[WebKit/WebCore]/SaferCPPExpectations` by running the following command{pluralCommand} and update your {self.change_type}:\n'
+            comment += '\n'.join([f"- `{c}`" for c in commands_for_comment])
+
+        self.setProperty('comment_text', comment)
+        # FIXME: Add merging blocked upon failure after initial deployment period
+        self.build.addStepsAfterCurrentStep([LeaveComment(), SetBuildSummary()])
+
+    @property
+    def change_type(self):
+        if self.getProperty('github.number', False):
+            return 'pull request'
+        return 'patch'
+
+    def doStepIf(self, step):
+        return self.getProperty('unexpected_failing_files', 0) or self.getProperty('unexpected_passing_files', 0) or self.getProperty('unexpected_new_issues', 0)
+
+    def hideStepIf(self, results, step):
+        return not self.doStepIf(step)
+
+    def resultDirectoryURL(self):
+        return f"{S3_RESULTS_URL}{self.resultDirectory.replace('public_html/results/', '') + '/'}"
+
+    def getResultSummary(self):
+        num_failures = self.getProperty('unexpected_failing_files', 0)
+        num_passes = self.getProperty('unexpected_passing_files', 0)
+        num_issues = self.getProperty('unexpected_new_issues', 0)
+        failing_files = (", ").join(self.getProperty('failures', [])[:self.NUM_TO_DISPLAY])
+        passing_files = (", ").join(self.getProperty('passes', [])[:self.NUM_TO_DISPLAY])
+        results_summary = ''
+
+        if num_failures:
+            pluralSuffix = 's' if num_issues > 1 else ''
+            results_summary = f'Found {num_issues} new failure{pluralSuffix} in {failing_files}'
+            if num_failures > self.NUM_TO_DISPLAY:
+                results_summary += ' ...'
+            self.setProperty('build_finish_summary', results_summary)
+        elif num_issues:
+            pluralSuffix = 's' if num_issues > 1 else ''
+            # FIXME: Display which files are being ignored
+            results_summary = f'Ignored {num_issues} pre-existing failure{pluralSuffix}'
+            self.setProperty('build_summary', results_summary)
+        elif num_passes:
+            pluralSuffix = 's' if num_passes > 1 else ''
+            results_summary = f'Found {num_passes} fixed file{pluralSuffix}: {passing_files}'
+            if num_passes > self.NUM_TO_DISPLAY:
+                results_summary += ' ...'
+            self.setProperty('build_summary', results_summary)
+
+        if num_passes and num_failures:
+            pluralSuffix = 's' if num_passes > 1 else ''
+            results_summary += f' and found {num_passes} fixed file{pluralSuffix}: {passing_files}'
+            if num_passes > self.NUM_TO_DISPLAY:
+                results_summary += ' ...'
+
+        return {'step': results_summary}
+
+
+class ArchiveStaticAnalyzerResults(shell.ShellCommandNewStyle):
+    command = ["Tools/Scripts/generate-static-analysis-archive", "--id-string", WithProperties("Build #%(buildnumber)s"), "--output-root", SCAN_BUILD_OUTPUT_DIR, "--destination", STATIC_ANALYSIS_ARCHIVE_PATH]
+    name = "archive-static-analyzer-results"
+    description = ["archiving static analyzer results"]
+    descriptionDone = ["archived static analyzer results"]
+    haltOnFailure = True
+
+    def __init__(self, **kwargs):
+        super().__init__(logEnviron=False, **kwargs)
+
+
+class UploadStaticAnalyzerResults(UploadTestResults):
+    name = "upload-static-analyzer-results"
+    workersrc = STATIC_ANALYSIS_ARCHIVE_PATH
+    haltOnFailure = True
+
+
+class ExtractStaticAnalyzerTestResults(ExtractTestResults):
+    name = 'extract-static-analyzer-test-results'
+
+    def addCustomURLs(self):
+        pass

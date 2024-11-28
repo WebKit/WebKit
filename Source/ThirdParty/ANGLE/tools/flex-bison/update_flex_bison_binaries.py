@@ -25,20 +25,26 @@ def main():
     if angle_tools.is_linux:
         subdir = 'linux'
         files = ['flex', 'bison']
+        bucket = 'angle-flex-bison'
+    elif angle_tools.is_mac:
+        subdir = 'mac'
+        files = ['flex', 'bison']
+        bucket = 'angle-flex-bison-mac'
     elif angle_tools.is_windows:
         subdir = 'windows'
         files = [
             'flex.exe', 'bison.exe', 'm4.exe', 'msys-2.0.dll', 'msys-iconv-2.dll',
             'msys-intl-8.dll'
         ]
+        bucket = 'angle-flex-bison'
     else:
-        print('Script must be run on Linux or Windows.')
+        print('Script must be run on Linux, Mac or Windows.')
         return 1
 
     files = [os.path.join(sys.path[0], subdir, f) for f in files]
 
     # Step 1: Upload to cloud storage
-    if not angle_tools.upload_to_google_storage('angle-flex-bison', files):
+    if not angle_tools.upload_to_google_storage(bucket, files):
         print('Error upload to cloud storage')
         return 1
 

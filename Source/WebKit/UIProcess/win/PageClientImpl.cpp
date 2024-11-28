@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2024 Apple Inc. All rights reserved.
  * Copyright (C) 2017 Sony Interactive Entertainment Inc.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -127,11 +127,6 @@ void PageClientImpl::setCursorHiddenUntilMouseMoves(bool /* hiddenUntilMouseMove
     notImplemented();
 }
 
-void PageClientImpl::didChangeViewportProperties(const WebCore::ViewportAttributes&)
-{
-    notImplemented();
-}
-
 void PageClientImpl::registerEditCommand(Ref<WebEditCommandProxy>&& command, UndoOrRedo undoOrRedo)
 {
     m_undoController.registerEditCommand(WTFMove(command), undoOrRedo);
@@ -202,7 +197,7 @@ Ref<WebContextMenuProxy> PageClientImpl::createContextMenuProxy(WebPageProxy& pa
 #endif
 
 #if ENABLE(INPUT_TYPE_COLOR)
-RefPtr<WebColorPicker> PageClientImpl::createColorPicker(WebPageProxy*, const WebCore::Color& intialColor, const WebCore::IntRect&, Vector<WebCore::Color>&&)
+RefPtr<WebColorPicker> PageClientImpl::createColorPicker(WebPageProxy*, const WebCore::Color& intialColor, const WebCore::IntRect&, ColorControlSupportsAlpha supportsAlpha, Vector<WebCore::Color>&&)
 {
     return nullptr;
 }

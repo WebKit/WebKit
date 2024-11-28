@@ -82,7 +82,6 @@ class JSGlobalObject;
     v(repeatCharacter, nullptr) \
     v(isArray, nullptr) \
     v(isArraySlow, nullptr) \
-    v(concatMemcpy, nullptr) \
     v(appendMemcpy, nullptr) \
     v(hostPromiseRejectionTracker, nullptr) \
     v(Set, nullptr) \
@@ -132,7 +131,8 @@ class JSGlobalObject;
     v(sentinelString, nullptr) \
     v(createRemoteFunction, nullptr) \
     v(isRemoteFunction, nullptr) \
-    v(arrayFromFast, nullptr) \
+    v(arrayFromFastFillWithUndefined, nullptr) \
+    v(arrayFromFastFillWithEmpty, nullptr) \
     v(arraySort, nullptr) \
     v(jsonParse, nullptr) \
     v(jsonStringify, nullptr) \
@@ -150,8 +150,9 @@ class JSGlobalObject;
     v(BigInt64Array, nullptr) \
     v(BigUint64Array, nullptr) \
     v(wrapForValidIteratorCreate, nullptr) \
-    v(wrapForValidIteratorGetIteratedIterator, nullptr) \
-    v(wrapForValidIteratorGetIteratedNextMethod, nullptr) \
+    v(asyncFromSyncIteratorCreate, nullptr) \
+    v(regExpStringIteratorCreate, nullptr) \
+    v(iteratorHelperCreate, nullptr) \
 
 
 #define DECLARE_LINK_TIME_CONSTANT(name, code) name,

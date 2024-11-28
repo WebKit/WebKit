@@ -41,6 +41,8 @@
 #import <WebKit/_WKNotificationData.h>
 #import <WebKit/_WKProcessPoolConfiguration.h>
 #import <WebKit/_WKWebsiteDataStoreConfiguration.h>
+#import <notify.h>
+#import <objc/runtime.h>
 
 static const NSString * const kURLArgumentString = @"--url";
 
@@ -115,6 +117,19 @@ static BOOL enabledForFeature(_WKFeature *feature)
 
         dataStore = [[WKWebsiteDataStore alloc] _initWithConfiguration:configuration];
         dataStore._delegate = self;
+
+        int token;
+        notify_register_dispatch("org.webkit.MiniBrowser.clearAllData", &token, dispatch_get_main_queue(), ^(int unusedToken) {
+            [dataStore removeDataOfTypes:WKWebsiteDataStore.allWebsiteDataTypes modifiedSince:[NSDate distantPast] completionHandler:^{
+                NSLog(@"Removed all website data from default persistent data store.");
+            }];
+        });
+
+        notify_register_dispatch("org.webkit.MiniBrowser.clearServiceWorkers", &token, dispatch_get_main_queue(), ^(int unusedToken) {
+            [dataStore removeDataOfTypes:[NSSet setWithObject:WKWebsiteDataTypeServiceWorkerRegistrations] modifiedSince:[NSDate distantPast] completionHandler:^{
+                NSLog(@"Removed all service workers from default persistent data store.");
+            }];
+        });
     }
     
     return dataStore;
@@ -280,12 +295,22 @@ static NSNumber *_currentBadge;
     BOOL useWebKit2 = NO;
     BOOL makeEditable = NO;
 
-    if (![sender respondsToSelector:@selector(tag)]) {
+    BOOL hasNSIntegerTag = NO;
+    if ([sender respondsToSelector:@selector(tag)]) {
+        Method tagMethod = class_getInstanceMethod([sender class], @selector(tag));
+        char *tagReturnType = method_copyReturnType(tagMethod);
+        if (!strcmp(tagReturnType, @encode(NSInteger)))
+            hasNSIntegerTag = YES;
+        free(tagReturnType);
+    }
+
+    if (!hasNSIntegerTag) {
         useWebKit2 = _settingsController.useWebKit2ByDefault;
         makeEditable = _settingsController.createEditorByDefault;
     } else {
-        useWebKit2 = [sender tag] == WebKit2NewWindowTag || [sender tag] == WebKit2NewEditorTag;
-        makeEditable = [sender tag] == WebKit1NewEditorTag || [sender tag] == WebKit2NewEditorTag;
+        NSInteger senderTag = (NSInteger)[sender performSelector:@selector(tag)];
+        useWebKit2 = senderTag == WebKit2NewWindowTag || senderTag == WebKit2NewEditorTag;
+        makeEditable = senderTag == WebKit1NewEditorTag || senderTag == WebKit2NewEditorTag;
     }
 
     if (!useWebKit2)
@@ -349,6 +374,11 @@ static NSNumber *_currentBadge;
 
     [[controller window] makeKeyAndOrderFront:sender];
     [controller loadHTMLString:@"<html><body></body></html>"];
+}
+
+- (IBAction)newSwiftUIWindow:(id)sender
+{
+    [self createSwiftUIWindow:sender];
 }
 
 - (void)didCreateBrowserWindowController:(BrowserWindowController *)controller

@@ -1,0 +1,42 @@
+<script>
+async function run() {
+    let adapter = await navigator.gpu.requestAdapter({});
+    let device = await adapter.requestDevice();
+    let bindGroupLayout = device.createBindGroupLayout({ entries: [] });
+    let pipelineLayout = device.createPipelineLayout({ bindGroupLayouts: [bindGroupLayout] });
+    let bindGroup = device.createBindGroup({ layout: bindGroupLayout, entries: [] });
+    let shaderModule = device.createShaderModule({ code: `
+        @vertex fn vertex_main() -> @builtin(position) vec4f {
+            return vec4f();
+        }
+        @fragment fn fragment_main() -> @location(0) vec4f {
+            return vec4f();
+        }
+    `});
+    let pipeline = device.createRenderPipeline({
+        layout: pipelineLayout,
+        fragment: { module: shaderModule, targets: [{ format: 'bgra8unorm-srgb' }] },
+        vertex: { module: shaderModule, buffers: [] },
+    });
+    let texture = device.createTexture({ size: [15, 10], dimension: '2d', format: 'bgra8unorm-srgb', usage: GPUTextureUsage.RENDER_ATTACHMENT });
+    let textureView = texture.createView();
+    let buffer1 = device.createBuffer({ size: 100, usage: GPUBufferUsage.INDEX });
+    let buffer2 = device.createBuffer({ size: 32, usage: GPUBufferUsage.INDIRECT });
+    let commandEncoder = device.createCommandEncoder();
+    let renderPassEncoder = commandEncoder.beginRenderPass({
+        colorAttachments: [{ view: textureView, loadOp: 'clear', storeOp: 'discard' }],
+    });
+    let renderBundleEncoder = device.createRenderBundleEncoder({ colorFormats: ['bgra8unorm-srgb'] });
+    renderBundleEncoder.setIndexBuffer(buffer1, 'uint16');
+    renderBundleEncoder.setPipeline(pipeline);
+    renderBundleEncoder.setBindGroup(0, bindGroup);
+    for (let i = 0; i < 700000; ++i)
+        renderBundleEncoder.draw(0);
+    renderBundleEncoder.drawIndexedIndirect(buffer2, 0);
+    let renderBundle = renderBundleEncoder.finish();
+    renderPassEncoder.executeBundles([renderBundle]);
+}
+
+globalThis.testRunner?.waitUntilDone();
+run().finally(() => setTimeout(() => globalThis.testRunner?.notifyDone(), 1000));
+</script>

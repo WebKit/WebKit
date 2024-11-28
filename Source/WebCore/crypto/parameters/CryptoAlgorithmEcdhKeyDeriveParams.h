@@ -32,6 +32,7 @@ namespace WebCore {
 class CryptoKey;
 
 class CryptoAlgorithmEcdhKeyDeriveParams final : public CryptoAlgorithmParameters {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(CryptoAlgorithmEcdhKeyDeriveParams);
 public:
     RefPtr<CryptoKey> publicKey;
 

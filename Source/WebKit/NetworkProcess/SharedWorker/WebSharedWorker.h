@@ -35,6 +35,7 @@
 #include <wtf/CheckedRef.h>
 #include <wtf/Identified.h>
 #include <wtf/ListHashSet.h>
+#include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
@@ -42,13 +43,9 @@ namespace WebKit {
 class WebSharedWorker;
 }
 
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::WebSharedWorker> : std::true_type { };
-}
-
 namespace WebCore {
 class RegistrableDomain;
+class Site;
 }
 
 namespace WebKit {
@@ -56,10 +53,11 @@ namespace WebKit {
 class WebSharedWorkerServer;
 class WebSharedWorkerServerToContextConnection;
 
-class WebSharedWorker : public CanMakeWeakPtr<WebSharedWorker>, public Identified<WebCore::SharedWorkerIdentifier> {
+class WebSharedWorker : public RefCountedAndCanMakeWeakPtr<WebSharedWorker>, public Identified<WebCore::SharedWorkerIdentifier> {
     WTF_MAKE_TZONE_ALLOCATED(WebSharedWorker);
 public:
-    WebSharedWorker(WebSharedWorkerServer&, const WebCore::SharedWorkerKey&, const WebCore::WorkerOptions&);
+    static Ref<WebSharedWorker> create(WebSharedWorkerServer&, const WebCore::SharedWorkerKey&, const WebCore::WorkerOptions&);
+
     ~WebSharedWorker();
 
     static WebSharedWorker* fromIdentifier(WebCore::SharedWorkerIdentifier);
@@ -69,6 +67,7 @@ public:
     const WebCore::ClientOrigin& origin() const { return m_key.origin; }
     const URL& url() const { return m_key.url; }
     WebCore::RegistrableDomain topRegistrableDomain() const;
+    WebCore::Site topSite() const;
     WebSharedWorkerServerToContextConnection* contextConnection() const;
 
     void addSharedWorkerObject(WebCore::SharedWorkerObjectIdentifier, const WebCore::TransferredMessagePort&);
@@ -95,7 +94,7 @@ public:
 
     struct SharedWorkerObjectState {
         bool isSuspended { false };
-        WebCore::TransferredMessagePort port;
+        std::optional<WebCore::TransferredMessagePort> port;
     };
 
     struct Object {
@@ -104,6 +103,8 @@ public:
     };
 
 private:
+    WebSharedWorker(WebSharedWorkerServer&, const WebCore::SharedWorkerKey&, const WebCore::WorkerOptions&);
+
     WebSharedWorker(WebSharedWorker&&) = delete;
     WebSharedWorker& operator=(WebSharedWorker&&) = delete;
     WebSharedWorker(const WebSharedWorker&) = delete;
@@ -112,7 +113,7 @@ private:
     void suspendIfNeeded();
     void resumeIfNeeded();
 
-    CheckedRef<WebSharedWorkerServer> m_server;
+    WeakPtr<WebSharedWorkerServer> m_server;
     WebCore::SharedWorkerKey m_key;
     WebCore::WorkerOptions m_workerOptions;
     ListHashSet<Object> m_sharedWorkerObjects;

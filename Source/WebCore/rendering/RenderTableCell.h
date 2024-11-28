@@ -116,12 +116,8 @@ public:
     static RenderPtr<RenderTableCell> createAnonymousWithParentRenderer(const RenderTableRow&);
     RenderPtr<RenderBox> createAnonymousBoxWithSameTypeAs(const RenderBox&) const override;
 
-    // This function is used to unify which table part's style we use for computing direction and
-    // writing mode. Writing modes are not allowed on row group and row but direction is.
-    // This means we can safely use the same style in all cases to simplify our code.
-    // FIXME: Eventually this function should replaced by style() once we support direction
-    // on all table parts and writing-mode on cells.
-    const RenderStyle& styleForCellFlow() const { return row()->style(); }
+    // Table layout always uses the table's writing mode.
+    const WritingMode tableWritingMode() const { return table()->writingMode(); }
 
     inline const BorderValue& borderAdjoiningTableStart() const;
     inline const BorderValue& borderAdjoiningTableEnd() const;
@@ -180,10 +176,10 @@ private:
     CollapsedBorderValue collapsedBeforeBorder(IncludeBorderColorOrNot = IncludeBorderColor) const;
     CollapsedBorderValue collapsedAfterBorder(IncludeBorderColorOrNot = IncludeBorderColor) const;
 
-    CollapsedBorderValue cachedCollapsedLeftBorder(const RenderStyle&) const;
-    CollapsedBorderValue cachedCollapsedRightBorder(const RenderStyle&) const;
-    CollapsedBorderValue cachedCollapsedTopBorder(const RenderStyle&) const;
-    CollapsedBorderValue cachedCollapsedBottomBorder(const RenderStyle&) const;
+    CollapsedBorderValue cachedCollapsedLeftBorder(const WritingMode) const;
+    CollapsedBorderValue cachedCollapsedRightBorder(const WritingMode) const;
+    CollapsedBorderValue cachedCollapsedTopBorder(const WritingMode) const;
+    CollapsedBorderValue cachedCollapsedBottomBorder(const WritingMode) const;
 
     CollapsedBorderValue computeCollapsedStartBorder(IncludeBorderColorOrNot = IncludeBorderColor) const;
     CollapsedBorderValue computeCollapsedEndBorder(IncludeBorderColorOrNot = IncludeBorderColor) const;
@@ -273,15 +269,6 @@ inline unsigned RenderTableCell::rowIndex() const
     // This function shouldn't be called on a detached cell.
     ASSERT(row());
     return row()->rowIndex();
-}
-
-inline bool RenderTableCell::isBaselineAligned() const
-{
-    if (auto alignContent = style().alignContent(); !alignContent.isNormal())
-        return alignContent.position() == ContentPosition::Baseline;
-
-    VerticalAlign va = style().verticalAlign();
-    return va == VerticalAlign::Baseline || va == VerticalAlign::TextBottom || va == VerticalAlign::TextTop || va == VerticalAlign::Super || va == VerticalAlign::Sub || va == VerticalAlign::Length;
 }
 
 inline RenderTableCell* RenderTableRow::firstCell() const

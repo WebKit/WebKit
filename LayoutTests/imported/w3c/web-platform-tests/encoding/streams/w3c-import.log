@@ -22,7 +22,10 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/encoding/streams/decode-non-utf8.any.js
 /LayoutTests/imported/w3c/web-platform-tests/encoding/streams/decode-split-character.any.js
 /LayoutTests/imported/w3c/web-platform-tests/encoding/streams/decode-utf8.any.js
+/LayoutTests/imported/w3c/web-platform-tests/encoding/streams/decode-utf8.any.js.headers
 /LayoutTests/imported/w3c/web-platform-tests/encoding/streams/encode-bad-chunks.any.js
 /LayoutTests/imported/w3c/web-platform-tests/encoding/streams/encode-utf8.any.js
+/LayoutTests/imported/w3c/web-platform-tests/encoding/streams/invalid-realm.window.js
 /LayoutTests/imported/w3c/web-platform-tests/encoding/streams/readable-writable-properties.any.js
 /LayoutTests/imported/w3c/web-platform-tests/encoding/streams/realms.window.js
+/LayoutTests/imported/w3c/web-platform-tests/encoding/streams/stringification-crash.html

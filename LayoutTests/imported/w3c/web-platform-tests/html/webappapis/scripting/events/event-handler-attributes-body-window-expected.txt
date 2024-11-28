@@ -85,9 +85,6 @@ PASS not shadowed webkitanimationiteration (document.body)
 PASS not shadowed webkitanimationstart (document.body)
 PASS not shadowed webkittransitionend (document.body)
 PASS not shadowed wheel (document.body)
-PASS not shadowed copy (document.body)
-PASS not shadowed cut (document.body)
-PASS not shadowed paste (document.body)
 PASS shadowed blur removal (document.body)
 PASS shadowed error removal (document.body)
 PASS shadowed focus removal (document.body)
@@ -110,6 +107,26 @@ PASS shadowed rejectionhandled removal (document.body)
 PASS shadowed storage removal (document.body)
 PASS shadowed unhandledrejection removal (document.body)
 PASS shadowed unload removal (document.body)
+PASS shadowed blur on body fires when event dispatched on window
+PASS shadowed focus on body fires when event dispatched on window
+PASS shadowed load on body fires when event dispatched on window
+PASS shadowed resize on body fires when event dispatched on window
+PASS shadowed scroll on body fires when event dispatched on window
+PASS shadowed afterprint on body fires when event dispatched on window
+PASS shadowed beforeprint on body fires when event dispatched on window
+PASS shadowed beforeunload on body fires when event dispatched on window
+PASS shadowed hashchange on body fires when event dispatched on window
+PASS shadowed languagechange on body fires when event dispatched on window
+PASS shadowed message on body fires when event dispatched on window
+PASS shadowed messageerror on body fires when event dispatched on window
+PASS shadowed offline on body fires when event dispatched on window
+PASS shadowed online on body fires when event dispatched on window
+PASS shadowed pagehide on body fires when event dispatched on window
+PASS shadowed pageshow on body fires when event dispatched on window
+PASS shadowed popstate on body fires when event dispatched on window
+PASS shadowed rejectionhandled on body fires when event dispatched on window
+PASS shadowed storage on body fires when event dispatched on window
+PASS shadowed unload on body fires when event dispatched on window
 PASS shadowed blur (document.createElement("body"))
 PASS shadowed error (document.createElement("body"))
 PASS shadowed focus (document.createElement("body"))
@@ -196,9 +213,6 @@ PASS not shadowed webkitanimationiteration (document.createElement("body"))
 PASS not shadowed webkitanimationstart (document.createElement("body"))
 PASS not shadowed webkittransitionend (document.createElement("body"))
 PASS not shadowed wheel (document.createElement("body"))
-PASS not shadowed copy (document.createElement("body"))
-PASS not shadowed cut (document.createElement("body"))
-PASS not shadowed paste (document.createElement("body"))
 PASS shadowed blur removal (document.createElement("body"))
 PASS shadowed error removal (document.createElement("body"))
 PASS shadowed focus removal (document.createElement("body"))
@@ -307,9 +321,6 @@ PASS not shadowed webkitanimationiteration (window)
 PASS not shadowed webkitanimationstart (window)
 PASS not shadowed webkittransitionend (window)
 PASS not shadowed wheel (window)
-PASS not shadowed copy (window)
-PASS not shadowed cut (window)
-PASS not shadowed paste (window)
 PASS shadowed blur removal (window)
 PASS shadowed error removal (window)
 PASS shadowed focus removal (window)

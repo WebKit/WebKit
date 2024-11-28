@@ -590,8 +590,11 @@ enum RenderingMode {
 
     DOMString viewBaseBackgroundColor();
     undefined setViewBaseBackgroundColor(DOMString colorValue);
+    undefined setUnderPageBackgroundColorOverride(DOMString colorValue);
 
     DOMString documentBackgroundColor();
+
+    boolean displayP3Available();
 
     undefined setPagination(DOMString mode, long gap, optional long pageLength = 0);
     unsigned long long lineIndexAfterPageBreak(Element element);
@@ -601,11 +604,11 @@ enum RenderingMode {
     boolean wasLastChangeUserEdit(Element textField);
     boolean elementShouldAutoComplete(HTMLInputElement inputElement);
     undefined setAutofilled(HTMLInputElement inputElement, boolean enabled);
-    undefined setAutoFilledAndViewable(HTMLInputElement inputElement, boolean enabled);
-    undefined setAutoFilledAndObscured(HTMLInputElement inputElement, boolean enabled);
-    undefined setShowAutoFillButton(HTMLInputElement inputElement, AutoFillButtonType autoFillButtonType);
-    AutoFillButtonType autoFillButtonType(HTMLInputElement inputElement);
-    AutoFillButtonType lastAutoFillButtonType(HTMLInputElement inputElement);
+    undefined setAutofilledAndViewable(HTMLInputElement inputElement, boolean enabled);
+    undefined setAutofilledAndObscured(HTMLInputElement inputElement, boolean enabled);
+    undefined setAutofillButtonType(HTMLInputElement inputElement, AutoFillButtonType autoFillButtonType);
+    AutoFillButtonType autofillButtonType(HTMLInputElement inputElement);
+    AutoFillButtonType lastAutofillButtonType(HTMLInputElement inputElement);
     sequence<DOMString> recentSearches(HTMLInputElement inputElement);
 
     undefined setCanShowPlaceholder(Element element, boolean canShowPlaceholder);
@@ -685,7 +688,10 @@ enum RenderingMode {
     undefined setAutomaticTextReplacementEnabled(boolean enabled);
     undefined setAutomaticSpellingCorrectionEnabled(boolean enabled);
 
+    undefined setMarkerFor(DOMString markerTypeString, long from, long length, DOMString data);
+
     undefined handleAcceptedCandidate(DOMString candidate, unsigned long location, unsigned long length);
+
     undefined changeSelectionListType();
     undefined changeBackToReplacedString(DOMString replacedString);
 
@@ -715,6 +721,8 @@ enum RenderingMode {
     undefined setAsyncDecodingEnabledForTesting(HTMLImageElement element, boolean enabled);
     undefined setForceUpdateImageDataEnabledForTesting(HTMLImageElement element, boolean enabled);
 
+    [Conditional=WEB_CODECS] boolean hasPendingActivity(WebCodecsVideoDecoder decoder);
+
     undefined setGridMaxTracksLimit(unsigned long maxTracksLimit);
 
     readonly attribute InternalSettings settings;
@@ -739,7 +747,7 @@ enum RenderingMode {
     const unsigned short LAYER_TREE_INCLUDES_BACKING_STORE_ATTACHED = 128;
     const unsigned short LAYER_TREE_INCLUDES_ROOT_LAYER_PROPERTIES = 256;
     const unsigned short LAYER_TREE_INCLUDES_EVENT_REGION = 512;
-    const unsigned short LAYER_TREE_INCLUDES_DEEP_COLOR = 1024;
+    const unsigned short LAYER_TREE_INCLUDES_EXTENDED_COLOR = 1024;
     const unsigned short LAYER_TREE_INCLUDES_DEVICE_SCALE = 2048;
     DOMString layerTreeAsText(Document document, optional unsigned short flags = 0);
 
@@ -889,6 +897,12 @@ enum RenderingMode {
     unsigned long styleRecalcCount();
     readonly attribute unsigned long lastStyleUpdateSize;
 
+    undefined startTrackingLayoutUpdates();
+    unsigned long layoutUpdateCount();
+
+    undefined startTrackingRenderLayerPositionUpdates();
+    unsigned long renderLayerPositionUpdateCount();
+
     undefined startTrackingCompositingUpdates();
     unsigned long compositingUpdateCount();
 
@@ -903,8 +917,6 @@ enum RenderingMode {
     // If |node| is an HTMLIFrameElement, it assumes node.contentDocument is
     // specified without security checks. Unspecified or null means this document.
     undefined updateLayoutIgnorePendingStylesheetsAndRunPostLayoutTasks(optional Node? node = null);
-
-    readonly attribute unsigned long layoutCount;
 
     // Returns a string with information about the mouse cursor used at the specified client location.
     DOMString getCurrentCursorInfo();
@@ -1233,6 +1245,7 @@ enum RenderingMode {
 
     [Conditional=VIDEO] readonly attribute NowPlayingMetadata? nowPlayingMetadata;
     [Conditional=VIDEO] readonly attribute NowPlayingState nowPlayingState;
+    [Conditional=VIDEO] boolean elementIsActiveNowPlayingSession(HTMLMediaElement element);
 
     [Conditional=VIDEO] HTMLMediaElement bestMediaElementForRemoteControls(PlaybackControlsPurpose purpose);
     [Conditional=VIDEO] MediaSessionState mediaSessionState(HTMLMediaElement element);
@@ -1391,14 +1404,18 @@ enum RenderingMode {
     readonly attribute boolean hasScopeBreakingHasSelectors;
 
     sequence<PDFAnnotationRect> pdfAnnotationRectsForTesting(Element element);
+    undefined setPDFTextAnnotationValueForTesting(Element element, unsigned long pageIndex, unsigned long annotationIndex, DOMString value);
     undefined registerPDFTest(VoidCallback callback, Element element);
     undefined setPDFDisplayModeForTesting(Element element, DOMString mode);
+    undefined unlockPDFDocumentForTesting(Element element, DOMString password);
     boolean sendEditingCommandToPDFForTesting(Element element, DOMString commandName, optional DOMString argument = "");
 
     readonly attribute DOMString defaultSpatialTrackingLabel;
 
-    boolean isEffectivelyMuted(HTMLMediaElement element);
+    [Conditional=VIDEO] boolean isEffectivelyMuted(HTMLMediaElement element);
 
     RenderingMode? getEffectiveRenderingModeOfNewlyCreatedAcceleratedImageBuffer();
     Promise<ImageBufferResourceLimits> getImageBufferResourceLimits();
+
+    undefined setTopDocumentURLForQuirks(DOMString urlString);
 };

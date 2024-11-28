@@ -1,5 +1,5 @@
 
-PASS Getting a custom property not in the computed style returns null
+PASS Getting a custom property not in the computed style returns undefined
 PASS Getting a valid property from computed style returns the correct entry
 PASS Getting a valid custom property from computed style returns the correct entry
 PASS Getting a list-valued property from computed style returns only the first value

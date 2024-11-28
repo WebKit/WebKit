@@ -10,7 +10,6 @@ accessibility/mac/document-attributes.html [ Failure ]
 accessibility/mac/focus-setting-selection-syncronizing-not-clearing.html [ Failure ]
 # Fails because of (1) stale focus ID for the iFrame and (2) iFrame #2 being ignored.
 accessibility/mac/frame-with-title.html [ Failure ]
-accessibility/mac/press-action-not-exposed-for-event-delegation.html [ Failure ]
 accessibility/mac/pseudo-element-text-markers.html [ Failure ]
 accessibility/mac/ruby-hierarchy-roles.html [ Failure Pass ]
 accessibility/mac/search-predicate-from-ignored-element.html [ Failure ]
@@ -28,6 +27,12 @@ accessibility/element-reflection-ariaactivedescendant.html [ Failure ]
 
 # Used to be a timeout until https://github.com/WebKit/WebKit/commit/c69e4c0caaf5368db791652eee3a057ed2751144, now is a text failure.
 accessibility/frame-disconnect-textmarker-cache-crash.html [ Failure ]
+
+# Crashes
+accessibility/mac/apple-pay-labels.html  [ Crash ]
+
+# Flaky timeouts
+accessibility/datetime/input-date-field-labels-and-value-changes.html [ Pass Timeout ]
 
 # When ENABLE(AX_THREAD_TEXT_APIS) is on by default, un-comment this.
 # accessibility/ax-thread-text-apis [ Pass ]

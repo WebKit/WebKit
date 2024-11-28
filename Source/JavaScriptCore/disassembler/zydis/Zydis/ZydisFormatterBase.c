@@ -30,6 +30,9 @@
 
 #include "ZydisInternalFormatterBase.h"
 #include "ZydisUtils.h"
+#include <wtf/Compiler.h>
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 /* ============================================================================================== */
 /* Constants                                                                                      */
@@ -784,5 +787,7 @@ ZyanStatus ZydisFormatterBasePrintDecorator(const ZydisFormatter* formatter,
 /* ---------------------------------------------------------------------------------------------- */
 
 /* ============================================================================================== */
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif /* ENABLE(ZYDIS) */

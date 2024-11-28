@@ -1,0 +1,68 @@
+<!doctype html>
+<html>
+<head>
+    <title>MediaRecorder with sampling rate change</title>
+    <script src="/resources/testharness.js"></script>
+    <script src="/resources/testharnessreport.js"></script>
+</head>
+<body>
+<script>
+    async function record(stream, mimeType)
+    {
+        await stream.getAudioTracks()[0].applyConstraints({ sampleRate:44100 });
+        const recorder = new MediaRecorder(stream, { mimeType : mimeType });
+        const promise = new Promise((resolve, reject) => {
+            recorder.ondataavailable = (e) => resolve(e.data);
+            setTimeout(reject, 5000);
+        });
+        recorder.start();
+        setTimeout(() => recorder.stop(), 1500);
+        return promise;
+    }
+
+    promise_test(async (t) => {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio : true });
+
+        setTimeout(() => {
+            stream.getAudioTracks()[0].applyConstraints({sampleRate:48000});
+        }, 500);
+
+        let blob = await record(stream, 'audio/mp4');
+        assert_not_equals(blob.size, 0);
+
+        const video = document.createElement('video');
+        video.muted = true;
+        document.body.appendChild(video);
+        video.srcObject = blob;
+        const watcher = new EventWatcher(t, video, [ 'loadedmetadata' ]);
+        await watcher.wait_for([ 'loadedmetadata' ]);
+        assert_greater_than(video.duration, 0.5, "video got recorded past change of sample rate");
+    }, "Recorder with sampling rate change");
+
+    promise_test(async (t) => {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio : true });
+
+        setTimeout(() => {
+            stream.getAudioTracks()[0].applyConstraints({sampleRate:48000});
+        }, 500);
+
+        let blob = await record(stream, 'audio/webm');
+        assert_not_equals(blob.size, 0);
+
+        const video = document.createElement('video');
+        video.muted = true;
+        document.body.appendChild(video);
+        video.srcObject = blob;
+        // WebM recorded from MediaStream do not have a duration set in the metadata. We must download the entire
+        // content to know the final duration.
+        // so we seek past 0.5s and make sure the seek completes.
+        let watcher = new EventWatcher(t, video, [ 'loadedmetadata' ]);
+        await watcher.wait_for([ 'loadedmetadata' ]);
+        video.currentTime = 0.6;
+        watcher = new EventWatcher(t, video, [ 'seeking', 'seeked' ]);
+        await watcher.wait_for([ 'seeking', 'seeked' ]);
+        assert_greater_than(video.duration, 0.5, "video got recorded past change of sample rate");
+    }, "Recorder WebM with sampling rate change");
+</script>
+</body>
+</html>

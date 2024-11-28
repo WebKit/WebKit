@@ -53,7 +53,6 @@
 #include <wtf/URL.h>
 #include <wtf/text/MakeString.h>
 
-
 namespace WebCore {
 using namespace JSC;
 
@@ -131,17 +130,16 @@ template<> void JSTestCEReactionsDOMConstructor::initializeProperties(VM& vm, JS
 
 /* Hash table for prototype */
 
-static const HashTableValue JSTestCEReactionsPrototypeTableValues[] =
-{
-    { "constructor"_s, static_cast<unsigned>(PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestCEReactionsConstructor, 0 } },
-    { "attributeWithCEReactions"_s, JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { HashTableValue::GetterSetterType, jsTestCEReactions_attributeWithCEReactions, setJSTestCEReactions_attributeWithCEReactions } },
-    { "reflectAttributeWithCEReactions"_s, JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { HashTableValue::GetterSetterType, jsTestCEReactions_reflectAttributeWithCEReactions, setJSTestCEReactions_reflectAttributeWithCEReactions } },
-    { "stringifierAttribute"_s, JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { HashTableValue::GetterSetterType, jsTestCEReactions_stringifierAttribute, setJSTestCEReactions_stringifierAttribute } },
-    { "attributeWithCEReactionsNotNeeded"_s, JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { HashTableValue::GetterSetterType, jsTestCEReactions_attributeWithCEReactionsNotNeeded, setJSTestCEReactions_attributeWithCEReactionsNotNeeded } },
-    { "reflectAttributeWithCEReactionsNotNeeded"_s, JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { HashTableValue::GetterSetterType, jsTestCEReactions_reflectAttributeWithCEReactionsNotNeeded, setJSTestCEReactions_reflectAttributeWithCEReactionsNotNeeded } },
-    { "stringifierAttributeNotNeeded"_s, JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { HashTableValue::GetterSetterType, jsTestCEReactions_stringifierAttributeNotNeeded, setJSTestCEReactions_stringifierAttributeNotNeeded } },
-    { "methodWithCEReactions"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestCEReactionsPrototypeFunction_methodWithCEReactions, 0 } },
-    { "methodWithCEReactionsNotNeeded"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestCEReactionsPrototypeFunction_methodWithCEReactionsNotNeeded, 0 } },
+static const std::array<HashTableValue, 9> JSTestCEReactionsPrototypeTableValues {
+    HashTableValue { "constructor"_s, static_cast<unsigned>(PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestCEReactionsConstructor, 0 } },
+    HashTableValue { "attributeWithCEReactions"_s, JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { HashTableValue::GetterSetterType, jsTestCEReactions_attributeWithCEReactions, setJSTestCEReactions_attributeWithCEReactions } },
+    HashTableValue { "reflectAttributeWithCEReactions"_s, JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { HashTableValue::GetterSetterType, jsTestCEReactions_reflectAttributeWithCEReactions, setJSTestCEReactions_reflectAttributeWithCEReactions } },
+    HashTableValue { "stringifierAttribute"_s, JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { HashTableValue::GetterSetterType, jsTestCEReactions_stringifierAttribute, setJSTestCEReactions_stringifierAttribute } },
+    HashTableValue { "attributeWithCEReactionsNotNeeded"_s, JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { HashTableValue::GetterSetterType, jsTestCEReactions_attributeWithCEReactionsNotNeeded, setJSTestCEReactions_attributeWithCEReactionsNotNeeded } },
+    HashTableValue { "reflectAttributeWithCEReactionsNotNeeded"_s, JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { HashTableValue::GetterSetterType, jsTestCEReactions_reflectAttributeWithCEReactionsNotNeeded, setJSTestCEReactions_reflectAttributeWithCEReactionsNotNeeded } },
+    HashTableValue { "stringifierAttributeNotNeeded"_s, JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { HashTableValue::GetterSetterType, jsTestCEReactions_stringifierAttributeNotNeeded, setJSTestCEReactions_stringifierAttributeNotNeeded } },
+    HashTableValue { "methodWithCEReactions"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestCEReactionsPrototypeFunction_methodWithCEReactions, 0 } },
+    HashTableValue { "methodWithCEReactionsNotNeeded"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestCEReactionsPrototypeFunction_methodWithCEReactionsNotNeeded, 0 } },
 };
 
 const ClassInfo JSTestCEReactionsPrototype::s_info = { "TestCEReactions"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestCEReactionsPrototype) };
@@ -187,7 +185,7 @@ void JSTestCEReactions::destroy(JSC::JSCell* cell)
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestCEReactionsConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
-    auto& vm = JSC::getVM(lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto* prototype = jsDynamicCast<JSTestCEReactionsPrototype*>(JSValue::decode(thisValue));
     if (UNLIKELY(!prototype))
@@ -197,9 +195,9 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestCEReactionsConstructor, (JSGlobalObject* lexicalG
 
 static inline JSValue jsTestCEReactions_attributeWithCEReactionsGetter(JSGlobalObject& lexicalGlobalObject, JSTestCEReactions& thisObject)
 {
-    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto& impl = thisObject.wrapped();
+    SUPPRESS_UNCOUNTED_LOCAL auto& impl = thisObject.wrapped();
     RELEASE_AND_RETURN(throwScope, (toJS<IDLDOMString>(lexicalGlobalObject, throwScope, impl.attributeWithCEReactions())));
 }
 
@@ -210,11 +208,11 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestCEReactions_attributeWithCEReactions, (JSGlobalOb
 
 static inline bool setJSTestCEReactions_attributeWithCEReactionsSetter(JSGlobalObject& lexicalGlobalObject, JSTestCEReactions& thisObject, JSValue value)
 {
-    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(&lexicalGlobalObject);
     UNUSED_PARAM(vm);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     CustomElementReactionStack customElementReactionStack(lexicalGlobalObject);
-    auto& impl = thisObject.wrapped();
+    SUPPRESS_UNCOUNTED_LOCAL auto& impl = thisObject.wrapped();
     auto nativeValueConversionResult = convert<IDLDOMString>(lexicalGlobalObject, value);
     if (UNLIKELY(nativeValueConversionResult.hasException(throwScope)))
         return false;
@@ -231,9 +229,9 @@ JSC_DEFINE_CUSTOM_SETTER(setJSTestCEReactions_attributeWithCEReactions, (JSGloba
 
 static inline JSValue jsTestCEReactions_reflectAttributeWithCEReactionsGetter(JSGlobalObject& lexicalGlobalObject, JSTestCEReactions& thisObject)
 {
-    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto& impl = thisObject.wrapped();
+    SUPPRESS_UNCOUNTED_LOCAL auto& impl = thisObject.wrapped();
     RELEASE_AND_RETURN(throwScope, (toJS<IDLAtomStringAdaptor<IDLDOMString>>(lexicalGlobalObject, throwScope, impl.attributeWithoutSynchronization(WebCore::HTMLNames::reflectattributewithcereactionsAttr))));
 }
 
@@ -244,11 +242,11 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestCEReactions_reflectAttributeWithCEReactions, (JSG
 
 static inline bool setJSTestCEReactions_reflectAttributeWithCEReactionsSetter(JSGlobalObject& lexicalGlobalObject, JSTestCEReactions& thisObject, JSValue value)
 {
-    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(&lexicalGlobalObject);
     UNUSED_PARAM(vm);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     CustomElementReactionStack customElementReactionStack(lexicalGlobalObject);
-    auto& impl = thisObject.wrapped();
+    SUPPRESS_UNCOUNTED_LOCAL auto& impl = thisObject.wrapped();
     auto nativeValueConversionResult = convert<IDLAtomStringAdaptor<IDLDOMString>>(lexicalGlobalObject, value);
     if (UNLIKELY(nativeValueConversionResult.hasException(throwScope)))
         return false;
@@ -265,9 +263,9 @@ JSC_DEFINE_CUSTOM_SETTER(setJSTestCEReactions_reflectAttributeWithCEReactions, (
 
 static inline JSValue jsTestCEReactions_stringifierAttributeGetter(JSGlobalObject& lexicalGlobalObject, JSTestCEReactions& thisObject)
 {
-    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto& impl = thisObject.wrapped();
+    SUPPRESS_UNCOUNTED_LOCAL auto& impl = thisObject.wrapped();
     RELEASE_AND_RETURN(throwScope, (toJS<IDLInterface<TestCEReactionsStringifier>>(lexicalGlobalObject, *thisObject.globalObject(), throwScope, impl.stringifierAttribute())));
 }
 
@@ -278,7 +276,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestCEReactions_stringifierAttribute, (JSGlobalObject
 
 static inline bool setJSTestCEReactions_stringifierAttributeSetter(JSGlobalObject& lexicalGlobalObject, JSTestCEReactions& thisObject, JSValue value)
 {
-    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(&lexicalGlobalObject);
     UNUSED_PARAM(vm);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto id = Identifier::fromString(vm, "stringifierAttribute"_s);
@@ -302,9 +300,9 @@ JSC_DEFINE_CUSTOM_SETTER(setJSTestCEReactions_stringifierAttribute, (JSGlobalObj
 
 static inline JSValue jsTestCEReactions_attributeWithCEReactionsNotNeededGetter(JSGlobalObject& lexicalGlobalObject, JSTestCEReactions& thisObject)
 {
-    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto& impl = thisObject.wrapped();
+    SUPPRESS_UNCOUNTED_LOCAL auto& impl = thisObject.wrapped();
     RELEASE_AND_RETURN(throwScope, (toJS<IDLDOMString>(lexicalGlobalObject, throwScope, impl.attributeWithCEReactionsNotNeeded())));
 }
 
@@ -315,11 +313,11 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestCEReactions_attributeWithCEReactionsNotNeeded, (J
 
 static inline bool setJSTestCEReactions_attributeWithCEReactionsNotNeededSetter(JSGlobalObject& lexicalGlobalObject, JSTestCEReactions& thisObject, JSValue value)
 {
-    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(&lexicalGlobalObject);
     UNUSED_PARAM(vm);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     CustomElementReactionDisallowedScope customElementReactionDisallowedScope;
-    auto& impl = thisObject.wrapped();
+    SUPPRESS_UNCOUNTED_LOCAL auto& impl = thisObject.wrapped();
     auto nativeValueConversionResult = convert<IDLDOMString>(lexicalGlobalObject, value);
     if (UNLIKELY(nativeValueConversionResult.hasException(throwScope)))
         return false;
@@ -336,9 +334,9 @@ JSC_DEFINE_CUSTOM_SETTER(setJSTestCEReactions_attributeWithCEReactionsNotNeeded,
 
 static inline JSValue jsTestCEReactions_reflectAttributeWithCEReactionsNotNeededGetter(JSGlobalObject& lexicalGlobalObject, JSTestCEReactions& thisObject)
 {
-    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto& impl = thisObject.wrapped();
+    SUPPRESS_UNCOUNTED_LOCAL auto& impl = thisObject.wrapped();
     RELEASE_AND_RETURN(throwScope, (toJS<IDLAtomStringAdaptor<IDLDOMString>>(lexicalGlobalObject, throwScope, impl.attributeWithoutSynchronization(WebCore::HTMLNames::reflectattributewithcereactionsnotneededAttr))));
 }
 
@@ -349,11 +347,11 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestCEReactions_reflectAttributeWithCEReactionsNotNee
 
 static inline bool setJSTestCEReactions_reflectAttributeWithCEReactionsNotNeededSetter(JSGlobalObject& lexicalGlobalObject, JSTestCEReactions& thisObject, JSValue value)
 {
-    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(&lexicalGlobalObject);
     UNUSED_PARAM(vm);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     CustomElementReactionDisallowedScope customElementReactionDisallowedScope;
-    auto& impl = thisObject.wrapped();
+    SUPPRESS_UNCOUNTED_LOCAL auto& impl = thisObject.wrapped();
     auto nativeValueConversionResult = convert<IDLAtomStringAdaptor<IDLDOMString>>(lexicalGlobalObject, value);
     if (UNLIKELY(nativeValueConversionResult.hasException(throwScope)))
         return false;
@@ -370,9 +368,9 @@ JSC_DEFINE_CUSTOM_SETTER(setJSTestCEReactions_reflectAttributeWithCEReactionsNot
 
 static inline JSValue jsTestCEReactions_stringifierAttributeNotNeededGetter(JSGlobalObject& lexicalGlobalObject, JSTestCEReactions& thisObject)
 {
-    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto& impl = thisObject.wrapped();
+    SUPPRESS_UNCOUNTED_LOCAL auto& impl = thisObject.wrapped();
     RELEASE_AND_RETURN(throwScope, (toJS<IDLInterface<TestCEReactionsStringifier>>(lexicalGlobalObject, *thisObject.globalObject(), throwScope, impl.stringifierAttributeNotNeeded())));
 }
 
@@ -383,7 +381,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestCEReactions_stringifierAttributeNotNeeded, (JSGlo
 
 static inline bool setJSTestCEReactions_stringifierAttributeNotNeededSetter(JSGlobalObject& lexicalGlobalObject, JSTestCEReactions& thisObject, JSValue value)
 {
-    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(&lexicalGlobalObject);
     UNUSED_PARAM(vm);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto id = Identifier::fromString(vm, "stringifierAttributeNotNeeded"_s);
@@ -407,12 +405,12 @@ JSC_DEFINE_CUSTOM_SETTER(setJSTestCEReactions_stringifierAttributeNotNeeded, (JS
 
 static inline JSC::EncodedJSValue jsTestCEReactionsPrototypeFunction_methodWithCEReactionsBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestCEReactions>::ClassParameter castedThis)
 {
-    auto& vm = JSC::getVM(lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(callFrame);
     CustomElementReactionStack customElementReactionStack(*lexicalGlobalObject);
-    auto& impl = castedThis->wrapped();
+    SUPPRESS_UNCOUNTED_LOCAL auto& impl = castedThis->wrapped();
     RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLUndefined>(*lexicalGlobalObject, throwScope, [&]() -> decltype(auto) { return impl.methodWithCEReactions(); })));
 }
 
@@ -423,12 +421,12 @@ JSC_DEFINE_HOST_FUNCTION(jsTestCEReactionsPrototypeFunction_methodWithCEReaction
 
 static inline JSC::EncodedJSValue jsTestCEReactionsPrototypeFunction_methodWithCEReactionsNotNeededBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestCEReactions>::ClassParameter castedThis)
 {
-    auto& vm = JSC::getVM(lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(callFrame);
     CustomElementReactionDisallowedScope customElementReactionDisallowedScope;
-    auto& impl = castedThis->wrapped();
+    SUPPRESS_UNCOUNTED_LOCAL auto& impl = castedThis->wrapped();
     RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLUndefined>(*lexicalGlobalObject, throwScope, [&]() -> decltype(auto) { return impl.methodWithCEReactionsNotNeeded(); })));
 }
 
@@ -451,8 +449,8 @@ void JSTestCEReactions::analyzeHeap(JSCell* cell, HeapAnalyzer& analyzer)
 {
     auto* thisObject = jsCast<JSTestCEReactions*>(cell);
     analyzer.setWrappedObjectForCell(cell, &thisObject->wrapped());
-    if (thisObject->scriptExecutionContext())
-        analyzer.setLabelForCell(cell, makeString("url "_s, thisObject->scriptExecutionContext()->url().string()));
+    if (RefPtr context = thisObject->scriptExecutionContext())
+        analyzer.setLabelForCell(cell, makeString("url "_s, context->url().string()));
     Base::analyzeHeap(cell, analyzer);
 }
 
@@ -471,6 +469,7 @@ void JSTestCEReactionsOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* co
     uncacheWrapper(world, jsTestCEReactions->protectedWrapped().ptr(), jsTestCEReactions);
 }
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 #if ENABLE(BINDING_INTEGRITY)
 #if PLATFORM(WIN)
 #pragma warning(disable: 4483)
@@ -495,6 +494,8 @@ template<typename T, typename = std::enable_if_t<std::is_same_v<T, TestCEReactio
     }
 }
 #endif
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+
 JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject*, JSDOMGlobalObject* globalObject, Ref<TestCEReactions>&& impl)
 {
 #if ENABLE(BINDING_INTEGRITY)

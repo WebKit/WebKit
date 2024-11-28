@@ -52,6 +52,16 @@ RemoteMediaSessionHelperProxy::~RemoteMediaSessionHelperProxy()
     MediaSessionHelper::sharedHelper().removeClient(*this);
 }
 
+void RemoteMediaSessionHelperProxy::ref() const
+{
+    m_gpuConnection.get()->ref();
+}
+
+void RemoteMediaSessionHelperProxy::deref() const
+{
+    m_gpuConnection.get()->deref();
+}
+
 void RemoteMediaSessionHelperProxy::startMonitoringWirelessRoutes()
 {
     if (m_isMonitoringWirelessRoutes)
@@ -134,6 +144,14 @@ void RemoteMediaSessionHelperProxy::activeAudioRouteSupportsSpatialPlaybackDidCh
 {
     if (auto connection = m_gpuConnection.get())
         connection->connection().send(Messages::RemoteMediaSessionHelper::ActiveAudioRouteSupportsSpatialPlaybackDidChange(supportsSpatialPlayback), { });
+}
+
+std::optional<SharedPreferencesForWebProcess> RemoteMediaSessionHelperProxy::sharedPreferencesForWebProcess() const
+{
+    if (RefPtr gpuConnectionToWebProcess = m_gpuConnection.get())
+        return gpuConnectionToWebProcess->sharedPreferencesForWebProcess();
+
+    return std::nullopt;
 }
 
 }

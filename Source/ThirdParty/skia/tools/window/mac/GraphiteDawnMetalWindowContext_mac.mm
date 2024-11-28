@@ -4,9 +4,10 @@
  * Use of this source code is governed by a BSD-style license that can be
  * found in the LICENSE file.
  */
+#include "tools/window/mac/GraphiteDawnMetalWindowContext_mac.h"
 
 #include "tools/window/GraphiteDawnWindowContext.h"
-#include "tools/window/mac/WindowContextFactory_mac.h"
+#include "tools/window/mac/MacWindowInfo.h"
 
 #import <Cocoa/Cocoa.h>
 #import <QuartzCore/CAConstraintLayoutManager.h>
@@ -81,10 +82,9 @@ bool GraphiteDawnMetalWindowContext_mac::onInitializeContext() {
         return false;
     }
 
-
     fDevice = std::move(device);
     fSurface = std::move(surface);
-    fSwapChain = this->createSwapChain();
+    configureSurface();
 
     return true;
 }
@@ -95,7 +95,6 @@ void GraphiteDawnMetalWindowContext_mac::resize(int w, int h) {
     if (!this->resizeInternal()) {
         return;
     }
-    fSwapChain = this->createSwapChain();
 }
 
 bool GraphiteDawnMetalWindowContext_mac::resizeInternal() {
@@ -113,6 +112,8 @@ bool GraphiteDawnMetalWindowContext_mac::resizeInternal() {
 
     fWidth = backingSize.width;
     fHeight = backingSize.height;
+    configureSurface();
+
     return true;
 }
 

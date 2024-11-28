@@ -35,6 +35,8 @@
 #include <wtf/ProcessID.h>
 #include <wtf/TZoneMallocInlines.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(HeapVerifier);
@@ -175,7 +177,8 @@ bool HeapVerifier::verifyCellList(Phase phase, CellList& list)
             continue;
 
         JSCell* cell = profile.jsCell();
-        success |= validateJSCell(&vm, cell, &profile, &list, printHeaderIfNeeded, "  ");
+        if (!validateJSCell(&vm, cell, &profile, &list, printHeaderIfNeeded, "  "))
+            success = false;
     }
 
     return success;
@@ -460,3 +463,5 @@ void HeapVerifier::checkIfRecorded(uintptr_t candidateCell)
 }
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

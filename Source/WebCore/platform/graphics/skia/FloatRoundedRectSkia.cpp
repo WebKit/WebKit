@@ -27,7 +27,10 @@
 #include "FloatRoundedRect.h"
 
 #if USE(SKIA)
+
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
 #include <skia/core/SkRRect.h>
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 
 namespace WebCore {
 
@@ -49,11 +52,14 @@ FloatRoundedRect::operator SkRRect() const
     if (!isRounded())
         return SkRRect::MakeRect(rect());
 
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib/Win port
     SkVector radii[4];
     radii[SkRRect::kUpperLeft_Corner].set(m_radii.topLeft().width(), m_radii.topLeft().height());
     radii[SkRRect::kUpperRight_Corner].set(m_radii.topRight().width(), m_radii.topRight().height());
     radii[SkRRect::kLowerRight_Corner].set(m_radii.bottomRight().width(), m_radii.bottomRight().height());
     radii[SkRRect::kLowerLeft_Corner].set(m_radii.bottomLeft().width(), m_radii.bottomLeft().height());
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+
     SkRRect skRect;
     skRect.setRectRadii(rect(), radii);
     return skRect;

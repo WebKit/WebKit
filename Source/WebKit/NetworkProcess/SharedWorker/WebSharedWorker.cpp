@@ -28,6 +28,7 @@
 
 #include "WebSharedWorkerServer.h"
 #include "WebSharedWorkerServerToContextConnection.h"
+#include <WebCore/Site.h>
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RunLoop.h>
@@ -45,6 +46,12 @@ static HashMap<WebCore::SharedWorkerIdentifier, WeakRef<WebSharedWorker>>& allWo
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(WebSharedWorker);
 
+
+Ref<WebSharedWorker> WebSharedWorker::create(WebSharedWorkerServer& server, const WebCore::SharedWorkerKey& key, const WebCore::WorkerOptions& options)
+{
+    return adoptRef(*new WebSharedWorker(server, key, options));
+}
+
 WebSharedWorker::WebSharedWorker(WebSharedWorkerServer& server, const WebCore::SharedWorkerKey& key, const WebCore::WorkerOptions& workerOptions)
     : m_server(server)
     , m_key(key)
@@ -56,7 +63,7 @@ WebSharedWorker::WebSharedWorker(WebSharedWorkerServer& server, const WebCore::S
 
 WebSharedWorker::~WebSharedWorker()
 {
-    if (auto* connection = contextConnection()) {
+    if (RefPtr connection = contextConnection()) {
         for (auto& sharedWorkerObject : m_sharedWorkerObjects)
             connection->removeSharedWorkerObject(sharedWorkerObject.identifier);
     }
@@ -73,6 +80,11 @@ WebSharedWorker* WebSharedWorker::fromIdentifier(WebCore::SharedWorkerIdentifier
 WebCore::RegistrableDomain WebSharedWorker::topRegistrableDomain() const
 {
     return WebCore::RegistrableDomain { m_key.origin.topOrigin };
+}
+
+WebCore::Site WebSharedWorker::topSite() const
+{
+    return WebCore::Site { m_key.origin.topOrigin };
 }
 
 void WebSharedWorker::setFetchResult(WebCore::WorkerFetchResult&& fetchResult)
@@ -99,7 +111,7 @@ void WebSharedWorker::addSharedWorkerObject(WebCore::SharedWorkerObjectIdentifie
 {
     ASSERT(!m_sharedWorkerObjects.contains({ sharedWorkerObjectIdentifier, { false, port } }));
     m_sharedWorkerObjects.add({ sharedWorkerObjectIdentifier, { false, port } });
-    if (auto* connection = contextConnection())
+    if (RefPtr connection = contextConnection())
         connection->addSharedWorkerObject(sharedWorkerObjectIdentifier);
 
     resumeIfNeeded();
@@ -108,7 +120,7 @@ void WebSharedWorker::addSharedWorkerObject(WebCore::SharedWorkerObjectIdentifie
 void WebSharedWorker::removeSharedWorkerObject(WebCore::SharedWorkerObjectIdentifier sharedWorkerObjectIdentifier)
 {
     m_sharedWorkerObjects.remove({ sharedWorkerObjectIdentifier, { } });
-    if (auto* connection = contextConnection())
+    if (RefPtr connection = contextConnection())
         connection->removeSharedWorkerObject(sharedWorkerObjectIdentifier);
 
     suspendIfNeeded();
@@ -136,7 +148,7 @@ void WebSharedWorker::suspendIfNeeded()
     }
 
     m_isSuspended = true;
-    if (auto* connection = contextConnection())
+    if (RefPtr connection = contextConnection())
         connection->suspendSharedWorker(identifier());
 }
 
@@ -156,14 +168,14 @@ void WebSharedWorker::resumeIfNeeded()
         return;
 
     m_isSuspended = false;
-    if (auto* connection = contextConnection())
+    if (RefPtr connection = contextConnection())
         connection->resumeSharedWorker(identifier());
 }
 
 void WebSharedWorker::forEachSharedWorkerObject(const Function<void(WebCore::SharedWorkerObjectIdentifier, const WebCore::TransferredMessagePort&)>& apply) const
 {
     for (auto& object : m_sharedWorkerObjects)
-        apply(object.identifier, object.state.port);
+        apply(object.identifier, *object.state.port);
 }
 
 std::optional<WebCore::ProcessIdentifier> WebSharedWorker::firstSharedWorkerObjectProcess() const
@@ -175,6 +187,8 @@ std::optional<WebCore::ProcessIdentifier> WebSharedWorker::firstSharedWorkerObje
 
 WebSharedWorkerServerToContextConnection* WebSharedWorker::contextConnection() const
 {
+    if (!m_server)
+        return nullptr;
     return m_server->contextConnectionForRegistrableDomain(topRegistrableDomain());
 }
 

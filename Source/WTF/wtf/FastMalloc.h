@@ -291,6 +291,11 @@ struct FastMalloc {
     }
     
     static void free(void* p) { fastFree(p); }
+
+    static constexpr ALWAYS_INLINE size_t nextCapacity(size_t capacity)
+    {
+        return capacity + capacity / 4 + 1;
+    }
 };
 
 struct FastCompactMalloc {
@@ -328,6 +333,11 @@ struct FastCompactMalloc {
     }
 
     static void free(void* p) { fastFree(p); }
+
+    static constexpr ALWAYS_INLINE size_t nextCapacity(size_t capacity)
+    {
+        return capacity + capacity / 4 + 1;
+    }
 };
 
 template<typename T>
@@ -619,7 +629,7 @@ using __thisIsHereToForceASemicolonAfterThisMacro UNUSED_TYPE_ALIAS = int
 void operator delete(T* object, std::destroying_delete_t, size_t size) { \
     ASSERT(sizeof(T) == size); \
     object->T::~T(); \
-    if (UNLIKELY(object->ptrCountWithoutThreadCheck())) { \
+    if (UNLIKELY(object->checkedPtrCountWithoutThreadCheck())) { \
         memset(static_cast<void*>(object), 0, size); \
         return; \
     } \

@@ -39,6 +39,7 @@
 #include <wtf/SoftLinking.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/ThreadSafeRefCounted.h>
+#include <wtf/cocoa/SpanCocoa.h>
 
 namespace WebKit {
 
@@ -61,9 +62,12 @@ public:
         static Ref<ConnectionStateTracker> create() { return adoptRef(*new ConnectionStateTracker()); }
         void markAsStopped() { m_isStopped = true; }
         bool isStopped() const { return m_isStopped; }
+        bool shouldLogMissingECN() const { return !m_didLogMissingECN; }
+        void didLogMissingECN() { m_didLogMissingECN = true; }
 
     private:
         bool m_isStopped { false };
+        bool m_didLogMissingECN { false };
     };
 
 private:
@@ -129,7 +133,7 @@ void NetworkRTCUDPSocketCocoa::sendTo(std::span<const uint8_t> data, const rtc::
     m_connections->sendTo(data, address, options);
 }
 
-static RTC::Network::EcnMarking getECN(nw_content_context_t nwContext)
+static RTC::Network::EcnMarking getECN(nw_content_context_t nwContext, NetworkRTCUDPSocketCocoaConnections::ConnectionStateTracker& connection)
 {
     auto protocol = adoptNS(nw_protocol_copy_ip_definition());
     auto metadata = adoptNS(nw_content_context_copy_protocol_metadata(nwContext, protocol.get()));
@@ -150,7 +154,11 @@ static RTC::Network::EcnMarking getECN(nw_content_context_t nwContext)
         }
     }
 
-    RELEASE_LOG_IF(!metadata, WebRTC, "Could not retreive the metadata from UDPSocket Context, so use default ECN value");
+    if (!metadata && connection.shouldLogMissingECN()) {
+        connection.didLogMissingECN();
+        RELEASE_LOG_INFO(WebRTC, "Could not retrieve the metadata from UDPSocket Context, so use default ECN value");
+    }
+
     return RTC::Network::EcnMarking::kNotEct;
 }
 
@@ -330,10 +338,10 @@ static inline void processUDPData(RetainPtr<nw_connection_t>&& nwConnection, Ref
     auto nwConnectionReference = nwConnection.get();
     nw_connection_receive(nwConnectionReference, 1, std::numeric_limits<uint32_t>::max(), makeBlockPtr([nwConnection = WTFMove(nwConnection), processData = WTFMove(processData), errorCode, connectionStateTracker = WTFMove(connectionStateTracker)](dispatch_data_t content, nw_content_context_t context, bool, nw_error_t error) mutable {
         if (content) {
-            dispatch_data_apply(content, makeBlockPtr([&](dispatch_data_t, size_t, const void* data, size_t size) {
-                processData({ static_cast<const uint8_t*>(data), size }, getECN(context));
+            dispatch_data_apply_span(content, [&](std::span<const uint8_t> data) {
+                processData(data, getECN(context, connectionStateTracker.get()));
                 return true;
-            }).get());
+            });
         }
         if (connectionStateTracker->isStopped() || nw_content_context_get_is_final(context))
             return;

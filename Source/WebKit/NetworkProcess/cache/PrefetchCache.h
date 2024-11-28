@@ -30,6 +30,7 @@
 #include <WebCore/ResourceResponse.h>
 #include <WebCore/SharedBuffer.h>
 #include <WebCore/Timer.h>
+#include <wtf/CheckedPtr.h>
 #include <wtf/Deque.h>
 #include <wtf/HashMap.h>
 #include <wtf/TZoneMalloc.h>
@@ -38,8 +39,9 @@
 
 namespace WebKit {
 
-class PrefetchCache {
+class PrefetchCache final : public CanMakeCheckedPtr<PrefetchCache> {
     WTF_MAKE_TZONE_ALLOCATED(PrefetchCache);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(PrefetchCache);
     WTF_MAKE_NONCOPYABLE(PrefetchCache);
 public:
     PrefetchCache();

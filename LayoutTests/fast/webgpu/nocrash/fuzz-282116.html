@@ -1,0 +1,11 @@
+<script>
+async function run() {
+  let adapter = await navigator.gpu.requestAdapter();
+  let device = await adapter.requestDevice();
+  let renderBundleEncoder = device.createRenderBundleEncoder({ colorFormats: ['r8sint'] });
+  renderBundleEncoder.draw(67, 297, 432_754_598, 4_294_967_295);
+  renderBundleEncoder.finish();
+}
+testRunner?.waitUntilDone();
+run().then(() => testRunner?.notifyDone());
+</script>

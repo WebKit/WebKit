@@ -164,7 +164,7 @@ float AccessibilityObjectAtspi::opacity() const
 
 void AccessibilityObjectAtspi::scrollToMakeVisible(Atspi::ScrollType scrollType) const
 {
-    auto* liveObject = dynamicDowncast<AccessibilityObject>(m_coreObject);
+    auto* liveObject = dynamicDowncast<AccessibilityObject>(m_coreObject.get());
     if (!liveObject)
         return;
 

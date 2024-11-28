@@ -54,7 +54,7 @@ void VerifierSlotVisitor::forEachLiveMarkedBlockCell(const Functor& func)
         MarkedBlock* block = data->block();
         const MarkedBlockData::AtomsBitSet& atoms = data->atoms();
         for (auto atomNumber : atoms)
-            func(bitwise_cast<HeapCell*>(block->handle().atomAt(atomNumber)));
+            func(std::bit_cast<HeapCell*>(block->handle().atomAt(atomNumber)));
     }
 }
 

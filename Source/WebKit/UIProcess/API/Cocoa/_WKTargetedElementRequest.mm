@@ -50,7 +50,7 @@
     if (!(self = [super init]))
         return nil;
 
-    API::Object::constructInWrapper<API::TargetedElementRequest>(self, API::TargetedElementRequest { });
+    API::Object::constructInWrapper<API::TargetedElementRequest>(self);
     return self;
 }
 

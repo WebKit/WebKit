@@ -178,7 +178,9 @@ static std::optional<Vector<uint8_t>> gcryptAESCTR(PAL::GCrypt::CipherOperation 
 
         // Encrypt/decrypt this single block with the block-specific counter. Output for this
         // single block is appended to the general output vector.
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib port
         auto blockOutput = callOperation(operation, handle, blockCounterData, inputText.data() + i, blockInputSize);
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
         if (!blockOutput)
             return std::nullopt;
 

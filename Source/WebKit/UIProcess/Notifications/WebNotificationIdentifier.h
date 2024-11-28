@@ -30,6 +30,6 @@
 namespace WebKit {
 
 enum class WebNotificationIdentifierType { };
-using WebNotificationIdentifier = LegacyNullableObjectIdentifier<WebNotificationIdentifierType>;
+using WebNotificationIdentifier = ObjectIdentifier<WebNotificationIdentifierType>;
 
 } // namespace WebKit

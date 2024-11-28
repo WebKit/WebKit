@@ -50,15 +50,16 @@ class EventSource final : public RefCounted<EventSource>, public EventTarget, pr
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(EventSource);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(EventSource);
 public:
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
+
     struct Init {
         bool withCredentials;
     };
     static ExceptionOr<Ref<EventSource>> create(ScriptExecutionContext&, const String& url, const Init&);
     virtual ~EventSource();
 
-    using EventTarget::weakPtrFactory;
-    using EventTarget::WeakValueType;
-    using EventTarget::WeakPtrImplType;
+    USING_CAN_MAKE_WEAKPTR(EventTarget);
 
     const String& url() const;
     bool withCredentials() const;
@@ -71,10 +72,6 @@ public:
     State readyState() const;
 
     void close();
-
-    // ActiveDOMObject.
-    void ref() const final { RefCounted::ref(); }
-    void deref() const final { RefCounted::deref(); }
 
 private:
     EventSource(ScriptExecutionContext&, const URL&, const Init&);
@@ -89,10 +86,10 @@ private:
     void doExplicitLoadCancellation();
 
     // ThreadableLoaderClient
-    void didReceiveResponse(ScriptExecutionContextIdentifier, ResourceLoaderIdentifier, const ResourceResponse&) final;
+    void didReceiveResponse(ScriptExecutionContextIdentifier, std::optional<ResourceLoaderIdentifier>, const ResourceResponse&) final;
     void didReceiveData(const SharedBuffer&) final;
-    void didFinishLoading(ScriptExecutionContextIdentifier, ResourceLoaderIdentifier, const NetworkLoadMetrics&) final;
-    void didFail(ScriptExecutionContextIdentifier, const ResourceError&) final;
+    void didFinishLoading(ScriptExecutionContextIdentifier, std::optional<ResourceLoaderIdentifier>, const NetworkLoadMetrics&) final;
+    void didFail(std::optional<ScriptExecutionContextIdentifier>, const ResourceError&) final;
 
     // ActiveDOMObject
     void stop() final;

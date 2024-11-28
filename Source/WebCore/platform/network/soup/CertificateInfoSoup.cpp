@@ -125,7 +125,9 @@ std::optional<CertificateSummary> CertificateInfo::summary() const
         summaryInfo.subject = String::fromUTF8(subjectName.get());
     if (dnsNames) {
         for (unsigned i = 0; i < dnsNames->len; ++i) {
+            WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib port
             GBytes* bytes = static_cast<GBytes*>(dnsNames->pdata[i]);
+            WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
             gsize dataLength;
             const auto* data = g_bytes_get_data(bytes, &dataLength);
             summaryInfo.dnsNames.append(String({ static_cast<const char*>(data), dataLength }));
@@ -133,7 +135,9 @@ std::optional<CertificateSummary> CertificateInfo::summary() const
     }
     if (ipAddresses) {
         for (unsigned i = 0; i < ipAddresses->len; ++i) {
+            WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib port
             GUniquePtr<char> ipAddress(g_inet_address_to_string(static_cast<GInetAddress*>(ipAddresses->pdata[i])));
+            WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
             summaryInfo.ipAddresses.append(String::fromUTF8(ipAddress.get()));
         }
     }

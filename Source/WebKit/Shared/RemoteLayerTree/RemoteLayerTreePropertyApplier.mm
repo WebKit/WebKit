@@ -33,6 +33,7 @@
 #import "RemoteLayerTreeInteractionRegionLayers.h"
 #import "WKVideoView.h"
 #import <QuartzCore/QuartzCore.h>
+#import <WebCore/ContentsFormatCocoa.h>
 #import <WebCore/MediaPlayerEnumsCocoa.h>
 #import <WebCore/PlatformCAFilters.h>
 #import <WebCore/ScrollbarThemeMac.h>
@@ -40,6 +41,7 @@
 #import <WebCore/WebCoreCALayerExtras.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <wtf/BlockObjCExceptions.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/cocoa/VectorCocoa.h>
 
 #if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
@@ -295,13 +297,6 @@ void RemoteLayerTreePropertyApplier::applyPropertiesToLayer(CALayer *layer, Remo
     if (properties.changedProperties & LayerChange::BackdropRootChanged)
         layer.shouldRasterize = properties.backdropRoot;
 
-#if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
-    if (properties.changedProperties & LayerChange::SeparatedChanged) {
-        layer.separated = properties.isSeparated;
-        if (properties.isSeparated)
-            configureSeparatedLayer(layer);
-    }
-
 #if HAVE(CORE_ANIMATION_SEPARATED_PORTALS)
     if (properties.changedProperties & LayerChange::SeparatedPortalChanged) {
         // FIXME: Implement SeparatedPortalChanged.
@@ -310,7 +305,6 @@ void RemoteLayerTreePropertyApplier::applyPropertiesToLayer(CALayer *layer, Remo
     if (properties.changedProperties & LayerChange::DescendentOfSeparatedPortalChanged) {
         // FIXME: Implement DescendentOfSeparatedPortalChanged.
     }
-#endif
 #endif
 
 #if HAVE(AVKIT)
@@ -325,6 +319,18 @@ void RemoteLayerTreePropertyApplier::applyPropertiesToLayer(CALayer *layer, Remo
             [(WebAVPlayerLayer*)playerLayer setVideoGravity:convertMediaPlayerToAVLayerVideoGravity(properties.videoGravity)];
     }
 #endif
+
+    if (properties.changedProperties & LayerChange::ContentsFormatChanged) {
+        auto contentsFormat = properties.contentsFormat;
+        if (NSString *formatString = contentsFormatString(contentsFormat))
+            [layer setContentsFormat:formatString];
+#if HAVE(HDR_SUPPORT)
+        if (contentsFormat == ContentsFormat::RGBA16F) {
+            [layer setWantsExtendedDynamicRangeContent:true];
+            [layer setToneMapMode:CAToneMapModeIfSupported];
+        }
+#endif
+    }
 }
 
 void RemoteLayerTreePropertyApplier::applyProperties(RemoteLayerTreeNode& node, RemoteLayerTreeHost* layerTreeHost, const LayerProperties& properties, const RelatedLayerMap& relatedLayers, LayerContentsType layerContentsType)
@@ -336,16 +342,32 @@ void RemoteLayerTreePropertyApplier::applyProperties(RemoteLayerTreeNode& node, 
         node.setEventRegion(properties.eventRegion);
     updateMask(node, properties, relatedLayers);
 
-#if ENABLE(GAZE_GLOW_FOR_INTERACTION_REGIONS)
+#if ENABLE(GAZE_GLOW_FOR_INTERACTION_REGIONS) || HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
     if (properties.changedProperties & LayerChange::VisibleRectChanged)
         node.setVisibleRect(properties.visibleRect);
+#endif
+
+#if ENABLE(GAZE_GLOW_FOR_INTERACTION_REGIONS)
     if (properties.changedProperties & LayerChange::EventRegionChanged || properties.changedProperties & LayerChange::VisibleRectChanged)
         updateLayersForInteractionRegions(node);
 #endif
 
+#if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
+    if (properties.changedProperties & LayerChange::SeparatedChanged)
+        node.setShouldBeSeparated(properties.isSeparated);
+
+    if (properties.changedProperties & LayerChange::SeparatedChanged || properties.changedProperties & LayerChange::VisibleRectChanged) {
+        if (node.visibleRect() && node.shouldBeSeparated()) {
+            node.layer().separated = true;
+            configureSeparatedLayer(node.layer());
+        } else
+            node.layer().separated = false;
+    }
+#endif
+
 #if ENABLE(SCROLLING_THREAD)
     if (properties.changedProperties & LayerChange::ScrollingNodeIDChanged)
-        node.setScrollingNodeID(properties.scrollingNodeID.value_or(ScrollingNodeID { }));
+        node.setScrollingNodeID(properties.scrollingNodeID);
 #endif
 
 #if PLATFORM(IOS_FAMILY)
@@ -416,15 +438,15 @@ void RemoteLayerTreePropertyApplier::updateMask(RemoteLayerTreeNode& node, const
         return;
     }
 
-    auto* maskNode = properties.maskLayerID ? relatedLayers.get(*properties.maskLayerID) : nullptr;
+    RefPtr maskNode = properties.maskLayerID ? relatedLayers.get(*properties.maskLayerID) : nullptr;
     ASSERT(maskNode);
     if (!maskNode)
         return;
-    CALayer *maskLayer = maskNode->layer();
-    ASSERT(!maskLayer.superlayer);
-    if (maskLayer.superlayer)
-        return;
-    maskOwnerLayer.mask = maskLayer;
+
+    RetainPtr maskLayer = maskNode->layer();
+    [maskLayer removeFromSuperlayer];
+
+    maskOwnerLayer.mask = maskLayer.get();
 }
 
 #if PLATFORM(IOS_FAMILY)

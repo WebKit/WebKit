@@ -37,6 +37,15 @@
 #include <wtf/text/StringBuilder.h>
 
 namespace WTR {
+class TestInvocation;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedTimerSmartPointerException;
+template<> struct IsDeprecatedTimerSmartPointerException<WTR::TestInvocation> : std::true_type { };
+}
+
+namespace WTR {
 
 class TestInvocation final : public UIScriptContextDelegate {
     WTF_MAKE_FAST_ALLOCATED;
@@ -97,6 +106,12 @@ private:
     
     void done();
     void setWaitUntilDone(bool);
+
+    // Returns true if the caller bundle should proceed with dumping.
+    // Returns false if the WKTR invokes dumping through page, asynchronously.
+    // Resets waitUntilDone.
+    bool resolveNotifyDone();
+    bool resolveForceImmediateCompletion();
 
     void dumpResults();
     static void dump(const char* textToStdout, const char* textToStderr = 0, bool seenError = false);

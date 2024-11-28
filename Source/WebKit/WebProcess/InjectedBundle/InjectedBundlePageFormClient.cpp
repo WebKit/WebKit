@@ -36,9 +36,12 @@
 #include <WebCore/HTMLFormElement.h>
 #include <WebCore/HTMLInputElement.h>
 #include <WebCore/HTMLTextAreaElement.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
 using namespace WebCore;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(InjectedBundlePageFormClient);
 
 InjectedBundlePageFormClient::InjectedBundlePageFormClient(const WKBundlePageFormClientBase* client)
 {

@@ -77,6 +77,7 @@ private:
 
     LayoutRect clippedOverflowRect(const RenderLayerModelObject* repaintContainer, VisibleRectContext) const override;
     RepaintRects rectsForRepaintingAfterLayout(const RenderLayerModelObject* repaintContainer, RepaintOutlineBounds) const override;
+    void computeIntrinsicLogicalWidths(LayoutUnit&, LayoutUnit&) const override { }
 
     bool requiresLayer() const final;
     void paint(PaintInfo&, const LayoutPoint&) override;

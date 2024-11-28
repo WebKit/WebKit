@@ -41,6 +41,7 @@ private:
     bool m_invalidated { false };
     ShaderModule& m_shaderModule;
     AST::Builder::State m_builderState;
+    size_t m_replacementsSize;
 };
 
 } // namespace WGSL

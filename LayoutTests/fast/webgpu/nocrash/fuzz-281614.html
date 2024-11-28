@@ -1,0 +1,46 @@
+<script>
+async function run() {
+    let adapter = await navigator.gpu.requestAdapter();
+    let device = await adapter.requestDevice();
+    let pipelineLayout = device.createPipelineLayout({ bindGroupLayouts: []});
+    let shaderModule = device.createShaderModule({ code: ` 
+        struct e {
+            @builtin(position) f: vec4f
+        }
+        @vertex fn g() -> e {
+            var h: e;
+            return h;
+        }
+    `}
+    );
+    let canvas = document.createElement('canvas');
+    let context = canvas.getContext('webgpu');
+    context.configure({ device: device, format: 'bgra8unorm', viewFormats: ['bgra8unorm-srgb'] });
+    let texture = context.getCurrentTexture();
+    let textureView = texture.createView({ format: 'bgra8unorm-srgb' });
+    let shaderModule2 = device.createShaderModule({ code: ` 
+        struct p {
+            @location(0) f0: vec4f
+        }
+        @fragment fn fragment7() -> p {
+            var h: p;
+            return h;
+        }
+    `});
+    await device.createRenderPipelineAsync({ layout: pipelineLayout, vertex: { module: shaderModule } });
+    let commandEncoder = device.createCommandEncoder();
+    let renderPassEncoder = commandEncoder.beginRenderPass({ colorAttachments: [{ view: textureView, loadOp: 'clear', storeOp: 'discard' }] });
+    let renderPipeline = await device.createRenderPipelineAsync({
+        layout: pipelineLayout,
+        fragment: { module: shaderModule2, targets: [{ format: 'bgra8unorm-srgb' }] },
+        vertex: { module: shaderModule, buffers: [] }
+    });
+    let renderBundleEncoder = device.createRenderBundleEncoder({ colorFormats: ['bgra8unorm-srgb'] });
+    renderBundleEncoder.setPipeline(renderPipeline);
+    let renderBundle = renderBundleEncoder.finish();
+    renderPassEncoder.executeBundles([renderBundle]);
+}
+
+globalThis.testRunner?.waitUntilDone();
+run().finally(() => globalThis.testRunner?.notifyDone());
+</script>

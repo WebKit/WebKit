@@ -1,0 +1,48 @@
+<script>
+async function run() {
+    let adapter = await navigator.gpu.requestAdapter();
+    let device = await adapter.requestDevice();
+    let videoFrame = new VideoFrame(new ArrayBuffer(16), { codedWidth: 2, codedHeight: 2, format: 'RGBX', timestamp: 0 });
+    let externalTexture =
+        device.importExternalTexture({
+            source: videoFrame,
+        });
+    let shaderModule1 = device.createShaderModule({ code: `
+        @group(0) @binding(0) var<storage> buffer: array<i32, 14>;
+        @group(0) @binding(2) var texture: texture_external;
+        @vertex fn vertex2() -> @builtin(position) vec4f {
+            return vec4f();
+            _ = buffer;
+            _ = texture;
+        }
+    `});
+    let shaderModule2 = device.createShaderModule({ code: `
+        @group(0) @binding(0) var<storage> buffer: array<array<f16, 28>>;
+        struct FragmentOutput4 {
+            @location(0) f0: vec4f
+        }
+        @fragment fn fragment4() -> FragmentOutput4 {
+            var out: FragmentOutput4;
+            out.f0 *= vec4f(f32(buffer[0][0]));
+            return out;
+        }
+    `});
+    let pipeline = device.createRenderPipeline({
+        layout: 'auto',
+        fragment: { module: shaderModule2, targets: [{ format: 'rgba8unorm', writeMask: GPUColorWrite.ALL }] },
+        vertex: { module: shaderModule1, entryPoint: 'vertex2', buffers: [] }
+    });
+    let bindGroupLayout = pipeline.getBindGroupLayout(0);
+    let buffer = device.createBuffer({ size: 56, usage: GPUBufferUsage.STORAGE });
+    device.createBindGroup({
+        layout: bindGroupLayout,
+        entries: [
+            { binding: 2, resource: externalTexture },
+            { binding: 0, resource: { buffer: buffer, offset: 0, size: 56 } }
+        ]
+    })
+}
+
+globalThis.testRunner?.waitUntilDone();
+run().finally(() => globalThis.testRunner?.notifyDone());
+</script>

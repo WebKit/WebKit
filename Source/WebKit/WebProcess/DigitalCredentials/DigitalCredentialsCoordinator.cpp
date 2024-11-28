@@ -34,9 +34,12 @@
 #include <WebCore/DigitalCredentialRequestOptions.h>
 #include <WebCore/LocalFrame.h>
 #include <wtf/Logger.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
 using namespace WebCore;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(DigitalCredentialsCoordinator);
 
 DigitalCredentialsCoordinator::DigitalCredentialsCoordinator(WebPage& page)
     : m_page(page)

@@ -30,6 +30,7 @@
 #import "config.h"
 #import "WKWebExtensionMatchPatternInternal.h"
 
+#import "APIError.h"
 #import "WebExtensionMatchPattern.h"
 #import <wtf/URLParser.h>
 
@@ -96,7 +97,11 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(WKWebExtensionMatchPattern, WebExtensionMa
         return WebKit::wrapper(WebKit::WebExtensionMatchPattern::getOrCreate(string)).autorelease();
     }
 
-    API::Object::constructInWrapper<WebKit::WebExtensionMatchPattern>(self, string, error);
+    RefPtr<API::Error> internalError;
+    API::Object::constructInWrapper<WebKit::WebExtensionMatchPattern>(self, string, internalError);
+
+    if (error)
+        *error = internalError ? static_cast<NSError *>(internalError->platformError()) : nil;
 
     return _webExtensionMatchPattern->isValid() ? self : nil;
 }
@@ -115,7 +120,11 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(WKWebExtensionMatchPattern, WebExtensionMa
         return WebKit::wrapper(WebKit::WebExtensionMatchPattern::getOrCreate(scheme, host, path)).autorelease();
     }
 
-    API::Object::constructInWrapper<WebKit::WebExtensionMatchPattern>(self, scheme, host, path, error);
+    RefPtr<API::Error> internalError;
+    API::Object::constructInWrapper<WebKit::WebExtensionMatchPattern>(self, scheme, host, path, internalError);
+
+    if (error)
+        *error = internalError ? static_cast<NSError *>(internalError->platformError()) : nil;
 
     return _webExtensionMatchPattern->isValid() ? self : nil;
 }
@@ -171,28 +180,31 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(WKWebExtensionMatchPattern, WebExtensionMa
 
 - (NSString *)scheme
 {
-    if (_webExtensionMatchPattern->scheme().isNull())
+    Ref pattern = *_webExtensionMatchPattern;
+    if (pattern->scheme().isNull())
         return nil;
-    return _webExtensionMatchPattern->scheme();
+    return pattern->scheme();
 }
 
 - (NSString *)host
 {
-    if (_webExtensionMatchPattern->host().isNull())
+    Ref pattern = *_webExtensionMatchPattern;
+    if (pattern->host().isNull())
         return nil;
-    return _webExtensionMatchPattern->host();
+    return pattern->host();
 }
 
 - (NSString *)path
 {
-    if (_webExtensionMatchPattern->path().isNull())
+    Ref pattern = *_webExtensionMatchPattern;
+    if (pattern->path().isNull())
         return nil;
-    return _webExtensionMatchPattern->path();
+    return pattern->path();
 }
 
 - (NSString *)string
 {
-    return _webExtensionMatchPattern->string();
+    return self._protectedWebExtensionMatchPattern->string();
 }
 
 - (BOOL)matchesAllURLs
@@ -202,7 +214,7 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(WKWebExtensionMatchPattern, WebExtensionMa
 
 - (BOOL)matchesAllHosts
 {
-    return _webExtensionMatchPattern->matchesAllHosts();
+    return self._protectedWebExtensionMatchPattern->matchesAllHosts();
 }
 
 - (BOOL)matchesURL:(NSURL *)urlToMatch
@@ -235,7 +247,7 @@ static OptionSet<WebKit::WebExtensionMatchPattern::Options> toImpl(WKWebExtensio
 
     NSParameterAssert([urlToMatch isKindOfClass:NSURL.class]);
 
-    return _webExtensionMatchPattern->matchesURL(urlToMatch, toImpl(options));
+    return self._protectedWebExtensionMatchPattern->matchesURL(urlToMatch, toImpl(options));
 }
 
 - (BOOL)matchesPattern:(WKWebExtensionMatchPattern *)patternToMatch
@@ -250,7 +262,7 @@ static OptionSet<WebKit::WebExtensionMatchPattern::Options> toImpl(WKWebExtensio
 
     NSParameterAssert([patternToMatch isKindOfClass:WKWebExtensionMatchPattern.class]);
 
-    return _webExtensionMatchPattern->matchesPattern(patternToMatch._webExtensionMatchPattern, toImpl(options));
+    return self._protectedWebExtensionMatchPattern->matchesPattern([patternToMatch _protectedWebExtensionMatchPattern], toImpl(options));
 }
 
 #pragma mark WKObject protocol implementation
@@ -261,6 +273,11 @@ static OptionSet<WebKit::WebExtensionMatchPattern::Options> toImpl(WKWebExtensio
 }
 
 - (WebKit::WebExtensionMatchPattern&)_webExtensionMatchPattern
+{
+    return *_webExtensionMatchPattern;
+}
+
+- (Ref<WebKit::WebExtensionMatchPattern>)_protectedWebExtensionMatchPattern
 {
     return *_webExtensionMatchPattern;
 }

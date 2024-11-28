@@ -30,6 +30,6 @@
 namespace WebCore {
 
 struct MediaPlayerIdentifierType;
-using MediaPlayerIdentifier = LegacyNullableObjectIdentifier<MediaPlayerIdentifierType>;
+using MediaPlayerIdentifier = ObjectIdentifier<MediaPlayerIdentifierType>;
 
 } // namespace WebCore

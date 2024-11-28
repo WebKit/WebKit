@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller ( mueller@kde.org )
- * Copyright (C) 2003-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2024 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Andrew Wellington (proton@wiretapped.net)
  *
  * This library is free software; you can redistribute it and/or
@@ -31,7 +31,6 @@
 #include "CalculationValue.h"
 #include <wtf/ASCIICType.h>
 #include <wtf/HashMap.h>
-#include <wtf/MallocPtr.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -42,6 +41,12 @@
 namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(Length);
+
+struct SameSizeAsLength {
+    int32_t value;
+    int32_t metaData;
+};
+static_assert(sizeof(Length) == sizeof(SameSizeAsLength), "length should stay small");
 
 static Length parseLength(std::span<const UChar> data)
 {
@@ -141,7 +146,7 @@ private:
     };
 
     unsigned m_nextAvailableHandle;
-    HashMap<unsigned, Entry> m_map;
+    UncheckedKeyHashMap<unsigned, Entry> m_map;
 };
 
 inline CalculationValueMap::Entry::Entry(Ref<CalculationValue>&& value)
@@ -346,12 +351,10 @@ bool Length::isCalculatedEqual(const Length& other) const
 static Calculation::Child lengthCalculation(const Length& length)
 {
     if (length.isPercent())
-        return Calculation::percent(length.value());
+        return Calculation::percentage(length.value());
 
-    if (length.isCalculated()) {
-        auto tree = length.calculationValue().copyTree();
-        return { WTFMove(tree.root) };
-    }
+    if (length.isCalculated())
+        return length.calculationValue().copyRoot();
 
     ASSERT(length.isFixed());
     return Calculation::dimension(length.value());
@@ -361,8 +364,8 @@ static Length makeLength(Calculation::Child&& root)
 {
     // FIXME: Value range should be passed in.
 
-    // NOTE: category is always `PercentLength` as late resolved `Length` values defined by percentages is the only reason calculation value is needed by `Length`.
-    return Length(CalculationValue::create(Calculation::Tree { .root = WTFMove(root), .category = Calculation::Category::PercentLength, .range = ValueRange::All }));
+    // NOTE: category is always `LengthPercentage` as late resolved `Length` values defined by percentages is the only reason calculation value is needed by `Length`.
+    return Length(CalculationValue::create(Calculation::Tree { .root = WTFMove(root), .category = Calculation::Category::LengthPercentage, .range = Calculation::All }));
 }
 
 Length convertTo100PercentMinusLength(const Length& length)
@@ -372,7 +375,7 @@ Length convertTo100PercentMinusLength(const Length& length)
         return Length(100 - length.value(), LengthType::Percent);
 
     // Otherwise, turn this into a calc expression: calc(100% - length)
-    return makeLength(Calculation::subtract(Calculation::percent(100), lengthCalculation(length)));
+    return makeLength(Calculation::subtract(Calculation::percentage(100), lengthCalculation(length)));
 }
 
 Length convertTo100PercentMinusLengthSum(const Length& a, const Length& b)
@@ -386,7 +389,7 @@ Length convertTo100PercentMinusLengthSum(const Length& a, const Length& b)
         // And if `b` is a percent, we can avoid the `calc` altogether.
         if (b.isPercent())
             return Length(100 - b.value(), LengthType::Percent);
-        return makeLength(Calculation::subtract(Calculation::percent(100), lengthCalculation(b)));
+        return makeLength(Calculation::subtract(Calculation::percentage(100), lengthCalculation(b)));
     }
 
     // If just `b` is 0, we can just consider the case of `calc(100% - a)`.
@@ -394,7 +397,7 @@ Length convertTo100PercentMinusLengthSum(const Length& a, const Length& b)
         // And if `a` is a percent, we can avoid the `calc` altogether.
         if (a.isPercent())
             return Length(100 - a.value(), LengthType::Percent);
-        return makeLength(Calculation::subtract(Calculation::percent(100), lengthCalculation(a)));
+        return makeLength(Calculation::subtract(Calculation::percentage(100), lengthCalculation(a)));
     }
 
     // If both and `a` and `b` are percentages, we can avoid the `calc` altogether.
@@ -402,7 +405,7 @@ Length convertTo100PercentMinusLengthSum(const Length& a, const Length& b)
         return Length(100 - (a.value() + b.value()), LengthType::Percent);
 
     // Otherwise, turn this into a calc expression: calc(100% - (a + b))
-    return makeLength(Calculation::subtract(Calculation::percent(100), Calculation::add(lengthCalculation(a), lengthCalculation(b))));
+    return makeLength(Calculation::subtract(Calculation::percentage(100), Calculation::add(lengthCalculation(a), lengthCalculation(b))));
 }
 
 static Length blendMixedTypes(const Length& from, const Length& to, const BlendingContext& context)
@@ -468,12 +471,6 @@ Length blend(const Length& from, const Length& to, const BlendingContext& contex
     }
     return blended;
 }
-
-struct SameSizeAsLength {
-    int32_t value;
-    int32_t metaData;
-};
-static_assert(sizeof(Length) == sizeof(SameSizeAsLength), "length should stay small");
 
 static TextStream& operator<<(TextStream& ts, LengthType type)
 {

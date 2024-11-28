@@ -46,7 +46,7 @@ void WebHistoryItemClient::historyItemChanged(const WebCore::HistoryItem& item)
 {
     if (m_shouldIgnoreChanges)
         return;
-    WebProcess::singleton().parentProcessConnection()->send(Messages::WebProcessProxy::UpdateBackForwardItem(toBackForwardListItemState(item)), 0);
+    WebProcess::singleton().parentProcessConnection()->send(Messages::WebProcessProxy::UpdateBackForwardItem(toFrameState(item)), 0);
 }
 
 }

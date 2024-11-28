@@ -30,20 +30,12 @@
 #include <WebCore/MDNSRegisterError.h>
 #include <WebCore/ProcessQualified.h>
 #include <WebCore/ScriptExecutionContextIdentifier.h>
+#include <wtf/CanMakeWeakPtr.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Expected.h>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
-#include <wtf/WeakPtr.h>
-
-namespace WebKit {
-class WebMDNSRegister;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::WebMDNSRegister> : std::true_type { };
-}
+#include <wtf/WeakRef.h>
 
 namespace IPC {
 class Connection;
@@ -51,10 +43,14 @@ class Decoder;
 }
 
 namespace WebKit {
+class LibWebRTCNetwork;
 
 class WebMDNSRegister : public CanMakeWeakPtr<WebMDNSRegister> {
 public:
-    WebMDNSRegister() = default;
+    explicit WebMDNSRegister(LibWebRTCNetwork&);
+
+    void ref() const;
+    void deref() const;
 
     void unregisterMDNSNames(WebCore::ScriptExecutionContextIdentifier);
     void registerMDNSName(WebCore::ScriptExecutionContextIdentifier, const String& ipAddress, CompletionHandler<void(const String&, std::optional<WebCore::MDNSRegisterError>)>&&);
@@ -65,6 +61,8 @@ private:
     void finishedRegisteringMDNSName(WebCore::ScriptExecutionContextIdentifier, const String& ipAddress, String&& mdnsName, std::optional<WebCore::MDNSRegisterError>, CompletionHandler<void(const String&, std::optional<WebCore::MDNSRegisterError>)>&&);
 
     HashMap<WebCore::ScriptExecutionContextIdentifier, HashMap<String, String>> m_registeringDocuments;
+
+    WeakRef<LibWebRTCNetwork> m_libWebRTCNetwork;
 };
 
 } // namespace WebKit

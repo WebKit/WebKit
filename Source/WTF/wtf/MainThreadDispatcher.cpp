@@ -51,14 +51,4 @@ void MainThreadDispatcher::dispatch(Function<void ()>&& function)
     callOnMainThread(WTFMove(function));
 }
 
-void MainThreadDispatcher::ref() const
-{
-    ThreadSafeRefCounted::ref();
-}
-
-void MainThreadDispatcher::deref() const
-{
-    ThreadSafeRefCounted::deref();
-}
-
 } // namespace WTF

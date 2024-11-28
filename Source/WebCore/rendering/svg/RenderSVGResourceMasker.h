@@ -20,9 +20,9 @@
 
 #pragma once
 
+#include "ImageBuffer.h"
 #include "RenderSVGResourceContainer.h"
 #include "SVGUnitTypes.h"
-
 #include <wtf/HashMap.h>
 
 namespace WebCore {
@@ -61,7 +61,7 @@ private:
     void element() const = delete;
 
     ASCIILiteral renderName() const final { return "RenderSVGResourceMasker"_s; }
-    HashMap<SingleThreadWeakRef<const RenderLayerModelObject>, RefPtr<ImageBuffer>> m_masker;
+    UncheckedKeyHashMap<SingleThreadWeakRef<const RenderLayerModelObject>, RefPtr<ImageBuffer>> m_masker;
 };
 
 }

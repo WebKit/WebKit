@@ -39,20 +39,19 @@ class ConvertToBackingContext;
 class RemoteCommandEncoderProxy final : public WebCore::WebGPU::CommandEncoder {
     WTF_MAKE_TZONE_ALLOCATED(RemoteCommandEncoderProxy);
 public:
-    static Ref<RemoteCommandEncoderProxy> create(RemoteDeviceProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier)
+    static Ref<RemoteCommandEncoderProxy> create(RemoteGPUProxy& root, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier)
     {
-        return adoptRef(*new RemoteCommandEncoderProxy(parent, convertToBackingContext, identifier));
+        return adoptRef(*new RemoteCommandEncoderProxy(root, convertToBackingContext, identifier));
     }
 
     virtual ~RemoteCommandEncoderProxy();
 
-    RemoteDeviceProxy& parent() { return m_parent; }
-    RemoteGPUProxy& root() { return m_parent->root(); }
+    RemoteGPUProxy& root() { return m_root; }
 
 private:
     friend class DowncastConvertToBackingContext;
 
-    RemoteCommandEncoderProxy(RemoteDeviceProxy&, ConvertToBackingContext&, WebGPUIdentifier);
+    RemoteCommandEncoderProxy(RemoteGPUProxy&, ConvertToBackingContext&, WebGPUIdentifier);
 
     RemoteCommandEncoderProxy(const RemoteCommandEncoderProxy&) = delete;
     RemoteCommandEncoderProxy(RemoteCommandEncoderProxy&&) = delete;
@@ -64,12 +63,12 @@ private:
     template<typename T>
     WARN_UNUSED_RETURN IPC::Error send(T&& message)
     {
-        return root().streamClientConnection().send(WTFMove(message), backing());
+        return root().protectedStreamClientConnection()->send(WTFMove(message), backing());
     }
     template<typename T>
     WARN_UNUSED_RETURN IPC::Connection::SendSyncResult<T> sendSync(T&& message)
     {
-        return root().streamClientConnection().sendSync(WTFMove(message), backing());
+        return root().protectedStreamClientConnection()->sendSync(WTFMove(message), backing());
     }
 
     RefPtr<WebCore::WebGPU::RenderPassEncoder> beginRenderPass(const WebCore::WebGPU::RenderPassDescriptor&) final;
@@ -119,9 +118,11 @@ private:
 
     void setLabelInternal(const String&) final;
 
+    Ref<ConvertToBackingContext> protectedConvertToBackingContext() const;
+
     WebGPUIdentifier m_backing;
     Ref<ConvertToBackingContext> m_convertToBackingContext;
-    Ref<RemoteDeviceProxy> m_parent;
+    Ref<RemoteGPUProxy> m_root;
 };
 
 } // namespace WebKit::WebGPU

@@ -29,6 +29,7 @@
 
 #include "APIObject.h"
 #include "WebExtensionPortChannelIdentifier.h"
+#include <wtf/CompletionHandler.h>
 #include <wtf/Forward.h>
 
 OBJC_CLASS NSError;
@@ -38,7 +39,7 @@ namespace WebKit {
 
 class WebExtensionContext;
 
-class WebExtensionMessagePort : public API::ObjectImpl<API::Object::Type::WebExtensionMessagePort> {
+class WebExtensionMessagePort : public API::ObjectImpl<API::Object::Type::WebExtensionMessagePort>, public CanMakeWeakPtr<WebExtensionMessagePort> {
     WTF_MAKE_NONCOPYABLE(WebExtensionMessagePort);
 
 public:
@@ -66,11 +67,11 @@ public:
     WebExtensionPortChannelIdentifier channelIdentifier() const { return m_channelIdentifier; }
     WebExtensionContext* extensionContext() const;
 
-    void disconnect(Error);
+    void disconnect(Error = std::nullopt);
     void reportDisconnection(Error);
     bool isDisconnected() const;
 
-    void sendMessage(id message, CompletionHandler<void(Error)>&&);
+    void sendMessage(id message, CompletionHandler<void(Error)>&& = { });
     void receiveMessage(id message, Error);
 
 #ifdef __OBJC__

@@ -69,10 +69,10 @@ public:
     {
         HashSet<BasicBlock*> blocks;
         HashSet<Value*> valueInProc;
-        HashMap<Value*, unsigned> valueInBlock;
-        HashMap<Value*, BasicBlock*> valueOwner;
-        HashMap<Value*, unsigned> valueIndex;
-        HashMap<Value*, Vector<std::optional<Type>>> extractions;
+        UncheckedKeyHashMap<Value*, unsigned> valueInBlock;
+        UncheckedKeyHashMap<Value*, BasicBlock*> valueOwner;
+        UncheckedKeyHashMap<Value*, unsigned> valueIndex;
+        UncheckedKeyHashMap<Value*, Vector<std::optional<Type>>> extractions;
 
         for (unsigned tuple = 0; tuple < m_procedure.tuples().size(); ++tuple) {
             VALIDATE(m_procedure.tuples()[tuple].size(), ("In tuple ", tuple));
@@ -114,7 +114,7 @@ public:
             }
         }
 
-        HashMap<BasicBlock*, HashSet<BasicBlock*>> allPredecessors;
+        UncheckedKeyHashMap<BasicBlock*, HashSet<BasicBlock*>> allPredecessors;
         for (BasicBlock* block : blocks) {
             VALIDATE(block->size() >= 1, ("At ", *block));
             for (unsigned i = 0; i < block->size() - 1; ++i)
@@ -252,7 +252,7 @@ public:
             case SShr:
             case ZShr:
             case RotR:
-                case RotL:
+            case RotL:
                 VALIDATE(!value->kind().hasExtraBits(), ("At ", *value));
                 VALIDATE(value->numChildren() == 2, ("At ", *value));
                 VALIDATE(value->type() == value->child(0)->type(), ("At ", *value));
@@ -708,6 +708,20 @@ public:
                 VALIDATE(value->asSIMDValue()->signMode() == SIMDSignMode::None, ("At ", *value));
                 break;
 
+            case VectorRelaxedLaneSelect:
+                VALIDATE(!value->kind().hasExtraBits(), ("At ", *value));
+                VALIDATE(value->numChildren() == 3, ("At ", *value));
+                VALIDATE(value->type() == V128, ("At ", *value));
+                VALIDATE(value->child(0)->type() == V128, ("At ", *value));
+                VALIDATE(value->child(1)->type() == V128, ("At ", *value));
+                VALIDATE(value->child(2)->type() == V128, ("At ", *value));
+                VALIDATE((value->asSIMDValue()->simdLane() == SIMDLane::i8x16)
+                    || (value->asSIMDValue()->simdLane() == SIMDLane::i16x8)
+                    || (value->asSIMDValue()->simdLane() == SIMDLane::i32x4)
+                    || (value->asSIMDValue()->simdLane() == SIMDLane::i64x2), ("At ", *value));
+                VALIDATE(value->asSIMDValue()->signMode() == SIMDSignMode::None, ("At ", *value));
+                break;
+
             case CCall:
                 VALIDATE(!value->kind().hasExtraBits(), ("At ", *value));
                 VALIDATE(value->numChildren() >= 1, ("At ", *value));
@@ -744,7 +758,7 @@ public:
                 break;
             case Extract: {
                 VALIDATE(value->numChildren() == 1, ("At ", *value));
-                VALIDATE(value->child(0)->type().isTuple(), ("At ", *value));
+                VALIDATE(value->child(0)->type().isTuple() || (isARM_THUMB2() && value->child(0)->type() == Int64), ("At ", *value));
                 VALIDATE(value->type().isNumeric(), ("At ", *value));
                 break;
             }
@@ -916,28 +930,7 @@ private:
             }
             break;
 #if USE(JSVALUE32_64)
-        case ValueRep::SomeRegisterPair:
-            break;
-        case ValueRep::SomeRegisterPairWithClobber:
-            VALIDATE(role == ConstraintRole::Use, ("At ", *context, ": ", value));
-            VALIDATE(context->as<PatchpointValue>(), ("At ", *context));
-            break;
-        case ValueRep::SomeEarlyRegisterPair:
-            VALIDATE(role == ConstraintRole::Def, ("At ", *context, ": ", value));
-            break;
         case ValueRep::RegisterPair:
-        case ValueRep::LateRegisterPair:
-        case ValueRep::SomeLateRegisterPair:
-            if (value.rep().kind() == ValueRep::LateRegisterPair)
-                VALIDATE(role == ConstraintRole::Use, ("At ", *context, ": ", value));
-            RELEASE_ASSERT(value.rep().isGPRPair());
-            if (value.value()->type().isTuple()) {
-                Type type = m_procedure.extractFromTuple(value.value()->type(), tupleIndex);
-                VALIDATE(type == Int64, ("At ", *context, ": ", value));
-            } else
-                VALIDATE(value.value()->type().isInt(), ("At ", *context, ": ", value));
-            break;
-
 #endif
         case ValueRep::Constant:
         case ValueRep::Stack:
@@ -945,18 +938,18 @@ private:
             break;
         }
     }
-    
+
     void validateFence(Value* value)
     {
         MemoryValue* memory = value->as<MemoryValue>();
         if (memory->hasFence())
             VALIDATE(memory->accessBank() == GP, ("Fence at ", *memory));
     }
-    
+
     void validateAtomic(Value* value)
     {
         AtomicValue* atomic = value->as<AtomicValue>();
-        
+
         VALIDATE(bestType(GP, atomic->accessWidth()) == atomic->accessType(), ("At ", *value));
     }
 

@@ -174,9 +174,7 @@ func (b *taskBuilder) dmFlags(internalHardwareLabel string) {
 
 	sampleCount := 0
 	glPrefix := ""
-	if b.extraConfig("FakeWGPU") {
-		configs = append(configs, "grdawn_fakeWGPU")
-	} else if b.extraConfig("SwiftShader") {
+	if b.extraConfig("SwiftShader") {
 		configs = append(configs, "vk", "vkdmsaa")
 		// skbug.com/12826
 		skip(ALL, "test", ALL, "GrThreadSafeCache16Verts")
@@ -321,8 +319,8 @@ func (b *taskBuilder) dmFlags(internalHardwareLabel string) {
 			skip(ALL, "test", ALL, "PinnedImageTest")
 			skip(ALL, "test", ALL, "RecordingOrderTest_Graphite")
 			skip(ALL, "test", ALL, "RecordingSurfacesTestClear")
+			skip(ALL, "test", ALL, "RecordingSurfacesTestDraw")
 			skip(ALL, "test", ALL, "RecordingSurfacesTestWritePixels")
-			skip(ALL, "test", ALL, "RecordingSurfacesTestWritePixelsOffscreen")
 			skip(ALL, "test", ALL, "ReimportImageTextureWithMipLevels")
 			skip(ALL, "test", ALL, "ReplaceSurfaceBackendTexture")
 			skip(ALL, "test", ALL, "ResourceCacheCache")
@@ -407,39 +405,69 @@ func (b *taskBuilder) dmFlags(internalHardwareLabel string) {
 			skip(ALL, "test", ALL, "PaintParamsKeyTestReduced")
 
 			if b.extraConfig("Dawn") {
+				baseConfig := ""
 				if b.extraConfig("D3D11") {
-					configs = []string{"grdawn_d3d11"}
+					baseConfig = "grdawn_d3d11"
+				} else if b.extraConfig("D3D12") {
+					baseConfig = "grdawn_d3d12"
+				} else if b.extraConfig("Metal") {
+					baseConfig = "grdawn_mtl"
+				} else if b.extraConfig("Vulkan") {
+					baseConfig = "grdawn_vk"
+				} else if b.extraConfig("GL") {
+					baseConfig = "grdawn_gl"
+				} else if b.extraConfig("GLES") {
+					baseConfig = "grdawn_gles"
 				}
-				if b.extraConfig("D3D12") {
-					configs = []string{"grdawn_d3d12"}
+
+				configs = []string{baseConfig}
+
+				if b.extraConfig("FakeWGPU") {
+					args = append(args, "--neverYieldToWebGPU")
+					args = append(args, "--useWGPUTextureView")
 				}
-				if b.extraConfig("Metal") {
-					configs = []string{"grdawn_mtl"}
+
+				if b.extraConfig("TintIR") {
+					args = append(args, "--useTintIR")
 				}
-				if b.extraConfig("Vulkan") {
-					configs = []string{"grdawn_vk"}
-				}
-				if b.extraConfig("GL") {
-					configs = []string{"grdawn_gl"}
-				}
-				if b.extraConfig("GLES") {
-					configs = []string{"grdawn_gles"}
-				}
+
 				// Shader doesn't compile
 				// https://skbug.com/14105
 				skip(ALL, "gm", ALL, "runtime_intrinsics_matrix")
 				// Crashes and failures
 				// https://skbug.com/14105
 				skip(ALL, "test", ALL, "BackendTextureTest")
-				skip(ALL, "test", ALL, "PaintParamsKeyTest")
 
-				if b.matchOs("Win10") || b.matchGpu("MaliG78", "Adreno620", "QuadroP400") {
+				if b.matchOs("Win10") || b.matchGpu("Adreno620", "MaliG78", "QuadroP400") {
 					// The Dawn Win10 and some Android/Linux device jobs OOMs (skbug.com/14410, b/318725123)
 					skip(ALL, "test", ALL, "BigImageTest_Graphite")
 				}
 				if b.matchGpu("Adreno620") {
 					// The Dawn Pixel5 device job fails one compute test (b/318725123)
 					skip(ALL, "test", ALL, "Compute_AtomicOperationsOverArrayAndStructTest")
+				}
+
+				if b.extraConfig("GL") || b.extraConfig("GLES") {
+					// These GMs currently have rendering issues in Dawn compat.
+					skip(ALL, "gm", ALL, "glyph_pos_n_s")
+					skip(ALL, "gm", ALL, "persptext")
+					skip(ALL, "gm", ALL, "persptext_minimal")
+					skip(ALL, "gm", ALL, "pictureshader_persp")
+					skip(ALL, "gm", ALL, "wacky_yuv_formats_frompixmaps")
+
+					// This GM is larger than Dawn compat's max texture size.
+					skip(ALL, "gm", ALL, "wacky_yuv_formats_domain")
+				}
+
+				// b/373845830 - Precompile isn't thread-safe on either Dawn Metal
+				// or Dawn Vulkan
+				skip(ALL, "test", ALL, "ThreadedPrecompileTest")
+
+				if b.extraConfig("Vulkan") {
+					if b.extraConfig("TSAN") {
+						// The TSAN_Graphite_Dawn_Vulkan job goes off into space on this test
+						skip(ALL, "test", ALL, "BigImageTest_Graphite")
+					}
 				}
 			} else if b.extraConfig("Native") {
 				if b.extraConfig("Metal") {
@@ -1473,13 +1501,14 @@ func (b *taskBuilder) dmFlags(internalHardwareLabel string) {
 	} else {
 		args = append(args, "--nonativeFonts")
 	}
-
 	if b.extraConfig("GDI") {
 		args = append(args, "--gdi")
 	}
-
 	if b.extraConfig("Fontations") {
 		args = append(args, "--fontations")
+	}
+	if b.extraConfig("AndroidNDKFonts") {
+		args = append(args, "--androidndkfonts")
 	}
 
 	// Let's make all tasks produce verbose output by default.

@@ -33,8 +33,12 @@
 #import <WebCore/ScrollingStateScrollingNode.h>
 #import <WebCore/ScrollingTree.h>
 #import <wtf/BlockObjCExceptions.h>
+#import <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ScrollingTreeFrameScrollingNodeRemoteIOS);
+
 using namespace WebCore;
 
 Ref<ScrollingTreeFrameScrollingNodeRemoteIOS> ScrollingTreeFrameScrollingNodeRemoteIOS::create(ScrollingTree& scrollingTree, ScrollingNodeType nodeType, ScrollingNodeID nodeID)
@@ -109,7 +113,7 @@ FloatPoint ScrollingTreeFrameScrollingNodeRemoteIOS::minimumScrollPosition() con
 {
     FloatPoint position = ScrollableArea::scrollPositionFromOffset(FloatPoint(), toFloatSize(scrollOrigin()));
     
-    if (isRootNode() && scrollingTree().scrollPinningBehavior() == ScrollPinningBehavior::PinToBottom)
+    if (isRootNode() && scrollingTree()->scrollPinningBehavior() == ScrollPinningBehavior::PinToBottom)
         position.setY(maximumScrollPosition().y());
 
     return position;
@@ -120,7 +124,7 @@ FloatPoint ScrollingTreeFrameScrollingNodeRemoteIOS::maximumScrollPosition() con
     FloatPoint position = ScrollableArea::scrollPositionFromOffset(FloatPoint(totalContentsSizeForRubberBand() - scrollableAreaSize()), toFloatSize(scrollOrigin()));
     position = position.expandedTo(FloatPoint());
 
-    if (isRootNode() && scrollingTree().scrollPinningBehavior() == ScrollPinningBehavior::PinToTop)
+    if (isRootNode() && scrollingTree()->scrollPinningBehavior() == ScrollPinningBehavior::PinToTop)
         position.setY(minimumScrollPosition().y());
 
     return position;

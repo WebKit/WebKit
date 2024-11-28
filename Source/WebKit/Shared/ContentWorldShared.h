@@ -31,12 +31,19 @@
 namespace WebKit {
 
 enum class ContentWorldIdentifierType { };
-using ContentWorldIdentifier = LegacyNullableObjectIdentifier<ContentWorldIdentifierType>;
+using ContentWorldIdentifier = ObjectIdentifier<ContentWorldIdentifierType>;
 
 inline ContentWorldIdentifier pageContentWorldIdentifier()
 {
-    static NeverDestroyed<ContentWorldIdentifier> identifier(LegacyNullableObjectIdentifier<ContentWorldIdentifierType>(1));
+    static NeverDestroyed<ContentWorldIdentifier> identifier(ObjectIdentifier<ContentWorldIdentifierType>(1));
     return identifier;
 }
+
+enum class ContentWorldOption : uint8_t {
+    AllowAccessToClosedShadowRoots = 1 << 0,
+    AllowAutofill = 1 << 1,
+    AllowElementUserInfo = 1 << 2,
+    DisableLegacyBuiltinOverrides = 1 << 3,
+};
 
 } // namespace WebKit

@@ -694,7 +694,7 @@ bool InspectorFrontendHost::showCertificate(const String& serializedCertificate)
     if (!data)
         return false;
 
-    WTF::Persistence::Decoder decoder({ data->data(), data->size() });
+    WTF::Persistence::Decoder decoder(data->span());
     std::optional<CertificateInfo> certificateInfo;
     decoder >> certificateInfo;
     if (!certificateInfo)

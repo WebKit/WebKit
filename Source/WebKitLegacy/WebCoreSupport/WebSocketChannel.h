@@ -60,7 +60,7 @@ class SocketStreamHandle;
 class SocketStreamError;
 class WebSocketChannelClient;
 class WebSocketChannel;
-using WebSocketChannelIdentifier = LegacyNullableAtomicObjectIdentifier<WebSocketChannel>;
+using WebSocketChannelIdentifier = AtomicObjectIdentifier<WebSocketChannel>;
 
 class WebSocketChannel final : public RefCounted<WebSocketChannel>, public SocketStreamHandleClient, public ThreadableWebSocketChannel, public FileReaderLoaderClient
 {
@@ -179,8 +179,10 @@ private:
         BlobLoaderFailed
     };
 
+    RefPtr<WebSocketChannelClient> protectedClient() const;
+
     WeakPtr<Document, WeakPtrImplWithEventTargetData> m_document;
-    WeakPtr<WebSocketChannelClient> m_client;
+    ThreadSafeWeakPtr<WebSocketChannelClient> m_client;
     std::unique_ptr<WebSocketHandshake> m_handshake;
     RefPtr<SocketStreamHandle> m_handle;
     Vector<uint8_t> m_buffer;

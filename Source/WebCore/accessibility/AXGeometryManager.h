@@ -51,7 +51,7 @@ public:
     void willUpdateObjectRegions();
     void scheduleObjectRegionsUpdate(bool /* scheduleImmediately */);
 
-    void cacheRect(AXID, IntRect&&);
+    void cacheRect(std::optional<AXID>, IntRect&&);
     // std::nullopt if there is no cached rect for the given ID (i.e. because it hasn't been cached yet via paint or otherwise, or cannot be painted / cached at all).
     std::optional<IntRect> cachedRectForID(AXID);
 
@@ -68,7 +68,7 @@ private:
 
     // The cache that owns this instance.
     WeakPtr<AXObjectCache> m_cache;
-    HashMap<AXID, IntRect> m_cachedRects;
+    UncheckedKeyHashMap<AXID, IntRect> m_cachedRects;
     Timer m_updateObjectRegionsTimer;
 
 #if PLATFORM(MAC)

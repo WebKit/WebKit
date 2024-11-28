@@ -36,15 +36,6 @@
 #include <wtf/WeakPtr.h>
 #include <wtf/WeakRef.h>
 
-namespace WebKit {
-class RemoteAudioSessionProxy;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::RemoteAudioSessionProxy> : std::true_type { };
-}
-
 namespace IPC {
 class Connection;
 }
@@ -53,12 +44,17 @@ namespace WebKit {
 
 class GPUConnectionToWebProcess;
 class RemoteAudioSessionProxyManager;
+struct SharedPreferencesForWebProcess;
 
 class RemoteAudioSessionProxy
-    : public IPC::MessageReceiver {
+    : public RefCounted<RemoteAudioSessionProxy>, public IPC::MessageReceiver {
     WTF_MAKE_TZONE_ALLOCATED(RemoteAudioSessionProxy);
 public:
-    static UniqueRef<RemoteAudioSessionProxy> create(GPUConnectionToWebProcess&);
+    static Ref<RemoteAudioSessionProxy> create(GPUConnectionToWebProcess& gpuConnection)
+    {
+        return adoptRef(*new RemoteAudioSessionProxy(gpuConnection));
+    }
+
     virtual ~RemoteAudioSessionProxy();
 
     WebCore::ProcessIdentifier processIdentifier();
@@ -86,9 +82,9 @@ public:
     bool didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&) final;
 
     RefPtr<GPUConnectionToWebProcess> gpuConnectionToWebProcess() const;
+    std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess() const;
 
 private:
-    friend UniqueRef<RemoteAudioSessionProxy> WTF::makeUniqueRefWithoutFastMallocCheck<RemoteAudioSessionProxy>(GPUConnectionToWebProcess&);
     explicit RemoteAudioSessionProxy(GPUConnectionToWebProcess&);
 
     // Messages
@@ -103,10 +99,9 @@ private:
     void beginInterruptionRemote();
     void endInterruptionRemote(WebCore::AudioSession::MayResume);
 
-    bool allowTestOnlyIPC();
-
     RemoteAudioSessionProxyManager& audioSessionManager();
-    IPC::Connection& connection();
+    Ref<RemoteAudioSessionProxyManager> protectedAudioSessionManager();
+    Ref<IPC::Connection> protectedConnection() const;
 
     ThreadSafeWeakPtr<GPUConnectionToWebProcess> m_gpuConnection;
     WebCore::AudioSession::CategoryType m_category { WebCore::AudioSession::CategoryType::None };

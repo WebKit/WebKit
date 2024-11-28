@@ -5,7 +5,11 @@
 //
 
 #include "test_utils/ANGLETest.h"
+
+#include "test_utils/angle_test_instantiate.h"
 #include "test_utils/gl_raii.h"
+#include "util/gles_loader_autogen.h"
+#include "util/shader_utils.h"
 
 #include <array>
 #include <cmath>
@@ -312,10 +316,145 @@ void main() {
     }
 }
 
+class BasicUniformUsageTest : public ANGLETest<>
+{
+  protected:
+    BasicUniformUsageTest()
+    {
+        setWindowWidth(128);
+        setWindowHeight(128);
+        setConfigRedBits(8);
+        setConfigGreenBits(8);
+        setConfigBlueBits(8);
+        setConfigAlphaBits(8);
+    }
+
+    void testSetUp() override
+    {
+
+        constexpr char kFS[] = R"(
+            precision mediump float;
+            uniform float uniF;
+            uniform int uniI;
+            uniform vec4 uniVec4;
+            void main() {
+              gl_FragColor = vec4(uniF + float(uniI));
+              gl_FragColor += uniVec4;
+            })";
+        mProgram             = CompileProgram(essl1_shaders::vs::Simple(), kFS);
+        ASSERT_NE(mProgram, 0u);
+
+        mUniformFLocation = glGetUniformLocation(mProgram, "uniF");
+        ASSERT_NE(mUniformFLocation, -1);
+
+        mUniformILocation = glGetUniformLocation(mProgram, "uniI");
+        ASSERT_NE(mUniformILocation, -1);
+
+        mUniformVec4Location = glGetUniformLocation(mProgram, "uniVec4");
+        ASSERT_NE(mUniformVec4Location, -1);
+
+        ASSERT_GL_NO_ERROR();
+    }
+
+    void testTearDown() override { glDeleteProgram(mProgram); }
+
+    GLuint mProgram            = 0;
+    GLint mUniformFLocation    = -1;
+    GLint mUniformILocation    = -1;
+    GLint mUniformVec4Location = -1;
+};
+
+// Tests that setting a float uniform with glUniform1f() is actually observable in the shader.
+TEST_P(BasicUniformUsageTest, Float)
+{
+    glUseProgram(mProgram);
+
+    glUniform1f(mUniformFLocation, 1.0f);
+    glUniform1i(mUniformILocation, 0);
+    glUniform4f(mUniformVec4Location, 0.0f, 0.0f, 0.0f, 1.0f);
+
+    drawQuad(mProgram, essl1_shaders::PositionAttrib(), 0.0f);
+    ASSERT_GL_NO_ERROR();
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::white);
+}
+
+// Tests that setting an int uniform with glUniform1i() is actually observable in the shader.
+TEST_P(BasicUniformUsageTest, Integer)
+{
+    glUseProgram(mProgram);
+
+    glUniform1f(mUniformFLocation, 0.0f);
+    glUniform1i(mUniformILocation, 1);
+    glUniform4f(mUniformVec4Location, 0.0f, 0.0f, 0.0f, 1.0f);
+
+    drawQuad(mProgram, essl1_shaders::PositionAttrib(), 0.0f);
+    ASSERT_GL_NO_ERROR();
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::white);
+}
+
+// Tests that setting a vec4 uniform with glUniform4f() is actually observable in the shader.
+TEST_P(BasicUniformUsageTest, Vec4)
+{
+    glUseProgram(mProgram);
+
+    glUniform1f(mUniformFLocation, 0.0f);
+    glUniform1i(mUniformILocation, 0);
+    // green
+    glUniform4f(mUniformVec4Location, 0.0f, 1.0f, 0.0f, 1.0f);
+
+    drawQuad(mProgram, essl1_shaders::PositionAttrib(), 0.0f);
+    ASSERT_GL_NO_ERROR();
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
+}
+
+// Tests that setting a vec4 uniform with glUniform4f() is actually observable in the shader, across
+// multiple draw calls, even without a glFlush() in between the draw calls.
+TEST_P(BasicUniformUsageTest, Vec4MultipleDraws)
+{
+    glUseProgram(mProgram);
+
+    glUniform1f(mUniformFLocation, 0.0f);
+    glUniform1i(mUniformILocation, 0);
+    // green
+    glUniform4f(mUniformVec4Location, 0.0f, 1.0f, 0.0f, 1.0f);
+
+    drawQuad(mProgram, essl1_shaders::PositionAttrib(), 0.0f);
+    ASSERT_GL_NO_ERROR();
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
+
+    // readPixels caused a flush, try red now
+    glUniform4f(mUniformVec4Location, 1.0f, 0.0f, 0.0f, 1.0f);
+
+    drawQuad(mProgram, essl1_shaders::PositionAttrib(), 0.0f);
+    ASSERT_GL_NO_ERROR();
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+
+    // green
+    glUniform4f(mUniformVec4Location, 0.0f, 1.0f, 0.0f, 1.0f);
+    // But only draw a quad half the size
+    drawQuad(mProgram, essl1_shaders::PositionAttrib(), 0.0f, /*positionAttribXYScale=*/0.5f);
+    // Still red at (0,0)
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+    // Green in the middle.
+    EXPECT_PIXEL_COLOR_EQ(getWindowWidth() / 2, getWindowHeight() / 2, GLColor::green);
+
+    // Now, do a similar thing but no flush in the middle.
+    // Draw the screen green:
+    glUniform4f(mUniformVec4Location, 0.0f, 1.0f, 0.0f, 1.0f);
+    drawQuad(mProgram, essl1_shaders::PositionAttrib(), 0.0f);
+    // Draw the middle of the screen red:
+    glUniform4f(mUniformVec4Location, 1.0f, 0.0f, 0.0f, 1.0f);
+    drawQuad(mProgram, essl1_shaders::PositionAttrib(), 0.0f, /*positionAttribXYScale=*/0.5f);
+    // Still green at (0,0)
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
+    // Red in the middle.
+    EXPECT_PIXEL_COLOR_EQ(getWindowWidth() / 2, getWindowHeight() / 2, GLColor::red);
+}
+
 class UniformTest : public ANGLETest<>
 {
   protected:
-    UniformTest() : mProgram(0), mUniformFLocation(-1), mUniformILocation(-1), mUniformBLocation(-1)
+    UniformTest()
     {
         setWindowWidth(128);
         setWindowHeight(128);
@@ -331,8 +470,8 @@ class UniformTest : public ANGLETest<>
         // changes. Must skip all tests explicitly.
         // if (IsMetal())
         //    return;
-
         constexpr char kVS[] = "void main() { gl_Position = vec4(1); }";
+
         constexpr char kFS[] =
             "precision mediump float;\n"
             "uniform float uniF;\n"
@@ -365,10 +504,10 @@ class UniformTest : public ANGLETest<>
 
     void testTearDown() override { glDeleteProgram(mProgram); }
 
-    GLuint mProgram;
-    GLint mUniformFLocation;
-    GLint mUniformILocation;
-    GLint mUniformBLocation;
+    GLuint mProgram         = 0;
+    GLint mUniformFLocation = -1;
+    GLint mUniformILocation = -1;
+    GLint mUniformBLocation = -1;
 };
 
 TEST_P(UniformTest, GetUniformNoCurrentProgram)
@@ -1588,7 +1727,8 @@ void main() {
 // tests should be run against.
 ANGLE_INSTANTIATE_TEST_ES2_AND_ES3(SimpleUniformTest);
 
-ANGLE_INSTANTIATE_TEST_ES2_AND_ES3(UniformTest);
+ANGLE_INSTANTIATE_TEST_ES2_AND_ES3_AND(UniformTest);
+ANGLE_INSTANTIATE_TEST_ES2_AND_ES3_AND(BasicUniformUsageTest, ES2_WEBGPU());
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(UniformTestES3);
 ANGLE_INSTANTIATE_TEST_ES3(UniformTestES3);

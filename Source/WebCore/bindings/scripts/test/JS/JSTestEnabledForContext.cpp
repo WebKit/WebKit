@@ -45,7 +45,6 @@
 #include <wtf/URL.h>
 #include <wtf/text/MakeString.h>
 
-
 namespace WebCore {
 using namespace JSC;
 
@@ -107,9 +106,8 @@ template<> void JSTestEnabledForContextDOMConstructor::initializeProperties(VM& 
 
 /* Hash table for prototype */
 
-static const HashTableValue JSTestEnabledForContextPrototypeTableValues[] =
-{
-    { "constructor"_s, static_cast<unsigned>(PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestEnabledForContextConstructor, 0 } },
+static const std::array<HashTableValue, 1> JSTestEnabledForContextPrototypeTableValues {
+    HashTableValue { "constructor"_s, static_cast<unsigned>(PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestEnabledForContextConstructor, 0 } },
 };
 
 const ClassInfo JSTestEnabledForContextPrototype::s_info = { "TestEnabledForContext"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestEnabledForContextPrototype) };
@@ -164,7 +162,7 @@ void JSTestEnabledForContext::destroy(JSC::JSCell* cell)
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestEnabledForContextConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
-    auto& vm = JSC::getVM(lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto* prototype = jsDynamicCast<JSTestEnabledForContextPrototype*>(JSValue::decode(thisValue));
     if (UNLIKELY(!prototype))
@@ -197,8 +195,8 @@ void JSTestEnabledForContext::analyzeHeap(JSCell* cell, HeapAnalyzer& analyzer)
 {
     auto* thisObject = jsCast<JSTestEnabledForContext*>(cell);
     analyzer.setWrappedObjectForCell(cell, &thisObject->wrapped());
-    if (thisObject->scriptExecutionContext())
-        analyzer.setLabelForCell(cell, makeString("url "_s, thisObject->scriptExecutionContext()->url().string()));
+    if (RefPtr context = thisObject->scriptExecutionContext())
+        analyzer.setLabelForCell(cell, makeString("url "_s, context->url().string()));
     Base::analyzeHeap(cell, analyzer);
 }
 
@@ -217,6 +215,7 @@ void JSTestEnabledForContextOwner::finalize(JSC::Handle<JSC::Unknown> handle, vo
     uncacheWrapper(world, jsTestEnabledForContext->protectedWrapped().ptr(), jsTestEnabledForContext);
 }
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 #if ENABLE(BINDING_INTEGRITY)
 #if PLATFORM(WIN)
 #pragma warning(disable: 4483)
@@ -241,6 +240,8 @@ template<typename T, typename = std::enable_if_t<std::is_same_v<T, TestEnabledFo
     }
 }
 #endif
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+
 JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject*, JSDOMGlobalObject* globalObject, Ref<TestEnabledForContext>&& impl)
 {
 #if ENABLE(BINDING_INTEGRITY)

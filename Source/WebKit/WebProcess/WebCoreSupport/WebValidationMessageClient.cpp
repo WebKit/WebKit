@@ -32,9 +32,12 @@
 #include "WebPageProxyMessages.h"
 #include <WebCore/Element.h>
 #include <WebCore/LocalFrame.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
 using namespace WebCore;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebValidationMessageClient);
 
 WebValidationMessageClient::WebValidationMessageClient(WebPage& page)
     : m_page(page)

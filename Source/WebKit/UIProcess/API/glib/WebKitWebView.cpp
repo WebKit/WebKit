@@ -31,6 +31,7 @@
 #include "NotificationService.h"
 #include "PageLoadState.h"
 #include "ProvisionalPageProxy.h"
+#include "SystemSettingsManagerProxy.h"
 #include "WebContextMenuItem.h"
 #include "WebContextMenuItemData.h"
 #include "WebFrameProxy.h"
@@ -83,7 +84,7 @@
 #include <wtf/SetForScope.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/URL.h>
-#include <wtf/glib/GRefPtr.h>
+#include <wtf/glib/GSpanExtras.h>
 #include <wtf/glib/WTFGType.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
@@ -241,17 +242,25 @@ enum {
     N_PROPERTIES,
 };
 
-static GParamSpec* sObjProperties[N_PROPERTIES] = { nullptr, };
+static std::array<GParamSpec*, N_PROPERTIES> sObjProperties;
 
-class PageLoadStateObserver final : public PageLoadState::Observer {
+class PageLoadStateObserver final : public RefCounted<PageLoadStateObserver>, public PageLoadState::Observer {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(PageLoadStateObserver);
 public:
+    static Ref<PageLoadStateObserver> create(WebKitWebView* webView)
+    {
+        return adoptRef(*new PageLoadStateObserver(webView));
+    }
+
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
+
+private:
     PageLoadStateObserver(WebKitWebView* webView)
         : m_webView(webView)
     {
     }
 
-private:
     void willChangeIsLoading() override
     {
         g_object_freeze_notify(G_OBJECT(m_webView));
@@ -358,7 +367,7 @@ struct _WebKitWebViewPrivate {
     bool isControlledByAutomation;
     WebKitAutomationBrowsingContextPresentation automationPresentationType;
 
-    std::unique_ptr<PageLoadStateObserver> loadObserver;
+    RefPtr<PageLoadStateObserver> loadObserver;
 
     GRefPtr<WebKitBackForwardList> backForwardList;
     GRefPtr<WebKitSettings> settings;
@@ -412,7 +421,7 @@ struct _WebKitWebViewPrivate {
     bool isWebProcessResponsive;
 };
 
-static guint signals[LAST_SIGNAL] = { 0, };
+static std::array<unsigned, LAST_SIGNAL> signals;
 
 #if PLATFORM(GTK)
 WEBKIT_DEFINE_TYPE(WebKitWebView, webkit_web_view, WEBKIT_TYPE_WEB_VIEW_BASE)
@@ -897,6 +906,9 @@ static void webkitWebViewConstructed(GObject* object)
             priv->display = wpe_display_get_default();
         }
     }
+
+    if (priv->display)
+        SystemSettingsManagerProxy::initialize();
 #endif
 
     if (!priv->settings)
@@ -932,7 +944,7 @@ static void webkitWebViewConstructed(GObject* object)
     webkitWebViewCreatePage(webView, WTFMove(configuration));
     webkitWebContextWebViewCreated(priv->context.get(), webView);
 
-    priv->loadObserver = makeUnique<PageLoadStateObserver>(webView);
+    priv->loadObserver = PageLoadStateObserver::create(webView);
     getPage(webView).pageLoadState().addObserver(*priv->loadObserver);
 
     priv->resourceLoadManager = makeUnique<WebKitWebResourceLoadManager>(webView);
@@ -1176,9 +1188,9 @@ static void webkitWebViewDispose(GObject* object)
 
     webkitWebViewDisconnectSettingsSignalHandlers(webView);
 
-    if (webView->priv->loadObserver) {
-        getPage(webView).pageLoadState().removeObserver(*webView->priv->loadObserver);
-        webView->priv->loadObserver.reset();
+    if (RefPtr loadObserver = webView->priv->loadObserver) {
+        getPage(webView).pageLoadState().removeObserver(*loadObserver);
+        webView->priv->loadObserver = nullptr;
 
         // We notify the context here to ensure it's called only once. Ideally we should
         // call this in finalize, not dispose, but finalize is used internally and we don't
@@ -1469,9 +1481,16 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
     /**
      * WebKitWebView:is-controlled-by-automation:
      *
-     * Whether the #WebKitWebView is controlled by automation. This should only be used when
-     * creating a new #WebKitWebView as a response to #WebKitAutomationSession::create-web-view
-     * signal request.
+     * Whether the #WebKitWebView is controlled by automation tools (e.g. WebDriver, Selenium). This is
+     * required for views returned as a response to #WebKitAutomationSession::create-web-view signal,
+     * alongside any view you want to control during an automation session.
+     *
+     * As a %G_PARAM_CONSTRUCT_ONLY, you need to set it during construction and it can't be modified.
+     *
+     * If #WebKitWebView:related-view is also passed during construction, #WebKitWebView:is-controlled-by-automation
+     * ignores its own parameter and inherits directly from the related view #WebKitWebView:is-controlled-by-automation
+     * property. This is the recommended way when creating new views as a response to the #WebKitWebView::create
+     * signal. For example, as response to JavaScript `window.open()` calls during an automation session.
      *
      * Since: 2.18
      */
@@ -1686,7 +1705,7 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
         nullptr,
         static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
 
-    g_object_class_install_properties(gObjectClass, N_PROPERTIES, sObjProperties);
+    g_object_class_install_properties(gObjectClass, N_PROPERTIES, sObjProperties.data());
 
     /**
      * WebKitWebView::load-changed:
@@ -1833,6 +1852,9 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
      *
      * The new #WebKitWebView should not be displayed to the user
      * until the #WebKitWebView::ready-to-show signal is emitted.
+     *
+     * For creating views as response to automation tools requests, see the
+     * #WebKitAutomationSession::create-web-view signal.
      *
      * Returns: (transfer full): a newly allocated #WebKitWebView widget
      *    or %NULL to propagate the event further.
@@ -2649,10 +2671,8 @@ void webkitWebViewSetIcon(WebKitWebView* webView, const LinkIcon& icon, API::Dat
 }
 #endif
 
-RefPtr<WebPageProxy> webkitWebViewCreateNewPage(WebKitWebView* webView, Ref<API::PageConfiguration>&& configuration, WindowFeatures&& windowFeatures, WebKitNavigationAction* navigationAction)
+RefPtr<WebPageProxy> webkitWebViewCreateNewPage(WebKitWebView* webView, Ref<API::PageConfiguration>&& configuration, WebKitNavigationAction* navigationAction)
 {
-    auto& openerInfo = configuration->openerInfo();
-
     ASSERT(!webView->priv->configurationForNextRelatedView);
     SetForScope configurationScope(webView->priv->configurationForNextRelatedView, WTFMove(configuration));
 
@@ -2662,13 +2682,8 @@ RefPtr<WebPageProxy> webkitWebViewCreateNewPage(WebKitWebView* webView, Ref<API:
         return nullptr;
 
     Ref newPage = getPage(newWebView);
-    if (&getPage(webView) != newPage->configuration().relatedPage() || openerInfo != newPage->configuration().openerInfo()) {
-        g_warning("WebKitWebView returned by WebKitWebView::create signal was not created with the related WebKitWebView");
-        return nullptr;
-    }
-
-    webkitWindowPropertiesUpdateFromWebWindowFeatures(newWebView->priv->windowProperties.get(), windowFeatures);
-
+    ASSERT(newPage->configuration().windowFeatures());
+    webkitWindowPropertiesUpdateFromWebWindowFeatures(newWebView->priv->windowProperties.get(), *newPage->configuration().windowFeatures());
     return newPage;
 }
 
@@ -3372,7 +3387,9 @@ void webkit_web_view_load_html(WebKitWebView* webView, const gchar* content, con
     g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
     g_return_if_fail(content);
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GTK/WPE port
     getPage(webView).loadData(WebCore::SharedBuffer::create(std::span { reinterpret_cast<const uint8_t*>(content), content ? strlen(content) : 0 }), "text/html"_s, "UTF-8"_s, String::fromUTF8(baseURI));
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 }
 
 /**
@@ -3395,7 +3412,9 @@ void webkit_web_view_load_alternate_html(WebKitWebView* webView, const gchar* co
     g_return_if_fail(content);
     g_return_if_fail(contentURI);
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GTK/WPE port
     getPage(webView).loadAlternateHTML(WebCore::DataSegment::create(Vector(std::span { reinterpret_cast<const uint8_t*>(content), content ? strlen(content) : 0 })), "UTF-8"_s, URL { String::fromUTF8(baseURI) }, URL { String::fromUTF8(contentURI) });
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 }
 
 /**
@@ -3438,11 +3457,10 @@ void webkit_web_view_load_bytes(WebKitWebView* webView, GBytes* bytes, const cha
     g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
     g_return_if_fail(bytes);
 
-    gsize bytesDataSize;
-    gconstpointer bytesData = g_bytes_get_data(bytes, &bytesDataSize);
-    g_return_if_fail(bytesDataSize);
+    auto bytesData = span(bytes);
+    g_return_if_fail(bytesData.size());
 
-    getPage(webView).loadData(WebCore::SharedBuffer::create(std::span { reinterpret_cast<const uint8_t*>(bytesData), bytesDataSize }), mimeType ? String::fromUTF8(mimeType) : String::fromUTF8("text/html"),
+    getPage(webView).loadData(WebCore::SharedBuffer::create(bytesData), mimeType ? String::fromUTF8(mimeType) : String::fromUTF8("text/html"),
         encoding ? String::fromUTF8(encoding) : String::fromUTF8("UTF-8"), String::fromUTF8(baseURI));
 }
 
@@ -4213,7 +4231,9 @@ static void webkitWebViewEvaluateJavascriptInternal(WebKitWebView* webView, cons
     g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
     g_return_if_fail(script);
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GTK/WPE port
     RunJavaScriptParameters params = { String::fromUTF8(std::span(script, length < 0 ? strlen(script) : length)), JSC::SourceTaintedOrigin::Untainted, URL({ }, String::fromUTF8(sourceURI)), RunAsAsyncFunction::No, std::nullopt, ForceUserGesture::Yes, RemoveTransientActivation::Yes };
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     webkitWebViewRunJavaScriptWithParams(webView, WTFMove(params), worldName, returnType, adoptGRef(g_task_new(webView, cancellable, callback, userData)));
 }
 
@@ -4349,7 +4369,9 @@ static void webkitWebViewCallAsyncJavascriptFunctionInternal(WebKitWebView* webV
         return;
     }
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GTK/WPE port
     RunJavaScriptParameters params = { String::fromUTF8(std::span(body, length < 0 ? strlen(body) : length)), JSC::SourceTaintedOrigin::Untainted, URL({ }, String::fromUTF8(sourceURI)), RunAsAsyncFunction::Yes, WTFMove(argumentsMap), ForceUserGesture::Yes, RemoveTransientActivation::Yes };
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     webkitWebViewRunJavaScriptWithParams(webView, WTFMove(params), worldName, returnType, adoptGRef(g_task_new(webView, cancellable, callback, userData)));
 }
 
@@ -5480,8 +5502,10 @@ void webkit_web_view_set_cors_allowlist(WebKitWebView* webView, const gchar* con
 
     Vector<String> allowListVector;
     if (allowList) {
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GTK/WPE port
         for (auto str = allowList; *str; ++str)
             allowListVector.append(String::fromUTF8(*str));
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     }
 
     getPage(webView).setCORSDisablingPatterns(WTFMove(allowListVector));

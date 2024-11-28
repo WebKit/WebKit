@@ -62,7 +62,7 @@ static inline bool isAlignedForPreciseAllocation(void* memory)
     // Checks if the allocated pointer is 16 byte aligned. If it's 16 byte aligned,
     // then the object will have halfAlignment because headerSize() ensures that it
     // has an odd halfAlignment at the end.
-    uintptr_t allocatedPointer = bitwise_cast<uintptr_t>(memory);
+    uintptr_t allocatedPointer = std::bit_cast<uintptr_t>(memory);
     uintptr_t maskedPointer = allocatedPointer & (PreciseAllocation::alignment - 1);
     ASSERT(!maskedPointer || maskedPointer == PreciseAllocation::halfAlignment);
     return maskedPointer;
@@ -70,7 +70,7 @@ static inline bool isAlignedForPreciseAllocation(void* memory)
 
 static inline bool isCacheAlignedForPreciseAllocation(void* memory)
 {
-    uintptr_t allocatedPointer = bitwise_cast<uintptr_t>(memory);
+    uintptr_t allocatedPointer = std::bit_cast<uintptr_t>(memory);
     uintptr_t cellStart = allocatedPointer + PreciseAllocation::headerSize();
     uintptr_t cacheLineOffsetForCellStart = cellStart % dataCacheLineSize();
     return dataCacheLineSize() - cacheLineOffsetForCellStart >= PreciseAllocation::cacheLineAdjustment;
@@ -90,15 +90,15 @@ PreciseAllocation* PreciseAllocation::tryCreate(JSC::Heap& heap, size_t size, Su
         return nullptr;
 
     unsigned adjustment = halfAlignment;
-    space = bitwise_cast<void*>(bitwise_cast<uintptr_t>(space) + halfAlignment);
+    space = std::bit_cast<void*>(std::bit_cast<uintptr_t>(space) + halfAlignment);
     if (UNLIKELY(!isAlignedForPreciseAllocation(space))) {
-        space = bitwise_cast<void*>(bitwise_cast<uintptr_t>(space) - halfAlignment);
+        space = std::bit_cast<void*>(std::bit_cast<uintptr_t>(space) - halfAlignment);
         adjustment -= halfAlignment;
         ASSERT(isAlignedForPreciseAllocation(space));
     }
 
     if (!isCacheAlignedForPreciseAllocation(space)) {
-        space = bitwise_cast<void*>(bitwise_cast<uintptr_t>(space) + cacheLineAdjustment);
+        space = std::bit_cast<void*>(std::bit_cast<uintptr_t>(space) + cacheLineAdjustment);
         adjustment += cacheLineAdjustment;
         ASSERT(isCacheAlignedForPreciseAllocation(space));
         ASSERT(isAlignedForPreciseAllocation(space));
@@ -127,23 +127,23 @@ PreciseAllocation* PreciseAllocation::tryReallocate(size_t size, Subspace* subsp
 
     void* newBasePointer = newSpace;
     unsigned newAdjustment = halfAlignment;
-    newBasePointer = bitwise_cast<void*>(bitwise_cast<uintptr_t>(newBasePointer) + halfAlignment);
+    newBasePointer = std::bit_cast<void*>(std::bit_cast<uintptr_t>(newBasePointer) + halfAlignment);
     if (UNLIKELY(!isAlignedForPreciseAllocation(newBasePointer))) {
-        newBasePointer = bitwise_cast<void*>(bitwise_cast<uintptr_t>(newBasePointer) - halfAlignment);
+        newBasePointer = std::bit_cast<void*>(std::bit_cast<uintptr_t>(newBasePointer) - halfAlignment);
         newAdjustment -= halfAlignment;
         ASSERT(isAlignedForPreciseAllocation(newBasePointer));
     }
 
     if (!isCacheAlignedForPreciseAllocation(newBasePointer)) {
-        newBasePointer = bitwise_cast<void*>(bitwise_cast<uintptr_t>(newBasePointer) + cacheLineAdjustment);
+        newBasePointer = std::bit_cast<void*>(std::bit_cast<uintptr_t>(newBasePointer) + cacheLineAdjustment);
         newAdjustment += cacheLineAdjustment;
         ASSERT(isCacheAlignedForPreciseAllocation(newBasePointer));
         ASSERT(isAlignedForPreciseAllocation(newBasePointer));
     }
 
-    PreciseAllocation* newAllocation = bitwise_cast<PreciseAllocation*>(newBasePointer);
+    PreciseAllocation* newAllocation = std::bit_cast<PreciseAllocation*>(newBasePointer);
     if (oldAdjustment != newAdjustment) {
-        void* basePointerAfterRealloc = bitwise_cast<void*>(bitwise_cast<uintptr_t>(newSpace) + oldAdjustment);
+        void* basePointerAfterRealloc = std::bit_cast<void*>(std::bit_cast<uintptr_t>(newSpace) + oldAdjustment);
         memmove(newBasePointer, basePointerAfterRealloc, oldCellSize + PreciseAllocation::headerSize());
     }
 
@@ -166,15 +166,15 @@ PreciseAllocation* PreciseAllocation::tryCreateForLowerTierPrecise(JSC::Heap& he
     RELEASE_ASSERT(space);
 
     unsigned adjustment = halfAlignment;
-    space = bitwise_cast<void*>(bitwise_cast<uintptr_t>(space) + halfAlignment);
+    space = std::bit_cast<void*>(std::bit_cast<uintptr_t>(space) + halfAlignment);
     if (UNLIKELY(!isAlignedForPreciseAllocation(space))) {
-        space = bitwise_cast<void*>(bitwise_cast<uintptr_t>(space) - halfAlignment);
+        space = std::bit_cast<void*>(std::bit_cast<uintptr_t>(space) - halfAlignment);
         adjustment -= halfAlignment;
         ASSERT(isAlignedForPreciseAllocation(space));
     }
 
     if (!isCacheAlignedForPreciseAllocation(space)) {
-        space = bitwise_cast<void*>(bitwise_cast<uintptr_t>(space) + cacheLineAdjustment);
+        space = std::bit_cast<void*>(std::bit_cast<uintptr_t>(space) + cacheLineAdjustment);
         adjustment += cacheLineAdjustment;
         ASSERT(isCacheAlignedForPreciseAllocation(space));
         ASSERT(isAlignedForPreciseAllocation(space));
@@ -198,7 +198,7 @@ PreciseAllocation* PreciseAllocation::reuseForLowerTierPrecise()
 
     this->~PreciseAllocation();
 
-    void* space = bitwise_cast<void*>(bitwise_cast<uintptr_t>(basePointer) + adjustment);
+    void* space = std::bit_cast<void*>(std::bit_cast<uintptr_t>(basePointer) + adjustment);
 
     PreciseAllocation* preciseAllocation = new (NotNull, space) PreciseAllocation(heap, size, subspace, 0, adjustment);
     preciseAllocation->m_lowerTierPreciseIndex = lowerTierPreciseIndex;

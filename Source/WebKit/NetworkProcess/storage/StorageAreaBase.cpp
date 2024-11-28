@@ -59,11 +59,6 @@ void StorageAreaBase::removeListener(IPC::Connection::UniqueID connection)
     m_listeners.remove(connection);
 }
 
-bool StorageAreaBase::hasListeners() const
-{
-    return !m_listeners.isEmpty();
-}
-
 void StorageAreaBase::notifyListenersAboutClear()
 {
     for (auto& [connection, identifier] : m_listeners)
@@ -72,8 +67,6 @@ void StorageAreaBase::notifyListenersAboutClear()
 
 void StorageAreaBase::dispatchEvents(IPC::Connection::UniqueID sourceConnection, StorageAreaImplIdentifier sourceImplIdentifier, const String& key, const String& oldValue, const String& newValue, const String& urlString) const
 {
-    ASSERT(sourceImplIdentifier);
-
     for (auto& [connection, identifier] : m_listeners) {
         std::optional<StorageAreaImplIdentifier> implIdentifier;
         if (connection == sourceConnection)

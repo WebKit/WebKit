@@ -62,6 +62,8 @@ WebPageInspectorController::WebPageInspectorController(WebPageProxy& inspectedPa
     m_agents.append(WTFMove(targetAgent));
 }
 
+WebPageInspectorController::~WebPageInspectorController() = default;
+
 Ref<WebPageProxy> WebPageInspectorController::protectedInspectedPage()
 {
     return m_inspectedPage.get();
@@ -225,6 +227,11 @@ void WebPageInspectorController::didCommitProvisionalPage(WebCore::PageIdentifie
         m_targetAgent->targetDestroyed(*target);
     m_targets.clear();
     m_targets.set(newTarget->identifier(), WTFMove(newTarget));
+}
+
+InspectorBrowserAgent* WebPageInspectorController::enabledBrowserAgent() const
+{
+    return m_enabledBrowserAgent.get();
 }
 
 WebPageAgentContext WebPageInspectorController::webPageAgentContext()

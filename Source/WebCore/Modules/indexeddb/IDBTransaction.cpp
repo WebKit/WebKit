@@ -796,7 +796,7 @@ void IDBTransaction::renameIndex(IDBIndex& index, const String& newName)
     index.objectStore().renameReferencedIndex(index, newName);
 
     auto objectStoreIdentifier = index.objectStore().info().identifier();
-    uint64_t indexIdentifier = index.info().identifier();
+    auto indexIdentifier = index.info().identifier();
 
     LOG(IndexedDBOperations, "IDB rename index operation: %s to %s under object store %" PRIu64, index.info().condensedLoggingString().utf8().data(), newName.utf8().data(), objectStoreIdentifier.toRawValue());
     scheduleOperation(IDBClient::TransactionOperationImpl::create(*this, [protectedThis = Ref { *this }] (const auto& result) {
@@ -806,7 +806,7 @@ void IDBTransaction::renameIndex(IDBIndex& index, const String& newName)
     }), IsWriteOperation::Yes);
 }
 
-void IDBTransaction::renameIndexOnServer(IDBClient::TransactionOperation& operation, IDBObjectStoreIdentifier objectStoreIdentifier, const uint64_t& indexIdentifier, const String& newName)
+void IDBTransaction::renameIndexOnServer(IDBClient::TransactionOperation& operation, IDBObjectStoreIdentifier objectStoreIdentifier, IDBIndexIdentifier indexIdentifier, const String& newName)
 {
     LOG(IndexedDB, "IDBTransaction::renameIndexOnServer");
     ASSERT(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
@@ -938,7 +938,7 @@ Ref<IDBRequest> IDBTransaction::requestGetAllObjectStoreRecords(IDBObjectStore& 
     auto request = IDBRequest::create(*scriptExecutionContext(), objectStore, *this);
     addRequest(request.get());
 
-    IDBGetAllRecordsData getAllRecordsData { keyRangeData, getAllType, count, objectStore.info().identifier(), 0 };
+    IDBGetAllRecordsData getAllRecordsData { keyRangeData, getAllType, count, objectStore.info().identifier() };
 
     LOG(IndexedDBOperations, "IDB get all object store records operation: %s", getAllRecordsData.loggingString().utf8().data());
     scheduleOperation(IDBClient::TransactionOperationImpl::create(*this, request.get(), [protectedThis = Ref { *this }, request] (const auto& result) {

@@ -32,7 +32,7 @@
 #include <gio/gio.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Vector.h>
-#include <wtf/glib/GUniquePtr.h>
+#include <wtf/glib/GSpanExtras.h>
 
 namespace Inspector {
 
@@ -88,10 +88,9 @@ static RemoteInspector::Client::SessionCapabilities processSessionCapabilities(G
             capabilities.proxy->socksURL = String::fromUTF8(socksURL);
 
         if (GRefPtr<GVariant> ignoreAddressList = g_variant_lookup_value(proxy.get(), "ignoreAddressList", G_VARIANT_TYPE("as"))) {
-            gsize ignoreAddressListLength;
-            GUniquePtr<char> ignoreAddressArray(reinterpret_cast<char*>(g_variant_get_strv(ignoreAddressList.get(), &ignoreAddressListLength)));
-            for (unsigned i = 0; i < ignoreAddressListLength; ++i)
-                capabilities.proxy->ignoreAddressList.append(String::fromUTF8(reinterpret_cast<char**>(ignoreAddressArray.get())[i]));
+            auto addresses = gVariantGetStrv(ignoreAddressList);
+            for (const char* address : addresses.span())
+                capabilities.proxy->ignoreAddressList.append(String::fromUTF8(address));
         }
     }
 

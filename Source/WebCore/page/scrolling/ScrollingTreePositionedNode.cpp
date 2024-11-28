@@ -33,9 +33,12 @@
 #include "ScrollingTree.h"
 #include "ScrollingTreeOverflowScrollingNode.h"
 #include "ScrollingTreeScrollingNode.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ScrollingTreePositionedNode);
 
 ScrollingTreePositionedNode::ScrollingTreePositionedNode(ScrollingTree& scrollingTree, ScrollingNodeID nodeID)
     : ScrollingTreeNode(scrollingTree, ScrollingNodeType::Positioned, nodeID)
@@ -57,7 +60,7 @@ bool ScrollingTreePositionedNode::commitStateBeforeChildren(const ScrollingState
         m_constraints = positionedStateNode->layoutConstraints();
 
     if (!m_relatedOverflowScrollingNodes.isEmpty())
-        scrollingTree().activePositionedNodes().add(*this);
+        scrollingTree()->activePositionedNodes().add(*this);
 
     return true;
 }
@@ -66,7 +69,7 @@ FloatSize ScrollingTreePositionedNode::scrollDeltaSinceLastCommit() const
 {
     FloatSize delta;
     for (auto nodeID : m_relatedOverflowScrollingNodes) {
-        if (auto* node = dynamicDowncast<ScrollingTreeOverflowScrollingNode>(scrollingTree().nodeForID(nodeID)))
+        if (auto* node = dynamicDowncast<ScrollingTreeOverflowScrollingNode>(scrollingTree()->nodeForID(nodeID)))
             delta += node->scrollDeltaSinceLastCommit();
     }
 

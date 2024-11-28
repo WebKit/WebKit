@@ -106,6 +106,14 @@ void MockRealtimeVideoSourceGStreamer::captureEnded()
     // devices removal.
 }
 
+std::pair<GstClockTime, GstClockTime> MockRealtimeVideoSourceGStreamer::queryCaptureLatency() const
+{
+    if (!m_capturer)
+        return { GST_CLOCK_TIME_NONE, GST_CLOCK_TIME_NONE };
+
+    return m_capturer->queryLatency();
+}
+
 void MockRealtimeVideoSourceGStreamer::updateSampleBuffer()
 {
     RefPtr imageBuffer = this->imageBufferInternal();

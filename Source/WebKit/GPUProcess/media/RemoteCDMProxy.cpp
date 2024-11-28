@@ -39,7 +39,7 @@ namespace WebKit {
 
 using namespace WebCore;
 
-std::unique_ptr<RemoteCDMProxy> RemoteCDMProxy::create(RemoteCDMFactoryProxy& factory, std::unique_ptr<WebCore::CDMPrivate>&& priv)
+RefPtr<RemoteCDMProxy> RemoteCDMProxy::create(RemoteCDMFactoryProxy& factory, std::unique_ptr<WebCore::CDMPrivate>&& priv)
 {
     if (!priv)
         return nullptr;
@@ -50,8 +50,8 @@ std::unique_ptr<RemoteCDMProxy> RemoteCDMProxy::create(RemoteCDMFactoryProxy& fa
         priv->supportsServerCertificates(),
         priv->supportsSessions()
     });
-    // Use new() to access CDMPrivate's private constructor.
-    return std::unique_ptr<RemoteCDMProxy>(new RemoteCDMProxy(factory, WTFMove(priv), WTFMove(configuration)));
+
+    return adoptRef(new RemoteCDMProxy(factory, WTFMove(priv), WTFMove(configuration)));
 }
 
 RemoteCDMProxy::RemoteCDMProxy(RemoteCDMFactoryProxy& factory, std::unique_ptr<CDMPrivate>&& priv, UniqueRef<RemoteCDMConfiguration>&& configuration)
@@ -86,17 +86,17 @@ void RemoteCDMProxy::getSupportedConfiguration(WebCore::CDMKeySystemConfiguratio
     m_private->getSupportedConfiguration(WTFMove(configuration), access, WTFMove(callback));
 }
 
-void RemoteCDMProxy::createInstance(CompletionHandler<void(RemoteCDMInstanceIdentifier, RemoteCDMInstanceConfiguration&&)>&& completion)
+void RemoteCDMProxy::createInstance(CompletionHandler<void(std::optional<RemoteCDMInstanceIdentifier>, RemoteCDMInstanceConfiguration&&)>&& completion)
 {
     auto privateInstance = m_private->createInstance();
     if (!privateInstance || !m_factory) {
-        completion({ }, { });
+        completion(std::nullopt, { });
         return;
     }
     auto identifier = RemoteCDMInstanceIdentifier::generate();
     auto instance = RemoteCDMInstanceProxy::create(*this, privateInstance.releaseNonNull(), identifier);
     RemoteCDMInstanceConfiguration configuration = instance->configuration();
-    m_factory->addInstance(identifier, WTFMove(instance));
+    protectedFactory()->addInstance(identifier, WTFMove(instance));
     completion(identifier, WTFMove(configuration));
 }
 
@@ -108,12 +108,21 @@ void RemoteCDMProxy::loadAndInitialize()
 void RemoteCDMProxy::setLogIdentifier(uint64_t logIdentifier)
 {
 #if !RELEASE_LOG_DISABLED
-    m_logIdentifier = reinterpret_cast<const void*>(logIdentifier);
+    m_logIdentifier = logIdentifier;
     if (m_factory)
         m_private->setLogIdentifier(m_logIdentifier);
 #else
     UNUSED_PARAM(logIdentifier);
 #endif
+}
+
+std::optional<SharedPreferencesForWebProcess> RemoteCDMProxy::sharedPreferencesForWebProcess() const
+{
+    if (!m_factory)
+        return std::nullopt;
+
+    // FIXME: Remove SUPPRESS_UNCOUNTED_ARG once https://github.com/llvm/llvm-project/pull/111198 lands.
+    SUPPRESS_UNCOUNTED_ARG return m_factory->sharedPreferencesForWebProcess();
 }
 
 }

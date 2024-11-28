@@ -36,6 +36,8 @@
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/StringView.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 // SQLite 3.6.16 makes sqlite3_prepare_v2 automatically retry preparing the statement
 // once if the database scheme has changed. We rely on this behavior.
 #if SQLITE_VERSION_NUMBER < 3006016
@@ -328,3 +330,5 @@ bool SQLiteStatement::isReadOnly()
 }
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

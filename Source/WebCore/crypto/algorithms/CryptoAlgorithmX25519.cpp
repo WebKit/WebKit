@@ -24,6 +24,7 @@
 #include "CryptoAlgorithmX25519Params.h"
 #include "CryptoKeyOKP.h"
 #include "ScriptExecutionContext.h"
+#include <wtf/CryptographicUtilities.h>
 
 namespace WebCore {
 
@@ -86,15 +87,32 @@ void CryptoAlgorithmX25519::deriveBits(const CryptoAlgorithmParameters& paramete
         return;
     }
 
+    // Return an empty string doesn't make much sense, but truncating either at all.
+    // https://github.com/WICG/webcrypto-secure-curves/pull/29
+    if (length && !(*length)) {
+        // Avoid executing the key-derivation, since we are going to return an empty string.
+        callback({ });
+        return;
+    }
+
     auto unifiedCallback = [callback = WTFMove(callback), exceptionCallback = WTFMove(exceptionCallback)](std::optional<Vector<uint8_t>>&& derivedKey, std::optional<size_t> length) mutable {
         if (!derivedKey) {
             exceptionCallback(ExceptionCode::OperationError);
             return;
         }
-        if (!length || !(*length)) {
+        if (!length) {
             callback(WTFMove(*derivedKey));
             return;
         }
+#if !HAVE(X25519_ZERO_CHECKS)
+        // https://datatracker.ietf.org/doc/html/rfc7748#section-6.1
+        constexpr auto expectedOutputSize = 32;
+        constexpr std::array<uint8_t, expectedOutputSize> zeros { };
+        if (derivedKey->size() != expectedOutputSize || !constantTimeMemcmp(derivedKey->data(), zeros.data(), expectedOutputSize)) {
+            exceptionCallback(ExceptionCode::OperationError);
+            return;
+        }
+#endif
         auto lengthInBytes = std::ceil(*length / 8.);
         if (lengthInBytes > (*derivedKey).size()) {
             exceptionCallback(ExceptionCode::OperationError);

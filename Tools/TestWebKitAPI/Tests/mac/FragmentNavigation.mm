@@ -118,7 +118,7 @@ TEST(WebKitLegacy, FragmentNavigation)
         [webView setPolicyDelegate:[WebKit1FragmentNavigationTestDelegate shared]];
         [webView setFrameLoadDelegate:[WebKit1FragmentNavigationTestDelegate shared]];
         [webView setUIDelegate:[WebKit1FragmentNavigationTestDelegate shared]];
-        [[webView mainFrame] loadRequest:[NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"FragmentNavigation" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]]];
+        [[webView mainFrame] loadRequest:[NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"FragmentNavigation" withExtension:@"html"]]];
 
         Util::run(&testFinished);
     }

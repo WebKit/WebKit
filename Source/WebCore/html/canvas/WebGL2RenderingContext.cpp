@@ -105,6 +105,8 @@
 #include <wtf/Locker.h>
 #include <wtf/TZoneMallocInlines.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 const GCGLuint64 MaxClientWaitTimeout = 0u;
@@ -113,7 +115,7 @@ WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(WebGL2RenderingContext);
 
 std::unique_ptr<WebGL2RenderingContext> WebGL2RenderingContext::create(CanvasBase& canvas, WebGLContextAttributes&& attributes)
 {
-    return std::unique_ptr<WebGL2RenderingContext>(new WebGL2RenderingContext(canvas, WTFMove(attributes)));
+    return std::unique_ptr<WebGL2RenderingContext>(new WebGL2RenderingContext(canvas, Type::WebGL2, WTFMove(attributes)));
 }
 
 WebGL2RenderingContext::~WebGL2RenderingContext()
@@ -3558,5 +3560,7 @@ void WebGL2RenderingContext::updateBuffersToAutoClear(ClearBufferCaller caller, 
 }
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ENABLE(WEBGL)

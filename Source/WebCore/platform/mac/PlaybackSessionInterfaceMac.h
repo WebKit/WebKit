@@ -46,7 +46,7 @@ class WEBCORE_EXPORT PlaybackSessionInterfaceMac final
     : public PlaybackSessionModelClient
     , public RefCounted<PlaybackSessionInterfaceMac>
     , public CanMakeCheckedPtr<PlaybackSessionInterfaceMac> {
-    WTF_MAKE_TZONE_ALLOCATED(PlaybackSessionInterfaceMac);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(PlaybackSessionInterfaceMac, WEBCORE_EXPORT);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(PlaybackSessionInterfaceMac);
 public:
     static Ref<PlaybackSessionInterfaceMac> create(PlaybackSessionModel&);
@@ -83,7 +83,7 @@ public:
     void invalidate();
 
 #if !RELEASE_LOG_DISABLED
-    const void* logIdentifier() const;
+    uint64_t logIdentifier() const;
     const Logger* loggerPtr() const;
     ASCIILiteral logClassName() const { return "PlaybackSessionInterfaceMac"_s; };
     WTFLogChannel& logChannel() const;
@@ -93,10 +93,10 @@ private:
     PlaybackSessionInterfaceMac(PlaybackSessionModel&);
 
     // CheckedPtr interface
-    uint32_t ptrCount() const final;
-    uint32_t ptrCountWithoutThreadCheck() const final;
-    void incrementPtrCount() const final;
-    void decrementPtrCount() const final;
+    uint32_t checkedPtrCount() const final;
+    uint32_t checkedPtrCountWithoutThreadCheck() const final;
+    void incrementCheckedPtrCount() const final;
+    void decrementCheckedPtrCount() const final;
 
     WeakPtr<PlaybackSessionModel> m_playbackSessionModel;
 #if ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -41,7 +41,7 @@ public:
     };
 
     static Ref<TextEncoder> create() { return adoptRef(*new TextEncoder); }
-    String encoding() const;
+    ASCIILiteral encoding() const { return "utf-8"_s; }
     RefPtr<Uint8Array> encode(String&&) const;
     EncodeIntoResult encodeInto(String&&, Ref<Uint8Array>&& destination);
 private:

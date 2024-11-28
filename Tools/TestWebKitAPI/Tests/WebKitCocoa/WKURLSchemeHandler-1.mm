@@ -1090,7 +1090,7 @@ TEST(URLSchemeHandler, DisableCORSCanvas)
             done = true;
         } else if ([task.request.URL.path isEqualToString:@"/image.png"]) {
             mimeType = @"image/png";
-            response = [NSData dataWithContentsOfURL:[[NSBundle mainBundle] URLForResource:@"400x400-green" withExtension:@"png" subdirectory:@"TestWebKitAPI.resources"]];
+            response = [NSData dataWithContentsOfURL:[NSBundle.test_resourcesBundle URLForResource:@"400x400-green" withExtension:@"png"]];
         } else
             ASSERT_NOT_REACHED();
 
@@ -1690,7 +1690,7 @@ TEST(URLSchemeHandler, APIRedirect)
 
 TEST(URLSchemeHandler, Ranges)
 {
-    RetainPtr<NSData> videoData = [NSData dataWithContentsOfURL:[[NSBundle mainBundle] URLForResource:@"test" withExtension:@"mp4" subdirectory:@"TestWebKitAPI.resources"]];
+    RetainPtr<NSData> videoData = [NSData dataWithContentsOfURL:[NSBundle.test_resourcesBundle URLForResource:@"test" withExtension:@"mp4"]];
 
     auto handler = adoptNS([[TestURLSchemeHandler alloc] init]);
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);

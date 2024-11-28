@@ -35,6 +35,8 @@
 #include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 class JSWebAssemblyGlobal;
@@ -84,7 +86,7 @@ public:
 
     static Global& fromBinding(Value& value)
     {
-        return *bitwise_cast<Global*>(bitwise_cast<uint8_t*>(&value) - offsetOfValue());
+        return *std::bit_cast<Global*>(std::bit_cast<uint8_t*>(&value) - offsetOfValue());
     }
 
     Value* valuePointer() { return &m_value; }
@@ -113,5 +115,7 @@ private:
 };
 
 } } // namespace JSC::Wasm
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ENABLE(WEBASSEMBLY)

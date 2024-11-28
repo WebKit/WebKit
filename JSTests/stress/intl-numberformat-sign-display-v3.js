@@ -49,8 +49,7 @@ for (const [signDisplay, neg, negZero, zero, pos] of testData) {
     nf = new Intl.NumberFormat("en", {signDisplay});
     shouldBe(signDisplay, nf.resolvedOptions().signDisplay);
     shouldBe(neg, nf.format(-123));
-    if ($vm.icuVersion() >= 69)
-        shouldBe(negZero, nf.format(-0));
+    shouldBe(negZero, nf.format(-0));
     shouldBe(zero, nf.format(0));
     shouldBe(pos, nf.format(123));
 }

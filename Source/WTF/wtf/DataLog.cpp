@@ -34,6 +34,8 @@
 #include <wtf/ProcessID.h>
 #include <mutex>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 // Setting DATA_LOG_TO_FILE to 1 will cause logs to be sent to the filename
 // specified in the WTF_DATA_LOG_FILENAME envvar.
 #define DATA_LOG_TO_FILE 0
@@ -210,3 +212,4 @@ void dataLogFString(const char* str)
 
 } // namespace WTF
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

@@ -42,7 +42,7 @@ for (let targetIsResizable of [
       // Write some data into the array.
       const taFull = new sourceCtor(rab);
       for (let i = 0; i < 4; ++i) {
-        WriteToTypedArray(taFull, i, i + 1);
+        taFull[i] = MayNeedBigInt(taFull, i + 1);
       }
 
       // Orig. array: [1, 2, 3, 4]
@@ -179,7 +179,7 @@ for (let targetIsResizable of [
       // Grow so that all TAs are back in-bounds.
       rab.resize(6 * sourceCtor.BYTES_PER_ELEMENT);
       for (let i = 0; i < 6; ++i) {
-        WriteToTypedArray(taFull, i, i + 1);
+        taFull[i] = MayNeedBigInt(taFull, i + 1);
       }
 
       // Orig. array: [1, 2, 3, 4, 5, 6]

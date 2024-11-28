@@ -102,10 +102,15 @@ static String buildUserAgentString(const UserAgentQuirks& quirks)
     // not advertise Version/X.
     if (quirks.contains(UserAgentQuirks::NeedsChromeBrowser)) {
         uaString.append(UserAgentQuirks::stringForQuirk(UserAgentQuirks::NeedsChromeBrowser), ' ');
-    // Version/X is mandatory *before* Safari/X to be a valid Safari UA. See
-    // https://bugs.webkit.org/show_bug.cgi?id=133403 for details.
     } else
-        uaString.append("Version/17.0 "_s);
+        // Version/X is mandatory *before* Safari/X to be a valid Safari UA.
+        //
+        // Actual Safari uses the Safari version (17.0, 18.0, etc.) here rather
+        // than the 605.1.15, but this is not web compatible for us because many
+        // websites discriminate against relatively recent Safari versions. We
+        // need to pick a higher version number than real Safari to avoid these.
+        // https://github.com/nextcloud/server/issues/40793#issuecomment-1750678596
+        uaString.append("Version/605.1.15 "_s);
 
     if (chassisType() == WTF::ChassisType::Mobile)
         uaString.append("Mobile "_s);

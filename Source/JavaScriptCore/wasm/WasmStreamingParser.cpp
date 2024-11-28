@@ -37,6 +37,8 @@
 #include <wtf/UnalignedAccess.h>
 #include <wtf/text/MakeString.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC { namespace Wasm {
 
 namespace WasmStreamingParserInternal {
@@ -173,7 +175,7 @@ auto StreamingParser::parseFunctionPayload(Vector<uint8_t>&& data) -> State
     function.end = m_offset + m_functionSize;
     function.data = WTFMove(data);
     dataLogLnIf(WasmStreamingParserInternal::verbose, "Processing function starting at: ", function.start, " and ending at: ", function.end);
-    if (!m_client.didReceiveFunctionData(m_functionIndex, function))
+    if (!m_client.didReceiveFunctionData(FunctionCodeIndex(m_functionIndex), function))
         return State::FatalError;
     ++m_functionIndex;
 
@@ -454,5 +456,7 @@ auto StreamingParser::finalize() -> State
 }
 
 } } // namespace JSC::Wasm
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ENABLE(WEBASSEMBLY)

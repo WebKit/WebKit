@@ -56,9 +56,9 @@ public:
     virtual bool isKeyframeEffect() const { return false; }
 
     EffectTiming getBindingsTiming() const;
-    BasicEffectTiming getBasicTiming(std::optional<Seconds> = std::nullopt) const;
+    BasicEffectTiming getBasicTiming(std::optional<WebAnimationTime> = std::nullopt) const;
     ComputedEffectTiming getBindingsComputedTiming() const;
-    ComputedEffectTiming getComputedTiming(std::optional<Seconds> = std::nullopt) const;
+    ComputedEffectTiming getComputedTiming(std::optional<WebAnimationTime> = std::nullopt) const;
     ExceptionOr<void> bindingsUpdateTiming(Document&, std::optional<OptionalEffectTiming>);
     ExceptionOr<void> updateTiming(Document&, std::optional<OptionalEffectTiming>);
 
@@ -66,7 +66,7 @@ public:
     virtual void animationDidChangeTimingProperties() { };
     virtual void animationWasCanceled() { };
     virtual void animationSuspensionStateDidChange(bool) { };
-    virtual void animationTimelineDidChange(AnimationTimeline*) { };
+    virtual void animationTimelineDidChange(const AnimationTimeline*);
     virtual void animationDidFinish() { };
 
     AnimationEffectTiming timing() const { return m_timing; }
@@ -89,7 +89,7 @@ public:
     double iterations() const { return m_timing.iterations; }
     ExceptionOr<void> setIterations(double);
 
-    Seconds iterationDuration() const { return m_timing.iterationDuration; }
+    WebAnimationTime iterationDuration() const { return m_timing.iterationDuration; }
     void setIterationDuration(const Seconds&);
 
     PlaybackDirection direction() const { return m_timing.direction; }
@@ -98,8 +98,8 @@ public:
     TimingFunction* timingFunction() const { return m_timing.timingFunction.get(); }
     void setTimingFunction(const RefPtr<TimingFunction>&);
 
-    Seconds activeDuration() const { return m_timing.activeDuration; }
-    Seconds endTime() const { return m_timing.endTime; }
+    WebAnimationTime activeDuration() const { return m_timing.activeDuration; }
+    WebAnimationTime endTime() const { return m_timing.endTime; }
 
     void updateStaticTimingProperties();
 
@@ -114,11 +114,12 @@ protected:
     virtual std::optional<double> progressUntilNextStep(double) const;
 
 private:
-    std::optional<Seconds> localTime(std::optional<Seconds>) const;
-    double playbackRate() const;
+    AnimationEffectTiming::ResolutionData resolutionData(std::optional<WebAnimationTime>) const;
+    void normalizeSpecifiedTiming(std::variant<double, String>);
 
     AnimationEffectTiming m_timing;
     WeakPtr<WebAnimation, WeakPtrImplWithEventTargetData> m_animation;
+    bool m_hasAutoDuration { true };
 };
 
 } // namespace WebCore

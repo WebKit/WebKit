@@ -73,23 +73,6 @@ split_srcs_and_hdrs(
     files = MTL_FILES,
 )
 
-skia_filegroup(
-    name = "objc_srcs",
-    srcs = [
-        ":mtl_srcs",
-    ],
-    visibility = ["//src/gpu/ganesh:__pkg__"],
-)
-
-skia_filegroup(
-    name = "private_hdrs",
-    srcs = [
-        ":mtl_cpp_hdrs",
-        ":mtl_hdrs",
-    ],
-    visibility = ["//src/gpu/ganesh:__pkg__"],
-)
-
 skia_objc_library(
     name = "ganesh_metal",
     srcs = [
@@ -99,7 +82,7 @@ skia_objc_library(
         "//src/gpu/ganesh/surface:mtl_objc_srcs",
     ],
     hdrs = [
-        "//include/gpu:ganesh_hdrs",
+        "//include/gpu:shared_gpu_hdrs",
         "//include/gpu/ganesh:ganesh_hdrs",
         "//include/gpu/ganesh/mtl:public_hdrs",
         "//include/gpu/mtl:public_hdrs",
@@ -119,6 +102,41 @@ skia_objc_library(
         "//src/core:core_priv",
         "//src/gpu",
         "//src/gpu/ganesh",
+        "//src/gpu/mtl:gpu_mtl",
+        "//src/sksl/codegen:metal",
+    ],
+)
+
+skia_objc_library(
+    name = "ganesh_metal_TEST_UTIL",
+    testonly = True,
+    srcs = [
+        ":mtl_cpp_hdrs",
+        ":mtl_hdrs",
+        ":mtl_srcs",
+        "//src/gpu/ganesh/surface:mtl_objc_srcs",
+    ],
+    hdrs = [
+        "//include/gpu:shared_gpu_hdrs",
+        "//include/gpu/ganesh:ganesh_hdrs",
+        "//include/gpu/ganesh/mtl:public_hdrs",
+        "//include/gpu/mtl:public_hdrs",
+        "//include/ports:core_foundation_hdrs",
+    ],
+    copts = ["-fobjc-arc"],
+    defines = ["SK_METAL"],
+    sdk_frameworks = [
+        "Metal",
+        "MetalKit",
+        "Foundation",
+    ],
+    visibility = ["//tools/window:__pkg__"],
+    deps = [
+        "//:core",
+        "//src/base",
+        "//src/core:core_priv",
+        "//src/gpu",
+        "//src/gpu/ganesh:ganesh_TEST_UTIL",
         "//src/gpu/mtl:gpu_mtl",
         "//src/sksl/codegen:metal",
     ],

@@ -30,7 +30,7 @@
 #include "IntRect.h"
 #include "ScrollbarsController.h"
 #include "Timer.h"
-
+#include <wtf/CheckedPtr.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/TZoneMalloc.h>
 
@@ -43,9 +43,10 @@ namespace WebCore {
 
 class WheelEventTestMonitor;
 
-class ScrollbarsControllerMac final : public ScrollbarsController {
+class ScrollbarsControllerMac final : public ScrollbarsController, public CanMakeCheckedPtr<ScrollbarsControllerMac> {
     WTF_MAKE_TZONE_ALLOCATED(ScrollbarsControllerMac);
     WTF_MAKE_NONCOPYABLE(ScrollbarsControllerMac);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(ScrollbarsControllerMac);
 public:
     explicit ScrollbarsControllerMac(ScrollableArea&);
     ~ScrollbarsControllerMac();
@@ -101,6 +102,8 @@ public:
 
     void scrollbarWidthChanged(WebCore::ScrollbarWidth) final;
 private:
+
+    void updateScrollerImps();
 
     // sendContentAreaScrolledSoon() will do the same work that sendContentAreaScrolled() does except
     // it does it after a zero-delay timer fires. This will prevent us from updating overlay scrollbar

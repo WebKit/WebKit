@@ -52,7 +52,6 @@
 #include <CommonCrypto/CommonDigest.h>
 #endif
 
-using namespace std;
 
 static void printPNG(CGImageRef image, const char* checksum, double scaleFactor)
 {

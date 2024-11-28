@@ -65,17 +65,17 @@ public:
 
     CanvasBase& canvasBase() const { return m_canvas; }
 
-    virtual bool is2dBase() const { return false; }
-    virtual bool is2d() const { return false; }
-    virtual bool isWebGL1() const { return false; }
-    virtual bool isWebGL2() const { return false; }
+    bool is2dBase() const { return is2d() || isOffscreen2d() || isPaint(); }
+    bool is2d() const { return m_type == Type::CanvasElement2D; }
+    bool isWebGL1() const { return m_type == Type::WebGL1; }
+    bool isWebGL2() const { return m_type == Type::WebGL2; }
     bool isWebGL() const { return isWebGL1() || isWebGL2(); }
-    virtual bool isWebGPU() const { return false; }
-    virtual bool isGPUBased() const { return false; }
-    virtual bool isBitmapRenderer() const { return false; }
-    virtual bool isPlaceholder() const { return false; }
-    virtual bool isOffscreen2d() const { return false; }
-    virtual bool isPaint() const { return false; }
+    bool isWebGPU() const { return m_type == Type::WebGPU; }
+    bool isGPUBased() const { return isWebGPU() || isWebGL(); }
+    bool isBitmapRenderer() const { return m_type == Type::BitmapRenderer; }
+    bool isPlaceholder() const { return m_type == Type::Placeholder; }
+    bool isOffscreen2d() const { return m_type == Type::Offscreen2D; }
+    bool isPaint() const { return m_type == Type::Paint; }
 
     virtual void clearAccumulatedDirtyRect() { }
 
@@ -92,7 +92,7 @@ public:
     // Draws the source buffer to the canvasBase().buffer().
     virtual RefPtr<ImageBuffer> surfaceBufferToImageBuffer(SurfaceBuffer);
     virtual bool isSurfaceBufferTransparentBlack(SurfaceBuffer) const;
-    virtual bool delegatesDisplay() const;
+    bool delegatesDisplay() const;
     virtual RefPtr<GraphicsLayerContentsDisplayDelegate> layerContentsDisplayDelegate();
     virtual void setContentsToLayer(GraphicsLayer&);
 
@@ -122,7 +122,18 @@ public:
     bool isInPreparationForDisplayOrFlush() const { return m_isInPreparationForDisplayOrFlush; }
 
 protected:
-    explicit CanvasRenderingContext(CanvasBase&);
+    enum class Type : uint8_t {
+        CanvasElement2D,
+        Offscreen2D,
+        Paint,
+        BitmapRenderer,
+        Placeholder,
+        WebGL1,
+        WebGL2,
+        WebGPU,
+    };
+
+    explicit CanvasRenderingContext(CanvasBase&, Type);
     bool taintsOrigin(const CanvasPattern*);
     bool taintsOrigin(const CanvasBase*);
     bool taintsOrigin(const CachedImage*);
@@ -147,6 +158,7 @@ private:
     static Lock s_instancesLock;
 
     CanvasBase& m_canvas;
+    const Type m_type;
 };
 
 } // namespace WebCore

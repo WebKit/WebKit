@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple, Inc. All rights reserved.
+ * Copyright (C) 2019-2024 Apple, Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,6 +31,8 @@
 #include <wtf/Range.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringSearch.h>
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace JSC {
 
@@ -143,7 +145,7 @@ ALWAYS_INLINE JSString* jsSpliceSubstringsWithSeparators(JSGlobalObject* globalO
         return jsEmptyString(vm);
 
     if (source.is8Bit() && allSeparators8Bit) {
-        LChar* buffer;
+        std::span<LChar> buffer;
         auto impl = StringImpl::tryCreateUninitialized(totalLength, buffer);
         if (!impl) {
             throwOutOfMemoryError(globalObject, scope);
@@ -155,12 +157,12 @@ ALWAYS_INLINE JSString* jsSpliceSubstringsWithSeparators(JSGlobalObject* globalO
         for (int i = 0; i < maxCount; i++) {
             if (i < rangeCount) {
                 auto substring = StringView { source }.substring(substringRanges[i].begin(), substringRanges[i].distance());
-                substring.getCharacters8(buffer + bufferPos.value());
+                substring.getCharacters8(buffer.subspan(bufferPos.value()));
                 bufferPos += substring.length();
             }
             if (i < separatorCount) {
                 StringView separator = separators[i];
-                separator.getCharacters8(buffer + bufferPos.value());
+                separator.getCharacters8(buffer.subspan(bufferPos.value()));
                 bufferPos += separator.length();
             }
         }
@@ -168,7 +170,7 @@ ALWAYS_INLINE JSString* jsSpliceSubstringsWithSeparators(JSGlobalObject* globalO
         RELEASE_AND_RETURN(scope, jsString(vm, impl.releaseNonNull()));
     }
 
-    UChar* buffer;
+    std::span<UChar> buffer;
     auto impl = StringImpl::tryCreateUninitialized(totalLength, buffer);
     if (!impl) {
         throwOutOfMemoryError(globalObject, scope);
@@ -180,12 +182,12 @@ ALWAYS_INLINE JSString* jsSpliceSubstringsWithSeparators(JSGlobalObject* globalO
     for (int i = 0; i < maxCount; i++) {
         if (i < rangeCount) {
             auto substring = StringView { source }.substring(substringRanges[i].begin(), substringRanges[i].distance());
-            substring.getCharacters(buffer + bufferPos.value());
+            substring.getCharacters(buffer.subspan(bufferPos.value()));
             bufferPos += substring.length();
         }
         if (i < separatorCount) {
             StringView separator = separators[i];
-            separator.getCharacters(buffer + bufferPos.value());
+            separator.getCharacters(buffer.subspan(bufferPos.value()));
             bufferPos += separator.length();
         }
     }
@@ -217,7 +219,7 @@ ALWAYS_INLINE JSString* stringReplaceStringString(JSGlobalObject* globalObject, 
     if constexpr (substitutions == StringReplaceSubstitutions::Yes) {
         size_t dollarSignPosition = replacement.find('$');
         if (dollarSignPosition != WTF::notFound) {
-            StringBuilder builder(StringBuilder::OverflowHandler::RecordOverflow);
+            StringBuilder builder(OverflowPolicy::RecordOverflow);
             int ovector[2] = { static_cast<int>(matchStart),  static_cast<int>(matchEnd) };
             substituteBackreferencesSlow(builder, replacement, string, ovector, nullptr, dollarSignPosition);
             if (UNLIKELY(builder.hasOverflowed())) {
@@ -271,7 +273,7 @@ ALWAYS_INLINE JSString* stringReplaceAllStringString(JSGlobalObject* globalObjec
 
     auto resultLength = CheckedSize { string.length() + matchStarts.size() * (replacement.length() - searchLength) };
 
-    StringBuilder resultBuilder;
+    StringBuilder resultBuilder(OverflowPolicy::RecordOverflow);
     resultBuilder.reserveCapacity(resultLength);
 
     size_t lastMatchEnd = 0;
@@ -377,4 +379,32 @@ inline JSString* replaceUsingStringSearch(VM& vm, JSGlobalObject* globalObject, 
     RELEASE_AND_RETURN(scope, jsSpliceSubstringsWithSeparators(globalObject, jsString, string, sourceRanges.data(), sourceRanges.size(), replacements.data(), replacements.size()));
 }
 
+enum class DollarCheck : uint8_t { Yes, No };
+template<DollarCheck check = DollarCheck::Yes>
+inline JSString* tryReplaceOneCharUsingString(JSGlobalObject* globalObject, JSString* string, JSString* search, JSString* replacement)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    // FIXME: Substring should be supported. However, substring of substring is not allowed at the moment.
+    if (!string->isNonSubstringRope() || string->length() < 0x128)
+        return nullptr;
+
+    RETURN_IF_EXCEPTION(scope, nullptr);
+    auto searchString = search->value(globalObject);
+    if (searchString->length() != 1)
+        return nullptr;
+
+    auto replaceString = replacement->value(globalObject);
+    RETURN_IF_EXCEPTION(scope, nullptr);
+    if constexpr (check == DollarCheck::Yes) {
+        if (replaceString->find('$') != notFound)
+            return nullptr;
+    }
+
+    RELEASE_AND_RETURN(scope, string->tryReplaceOneChar(globalObject, searchString[0], replacement));
+}
+
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

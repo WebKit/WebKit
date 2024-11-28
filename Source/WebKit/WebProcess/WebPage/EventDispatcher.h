@@ -71,6 +71,10 @@ class EventDispatcher final :
     public MomentumEventDispatcher::Client,
 #endif
     private IPC::MessageReceiver {
+    WTF_MAKE_FAST_ALLOCATED;
+#if ENABLE(MOMENTUM_EVENT_DISPATCHER)
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(EventDispatcher);
+#endif
 public:
     EventDispatcher();
     ~EventDispatcher();
@@ -111,7 +115,7 @@ private:
     void touchEvent(WebCore::PageIdentifier, WebCore::FrameIdentifier, const WebTouchEvent&, CompletionHandler<void(bool, std::optional<WebCore::RemoteUserInputEventData>)>&&);
 #endif
 #if ENABLE(MAC_GESTURE_EVENTS)
-    void gestureEvent(WebCore::FrameIdentifier, WebCore::PageIdentifier, const WebGestureEvent&, CompletionHandler<void(std::optional<WebEventType>, bool, std::optional<WebCore::RemoteUserInputEventData>)>&&);
+    void gestureEvent(WebCore::FrameIdentifier, WebCore::PageIdentifier, const WebGestureEvent&);
 #endif
 
     // This is called on the main thread.
@@ -124,7 +128,7 @@ private:
     void dispatchTouchEvents();
 #endif
 #if ENABLE(MAC_GESTURE_EVENTS)
-    void dispatchGestureEvent(WebCore::FrameIdentifier, WebCore::PageIdentifier, const WebGestureEvent&, CompletionHandler<void(std::optional<WebEventType>, bool, std::optional<WebCore::RemoteUserInputEventData>)>&&);
+    void dispatchGestureEvent(WebCore::FrameIdentifier, WebCore::PageIdentifier, const WebGestureEvent&);
 #endif
 
     static void sendDidReceiveEvent(WebCore::PageIdentifier, WebEventType, bool didHandleEvent);

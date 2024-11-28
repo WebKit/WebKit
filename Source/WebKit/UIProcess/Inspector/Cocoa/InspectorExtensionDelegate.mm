@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -59,7 +59,7 @@ RetainPtr<id <_WKInspectorExtensionDelegate>> InspectorExtensionDelegate::delega
     return m_delegate.get();
 }
 
-WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(InspectorExtensionDelegateInspectorExtensionClient, InspectorExtensionDelegate::InspectorExtensionClient);
+WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(InspectorExtensionDelegate, InspectorExtensionClient);
 
 InspectorExtensionDelegate::InspectorExtensionClient::InspectorExtensionClient(InspectorExtensionDelegate& delegate)
     : m_inspectorExtensionDelegate(delegate)

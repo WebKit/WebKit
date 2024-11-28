@@ -62,6 +62,7 @@ struct BindGroupEntryUsageData {
     using Resource = std::variant<RefPtr<Buffer>, RefPtr<const TextureView>, RefPtr<const ExternalTexture>>;
     Resource resource;
     uint64_t entryOffset { 0 };
+    uint64_t entrySize { 0 };
     static constexpr uint32_t invalidBindingIndex = INT_MAX;
     static constexpr BindGroupEntryUsage invalidBindGroupUsage = static_cast<BindGroupEntryUsage>(std::numeric_limits<std::underlying_type<BindGroupEntryUsage>::type>::max());
 };
@@ -87,7 +88,7 @@ struct IndexData {
 };
 
 struct IndexBufferAndIndexData {
-    WeakPtr<Buffer> indexBuffer;
+    RefPtr<Buffer> indexBuffer;
     MTLIndexType indexType { MTLIndexTypeUInt16 };
     NSUInteger indexBufferOffsetInBytes { 0 };
     IndexData indexData;

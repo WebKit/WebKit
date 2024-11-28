@@ -32,6 +32,7 @@
 #include "FaceDetectorOptions.h"
 #include "ImageBitmap.h"
 #include "ImageBitmapOptions.h"
+#include "ImageBuffer.h"
 #include "JSDOMPromiseDeferred.h"
 #include "JSDetectedFace.h"
 #include "Page.h"

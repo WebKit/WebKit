@@ -606,7 +606,7 @@ void JIT::emitSlow_op_negate(const JSInstruction* currentInstruction, Vector<Slo
 {
     linkAllSlowCases(iter);
 
-    JITNegIC* negIC = bitwise_cast<JITNegIC*>(m_instructionToMathIC.get(currentInstruction));
+    JITNegIC* negIC = std::bit_cast<JITNegIC*>(m_instructionToMathIC.get(currentInstruction));
     // FIXME: it would be better to call those operationValueNegate, since the operand can be a BigInt
     emitMathICSlow<OpNegate>(negIC, currentInstruction, operationArithNegateProfiledOptimize, operationArithNegateProfiled, operationArithNegateOptimize);
 }
@@ -752,7 +752,7 @@ void JIT::emitSlow_op_add(const JSInstruction* currentInstruction, Vector<SlowCa
 {
     linkAllSlowCases(iter);
 
-    JITAddIC* addIC = bitwise_cast<JITAddIC*>(m_instructionToMathIC.get(currentInstruction));
+    JITAddIC* addIC = std::bit_cast<JITAddIC*>(m_instructionToMathIC.get(currentInstruction));
     emitMathICSlow<OpAdd>(addIC, currentInstruction, operationValueAddProfiledOptimize, operationValueAddProfiled, operationValueAddOptimize);
 }
 
@@ -951,11 +951,11 @@ void JIT::emitMathICSlow(JITBinaryMathIC<Generator>* mathIC, const JSInstruction
     loadGlobalObject(globalObjetGPR);
     if (arithProfile && shouldEmitProfiling()) {
         if (mathICGenerationState.shouldSlowPathRepatch)
-            mathICGenerationState.slowPathCall = callOperationWithResult(bitwise_cast<J_JITOperation_GJJMic>(profiledRepatchFunction), resultRegs, globalObjetGPR, leftRegs, rightRegs, TrustedImmPtr(mathIC));
+            mathICGenerationState.slowPathCall = callOperationWithResult(std::bit_cast<J_JITOperation_GJJMic>(profiledRepatchFunction), resultRegs, globalObjetGPR, leftRegs, rightRegs, TrustedImmPtr(mathIC));
         else
             mathICGenerationState.slowPathCall = callOperationWithResult(profiledFunction, resultRegs, globalObjetGPR, leftRegs, rightRegs, TrustedImmPtr(arithProfile));
     } else
-        mathICGenerationState.slowPathCall = callOperationWithResult(bitwise_cast<J_JITOperation_GJJMic>(repatchFunction), resultRegs, globalObjetGPR, leftRegs, rightRegs, TrustedImmPtr(mathIC));
+        mathICGenerationState.slowPathCall = callOperationWithResult(std::bit_cast<J_JITOperation_GJJMic>(repatchFunction), resultRegs, globalObjetGPR, leftRegs, rightRegs, TrustedImmPtr(mathIC));
 
 #if ENABLE(MATH_IC_STATS)
     auto slowPathEnd = label();
@@ -1043,7 +1043,7 @@ void JIT::emitSlow_op_mul(const JSInstruction* currentInstruction, Vector<SlowCa
 {
     linkAllSlowCases(iter);
 
-    JITMulIC* mulIC = bitwise_cast<JITMulIC*>(m_instructionToMathIC.get(currentInstruction));
+    JITMulIC* mulIC = std::bit_cast<JITMulIC*>(m_instructionToMathIC.get(currentInstruction));
     emitMathICSlow<OpMul>(mulIC, currentInstruction, operationValueMulProfiledOptimize, operationValueMulProfiled, operationValueMulOptimize);
 }
 
@@ -1059,7 +1059,7 @@ void JIT::emitSlow_op_sub(const JSInstruction* currentInstruction, Vector<SlowCa
 {
     linkAllSlowCases(iter);
 
-    JITSubIC* subIC = bitwise_cast<JITSubIC*>(m_instructionToMathIC.get(currentInstruction));
+    JITSubIC* subIC = std::bit_cast<JITSubIC*>(m_instructionToMathIC.get(currentInstruction));
     emitMathICSlow<OpSub>(subIC, currentInstruction, operationValueSubProfiledOptimize, operationValueSubProfiled, operationValueSubOptimize);
 }
 

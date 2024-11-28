@@ -33,7 +33,7 @@
 
 namespace WebCore {
 
-class Shape;
+class LayoutShape;
 class RenderObject;
 
 namespace Layout {
@@ -61,6 +61,7 @@ public:
         LineBreak,
         WordBreakOpportunity,
         ListMarker,
+        ImplicitFlexBox // These boxes are implicit flex boxes with no flex display type and they should probably turned into proper flex boxes.
     };
 
     enum class IsAnonymous : bool { No, Yes };
@@ -140,7 +141,7 @@ public:
     bool isTableColumn() const { return style().display() == DisplayType::TableColumn; }
     bool isTableCell() const { return style().display() == DisplayType::TableCell; }
     bool isInternalTableBox() const;
-    bool isFlexBox() const { return style().display() == DisplayType::Flex || style().display() == DisplayType::InlineFlex; }
+    bool isFlexBox() const { return style().display() == DisplayType::Flex || style().display() == DisplayType::InlineFlex || m_nodeType == NodeType::ImplicitFlexBox; }
     bool isFlexItem() const;
     bool isGridBox() const { return style().display() == DisplayType::Grid || style().display() == DisplayType::InlineGrid; }
     bool isIFrame() const { return m_nodeType == NodeType::IFrame; }
@@ -157,10 +158,13 @@ public:
     const Box* nextSibling() const { return m_nextSibling.get(); }
     const Box* nextInFlowSibling() const;
     const Box* nextInFlowOrFloatingSibling() const;
+    const Box* nextOutOfFlowSibling() const;
     const Box* previousSibling() const { return m_previousSibling.get(); }
     const Box* previousInFlowSibling() const;
     const Box* previousInFlowOrFloatingSibling() const;
+    const Box* previousOutOfFlowSibling() const;
     bool isDescendantOf(const ElementBox&) const;
+    bool isInFormattingContextEstablishedBy(const ElementBox& formattingContextRoot) const;
 
     // FIXME: This is currently needed for style updates.
     Box* nextSibling() { return m_nextSibling.get(); }
@@ -174,6 +178,7 @@ public:
     void updateStyle(RenderStyle&& newStyle, std::unique_ptr<RenderStyle>&& newFirstLineStyle);
     const RenderStyle& style() const { return m_style; }
     const RenderStyle& firstLineStyle() const { return hasRareData() && rareData().firstLineStyle ? *rareData().firstLineStyle : m_style; }
+    WritingMode writingMode() const { return style().writingMode(); }
 
     // FIXME: Find a better place for random DOM things.
     void setRowSpan(size_t);
@@ -188,8 +193,8 @@ public:
     void setIsInlineIntegrationRoot() { m_isInlineIntegrationRoot = true; }
     void setIsFirstChildForIntegration(bool value) { m_isFirstChildForIntegration = value; }
 
-    const Shape* shape() const;
-    void setShape(RefPtr<const Shape>);
+    const LayoutShape* shape() const;
+    void setShape(RefPtr<const LayoutShape>);
 
     const ElementBox* associatedRubyAnnotationBox() const;
 
@@ -213,18 +218,19 @@ private:
         CellSpan tableCellSpan;
         std::optional<LayoutUnit> columnWidth;
         std::unique_ptr<RenderStyle> firstLineStyle;
-        RefPtr<const Shape> shape;
+        RefPtr<const LayoutShape> shape;
     };
 
     bool hasRareData() const { return m_hasRareData; }
     void setHasRareData(bool hasRareData) { m_hasRareData = hasRareData; }
     const BoxRareData& rareData() const;
+    Box::BoxRareData& rareData();
     BoxRareData& ensureRareData();
     void removeRareData();
     
     OptionSet<BaseTypeFlag> baseTypeFlags() const { return OptionSet<BaseTypeFlag>::fromRaw(m_baseTypeFlags); }
 
-    typedef HashMap<const Box*, std::unique_ptr<BoxRareData>> RareDataMap;
+    typedef UncheckedKeyHashMap<const Box*, std::unique_ptr<BoxRareData>> RareDataMap;
 
     static RareDataMap& rareDataMap();
 

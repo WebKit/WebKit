@@ -16,7 +16,7 @@ Dialog is displaying
 PASS backgroundAccessible() is false
 Dialog is displaying and aria-hidden=true
 PASS backgroundAccessible() is true
-Dialog is displaying and aria-hidden=false
+Dialog is displaying and removed aria-hidden
 PASS backgroundAccessible() is false
 Dialog is not displaying with opacity 0
 PASS backgroundAccessible() is true

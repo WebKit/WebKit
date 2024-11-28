@@ -46,6 +46,10 @@ InjectedScript::InjectedScript()
 {
 }
 
+InjectedScript::InjectedScript(const InjectedScript&) = default;
+
+InjectedScript& InjectedScript::operator=(const InjectedScript&) = default;
+
 InjectedScript::InjectedScript(JSC::JSGlobalObject* globalObject, JSC::JSObject* injectedScriptObject, InspectorEnvironment* environment)
     : InjectedScriptBase("InjectedScript"_s, globalObject, injectedScriptObject, environment)
 {

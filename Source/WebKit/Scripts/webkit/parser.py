@@ -104,16 +104,23 @@ def parse(file):
             else:
                 parameters = []
 
-            enabled_if = None
+            validator = None
             enabled_by = None
             enabled_by_conjunction = None
+            coalescing_key_indices = None
             if options_string:
-                match = re.search(r"(?:(?:, |^)+(?:EnabledIf='(.*)'))(?:, |$)?", options_string)
+                match = re.search(r"(?:(?:, |^)+(?:Validator=(.*)))(?:, |$)?", options_string)
                 if match:
-                    enabled_if = match.groups()[0]
+                    validator = match.groups()[0]
                 match = re.search(r"(?:(?:, |^)+(?:EnabledBy=([\w \&\|]+)))(?:, |$)?", options_string)
                 if match:
                     (enabled_by, enabled_by_conjunction) = parse_enabled_by_string(match.groups()[0])
+                match = re.search(r"(?:(?:, |^)+(?:DeferSendingIfSuspended))(?:, |$)?", options_string)
+                if match:
+                    coalescing_key_indices = []
+                match = re.search(r"(?:(?:, |^)+(?:DeferSendingIfSuspendedWithCoalescingKeys=\((.*?)\)))(?:, |$)?", options_string)
+                if match:
+                    coalescing_key_indices = parse_coalescing_keys(match.group(1), [parameter.name for parameter in parameters])
 
             attributes = parse_attributes_string(attributes_string)
 
@@ -126,7 +133,10 @@ def parse(file):
             else:
                 reply_parameters = None
 
-            messages.append(model.Message(name, parameters, reply_parameters, attributes, combine_condition(conditions), enabled_if, enabled_by, enabled_by_conjunction))
+            if coalescing_key_indices is not None and reply_parameters is not None:
+                raise Exception(f"ERROR: DeferSendingIfSuspended not supported for message {name} since it contains reply parameters")
+
+            messages.append(model.Message(name, parameters, reply_parameters, attributes, combine_condition(conditions), validator, enabled_by, enabled_by_conjunction, coalescing_key_indices))
     return model.MessageReceiver(destination, superclass, receiver_attributes, receiver_enabled_by, receiver_enabled_by_conjunction, shared_preferences_needs_connection, messages, combine_condition(master_condition), namespace)
 
 
@@ -204,3 +214,8 @@ def parse_enabled_by_string(enabled_by_string):
         enabled_by_conjunction = None
 
     return enabled_by, enabled_by_conjunction
+
+
+def parse_coalescing_keys(coalescing_keys_string, parameter_names):
+    coalescing_key_names = [part.strip() for part in coalescing_keys_string.split(',')]
+    return [parameter_names.index(name) for name in coalescing_key_names]

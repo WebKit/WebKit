@@ -49,7 +49,7 @@ namespace WebKit::WebGPU {
 class ConvertToBackingContext;
 
 class RemoteXRViewProxy final : public WebCore::WebGPU::XRView {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(RemoteXRViewProxy);
 public:
     static Ref<RemoteXRViewProxy> create(RemoteDeviceProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier)
     {
@@ -76,12 +76,12 @@ private:
     template<typename T>
     WARN_UNUSED_RETURN IPC::Error send(T&& message)
     {
-        return root().streamClientConnection().send(WTFMove(message), backing());
+        return root().protectedStreamClientConnection()->send(WTFMove(message), backing());
     }
     template<typename T>
     WARN_UNUSED_RETURN IPC::Connection::SendSyncResult<T> sendSync(T&& message)
     {
-        return root().streamClientConnection().sendSync(WTFMove(message), backing());
+        return root().protectedStreamClientConnection()->sendSync(WTFMove(message), backing());
     }
 
     WebGPUIdentifier m_backing;

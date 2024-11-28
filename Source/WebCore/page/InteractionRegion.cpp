@@ -41,6 +41,7 @@
 #include "HTMLInputElement.h"
 #include "HTMLLabelElement.h"
 #include "HitTestResult.h"
+#include "LayoutShape.h"
 #include "LegacyRenderSVGShape.h"
 #include "LegacyRenderSVGShapeInlines.h"
 #include "LocalFrame.h"
@@ -55,7 +56,6 @@
 #include "RenderLayerBacking.h"
 #include "RenderVideo.h"
 #include "SVGSVGElement.h"
-#include "Shape.h"
 #include "SimpleRange.h"
 #include "SliderThumbElement.h"
 #include "StyleResolver.h"
@@ -112,7 +112,6 @@ static bool shouldAllowAccessibilityRoleAsPointerCursorReplacement(const Element
     case AccessibilityRole::Link:
     case AccessibilityRole::WebCoreLink:
     case AccessibilityRole::ListBoxOption:
-    case AccessibilityRole::MenuButton:
     case AccessibilityRole::MenuItem:
     case AccessibilityRole::MenuItemCheckbox:
     case AccessibilityRole::MenuItemRadio:
@@ -501,8 +500,8 @@ std::optional<InteractionRegion> interactionRegionForRenderedRegion(RenderObject
     } else if (iconImage && originalElement) {
         auto size = boundingSize(regionRenderer, transform);
         LayoutRect imageRect(FloatPoint(), size);
-        Ref shape = Shape::createRasterShape(iconImage.get(), 0, imageRect, imageRect, WritingMode::HorizontalTb, 0);
-        Shape::DisplayPaths paths;
+        Ref shape = LayoutShape::createRasterShape(iconImage.get(), 0, imageRect, imageRect, WritingMode(), 0);
+        LayoutShape::DisplayPaths paths;
         shape->buildDisplayPaths(paths);
         auto path = paths.shape;
 
@@ -564,10 +563,8 @@ std::optional<InteractionRegion> interactionRegionForRenderedRegion(RenderObject
                 maskedCorners.add(InteractionRegion::CornerMask::MinXMaxYCorner);
             if (borderRadii.bottomRight().minDimension() == maxRadius)
                 maskedCorners.add(InteractionRegion::CornerMask::MaxXMaxYCorner);
-        } else {
+        } else
             clipPath = borderShape.pathForOuterShape(renderBox->document().deviceScaleFactor());
-            WTF_ALWAYS_LOG("interactionRegionForRenderedRegion - rounded rect" << borderShape.deprecatedRoundedRect() << " device scale " << renderBox->document().deviceScaleFactor() << " " << clipPath);
-        }
     }
 
     bool canTweakShape = !isPhoto

@@ -32,6 +32,8 @@
 #include <wtf/RefCounted.h>
 #include <wtf/TZoneMalloc.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 class CodeBlock;
@@ -53,16 +55,16 @@ public:
     {
         auto opcodeID = Metadata::opcodeID;
         ASSERT(opcodeID < NUMBER_OF_BYTECODE_WITH_METADATA);
-        uintptr_t ptr = bitwise_cast<uintptr_t>(getWithoutAligning(opcodeID));
+        uintptr_t ptr = std::bit_cast<uintptr_t>(getWithoutAligning(opcodeID));
         ptr = roundUpToMultipleOf(alignof(Metadata), ptr);
-        return bitwise_cast<Metadata*>(ptr);
+        return std::bit_cast<Metadata*>(ptr);
     }
 
     template<typename Op, typename Functor>
     ALWAYS_INLINE void forEach(const Functor& func)
     {
         auto* metadata = get<typename Op::Metadata>();
-        auto* end = bitwise_cast<typename Op::Metadata*>(getWithoutAligning(Op::opcodeID + 1));
+        auto* end = std::bit_cast<typename Op::Metadata*>(getWithoutAligning(Op::opcodeID + 1));
         for (; metadata < end; ++metadata)
             func(*metadata);
     }
@@ -131,15 +133,15 @@ public:
 
     SUPPRESS_ASAN bool isDestroyed() const
     {
-        uintptr_t unlinkedMetadataPtr = *bitwise_cast<uintptr_t*>(&linkingData().unlinkedMetadata);
+        uintptr_t unlinkedMetadataPtr = *std::bit_cast<uintptr_t*>(&linkingData().unlinkedMetadata);
         return !unlinkedMetadataPtr;
     }
 
 private:
     MetadataTable(UnlinkedMetadataTable&);
 
-    UnlinkedMetadataTable::Offset16* offsetTable16() const { return bitwise_cast<UnlinkedMetadataTable::Offset16*>(this); }
-    UnlinkedMetadataTable::Offset32* offsetTable32() const { return bitwise_cast<UnlinkedMetadataTable::Offset32*>(bitwise_cast<uint8_t*>(this) + UnlinkedMetadataTable::s_offset16TableSize); }
+    UnlinkedMetadataTable::Offset16* offsetTable16() const { return std::bit_cast<UnlinkedMetadataTable::Offset16*>(this); }
+    UnlinkedMetadataTable::Offset32* offsetTable32() const { return std::bit_cast<UnlinkedMetadataTable::Offset32*>(std::bit_cast<uint8_t*>(this) + UnlinkedMetadataTable::s_offset16TableSize); }
 
     size_t totalSize() const
     {
@@ -148,7 +150,7 @@ private:
 
     UnlinkedMetadataTable::LinkingData& linkingData() const
     {
-        return *bitwise_cast<UnlinkedMetadataTable::LinkingData*>((bitwise_cast<uint8_t*>(this) - sizeof(UnlinkedMetadataTable::LinkingData)));
+        return *std::bit_cast<UnlinkedMetadataTable::LinkingData*>((std::bit_cast<uint8_t*>(this) - sizeof(UnlinkedMetadataTable::LinkingData)));
     }
 
     void* buffer() { return this; }
@@ -166,10 +168,12 @@ private:
 
     ALWAYS_INLINE uint8_t* getWithoutAligning(unsigned i)
     {
-        return bitwise_cast<uint8_t*>(this) + getOffset(i);
+        return std::bit_cast<uint8_t*>(this) + getOffset(i);
     }
 
     static void destroy(MetadataTable*);
 };
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

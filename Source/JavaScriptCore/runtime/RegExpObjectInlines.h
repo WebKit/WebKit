@@ -38,8 +38,7 @@ inline Structure* RegExpObject::createStructure(VM& vm, JSGlobalObject* globalOb
     return Structure::create(vm, globalObject, prototype, TypeInfo(RegExpObjectType, StructureFlags), info());
 }
 
-ALWAYS_INLINE unsigned getRegExpObjectLastIndexAsUnsigned(
-    JSGlobalObject* globalObject, RegExpObject* regExpObject, const String& input)
+ALWAYS_INLINE unsigned getRegExpObjectLastIndexAsUnsigned(JSGlobalObject* globalObject, RegExpObject* regExpObject, const String& input)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -59,7 +58,7 @@ ALWAYS_INLINE unsigned getRegExpObjectLastIndexAsUnsigned(
     return lastIndex;
 }
 
-inline JSValue RegExpObject::execInline(JSGlobalObject* globalObject, JSString* string)
+ALWAYS_INLINE JSValue RegExpObject::execInline(JSGlobalObject* globalObject, JSString* string)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -99,8 +98,7 @@ inline JSValue RegExpObject::execInline(JSGlobalObject* globalObject, JSString* 
 }
 
 // Shared implementation used by test and exec.
-inline MatchResult RegExpObject::matchInline(
-    JSGlobalObject* globalObject, JSString* string)
+ALWAYS_INLINE MatchResult RegExpObject::matchInline(JSGlobalObject* globalObject, JSString* string)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -223,6 +221,82 @@ JSValue collectMatches(VM& vm, JSGlobalObject* globalObject, JSString* string, c
     } while (result);
     
     return array;
+}
+
+template<typename Char>
+ALWAYS_INLINE void oneCharMatches(std::span<const Char> input, Char pattern, size_t& numberOfMatches, size_t& startIndex)
+{
+    for (size_t i = startIndex; i < input.size(); ++i) {
+        if (input[i] != pattern)
+            continue;
+        numberOfMatches++;
+        startIndex = i + 1;
+        if (numberOfMatches > MAX_STORAGE_VECTOR_LENGTH)
+            return;
+    }
+}
+
+template<typename SubjectChar, typename PatternChar>
+ALWAYS_INLINE void genericMatches(VM& vm, std::span<const SubjectChar> input, std::span<const PatternChar> pattern, size_t& numberOfMatches, size_t& startIndex)
+{
+    ASSERT(!pattern.empty());
+    if (startIndex > input.size())
+        return;
+    AdaptiveStringSearcher<PatternChar, SubjectChar> search(vm.adaptiveStringSearcherTables(), pattern);
+    size_t found = search.search(input, startIndex);
+    while (found != notFound) {
+        startIndex = found + pattern.size();
+        numberOfMatches++;
+        found = search.search(input, startIndex);
+        if (numberOfMatches > MAX_STORAGE_VECTOR_LENGTH)
+            return;
+    }
+}
+
+ALWAYS_INLINE JSValue collectGlobalAtomMatches(JSGlobalObject* globalObject, JSString* string, RegExp* regExp)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    size_t numberOfMatches = 0;
+    size_t startIndex = 0;
+    auto input = string->value(globalObject);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    const String& pattern = regExp->atom();
+    ASSERT(!pattern.isEmpty());
+
+    if (pattern.is8Bit()) {
+        if (input->is8Bit()) {
+            if (pattern.length() == 1)
+                oneCharMatches(input->span8(), pattern.span8()[0], numberOfMatches, startIndex);
+            else
+                genericMatches(vm, input->span8(), pattern.span8(), numberOfMatches, startIndex);
+        } else {
+            if (pattern.length() == 1)
+                oneCharMatches(input->span16(), pattern.characterAt(0), numberOfMatches, startIndex);
+            else
+                genericMatches(vm, input->span16(), pattern.span8(), numberOfMatches, startIndex);
+        }
+    } else {
+        if (input->is8Bit())
+            genericMatches(vm, input->span8(), pattern.span16(), numberOfMatches, startIndex);
+        else {
+            if (pattern.length() == 1)
+                oneCharMatches(input->span16(), pattern.characterAt(0), numberOfMatches, startIndex);
+            else
+                genericMatches(vm, input->span16(), pattern.span16(), numberOfMatches, startIndex);
+        }
+    }
+
+    if (numberOfMatches > MAX_STORAGE_VECTOR_LENGTH) {
+        throwOutOfMemoryError(globalObject, scope);
+        return jsUndefined();
+    }
+    if (!numberOfMatches)
+        return jsNull();
+
+    RELEASE_AND_RETURN(scope, createPatternFilledArray(globalObject, jsString(vm, pattern), numberOfMatches));
 }
 
 } // namespace JSC

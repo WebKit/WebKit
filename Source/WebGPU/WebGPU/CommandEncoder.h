@@ -25,10 +25,12 @@
 
 #pragma once
 
+#import "CommandBuffer.h"
 #import "CommandsMixin.h"
 #import <wtf/FastMalloc.h>
 #import <wtf/Ref.h>
 #import <wtf/RefCounted.h>
+#import <wtf/RetainReleaseSwift.h>
 #import <wtf/TZoneMalloc.h>
 #import <wtf/Vector.h>
 #import <wtf/WeakPtr.h>
@@ -84,12 +86,14 @@ public:
     void writeTimestamp(QuerySet&, uint32_t queryIndex);
     void setLabel(String&&);
 
-    Device& device() const { return m_device; }
+    Device& device() const SWIFT_RETURNS_INDEPENDENT_VALUE { return m_device; }
+    Ref<Device> protectedDevice() const SWIFT_RETURNS_INDEPENDENT_VALUE { return m_device; }
 
     bool isValid() const { return m_commandBuffer; }
     void lock(bool);
-    bool isLocked() const;
-    bool isFinished() const;
+    bool isLocked() const { return m_state == EncoderState::Locked; }
+
+    bool isFinished() const { return m_state == EncoderState::Ended; }
 
     id<MTLBlitCommandEncoder> ensureBlitCommandEncoder();
     void finalizeBlitCommandEncoder();
@@ -105,18 +109,20 @@ public:
     void setLastError(NSString*);
     bool waitForCommandBufferCompletion();
     bool encoderIsCurrent(id<MTLCommandEncoder>) const;
-    bool submitWillBeInvalid() const;
+    bool submitWillBeInvalid() const { return m_makeSubmitInvalid; }
     void addBuffer(id<MTLBuffer>);
-    void addTexture(id<MTLTexture>);
+    void addTexture(const Texture&);
     id<MTLCommandBuffer> commandBuffer() const;
     void setExistingEncoder(id<MTLCommandEncoder>);
+    void generateInvalidEncoderStateError();
+    bool validateClearBuffer(const Buffer&, uint64_t offset, uint64_t size);
+    static void trackEncoder(CommandEncoder&, WeakHashSet<CommandEncoder>&);
 
 private:
     CommandEncoder(id<MTLCommandBuffer>, Device&);
     CommandEncoder(Device&);
 
     NSString* errorValidatingCopyBufferToBuffer(const Buffer& source, uint64_t sourceOffset, const Buffer& destination, uint64_t destinationOffset, uint64_t size);
-    bool validateClearBuffer(const Buffer&, uint64_t offset, uint64_t size);
     NSString* validateFinishError() const;
     bool validatePopDebugGroup() const;
     NSString* errorValidatingComputePassDescriptor(const WGPUComputePassDescriptor&) const;
@@ -128,14 +134,13 @@ private:
     NSString* errorValidatingCopyTextureToBuffer(const WGPUImageCopyTexture&, const WGPUImageCopyBuffer&, const WGPUExtent3D&) const;
     void discardCommandBuffer();
 
+    RefPtr<CommandBuffer> protectedCachedCommandBuffer() const { return m_cachedCommandBuffer.get(); }
+
     id<MTLCommandBuffer> m_commandBuffer { nil };
     id<MTLSharedEvent> m_abortCommandBuffer { nil };
     id<MTLBlitCommandEncoder> m_blitCommandEncoder { nil };
     id<MTLCommandEncoder> m_existingCommandEncoder { nil };
-    struct PendingTimestampWrites {
-        Ref<QuerySet> querySet;
-        uint32_t queryIndex;
-    };
+
     uint64_t m_debugGroupStackSize { 0 };
     WeakPtr<CommandBuffer> m_cachedCommandBuffer;
     NSString* m_lastErrorString { nil };
@@ -146,7 +151,19 @@ private:
     NSMutableSet<id<MTLTexture>> *m_managedTextures { nil };
     NSMutableSet<id<MTLBuffer>> *m_managedBuffers { nil };
 #endif
+    id<MTLSharedEvent> m_sharedEvent { nil };
+    uint64_t m_sharedEventSignalValue { 0 };
     const Ref<Device> m_device;
-};
+} SWIFT_SHARED_REFERENCE(retainCommandEncoder, releaseCommandEncoder);
 
 } // namespace WebGPU
+
+inline void retainCommandEncoder(WebGPU::CommandEncoder* obj)
+{
+    WTF::retainRefCounted(obj);
+}
+
+inline void releaseCommandEncoder(WebGPU::CommandEncoder* obj)
+{
+    WTF::releaseRefCounted(obj);
+}

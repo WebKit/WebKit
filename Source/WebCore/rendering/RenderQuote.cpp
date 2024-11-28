@@ -28,6 +28,8 @@
 #include "RenderTextFragment.h"
 #include "RenderTreeBuilder.h"
 #include "RenderView.h"
+#include <array>
+#include <wtf/StdLibExtras.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/unicode/CharacterNames.h>
 
@@ -68,14 +70,14 @@ void RenderQuote::styleDidChange(StyleDifference diff, const RenderStyle* oldSty
     }
 }
 
-const unsigned maxDistinctQuoteCharacters = 16;
+constexpr unsigned maxDistinctQuoteCharacters = 16;
 
 #if ASSERT_ENABLED
 
 static void checkNumberOfDistinctQuoteCharacters(UChar character)
 {
     ASSERT(character);
-    static UChar distinctQuoteCharacters[maxDistinctQuoteCharacters];
+    static std::array<UChar, maxDistinctQuoteCharacters> distinctQuoteCharacters;
     for (unsigned i = 0; i < maxDistinctQuoteCharacters; ++i) {
         if (distinctQuoteCharacters[i] == character)
             return;
@@ -97,28 +99,28 @@ struct SubtagComparison {
     int comparison;
 };
 
-static SubtagComparison subtagCompare(const char* key, const char* range)
+static SubtagComparison subtagCompare(std::span<const LChar> key, std::span<const LChar> range)
 {
     SubtagComparison result;
 
-    result.keyLength = strlen(key);
+    result.keyLength = key.size();
     result.keyContinue = result.keyLength;
-    if (auto* hyphenPointer = strchr(key, '-')) {
-        result.keyLength = hyphenPointer - key;
+    if (auto* hyphenPointer = memchr(key.data(), '-', key.size())) {
+        result.keyLength = static_cast<const LChar*>(hyphenPointer) - key.data();
         result.keyContinue = result.keyLength + 1;
     }
 
-    result.rangeLength = strlen(range);
+    result.rangeLength = range.size();
     result.rangeContinue = result.rangeLength;
-    if (auto* hyphenPointer = strchr(range, '-')) {
-        result.rangeLength = hyphenPointer - range;
+    if (auto* hyphenPointer = memchr(range.data(), '-', range.size())) {
+        result.rangeLength = static_cast<const LChar*>(hyphenPointer) - range.data();
         result.rangeContinue = result.rangeLength + 1;
     }
 
     if (result.keyLength == result.rangeLength)
-        result.comparison = memcmp(key, range, result.keyLength);
+        result.comparison = compareSpans(key.first(result.keyLength), range.first(result.keyLength));
     else
-        result.comparison = strcmp(key, range);
+        result.comparison = compareSpans(key, range);
 
     return result;
 }
@@ -128,15 +130,15 @@ static SubtagComparison subtagCompare(const char* key, const char* range)
 //
 // The "checkFurther" field is needed in one specific situation.
 // In the quoteTable below, there are lines like:
-// { "de"   , 0x201e, 0x201c, 0x201a, 0x2018 },
-// { "de-ch", 0x00ab, 0x00bb, 0x2039, 0x203a },
+// { "de"_span   , 0x201e, 0x201c, 0x201a, 0x2018 },
+// { "de-ch"_span, 0x00ab, 0x00bb, 0x2039, 0x203a },
 // Let's say the binary search arbitrarily decided to test our key against the upper line "de" first.
 // If the key we're testing against is "de-ch", then we should report "greater than",
 // so the binary search will keep searching and eventually find the "de-ch" line.
 // However, if the key we're testing against is "de-de", then we should report "equal to",
 // because these are the quotes we should use for all "de" except for "de-ch".
 struct QuotesForLanguage {
-    const char* language;
+    std::span<const LChar> language;
     UChar checkFurther;
     UChar open1;
     UChar close1;
@@ -144,6 +146,7 @@ struct QuotesForLanguage {
     UChar close2;
 };
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 static int quoteTableLanguageComparisonFunction(const void* a, const void* b)
 {
     // These strings need to be compared according to "Extended Filtering", as in Section 3.3.2 in RFC4647.
@@ -175,7 +178,7 @@ static int quoteTableLanguageComparisonFunction(const void* a, const void* b)
     }
 
     for (size_t keyOffset = firstSubtagComparison.keyContinue; ;) {
-        auto nextSubtagComparison = subtagCompare(key->language + keyOffset, range->language + firstSubtagComparison.rangeContinue);
+        auto nextSubtagComparison = subtagCompare(key->language.subspan(keyOffset), range->language.subspan(firstSubtagComparison.rangeContinue));
 
         if (!nextSubtagComparison.rangeLength) {
             // E.g. The key is "zh-Hans" and the range is "zh".
@@ -201,160 +204,161 @@ static int quoteTableLanguageComparisonFunction(const void* a, const void* b)
         keyOffset += nextSubtagComparison.keyContinue;
     }
 }
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 static const QuotesForLanguage* quotesForLanguage(const String& language)
 {
     // Table of quotes from http://www.whatwg.org/specs/web-apps/current-work/multipage/rendering.html#quotes
     // FIXME: This table is out-of-date.
-    static const QuotesForLanguage quoteTable[] = {
-        { "af"_s,         0, 0x201c, 0x201d, 0x2018, 0x2019 },
-        { "agq"_s,        0, 0x201e, 0x201d, 0x201a, 0x2019 },
-        { "ak"_s,         0, 0x201c, 0x201d, 0x2018, 0x2019 },
-        { "am"_s,         0, 0x00ab, 0x00bb, 0x2039, 0x203a },
-        { "ar"_s,         0, 0x201d, 0x201c, 0x2019, 0x2018 },
-        { "asa"_s,        0, 0x201c, 0x201d, 0x2018, 0x2019 },
-        { "az-cyrl"_s,    0, 0x00ab, 0x00bb, 0x2039, 0x203a },
-        { "bas"_s,        0, 0x00ab, 0x00bb, 0x201e, 0x201c },
-        { "bem"_s,        0, 0x201c, 0x201d, 0x2018, 0x2019 },
-        { "bez"_s,        0, 0x201c, 0x201d, 0x2018, 0x2019 },
-        { "bg"_s,         0, 0x201e, 0x201c, 0x201a, 0x2018 },
-        { "bm"_s,         0, 0x00ab, 0x00bb, 0x201c, 0x201d },
-        { "bn"_s,         0, 0x201c, 0x201d, 0x2018, 0x2019 },
-        { "br"_s,         0, 0x00ab, 0x00bb, 0x2039, 0x203a },
-        { "brx"_s,        0, 0x201c, 0x201d, 0x2018, 0x2019 },
-        { "bs-cyrl"_s,    0, 0x201e, 0x201c, 0x201a, 0x2018 },
-        { "ca"_s,         0, 0x201c, 0x201d, 0x00ab, 0x00bb },
-        { "cgg"_s,        0, 0x201c, 0x201d, 0x2018, 0x2019 },
-        { "chr"_s,        0, 0x201c, 0x201d, 0x2018, 0x2019 },
-        { "cs"_s,         0, 0x201e, 0x201c, 0x201a, 0x2018 },
-        { "da"_s,         0, 0x201c, 0x201d, 0x2018, 0x2019 },
-        { "dav"_s,        0, 0x201c, 0x201d, 0x2018, 0x2019 },
-        { "de"_s,         1, 0x201e, 0x201c, 0x201a, 0x2018 },
-        { "de-ch"_s,      0, 0x00ab, 0x00bb, 0x2039, 0x203a },
-        { "dje"_s,        0, 0x201c, 0x201d, 0x2018, 0x2019 },
-        { "dua"_s,        0, 0x00ab, 0x00bb, 0x2018, 0x2019 },
-        { "dyo"_s,        0, 0x00ab, 0x00bb, 0x201c, 0x201d },
-        { "dz"_s,         0, 0x201c, 0x201d, 0x2018, 0x2019 },
-        { "ebu"_s,        0, 0x201c, 0x201d, 0x2018, 0x2019 },
-        { "ee"_s,         0, 0x201c, 0x201d, 0x2018, 0x2019 },
-        { "el"_s,         0, 0x00ab, 0x00bb, 0x201c, 0x201d },
-        { "en"_s,         1, 0x201c, 0x201d, 0x2018, 0x2019 },
-        { "en-gb"_s,      0, 0x201c, 0x201d, 0x2018, 0x2019 },
-        { "es"_s,         0, 0x201c, 0x201d, 0x00ab, 0x00bb },
-        { "et"_s,         0, 0x201e, 0x201c, 0x201a, 0x2018 },
-        { "eu"_s,         0, 0x201c, 0x201d, 0x00ab, 0x00bb },
-        { "ewo"_s,        0, 0x00ab, 0x00bb, 0x201c, 0x201d },
-        { "fa"_s,         0, 0x00ab, 0x00bb, 0x2039, 0x203a },
-        { "ff"_s,         0, 0x201e, 0x201d, 0x201a, 0x2019 },
-        { "fi"_s,         0, 0x201d, 0x201d, 0x2019, 0x2019 },
-        { "fr"_s,         2, 0x00ab, 0x00bb, 0x00ab, 0x00bb },
-        { "fr-ca"_s,      0, 0x00ab, 0x00bb, 0x2039, 0x203a },
-        { "fr-ch"_s,      0, 0x00ab, 0x00bb, 0x2039, 0x203a },
-        { "gsw"_s,        0, 0x00ab, 0x00bb, 0x2039, 0x203a },
-        { "gu"_s,         0, 0x201c, 0x201d, 0x2018, 0x2019 },
-        { "guz"_s,        0, 0x201c, 0x201d, 0x2018, 0x2019 },
-        { "ha"_s,         0, 0x201c, 0x201d, 0x2018, 0x2019 },
-        { "he"_s,         0, 0x0022, 0x0022, 0x0027, 0x0027 },
-        { "hi"_s,         0, 0x201c, 0x201d, 0x2018, 0x2019 },
-        { "hr"_s,         0, 0x201e, 0x201c, 0x201a, 0x2018 },
-        { "hu"_s,         0, 0x201e, 0x201d, 0x00bb, 0x00ab },
-        { "id"_s,         0, 0x201c, 0x201d, 0x2018, 0x2019 },
-        { "ig"_s,         0, 0x201c, 0x201d, 0x2018, 0x2019 },
-        { "it"_s,         0, 0x00ab, 0x00bb, 0x201c, 0x201d },
-        { "ja"_s,         0, 0x300c, 0x300d, 0x300e, 0x300f },
-        { "jgo"_s,        0, 0x00ab, 0x00bb, 0x2039, 0x203a },
-        { "jmc"_s,        0, 0x201c, 0x201d, 0x2018, 0x2019 },
-        { "kab"_s,        0, 0x00ab, 0x00bb, 0x201c, 0x201d },
-        { "kam"_s,        0, 0x201c, 0x201d, 0x2018, 0x2019 },
-        { "kde"_s,        0, 0x201c, 0x201d, 0x2018, 0x2019 },
-        { "kea"_s,        0, 0x201c, 0x201d, 0x2018, 0x2019 },
-        { "khq"_s,        0, 0x201c, 0x201d, 0x2018, 0x2019 },
-        { "ki"_s,         0, 0x201c, 0x201d, 0x2018, 0x2019 },
-        { "kkj"_s,        0, 0x00ab, 0x00bb, 0x2039, 0x203a },
-        { "kln"_s,        0, 0x201c, 0x201d, 0x2018, 0x2019 },
-        { "km"_s,         0, 0x201c, 0x201d, 0x2018, 0x2019 },
-        { "kn"_s,         0, 0x201c, 0x201d, 0x2018, 0x2019 },
-        { "ko"_s,         0, 0x201c, 0x201d, 0x2018, 0x2019 },
-        { "ksb"_s,        0, 0x201c, 0x201d, 0x2018, 0x2019 },
-        { "ksf"_s,        0, 0x00ab, 0x00bb, 0x2018, 0x2019 },
-        { "lag"_s,        0, 0x201d, 0x201d, 0x2019, 0x2019 },
-        { "lg"_s,         0, 0x201c, 0x201d, 0x2018, 0x2019 },
-        { "ln"_s,         0, 0x201c, 0x201d, 0x2018, 0x2019 },
-        { "lo"_s,         0, 0x201c, 0x201d, 0x2018, 0x2019 },
-        { "lt"_s,         0, 0x201e, 0x201c, 0x201e, 0x201c },
-        { "lu"_s,         0, 0x201c, 0x201d, 0x2018, 0x2019 },
-        { "luo"_s,        0, 0x201c, 0x201d, 0x2018, 0x2019 },
-        { "luy"_s,        0, 0x201e, 0x201c, 0x201a, 0x2018 },
-        { "lv"_s,         0, 0x201c, 0x201d, 0x2018, 0x2019 },
-        { "mas"_s,        0, 0x201c, 0x201d, 0x2018, 0x2019 },
-        { "mer"_s,        0, 0x201c, 0x201d, 0x2018, 0x2019 },
-        { "mfe"_s,        0, 0x201c, 0x201d, 0x2018, 0x2019 },
-        { "mg"_s,         0, 0x00ab, 0x00bb, 0x201c, 0x201d },
-        { "mgo"_s,        0, 0x201c, 0x201d, 0x2018, 0x2019 },
-        { "mk"_s,         0, 0x201e, 0x201c, 0x201a, 0x2018 },
-        { "ml"_s,         0, 0x201c, 0x201d, 0x2018, 0x2019 },
-        { "mr"_s,         0, 0x201c, 0x201d, 0x2018, 0x2019 },
-        { "ms"_s,         0, 0x201c, 0x201d, 0x2018, 0x2019 },
-        { "mua"_s,        0, 0x00ab, 0x00bb, 0x201c, 0x201d },
-        { "my"_s,         0, 0x201c, 0x201d, 0x2018, 0x2019 },
-        { "naq"_s,        0, 0x201c, 0x201d, 0x2018, 0x2019 },
-        { "nb"_s,         0, 0x00ab, 0x00bb, 0x2018, 0x2019 },
-        { "nd"_s,         0, 0x201c, 0x201d, 0x2018, 0x2019 },
-        { "nl"_s,         0, 0x201c, 0x201d, 0x2018, 0x2019 },
-        { "nmg"_s,        0, 0x201e, 0x201d, 0x00ab, 0x00bb },
-        { "nn"_s,         0, 0x00ab, 0x00bb, 0x2018, 0x2019 },
-        { "nnh"_s,        0, 0x00ab, 0x00bb, 0x201c, 0x201d },
-        { "nus"_s,        0, 0x201c, 0x201d, 0x2018, 0x2019 },
-        { "nyn"_s,        0, 0x201c, 0x201d, 0x2018, 0x2019 },
-        { "pl"_s,         0, 0x201e, 0x201d, 0x00ab, 0x00bb },
-        { "pt"_s,         1, 0x201c, 0x201d, 0x2018, 0x2019 },
-        { "pt-pt"_s,      0, 0x00ab, 0x00bb, 0x201c, 0x201d },
-        { "rn"_s,         0, 0x201d, 0x201d, 0x2019, 0x2019 },
-        { "ro"_s,         0, 0x201e, 0x201d, 0x00ab, 0x00bb },
-        { "rof"_s,        0, 0x201c, 0x201d, 0x2018, 0x2019 },
-        { "ru"_s,         0, 0x00ab, 0x00bb, 0x201e, 0x201c },
-        { "rw"_s,         0, 0x00ab, 0x00bb, 0x2018, 0x2019 },
-        { "rwk"_s,        0, 0x201c, 0x201d, 0x2018, 0x2019 },
-        { "saq"_s,        0, 0x201c, 0x201d, 0x2018, 0x2019 },
-        { "sbp"_s,        0, 0x201c, 0x201d, 0x2018, 0x2019 },
-        { "seh"_s,        0, 0x201c, 0x201d, 0x2018, 0x2019 },
-        { "ses"_s,        0, 0x201c, 0x201d, 0x2018, 0x2019 },
-        { "sg"_s,         0, 0x00ab, 0x00bb, 0x201c, 0x201d },
-        { "shi"_s,        1, 0x00ab, 0x00bb, 0x201e, 0x201d },
-        { "shi-tfng"_s,   0, 0x00ab, 0x00bb, 0x201e, 0x201d },
-        { "si"_s,         0, 0x201c, 0x201d, 0x2018, 0x2019 },
-        { "sk"_s,         0, 0x201e, 0x201c, 0x201a, 0x2018 },
-        { "sl"_s,         0, 0x201e, 0x201c, 0x201a, 0x2018 },
-        { "sn"_s,         0, 0x201d, 0x201d, 0x2019, 0x2019 },
-        { "so"_s,         0, 0x201c, 0x201d, 0x2018, 0x2019 },
-        { "sq"_s,         0, 0x201e, 0x201c, 0x201a, 0x2018 },
-        { "sr"_s,         1, 0x201e, 0x201c, 0x201a, 0x2018 },
-        { "sr-latn"_s,    0, 0x201e, 0x201c, 0x201a, 0x2018 },
-        { "sv"_s,         0, 0x201d, 0x201d, 0x2019, 0x2019 },
-        { "sw"_s,         0, 0x201c, 0x201d, 0x2018, 0x2019 },
-        { "swc"_s,        0, 0x201c, 0x201d, 0x2018, 0x2019 },
-        { "ta"_s,         0, 0x201c, 0x201d, 0x2018, 0x2019 },
-        { "te"_s,         0, 0x201c, 0x201d, 0x2018, 0x2019 },
-        { "teo"_s,        0, 0x201c, 0x201d, 0x2018, 0x2019 },
-        { "th"_s,         0, 0x201c, 0x201d, 0x2018, 0x2019 },
-        { "ti-er"_s,      0, 0x2018, 0x2019, 0x201c, 0x201d },
-        { "to"_s,         0, 0x201c, 0x201d, 0x2018, 0x2019 },
-        { "tr"_s,         0, 0x201c, 0x201d, 0x2018, 0x2019 },
-        { "twq"_s,        0, 0x201c, 0x201d, 0x2018, 0x2019 },
-        { "tzm"_s,        0, 0x201c, 0x201d, 0x2018, 0x2019 },
-        { "uk"_s,         0, 0x00ab, 0x00bb, 0x201e, 0x201c },
-        { "ur"_s,         0, 0x201d, 0x201c, 0x2019, 0x2018 },
-        { "vai"_s,        1, 0x201c, 0x201d, 0x2018, 0x2019 },
-        { "vai-latn"_s,   0, 0x201c, 0x201d, 0x2018, 0x2019 },
-        { "vi"_s,         0, 0x201c, 0x201d, 0x2018, 0x2019 },
-        { "vun"_s,        0, 0x201c, 0x201d, 0x2018, 0x2019 },
-        { "xh"_s,         0, 0x2018, 0x2019, 0x201c, 0x201d },
-        { "xog"_s,        0, 0x201c, 0x201d, 0x2018, 0x2019 },
-        { "yav"_s,        0, 0x00ab, 0x00bb, 0x00ab, 0x00bb },
-        { "yo"_s,         0, 0x201c, 0x201d, 0x2018, 0x2019 },
-        { "zh"_s,         1, 0x201c, 0x201d, 0x2018, 0x2019 },
-        { "zh-hant"_s,    0, 0x300c, 0x300d, 0x300e, 0x300f },
-        { "zu"_s,         0, 0x201c, 0x201d, 0x2018, 0x2019 },
+    static const std::array quoteTable {
+        QuotesForLanguage { "af"_span,         0, 0x201c, 0x201d, 0x2018, 0x2019 },
+        QuotesForLanguage { "agq"_span,        0, 0x201e, 0x201d, 0x201a, 0x2019 },
+        QuotesForLanguage { "ak"_span,         0, 0x201c, 0x201d, 0x2018, 0x2019 },
+        QuotesForLanguage { "am"_span,         0, 0x00ab, 0x00bb, 0x2039, 0x203a },
+        QuotesForLanguage { "ar"_span,         0, 0x201d, 0x201c, 0x2019, 0x2018 },
+        QuotesForLanguage { "asa"_span,        0, 0x201c, 0x201d, 0x2018, 0x2019 },
+        QuotesForLanguage { "az-cyrl"_span,    0, 0x00ab, 0x00bb, 0x2039, 0x203a },
+        QuotesForLanguage { "bas"_span,        0, 0x00ab, 0x00bb, 0x201e, 0x201c },
+        QuotesForLanguage { "bem"_span,        0, 0x201c, 0x201d, 0x2018, 0x2019 },
+        QuotesForLanguage { "bez"_span,        0, 0x201c, 0x201d, 0x2018, 0x2019 },
+        QuotesForLanguage { "bg"_span,         0, 0x201e, 0x201c, 0x201a, 0x2018 },
+        QuotesForLanguage { "bm"_span,         0, 0x00ab, 0x00bb, 0x201c, 0x201d },
+        QuotesForLanguage { "bn"_span,         0, 0x201c, 0x201d, 0x2018, 0x2019 },
+        QuotesForLanguage { "br"_span,         0, 0x00ab, 0x00bb, 0x2039, 0x203a },
+        QuotesForLanguage { "brx"_span,        0, 0x201c, 0x201d, 0x2018, 0x2019 },
+        QuotesForLanguage { "bs-cyrl"_span,    0, 0x201e, 0x201c, 0x201a, 0x2018 },
+        QuotesForLanguage { "ca"_span,         0, 0x201c, 0x201d, 0x00ab, 0x00bb },
+        QuotesForLanguage { "cgg"_span,        0, 0x201c, 0x201d, 0x2018, 0x2019 },
+        QuotesForLanguage { "chr"_span,        0, 0x201c, 0x201d, 0x2018, 0x2019 },
+        QuotesForLanguage { "cs"_span,         0, 0x201e, 0x201c, 0x201a, 0x2018 },
+        QuotesForLanguage { "da"_span,         0, 0x201c, 0x201d, 0x2018, 0x2019 },
+        QuotesForLanguage { "dav"_span,        0, 0x201c, 0x201d, 0x2018, 0x2019 },
+        QuotesForLanguage { "de"_span,         1, 0x201e, 0x201c, 0x201a, 0x2018 },
+        QuotesForLanguage { "de-ch"_span,      0, 0x00ab, 0x00bb, 0x2039, 0x203a },
+        QuotesForLanguage { "dje"_span,        0, 0x201c, 0x201d, 0x2018, 0x2019 },
+        QuotesForLanguage { "dua"_span,        0, 0x00ab, 0x00bb, 0x2018, 0x2019 },
+        QuotesForLanguage { "dyo"_span,        0, 0x00ab, 0x00bb, 0x201c, 0x201d },
+        QuotesForLanguage { "dz"_span,         0, 0x201c, 0x201d, 0x2018, 0x2019 },
+        QuotesForLanguage { "ebu"_span,        0, 0x201c, 0x201d, 0x2018, 0x2019 },
+        QuotesForLanguage { "ee"_span,         0, 0x201c, 0x201d, 0x2018, 0x2019 },
+        QuotesForLanguage { "el"_span,         0, 0x00ab, 0x00bb, 0x201c, 0x201d },
+        QuotesForLanguage { "en"_span,         1, 0x201c, 0x201d, 0x2018, 0x2019 },
+        QuotesForLanguage { "en-gb"_span,      0, 0x201c, 0x201d, 0x2018, 0x2019 },
+        QuotesForLanguage { "es"_span,         0, 0x201c, 0x201d, 0x00ab, 0x00bb },
+        QuotesForLanguage { "et"_span,         0, 0x201e, 0x201c, 0x201a, 0x2018 },
+        QuotesForLanguage { "eu"_span,         0, 0x201c, 0x201d, 0x00ab, 0x00bb },
+        QuotesForLanguage { "ewo"_span,        0, 0x00ab, 0x00bb, 0x201c, 0x201d },
+        QuotesForLanguage { "fa"_span,         0, 0x00ab, 0x00bb, 0x2039, 0x203a },
+        QuotesForLanguage { "ff"_span,         0, 0x201e, 0x201d, 0x201a, 0x2019 },
+        QuotesForLanguage { "fi"_span,         0, 0x201d, 0x201d, 0x2019, 0x2019 },
+        QuotesForLanguage { "fr"_span,         2, 0x00ab, 0x00bb, 0x00ab, 0x00bb },
+        QuotesForLanguage { "fr-ca"_span,      0, 0x00ab, 0x00bb, 0x2039, 0x203a },
+        QuotesForLanguage { "fr-ch"_span,      0, 0x00ab, 0x00bb, 0x2039, 0x203a },
+        QuotesForLanguage { "gsw"_span,        0, 0x00ab, 0x00bb, 0x2039, 0x203a },
+        QuotesForLanguage { "gu"_span,         0, 0x201c, 0x201d, 0x2018, 0x2019 },
+        QuotesForLanguage { "guz"_span,        0, 0x201c, 0x201d, 0x2018, 0x2019 },
+        QuotesForLanguage { "ha"_span,         0, 0x201c, 0x201d, 0x2018, 0x2019 },
+        QuotesForLanguage { "he"_span,         0, 0x0022, 0x0022, 0x0027, 0x0027 },
+        QuotesForLanguage { "hi"_span,         0, 0x201c, 0x201d, 0x2018, 0x2019 },
+        QuotesForLanguage { "hr"_span,         0, 0x201e, 0x201c, 0x201a, 0x2018 },
+        QuotesForLanguage { "hu"_span,         0, 0x201e, 0x201d, 0x00bb, 0x00ab },
+        QuotesForLanguage { "id"_span,         0, 0x201c, 0x201d, 0x2018, 0x2019 },
+        QuotesForLanguage { "ig"_span,         0, 0x201c, 0x201d, 0x2018, 0x2019 },
+        QuotesForLanguage { "it"_span,         0, 0x00ab, 0x00bb, 0x201c, 0x201d },
+        QuotesForLanguage { "ja"_span,         0, 0x300c, 0x300d, 0x300e, 0x300f },
+        QuotesForLanguage { "jgo"_span,        0, 0x00ab, 0x00bb, 0x2039, 0x203a },
+        QuotesForLanguage { "jmc"_span,        0, 0x201c, 0x201d, 0x2018, 0x2019 },
+        QuotesForLanguage { "kab"_span,        0, 0x00ab, 0x00bb, 0x201c, 0x201d },
+        QuotesForLanguage { "kam"_span,        0, 0x201c, 0x201d, 0x2018, 0x2019 },
+        QuotesForLanguage { "kde"_span,        0, 0x201c, 0x201d, 0x2018, 0x2019 },
+        QuotesForLanguage { "kea"_span,        0, 0x201c, 0x201d, 0x2018, 0x2019 },
+        QuotesForLanguage { "khq"_span,        0, 0x201c, 0x201d, 0x2018, 0x2019 },
+        QuotesForLanguage { "ki"_span,         0, 0x201c, 0x201d, 0x2018, 0x2019 },
+        QuotesForLanguage { "kkj"_span,        0, 0x00ab, 0x00bb, 0x2039, 0x203a },
+        QuotesForLanguage { "kln"_span,        0, 0x201c, 0x201d, 0x2018, 0x2019 },
+        QuotesForLanguage { "km"_span,         0, 0x201c, 0x201d, 0x2018, 0x2019 },
+        QuotesForLanguage { "kn"_span,         0, 0x201c, 0x201d, 0x2018, 0x2019 },
+        QuotesForLanguage { "ko"_span,         0, 0x201c, 0x201d, 0x2018, 0x2019 },
+        QuotesForLanguage { "ksb"_span,        0, 0x201c, 0x201d, 0x2018, 0x2019 },
+        QuotesForLanguage { "ksf"_span,        0, 0x00ab, 0x00bb, 0x2018, 0x2019 },
+        QuotesForLanguage { "lag"_span,        0, 0x201d, 0x201d, 0x2019, 0x2019 },
+        QuotesForLanguage { "lg"_span,         0, 0x201c, 0x201d, 0x2018, 0x2019 },
+        QuotesForLanguage { "ln"_span,         0, 0x201c, 0x201d, 0x2018, 0x2019 },
+        QuotesForLanguage { "lo"_span,         0, 0x201c, 0x201d, 0x2018, 0x2019 },
+        QuotesForLanguage { "lt"_span,         0, 0x201e, 0x201c, 0x201e, 0x201c },
+        QuotesForLanguage { "lu"_span,         0, 0x201c, 0x201d, 0x2018, 0x2019 },
+        QuotesForLanguage { "luo"_span,        0, 0x201c, 0x201d, 0x2018, 0x2019 },
+        QuotesForLanguage { "luy"_span,        0, 0x201e, 0x201c, 0x201a, 0x2018 },
+        QuotesForLanguage { "lv"_span,         0, 0x201c, 0x201d, 0x2018, 0x2019 },
+        QuotesForLanguage { "mas"_span,        0, 0x201c, 0x201d, 0x2018, 0x2019 },
+        QuotesForLanguage { "mer"_span,        0, 0x201c, 0x201d, 0x2018, 0x2019 },
+        QuotesForLanguage { "mfe"_span,        0, 0x201c, 0x201d, 0x2018, 0x2019 },
+        QuotesForLanguage { "mg"_span,         0, 0x00ab, 0x00bb, 0x201c, 0x201d },
+        QuotesForLanguage { "mgo"_span,        0, 0x201c, 0x201d, 0x2018, 0x2019 },
+        QuotesForLanguage { "mk"_span,         0, 0x201e, 0x201c, 0x201a, 0x2018 },
+        QuotesForLanguage { "ml"_span,         0, 0x201c, 0x201d, 0x2018, 0x2019 },
+        QuotesForLanguage { "mr"_span,         0, 0x201c, 0x201d, 0x2018, 0x2019 },
+        QuotesForLanguage { "ms"_span,         0, 0x201c, 0x201d, 0x2018, 0x2019 },
+        QuotesForLanguage { "mua"_span,        0, 0x00ab, 0x00bb, 0x201c, 0x201d },
+        QuotesForLanguage { "my"_span,         0, 0x201c, 0x201d, 0x2018, 0x2019 },
+        QuotesForLanguage { "naq"_span,        0, 0x201c, 0x201d, 0x2018, 0x2019 },
+        QuotesForLanguage { "nb"_span,         0, 0x00ab, 0x00bb, 0x2018, 0x2019 },
+        QuotesForLanguage { "nd"_span,         0, 0x201c, 0x201d, 0x2018, 0x2019 },
+        QuotesForLanguage { "nl"_span,         0, 0x201c, 0x201d, 0x2018, 0x2019 },
+        QuotesForLanguage { "nmg"_span,        0, 0x201e, 0x201d, 0x00ab, 0x00bb },
+        QuotesForLanguage { "nn"_span,         0, 0x00ab, 0x00bb, 0x2018, 0x2019 },
+        QuotesForLanguage { "nnh"_span,        0, 0x00ab, 0x00bb, 0x201c, 0x201d },
+        QuotesForLanguage { "nus"_span,        0, 0x201c, 0x201d, 0x2018, 0x2019 },
+        QuotesForLanguage { "nyn"_span,        0, 0x201c, 0x201d, 0x2018, 0x2019 },
+        QuotesForLanguage { "pl"_span,         0, 0x201e, 0x201d, 0x00ab, 0x00bb },
+        QuotesForLanguage { "pt"_span,         1, 0x201c, 0x201d, 0x2018, 0x2019 },
+        QuotesForLanguage { "pt-pt"_span,      0, 0x00ab, 0x00bb, 0x201c, 0x201d },
+        QuotesForLanguage { "rn"_span,         0, 0x201d, 0x201d, 0x2019, 0x2019 },
+        QuotesForLanguage { "ro"_span,         0, 0x201e, 0x201d, 0x00ab, 0x00bb },
+        QuotesForLanguage { "rof"_span,        0, 0x201c, 0x201d, 0x2018, 0x2019 },
+        QuotesForLanguage { "ru"_span,         0, 0x00ab, 0x00bb, 0x201e, 0x201c },
+        QuotesForLanguage { "rw"_span,         0, 0x00ab, 0x00bb, 0x2018, 0x2019 },
+        QuotesForLanguage { "rwk"_span,        0, 0x201c, 0x201d, 0x2018, 0x2019 },
+        QuotesForLanguage { "saq"_span,        0, 0x201c, 0x201d, 0x2018, 0x2019 },
+        QuotesForLanguage { "sbp"_span,        0, 0x201c, 0x201d, 0x2018, 0x2019 },
+        QuotesForLanguage { "seh"_span,        0, 0x201c, 0x201d, 0x2018, 0x2019 },
+        QuotesForLanguage { "ses"_span,        0, 0x201c, 0x201d, 0x2018, 0x2019 },
+        QuotesForLanguage { "sg"_span,         0, 0x00ab, 0x00bb, 0x201c, 0x201d },
+        QuotesForLanguage { "shi"_span,        1, 0x00ab, 0x00bb, 0x201e, 0x201d },
+        QuotesForLanguage { "shi-tfng"_span,   0, 0x00ab, 0x00bb, 0x201e, 0x201d },
+        QuotesForLanguage { "si"_span,         0, 0x201c, 0x201d, 0x2018, 0x2019 },
+        QuotesForLanguage { "sk"_span,         0, 0x201e, 0x201c, 0x201a, 0x2018 },
+        QuotesForLanguage { "sl"_span,         0, 0x201e, 0x201c, 0x201a, 0x2018 },
+        QuotesForLanguage { "sn"_span,         0, 0x201d, 0x201d, 0x2019, 0x2019 },
+        QuotesForLanguage { "so"_span,         0, 0x201c, 0x201d, 0x2018, 0x2019 },
+        QuotesForLanguage { "sq"_span,         0, 0x201e, 0x201c, 0x201a, 0x2018 },
+        QuotesForLanguage { "sr"_span,         1, 0x201e, 0x201c, 0x201a, 0x2018 },
+        QuotesForLanguage { "sr-latn"_span,    0, 0x201e, 0x201c, 0x201a, 0x2018 },
+        QuotesForLanguage { "sv"_span,         0, 0x201d, 0x201d, 0x2019, 0x2019 },
+        QuotesForLanguage { "sw"_span,         0, 0x201c, 0x201d, 0x2018, 0x2019 },
+        QuotesForLanguage { "swc"_span,        0, 0x201c, 0x201d, 0x2018, 0x2019 },
+        QuotesForLanguage { "ta"_span,         0, 0x201c, 0x201d, 0x2018, 0x2019 },
+        QuotesForLanguage { "te"_span,         0, 0x201c, 0x201d, 0x2018, 0x2019 },
+        QuotesForLanguage { "teo"_span,        0, 0x201c, 0x201d, 0x2018, 0x2019 },
+        QuotesForLanguage { "th"_span,         0, 0x201c, 0x201d, 0x2018, 0x2019 },
+        QuotesForLanguage { "ti-er"_span,      0, 0x2018, 0x2019, 0x201c, 0x201d },
+        QuotesForLanguage { "to"_span,         0, 0x201c, 0x201d, 0x2018, 0x2019 },
+        QuotesForLanguage { "tr"_span,         0, 0x201c, 0x201d, 0x2018, 0x2019 },
+        QuotesForLanguage { "twq"_span,        0, 0x201c, 0x201d, 0x2018, 0x2019 },
+        QuotesForLanguage { "tzm"_span,        0, 0x201c, 0x201d, 0x2018, 0x2019 },
+        QuotesForLanguage { "uk"_span,         0, 0x00ab, 0x00bb, 0x201e, 0x201c },
+        QuotesForLanguage { "ur"_span,         0, 0x201d, 0x201c, 0x2019, 0x2018 },
+        QuotesForLanguage { "vai"_span,        1, 0x201c, 0x201d, 0x2018, 0x2019 },
+        QuotesForLanguage { "vai-latn"_span,   0, 0x201c, 0x201d, 0x2018, 0x2019 },
+        QuotesForLanguage { "vi"_span,         0, 0x201c, 0x201d, 0x2018, 0x2019 },
+        QuotesForLanguage { "vun"_span,        0, 0x201c, 0x201d, 0x2018, 0x2019 },
+        QuotesForLanguage { "xh"_span,         0, 0x2018, 0x2019, 0x201c, 0x201d },
+        QuotesForLanguage { "xog"_span,        0, 0x201c, 0x201d, 0x2018, 0x2019 },
+        QuotesForLanguage { "yav"_span,        0, 0x00ab, 0x00bb, 0x00ab, 0x00bb },
+        QuotesForLanguage { "yo"_span,         0, 0x201c, 0x201d, 0x2018, 0x2019 },
+        QuotesForLanguage { "zh"_span,         1, 0x201c, 0x201d, 0x2018, 0x2019 },
+        QuotesForLanguage { "zh-hant"_span,    0, 0x300c, 0x300d, 0x300e, 0x300f },
+        QuotesForLanguage { "zu"_span,         0, 0x201c, 0x201d, 0x2018, 0x2019 },
     };
 
 #if ASSERT_ENABLED
@@ -369,9 +373,9 @@ static const QuotesForLanguage* quotesForLanguage(const String& language)
 
         for (unsigned i = 0; i < std::size(quoteTable); ++i) {
             if (i)
-                ASSERT(strcmp(quoteTable[i - 1].language, quoteTable[i].language) < 0);
+                ASSERT(compareSpans(quoteTable[i - 1].language, quoteTable[i].language) < 0);
 
-            for (unsigned j = 0; UChar character = quoteTable[i].language[j]; ++j)
+            for (auto character : quoteTable[i].language)
                 ASSERT(isASCIILower(character) || character == '-');
 
             checkNumberOfDistinctQuoteCharacters(quoteTable[i].open1);
@@ -386,19 +390,18 @@ static const QuotesForLanguage* quotesForLanguage(const String& language)
     if (!length)
         return nullptr;
 
-    Vector<char> languageKeyBuffer(length + 1);
+    Vector<LChar> languageKeyBuffer(length);
     for (unsigned i = 0; i < length; ++i) {
         UChar character = toASCIILower(language[i]);
         if (!(isASCIILower(character) || character == '-'))
             return nullptr;
-        languageKeyBuffer[i] = static_cast<char>(character);
+        languageKeyBuffer[i] = static_cast<LChar>(character);
     }
-    languageKeyBuffer[length] = 0;
 
-    QuotesForLanguage languageKey = { languageKeyBuffer.data(), 0, 0, 0, 0, 0 };
+    QuotesForLanguage languageKey = { languageKeyBuffer.span(), 0, 0, 0, 0, 0 };
 
     return static_cast<const QuotesForLanguage*>(bsearch(&languageKey,
-        quoteTable, std::size(quoteTable), sizeof(quoteTable[0]), quoteTableLanguageComparisonFunction));
+        quoteTable.data(), std::size(quoteTable), sizeof(quoteTable[0]), quoteTableLanguageComparisonFunction));
 }
 
 static StringImpl* stringForQuoteCharacter(UChar character)
@@ -409,14 +412,14 @@ static StringImpl* stringForQuoteCharacter(UChar character)
         UChar character;
         StringImpl* string;
     };
-    static StringForCharacter strings[maxDistinctQuoteCharacters];
-    for (unsigned i = 0; i < maxDistinctQuoteCharacters; ++i) {
-        if (strings[i].character == character)
-            return strings[i].string;
-        if (!strings[i].character) {
-            strings[i].character = character;
-            strings[i].string = &StringImpl::create8BitIfPossible(span(character)).leakRef();
-            return strings[i].string;
+    static std::array<StringForCharacter, maxDistinctQuoteCharacters> strings;
+    for (auto& string : strings) {
+        if (string.character == character)
+            return string.string;
+        if (!string.character) {
+            string.character = character;
+            string.string = &StringImpl::create8BitIfPossible(span(character)).leakRef();
+            return string.string;
         }
     }
     ASSERT_NOT_REACHED();

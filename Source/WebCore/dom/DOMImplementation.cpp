@@ -151,7 +151,7 @@ Ref<HTMLDocument> DOMImplementation::createHTMLDocument(String&& title)
     return document;
 }
 
-Ref<Document> DOMImplementation::createDocument(const String& contentType, LocalFrame* frame, const Settings& settings, const URL& url, ScriptExecutionContextIdentifier documentIdentifier)
+Ref<Document> DOMImplementation::createDocument(const String& contentType, LocalFrame* frame, const Settings& settings, const URL& url, std::optional<ScriptExecutionContextIdentifier> documentIdentifier)
 {
     // FIXME: Inelegant to have this here just because this is the home of DOM APIs for creating documents.
     // This is internal, not a DOM API. Maybe we should put it in a new class called DocumentFactory,

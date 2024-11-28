@@ -43,8 +43,7 @@ class ParseTest : public testing::Test
 
         const char *shaderStrings[] = {shaderString.c_str()};
         bool compilationSuccess     = mTranslator->compile(shaderStrings, 1, mCompileOptions);
-        TInfoSink &infoSink         = mTranslator->getInfoSink();
-        mInfoLog                    = RemoveSymbolIdsFromInfoLog(infoSink.info.c_str());
+        mInfoLog                    = mTranslator->getInfoSink().info.str();
         if (!compilationSuccess)
         {
             return testing::AssertionFailure() << "Shader compilation failed " << mInfoLog;
@@ -58,28 +57,13 @@ class ParseTest : public testing::Test
     {
         return mInfoLog.find(stringToFind) != std::string::npos;
     }
+    std::string intermediateTree() const { return mInfoLog; }
 
     ShBuiltInResources mResources;
     ShCompileOptions mCompileOptions{};
     ShShaderSpec mShaderSpec = SH_WEBGL_SPEC;
 
   private:
-    // Remove symbol ids from info log - the tests don't care about them.
-    static std::string RemoveSymbolIdsFromInfoLog(const char *infoLog)
-    {
-        std::string filteredLog(infoLog);
-        size_t idPrefixPos = 0u;
-        do
-        {
-            idPrefixPos = filteredLog.find(" (symbol id");
-            if (idPrefixPos != std::string::npos)
-            {
-                size_t idSuffixPos = filteredLog.find(")", idPrefixPos);
-                filteredLog.erase(idPrefixPos, idSuffixPos - idPrefixPos + 1u);
-            }
-        } while (idPrefixPos != std::string::npos);
-        return filteredLog;
-    }
 
     std::unique_ptr<TranslatorESSL> mTranslator;
     std::string mInfoLog;
@@ -95,7 +79,7 @@ int B[int[][](A)];)";
     EXPECT_TRUE(foundInIntermediateTree("constructing from an unsized array"));
 }
 
-TEST_F(ParseTest, UniformBlockNameReferenceNoCrash)
+TEST_F(ParseTest, UniformBlockNameReferenceConstructorNoCrash)
 {
     const char kShader[] = R"(#version 300 es
 precision mediump float;
@@ -446,4 +430,400 @@ void main() {
     EXPECT_FALSE(compile(shader.str()));
     EXPECT_TRUE(foundErrorInIntermediateTree());
     EXPECT_TRUE(foundInIntermediateTree("Expression too complex"));
+}
+
+// Test that comma expression referring to an uniform block member through instance-name is not an
+// error.
+TEST_F(ParseTest, UniformBlockWorks)
+{
+    mShaderSpec          = SH_WEBGL2_SPEC;
+    const char kShader[] = R"(#version 300 es
+         uniform B { uint e; } b;
+         void main() { b.e; })";
+
+    EXPECT_TRUE(compile(kShader));
+
+    const char kShader2[] = R"(#version 300 es
+         uniform B { uint e; } b;
+         mediump float f() { return .0; }
+         void main() { f(), b.e; })";
+    EXPECT_TRUE(compile(kShader2));
+
+    const char kShader3[] = R"(#version 300 es
+         uniform B { uint e; };
+         void main() { e; })";
+    EXPECT_TRUE(compile(kShader3));
+
+    const char kShader4[] = R"(#version 300 es
+        uniform B { uint e; };
+        mediump float f() { return .0; }
+        void main() { f(), e; })";
+    EXPECT_TRUE(compile(kShader4));
+
+    const char kShader5[] = R"(#version 300 es
+        uniform B { uint e; } b[3];
+        void main() { b[0].e; })";
+    EXPECT_TRUE(compile(kShader5));
+
+    const char kShader6[] = R"(#version 300 es
+        uniform B { uint e; } b[3];
+        mediump float f() { return .0; }
+        void main() { f(), b[0].e; })";
+    EXPECT_TRUE(compile(kShader6));
+}
+
+// Test that comma expression referring to an uniform block instance-name is an error.
+TEST_F(ParseTest, UniformBlockInstanceNameReferenceIsError)
+{
+    mShaderSpec = SH_WEBGL2_SPEC;
+
+    const char kShader[] = R"(#version 300 es
+         precision mediump float;
+         uniform B { uint e; } b;
+         void main() { b; })";
+    EXPECT_FALSE(compile(kShader));
+    EXPECT_TRUE(foundErrorInIntermediateTree());
+    EXPECT_TRUE(
+        foundInIntermediateTree("expression statement is not allowed for interface blocks"));
+
+    const char kShader2[] = R"(#version 300 es
+         uniform B { uint e; } b;
+         mediump float f() { return .0; }
+         void main() { f(), b; })";
+    EXPECT_FALSE(compile(kShader2));
+    EXPECT_TRUE(foundErrorInIntermediateTree());
+    EXPECT_TRUE(
+        foundInIntermediateTree("',' : sequence operator is not allowed for interface blocks"));
+}
+
+// Test that expression statements resulting in a uniform block instance-name as an array subscript
+// is an error.
+TEST_F(ParseTest, UniformBlockInstanceNameReferenceSubscriptIsError)
+{
+    mShaderSpec = SH_WEBGL2_SPEC;
+
+    const char kShader[] = R"(#version 300 es
+         precision mediump float;
+         uniform B { uint e; } b[3];
+         void main() { b[0]; })";
+    EXPECT_FALSE(compile(kShader));
+    EXPECT_TRUE(foundErrorInIntermediateTree());
+    EXPECT_TRUE(
+        foundInIntermediateTree("expression statement is not allowed for interface blocks"));
+    const char kShader2[] = R"(#version 300 es
+         uniform B { uint e; } b[3];
+         mediump float f() { return .0; }
+         void main() { f(), b[0]; })";
+    EXPECT_FALSE(compile(kShader2));
+    EXPECT_TRUE(foundErrorInIntermediateTree());
+    EXPECT_TRUE(
+        foundInIntermediateTree("',' : sequence operator is not allowed for interface blocks"));
+}
+
+// Test that expressions using binary operations on a uniform block instance-name is an error.
+TEST_F(ParseTest, UniformBlockInstanceNameOpIsError)
+{
+    mShaderSpec = SH_WEBGL2_SPEC;
+
+    const char kShader[] = R"(#version 300 es
+        precision mediump float;
+        uniform B { uint e; } b;
+        void main() { b = b; })";
+    EXPECT_FALSE(compile(kShader));
+    EXPECT_TRUE(foundErrorInIntermediateTree());
+    EXPECT_TRUE(
+        foundInIntermediateTree("'assign' : l-value required (can't modify a uniform \"b\")"));
+    EXPECT_TRUE(foundInIntermediateTree("'=' : Invalid operation for interface blocks"));
+    EXPECT_TRUE(foundInIntermediateTree(
+        "'assign' : cannot convert from 'uniform interface block' to 'uniform interface block'"));
+
+    const char kShader2[] = R"(#version 300 es
+        uniform B { uint e; } b;
+        void main() { b == b; })";
+    EXPECT_FALSE(compile(kShader2));
+    EXPECT_TRUE(foundErrorInIntermediateTree());
+    EXPECT_TRUE(foundInIntermediateTree("'==' : Invalid operation for interface blocks"));
+    EXPECT_TRUE(foundInIntermediateTree(
+        "'==' : wrong operand types - no operation '==' exists that takes a left-hand operand of "
+        "type 'uniform interface block' and a right operand of type 'uniform interface block' (or "
+        "there is no acceptable conversion)"));
+    const char kShader3[] = R"(#version 300 es
+         uniform B { uint e; } b;
+         void main() { b.e > 33u ? b : b; })";
+    EXPECT_FALSE(compile(kShader3));
+    EXPECT_TRUE(foundErrorInIntermediateTree());
+    EXPECT_TRUE(
+        foundInIntermediateTree("'?:' : ternary operator is not allowed for interface blocks"));
+}
+
+TEST_F(ParseTest, UniformBlockReferenceIsError)
+{
+    const char kShader[] = R"(#version 300 es
+        uniform B { uint e; } b;
+        void main() { B; })";
+    EXPECT_FALSE(compile(kShader));
+    EXPECT_TRUE(foundErrorInIntermediateTree());
+    EXPECT_TRUE(foundInIntermediateTree("'B' : variable expected"));
+
+    const char kShader2[] = R"(#version 300 es
+        uniform B { uint e; };
+        mediump float f() { return .0; }
+        void main() { f(), B; })";
+    EXPECT_FALSE(compile(kShader2));
+    EXPECT_TRUE(foundErrorInIntermediateTree());
+    EXPECT_TRUE(foundInIntermediateTree("'B' : variable expected"));
+}
+
+// Tests that referring to functions is a parse error.
+TEST_F(ParseTest, FunctionReferenceIsError)
+{
+    mShaderSpec          = SH_WEBGL2_SPEC;
+    const char kShader[] = R"(#version 300 es
+        mediump float f() { return .0; }
+        void main() { f; })";
+    EXPECT_FALSE(compile(kShader));
+    EXPECT_TRUE(foundErrorInIntermediateTree());
+    EXPECT_TRUE(foundInIntermediateTree("'f' : variable expected"));
+
+    const char kShader2[] = R"(#version 300 es
+        mediump float f() { return .0; }
+        void main() { f(), f; })";
+    EXPECT_FALSE(compile(kShader2));
+    EXPECT_TRUE(foundErrorInIntermediateTree());
+    EXPECT_TRUE(foundInIntermediateTree("'f' : variable expected"));
+}
+
+// Tests that referring to builtin functions is a parse error.
+// Shows discrepancy where the error message is unexpected, user defined functions have
+// better error message.
+TEST_F(ParseTest, BuiltinFunctionReferenceIsError)
+{
+    mShaderSpec          = SH_WEBGL2_SPEC;
+    const char kShader[] = R"(#version 300 es
+        void main() { sin; })";
+    EXPECT_FALSE(compile(kShader));
+    EXPECT_TRUE(foundErrorInIntermediateTree());
+    EXPECT_TRUE(foundInIntermediateTree("'sin' : undeclared identifier"));
+
+    const char kShader2[] = R"(#version 300 es
+        void main() { sin(3.0), sin; })";
+    EXPECT_FALSE(compile(kShader2));
+    EXPECT_TRUE(foundErrorInIntermediateTree());
+    EXPECT_TRUE(foundInIntermediateTree("'sin' : undeclared identifier"));
+}
+
+// Tests that unsized array parameters fail.
+TEST_F(ParseTest, UnsizedArrayParameterIsError)
+{
+    mShaderSpec          = SH_WEBGL2_SPEC;
+    const char kShader[] = R"(#version 300 es
+int f(int a[], int i) {
+    return i;
+}
+void main() { }
+)";
+    EXPECT_FALSE(compile(kShader));
+    EXPECT_TRUE(foundErrorInIntermediateTree());
+    EXPECT_TRUE(foundInIntermediateTree("'a' : function parameter array must specify a size"));
+}
+
+// Tests that unsized array parameters fail.
+TEST_F(ParseTest, UnsizedArrayParameterIsError2)
+{
+    mShaderSpec          = SH_GLES3_1_SPEC;
+    const char kShader[] = R"(#version 310 es
+int f(int []a[1], int i) {
+    return i;
+}
+void main() { }
+)";
+    EXPECT_FALSE(compile(kShader));
+    EXPECT_TRUE(foundErrorInIntermediateTree());
+    EXPECT_TRUE(foundInIntermediateTree("'a' : function parameter array must specify a size"));
+}
+
+// Tests that unnamed, unsized array parameters fail with same error message as named ones.
+TEST_F(ParseTest, UnnamedUnsizedArrayParameterIsError)
+{
+    mShaderSpec          = SH_WEBGL2_SPEC;
+    const char kShader[] = R"(#version 300 es
+int f(int[], int i) {
+    return i;
+}
+void main() { }
+)";
+    EXPECT_FALSE(compile(kShader));
+    EXPECT_TRUE(foundErrorInIntermediateTree());
+    EXPECT_TRUE(foundInIntermediateTree("'' : function parameter array must specify a size"));
+}
+
+// Tests that different array notatinos [1]a[2], a[1][2] etc work in parameters.
+TEST_F(ParseTest, ArrayParameterVariants)
+{
+    mShaderSpec          = SH_GLES3_1_SPEC;
+    const char kShader[] = R"(#version 310 es
+int f(int[1][2] a) {
+    return a[0][0];
+}
+int g(int a[1][2]) {
+    return a[0][0];
+}
+int h(int[1]a[2]) {
+    return a[0][0];
+}
+void main() {
+    int[1][2] a;
+    int b[1][2];
+    int x1 = f(a);
+    int x2 = f(b);
+    int x3 = g(a);
+    int x4 = g(b);
+
+    int[1] c[2];
+    int d[2][1];
+    int y1 = h(c);
+    int y2 = h(d);
+}
+)";
+    EXPECT_TRUE(compile(kShader));
+}
+
+// Tests that parameters parse the [1]a[2] notation in correct order.
+TEST_F(ParseTest, ArrayParameterVariantsMismatchIsError2)
+{
+    mShaderSpec          = SH_GLES3_1_SPEC;
+    const char kShader[] = R"(#version 310 es
+int f(int[1]a[2]) {
+    return a[0][0];
+}
+void main() {
+    int[1][2] a;
+    int x = f(a);
+}
+)";
+    EXPECT_FALSE(compile(kShader));
+    EXPECT_TRUE(foundErrorInIntermediateTree());
+    EXPECT_TRUE(foundInIntermediateTree("'f' : no matching overloaded function found"));
+}
+
+// Tests that specifying a struct in a function parameter is a parse error.
+TEST_F(ParseTest, StructSpecificationFunctionParameterIsError)
+{
+    mShaderSpec          = SH_WEBGL2_SPEC;
+    const char kShader[] = R"(#version 300 es
+precision highp float;
+float f(struct S {float f;} a) {
+    return a.f;
+}
+void main() { })";
+    EXPECT_FALSE(compile(kShader));
+    EXPECT_TRUE(foundErrorInIntermediateTree());
+    EXPECT_TRUE(
+        foundInIntermediateTree("'a' : Function parameter type cannot be a structure definition"));
+}
+
+// Tests that specifying a struct in a function parameter is the same parse error as with named one.
+TEST_F(ParseTest, StructSpecificationUnnamedFunctionParameterIsError)
+{
+    mShaderSpec          = SH_WEBGL2_SPEC;
+    const char kShader[] = R"(#version 300 es
+precision highp float;
+float f(struct S {float f;}) {
+    return a.f;
+}
+void main() { })";
+    EXPECT_FALSE(compile(kShader));
+    EXPECT_TRUE(foundErrorInIntermediateTree());
+    EXPECT_TRUE(
+        foundInIntermediateTree("'' : Function parameter type cannot be a structure definition"));
+}
+
+// Tests that specifying a struct in a function parameter is the same parse error as with named one.
+TEST_F(ParseTest, UnnamedStructSpecificationUnnamedFunctionParameterIsError)
+{
+    mShaderSpec          = SH_WEBGL2_SPEC;
+    const char kShader[] = R"(#version 300 es
+precision highp float;
+float f(struct {float f;}) {
+    return a.f;
+}
+void main() { })";
+    EXPECT_FALSE(compile(kShader));
+    EXPECT_TRUE(foundErrorInIntermediateTree());
+    EXPECT_TRUE(
+        foundInIntermediateTree("'' : Function parameter type cannot be a structure definition"));
+}
+
+// Tests that specifying a struct in a function parameter is the same parse error as with named one.
+TEST_F(ParseTest, UnnamedStructSpecificationFunctionParameterIsError)
+{
+    mShaderSpec          = SH_WEBGL2_SPEC;
+    const char kShader[] = R"(#version 300 es
+precision highp float;
+float f(struct {float f;} d) {
+    return a.f;
+}
+void main() { })";
+    EXPECT_FALSE(compile(kShader));
+    EXPECT_TRUE(foundErrorInIntermediateTree());
+    EXPECT_TRUE(
+        foundInIntermediateTree("'d' : Function parameter type cannot be a structure definition"));
+}
+
+TEST_F(ParseTest, SeparateStructStructSpecificationFunctionNoCrash)
+{
+    mCompileOptions.validateAST = 1;
+    const char kShader[] =
+        R"(struct S{int f;};struct S2{S h;} o() { return S2(S(1)); } void main(){ S2 s2 = o(); })";
+    EXPECT_TRUE(compile(kShader));
+}
+
+// Test showing that prototypes get the function definition variable names.
+// An example where parser loses information.
+TEST_F(ParseTest, VariableNamesInPrototypesUnnamedOut)
+{
+    const char kShader[]   = R"(
+precision highp float;
+void f(out float, out float);
+void main()
+{
+    gl_FragColor = vec4(0.5);
+    f(gl_FragColor.r, gl_FragColor.g);
+}
+void f(out float r, out float)
+{
+    r = 1.0;
+}
+)";
+    const char kExpected[] = R"(0:2: Code block
+0:3:   Function Prototype: 'f' (symbol id 3001) (void)
+0:3:     parameter: 'r' (symbol id 3006) (out highp float)
+0:3:     parameter: '' (symbol id 3007) (out highp float)
+0:4:   Function Definition:
+0:4:     Function Prototype: 'main' (symbol id 3004) (void)
+0:5:     Code block
+0:6:       move second child to first child (mediump 4-component vector of float)
+0:6:         gl_FragColor (symbol id 2446) (FragColor mediump 4-component vector of float)
+0:6:         Constant union (const mediump 4-component vector of float)
+0:6:           0.5 (const float)
+0:6:           0.5 (const float)
+0:6:           0.5 (const float)
+0:6:           0.5 (const float)
+0:7:       Call a function: 'f' (symbol id 3001) (void)
+0:7:         vector swizzle (x) (mediump float)
+0:7:           gl_FragColor (symbol id 2446) (FragColor mediump 4-component vector of float)
+0:7:         vector swizzle (y) (mediump float)
+0:7:           gl_FragColor (symbol id 2446) (FragColor mediump 4-component vector of float)
+0:9:   Function Definition:
+0:9:     Function Prototype: 'f' (symbol id 3001) (void)
+0:9:       parameter: 'r' (symbol id 3006) (out highp float)
+0:9:       parameter: '' (symbol id 3007) (out highp float)
+0:10:     Code block
+0:11:       move second child to first child (highp float)
+0:11:         'r' (symbol id 3006) (out highp float)
+0:11:         Constant union (const highp float)
+0:11:           1.0 (const float)
+)";
+    compile(kShader);
+    EXPECT_EQ(kExpected, intermediateTree());
 }

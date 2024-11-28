@@ -35,6 +35,8 @@
 
 namespace WebCore {
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib/Win port
+
 void FontCascade::drawGlyphs(GraphicsContext& graphicsContext, const Font& font, const GlyphBufferGlyph* glyphs, const GlyphBufferAdvance* advances, unsigned glyphCount, const FloatPoint& position, FontSmoothingMode smoothingMode)
 {
     if (!font.platformData().size())
@@ -91,6 +93,8 @@ void FontCascade::drawGlyphs(GraphicsContext& graphicsContext, const Font& font,
     static_cast<GraphicsContextSkia*>(&graphicsContext)->drawSkiaText(blob, SkFloatToScalar(position.x()), SkFloatToScalar(position.y()), edging != SkFont::Edging::kAlias, isVertical);
 }
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+
 bool FontCascade::canReturnFallbackFontsForComplexText()
 {
     return false;
@@ -99,6 +103,11 @@ bool FontCascade::canReturnFallbackFontsForComplexText()
 bool FontCascade::canExpandAroundIdeographsInComplexText()
 {
     return false;
+}
+
+bool FontCascade::canUseGlyphDisplayList(const RenderStyle&)
+{
+    return true;
 }
 
 ResolvedEmojiPolicy FontCascade::resolveEmojiPolicy(FontVariantEmoji fontVariantEmoji, char32_t character)
@@ -120,7 +129,7 @@ ResolvedEmojiPolicy FontCascade::resolveEmojiPolicy(FontVariantEmoji fontVariant
     return ResolvedEmojiPolicy::NoPreference;
 }
 
-const Font* FontCascade::fontForCombiningCharacterSequence(StringView stringView) const
+RefPtr<const Font> FontCascade::fontForCombiningCharacterSequence(StringView stringView) const
 {
     ASSERT(!stringView.isEmpty());
     auto codePoints = stringView.codePoints();

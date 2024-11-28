@@ -88,6 +88,10 @@ class MemoryPressureHandler {
 public:
     WTF_EXPORT_PRIVATE static MemoryPressureHandler& singleton();
 
+    // Do nothing since this is a singleton.
+    void ref() const { }
+    void deref() const { }
+
     WTF_EXPORT_PRIVATE void install();
 
     WTF_EXPORT_PRIVATE void setMemoryFootprintPollIntervalForTesting(Seconds);
@@ -126,7 +130,9 @@ public:
 
     bool isSimulatingMemoryWarning() const { return m_isSimulatingMemoryWarning; }
     bool isSimulatingMemoryPressure() const { return m_isSimulatingMemoryPressure; }
+
     void setMemoryPressureStatus(SystemMemoryPressureStatus);
+    SystemMemoryPressureStatus memoryPressureStatus() const { return m_memoryPressureStatus; }
 
     WTF_EXPORT_PRIVATE MemoryUsagePolicy currentMemoryUsagePolicy();
 
@@ -262,7 +268,7 @@ private:
     Win32Handle m_lowMemoryHandle;
 #endif
 
-#if OS(LINUX) || OS(FREEBSD) || OS(QNX)
+#if OS(LINUX) || OS(FREEBSD) || OS(HAIKU) || OS(QNX)
     RunLoop::Timer m_holdOffTimer;
     void holdOffTimerFired();
 #endif
@@ -277,4 +283,5 @@ private:
 using WTF::Critical;
 using WTF::MemoryPressureHandler;
 using WTF::Synchronous;
+using WTF::SystemMemoryPressureStatus;
 using WTF::WebsamProcessState;

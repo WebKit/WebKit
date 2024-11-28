@@ -99,7 +99,7 @@ void loadPendingResources(RenderStyle& style, Document& document, const Element*
 
     // Masking operations may be sensitive to timing attacks that can be used to reveal the pixel data of
     // the image used as the mask. As a means to mitigate such attacks CSS mask images and shape-outside
-    // images are retreived in "Anonymous" mode, which uses a potentially CORS-enabled fetch.
+    // images are retrieved in "Anonymous" mode, which uses a potentially CORS-enabled fetch.
     for (auto* maskLayer = &style.maskLayers(); maskLayer; maskLayer = maskLayer->next())
         loadPendingImage(document, maskLayer->image(), element, LoadPolicy::CORS);
 

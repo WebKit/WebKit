@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(WEB_CODECS)
+#if ENABLE(VIDEO)
 
 #include "VideoEncoderActiveConfiguration.h"
 #include "VideoEncoderScalabilityMode.h"
@@ -65,6 +65,7 @@ public:
         std::optional<uint64_t> duration;
     };
     using CreateResult = Expected<UniqueRef<VideoEncoder>, String>;
+    using CreatePromise = NativePromise<UniqueRef<VideoEncoder>, String>;
 
     using DescriptionCallback = Function<void(ActiveConfiguration&&)>;
     using OutputCallback = Function<void(EncodedFrame&&)>;
@@ -73,7 +74,7 @@ public:
     using CreatorFunction = void(*)(const String&, const Config&, CreateCallback&&, DescriptionCallback&&, OutputCallback&&);
     WEBCORE_EXPORT static void setCreatorCallback(CreatorFunction&&);
 
-    static void create(const String&, const Config&, CreateCallback&&, DescriptionCallback&&, OutputCallback&&);
+    static Ref<CreatePromise> create(const String&, const Config&, DescriptionCallback&&, OutputCallback&&);
     WEBCORE_EXPORT static void createLocalEncoder(const String&, const Config&, CreateCallback&&, DescriptionCallback&&, OutputCallback&&);
 
     using EncodePromise = NativePromise<void, String>;
@@ -89,4 +90,4 @@ public:
 
 }
 
-#endif // ENABLE(WEB_CODECS)
+#endif // ENABLE(VIDEO)

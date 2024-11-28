@@ -29,10 +29,18 @@
 
 #include "B3Value.h"
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC { namespace B3 {
 
 class JS_EXPORT_PRIVATE ExtractValue final : public Value {
 public:
+#if CPU(ARM_THUMB2)
+    // See LowerInt64 for details
+    static constexpr int s_int64HighBits = 1;
+    static constexpr int s_int64LowBits = 0;
+#endif
+
     static bool accepts(Kind kind) { return kind == Extract; }
 
     ~ExtractValue() final;
@@ -60,5 +68,7 @@ private:
 };
 
 } } // namespace JSC::B3
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ENABLE(B3_JIT)

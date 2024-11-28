@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2023-2024 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,22 +29,32 @@
 
 #include "DFGAbstractInterpreter.h"
 #include "DFGAbstractValue.h"
+#include "DFGArrayifySlowPathGenerator.h"
 #include "DFGBackwardsDominators.h"
 #include "DFGCFG.h"
+#include "DFGCallArrayAllocatorSlowPathGenerator.h"
+#include "DFGCallCreateDirectArgumentsSlowPathGenerator.h"
 #include "DFGControlEquivalenceAnalysis.h"
 #include "DFGDominators.h"
 #include "DFGFlowMap.h"
 #include "DFGInPlaceAbstractState.h"
 #include "DFGNaturalLoops.h"
+#include "DFGSaneStringGetByValSlowPathGenerator.h"
 #include "DFGSlowPathGenerator.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace JSC { namespace DFG {
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ArrayifySlowPathGenerator);
 WTF_MAKE_TZONE_ALLOCATED_IMPL(BackwardsCFG);
 WTF_MAKE_TZONE_ALLOCATED_IMPL(BackwardsDominators);
 WTF_MAKE_TZONE_ALLOCATED_IMPL(CFG);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CallArrayAllocatorSlowPathGenerator);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CallArrayAllocatorWithVariableSizeSlowPathGenerator);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CallArrayAllocatorWithVariableStructureVariableSizeSlowPathGenerator);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CallCreateDirectArgumentsSlowPathGenerator);
 WTF_MAKE_TZONE_ALLOCATED_IMPL(ControlEquivalenceAnalysis);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SaneStringGetByValSlowPathGenerator);
 
 using AbstractInterpreterInPlaceAbstractState = AbstractInterpreter<InPlaceAbstractState>;
 using DominatorsCFG = Dominators<CFG>;

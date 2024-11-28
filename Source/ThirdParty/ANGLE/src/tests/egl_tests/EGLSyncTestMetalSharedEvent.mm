@@ -94,7 +94,7 @@ TEST_P(EGLSyncTestMetalSharedEvent, BasicEGLSync)
     glFinish();
 
     // Don't wait forever to make sure the test terminates
-    constexpr GLuint64 kTimeout = 1'000'000'000;  // 1 second
+    constexpr GLuint64 kTimeout = 1000'000'000ul;  // 1 second
     EXPECT_EQ(EGL_CONDITION_SATISFIED_KHR,
               eglClientWaitSyncKHR(display, sync, EGL_SYNC_FLUSH_COMMANDS_BIT_KHR, kTimeout));
 

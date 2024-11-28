@@ -42,12 +42,13 @@ namespace Layout {
 
 WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(LayoutState);
 
-LayoutState::LayoutState(const Document& document, const ElementBox& rootContainer, Type type, FormattingContextLayoutFunction&& formattingContextLayoutFunction, FormattingContextPreferredWidthsFunction&& formattingContextPreferredWidthsFunction)
+LayoutState::LayoutState(const Document& document, const ElementBox& rootContainer, Type type, FormattingContextLayoutFunction&& formattingContextLayoutFunction, FormattingContextLogicalWidthFunction&& formattingContextLogicalWidthFunction , FormattingContextLogicalHeightFunction&& formattingContextLogicalHeightFunction)
     : m_type(type)
     , m_rootContainer(rootContainer)
     , m_securityOrigin(document.securityOrigin())
     , m_formattingContextLayoutFunction(WTFMove(formattingContextLayoutFunction))
-    , m_formattingContextPreferredWidthsFunction(WTFMove(formattingContextPreferredWidthsFunction))
+    , m_formattingContextLogicalWidthFunction(WTFMove(formattingContextLogicalWidthFunction))
+    , m_formattingContextLogicalHeightFunction(WTFMove(formattingContextLogicalHeightFunction))
 {
     // It makes absolutely no sense to construct a dedicated layout state for a non-formatting context root (layout would be a no-op).
     ASSERT(root().establishesFormattingContext());
@@ -157,9 +158,14 @@ void LayoutState::layoutWithFormattingContextForBox(const ElementBox& box, std::
     const_cast<LayoutState&>(*this).m_formattingContextLayoutFunction(box, widthConstraint, const_cast<LayoutState&>(*this));
 }
 
-std::pair<LayoutUnit, LayoutUnit> LayoutState::preferredWidthWithFormattingContextForBox(const ElementBox& box) const
+LayoutUnit LayoutState::logicalWidthWithFormattingContextForBox(const ElementBox& box, LayoutIntegration::LogicalWidthType logicalWidthType) const
 {
-    return const_cast<LayoutState&>(*this).m_formattingContextPreferredWidthsFunction(box);
+    return const_cast<LayoutState&>(*this).m_formattingContextLogicalWidthFunction(box, logicalWidthType);
+}
+
+LayoutUnit LayoutState::logicalHeightWithFormattingContextForBox(const ElementBox& box, LayoutIntegration::LogicalHeightType logicalHeightType) const
+{
+    return const_cast<LayoutState&>(*this).m_formattingContextLogicalHeightFunction(box, logicalHeightType);
 }
 
 }

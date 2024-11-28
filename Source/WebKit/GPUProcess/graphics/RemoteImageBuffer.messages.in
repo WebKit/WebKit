@@ -23,7 +23,7 @@
 #if ENABLE(GPU_PROCESS)
 
 // FIXME: Will be renamed to RemoteImageBufferBackend.
-messages -> RemoteImageBuffer NotRefCounted Stream {
+messages -> RemoteImageBuffer Stream {
     GetPixelBuffer(struct WebCore::PixelBufferFormat outputFormat, WebCore::IntPoint srcPoint, WebCore::IntSize srcSize) -> () Synchronous
     GetPixelBufferWithNewMemory(WebCore::SharedMemory::Handle handle, struct WebCore::PixelBufferFormat outputFormat, WebCore::IntPoint srcPoint, WebCore::IntSize srcSize) -> () Synchronous NotStreamEncodable
     PutPixelBuffer(Ref<WebCore::PixelBuffer> pixelBuffer, WebCore::IntPoint srcPoint, WebCore::IntSize srcSize, WebCore::IntPoint destPoint, enum:uint8_t WebCore::AlphaPremultiplication destFormat)

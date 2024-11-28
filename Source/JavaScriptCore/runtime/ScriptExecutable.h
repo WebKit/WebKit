@@ -42,7 +42,7 @@ public:
 
     static void destroy(JSCell*);
 
-    using TemplateObjectMap = HashMap<uint64_t, WriteBarrier<JSArray>, WTF::IntHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>>;
+    using TemplateObjectMap = UncheckedKeyHashMap<uint64_t, WriteBarrier<JSArray>, WTF::IntHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>>;
         
     CodeBlockHash hashFor(CodeSpecializationKind) const;
 

@@ -60,7 +60,7 @@ static NSDate * __nullable networkLoadMetricsDate(MonotonicTime time)
 }
 
 @interface WebCoreNSURLSessionTaskTransactionMetrics : NSObject
-- (instancetype)_initWithMetrics:(WebCore::NetworkLoadMetrics&&)metrics onTarget:(RefCountedSerialFunctionDispatcher*)targetDispatcher;
+- (instancetype)_initWithMetrics:(WebCore::NetworkLoadMetrics&&)metrics onTarget:(GuaranteedSerialFunctionDispatcher*)targetDispatcher;
 @property (nullable, copy, readonly) NSDate *fetchStartDate;
 @property (nullable, copy, readonly) NSDate *domainLookupStartDate;
 @property (nullable, copy, readonly) NSDate *domainLookupEndDate;
@@ -83,10 +83,10 @@ static NSDate * __nullable networkLoadMetricsDate(MonotonicTime time)
 
 @implementation WebCoreNSURLSessionTaskTransactionMetrics {
     WebCore::NetworkLoadMetrics _metrics;
-    RefPtr<RefCountedSerialFunctionDispatcher> _targetDispatcher;
+    RefPtr<GuaranteedSerialFunctionDispatcher> _targetDispatcher;
 }
 
-- (instancetype)_initWithMetrics:(WebCore::NetworkLoadMetrics&&)metrics onTarget:(RefCountedSerialFunctionDispatcher*)dispatcher
+- (instancetype)_initWithMetrics:(WebCore::NetworkLoadMetrics&&)metrics onTarget:(GuaranteedSerialFunctionDispatcher*)dispatcher
 {
     assertIsCurrent(*dispatcher);
 
@@ -229,16 +229,16 @@ static NSDate * __nullable networkLoadMetricsDate(MonotonicTime time)
 @end
 
 @interface WebCoreNSURLSessionTaskMetrics : NSObject
-- (instancetype)_initWithMetrics:(WebCore::NetworkLoadMetrics&&)metrics onTarget:(nonnull RefCountedSerialFunctionDispatcher *)targetDispatcher;
+- (instancetype)_initWithMetrics:(WebCore::NetworkLoadMetrics&&)metrics onTarget:(nonnull GuaranteedSerialFunctionDispatcher *)targetDispatcher;
 @property (copy, readonly) NSArray<NSURLSessionTaskTransactionMetrics *> *transactionMetrics;
 @end
 
 @implementation WebCoreNSURLSessionTaskMetrics {
     RetainPtr<WebCoreNSURLSessionTaskTransactionMetrics> _transactionMetrics;
-    RefPtr<RefCountedSerialFunctionDispatcher> _targetDispatcher;
+    RefPtr<GuaranteedSerialFunctionDispatcher> _targetDispatcher;
 }
 
-- (instancetype)_initWithMetrics:(WebCore::NetworkLoadMetrics&&)metrics onTarget:(nonnull RefCountedSerialFunctionDispatcher *)targetDispatcher
+- (instancetype)_initWithMetrics:(WebCore::NetworkLoadMetrics&&)metrics onTarget:(nonnull GuaranteedSerialFunctionDispatcher *)targetDispatcher
 {
     assertIsCurrent(*targetDispatcher);
 
@@ -277,7 +277,7 @@ static NSDate * __nullable networkLoadMetricsDate(MonotonicTime time)
 @end
 
 @interface WebCoreNSURLSessionDataTask ()
-- (id)initWithSession:(WebCoreNSURLSession *)session identifier:(NSUInteger)identifier request:(NSURLRequest *)request targetDispatcher:(RefCountedSerialFunctionDispatcher *)targetDispatcher;
+- (id)initWithSession:(WebCoreNSURLSession *)session identifier:(NSUInteger)identifier request:(NSURLRequest *)request targetDispatcher:(GuaranteedSerialFunctionDispatcher *)targetDispatcher;
 - (void)_cancel;
 @property (assign) WebCoreNSURLSession * _Nullable session;
 
@@ -625,7 +625,7 @@ namespace WebCore {
 class WebCoreNSURLSessionDataTaskClient : public PlatformMediaResourceClient {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(WebCoreNSURLSessionDataTaskClient);
 public:
-    WebCoreNSURLSessionDataTaskClient(WebCoreNSURLSessionDataTask *task, RefCountedSerialFunctionDispatcher& target)
+    WebCoreNSURLSessionDataTaskClient(WebCoreNSURLSessionDataTask *task, GuaranteedSerialFunctionDispatcher& target)
         : m_task(task)
         , m_targetDispatcher(target)
     {
@@ -644,7 +644,7 @@ public:
 
 private:
     WeakObjCPtr<WebCoreNSURLSessionDataTask> m_task WTF_GUARDED_BY_CAPABILITY(m_targetDispatcher.get());
-    Ref<RefCountedSerialFunctionDispatcher> m_targetDispatcher;
+    Ref<GuaranteedSerialFunctionDispatcher> m_targetDispatcher;
 };
 
 void WebCoreNSURLSessionDataTaskClient::clearTask()
@@ -731,7 +731,7 @@ void WebCoreNSURLSessionDataTaskClient::loadFinished(PlatformMediaResource& reso
 #pragma mark - WebCoreNSURLSessionDataTask
 
 @implementation WebCoreNSURLSessionDataTask
-- (id)initWithSession:(WebCoreNSURLSession *)session identifier:(NSUInteger)identifier request:(NSURLRequest *)request targetDispatcher:(RefCountedSerialFunctionDispatcher *)dispatcher
+- (id)initWithSession:(WebCoreNSURLSession *)session identifier:(NSUInteger)identifier request:(NSURLRequest *)request targetDispatcher:(GuaranteedSerialFunctionDispatcher *)dispatcher
 {
     self.taskIdentifier = identifier;
     self->_state = NSURLSessionTaskStateSuspended;

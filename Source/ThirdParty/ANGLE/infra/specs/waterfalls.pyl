@@ -97,7 +97,15 @@
           'linux_intel_uhd_630_experimental',
         ],
         'test_suites': {
-          'gtest_tests': 'linux_intel_gtests',
+        },
+      },
+      'linux-exp-nvidia': {
+        'os_type': 'linux',
+        'mixins': [
+          'linux_nvidia_gtx_1660_experimental',
+        ],
+        'test_suites': {
+          'gtest_tests': 'linux_nvidia_gtests',
           'isolated_scripts': 'isolated_scripts_group_common',
         },
       },
@@ -232,6 +240,7 @@
           'mac_retina_amd_gpu_experimental',
         ],
         'test_suites': {
+          'gtest_tests': 'mac_amd_and_intel_gtests',
         },
       },
       'mac-exp-intel': {

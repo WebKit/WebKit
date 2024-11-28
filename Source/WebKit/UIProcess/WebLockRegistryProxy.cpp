@@ -39,81 +39,84 @@
 
 namespace WebKit {
 
-#define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, m_process.connection())
-#define MESSAGE_CHECK_COMPLETION(assertion, completion) MESSAGE_CHECK_COMPLETION_BASE(assertion, m_process.connection(), completion)
+#define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, m_process->connection())
+#define MESSAGE_CHECK_COMPLETION(assertion, completion) MESSAGE_CHECK_COMPLETION_BASE(assertion, m_process->connection(), completion)
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(WebLockRegistryProxy);
 
 WebLockRegistryProxy::WebLockRegistryProxy(WebProcessProxy& process)
     : m_process(process)
 {
-    m_process.addMessageReceiver(Messages::WebLockRegistryProxy::messageReceiverName(), *this);
+    protectedProcess()->addMessageReceiver(Messages::WebLockRegistryProxy::messageReceiverName(), *this);
 }
 
 WebLockRegistryProxy::~WebLockRegistryProxy()
 {
-    m_process.removeMessageReceiver(Messages::WebLockRegistryProxy::messageReceiverName());
+    protectedProcess()->removeMessageReceiver(Messages::WebLockRegistryProxy::messageReceiverName());
 }
 
 void WebLockRegistryProxy::requestLock(WebCore::ClientOrigin&& clientOrigin, WebCore::WebLockIdentifier lockIdentifier, WebCore::ScriptExecutionContextIdentifier clientID, String&& name, WebCore::WebLockMode lockMode, bool steal, bool ifAvailable)
 {
-    MESSAGE_CHECK(lockIdentifier.processIdentifier() == m_process.coreProcessIdentifier());
-    MESSAGE_CHECK(clientID.processIdentifier() == m_process.coreProcessIdentifier());
+    Ref process = m_process.get();
+    MESSAGE_CHECK(lockIdentifier.processIdentifier() == process->coreProcessIdentifier());
+    MESSAGE_CHECK(clientID.processIdentifier() == process->coreProcessIdentifier());
     MESSAGE_CHECK(name.length() <= WebCore::WebLock::maxNameLength);
     m_hasEverRequestedLocks = true;
 
-    auto* dataStore = m_process.websiteDataStore();
+    RefPtr dataStore = process->websiteDataStore();
     if (!dataStore) {
-        m_process.send(Messages::RemoteWebLockRegistry::DidCompleteLockRequest(lockIdentifier, clientID, false), 0);
+        process->send(Messages::RemoteWebLockRegistry::DidCompleteLockRequest(lockIdentifier, clientID, false), 0);
         return;
     }
 
-    dataStore->webLockRegistry().requestLock(m_process.sessionID(), WTFMove(clientOrigin), lockIdentifier, clientID, WTFMove(name), lockMode, steal, ifAvailable, [weakThis = WeakPtr { *this }, lockIdentifier, clientID](bool success) {
+    dataStore->protectedWebLockRegistry()->requestLock(process->sessionID(), WTFMove(clientOrigin), lockIdentifier, clientID, WTFMove(name), lockMode, steal, ifAvailable, [weakThis = WeakPtr { *this }, lockIdentifier, clientID](bool success) {
         if (weakThis)
-            weakThis->m_process.send(Messages::RemoteWebLockRegistry::DidCompleteLockRequest(lockIdentifier, clientID, success), 0);
+            weakThis->protectedProcess()->send(Messages::RemoteWebLockRegistry::DidCompleteLockRequest(lockIdentifier, clientID, success), 0);
     }, [weakThis = WeakPtr { *this }, lockIdentifier, clientID] {
         if (weakThis)
-            weakThis->m_process.send(Messages::RemoteWebLockRegistry::DidStealLock(lockIdentifier, clientID), 0);
+            weakThis->protectedProcess()->send(Messages::RemoteWebLockRegistry::DidStealLock(lockIdentifier, clientID), 0);
     });
 }
 
 void WebLockRegistryProxy::releaseLock(WebCore::ClientOrigin&& clientOrigin, WebCore::WebLockIdentifier lockIdentifier, WebCore::ScriptExecutionContextIdentifier clientID, String&& name)
 {
-    MESSAGE_CHECK(lockIdentifier.processIdentifier() == m_process.coreProcessIdentifier());
-    MESSAGE_CHECK(clientID.processIdentifier() == m_process.coreProcessIdentifier());
-    if (auto* dataStore = m_process.websiteDataStore())
-        dataStore->webLockRegistry().releaseLock(m_process.sessionID(), WTFMove(clientOrigin), lockIdentifier, clientID, WTFMove(name));
+    MESSAGE_CHECK(lockIdentifier.processIdentifier() == m_process->coreProcessIdentifier());
+    MESSAGE_CHECK(clientID.processIdentifier() == m_process->coreProcessIdentifier());
+    Ref process = m_process.get();
+    if (RefPtr dataStore = process->websiteDataStore())
+        dataStore->protectedWebLockRegistry()->releaseLock(process->sessionID(), WTFMove(clientOrigin), lockIdentifier, clientID, WTFMove(name));
 }
 
 void WebLockRegistryProxy::abortLockRequest(WebCore::ClientOrigin&& clientOrigin, WebCore::WebLockIdentifier lockIdentifier, WebCore::ScriptExecutionContextIdentifier clientID, String&& name, CompletionHandler<void(bool)>&& completionHandler)
 {
-    MESSAGE_CHECK_COMPLETION(lockIdentifier.processIdentifier() == m_process.coreProcessIdentifier(), completionHandler(false));
-    MESSAGE_CHECK_COMPLETION(clientID.processIdentifier() == m_process.coreProcessIdentifier(), completionHandler(false));
-    auto* dataStore = m_process.websiteDataStore();
+    MESSAGE_CHECK_COMPLETION(lockIdentifier.processIdentifier() == m_process->coreProcessIdentifier(), completionHandler(false));
+    MESSAGE_CHECK_COMPLETION(clientID.processIdentifier() == m_process->coreProcessIdentifier(), completionHandler(false));
+    RefPtr dataStore = m_process->websiteDataStore();
     if (!dataStore) {
         completionHandler(false);
         return;
     }
 
-    dataStore->webLockRegistry().abortLockRequest(m_process.sessionID(), WTFMove(clientOrigin), lockIdentifier, clientID, WTFMove(name), WTFMove(completionHandler));
+    dataStore->protectedWebLockRegistry()->abortLockRequest(protectedProcess()->sessionID(), WTFMove(clientOrigin), lockIdentifier, clientID, WTFMove(name), WTFMove(completionHandler));
 }
 
 void WebLockRegistryProxy::snapshot(WebCore::ClientOrigin&& clientOrigin, CompletionHandler<void(WebCore::WebLockManagerSnapshot&&)>&& completionHandler)
 {
-    auto* dataStore = m_process.websiteDataStore();
+    RefPtr dataStore = m_process->websiteDataStore();
     if (!dataStore) {
         completionHandler(WebCore::WebLockManagerSnapshot { });
         return;
     }
 
-    dataStore->webLockRegistry().snapshot(m_process.sessionID(), WTFMove(clientOrigin), WTFMove(completionHandler));
+    dataStore->protectedWebLockRegistry()->snapshot(protectedProcess()->sessionID(), WTFMove(clientOrigin), WTFMove(completionHandler));
 }
 
 void WebLockRegistryProxy::clientIsGoingAway(WebCore::ClientOrigin&& clientOrigin, WebCore::ScriptExecutionContextIdentifier clientID)
 {
-    MESSAGE_CHECK(clientID.processIdentifier() == m_process.coreProcessIdentifier());
-    if (auto* dataStore = WebsiteDataStore::existingDataStoreForSessionID(m_process.sessionID()))
-        dataStore->webLockRegistry().clientIsGoingAway(m_process.sessionID(), WTFMove(clientOrigin), clientID);
+    Ref process = m_process.get();
+    MESSAGE_CHECK(clientID.processIdentifier() == process->coreProcessIdentifier());
+    if (RefPtr dataStore = WebsiteDataStore::existingDataStoreForSessionID(process->sessionID()))
+        dataStore->protectedWebLockRegistry()->clientIsGoingAway(process->sessionID(), WTFMove(clientOrigin), clientID);
 }
 
 void WebLockRegistryProxy::processDidExit()
@@ -121,8 +124,9 @@ void WebLockRegistryProxy::processDidExit()
     if (!m_hasEverRequestedLocks)
         return;
 
-    if (auto* dataStore = WebsiteDataStore::existingDataStoreForSessionID(m_process.sessionID()))
-        dataStore->webLockRegistry().clientsAreGoingAway(m_process.coreProcessIdentifier());
+    Ref process = m_process.get();
+    if (RefPtr dataStore = WebsiteDataStore::existingDataStoreForSessionID(process->sessionID()))
+        dataStore->protectedWebLockRegistry()->clientsAreGoingAway(process->coreProcessIdentifier());
 }
 
 #undef MESSAGE_CHECK

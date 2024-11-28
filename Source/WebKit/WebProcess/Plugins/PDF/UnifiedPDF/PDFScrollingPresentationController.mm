@@ -28,6 +28,7 @@
 
 #if ENABLE(UNIFIED_PDF)
 
+#include "AsyncPDFRenderer.h"
 #include "Logging.h"
 #include "UnifiedPDFPlugin.h"
 #include "WebKeyboardEvent.h"
@@ -107,9 +108,7 @@ PDFPageCoverage PDFScrollingPresentationController::pageCoverageForContentsRect(
     if (m_plugin->visibleOrDocumentSizeIsEmpty())
         return { };
 
-    auto drawingRect = IntRect { { }, m_plugin->documentSize() };
-    drawingRect.intersect(enclosingIntRect(contentsRect));
-    auto rectInPDFLayoutCoordinates = m_plugin->convertDown(UnifiedPDFPlugin::CoordinateSpace::Contents, UnifiedPDFPlugin::CoordinateSpace::PDFDocumentLayout, FloatRect { drawingRect });
+    auto rectInPDFLayoutCoordinates = m_plugin->convertDown(UnifiedPDFPlugin::CoordinateSpace::Contents, UnifiedPDFPlugin::CoordinateSpace::PDFDocumentLayout, contentsRect);
 
     auto& documentLayout = m_plugin->documentLayout();
     auto pageCoverage = PDFPageCoverage { };
@@ -122,7 +121,7 @@ PDFPageCoverage PDFScrollingPresentationController::pageCoverageForContentsRect(
         if (!pageBounds.intersects(rectInPDFLayoutCoordinates))
             continue;
 
-        pageCoverage.append(PerPageInfo { i, pageBounds });
+        pageCoverage.append(PerPageInfo { i, pageBounds, rectInPDFLayoutCoordinates });
     }
 
     return pageCoverage;
@@ -298,16 +297,23 @@ void PDFScrollingPresentationController::updateDebugBorders(bool showDebugBorder
         layer.setShowRepaintCounter(showRepaintCounters);
     };
 
-    propagateSettingsToLayer(*m_pageBackgroundsContainerLayer);
-    propagateSettingsToLayer(*m_contentsLayer);
+    if (m_pageBackgroundsContainerLayer)
+        propagateSettingsToLayer(*m_pageBackgroundsContainerLayer);
+
+    if (m_contentsLayer)
+        propagateSettingsToLayer(*m_contentsLayer);
+
 #if ENABLE(UNIFIED_PDF_SELECTION_LAYER)
-    propagateSettingsToLayer(*m_selectionLayer);
+    if (m_selectionLayer)
+        propagateSettingsToLayer(*m_selectionLayer);
 #endif
 
-    for (auto& pageLayer : m_pageBackgroundsContainerLayer->children()) {
-        propagateSettingsToLayer(pageLayer);
-        if (pageLayer->children().size())
-            propagateSettingsToLayer(pageLayer->children()[0]);
+    if (m_pageBackgroundsContainerLayer) {
+        for (auto& pageLayer : m_pageBackgroundsContainerLayer->children()) {
+            propagateSettingsToLayer(pageLayer);
+            if (pageLayer->children().size())
+                propagateSettingsToLayer(pageLayer->children()[0]);
+        }
     }
 
     if (RefPtr asyncRenderer = asyncRendererIfExists())
@@ -328,7 +334,7 @@ void PDFScrollingPresentationController::setNeedsRepaintInDocumentRect(OptionSet
     auto contentsRect = m_plugin->convertUp(UnifiedPDFPlugin::CoordinateSpace::PDFDocumentLayout, UnifiedPDFPlugin::CoordinateSpace::Contents, rectInDocumentCoordinates);
     if (repaintRequirements.contains(RepaintRequirement::PDFContent)) {
         if (RefPtr asyncRenderer = asyncRendererIfExists())
-            asyncRenderer->pdfContentChangedInRect(m_contentsLayer.get(), m_plugin->nonNormalizedScaleFactor(), contentsRect, layoutRow);
+            asyncRenderer->pdfContentChangedInRect(m_contentsLayer.get(), contentsRect, layoutRow);
     }
 
 #if ENABLE(UNIFIED_PDF_SELECTION_LAYER)

@@ -72,7 +72,7 @@ function parseSecurityOrigin(securityOrigin)
 
 function parseDataURL(url)
 {
-    if (!url.startsWith("data:"))
+    if (!url || !url.startsWith("data:"))
         return null;
 
     // data:[<media type>][;charset=<character set>][;base64],<data>
@@ -249,7 +249,7 @@ function parseQueryString(queryString, arrayResult)
 
 WI.displayNameForURL = function(url, urlComponents, options = {})
 {
-    if (url.startsWith("data:"))
+    if (url && url.startsWith("data:"))
         return WI.truncateURL(url);
 
     if (!urlComponents)
@@ -270,7 +270,7 @@ WI.displayNameForURL = function(url, urlComponents, options = {})
 
 WI.truncateURL = function(url, multiline = false, dataURIMaxSize = 6)
 {
-    if (!url.startsWith("data:"))
+    if (!url || !url.startsWith("data:"))
         return url;
 
     const dataIndex = url.indexOf(",") + 1;

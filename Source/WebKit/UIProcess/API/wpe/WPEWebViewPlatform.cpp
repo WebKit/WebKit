@@ -44,9 +44,11 @@
 #endif
 
 #if USE(SKIA)
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
 IGNORE_CLANG_WARNINGS_BEGIN("cast-align")
 #include <skia/core/SkPixmap.h>
 IGNORE_CLANG_WARNINGS_END
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 #endif
 
 using namespace WebKit;
@@ -74,8 +76,8 @@ ViewPlatform::ViewPlatform(WPEDisplay* display, const API::PageConfiguration& co
             m_viewStateFlags.add(WebCore::ActivityState::WindowIsActive);
     }
 
-    if (auto* monitor = wpe_view_get_monitor(m_wpeView.get()))
-        m_displayID = wpe_monitor_get_id(monitor);
+    if (auto* screen = wpe_view_get_screen(m_wpeView.get()))
+        m_displayID = wpe_screen_get_id(screen);
     else
         m_displayID = ScreenManager::singleton().primaryDisplayID();
 
@@ -91,7 +93,7 @@ ViewPlatform::ViewPlatform(WPEDisplay* display, const API::PageConfiguration& co
         auto& webView = *reinterpret_cast<ViewPlatform*>(userData);
         webView.page().setIntrinsicDeviceScaleFactor(wpe_view_get_scale(view));
     }), this);
-    g_signal_connect(m_wpeView.get(), "notify::monitor", G_CALLBACK(+[](WPEView*, GParamSpec*, gpointer userData) {
+    g_signal_connect(m_wpeView.get(), "notify::screen", G_CALLBACK(+[](WPEView*, GParamSpec*, gpointer userData) {
         auto& webView = *reinterpret_cast<ViewPlatform*>(userData);
         webView.updateDisplayID();
     }), this);
@@ -118,18 +120,20 @@ ViewPlatform::ViewPlatform(WPEDisplay* display, const API::PageConfiguration& co
         auto& webView = *reinterpret_cast<ViewPlatform*>(userData);
         webView.toplevelStateChanged(previousState, wpe_view_get_toplevel_state(view));
     }), this);
+#if USE(GBM)
     g_signal_connect(m_wpeView.get(), "preferred-dma-buf-formats-changed", G_CALLBACK(+[](WPEView*, gpointer userData) {
         auto& webView = *reinterpret_cast<ViewPlatform*>(userData);
         webView.page().preferredBufferFormatsDidChange();
     }), this);
+#endif
 
     createWebPage(configuration);
     m_pageProxy->setIntrinsicDeviceScaleFactor(wpe_view_get_scale(m_wpeView.get()));
     m_pageProxy->windowScreenDidChange(m_displayID);
     m_backingStore = AcceleratedBackingStoreDMABuf::create(*m_pageProxy, m_wpeView.get());
 
-    auto& openerInfo = m_pageProxy->configuration().openerInfo();
-    m_pageProxy->initializeWebPage(openerInfo ? openerInfo->site : Site(aboutBlankURL()));
+    auto& pageConfiguration = m_pageProxy->configuration();
+    m_pageProxy->initializeWebPage(pageConfiguration.openedSite(), pageConfiguration.initialSandboxFlags());
 }
 
 ViewPlatform::~ViewPlatform()
@@ -220,11 +224,11 @@ RendererBufferFormat ViewPlatform::renderBufferFormat() const
 
 void ViewPlatform::updateDisplayID()
 {
-    auto* monitor = wpe_view_get_monitor(m_wpeView.get());
-    if (!monitor)
+    auto* screen = wpe_view_get_screen(m_wpeView.get());
+    if (!screen)
         return;
 
-    auto displayID = wpe_monitor_get_id(monitor);
+    auto displayID = wpe_screen_get_id(screen);
     if (displayID == m_displayID)
         return;
 
@@ -252,6 +256,8 @@ bool ViewPlatform::activityStateChanged(WebCore::ActivityState state, bool value
 void ViewPlatform::toplevelStateChanged(WPEToplevelState previousState, WPEToplevelState state)
 {
     uint32_t changedMask = state ^ previousState;
+
+#if ENABLE(FULLSCREEN_API)
     if (changedMask & WPE_TOPLEVEL_STATE_FULLSCREEN) {
         switch (m_fullscreenState) {
         case WebFullScreenManagerProxy::FullscreenState::EnteringFullscreen:
@@ -270,6 +276,7 @@ void ViewPlatform::toplevelStateChanged(WPEToplevelState previousState, WPETople
             break;
         }
     }
+#endif
 
     if (changedMask & WPE_TOPLEVEL_STATE_ACTIVE)
         activityStateChanged(WebCore::ActivityState::WindowIsActive, state & WPE_TOPLEVEL_STATE_ACTIVE);
@@ -434,9 +441,9 @@ void ViewPlatform::handleGesture(WPEEvent* event)
     }
 }
 
-void ViewPlatform::synthesizeCompositionKeyPress(const String&, std::optional<Vector<WebCore::CompositionUnderline>>&&, std::optional<EditingRange>&&)
+void ViewPlatform::synthesizeCompositionKeyPress(const String& text, std::optional<Vector<WebCore::CompositionUnderline>>&& underlines, std::optional<EditingRange>&& selectionRange)
 {
-    // FIXME: implement.
+    page().handleKeyboardEvent(WebKit::NativeWebKeyboardEvent(text, WTFMove(underlines), WTFMove(selectionRange)));
 }
 
 void ViewPlatform::setCursor(const WebCore::Cursor& cursor)

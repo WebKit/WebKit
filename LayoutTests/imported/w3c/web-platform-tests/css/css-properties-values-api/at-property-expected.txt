@@ -36,7 +36,7 @@ PASS Attribute 'initial-value' returns expected value for [red]
 PASS Attribute 'initial-value' returns expected value for [foo]
 PASS Attribute 'initial-value' returns expected value for [if(){}]
 PASS Attribute 'initial-value' makes the @property rule invalid for [3em]
-FAIL Attribute 'initial-value' makes the @property rule invalid for [var(--x)] assert_true: expected true got false
+PASS Attribute 'initial-value' makes the @property rule invalid for [var(--x)]
 PASS Attribute 'inherits' returns expected value for [true]
 PASS Attribute 'inherits' returns expected value for [false]
 PASS Attribute 'inherits' makes the @property rule invalid for [none]

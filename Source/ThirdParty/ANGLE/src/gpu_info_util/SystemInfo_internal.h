@@ -44,9 +44,9 @@ uint64_t GetGpuIDFromOpenGLDisplayMask(uint32_t displayMask);
 #    if ANGLE_ENABLE_METAL
 // Get VendorID from metal device's registry ID
 VendorID GetVendorIDFromMetalDeviceRegistryID(uint64_t registryID);
+#    endif
 #endif
 
-#endif
 
 }  // namespace angle
 

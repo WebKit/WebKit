@@ -28,6 +28,8 @@
 
 #include "Error.h"
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC { namespace Yarr {
 
 ASCIILiteral errorMessage(ErrorCode error)
@@ -118,3 +120,5 @@ JSObject* errorToThrow(JSGlobalObject* globalObject, ErrorCode error)
 }
 
 } } // namespace JSC::Yarr
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

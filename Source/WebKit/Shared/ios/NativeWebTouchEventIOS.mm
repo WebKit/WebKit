@@ -92,7 +92,7 @@ static CGFloat radiusForTouchPoint(const WKTouchPoint& touchPoint)
 #if ENABLE(FIXED_IOS_TOUCH_POINT_RADIUS)
     return 12.1;
 #else
-    return touchPoint.majorRadiusInScreenCoordinates;
+    return touchPoint.majorRadiusInWindowCoordinates;
 #endif
 }
 
@@ -100,9 +100,10 @@ Vector<WebPlatformTouchPoint> NativeWebTouchEvent::extractWebTouchPoints(const W
 {
     return event.touchPoints.map([](auto& touchPoint) {
         unsigned identifier = touchPoint.identifier;
-        WebCore::IntPoint location = positionForCGPoint(touchPoint.locationInDocumentCoordinates);
+        auto locationInRootView = positionForCGPoint(touchPoint.locationInRootViewCoordinates);
+        auto locationInViewport = positionForCGPoint(touchPoint.locationInViewport);
         WebPlatformTouchPoint::State phase = convertTouchPhase(touchPoint.phase);
-        WebPlatformTouchPoint platformTouchPoint = WebPlatformTouchPoint(identifier, location, phase);
+        WebPlatformTouchPoint platformTouchPoint = WebPlatformTouchPoint(identifier, locationInRootView, locationInViewport, phase);
 #if ENABLE(IOS_TOUCH_EVENTS)
         auto radius = radiusForTouchPoint(touchPoint);
         platformTouchPoint.setRadiusX(radius);
@@ -138,7 +139,7 @@ NativeWebTouchEvent::NativeWebTouchEvent(const WKTouchEvent& event, UIKeyModifie
         extractWebTouchPoints(event),
         extractCoalescedWebTouchEvents(event, flags),
         extractPredictedWebTouchEvents(event, flags),
-        positionForCGPoint(event.locationInDocumentCoordinates),
+        positionForCGPoint(event.locationInRootViewCoordinates),
         event.isPotentialTap,
         event.inJavaScriptGesture,
         event.scale,

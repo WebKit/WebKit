@@ -32,6 +32,7 @@
 #include "ModelProcessModelPlayerManagerProxyMessages.h"
 #include "WebPage.h"
 #include "WebProcess.h"
+#include <WebCore/ModelPlayer.h>
 #include <WebCore/ModelPlayerClient.h>
 #include <WebCore/ModelPlayerIdentifier.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -73,8 +74,9 @@ Ref<ModelProcessModelPlayer> ModelProcessModelPlayerManager::createModelProcessM
     return player;
 }
 
-void ModelProcessModelPlayerManager::deleteModelProcessModelPlayer(WebCore::ModelPlayerIdentifier identifier)
+void ModelProcessModelPlayerManager::deleteModelProcessModelPlayer(WebCore::ModelPlayer& modelPlayer)
 {
+    WebCore::ModelPlayerIdentifier identifier = modelPlayer.identifier();
     m_players.take(identifier);
     modelProcessConnection().connection().send(Messages::ModelProcessModelPlayerManagerProxy::DeleteModelPlayer(identifier), 0);
 }

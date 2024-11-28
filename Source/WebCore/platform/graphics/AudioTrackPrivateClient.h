@@ -26,6 +26,7 @@
 #pragma once
 
 #include "TrackPrivateBaseClient.h"
+#include <wtf/TZoneMallocInlines.h>
 
 #if ENABLE(VIDEO)
 
@@ -35,6 +36,7 @@ class AudioTrackPrivate;
 struct PlatformAudioTrackConfiguration;
 
 class AudioTrackPrivateClient : public TrackPrivateBaseClient {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(AudioTrackPrivateClient);
 public:
     constexpr Type type() const final { return Type::Audio; }
     virtual void enabledChanged(bool) = 0;

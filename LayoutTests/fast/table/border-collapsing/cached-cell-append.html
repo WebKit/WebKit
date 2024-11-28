@@ -7,15 +7,16 @@ Here we append new cell, expect that cache is invalidated and paint produces exp
         <title></title>
         <link rel="stylesheet" href="resources/cached.css">
         <script type="text/javascript">
-            function test() {
+            async function test() {
                 document.body.offsetTop;
-                if (window.testRunner)
-                    testRunner.displayAndTrackRepaints();
+                testRunner?.waitUntilDone();
+                await testRunner?.displayAndTrackRepaints();
                 newCell = document.createElement("td");
                 newCell.style.borderLeftWidth = "6px";
                 newCell.style.borderLeftStyle = "solid";
                 newCell.style.borderLeftColor = "yellow";
                 document.getElementById("row").appendChild(newCell);
+                testRunner?.notifyDone();
             }
         </script>
     </head>

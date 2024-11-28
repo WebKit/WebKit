@@ -191,7 +191,6 @@
 #import <WebCore/LocalizedStrings.h>
 #import <WebCore/LogInitialization.h>
 #import <WebCore/MIMETypeRegistry.h>
-#import <WebCore/MediaRecorderProvider.h>
 #import <WebCore/MemoryCache.h>
 #import <WebCore/MemoryRelease.h>
 #import <WebCore/MutableStyleProperties.h>
@@ -206,6 +205,7 @@
 #import <WebCore/PlatformEventFactoryMac.h>
 #import <WebCore/PlatformScreen.h>
 #import <WebCore/PlatformTextAlternatives.h>
+#import <WebCore/ProcessSyncClient.h>
 #import <WebCore/ProgressTracker.h>
 #import <WebCore/Range.h>
 #import <WebCore/RemoteFrameClient.h>
@@ -217,7 +217,6 @@
 #import <WebCore/ResourceHandle.h>
 #import <WebCore/ResourceLoadObserver.h>
 #import <WebCore/ResourceRequest.h>
-#import <WebCore/RuntimeApplicationChecks.h>
 #import <WebCore/SQLiteFileSystem.h>
 #import <WebCore/ScriptController.h>
 #import <WebCore/SecurityOrigin.h>
@@ -273,6 +272,7 @@
 #import <wtf/RefCountedLeakCounter.h>
 #import <wtf/RefPtr.h>
 #import <wtf/RunLoop.h>
+#import <wtf/RuntimeApplicationChecks.h>
 #import <wtf/SetForScope.h>
 #import <wtf/SoftLinking.h>
 #import <wtf/StdLibExtras.h>
@@ -1334,7 +1334,7 @@ static RetainPtr<CFMutableSetRef>& allWebViewsSet()
 #if PLATFORM(IOS) || PLATFORM(VISION)
 static bool needsLaBanquePostaleQuirks()
 {
-    static bool needsQuirks = WebCore::IOSApplication::isLaBanquePostale() && !linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::NoLaBanquePostaleQuirks);
+    static bool needsQuirks = WTF::IOSApplication::isLaBanquePostale() && !linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::NoLaBanquePostaleQuirks);
     return needsQuirks;
 }
 
@@ -1487,8 +1487,11 @@ static WebCore::ApplicationCacheStorage& webApplicationCacheStorage()
 
 
 #if PLATFORM(IOS_FAMILY)
-        if (WebCore::IOSApplication::isMobileSafari())
+        if (WTF::IOSApplication::isMobileSafari())
             WebCore::DeprecatedGlobalSettings::setShouldManageAudioSessionCategory(true);
+#endif
+#if USE(AUDIO_SESSION)
+        WebCore::AudioSession::enableMediaPlayback();
 #endif
 
 #if ENABLE(VIDEO)
@@ -1512,13 +1515,15 @@ static WebCore::ApplicationCacheStorage& webApplicationCacheStorage()
         BackForwardList::create(self),
         WebCore::CookieJar::create(storageProvider.copyRef()),
         makeUniqueRef<WebProgressTrackerClient>(self),
-        CompletionHandler<UniqueRef<WebCore::LocalFrameLoaderClient>(WebCore::LocalFrame&)> { [] (auto&) {
-            return makeUniqueRef<WebFrameLoaderClient>();
-        } },
+        WebCore::PageConfiguration::LocalMainFrameCreationParameters {
+            CompletionHandler<UniqueRef<WebCore::LocalFrameLoaderClient>(WebCore::LocalFrame&, WebCore::FrameLoader&)> { [] (auto&, auto& frameLoader) {
+                return makeUniqueRefWithoutRefCountedCheck<WebFrameLoaderClient>(frameLoader);
+            } },
+            WebCore::SandboxFlags { } // Set by updateSandboxFlags after instantiation.
+        },
         WebCore::FrameIdentifier::generate(),
-        nullptr, // Opener may be set by setOpenerForWebKitLegacy.
+        nullptr, // Opener may be set by setOpenerForWebKitLegacy after instantiation.
         makeUniqueRef<WebCore::DummySpeechRecognitionProvider>(),
-        makeUniqueRef<WebCore::MediaRecorderProvider>(),
         WebBroadcastChannelRegistry::getOrCreate([[self preferences] privateBrowsingEnabled]),
         makeUniqueRef<WebCore::DummyStorageProvider>(),
         makeUniqueRef<WebCore::DummyModelPlayerProvider>(),
@@ -1535,7 +1540,8 @@ static WebCore::ApplicationCacheStorage& webApplicationCacheStorage()
 #else
         makeUniqueRef<WebChromeClientIOS>(self),
 #endif
-        makeUniqueRef<WebCryptoClient>(self)
+        makeUniqueRef<WebCryptoClient>(self),
+        makeUniqueRef<WebCore::ProcessSyncClient>()
     );
 #if !PLATFORM(IOS_FAMILY)
     pageConfiguration.validationMessageClient = makeUnique<WebValidationMessageClient>(self);
@@ -1659,7 +1665,7 @@ static WebCore::ApplicationCacheStorage& webApplicationCacheStorage()
         WebCore::ResourceHandle::forceContentSniffing();
 
     _private->page->setDeviceScaleFactor([self _deviceScaleFactor]);
-    _private->page->effectiveAppearanceDidChange(self._effectiveAppearanceIsDark, self._effectiveUserInterfaceLevelIsElevated);
+    _private->page->setUseColorAppearance(self._effectiveAppearanceIsDark, self._effectiveUserInterfaceLevelIsElevated);
 
     [WebViewVisualIdentificationOverlay installForWebViewIfNeeded:self kind:@"WebView" deprecated:YES];
 
@@ -1775,13 +1781,15 @@ static WebCore::ApplicationCacheStorage& webApplicationCacheStorage()
         BackForwardList::create(self),
         WebCore::CookieJar::create(storageProvider.copyRef()),
         makeUniqueRef<WebProgressTrackerClient>(self),
-        CompletionHandler<UniqueRef<WebCore::LocalFrameLoaderClient>(WebCore::LocalFrame&)> { [] (auto&) {
-            return makeUniqueRef<WebFrameLoaderClient>();
-        } },
+        WebCore::PageConfiguration::LocalMainFrameCreationParameters {
+            CompletionHandler<UniqueRef<WebCore::LocalFrameLoaderClient>(WebCore::LocalFrame&, WebCore::FrameLoader&)> { [] (auto&, auto& frameLoader) {
+                return makeUniqueRefWithoutRefCountedCheck<WebFrameLoaderClient>(frameLoader);
+            } },
+            WebCore::SandboxFlags { } // Set by updateSandboxFlags after instantiation.
+        },
         WebCore::FrameIdentifier::generate(),
-        nullptr, // Opener may be set by setOpenerForWebKitLegacy.
+        nullptr, // Opener may be set by setOpenerForWebKitLegacy after instantiation.
         makeUniqueRef<WebCore::DummySpeechRecognitionProvider>(),
-        makeUniqueRef<WebCore::MediaRecorderProvider>(),
         WebBroadcastChannelRegistry::getOrCreate([[self preferences] privateBrowsingEnabled]),
         makeUniqueRef<WebCore::DummyStorageProvider>(),
         makeUniqueRef<WebCore::DummyModelPlayerProvider>(),
@@ -1791,7 +1799,8 @@ static WebCore::ApplicationCacheStorage& webApplicationCacheStorage()
         makeUniqueRef<WebPaymentCoordinatorClient>(),
 #endif
         makeUniqueRef<WebChromeClientIOS>(self),
-        makeUniqueRef<WebCryptoClient>(self)
+        makeUniqueRef<WebCryptoClient>(self),
+        makeUniqueRef<WebCore::ProcessSyncClient>()
     );
 #if ENABLE(DRAG_SUPPORT)
     pageConfiguration.dragClient = makeUnique<WebDragClient>(self);
@@ -2621,7 +2630,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 {
     if (!_private || !_private->page)
         return;
-    _private->page->effectiveAppearanceDidChange(useDarkAppearance, useElevatedUserInterfaceLevel);
+    _private->page->setUseColorAppearance(useDarkAppearance, useElevatedUserInterfaceLevel);
 }
 
 + (void)_setIconLoadingEnabled:(BOOL)enabled
@@ -4698,6 +4707,10 @@ IGNORE_WARNINGS_END
 
 + (void)_setLoadResourcesSerially:(BOOL)serialize
 {
+#if PLATFORM(IOS_FAMILY)
+    WebThreadLock();
+#endif
+
     WebPlatformStrategies::initializeIfNecessary();
 
     webResourceLoadScheduler().setSerialLoadingEnabled(serialize);
@@ -4833,7 +4846,7 @@ IGNORE_WARNINGS_END
     if (!_private || !_private->page)
         return;
 
-    _private->page->effectiveAppearanceDidChange(self._effectiveAppearanceIsDark, self._effectiveUserInterfaceLevelIsElevated);
+    _private->page->setUseColorAppearance(self._effectiveAppearanceIsDark, self._effectiveUserInterfaceLevelIsElevated);
 }
 #endif
 
@@ -8972,7 +8985,7 @@ FORWARD(toggleUnderline)
 {
     for (auto& alternativeWithRange : alternativesWithRange) {
         if (auto dictationContext = _private->m_alternativeTextUIController->addAlternatives(alternativeWithRange.alternatives.get()))
-            alternatives.append({ alternativeWithRange.range, dictationContext });
+            alternatives.append({ alternativeWithRange.range, *dictationContext });
     }
 }
 

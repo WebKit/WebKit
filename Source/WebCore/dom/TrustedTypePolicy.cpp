@@ -90,7 +90,7 @@ ExceptionOr<String> TrustedTypePolicy::getPolicyValue(TrustedType trustedTypeNam
             protectedCreateHTML = m_options.createHTML;
         }
         if (protectedCreateHTML && protectedCreateHTML->hasCallback())
-            policyValue = protectedCreateHTML->handleEvent(input, WTFMove(arguments));
+            policyValue = protectedCreateHTML->handleEventRethrowingException(input, WTFMove(arguments));
     } else if (trustedTypeName == TrustedType::TrustedScript) {
         RefPtr<CreateScriptCallback> protectedCreateScript;
         {
@@ -98,7 +98,7 @@ ExceptionOr<String> TrustedTypePolicy::getPolicyValue(TrustedType trustedTypeNam
             protectedCreateScript = m_options.createScript;
         }
         if (protectedCreateScript && protectedCreateScript->hasCallback())
-            policyValue = protectedCreateScript->handleEvent(input, WTFMove(arguments));
+            policyValue = protectedCreateScript->handleEventRethrowingException(input, WTFMove(arguments));
     } else if (trustedTypeName == TrustedType::TrustedScriptURL) {
         RefPtr<CreateScriptURLCallback> protectedCreateScriptURL;
         {
@@ -106,7 +106,7 @@ ExceptionOr<String> TrustedTypePolicy::getPolicyValue(TrustedType trustedTypeNam
             protectedCreateScriptURL = m_options.createScriptURL;
         }
         if (protectedCreateScriptURL && protectedCreateScriptURL->hasCallback())
-            policyValue = protectedCreateScriptURL->handleEvent(input, WTFMove(arguments));
+            policyValue = protectedCreateScriptURL->handleEventRethrowingException(input, WTFMove(arguments));
     } else {
         ASSERT_NOT_REACHED();
         return Exception { ExceptionCode::TypeError };

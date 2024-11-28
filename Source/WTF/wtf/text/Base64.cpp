@@ -37,7 +37,7 @@ constexpr const char nonAlphabet = -1;
 constexpr unsigned encodeMapSize = 64;
 constexpr unsigned decodeMapSize = 128;
 
-static const char base64EncMap[encodeMapSize] = {
+static constexpr std::array<char, encodeMapSize> base64EncMap {
     0x41, 0x42, 0x43, 0x44, 0x45, 0x46, 0x47, 0x48,
     0x49, 0x4A, 0x4B, 0x4C, 0x4D, 0x4E, 0x4F, 0x50,
     0x51, 0x52, 0x53, 0x54, 0x55, 0x56, 0x57, 0x58,
@@ -48,7 +48,7 @@ static const char base64EncMap[encodeMapSize] = {
     0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0x2B, 0x2F
 };
 
-static const char base64DecMap[decodeMapSize] = {
+static constexpr std::array<char, decodeMapSize> base64DecMap {
     nonAlphabet, nonAlphabet, nonAlphabet, nonAlphabet, nonAlphabet, nonAlphabet, nonAlphabet, nonAlphabet,
     nonAlphabet, nonAlphabet, nonAlphabet, nonAlphabet, nonAlphabet, nonAlphabet, nonAlphabet, nonAlphabet,
     nonAlphabet, nonAlphabet, nonAlphabet, nonAlphabet, nonAlphabet, nonAlphabet, nonAlphabet, nonAlphabet,
@@ -67,7 +67,7 @@ static const char base64DecMap[decodeMapSize] = {
     0x31, 0x32, 0x33, nonAlphabet, nonAlphabet, nonAlphabet, nonAlphabet, nonAlphabet
 };
 
-static const char base64URLEncMap[encodeMapSize] = {
+static constexpr std::array<char, encodeMapSize> base64URLEncMap {
     0x41, 0x42, 0x43, 0x44, 0x45, 0x46, 0x47, 0x48,
     0x49, 0x4A, 0x4B, 0x4C, 0x4D, 0x4E, 0x4F, 0x50,
     0x51, 0x52, 0x53, 0x54, 0x55, 0x56, 0x57, 0x58,
@@ -78,7 +78,7 @@ static const char base64URLEncMap[encodeMapSize] = {
     0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0x2D, 0x5F
 };
 
-static const char base64URLDecMap[decodeMapSize] = {
+static constexpr std::array<char, decodeMapSize> base64URLDecMap {
     nonAlphabet, nonAlphabet, nonAlphabet, nonAlphabet, nonAlphabet, nonAlphabet, nonAlphabet, nonAlphabet,
     nonAlphabet, nonAlphabet, nonAlphabet, nonAlphabet, nonAlphabet, nonAlphabet, nonAlphabet, nonAlphabet,
     nonAlphabet, nonAlphabet, nonAlphabet, nonAlphabet, nonAlphabet, nonAlphabet, nonAlphabet, nonAlphabet,
@@ -115,7 +115,7 @@ template<typename CharacterType> static void base64EncodeInternal(std::span<cons
     ASSERT(calculateBase64EncodedSize(inputDataBuffer.size(), options) == destinationDataBuffer.size());
 
     if constexpr (sizeof(CharacterType) == 1) {
-        size_t bytesWritten = simdutf::binary_to_base64(bitwise_cast<const char*>(inputDataBuffer.data()), inputDataBuffer.size(), bitwise_cast<char*>(destinationDataBuffer.data()), toSIMDUTFOptions(options));
+        size_t bytesWritten = simdutf::binary_to_base64(std::bit_cast<const char*>(inputDataBuffer.data()), inputDataBuffer.size(), std::bit_cast<char*>(destinationDataBuffer.data()), toSIMDUTFOptions(options));
         ASSERT_UNUSED(bytesWritten, bytesWritten == destinationDataBuffer.size());
         return;
     }
@@ -323,7 +323,7 @@ static std::tuple<FromBase64ShouldThrowError, size_t, size_t> fromBase64SlowImpl
     if (!output.size())
         return { FromBase64ShouldThrowError::No, 0, 0 };
 
-    UChar chunk[4] = { 0, 0, 0, 0 };
+    std::array<UChar, 4> chunk { 0, 0, 0, 0 };
     size_t chunkLength = 0;
 
     for (size_t i = 0; i < length;) {
@@ -360,7 +360,7 @@ static std::tuple<FromBase64ShouldThrowError, size_t, size_t> fromBase64SlowImpl
             for (size_t j = chunkLength; j < 4; ++j)
                 chunk[j] = 'A';
 
-            auto decodedVector = base64Decode(StringView(std::span(chunk, 4)));
+            auto decodedVector = base64Decode(StringView(std::span { chunk }));
             if (!decodedVector)
                 return { FromBase64ShouldThrowError::Yes, read, write };
             auto decoded = decodedVector->span();
@@ -400,7 +400,7 @@ static std::tuple<FromBase64ShouldThrowError, size_t, size_t> fromBase64SlowImpl
         if (chunkLength != 4)
             continue;
 
-        auto decodedVector = base64Decode(StringView(std::span(chunk, chunkLength)));
+        auto decodedVector = base64Decode(StringView(std::span { chunk }));
         ASSERT(decodedVector);
         if (!decodedVector)
             return { FromBase64ShouldThrowError::Yes, read, write };
@@ -427,7 +427,7 @@ static std::tuple<FromBase64ShouldThrowError, size_t, size_t> fromBase64SlowImpl
         for (size_t j = chunkLength; j < 4; ++j)
             chunk[j] = 'A';
 
-        auto decodedVector = base64Decode(StringView(std::span(chunk, chunkLength)));
+        auto decodedVector = base64Decode(StringView(std::span { chunk }.first(chunkLength)));
         ASSERT(decodedVector);
         if (!decodedVector)
             return { FromBase64ShouldThrowError::Yes, read, write };
@@ -455,7 +455,7 @@ static std::tuple<FromBase64ShouldThrowError, size_t, size_t> fromBase64Impl(std
         return { FromBase64ShouldThrowError::No, 0, 0 };
 
     size_t outputLength = output.size();
-    auto result = simdutf::base64_to_binary_safe(bitwise_cast<const UTFType*>(span.data()), span.size(), bitwise_cast<char*>(output.data()), outputLength, options);
+    auto result = simdutf::base64_to_binary_safe(std::bit_cast<const UTFType*>(span.data()), span.size(), std::bit_cast<char*>(output.data()), outputLength, options);
     switch (result.error) {
     case simdutf::error_code::INVALID_BASE64_CHARACTER:
         return { FromBase64ShouldThrowError::Yes, result.count, outputLength };
@@ -485,8 +485,8 @@ size_t maxLengthFromBase64(StringView string)
 {
     size_t length = string.length();
     if (string.is8Bit())
-        return simdutf::maximal_binary_length_from_base64(bitwise_cast<const char*>(string.span8().data()), length);
-    return simdutf::maximal_binary_length_from_base64(bitwise_cast<const char16_t*>(string.span16().data()), length);
+        return simdutf::maximal_binary_length_from_base64(std::bit_cast<const char*>(string.span8().data()), length);
+    return simdutf::maximal_binary_length_from_base64(std::bit_cast<const char16_t*>(string.span16().data()), length);
 }
 
 } // namespace WTF

@@ -68,6 +68,8 @@
 #import "WebAccessibilityObjectWrapperIOS.h"
 #endif
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 using namespace WebCore;
 
 // Search Keys
@@ -263,9 +265,6 @@ static NSArray *convertMathPairsToNSArray(const AccessibilityObject::Accessibili
 NSArray *makeNSArray(const WebCore::AXCoreObject::AccessibilityChildrenVector& children)
 {
     return createNSArray(children, [] (const auto& child) -> id {
-        if (!child)
-            return nil;
-
         auto wrapper = child->wrapper();
         // We want to return the attachment view instead of the object representing the attachment,
         // otherwise, we get palindrome errors in the AX hierarchy.
@@ -295,21 +294,21 @@ NSArray *makeNSArray(const WebCore::AXCoreObject::AccessibilityChildrenVector& c
 
 - (void)attachAXObject:(AccessibilityObject&)axObject
 {
-    ASSERT(!_identifier.isValid() || _identifier == axObject.objectID());
+    ASSERT(!_identifier || _identifier == axObject.objectID());
     m_axObject = axObject;
-    if (!_identifier.isValid())
+    if (!_identifier)
         _identifier = m_axObject->objectID();
 }
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 - (void)attachIsolatedObject:(AXIsolatedObject*)isolatedObject
 {
-    ASSERT(isolatedObject && (!_identifier.isValid() || _identifier == isolatedObject->objectID()));
+    ASSERT(isolatedObject && (!_identifier || *_identifier == isolatedObject->objectID()));
     m_isolatedObject = isolatedObject;
     if (isMainThread())
         m_isolatedObjectInitialized = true;
 
-    if (!_identifier.isValid())
+    if (!_identifier)
         _identifier = m_isolatedObject.get()->objectID();
 }
 
@@ -322,7 +321,7 @@ NSArray *makeNSArray(const WebCore::AXCoreObject::AccessibilityChildrenVector& c
 - (void)detach
 {
     ASSERT(isMainThread());
-    _identifier = { };
+    _identifier = std::nullopt;
     m_axObject = nullptr;
 }
 
@@ -811,7 +810,7 @@ static NSDictionary *dictionaryRemovingNonSupportedTypes(NSDictionary *dictionar
 
 #pragma mark Search helpers
 
-typedef HashMap<String, AccessibilitySearchKey> AccessibilitySearchKeyMap;
+typedef UncheckedKeyHashMap<String, AccessibilitySearchKey> AccessibilitySearchKeyMap;
 
 struct SearchKeyEntry {
     String key;
@@ -942,3 +941,5 @@ AccessibilitySearchCriteria accessibilitySearchCriteriaForSearchPredicate(AXCore
 }
 
 @end
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

@@ -41,6 +41,7 @@
 #include "WebPageMessages.h"
 #include "WebPageProxy.h"
 #include "WebPageProxyMessages.h"
+#include "WebProcessActivityState.h"
 #include "WebProcessMessages.h"
 #include "WebProcessProxy.h"
 #include <WebCore/RemoteUserInputEventData.h>
@@ -50,11 +51,17 @@ namespace WebKit {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RemotePageProxy);
 
-RemotePageProxy::RemotePageProxy(WebPageProxy& page, WebProcessProxy& process, const Site& site, WebPageProxyMessageReceiverRegistration* registrationToTransfer)
+Ref<RemotePageProxy> RemotePageProxy::create(WebPageProxy& page, WebProcessProxy& process, const WebCore::Site& site, WebPageProxyMessageReceiverRegistration* registrationToTransfer)
+{
+    return adoptRef(*new RemotePageProxy(page, process, site, registrationToTransfer));
+}
+
+RemotePageProxy::RemotePageProxy(WebPageProxy& page, WebProcessProxy& process, const WebCore::Site& site, WebPageProxyMessageReceiverRegistration* registrationToTransfer)
     : m_webPageID(page.webPageIDInMainFrameProcess()) // FIXME: We should generate a new identifier so that it will be more obvious when we get things wrong.
     , m_process(process)
     , m_page(page)
     , m_site(site)
+    , m_processActivityState(makeUniqueRef<WebProcessActivityState>(*this))
 {
     if (registrationToTransfer)
         m_messageReceiverRegistration.transferMessageReceivingFrom(*registrationToTransfer, *this);
@@ -79,7 +86,7 @@ void RemotePageProxy::injectPageIntoNewProcess()
     auto* drawingArea = page->drawingArea();
     RELEASE_ASSERT(drawingArea);
 
-    m_drawingArea = makeUnique<RemotePageDrawingAreaProxy>(*drawingArea, m_process);
+    m_drawingArea = RemotePageDrawingAreaProxy::create(*drawingArea, m_process);
     m_visitedLinkStoreRegistration = makeUnique<RemotePageVisitedLinkStoreRegistration>(*page, m_process);
 
     m_process->send(
@@ -93,14 +100,15 @@ void RemotePageProxy::injectPageIntoNewProcess()
         0);
 }
 
-void RemotePageProxy::processDidTerminate(WebCore::ProcessIdentifier processIdentifier)
+void RemotePageProxy::processDidTerminate(WebProcessProxy& process, ProcessTerminationReason reason)
 {
     if (!m_page)
         return;
     if (auto* drawingArea = m_page->drawingArea())
-        drawingArea->remotePageProcessDidTerminate(processIdentifier);
+        drawingArea->remotePageProcessDidTerminate(process.coreProcessIdentifier());
     if (RefPtr mainFrame = m_page->mainFrame())
-        mainFrame->remoteProcessDidTerminate(process());
+        mainFrame->remoteProcessDidTerminate(process);
+    m_page->dispatchProcessDidTerminate(process, reason);
 }
 
 RemotePageProxy::~RemotePageProxy()
@@ -233,6 +241,11 @@ RefPtr<WebPageProxy> RemotePageProxy::protectedPage() const
 WebPageProxy* RemotePageProxy::page() const
 {
     return m_page.get();
+}
+
+WebProcessActivityState& RemotePageProxy::processActivityState()
+{
+    return m_processActivityState;
 }
 
 }

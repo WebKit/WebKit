@@ -31,12 +31,11 @@
 #include "CDMMessageType.h"
 #include "CDMSessionType.h"
 #include <utility>
+#include <wtf/AbstractRefCountedAndCanMakeWeakPtr.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
-#include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/TypeCasts.h>
-#include <wtf/WeakPtr.h>
 
 #if !RELEASE_LOG_DISABLED
 namespace WTF {
@@ -45,21 +44,12 @@ class Logger;
 #endif
 
 namespace WebCore {
-class CDMInstanceClient;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::CDMInstanceClient> : std::true_type { };
-}
-
-namespace WebCore {
 
 class CDMInstanceSession;
 struct CDMKeySystemConfiguration;
 class SharedBuffer;
 
-class CDMInstanceClient : public CanMakeWeakPtr<CDMInstanceClient> {
+class CDMInstanceClient : public AbstractRefCountedAndCanMakeWeakPtr<CDMInstanceClient> {
 public:
     virtual ~CDMInstanceClient() = default;
 
@@ -67,7 +57,7 @@ public:
 
 #if !RELEASE_LOG_DISABLED
     virtual const Logger& logger() const = 0;
-    virtual const void* logIdentifier() const = 0;
+    virtual uint64_t logIdentifier() const = 0;
 #endif
 };
 
@@ -81,7 +71,7 @@ public:
     virtual void clearClient() { }
 
 #if !RELEASE_LOG_DISABLED
-    virtual void setLogIdentifier(const void*) { }
+    virtual void setLogIdentifier(uint64_t) { }
 #endif
 
     enum class ImplementationType {

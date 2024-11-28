@@ -30,6 +30,7 @@
 #include "WKBundlePage.h"
 #include "WebEvent.h"
 #include <wtf/Forward.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace API {
 class Object;
@@ -42,6 +43,7 @@ template<> struct ClientTraits<WKBundlePageUIClientBase> {
 namespace WebKit {
 
 class InjectedBundlePageUIClient : public API::Client<WKBundlePageUIClientBase>, public API::InjectedBundle::PageUIClient {
+    WTF_MAKE_TZONE_ALLOCATED(InjectedBundlePageUIClient);
 public:
     explicit InjectedBundlePageUIClient(const WKBundlePageUIClientBase*);
 

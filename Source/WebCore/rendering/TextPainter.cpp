@@ -27,12 +27,14 @@
 #include "DisplayListRecorderImpl.h"
 #include "DisplayListReplayer.h"
 #include "FilterOperations.h"
+#include "FontCascade.h"
 #include "GraphicsContext.h"
 #include "InlineIteratorTextBox.h"
 #include "LayoutIntegrationInlineContent.h"
 #include "LegacyInlineTextBox.h"
 #include "RenderCombineText.h"
 #include "RenderLayer.h"
+#include "RenderStyle.h"
 #include "ShadowData.h"
 #include <wtf/NeverDestroyed.h>
 
@@ -215,9 +217,9 @@ void TextPainter::paintRange(const TextRun& textRun, const FloatRect& boxRect, c
     paintTextAndEmphasisMarksIfNeeded(textRun, boxRect, textOrigin, start, end, m_style, m_shadow, m_shadowColorFilter);
 }
 
-bool TextPainter::shouldUseGlyphDisplayList(const PaintInfo& paintInfo)
+bool TextPainter::shouldUseGlyphDisplayList(const PaintInfo& paintInfo, const RenderStyle& style)
 {
-    return !paintInfo.context().paintingDisabled() && paintInfo.enclosingSelfPaintingLayer();
+    return !paintInfo.context().paintingDisabled() && paintInfo.enclosingSelfPaintingLayer() && FontCascade::canUseGlyphDisplayList(style);
 }
 
 void TextPainter::setForceUseGlyphDisplayListForTesting(bool enabled)

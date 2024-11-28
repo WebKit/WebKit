@@ -30,6 +30,26 @@ class CSSCounterStyle;
 class RenderListItem;
 class StyleRuleCounterStyle;
 
+struct ListMarkerTextContent {
+    String textWithSuffix;
+    uint32_t textWithoutSuffixLength { 0 };
+    TextDirection textDirection { TextDirection::LTR };
+    bool isEmpty() const
+    {
+        return textWithSuffix.isEmpty();
+    }
+
+    StringView textWithoutSuffix() const
+    {
+        return StringView { textWithSuffix }.left(textWithoutSuffixLength);
+    }
+
+    StringView suffix() const
+    {
+        return StringView { textWithSuffix }.substring(textWithoutSuffixLength);
+    }
+};
+
 // Used to render the list item's marker.
 // The RenderListMarker always has to be a child of a RenderListItem.
 class RenderListMarker final : public RenderBox {
@@ -39,12 +59,12 @@ public:
     RenderListMarker(RenderListItem&, RenderStyle&&);
     virtual ~RenderListMarker();
 
-    StringView textWithoutSuffix() const;
-    StringView textWithSuffix() const { return m_textWithSuffix; }
+    String textWithoutSuffix() const { return m_textContent.textWithoutSuffix().toString(); };
+    String textWithSuffix() const { return m_textContent.textWithSuffix; };
 
     bool isInside() const;
 
-    void updateMarginsAndContent();
+    void updateInlineMarginsAndContent();
 
     bool isImage() const final;
 
@@ -65,25 +85,22 @@ private:
     bool canBeSelectionLeaf() const final { return true; }
     void styleWillChange(StyleDifference, const RenderStyle& newStyle) final;
     void styleDidChange(StyleDifference, const RenderStyle* oldStyle) final;
+    void computeIntrinsicLogicalWidths(LayoutUnit&, LayoutUnit&) const override { ASSERT_NOT_REACHED(); }
 
     void element() const = delete;
 
-    void updateMargins();
+    void updateInlineMargins();
     void updateContent();
     RenderBox* parentBox(RenderBox&);
     FloatRect relativeMarkerRect();
     LayoutRect localSelectionRect();
 
-    struct TextRunWithUnderlyingString;
-    TextRunWithUnderlyingString textRun() const;
-
     RefPtr<CSSCounterStyle> counterStyle() const;
     bool widthUsesMetricsOfPrimaryFont() const;
 
-    String m_textWithSuffix;
-    uint8_t m_textWithoutSuffixLength { 0 };
-    bool m_textIsLeftToRightDirection { true };
+    ListMarkerTextContent m_textContent;
     RefPtr<StyleImage> m_image;
+
     SingleThreadWeakPtr<RenderListItem> m_listItem;
     LayoutUnit m_lineOffsetForListItem;
     LayoutUnit m_lineLogicalOffsetForListItem;

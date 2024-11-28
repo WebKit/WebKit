@@ -86,7 +86,7 @@ public:
 private:
     ActionsFromContentRuleList actionsFromContentRuleList(const ContentExtension&, const String& urlString, const ResourceLoadInfo&, ResourceFlags) const;
 
-    HashMap<String, Ref<ContentExtension>> m_contentExtensions;
+    UncheckedKeyHashMap<String, Ref<ContentExtension>> m_contentExtensions;
 };
 
 WEBCORE_EXPORT void applyResultsToRequest(ContentRuleListResults&&, Page*, ResourceRequest&);

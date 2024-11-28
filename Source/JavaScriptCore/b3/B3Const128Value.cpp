@@ -31,6 +31,8 @@
 #include "B3ProcedureInlines.h"
 #include "B3ValueInlines.h"
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC { namespace B3 {
 
 Const128Value::~Const128Value() = default;
@@ -65,5 +67,7 @@ void Const128Value::dumpMeta(CommaPrinter& comma, PrintStream& out) const
 }
 
 } } // namespace JSC::B3
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ENABLE(B3_JIT)

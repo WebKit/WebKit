@@ -58,8 +58,10 @@ class RemoteAudioDestination final
 public:
     RemoteAudioDestination(GPUConnectionToWebProcess& connection, const String& inputDeviceId, uint32_t numberOfInputChannels, uint32_t numberOfOutputChannels, float sampleRate, float hardwareSampleRate, IPC::Semaphore&& renderSemaphore)
         : m_renderSemaphore(WTFMove(renderSemaphore))
+#if !RELEASE_LOG_DISABLED
         , m_logger(connection.logger())
         , m_logIdentifier(LoggerHelper::uniqueLogIdentifier())
+#endif
 #if PLATFORM(COCOA)
         , m_audioOutputUnitAdaptor(*this)
         , m_numOutputChannels(numberOfOutputChannels)
@@ -139,10 +141,8 @@ private:
     void incrementTotalFrameCount(UInt32 numberOfFrames)
     {
         static_assert(std::atomic<UInt32>::is_always_lock_free, "Shared memory atomic usage assumes lock free primitives are used");
-        if (m_frameCount) {
-            RELEASE_ASSERT(m_frameCount->size() == sizeof(std::atomic<uint32_t>));
-            WTF::atomicExchangeAdd(reinterpret_cast<uint32_t*>(m_frameCount->mutableSpan().data()), numberOfFrames);
-        }
+        if (m_frameCount)
+            WTF::atomicExchangeAdd(spanReinterpretCast<uint32_t>(m_frameCount->mutableSpan()).data(), numberOfFrames);
     }
 
     OSStatus render(double sampleTime, uint64_t hostTime, UInt32 numberOfFrames, AudioBufferList* ioData)
@@ -162,15 +162,18 @@ private:
     }
 #endif
 
-    Logger& logger() const { return m_logger; }
-    const void* logIdentifier() const { return m_logIdentifier; }
-    ASCIILiteral logClassName() const { return "RemoteAudioDestination"_s; }
-    WTFLogChannel& logChannel() const { return WebKit2LogMedia; }
-
     IPC::Semaphore m_renderSemaphore;
     bool m_isPlaying { false };
+
+#if !RELEASE_LOG_DISABLED
+    ASCIILiteral logClassName() const { return "RemoteAudioDestination"_s; }
+    WTFLogChannel& logChannel() const { return WebKit2LogMedia; }
+    uint64_t logIdentifier() const { return m_logIdentifier; }
+    Logger& logger() const { return m_logger; }
+
     Ref<Logger> m_logger;
-    const void* m_logIdentifier;
+    const uint64_t m_logIdentifier;
+#endif
 
 #if PLATFORM(COCOA)
     WebCore::AudioOutputUnitAdaptor m_audioOutputUnitAdaptor;
@@ -189,6 +192,16 @@ RemoteAudioDestinationManager::RemoteAudioDestinationManager(GPUConnectionToWebP
 }
 
 RemoteAudioDestinationManager::~RemoteAudioDestinationManager() = default;
+
+void RemoteAudioDestinationManager::ref() const
+{
+    m_gpuConnectionToWebProcess.get()->ref();
+}
+
+void RemoteAudioDestinationManager::deref() const
+{
+    m_gpuConnectionToWebProcess.get()->deref();
+}
 
 void RemoteAudioDestinationManager::createAudioDestination(RemoteAudioDestinationIdentifier identifier, const String& inputDeviceId, uint32_t numberOfInputChannels, uint32_t numberOfOutputChannels, float sampleRate, float hardwareSampleRate, IPC::Semaphore&& renderSemaphore, WebCore::SharedMemory::Handle&& handle)
 {
@@ -216,7 +229,7 @@ void RemoteAudioDestinationManager::deleteAudioDestination(RemoteAudioDestinatio
     m_audioDestinations.remove(identifier);
 
     if (allowsExitUnderMemoryPressure())
-        connection->gpuProcess().tryExitIfUnusedAndUnderMemoryPressure();
+        connection->protectedGPUProcess()->tryExitIfUnusedAndUnderMemoryPressure();
 }
 
 void RemoteAudioDestinationManager::startAudioDestination(RemoteAudioDestinationIdentifier identifier, CompletionHandler<void(bool)>&& completionHandler)
@@ -264,6 +277,14 @@ bool RemoteAudioDestinationManager::allowsExitUnderMemoryPressure() const
             return false;
     }
     return true;
+}
+
+std::optional<SharedPreferencesForWebProcess> RemoteAudioDestinationManager::sharedPreferencesForWebProcess() const
+{
+    if (RefPtr gpuConnectionToWebProcess = m_gpuConnectionToWebProcess.get())
+        return gpuConnectionToWebProcess->sharedPreferencesForWebProcess();
+
+    return std::nullopt;
 }
 
 } // namespace WebKit

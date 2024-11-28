@@ -36,6 +36,7 @@
 #include <WebCore/MediaSourcePrivateClient.h>
 #include <WebCore/SourceBufferPrivate.h>
 #include <atomic>
+#include <wtf/CheckedRef.h>
 #include <wtf/Forward.h>
 #include <wtf/LoggerHelper.h>
 #include <wtf/RefPtr.h>
@@ -72,14 +73,18 @@ public:
     void unmarkEndOfStream() final;
     WebCore::MediaPlayer::ReadyState mediaPlayerReadyState() const final;
     void setMediaPlayerReadyState(WebCore::MediaPlayer::ReadyState) final;
+    void setPlayer(WebCore::MediaPlayerPrivateInterface*) final;
+    void shutdown() final;
 
     void setTimeFudgeFactor(const MediaTime&) final;
+
+    RemoteMediaSourceIdentifier identifier() const { return m_identifier; }
 
     static WorkQueue& queue();
 
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const final { return m_logger.get(); }
-    const void* nextSourceBufferLogIdentifier() { return childLogIdentifier(m_logIdentifier, ++m_nextSourceBufferID); }
+    uint64_t nextSourceBufferLogIdentifier() { return childLogIdentifier(m_logIdentifier, ++m_nextSourceBufferID); }
 #endif
 
     class MessageReceiver : public IPC::WorkQueueMessageReceiver {
@@ -94,7 +99,6 @@ public:
         void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
         void proxyWaitForTarget(const WebCore::SeekTarget&, CompletionHandler<void(WebCore::MediaTimePromise::Result&&)>&&);
         void proxySeekToTime(const MediaTime&, CompletionHandler<void(WebCore::MediaPromise::Result&&)>&&);
-        void mediaSourcePrivateShuttingDown(CompletionHandler<void()>&&);
 
         RefPtr<WebCore::MediaSourcePrivateClient> client() const;
         ThreadSafeWeakPtr<MediaSourcePrivateRemote> m_parent;
@@ -112,22 +116,26 @@ private:
     ThreadSafeWeakPtr<GPUProcessConnection> m_gpuProcessConnection;
     Ref<MessageReceiver> m_receiver;
     RemoteMediaSourceIdentifier m_identifier;
-    RemoteMediaPlayerMIMETypeCache& m_mimeTypeCache;
+    CheckedRef<RemoteMediaPlayerMIMETypeCache> m_mimeTypeCache;
     ThreadSafeWeakPtr<MediaPlayerPrivateRemote> m_mediaPlayerPrivate;
     std::atomic<bool> m_shutdown { false };
     std::atomic<WebCore::MediaPlayer::ReadyState> m_mediaPlayerReadyState { WebCore::MediaPlayer::ReadyState::HaveNothing };
 
 #if !RELEASE_LOG_DISABLED
     ASCIILiteral logClassName() const override { return "MediaSourcePrivateRemote"_s; }
-    const void* logIdentifier() const final { return m_logIdentifier; }
+    uint64_t logIdentifier() const final { return m_logIdentifier; }
     WTFLogChannel& logChannel() const final;
 
     Ref<const Logger> m_logger;
-    const void* m_logIdentifier;
+    const uint64_t m_logIdentifier;
     uint64_t m_nextSourceBufferID { 0 };
 #endif
 };
 
 } // namespace WebKit
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebKit::MediaSourcePrivateRemote)
+static bool isType(const WebCore::MediaSourcePrivate& mediaSource) { return mediaSource.platformType() == WebCore::MediaPlatformType::Remote; }
+SPECIALIZE_TYPE_TRAITS_END()
 
 #endif // ENABLE(GPU_PROCESS) && ENABLE(MEDIA_SOURCE)

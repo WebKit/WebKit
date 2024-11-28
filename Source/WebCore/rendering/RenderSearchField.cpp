@@ -284,7 +284,7 @@ PopupMenuStyle RenderSearchField::itemStyle(unsigned) const
 PopupMenuStyle RenderSearchField::menuStyle() const
 {
     return PopupMenuStyle(style().visitedDependentColorWithColorFilter(CSSPropertyColor), style().visitedDependentColorWithColorFilter(CSSPropertyBackgroundColor), style().fontCascade(), style().usedVisibility() == Visibility::Visible,
-        style().display() == DisplayType::None, true, style().textIndent(), style().direction(), isOverride(style().unicodeBidi()), PopupMenuStyle::CustomBackgroundColor);
+        style().display() == DisplayType::None, true, style().textIndent(), writingMode().bidiDirection(), isOverride(style().unicodeBidi()), PopupMenuStyle::CustomBackgroundColor);
 }
 
 int RenderSearchField::clientInsetLeft() const

@@ -83,7 +83,7 @@ public:
         return result;
     }
 
-    const SharedPreferencesForWebProcess& sharedPreferencesForWebProcess() const { return m_sharedPreferencesForWebProcess; }
+    std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess() const { return m_sharedPreferencesForWebProcess; }
 
     virtual ~RemoteGPU();
 
@@ -106,6 +106,7 @@ private:
 
     void initialize();
     IPC::StreamConnectionWorkQueue& workQueue() const { return m_workQueue; }
+    Ref<IPC::StreamConnectionWorkQueue> protectedWorkQueue() const { return m_workQueue; }
     void workQueueInitialize();
     void workQueueUninitialize();
 

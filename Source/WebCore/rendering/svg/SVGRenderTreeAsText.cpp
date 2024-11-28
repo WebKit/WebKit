@@ -105,11 +105,13 @@ TextStream& operator<<(TextStream& ts, TextStreamSeparator& sep)
 static TextStream& operator<<(TextStream& ts, const DashArray& a)
 {
     ts << '{';
-    DashArray::const_iterator end = a.end();
-    for (DashArray::const_iterator it = a.begin(); it != end; ++it) {
-        if (it != a.begin())
+    bool isFirst = true;
+    for (auto& value : a) {
+        if (isFirst)
+            isFirst = false;
+        else
             ts << ", "_s;
-        ts << *it;
+        ts << value;
     }
     ts << '}';
     return ts;
@@ -360,7 +362,7 @@ static inline void writeSVGInlineTextBox(TextStream& ts, const InlineIterator::S
         // FIXME: Remove this hack, once the new text layout engine is completly landed. We want to preserve the old layout test results for now.
         ts << "chunk 1 "_s;
         TextAnchor anchor = svgStyle->textAnchor();
-        bool isVerticalText = textBox.renderer().style().isVerticalWritingMode();
+        bool isVerticalText = textBox.renderer().writingMode().isVertical();
         if (anchor == TextAnchor::Middle) {
             ts << "(middle anchor"_s;
             if (isVerticalText)
@@ -444,10 +446,9 @@ void writeSVGResourceContainer(TextStream& ts, const LegacyRenderSVGResourceCont
     const AtomString& id = resource.element().getIdAttribute();
     writeNameAndQuotedValue(ts, "id"_s, id);
 
-    if (resource.resourceType() == MaskerResourceType) {
-        const auto& masker = static_cast<const LegacyRenderSVGResourceMasker&>(resource);
-        writeNameValuePair(ts, "maskUnits"_s, masker.maskUnits());
-        writeNameValuePair(ts, "maskContentUnits"_s, masker.maskContentUnits());
+    if (auto* masker = dynamicDowncast<const LegacyRenderSVGResourceMasker>(resource)) {
+        writeNameValuePair(ts, "maskUnits"_s, masker->maskUnits());
+        writeNameValuePair(ts, "maskContentUnits"_s, masker->maskContentUnits());
         ts << '\n';
     } else if (resource.resourceType() == FilterResourceType) {
         const auto& filter = static_cast<const LegacyRenderSVGResourceFilter&>(resource);
@@ -475,13 +476,11 @@ void writeSVGResourceContainer(TextStream& ts, const LegacyRenderSVGResourceCont
             ts << *angle << "]\n"_s;
         else
             ts << "auto"_s << "]\n"_s;
-    } else if (resource.resourceType() == PatternResourceType) {
-        const auto& pattern = static_cast<const LegacyRenderSVGResourcePattern&>(resource);
-
+    } else if (auto* pattern = dynamicDowncast<const LegacyRenderSVGResourcePattern>(resource)) {
         // Dump final results that are used for rendering. No use in asking SVGPatternElement for its patternUnits(), as it may
         // link to other patterns using xlink:href, we need to build the full inheritance chain, aka. collectPatternProperties()
         PatternAttributes attributes;
-        pattern.collectPatternAttributes(attributes);
+        pattern->collectPatternAttributes(attributes);
 
         writeNameValuePair(ts, "patternUnits"_s, attributes.patternUnits());
         writeNameValuePair(ts, "patternContentUnits"_s, attributes.patternContentUnits());
@@ -490,29 +489,25 @@ void writeSVGResourceContainer(TextStream& ts, const LegacyRenderSVGResourceCont
         if (!transform.isIdentity())
             ts << " [patternTransform="_s << transform << ']';
         ts << '\n';
-    } else if (resource.resourceType() == LinearGradientResourceType) {
-        const auto& gradient = static_cast<const LegacyRenderSVGResourceLinearGradient&>(resource);
-
+    } else if (auto* gradient = dynamicDowncast<const LegacyRenderSVGResourceLinearGradient>(resource)) {
         // Dump final results that are used for rendering. No use in asking SVGGradientElement for its gradientUnits(), as it may
         // link to other gradients using xlink:href, we need to build the full inheritance chain, aka. collectGradientProperties()
         LinearGradientAttributes attributes;
-        gradient.linearGradientElement().collectGradientAttributes(attributes);
+        gradient->linearGradientElement().collectGradientAttributes(attributes);
         writeCommonGradientProperties(ts, attributes.spreadMethod(), attributes.gradientTransform(), attributes.gradientUnits());
 
-        ts << " [start="_s << gradient.startPoint(attributes) << "] [end="_s << gradient.endPoint(attributes) << "]\n"_s;
-    }  else if (resource.resourceType() == RadialGradientResourceType) {
-        const auto& gradient = static_cast<const LegacyRenderSVGResourceRadialGradient&>(resource);
-
+        ts << " [start="_s << gradient->startPoint(attributes) << "] [end="_s << gradient->endPoint(attributes) << "]\n"_s;
+    }  else if (auto* gradient = dynamicDowncast<const LegacyRenderSVGResourceRadialGradient>(resource)) {
         // Dump final results that are used for rendering. No use in asking SVGGradientElement for its gradientUnits(), as it may
         // link to other gradients using xlink:href, we need to build the full inheritance chain, aka. collectGradientProperties()
         RadialGradientAttributes attributes;
-        gradient.radialGradientElement().collectGradientAttributes(attributes);
+        gradient->radialGradientElement().collectGradientAttributes(attributes);
         writeCommonGradientProperties(ts, attributes.spreadMethod(), attributes.gradientTransform(), attributes.gradientUnits());
 
-        FloatPoint focalPoint = gradient.focalPoint(attributes);
-        FloatPoint centerPoint = gradient.centerPoint(attributes);
-        float radius = gradient.radius(attributes);
-        float focalRadius = gradient.focalRadius(attributes);
+        FloatPoint focalPoint = gradient->focalPoint(attributes);
+        FloatPoint centerPoint = gradient->centerPoint(attributes);
+        float radius = gradient->radius(attributes);
+        float focalRadius = gradient->focalRadius(attributes);
 
         ts << " [center="_s << centerPoint << "] [focal="_s << focalPoint << "] [radius="_s << radius << "] [focalRadius="_s << focalRadius << "]\n"_s;
     } else

@@ -98,7 +98,7 @@ ALWAYS_INLINE Int toIntImpl(double number)
     static_assert(intBitsMinusOne == 63 || intBitsMinusOne == 31);
     using UInt = std::make_unsigned_t<Int>;
 
-    uint64_t bits = WTF::bitwise_cast<uint64_t>(number);
+    uint64_t bits = std::bit_cast<uint64_t>(number);
     int32_t exp = (static_cast<int32_t>(bits >> 52) & 0x7ff) - 0x3ff;
 
     // If exponent < 0 there will be no bits to the left of the decimal point

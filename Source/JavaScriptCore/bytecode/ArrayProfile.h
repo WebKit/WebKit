@@ -28,6 +28,8 @@
 #include "ConcurrentJSLock.h"
 #include "Structure.h"
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 class CodeBlock;
@@ -217,6 +219,7 @@ public:
     void clear()
     {
         m_lastSeenStructureID = { };
+        m_speculationFailureStructureID = { };
         m_arrayProfileFlags = { };
         m_observedArrayModes = { };
     }
@@ -227,11 +230,13 @@ public:
 
     bool mayBeResizableOrGrowableSharedTypedArray(const ConcurrentJSLocker&) const { return m_arrayProfileFlags.contains(ArrayProfileFlag::MayBeResizableOrGrowableSharedTypedArray); }
 
-    StructureID* addressOfLastSeenStructureID() { return &m_lastSeenStructureID; }
+    StructureID* addressOfSpeculationFailureStructureID() { return &m_speculationFailureStructureID; }
     ArrayModes* addressOfArrayModes() { return &m_observedArrayModes; }
 
-    static constexpr ptrdiff_t offsetOfArrayProfileFlags() { return OBJECT_OFFSETOF(ArrayProfile, m_arrayProfileFlags); }
     static constexpr ptrdiff_t offsetOfLastSeenStructureID() { return OBJECT_OFFSETOF(ArrayProfile, m_lastSeenStructureID); }
+    static constexpr ptrdiff_t offsetOfSpeculationFailureStructureID() { return OBJECT_OFFSETOF(ArrayProfile, m_speculationFailureStructureID); }
+    static constexpr ptrdiff_t offsetOfArrayProfileFlags() { return OBJECT_OFFSETOF(ArrayProfile, m_arrayProfileFlags); }
+    static constexpr ptrdiff_t offsetOfArrayModes() { return OBJECT_OFFSETOF(ArrayProfile, m_observedArrayModes); }
 
     void setOutOfBounds() { m_arrayProfileFlags.add(ArrayProfileFlag::OutOfBounds); }
     
@@ -261,10 +266,11 @@ private:
     static Structure* polymorphicStructure() { return static_cast<Structure*>(reinterpret_cast<void*>(1)); }
     
     StructureID m_lastSeenStructureID;
+    StructureID m_speculationFailureStructureID;
     OptionSet<ArrayProfileFlag> m_arrayProfileFlags;
     ArrayModes m_observedArrayModes { 0 };
 };
-static_assert(sizeof(ArrayProfile) == 12);
+static_assert(sizeof(ArrayProfile) == 16);
 
 class UnlinkedArrayProfile {
 public:
@@ -289,3 +295,5 @@ private:
 static_assert(sizeof(UnlinkedArrayProfile) <= 8);
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

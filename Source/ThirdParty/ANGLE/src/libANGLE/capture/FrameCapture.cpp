@@ -734,15 +734,21 @@ enum class Indent
 void UpdateResourceIDBuffer(std::ostream &out,
                             Indent indent,
                             size_t bufferIndex,
-                            const char *mapName,
+                            ResourceIDType resourceIDType,
+                            gl::ContextID contextID,
                             GLuint resourceID)
 {
     if (indent == Indent::Indent)
     {
         out << "    ";
     }
-    out << "UpdateResourceIDBuffer(" << bufferIndex << ", g" << mapName << "Map[" << resourceID
-        << "]);\n";
+    out << "UpdateResourceIDBuffer(" << bufferIndex << ", g"
+        << GetResourceIDTypeName(resourceIDType) << "Map";
+    if (IsTrackedPerContext(resourceIDType))
+    {
+        out << "PerContext[" << contextID.value << "]";
+    }
+    out << "[" << resourceID << "]);\n";
 }
 
 template <typename ParamT>
@@ -755,7 +761,6 @@ void WriteResourceIDPointerParamReplay(ReplayWriter &replayWriter,
 {
     const ResourceIDType resourceIDType = GetResourceIDTypeFromParamType(param.type);
     ASSERT(resourceIDType != ResourceIDType::InvalidEnum);
-    const char *name = GetResourceIDTypeName(resourceIDType);
 
     if (param.dataNElements > 0)
     {
@@ -765,7 +770,8 @@ void WriteResourceIDPointerParamReplay(ReplayWriter &replayWriter,
         for (GLsizei resIndex = 0; resIndex < param.dataNElements; ++resIndex)
         {
             ParamT id = returnedIDs[resIndex];
-            UpdateResourceIDBuffer(header, Indent::NoIdent, resIndex, name, id.value);
+            UpdateResourceIDBuffer(header, Indent::NoIdent, resIndex, resourceIDType,
+                                   call.contextID, id.value);
         }
 
         *maxResourceIDBufferSize = std::max<size_t>(*maxResourceIDBufferSize, param.dataNElements);
@@ -1110,9 +1116,10 @@ void WriteInitReplayCall(bool compression,
 }
 
 void DeleteResourcesInReset(std::stringstream &out,
+                            const gl::ContextID contextID,
                             const ResourceSet &newResources,
                             const ResourceSet &resourcesToDelete,
-                            const char *resourceName,
+                            const ResourceIDType resourceIDType,
                             size_t *maxResourceIDBufferSize)
 {
     if (!newResources.empty() || !resourcesToDelete.empty())
@@ -1121,16 +1128,19 @@ void DeleteResourcesInReset(std::stringstream &out,
 
         for (GLuint oldResource : resourcesToDelete)
         {
-            UpdateResourceIDBuffer(out, Indent::Indent, count++, resourceName, oldResource);
+            UpdateResourceIDBuffer(out, Indent::Indent, count++, resourceIDType, contextID,
+                                   oldResource);
         }
 
         for (GLuint newResource : newResources)
         {
-            UpdateResourceIDBuffer(out, Indent::Indent, count++, resourceName, newResource);
+            UpdateResourceIDBuffer(out, Indent::Indent, count++, resourceIDType, contextID,
+                                   newResource);
         }
 
         // Delete all the new and old buffers at once
-        out << "    glDelete" << resourceName << "s(" << count << ", gResourceIDBuffer);\n";
+        out << "    glDelete" << GetResourceIDTypeName(resourceIDType) << "s(" << count
+            << ", gResourceIDBuffer);\n";
 
         *maxResourceIDBufferSize = std::max(*maxResourceIDBufferSize, count);
     }
@@ -1166,7 +1176,7 @@ void MaybeResetResources(egl::Display *display,
             BufferCalls &bufferMapCalls   = resourceTracker->getBufferMapCalls();
             BufferCalls &bufferUnmapCalls = resourceTracker->getBufferUnmapCalls();
 
-            DeleteResourcesInReset(out, newBuffers, buffersToDelete, "Buffer",
+            DeleteResourcesInReset(out, contextID, newBuffers, buffersToDelete, resourceIDType,
                                    maxResourceIDBufferSize);
 
             // If any of our starting buffers were deleted during the run, recreate them
@@ -1255,8 +1265,8 @@ void MaybeResetResources(egl::Display *display,
             ResourceCalls &framebufferRegenCalls   = trackedFramebuffers.getResourceRegenCalls();
             ResourceCalls &framebufferRestoreCalls = trackedFramebuffers.getResourceRestoreCalls();
 
-            DeleteResourcesInReset(out, newFramebuffers, framebuffersToDelete, "Framebuffer",
-                                   maxResourceIDBufferSize);
+            DeleteResourcesInReset(out, contextID, newFramebuffers, framebuffersToDelete,
+                                   resourceIDType, maxResourceIDBufferSize);
 
             for (GLuint id : framebuffersToRegen)
             {
@@ -1297,8 +1307,8 @@ void MaybeResetResources(egl::Display *display,
             ResourceCalls &renderbufferRestoreCalls =
                 trackedRenderbuffers.getResourceRestoreCalls();
 
-            DeleteResourcesInReset(out, newRenderbuffers, renderbuffersToDelete, "Renderbuffer",
-                                   maxResourceIDBufferSize);
+            DeleteResourcesInReset(out, contextID, newRenderbuffers, renderbuffersToDelete,
+                                   resourceIDType, maxResourceIDBufferSize);
 
             for (GLuint id : renderbuffersToRegen)
             {
@@ -1411,7 +1421,7 @@ void MaybeResetResources(egl::Display *display,
             ResourceCalls &textureRegenCalls   = trackedTextures.getResourceRegenCalls();
             ResourceCalls &textureRestoreCalls = trackedTextures.getResourceRestoreCalls();
 
-            DeleteResourcesInReset(out, newTextures, texturesToDelete, "Texture",
+            DeleteResourcesInReset(out, contextID, newTextures, texturesToDelete, resourceIDType,
                                    maxResourceIDBufferSize);
 
             // If any of our starting textures were deleted, regen them
@@ -1472,8 +1482,8 @@ void MaybeResetResources(egl::Display *display,
             ResourceCalls &vertexArrayRegenCalls   = trackedVertexArrays.getResourceRegenCalls();
             ResourceCalls &vertexArrayRestoreCalls = trackedVertexArrays.getResourceRestoreCalls();
 
-            DeleteResourcesInReset(out, newVertexArrays, vertexArraysToDelete, "VertexArray",
-                                   maxResourceIDBufferSize);
+            DeleteResourcesInReset(out, contextID, newVertexArrays, vertexArraysToDelete,
+                                   resourceIDType, maxResourceIDBufferSize);
 
             // If any of our starting vertex arrays were deleted during the run, recreate them
             for (GLuint id : vertexArraysToRegen)
@@ -2248,6 +2258,13 @@ void CaptureUpdateResourceIDs(const gl::Context *context,
 
     std::stringstream updateFuncNameStr;
     updateFuncNameStr << "Update" << resourceName << "ID";
+    bool trackedPerContext = IsTrackedPerContext(resourceIDType);
+    if (trackedPerContext)
+    {
+        // TODO (https://issuetracker.google.com/169868803) The '2' version can be removed after all
+        // context-local objects are tracked per-context
+        updateFuncNameStr << "2";
+    }
     std::string updateFuncName = updateFuncNameStr.str();
 
     const IDType *returnedIDs = reinterpret_cast<const IDType *>(param.data[0].data());
@@ -2260,6 +2277,10 @@ void CaptureUpdateResourceIDs(const gl::Context *context,
         IDType id                = returnedIDs[idIndex];
         GLsizei readBufferOffset = idIndex * sizeof(gl::RenderbufferID);
         ParamBuffer params;
+        if (trackedPerContext)
+        {
+            params.addValueParam("contextId", ParamType::TGLuint, context->id().value);
+        }
         params.addValueParam("id", ParamType::TGLuint, id.value);
         params.addValueParam("readBufferOffset", ParamType::TGLsizei, readBufferOffset);
         callsOut->emplace_back(updateFuncName, std::move(params));
@@ -2536,50 +2557,33 @@ bool IsTextureUpdate(CallCapture &call)
     switch (call.entryPoint)
     {
         case EntryPoint::GLCompressedCopyTextureCHROMIUM:
-        case EntryPoint::GLCompressedTexImage1D:
         case EntryPoint::GLCompressedTexImage2D:
         case EntryPoint::GLCompressedTexImage2DRobustANGLE:
         case EntryPoint::GLCompressedTexImage3D:
         case EntryPoint::GLCompressedTexImage3DOES:
         case EntryPoint::GLCompressedTexImage3DRobustANGLE:
-        case EntryPoint::GLCompressedTexSubImage1D:
         case EntryPoint::GLCompressedTexSubImage2D:
         case EntryPoint::GLCompressedTexSubImage2DRobustANGLE:
         case EntryPoint::GLCompressedTexSubImage3D:
         case EntryPoint::GLCompressedTexSubImage3DOES:
         case EntryPoint::GLCompressedTexSubImage3DRobustANGLE:
-        case EntryPoint::GLCompressedTextureSubImage1D:
-        case EntryPoint::GLCompressedTextureSubImage2D:
-        case EntryPoint::GLCompressedTextureSubImage3D:
-        case EntryPoint::GLCopyTexImage1D:
         case EntryPoint::GLCopyTexImage2D:
-        case EntryPoint::GLCopyTexSubImage1D:
         case EntryPoint::GLCopyTexSubImage2D:
         case EntryPoint::GLCopyTexSubImage3D:
         case EntryPoint::GLCopyTexSubImage3DOES:
         case EntryPoint::GLCopyTexture3DANGLE:
         case EntryPoint::GLCopyTextureCHROMIUM:
-        case EntryPoint::GLCopyTextureSubImage1D:
-        case EntryPoint::GLCopyTextureSubImage2D:
-        case EntryPoint::GLCopyTextureSubImage3D:
-        case EntryPoint::GLTexImage1D:
         case EntryPoint::GLTexImage2D:
         case EntryPoint::GLTexImage2DExternalANGLE:
-        case EntryPoint::GLTexImage2DMultisample:
         case EntryPoint::GLTexImage2DRobustANGLE:
         case EntryPoint::GLTexImage3D:
-        case EntryPoint::GLTexImage3DMultisample:
         case EntryPoint::GLTexImage3DOES:
         case EntryPoint::GLTexImage3DRobustANGLE:
-        case EntryPoint::GLTexSubImage1D:
         case EntryPoint::GLTexSubImage2D:
         case EntryPoint::GLTexSubImage2DRobustANGLE:
         case EntryPoint::GLTexSubImage3D:
         case EntryPoint::GLTexSubImage3DOES:
         case EntryPoint::GLTexSubImage3DRobustANGLE:
-        case EntryPoint::GLTextureSubImage1D:
-        case EntryPoint::GLTextureSubImage2D:
-        case EntryPoint::GLTextureSubImage3D:
         case EntryPoint::GLCopyImageSubData:
         case EntryPoint::GLCopyImageSubDataEXT:
         case EntryPoint::GLCopyImageSubDataOES:
@@ -2733,8 +2737,6 @@ DefaultUniformType GetDefaultUniformType(const CallCapture &call)
 {
     switch (call.entryPoint)
     {
-        case EntryPoint::GLProgramUniform1d:
-        case EntryPoint::GLProgramUniform1dv:
         case EntryPoint::GLProgramUniform1f:
         case EntryPoint::GLProgramUniform1fEXT:
         case EntryPoint::GLProgramUniform1fv:
@@ -2747,8 +2749,6 @@ DefaultUniformType GetDefaultUniformType(const CallCapture &call)
         case EntryPoint::GLProgramUniform1uiEXT:
         case EntryPoint::GLProgramUniform1uiv:
         case EntryPoint::GLProgramUniform1uivEXT:
-        case EntryPoint::GLProgramUniform2d:
-        case EntryPoint::GLProgramUniform2dv:
         case EntryPoint::GLProgramUniform2f:
         case EntryPoint::GLProgramUniform2fEXT:
         case EntryPoint::GLProgramUniform2fv:
@@ -2761,8 +2761,6 @@ DefaultUniformType GetDefaultUniformType(const CallCapture &call)
         case EntryPoint::GLProgramUniform2uiEXT:
         case EntryPoint::GLProgramUniform2uiv:
         case EntryPoint::GLProgramUniform2uivEXT:
-        case EntryPoint::GLProgramUniform3d:
-        case EntryPoint::GLProgramUniform3dv:
         case EntryPoint::GLProgramUniform3f:
         case EntryPoint::GLProgramUniform3fEXT:
         case EntryPoint::GLProgramUniform3fv:
@@ -2775,8 +2773,6 @@ DefaultUniformType GetDefaultUniformType(const CallCapture &call)
         case EntryPoint::GLProgramUniform3uiEXT:
         case EntryPoint::GLProgramUniform3uiv:
         case EntryPoint::GLProgramUniform3uivEXT:
-        case EntryPoint::GLProgramUniform4d:
-        case EntryPoint::GLProgramUniform4dv:
         case EntryPoint::GLProgramUniform4f:
         case EntryPoint::GLProgramUniform4fEXT:
         case EntryPoint::GLProgramUniform4fv:
@@ -2789,86 +2785,59 @@ DefaultUniformType GetDefaultUniformType(const CallCapture &call)
         case EntryPoint::GLProgramUniform4uiEXT:
         case EntryPoint::GLProgramUniform4uiv:
         case EntryPoint::GLProgramUniform4uivEXT:
-        case EntryPoint::GLProgramUniformMatrix2dv:
         case EntryPoint::GLProgramUniformMatrix2fv:
         case EntryPoint::GLProgramUniformMatrix2fvEXT:
-        case EntryPoint::GLProgramUniformMatrix2x3dv:
         case EntryPoint::GLProgramUniformMatrix2x3fv:
         case EntryPoint::GLProgramUniformMatrix2x3fvEXT:
-        case EntryPoint::GLProgramUniformMatrix2x4dv:
         case EntryPoint::GLProgramUniformMatrix2x4fv:
         case EntryPoint::GLProgramUniformMatrix2x4fvEXT:
-        case EntryPoint::GLProgramUniformMatrix3dv:
         case EntryPoint::GLProgramUniformMatrix3fv:
         case EntryPoint::GLProgramUniformMatrix3fvEXT:
-        case EntryPoint::GLProgramUniformMatrix3x2dv:
         case EntryPoint::GLProgramUniformMatrix3x2fv:
         case EntryPoint::GLProgramUniformMatrix3x2fvEXT:
-        case EntryPoint::GLProgramUniformMatrix3x4dv:
         case EntryPoint::GLProgramUniformMatrix3x4fv:
         case EntryPoint::GLProgramUniformMatrix3x4fvEXT:
-        case EntryPoint::GLProgramUniformMatrix4dv:
         case EntryPoint::GLProgramUniformMatrix4fv:
         case EntryPoint::GLProgramUniformMatrix4fvEXT:
-        case EntryPoint::GLProgramUniformMatrix4x2dv:
         case EntryPoint::GLProgramUniformMatrix4x2fv:
         case EntryPoint::GLProgramUniformMatrix4x2fvEXT:
-        case EntryPoint::GLProgramUniformMatrix4x3dv:
         case EntryPoint::GLProgramUniformMatrix4x3fv:
         case EntryPoint::GLProgramUniformMatrix4x3fvEXT:
             return DefaultUniformType::SpecifiedProgram;
 
-        case EntryPoint::GLUniform1d:
-        case EntryPoint::GLUniform1dv:
         case EntryPoint::GLUniform1f:
         case EntryPoint::GLUniform1fv:
         case EntryPoint::GLUniform1i:
         case EntryPoint::GLUniform1iv:
         case EntryPoint::GLUniform1ui:
         case EntryPoint::GLUniform1uiv:
-        case EntryPoint::GLUniform2d:
-        case EntryPoint::GLUniform2dv:
         case EntryPoint::GLUniform2f:
         case EntryPoint::GLUniform2fv:
         case EntryPoint::GLUniform2i:
         case EntryPoint::GLUniform2iv:
         case EntryPoint::GLUniform2ui:
         case EntryPoint::GLUniform2uiv:
-        case EntryPoint::GLUniform3d:
-        case EntryPoint::GLUniform3dv:
         case EntryPoint::GLUniform3f:
         case EntryPoint::GLUniform3fv:
         case EntryPoint::GLUniform3i:
         case EntryPoint::GLUniform3iv:
         case EntryPoint::GLUniform3ui:
         case EntryPoint::GLUniform3uiv:
-        case EntryPoint::GLUniform4d:
-        case EntryPoint::GLUniform4dv:
         case EntryPoint::GLUniform4f:
         case EntryPoint::GLUniform4fv:
         case EntryPoint::GLUniform4i:
         case EntryPoint::GLUniform4iv:
         case EntryPoint::GLUniform4ui:
         case EntryPoint::GLUniform4uiv:
-        case EntryPoint::GLUniformMatrix2dv:
         case EntryPoint::GLUniformMatrix2fv:
-        case EntryPoint::GLUniformMatrix2x3dv:
         case EntryPoint::GLUniformMatrix2x3fv:
-        case EntryPoint::GLUniformMatrix2x4dv:
         case EntryPoint::GLUniformMatrix2x4fv:
-        case EntryPoint::GLUniformMatrix3dv:
         case EntryPoint::GLUniformMatrix3fv:
-        case EntryPoint::GLUniformMatrix3x2dv:
         case EntryPoint::GLUniformMatrix3x2fv:
-        case EntryPoint::GLUniformMatrix3x4dv:
         case EntryPoint::GLUniformMatrix3x4fv:
-        case EntryPoint::GLUniformMatrix4dv:
         case EntryPoint::GLUniformMatrix4fv:
-        case EntryPoint::GLUniformMatrix4x2dv:
         case EntryPoint::GLUniformMatrix4x2fv:
-        case EntryPoint::GLUniformMatrix4x3dv:
         case EntryPoint::GLUniformMatrix4x3fv:
-        case EntryPoint::GLUniformSubroutinesuiv:
             return DefaultUniformType::CurrentProgram;
 
         default:
@@ -4827,17 +4796,21 @@ void CaptureShareGroupMidExecutionSetup(
         {
             frameCaptureShared->setDeferredLinkProgram(id);
 
-            // Deferred attachment of shaders is not yet supported
-            ASSERT(program->getAttachedShadersCount());
-
-            // AttachShader calls will be generated at shader-handling time
-            for (gl::ShaderType shaderType : gl::AllShaderTypes())
+            if (program->getAttachedShadersCount() > 0)
             {
-                gl::Shader *shader = program->getAttachedShader(shaderType);
-                if (shader != nullptr)
+                // AttachShader calls will be generated at shader-handling time
+                for (gl::ShaderType shaderType : gl::AllShaderTypes())
                 {
-                    deferredAttachCalls[shader->getHandle()].push_back(id);
+                    gl::Shader *shader = program->getAttachedShader(shaderType);
+                    if (shader != nullptr)
+                    {
+                        deferredAttachCalls[shader->getHandle()].push_back(id);
+                    }
                 }
+            }
+            else
+            {
+                WARN() << "Deferred attachment of shaders is not yet supported";
             }
         }
 
@@ -5362,6 +5335,8 @@ void CaptureMidExecutionSetup(const gl::Context *context,
         for (std::vector<CallCapture> *calls : framebufferSetupCalls)
         {
             Capture(calls, framebufferFuncs.bindFramebuffer(replayState, true, GL_FRAMEBUFFER, id));
+            // Set current context for this CallCapture
+            calls->back().contextID = context->id();
         }
         currentDrawFramebuffer = currentReadFramebuffer = id;
 
@@ -5542,9 +5517,13 @@ void CaptureMidExecutionSetup(const gl::Context *context,
         }
     }
 
+    // Capture Queries
+    const gl::QueryMap &queryMap = context->getQueriesForCapture();
+
     // Create existing queries. Note that queries may be genned and not yet started. In that
     // case the queries will exist in the query map as nullptr entries.
-    const gl::QueryMap &queryMap = context->getQueriesForCapture();
+    // If any queries are active between frames, we want to defer creation and do them last,
+    // otherwise you'll get GL errors about starting a query while one is already active.
     for (gl::QueryMap::Iterator queryIter = gl::UnsafeResourceMapIter(queryMap).beginWithNull(),
                                 endIter   = gl::UnsafeResourceMapIter(queryMap).endWithNull();
          queryIter != endIter; ++queryIter)
@@ -5560,14 +5539,27 @@ void CaptureMidExecutionSetup(const gl::Context *context,
         {
             gl::QueryType queryType = query->getType();
 
+            // Defer active queries until we've created them all
+            if (IsQueryActive(apiState, queryID))
+            {
+                continue;
+            }
+
             // Begin the query to generate the object
             cap(CaptureBeginQuery(replayState, true, queryType, queryID));
 
             // End the query if it was not active
-            if (!IsQueryActive(apiState, queryID))
-            {
-                cap(CaptureEndQuery(replayState, true, queryType));
-            }
+            cap(CaptureEndQuery(replayState, true, queryType));
+        }
+    }
+
+    const gl::ActiveQueryMap &activeQueries = apiState.getActiveQueriesForCapture();
+    for (const auto &activeQueryIter : activeQueries)
+    {
+        const gl::Query *activeQuery = activeQueryIter.get();
+        if (activeQuery)
+        {
+            cap(CaptureBeginQuery(replayState, true, activeQuery->getType(), activeQuery->id()));
         }
     }
 
@@ -6175,7 +6167,6 @@ bool SkipCall(EntryPoint entryPoint)
             return true;
 
         case EntryPoint::GLGetActiveUniformBlockiv:
-        case EntryPoint::GLGetActiveUniformName:
         case EntryPoint::GLGetActiveUniformBlockName:
             // Skip these calls because:
             // - We don't use the return values.
@@ -6420,6 +6411,29 @@ AddressRange::~AddressRange() = default;
 uintptr_t AddressRange::end()
 {
     return start + size;
+}
+
+bool IsTrackedPerContext(ResourceIDType type)
+{
+    // This helper function informs us which context-local (not shared) objects are tracked
+    // with per-context object maps.
+    if (IsSharedObjectResource(type))
+    {
+        return false;
+    }
+
+    // TODO (https://issuetracker.google.com/169868803): Remaining context-local resources (VAOs,
+    // PPOs, Transform Feedback Objects, and Query Objects) must also tracked per-context. Once all
+    // per-context resource handling is correctly updated then this function can be replaced with
+    // !IsSharedObjectResource().
+    switch (type)
+    {
+        case ResourceIDType::Framebuffer:
+            return true;
+
+        default:
+            return false;
+    }
 }
 
 CoherentBuffer::CoherentBuffer(uintptr_t start,
@@ -7269,6 +7283,7 @@ void FrameCaptureShared::updateCopyImageSubData(CallCapture &call)
         case GL_TEXTURE_2D_ARRAY:
         case GL_TEXTURE_3D:
         case GL_TEXTURE_CUBE_MAP:
+        case GL_TEXTURE_EXTERNAL_OES:
         {
             // Convert the GLuint to TextureID
             gl::TextureID srcTextureID = {static_cast<GLuint>(srcName)};
@@ -7298,6 +7313,7 @@ void FrameCaptureShared::updateCopyImageSubData(CallCapture &call)
         case GL_TEXTURE_2D_ARRAY:
         case GL_TEXTURE_3D:
         case GL_TEXTURE_CUBE_MAP:
+        case GL_TEXTURE_EXTERNAL_OES:
         {
             // Convert the GLuint to TextureID
             gl::TextureID dstTextureID = {static_cast<GLuint>(dstName)};
@@ -7439,12 +7455,6 @@ void FrameCaptureShared::maybeOverrideEntryPoint(const gl::Context *context,
         case EntryPoint::GLMapBufferRangeEXT:
         {
             captureCustomMapBufferFromContext(context, "MapBufferRangeEXT", inCall, outCalls);
-            break;
-        }
-        case EntryPoint::GLMapBuffer:
-        {
-            // Currently desktop GL is not implemented.
-            UNREACHABLE();
             break;
         }
         case EntryPoint::GLMapBufferOES:
@@ -7812,8 +7822,6 @@ void FrameCaptureShared::maybeCapturePreCallUpdates(
 
         case EntryPoint::GLBindBufferBase:
         case EntryPoint::GLBindBufferRange:
-        case EntryPoint::GLBindBuffersBase:
-        case EntryPoint::GLBindBuffersRange:
             if (isCaptureActive())
             {
                 WARN() << "Indexed buffer binding changed during capture, Reset doesn't handle it "
@@ -8011,13 +8019,6 @@ void FrameCaptureShared::maybeCapturePreCallUpdates(
             break;
         }
 
-        case EntryPoint::GLCompressedTexImage1D:
-        case EntryPoint::GLCompressedTexSubImage1D:
-        {
-            UNIMPLEMENTED();
-            break;
-        }
-
         case EntryPoint::GLDeleteTextures:
         {
             // Free any TextureLevelDataMap entries being tracked for this texture
@@ -8041,7 +8042,6 @@ void FrameCaptureShared::maybeCapturePreCallUpdates(
             break;
         }
 
-        case EntryPoint::GLMapBuffer:
         case EntryPoint::GLMapBufferOES:
         {
             gl::BufferBinding target =
@@ -8063,12 +8063,6 @@ void FrameCaptureShared::maybeCapturePreCallUpdates(
                 context->getShareGroup()->getFrameCaptureShared();
             frameCaptureShared->trackBufferMapping(context, &call, buffer->id(), buffer, offset,
                                                    length, writable, false);
-            break;
-        }
-
-        case EntryPoint::GLUnmapNamedBuffer:
-        {
-            UNIMPLEMENTED();
             break;
         }
 
@@ -8424,9 +8418,15 @@ void FrameCaptureShared::maybeGenResourceOnBind(const gl::Context *context, Call
 
         std::stringstream updateFuncNameStr;
         updateFuncNameStr << "Set" << resourceName << "ID";
-        std::string updateFuncName = updateFuncNameStr.str();
-
         ParamBuffer params;
+        if (IsTrackedPerContext(resourceIDType))
+        {
+            // TODO (https://issuetracker.google.com/169868803) The '2' version can be removed after
+            // all context-local objects are tracked per-context
+            updateFuncNameStr << "2";
+            params.addValueParam("contextID", ParamType::TGLuint, context->id().value);
+        }
+        std::string updateFuncName = updateFuncNameStr.str();
         params.addValueParam("id", ParamType::TGLuint, id.value);
         mFrameCalls.emplace_back(updateFuncName, std::move(params));
     }
@@ -8953,10 +8953,9 @@ void FrameCaptureShared::runMidExecutionCapture(gl::Context *mainContext)
 
     const gl::State &contextState = mainContext->getState();
     gl::State mainContextReplayState(
-        nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, contextState.getClientType(),
-        contextState.getClientVersion(), contextState.getProfileMask(), false, true, true, true,
-        false, EGL_CONTEXT_PRIORITY_MEDIUM_IMG, contextState.hasRobustAccess(),
-        contextState.hasProtectedContent(), false);
+        nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, contextState.getClientVersion(),
+        false, true, true, true, false, EGL_CONTEXT_PRIORITY_MEDIUM_IMG,
+        contextState.hasRobustAccess(), contextState.hasProtectedContent(), false);
     mainContextReplayState.initializeForCapture(mainContext);
 
     CaptureShareGroupMidExecutionSetup(mainContext, &mShareGroupSetupCalls, &mResourceTracker,
@@ -8998,12 +8997,11 @@ void FrameCaptureShared::runMidExecutionCapture(gl::Context *mainContext)
         else
         {
             const gl::State &shareContextState = shareContext.second->getState();
-            gl::State auxContextReplayState(
-                nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
-                shareContextState.getClientType(), shareContextState.getClientVersion(),
-                shareContextState.getProfileMask(), false, true, true, true, false,
-                EGL_CONTEXT_PRIORITY_MEDIUM_IMG, shareContextState.hasRobustAccess(),
-                shareContextState.hasProtectedContent(), false);
+            gl::State auxContextReplayState(nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+                                            shareContextState.getClientVersion(), false, true, true,
+                                            true, false, EGL_CONTEXT_PRIORITY_MEDIUM_IMG,
+                                            shareContextState.hasRobustAccess(),
+                                            shareContextState.hasProtectedContent(), false);
             auxContextReplayState.initializeForCapture(shareContext.second);
 
             egl::Error error = shareContext.second->makeCurrent(display, draw, read);

@@ -48,6 +48,7 @@
 #include "Page.h"
 #include "PageGroup.h"
 #include "RenderLayer.h"
+#include "RenderLayerInlines.h"
 #include "RenderVideo.h"
 #include "RenderView.h"
 #include "Settings.h"
@@ -491,7 +492,7 @@ const Logger& MediaControlTextTrackContainerElement::logger() const
     return *m_logger;
 }
 
-const void* MediaControlTextTrackContainerElement::logIdentifier() const
+uint64_t MediaControlTextTrackContainerElement::logIdentifier() const
 {
     if (!m_logIdentifier && m_mediaElement)
         m_logIdentifier = m_mediaElement->logIdentifier();

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (c) 2021-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -79,6 +79,7 @@ std::variant<SuccessfulCheck, FailedCheck> staticCheck(const String& wgsl, const
     RUN_PASS(buildCallGraph, shaderModule);
     CHECK_PASS(validateIO, shaderModule);
     CHECK_PASS(validateVisibility, shaderModule);
+    RUN_PASS(mangleNames, shaderModule);
 
     Vector<Warning> warnings { };
     return std::variant<SuccessfulCheck, FailedCheck>(std::in_place_type<SuccessfulCheck>, WTFMove(warnings), WTFMove(shaderModule));
@@ -104,7 +105,6 @@ inline std::variant<PrepareResult, Error> prepareImpl(ShaderModule& shaderModule
 
         HashMap<String, Reflection::EntryPointInformation> entryPoints;
 
-        RUN_PASS(mangleNames, shaderModule);
         RUN_PASS(insertBoundsChecks, shaderModule);
         RUN_PASS(rewritePointers, shaderModule);
         RUN_PASS(rewriteEntryPoints, shaderModule, pipelineLayouts);
@@ -120,16 +120,18 @@ inline std::variant<PrepareResult, Error> prepareImpl(ShaderModule& shaderModule
     return result;
 }
 
-String generate(ShaderModule& shaderModule, PrepareResult& prepareResult, HashMap<String, ConstantValue>& constantValues)
+std::variant<String, Error> generate(ShaderModule& shaderModule, PrepareResult& prepareResult, HashMap<String, ConstantValue>& constantValues)
 {
     PhaseTimes phaseTimes;
     String result;
+    if (auto maybeError = shaderModule.validateOverrides(constantValues))
+        return { *maybeError };
     {
         PhaseTimer phaseTimer("generateMetalCode", phaseTimes);
         result = Metal::generateMetalCode(shaderModule, prepareResult, constantValues);
     }
     logPhaseTimes(phaseTimes);
-    return result;
+    return { result };
 }
 
 std::variant<PrepareResult, Error> prepare(ShaderModule& ast, const HashMap<String, PipelineLayout*>& pipelineLayouts)
@@ -151,9 +153,11 @@ std::optional<ConstantValue> evaluate(const AST::Expression& expression, const H
     auto* maybeIdentifierExpression = dynamicDowncast<const AST::IdentifierExpression>(expression);
     if (!maybeIdentifierExpression)
         return std::nullopt;
-    auto constantValue = constants.get(maybeIdentifierExpression->identifier());
-    const_cast<AST::Expression&>(expression).setConstantValue(constantValue);
-    return constantValue;
+    auto it = constants.find(maybeIdentifierExpression->identifier());
+    if (it == constants.end())
+        return std::nullopt;
+    const_cast<AST::Expression&>(expression).setConstantValue(it->value);
+    return it->value;
 }
 
 }

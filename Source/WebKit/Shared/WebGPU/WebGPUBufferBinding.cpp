@@ -37,9 +37,7 @@ namespace WebKit::WebGPU {
 
 std::optional<BufferBinding> ConvertToBackingContext::convertToBacking(const WebCore::WebGPU::BufferBinding& bufferBinding)
 {
-    auto buffer = convertToBacking(bufferBinding.buffer);
-    if (!buffer)
-        return std::nullopt;
+    auto buffer = convertToBacking(bufferBinding.protectedBuffer().get());
 
     return { { buffer, bufferBinding.offset, bufferBinding.size } };
 }

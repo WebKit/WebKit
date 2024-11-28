@@ -27,7 +27,7 @@
 #include "WPEToplevelDRM.h"
 
 #include "WPEDisplayDRMPrivate.h"
-#include "WPEMonitorDRMPrivate.h"
+#include "WPEScreenDRMPrivate.h"
 #include <wtf/glib/WTFGType.h>
 
 /**
@@ -44,18 +44,18 @@ static void wpeToplevelDRMConstructed(GObject* object)
 
     auto* toplevel = WPE_TOPLEVEL(object);
     auto* display = WPE_DISPLAY_DRM(wpe_toplevel_get_display(toplevel));
-    auto* monitor = wpeDisplayDRMGetMonitor(display);
-    auto* mode = wpeMonitorDRMGetMode(WPE_MONITOR_DRM(monitor));
-    double scale = wpe_monitor_get_scale(monitor);
+    auto* screen = wpeDisplayDRMGetScreen(display);
+    auto* mode = wpeScreenDRMGetMode(WPE_SCREEN_DRM(screen));
+    double scale = wpe_screen_get_scale(screen);
     wpe_toplevel_resized(toplevel, mode->hdisplay / scale, mode->vdisplay / scale);
     wpe_toplevel_scale_changed(toplevel, scale);
     wpe_toplevel_state_changed(toplevel, static_cast<WPEToplevelState>(WPE_TOPLEVEL_STATE_FULLSCREEN | WPE_TOPLEVEL_STATE_ACTIVE));
 }
 
-static WPEMonitor* wpeToplevelDRMGetMonitor(WPEToplevel* toplevel)
+static WPEScreen* wpeToplevelDRMGetScreen(WPEToplevel* toplevel)
 {
     if (auto* display = wpe_toplevel_get_display(toplevel))
-        return wpeDisplayDRMGetMonitor(WPE_DISPLAY_DRM(display));
+        return wpeDisplayDRMGetScreen(WPE_DISPLAY_DRM(display));
     return nullptr;
 }
 
@@ -65,7 +65,7 @@ static void wpe_toplevel_drm_class_init(WPEToplevelDRMClass* toplevelDRMClass)
     objectClass->constructed = wpeToplevelDRMConstructed;
 
     WPEToplevelClass* toplevelClass = WPE_TOPLEVEL_CLASS(toplevelDRMClass);
-    toplevelClass->get_monitor = wpeToplevelDRMGetMonitor;
+    toplevelClass->get_screen = wpeToplevelDRMGetScreen;
 }
 
 /**

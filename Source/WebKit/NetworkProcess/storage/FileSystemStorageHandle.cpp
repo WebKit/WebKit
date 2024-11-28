@@ -45,7 +45,7 @@ constexpr uint64_t defaultCapacityStep = 128 * MB;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(FileSystemStorageHandle);
 
-std::unique_ptr<FileSystemStorageHandle> FileSystemStorageHandle::create(FileSystemStorageManager& manager, Type type, String&& path, String&& name)
+RefPtr<FileSystemStorageHandle> FileSystemStorageHandle::create(FileSystemStorageManager& manager, Type type, String&& path, String&& name)
 {
     bool canAccess = false;
     switch (type) {
@@ -65,7 +65,7 @@ std::unique_ptr<FileSystemStorageHandle> FileSystemStorageHandle::create(FileSys
     if (!canAccess)
         return nullptr;
 
-    return std::unique_ptr<FileSystemStorageHandle>(new FileSystemStorageHandle(manager, type, WTFMove(path), WTFMove(name)));
+    return adoptRef(*new FileSystemStorageHandle(manager, type, WTFMove(path), WTFMove(name)));
 }
 
 FileSystemStorageHandle::FileSystemStorageHandle(FileSystemStorageManager& manager, Type type, String&& path, String&& name)
@@ -79,17 +79,22 @@ FileSystemStorageHandle::FileSystemStorageHandle(FileSystemStorageManager& manag
 
 void FileSystemStorageHandle::close()
 {
-    if (!m_manager)
+    RefPtr manager = m_manager.get();
+    if (!manager)
         return;
 
     if (m_activeSyncAccessHandle)
         closeSyncAccessHandle(m_activeSyncAccessHandle->identifier);
-    m_manager->closeHandle(*this);
+    manager->closeHandle(*this);
 }
 
 bool FileSystemStorageHandle::isSameEntry(WebCore::FileSystemHandleIdentifier identifier)
 {
-    auto path = m_manager->getPath(identifier);
+    RefPtr manager = m_manager.get();
+    if (!manager)
+        return false;
+
+    auto path = manager->getPath(identifier);
     if (path.isEmpty())
         return false;
 
@@ -110,14 +115,15 @@ Expected<WebCore::FileSystemHandleIdentifier, FileSystemStorageError> FileSystem
     if (m_type != FileSystemStorageHandle::Type::Directory)
         return makeUnexpected(FileSystemStorageError::TypeMismatch);
 
-    if (!m_manager)
+    RefPtr manager = m_manager.get();
+    if (!manager)
         return makeUnexpected(FileSystemStorageError::Unknown);
 
     if (!isValidFileName(m_path, name))
         return makeUnexpected(FileSystemStorageError::InvalidName);
 
     auto path = FileSystem::pathByAppendingComponent(m_path, name);
-    return m_manager->createHandle(connection, type, WTFMove(path), WTFMove(name), createIfNecessary);
+    return manager->createHandle(connection, type, WTFMove(path), WTFMove(name), createIfNecessary);
 }
 
 Expected<WebCore::FileSystemHandleIdentifier, FileSystemStorageError> FileSystemStorageHandle::getFileHandle(IPC::Connection::UniqueID connection, String&& name, bool createIfNecessary)
@@ -168,10 +174,11 @@ std::optional<FileSystemStorageError> FileSystemStorageHandle::removeEntry(const
 
 Expected<Vector<String>, FileSystemStorageError> FileSystemStorageHandle::resolve(WebCore::FileSystemHandleIdentifier identifier)
 {
-    if (!m_manager)
+    RefPtr manager = m_manager.get();
+    if (!manager)
         return makeUnexpected(FileSystemStorageError::Unknown);
 
-    auto path = m_manager->getPath(identifier);
+    auto path = manager->getPath(identifier);
     if (path.isEmpty())
         return makeUnexpected(FileSystemStorageError::Unknown);
 
@@ -184,10 +191,11 @@ Expected<Vector<String>, FileSystemStorageError> FileSystemStorageHandle::resolv
 
 Expected<FileSystemSyncAccessHandleInfo, FileSystemStorageError> FileSystemStorageHandle::createSyncAccessHandle()
 {
-    if (!m_manager)
+    RefPtr manager = m_manager.get();
+    if (!manager)
         return makeUnexpected(FileSystemStorageError::Unknown);
 
-    bool acquired = m_manager->acquireLockForFile(m_path, identifier());
+    bool acquired = manager->acquireLockForFile(m_path, identifier());
     if (!acquired)
         return makeUnexpected(FileSystemStorageError::InvalidState);
 
@@ -212,10 +220,11 @@ std::optional<FileSystemStorageError> FileSystemStorageHandle::closeSyncAccessHa
     if (!m_activeSyncAccessHandle || m_activeSyncAccessHandle->identifier != accessHandleIdentifier)
         return FileSystemStorageError::Unknown;
 
-    if (!m_manager)
+    RefPtr manager = m_manager.get();
+    if (!manager)
         return FileSystemStorageError::Unknown;
 
-    m_manager->releaseLockForFile(m_path, identifier());
+    manager->releaseLockForFile(m_path, identifier());
     m_activeSyncAccessHandle = std::nullopt;
 
     return std::nullopt;
@@ -236,24 +245,29 @@ Expected<std::pair<WebCore::FileSystemHandleIdentifier, bool>, FileSystemStorage
     if (!result)
         return makeUnexpected(result.error());
 
-    auto resultType = m_manager->getType(result.value());
+    RefPtr manager = m_manager.get();
+    if (!manager)
+        return makeUnexpected(FileSystemStorageError::Unknown);
+
+    auto resultType = manager->getType(result.value());
     ASSERT(resultType != FileSystemStorageHandle::Type::Any);
     return std::pair { result.value(), resultType == FileSystemStorageHandle::Type::Directory };
 }
 
 std::optional<FileSystemStorageError> FileSystemStorageHandle::move(WebCore::FileSystemHandleIdentifier destinationIdentifier, const String& newName)
 {
-    if (!m_manager)
+    RefPtr manager = m_manager.get();
+    if (!manager)
         return FileSystemStorageError::Unknown;
 
     // Do not move file if there is ongoing operation.
     if (m_activeSyncAccessHandle)
         return FileSystemStorageError::AccessHandleActive;
 
-    if (m_manager->getType(destinationIdentifier) != Type::Directory)
+    if (manager->getType(destinationIdentifier) != Type::Directory)
         return FileSystemStorageError::TypeMismatch;
 
-    auto path = m_manager->getPath(destinationIdentifier);
+    auto path = manager->getPath(destinationIdentifier);
     if (path.isEmpty())
         return FileSystemStorageError::Unknown;
 
@@ -301,7 +315,8 @@ void FileSystemStorageHandle::requestNewCapacityForSyncAccessHandle(WebCore::Fil
     if (newCapacity <= currentCapacity)
         return completionHandler(currentCapacity);
 
-    if (!m_manager)
+    RefPtr manager = m_manager.get();
+    if (!manager)
         return completionHandler(std::nullopt);
 
     if (newCapacity < defaultInitialCapacity)
@@ -311,7 +326,7 @@ void FileSystemStorageHandle::requestNewCapacityForSyncAccessHandle(WebCore::Fil
     else
         newCapacity = defaultCapacityStep * ((newCapacity / defaultCapacityStep) + 1);
 
-    m_manager->requestSpace(newCapacity - currentCapacity, [this, weakThis = WeakPtr { *this }, accessHandleIdentifier, newCapacity, completionHandler = WTFMove(completionHandler)](bool granted) mutable {
+    manager->requestSpace(newCapacity - currentCapacity, [this, weakThis = WeakPtr { *this }, accessHandleIdentifier, newCapacity, completionHandler = WTFMove(completionHandler)](bool granted) mutable {
         if (!weakThis)
             return completionHandler(std::nullopt);
 

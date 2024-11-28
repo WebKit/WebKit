@@ -62,7 +62,8 @@ public:
 
     virtual ~RemotePresentationContext();
 
-    const SharedPreferencesForWebProcess& sharedPreferencesForWebProcess() const { return m_gpu->sharedPreferencesForWebProcess(); }
+    // FIXME: Remove SUPPRESS_UNCOUNTED_ARG once https://github.com/llvm/llvm-project/pull/111198 lands.
+    SUPPRESS_UNCOUNTED_ARG std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess() const { return m_gpu->sharedPreferencesForWebProcess(); }
 
     void stopListeningForIPC();
 
@@ -77,14 +78,18 @@ private:
     RemotePresentationContext& operator=(RemotePresentationContext&&) = delete;
 
     WebCore::WebGPU::PresentationContext& backing() { return m_backing; }
+    Ref<WebCore::WebGPU::PresentationContext> protectedBacking();
+    Ref<IPC::StreamServerConnection> protectedStreamConnection() const;
+    Ref<WebGPU::ObjectHeap> protectedObjectHeap() const;
+    Ref<RemoteGPU> protectedGPU() const { return m_gpu.get(); }
 
     void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;
 
     void configure(const WebGPU::CanvasConfiguration&);
     void unconfigure();
-    void present();
+    void present(uint32_t frameIndex);
 
-    void getCurrentTexture(WebGPUIdentifier);
+    void getCurrentTexture(WebGPUIdentifier, uint32_t frameIndex);
 
     Ref<WebCore::WebGPU::PresentationContext> m_backing;
     WeakRef<WebGPU::ObjectHeap> m_objectHeap;

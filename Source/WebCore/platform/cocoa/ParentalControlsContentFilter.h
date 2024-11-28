@@ -28,6 +28,7 @@
 #include "PlatformContentFilter.h"
 #include <wtf/Compiler.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/UniqueRef.h>
 
 OBJC_CLASS NSData;
@@ -36,6 +37,7 @@ OBJC_CLASS WebFilterEvaluator;
 namespace WebCore {
 
 class ParentalControlsContentFilter final : public PlatformContentFilter {
+    WTF_MAKE_TZONE_ALLOCATED(ParentalControlsContentFilter);
     friend UniqueRef<ParentalControlsContentFilter> WTF::makeUniqueRefWithoutFastMallocCheck<ParentalControlsContentFilter>();
 
 public:

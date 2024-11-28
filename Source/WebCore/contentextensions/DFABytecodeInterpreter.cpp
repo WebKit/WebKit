@@ -31,6 +31,8 @@
 
 #if ENABLE(CONTENT_EXTENSIONS)
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore::ContentExtensions {
 
 template <typename IntType>
@@ -405,5 +407,7 @@ auto DFABytecodeInterpreter::interpret(const String& urlString, ResourceFlags fl
 }
 
 } // namespace WebCore::ContentExtensions
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ENABLE(CONTENT_EXTENSIONS)

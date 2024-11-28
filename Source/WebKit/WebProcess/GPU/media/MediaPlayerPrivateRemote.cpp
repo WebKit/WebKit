@@ -67,10 +67,12 @@
 
 #if USE(NICOSIA)
 #include <WebCore/NicosiaPlatformLayer.h>
+#include <WebCore/TextureMapperPlatformLayerProxy.h>
 #elif USE(COORDINATED_GRAPHICS)
 #include <WebCore/TextureMapperPlatformLayerProxyProvider.h>
 #elif USE(TEXTURE_MAPPER)
 #include <WebCore/TextureMapperPlatformLayer.h>
+#include <WebCore/TextureMapperPlatformLayerProxy.h>
 #endif
 
 #if ENABLE(ENCRYPTED_MEDIA)
@@ -133,7 +135,7 @@ MediaTime MediaPlayerPrivateRemote::TimeProgressEstimator::currentTimeWithLockHe
         return m_cachedMediaTime;
 
     auto calculatedCurrentTime = m_cachedMediaTime + MediaTime::createWithDouble(m_rate * (MonotonicTime::now() - m_cachedMediaTimeQueryTime).seconds());
-    return std::min(std::max(calculatedCurrentTime, MediaTime::zeroTime()), m_parent.duration());
+    return std::min(std::max(calculatedCurrentTime, MediaTime::zeroTime()), protectedParent()->duration());
 }
 
 MediaTime MediaPlayerPrivateRemote::TimeProgressEstimator::cachedTime() const
@@ -185,7 +187,6 @@ MediaPlayerPrivateRemote::MediaPlayerPrivateRemote(MediaPlayer* player, MediaPla
     , m_logIdentifier(player->mediaPlayerLogIdentifier())
 #endif
     , m_player(*player)
-    , m_mediaResourceLoader(player->createResourceLoader())
 #if PLATFORM(COCOA)
     , m_videoLayerManager(makeUniqueRef<VideoLayerManagerObjC>(logger(), logIdentifier()))
 #endif
@@ -203,7 +204,7 @@ MediaPlayerPrivateRemote::~MediaPlayerPrivateRemote()
 #if PLATFORM(COCOA)
     m_videoLayerManager->didDestroyVideoLayer();
 #endif
-    m_manager.deleteRemoteMediaPlayer(m_id);
+    protectedManager()->deleteRemoteMediaPlayer(m_id);
 
 #if ENABLE(WEB_AUDIO) && PLATFORM(COCOA)
     if (m_audioSourceProvider)
@@ -244,7 +245,7 @@ void MediaPlayerPrivateRemote::load(const URL& url, const ContentType& contentTy
 
         auto createExtension = [&] {
 #if HAVE(AUDIT_TOKEN)
-            if (auto auditToken = m_manager.gpuProcessConnection().auditToken()) {
+            if (auto auditToken = protectedManager()->gpuProcessConnection().auditToken()) {
                 if (auto createdHandle = SandboxExtension::createHandleForReadByAuditToken(fileSystemPath, auditToken.value())) {
                     handle = WTFMove(*createdHandle);
                     return true;
@@ -743,7 +744,7 @@ void MediaPlayerPrivateRemote::addRemoteAudioTrack(AudioTrackPrivateRemoteConfig
 
     m_audioTracks.erase(configuration.trackId);
 
-    auto addResult = m_audioTracks.emplace(configuration.trackId, AudioTrackPrivateRemote::create(m_manager.gpuProcessConnection(), m_id, WTFMove(configuration)));
+    auto addResult = m_audioTracks.emplace(configuration.trackId, AudioTrackPrivateRemote::create(protectedManager()->gpuProcessConnection(), m_id, WTFMove(configuration)));
     ASSERT(addResult.second);
 
 #if ENABLE(MEDIA_SOURCE)
@@ -793,7 +794,7 @@ void MediaPlayerPrivateRemote::addRemoteTextTrack(TextTrackPrivateRemoteConfigur
 
     m_textTracks.erase(configuration.trackId);
 
-    auto addResult = m_textTracks.emplace(configuration.trackId, TextTrackPrivateRemote::create(m_manager.gpuProcessConnection(), m_id, WTFMove(configuration)));
+    auto addResult = m_textTracks.emplace(configuration.trackId, TextTrackPrivateRemote::create(protectedManager()->gpuProcessConnection(), m_id, WTFMove(configuration)));
     ASSERT(addResult.second);
 
 #if ENABLE(MEDIA_SOURCE)
@@ -957,7 +958,7 @@ void MediaPlayerPrivateRemote::addRemoteVideoTrack(VideoTrackPrivateRemoteConfig
 
     m_videoTracks.erase(configuration.trackId);
 
-    auto addResult = m_videoTracks.emplace(configuration.trackId, VideoTrackPrivateRemote::create(m_manager.gpuProcessConnection(), m_id, WTFMove(configuration)));
+    auto addResult = m_videoTracks.emplace(configuration.trackId, VideoTrackPrivateRemote::create(protectedManager()->gpuProcessConnection(), m_id, WTFMove(configuration)));
     ASSERT(addResult.second);
 
 #if ENABLE(MEDIA_SOURCE)
@@ -1007,7 +1008,15 @@ void MediaPlayerPrivateRemote::load(const URL& url, const ContentType& contentTy
 {
     if (m_remoteEngineIdentifier == MediaPlayerEnums::MediaEngineIdentifier::AVFoundationMSE
         || (platformStrategies()->mediaStrategy().mockMediaSourceEnabled() && m_remoteEngineIdentifier == MediaPlayerEnums::MediaEngineIdentifier::MockMSE)) {
-        auto identifier = RemoteMediaSourceIdentifier::generate();
+
+        RefPtr mediaSourcePrivate = downcast<MediaSourcePrivateRemote>(client.mediaSourcePrivate());
+        RemoteMediaSourceIdentifier identifier = [&] {
+            if (mediaSourcePrivate) {
+                mediaSourcePrivate->setPlayer(this);
+                return mediaSourcePrivate->identifier();
+            }
+            return RemoteMediaSourceIdentifier::generate();
+        }();
         connection().sendWithAsyncReply(Messages::RemoteMediaPlayerProxy::LoadMediaSource(url, contentType, DeprecatedGlobalSettings::webMParserEnabled(), identifier), [weakThis = ThreadSafeWeakPtr { *this }, this](RemoteMediaPlayerConfiguration&& configuration) {
             RefPtr protectedThis = weakThis.get();
             if (!protectedThis)
@@ -1020,8 +1029,12 @@ void MediaPlayerPrivateRemote::load(const URL& url, const ContentType& contentTy
             updateConfiguration(WTFMove(configuration));
             player->mediaEngineUpdated();
         }, m_id);
-        m_mediaSourcePrivate = MediaSourcePrivateRemote::create(m_manager.gpuProcessConnection(), identifier, m_manager.typeCache(m_remoteEngineIdentifier), *this, client);
-
+        if (mediaSourcePrivate) {
+            m_mediaSourcePrivate = WTFMove(mediaSourcePrivate);
+            // MediaSource can only be re-opened after RemoteMediaPlayerProxy::LoadMediaSource has been called.
+            client.reOpen();
+        } else
+            m_mediaSourcePrivate = MediaSourcePrivateRemote::create(protectedManager()->gpuProcessConnection(), identifier, protectedManager()->typeCache(m_remoteEngineIdentifier), *this, client);
         return;
     }
 
@@ -1218,35 +1231,21 @@ void MediaPlayerPrivateRemote::paintCurrentFrameInContext(GraphicsContext& conte
     if (context.paintingDisabled())
         return;
 
-    auto nativeImage = nativeImageForCurrentTime();
-    if (!nativeImage)
+    RefPtr videoFrame = videoFrameForCurrentTime();
+    if (!videoFrame)
         return;
-    context.drawNativeImage(*nativeImage, rect, FloatRect { { }, nativeImage->size() });
+    context.drawVideoFrame(*videoFrame, rect, ImageOrientation::Orientation::None, false);
 }
-
-#if !USE(AVFOUNDATION)
-bool MediaPlayerPrivateRemote::copyVideoTextureToPlatformTexture(WebCore::GraphicsContextGL*, PlatformGLObject, GCGLenum, GCGLint, GCGLenum, GCGLenum, GCGLenum, bool, bool)
-{
-    notImplemented();
-    return false;
-}
-#endif
-
-#if PLATFORM(COCOA) && !HAVE(AVSAMPLEBUFFERDISPLAYLAYER_COPYDISPLAYEDPIXELBUFFER)
-void MediaPlayerPrivateRemote::willBeAskedToPaintGL()
-{
-    if (m_hasBeenAskedToPaintGL)
-        return;
-
-    m_hasBeenAskedToPaintGL = true;
-    connection().send(Messages::RemoteMediaPlayerProxy::WillBeAskedToPaintGL(), m_id);
-}
-#endif
 
 RefPtr<WebCore::VideoFrame> MediaPlayerPrivateRemote::videoFrameForCurrentTime()
 {
     if (readyState() < MediaPlayer::ReadyState::HaveCurrentData)
         return { };
+
+#if PLATFORM(COCOA)
+    if (m_videoFrameGatheredWithVideoFrameMetadata)
+        return m_videoFrameGatheredWithVideoFrameMetadata;
+#endif
 
     auto sendResult = connection().sendSync(Messages::RemoteMediaPlayerProxy::VideoFrameForCurrentTimeIfChanged(), m_id);
     if (!sendResult.succeeded())
@@ -1399,7 +1398,7 @@ AudioSourceProvider* MediaPlayerPrivateRemote::audioSourceProvider()
 #endif
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
-std::unique_ptr<LegacyCDMSession> MediaPlayerPrivateRemote::createSession(const String&, LegacyCDMSessionClient&)
+RefPtr<LegacyCDMSession> MediaPlayerPrivateRemote::createSession(const String&, LegacyCDMSessionClient&)
 {
     notImplemented();
     return nullptr;
@@ -1410,11 +1409,8 @@ void MediaPlayerPrivateRemote::setCDM(LegacyCDM* cdm)
     if (!cdm)
         return;
 
-    auto remoteCDM = WebProcess::singleton().legacyCDMFactory().findCDM(cdm->cdmPrivate());
-    if (!remoteCDM)
-        return;
-
-    remoteCDM->setPlayerId(m_id);
+    if (RefPtr remoteCDM = WebProcess::singleton().protectedLegacyCDMFactory()->findCDM(cdm->cdmPrivate()))
+        remoteCDM->setPlayerId(m_id);
 }
 
 void MediaPlayerPrivateRemote::setCDMSession(LegacyCDMSession* session)
@@ -1653,7 +1649,9 @@ void MediaPlayerPrivateRemote::requestResource(RemoteMediaResourceIdentifier rem
     assertIsMainRunLoop();
 
     ASSERT(!m_mediaResources.contains(remoteMediaResourceIdentifier));
-    auto resource = m_mediaResourceLoader->requestResource(WTFMove(request), options);
+
+    RefPtr player = m_player.get();
+    RefPtr resource = player ? player->mediaResourceLoader()->requestResource(WTFMove(request), options) : nullptr;
 
     if (!resource) {
         // FIXME: Get the error from MediaResourceLoader::requestResource.
@@ -1667,7 +1665,12 @@ void MediaPlayerPrivateRemote::requestResource(RemoteMediaResourceIdentifier rem
 
 void MediaPlayerPrivateRemote::sendH2Ping(const URL& url, CompletionHandler<void(Expected<WTF::Seconds, WebCore::ResourceError>&&)>&& completionHandler)
 {
-    m_mediaResourceLoader->sendH2Ping(url, WTFMove(completionHandler));
+    RefPtr player = m_player.get();
+    if (!player) {
+        completionHandler(makeUnexpected(internalError(url)));
+        return;
+    }
+    player->mediaResourceLoader()->sendH2Ping(url, WTFMove(completionHandler));
 }
 
 void MediaPlayerPrivateRemote::removeResource(RemoteMediaResourceIdentifier remoteMediaResourceIdentifier)
@@ -1833,9 +1836,20 @@ bool MediaPlayerPrivateRemote::supportsLinearMediaPlayer() const
 }
 #endif
 
+void MediaPlayerPrivateRemote::audioOutputDeviceChanged()
+{
+    if (RefPtr player = m_player.get())
+        protectedConnection()->send(Messages::RemoteMediaPlayerProxy::AudioOutputDeviceChanged { player->audioOutputDeviceId() }, m_id);
+}
+
 void MediaPlayerPrivateRemote::commitAllTransactions(CompletionHandler<void()>&& completionHandler)
 {
     completionHandler();
+}
+
+Ref<RemoteMediaPlayerManager> MediaPlayerPrivateRemote::protectedManager() const
+{
+    return m_manager.get().releaseNonNull();
 }
 
 } // namespace WebKit

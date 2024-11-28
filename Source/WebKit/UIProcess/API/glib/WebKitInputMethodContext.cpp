@@ -54,7 +54,7 @@ enum {
     N_PROPERTIES,
 };
 
-static GParamSpec* sObjProperties[N_PROPERTIES] = { nullptr, };
+static std::array<GParamSpec*, N_PROPERTIES> sObjProperties;
 
 enum {
     PREEDIT_STARTED,
@@ -142,7 +142,7 @@ struct _WebKitInputMethodContextPrivate {
     WebKitInputHints hints;
 };
 
-static guint signals[LAST_SIGNAL] = { 0, };
+static std::array<unsigned, LAST_SIGNAL> signals;
 
 WEBKIT_DEFINE_ABSTRACT_TYPE(WebKitInputMethodContext, webkit_input_method_context, G_TYPE_OBJECT)
 
@@ -250,7 +250,7 @@ static void webkit_input_method_context_class_init(WebKitInputMethodContextClass
             WEBKIT_INPUT_HINT_NONE,
             WEBKIT_PARAM_READWRITE);
 
-    g_object_class_install_properties(gObjectClass, N_PROPERTIES, sObjProperties);
+    g_object_class_install_properties(gObjectClass, N_PROPERTIES, sObjProperties.data());
 
     /**
      * WebKitInputMethodContext::preedit-started:

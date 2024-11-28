@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -95,15 +95,6 @@ OBJC_CLASS WKView;
 #endif
 #endif
 
-namespace WebKit {
-class PageClient;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::PageClient> : std::true_type { };
-}
-
 namespace API {
 class Attachment;
 class HitTestResult;
@@ -141,7 +132,6 @@ struct AppHighlight;
 struct DataDetectorElementInfo;
 struct DictionaryPopupInfo;
 struct TextIndicatorData;
-struct ViewportAttributes;
 struct ShareDataWithParsedURL;
 
 template <typename> class RectEdges;
@@ -178,6 +168,7 @@ using SessionID = WTF::UUID;
 
 namespace WebKit {
 
+enum class ColorControlSupportsAlpha : bool;
 enum class UndoOrRedo : bool;
 enum class ForceSoftwareCapturingViewportSnapshot : bool;
 enum class TapHandlingResult : uint8_t;
@@ -204,6 +195,7 @@ class WebProcessProxy;
 
 enum class ContinueUnsafeLoad : bool { No, Yes };
 
+struct EditorState;
 struct FocusedElementInformation;
 struct FrameInfoData;
 struct InteractionInformationAtPosition;
@@ -298,6 +290,7 @@ public:
     virtual void processDidExit() = 0;
     virtual void processWillSwap() { processDidExit(); }
     virtual void didRelaunchProcess() = 0;
+    virtual void processDidUpdateThrottleState() { }
     virtual void pageClosed() = 0;
 
     virtual void preferencesDidChange() = 0;
@@ -318,6 +311,10 @@ public:
     virtual void updatePDFHUDLocation(PDFPluginIdentifier, const WebCore::IntRect&) = 0;
     virtual void removePDFHUD(PDFPluginIdentifier) = 0;
     virtual void removeAllPDFHUDs() = 0;
+#endif
+
+#if ENABLE(PDF_PLUGIN) && PLATFORM(IOS_FAMILY)
+    virtual void pluginDidInstallPDFDocument(double initialScale) { };
 #endif
 
     virtual bool handleRunOpenPanel(WebPageProxy*, WebFrameProxy*, const FrameInfoData&, API::OpenPanelParameters*, WebOpenPanelResultListenerProxy*) { return false; }
@@ -345,7 +342,6 @@ public:
 
     virtual void setCursor(const WebCore::Cursor&) = 0;
     virtual void setCursorHiddenUntilMouseMoves(bool) = 0;
-    virtual void didChangeViewportProperties(const WebCore::ViewportAttributes&) = 0;
 
     virtual void registerEditCommand(Ref<WebEditCommandProxy>&&, UndoOrRedo) = 0;
     virtual void clearAllEditCommands() = 0;
@@ -353,7 +349,7 @@ public:
     virtual void executeUndoRedo(UndoOrRedo) = 0;
     virtual void wheelEventWasNotHandledByWebCore(const NativeWebWheelEvent&) = 0;
 #if PLATFORM(COCOA)
-    virtual void accessibilityWebProcessTokenReceived(std::span<const uint8_t>, WebCore::FrameIdentifier, pid_t) = 0;
+    virtual void accessibilityWebProcessTokenReceived(std::span<const uint8_t>, pid_t) = 0;
     virtual bool executeSavedCommandBySelector(const String& selector) = 0;
     virtual void updateSecureInputState() = 0;
     virtual void resetSecureInputState() = 0;
@@ -451,7 +447,7 @@ public:
 #endif
 
 #if ENABLE(INPUT_TYPE_COLOR)
-    virtual RefPtr<WebColorPicker> createColorPicker(WebPageProxy*, const WebCore::Color& initialColor, const WebCore::IntRect&, Vector<WebCore::Color>&&) = 0;
+    virtual RefPtr<WebColorPicker> createColorPicker(WebPageProxy*, const WebCore::Color& initialColor, const WebCore::IntRect&, ColorControlSupportsAlpha, Vector<WebCore::Color>&&) = 0;
 #endif
 
 #if ENABLE(DATALIST_ELEMENT)
@@ -494,7 +490,7 @@ public:
     virtual void performSwitchHapticFeedback() { }
 
 #if USE(DICTATION_ALTERNATIVES)
-    virtual WebCore::DictationContext addDictationAlternatives(PlatformTextAlternatives *) = 0;
+    virtual std::optional<WebCore::DictationContext> addDictationAlternatives(PlatformTextAlternatives *) = 0;
     virtual void replaceDictationAlternatives(PlatformTextAlternatives *, WebCore::DictationContext) = 0;
     virtual void removeDictationAlternatives(WebCore::DictationContext) = 0;
     virtual void showDictationAlternativeUI(const WebCore::FloatRect& boundingBoxOfDictatedText, WebCore::DictationContext) = 0;
@@ -542,9 +538,12 @@ public:
     virtual CocoaWindow *platformWindow() const = 0;
 #endif
 
+    virtual void reconcileEnclosingScrollViewContentOffset(EditorState&) { };
+
 #if PLATFORM(IOS_FAMILY)
     virtual void commitPotentialTapFailed() = 0;
     virtual void didGetTapHighlightGeometries(WebKit::TapIdentifier requestID, const WebCore::Color&, const Vector<WebCore::FloatQuad>& highlightedQuads, const WebCore::IntSize& topLeftRadius, const WebCore::IntSize& topRightRadius, const WebCore::IntSize& bottomLeftRadius, const WebCore::IntSize& bottomRightRadius, bool nodeHasBuiltInClickHandling) = 0;
+    virtual bool isPotentialTapInProgress() const = 0;
 
     virtual void couldNotRestorePageState() = 0;
     virtual void restorePageState(std::optional<WebCore::FloatPoint> scrollPosition, const WebCore::FloatPoint& scrollOrigin, const WebCore::FloatBoxExtent& obscuredInsetsOnSave, double scale) = 0;
@@ -567,8 +566,8 @@ public:
     virtual double minimumZoomScale() const = 0;
     virtual WebCore::FloatRect documentRect() const = 0;
     virtual void scrollingNodeScrollViewWillStartPanGesture(WebCore::ScrollingNodeID) = 0;
-    virtual void scrollingNodeScrollWillStartScroll(WebCore::ScrollingNodeID) = 0;
-    virtual void scrollingNodeScrollDidEndScroll(WebCore::ScrollingNodeID) = 0;
+    virtual void scrollingNodeScrollWillStartScroll(std::optional<WebCore::ScrollingNodeID>) = 0;
+    virtual void scrollingNodeScrollDidEndScroll(std::optional<WebCore::ScrollingNodeID>) = 0;
     virtual Vector<String> mimeTypesWithCustomContentProviders() = 0;
 
     virtual void hardwareKeyboardAvailabilityChanged() = 0;
@@ -695,6 +694,8 @@ public:
 
     virtual bool windowIsFrontWindowUnderMouse(const NativeWebMouseEvent&) { return false; }
 
+    virtual std::optional<float> computeAutomaticTopContentInset() { return std::nullopt; }
+
     virtual WebCore::UserInterfaceLayoutDirection userInterfaceLayoutDirection() = 0;
 
 #if USE(QUICK_LOOK)
@@ -758,7 +759,7 @@ public:
     virtual void writingToolsActiveWillChange() = 0;
     virtual void writingToolsActiveDidChange() = 0;
 
-    virtual void didEndPartialIntelligenceTextPonderingAnimation() = 0;
+    virtual void didEndPartialIntelligenceTextAnimation() = 0;
     virtual bool writingToolsTextReplacementsFinished() = 0;
 
     virtual void addTextAnimationForAnimationID(const WTF::UUID&, const WebCore::TextAnimationData&) = 0;

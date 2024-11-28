@@ -77,8 +77,7 @@ private:
         std::optional<Vector<BufferDynamicOffset>>&& dynamicOffsets) final;
 
     void setBindGroup(Index32, const BindGroup&,
-        const uint32_t* dynamicOffsetsArrayBuffer,
-        size_t dynamicOffsetsArrayBufferLength,
+        std::span<const uint32_t> dynamicOffsetsArrayBuffer,
         Size64 dynamicOffsetsDataStart,
         Size32 dynamicOffsetsDataLength) final;
 
@@ -89,6 +88,8 @@ private:
     RefPtr<RenderBundle> finish(const RenderBundleDescriptor&) final;
 
     void setLabelInternal(const String&) final;
+
+    Ref<ConvertToBackingContext> protectedConvertToBackingContext() const { return m_convertToBackingContext; }
 
     WebGPUPtr<WGPURenderBundleEncoder> m_backing;
     Ref<ConvertToBackingContext> m_convertToBackingContext;

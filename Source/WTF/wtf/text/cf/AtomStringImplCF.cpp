@@ -41,14 +41,14 @@ RefPtr<AtomStringImpl> AtomStringImpl::add(CFStringRef string)
     size_t length = CFStringGetLength(string);
 
     if (const LChar* ptr = byteCast<LChar>(CFStringGetCStringPtr(string, kCFStringEncodingISOLatin1)))
-        return add(std::span { ptr, length });
+        return add(unsafeMakeSpan(ptr, length));
 
     if (const UniChar* ptr = CFStringGetCharactersPtr(string))
-        return add(std::span { reinterpret_cast<const UChar*>(ptr), length });
+        return add(unsafeMakeSpan(reinterpret_cast<const UChar*>(ptr), length));
 
     Vector<UniChar, 1024> ucharBuffer(length);
     CFStringGetCharacters(string, CFRangeMake(0, length), ucharBuffer.data());
-    return add(std::span { reinterpret_cast<const UChar*>(ucharBuffer.data()), length });
+    return add(spanReinterpretCast<const UChar>(ucharBuffer.span()));
 }
 
 } // namespace WTF

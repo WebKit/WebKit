@@ -38,7 +38,6 @@ using SidebarViewControllerType = NSViewController;
 #if ENABLE(WK_WEB_EXTENSIONS_SIDEBAR)
 
 #include "APIObject.h"
-#include "CocoaImage.h"
 #include <wtf/Forward.h>
 #include <wtf/WeakHashSet.h>
 #include <wtf/WeakPtr.h>
@@ -82,8 +81,8 @@ public:
     void propertiesDidChange();
 
     /// `icon()` will return the overridden icon of this sidebar, or the icon of the first parent sidebar in which the icon is set
-    RetainPtr<CocoaImage> icon(CGSize);
-    void setIconsDictionary(NSDictionary *);
+    RefPtr<WebCore::Icon> icon(WebCore::FloatSize);
+    void setIconsDictionary(RefPtr<JSON::Object>);
 
     /// `title()` will return the overridden title of this sidebar, or the title of the first parent sidebar in which the title is set
     String title() const;
@@ -94,21 +93,23 @@ public:
 
     bool isOpen() const { return m_isOpen; }
     bool opensSidebar() { return !sidebarPath().isEmpty(); };
-    bool canProgrammaticallyOpenSidebar() const;
-    void openSidebarWhenReady();
-
-    bool canProgrammaticallyCloseSidebar() const;
-    void closeSidebarWhenReady();
 
     /// `sidebarPath()` will return the overriden path of this sidebar, or the path of the first parent sidebar in which the path is set
     String sidebarPath() const;
     void setSidebarPath(std::optional<String>);
 
+    /// Should be called when a user action will open the sidebar
     void willOpenSidebar();
     void willCloseSidebar();
 
+    /// Should be called when the sidebar will be displayed, regardless of whether this stems from a user action.
+    void sidebarWillAppear();
+    void sidebarWillDisappear();
+
     void addChild(WebExtensionSidebar const& child);
     void removeChild(WebExtensionSidebar const& child);
+
+    void didReceiveUserInteraction();
 
     RetainPtr<SidebarViewControllerType> viewController();
 
@@ -129,7 +130,7 @@ private:
 
     void reloadWebView();
 
-    std::optional<RetainPtr<NSDictionary>> m_iconsOverride;
+    std::optional<RefPtr<JSON::Object>> m_iconsOverride;
     std::optional<String> m_titleOverride;
     std::optional<String> m_sidebarPathOverride;
     std::optional<bool> m_isEnabled;
@@ -139,8 +140,6 @@ private:
     const std::optional<WeakPtr<WebExtensionWindow>> m_window;
 
     bool m_isOpen { false };
-    bool m_opensSidebarWhenReady { false };
-    bool m_sidebarOpened { false };
     const IsDefault m_isDefault { IsDefault::No };
 
     RetainPtr<WKWebView> m_webView;

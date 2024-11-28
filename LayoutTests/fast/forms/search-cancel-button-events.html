@@ -20,27 +20,34 @@ var changeEventCounter = 0;
 search.onchange = function() { changeEventCounter++; };
 search.oninput = function() { inputEventCounter++; };
 
-if (window.eventSender) {
-    debug('Initial state');
-    shouldBe('changeEventCounter', '0');
-    shouldBe('inputEventCounter', '0');
+onload = async () => {
+    if (!window.testRunner)
+        return;
 
-    debug('Click the cancel button');
-    eventSender.mouseMoveTo(search.offsetLeft + search.offsetWidth - 8, search.offsetTop + search.offsetHeight / 2);
-    eventSender.mouseDown();
-    eventSender.mouseUp();
-    shouldBe('search.value', '""');
-    shouldBe('changeEventCounter', '0');
-    shouldBe('inputEventCounter', '1');
+    testRunner.waitUntilDone();
+    if (window.eventSender) {
+        debug('Initial state');
+        shouldBe('changeEventCounter', '0');
+        shouldBe('inputEventCounter', '0');
 
-    debug('Focus on another field');
-    anotherInput.focus();
-    shouldBe('changeEventCounter', '1');
-    shouldBe('inputEventCounter', '1');
+        debug('Click the cancel button');
+        await eventSender.asyncMouseMoveTo(search.offsetLeft + search.offsetWidth - 8, search.offsetTop + search.offsetHeight / 2);
+        await eventSender.asyncMouseDown();
+        await eventSender.asyncMouseUp();
+        shouldBe('search.value', '""');
+        shouldBe('changeEventCounter', '0');
+        shouldBe('inputEventCounter', '1');
 
-    parent.innerHTML = '';
-} else {
-  document.getElementById('console').innerHTML = 'No eventSender';
+        debug('Focus on another field');
+        anotherInput.focus();
+        shouldBe('changeEventCounter', '1');
+        shouldBe('inputEventCounter', '1');
+
+        parent.innerHTML = '';
+    } else {
+        document.getElementById('console').innerHTML = 'No eventSender';
+    }
+    testRunner.notifyDone();
 }
 </script>
 <script src="../../resources/js-test-post.js"></script>

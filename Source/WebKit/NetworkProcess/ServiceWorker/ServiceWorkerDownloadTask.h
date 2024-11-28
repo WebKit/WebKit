@@ -66,6 +66,8 @@ private:
     ServiceWorkerDownloadTask(NetworkSession&, NetworkDataTaskClient&, WebSWServerToContextConnection&, WebCore::ServiceWorkerIdentifier, WebCore::SWServerConnectionIdentifier, WebCore::FetchIdentifier, const WebCore::ResourceRequest&, const WebCore::ResourceResponse& response, DownloadID);
     void startListeningForIPC();
 
+    Ref<NetworkProcess> protectedNetworkProcess() const;
+
     // IPC Message
     void didReceiveData(const IPC::SharedBufferReference&, uint64_t encodedDataLength);
     void didReceiveFormData(const IPC::FormDataReference&);

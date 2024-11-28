@@ -127,7 +127,7 @@ inline void add(Hasher& hasher, const QualifiedName::QualifiedNameImpl& impl)
 
 inline void add(Hasher& hasher, const QualifiedName& name)
 {
-    add(hasher, bitwise_cast<uintptr_t>(name.impl()));
+    add(hasher, std::bit_cast<uintptr_t>(name.impl()));
 }
 
 extern LazyNeverDestroyed<const QualifiedName> anyName;

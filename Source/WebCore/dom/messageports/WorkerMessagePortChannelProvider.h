@@ -53,7 +53,7 @@ private:
     WeakRef<WorkerOrWorkletGlobalScope> m_scope;
 
     uint64_t m_lastCallbackIdentifier { 0 };
-    HashMap<uint64_t, CompletionHandler<void(Vector<MessageWithMessagePorts>&&, Function<void()>&&)>> m_takeAllMessagesCallbacks;
+    UncheckedKeyHashMap<uint64_t, CompletionHandler<void(Vector<MessageWithMessagePorts>&&, Function<void()>&&)>> m_takeAllMessagesCallbacks;
 };
 
 } // namespace WebCore

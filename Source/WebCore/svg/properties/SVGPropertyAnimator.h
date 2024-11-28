@@ -29,11 +29,13 @@
 #include "ComputedStyleExtractor.h"
 #include "SVGAttributeAnimator.h"
 #include "SVGElement.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
     
 template<typename AnimationFunction>
 class SVGPropertyAnimator : public SVGAttributeAnimator {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(SVGPropertyAnimator);
 public:
     bool isDiscrete() const override { return m_function.isDiscrete(); }
 

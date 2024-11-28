@@ -29,6 +29,7 @@
 
 #if ENABLE(VIDEO) && USE(AVFOUNDATION)
 #include "InbandTextTrackPrivate.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -40,6 +41,7 @@ struct IncompleteMetaDataCue {
 #endif
 
 class InbandMetadataTextTrackPrivateAVF : public InbandTextTrackPrivate {
+    WTF_MAKE_TZONE_ALLOCATED(InbandMetadataTextTrackPrivateAVF);
 public:
     static Ref<InbandMetadataTextTrackPrivateAVF> create(Kind, TrackID, CueFormat);
 

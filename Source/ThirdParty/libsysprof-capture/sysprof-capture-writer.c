@@ -1697,7 +1697,7 @@ sysprof_capture_writer_add_allocation (SysprofCaptureWriter  *self,
 {
   SysprofCaptureAllocation *ev;
   size_t len;
-  unsigned int n_addrs;
+  int n_addrs;
 
   assert (self != NULL);
   assert (backtrace_func != NULL);
@@ -1706,6 +1706,9 @@ sysprof_capture_writer_add_allocation (SysprofCaptureWriter  *self,
   ev = (SysprofCaptureAllocation *)sysprof_capture_writer_allocate (self, &len);
   if (!ev)
     return false;
+
+  if ((n_addrs = backtrace_func (ev->addrs, MAX_UNWIND_DEPTH, backtrace_data)) < 0)
+    n_addrs = 0;
 
   sysprof_capture_writer_frame_init (&ev->frame,
                                      len,
@@ -1719,8 +1722,6 @@ sysprof_capture_writer_add_allocation (SysprofCaptureWriter  *self,
   ev->padding1 = 0;
   ev->tid = tid;
   ev->n_addrs = 0;
-
-  n_addrs = backtrace_func (ev->addrs, MAX_UNWIND_DEPTH, backtrace_data);
 
   if (n_addrs <= MAX_UNWIND_DEPTH)
     ev->n_addrs = n_addrs;

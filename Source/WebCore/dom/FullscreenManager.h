@@ -90,12 +90,6 @@ public:
     WEBCORE_EXPORT bool isAnimatingFullscreen() const;
     WEBCORE_EXPORT void setAnimatingFullscreen(bool);
 
-    enum class ResizeType : uint8_t {
-        DOMWindow           = 1 << 0,
-        VisualViewport      = 1 << 1,
-    };
-    void addPendingScheduledResize(ResizeType);
-
     void clear();
     void emptyEventQueue();
 
@@ -110,7 +104,7 @@ protected:
 private:
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const { return document().logger(); }
-    const void* logIdentifier() const { return m_logIdentifier; }
+    uint64_t logIdentifier() const { return m_logIdentifier; }
     ASCIILiteral logClassName() const { return "FullscreenManager"_s; }
     WTFLogChannel& logChannel() const;
 #endif
@@ -131,13 +125,11 @@ private:
     Deque<GCReachableRef<Node>> m_fullscreenChangeEventTargetQueue;
     Deque<GCReachableRef<Node>> m_fullscreenErrorEventTargetQueue;
 
-    OptionSet<ResizeType> m_pendingScheduledResize;
-
     bool m_areKeysEnabledInFullscreen { false };
     bool m_isAnimatingFullscreen { false };
 
 #if !RELEASE_LOG_DISABLED
-    const void* m_logIdentifier;
+    const uint64_t m_logIdentifier;
 #endif
 };
 

@@ -175,20 +175,46 @@ private:
                 if (node->op() == ArrayifyToStructure) {
                     set = node->structure();
                     ASSERT(!isCopyOnWrite(node->structure()->indexingMode()));
-                }
-                else {
+                } else {
                     set = node->structureSet();
                     if ((SpecCellCheck & SpecEmpty) && node->child1().useKind() == CellUse && m_state.forNode(node->child1()).m_type & SpecEmpty) {
                         m_insertionSet.insertNode(
                             indexInBlock, SpecNone, AssertNotEmpty, node->origin, Edge(node->child1().node(), UntypedUse));
                     }
                 }
+
                 if (value.m_structure.isSubsetOf(set)) {
                     m_interpreter.execute(indexInBlock); // Catch the fact that we may filter on cell.
                     node->remove(m_graph);
                     eliminated = true;
                     break;
                 }
+
+                if (node->op() == CheckStructure) {
+                    Edge incoming = node->child1();
+                    if (set.onlyStructure().get() == m_graph.m_vm.stringStructure.get()) {
+                        m_interpreter.execute(indexInBlock); // Catch the fact that we may filter on cell.
+                        node->remove(m_graph);
+                        m_insertionSet.insertCheck(indexInBlock + 1, node->origin, Edge(incoming.node(), StringUse));
+                        eliminated = true;
+                        break;
+                    }
+                    if (set.onlyStructure().get() == m_graph.m_vm.symbolStructure.get()) {
+                        m_interpreter.execute(indexInBlock); // Catch the fact that we may filter on cell.
+                        node->remove(m_graph);
+                        m_insertionSet.insertCheck(indexInBlock + 1, node->origin, Edge(incoming.node(), SymbolUse));
+                        eliminated = true;
+                        break;
+                    }
+                    if (set.onlyStructure().get() == m_graph.m_vm.bigIntStructure.get()) {
+                        m_interpreter.execute(indexInBlock); // Catch the fact that we may filter on cell.
+                        node->remove(m_graph);
+                        m_insertionSet.insertCheck(indexInBlock + 1, node->origin, Edge(incoming.node(), HeapBigIntUse));
+                        eliminated = true;
+                        break;
+                    }
+                }
+
                 break;
             }
 
@@ -1291,10 +1317,10 @@ private:
                     if (callee && newTarget) {
                         JSGlobalObject* globalObject = m_graph.globalObjectFor(node->origin.semantic);
                         if (callee->globalObject() == globalObject) {
-                            if (callee->classInfo() == ObjectConstructor::info() && node->numChildren() == 2) {
-                                if (FunctionRareData* rareData = newTarget->rareData()) {
-                                    if (rareData->allocationProfileWatchpointSet().isStillValid() && globalObject->structureCacheClearedWatchpointSet().isStillValid()) {
-                                        Structure* structure = rareData->internalFunctionAllocationStructure();
+                            if (FunctionRareData* rareData = newTarget->rareData()) {
+                                if (rareData->allocationProfileWatchpointSet().isStillValid() && globalObject->structureCacheClearedWatchpointSet().isStillValid()) {
+                                    Structure* structure = rareData->internalFunctionAllocationStructure();
+                                    if (callee->classInfo() == ObjectConstructor::info() && node->numChildren() == 2) {
                                         if (structure && structure->classInfoForCells() == JSFinalObject::info() && structure->hasMonoProto()) {
                                             m_graph.freeze(rareData);
                                             m_graph.watchpoints().addLazily(rareData->allocationProfileWatchpointSet());
@@ -1305,9 +1331,100 @@ private:
                                             break;
                                         }
                                     }
+
+                                    if (callee->classInfo() == ArrayConstructor::info() && node->numChildren() == 3 && !m_graph.hasExitSite(node->origin.semantic, BadType) && !m_graph.hasExitSite(node->origin.semantic, OutOfBounds)) {
+                                        if (structure && structure->classInfoForCells() == JSArray::info() && structure->hasMonoProto() && !hasAnyArrayStorage(structure->indexingType())) {
+                                            if (m_graph.isWatchingHavingABadTimeWatchpoint(node)) {
+                                                m_graph.freeze(rareData);
+                                                m_graph.watchpoints().addLazily(rareData->allocationProfileWatchpointSet());
+                                                m_graph.freeze(globalObject);
+                                                m_graph.watchpoints().addLazily(globalObject->structureCacheClearedWatchpointSet());
+                                                node->convertToNewArrayWithSizeAndStructure(m_graph, m_graph.registerStructure(structure));
+                                                changed = true;
+                                                break;
+                                            }
+                                        }
+                                    }
                                 }
                             }
                         }
+                    }
+                }
+                break;
+            }
+
+            case ArithBitAnd: {
+                if (node->child1().useKind() == UntypedUse || node->child2().useKind() == UntypedUse)
+                    break;
+
+                if ((node->child2()->isInt32Constant() && node->child2()->asInt32() == -1) || (node->child1() == node->child2())) {
+                    m_insertionSet.insertCheck(m_graph, indexInBlock, node);
+                    node->convertToIdentityOn(node->child1().node());
+                    changed = true;
+                    break;
+                }
+                break;
+            }
+
+            case ArithBitOr: {
+                if (node->child1().useKind() == UntypedUse || node->child2().useKind() == UntypedUse)
+                    break;
+
+                if ((node->child2()->isInt32Constant() && !node->child2()->asInt32()) || (node->child1() == node->child2())) {
+                    m_insertionSet.insertCheck(m_graph, indexInBlock, node);
+                    node->convertToIdentityOn(node->child1().node());
+                    changed = true;
+                    break;
+                }
+                break;
+            }
+
+            case ArithBitXor: {
+                if (node->child1().useKind() == UntypedUse || node->child2().useKind() == UntypedUse)
+                    break;
+
+                if (node->child2()->isInt32Constant() && !node->child2()->asInt32()) {
+                    m_insertionSet.insertCheck(m_graph, indexInBlock, node);
+                    node->convertToIdentityOn(node->child1().node());
+                    changed = true;
+                    break;
+                }
+                break;
+            }
+
+            case ValueBitXor:
+            case ValueBitAnd:
+            case ValueBitOr:
+            case ValueBitRShift:
+            case ValueBitLShift: {
+                if (node->binaryUseKind() == UntypedUse) {
+                    auto& value1 = m_state.forNode(node->child1());
+                    auto& value2 = m_state.forNode(node->child2());
+                    if (value1.isType(SpecInt32Only) && value2.isType(SpecInt32Only)) {
+                        switch (node->op()) {
+                        case ValueBitXor:
+                            node->setOp(ArithBitXor);
+                            break;
+                        case ValueBitOr:
+                            node->setOp(ArithBitOr);
+                            break;
+                        case ValueBitAnd:
+                            node->setOp(ArithBitAnd);
+                            break;
+                        case ValueBitLShift:
+                            node->setOp(ArithBitLShift);
+                            break;
+                        case ValueBitRShift:
+                            node->setOp(ArithBitRShift);
+                            break;
+                        default:
+                            DFG_CRASH(m_graph, node, "Unexpected node");
+                            break;
+                        }
+                        node->child1() = Edge(node->child1().node(), KnownInt32Use);
+                        node->child2() = Edge(node->child2().node(), KnownInt32Use);
+                        changed = true;
+                        break;
                     }
                 }
                 break;

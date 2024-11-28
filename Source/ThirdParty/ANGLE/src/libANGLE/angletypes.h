@@ -44,6 +44,7 @@ enum class Command
     Blit,
     BlitAll = Blit + 0x7,
     Clear,
+    ClearTexture,
     CopyImage,
     Dispatch,
     Draw,
@@ -300,9 +301,9 @@ struct DepthStencilState final
     DepthStencilState &operator=(const DepthStencilState &other);
 
     bool isDepthMaskedOut() const;
-    bool isStencilMaskedOut() const;
-    bool isStencilNoOp() const;
-    bool isStencilBackNoOp() const;
+    bool isStencilMaskedOut(GLuint framebufferStencilSize) const;
+    bool isStencilNoOp(GLuint framebufferStencilSize) const;
+    bool isStencilBackNoOp(GLuint framebufferStencilSize) const;
 
     bool depthTest;
     GLenum depthFunc;
@@ -1013,6 +1014,14 @@ ANGLE_INLINE DrawBufferMask GetIntOrUnsignedIntDrawBufferMask(ComponentTypeMask 
         static_cast<uint8_t>((mask.bits() >> kMaxComponentTypeMaskIndex) ^ mask.bits()));
 }
 
+// GL_ANGLE_blob_cache state
+struct BlobCacheCallbacks
+{
+    GLSETBLOBPROCANGLE setFunction = nullptr;
+    GLGETBLOBPROCANGLE getFunction = nullptr;
+    const void *userParam          = nullptr;
+};
+
 enum class RenderToTextureImageIndex
 {
     // The default image of the texture, where data is expected to be.
@@ -1280,6 +1289,8 @@ bool DecompressBlob(const uint8_t *compressedData,
                     size_t maxUncompressedDataSize,
                     MemoryBuffer *uncompressedData);
 uint32_t GenerateCRC32(const uint8_t *data, size_t size);
+uint32_t InitCRC32();
+uint32_t UpdateCRC32(uint32_t prevCrc32, const uint8_t *data, size_t size);
 }  // namespace angle
 
 namespace std
@@ -1337,10 +1348,9 @@ class UnlockedTailCall final : angle::NonCopyable
     // with unMakeCurrent destroying both the read and draw surfaces, each adding a tail call in the
     // Vulkan backend.
     //
-    // The max count can be increased as necessary.  An assertion would fire inside FixedVector if
-    // the max count is surpassed.
-    static constexpr size_t kMaxCallCount = 2;
-    angle::FixedVector<CallType, kMaxCallCount> mCalls;
+    // Some apps will create multiple windows surfaces and not call corresponding destroy api, which
+    // cause many tail calls been added, so remove the max call count limitations.
+    std::vector<CallType> mCalls;
 };
 
 enum class JobThreadSafety

@@ -44,6 +44,15 @@ SystemFallbackFontCache& SystemFallbackFontCache::forCurrentThread()
     return FontCache::forCurrentThread().systemFallbackFontCache();
 }
 
+SystemFallbackFontCache* SystemFallbackFontCache::forCurrentThreadIfExists()
+{
+    auto* cache = FontCache::forCurrentThreadIfExists();
+    if (!cache)
+        return nullptr;
+
+    return &cache->systemFallbackFontCache();
+}
+
 RefPtr<Font> SystemFallbackFontCache::systemFallbackFontForCharacterCluster(const Font* font, StringView characterCluster, const FontDescription& description, ResolvedEmojiPolicy resolvedEmojiPolicy, IsForPlatformFont isForPlatformFont)
 {
     auto fontAddResult = m_characterFallbackMaps.add(font, CharacterFallbackMap());

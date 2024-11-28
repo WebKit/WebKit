@@ -22,7 +22,7 @@
 
 #if ENABLE(CONTENT_EXTENSIONS)
 
-messages -> NetworkContentRuleListManager NotRefCounted {
+messages -> NetworkContentRuleListManager {
     Remove(WebKit::UserContentControllerIdentifier identifier)
     AddContentRuleLists(WebKit::UserContentControllerIdentifier identifier, Vector<std::pair<WebKit::WebCompiledContentRuleListData, URL>> contentFilters)
     RemoveContentRuleList(WebKit::UserContentControllerIdentifier identifier, String name)

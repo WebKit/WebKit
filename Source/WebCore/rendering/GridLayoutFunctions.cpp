@@ -197,8 +197,8 @@ std::optional<RenderBox::ContainingBlockOverrideValue> overridingContainingBlock
 bool isFlippedDirection(const RenderGrid& grid, GridTrackSizingDirection direction)
 {
     if (direction == GridTrackSizingDirection::ForColumns)
-        return !grid.style().isLeftToRightDirection();
-    return grid.style().isFlippedBlocksWritingMode();
+        return grid.writingMode().isBidiRTL();
+    return grid.writingMode().isBlockFlipped();
 }
 
 bool isSubgridReversedDirection(const RenderGrid& grid, GridTrackSizingDirection outerDirection, const RenderGrid& subgrid)

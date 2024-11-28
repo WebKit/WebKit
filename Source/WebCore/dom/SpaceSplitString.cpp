@@ -26,6 +26,8 @@
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/AtomStringHash.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SpaceSplitStringData);
@@ -85,7 +87,7 @@ struct SpaceSplitStringTableKeyTraits : public HashTraits<AtomString>
     static const int minimumTableSize = WTF::HashTableCapacityForSize<typicalNumberOfSpaceSplitString>::value;
 };
 
-typedef HashMap<AtomString, SpaceSplitStringData*, AtomStringHash, SpaceSplitStringTableKeyTraits> SpaceSplitStringTable;
+typedef UncheckedKeyHashMap<AtomString, SpaceSplitStringData*, AtomStringHash, SpaceSplitStringTableKeyTraits> SpaceSplitStringTable;
 
 static SpaceSplitStringTable& spaceSplitStringTable()
 {
@@ -251,3 +253,5 @@ void SpaceSplitStringData::destroy(SpaceSplitStringData* spaceSplitString)
 }
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

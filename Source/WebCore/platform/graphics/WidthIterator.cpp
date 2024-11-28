@@ -34,6 +34,8 @@
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/CharacterProperties.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(WidthIterator);
@@ -390,6 +392,15 @@ inline void WidthIterator::advanceInternal(TextIterator& textIterator, GlyphBuff
         return;
 
     auto glyphData = m_font->glyphDataForCharacter(character, false, FontVariant::NormalVariant);
+
+    RefPtr<Font> halfWidthFont;
+    auto shouldProcessTextSpacingTrim = !fontDescription.textSpacingTrim().isSpaceAll();
+    if (shouldProcessTextSpacingTrim) {
+        TextSpacing::CharactersData charactersData = { .currentCharacter = character, .currentCharacterClass = TextSpacing::characterClass(character) };
+        halfWidthFont = TextSpacing::getHalfWidthFontIfNeeded(*glyphData.font, fontDescription.textSpacingTrim(), charactersData);
+        glyphData.font = halfWidthFont ? halfWidthFont.get() : glyphData.font;
+    }
+
     advanceInternalState.updateFont(glyphData.font ? glyphData.font.get() : primaryFont.ptr());
     auto capitalizedCharacter = capitalized(character);
     if (shouldSynthesizeSmallCaps(smallCapsState.dontSynthesizeSmallCaps, advanceInternalState.font.get(), character, capitalizedCharacter, smallCapsState.fontVariantCaps, smallCapsState.engageAllSmallCapsProcessing))
@@ -419,6 +430,13 @@ inline void WidthIterator::advanceInternal(TextIterator& textIterator, GlyphBuff
         }
 #endif
         auto glyphData = m_font->glyphDataForCharacter(character, false, FontVariant::NormalVariant);
+
+        if (shouldProcessTextSpacingTrim) {
+            TextSpacing::CharactersData charactersData = { .currentCharacter = character, .currentCharacterClass = TextSpacing::characterClass(character) };
+            halfWidthFont = TextSpacing::getHalfWidthFontIfNeeded(*glyphData.font, fontDescription.textSpacingTrim(), charactersData);
+            glyphData.font = halfWidthFont ? halfWidthFont.get() : glyphData.font;
+        }
+
         advanceInternalState.updateFont(glyphData.font ? glyphData.font.get() : primaryFont.ptr());
         smallCapsState.shouldSynthesizeCharacter = shouldSynthesizeSmallCaps(smallCapsState.dontSynthesizeSmallCaps, advanceInternalState.font.get(), character, capitalizedCharacter, smallCapsState.fontVariantCaps, smallCapsState.engageAllSmallCapsProcessing);
         updateCharacterAndSmallCapsIfNeeded(smallCapsState, capitalizedCharacter, characterToWrite);
@@ -857,3 +875,5 @@ bool WidthIterator::advanceOneCharacter(float& width, GlyphBuffer& glyphBuffer)
 }
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

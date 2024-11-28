@@ -64,6 +64,8 @@
 #include <wtf/text/FastCharacterComparison.h>
 #include <wtf/text/StringParsingBuffer.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 // Captures the potential outcomes for fast path html parser.
@@ -230,7 +232,7 @@ public:
     HTMLFastPathResult parseResult() const { return m_parseResult; }
 
 private:
-    Document& m_document; // FIXME: Use a smart pointer.
+    Ref<Document> m_document;
     WeakRef<ContainerNode, WeakPtrImplWithEventTargetData> m_destinationParent;
 
     StringParsingBuffer<CharacterType> m_parsingBuffer;
@@ -991,3 +993,5 @@ bool tryFastParsingHTMLFragment(StringView source, Document& document, Container
 #undef FOR_EACH_SUPPORTED_TAG
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

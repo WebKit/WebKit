@@ -55,7 +55,7 @@ void WebExtensionContext::storageGet(WebPageProxyIdentifier webPageProxyIdentifi
 {
     auto callingAPIName = makeString("browser.storage."_s, toAPIString(dataType), ".get()"_s);
 
-    auto storage = storageForType(dataType);
+    auto *storage = storageForType(dataType);
     [storage getValuesForKeys:createNSArray(keys).get() completionHandler:makeBlockPtr([callingAPIName, completionHandler = WTFMove(completionHandler)](NSDictionary<NSString *, NSString *> *values, NSString *errorMessage) mutable {
         if (errorMessage)
             completionHandler(toWebExtensionError(callingAPIName, nil, errorMessage));
@@ -64,11 +64,24 @@ void WebExtensionContext::storageGet(WebPageProxyIdentifier webPageProxyIdentifi
     }).get()];
 }
 
+void WebExtensionContext::storageGetKeys(WebPageProxyIdentifier webPageProxyIdentifier, WebExtensionDataType dataType, CompletionHandler<void(Expected<Vector<String>, WebExtensionError>&&)>&& completionHandler)
+{
+    auto callingAPIName = makeString("browser.storage."_s, toAPIString(dataType), ".getKeys()"_s);
+
+    auto *storage = storageForType(dataType);
+    [storage getAllKeys:makeBlockPtr([callingAPIName, completionHandler = WTFMove(completionHandler)](NSArray<NSString *> *keys, NSString *errorMessage) mutable {
+        if (errorMessage)
+            completionHandler(toWebExtensionError(callingAPIName, nil, errorMessage));
+        else
+            completionHandler(makeVector<String>(keys));
+    }).get()];
+}
+
 void WebExtensionContext::storageGetBytesInUse(WebPageProxyIdentifier webPageProxyIdentifier, WebExtensionDataType dataType, const Vector<String>& keys, CompletionHandler<void(Expected<size_t, WebExtensionError>&&)>&& completionHandler)
 {
     auto callingAPIName = makeString("browser.storage."_s, toAPIString(dataType), ".getBytesInUse()"_s);
 
-    auto storage = storageForType(dataType);
+    auto *storage = storageForType(dataType);
     [storage getStorageSizeForKeys:createNSArray(keys).get() completionHandler:makeBlockPtr([callingAPIName, completionHandler = WTFMove(completionHandler)](size_t size, NSString *errorMessage) mutable {
         if (errorMessage)
             completionHandler(toWebExtensionError(callingAPIName, nil, errorMessage));
@@ -89,7 +102,7 @@ void WebExtensionContext::storageSet(WebPageProxyIdentifier webPageProxyIdentifi
             return;
         }
 
-        if (size > quoataForStorageType(dataType)) {
+        if (size > quotaForStorageType(dataType)) {
             completionHandler(toWebExtensionError(callingAPIName, nil, @"exceeded storage quota"));
             return;
         }
@@ -181,27 +194,22 @@ void WebExtensionContext::fireStorageChangedEventIfNeeded(NSDictionary *oldKeysA
 
     auto *changedData = [NSMutableDictionary dictionary];
 
-    if (!newKeysAndValues) {
-        [oldKeysAndValues enumerateKeysAndObjectsUsingBlock:^(NSString *key, NSString *value, BOOL *) {
-            changedData[key] = @{ oldValueKey: parseJSON(value, { JSONOptions::FragmentsAllowed }) ?: NSNull.null };
-        }];
-    } else {
-        [newKeysAndValues enumerateKeysAndObjectsUsingBlock:^(NSString *key, NSString *value, BOOL *) {
-            if (NSString *oldValue = oldKeysAndValues[key]) {
-                if (![oldValue isEqualToString:value]) {
-                    changedData[key] = @{
-                        oldValueKey: parseJSON(oldValue, { JSONOptions::FragmentsAllowed }) ?: NSNull.null,
-                        newValueKey: parseJSON(value, { JSONOptions::FragmentsAllowed }) ?: NSNull.null,
-                    };
-                }
+    // Process new or changed keys.
+    [newKeysAndValues enumerateKeysAndObjectsUsingBlock:^(NSString *key, NSString *newValue, BOOL *) {
+        NSString *oldValue = oldKeysAndValues[key];
 
-                return;
-            }
+        if (!oldValue || ![oldValue isEqualToString:newValue]) {
+            id parsedNewValue = parseJSON(newValue, JSONOptions::FragmentsAllowed) ?: NSNull.null;
+            id parsedOldValue = oldValue ? parseJSON(oldValue, JSONOptions::FragmentsAllowed) ?: NSNull.null : nil;
+            changedData[key] = parsedOldValue ? @{ oldValueKey: parsedOldValue, newValueKey: parsedNewValue } : @{ newValueKey: parsedNewValue };
+        }
+    }];
 
-            // A new key is being added for the first time.
-            changedData[key] = @{ newValueKey: parseJSON(value, { JSONOptions::FragmentsAllowed }) ?: NSNull.null };
-        }];
-    }
+    // Process removed keys.
+    [oldKeysAndValues enumerateKeysAndObjectsUsingBlock:^(NSString *key, NSString *oldValue, BOOL *) {
+        if (!newKeysAndValues[key])
+            changedData[key] = @{ oldValueKey: parseJSON(oldValue, JSONOptions::FragmentsAllowed) ?: NSNull.null };
+    }];
 
     if (!changedData.count)
         return;

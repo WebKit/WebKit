@@ -1,0 +1,11 @@
+This test checks that programmatically focusing an element after a click and using keyboard afterwards triggers :focus-visible matching.
+If the user-agent does not claim to support the :focus-visible pseudo-class then SKIP this test.
+Click the button below that says "Click me".
+Once focused on the button that says "I will be focused programmatically", use "Left" or "Right" arrow keys to navigate through the button group
+If any button within the group has a blue outline after using either arrow key, then the test result is SUCCESS. If the element has a green background after using either arrow key, then the test result is FAILURE.
+
+Click me
+I will be focused programmatically.  Button 2  Button 3
+
+PASS Programmatic focus after click and keyboard interaction should match :focus-visible
+

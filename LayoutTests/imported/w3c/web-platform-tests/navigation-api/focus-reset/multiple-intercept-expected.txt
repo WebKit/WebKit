@@ -1,11 +1,8 @@
 
-
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT (not provided) + after-transition Test timed out
-NOTRUN (not provided) + manual
-NOTRUN after-transition + manual
-NOTRUN after-transition + (not provided)
-NOTRUN manual + after-transition
-NOTRUN manual + (not provided)
+PASS (not provided) + after-transition
+PASS (not provided) + manual
+PASS after-transition + manual
+PASS after-transition + (not provided)
+PASS manual + after-transition
+PASS manual + (not provided)
 

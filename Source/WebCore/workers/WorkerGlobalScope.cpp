@@ -162,7 +162,8 @@ void WorkerGlobalScope::prepareForDestruction()
 {
     WorkerOrWorkletGlobalScope::prepareForDestruction();
 
-    removeSupplement(WindowOrWorkerGlobalScopeTrustedTypes::workerGlobalSupplementName());
+    if (auto* trustedTypes = static_cast<WorkerGlobalScopeTrustedTypes*>(requireSupplement(WorkerGlobalScopeTrustedTypes::supplementName())))
+        trustedTypes->prepareForDestruction();
 
     if (settingsValues().serviceWorkersEnabled)
         swClientConnection().unregisterServiceWorkerClient(identifier());
@@ -615,6 +616,11 @@ void WorkerGlobalScope::beginLoadingFontSoon(FontLoadRequest& request)
 WorkerThread& WorkerGlobalScope::thread() const
 {
     return *static_cast<WorkerThread*>(workerOrWorkletThread());
+}
+
+Ref<WorkerThread> WorkerGlobalScope::protectedThread() const
+{
+    return thread();
 }
 
 void WorkerGlobalScope::releaseMemory(Synchronous synchronous)

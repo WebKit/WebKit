@@ -14,6 +14,8 @@ info: |
 includes: [propertyHelper.js]
 ---*/
 
-verifyNotEnumerable(Promise, 'race');
-verifyWritable(Promise, 'race');
-verifyConfigurable(Promise, 'race');
+verifyProperty(Promise, 'race', {
+  writable: true,
+  enumerable: false,
+  configurable: true
+});

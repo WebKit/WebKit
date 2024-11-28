@@ -110,6 +110,7 @@ public:
     ResourceErrorOr<CachedResourceHandle<CachedApplicationManifest>> requestApplicationManifest(CachedResourceRequest&&);
 #endif
 #if ENABLE(MODEL_ELEMENT)
+    ResourceErrorOr<CachedResourceHandle<CachedRawResource>> requestEnvironmentMapResource(CachedResourceRequest&&);
     ResourceErrorOr<CachedResourceHandle<CachedRawResource>> requestModelResource(CachedResourceRequest&&);
 #endif
 

@@ -40,22 +40,22 @@
 
 using namespace WebCore;
 @interface WebCoreReplayKitScreenRecorderHelper : NSObject {
-    WeakPtr<ReplayKitCaptureSource> _callback;
+    WeakPtr<ReplayKitCaptureSource> _capturer;
 }
 
-- (instancetype)initWithCallback:(WeakPtr<ReplayKitCaptureSource>&&)callback;
+- (instancetype)initWithCallback:(WeakPtr<ReplayKitCaptureSource>&&)capturer;
 - (void)disconnect;
 - (void)observeValueForKeyPath:keyPath ofObject:(id)object change:(NSDictionary*)change context:(void*)context;
 @end
 
 @implementation WebCoreReplayKitScreenRecorderHelper
-- (instancetype)initWithCallback:(WeakPtr<ReplayKitCaptureSource>&&)callback
+- (instancetype)initWithCallback:(WeakPtr<ReplayKitCaptureSource>&&)capturer
 {
     self = [super init];
     if (!self)
         return self;
 
-    _callback = WTFMove(callback);
+    _capturer = WTFMove(capturer);
     [[PAL::getRPScreenRecorderClass() sharedRecorder] addObserver:self forKeyPath:@"recording" options:NSKeyValueObservingOptionNew context:(void *)nil];
 
     return self;
@@ -63,7 +63,7 @@ using namespace WebCore;
 
 - (void)disconnect
 {
-    _callback = nullptr;
+    _capturer = nullptr;
     [[PAL::getRPScreenRecorderClass() sharedRecorder] removeObserver:self forKeyPath:@"recording"];
 }
 
@@ -72,17 +72,18 @@ using namespace WebCore;
     UNUSED_PARAM(object);
     UNUSED_PARAM(context);
 
-    if (!_callback)
+    RefPtr protectedCapturer = _capturer.get();
+    if (!protectedCapturer)
         return;
 
     id newValue = [change valueForKey:NSKeyValueChangeNewKey];
     bool willChange = [[change valueForKey:NSKeyValueChangeNotificationIsPriorKey] boolValue];
 
 #if !RELEASE_LOG_DISABLED
-    if (_callback->loggerPtr()) {
-        auto identifier = Logger::LogSiteIdentifier("ReplayKitCaptureSource"_s, "observeValueForKeyPath"_s, _callback->logIdentifier());
+    if (protectedCapturer->loggerPtr()) {
+        auto identifier = Logger::LogSiteIdentifier("ReplayKitCaptureSource"_s, "observeValueForKeyPath"_s, protectedCapturer->logIdentifier());
         RetainPtr<NSString> valueString = adoptNS([[NSString alloc] initWithFormat:@"%@", newValue]);
-        _callback->logger().logAlways(_callback->logChannel(), identifier, willChange ? "will" : "did", " change '", [keyPath UTF8String], "' to ", [valueString.get() UTF8String]);
+        protectedCapturer->logger().logAlways(protectedCapturer->logChannel(), identifier, willChange ? "will" : "did", " change '", [keyPath UTF8String], "' to ", [valueString.get() UTF8String]);
     }
 #endif
 
@@ -90,7 +91,7 @@ using namespace WebCore;
         return;
 
     if ([keyPath isEqualToString:@"recording"])
-        _callback->captureStateDidChange();
+        protectedCapturer->captureStateDidChange();
 }
 @end
 
@@ -101,16 +102,9 @@ bool ReplayKitCaptureSource::isAvailable()
     return [PAL::getRPScreenRecorderClass() sharedRecorder].isAvailable;
 }
 
-Expected<UniqueRef<DisplayCaptureSourceCocoa::Capturer>, CaptureSourceError> ReplayKitCaptureSource::create(const String&)
-{
-    if (!isAvailable())
-        return makeUnexpected(CaptureSourceError { "Screen capture unavailable"_s, MediaAccessDenialReason::NoCaptureDevices });
-
-    return UniqueRef<DisplayCaptureSourceCocoa::Capturer>(makeUniqueRef<ReplayKitCaptureSource>());
-}
-
-ReplayKitCaptureSource::ReplayKitCaptureSource()
-    : m_captureWatchdogTimer(*this, &ReplayKitCaptureSource::verifyCaptureIsActive)
+ReplayKitCaptureSource::ReplayKitCaptureSource(CapturerObserver& observer)
+    : DisplayCaptureSourceCocoa::Capturer(observer)
+    , m_captureWatchdogTimer(*this, &ReplayKitCaptureSource::verifyCaptureIsActive)
 {
 }
 

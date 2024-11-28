@@ -1,0 +1,23 @@
+// swift-interface-format-version: 1.0
+// swift-module-flags: -enable-objc-interop -enable-library-evolution -swift-version 5 -enforce-exclusivity=checked -O -library-level spi -enable-bare-slash-regex -user-module-version 967 -module-name QuickLook_SPI -module-abi-name QuickLook
+import Foundation
+@_exported import QuickLook
+
+@_hasMissingDesignatedInitializers @available(visionOS 2.0, *)
+final public class PreviewApplication {
+  final public class func open(urls: [Foundation.URL], selectedURL: Foundation.URL? = nil) -> QuickLook.PreviewSession
+  final public class func open(items: [QuickLook.PreviewItem], selectedItem: QuickLook.PreviewItem? = nil) -> QuickLook.PreviewSession
+  final public class func open(items: [QuickLook.PreviewItem], selectedItem: QuickLook.PreviewItem? = nil, configuration: QuickLook_SPI.PreviewApplication.PreviewConfiguration?) -> QuickLook.PreviewSession
+  public struct PreviewConfiguration : Swift.Sendable {
+    public static let hideDocumentMenuKey: Swift.String
+    public static let showCloseButtonKey: Swift.String
+    public static let matchScenePlacementIDKey: Swift.String
+    public static let isContentManaged: Swift.String
+    public var hideDocumentMenu: Swift.Bool
+    public var showCloseButton: Swift.Bool
+    public var matchScenePlacementID: Swift.String?
+    public var isContentManaged: Swift.Bool
+    public init()
+  }
+  @objc deinit
+}

@@ -44,6 +44,8 @@
 #include <wtf/WTFProcess.h>
 #include <wtf/text/StringCommon.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 // We don't have a NO_RETURN_DUE_TO_EXIT, nor should we. That's ridiculous.
 static bool hiddenTruthBecauseNoReturnIsStupid() { return true; }
 
@@ -267,7 +269,7 @@ template<typename T, typename... Arguments>
 T invoke(const MacroAssemblerCodeRef<JSEntryPtrTag>& code, Arguments... arguments)
 {
     void* executableAddress = untagCFunctionPtr<JSEntryPtrTag>(code.code().taggedPtr());
-    T (SYSV_ABI *function)(Arguments...) = bitwise_cast<T(SYSV_ABI *)(Arguments...)>(executableAddress);
+    T (SYSV_ABI *function)(Arguments...) = std::bit_cast<T(SYSV_ABI *)(Arguments...)>(executableAddress);
 
 #if CPU(RISCV64)
     // RV64 calling convention requires all 32-bit values to be sign-extended into the whole register.
@@ -329,8 +331,8 @@ void testGetEffectiveAddress(size_t pointer, ptrdiff_t length, int32_t offset, C
 {
     CHECK_EQ(compileAndRun<size_t>([=] (CCallHelpers& jit) {
         emitFunctionPrologue(jit);
-        jit.move(CCallHelpers::TrustedImmPtr(bitwise_cast<void*>(pointer)), GPRInfo::regT0);
-        jit.move(CCallHelpers::TrustedImmPtr(bitwise_cast<void*>(length)), GPRInfo::regT1);
+        jit.move(CCallHelpers::TrustedImmPtr(std::bit_cast<void*>(pointer)), GPRInfo::regT0);
+        jit.move(CCallHelpers::TrustedImmPtr(std::bit_cast<void*>(length)), GPRInfo::regT1);
         jit.getEffectiveAddress(CCallHelpers::BaseIndex(GPRInfo::regT0, GPRInfo::regT1, scale, offset), GPRInfo::returnValueGPR);
         emitFunctionEpilogue(jit);
         jit.ret();
@@ -341,7 +343,7 @@ void testGetEffectiveAddress(size_t pointer, ptrdiff_t length, int32_t offset, C
 // Nan, should either yield 0 in dest or fail.
 void testBranchTruncateDoubleToInt32(double val, int32_t expected)
 {
-    const uint64_t valAsUInt = bitwise_cast<uint64_t>(val);
+    const uint64_t valAsUInt = std::bit_cast<uint64_t>(val);
 #if CPU(BIG_ENDIAN)
     const bool isBigEndian = true;
 #else
@@ -823,8 +825,8 @@ void testShiftAndAdd()
             emitFunctionPrologue(jit);
             jit.pushPair(scratchGPR, GPRInfo::argumentGPR3);
 
-            jit.move(CCallHelpers::TrustedImmPtr(bitwise_cast<void*>(basePointer)), baseGPR);
-            jit.move(CCallHelpers::TrustedImmPtr(bitwise_cast<void*>(index)), indexGPR);
+            jit.move(CCallHelpers::TrustedImmPtr(std::bit_cast<void*>(basePointer)), baseGPR);
+            jit.move(CCallHelpers::TrustedImmPtr(std::bit_cast<void*>(index)), indexGPR);
             jit.shiftAndAdd(baseGPR, indexGPR, shift, destGPR);
 
             jit.probeDebug([=] (Probe::Context& context) {
@@ -2357,7 +2359,7 @@ void testXorNotWithUnsignedRightShift64()
 void testStorePrePostIndex32()
 {
     int32_t nums[] = { 1, 2, 3 };
-    intptr_t addr = bitwise_cast<intptr_t>(&nums[1]);
+    intptr_t addr = std::bit_cast<intptr_t>(&nums[1]);
     int32_t index = sizeof(int32_t);
 
     auto test1 = [&] (int32_t src) {
@@ -2374,7 +2376,7 @@ void testStorePrePostIndex32()
         return invoke<intptr_t>(store, src, addr);
     };
 
-    int32_t* p1 = bitwise_cast<int32_t*>(test1(4));
+    int32_t* p1 = std::bit_cast<int32_t*>(test1(4));
     CHECK_EQ(*p1, 4);
     CHECK_EQ(*--p1, nums[1]);
 
@@ -2392,7 +2394,7 @@ void testStorePrePostIndex32()
         return invoke<intptr_t>(store, src, addr);
     };
 
-    int32_t* p2 = bitwise_cast<int32_t*>(test2(5));
+    int32_t* p2 = std::bit_cast<int32_t*>(test2(5));
     CHECK_EQ(*p2, 4);
     CHECK_EQ(*--p2, 5);
 }
@@ -2400,7 +2402,7 @@ void testStorePrePostIndex32()
 void testStorePrePostIndex64()
 {
     int64_t nums[] = { 1, 2, 3 };
-    intptr_t addr = bitwise_cast<intptr_t>(&nums[1]);
+    intptr_t addr = std::bit_cast<intptr_t>(&nums[1]);
     int32_t index = sizeof(int64_t);
 
     auto test1 = [&] (int64_t src) {
@@ -2417,7 +2419,7 @@ void testStorePrePostIndex64()
         return invoke<intptr_t>(store, src, addr);
     };
 
-    int64_t* p1 = bitwise_cast<int64_t*>(test1(4));
+    int64_t* p1 = std::bit_cast<int64_t*>(test1(4));
     CHECK_EQ(*p1, 4);
     CHECK_EQ(*--p1, nums[1]);
 
@@ -2435,7 +2437,7 @@ void testStorePrePostIndex64()
         return invoke<intptr_t>(store, src, addr);
     };
 
-    int64_t* p2 = bitwise_cast<int64_t*>(test2(5));
+    int64_t* p2 = std::bit_cast<int64_t*>(test2(5));
     CHECK_EQ(*p2, 4);
     CHECK_EQ(*--p2, 5);
 }
@@ -4504,7 +4506,7 @@ void testLoadStorePair64Double()
     };
 
     auto asInt64 = [] (double value) {
-        return bitwise_cast<int64_t>(value);
+        return std::bit_cast<int64_t>(value);
     };
 
     auto testStorePair0 = compile([&] (CCallHelpers& jit) {
@@ -4705,8 +4707,8 @@ void testProbeWritesArgumentRegisters()
             cpu.gpr(GPRInfo::argumentGPR2) = testWord(2);
             cpu.gpr(GPRInfo::argumentGPR3) = testWord(3);
             
-            cpu.fpr(FPRInfo::fpRegT0) = bitwise_cast<double>(testWord64(0));
-            cpu.fpr(FPRInfo::fpRegT1) = bitwise_cast<double>(testWord64(1));
+            cpu.fpr(FPRInfo::fpRegT0) = std::bit_cast<double>(testWord64(0));
+            cpu.fpr(FPRInfo::fpRegT1) = std::bit_cast<double>(testWord64(1));
         });
 
         // Validate that expected values were written.
@@ -4767,7 +4769,7 @@ void testProbePreservesGPRS()
             }
             for (auto id = CCallHelpers::firstFPRegister(); id <= CCallHelpers::lastFPRegister(); id = nextID(id)) {
                 originalState.fpr(id) = cpu.fpr(id);
-                cpu.fpr(id) = bitwise_cast<double>(testWord64(id));
+                cpu.fpr(id) = std::bit_cast<double>(testWord64(id));
             }
         });
 
@@ -4865,7 +4867,7 @@ void testProbeModifiesStackPointer(WTF::Function<void*(Probe::Context&)> compute
             }
             for (auto id = CCallHelpers::firstFPRegister(); id <= CCallHelpers::lastFPRegister(); id = nextID(id)) {
                 originalState.fpr(id) = cpu.fpr(id);
-                cpu.fpr(id) = bitwise_cast<double>(testWord64(id));
+                cpu.fpr(id) = std::bit_cast<double>(testWord64(id));
             }
 
 #if !(CPU(RISCV64))
@@ -4949,7 +4951,7 @@ void testProbeModifiesStackPointerToInsideProbeStateOnStack()
 #endif
     for (size_t offset = 0; offset < sizeof(Probe::State); offset += increment) {
         testProbeModifiesStackPointer([=] (Probe::Context& context) -> void* {
-            return reinterpret_cast<uint8_t*>(probeStateForContext(context)) + offset;
+            return static_cast<uint8_t*>(probeStateForContext(context)) + offset;
 
         });
     }
@@ -5043,7 +5045,7 @@ void testProbeModifiesStackValues()
             }
             for (auto id = CCallHelpers::firstFPRegister(); id <= CCallHelpers::lastFPRegister(); id = nextID(id)) {
                 originalState.fpr(id) = cpu.fpr(id);
-                cpu.fpr(id) = bitwise_cast<double>(testWord64(id));
+                cpu.fpr(id) = std::bit_cast<double>(testWord64(id));
             }
 #if !CPU(RISCV64)
             originalState.spr(flagsSPR) = cpu.spr(flagsSPR);
@@ -5053,16 +5055,16 @@ void testProbeModifiesStackValues()
 
             // Ensure that we'll be writing over the regions of the stack where the Probe::State is.
             originalSP = cpu.sp();
-            newSP = reinterpret_cast<uintptr_t*>(probeStateForContext(context)) - numberOfExtraEntriesToWrite;
+            newSP = static_cast<uintptr_t*>(probeStateForContext(context)) - numberOfExtraEntriesToWrite;
             cpu.sp() = newSP;
 
             // Fill the stack with values.
-            uintptr_t* p = reinterpret_cast<uintptr_t*>(newSP);
+            uintptr_t* p = static_cast<uintptr_t*>(newSP);
             int count = 0;
             stack.set<double>(p++, 1.234567);
             if (is32Bit())
                 p++; // On 32-bit targets, a double takes up 2 uintptr_t.
-            while (p < reinterpret_cast<uintptr_t*>(originalSP))
+            while (p < static_cast<uintptr_t*>(originalSP))
                 stack.set<uintptr_t>(p++, testWord(count++));
         });
 
@@ -5090,12 +5092,12 @@ void testProbeModifiesStackValues()
             CHECK_EQ(cpu.sp(), newSP);
 
             // Validate the stack values.
-            uintptr_t* p = reinterpret_cast<uintptr_t*>(newSP);
+            uintptr_t* p = static_cast<uintptr_t*>(newSP);
             int count = 0;
             CHECK_EQ(stack.get<double>(p++), 1.234567);
             if (is32Bit())
                 p++; // On 32-bit targets, a double takes up 2 uintptr_t.
-            while (p < reinterpret_cast<uintptr_t*>(originalSP))
+            while (p < static_cast<uintptr_t*>(originalSP))
                 CHECK_EQ(stack.get<uintptr_t>(p++), testWord(count++));
         });
 
@@ -5188,8 +5190,8 @@ void testAndOrDouble()
         for (auto b : operands) {
             arg1 = a;
             arg2 = b;
-            uint64_t expectedResult = bitwise_cast<uint64_t>(arg1) & bitwise_cast<uint64_t>(arg2);
-            CHECK_EQ(bitwise_cast<uint64_t>(invoke<double>(andDouble)), expectedResult);
+            uint64_t expectedResult = std::bit_cast<uint64_t>(arg1) & std::bit_cast<uint64_t>(arg2);
+            CHECK_EQ(std::bit_cast<uint64_t>(invoke<double>(andDouble)), expectedResult);
         }
     }
 
@@ -5208,8 +5210,8 @@ void testAndOrDouble()
         for (auto b : operands) {
             arg1 = a;
             arg2 = b;
-            uint64_t expectedResult = bitwise_cast<uint64_t>(arg1) | bitwise_cast<uint64_t>(arg2);
-            CHECK_EQ(bitwise_cast<uint64_t>(invoke<double>(orDouble)), expectedResult);
+            uint64_t expectedResult = std::bit_cast<uint64_t>(arg1) | std::bit_cast<uint64_t>(arg2);
+            CHECK_EQ(std::bit_cast<uint64_t>(invoke<double>(orDouble)), expectedResult);
         }
     }
 }
@@ -6313,3 +6315,5 @@ extern "C" __declspec(dllexport) int WINAPI dllLauncherEntryPoint(int argc, cons
     return main(argc, const_cast<char**>(argv));
 }
 #endif
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

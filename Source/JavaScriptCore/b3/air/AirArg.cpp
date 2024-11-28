@@ -101,13 +101,9 @@ unsigned Arg::jsHash() const
     case Tmp:
         result += m_base.internalValue();
         break;
-#if USE(JSVALUE32_64)
-    case TmpPair:
-        result += m_baseHi.internalValue() + m_baseLo.internalValue();
-        break;
-#endif
     case Imm:
     case BitImm:
+    case FPImm32:
     case ZeroReg:
     case CallArg:
     case RelCond:
@@ -119,6 +115,7 @@ unsigned Arg::jsHash() const
         break;
     case BigImm:
     case BitImm64:
+    case FPImm64:
         result += static_cast<unsigned>(m_offset);
         result += static_cast<unsigned>(m_offset >> 32);
         break;
@@ -159,11 +156,6 @@ void Arg::dump(PrintStream& out) const
     case Tmp:
         out.print(tmp());
         return;
-#if USE(JSVALUE32_64)
-    case TmpPair:
-        out.print("(", tmpHi(), ", ", tmpLo(), ")");
-        return;
-#endif
     case Imm:
         out.print("$", m_offset);
         return;
@@ -174,6 +166,12 @@ void Arg::dump(PrintStream& out) const
         out.print("$", m_offset);
         return;
     case BitImm64:
+        out.printf("$0x%llx", static_cast<long long unsigned>(m_offset));
+        return;
+    case FPImm32:
+        out.print("$", m_offset);
+        return;
+    case FPImm64:
         out.printf("$0x%llx", static_cast<long long unsigned>(m_offset));
         return;
     case ZeroReg:
@@ -253,11 +251,6 @@ void printInternal(PrintStream& out, Arg::Kind kind)
     case Arg::Tmp:
         out.print("Tmp");
         return;
-#if USE(JSVALUE32_64)
-    case Arg::TmpPair:
-        out.print("TmpPair");
-        return;
-#endif
     case Arg::Imm:
         out.print("Imm");
         return;
@@ -269,6 +262,12 @@ void printInternal(PrintStream& out, Arg::Kind kind)
         return;
     case Arg::BitImm64:
         out.print("BitImm64");
+        return;
+    case Arg::FPImm32:
+        out.print("FPImm32");
+        return;
+    case Arg::FPImm64:
+        out.print("FPImm64");
         return;
     case Arg::ZeroReg:
         out.print("ZeroReg");

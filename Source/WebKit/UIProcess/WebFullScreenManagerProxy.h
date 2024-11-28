@@ -58,7 +58,9 @@ namespace WebKit {
 class WebPageProxy;
 struct SharedPreferencesForWebProcess;
 
-class WebFullScreenManagerProxyClient {
+class WebFullScreenManagerProxyClient : public CanMakeCheckedPtr<WebFullScreenManagerProxyClient> {
+    WTF_MAKE_FAST_ALLOCATED;
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(WebFullScreenManagerProxyClient);
 public:
     virtual ~WebFullScreenManagerProxyClient() { }
 
@@ -69,6 +71,9 @@ public:
 #else
     virtual void enterFullScreen() = 0;
 #endif
+#if ENABLE(QUICKLOOK_FULLSCREEN)
+    virtual void updateImageSource() = 0;
+#endif
     virtual void exitFullScreen() = 0;
     virtual void beganEnterFullScreen(const WebCore::IntRect& initialFrame, const WebCore::IntRect& finalFrame) = 0;
     virtual void beganExitFullScreen(const WebCore::IntRect& initialFrame, const WebCore::IntRect& finalFrame) = 0;
@@ -77,14 +82,14 @@ public:
     virtual void unlockFullscreenOrientation() { }
 };
 
-class WebFullScreenManagerProxy : public IPC::MessageReceiver, public CanMakeCheckedPtr<WebFullScreenManagerProxy> {
+class WebFullScreenManagerProxy : public IPC::MessageReceiver, public CanMakeCheckedPtr<WebFullScreenManagerProxy>, public RefCounted<WebFullScreenManagerProxy> {
     WTF_MAKE_TZONE_ALLOCATED(WebFullScreenManagerProxy);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(WebFullScreenManagerProxy);
 public:
-    WebFullScreenManagerProxy(WebPageProxy&, WebFullScreenManagerProxyClient&);
+    static Ref<WebFullScreenManagerProxy> create(WebPageProxy&, WebFullScreenManagerProxyClient&);
     virtual ~WebFullScreenManagerProxy();
 
-    const SharedPreferencesForWebProcess& sharedPreferencesForWebProcess() const;
+    std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess() const;
 
     bool isFullScreen();
     bool blocksReturnToFullscreenFromPictureInPicture() const;
@@ -120,8 +125,13 @@ public:
     void unlockFullscreenOrientation();
 
 private:
+    WebFullScreenManagerProxy(WebPageProxy&, WebFullScreenManagerProxyClient&);
+
     void supportsFullScreen(bool withKeyboard, CompletionHandler<void(bool)>&&);
     void enterFullScreen(bool blocksReturnToFullscreenFromPictureInPicture, FullScreenMediaDetails&&);
+#if ENABLE(QUICKLOOK_FULLSCREEN)
+    void updateImageSource(FullScreenMediaDetails&&);
+#endif
     void exitFullScreen();
     void beganEnterFullScreen(const WebCore::IntRect& initialFrame, const WebCore::IntRect& finalFrame);
     void beganExitFullScreen(const WebCore::IntRect& initialFrame, const WebCore::IntRect& finalFrame);
@@ -132,13 +142,13 @@ private:
 
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const { return m_logger; }
-    const void* logIdentifier() const { return m_logIdentifier; }
+    uint64_t logIdentifier() const { return m_logIdentifier; }
     ASCIILiteral logClassName() const { return "WebFullScreenManagerProxy"_s; }
     WTFLogChannel& logChannel() const;
 #endif
 
-    WebPageProxy& m_page;
-    WebFullScreenManagerProxyClient& m_client;
+    WeakPtr<WebPageProxy> m_page;
+    CheckedPtr<WebFullScreenManagerProxyClient> m_client;
     FullscreenState m_fullscreenState { FullscreenState::NotInFullscreen };
     bool m_blocksReturnToFullscreenFromPictureInPicture { false };
 #if ENABLE(VIDEO_USES_ELEMENT_FULLSCREEN)
@@ -152,7 +162,7 @@ private:
 
 #if !RELEASE_LOG_DISABLED
     Ref<const Logger> m_logger;
-    const void* m_logIdentifier;
+    const uint64_t m_logIdentifier;
 #endif
 };
 

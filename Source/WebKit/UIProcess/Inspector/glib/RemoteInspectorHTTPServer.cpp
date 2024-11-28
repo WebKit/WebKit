@@ -32,6 +32,7 @@
 #include <WebCore/SoupVersioning.h>
 #include <wtf/FileSystem.h>
 #include <wtf/URL.h>
+#include <wtf/glib/GSpanExtras.h>
 #include <wtf/glib/GUniquePtr.h>
 
 namespace WebKit {
@@ -132,9 +133,7 @@ void RemoteInspectorHTTPServer::handleWebSocket(const char* path, SoupWebsocketC
     m_webSocketConnectionToTargetMap.set(connection, std::make_pair(connectionID, targetID));
     g_signal_connect(connection, "message", G_CALLBACK(+[](SoupWebsocketConnection* connection, SoupWebsocketDataType messageType, GBytes* message, gpointer userData) {
         auto& httpServer = *static_cast<RemoteInspectorHTTPServer*>(userData);
-        gsize dataSize;
-        const auto* data = static_cast<const char*>(g_bytes_get_data(message, &dataSize));
-        httpServer.sendMessageToBackend(connection, String::fromUTF8(std::span(data, dataSize)));
+        httpServer.sendMessageToBackend(connection, String::fromUTF8(span(message)));
     }), this);
     g_signal_connect(connection, "closed", G_CALLBACK(+[](SoupWebsocketConnection* connection, gpointer userData) {
         auto& httpServer = *static_cast<RemoteInspectorHTTPServer*>(userData);
@@ -156,7 +155,7 @@ void RemoteInspectorHTTPServer::sendMessageToFrontend(uint64_t connectionID, uin
     GRefPtr<GBytes> bytes = adoptGRef(g_bytes_new_static(utf8.data(), utf8.length()));
     soup_websocket_connection_send_message(webSocketConnection, SOUP_WEBSOCKET_DATA_TEXT, bytes.get());
 #else
-    soup_websocket_connection_send_text(webSocketConnection, CString(reinterpret_cast<const char*>(utf8.data()), utf8.length()).data());
+    soup_websocket_connection_send_text(webSocketConnection, CString(utf8).data());
 #endif
 }
 

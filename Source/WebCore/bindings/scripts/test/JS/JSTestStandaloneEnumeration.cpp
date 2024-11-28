@@ -30,12 +30,13 @@
 #include <wtf/SortedArrayMap.h>
 
 
+
 namespace WebCore {
 using namespace JSC;
 
 String convertEnumerationToString(TestStandaloneEnumeration enumerationValue)
 {
-    static const NeverDestroyed<String> values[] = {
+    static const std::array<NeverDestroyed<String>, 2> values {
         MAKE_STATIC_STRING_IMPL("enumValue1"),
         MAKE_STATIC_STRING_IMPL("enumValue2"),
     };
@@ -52,9 +53,9 @@ template<> JSString* convertEnumerationToJS(VM& vm, TestStandaloneEnumeration en
 
 template<> std::optional<TestStandaloneEnumeration> parseEnumerationFromString<TestStandaloneEnumeration>(const String& stringValue)
 {
-    static constexpr std::pair<ComparableASCIILiteral, TestStandaloneEnumeration> mappings[] = {
-        { "enumValue1", TestStandaloneEnumeration::EnumValue1 },
-        { "enumValue2", TestStandaloneEnumeration::EnumValue2 },
+    static constexpr std::array<std::pair<ComparableASCIILiteral, TestStandaloneEnumeration>, 2> mappings {
+        std::pair<ComparableASCIILiteral, TestStandaloneEnumeration> { "enumValue1"_s, TestStandaloneEnumeration::EnumValue1 },
+        std::pair<ComparableASCIILiteral, TestStandaloneEnumeration> { "enumValue2"_s, TestStandaloneEnumeration::EnumValue2 },
     };
     static constexpr SortedArrayMap enumerationMapping { mappings };
     if (auto* enumerationValue = enumerationMapping.tryGet(stringValue); LIKELY(enumerationValue))
@@ -73,5 +74,6 @@ template<> ASCIILiteral expectedEnumerationValues<TestStandaloneEnumeration>()
 }
 
 } // namespace WebCore
+
 
 #endif // ENABLE(CONDITION)

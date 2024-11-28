@@ -36,14 +36,16 @@ class Connection;
 namespace WebKit {
 
 // Proxy interface to test IPC activities related to receiving messages.
-class IPCTesterReceiver final : public IPC::MessageReceiver {
+class IPCTesterReceiver final : public IPC::MessageReceiver, public RefCounted<IPCTesterReceiver> {
 public:
-    IPCTesterReceiver() = default;
+    static Ref<IPCTesterReceiver> create();
     ~IPCTesterReceiver() = default;
 
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
 private:
+    IPCTesterReceiver() = default;
+
     // Messages
     void asyncMessage(uint32_t, CompletionHandler<void(uint32_t)>&&);
 };

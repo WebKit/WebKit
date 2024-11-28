@@ -1,4 +1,4 @@
 
 
-FAIL traverseTo() promise never settle when preventDefault()ing the navigate event (cross-document) assert_equals: expected 2 but got 1
+PASS traverseTo() promise never settle when preventDefault()ing the navigate event (cross-document)
 

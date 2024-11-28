@@ -107,40 +107,44 @@ bool LocalStorageManager::isActive() const
 
 bool LocalStorageManager::hasDataInMemory() const
 {
-    bool hasDataInLocalStorageArea = is<MemoryStorageArea>(m_localStorageArea) && !m_localStorageArea->isEmpty();
-    return hasDataInLocalStorageArea || (m_transientStorageArea && !m_transientStorageArea->isEmpty());
+    RefPtr memoryLocalStorage = dynamicDowncast<MemoryStorageArea>(m_localStorageArea);
+    if (memoryLocalStorage && !memoryLocalStorage->isEmpty())
+        return true;
+
+    RefPtr transientStorage = m_transientStorageArea;
+    return transientStorage && !transientStorage->isEmpty();
 }
 
 void LocalStorageManager::clearDataInMemory()
 {
-    if (is<MemoryStorageArea>(m_localStorageArea))
-        m_localStorageArea->clear();
+    if (RefPtr storage = dynamicDowncast<MemoryStorageArea>(m_localStorageArea))
+        storage->clear();
 
-    if (m_transientStorageArea)
-        m_transientStorageArea->clear();
+    if (RefPtr transientStorage = m_transientStorageArea)
+        transientStorage->clear();
 }
 
 void LocalStorageManager::clearDataOnDisk()
 {
-    if (is<SQLiteStorageArea>(m_localStorageArea))
-        m_localStorageArea->clear();
+    if (RefPtr storage = dynamicDowncast<SQLiteStorageArea>(m_localStorageArea))
+        storage->clear();
 }
 
 void LocalStorageManager::close()
 {
-    if (auto* storage = dynamicDowncast<SQLiteStorageArea>(m_localStorageArea.get()))
+    if (RefPtr storage = dynamicDowncast<SQLiteStorageArea>(m_localStorageArea))
         storage->close();
 }
 
 void LocalStorageManager::handleLowMemoryWarning()
 {
-    if (auto* storage = dynamicDowncast<SQLiteStorageArea>(m_localStorageArea.get()))
+    if (RefPtr storage = dynamicDowncast<SQLiteStorageArea>(m_localStorageArea))
         storage->handleLowMemoryWarning();
 }
 
 void LocalStorageManager::syncLocalStorage()
 {
-    if (auto* storage = dynamicDowncast<SQLiteStorageArea>(m_localStorageArea.get()))
+    if (RefPtr storage = dynamicDowncast<SQLiteStorageArea>(m_localStorageArea))
         storage->commitTransactionIfNecessary();
 }
 
@@ -152,59 +156,70 @@ void LocalStorageManager::connectionClosed(IPC::Connection::UniqueID connection)
 
 void LocalStorageManager::connectionClosedForLocalStorageArea(IPC::Connection::UniqueID connection)
 {
-    if (!m_localStorageArea)
+    RefPtr storage = m_localStorageArea;
+    if (!storage)
         return;
 
-    m_localStorageArea->removeListener(connection);
-    if (m_localStorageArea->hasListeners())
+    storage->removeListener(connection);
+    if (storage->hasListeners())
         return;
 
-    if (is<MemoryStorageArea>(*m_localStorageArea) && !m_localStorageArea->isEmpty())
+    if (RefPtr memoryStorage = dynamicDowncast<MemoryStorageArea>(*storage); memoryStorage && !memoryStorage->isEmpty())
         return;
 
-    m_registry->unregisterStorageArea(m_localStorageArea->identifier());
+    m_registry->unregisterStorageArea(storage->identifier());
     m_localStorageArea = nullptr;
 }
 
 void LocalStorageManager::connectionClosedForTransientStorageArea(IPC::Connection::UniqueID connection)
 {
-    if (!m_transientStorageArea)
+    RefPtr transientStorageArea = m_transientStorageArea;
+    if (!transientStorageArea)
         return;
 
-    m_transientStorageArea->removeListener(connection);
-    if (m_transientStorageArea->hasListeners() || !m_transientStorageArea->isEmpty())
+    transientStorageArea->removeListener(connection);
+    if (transientStorageArea->hasListeners() || !transientStorageArea->isEmpty())
         return;
 
-    m_registry->unregisterStorageArea(m_transientStorageArea->identifier());
+    m_registry->unregisterStorageArea(transientStorageArea->identifier());
     m_transientStorageArea = nullptr;
 }
 
 StorageAreaIdentifier LocalStorageManager::connectToLocalStorageArea(IPC::Connection::UniqueID connection, StorageAreaMapIdentifier sourceIdentifier, const WebCore::ClientOrigin& origin, Ref<WorkQueue>&& workQueue)
 {
     if (!m_localStorageArea) {
+        RefPtr<StorageAreaBase> storage;
         if (!m_path.isEmpty())
-            m_localStorageArea = makeUnique<SQLiteStorageArea>(localStorageQuotaInBytes, origin, m_path, WTFMove(workQueue));
+            storage = SQLiteStorageArea::create(localStorageQuotaInBytes, origin, m_path, WTFMove(workQueue));
         else
-            m_localStorageArea = makeUnique<MemoryStorageArea>(origin, StorageAreaBase::StorageType::Local);
+            storage = MemoryStorageArea::create(origin, StorageAreaBase::StorageType::Local);
 
-        m_registry->registerStorageArea(m_localStorageArea->identifier(), *m_localStorageArea);
+        m_localStorageArea = storage;
+        m_registry->registerStorageArea(storage->identifier(), *storage);
     }
 
     ASSERT(m_path.isEmpty() || is<SQLiteStorageArea>(*m_localStorageArea));
-    m_localStorageArea->addListener(connection, sourceIdentifier);
+    protectedLocalStorageArea()->addListener(connection, sourceIdentifier);
     return m_localStorageArea->identifier();
+}
+
+RefPtr<StorageAreaBase> LocalStorageManager::protectedLocalStorageArea() const
+{
+    return m_localStorageArea;
 }
 
 StorageAreaIdentifier LocalStorageManager::connectToTransientLocalStorageArea(IPC::Connection::UniqueID connection, StorageAreaMapIdentifier sourceIdentifier, const WebCore::ClientOrigin& origin)
 {
-    if (!m_transientStorageArea) {
-        m_transientStorageArea = makeUnique<MemoryStorageArea>(origin, StorageAreaBase::StorageType::Local);
-        m_registry->registerStorageArea(m_transientStorageArea->identifier(), *m_transientStorageArea);
+    RefPtr transientStorageArea = m_transientStorageArea;
+    if (!transientStorageArea) {
+        transientStorageArea = MemoryStorageArea::create(origin, StorageAreaBase::StorageType::Local);
+        m_transientStorageArea = transientStorageArea;
+        m_registry->registerStorageArea(transientStorageArea->identifier(), *transientStorageArea);
     }
 
-    ASSERT(is<MemoryStorageArea>(*m_transientStorageArea));
-    m_transientStorageArea->addListener(connection, sourceIdentifier);
-    return m_transientStorageArea->identifier();
+    ASSERT(is<MemoryStorageArea>(*transientStorageArea));
+    transientStorageArea->addListener(connection, sourceIdentifier);
+    return transientStorageArea->identifier();
 }
 
 void LocalStorageManager::cancelConnectToLocalStorageArea(IPC::Connection::UniqueID connection)

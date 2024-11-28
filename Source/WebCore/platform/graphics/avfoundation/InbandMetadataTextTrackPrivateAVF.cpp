@@ -32,11 +32,14 @@
 #include "Logging.h"
 #include "MediaPlayer.h"
 #include <CoreMedia/CoreMedia.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 #include <wtf/unicode/CharacterNames.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(InbandMetadataTextTrackPrivateAVF);
 
 Ref<InbandMetadataTextTrackPrivateAVF> InbandMetadataTextTrackPrivateAVF::create(InbandTextTrackPrivate::Kind kind, TrackID id, InbandTextTrackPrivate::CueFormat cueFormat)
 {

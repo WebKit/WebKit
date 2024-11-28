@@ -29,6 +29,8 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/TZoneMallocInlines.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(MachineThreads);
@@ -66,7 +68,7 @@ static inline int osRedZoneAdjustment()
 static std::pair<void*, size_t> captureStack(Thread& thread, void* stackTop)
 {
     char* begin = reinterpret_cast_ptr<char*>(thread.stack().origin());
-    char* end = bitwise_cast<char*>(WTF::roundUpToMultipleOf<sizeof(void*)>(reinterpret_cast<uintptr_t>(stackTop)));
+    char* end = std::bit_cast<char*>(WTF::roundUpToMultipleOf<sizeof(void*)>(reinterpret_cast<uintptr_t>(stackTop)));
     ASSERT(begin >= end);
 
     char* endWithRedZone = end + osRedZoneAdjustment();
@@ -227,3 +229,5 @@ NEVER_INLINE int callWithCurrentThreadState(const ScopedLambda<void(CurrentThrea
 }
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

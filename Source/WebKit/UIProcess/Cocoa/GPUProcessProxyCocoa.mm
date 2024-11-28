@@ -44,6 +44,9 @@ WTF_WEAK_LINK_FORCE_IMPORT(PLQueryRegistered);
 
 namespace WebKit {
 
+bool GPUProcessProxy::s_enableMetalDebugDeviceInNewGPUProcessesForTesting { false };
+bool GPUProcessProxy::s_enableMetalShaderValidationInNewGPUProcessesForTesting { false };
+
 void GPUProcessProxy::platformInitializeGPUProcessParameters(GPUProcessCreationParameters& parameters)
 {
     parameters.mobileGestaltExtensionHandle = createMobileGestaltSandboxExtensionIfNeeded();
@@ -53,6 +56,8 @@ void GPUProcessProxy::platformInitializeGPUProcessParameters(GPUProcessCreationP
     if (auto launchServicesExtensionHandle = SandboxExtension::createHandleForMachLookup("com.apple.coreservices.launchservicesd"_s, std::nullopt))
         parameters.launchServicesExtensionHandle = WTFMove(*launchServicesExtensionHandle);
 #endif
+    parameters.enableMetalDebugDeviceForTesting = m_isMetalDebugDeviceEnabledForTesting;
+    parameters.enableMetalShaderValidationForTesting = m_isMetalShaderValidationEnabledForTesting;
 }
 
 #if HAVE(POWERLOG_TASK_MODE_QUERY)

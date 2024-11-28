@@ -38,7 +38,7 @@ namespace PAL {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(TextCodec);
 
-int TextCodec::getUnencodableReplacement(char32_t codePoint, UnencodableHandling handling, UnencodableReplacementArray& replacement)
+std::span<char> TextCodec::getUnencodableReplacement(char32_t codePoint, UnencodableHandling handling, UnencodableReplacementArray& replacement)
 {
     ASSERT(!(codePoint > UCHAR_MAX_VALUE));
 
@@ -49,14 +49,20 @@ int TextCodec::getUnencodableReplacement(char32_t codePoint, UnencodableHandling
         codePoint = replacementCharacter;
 
     switch (handling) {
-    case UnencodableHandling::Entities:
-        return snprintf(replacement.data(), sizeof(UnencodableReplacementArray), "&#%u;", static_cast<unsigned>(codePoint));
-    case UnencodableHandling::URLEncodedEntities:
-        return snprintf(replacement.data(), sizeof(UnencodableReplacementArray), "%%26%%23%u%%3B", static_cast<unsigned>(codePoint));
+    case UnencodableHandling::Entities: {
+        int count = snprintf(replacement.data(), sizeof(UnencodableReplacementArray), "&#%u;", static_cast<unsigned>(codePoint));
+        ASSERT(count >= 0);
+        return std::span { replacement }.first(std::max<int>(0, count));
     }
+    case UnencodableHandling::URLEncodedEntities: {
+        int count = snprintf(replacement.data(), sizeof(UnencodableReplacementArray), "%%26%%23%u%%3B", static_cast<unsigned>(codePoint));
+        ASSERT(count >= 0);
+        return std::span { replacement }.first(std::max<int>(0, count));
+    } }
+
     ASSERT_NOT_REACHED();
-    replacement.data()[0] = 0;
-    return 0;
+    replacement[0] = '\0';
+    return std::span { replacement }.first(0);
 }
 
 } // namespace PAL

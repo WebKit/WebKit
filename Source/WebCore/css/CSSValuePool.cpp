@@ -31,6 +31,8 @@
 #include "CSSValueKeywords.h"
 #include "CSSValueList.h"
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(CSSValuePool);
 
@@ -49,7 +51,7 @@ StaticCSSValuePool::StaticCSSValuePool()
 
     for (unsigned i = 0; i <= maximumCacheableIntegerValue; ++i) {
         m_pixelValues[i].construct(CSSValue::StaticCSSValue, i, CSSUnitType::CSS_PX);
-        m_percentValues[i].construct(CSSValue::StaticCSSValue, i, CSSUnitType::CSS_PERCENTAGE);
+        m_percentageValues[i].construct(CSSValue::StaticCSSValue, i, CSSUnitType::CSS_PERCENTAGE);
         m_numberValues[i].construct(CSSValue::StaticCSSValue, i, CSSUnitType::CSS_NUMBER);
     }
 }
@@ -129,3 +131,5 @@ void CSSValuePool::drain()
 }
 
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

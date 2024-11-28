@@ -27,7 +27,7 @@
 
 #include "Algorithm.h"
 #include "GigacageKind.h"
-#include "StdLibExtras.h"
+#include <bit>
 #include <inttypes.h>
 
 namespace WebConfig {
@@ -43,37 +43,37 @@ struct Config {
     void* basePtr(Kind kind) const
     {
         RELEASE_BASSERT(kind < NumberOfKinds);
-        return basePtrs[kind];
+        return basePtrs[static_cast<size_t>(kind)];
     }
 
     void setBasePtr(Kind kind, void* ptr)
     {
         RELEASE_BASSERT(kind < NumberOfKinds);
-        basePtrs[kind] = ptr;
+        basePtrs[static_cast<size_t>(kind)] = ptr;
     }
 
     void* allocBasePtr(Kind kind) const
     {
         RELEASE_BASSERT(kind < NumberOfKinds);
-        return allocBasePtrs[kind];
+        return allocBasePtrs[static_cast<size_t>(kind)];
     }
 
     void setAllocBasePtr(Kind kind, void* ptr)
     {
         RELEASE_BASSERT(kind < NumberOfKinds);
-        allocBasePtrs[kind] = ptr;
+        allocBasePtrs[static_cast<size_t>(kind)] = ptr;
     }
 
     size_t allocSize(Kind kind) const
     {
         RELEASE_BASSERT(kind < NumberOfKinds);
-        return allocSizes[kind];
+        return allocSizes[static_cast<size_t>(kind)];
     }
 
     void setAllocSize(Kind kind, size_t size)
     {
         RELEASE_BASSERT(kind < NumberOfKinds);
-        allocSizes[kind] = size;
+        allocSizes[static_cast<size_t>(kind)] = size;
     }
 
     // All the fields in this struct should be chosen such that their
@@ -93,9 +93,9 @@ struct Config {
 
     void* start;
     size_t totalSize;
-    void* basePtrs[NumberOfKinds];
-    void* allocBasePtrs[NumberOfKinds];
-    size_t allocSizes[NumberOfKinds];
+    void* basePtrs[static_cast<size_t>(NumberOfKinds)];
+    void* allocBasePtrs[static_cast<size_t>(NumberOfKinds)];
+    size_t allocSizes[static_cast<size_t>(NumberOfKinds)];
 };
 
 // The first 4 slots are reserved for the use of the ExecutableAllocator.
@@ -110,6 +110,6 @@ constexpr size_t alignmentOfGigacageConfig = std::alignment_of<Gigacage::Config>
 static_assert(sizeof(Gigacage::Config) + startOffsetOfGigacageConfig <= reservedBytesForGigacageConfig);
 static_assert(bmalloc::roundUpToMultipleOf<alignmentOfGigacageConfig>(startOffsetOfGigacageConfig) == startOffsetOfGigacageConfig);
 
-#define g_gigacageConfig (*bmalloc::bitwise_cast<Gigacage::Config*>(&WebConfig::g_config[Gigacage::startSlotOfGigacageConfig]))
+#define g_gigacageConfig (*std::bit_cast<Gigacage::Config*>(&WebConfig::g_config[Gigacage::startSlotOfGigacageConfig]))
 
 } // namespace Gigacage

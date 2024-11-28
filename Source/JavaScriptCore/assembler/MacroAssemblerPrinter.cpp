@@ -31,6 +31,8 @@
 #include "MacroAssembler.h"
 #include <inttypes.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 namespace Printer {
@@ -71,7 +73,7 @@ void printAllRegisters(PrintStream& out, Context& context)
     #undef INTPTR_HEX_VALUE_FORMAT
 
     for (auto id = MacroAssembler::firstFPRegister(); id <= MacroAssembler::lastFPRegister(); id = nextID(id)) {
-        uint64_t u = bitwise_cast<uint64_t>(cpu.fpr(id));
+        uint64_t u = std::bit_cast<uint64_t>(cpu.fpr(id));
         double d = cpu.fpr(id);
         INDENT; out.printf("    %6s: 0x%016" PRIx64 "  %.13g\n", cpu.fprName(id).characters(), u, d);
     }
@@ -85,7 +87,7 @@ void printPCRegister(PrintStream& out, Context& context)
 {
     auto cpu = context.probeContext.cpu;
     void* value = cpu.pc();
-    out.printf("pc:<%p %" PRIdPTR ">", value, bitwise_cast<intptr_t>(value));
+    out.printf("pc:<%p %" PRIdPTR ">", value, std::bit_cast<intptr_t>(value));
 }
 
 void printRegisterID(PrintStream& out, Context& context)
@@ -93,7 +95,7 @@ void printRegisterID(PrintStream& out, Context& context)
     RegisterID regID = context.data.as<RegisterID>();
     const char* name = CPUState::gprName(regID);
     intptr_t value = context.probeContext.gpr(regID);
-    out.printf("%s:<%p %" PRIdPTR ">", name, bitwise_cast<void*>(value), value);
+    out.printf("%s:<%p %" PRIdPTR ">", name, std::bit_cast<void*>(value), value);
 }
 
 void printFPRegisterID(PrintStream& out, Context& context)
@@ -101,7 +103,7 @@ void printFPRegisterID(PrintStream& out, Context& context)
     FPRegisterID regID = context.data.as<FPRegisterID>();
     const char* name = CPUState::fprName(regID);
     double value = context.probeContext.fpr(regID);
-    out.printf("%s:<0x%016" PRIx64 " %.13g>", name, bitwise_cast<uint64_t>(value), value);
+    out.printf("%s:<0x%016" PRIx64 " %.13g>", name, std::bit_cast<uint64_t>(value), value);
 }
 
 void printAddress(PrintStream& out, Context& context)
@@ -110,7 +112,7 @@ void printAddress(PrintStream& out, Context& context)
     RegisterID regID = address.base;
     const char* name = CPUState::gprName(regID);
     intptr_t value = context.probeContext.gpr(regID);
-    out.printf("Address{base:%s:<%p %" PRIdPTR ">, offset:<0x%x %d>", name, bitwise_cast<void*>(value), value, address.offset, address.offset);
+    out.printf("Address{base:%s:<%p %" PRIdPTR ">, offset:<0x%x %d>", name, std::bit_cast<void*>(value), value, address.offset, address.offset);
 }
 
 void printMemory(PrintStream& out, Context& context)
@@ -137,17 +139,17 @@ void printMemory(PrintStream& out, Context& context)
             return;
         }
         if (memory.numBytes == sizeof(int16_t)) {
-            auto p = bitwise_cast<int16_t*>(ptr);
+            auto p = std::bit_cast<int16_t*>(ptr);
             out.printf("%p:<0x%04x %d>", p, *p, *p);
             return;
         }
         if (memory.numBytes == sizeof(int32_t)) {
-            auto p = bitwise_cast<int32_t*>(ptr);
+            auto p = std::bit_cast<int32_t*>(ptr);
             out.printf("%p:<0x%08x %d>", p, *p, *p);
             return;
         }
         if (memory.numBytes == sizeof(int64_t)) {
-            auto p = bitwise_cast<int64_t*>(ptr);
+            auto p = std::bit_cast<int64_t*>(ptr);
             out.printf("%p:<0x%016" PRIx64 " %" PRId64 ">", p, *p, *p);
             return;
         }
@@ -184,5 +186,7 @@ void SYSV_ABI printCallback(Probe::Context& probeContext)
 
 } // namespace Printer
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ENABLE(ASSEMBLER)

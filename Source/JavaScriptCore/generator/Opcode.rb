@@ -290,29 +290,29 @@ EOF
     #{capitalized_name}(const uint8_t* stream)
         #{init.call("OpcodeSize::Narrow")}
     {
-        ASSERT_UNUSED(stream, static_cast<#{opcodeIDType}>(bitwise_cast<const typename OpcodeIDWidthBySize<#{type_prefix}OpcodeTraits, OpcodeSize::Narrow>::opcodeType*>(stream)[-1]) == opcodeID);
+        ASSERT_UNUSED(stream, static_cast<#{opcodeIDType}>(std::bit_cast<const typename OpcodeIDWidthBySize<#{type_prefix}OpcodeTraits, OpcodeSize::Narrow>::opcodeType*>(stream)[-1]) == opcodeID);
     }
 
     #{capitalized_name}(const uint16_t* stream)
         #{init.call("OpcodeSize::Wide16")}
     {
-        ASSERT_UNUSED(stream, static_cast<#{opcodeIDType}>(bitwise_cast<const typename OpcodeIDWidthBySize<#{type_prefix}OpcodeTraits, OpcodeSize::Wide16>::opcodeType*>(stream)[-1]) == opcodeID);
+        ASSERT_UNUSED(stream, static_cast<#{opcodeIDType}>(std::bit_cast<const typename OpcodeIDWidthBySize<#{type_prefix}OpcodeTraits, OpcodeSize::Wide16>::opcodeType*>(stream)[-1]) == opcodeID);
     }
 
 
     #{capitalized_name}(const uint32_t* stream)
         #{init.call("OpcodeSize::Wide32")}
     {
-        ASSERT_UNUSED(stream, static_cast<#{opcodeIDType}>(bitwise_cast<const typename OpcodeIDWidthBySize<#{type_prefix}OpcodeTraits, OpcodeSize::Wide32>::opcodeType*>(stream)[-1]) == opcodeID);
+        ASSERT_UNUSED(stream, static_cast<#{opcodeIDType}>(std::bit_cast<const typename OpcodeIDWidthBySize<#{type_prefix}OpcodeTraits, OpcodeSize::Wide32>::opcodeType*>(stream)[-1]) == opcodeID);
     }
 
     static #{capitalized_name} decode(const uint8_t* stream)
     {
         // A pointer is pointing to the first operand (opcode and prefix are not included).
         if (*stream == #{wide32})
-            return { bitwise_cast<const uint32_t*>(stream + /* prefix */ 1 + OpcodeIDWidthBySize<#{type_prefix}OpcodeTraits, OpcodeSize::Wide32>::opcodeIDSize) };
+            return { std::bit_cast<const uint32_t*>(stream + /* prefix */ 1 + OpcodeIDWidthBySize<#{type_prefix}OpcodeTraits, OpcodeSize::Wide32>::opcodeIDSize) };
         if (*stream == #{wide16})
-            return { bitwise_cast<const uint16_t*>(stream + /* prefix */ 1 + OpcodeIDWidthBySize<#{type_prefix}OpcodeTraits, OpcodeSize::Wide16>::opcodeIDSize) };
+            return { std::bit_cast<const uint16_t*>(stream + /* prefix */ 1 + OpcodeIDWidthBySize<#{type_prefix}OpcodeTraits, OpcodeSize::Wide16>::opcodeIDSize) };
         return { stream + OpcodeIDWidthBySize<#{type_prefix}OpcodeTraits, OpcodeSize::Narrow>::opcodeIDSize };
     }
 EOF

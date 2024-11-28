@@ -39,17 +39,8 @@ SQLiteStatementAutoResetScope::SQLiteStatementAutoResetScope(SQLiteStatement *st
 {
 }
 
-SQLiteStatementAutoResetScope::SQLiteStatementAutoResetScope(SQLiteStatementAutoResetScope&& other)
-    : m_statement(other.m_statement)
-{
-    other.m_statement = nullptr;
-}
-
-SQLiteStatementAutoResetScope& SQLiteStatementAutoResetScope::operator=(SQLiteStatementAutoResetScope&& other)
-{
-    std::swap(m_statement, other.m_statement);
-    return *this;
-}
+SQLiteStatementAutoResetScope::SQLiteStatementAutoResetScope(SQLiteStatementAutoResetScope&&) = default;
+SQLiteStatementAutoResetScope& SQLiteStatementAutoResetScope::operator=(SQLiteStatementAutoResetScope&&) = default;
 
 SQLiteStatementAutoResetScope::~SQLiteStatementAutoResetScope()
 {

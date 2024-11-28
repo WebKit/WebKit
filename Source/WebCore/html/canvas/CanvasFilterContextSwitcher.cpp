@@ -59,18 +59,18 @@ std::unique_ptr<CanvasFilterContextSwitcher> CanvasFilterContextSwitcher::create
 CanvasFilterContextSwitcher::CanvasFilterContextSwitcher(CanvasRenderingContext2DBase& context)
     : m_context(context)
 {
-    m_context.save();
-    m_context.realizeSaves();
+    context.save();
+    context.realizeSaves();
 }
 
 CanvasFilterContextSwitcher::~CanvasFilterContextSwitcher()
 {
-    m_context.restore();
+    protectedContext()->restore();
 }
 
 FloatRect CanvasFilterContextSwitcher::expandedBounds() const
 {
-    return m_context.state().targetSwitcher->expandedBounds();
+    return m_context->state().targetSwitcher->expandedBounds();
 }
 
 } // namespace WebCore

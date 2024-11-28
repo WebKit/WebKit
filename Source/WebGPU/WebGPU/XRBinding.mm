@@ -62,11 +62,6 @@ bool XRBinding::isValid() const
     return true;
 }
 
-Device& XRBinding::device()
-{
-    return m_device;
-}
-
 } // namespace WebGPU
 
 #pragma mark WGPU Stubs
@@ -83,11 +78,11 @@ void wgpuXRBindingRelease(WGPUXRBinding binding)
 
 WGPUXRProjectionLayer wgpuBindingCreateXRProjectionLayer(WGPUXRBinding binding, WGPUTextureFormat colorFormat, WGPUTextureFormat* optionalDepthStencilFormat, WGPUTextureUsageFlags flags, double scale)
 {
-    return WebGPU::releaseToAPI(WebGPU::fromAPI(binding).createXRProjectionLayer(colorFormat, optionalDepthStencilFormat, flags, scale));
+    return WebGPU::releaseToAPI(WebGPU::protectedFromAPI(binding)->createXRProjectionLayer(colorFormat, optionalDepthStencilFormat, flags, scale));
 }
 
-WGPUXRSubImage wgpuBindingGetViewSubImage(WGPUXRBinding binding, WGPUXREye eye)
+WGPUXRSubImage wgpuBindingGetViewSubImage(WGPUXRBinding binding, WGPUXRProjectionLayer layer)
 {
-    return WebGPU::releaseToAPI(WebGPU::fromAPI(binding).getViewSubImage(eye));
+    return WebGPU::releaseToAPI(WebGPU::protectedFromAPI(binding)->getViewSubImage(WebGPU::protectedFromAPI(layer)));
 }
 

@@ -33,14 +33,18 @@
 #include "BytecodeGenerator.h"
 #include "BytecodeGeneratorBaseInlines.h"
 #include "JSArrayIterator.h"
+#include "JSAsyncFromSyncIterator.h"
 #include "JSAsyncGenerator.h"
 #include "JSCInlines.h"
 #include "JSGenerator.h"
 #include "JSImmutableButterfly.h"
+#include "JSIteratorHelper.h"
 #include "JSMapIterator.h"
 #include "JSPromise.h"
+#include "JSRegExpStringIterator.h"
 #include "JSSetIterator.h"
 #include "JSStringIterator.h"
+#include "JSWrapForValidIterator.h"
 #include "LabelScope.h"
 #include "LinkTimeConstant.h"
 #include "ModuleScopeData.h"
@@ -254,6 +258,15 @@ RegisterID* ImportMetaNode::emitBytecode(BytecodeGenerator& generator, RegisterI
 bool ResolveNode::isPure(BytecodeGenerator& generator) const
 {
     return generator.variable(m_ident).offset().isStack();
+}
+
+bool ResolveNode::getFromScopeCanThrow(BytecodeGenerator& generator) const
+{
+    Variable var = generator.variable(m_ident);
+    if (var.offset().isStack() || var.offset().isScope())
+        return !generator.needsTDZCheck(var);
+
+    return true;
 }
 
 RegisterID* ResolveNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
@@ -648,7 +661,7 @@ RegisterID* PropertyListNode::emitBytecode(BytecodeGenerator& generator, Registe
     };
 
     using GetterSetterPair = std::pair<PropertyNode*, PropertyNode*>;
-    using GetterSetterMap = HashMap<UniquedStringImpl*, GetterSetterPair, IdentifierRepHash>;
+    using GetterSetterMap = UncheckedKeyHashMap<UniquedStringImpl*, GetterSetterPair, IdentifierRepHash>;
 
     if (hasPrivateAccessors()) {
         GetterSetterMap privateAccessorMap;
@@ -1201,7 +1214,6 @@ RegisterID* NewExprNode::emitBytecode(BytecodeGenerator& generator, RegisterID* 
 
 CallArguments::CallArguments(BytecodeGenerator& generator, ArgumentsNode* argumentsNode, unsigned additionalArguments)
     : m_argumentsNode(argumentsNode)
-    , m_padding(0)
 {
     size_t argumentCountIncludingThis = 1 + additionalArguments; // 'this' register.
     if (argumentsNode) {
@@ -1209,22 +1221,27 @@ CallArguments::CallArguments(BytecodeGenerator& generator, ArgumentsNode* argume
             ++argumentCountIncludingThis;
     }
 
-    m_argv.grow(argumentCountIncludingThis);
-    for (int i = argumentCountIncludingThis - 1; i >= 0; --i) {
-        m_argv[i] = generator.newTemporary();
-        ASSERT(static_cast<size_t>(i) == m_argv.size() - 1 || m_argv[i]->index() == m_argv[i + 1]->index() - 1);
-    }
+    static_assert(stackAlignmentRegisters() == 2);
+    size_t argvSize = argumentCountIncludingThis;
+    ASSERT(argvSize >= 1);
+    if ((CallFrame::headerSizeInRegisters + argvSize) % stackAlignmentRegisters())
+        ++argvSize;
+    argvSize += 1; // For stackOffset adjustment case.
+    ASSERT(argvSize >= 2);
+    m_allocatedRegisters.grow(argvSize);
 
-    // We need to ensure that the frame size is stack-aligned
-    while ((CallFrame::headerSizeInRegisters + m_argv.size()) % stackAlignmentRegisters()) {
-        m_argv.insert(0, generator.newTemporary());
-        m_padding++;
-    }
-    
-    while (stackOffset() % stackAlignmentRegisters()) {
-        m_argv.insert(0, generator.newTemporary());
-        m_padding++;
-    }
+    // Do not initialize index 0.
+    size_t index = m_allocatedRegisters.size();
+    generator.newTemporaries(m_allocatedRegisters.size() - 1, [&](RegisterID* slot) {
+        m_allocatedRegisters[--index] = slot;
+    });
+
+    // We initialize 0 based on offset. And adjust m_argv based on that.
+    if ((-m_allocatedRegisters[1]->index() + CallFrame::headerSizeInRegisters) % stackAlignmentRegisters()) {
+        m_allocatedRegisters[0] = generator.newTemporary();
+        m_argv = m_allocatedRegisters.mutableSpan().subspan(0, argumentCountIncludingThis);
+    } else
+        m_argv = m_allocatedRegisters.mutableSpan().subspan(1, argumentCountIncludingThis);
 }
 
 // ------------------------------ EvalFunctionCallNode ----------------------------------
@@ -1307,7 +1324,7 @@ RegisterID* FunctionCallValueNode::emitBytecode(BytecodeGenerator& generator, Re
 
         ASSERT(generator.isConstructor() || generator.derivedContextType() == DerivedContextType::DerivedConstructorContext);
         ASSERT(generator.constructorKind() == ConstructorKind::Extends || generator.derivedContextType() == DerivedContextType::DerivedConstructorContext);
-        RegisterID* ret = generator.emitConstruct(returnValue.get(), func.get(), generator.newTarget(), NoExpectedFunction, callArguments, divot(), divotStart(), divotEnd());
+        RegisterID* ret = generator.emitSuperConstruct(returnValue.get(), func.get(), generator.newTarget(), NoExpectedFunction, callArguments, divot(), divotStart(), divotEnd());
 
         bool isConstructorKindDerived = generator.constructorKind() == ConstructorKind::Extends;
         bool doWeUseArrowFunctionInConstructor = isConstructorKindDerived && generator.needsToUpdateArrowFunctionContext();
@@ -1530,6 +1547,17 @@ static JSGenerator::Field generatorInternalFieldIndex(BytecodeIntrinsicNode* nod
     return JSGenerator::Field::State;
 }
 
+static JSIteratorHelper::Field iteratorHelperInternalFieldIndex(BytecodeIntrinsicNode* node)
+{
+    ASSERT(node->entry().type() == BytecodeIntrinsicRegistry::Type::Emitter);
+    if (node->entry().emitter() == &BytecodeIntrinsicNode::emit_intrinsic_iteratorHelperFieldGenerator)
+        return JSIteratorHelper::Field::Generator;
+    if (node->entry().emitter() == &BytecodeIntrinsicNode::emit_intrinsic_iteratorHelperFieldUnderlyingIterator)
+        return JSIteratorHelper::Field::UnderlyingIterator;
+    RELEASE_ASSERT_NOT_REACHED();
+    return JSIteratorHelper::Field::Generator;
+}
+
 static JSAsyncGenerator::Field asyncGeneratorInternalFieldIndex(BytecodeIntrinsicNode* node)
 {
     ASSERT(node->entry().type() == BytecodeIntrinsicRegistry::Type::Emitter);
@@ -1625,6 +1653,45 @@ static ProxyObject::Field proxyInternalFieldIndex(BytecodeIntrinsicNode* node)
     return ProxyObject::Field::Target;
 }
 
+static JSAsyncFromSyncIterator::Field asyncFromSyncIteratorInternalFieldIndex(BytecodeIntrinsicNode* node)
+{
+    ASSERT(node->entry().type() == BytecodeIntrinsicRegistry::Type::Emitter);
+    if (node->entry().emitter() == &BytecodeIntrinsicNode::emit_intrinsic_asyncFromSyncIteratorFieldSyncIterator)
+        return JSAsyncFromSyncIterator::Field::SyncIterator;
+    if (node->entry().emitter() == &BytecodeIntrinsicNode::emit_intrinsic_asyncFromSyncIteratorFieldNextMethod)
+        return JSAsyncFromSyncIterator::Field::NextMethod;
+    RELEASE_ASSERT_NOT_REACHED();
+    return JSAsyncFromSyncIterator::Field::SyncIterator;
+}
+
+static JSWrapForValidIterator::Field wrapForValidIteratorInternalFieldIndex(BytecodeIntrinsicNode* node)
+{
+    ASSERT(node->entry().type() == BytecodeIntrinsicRegistry::Type::Emitter);
+    if (node->entry().emitter() == &BytecodeIntrinsicNode::emit_intrinsic_wrapForValidIteratorFieldIteratedIterator)
+        return JSWrapForValidIterator::Field::IteratedIterator;
+    if (node->entry().emitter() == &BytecodeIntrinsicNode::emit_intrinsic_wrapForValidIteratorFieldIteratedNextMethod)
+        return JSWrapForValidIterator::Field::IteratedNextMethod;
+    RELEASE_ASSERT_NOT_REACHED();
+    return JSWrapForValidIterator::Field::IteratedNextMethod;
+}
+
+static JSRegExpStringIterator::Field regExpStringIteratorInternalFieldIndex(BytecodeIntrinsicNode* node)
+{
+    ASSERT(node->entry().type() == BytecodeIntrinsicRegistry::Type::Emitter);
+    if (node->entry().emitter() == &BytecodeIntrinsicNode::emit_intrinsic_regExpStringIteratorFieldRegExp)
+        return JSRegExpStringIterator::Field::RegExp;
+    if (node->entry().emitter() == &BytecodeIntrinsicNode::emit_intrinsic_regExpStringIteratorFieldString)
+        return JSRegExpStringIterator::Field::String;
+    if (node->entry().emitter() == &BytecodeIntrinsicNode::emit_intrinsic_regExpStringIteratorFieldGlobal)
+        return JSRegExpStringIterator::Field::Global;
+    if (node->entry().emitter() == &BytecodeIntrinsicNode::emit_intrinsic_regExpStringIteratorFieldFullUnicode)
+        return JSRegExpStringIterator::Field::FullUnicode;
+    if (node->entry().emitter() == &BytecodeIntrinsicNode::emit_intrinsic_regExpStringIteratorFieldDone)
+        return JSRegExpStringIterator::Field::Done;
+    RELEASE_ASSERT_NOT_REACHED();
+    return JSRegExpStringIterator::Field::RegExp;
+}
+
 RegisterID* BytecodeIntrinsicNode::emit_intrinsic_getPromiseInternalField(BytecodeGenerator& generator, RegisterID* dst)
 {
     ArgumentListNode* node = m_args->m_listNode;
@@ -1646,6 +1713,19 @@ RegisterID* BytecodeIntrinsicNode::emit_intrinsic_getGeneratorInternalField(Byte
     RELEASE_ASSERT(node->m_expr->isBytecodeIntrinsicNode());
     unsigned index = static_cast<unsigned>(generatorInternalFieldIndex(static_cast<BytecodeIntrinsicNode*>(node->m_expr)));
     ASSERT(index < JSGenerator::numberOfInternalFields);
+    ASSERT(!node->m_next);
+
+    return generator.emitGetInternalField(generator.finalDestination(dst), base.get(), index);
+}
+
+RegisterID* BytecodeIntrinsicNode::emit_intrinsic_getIteratorHelperInternalField(BytecodeGenerator& generator, RegisterID* dst)
+{
+    ArgumentListNode* node = m_args->m_listNode;
+    RefPtr<RegisterID> base = generator.emitNode(node);
+    node = node->m_next;
+    RELEASE_ASSERT(node->m_expr->isBytecodeIntrinsicNode());
+    unsigned index = static_cast<unsigned>(iteratorHelperInternalFieldIndex(static_cast<BytecodeIntrinsicNode*>(node->m_expr)));
+    ASSERT(index < JSIteratorHelper::numberOfInternalFields);
     ASSERT(!node->m_next);
 
     return generator.emitGetInternalField(generator.finalDestination(dst), base.get(), index);
@@ -1737,6 +1817,45 @@ RegisterID* BytecodeIntrinsicNode::emit_intrinsic_getSetIteratorInternalField(By
     RELEASE_ASSERT(node->m_expr->isBytecodeIntrinsicNode());
     unsigned index = static_cast<unsigned>(setIteratorInternalFieldIndex(static_cast<BytecodeIntrinsicNode*>(node->m_expr)));
     ASSERT(index < JSSetIterator::numberOfInternalFields);
+    ASSERT(!node->m_next);
+
+    return generator.emitGetInternalField(generator.finalDestination(dst), base.get(), index);
+}
+
+RegisterID* BytecodeIntrinsicNode::emit_intrinsic_getAsyncFromSyncIteratorInternalField(BytecodeGenerator& generator, RegisterID* dst)
+{
+    ArgumentListNode* node = m_args->m_listNode;
+    RefPtr<RegisterID> base = generator.emitNode(node);
+    node = node->m_next;
+    RELEASE_ASSERT(node->m_expr->isBytecodeIntrinsicNode());
+    unsigned index = static_cast<unsigned>(asyncFromSyncIteratorInternalFieldIndex(static_cast<BytecodeIntrinsicNode*>(node->m_expr)));
+    ASSERT(index < JSAsyncFromSyncIterator::numberOfInternalFields);
+    ASSERT(!node->m_next);
+
+    return generator.emitGetInternalField(generator.finalDestination(dst), base.get(), index);
+}
+
+RegisterID* BytecodeIntrinsicNode::emit_intrinsic_getWrapForValidIteratorInternalField(BytecodeGenerator& generator, RegisterID* dst)
+{
+    ArgumentListNode* node = m_args->m_listNode;
+    RefPtr<RegisterID> base = generator.emitNode(node);
+    node = node->m_next;
+    RELEASE_ASSERT(node->m_expr->isBytecodeIntrinsicNode());
+    unsigned index = static_cast<unsigned>(wrapForValidIteratorInternalFieldIndex(static_cast<BytecodeIntrinsicNode*>(node->m_expr)));
+    ASSERT(index < JSWrapForValidIterator::numberOfInternalFields);
+    ASSERT(!node->m_next);
+
+    return generator.emitGetInternalField(generator.finalDestination(dst), base.get(), index);
+}
+
+RegisterID* BytecodeIntrinsicNode::emit_intrinsic_getRegExpStringIteratorInternalField(BytecodeGenerator& generator, RegisterID* dst)
+{
+    ArgumentListNode* node = m_args->m_listNode;
+    RefPtr<RegisterID> base = generator.emitNode(node);
+    node = node->m_next;
+    RELEASE_ASSERT(node->m_expr->isBytecodeIntrinsicNode());
+    unsigned index = static_cast<unsigned>(regExpStringIteratorInternalFieldIndex(static_cast<BytecodeIntrinsicNode*>(node->m_expr)));
+    ASSERT(index < JSRegExpStringIterator::numberOfInternalFields);
     ASSERT(!node->m_next);
 
     return generator.emitGetInternalField(generator.finalDestination(dst), base.get(), index);
@@ -1936,6 +2055,22 @@ RegisterID* BytecodeIntrinsicNode::emit_intrinsic_putSetIteratorInternalField(By
     return generator.move(dst, generator.emitPutInternalField(base.get(), index, value.get()));
 }
 
+RegisterID* BytecodeIntrinsicNode::emit_intrinsic_putRegExpStringIteratorInternalField(BytecodeGenerator& generator, RegisterID* dst)
+{
+    ArgumentListNode* node = m_args->m_listNode;
+    RefPtr<RegisterID> base = generator.emitNode(node);
+    node = node->m_next;
+    RELEASE_ASSERT(node->m_expr->isBytecodeIntrinsicNode());
+    unsigned index = static_cast<unsigned>(regExpStringIteratorInternalFieldIndex(static_cast<BytecodeIntrinsicNode*>(node->m_expr)));
+    ASSERT(index < JSRegExpStringIterator::numberOfInternalFields);
+    node = node->m_next;
+    RefPtr<RegisterID> value = generator.emitNode(node);
+
+    ASSERT(!node->m_next);
+
+    return generator.move(dst, generator.emitPutInternalField(base.get(), index, value.get()));
+}
+
 RegisterID* BytecodeIntrinsicNode::emit_intrinsic_superSamplerBegin(BytecodeGenerator& generator, RegisterID* dst)
 {
     ASSERT(!m_args->m_listNode);
@@ -2116,6 +2251,7 @@ CREATE_INTRINSIC_FOR_BRAND_CHECK(isJSArray, IsJSArray)
 CREATE_INTRINSIC_FOR_BRAND_CHECK(isProxyObject, IsProxyObject)
 CREATE_INTRINSIC_FOR_BRAND_CHECK(isDerivedArray, IsDerivedArray)
 CREATE_INTRINSIC_FOR_BRAND_CHECK(isGenerator, IsGenerator)
+CREATE_INTRINSIC_FOR_BRAND_CHECK(isIteratorHelper, IsIteratorHelper)
 CREATE_INTRINSIC_FOR_BRAND_CHECK(isAsyncGenerator, IsAsyncGenerator)
 CREATE_INTRINSIC_FOR_BRAND_CHECK(isPromise, IsPromise)
 CREATE_INTRINSIC_FOR_BRAND_CHECK(isRegExpObject, IsRegExpObject)
@@ -2128,6 +2264,8 @@ CREATE_INTRINSIC_FOR_BRAND_CHECK(isMapIterator, IsMapIterator)
 CREATE_INTRINSIC_FOR_BRAND_CHECK(isSetIterator, IsSetIterator)
 CREATE_INTRINSIC_FOR_BRAND_CHECK(isUndefinedOrNull, IsUndefinedOrNull)
 CREATE_INTRINSIC_FOR_BRAND_CHECK(isWrapForValidIterator, IsWrapForValidIterator)
+CREATE_INTRINSIC_FOR_BRAND_CHECK(isRegExpStringIterator, IsRegExpStringIterator)
+CREATE_INTRINSIC_FOR_BRAND_CHECK(isAsyncFromSyncIterator, IsAsyncFromSyncIterator)
 
 #undef CREATE_INTRINSIC_FOR_BRAND_CHECK
 
@@ -2191,6 +2329,50 @@ RegisterID* BytecodeIntrinsicNode::emit_intrinsic_newPromise(JSC::BytecodeGenera
     bool isInternalPromise = false;
     generator.emitNewPromise(finalDestination.get(), isInternalPromise);
     return finalDestination.get();
+}
+
+RegisterID* BytecodeIntrinsicNode::emit_intrinsic_iteratorGenericClose(BytecodeGenerator& generator, RegisterID* dst)
+{
+    ArgumentListNode* node = m_args->m_listNode;
+    RefPtr<RegisterID> iterator = generator.emitNode(node);
+    ASSERT(!node->m_next);
+
+    generator.emitIteratorGenericClose(iterator.get(), this);
+    return dst;
+}
+
+RegisterID* BytecodeIntrinsicNode::emit_intrinsic_iteratorGenericNext(BytecodeGenerator& generator, RegisterID* dst)
+{
+    ArgumentListNode* node = m_args->m_listNode;
+    RefPtr<RegisterID> nextMethod = generator.emitNode(node);
+    node = node->m_next;
+    RefPtr<RegisterID> iterator = generator.emitNode(node);
+    ASSERT(!node->m_next);
+
+    return generator.emitIteratorGenericNext(generator.finalDestination(dst), nextMethod.get(), iterator.get(), this);
+}
+
+RegisterID* BytecodeIntrinsicNode::emit_intrinsic_ifAbruptCloseIterator(BytecodeGenerator& generator, RegisterID* dst)
+{
+    ArgumentListNode* node = m_args->m_listNode;
+    RefPtr<RegisterID> iterator = generator.emitNode(node);
+    node = node->m_next;
+    ASSERT(!node->m_next);
+
+    Ref<Label> end = generator.newLabel();
+    auto emitSecondArgumentNode = scopedLambda<void(BytecodeGenerator&)>([&](BytecodeGenerator& generator) {
+        generator.emitNode(node);
+        generator.emitJump(end.get());
+    });
+
+    auto emitIteratorClose = scopedLambda<void(BytecodeGenerator&)>([&](BytecodeGenerator& generator) {
+        generator.emitIteratorGenericClose(iterator.get(), this);
+    });
+
+    generator.emitTryWithFinallyThatDoesNotShadowException(emitSecondArgumentNode, emitIteratorClose);
+    generator.emitLabel(end.get());
+
+    return dst;
 }
 
 #define JSC_DECLARE_BYTECODE_INTRINSIC_CONSTANT_GENERATORS(name) \
@@ -3443,52 +3625,12 @@ RegisterID* ThrowableBinaryOpNode::emitBytecode(BytecodeGenerator& generator, Re
 
 RegisterID* InstanceOfNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 {
-    RefPtr<RegisterID> hasInstanceValue = generator.newTemporary();
-    RefPtr<RegisterID> temp = generator.newTemporary();
-    RefPtr<RegisterID> prototype = generator.newTemporary();
     RefPtr<RegisterID> value = generator.emitNodeForLeftHandSide(m_expr1, m_rightHasAssignments, m_expr2->isPure(generator));
-    RefPtr<RegisterID> constructor = generator.emitNode(m_expr2);
     RefPtr<RegisterID> dstReg = generator.finalDestination(dst, value.get());
-    Ref<Label> ordinary = generator.newLabel();
-    Ref<Label> custom = generator.newLabel();
-    Ref<Label> done = generator.newLabel();
-    Ref<Label> typeError = generator.newLabel();
-
+    RefPtr<RegisterID> constructor = generator.emitNode(m_expr2);
+    RefPtr<RegisterID> hasInstanceOrPrototype = generator.newTemporary();
     generator.emitExpressionInfo(divot(), divotStart(), divotEnd());
-    generator.emitIsObject(temp.get(), constructor.get());
-    generator.emitJumpIfFalse(temp.get(), typeError.get());
-
-    generator.emitExpressionInfo(divot(), divotStart(), divotEnd());
-    generator.emitGetById(hasInstanceValue.get(), constructor.get(), generator.vm().propertyNames->hasInstanceSymbol);
-
-    generator.emitExpressionInfo(divot(), divotStart(), divotEnd());
-    generator.emitOverridesHasInstance(temp.get(), constructor.get(), hasInstanceValue.get());
-    generator.emitJumpIfTrue(temp.get(), custom.get());
-
-    generator.emitExpressionInfo(divot(), divotStart(), divotEnd());
-    generator.emitIsObject(temp.get(), value.get());
-    generator.emitJumpIfTrue(temp.get(), ordinary.get());
-
-    generator.emitLoad(dstReg.get(), false);
-    generator.emitJump(done.get());
-
-    generator.emitLabel(ordinary.get());
-    generator.emitExpressionInfo(divot(), divotStart(), divotEnd());
-    generator.emitGetById(prototype.get(), constructor.get(), generator.vm().propertyNames->prototype);
-
-    generator.emitExpressionInfo(divot(), divotStart(), divotEnd());
-    generator.emitInstanceOf(dstReg.get(), value.get(), prototype.get());
-    generator.emitJump(done.get());
-
-    generator.emitLabel(typeError.get());
-    generator.emitThrowTypeError("Right hand side of instanceof is not an object"_s);
-
-    generator.emitLabel(custom.get());
-    generator.emitExpressionInfo(divot(), divotStart(), divotEnd());
-    generator.emitInstanceOfCustom(dstReg.get(), value.get(), constructor.get(), hasInstanceValue.get());
-
-    generator.emitLabel(done.get());
-    return dstReg.get();
+    return generator.emitInstanceof(dstReg.get(), value.get(), constructor.get(), hasInstanceOrPrototype.get());
 }
 
 // ------------------------------ InNode ----------------------------
@@ -5580,85 +5722,125 @@ void ArrayPatternNode::bindValue(BytecodeGenerator& generator, RegisterID* rhs) 
         return;
     }
 
-    RefPtr<RegisterID> done;
-    for (auto& target : m_targetPatterns) {
-        std::optional<BaseAndPropertyName> targetBaseAndPropertyName;
-        if (target.pattern && target.pattern->isAssignmentElementNode())
-            targetBaseAndPropertyName = static_cast<AssignmentElementNode*>(target.pattern)->emitNodesForDestructuring(generator);
+    bool bindValueOrDefaultValueCanThrow = m_targetPatterns.containsIf([&](const auto& target) {
+        if (target.pattern && target.pattern->bindValueCanThrow(generator))
+            return true;
 
-        switch (target.bindingType) {
-        case BindingType::Elision:
-        case BindingType::Element: {
-            Ref<Label> iterationSkipped = generator.newLabel();
-            if (!done)
-                done = generator.newTemporary();
-            else
-                generator.emitJumpIfTrue(done.get(), iterationSkipped.get());
+        if (target.defaultValue) {
+            if (target.defaultValue->isConstant())
+                return false;
+            if (target.defaultValue->isResolveNode() && !static_cast<ResolveNode*>(target.defaultValue)->getFromScopeCanThrow(generator))
+                return false;
+            return true;
+        }
 
-            RefPtr<RegisterID> value = generator.newTemporary();
-            {
-                Ref<Label> valueIsSet = generator.newLabel();
-                CallArguments nextArgs(generator, nullptr, 0);
-                generator.move(nextArgs.thisRegister(), iterator.get());
-                generator.emitIteratorNext(done.get(), value.get(), iterable.get(), nextOrIndex.get(), nextArgs, this);
-                generator.emitJumpIfFalse(done.get(), valueIsSet.get());
-                generator.emitLabel(iterationSkipped.get());
-                generator.emitLoad(value.get(), jsUndefined());
-                generator.emitLabel(valueIsSet.get());
+        return false;
+    });
+
+    RefPtr<RegisterID> done = generator.newTemporary();
+
+    auto emitBindValue = scopedLambda<void(BytecodeGenerator&)>([&](BytecodeGenerator& generator) {
+        for (size_t i = 0; i < this->m_targetPatterns.size(); i++) {
+            const auto& target = this->m_targetPatterns[i];
+
+            std::optional<BaseAndPropertyName> targetBaseAndPropertyName;
+            if (target.pattern && target.pattern->isAssignmentElementNode())
+                targetBaseAndPropertyName = static_cast<AssignmentElementNode*>(target.pattern)->emitNodesForDestructuring(generator);
+
+            switch (target.bindingType) {
+            case BindingType::Elision:
+            case BindingType::Element: {
+                Ref<Label> iterationSkipped = generator.newLabel();
+                if (i)
+                    generator.emitJumpIfTrue(done.get(), iterationSkipped.get());
+
+                RefPtr<RegisterID> value = generator.newTemporary();
+                {
+                    Ref<Label> valueIsSet = generator.newLabel();
+                    CallArguments nextArgs(generator, nullptr, 0);
+                    generator.move(nextArgs.thisRegister(), iterator.get());
+                    if (bindValueOrDefaultValueCanThrow) {
+                        // This implements steps 3-5 of https://tc39.es/ecma262/#sec-iteratornext and similar steps in its callers.
+                        // On the fast path, only IteratorNext & friends can throw, resulting in iteratorRecord.[[Done]] being set
+                        // to `true` and skipping IteratorClose. As an optimization, we are avoiding emitLoad() here because exception
+                        // handlers are not emitted on the fast path and `done` won't be checked in case of an abrupt completion.
+                        generator.emitLoad(done.get(), jsBoolean(true));
+                    }
+                    generator.emitIteratorNext(done.get(), value.get(), iterable.get(), nextOrIndex.get(), nextArgs, this);
+                    generator.emitJumpIfFalse(done.get(), valueIsSet.get());
+                    generator.emitLabel(iterationSkipped.get());
+                    generator.emitLoad(value.get(), jsUndefined());
+                    generator.emitLabel(valueIsSet.get());
+                }
+
+                if (target.bindingType == BindingType::Element) {
+                    if (target.defaultValue)
+                        assignDefaultValueIfUndefined(generator, value.get(), target.defaultValue);
+
+                    if (targetBaseAndPropertyName)
+                        static_cast<AssignmentElementNode*>(target.pattern)->bindValueWithEmittedNodes(generator, targetBaseAndPropertyName.value(), value.get());
+                    else
+                        target.pattern->bindValue(generator, value.get());
+                }
+                break;
             }
 
-            if (target.bindingType == BindingType::Element) {
-                if (target.defaultValue)
-                    assignDefaultValueIfUndefined(generator, value.get(), target.defaultValue);
+            case BindingType::RestElement: {
+                RefPtr<RegisterID> array = generator.emitNewArray(generator.newTemporary(), nullptr, 0, ArrayWithUndecided);
 
+                Ref<Label> iterationDone = generator.newLabel();
+                if (i)
+                    generator.emitJumpIfTrue(done.get(), iterationDone.get());
+
+                RefPtr<RegisterID> index = generator.newTemporary();
+                generator.emitLoad(index.get(), jsNumber(0));
+                Ref<Label> loopStart = generator.newLabel();
+                generator.emitLabel(loopStart.get());
+
+                RefPtr<RegisterID> value = generator.newTemporary();
+                {
+                    CallArguments nextArgs(generator, nullptr, 0);
+                    generator.move(nextArgs.thisRegister(), iterator.get());
+                    if (bindValueOrDefaultValueCanThrow) {
+                        // This implements steps 3-5 of https://tc39.es/ecma262/#sec-iteratornext and similar steps in its callers.
+                        // On the fast path, only IteratorNext & friends can throw, resulting in iteratorRecord.[[Done]] being set
+                        // to `true` and skipping IteratorClose. As an optimization, we are avoiding emitLoad() here because exception
+                        // handlers are not emitted on the fast path and `done` won't be checked in case of an abrupt completion.
+                        generator.emitLoad(done.get(), jsBoolean(true));
+                    }
+                    generator.emitIteratorNext(done.get(), value.get(), iterable.get(), nextOrIndex.get(), nextArgs, this);
+                    generator.emitJumpIfTrue(done.get(), iterationDone.get());
+                }
+
+                generator.emitDirectPutByVal(array.get(), index.get(), value.get());
+                generator.emitInc(index.get());
+                generator.emitJump(loopStart.get());
+
+                generator.emitLabel(iterationDone.get());
                 if (targetBaseAndPropertyName)
-                    static_cast<AssignmentElementNode*>(target.pattern)->bindValueWithEmittedNodes(generator, targetBaseAndPropertyName.value(), value.get());
+                    static_cast<AssignmentElementNode*>(target.pattern)->bindValueWithEmittedNodes(generator, targetBaseAndPropertyName.value(), array.get());
                 else
-                    target.pattern->bindValue(generator, value.get());
+                    target.pattern->bindValue(generator, array.get());
+                break;
             }
-            break;
-        }
-
-        case BindingType::RestElement: {
-            RefPtr<RegisterID> array = generator.emitNewArray(generator.newTemporary(), nullptr, 0, ArrayWithUndecided);
-
-            Ref<Label> iterationDone = generator.newLabel();
-            if (!done)
-                done = generator.newTemporary();
-            else
-                generator.emitJumpIfTrue(done.get(), iterationDone.get());
-
-            RefPtr<RegisterID> index = generator.newTemporary();
-            generator.emitLoad(index.get(), jsNumber(0));
-            Ref<Label> loopStart = generator.newLabel();
-            generator.emitLabel(loopStart.get());
-
-            RefPtr<RegisterID> value = generator.newTemporary();
-            {
-                CallArguments nextArgs(generator, nullptr, 0);
-                generator.move(nextArgs.thisRegister(), iterator.get());
-                generator.emitIteratorNext(done.get(), value.get(), iterable.get(), nextOrIndex.get(), nextArgs, this);
-                generator.emitJumpIfTrue(done.get(), iterationDone.get());
             }
-
-            generator.emitDirectPutByVal(array.get(), index.get(), value.get());
-            generator.emitInc(index.get());
-            generator.emitJump(loopStart.get());
-
-            generator.emitLabel(iterationDone.get());
-            if (targetBaseAndPropertyName)
-                static_cast<AssignmentElementNode*>(target.pattern)->bindValueWithEmittedNodes(generator, targetBaseAndPropertyName.value(), array.get());
-            else
-                target.pattern->bindValue(generator, array.get());
-            break;
         }
-        }
+    });
+
+    auto emitIteratorClose = scopedLambda<void(BytecodeGenerator&)>([&](BytecodeGenerator& generator) {
+        Ref<Label> iteratorClosed = generator.newLabel();
+        generator.emitJumpIfTrue(done.get(), iteratorClosed.get());
+        generator.emitIteratorGenericClose(iterator.get(), this);
+        generator.emitLabel(iteratorClosed.get());
+    });
+
+    if (bindValueOrDefaultValueCanThrow) {
+        generator.emitLoad(done.get(), jsBoolean(false));
+        generator.emitTryWithFinallyThatDoesNotShadowException(emitBindValue, emitIteratorClose);
+    } else {
+        emitBindValue(generator);
+        emitIteratorClose(generator);
     }
-
-    Ref<Label> iteratorClosed = generator.newLabel();
-    generator.emitJumpIfTrue(done.get(), iteratorClosed.get());
-    generator.emitIteratorGenericClose(iterator.get(), this);
-    generator.emitLabel(iteratorClosed.get());
 }
 
 void ArrayPatternNode::toString(StringBuilder& builder) const
@@ -5793,14 +5975,16 @@ void ObjectPatternNode::bindValue(BytecodeGenerator& generator, RegisterID* rhs)
                 } else {
                     RefPtr<RegisterID> propertyName;
                     if (m_containsRestElement)
-                        propertyName = generator.emitNodeForProperty(args->argumentRegister(indexInArguments++), target.propertyExpression);
+                        propertyName = generator.emitNodeForProperty(args->argumentRegister(indexInArguments), target.propertyExpression);
                     else
                         propertyName = generator.emitNodeForProperty(target.propertyExpression);
                     if (!target.propertyExpression->isNumber() && !target.propertyExpression->isString()) {
                         // ToPropertyKey(Number | String) does not have side-effect.
                         // And for Number case, passing it to GetByVal is better for performance.
-                        propertyName = generator.emitToPropertyKeyOrNumber(propertyName.get(), propertyName.get());
+                        propertyName = generator.emitToPropertyKeyOrNumber(m_containsRestElement ? args->argumentRegister(indexInArguments) : generator.newTemporary(), propertyName.get());
                     }
+                    if (m_containsRestElement)
+                        indexInArguments++;
                     if (target.pattern->isAssignmentElementNode())
                         targetBaseAndPropertyName = static_cast<AssignmentElementNode*>(target.pattern)->emitNodesForDestructuring(generator);
                     generator.emitGetByVal(temp.get(), rhs, propertyName.get());
@@ -5850,6 +6034,21 @@ void ObjectPatternNode::collectBoundIdentifiers(Vector<Identifier>& identifiers)
 {
     for (size_t i = 0; i < m_targetPatterns.size(); i++)
         m_targetPatterns[i].pattern->collectBoundIdentifiers(identifiers);
+}
+
+
+bool BindingNode::bindValueCanThrow(BytecodeGenerator& generator) const
+{
+    Variable var = generator.variable(m_boundProperty);
+    if (var.offset().isStack() || var.offset().isScope()) {
+        if (m_bindingContext != AssignmentContext::ConstDeclarationStatement && var.isReadOnly())
+            return true;
+        if (m_bindingContext == AssignmentContext::AssignmentExpression && generator.needsTDZCheck(var))
+            return true;
+        return false;
+    }
+
+    return true;
 }
 
 RegisterID* BindingNode::writableDirectBindingIfPossible(BytecodeGenerator& generator) const
@@ -5967,6 +6166,18 @@ void AssignmentElementNode::bindValueWithEmittedNodes(BytecodeGenerator& generat
             generator.emitPutByVal(pair.first.get(), pair.second.get(), value);
         generator.emitProfileType(value, divotStart(), divotEnd());
     }
+}
+
+bool AssignmentElementNode::bindValueCanThrow(BytecodeGenerator& generator) const
+{
+    if (m_assignmentTarget->isResolveNode()) {
+        ResolveNode* lhs = static_cast<ResolveNode*>(m_assignmentTarget);
+        Variable var = generator.variable(lhs->identifier());
+        if (var.offset().isStack() || var.offset().isScope())
+            return var.isReadOnly() || generator.needsTDZCheck(var);
+    }
+
+    return true;
 }
 
 RegisterID* AssignmentElementNode::writableDirectBindingIfPossible(BytecodeGenerator& generator) const

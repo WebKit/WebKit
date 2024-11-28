@@ -241,6 +241,11 @@ void ReplayTraceFunctionCall(const CallCapture &call, const TraceFunctionMap &cu
                                 captures[6].value.GLintVal, captures[7].value.GLintVal,
                                 captures[8].value.GLbitfieldVal, captures[9].value.GLenumVal);
             break;
+        case angle::EntryPoint::GLBlobCacheCallbacksANGLE:
+            glBlobCacheCallbacksANGLE(captures[0].value.GLSETBLOBPROCANGLEVal,
+                                      captures[1].value.GLGETBLOBPROCANGLEVal,
+                                      captures[2].value.voidConstPointerVal);
+            break;
         case angle::EntryPoint::GLBufferData:
             glBufferData(captures[0].value.GLenumVal, captures[1].value.GLsizeiptrVal,
                          captures[2].value.voidConstPointerVal, captures[3].value.GLenumVal);
@@ -1544,6 +1549,10 @@ void ReplayTraceFunctionCall(const CallCapture &call, const TraceFunctionMap &cu
             break;
         case angle::EntryPoint::GLGetPointerv:
             glGetPointerv(captures[0].value.GLenumVal, captures[1].value.voidPointerPointerVal);
+            break;
+        case angle::EntryPoint::GLGetPointervANGLE:
+            glGetPointervANGLE(captures[0].value.GLenumVal,
+                               captures[1].value.voidPointerPointerVal);
             break;
         case angle::EntryPoint::GLGetPointervKHR:
             glGetPointervKHR(captures[0].value.GLenumVal, captures[1].value.voidPointerPointerVal);

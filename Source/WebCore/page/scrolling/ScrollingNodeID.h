@@ -31,6 +31,6 @@
 namespace WebCore {
 
 struct ScrollingNodeIDType;
-using ScrollingNodeID = ProcessQualified<LegacyNullableObjectIdentifier<ScrollingNodeIDType>>;
+using ScrollingNodeID = ProcessQualified<ObjectIdentifier<ScrollingNodeIDType>>;
 
 } // namespace WebCore

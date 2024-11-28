@@ -33,10 +33,13 @@
 #if ENABLE(INPUT_TYPE_MONTH)
 
 #include "BaseDateAndTimeInputType.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class MonthInputType final : public BaseDateAndTimeInputType {
+    WTF_MAKE_TZONE_ALLOCATED(MonthInputType);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(MonthInputType);
 public:
     static Ref<MonthInputType> create(HTMLInputElement& element)
     {

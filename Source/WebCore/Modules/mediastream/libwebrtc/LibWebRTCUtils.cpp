@@ -35,6 +35,7 @@
 #include "RTCRtpSendParameters.h"
 #include <wtf/text/WTFString.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 ALLOW_UNUSED_PARAMETERS_BEGIN
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 ALLOW_COMMA_BEGIN
@@ -47,6 +48,7 @@ ALLOW_COMMA_BEGIN
 ALLOW_COMMA_END
 ALLOW_DEPRECATED_DECLARATIONS_END
 ALLOW_UNUSED_PARAMETERS_END
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 namespace WebCore {
 
@@ -255,11 +257,11 @@ void updateRTCRtpSendParameters(const RTCRtpSendParameters& parameters, webrtc::
     for (size_t i = 0; i < parameters.encodings.size(); ++i) {
         rtcParameters.encodings[i].active = parameters.encodings[i].active;
         if (parameters.encodings[i].maxBitrate)
-            rtcParameters.encodings[i].max_bitrate_bps = parameters.encodings[i].maxBitrate;
+            rtcParameters.encodings[i].max_bitrate_bps = *parameters.encodings[i].maxBitrate;
         if (parameters.encodings[i].maxFramerate)
-            rtcParameters.encodings[i].max_framerate = parameters.encodings[i].maxFramerate;
+            rtcParameters.encodings[i].max_framerate = *parameters.encodings[i].maxFramerate;
         if (parameters.encodings[i].scaleResolutionDownBy)
-            rtcParameters.encodings[i].scale_resolution_down_by = parameters.encodings[i].scaleResolutionDownBy;
+            rtcParameters.encodings[i].scale_resolution_down_by = *parameters.encodings[i].scaleResolutionDownBy;
         rtcParameters.encodings[i].bitrate_priority = toWebRTCBitRatePriority(parameters.encodings[i].priority);
         if (parameters.encodings[i].networkPriority)
             rtcParameters.encodings[i].network_priority = fromRTCPriorityType(*parameters.encodings[i].networkPriority);

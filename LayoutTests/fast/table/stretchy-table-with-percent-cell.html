@@ -1,0 +1,36 @@
+<style>
+table {
+  border-collapse: collapse;
+}
+
+td {
+  padding: 0px;
+}
+
+.wide_cell {
+  background-color: blue;
+  height: 30px;
+  width: 100%;
+  padding: 0px;
+}
+
+.cell_with_padding {
+  padding-left: 1px;
+}
+
+.stretch {
+  width: 500px;
+  height: 30px;
+  background-color: green;
+}
+</style>
+<!-- PASS if wide_cell (blue bar) is visible -->
+<table class=outer_table>
+  <td>
+    <table>
+      <td class=wide_cell></td>
+      <td class=cell_with_padding></td>
+    </table>
+  <div class=stretch></div>
+  </td>
+</table>

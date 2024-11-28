@@ -32,6 +32,7 @@
 namespace WebCore {
 
 class CryptoAlgorithmRsaOaepParams final : public CryptoAlgorithmParameters {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(CryptoAlgorithmRsaOaepParams);
 public:
     // Use labelVector() instead of label. The label will be gone once labelVector() is called.
     mutable std::optional<BufferSource::VariantType> label;

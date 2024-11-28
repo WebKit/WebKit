@@ -229,7 +229,7 @@ inline void LegacyInlineFlowBox::addTextBoxVisualOverflow(LegacyInlineTextBox& t
     
     GlyphOverflowAndFallbackFontsMap::iterator it = textBoxDataMap.find(&textBox);
     GlyphOverflow* glyphOverflow = it == textBoxDataMap.end() ? nullptr : &it->value.second;
-    bool isFlippedLine = lineStyle.isFlippedLinesWritingMode();
+    bool isFlippedLine = lineStyle.writingMode().isLineInverted();
 
     auto topGlyphEdge = glyphOverflow ? (isFlippedLine ? glyphOverflow->bottom : glyphOverflow->top) : 0_lu;
     auto bottomGlyphEdge = glyphOverflow ? (isFlippedLine ? glyphOverflow->top : glyphOverflow->bottom) : 0_lu;
@@ -245,7 +245,7 @@ inline void LegacyInlineFlowBox::addTextBoxVisualOverflow(LegacyInlineTextBox& t
 
     if (auto markExistsAndIsAbove = RenderText::emphasisMarkExistsAndIsAbove(textBox.renderer(), lineStyle)) {
         LayoutUnit emphasisMarkHeight = lineStyle.fontCascade().emphasisMarkHeight(lineStyle.textEmphasisMarkString());
-        if (*markExistsAndIsAbove == !lineStyle.isFlippedLinesWritingMode())
+        if (*markExistsAndIsAbove == !lineStyle.writingMode().isBlockFlipped())
             topGlyphOverflow = std::min(topGlyphOverflow, -emphasisMarkHeight);
         else
             bottomGlyphOverflow = std::max(bottomGlyphOverflow, emphasisMarkHeight);
@@ -275,10 +275,6 @@ inline void LegacyInlineFlowBox::addTextBoxVisualOverflow(LegacyInlineTextBox& t
     LayoutUnit logicalRightVisualOverflow = std::max(LayoutUnit(textBox.logicalRight() + childOverflowLogicalRight), logicalVisualOverflow.maxX());
     
     logicalVisualOverflow = LayoutRect(logicalLeftVisualOverflow, logicalTopVisualOverflow, logicalRightVisualOverflow - logicalLeftVisualOverflow, logicalBottomVisualOverflow - logicalTopVisualOverflow);
-
-    auto documentMarkerBounds = LegacyTextBoxPainter::calculateUnionOfAllDocumentMarkerBounds(textBox);
-    documentMarkerBounds.move(textBox.logicalLeft(), textBox.logicalTop());
-    logicalVisualOverflow = unionRect(logicalVisualOverflow, LayoutRect(documentMarkerBounds));
 
     textBox.setLogicalOverflowRect(logicalVisualOverflow);
 }
@@ -329,79 +325,6 @@ void LegacyInlineFlowBox::setOverflowFromLogicalRects(const LayoutRect& logicalV
 {
     LayoutRect visualOverflow(isHorizontal() ? logicalVisualOverflow : logicalVisualOverflow.transposedRect());
     setVisualOverflow(visualOverflow, lineTop, lineBottom);
-}
-
-bool LegacyInlineFlowBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, LayoutUnit lineTop, LayoutUnit lineBottom, HitTestAction hitTestAction)
-{
-    if (hitTestAction != HitTestForeground)
-        return false;
-
-    LayoutRect overflowRect(visualOverflowRect(lineTop, lineBottom));
-    flipForWritingMode(overflowRect);
-    overflowRect.moveBy(accumulatedOffset);
-    if (!locationInContainer.intersects(overflowRect))
-        return false;
-
-    // Check children first.
-    for (auto* child = lastChild(); child; child = child->previousOnLine()) {
-        if (is<RenderText>(child->renderer()) || !child->boxModelObject()->hasSelfPaintingLayer()) {
-            if (child->nodeAtPoint(request, result, locationInContainer, accumulatedOffset, lineTop, lineBottom, hitTestAction)) {
-                renderer().updateHitTestResult(result, locationInContainer.point() - toLayoutSize(accumulatedOffset));
-                return true;
-            }
-        }
-    }
-
-    // Now check ourselves. Pixel snap hit testing.
-    if (!renderer().visibleToHitTesting(request))
-        return false;
-
-    // Move x/y to our coordinates.
-    FloatRect rect(frameRect());
-    flipForWritingMode(rect);
-    rect.moveBy(accumulatedOffset);
-
-    if (locationInContainer.intersects(rect)) {
-        renderer().updateHitTestResult(result, flipForWritingMode(locationInContainer.point() - toLayoutSize(accumulatedOffset))); // Don't add in m_x or m_y here, we want coords in the containing block's space.
-        if (result.addNodeToListBasedTestResult(renderer().protectedNodeForHitTest().get(), request, locationInContainer, rect) == HitTestProgress::Stop)
-            return true;
-    }
-
-    return false;
-}
-
-void LegacyInlineFlowBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, LayoutUnit lineTop, LayoutUnit lineBottom)
-{
-    if (paintInfo.phase != PaintPhase::Foreground && paintInfo.phase != PaintPhase::Selection && paintInfo.phase != PaintPhase::Outline && paintInfo.phase != PaintPhase::SelfOutline && paintInfo.phase != PaintPhase::ChildOutlines && paintInfo.phase != PaintPhase::TextClip && paintInfo.phase != PaintPhase::Mask && paintInfo.phase != PaintPhase::EventRegion && paintInfo.phase != PaintPhase::Accessibility)
-        return;
-
-    LayoutRect overflowRect(visualOverflowRect(lineTop, lineBottom));
-    flipForWritingMode(overflowRect);
-    overflowRect.moveBy(paintOffset);
-    
-    if (!paintInfo.rect.intersects(snappedIntRect(overflowRect)))
-        return;
-
-    if (paintInfo.phase != PaintPhase::ChildOutlines) {
-        InlineBoxPainter painter(*this, paintInfo, paintOffset);
-        painter.paint();
-    }
-
-    if (paintInfo.phase == PaintPhase::Mask)
-        return;
-
-    PaintPhase paintPhase = paintInfo.phase == PaintPhase::ChildOutlines ? PaintPhase::Outline : paintInfo.phase;
-    PaintInfo childInfo(paintInfo);
-    childInfo.phase = paintPhase;
-    childInfo.updateSubtreePaintRootForChildren(&renderer());
-    
-    // Paint our children.
-    if (paintPhase != PaintPhase::SelfOutline) {
-        for (auto* curr = firstChild(); curr; curr = curr->nextOnLine()) {
-            if (curr->renderer().isRenderText() || !curr->boxModelObject()->hasSelfPaintingLayer())
-                curr->paint(childInfo, paintOffset, lineTop, lineBottom);
-        }
-    }
 }
 
 LegacyInlineBox* LegacyInlineFlowBox::firstLeafDescendant() const

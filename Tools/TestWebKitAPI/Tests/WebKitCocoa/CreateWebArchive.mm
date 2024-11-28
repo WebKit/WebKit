@@ -181,7 +181,7 @@ TEST(WebArchive, SaveResourcesBasic)
     [configuration setURLSchemeHandler:schemeHandler.get() forURLScheme:@"webarchivetest"];
     NSData *htmlData = [@"<head><script src=\"script.js\"></script></head><img src=\"image.png\" onload=\"onImageLoad()\"><script>function onImageLoad() { notifyTestRunner(); }</script>" dataUsingEncoding:NSUTF8StringEncoding];
     NSData *scriptData = [@"function notifyTestRunner() { window.webkit.messageHandlers.testHandler.postMessage(\"done\"); }" dataUsingEncoding:NSUTF8StringEncoding];
-    NSData *imageData = [NSData dataWithContentsOfURL:[[NSBundle mainBundle] URLForResource:@"400x400-green" withExtension:@"png" subdirectory:@"TestWebKitAPI.resources"]];
+    NSData *imageData = [NSData dataWithContentsOfURL:[NSBundle.test_resourcesBundle URLForResource:@"400x400-green" withExtension:@"png"]];
     [schemeHandler setStartURLSchemeTaskHandler:^(WKWebView *, id<WKURLSchemeTask> task) {
         NSData *data = nil;
         NSString *mimeType = nil;
@@ -273,7 +273,7 @@ TEST(WebArchive, SaveResourcesIframe)
     NSData *htmlData = [NSData dataWithBytes:htmlDataBytesForIframe length:strlen(htmlDataBytesForIframe)];
     NSData *iframeHTMLData = [NSData dataWithBytes:iframeHTMLDataBytes length:strlen(iframeHTMLDataBytes)];
     NSData *cssData = [NSData dataWithBytes:cssDataBytesForIframe length:strlen(cssDataBytesForIframe)];
-    NSData *imageData = [NSData dataWithContentsOfURL:[[NSBundle mainBundle] URLForResource:@"400x400-green" withExtension:@"png" subdirectory:@"TestWebKitAPI.resources"]];
+    NSData *imageData = [NSData dataWithContentsOfURL:[NSBundle.test_resourcesBundle URLForResource:@"400x400-green" withExtension:@"png"]];
     [schemeHandler setStartURLSchemeTaskHandler:^(WKWebView *, id<WKURLSchemeTask> task) {
         NSData *data = nil;
         NSString *mimeType = nil;
@@ -382,7 +382,7 @@ TEST(WebArchive, SaveResourcesFrame)
     [configuration setURLSchemeHandler:schemeHandler.get() forURLScheme:@"webarchivetest"];
     NSData *htmlData = [NSData dataWithBytes:htmlDataBytesForFrame length:strlen(htmlDataBytesForFrame)];
     NSData *frameHTMLData = [NSData dataWithBytes:frameHTMLDataBytes length:strlen(frameHTMLDataBytes)];
-    NSData *imageData = [NSData dataWithContentsOfURL:[[NSBundle mainBundle] URLForResource:@"400x400-green" withExtension:@"png" subdirectory:@"TestWebKitAPI.resources"]];
+    NSData *imageData = [NSData dataWithContentsOfURL:[NSBundle.test_resourcesBundle URLForResource:@"400x400-green" withExtension:@"png"]];
     [schemeHandler setStartURLSchemeTaskHandler:^(WKWebView *, id<WKURLSchemeTask> task) {
         NSData *data = nil;
         NSString *mimeType = nil;
@@ -474,7 +474,7 @@ TEST(WebArchive, SaveResourcesValidFileName)
     for (NSString *item in tests)
         [mutableHTMLString appendString:[NSString stringWithFormat:@"<img src='%@' onload='onImageLoad()'>", item]];
     NSData *htmlData = [[NSString stringWithString:mutableHTMLString] dataUsingEncoding:NSUTF8StringEncoding];
-    NSData *imageData = [NSData dataWithContentsOfURL:[[NSBundle mainBundle] URLForResource:@"400x400-green" withExtension:@"png" subdirectory:@"TestWebKitAPI.resources"]];
+    NSData *imageData = [NSData dataWithContentsOfURL:[NSBundle.test_resourcesBundle URLForResource:@"400x400-green" withExtension:@"png"]];
     NSString *cssString = @"img { width: 10px; }";
     NSData *cssData = [cssString dataUsingEncoding:NSUTF8StringEncoding];
     [schemeHandler setStartURLSchemeTaskHandler:^(WKWebView *, id<WKURLSchemeTask> task) {
@@ -564,7 +564,7 @@ TEST(WebArchive, SaveResourcesBlobURL)
     [configuration setURLSchemeHandler:schemeHandler.get() forURLScheme:@"webarchivetest"];
 
     NSData *htmlData = [NSData dataWithBytes:htmlDataBytesForBlobURL length:strlen(htmlDataBytesForBlobURL)];
-    NSData *imageData = [NSData dataWithContentsOfURL:[[NSBundle mainBundle] URLForResource:@"400x400-green" withExtension:@"png" subdirectory:@"TestWebKitAPI.resources"]];
+    NSData *imageData = [NSData dataWithContentsOfURL:[NSBundle.test_resourcesBundle URLForResource:@"400x400-green" withExtension:@"png"]];
     [schemeHandler setStartURLSchemeTaskHandler:^(WKWebView *, id<WKURLSchemeTask> task) {
         NSData *data = nil;
         NSString *mimeType = nil;
@@ -674,7 +674,7 @@ TEST(WebArchive, SaveResourcesResponsiveImages)
     auto schemeHandler = adoptNS([[TestURLSchemeHandler alloc] init]);
     [configuration setURLSchemeHandler:schemeHandler.get() forURLScheme:@"webarchivetest"];
     NSData *htmlData = [NSData dataWithBytes:htmlDataBytesForResponsiveImages length:strlen(htmlDataBytesForResponsiveImages)];
-    NSData *imageData = [NSData dataWithContentsOfURL:[[NSBundle mainBundle] URLForResource:@"400x400-green" withExtension:@"png" subdirectory:@"TestWebKitAPI.resources"]];
+    NSData *imageData = [NSData dataWithContentsOfURL:[NSBundle.test_resourcesBundle URLForResource:@"400x400-green" withExtension:@"png"]];
     [schemeHandler setStartURLSchemeTaskHandler:^(WKWebView *, id<WKURLSchemeTask> task) {
         NSData *data = nil;
         NSString *mimeType = nil;
@@ -747,7 +747,7 @@ TEST(WebArchive, SaveResourcesDataURL)
     [configuration setURLSchemeHandler:schemeHandler.get() forURLScheme:@"webarchivetest"];
 
     NSData *htmlData = [NSData dataWithBytes:hTMLDataBytesForDataURL length:strlen(hTMLDataBytesForDataURL)];
-    NSData *imageData = [NSData dataWithContentsOfURL:[[NSBundle mainBundle] URLForResource:@"400x400-green" withExtension:@"png" subdirectory:@"TestWebKitAPI.resources"]];
+    NSData *imageData = [NSData dataWithContentsOfURL:[NSBundle.test_resourcesBundle URLForResource:@"400x400-green" withExtension:@"png"]];
     [schemeHandler setStartURLSchemeTaskHandler:^(WKWebView *, id<WKURLSchemeTask> task) {
         NSData *data = nil;
         NSString *mimeType = nil;
@@ -1175,8 +1175,8 @@ TEST(WebArchive, SaveResourcesStyle)
     auto schemeHandler = adoptNS([[TestURLSchemeHandler alloc] init]);
     [configuration setURLSchemeHandler:schemeHandler.get() forURLScheme:@"webarchivetest"];
     NSData *htmlData = [NSData dataWithBytes:htmlDataBytesForStyle length:strlen(htmlDataBytesForStyle)];
-    NSData *imageData = [NSData dataWithContentsOfURL:[[NSBundle mainBundle] URLForResource:@"400x400-green" withExtension:@"png" subdirectory:@"TestWebKitAPI.resources"]];
-    NSData *fontData = [NSData dataWithContentsOfURL:[[NSBundle mainBundle] URLForResource:@"Ahem-10000A" withExtension:@"ttf" subdirectory:@"TestWebKitAPI.resources"]];
+    NSData *imageData = [NSData dataWithContentsOfURL:[NSBundle.test_resourcesBundle URLForResource:@"400x400-green" withExtension:@"png"]];
+    NSData *fontData = [NSData dataWithContentsOfURL:[NSBundle.test_resourcesBundle URLForResource:@"Ahem-10000A" withExtension:@"ttf"]];
     [schemeHandler setStartURLSchemeTaskHandler:^(WKWebView *, id<WKURLSchemeTask> task) {
         NSData *data = nil;
         NSString *mimeType = nil;
@@ -1248,7 +1248,7 @@ TEST(WebArchive, SaveResourcesInlineStyle)
     auto schemeHandler = adoptNS([[TestURLSchemeHandler alloc] init]);
     [configuration setURLSchemeHandler:schemeHandler.get() forURLScheme:@"webarchivetest"];
     NSData *htmlData = [NSData dataWithBytes:htmlDataBytesForInlineStyle length:strlen(htmlDataBytesForInlineStyle)];
-    NSData *imageData = [NSData dataWithContentsOfURL:[[NSBundle mainBundle] URLForResource:@"400x400-green" withExtension:@"png" subdirectory:@"TestWebKitAPI.resources"]];
+    NSData *imageData = [NSData dataWithContentsOfURL:[NSBundle.test_resourcesBundle URLForResource:@"400x400-green" withExtension:@"png"]];
     [schemeHandler setStartURLSchemeTaskHandler:^(WKWebView *, id<WKURLSchemeTask> task) {
         NSData *data = nil;
         NSString *mimeType = nil;
@@ -1346,9 +1346,9 @@ TEST(WebArchive, SaveResourcesLink)
     [configuration setURLSchemeHandler:schemeHandler.get() forURLScheme:@"webarchivetest"];
     NSData *htmlData = [NSData dataWithBytes:htmlDataBytesForLink length:strlen(htmlDataBytesForLink)];
     NSData *cssData = [NSData dataWithBytes:cssDataBytesForLink length:strlen(cssDataBytesForLink)];
-    NSData *imageData = [NSData dataWithContentsOfURL:[[NSBundle mainBundle] URLForResource:@"400x400-green" withExtension:@"png" subdirectory:@"TestWebKitAPI.resources"]];
+    NSData *imageData = [NSData dataWithContentsOfURL:[NSBundle.test_resourcesBundle URLForResource:@"400x400-green" withExtension:@"png"]];
     NSData *manifestData = [NSData dataWithBytes:manifestDataBytesForLink length:strlen(manifestDataBytesForLink)];
-    NSData *fontData = [NSData dataWithContentsOfURL:[[NSBundle mainBundle] URLForResource:@"Ahem-10000A" withExtension:@"ttf" subdirectory:@"TestWebKitAPI.resources"]];
+    NSData *fontData = [NSData dataWithContentsOfURL:[NSBundle.test_resourcesBundle URLForResource:@"Ahem-10000A" withExtension:@"ttf"]];
     [schemeHandler setStartURLSchemeTaskHandler:^(WKWebView *, id<WKURLSchemeTask> task) {
         NSData *data = nil;
         NSString *mimeType = nil;
@@ -1602,7 +1602,7 @@ TEST(WebArchive, SaveResourcesCSSImportRule)
     [configuration setURLSchemeHandler:schemeHandler.get() forURLScheme:@"webarchivetest"];
     NSData *htmlData = [NSData dataWithBytes:htmlDataBytesForCSSImportRule length:strlen(htmlDataBytesForCSSImportRule)];
     NSData *cssData = [NSData dataWithBytes:cssDataBytesForLink length:strlen(cssDataBytesForLink)];
-    NSData *imageData = [NSData dataWithContentsOfURL:[[NSBundle mainBundle] URLForResource:@"400x400-green" withExtension:@"png" subdirectory:@"TestWebKitAPI.resources"]];
+    NSData *imageData = [NSData dataWithContentsOfURL:[NSBundle.test_resourcesBundle URLForResource:@"400x400-green" withExtension:@"png"]];
     [schemeHandler setStartURLSchemeTaskHandler:^(WKWebView *, id<WKURLSchemeTask> task) {
         NSData *data = nil;
         NSString *mimeType = nil;
@@ -1690,7 +1690,7 @@ TEST(WebArchive, SaveResourcesCSSSupportsRule)
     auto schemeHandler = adoptNS([[TestURLSchemeHandler alloc] init]);
     [configuration setURLSchemeHandler:schemeHandler.get() forURLScheme:@"webarchivetest"];
     NSData *htmlData = [NSData dataWithBytes:htmlDataBytesForCSSSupportsRule length:strlen(htmlDataBytesForCSSSupportsRule)];
-    NSData *imageData = [NSData dataWithContentsOfURL:[[NSBundle mainBundle] URLForResource:@"400x400-green" withExtension:@"png" subdirectory:@"TestWebKitAPI.resources"]];
+    NSData *imageData = [NSData dataWithContentsOfURL:[NSBundle.test_resourcesBundle URLForResource:@"400x400-green" withExtension:@"png"]];
     [schemeHandler setStartURLSchemeTaskHandler:^(WKWebView *, id<WKURLSchemeTask> task) {
         NSData *data = nil;
         NSString *mimeType = nil;
@@ -1769,7 +1769,7 @@ TEST(WebArchive, SaveResourcesCSSMediaRule)
     RetainPtr schemeHandler = adoptNS([[TestURLSchemeHandler alloc] init]);
     [configuration setURLSchemeHandler:schemeHandler.get() forURLScheme:@"webarchivetest"];
     RetainPtr htmlData = [NSData dataWithBytes:htmlDataBytesForCSSMediaRule length:strlen(htmlDataBytesForCSSMediaRule)];
-    RetainPtr imageData = [NSData dataWithContentsOfURL:[[NSBundle mainBundle] URLForResource:@"400x400-green" withExtension:@"png" subdirectory:@"TestWebKitAPI.resources"]];
+    RetainPtr imageData = [NSData dataWithContentsOfURL:[NSBundle.test_resourcesBundle URLForResource:@"400x400-green" withExtension:@"png"]];
     [schemeHandler setStartURLSchemeTaskHandler:^(WKWebView *, id<WKURLSchemeTask> task) {
         NSData *data = nil;
         NSString *mimeType = nil;
@@ -1912,7 +1912,7 @@ TEST(WebArchive, SaveResourcesExcludeBaseElement)
     auto schemeHandler = adoptNS([[TestURLSchemeHandler alloc] init]);
     [configuration setURLSchemeHandler:schemeHandler.get() forURLScheme:@"webarchivetest"];
     NSData *htmlData = [NSData dataWithBytes:htmlDataBytesForExcludeBaseElement length:strlen(htmlDataBytesForExcludeBaseElement)];
-    NSData *imageData = [NSData dataWithContentsOfURL:[[NSBundle mainBundle] URLForResource:@"400x400-green" withExtension:@"png" subdirectory:@"TestWebKitAPI.resources"]];
+    NSData *imageData = [NSData dataWithContentsOfURL:[NSBundle.test_resourcesBundle URLForResource:@"400x400-green" withExtension:@"png"]];
     [schemeHandler setStartURLSchemeTaskHandler:^(WKWebView *, id<WKURLSchemeTask> task) {
         NSData *data = nil;
         NSString *mimeType = nil;
@@ -2153,7 +2153,7 @@ TEST(WebArchive, SaveResourcesStyleWithUnloadedResources)
     auto schemeHandler = adoptNS([[TestURLSchemeHandler alloc] init]);
     [configuration setURLSchemeHandler:schemeHandler.get() forURLScheme:@"webarchivetest"];
     RetainPtr htmlData = [NSData dataWithBytes:htmlDataBytesForUnsavedSubresources length:strlen(htmlDataBytesForUnsavedSubresources)];
-    RetainPtr fontData = [NSData dataWithContentsOfURL:[[NSBundle mainBundle] URLForResource:@"Ahem-10000A" withExtension:@"ttf" subdirectory:@"TestWebKitAPI.resources"]];
+    RetainPtr fontData = [NSData dataWithContentsOfURL:[NSBundle.test_resourcesBundle URLForResource:@"Ahem-10000A" withExtension:@"ttf"]];
     [schemeHandler setStartURLSchemeTaskHandler:^(WKWebView *, id<WKURLSchemeTask> task) {
         NSData *data = nil;
         NSString *mimeType = nil;

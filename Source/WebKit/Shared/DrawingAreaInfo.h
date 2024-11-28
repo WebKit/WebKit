@@ -49,6 +49,6 @@ enum {
 typedef uint64_t ActivityStateChangeID;
 
 struct DrawingAreaIdentifierType;
-using DrawingAreaIdentifier = LegacyNullableObjectIdentifier<DrawingAreaIdentifierType>;
+using DrawingAreaIdentifier = ObjectIdentifier<DrawingAreaIdentifierType>;
 
 } // namespace WebKit

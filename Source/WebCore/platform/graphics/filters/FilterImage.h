@@ -26,6 +26,7 @@
 #pragma once
 
 #include "FloatRect.h"
+#include "ImageBuffer.h"
 #include "IntRect.h"
 #include "PixelBuffer.h"
 #include "RenderingMode.h"
@@ -46,8 +47,6 @@ namespace WebCore {
 
 class Filter;
 class FloatRect;
-class ImageBuffer;
-class ImageBufferAllocator;
 
 class FilterImage : public RefCounted<FilterImage> {
 public:

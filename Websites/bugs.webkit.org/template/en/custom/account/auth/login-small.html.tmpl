@@ -1,0 +1,94 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[%# Use the current script name. If an empty name is returned,
+  # then we are accessing the home page. %]
+
+[% USE Bugzilla %]
+[% cgi = Bugzilla.cgi %]
+
+[% login_target = cgi.url("-relative" => 1, "-query" => 1) %]
+[% IF !login_target OR login_target.match("^token.cgi") %]
+ [% login_target = "index.cgi" %]
+[% END %]
+
+<li id="mini_login_container[% qs_suffix FILTER css_class_quote %]">
+  [% connector = "?" %]
+  [% IF cgi.request_method == "GET" AND cgi.query_string %]
+    [% connector = "&" %]
+  [% END %]
+  [% script_url = login_target _ connector _ "GoAheadAndLogIn=1" %]
+  <button id="login_link[% qs_suffix FILTER css_class_quote %]" href="[% script_url FILTER html %]" onclick="document.getElementById('login-dialog').show()">Log In</button>
+  
+  <dialog id="login-dialog">
+  <div class="close">
+  <a href="#" onclick="document.getElementById('mini_login[% qs_suffix FILTER html %]').classList.remove('bz_default_hidden'); document.getElementById('forgot_form[% qs_suffix %]').classList.add('bz_default_hidden'); document.getElementById('login-dialog').close(); return false;" class="close">&times;</a>
+  </div>
+
+  [% Hook.process('additional_methods') %]
+  
+  <p class="divider">or</p>
+  
+  <form action="[% login_target FILTER html %]" method="POST"
+        id="mini_login[% qs_suffix FILTER css_class_quote %]" class="mini_login dialog-grid">
+        
+    <input id="Bugzilla_login[% qs_suffix FILTER css_class_quote %]" required
+           name="Bugzilla_login" class="bz_login"
+      [% IF login_not_email %]
+        placeholder="Login"
+      [% ELSE %]
+        type="email" placeholder="Email Address"
+      [% END %]>
+    <input class="bz_password" name="Bugzilla_password" type="password"
+           id="Bugzilla_password[% qs_suffix FILTER css_class_quote %]" required
+           placeholder="Password">
+    <input type="hidden" name="Bugzilla_login_token"
+           value="[% get_login_request_token() FILTER html %]">
+    <input type="submit" name="GoAheadAndLogIn" value="Log in"
+            id="log_in[% qs_suffix FILTER css_class_quote %]">
+                
+    [% IF Param('rememberlogin') == 'defaulton' ||
+          Param('rememberlogin') == 'defaultoff' %]
+      <label for="Bugzilla_remember[% qs_suffix FILTER css_class_quote %]"><input type="checkbox" id="Bugzilla_remember[% qs_suffix FILTER css_class_quote %]" 
+             name="Bugzilla_remember" value="on" class="bz_remember"
+             [%+ "checked" IF Param('rememberlogin') == "defaulton" %]> Remember my login</label>
+    [% END %]
+    
+    <div class="links">
+    <a id="create_account_link[% qs_suffix FILTER css_class_quote %]" href="/createaccount.cgi">Create Account</a> 
+    
+    &middot;
+              
+    <a id="forgot_link[% qs_suffix FILTER css_class_quote %]" href="[% script_url FILTER html %]#forgot"
+       onclick="document.getElementById('mini_login[% qs_suffix FILTER css_class_quote %]').classList.toggle('bz_default_hidden');
+                document.getElementById('forgot_form[% qs_suffix FILTER css_class_quote %]').classList.toggle('bz_default_hidden');
+                return false;">Forgot Password</a>
+    </div>
+  </form>
+  
+  [% IF user.authorizer.can_change_password %]
+    <form action="token.cgi" method="post" id="forgot_form[% qs_suffix FILTER css_class_quote %]"
+          class="mini_forgot dialog-grid bz_default_hidden">
+      <h2>Forgotten password account recovery</h2>
+      <input name="loginname" size="20" id="login[% qs_suffix FILTER html %]" required
+        [% IF login_not_email %]
+          placeholder="Your Login"
+        [% ELSE %]
+          type="email" placeholder="Your Email Address"
+        [% END %]>
+      <input id="forgot_button[% qs_suffix FILTER css_class_quote %]" value="Reset Password" type="submit">
+      <input type="hidden" name="a" value="reqpw">
+      <input type="hidden" id="token[% qs_suffix FILTER css_class_quote %]" name="token"
+             value="[% issue_hash_token(['reqpw']) FILTER html %]">
+    </form>
+    [% END %]
+  
+  </dialog>
+  
+
+</li>

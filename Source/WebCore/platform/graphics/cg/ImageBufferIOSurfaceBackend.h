@@ -36,7 +36,7 @@
 namespace WebCore {
 
 class WEBCORE_EXPORT ImageBufferIOSurfaceBackend : public ImageBufferCGBackend {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(ImageBufferIOSurfaceBackend);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED_EXPORT(ImageBufferIOSurfaceBackend, WEBCORE_EXPORT);
     WTF_MAKE_NONCOPYABLE(ImageBufferIOSurfaceBackend);
 public:
     static IntSize calculateSafeBackendSize(const Parameters&);

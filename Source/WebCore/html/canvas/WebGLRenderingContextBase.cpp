@@ -165,7 +165,7 @@
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
 
-#if ENABLE(MEDIA_STREAM)
+#if ENABLE(VIDEO)
 #include "VideoFrame.h"
 #endif
 
@@ -176,6 +176,8 @@
 #if PLATFORM(MAC)
 #include "PlatformScreen.h"
 #endif
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace WebCore {
 
@@ -486,13 +488,14 @@ std::unique_ptr<WebGLRenderingContextBase> WebGLRenderingContextBase::create(Can
     return renderingContext;
 }
 
-WebGLRenderingContextBase::WebGLRenderingContextBase(CanvasBase& canvas, WebGLContextAttributes&& attributes)
-    : GPUBasedCanvasRenderingContext(canvas)
+WebGLRenderingContextBase::WebGLRenderingContextBase(CanvasBase& canvas, CanvasRenderingContext::Type type, WebGLContextAttributes&& attributes)
+    : GPUBasedCanvasRenderingContext(canvas, type)
     , m_generatedImageCache(4)
     , m_attributes(WTFMove(attributes))
     , m_creationAttributes(m_attributes)
     , m_numGLErrorsToConsoleAllowed(canvas.scriptExecutionContext()->settingsValues().webGLErrorsToConsoleEnabled ? maxGLErrorsAllowedToConsole : 0)
 {
+    ASSERT(isWebGL());
 }
 
 WebGLCanvas WebGLRenderingContextBase::canvas()
@@ -1092,7 +1095,7 @@ void WebGLRenderingContextBase::bindTexture(GCGLenum target, WebGLTexture* textu
     // ES 2.0 doesn't expose this flag (a bug in the specification) and
     // otherwise the application has no control over the seams in this
     // dimension. However, it appears that supporting this properly on all
-    // platforms is fairly involved (will require a HashMap from texture ID
+    // platforms is fairly involved (will require a UncheckedKeyHashMap from texture ID
     // in all ports), and we have not had any complaints, so the logic has
     // been removed.
 }
@@ -3336,10 +3339,6 @@ ExceptionOr<void> WebGLRenderingContextBase::texImageSource(TexImageFunctionID f
     // elements' size for WebGL 1.0 as late as possible.
     bool sourceImageRectIsDefault = inputSourceImageRect == sentinelEmptyRect() || inputSourceImageRect == IntRect(0, 0, source.videoWidth(), source.videoHeight());
 
-#if PLATFORM(COCOA) && !HAVE(AVSAMPLEBUFFERDISPLAYLAYER_COPYDISPLAYEDPIXELBUFFER)
-    if (RefPtr player = source.player())
-        player->willBeAskedToPaintGL();
-#endif
     // Go through the fast path doing a GPU-GPU textures copy without a readback to system memory if possible.
     // Otherwise, it will fall back to the normal SW path.
     // FIXME: The current restrictions require that format shoud be RGB or RGBA,
@@ -3349,8 +3348,10 @@ ExceptionOr<void> WebGLRenderingContextBase::texImageSource(TexImageFunctionID f
         && type == GraphicsContextGL::UNSIGNED_BYTE
         && !level) {
         if (RefPtr player = source.player()) {
-            if (m_context->copyTextureFromMedia(*player, texture->object(), target, level, internalformat, format, type, m_unpackPremultiplyAlpha, m_unpackFlipY))
+            if (RefPtr videoFrame = player->videoFrameForCurrentTime()) {
+                if (m_context->copyTextureFromVideoFrame(*videoFrame, texture->object(), target, level, internalformat, format, type, m_unpackPremultiplyAlpha, m_unpackFlipY))
                 return { };
+            }
         }
     }
 
@@ -5236,7 +5237,7 @@ void WebGLRenderingContextBase::maybeRestoreContext()
             if (auto* htmlCanvas = this->htmlCanvas()) {
                 CheckedPtr renderBox = htmlCanvas->renderBox();
                 if (renderBox && renderBox->hasAcceleratedCompositing())
-                    renderBox->contentChanged(CanvasChanged);
+                    renderBox->contentChanged(ContentChangeType::Canvas);
             }
             return;
         }
@@ -5648,5 +5649,7 @@ WebCoreOpaqueRoot root(const WebGLExtension<WebGLRenderingContextBase>* extensio
 }
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ENABLE(WEBGL)

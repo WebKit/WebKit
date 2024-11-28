@@ -305,7 +305,7 @@ class CDMInstanceSessionFairPlayStreamingAVFObjC::UpdateResponseCollector {
 public:
     using KeyType = RetainPtr<AVContentKeyRequest>;
     using ValueType = RetainPtr<NSData>;
-    using ResponseMap = HashMap<KeyType, ValueType>;
+    using ResponseMap = UncheckedKeyHashMap<KeyType, ValueType>;
     using UpdateCallback = WTF::Function<void(std::optional<ResponseMap>&&)>;
     UpdateResponseCollector(size_t numberOfExpectedResponses, UpdateCallback&& callback)
         : m_numberOfExpectedResponses(numberOfExpectedResponses)
@@ -494,8 +494,8 @@ void CDMInstanceFairPlayStreamingAVFObjC::handleUnexpectedRequests(Vector<Retain
         auto request = requests.takeLast();
         m_unexpectedKeyRequests.add(request);
 
-        if (m_client)
-            m_client->unrequestedInitializationDataReceived(initTypeForRequest(request.get()), initializationDataForRequest(request.get()));
+        if (RefPtr client = m_client.get())
+            client->unrequestedInitializationDataReceived(initTypeForRequest(request.get()), initializationDataForRequest(request.get()));
     }
 }
 
@@ -1797,7 +1797,7 @@ Vector<RetainPtr<AVContentKey>> CDMInstanceSessionFairPlayStreamingAVFObjC::cont
 
 #if !RELEASE_LOG_DISABLED
 
-const void* CDMInstanceSessionFairPlayStreamingAVFObjC::contentKeyGroupDataSourceLogIdentifier() const
+uint64_t CDMInstanceSessionFairPlayStreamingAVFObjC::contentKeyGroupDataSourceLogIdentifier() const
 {
     return logIdentifier();
 }

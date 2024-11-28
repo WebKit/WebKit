@@ -9,6 +9,10 @@ export async function compile(wat, options = {}) {
         print("log for compilation:");
         print(binaryResult.log);
     }
+    if (options.logBinary) {
+        print("binary:");
+        print(binaryResult.buffer);
+    }
     return new WebAssembly.Module(binaryResult.buffer);
 }
 

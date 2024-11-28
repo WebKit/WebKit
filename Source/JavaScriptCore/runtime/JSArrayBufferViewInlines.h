@@ -25,10 +25,16 @@
 
 #pragma once
 
+#include <wtf/Compiler.h>
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 #include "ArrayBufferView.h"
 #include "JSArrayBufferView.h"
 #include "JSDataView.h"
 #include "TypedArrayType.h"
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 namespace JSC {
 

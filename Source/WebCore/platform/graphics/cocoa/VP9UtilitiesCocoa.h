@@ -40,8 +40,6 @@ struct MediaCapabilitiesInfo;
 struct VideoConfiguration;
 struct VideoInfo;
 
-WEBCORE_EXPORT void registerWebKitVP9Decoder();
-WEBCORE_EXPORT void registerWebKitVP8Decoder();
 WEBCORE_EXPORT void registerSupplementalVP9Decoder();
 bool isVP9DecoderAvailable();
 WEBCORE_EXPORT bool vp9HardwareDecoderAvailable();
@@ -51,7 +49,7 @@ std::optional<MediaCapabilitiesInfo> validateVPParameters(const VPCodecConfigura
 std::optional<MediaCapabilitiesInfo> computeVPParameters(const VideoConfiguration&, bool vp9HardwareDecoderAvailable);
 bool isVPSoftwareDecoderSmooth(const VideoConfiguration&);
 
-Ref<VideoInfo> createVideoInfoFromVP9HeaderParser(const vp9_parser::Vp9HeaderParser&, const webm::Element<webm::Colour>&);
+Ref<VideoInfo> createVideoInfoFromVP9HeaderParser(const vp9_parser::Vp9HeaderParser&, const webm::Video&);
 
 struct VP8FrameHeader {
     bool keyframe { false };
@@ -67,7 +65,7 @@ struct VP8FrameHeader {
 };
 
 std::optional<VP8FrameHeader> parseVP8FrameHeader(std::span<const uint8_t>);
-Ref<VideoInfo> createVideoInfoFromVP8Header(const VP8FrameHeader&, const webm::Element<webm::Colour>&);
+Ref<VideoInfo> createVideoInfoFromVP8Header(const VP8FrameHeader&, const webm::Video&);
 
 class WEBCORE_EXPORT VP9TestingOverrides {
 public:

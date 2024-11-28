@@ -32,7 +32,7 @@
 #if USE(COORDINATED_GRAPHICS)
 
 #include "DrawingArea.h"
-#include "WebPage.h"
+#include "WebPageInlines.h"
 #include "WebPageProxyMessages.h"
 #include "WebProcess.h"
 #include <WebCore/AsyncScrollingCoordinator.h>
@@ -40,11 +40,20 @@
 #include <WebCore/Damage.h>
 #include <WebCore/LocalFrame.h>
 #include <WebCore/LocalFrameView.h>
+#include <WebCore/NativeImage.h>
 #include <WebCore/PageOverlayController.h>
 #include <WebCore/RenderLayerBacking.h>
 #include <WebCore/RenderView.h>
 #include <WebCore/ThreadedScrollingTree.h>
+#include <wtf/SetForScope.h>
+#include <wtf/SystemTracing.h>
 #include <wtf/TZoneMallocInlines.h>
+
+#if USE(CAIRO)
+#include <WebCore/CairoPaintingEngine.h>
+#elif USE(SKIA)
+#include <WebCore/SkiaPaintingEngine.h>
+#endif
 
 #if USE(GLIB_EVENT_LOOP)
 #include <wtf/glib/RunLoopSourcePriority.h>
@@ -61,62 +70,60 @@ LayerTreeHost::LayerTreeHost(WebPage& webPage)
 LayerTreeHost::LayerTreeHost(WebPage& webPage, WebCore::PlatformDisplayID displayID)
 #endif
     : m_webPage(webPage)
-    , m_surface(AcceleratedSurface::create(webPage, *this))
-    , m_viewportController(webPage.size())
     , m_layerFlushTimer(RunLoop::main(), this, &LayerTreeHost::layerFlushTimerFired)
-#if HAVE(DISPLAY_LINK)
-    , m_didRenderFrameTimer(RunLoop::main(), this, &LayerTreeHost::didRenderFrameTimerFired)
-#endif
-    , m_coordinator(webPage, *this)
 #if !HAVE(DISPLAY_LINK)
     , m_displayID(displayID)
 #endif
+#if USE(CAIRO)
+    , m_paintingEngine(Cairo::PaintingEngine::create())
+#elif USE(SKIA)
+    , m_skiaPaintingEngine(SkiaPaintingEngine::create())
+#endif
 {
+    m_nicosia.scene = Nicosia::Scene::create();
+    m_nicosia.sceneIntegration = Nicosia::SceneIntegration::create(*m_nicosia.scene, *this);
+
+    m_rootLayer = GraphicsLayer::create(this, *this);
+#ifndef NDEBUG
+    m_rootLayer->setName(MAKE_STATIC_STRING_IMPL("LayerTreeHost root layer"));
+#endif
+    m_rootLayer->setDrawsContent(false);
+    m_rootLayer->setSize(m_webPage.size());
+
 #if USE(GLIB_EVENT_LOOP)
     m_layerFlushTimer.setPriority(RunLoopSourcePriority::LayerFlushTimer);
     m_layerFlushTimer.setName("[WebKit] LayerTreeHost"_s);
 #endif
     scheduleLayerFlush();
 
-    if (auto* frameView = m_webPage.localMainFrameView()) {
-        auto contentsSize = frameView->contentsSize();
-        if (!contentsSize.isEmpty())
-            m_viewportController.didChangeContentsSize(contentsSize);
-    }
-
-    IntSize scaledSize(m_webPage.size());
-    scaledSize.scale(m_webPage.deviceScaleFactor());
-    float scaleFactor = m_webPage.deviceScaleFactor() * m_viewportController.pageScaleFactor();
-
-    const auto damagePropagation = ([](const WebCore::Settings& settings) {
-        if (!settings.propagateDamagingInformation())
-            return ThreadedCompositor::DamagePropagation::None;
-        if (settings.unifyDamagedRegions())
-            return ThreadedCompositor::DamagePropagation::Unified;
-        return ThreadedCompositor::DamagePropagation::Region;
-    })(m_webPage.corePage()->settings());
-
 #if HAVE(DISPLAY_LINK)
-    // FIXME: remove the displayID from ThreadedCompositor too.
-    auto displayID = m_webPage.corePage()->displayID();
-    m_compositor = ThreadedCompositor::create(*this, displayID, scaledSize, scaleFactor, m_surface->shouldPaintMirrored(), damagePropagation);
+    m_compositor = ThreadedCompositor::create(*this, m_webPage.deviceScaleFactor());
 #else
-    m_compositor = ThreadedCompositor::create(*this, *this, displayID, scaledSize, scaleFactor, m_surface->shouldPaintMirrored(), damagePropagation);
+    m_compositor = ThreadedCompositor::create(*this, *this, m_webPage.deviceScaleFactor(), displayID);
 #endif
-    m_layerTreeContext.contextID = m_surface->surfaceID();
-    m_surface->didCreateCompositingRunLoop(m_compositor->compositingRunLoop());
-
-    didChangeViewport();
+    m_layerTreeContext.contextID = m_compositor->surfaceID();
 }
 
 LayerTreeHost::~LayerTreeHost()
 {
     cancelPendingLayerFlush();
 
-    m_surface->willDestroyCompositingRunLoop();
-    m_coordinator.invalidate();
+    m_nicosia.sceneIntegration->invalidate();
+
+    m_rootLayer = nullptr;
+    {
+        SetForScope purgingToggle(m_isPurgingBackingStores, true);
+        for (auto& registeredLayer : m_registeredLayers.values()) {
+            registeredLayer->purgeBackingStores();
+            registeredLayer->invalidateCoordinator();
+        }
+    }
+
+#if USE(SKIA)
+    m_skiaPaintingEngine = nullptr;
+#endif
+
     m_compositor->invalidate();
-    m_surface = nullptr;
 }
 
 void LayerTreeHost::setLayerFlushSchedulingEnabled(bool layerFlushingEnabled)
@@ -138,6 +145,8 @@ void LayerTreeHost::setLayerFlushSchedulingEnabled(bool layerFlushingEnabled)
 
 void LayerTreeHost::scheduleLayerFlush()
 {
+    WTFEmitSignpost(this, ScheduleLayerFlush, "isWaitingForRenderer %i", m_isWaitingForRenderer);
+
     if (!m_layerFlushSchedulingEnabled)
         return;
 
@@ -158,18 +167,30 @@ void LayerTreeHost::cancelPendingLayerFlush()
     m_layerFlushTimer.stop();
 }
 
-void LayerTreeHost::layerFlushTimerFired()
+void LayerTreeHost::flushLayers()
 {
-    if (m_isSuspended)
-        return;
+#if PLATFORM(GTK) || PLATFORM(WPE)
+    TraceScope traceScope(FlushPendingLayerChangesStart, FlushPendingLayerChangesEnd);
+#endif
+    SetForScope isFlushingLayerChanges(m_isFlushingLayerChanges, true);
 
-    if (m_isWaitingForRenderer)
-        return;
+    bool shouldSyncFrame = false;
+    if (!m_didInitializeRootCompositingLayer) {
+        auto& rootLayer = downcast<CoordinatedGraphicsLayer>(*m_rootLayer);
+        m_nicosia.state.rootLayer = rootLayer.compositionLayer();
+        m_didInitializeRootCompositingLayer = true;
+        shouldSyncFrame = true;
+    }
 
-    // If a force-repaint callback was registered, we should force a 'frame sync' that
-    // will guarantee us a call to renderNextFrame() once the update is complete.
-    if (m_forceRepaintAsync.callback)
-        m_coordinator.forceFrameSync();
+    Ref page { m_webPage };
+    page->updateRendering();
+    page->flushPendingEditorStateUpdate();
+
+    WTFBeginSignpost(this, FlushRootCompositingLayer);
+    m_rootLayer->flushCompositingStateForThisLayerOnly();
+    if (m_overlayCompositingLayer)
+        m_overlayCompositingLayer->flushCompositingState(visibleContentsRect());
+    WTFEndSignpost(this, FlushRootCompositingLayer);
 
     OptionSet<FinalizeRenderingUpdateFlags> flags;
 #if PLATFORM(GTK)
@@ -178,8 +199,66 @@ void LayerTreeHost::layerFlushTimerFired()
 #else
     flags.add(FinalizeRenderingUpdateFlags::ApplyScrollingTreeLayerPositions);
 #endif
+    page->finalizeRenderingUpdate(flags);
 
-    m_coordinator.flushPendingLayerChanges(flags);
+    WTFBeginSignpost(this, FinalizeCompositingStateFlush);
+    auto& coordinatedLayer = downcast<CoordinatedGraphicsLayer>(*m_rootLayer);
+    auto [performLayerSync, platformLayerUpdated] = coordinatedLayer.finalizeCompositingStateFlush();
+    shouldSyncFrame |= performLayerSync;
+    shouldSyncFrame |= m_forceFrameSync;
+    WTFEndSignpost(this, FinalizeCompositingStateFlush);
+
+    if (shouldSyncFrame) {
+        WTFBeginSignpost(this, SyncFrame);
+
+        m_nicosia.scene->accessState([this](Nicosia::Scene::State& state) {
+            for (auto& compositionLayer : m_nicosia.state.layers)
+                compositionLayer->flushState();
+
+            ++state.id;
+            state.layers = m_nicosia.state.layers;
+            state.rootLayer = m_nicosia.state.rootLayer;
+        });
+
+        commitSceneState(m_nicosia.scene);
+        m_forceFrameSync = false;
+
+        WTFEndSignpost(this, SyncFrame);
+    }
+#if HAVE(DISPLAY_LINK)
+    else if (platformLayerUpdated)
+        commitSceneState(nullptr);
+#endif
+
+    page->didUpdateRendering();
+
+    // Eject any backing stores whose only reference is held in the HashMap cache.
+    m_imageBackingStores.removeIf(
+        [](auto& it) {
+            return it.value->hasOneRef();
+        });
+}
+
+void LayerTreeHost::layerFlushTimerFired()
+{
+    WTFBeginSignpost(this, LayerFlushTimerFired, "isWaitingForRenderer %i", m_isWaitingForRenderer);
+
+    if (m_isSuspended) {
+        WTFEndSignpost(this, LayerFlushTimerFired);
+        return;
+    }
+
+    if (m_isWaitingForRenderer) {
+        WTFEndSignpost(this, LayerFlushTimerFired);
+        return;
+    }
+
+    // If a force-repaint callback was registered, we should force a 'frame sync' that
+    // will guarantee us a call to renderNextFrame() once the update is complete.
+    if (m_forceRepaintAsync.callback)
+        m_forceFrameSync = true;
+
+    flushLayers();
 
 #if PLATFORM(GTK)
     // If we have an active transient zoom, we want the zoom to win over any changes
@@ -187,52 +266,49 @@ void LayerTreeHost::layerFlushTimerFired()
     if (m_transientZoom)
         applyTransientZoomToLayers(m_transientZoomScale, m_transientZoomOrigin);
 #endif
+
+    WTFEndSignpost(this, LayerFlushTimerFired);
 }
 
 void LayerTreeHost::setRootCompositingLayer(GraphicsLayer* graphicsLayer)
 {
-    m_coordinator.setRootCompositingLayer(graphicsLayer);
-}
-
-void LayerTreeHost::setViewOverlayRootLayer(GraphicsLayer* viewOverlayRootLayer)
-{
-    m_viewOverlayRootLayer = viewOverlayRootLayer;
-    m_coordinator.setViewOverlayRootLayer(viewOverlayRootLayer);
-}
-
-void LayerTreeHost::scrollNonCompositedContents(const IntRect& rect)
-{
-    m_scrolledSinceLastFrame = true;
-
-    auto* frameView = m_webPage.localMainFrameView();
-    if (!frameView || !frameView->delegatesScrolling())
+    if (m_rootCompositingLayer == graphicsLayer)
         return;
 
-    m_viewportController.didScroll(rect.location());
-    didChangeViewport();
+    if (m_rootCompositingLayer)
+        m_rootCompositingLayer->removeFromParent();
+
+    m_rootCompositingLayer = graphicsLayer;
+    if (m_rootCompositingLayer)
+        m_rootLayer->addChildAtIndex(*m_rootCompositingLayer, 0);
+}
+
+void LayerTreeHost::setViewOverlayRootLayer(GraphicsLayer* graphicsLayer)
+{
+    if (m_overlayCompositingLayer == graphicsLayer)
+        return;
+
+    if (m_overlayCompositingLayer)
+        m_overlayCompositingLayer->removeFromParent();
+
+    m_overlayCompositingLayer = graphicsLayer;
+    if (m_overlayCompositingLayer)
+        m_rootLayer->addChild(*m_overlayCompositingLayer);
 }
 
 void LayerTreeHost::forceRepaint()
 {
     // This is necessary for running layout tests. Since in this case we are not waiting for a UIProcess to reply nicely.
     // Instead we are just triggering forceRepaint. But we still want to have the scripted animation callbacks being executed.
-    m_coordinator.syncDisplayState();
+    if (auto* frameView = m_webPage.localMainFrameView())
+        frameView->updateLayoutAndStyleIfNeededRecursive();
 
     // We need to schedule another flush, otherwise the forced paint might cancel a later expected flush.
-    m_coordinator.forceFrameSync();
+    m_forceFrameSync = true;
     scheduleLayerFlush();
 
-    if (!m_isWaitingForRenderer) {
-        OptionSet<FinalizeRenderingUpdateFlags> flags;
-#if PLATFORM(GTK)
-        if (!m_transientZoom)
-            flags.add(FinalizeRenderingUpdateFlags::ApplyScrollingTreeLayerPositions);
-#else
-        flags.add(FinalizeRenderingUpdateFlags::ApplyScrollingTreeLayerPositions);
-#endif
-
-        m_coordinator.flushPendingLayerChanges(flags);
-    }
+    if (!m_isWaitingForRenderer)
+        flushLayers();
 
     m_compositor->forceRepaint();
 }
@@ -250,106 +326,93 @@ void LayerTreeHost::forceRepaintAsync(CompletionHandler<void()>&& callback)
 
 void LayerTreeHost::sizeDidChange(const IntSize& size)
 {
-    if (m_surface->hostResize(size))
-        m_layerTreeContext.contextID = m_surface->surfaceID();
-
-    m_coordinator.sizeDidChange(size);
+    m_rootLayer->setSize(size);
     scheduleLayerFlush();
 
-    m_viewportController.didChangeViewportSize(size);
-    IntSize scaledSize(size);
-    scaledSize.scale(m_webPage.deviceScaleFactor());
-    m_compositor->setViewportSize(scaledSize, m_webPage.deviceScaleFactor() * m_viewportController.pageScaleFactor());
-    didChangeViewport();
+    m_compositor->setViewportSize(size, m_webPage.deviceScaleFactor());
 }
 
 void LayerTreeHost::pauseRendering()
 {
     m_isSuspended = true;
-    m_surface->visibilityDidChange(false);
     m_compositor->suspend();
 }
 
 void LayerTreeHost::resumeRendering()
 {
     m_isSuspended = false;
-    m_surface->visibilityDidChange(true);
     m_compositor->resume();
     scheduleLayerFlush();
 }
 
 GraphicsLayerFactory* LayerTreeHost::graphicsLayerFactory()
 {
-    return &m_coordinator;
+    return this;
 }
 
-void LayerTreeHost::contentsSizeChanged(const IntSize& newSize)
+FloatRect LayerTreeHost::visibleContentsRect() const
 {
-    m_viewportController.didChangeContentsSize(newSize);
-    didChangeViewport();
-}
-
-void LayerTreeHost::didChangeViewportAttributes(ViewportAttributes&& attr)
-{
-    m_viewportController.didChangeViewportAttributes(WTFMove(attr));
-    didChangeViewport();
-}
-
-void LayerTreeHost::didChangeViewport()
-{
-    FloatRect visibleRect(m_viewportController.visibleContentsRect());
-    if (visibleRect.isEmpty())
-        return;
-
-    // When using non overlay scrollbars, the contents size doesn't include the scrollbars, but we need to include them
-    // in the visible area used by the compositor to ensure that the scrollbar layers are also updated.
-    // See https://bugs.webkit.org/show_bug.cgi?id=160450.
-    auto* localMainFrame = dynamicDowncast<WebCore::LocalFrame>(m_webPage.corePage()->mainFrame());
-    auto* view = localMainFrame ? localMainFrame->view() : nullptr;
-    if (!view)
-        return;
-    auto* scrollbar = view->verticalScrollbar();
-    if (scrollbar && !scrollbar->isOverlayScrollbar())
-        visibleRect.expand(scrollbar->width(), 0);
-    scrollbar = view->horizontalScrollbar();
-    if (scrollbar && !scrollbar->isOverlayScrollbar())
-        visibleRect.expand(0, scrollbar->height());
-
-    m_coordinator.setVisibleContentsRect(visibleRect);
-    scheduleLayerFlush();
-
-    float pageScale = m_viewportController.pageScaleFactor();
-    IntPoint scrollPosition = roundedIntPoint(visibleRect.location());
-    if (m_lastScrollPosition != scrollPosition) {
-        m_scrolledSinceLastFrame = true;
-        m_lastScrollPosition = scrollPosition;
-        m_compositor->setScrollPosition(m_lastScrollPosition, m_webPage.deviceScaleFactor() * pageScale);
-
-        if (!view->useFixedLayout())
-            view->notifyScrollPositionChanged(m_lastScrollPosition);
-    }
-
-    if (m_lastPageScaleFactor != pageScale) {
-        m_lastPageScaleFactor = pageScale;
-        m_webPage.scalePage(pageScale, m_lastScrollPosition);
-    }
+    if (auto* localMainFrameView = m_webPage.localMainFrameView())
+        return FloatRect({ }, localMainFrameView->sizeForVisibleContent(ScrollableArea::VisibleContentRectIncludesScrollbars::Yes));
+    return m_webPage.bounds();
 }
 
 void LayerTreeHost::deviceOrPageScaleFactorChanged()
 {
-    if (m_surface->hostResize(m_webPage.size()))
-        m_layerTreeContext.contextID = m_surface->surfaceID();
-
     m_webPage.corePage()->pageOverlayController().didChangeDeviceScaleFactor();
-    IntSize scaledSize(m_webPage.size());
-    scaledSize.scale(m_webPage.deviceScaleFactor());
-    m_compositor->setViewportSize(scaledSize, m_webPage.deviceScaleFactor() * m_viewportController.pageScaleFactor());
-    didChangeViewport();
+    m_compositor->setViewportSize(m_webPage.size(), m_webPage.deviceScaleFactor());
 }
 
 void LayerTreeHost::backgroundColorDidChange()
 {
-    m_surface->backgroundColorDidChange();
+    m_compositor->backgroundColorDidChange();
+}
+
+void LayerTreeHost::detachLayer(CoordinatedGraphicsLayer* layer)
+{
+    if (m_isPurgingBackingStores)
+        return;
+
+    {
+        auto& compositionLayer = layer->compositionLayer();
+        m_nicosia.state.layers.remove(compositionLayer);
+        compositionLayer->setSceneIntegration(nullptr);
+    }
+    m_registeredLayers.remove(layer->id());
+}
+
+void LayerTreeHost::attachLayer(CoordinatedGraphicsLayer* layer)
+{
+    {
+        auto& compositionLayer = layer->compositionLayer();
+        m_nicosia.state.layers.add(compositionLayer);
+        compositionLayer->setSceneIntegration(m_nicosia.sceneIntegration.copyRef());
+    }
+    m_registeredLayers.add(layer->id(), layer);
+    layer->setNeedsVisibleRectAdjustment();
+}
+
+#if USE(CAIRO)
+Cairo::PaintingEngine& LayerTreeHost::paintingEngine()
+{
+    return *m_paintingEngine;
+}
+#endif
+
+Ref<CoordinatedImageBackingStore> LayerTreeHost::imageBackingStore(Ref<NativeImage>&& nativeImage)
+{
+    auto nativeImageID = CoordinatedImageBackingStore::uniqueIDForNativeImage(nativeImage.get());
+    auto addResult = m_imageBackingStores.ensure(nativeImageID, [&] {
+        return CoordinatedImageBackingStore::create(WTFMove(nativeImage));
+    });
+    return addResult.iterator->value;
+}
+
+Ref<GraphicsLayer> LayerTreeHost::createGraphicsLayer(GraphicsLayer::Type layerType, GraphicsLayerClient& client)
+{
+    auto layer = adoptRef(*new CoordinatedGraphicsLayer(layerType, client));
+    layer->setCoordinatorIncludingSubLayersIfNeeded(this);
+    return layer;
 }
 
 #if !HAVE(DISPLAY_LINK)
@@ -358,122 +421,13 @@ RefPtr<DisplayRefreshMonitor> LayerTreeHost::createDisplayRefreshMonitor(Platfor
     ASSERT(m_displayID == displayID);
     return Ref { m_compositor->displayRefreshMonitor() };
 }
-#endif
 
-void LayerTreeHost::didFlushRootLayer(const FloatRect& visibleContentRect)
-{
-    // Because our view-relative overlay root layer is not attached to the FrameView's GraphicsLayer tree, we need to flush it manually.
-    if (m_viewOverlayRootLayer)
-        m_viewOverlayRootLayer->flushCompositingState(visibleContentRect);
-}
-
-void LayerTreeHost::commitSceneState(const RefPtr<Nicosia::Scene>& state)
-{
-    m_isWaitingForRenderer = true;
-    m_compositor->updateSceneState(state, ++m_compositionRequestID);
-}
-
-void LayerTreeHost::updateScene()
-{
-    m_compositor->updateScene();
-}
-
-void LayerTreeHost::frameComplete()
-{
-    m_compositor->frameComplete();
-}
-
-uint64_t LayerTreeHost::nativeSurfaceHandleForCompositing()
-{
-    m_surface->initialize();
-    return m_surface->window();
-}
-
-void LayerTreeHost::didCreateGLContext()
-{
-    m_surface->didCreateGLContext();
-}
-
-void LayerTreeHost::willDestroyGLContext()
-{
-    m_surface->willDestroyGLContext();
-}
-
-void LayerTreeHost::didDestroyGLContext()
-{
-    m_surface->finalize();
-}
-
-void LayerTreeHost::resize(const IntSize& size)
-{
-    m_surface->clientResize(size);
-}
-
-void LayerTreeHost::willRenderFrame()
-{
-    RunLoop::main().dispatch([webPage = Ref { m_webPage }] {
-        if (auto* drawingArea = webPage->drawingArea())
-            drawingArea->willStartRenderingUpdateDisplay();
-    });
-    m_surface->willRenderFrame();
-}
-
-void LayerTreeHost::clearIfNeeded()
-{
-    m_surface->clearIfNeeded();
-}
-
-void LayerTreeHost::didRenderFrame(uint32_t compositionResponseID, const WebCore::Damage& damage)
-{
-    auto damageRegion = [&]() -> WebCore::Region {
-        if (m_scrolledSinceLastFrame || damage.isInvalid())
-            return { };
-
-        if (damage.isEmpty())
-            return { };
-
-        const auto& region = damage.region();
-        if (region.isRect() && region.contains(IntRect({ }, m_surface->size())))
-            return { };
-
-        return region;
-    }();
-
-    m_surface->didRenderFrame(WTFMove(damageRegion));
-
-    m_scrolledSinceLastFrame = false;
-
-#if HAVE(DISPLAY_LINK)
-    m_compositionResponseID = compositionResponseID;
-    if (!m_didRenderFrameTimer.isActive())
-        m_didRenderFrameTimer.startOneShot(0_s);
-#endif
-    RunLoop::main().dispatch([webPage = Ref { m_webPage }] {
-        if (auto* drawingArea = webPage->drawingArea())
-            drawingArea->didCompleteRenderingUpdateDisplay();
-    });
-}
-
-#if HAVE(DISPLAY_LINK)
-void LayerTreeHost::didRenderFrameTimerFired()
-{
-    if (!m_isWaitingForRenderer || (m_isWaitingForRenderer && m_compositionRequestID == m_compositionResponseID))
-        renderNextFrame(false);
-}
-#endif
-
-void LayerTreeHost::displayDidRefresh(PlatformDisplayID displayID)
-{
-    WebProcess::singleton().eventDispatcher().notifyScrollingTreesDisplayDidRefresh(displayID);
-}
-
-#if !HAVE(DISPLAY_LINK)
 void LayerTreeHost::requestDisplayRefreshMonitorUpdate()
 {
     // Flush layers to cause a repaint. If m_isWaitingForRenderer was true at this point, the layer
     // flush won't do anything, but that means there's a painting ongoing that will send the
     // display refresh notification when it's done.
-    m_coordinator.forceFrameSync();
+    m_forceFrameSync = true;
     scheduleLayerFlush();
 }
 
@@ -485,8 +439,42 @@ void LayerTreeHost::handleDisplayRefreshMonitorUpdate(bool hasBeenRescheduled)
 }
 #endif
 
+void LayerTreeHost::willRenderFrame()
+{
+    if (auto* drawingArea = m_webPage.drawingArea())
+        drawingArea->willStartRenderingUpdateDisplay();
+}
+
+void LayerTreeHost::didRenderFrame()
+{
+    if (auto* drawingArea = m_webPage.drawingArea())
+        drawingArea->didCompleteRenderingUpdateDisplay();
+}
+
+#if HAVE(DISPLAY_LINK)
+void LayerTreeHost::didComposite(uint32_t compositionResponseID)
+{
+    if (!m_isWaitingForRenderer || (m_isWaitingForRenderer && m_compositionRequestID == compositionResponseID))
+        renderNextFrame(false);
+}
+#endif
+
+void LayerTreeHost::commitSceneState(const RefPtr<Nicosia::Scene>& state)
+{
+    m_isWaitingForRenderer = true;
+    m_compositionRequestID = m_compositor->requestComposition(state);
+    WTFEmitSignpost(this, CommitSceneState, "compositionRequestID %i", m_compositionRequestID);
+}
+
+void LayerTreeHost::requestUpdate()
+{
+    m_compositor->updateScene();
+}
+
 void LayerTreeHost::renderNextFrame(bool forceRepaint)
 {
+    WTFBeginSignpost(this, RenderNextFrame);
+
     m_isWaitingForRenderer = false;
     bool scheduledWhileWaitingForRenderer = std::exchange(m_scheduledWhileWaitingForRenderer, false);
 
@@ -507,9 +495,11 @@ void LayerTreeHost::renderNextFrame(bool forceRepaint)
     if (scheduledWhileWaitingForRenderer || m_layerFlushTimer.isActive() || forceRepaint) {
         m_layerFlushTimer.stop();
         if (forceRepaint)
-            m_coordinator.forceFrameSync();
+            m_forceFrameSync = true;
         layerFlushTimerFired();
     }
+
+    WTFEndSignpost(this, RenderNextFrame);
 }
 
 #if PLATFORM(GTK)
@@ -597,7 +587,7 @@ void LayerTreeHost::commitTransientZoom(double scale, FloatPoint origin)
 #if PLATFORM(WPE) && USE(GBM) && ENABLE(WPE_PLATFORM)
 void LayerTreeHost::preferredBufferFormatsDidChange()
 {
-    m_surface->preferredBufferFormatsDidChange();
+    m_compositor->preferredBufferFormatsDidChange();
 }
 #endif
 

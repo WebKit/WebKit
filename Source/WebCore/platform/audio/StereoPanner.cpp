@@ -33,6 +33,8 @@
 #include "VectorMath.h"
 #include <wtf/MathExtras.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 namespace StereoPanner {
@@ -148,5 +150,7 @@ void panToTargetValue(const AudioBus* inputBus, AudioBus* outputBus, float panVa
 } // namespace StereoPanner
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ENABLE(WEB_AUDIO)

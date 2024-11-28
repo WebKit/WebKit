@@ -56,11 +56,14 @@
 #import <wtf/BlockPtr.h>
 #import <wtf/SetForScope.h>
 #import <wtf/SystemTracing.h>
+#import <wtf/TZoneMallocInlines.h>
 #import <wtf/WorkQueue.h>
 #import <wtf/text/MakeString.h>
 
 namespace WebKit {
 using namespace WebCore;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteLayerTreeDrawingArea);
 
 constexpr FramesPerSecond DefaultPreferredFramesPerSecond = 60;
 
@@ -191,7 +194,7 @@ void RemoteLayerTreeDrawingArea::updateGeometry(const IntSize& viewSize, bool fl
 
 bool RemoteLayerTreeDrawingArea::shouldUseTiledBackingForFrameView(const LocalFrameView& frameView) const
 {
-    return frameView.frame().isRootFrame()
+    return frameView.frame().isMainFrame()
         || m_webPage->corePage()->settings().asyncFrameScrollingEnabled();
 }
 
@@ -212,9 +215,10 @@ void RemoteLayerTreeDrawingArea::updatePreferences(const WebPreferencesStore& pr
     DebugPageOverlays::settingsChanged(page);
 }
 
-void RemoteLayerTreeDrawingArea::setDeviceScaleFactor(float deviceScaleFactor)
+void RemoteLayerTreeDrawingArea::setDeviceScaleFactor(float deviceScaleFactor, CompletionHandler<void()>&& completionHandler)
 {
     Ref { m_webPage.get() }->setDeviceScaleFactor(deviceScaleFactor);
+    completionHandler();
 }
 
 DelegatedScrollingMode RemoteLayerTreeDrawingArea::delegatedScrollingMode() const
@@ -468,6 +472,15 @@ auto RemoteLayerTreeDrawingArea::rootLayerInfoWithFrameIdentifier(WebCore::Frame
     }
     return &m_rootLayers[index];
 }
+
+#if HAVE(HDR_SUPPORT)
+bool RemoteLayerTreeDrawingArea::hdrForImagesEnabled() const
+{
+    if (auto corePage = m_webPage->corePage())
+        return corePage->settings().hdrForImagesEnabled();
+    return false;
+}
+#endif
 
 void RemoteLayerTreeDrawingArea::mainFrameContentSizeChanged(WebCore::FrameIdentifier frameID, const IntSize& contentsSize)
 {

@@ -293,7 +293,9 @@ void SincResampler::process(std::span<float> destination, size_t framesToProcess
     }
 }
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 float SincResampler::convolve(const float* inputP, const float* k1, const float* k2, float kernelInterpolationFactor)
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 {
 #if USE(ACCELERATE)
     float sum1;

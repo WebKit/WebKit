@@ -1,4 +1,32 @@
 ================
+WebKitGTK 2.47.2
+================
+
+What's new in WebKitGTK 2.47.2?
+
+  - Move tiles rendering to a secondary thread when using the GPU.
+  - Use the damage information when collected to improve composition in WebKit.
+  - Improve performance of canvas putImageData by avoiding buffer copies.
+  - Fix preserve-3D intersection rendering.
+  - Fix video dimensions since GStreamer 1.24.9.
+  - Fix opening links with window.open() when noopener is present.
+  - Fix several crashes and rendering issues.
+  - Translation updates: Indonesian.
+
+================
+WebKitGTK 2.47.1
+================
+
+What's new in WebKitGTK 2.47.1?
+
+  - Flatten layers to a plane when preseve-3d style is set.
+  - Build GPU process by default, but keeping WebGL in the web process by default for now.
+  - Use DMA-BUF buffers for WebGL when available.
+  - Fix DuckDuckGo links by adding a user agent quirk.
+  - Make GStreamer GL sink handle DMA-BUF memory to replace the DMA-BUF sink.
+  - Fix several crashes and rendering issues.
+
+================
 WebKitGTK 2.45.6
 ================
 

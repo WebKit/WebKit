@@ -226,11 +226,8 @@ bool RenderInline::mayAffectLayout() const
 
 void RenderInline::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
-    if (auto* lineLayout = LayoutIntegration::LineLayout::containing(*this)) {
+    if (auto* lineLayout = LayoutIntegration::LineLayout::containing(*this))
         lineLayout->paint(paintInfo, paintOffset, this);
-        return;
-    }
-    m_legacyLineBoxes.paint(this, paintInfo, paintOffset);
 }
 
 template<typename GeneratorContext>
@@ -376,24 +373,24 @@ LayoutUnit RenderInline::marginBottom() const
     return computeMargin(this, style().marginBottom());
 }
 
-LayoutUnit RenderInline::marginStart(const RenderStyle* otherStyle) const
+LayoutUnit RenderInline::marginStart(const WritingMode writingMode) const
 {
-    return computeMargin(this, style().marginStartUsing(otherStyle ? otherStyle : &style()));
+    return computeMargin(this, style().marginStart(writingMode));
 }
 
-LayoutUnit RenderInline::marginEnd(const RenderStyle* otherStyle) const
+LayoutUnit RenderInline::marginEnd(const WritingMode writingMode) const
 {
-    return computeMargin(this, style().marginEndUsing(otherStyle ? otherStyle : &style()));
+    return computeMargin(this, style().marginEnd(writingMode));
 }
 
-LayoutUnit RenderInline::marginBefore(const RenderStyle* otherStyle) const
+LayoutUnit RenderInline::marginBefore(const WritingMode writingMode) const
 {
-    return computeMargin(this, style().marginBeforeUsing(otherStyle ? otherStyle : &style()));
+    return computeMargin(this, style().marginBefore(writingMode));
 }
 
-LayoutUnit RenderInline::marginAfter(const RenderStyle* otherStyle) const
+LayoutUnit RenderInline::marginAfter(const WritingMode writingMode) const
 {
-    return computeMargin(this, style().marginAfterUsing(otherStyle ? otherStyle : &style()));
+    return computeMargin(this, style().marginAfter(writingMode));
 }
 
 ASCIILiteral RenderInline::renderName() const
@@ -416,7 +413,7 @@ bool RenderInline::nodeAtPoint(const HitTestRequest& request, HitTestResult& res
     ASSERT(layer());
     if (auto* lineLayout = LayoutIntegration::LineLayout::containing(*this))
         return lineLayout->hitTest(request, result, locationInContainer, accumulatedOffset, hitTestAction, this);
-    return m_legacyLineBoxes.hitTest(this, request, result, locationInContainer, accumulatedOffset, hitTestAction);
+    return false;
 }
 
 VisiblePosition RenderInline::positionForPoint(const LayoutPoint& point, HitTestSource source, const RenderFragmentContainer* fragment)
@@ -457,7 +454,7 @@ LayoutUnit RenderInline::innerPaddingBoxWidth() const
 
     if (LayoutIntegration::LineLayout::containing(*this)) {
         if (auto inlineBox = InlineIterator::firstInlineBoxFor(*this)) {
-            if (style().isLeftToRightDirection()) {
+            if (writingMode().isBidiLTR()) {
                 firstInlineBoxPaddingBoxLeft = inlineBox->logicalLeftIgnoringInlineDirection() + borderStart();
                 for (; inlineBox->nextInlineBox(); inlineBox.traverseNextInlineBox()) { }
                 ASSERT(inlineBox);
@@ -478,7 +475,7 @@ LayoutUnit RenderInline::innerPaddingBoxWidth() const
     if (!firstInlineBox || !lastInlineBox)
         return { };
 
-    if (style().isLeftToRightDirection()) {
+    if (writingMode().isBidiLTR()) {
         firstInlineBoxPaddingBoxLeft = firstInlineBox->logicalLeft();
         lastInlineBoxPaddingBoxRight = lastInlineBox->logicalRight();
     } else {
@@ -523,7 +520,7 @@ IntRect RenderInline::linesBoundingBox() const
                 logicalRightSide = curr->logicalRight();
         }
 
-        bool isHorizontal = style().isHorizontalWritingMode();
+        bool isHorizontal = writingMode().isHorizontal();
 
         float x = isHorizontal ? logicalLeftSide : firstLegacyInlineBox()->x();
         float y = isHorizontal ? firstLegacyInlineBox()->y() : logicalLeftSide;
@@ -565,7 +562,7 @@ LayoutRect RenderInline::linesVisualOverflowBoundingBox() const
     LayoutUnit logicalHeight = lastLegacyInlineBox()->logicalBottomVisualOverflow(lastRootBox.lineBottom()) - logicalTop;
 
     LayoutRect rect(logicalLeftSide, logicalTop, logicalWidth, logicalHeight);
-    if (!style().isHorizontalWritingMode())
+    if (!writingMode().isHorizontal())
         rect = rect.transposedRect();
     return rect;
 }
@@ -728,7 +725,7 @@ LayoutSize RenderInline::offsetFromContainer(RenderElement& container, const Lay
         offset -= toLayoutSize(box->scrollPosition());
 
     if (offsetDependsOnPoint)
-        *offsetDependsOnPoint = (is<RenderBox>(container) && container.style().isFlippedBlocksWritingMode()) || is<RenderFragmentedFlow>(container);
+        *offsetDependsOnPoint = (is<RenderBox>(container) && container.writingMode().isBlockFlipped()) || is<RenderFragmentedFlow>(container);
 
     return offset;
 }
@@ -754,7 +751,7 @@ void RenderInline::mapLocalToContainer(const RenderLayerModelObject* ancestorCon
 
     if (mode.contains(ApplyContainerFlip)) {
         if (CheckedPtr box = dynamicDowncast<RenderBox>(*container)) {
-            if (container->style().isFlippedBlocksWritingMode()) {
+            if (container->writingMode().isBlockFlipped()) {
                 LayoutPoint centerPoint(transformState.mappedPoint());
                 transformState.move(box->flipForWritingMode(centerPoint) - centerPoint);
             }
@@ -785,7 +782,7 @@ const RenderObject* RenderInline::pushMappingToContainer(const RenderLayerModelO
     return ancestorSkipped ? ancestorToStopAt : container;
 }
 
-void RenderInline::updateHitTestResult(HitTestResult& result, const LayoutPoint& point)
+void RenderInline::updateHitTestResult(HitTestResult& result, const LayoutPoint& point) const
 {
     if (result.innerNode())
         return;
@@ -878,13 +875,13 @@ LayoutSize RenderInline::offsetForInFlowPositionedInline(const RenderBox* child)
     // Per http://www.w3.org/TR/CSS2/visudet.html#abs-non-replaced-width an absolute positioned box with a static position
     // should locate itself as though it is a normal flow box in relation to its containing block.
     LayoutSize logicalOffset;
-    if (!child->style().hasStaticInlinePosition(style().isHorizontalWritingMode()))
+    if (!child->style().hasStaticInlinePosition(writingMode().isHorizontal()))
         logicalOffset.setWidth(inlinePosition);
 
-    if (!child->style().hasStaticBlockPosition(style().isHorizontalWritingMode()))
+    if (!child->style().hasStaticBlockPosition(writingMode().isHorizontal()))
         logicalOffset.setHeight(blockPosition);
 
-    return style().isHorizontalWritingMode() ? logicalOffset : logicalOffset.transposedSize();
+    return writingMode().isHorizontal() ? logicalOffset : logicalOffset.transposedSize();
 }
 
 void RenderInline::imageChanged(WrappedImagePtr, const IntRect*)
@@ -965,7 +962,7 @@ void RenderInline::paintOutline(PaintInfo& paintInfo, const LayoutPoint& paintOf
 
     auto isHorizontalWritingMode = this->isHorizontalWritingMode();
     auto& containingBlock = *this->containingBlock();
-    auto isFlippedBlocksWritingMode = containingBlock.style().isFlippedBlocksWritingMode();
+    auto isFlipped = containingBlock.writingMode().isBlockFlipped();
     Vector<LayoutRect> rects;
     for (auto box = InlineIterator::firstInlineBoxFor(*this); box; box.traverseNextInlineBox()) {
         auto lineBox = box->lineBox();
@@ -976,7 +973,7 @@ void RenderInline::paintOutline(PaintInfo& paintInfo, const LayoutPoint& paintOf
         if (!isHorizontalWritingMode)
             enclosingVisualRect = enclosingVisualRect.transposedRect();
 
-        if (isFlippedBlocksWritingMode)
+        if (isFlipped)
             containingBlock.flipForWritingMode(enclosingVisualRect);
 
         rects.append(LayoutRect { enclosingVisualRect });

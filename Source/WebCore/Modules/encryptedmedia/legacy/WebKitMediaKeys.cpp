@@ -49,7 +49,7 @@ ExceptionOr<Ref<WebKitMediaKeys>> WebKitMediaKeys::create(const String& keySyste
 
     // 3. Let cdm be the content decryption module corresponding to keySystem.
     // 4. Load cdm if necessary.
-    auto cdm = LegacyCDM::create(keySystem);
+    Ref cdm = LegacyCDM::create(keySystem).releaseNonNull();
 
     // 5. Create a new MediaKeys object.
     // 5.1 Let the keySystem attribute be keySystem.
@@ -57,7 +57,7 @@ ExceptionOr<Ref<WebKitMediaKeys>> WebKitMediaKeys::create(const String& keySyste
     return adoptRef(*new WebKitMediaKeys(keySystem, WTFMove(cdm)));
 }
 
-WebKitMediaKeys::WebKitMediaKeys(const String& keySystem, std::unique_ptr<LegacyCDM>&& cdm)
+WebKitMediaKeys::WebKitMediaKeys(const String& keySystem, Ref<LegacyCDM>&& cdm)
     : m_keySystem(keySystem)
     , m_cdm(WTFMove(cdm))
 {
@@ -72,6 +72,8 @@ WebKitMediaKeys::~WebKitMediaKeys()
         session->close();
         session->detachKeys();
     }
+
+    m_cdm->setClient(nullptr);
 }
 
 ExceptionOr<Ref<WebKitMediaKeySession>> WebKitMediaKeys::createSession(Document& document, const String& type, Ref<Uint8Array>&& initData)
@@ -137,7 +139,7 @@ void WebKitMediaKeys::setMediaElement(HTMLMediaElement* element)
     m_mediaElement = element;
 
     if (RefPtr player = m_mediaElement? m_mediaElement->player() : nullptr) {
-        player->setCDM(m_cdm.get());
+        player->setCDM(m_cdm.ptr());
         if (!m_sessions.isEmpty())
             player->setCDMSession(m_sessions.last()->session());
     }

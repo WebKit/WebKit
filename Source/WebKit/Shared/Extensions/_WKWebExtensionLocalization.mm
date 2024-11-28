@@ -30,10 +30,13 @@
 #import "config.h"
 #import "_WKWebExtensionLocalization.h"
 
+#import "APIData.h"
+#import "APIError.h"
 #import "CocoaHelpers.h"
 #import "Logging.h"
 #import "WKWebExtensionInternal.h"
 #import "WebExtension.h"
+#import <wtf/Language.h>
 
 #if PLATFORM(IOS_FAMILY)
 #import <UIKit/UIKit.h>
@@ -84,43 +87,40 @@ using namespace WebKit;
 
 - (instancetype)initWithWebExtension:(WebExtension&)webExtension
 {
-    NSString *defaultLocaleString = webExtension.defaultLocale().localeIdentifier;
-
-    if (!defaultLocaleString.length) {
+    auto defaultLocaleString = webExtension.defaultLocale();
+    if (defaultLocaleString.isEmpty()) {
         RELEASE_LOG_DEBUG(Extensions, "No default locale provided");
         return [self initWithRegionalLocalization:nil languageLocalization:nil defaultLocalization:nil withBestLocale:nil uniqueIdentifier:nil];
     }
 
-    NSLocale *currentLocale = NSLocale.autoupdatingCurrentLocale;
-    NSString *languageCode = currentLocale.languageCode;
-    NSString *countryCode = currentLocale.countryCode;
-
-    NSString *regionalLocaleString = [NSString stringWithFormat:@"%@_%@", languageCode, countryCode];
-    NSString *bestLocaleString;
-
-    LocalizationDictionary *defaultLocaleDictionary = [self _localizationDictionaryForWebExtension:webExtension withLocale:defaultLocaleString];
-    if (defaultLocaleDictionary) {
-        RELEASE_LOG_DEBUG(Extensions, "Default locale available for %{public}@", defaultLocaleString);
-        bestLocaleString = defaultLocaleString;
+    auto *defaultLocaleDictionary = [self _localizationDictionaryForWebExtension:webExtension withLocale:defaultLocaleString];
+    if (!defaultLocaleDictionary) {
+        RELEASE_LOG_DEBUG(Extensions, "No localization found for default locale %{public}@", static_cast<NSString *>(defaultLocaleString));
+        return [self initWithRegionalLocalization:nil languageLocalization:nil defaultLocalization:nil withBestLocale:nil uniqueIdentifier:nil];
     }
 
+    RELEASE_LOG_DEBUG(Extensions, "Loaded default locale %{public}@", static_cast<NSString *>(defaultLocaleString));
+
+    auto bestLocaleString = webExtension.bestMatchLocale();
+    auto defaultLocaleComponents = parseLocale(defaultLocaleString);
+    auto bestLocaleComponents = parseLocale(bestLocaleString);
+    auto bestLocaleLanguageOnlyString = bestLocaleComponents.languageCode;
+
+    RELEASE_LOG_DEBUG(Extensions, "Best locale is %{public}@", static_cast<NSString *>(bestLocaleString));
+
     LocalizationDictionary *languageDictionary;
-    if (![languageCode isEqualToString:defaultLocaleString]) {
-        if ((languageDictionary = [self _localizationDictionaryForWebExtension:webExtension withLocale:languageCode])) {
-            RELEASE_LOG_DEBUG(Extensions, "Language locale available for %{public}@", languageCode);
-            bestLocaleString = languageCode;
-        }
+    if (!bestLocaleLanguageOnlyString.isEmpty() && bestLocaleLanguageOnlyString != defaultLocaleString) {
+        languageDictionary = [self _localizationDictionaryForWebExtension:webExtension withLocale:bestLocaleLanguageOnlyString];
+        if (languageDictionary)
+            RELEASE_LOG_DEBUG(Extensions, "Loaded language-only locale %{public}@", static_cast<NSString *>(bestLocaleLanguageOnlyString));
     }
 
     LocalizationDictionary *regionalDictionary;
-    if (![regionalLocaleString isEqualToString:defaultLocaleString]) {
-        if ((regionalDictionary = [self _localizationDictionaryForWebExtension:webExtension withLocale:regionalLocaleString])) {
-            RELEASE_LOG_DEBUG(Extensions, "Regional locale available for %{public}@", regionalLocaleString);
-            bestLocaleString = regionalLocaleString;
-        }
+    if (bestLocaleString != bestLocaleLanguageOnlyString && bestLocaleString != defaultLocaleString) {
+        regionalDictionary = [self _localizationDictionaryForWebExtension:webExtension withLocale:bestLocaleString];
+        if (regionalDictionary)
+            RELEASE_LOG_DEBUG(Extensions, "Loaded regional locale %{public}@", static_cast<NSString *>(bestLocaleString));
     }
-
-    RELEASE_LOG_DEBUG(Extensions, "Best locale is %{public}@", bestLocaleString ?: @"undefined");
 
     return [self initWithRegionalLocalization:regionalDictionary languageLocalization:languageDictionary defaultLocalization:defaultLocaleDictionary withBestLocale:bestLocaleString uniqueIdentifier:nil];
 }
@@ -165,12 +165,12 @@ using namespace WebKit;
     for (NSString *key in localizedDictionary.allKeys) {
         id value = localizedDictionary[key];
 
-        if ([value isKindOfClass:NSString.class])
-            localizedDictionary[key] = [self localizedStringForString:(NSString *)value];
-        else if ([value isKindOfClass:NSArray.class])
-            localizedDictionary[key] = [self _localizedArrayForArray:(NSArray *)value];
-        else if ([value isKindOfClass:NSDictionary.class])
-            localizedDictionary[key] = [self localizedDictionaryForDictionary:(NSDictionary *)value];
+        if (auto *str = dynamic_objc_cast<NSString>(value))
+            localizedDictionary[key] = [self localizedStringForString:str];
+        else if (auto *arr = dynamic_objc_cast<NSArray>(value))
+            localizedDictionary[key] = [self _localizedArrayForArray:arr];
+        else if (auto* dict = dynamic_objc_cast<NSDictionary>(value))
+            localizedDictionary[key] = [self localizedDictionaryForDictionary:dict];
     }
 
     return localizedDictionary;
@@ -241,11 +241,14 @@ using namespace WebKit;
 {
     auto *path = [NSString stringWithFormat:pathToJSONFile, localeString];
 
-    NSError *error;
-    NSData *data = [NSData dataWithData:webExtension.resourceDataForPath(path, &error, WebExtension::CacheResult::No, WebExtension::SuppressNotFoundErrors::Yes)];
-    webExtension.recordErrorIfNeeded(error);
+    RefPtr<API::Error> error;
+    RefPtr data = webExtension.resourceDataForPath(path, error, WebExtension::CacheResult::No, WebExtension::SuppressNotFoundErrors::Yes);
+    if (!data || error) {
+        webExtension.recordErrorIfNeeded(error);
+        return nil;
+    }
 
-    return parseJSON(data);
+    return parseJSON(static_cast<NSData *>(data->wrapper()));
 }
 
 - (LocalizationDictionary *)_predefinedMessages

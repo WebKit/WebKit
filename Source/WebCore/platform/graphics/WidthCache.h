@@ -37,6 +37,8 @@
 #include <wtf/text/StringImpl.h>
 #include <wtf/text/WYHash.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 struct GlyphOverflow;
@@ -221,8 +223,8 @@ private:
         return false;
     }
 
-    using Map = HashMap<SmallStringKey, float, SmallStringKeyHash, SmallStringKeyHashTraits, WTF::FloatWithZeroEmptyKeyHashTraits<float>>;
-    using SingleCharMap = HashMap<uint32_t, float, DefaultHash<uint32_t>, HashTraits<uint32_t>, WTF::FloatWithZeroEmptyKeyHashTraits<float>>;
+    using Map = UncheckedKeyHashMap<SmallStringKey, float, SmallStringKeyHash, SmallStringKeyHashTraits, WTF::FloatWithZeroEmptyKeyHashTraits<float>>;
+    using SingleCharMap = UncheckedKeyHashMap<uint32_t, float, DefaultHash<uint32_t>, HashTraits<uint32_t>, WTF::FloatWithZeroEmptyKeyHashTraits<float>>;
 
     static constexpr int s_minInterval = -3; // A cache hit pays for about 3 cache misses.
     static constexpr int s_maxInterval = 20; // Sampling at this interval has almost no overhead.
@@ -236,5 +238,7 @@ private:
 };
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // WidthCache_h

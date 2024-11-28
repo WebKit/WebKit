@@ -35,8 +35,9 @@ namespace WebKit {
 class NetworkSocketChannel;
 struct SessionSet;
 
-class WebSocketTask {
+class WebSocketTask : public CanMakeWeakPtr<WebSocketTask>, public CanMakeCheckedPtr<WebSocketTask> {
     WTF_MAKE_TZONE_ALLOCATED(WebSocketTask);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(WebSocketTask);
 public:
     WebSocketTask(NetworkSocketChannel&, const WebCore::ResourceRequest&, SoupSession*, SoupMessage*, const String& protocol);
     ~WebSocketTask();
@@ -58,11 +59,13 @@ private:
 
     String acceptedExtensions() const;
 
+    Ref<NetworkSocketChannel> protectedChannel() const;
+
     static void didReceiveMessageCallback(WebSocketTask*, SoupWebsocketDataType, GBytes*);
     static void didReceiveErrorCallback(WebSocketTask*, GError*);
     static void didCloseCallback(WebSocketTask*);
 
-    CheckedRef<NetworkSocketChannel> m_channel;
+    WeakRef<NetworkSocketChannel> m_channel;
     WebCore::ResourceRequest m_request;
     GRefPtr<SoupMessage> m_handshakeMessage;
     GRefPtr<SoupWebsocketConnection> m_connection;

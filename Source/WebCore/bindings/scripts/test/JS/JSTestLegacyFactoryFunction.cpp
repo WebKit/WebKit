@@ -47,7 +47,6 @@
 #include <wtf/URL.h>
 #include <wtf/text/MakeString.h>
 
-
 namespace WebCore {
 using namespace JSC;
 
@@ -109,7 +108,7 @@ template<> void JSTestLegacyFactoryFunctionDOMConstructor::initializeProperties(
 
 template<> EncodedJSValue JSC_HOST_CALL_ATTRIBUTES JSTestLegacyFactoryFunctionLegacyFactoryFunction::construct(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
 {
-    auto& vm = lexicalGlobalObject->vm();
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = lexicalGlobalObject->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto* castedThis = jsCast<JSTestLegacyFactoryFunctionLegacyFactoryFunction*>(callFrame->jsCallee());
     ASSERT(castedThis);
@@ -163,9 +162,8 @@ template<> void JSTestLegacyFactoryFunctionLegacyFactoryFunction::initializeProp
 
 /* Hash table for prototype */
 
-static const HashTableValue JSTestLegacyFactoryFunctionPrototypeTableValues[] =
-{
-    { "constructor"_s, static_cast<unsigned>(PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestLegacyFactoryFunctionConstructor, 0 } },
+static const std::array<HashTableValue, 1> JSTestLegacyFactoryFunctionPrototypeTableValues {
+    HashTableValue { "constructor"_s, static_cast<unsigned>(PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestLegacyFactoryFunctionConstructor, 0 } },
 };
 
 const ClassInfo JSTestLegacyFactoryFunctionPrototype::s_info = { "TestLegacyFactoryFunction"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestLegacyFactoryFunctionPrototype) };
@@ -216,7 +214,7 @@ void JSTestLegacyFactoryFunction::destroy(JSC::JSCell* cell)
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestLegacyFactoryFunctionConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
-    auto& vm = JSC::getVM(lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto* prototype = jsDynamicCast<JSTestLegacyFactoryFunctionPrototype*>(JSValue::decode(thisValue));
     if (UNLIKELY(!prototype))
@@ -238,15 +236,15 @@ void JSTestLegacyFactoryFunction::analyzeHeap(JSCell* cell, HeapAnalyzer& analyz
 {
     auto* thisObject = jsCast<JSTestLegacyFactoryFunction*>(cell);
     analyzer.setWrappedObjectForCell(cell, &thisObject->wrapped());
-    if (thisObject->scriptExecutionContext())
-        analyzer.setLabelForCell(cell, makeString("url "_s, thisObject->scriptExecutionContext()->url().string()));
+    if (RefPtr context = thisObject->scriptExecutionContext())
+        analyzer.setLabelForCell(cell, makeString("url "_s, context->url().string()));
     Base::analyzeHeap(cell, analyzer);
 }
 
 bool JSTestLegacyFactoryFunctionOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, AbstractSlotVisitor& visitor, ASCIILiteral* reason)
 {
     SUPPRESS_UNCOUNTED_LOCAL auto* jsTestLegacyFactoryFunction = jsCast<JSTestLegacyFactoryFunction*>(handle.slot()->asCell());
-    auto& wrapped = jsTestLegacyFactoryFunction->wrapped();
+    SUPPRESS_UNCOUNTED_LOCAL auto& wrapped = jsTestLegacyFactoryFunction->wrapped();
     if (!wrapped.isContextStopped() && wrapped.hasPendingActivity()) {
         if (UNLIKELY(reason))
             *reason = "ActiveDOMObject with pending activity"_s;
@@ -264,6 +262,7 @@ void JSTestLegacyFactoryFunctionOwner::finalize(JSC::Handle<JSC::Unknown> handle
     uncacheWrapper(world, jsTestLegacyFactoryFunction->protectedWrapped().ptr(), jsTestLegacyFactoryFunction);
 }
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 #if ENABLE(BINDING_INTEGRITY)
 #if PLATFORM(WIN)
 #pragma warning(disable: 4483)
@@ -288,6 +287,8 @@ template<typename T, typename = std::enable_if_t<std::is_same_v<T, TestLegacyFac
     }
 }
 #endif
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+
 JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject*, JSDOMGlobalObject* globalObject, Ref<TestLegacyFactoryFunction>&& impl)
 {
 #if ENABLE(BINDING_INTEGRITY)

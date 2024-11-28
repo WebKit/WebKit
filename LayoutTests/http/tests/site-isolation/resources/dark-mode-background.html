@@ -1,0 +1,17 @@
+<style>
+    @media (prefers-color-scheme: dark) {
+        body {
+            background-color: green;
+        }
+    }
+    @media (prefers-color-scheme: light) {
+        body {
+            background-color: red;
+        }
+    }
+</style>
+<body>
+    <script>
+        onload = () => { window.parent.postMessage("onload", "*"); }
+    </script>
+</body>

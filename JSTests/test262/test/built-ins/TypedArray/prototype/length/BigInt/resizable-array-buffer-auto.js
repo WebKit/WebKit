@@ -38,6 +38,13 @@ testWithBigIntTypedArrayConstructors(function(TA) {
   assert.sameValue(array.length, expected, "following shrink (within bounds)");
 
   try {
+    ab.resize(BPE * 3 - 1);
+    expected = 1;
+  } catch (_) {}
+
+  assert.sameValue(array.length, expected, "following shrink (partial element)");
+
+  try {
     ab.resize(BPE);
     expected = 0;
   } catch (_) {}

@@ -45,7 +45,6 @@
 #include <wtf/URL.h>
 #include <wtf/text/MakeString.h>
 
-
 namespace WebCore {
 using namespace JSC;
 
@@ -68,13 +67,12 @@ static const struct CompactHashIndex JSDedicatedWorkerGlobalScopeTableIndex[5] =
 };
 
 
-static const HashTableValue JSDedicatedWorkerGlobalScopeTableValues[] =
-{
-    { "DedicatedWorkerGlobalScope"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsDedicatedWorkerGlobalScope_DedicatedWorkerGlobalScopeConstructor, 0 } },
-    { "ExposedStar"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsDedicatedWorkerGlobalScope_ExposedStarConstructor, 0 } },
+static const std::array<HashTableValue, 2> JSDedicatedWorkerGlobalScopeTableValues {
+    HashTableValue { "DedicatedWorkerGlobalScope"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsDedicatedWorkerGlobalScope_DedicatedWorkerGlobalScopeConstructor, 0 } },
+    HashTableValue { "ExposedStar"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsDedicatedWorkerGlobalScope_ExposedStarConstructor, 0 } },
 };
 
-static const HashTable JSDedicatedWorkerGlobalScopeTable = { 2, 3, static_cast<uint8_t>(static_cast<unsigned>(JSC::PropertyAttribute::DontEnum)), JSDedicatedWorkerGlobalScope::info(), JSDedicatedWorkerGlobalScopeTableValues, JSDedicatedWorkerGlobalScopeTableIndex };
+static const HashTable JSDedicatedWorkerGlobalScopeTable = { 2, 3, static_cast<uint8_t>(static_cast<unsigned>(JSC::PropertyAttribute::DontEnum)), JSDedicatedWorkerGlobalScope::info(), JSDedicatedWorkerGlobalScopeTableValues.data(), JSDedicatedWorkerGlobalScopeTableIndex };
 template<> const ClassInfo JSDedicatedWorkerGlobalScopeDOMConstructor::s_info = { "DedicatedWorkerGlobalScope"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSDedicatedWorkerGlobalScopeDOMConstructor) };
 
 template<> JSValue JSDedicatedWorkerGlobalScopeDOMConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
@@ -99,12 +97,11 @@ static const struct CompactHashIndex JSDedicatedWorkerGlobalScopePrototypeTableI
 };
 
 
-static const HashTableValue JSDedicatedWorkerGlobalScopePrototypeTableValues[] =
-{
-    { "constructor"_s, static_cast<unsigned>(PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsDedicatedWorkerGlobalScopeConstructor, 0 } },
+static const std::array<HashTableValue, 1> JSDedicatedWorkerGlobalScopePrototypeTableValues {
+    HashTableValue { "constructor"_s, static_cast<unsigned>(PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsDedicatedWorkerGlobalScopeConstructor, 0 } },
 };
 
-static const HashTable JSDedicatedWorkerGlobalScopePrototypeTable = { 1, 1, static_cast<uint8_t>(static_cast<unsigned>(PropertyAttribute::DontEnum)), JSDedicatedWorkerGlobalScope::info(), JSDedicatedWorkerGlobalScopePrototypeTableValues, JSDedicatedWorkerGlobalScopePrototypeTableIndex };
+static const HashTable JSDedicatedWorkerGlobalScopePrototypeTable = { 1, 1, static_cast<uint8_t>(static_cast<unsigned>(PropertyAttribute::DontEnum)), JSDedicatedWorkerGlobalScope::info(), JSDedicatedWorkerGlobalScopePrototypeTableValues.data(), JSDedicatedWorkerGlobalScopePrototypeTableIndex };
 const ClassInfo JSDedicatedWorkerGlobalScopePrototype::s_info = { "DedicatedWorkerGlobalScope"_s, &Base::s_info, &JSDedicatedWorkerGlobalScopePrototypeTable, nullptr, CREATE_METHOD_TABLE(JSDedicatedWorkerGlobalScopePrototype) };
 
 void JSDedicatedWorkerGlobalScopePrototype::finishCreation(VM& vm)
@@ -143,7 +140,7 @@ JSValue JSDedicatedWorkerGlobalScope::getConstructor(VM& vm, const JSGlobalObjec
 
 JSC_DEFINE_CUSTOM_GETTER(jsDedicatedWorkerGlobalScopeConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
-    auto& vm = JSC::getVM(lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto* prototype = jsDynamicCast<JSDedicatedWorkerGlobalScopePrototype*>(JSValue::decode(thisValue));
     if (UNLIKELY(!prototype))
@@ -188,8 +185,8 @@ void JSDedicatedWorkerGlobalScope::analyzeHeap(JSCell* cell, HeapAnalyzer& analy
 {
     auto* thisObject = jsCast<JSDedicatedWorkerGlobalScope*>(cell);
     analyzer.setWrappedObjectForCell(cell, &thisObject->wrapped());
-    if (thisObject->scriptExecutionContext())
-        analyzer.setLabelForCell(cell, makeString("url "_s, thisObject->scriptExecutionContext()->url().string()));
+    if (RefPtr context = thisObject->scriptExecutionContext())
+        analyzer.setLabelForCell(cell, makeString("url "_s, context->url().string()));
     Base::analyzeHeap(cell, analyzer);
 }
 

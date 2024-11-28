@@ -168,32 +168,6 @@ TEST_P(EGLQueryContextTest, BadAttribute)
     EXPECT_TRUE(eglGetError() == EGL_BAD_ATTRIBUTE);
 }
 
-// Test that EGL_OPENGL_API is supported only if angle_enable_gl_desktop_frontend is enabled
-TEST_P(EGLQueryContextTest, DesktopGlApi)
-{
-#ifdef ANGLE_ENABLE_GL_DESKTOP_FRONTEND
-    const bool kIsDesktopGlApiSupported = true;
-#else
-    const bool kIsDesktopGlApiSupported = false;
-#endif  // ANGLE_ENABLE_GL_DESKTOP_FRONTEND
-
-    EGLint majorVersion, minorVersion;
-    ASSERT_EGL_TRUE(eglInitialize(mDisplay, &majorVersion, &minorVersion));
-
-    eglBindAPI(EGL_OPENGL_API);
-    if (kIsDesktopGlApiSupported)
-    {
-        ASSERT_EGL_SUCCESS();
-    }
-    else
-    {
-        EXPECT_EGL_ERROR(EGL_BAD_PARAMETER);
-    }
-
-    // Cleanup by binding GLES API
-    eglBindAPI(EGL_OPENGL_ES_API);
-}
-
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(EGLQueryContextTest);
 ANGLE_INSTANTIATE_TEST(EGLQueryContextTest,
                        WithNoFixture(ES2_D3D9()),

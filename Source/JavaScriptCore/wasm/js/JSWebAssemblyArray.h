@@ -32,6 +32,8 @@
 #include "WasmTypeDefinition.h"
 #include "WebAssemblyGCObjectBase.h"
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 class JSWebAssemblyArray final : public WebAssemblyGCObjectBase {
@@ -153,7 +155,7 @@ public:
         case Wasm::TypeKind::Funcref:
         case Wasm::TypeKind::Ref:
         case Wasm::TypeKind::RefNull: {
-            WriteBarrier<Unknown>* pointer = bitwise_cast<WriteBarrier<Unknown>*>(m_payload64.mutableSpan().data());
+            WriteBarrier<Unknown>* pointer = std::bit_cast<WriteBarrier<Unknown>*>(m_payload64.mutableSpan().data());
             pointer += index;
             pointer->set(vm(), this, JSValue::decode(static_cast<EncodedJSValue>(value)));
             break;
@@ -235,5 +237,7 @@ protected:
 };
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ENABLE(WEBASSEMBLY)

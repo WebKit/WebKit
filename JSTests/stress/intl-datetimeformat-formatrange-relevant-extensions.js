@@ -112,8 +112,7 @@ function test() {
     shouldBe(fmt5.formatRange(date1, date5), `1/10/07, 10:00 – 12:00`);
     shouldBe(fmt5.formatRange(date1, date6), `1/10/07, 10:00 – 14:00`);
     shouldBe(fmt5.formatRange(date1, date7), `1/10/07, 10:00 – 23:00`);
-    if ($vm.icuVersion() > 66)
-        shouldBe(fmt5.formatRange(date1, date8), `1/10/07, 10:00 – 1/11/07, 24:00`);
+    shouldBe(fmt5.formatRange(date1, date8), `1/10/07, 10:00 – 1/11/07, 24:00`);
 
     let fmt6 = new Intl.DateTimeFormat("en", {
         year: '2-digit',
@@ -146,12 +145,10 @@ function test() {
     shouldBe(fmt7.format(date8), `1/11/07, 0:00 AM`);
     shouldBeOneOfThem(fmt7.formatRange(date1, date2), [ `1/10/07, 10:00 AM – 11:00 AM`, `1/10/07, 10:00 – 11:00 AM` ]);
     shouldBe(fmt7.formatRange(date1, date3), `1/10/07, 10:00 AM – 1/20/07, 10:00 AM`);
-    if ($vm.icuVersion() > 66)
-        shouldBe(fmt7.formatRange(date1, date5), `1/10/07, 10:00 AM – 0:00 PM`);
+    shouldBe(fmt7.formatRange(date1, date5), `1/10/07, 10:00 AM – 0:00 PM`);
     shouldBe(fmt7.formatRange(date1, date6), `1/10/07, 10:00 AM – 2:00 PM`);
     shouldBe(fmt7.formatRange(date1, date7), `1/10/07, 10:00 AM – 11:00 PM`);
-    if ($vm.icuVersion() > 66)
-        shouldBe(fmt7.formatRange(date1, date8), `1/10/07, 10:00 AM – 1/11/07, 0:00 AM`);
+    shouldBe(fmt7.formatRange(date1, date8), `1/10/07, 10:00 AM – 1/11/07, 0:00 AM`);
 
     let fmt8 = new Intl.DateTimeFormat("en", {
         year: '2-digit',
@@ -188,8 +185,7 @@ function test() {
     shouldBe(fmt9.formatRange(date1, date5), `1/10/07, 10:00 – 12:00`);
     shouldBe(fmt9.formatRange(date1, date6), `1/10/07, 10:00 – 14:00`);
     shouldBe(fmt9.formatRange(date1, date7), `1/10/07, 10:00 – 23:00`);
-    if ($vm.icuVersion() > 66)
-        shouldBe(fmt9.formatRange(date1, date8), `1/10/07, 10:00 – 1/11/07, 24:00`);
+    shouldBe(fmt9.formatRange(date1, date8), `1/10/07, 10:00 – 1/11/07, 24:00`);
 
     let fmt10 = new Intl.DateTimeFormat("en", {
         year: '2-digit',
@@ -222,12 +218,10 @@ function test() {
     shouldBe(fmt11.format(date8), `1/11/07, 00:00 AM`);
     shouldBeOneOfThem(fmt11.formatRange(date1, date2), [ `1/10/07, 10:00 AM – 11:00 AM`, `1/10/07, 10:00 – 11:00 AM` ]);
     shouldBe(fmt11.formatRange(date1, date3), `1/10/07, 10:00 AM – 1/20/07, 10:00 AM`);
-    if ($vm.icuVersion() > 66)
-        shouldBe(fmt11.formatRange(date1, date5), `1/10/07, 10:00 AM – 0:00 PM`);
+    shouldBe(fmt11.formatRange(date1, date5), `1/10/07, 10:00 AM – 0:00 PM`);
     shouldBe(fmt11.formatRange(date1, date6), `1/10/07, 10:00 AM – 2:00 PM`);
     shouldBe(fmt11.formatRange(date1, date7), `1/10/07, 10:00 AM – 11:00 PM`);
-    if ($vm.icuVersion() > 66)
-        shouldBe(fmt11.formatRange(date1, date8), `1/10/07, 10:00 AM – 1/11/07, 0:00 AM`);
+    shouldBe(fmt11.formatRange(date1, date8), `1/10/07, 10:00 AM – 1/11/07, 0:00 AM`);
 
     let fmt12 = new Intl.DateTimeFormat("en", {
         year: '2-digit',
@@ -325,5 +319,4 @@ function test() {
     shouldBe(fmt16.formatRange(date1, date8), `1/10/07, 10:00 AM – 1/11/07, 12:00 AM`);
 }
 
-if ($vm.icuVersion() >= 64)
-    test();
+test();

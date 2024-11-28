@@ -45,7 +45,8 @@ using BareItem = std::variant<String, Token, bool>; // FIXME: The specification 
 class Parameters {
 public:
     Parameters() = default;
-    explicit Parameters(HashMap<String, BareItem>&& parameters) : m_parameters(WTFMove(parameters)) { }
+    explicit Parameters(HashMap<String, BareItem>&& parameters)
+        : m_parameters(WTFMove(parameters)) { }
     const HashMap<String, BareItem>& map() const { return m_parameters; }
     template<typename T> const T* getIf(ASCIILiteral key) const;
 private:

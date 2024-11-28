@@ -22,7 +22,7 @@
 
 #if ENABLE(GPU_PROCESS)
 
-messages -> RemoteSharedResourceCache NotRefCounted {
+messages -> RemoteSharedResourceCache {
     void ReleaseSerializedImageBuffer(WebCore::RenderingResourceIdentifier imageBuffer)
 }
 

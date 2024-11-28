@@ -53,6 +53,11 @@ static NSString *const WKInteractionRegionContainerKey = @"WKInteractionRegionCo
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteLayerTreeNode);
 
+Ref<RemoteLayerTreeNode> RemoteLayerTreeNode::create(WebCore::PlatformLayerIdentifier layerID, Markable<WebCore::LayerHostingContextIdentifier> hostIdentifier, RetainPtr<CALayer> layer)
+{
+    return adoptRef(*new RemoteLayerTreeNode(layerID, hostIdentifier, WTFMove(layer)));
+}
+
 RemoteLayerTreeNode::RemoteLayerTreeNode(WebCore::PlatformLayerIdentifier layerID, Markable<WebCore::LayerHostingContextIdentifier> hostIdentifier, RetainPtr<CALayer> layer)
     : m_layerID(layerID)
     , m_remoteContextHostingIdentifier(hostIdentifier)
@@ -63,6 +68,12 @@ RemoteLayerTreeNode::RemoteLayerTreeNode(WebCore::PlatformLayerIdentifier layerI
 }
 
 #if PLATFORM(IOS_FAMILY)
+
+Ref<RemoteLayerTreeNode> RemoteLayerTreeNode::create(WebCore::PlatformLayerIdentifier layerID, Markable<WebCore::LayerHostingContextIdentifier> hostIdentifier, RetainPtr<UIView> uiView)
+{
+    return adoptRef(*new RemoteLayerTreeNode(layerID, hostIdentifier, WTFMove(uiView)));
+}
+
 RemoteLayerTreeNode::RemoteLayerTreeNode(WebCore::PlatformLayerIdentifier layerID, Markable<WebCore::LayerHostingContextIdentifier> hostIdentifier, RetainPtr<UIView> uiView)
     : m_layerID(layerID)
     , m_remoteContextHostingIdentifier(hostIdentifier)
@@ -85,10 +96,10 @@ RemoteLayerTreeNode::~RemoteLayerTreeNode()
 #endif
 }
 
-std::unique_ptr<RemoteLayerTreeNode> RemoteLayerTreeNode::createWithPlainLayer(WebCore::PlatformLayerIdentifier layerID)
+Ref<RemoteLayerTreeNode> RemoteLayerTreeNode::createWithPlainLayer(WebCore::PlatformLayerIdentifier layerID)
 {
     RetainPtr<CALayer> layer = adoptNS([[WKCompositingLayer alloc] init]);
-    return makeUnique<RemoteLayerTreeNode>(layerID, std::nullopt, WTFMove(layer));
+    return RemoteLayerTreeNode::create(layerID, std::nullopt, WTFMove(layer));
 }
 
 void RemoteLayerTreeNode::detachFromParent()
@@ -237,7 +248,7 @@ void RemoteLayerTreeNode::propagateInteractionRegionsChangeInHierarchy(Interacti
 
 std::optional<WebCore::PlatformLayerIdentifier> RemoteLayerTreeNode::layerID(CALayer *layer)
 {
-    auto* node = forCALayer(layer);
+    RefPtr node = forCALayer(layer);
     return node ? std::optional { node->layerID() } : std::nullopt;
 }
 
@@ -283,7 +294,7 @@ void RemoteLayerTreeNode::setAcceleratedEffectsAndBaseValues(const WebCore::Acce
     if (effects.isEmpty())
         return;
 
-    m_effectStack = RemoteAcceleratedEffectStack::create(layer().bounds, host.acceleratedTimelineTimeOrigin());
+    m_effectStack = RemoteAcceleratedEffectStack::create(layer().bounds, host.acceleratedTimelineTimeOrigin(m_layerID.processIdentifier()));
 
     auto clonedEffects = effects;
     auto clonedBaseValues = baseValues.clone();
@@ -292,9 +303,9 @@ void RemoteLayerTreeNode::setAcceleratedEffectsAndBaseValues(const WebCore::Acce
     m_effectStack->setBaseValues(WTFMove(clonedBaseValues));
 
 #if PLATFORM(IOS_FAMILY)
-    m_effectStack->applyEffectsFromMainThread(layer(), host.animationCurrentTime(), backdropRootIsOpaque());
+    m_effectStack->applyEffectsFromMainThread(layer(), host.animationCurrentTime(m_layerID.processIdentifier()), backdropRootIsOpaque());
 #else
-    m_effectStack->initEffectsFromMainThread(layer(), host.animationCurrentTime());
+    m_effectStack->initEffectsFromMainThread(layer(), host.animationCurrentTime(m_layerID.processIdentifier()));
 #endif
 
     host.animationsWereAddedToNode(*this);

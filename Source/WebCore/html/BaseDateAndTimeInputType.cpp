@@ -62,9 +62,12 @@
 #include <limits>
 #include <wtf/DateMath.h>
 #include <wtf/MathExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/StringView.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(BaseDateAndTimeInputType);
 
 using namespace HTMLNames;
 
@@ -343,8 +346,8 @@ void BaseDateAndTimeInputType::showPicker()
 
     if (auto* chrome = this->chrome()) {
         m_dateTimeChooser = chrome->createDateTimeChooser(*this);
-        if (m_dateTimeChooser)
-            m_dateTimeChooser->showChooser(parameters);
+        if (RefPtr dateTimeChooser = m_dateTimeChooser)
+            dateTimeChooser->showChooser(parameters);
     }
 }
 
@@ -546,8 +549,8 @@ void BaseDateAndTimeInputType::didChangeValueFromControl()
     if (!setupDateTimeChooserParameters(parameters))
         return;
 
-    if (m_dateTimeChooser)
-        m_dateTimeChooser->showChooser(parameters);
+    if (RefPtr dateTimeChooser = m_dateTimeChooser)
+        dateTimeChooser->showChooser(parameters);
 }
 
 bool BaseDateAndTimeInputType::isEditControlOwnerDisabled() const
@@ -572,11 +575,6 @@ void BaseDateAndTimeInputType::didChooseValue(StringView value)
 {
     ASSERT(element());
     element()->setValue(value.toString(), DispatchInputAndChangeEvent);
-}
-
-void BaseDateAndTimeInputType::didEndChooser()
-{
-    m_dateTimeChooser = nullptr;
 }
 
 bool BaseDateAndTimeInputType::setupDateTimeChooserParameters(DateTimeChooserParameters& parameters)
@@ -617,7 +615,7 @@ bool BaseDateAndTimeInputType::setupDateTimeChooserParameters(DateTimeChooserPar
     parameters.currentValue = element.value();
 
     auto* computedStyle = element.computedStyle();
-    parameters.isAnchorElementRTL = computedStyle->direction() == TextDirection::RTL;
+    parameters.isAnchorElementRTL = computedStyle->writingMode().computedTextDirection() == TextDirection::RTL;
     parameters.useDarkAppearance = document.useDarkAppearance(computedStyle);
     auto date = valueOrDefault(parseToDateComponents(element.value()));
     parameters.hasSecondField = shouldHaveSecondField(date);
@@ -642,8 +640,8 @@ bool BaseDateAndTimeInputType::setupDateTimeChooserParameters(DateTimeChooserPar
 
 void BaseDateAndTimeInputType::closeDateTimeChooser()
 {
-    if (m_dateTimeChooser)
-        m_dateTimeChooser->endChooser();
+    if (RefPtr dateTimeChooser = m_dateTimeChooser)
+        dateTimeChooser->endChooser();
 }
 
 } // namespace WebCore

@@ -59,6 +59,7 @@ private:
 
 #if HAVE(WIDE_GAMECONTROLLER_SUPPORT)
     GameControllerHapticEngines& ensureHapticEngines();
+    Ref<GameControllerHapticEngines> ensureProtectedHapticEngines() { return ensureHapticEngines(); }
 #endif
 
     RetainPtr<GCController> m_gcController;
@@ -66,7 +67,7 @@ private:
     Vector<SharedGamepadValue> m_axisValues;
     Vector<SharedGamepadValue> m_buttonValues;
 #if HAVE(WIDE_GAMECONTROLLER_SUPPORT)
-    std::unique_ptr<GameControllerHapticEngines> m_hapticEngines;
+    RefPtr<GameControllerHapticEngines> m_hapticEngines;
 #endif
 };
 

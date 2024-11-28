@@ -41,6 +41,7 @@
 #import "WebExtensionContextMessages.h"
 #import "WebExtensionContextProxy.h"
 #import "WebExtensionMessageSenderParameters.h"
+#import "WebExtensionMessageTargetParameters.h"
 #import "WebExtensionScriptInjectionParameters.h"
 #import "WebExtensionScriptInjectionResultParameters.h"
 #import "WebExtensionTabParameters.h"
@@ -110,6 +111,7 @@ static NSString * const jpegValue = @"jpeg";
 static NSString * const qualityKey = @"quality";
 
 static NSString * const frameIdKey = @"frameId";
+static NSString * const documentIdKey = @"documentId";
 static NSString * const nameKey = @"name";
 
 static NSString * const allFramesKey = @"allFrames";
@@ -443,31 +445,47 @@ bool WebExtensionAPITabs::parseCaptureVisibleTabOptions(NSDictionary *options, W
     return true;
 }
 
-bool WebExtensionAPITabs::parseSendMessageOptions(NSDictionary *options, std::optional<WebExtensionFrameIdentifier>& frameIdentifier, NSString *sourceKey, NSString **outExceptionString)
+bool WebExtensionAPITabs::parseSendMessageOptions(NSDictionary *options, WebExtensionMessageTargetParameters& targetParameters, NSString *sourceKey, NSString **outExceptionString)
 {
     static NSDictionary<NSString *, id> *types = @{
         frameIdKey: NSNumber.class,
+        documentIdKey: NSString.class,
     };
 
     if (!validateDictionary(options, sourceKey, nil, types, outExceptionString))
         return false;
 
-    if (NSNumber *frameID = objectForKey<NSNumber>(options, frameIdKey)) {
-        auto identifier = toWebExtensionFrameIdentifier(frameID.doubleValue);
+    if (options[frameIdKey] && options[documentIdKey]) {
+        *outExceptionString = toErrorString(nil, sourceKey, @"it cannot specify both 'frameId' and 'documentId'");
+        return false;
+    }
+
+    if (NSNumber *frameIdentifier = options[frameIdKey]) {
+        auto identifier = toWebExtensionFrameIdentifier(frameIdentifier.doubleValue);
         if (!isValid(identifier)) {
-            *outExceptionString = toErrorString(nil, frameIdKey, @"it is not a frame identifier");
+            *outExceptionString = toErrorString(nil, frameIdKey, @"'%@' is not a frame identifier", frameIdentifier);
             return false;
         }
 
-        frameIdentifier = identifier.value();
+        targetParameters.frameIdentifier = identifier.value();
+    }
+
+    if (NSString *documentIdentifier = options[documentIdKey]) {
+        auto parsedUUID = WTF::UUID::parse(String(documentIdentifier));
+        if (!parsedUUID) {
+            *outExceptionString = toErrorString(nil, documentIdKey, @"'%@' is not a document identifier", documentIdentifier);
+            return false;
+        }
+
+        targetParameters.documentIdentifier = parsedUUID.value();
     }
 
     return true;
 }
 
-bool WebExtensionAPITabs::parseConnectOptions(NSDictionary *options, std::optional<String>& name, std::optional<WebExtensionFrameIdentifier>& frameIdentifier, NSString *sourceKey, NSString **outExceptionString)
+bool WebExtensionAPITabs::parseConnectOptions(NSDictionary *options, std::optional<String>& name, WebExtensionMessageTargetParameters& targetParameters, NSString *sourceKey, NSString **outExceptionString)
 {
-    if (!parseSendMessageOptions(options, frameIdentifier, sourceKey, outExceptionString))
+    if (!parseSendMessageOptions(options, targetParameters, sourceKey, outExceptionString))
         return false;
 
     static NSDictionary<NSString *, id> *types = @{
@@ -520,14 +538,12 @@ bool WebExtensionAPITabs::parseScriptOptions(NSDictionary *options, WebExtension
     if (NSNumber *frameID = options[frameIdKey]) {
         auto frameIdentifier = toWebExtensionFrameIdentifier(frameID.doubleValue);
         if (!isValid(frameIdentifier)) {
-            *outExceptionString = toErrorString(nil, frameIdKey, @"it is not a frame identifier");
+            *outExceptionString = toErrorString(nil, frameIdKey, @"'%@' is not a frame identifier", frameID);
             return false;
         }
 
         parameters.frameIDs = { frameIdentifier.value() };
-    }
-
-    if (!boolForKey(options, allFramesKey, false))
+    } else if (!boolForKey(options, allFramesKey, false))
         parameters.frameIDs = { WebExtensionFrameConstants::MainFrameIdentifier };
 
     if (NSString *origin = options[cssOriginKey]) {
@@ -940,8 +956,14 @@ void WebExtensionAPITabs::sendMessage(WebFrame& frame, double tabID, NSString *m
         return;
     }
 
-    std::optional<WebExtensionFrameIdentifier> targetFrameIdentifier;
-    if (!parseSendMessageOptions(options, targetFrameIdentifier, @"options", outExceptionString))
+    auto documentIdentifier = toDocumentIdentifier(frame);
+    if (!documentIdentifier) {
+        *outExceptionString = toErrorString(@"runtime.sendMessage()", nil, @"an unexpected error occured");
+        return;
+    }
+
+    WebExtensionMessageTargetParameters targetParameters;
+    if (!parseSendMessageOptions(options, targetParameters, @"options", outExceptionString))
         return;
 
     WebExtensionMessageSenderParameters senderParameters {
@@ -951,9 +973,10 @@ void WebExtensionAPITabs::sendMessage(WebFrame& frame, double tabID, NSString *m
         frame.page()->webPageProxyIdentifier(),
         contentWorldType(),
         frame.url(),
+        documentIdentifier.value(),
     };
 
-    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::TabsSendMessage(tabIdentifer.value(), messageJSON, targetFrameIdentifier, senderParameters), [protectedThis = Ref { *this }, callback = WTFMove(callback)](Expected<String, WebExtensionError>&& result) {
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::TabsSendMessage(tabIdentifer.value(), messageJSON, targetParameters, senderParameters), [protectedThis = Ref { *this }, callback = WTFMove(callback)](Expected<String, WebExtensionError>&& result) {
         if (!result) {
             callback->reportError(result.error());
             return;
@@ -971,9 +994,15 @@ RefPtr<WebExtensionAPIPort> WebExtensionAPITabs::connect(WebFrame& frame, JSCont
     if (!isValid(tabIdentifer, outExceptionString))
         return nullptr;
 
+    auto documentIdentifier = toDocumentIdentifier(frame);
+    if (!documentIdentifier) {
+        *outExceptionString = toErrorString(nil, nil, @"an unexpected error occured");
+        return nullptr;
+    }
+
     std::optional<String> name;
-    std::optional<WebExtensionFrameIdentifier> targetFrameIdentifier;
-    if (!parseConnectOptions(options, name, targetFrameIdentifier, @"options", outExceptionString))
+    WebExtensionMessageTargetParameters targetParameters;
+    if (!parseConnectOptions(options, name, targetParameters, @"options", outExceptionString))
         return nullptr;
 
     String resolvedName = name.value_or(nullString());
@@ -985,11 +1014,12 @@ RefPtr<WebExtensionAPIPort> WebExtensionAPITabs::connect(WebFrame& frame, JSCont
         frame.page()->webPageProxyIdentifier(),
         contentWorldType(),
         frame.url(),
+        documentIdentifier.value(),
     };
 
     auto port = WebExtensionAPIPort::create(*this, *frame.page(), WebExtensionContentWorldType::ContentScript, resolvedName);
 
-    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::TabsConnect(tabIdentifer.value(), port->channelIdentifier(), resolvedName, targetFrameIdentifier, senderParameters), [=, this, protectedThis = Ref { *this }, globalContext = JSRetainPtr { JSContextGetGlobalContext(context) }](Expected<void, WebExtensionError>&& result) {
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::TabsConnect(tabIdentifer.value(), port->channelIdentifier(), resolvedName, targetParameters, senderParameters), [=, this, protectedThis = Ref { *this }, globalContext = JSRetainPtr { JSContextGetGlobalContext(context) }](Expected<void, WebExtensionError>&& result) {
         if (result)
             return;
 

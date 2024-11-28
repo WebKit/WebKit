@@ -58,8 +58,9 @@ public:
     WEBCORE_EXPORT void storeAppHighlight(Ref<StaticRange>&&, CompletionHandler<void(AppHighlight&&)>&&);
     WEBCORE_EXPORT void restoreAndScrollToAppHighlight(Ref<FragmentedSharedBuffer>&&, ScrollToHighlight);
     void restoreUnrestoredAppHighlights();
-    MonotonicTime lastRangeSearchTime() const { return m_timeAtLastRangeSearch; }
-    void resetLastRangeSearchTime() { m_timeAtLastRangeSearch = MonotonicTime::now(); }
+
+    bool shouldRestoreHighlights(MonotonicTime timestamp);
+
     bool hasUnrestoredHighlights() const { return m_unrestoredHighlights.size() || m_unrestoredScrollHighlight; }
 
 private:

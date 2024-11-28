@@ -50,7 +50,6 @@
 #include "compiler/translator/tree_ops/RescopeGlobalVariables.h"
 #include "compiler/translator/tree_ops/RewritePixelLocalStorage.h"
 #include "compiler/translator/tree_ops/SeparateDeclarations.h"
-#include "compiler/translator/tree_ops/SeparateStructFromFunctionDeclarations.h"
 #include "compiler/translator/tree_ops/SimplifyLoopConditions.h"
 #include "compiler/translator/tree_ops/SplitSequenceOperator.h"
 #include "compiler/translator/tree_ops/glsl/RegenerateStructNames.h"
@@ -287,9 +286,6 @@ int GetMaxShaderVersionForSpec(ShShaderSpec spec)
             return 310;
         case SH_GLES3_2_SPEC:
             return 320;
-        case SH_GL_CORE_SPEC:
-        case SH_GL_COMPATIBILITY_SPEC:
-            return 460;
         default:
             UNREACHABLE();
             return 0;
@@ -377,7 +373,6 @@ TCompiler::TCompiler(sh::GLenum type, ShShaderSpec spec, ShShaderOutput output)
       mTessEvaluationShaderInputPointType(EtetUndefined),
       mHasAnyPreciseType(false),
       mAdvancedBlendEquations(0),
-      mHasPixelLocalStorageUniforms(false),
       mUsesDerivatives(false),
       mCompileOptions{}
 {}
@@ -404,7 +399,10 @@ bool TCompiler::shouldLimitTypeSizes() const
     // Prevent unrealistically large variable sizes in shaders.  This works around driver bugs
     // around int-size limits (such as 2GB).  The limits are generously large enough that no real
     // shader should ever hit it.
-    return true;
+    //
+    // The size check does not take std430 into account, so this is limited to WebGL and shaders
+    // up to ES3.
+    return mShaderVersion <= 300;
 }
 
 bool TCompiler::Init(const ShBuiltInResources &resources)
@@ -476,8 +474,7 @@ TIntermBlock *TCompiler::compileTreeImpl(const char *const shaderStrings[],
     }
 
     TParseContext parseContext(mSymbolTable, mExtensionBehavior, mShaderType, mShaderSpec,
-                               compileOptions, !IsDesktopGLSpec(mShaderSpec), &mDiagnostics,
-                               getResources(), getOutputType());
+                               compileOptions, &mDiagnostics, getResources(), getOutputType());
 
     parseContext.setFragmentPrecisionHighOnESSL1(mResources.FragmentPrecisionHigh == 1);
 
@@ -603,8 +600,17 @@ void TCompiler::setASTMetadata(const TParseContext &parseContext)
 
     if (mShaderType == GL_FRAGMENT_SHADER)
     {
-        mAdvancedBlendEquations       = parseContext.getAdvancedBlendEquations();
-        mHasPixelLocalStorageUniforms = !parseContext.pixelLocalStorageBindings().empty();
+        mAdvancedBlendEquations = parseContext.getAdvancedBlendEquations();
+        const std::map<int, ShPixelLocalStorageFormat> &plsFormats =
+            parseContext.pixelLocalStorageFormats();
+        // std::map keys are in sorted order, so the PLS uniform with the largest binding will be at
+        // rbegin().
+        mPixelLocalStorageFormats.resize(plsFormats.empty() ? 0 : plsFormats.rbegin()->first + 1,
+                                         ShPixelLocalStorageFormat::NotPLS);
+        for (auto [binding, format] : parseContext.pixelLocalStorageFormats())
+        {
+            mPixelLocalStorageFormats[binding] = format;
+        }
     }
     if (mShaderType == GL_GEOMETRY_SHADER_EXT)
     {
@@ -756,9 +762,6 @@ bool TCompiler::checkAndSimplifyAST(TIntermBlock *root,
 {
     mValidateASTOptions = {};
 
-    // Desktop GLSL shaders don't have precision, so don't expect them to be specified.
-    mValidateASTOptions.validatePrecision = !IsDesktopGLSpec(mShaderSpec);
-
     // Disallow expressions deemed too complex.
     // This needs to be checked before other functions that will traverse the AST
     // to prevent potential stack overflow crashes.
@@ -874,11 +877,6 @@ bool TCompiler::checkAndSimplifyAST(TIntermBlock *root,
         !DeferGlobalInitializers(this, root, initializeLocalsAndGlobals, canUseLoopsToInitialize,
                                  highPrecisionSupported, forceDeferNonConstGlobalInitializers,
                                  &mSymbolTable))
-    {
-        return false;
-    }
-
-    if (!SeparateStructFromFunctionDeclarations(*this, *root))
     {
         return false;
     }
@@ -1028,20 +1026,30 @@ bool TCompiler::checkAndSimplifyAST(TIntermBlock *root,
         }
     }
 
-    // Split multi declarations and remove calls to array length().
-    // Note that SimplifyLoopConditions needs to be run before any other AST transformations
-    // that may need to generate new statements from loop conditions or loop expressions.
-    if (!SimplifyLoopConditions(this, root,
-                                IntermNodePatternMatcher::kMultiDeclaration |
-                                    IntermNodePatternMatcher::kArrayLengthMethod,
-                                &getSymbolTable()))
+    if (compileOptions.simplifyLoopConditions)
     {
-        return false;
+        if (!SimplifyLoopConditions(this, root, &getSymbolTable()))
+        {
+            return false;
+        }
+    }
+    else
+    {
+        // Split multi declarations and remove calls to array length().
+        // Note that SimplifyLoopConditions needs to be run before any other AST transformations
+        // that may need to generate new statements from loop conditions or loop expressions.
+        if (!SimplifyLoopConditions(this, root,
+                                    IntermNodePatternMatcher::kMultiDeclaration |
+                                        IntermNodePatternMatcher::kArrayLengthMethod,
+                                    &getSymbolTable()))
+        {
+            return false;
+        }
     }
 
     // Note that separate declarations need to be run before other AST transformations that
     // generate new statements from expressions.
-    if (!SeparateDeclarations(*this, *root))
+    if (!SeparateDeclarations(*this, *root, mCompileOptions.separateCompoundStructDeclarations))
     {
         return false;
     }
@@ -1433,6 +1441,7 @@ void TCompiler::setResourceString()
         << ":EXT_shader_framebuffer_fetch_non_coherent:" << mResources.EXT_shader_framebuffer_fetch_non_coherent
         << ":NV_shader_framebuffer_fetch:" << mResources.NV_shader_framebuffer_fetch
         << ":ARM_shader_framebuffer_fetch:" << mResources.ARM_shader_framebuffer_fetch
+        << ":ARM_shader_framebuffer_fetch_depth_stencil:" << mResources.ARM_shader_framebuffer_fetch_depth_stencil
         << ":OVR_multiview2:" << mResources.OVR_multiview2
         << ":OVR_multiview:" << mResources.OVR_multiview
         << ":EXT_YUV_target:" << mResources.EXT_YUV_target
@@ -1454,6 +1463,8 @@ void TCompiler::setResourceString()
         << ":APPLE_clip_distance:" << mResources.APPLE_clip_distance
         << ":OES_texture_cube_map_array:" << mResources.OES_texture_cube_map_array
         << ":EXT_texture_cube_map_array:" << mResources.EXT_texture_cube_map_array
+        << ":EXT_texture_query_lod:" << mResources.EXT_texture_query_lod
+        << ":EXT_texture_shadow_lod:" << mResources.EXT_texture_shadow_lod
         << ":EXT_shadow_samplers:" << mResources.EXT_shadow_samplers
         << ":OES_shader_multisample_interpolation:" << mResources.OES_shader_multisample_interpolation
         << ":OES_shader_image_atomic:" << mResources.OES_shader_image_atomic

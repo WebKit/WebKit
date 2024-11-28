@@ -1,0 +1,16 @@
+Tests that skipped content is successfully removed from pasted content. To manually test, press "Copy" below and paste (Command+V on macOS and Control+V elsewhere).
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS JSON.stringify(event.clipboardData.types) is "[\"text/html\",\"text/plain\"]"
+PASS event.clipboardData.getData("text/plain") is "hello, world\nWebKit"
+PASS event.clipboardData.getData("text/html").length is > 0
+PASS event.clipboardData.getData("text/html").includes("sensitive") is false
+PASS event.clipboardData.items.length is 2
+PASS item = event.clipboardData.items[0]; item.kind is "string"
+PASS item.type is "text/html"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

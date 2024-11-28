@@ -36,6 +36,7 @@
 #include <WebCore/AXObjectCache.h>
 #include <WebCore/HTMLPlugInElement.h>
 #include <WebCore/WebAccessibilityObjectWrapperMac.h>
+#include <pal/spi/cocoa/NSAccessibilitySPI.h>
 #include <wtf/CheckedPtr.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/ThreadSafeWeakPtr.h>
@@ -52,6 +53,10 @@
 
     _pdfDocument = document;
     _pluginElement = element;
+    // We are setting the presenter ID of the WKAccessibilityPDFDocumentObject to the hosting application's PID.
+    // This way VoiceOver can set AX observers on all the PDF AX nodes which are descendant of this element.
+    if ([self respondsToSelector:@selector(accessibilitySetPresenterProcessIdentifier:)])
+        [(id)self accessibilitySetPresenterProcessIdentifier:presentingApplicationPID()];
     return self;
 }
 
@@ -244,6 +249,29 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     if (RefPtr plugin = _pdfPlugin.get())
         return plugin->convertFromPDFPageToScreenForAccessibility(rectInPageCoordinate, pageIndex);
     return rectInPageCoordinate;
+}
+
+- (id)accessibilityAssociatedControlForAnnotation:(PDFAnnotation *)annotation
+{
+    RefPtr activeAnnotation = _pdfPlugin.get()->activeAnnotation();
+    if (!activeAnnotation)
+        return nil;
+
+    id wrapper = nil;
+    callOnMainRunLoopAndWait([activeAnnotation, protectedSelf = retainPtr(self), &wrapper] {
+        if (auto* axObjectCache = protectedSelf->_pdfPlugin.get()->axObjectCache()) {
+            if (RefPtr annotationElementAxObject = axObjectCache->getOrCreate(activeAnnotation->element()))
+                wrapper = annotationElementAxObject->wrapper();
+        }
+    });
+
+    return wrapper;
+}
+
+- (void)setActiveAnnotation:(PDFAnnotation *)annotation
+{
+    RefPtr plugin = _pdfPlugin.get();
+    plugin->setActiveAnnotation({ WTFMove(annotation) });
 }
 
 - (id)accessibilityHitTest:(NSPoint)point

@@ -87,19 +87,21 @@ public:
         InlineLayoutUnit hangingContentWidth() const { return m_hangingContentWidth.value_or(0.f); }
         bool hasTrimmableSpace() const { return trailingTrimmableWidth() || leadingTrimmableWidth(); }
         bool hasHangingSpace() const { return hangingContentWidth(); }
+        bool hasTrailingSoftHyphen() const { return m_hasTrailingSoftHyphen; }
         bool hasTextContent() const { return m_hasTextContent; }
         bool isTextOnlyContent() const { return m_isTextOnlyContent; }
         bool isFullyTrimmable() const { return m_isFullyTrimmable; }
         bool isHangingContent() const { return m_hangingContentWidth && *m_hangingContentWidth == logicalWidth(); }
 
-        void append(const InlineItem&, const RenderStyle&, InlineLayoutUnit logicalWidth);
+        void append(const InlineItem&, const RenderStyle&, InlineLayoutUnit logicalWidth, InlineLayoutUnit textSpacingAdjustment = 0.f);
         void appendTextContent(const InlineTextItem&, const RenderStyle&, InlineLayoutUnit logicalWidth);
         void setHangingContentWidth(InlineLayoutUnit logicalWidth) { m_hangingContentWidth = logicalWidth; }
+        void setTrailingSoftHyphenWidth(InlineLayoutUnit);
         void setMinimumRequiredWidth(InlineLayoutUnit minimumRequiredWidth) { m_minimumRequiredWidth = minimumRequiredWidth; }
         void reset();
 
         struct Run {
-            Run(const InlineItem&, const RenderStyle&, InlineLayoutUnit offset, InlineLayoutUnit contentWidth);
+            Run(const InlineItem&, const RenderStyle&, InlineLayoutUnit offset, InlineLayoutUnit contentWidth, InlineLayoutUnit textSpacingAdjustment = 0.f);
             Run(const Run&);
             Run& operator=(const Run&);
 
@@ -109,6 +111,7 @@ public:
             const InlineItem& inlineItem;
             const RenderStyle& style;
             InlineLayoutUnit offset { 0 };
+            InlineLayoutUnit textSpacingAdjustment { 0 };
 
         private:
             InlineLayoutUnit m_contentWidth { 0 };
@@ -117,7 +120,7 @@ public:
         const RunList& runs() const { return m_runs; }
 
     private:
-        void appendToRunList(const InlineItem&, const RenderStyle&, InlineLayoutUnit offset, InlineLayoutUnit contentWidth);
+        void appendToRunList(const InlineItem&, const RenderStyle&, InlineLayoutUnit offset, InlineLayoutUnit contentWidth, InlineLayoutUnit textSpacingAdjustment = 0.f);
         void resetTrailingTrimmableContent();
 
         RunList m_runs;
@@ -130,6 +133,7 @@ public:
         bool m_isTextOnlyContent { true };
         bool m_isFullyTrimmable { false };
         bool m_hasTrailingWordSeparator { false };
+        bool m_hasTrailingSoftHyphen { false };
     };
 
     struct LineStatus {
@@ -186,10 +190,11 @@ private:
     bool n_hyphenationIsDisabled { false };
 };
 
-inline InlineContentBreaker::ContinuousContent::Run::Run(const InlineItem& inlineItem, const RenderStyle& style, InlineLayoutUnit offset, InlineLayoutUnit contentWidth)
+inline InlineContentBreaker::ContinuousContent::Run::Run(const InlineItem& inlineItem, const RenderStyle& style, InlineLayoutUnit offset, InlineLayoutUnit contentWidth, InlineLayoutUnit textSpacingAdjustment)
     : inlineItem(inlineItem)
     , style(style)
     , offset(offset)
+    , textSpacingAdjustment(textSpacingAdjustment)
     , m_contentWidth(contentWidth)
 {
 }
@@ -198,6 +203,7 @@ inline InlineContentBreaker::ContinuousContent::Run::Run(const Run& other)
     : inlineItem(other.inlineItem)
     , style(other.style)
     , offset(other.offset)
+    , textSpacingAdjustment(other.textSpacingAdjustment)
     , m_contentWidth(other.contentWidth())
 {
 }

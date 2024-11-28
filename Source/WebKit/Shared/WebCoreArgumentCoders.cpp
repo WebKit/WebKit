@@ -36,7 +36,7 @@ namespace IPC {
 using namespace WebCore;
 using namespace WebKit;
 
-#if !USE(CORE_TEXT)
+#if !USE(CORE_TEXT) && !USE(SKIA)
 void ArgumentCoder<WebCore::Font>::encode(Encoder& encoder, const WebCore::Font& font)
 {
     encoder << font.attributes();

@@ -552,6 +552,9 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
 
     blackboxDataForSourceCode(sourceCode)
     {
+        if (sourceCode instanceof WI.SourceMapResource && sourceCode.ignored)
+            return {type: DebuggerManager.BlackboxType.URL};
+
         for (let regex of this._blackboxedPatternDataMap.keys()) {
             if (regex.test(sourceCode.contentIdentifier))
                 return {type: DebuggerManager.BlackboxType.Pattern, regex};
@@ -578,6 +581,9 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
 
         this._blackboxedURLsSetting.value.toggleIncludes(sourceCode.contentIdentifier, shouldBlackbox);
         this._blackboxedURLsSetting.save();
+
+        if (!shouldBlackbox && sourceCode instanceof WI.SourceMapResource)
+            sourceCode.ignored = false;
 
         this._updateBlackbox(WI.targets, sourceCode);
 

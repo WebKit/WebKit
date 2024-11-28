@@ -1,0 +1,38 @@
+<script>
+async function run() {
+    let adapter = await navigator.gpu.requestAdapter();
+    let device = await adapter.requestDevice();
+    let bindGroupLayout = device.createBindGroupLayout({
+        entries: [{
+            binding: 1,
+            visibility: GPUShaderStage.COMPUTE | GPUShaderStage.FRAGMENT,
+            externalTexture: {}
+        }],
+    });
+    let pipelineLayout = device.createPipelineLayout({ bindGroupLayouts: [bindGroupLayout] });
+    let videoFrame = new VideoFrame(new ArrayBuffer(16), { codedWidth: 2, codedHeight: 2, format: 'RGBX', timestamp: 0 });
+    let shaderModule4 = device.createShaderModule({ code: `
+        @group(0) @binding(1) var et3: texture_external;
+        @compute @workgroup_size(1, 1, 1) fn compute4() {
+            let a = textureLoad(et3, vec2u());
+            let b = pack4x8unorm(a);
+            let c = atanh(mat2x2f()[b][0]);
+        }
+    `});
+    let commandEncoder = device.createCommandEncoder();
+    let computePassEncoder14 = commandEncoder.beginComputePass();
+    let pipeline1 = device.createComputePipeline({ layout: pipelineLayout, compute: { module: shaderModule4 } });
+    computePassEncoder14.setPipeline(pipeline1);
+    let externalTexture = device.importExternalTexture({ source: videoFrame });
+    let bindGroup1 = device.createBindGroup({ layout: bindGroupLayout, entries: [{ binding: 1, resource: externalTexture }] });
+    computePassEncoder14.setBindGroup(0, bindGroup1);
+    let bindGroup2 = device.createBindGroup({ layout: bindGroupLayout, entries: [{ binding: 1, resource: externalTexture }] });
+    computePassEncoder14.dispatchWorkgroups(1);
+    computePassEncoder14.end();
+    let commandBuffer = commandEncoder.finish();
+    device.queue.submit([commandBuffer]);
+}
+
+globalThis.testRunner?.waitUntilDone();
+run().finally(() => globalThis.testRunner?.notifyDone());
+</script>

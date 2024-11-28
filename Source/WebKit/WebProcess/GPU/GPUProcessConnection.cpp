@@ -110,9 +110,9 @@ Ref<GPUProcessConnection> GPUProcessConnection::create(Ref<IPC::Connection>&& co
 }
 
 GPUProcessConnection::GPUProcessConnection(Ref<IPC::Connection>&& connection)
-    : m_connection(WTFMove(connection))
+    : m_connection(connection)
 {
-    m_connection->open(*this);
+    connection->open(*this);
 
     if (WebProcess::singleton().shouldUseRemoteRenderingFor(RenderingPurpose::MediaPainting)) {
     }
@@ -120,23 +120,23 @@ GPUProcessConnection::GPUProcessConnection(Ref<IPC::Connection>&& connection)
 
 GPUProcessConnection::~GPUProcessConnection()
 {
-    m_connection->invalidate();
+    protectedConnection()->invalidate();
 #if PLATFORM(COCOA) && ENABLE(WEB_AUDIO)
-    if (m_audioSourceProviderManager)
-        m_audioSourceProviderManager->stopListeningForIPC();
+    if (RefPtr audioSourceProviderManager = m_audioSourceProviderManager)
+        audioSourceProviderManager->stopListeningForIPC();
 #endif
 }
 
 
 void GPUProcessConnection::didBecomeUnresponsive()
 {
-    auto& webProcess = WebProcess::singleton();
+    Ref webProcess = WebProcess::singleton();
     // The function call might have been posted asynchronously from other thread.
     // Guard against notifying a problem for a GPUProcessConnection that has already been
     // switched away.
-    if (webProcess.existingGPUProcessConnection() != this)
+    if (webProcess->existingGPUProcessConnection() != this)
         return;
-    webProcess.gpuProcessConnectionDidBecomeUnresponsive();
+    webProcess->gpuProcessConnectionDidBecomeUnresponsive();
 }
 
 #if HAVE(AUDIT_TOKEN)
@@ -157,7 +157,7 @@ Ref<RemoteSharedResourceCacheProxy> GPUProcessConnection::sharedResourceCache()
 
 void GPUProcessConnection::invalidate()
 {
-    m_connection->invalidate();
+    protectedConnection()->invalidate();
     m_hasInitialized = true;
 }
 
@@ -165,12 +165,12 @@ void GPUProcessConnection::didClose(IPC::Connection&)
 {
     RELEASE_LOG_ERROR(Process, "%p - GPUProcessConnection::didClose", this);
     auto protector = Ref { *this };
-    auto& webProcess = WebProcess::singleton();
-    ASSERT(webProcess.existingGPUProcessConnection() == this);
-    webProcess.gpuProcessConnectionClosed();
+    Ref webProcess = WebProcess::singleton();
+    ASSERT(webProcess->existingGPUProcessConnection() == this);
+    webProcess->gpuProcessConnectionClosed();
 
 #if ENABLE(ROUTING_ARBITRATION)
-    if (auto* arbitrator = WebProcess::singleton().supplement<AudioSessionRoutingArbitrator>())
+    if (auto* arbitrator = webProcess->audioSessionRoutingArbitrator())
         arbitrator->leaveRoutingAbritration();
 #endif
 
@@ -188,8 +188,13 @@ void GPUProcessConnection::didReceiveInvalidMessage(IPC::Connection&, IPC::Messa
 SampleBufferDisplayLayerManager& GPUProcessConnection::sampleBufferDisplayLayerManager()
 {
     if (!m_sampleBufferDisplayLayerManager)
-        m_sampleBufferDisplayLayerManager = makeUnique<SampleBufferDisplayLayerManager>();
+        m_sampleBufferDisplayLayerManager = makeUniqueWithoutRefCountedCheck<SampleBufferDisplayLayerManager>(*this);
     return *m_sampleBufferDisplayLayerManager;
+}
+
+Ref<SampleBufferDisplayLayerManager> GPUProcessConnection::protectedSampleBufferDisplayLayerManager()
+{
+    return sampleBufferDisplayLayerManager();
 }
 
 void GPUProcessConnection::resetAudioMediaStreamTrackRendererInternalUnit(AudioMediaStreamTrackRendererInternalUnitIdentifier identifier)
@@ -204,6 +209,11 @@ RemoteVideoFrameObjectHeapProxy& GPUProcessConnection::videoFrameObjectHeapProxy
     if (!m_videoFrameObjectHeapProxy)
         m_videoFrameObjectHeapProxy = RemoteVideoFrameObjectHeapProxy::create(*this);
     return *m_videoFrameObjectHeapProxy;
+}
+
+Ref<RemoteVideoFrameObjectHeapProxy> GPUProcessConnection::protectedVideoFrameObjectHeapProxy()
+{
+    return videoFrameObjectHeapProxy();
 }
 
 RemoteMediaPlayerManager& GPUProcessConnection::mediaPlayerManager()
@@ -225,7 +235,7 @@ bool GPUProcessConnection::dispatchMessage(IPC::Connection& connection, IPC::Dec
 {
 #if ENABLE(VIDEO)
     if (decoder.messageReceiverName() == Messages::MediaPlayerPrivateRemote::messageReceiverName()) {
-        WebProcess::singleton().remoteMediaPlayerManager().didReceivePlayerMessage(connection, decoder);
+        WebProcess::singleton().protectedRemoteMediaPlayerManager()->didReceivePlayerMessage(connection, decoder);
         return true;
     }
 #endif
@@ -238,14 +248,14 @@ bool GPUProcessConnection::dispatchMessage(IPC::Connection& connection, IPC::Dec
     }
 
     if (decoder.messageReceiverName() == Messages::SampleBufferDisplayLayer::messageReceiverName()) {
-        sampleBufferDisplayLayerManager().didReceiveLayerMessage(connection, decoder);
+        protectedSampleBufferDisplayLayerManager()->didReceiveLayerMessage(connection, decoder);
         return true;
     }
 #endif // PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
 
 #if ENABLE(ENCRYPTED_MEDIA)
     if (decoder.messageReceiverName() == Messages::RemoteCDMInstanceSession::messageReceiverName()) {
-        WebProcess::singleton().cdmFactory().didReceiveSessionMessage(connection, decoder);
+        WebProcess::singleton().protectedCDMFactory()->didReceiveSessionMessage(connection, decoder);
         return true;
     }
 #endif
@@ -304,35 +314,37 @@ void GPUProcessConnection::didInitialize(std::optional<GPUProcessConnectionInfo>
     WebProcess::singleton().libWebRTCCodecs().setVP9VTBSupport(info->hasVP9HardwareDecoder);
 #endif
 #if ENABLE(AV1)
-    WebProcess::singleton().libWebRTCCodecs().setHasAV1HardwareDecoder(info->hasAV1HardwareDecoder);
+    WebProcess::singleton().protectedLibWebRTCCodecs()->setHasAV1HardwareDecoder(info->hasAV1HardwareDecoder);
 #endif
 #endif
 }
 
 bool GPUProcessConnection::waitForDidInitialize()
 {
+    Ref connection = m_connection;
+
     if (!m_hasInitialized) {
-        auto result = m_connection->waitForAndDispatchImmediately<Messages::GPUProcessConnection::DidInitialize>(0, defaultTimeout);
+        auto result = connection->waitForAndDispatchImmediately<Messages::GPUProcessConnection::DidInitialize>(0, defaultTimeout);
         if (result != IPC::Error::NoError) {
             RELEASE_LOG_ERROR(Process, "%p - GPUProcessConnection::waitForDidInitialize - failed, error:%" PUBLIC_LOG_STRING, this, IPC::errorAsString(result).characters());
             invalidate();
             return false;
         }
     }
-    return m_connection->isValid();
+    return connection->isValid();
 }
 
 void GPUProcessConnection::didReceiveRemoteCommand(PlatformMediaSession::RemoteControlCommandType type, const PlatformMediaSession::RemoteCommandArgument& argument)
 {
 #if ENABLE(VIDEO) || ENABLE(WEB_AUDIO)
-    PlatformMediaSessionManager::sharedManager().processDidReceiveRemoteControlCommand(type, argument);
+    PlatformMediaSessionManager::singleton().processDidReceiveRemoteControlCommand(type, argument);
 #endif
 }
 
 #if ENABLE(ROUTING_ARBITRATION)
 void GPUProcessConnection::beginRoutingArbitrationWithCategory(AudioSession::CategoryType category, AudioSessionRoutingArbitrationClient::ArbitrationCallback&& callback)
 {
-    if (auto* arbitrator = WebProcess::singleton().supplement<AudioSessionRoutingArbitrator>()) {
+    if (auto* arbitrator = WebProcess::singleton().audioSessionRoutingArbitrator()) {
         arbitrator->beginRoutingArbitrationWithCategory(category, WTFMove(callback));
         return;
     }
@@ -343,7 +355,7 @@ void GPUProcessConnection::beginRoutingArbitrationWithCategory(AudioSession::Cat
 
 void GPUProcessConnection::endRoutingArbitration()
 {
-    if (auto* arbitrator = WebProcess::singleton().supplement<AudioSessionRoutingArbitrator>()) {
+    if (auto* arbitrator = WebProcess::singleton().audioSessionRoutingArbitrator()) {
         arbitrator->leaveRoutingAbritration();
         return;
     }
@@ -355,18 +367,18 @@ void GPUProcessConnection::endRoutingArbitration()
 #if HAVE(VISIBILITY_PROPAGATION_VIEW)
 void GPUProcessConnection::createVisibilityPropagationContextForPage(WebPage& page)
 {
-    connection().send(Messages::GPUConnectionToWebProcess::CreateVisibilityPropagationContextForPage(page.webPageProxyIdentifier(), page.identifier(), page.canShowWhileLocked()), { });
+    protectedConnection()->send(Messages::GPUConnectionToWebProcess::CreateVisibilityPropagationContextForPage(page.webPageProxyIdentifier(), page.identifier(), page.canShowWhileLocked()), { });
 }
 
 void GPUProcessConnection::destroyVisibilityPropagationContextForPage(WebPage& page)
 {
-    connection().send(Messages::GPUConnectionToWebProcess::DestroyVisibilityPropagationContextForPage(page.webPageProxyIdentifier(), page.identifier()), { });
+    protectedConnection()->send(Messages::GPUConnectionToWebProcess::DestroyVisibilityPropagationContextForPage(page.webPageProxyIdentifier(), page.identifier()), { });
 }
 #endif
 
 void GPUProcessConnection::configureLoggingChannel(const String& channelName, WTFLogChannelState state, WTFLogLevel level)
 {
-    connection().send(Messages::GPUConnectionToWebProcess::ConfigureLoggingChannel(channelName, state, level), { });
+    protectedConnection()->send(Messages::GPUConnectionToWebProcess::ConfigureLoggingChannel(channelName, state, level), { });
 }
 
 void GPUProcessConnection::updateMediaConfiguration(bool forceUpdate)
@@ -398,47 +410,47 @@ void GPUProcessConnection::updateMediaConfiguration(bool forceUpdate)
 #endif
     };
 
-    connection().send(Messages::GPUConnectionToWebProcess::SetMediaOverridesForTesting(m_mediaOverridesForTesting), { });
+    protectedConnection()->send(Messages::GPUConnectionToWebProcess::SetMediaOverridesForTesting(m_mediaOverridesForTesting), { });
 #endif
 }
 
 #if ENABLE(EXTENSION_CAPABILITIES)
 void GPUProcessConnection::setMediaEnvironment(WebCore::PageIdentifier pageIdentifier, const String& mediaEnvironment)
 {
-    connection().send(Messages::GPUConnectionToWebProcess::SetMediaEnvironment(pageIdentifier, mediaEnvironment), { });
+    protectedConnection()->send(Messages::GPUConnectionToWebProcess::SetMediaEnvironment(pageIdentifier, mediaEnvironment), { });
 }
 #endif
 
 void GPUProcessConnection::createRenderingBackend(RenderingBackendIdentifier identifier, IPC::StreamServerConnection::Handle&& serverHandle)
 {
-    connection().send(Messages::GPUConnectionToWebProcess::CreateRenderingBackend(identifier, WTFMove(serverHandle)), 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
+    protectedConnection()->send(Messages::GPUConnectionToWebProcess::CreateRenderingBackend(identifier, WTFMove(serverHandle)), 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
 }
 
 void GPUProcessConnection::releaseRenderingBackend(RenderingBackendIdentifier identifier)
 {
-    connection().send(Messages::GPUConnectionToWebProcess::ReleaseRenderingBackend(identifier), 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
+    protectedConnection()->send(Messages::GPUConnectionToWebProcess::ReleaseRenderingBackend(identifier), 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
 }
 
 #if ENABLE(WEBGL)
 void GPUProcessConnection::createGraphicsContextGL(GraphicsContextGLIdentifier identifier, const GraphicsContextGLAttributes& contextAttributes, RenderingBackendIdentifier renderingBackendIdentifier, IPC::StreamServerConnection::Handle&& serverHandle)
 {
-    connection().send(Messages::GPUConnectionToWebProcess::CreateGraphicsContextGL(identifier, contextAttributes, renderingBackendIdentifier, WTFMove(serverHandle)), 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
+    protectedConnection()->send(Messages::GPUConnectionToWebProcess::CreateGraphicsContextGL(identifier, contextAttributes, renderingBackendIdentifier, WTFMove(serverHandle)), 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
 }
 
 void GPUProcessConnection::releaseGraphicsContextGL(GraphicsContextGLIdentifier identifier)
 {
-    connection().send(Messages::GPUConnectionToWebProcess::ReleaseGraphicsContextGL(identifier), 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
+    protectedConnection()->send(Messages::GPUConnectionToWebProcess::ReleaseGraphicsContextGL(identifier), 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
 }
 #endif
 
 void GPUProcessConnection::createGPU(WebGPUIdentifier identifier, RenderingBackendIdentifier renderingBackendIdentifier, IPC::StreamServerConnection::Handle&& serverHandle)
 {
-    connection().send(Messages::GPUConnectionToWebProcess::CreateGPU(identifier, renderingBackendIdentifier, WTFMove(serverHandle)), 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
+    protectedConnection()->send(Messages::GPUConnectionToWebProcess::CreateGPU(identifier, renderingBackendIdentifier, WTFMove(serverHandle)), 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
 }
 
 void GPUProcessConnection::releaseGPU(WebGPUIdentifier identifier)
 {
-    connection().send(Messages::GPUConnectionToWebProcess::ReleaseGPU(identifier), 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
+    protectedConnection()->send(Messages::GPUConnectionToWebProcess::ReleaseGPU(identifier), 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
 }
 
 } // namespace WebKit

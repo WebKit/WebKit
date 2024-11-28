@@ -62,8 +62,8 @@ public:
     virtual void configure(Device&, const WGPUSwapChainDescriptor&);
     virtual void unconfigure();
 
-    virtual void present();
-    virtual Texture* getCurrentTexture();
+    virtual void present(uint32_t);
+    virtual Texture* getCurrentTexture(uint32_t);
     virtual TextureView* getCurrentTextureView(); // FIXME: This should return a TextureView&.
 
     virtual bool isPresentationContextIOSurface() const { return false; }

@@ -41,7 +41,7 @@ static void runTest(NSArray<NSString *> *additionalSupportedImageTypes, NSString
 
     RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
 
-    RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:imageURL withExtension:imageExtension subdirectory:@"TestWebKitAPI.resources"];
+    RetainPtr<NSURL> testURL = [NSBundle.test_resourcesBundle URLForResource:imageURL withExtension:imageExtension];
     [webView loadRequest:[NSURLRequest requestWithURL:testURL.get()]];
     [webView _test_waitForDidFinishNavigation];
 

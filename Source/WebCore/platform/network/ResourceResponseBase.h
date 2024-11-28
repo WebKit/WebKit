@@ -137,6 +137,8 @@ public:
     WEBCORE_EXPORT String suggestedFilename() const;
     WEBCORE_EXPORT static String sanitizeSuggestedFilename(const String&);
 
+    bool isNosniff() const;
+
     WEBCORE_EXPORT void includeCertificateInfo(std::span<const std::byte> = { }) const;
     void setCertificateInfo(CertificateInfo&& info) { m_certificateInfo = WTFMove(info); }
     const std::optional<CertificateInfo>& certificateInfo() const { return m_certificateInfo; };

@@ -39,7 +39,7 @@ SleepDisabler::SleepDisabler(const String& reason, PAL::SleepDisabler::Type type
 {
     if (sleepDisablerClient()) {
         m_identifier = SleepDisablerIdentifier::generate();
-        sleepDisablerClient()->didCreateSleepDisabler(m_identifier, reason, type == PAL::SleepDisabler::Type::Display, pageID);
+        sleepDisablerClient()->didCreateSleepDisabler(*m_identifier, reason, type == PAL::SleepDisabler::Type::Display, pageID);
         return;
     }
 
@@ -49,7 +49,7 @@ SleepDisabler::SleepDisabler(const String& reason, PAL::SleepDisabler::Type type
 SleepDisabler::~SleepDisabler()
 {
     if (sleepDisablerClient())
-        sleepDisablerClient()->didDestroySleepDisabler(m_identifier, m_pageID);
+        sleepDisablerClient()->didDestroySleepDisabler(*m_identifier, m_pageID);
 }
 
 } // namespace WebCore

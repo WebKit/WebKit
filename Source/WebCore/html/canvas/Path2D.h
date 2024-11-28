@@ -37,7 +37,7 @@ namespace WebCore {
 struct DOMMatrix2DInit;
 
 class WEBCORE_EXPORT Path2D final : public RefCounted<Path2D>, public CanvasPath {
-    WTF_MAKE_TZONE_ALLOCATED(Path2D);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(Path2D, WEBCORE_EXPORT);
 public:
     virtual ~Path2D();
 

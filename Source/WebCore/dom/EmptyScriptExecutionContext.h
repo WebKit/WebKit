@@ -55,6 +55,7 @@ public:
         return *m_eventLoopTaskGroup;
     }
     const URL& url() const final { return m_url; }
+    const URL& cookieURL() const final { return url(); }
     URL completeURL(const String&, ForceUTF8 = ForceUTF8::No) const final { return { }; };
     String userAgent(const URL&) const final { return emptyString(); }
     ReferrerPolicy referrerPolicy() const final { return ReferrerPolicy::EmptyString; }
@@ -82,11 +83,10 @@ public:
     std::optional<Vector<uint8_t>> unwrapCryptoKey(const Vector<uint8_t>&) final { return std::nullopt; }
 
     JSC::VM& vm() final { return m_vm; }
+    JSC::VM* vmIfExists() const final { return m_vm.ptr(); }
 
     using RefCounted::ref;
     using RefCounted::deref;
-    using RefCounted::refAllowingPartiallyDestroyed;
-    using RefCounted::derefAllowingPartiallyDestroyed;
 
 private:
     EmptyScriptExecutionContext(JSC::VM& vm)

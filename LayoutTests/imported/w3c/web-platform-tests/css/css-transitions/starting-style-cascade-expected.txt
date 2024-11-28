@@ -4,5 +4,5 @@ PASS @starting-style with higher specificity
 PASS Starting style does not inherit from parent starting style
 PASS Starting style inheriting from parent's after-change style
 PASS Starting style inheriting from parent's after-change style while parent transitioning
-FAIL Starting style inheriting from parent's after-change style while ancestor is transitioning assert_equals: Transition started from parent's after-change style color, inherited from ancestors after-change color expected "rgb(0, 192, 0)" but got "rgb(0, 160, 0)"
+PASS Starting style inheriting from parent's after-change style while ancestor is transitioning
 

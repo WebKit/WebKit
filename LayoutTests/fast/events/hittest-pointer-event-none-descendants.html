@@ -11,7 +11,7 @@ async function test() {
 
     await new Promise(requestAnimationFrame);
 
-    eventSender.mouseMoveTo(100, 100);
+    await eventSender.asyncMouseMoveTo(100, 100);
 
     await new Promise(requestAnimationFrame);
     

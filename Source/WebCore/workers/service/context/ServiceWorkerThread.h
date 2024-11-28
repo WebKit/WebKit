@@ -37,7 +37,6 @@
 #include "Timer.h"
 #include "WorkerThread.h"
 #include <wtf/OptionSet.h>
-#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
@@ -53,7 +52,7 @@ struct NotificationPayload;
 
 enum class AdvancedPrivacyProtections : uint16_t;
 
-class ServiceWorkerThread : public WorkerThread, public CanMakeWeakPtr<ServiceWorkerThread, WeakPtrFactoryInitialization::Eager> {
+class ServiceWorkerThread : public WorkerThread {
 public:
     template<typename... Args> static Ref<ServiceWorkerThread> create(Args&&... args)
     {

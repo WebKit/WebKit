@@ -25,6 +25,6 @@ Frame: '<!--frame1-->'
 PASS
 
 ============== Back Forward List ==============
-curr->  (file test):contentfiltering/block-after-will-send-request-then-deny-unblock.html  **nav target**
+curr->  (file test):contentfiltering/block-after-will-send-request-then-deny-unblock.html
             about:blank (in frame "<!--frame1-->")
 ===============================================

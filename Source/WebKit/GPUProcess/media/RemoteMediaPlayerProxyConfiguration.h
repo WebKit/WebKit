@@ -41,6 +41,7 @@ struct RemoteMediaPlayerProxyConfiguration {
     String userAgent;
     String sourceApplicationIdentifier;
     String networkInterfaceName;
+    String audioOutputDeviceId;
     Vector<WebCore::ContentType> mediaContentTypesRequiringHardwareSupport;
     std::optional<Vector<String>> allowedMediaContainerTypes;
     std::optional<Vector<String>> allowedMediaCodecTypes;

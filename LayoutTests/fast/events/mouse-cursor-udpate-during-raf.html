@@ -31,7 +31,7 @@ if (window.testRunner) {
         return;
 
     const target = document.getElementById("target");
-    eventSender.mouseMoveTo(target.offsetLeft + 3, target.offsetTop + 3);
+    await eventSender.asyncMouseMoveTo(target.offsetLeft + 3, target.offsetTop + 3);
     debug("Moved pointer over the target, cursor should be Pointer.");
     debug(`Cursor info: ${window.internals.getCurrentCursorInfo()}`);
 

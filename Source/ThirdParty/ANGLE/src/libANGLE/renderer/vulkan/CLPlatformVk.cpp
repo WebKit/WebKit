@@ -30,31 +30,24 @@ constexpr vk::UseDebugLayers kUseDebugLayers = vk::UseDebugLayers::YesIfAvailabl
 #else
 constexpr vk::UseDebugLayers kUseDebugLayers = vk::UseDebugLayers::No;
 #endif
-
-std::string CreateExtensionString(const NameVersionVector &extList)
-{
-    std::string extensions;
-    for (const cl_name_version &ext : extList)
-    {
-        extensions += ext.name;
-        extensions += ' ';
-    }
-    if (!extensions.empty())
-    {
-        extensions.pop_back();
-    }
-    return extensions;
-}
-
 }  // namespace
 
 angle::Result CLPlatformVk::initBackendRenderer()
 {
     ASSERT(mRenderer != nullptr);
 
+    angle::FeatureOverrides featureOverrides;
+
+    // In memory |SizedMRUCache| does not require dual slots, supports zero sized values, and evicts
+    // minumum number of old items when storing a new item.
+    featureOverrides.disabled.push_back("useDualPipelineBlobCacheSlots");
+    featureOverrides.enabled.push_back("useEmptyBlobsToEraseOldPipelineCacheFromBlobCache");
+    featureOverrides.enabled.push_back("hasBlobCacheThatEvictsOldItemsFirst");
+    featureOverrides.disabled.push_back("verifyPipelineCacheInBlobCache");
+
     ANGLE_TRY(mRenderer->initialize(this, this, angle::vk::ICD::Default, 0, 0, kUseDebugLayers,
                                     getWSIExtension(), getWSILayer(), getWindowSystem(),
-                                    angle::FeatureOverrides{}));
+                                    featureOverrides));
 
     return angle::Result::Continue;
 }
@@ -69,17 +62,17 @@ CLPlatformVk::~CLPlatformVk()
 CLPlatformImpl::Info CLPlatformVk::createInfo() const
 {
     NameVersionVector extList = {
-        cl_name_version{CL_MAKE_VERSION(3, 0, 0), "cl_khr_icd"},
-        cl_name_version{CL_MAKE_VERSION(3, 0, 0), "cl_khr_extended_versioning"}};
+        cl_name_version{CL_MAKE_VERSION(1, 0, 0), "cl_khr_icd"},
+        cl_name_version{CL_MAKE_VERSION(1, 0, 0), "cl_khr_extended_versioning"}};
 
     Info info;
     info.name.assign("ANGLE Vulkan");
     info.profile.assign("FULL_PROFILE");
     info.versionStr.assign(GetVersionString());
-    info.hostTimerRes          = 0u;
-    info.extensionsWithVersion = std::move(extList);
-    info.version               = GetVersion();
-    info.initializeExtensions(CreateExtensionString(extList));
+    info.hostTimerRes = 0u;
+    info.version      = GetVersion();
+
+    info.initializeVersionedExtensions(std::move(extList));
     return info;
 }
 
@@ -134,11 +127,12 @@ angle::Result CLPlatformVk::createContextFromType(cl::Context &context,
     const VkPhysicalDeviceType &vkPhysicalDeviceType =
         getRenderer()->getPhysicalDeviceProperties().deviceType;
 
-    if (deviceType.isSet(CL_DEVICE_TYPE_CPU) && vkPhysicalDeviceType != VK_PHYSICAL_DEVICE_TYPE_CPU)
+    if (deviceType.intersects(CL_DEVICE_TYPE_CPU) &&
+        vkPhysicalDeviceType != VK_PHYSICAL_DEVICE_TYPE_CPU)
     {
         ANGLE_CL_RETURN_ERROR(CL_DEVICE_NOT_FOUND);
     }
-    else if (deviceType.isSet(CL_DEVICE_TYPE_GPU))
+    else if (deviceType.intersects(CL_DEVICE_TYPE_GPU | CL_DEVICE_TYPE_DEFAULT))
     {
         switch (vkPhysicalDeviceType)
         {
@@ -159,7 +153,7 @@ angle::Result CLPlatformVk::createContextFromType(cl::Context &context,
     for (const auto &platformDevice : mPlatform.getDevices())
     {
         const auto &platformDeviceInfo = platformDevice->getInfo();
-        if (platformDeviceInfo.type.isSet(deviceType))
+        if (platformDeviceInfo.type.intersects(deviceType))
         {
             devices.push_back(platformDevice);
         }

@@ -210,7 +210,7 @@ void WorkerThreadableLoader::MainThreadBridge::cancel()
     // Note: no more client callbacks will be done after this method -- we clear the client wrapper to ensure that.
     ResourceError error(ResourceError::Type::Cancellation);
     // FIXME: Always get the `ScriptExecutionContextIdentifier` of the `Document`.
-    workerClientWrapper->didFail({ }, error);
+    workerClientWrapper->didFail(std::nullopt, error);
     workerClientWrapper->clearClient();
 }
 
@@ -253,7 +253,7 @@ void WorkerThreadableLoader::MainThreadBridge::didSendData(unsigned long long by
     }, m_taskMode);
 }
 
-void WorkerThreadableLoader::MainThreadBridge::didReceiveResponse(ScriptExecutionContextIdentifier mainContextIdentifier, ResourceLoaderIdentifier identifier, const ResourceResponse& response)
+void WorkerThreadableLoader::MainThreadBridge::didReceiveResponse(ScriptExecutionContextIdentifier mainContextIdentifier, std::optional<ResourceLoaderIdentifier> identifier, const ResourceResponse& response)
 {
     ScriptExecutionContext::postTaskForModeToWorkerOrWorklet(m_contextIdentifier, [protectedWorkerClientWrapper = Ref { *m_workerClientWrapper }, workerRequestIdentifier = m_workerRequestIdentifier, mainContextIdentifier, identifier, responseData = response.crossThreadData()] (ScriptExecutionContext& context) mutable {
         ASSERT(context.isWorkerGlobalScope() || context.isWorkletGlobalScope());
@@ -274,7 +274,7 @@ void WorkerThreadableLoader::MainThreadBridge::didReceiveData(const SharedBuffer
     }, m_taskMode);
 }
 
-void WorkerThreadableLoader::MainThreadBridge::didFinishLoading(ScriptExecutionContextIdentifier mainContext, ResourceLoaderIdentifier identifier, const NetworkLoadMetrics& metrics)
+void WorkerThreadableLoader::MainThreadBridge::didFinishLoading(ScriptExecutionContextIdentifier mainContext, std::optional<ResourceLoaderIdentifier> identifier, const NetworkLoadMetrics& metrics)
 {
     m_loadingFinished = true;
     ScriptExecutionContext::postTaskForModeToWorkerOrWorklet(m_contextIdentifier, [protectedWorkerClientWrapper = Ref { *m_workerClientWrapper }, workerRequestIdentifier = m_workerRequestIdentifier, metrics = metrics.isolatedCopy(), mainContext, identifier] (ScriptExecutionContext& context) mutable {
@@ -285,7 +285,7 @@ void WorkerThreadableLoader::MainThreadBridge::didFinishLoading(ScriptExecutionC
     }, m_taskMode);
 }
 
-void WorkerThreadableLoader::MainThreadBridge::didFail(ScriptExecutionContextIdentifier mainContext, const ResourceError& error)
+void WorkerThreadableLoader::MainThreadBridge::didFail(std::optional<ScriptExecutionContextIdentifier> mainContext, const ResourceError& error)
 {
     m_loadingFinished = true;
     ScriptExecutionContext::postTaskForModeToWorkerOrWorklet(m_contextIdentifier, [protectedWorkerClientWrapper = Ref { *m_workerClientWrapper }, workerRequestIdentifier = m_workerRequestIdentifier, mainContext, error = error.isolatedCopy()] (ScriptExecutionContext& context) mutable {

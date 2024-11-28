@@ -30,6 +30,7 @@
 #include <wtf/CheckedRef.h>
 #include <wtf/HashMap.h>
 #include <wtf/RefCounted.h>
+#include <wtf/WeakRef.h>
 
 namespace WebCore {
 class ResourceError;
@@ -57,7 +58,8 @@ public:
     void loadSynchronously(WebCore::ResourceLoaderIdentifier, WebFrame&, const WebCore::ResourceRequest&, WebCore::ResourceResponse&, WebCore::ResourceError&, Vector<uint8_t>&);
 
     WebURLSchemeHandlerIdentifier identifier() const { return m_identifier; }
-    WebPage& page() { return m_webPage; }
+    WebPage& page() { return m_webPage.get(); }
+    Ref<WebPage> protectedPage();
 
     void taskDidPerformRedirection(WebCore::ResourceLoaderIdentifier, WebCore::ResourceResponse&&, WebCore::ResourceRequest&&, CompletionHandler<void(WebCore::ResourceRequest&&)>&&);
     void taskDidReceiveResponse(WebCore::ResourceLoaderIdentifier, const WebCore::ResourceResponse&);
@@ -70,7 +72,7 @@ private:
 
     RefPtr<WebURLSchemeTaskProxy> removeTask(WebCore::ResourceLoaderIdentifier);
 
-    WebPage& m_webPage;
+    WeakRef<WebPage> m_webPage;
     WebURLSchemeHandlerIdentifier m_identifier;
 
     HashMap<WebCore::ResourceLoaderIdentifier, RefPtr<WebURLSchemeTaskProxy>> m_tasks;

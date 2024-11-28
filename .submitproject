@@ -1,8 +1,18 @@
 [submitproject "filter"]
     includedSubdirectoryPatterns = Configurations/
     includedSubdirectoryPatterns = Source/
+    includedSubdirectoryPatterns = WebKitLibraries/SDKs/*.internal-additions.sdk/
     excludedSubdirectoryPatterns = Source/ThirdParty/libwebrtc/Source/third_party/boringssl/src/util
     excludedSubdirectoryPatterns = Source/ThirdParty/libwebrtc/Source/webrtc/examples
+    excludedSubdirectoryPatterns = Source/ThirdParty/capstone
+    excludedSubdirectoryPatterns = Source/ThirdParty/d3flamegraphjs
+    excludedSubdirectoryPatterns = Source/ThirdParty/d3js
+    excludedSubdirectoryPatterns = Source/ThirdParty/gmock
+    excludedSubdirectoryPatterns = Source/ThirdParty/gtest
+    excludedSubdirectoryPatterns = Source/ThirdParty/libsysprof-capture
+    excludedSubdirectoryPatterns = Source/ThirdParty/qunit
     excludedSubdirectoryPatterns = Source/ThirdParty/skia
+    excludedSubdirectoryPatterns = Source/ThirdParty/unifdef
+    excludedSubdirectoryPatterns = Source/ThirdParty/xdgmime
 [submitproject "gitmodules"]
     enabled = false

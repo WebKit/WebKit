@@ -27,16 +27,15 @@ constexpr int kStreamIndexBufferCachedIndexCount = 6;
 constexpr int kMaxCachedStreamIndexBuffers       = 4;
 constexpr size_t kDefaultValueSize               = sizeof(gl::VertexAttribCurrentValueData::Values);
 
-ANGLE_INLINE bool BindingIsAligned(const gl::VertexBinding &binding,
-                                   const angle::Format &angleFormat,
-                                   unsigned int attribSize,
-                                   GLuint relativeOffset)
+ANGLE_INLINE bool BindingIsAligned(const angle::Format &angleFormat,
+                                   VkDeviceSize offset,
+                                   GLuint stride)
 {
-    GLintptr totalOffset = binding.getOffset() + relativeOffset;
+    ASSERT(stride != 0);
     GLuint mask          = angleFormat.componentAlignmentMask;
     if (mask != std::numeric_limits<GLuint>::max())
     {
-        return ((totalOffset & mask) == 0 && (binding.getStride() & mask) == 0);
+        return ((offset & mask) == 0 && (stride & mask) == 0);
     }
     else
     {
@@ -44,7 +43,7 @@ ANGLE_INLINE bool BindingIsAligned(const gl::VertexBinding &binding,
         // (for example, A2BGR10 or RGB10A2), one element has to be placed in 4 bytes to perform
         // the compute shader. So, binding offset and stride has to be aligned to formatSize.
         unsigned int formatSize = angleFormat.pixelBytes;
-        return (totalOffset % formatSize == 0) && (binding.getStride() % formatSize == 0);
+        return (offset % formatSize == 0) && (stride % formatSize == 0);
     }
 }
 
@@ -96,6 +95,12 @@ angle::Result StreamVertexData(ContextVk *contextVk,
                                VertexCopyFunction vertexLoadFunction)
 {
     vk::Renderer *renderer = contextVk->getRenderer();
+
+    // If the source pointer is null, it should not be accessed.
+    if (srcData == nullptr)
+    {
+        return angle::Result::Continue;
+    }
 
     uint8_t *dst = dstBufferHelper->getMappedMemory() + dstOffset;
 
@@ -189,17 +194,15 @@ size_t GetVertexCount(BufferVk *srcBuffer, const gl::VertexBinding &binding, uin
     return GetVertexCountForRange(bytes, srcFormatSize, stride);
 }
 
-angle::Result CalculateOffsetAndVertexCountForConversion(ContextVk *contextVk,
-                                                         BufferVk *srcBuffer,
-                                                         VertexConversionBuffer *conversion,
-                                                         const angle::Format &srcFormat,
-                                                         const angle::Format &dstFormat,
-                                                         size_t *srcOffsetOut,
-                                                         size_t *dstOffsetOut,
-                                                         size_t *numVerticesOut)
+angle::Result CalculateMaxVertexCountForConversion(ContextVk *contextVk,
+                                                   BufferVk *srcBuffer,
+                                                   VertexConversionBuffer *conversion,
+                                                   const angle::Format &srcFormat,
+                                                   const angle::Format &dstFormat,
+                                                   size_t *maxNumVerticesOut)
 {
     // Initialize numVertices to 0
-    *numVerticesOut = 0;
+    *maxNumVerticesOut = 0;
 
     unsigned srcFormatSize = srcFormat.pixelBytes;
     unsigned dstFormatSize = dstFormat.pixelBytes;
@@ -214,7 +217,6 @@ angle::Result CalculateOffsetAndVertexCountForConversion(ContextVk *contextVk,
     // buffer. Then scissor it with the dirtyRange.
     size_t srcOffset  = conversion->getCacheKey().offset;
     GLint64 srcLength = srcBuffer->getSize() - srcOffset;
-    size_t dstOffset  = 0;
 
     // The max number of vertices from binding to the end of the buffer
     size_t maxNumVertices = GetVertexCountForRange(srcLength, srcFormatSize, srcStride);
@@ -230,18 +232,39 @@ angle::Result CalculateOffsetAndVertexCountForConversion(ContextVk *contextVk,
     ANGLE_TRY(contextVk->initBufferForVertexConversion(conversion, maxNumVertices * dstStride,
                                                        hostVisible));
 
-    RangeDeviceSize dirtyRange;
-    if (conversion->isEntireBufferDirty())
-    {
-        dirtyRange = RangeDeviceSize(0, srcBuffer->getSize());
-    }
-    else
-    {
-        dirtyRange = conversion->getDirtyBufferRange();
-        ASSERT(!dirtyRange.empty());
-    }
+    // Calculate numVertices to convert
+    *maxNumVerticesOut = GetVertexCountForRange(srcLength, srcFormatSize, srcStride);
 
-    // Adjust offset
+    return angle::Result::Continue;
+}
+
+void CalculateOffsetAndVertexCountForDirtyRange(BufferVk *bufferVk,
+                                                VertexConversionBuffer *conversion,
+                                                const angle::Format &srcFormat,
+                                                const angle::Format &dstFormat,
+                                                const RangeDeviceSize &dirtyRange,
+                                                uint32_t *srcOffsetOut,
+                                                uint32_t *dstOffsetOut,
+                                                uint32_t *numVerticesOut)
+{
+    ASSERT(!dirtyRange.empty());
+    unsigned srcFormatSize = srcFormat.pixelBytes;
+    unsigned dstFormatSize = dstFormat.pixelBytes;
+
+    uint32_t srcStride = conversion->getCacheKey().stride;
+    uint32_t dstStride = dstFormatSize;
+
+    ASSERT(srcStride != 0);
+    ASSERT(conversion->dirty());
+
+    // Start the range with the range from the the beginning of the buffer to the end of
+    // buffer. Then scissor it with the dirtyRange.
+    size_t srcOffset = conversion->getCacheKey().offset;
+    size_t dstOffset = 0;
+
+    GLint64 srcLength = bufferVk->getSize() - srcOffset;
+
+    // Adjust offset to the begining of the dirty range
     if (dirtyRange.low() > srcOffset)
     {
         size_t vertexCountToSkip = (static_cast<size_t>(dirtyRange.low()) - srcOffset) / srcStride;
@@ -252,18 +275,28 @@ angle::Result CalculateOffsetAndVertexCountForConversion(ContextVk *contextVk,
         dstOffset += dstBytesToSkip;
     }
 
+    // Adjust dstOffset to align to 4 bytes. The GPU convert code path always write a uint32_t and
+    // must aligned at 4 bytes. We could possibly make it able to store at unaligned uint32_t but
+    // performance will be worse than just convert a few extra data.
+    while ((dstOffset % 4) != 0)
+    {
+        dstOffset -= dstStride;
+        srcOffset -= srcStride;
+        srcLength += srcStride;
+    }
+
     // Adjust length
-    if (dirtyRange.high() < static_cast<VkDeviceSize>(srcBuffer->getSize()))
+    if (dirtyRange.high() < static_cast<VkDeviceSize>(bufferVk->getSize()))
     {
         srcLength = dirtyRange.high() - srcOffset;
     }
 
     // Calculate numVertices to convert
-    *numVerticesOut = GetVertexCountForRange(srcLength, srcFormatSize, srcStride);
-    *srcOffsetOut   = srcOffset;
-    *dstOffsetOut   = dstOffset;
+    size_t numVertices = GetVertexCountForRange(srcLength, srcFormatSize, srcStride);
 
-    return angle::Result::Continue;
+    *numVerticesOut = static_cast<uint32_t>(numVertices);
+    *srcOffsetOut   = static_cast<uint32_t>(srcOffset);
+    *dstOffsetOut   = static_cast<uint32_t>(dstOffset);
 }
 }  // anonymous namespace
 
@@ -289,7 +322,7 @@ VertexArrayVk::VertexArrayVk(ContextVk *contextVk, const gl::VertexArrayState &s
     mCurrentArrayBufferDivisors.fill(0);
 
     mBindingDirtyBitsRequiresPipelineUpdate.set(gl::VertexArray::DIRTY_BINDING_DIVISOR);
-    if (!contextVk->getRenderer()->useVertexInputBindingStrideDynamicState())
+    if (!contextVk->getFeatures().useVertexInputBindingStrideDynamicState.enabled)
     {
         mBindingDirtyBitsRequiresPipelineUpdate.set(gl::VertexArray::DIRTY_BINDING_STRIDE);
     }
@@ -396,20 +429,21 @@ angle::Result VertexArrayVk::convertIndexBufferIndirectGPU(ContextVk *contextVk,
 
 angle::Result VertexArrayVk::handleLineLoopIndexIndirect(ContextVk *contextVk,
                                                          gl::DrawElementsType glIndexType,
-                                                         vk::BufferHelper *srcIndirectBuf,
+                                                         vk::BufferHelper *srcIndexBuffer,
+                                                         vk::BufferHelper *srcIndirectBuffer,
                                                          VkDeviceSize indirectBufferOffset,
+                                                         vk::BufferHelper **indexBufferOut,
                                                          vk::BufferHelper **indirectBufferOut)
 {
-    ANGLE_TRY(mLineLoopHelper.streamIndicesIndirect(
-        contextVk, glIndexType, mCurrentElementArrayBuffer, srcIndirectBuf, indirectBufferOffset,
-        &mCurrentElementArrayBuffer, indirectBufferOut));
-
-    return angle::Result::Continue;
+    return mLineLoopHelper.streamIndicesIndirect(contextVk, glIndexType, srcIndexBuffer,
+                                                 srcIndirectBuffer, indirectBufferOffset,
+                                                 indexBufferOut, indirectBufferOut);
 }
 
 angle::Result VertexArrayVk::handleLineLoopIndirectDraw(const gl::Context *context,
                                                         vk::BufferHelper *indirectBufferVk,
                                                         VkDeviceSize indirectBufferOffset,
+                                                        vk::BufferHelper **indexBufferOut,
                                                         vk::BufferHelper **indirectBufferOut)
 {
     size_t maxVertexCount = 0;
@@ -434,7 +468,7 @@ angle::Result VertexArrayVk::handleLineLoopIndirectDraw(const gl::Context *conte
         }
     }
     ANGLE_TRY(mLineLoopHelper.streamArrayIndirect(contextVk, maxVertexCount + 1, indirectBufferVk,
-                                                  indirectBufferOffset, &mCurrentElementArrayBuffer,
+                                                  indirectBufferOffset, indexBufferOut,
                                                   indirectBufferOut));
 
     return angle::Result::Continue;
@@ -555,24 +589,69 @@ angle::Result VertexArrayVk::convertVertexBufferGPU(ContextVk *contextVk,
     uint32_t srcStride = conversion->getCacheKey().stride;
     ASSERT(srcStride % (srcFormat.pixelBytes / srcFormat.channelCount) == 0);
 
-    size_t srcOffset, dstOffset, numVertices;
-    ANGLE_TRY(CalculateOffsetAndVertexCountForConversion(contextVk, srcBuffer, conversion,
-                                                         srcFormat, dstFormat, &srcOffset,
-                                                         &dstOffset, &numVertices));
-    if (numVertices == 0)
+    size_t maxNumVertices;
+    ANGLE_TRY(CalculateMaxVertexCountForConversion(contextVk, srcBuffer, conversion, srcFormat,
+                                                   dstFormat, &maxNumVertices));
+    if (maxNumVertices == 0)
     {
         return angle::Result::Continue;
     }
+
+    vk::BufferHelper *srcBufferHelper = &srcBuffer->getBuffer();
+    vk::BufferHelper *dstBuffer       = conversion->getBuffer();
+
+    UtilsVk::OffsetAndVertexCounts additionalOffsetVertexCounts;
 
     UtilsVk::ConvertVertexParameters params;
     params.srcFormat   = &srcFormat;
     params.dstFormat   = &dstFormat;
     params.srcStride   = srcStride;
-    params.vertexCount = numVertices;
-    params.srcOffset   = srcOffset;
-    params.dstOffset   = dstOffset;
-    ANGLE_TRY(contextVk->getUtils().convertVertexBuffer(contextVk, conversion->getBuffer(),
-                                                        &srcBuffer->getBuffer(), params));
+    params.vertexCount = 0;
+
+    if (conversion->isEntireBufferDirty())
+    {
+        params.vertexCount = static_cast<uint32_t>(maxNumVertices);
+        params.srcOffset   = static_cast<uint32_t>(conversion->getCacheKey().offset);
+        params.dstOffset   = 0;
+    }
+    else
+    {
+        // dirtyRanges may overlap with each other. Try to do a quick merge to reduce the number of
+        // dispatch calls as well as avoid redundant conversion in the overlapped area.
+        conversion->consolidateDirtyRanges();
+
+        const std::vector<RangeDeviceSize> &dirtyRanges = conversion->getDirtyBufferRanges();
+        additionalOffsetVertexCounts.reserve(dirtyRanges.size());
+
+        for (const RangeDeviceSize &dirtyRange : dirtyRanges)
+        {
+            if (dirtyRange.empty())
+            {
+                // consolidateDirtyRanges may end up with invalid range if it gets merged.
+                continue;
+            }
+
+            uint32_t srcOffset, dstOffset, numVertices;
+            CalculateOffsetAndVertexCountForDirtyRange(srcBuffer, conversion, srcFormat, dstFormat,
+                                                       dirtyRange, &srcOffset, &dstOffset,
+                                                       &numVertices);
+            if (params.vertexCount == 0)
+            {
+                params.vertexCount = numVertices;
+                params.srcOffset   = srcOffset;
+                params.dstOffset   = dstOffset;
+            }
+            else
+            {
+                additionalOffsetVertexCounts.emplace_back();
+                additionalOffsetVertexCounts.back().srcOffset   = srcOffset;
+                additionalOffsetVertexCounts.back().dstOffset   = dstOffset;
+                additionalOffsetVertexCounts.back().vertexCount = numVertices;
+            }
+        }
+    }
+    ANGLE_TRY(contextVk->getUtils().convertVertexBuffer(contextVk, dstBuffer, srcBufferHelper,
+                                                        params, additionalOffsetVertexCounts));
     conversion->clearDirty();
 
     return angle::Result::Continue;
@@ -587,23 +666,58 @@ angle::Result VertexArrayVk::convertVertexBufferCPU(ContextVk *contextVk,
 {
     ANGLE_TRACE_EVENT0("gpu.angle", "VertexArrayVk::convertVertexBufferCpu");
 
-    size_t srcOffset, dstOffset, numVertices;
-    ANGLE_TRY(CalculateOffsetAndVertexCountForConversion(contextVk, srcBuffer, conversion,
-                                                         srcFormat, dstFormat, &srcOffset,
-                                                         &dstOffset, &numVertices));
-    if (numVertices == 0)
+    size_t maxNumVertices;
+    ANGLE_TRY(CalculateMaxVertexCountForConversion(contextVk, srcBuffer, conversion, srcFormat,
+                                                   dstFormat, &maxNumVertices));
+    if (maxNumVertices == 0)
     {
         return angle::Result::Continue;
     }
 
-    void *src = nullptr;
-    ANGLE_TRY(srcBuffer->mapImpl(contextVk, GL_MAP_READ_BIT, &src));
-    const uint8_t *srcBytes = reinterpret_cast<const uint8_t *>(src) + srcOffset;
+    uint8_t *src = nullptr;
+    ANGLE_TRY(srcBuffer->mapImpl(contextVk, GL_MAP_READ_BIT, reinterpret_cast<void **>(&src)));
     uint32_t srcStride      = conversion->getCacheKey().stride;
-    size_t bytesToCopy      = numVertices * dstFormat.pixelBytes;
 
-    ANGLE_TRY(StreamVertexData(contextVk, conversion->getBuffer(), srcBytes, bytesToCopy, dstOffset,
-                               numVertices, srcStride, vertexLoadFunction));
+    if (conversion->isEntireBufferDirty())
+    {
+        size_t srcOffset        = conversion->getCacheKey().offset;
+        size_t dstOffset        = 0;
+        const uint8_t *srcBytes = src + srcOffset;
+        size_t bytesToCopy      = maxNumVertices * dstFormat.pixelBytes;
+        ANGLE_TRY(StreamVertexData(contextVk, conversion->getBuffer(), srcBytes, bytesToCopy,
+                                   dstOffset, maxNumVertices, srcStride, vertexLoadFunction));
+    }
+    else
+    {
+        // dirtyRanges may overlap with each other. Try to do a quick merge to avoid redundant
+        // conversion in the overlapped area.
+        conversion->consolidateDirtyRanges();
+
+        const std::vector<RangeDeviceSize> &dirtyRanges = conversion->getDirtyBufferRanges();
+        for (const RangeDeviceSize &dirtyRange : dirtyRanges)
+        {
+            if (dirtyRange.empty())
+            {
+                // consolidateDirtyRanges may end up with invalid range if it gets merged.
+                continue;
+            }
+
+            uint32_t srcOffset, dstOffset, numVertices;
+            CalculateOffsetAndVertexCountForDirtyRange(srcBuffer, conversion, srcFormat, dstFormat,
+                                                       dirtyRange, &srcOffset, &dstOffset,
+                                                       &numVertices);
+
+            if (numVertices > 0)
+            {
+                const uint8_t *srcBytes = src + srcOffset;
+                size_t bytesToCopy      = maxNumVertices * dstFormat.pixelBytes;
+                ANGLE_TRY(StreamVertexData(contextVk, conversion->getBuffer(), srcBytes,
+                                           bytesToCopy, dstOffset, maxNumVertices, srcStride,
+                                           vertexLoadFunction));
+            }
+        }
+    }
+
     conversion->clearDirty();
     ANGLE_TRY(srcBuffer->unmapImpl(contextVk));
 
@@ -642,7 +756,7 @@ angle::Result VertexArrayVk::syncState(const gl::Context *context,
                 // If vertex array was not observing while unbound, we need to check buffer's
                 // internal storage and take action if buffer storage has changed while not
                 // observing.
-                if (contextVk->getRenderer()->getFeatures().compressVertexData.enabled ||
+                if (contextVk->getFeatures().compressVertexData.enabled ||
                     mContentsObservers->any())
                 {
                     // We may have lost buffer content change when it became non-current. In that
@@ -834,7 +948,7 @@ angle::Result VertexArrayVk::syncDirtyAttrib(ContextVk *contextVk,
             uint32_t srcStride    = binding.getStride() == 0 ? srcFormatSize : binding.getStride();
             size_t numVertices    = GetVertexCount(bufferVk, binding, srcFormatSize);
             bool bindingIsAligned =
-                BindingIsAligned(binding, srcFormat, srcFormat.channelCount, attrib.relativeOffset);
+                BindingIsAligned(srcFormat, binding.getOffset() + attrib.relativeOffset, srcStride);
 
             if (renderer->getFeatures().compressVertexData.enabled &&
                 gl::IsStaticBufferUsage(bufferGL->getUsage()) &&
@@ -850,6 +964,8 @@ angle::Result VertexArrayVk::syncDirtyAttrib(ContextVk *contextVk,
             if (needsConversion)
             {
                 const angle::Format &dstFormat = vertexFormat.getActualBufferFormat(compressed);
+                // Converted buffer is tightly packed
+                uint32_t dstStride = dstFormat.pixelBytes;
 
                 ASSERT(vertexFormat.getVertexInputAlignment(compressed) <=
                        vk::kVertexBufferAlignment);
@@ -861,10 +977,34 @@ angle::Result VertexArrayVk::syncDirtyAttrib(ContextVk *contextVk,
                 const VertexConversionBuffer::CacheKey cacheKey{
                     srcFormat.id, srcStride,
                     static_cast<size_t>(binding.getOffset()) + attrib.relativeOffset,
-                    !bindingIsAligned};
+                    !bindingIsAligned, false};
 
                 VertexConversionBuffer *conversion =
                     bufferVk->getVertexConversionBuffer(renderer, cacheKey);
+
+                // Converted attribs are packed in their own VK buffer so offset is relative to the
+                // binding and coversion's offset. The conversion buffer try to reuse the existing
+                // buffer as much as possible to reduce the amount of data that has to be converted.
+                // When binding's offset changes, it will check if new offset and existing buffer's
+                // offset are multiple of strides apart. It yes it will reuse. If new offset is
+                // larger, all existing data are still valid. If the new offset is smaller it will
+                // mark the newly exposed range dirty and then rely on
+                // ContextVk::initBufferForVertexConversion to decide buffer's size is big enough or
+                // not and reallocate (and mark entire buffer dirty) if needed.
+                //
+                // bufferVk:-----------------------------------------------------------------------
+                //                 |                   |
+                //                 |                bingding.offset + attrib.relativeOffset.
+                //          conversion->getCacheKey().offset
+                //
+                // conversion.buffer: --------------------------------------------------------------
+                //                                     |
+                //                                   dstRelativeOffset
+                size_t srcRelativeOffset =
+                    binding.getOffset() + attrib.relativeOffset - conversion->getCacheKey().offset;
+                size_t numberOfVerticesToSkip = srcRelativeOffset / srcStride;
+                size_t dstRelativeOffset      = numberOfVerticesToSkip * dstStride;
+
                 if (conversion->dirty())
                 {
                     if (compressed)
@@ -905,13 +1045,10 @@ angle::Result VertexArrayVk::syncDirtyAttrib(ContextVk *contextVk,
                     bufferHelper
                         ->getBufferForVertexArray(contextVk, bufferHelper->getSize(), &bufferOffset)
                         .getHandle();
-                mCurrentArrayBufferOffsets[attribIndex] = bufferOffset;
-                // Converted attribs are packed in their own VK buffer so offset is zero
+                ASSERT(BindingIsAligned(dstFormat, bufferOffset + dstRelativeOffset, dstStride));
+                mCurrentArrayBufferOffsets[attribIndex]         = bufferOffset + dstRelativeOffset;
                 mCurrentArrayBufferRelativeOffsets[attribIndex] = 0;
-
-                // Converted buffer is tightly packed
-                mCurrentArrayBufferStrides[attribIndex] =
-                    vertexFormat.getActualBufferFormat(compressed).pixelBytes;
+                mCurrentArrayBufferStrides[attribIndex]         = dstStride;
             }
             else
             {
@@ -1121,7 +1258,8 @@ angle::Result VertexArrayVk::updateStreamedAttribs(const gl::Context *context,
         const gl::VertexBinding &binding = bindings[attrib.bindingIndex];
 
         const vk::Format &vertexFormat = renderer->getFormat(attrib.format->id);
-        GLuint pixelBytes              = vertexFormat.getActualBufferFormat(false).pixelBytes;
+        const angle::Format &dstFormat = vertexFormat.getActualBufferFormat(false);
+        GLuint pixelBytes              = dstFormat.pixelBytes;
 
         const bool compressed = false;
         ASSERT(vertexFormat.getVertexInputAlignment(false) <= vk::kVertexBufferAlignment);
@@ -1232,6 +1370,8 @@ angle::Result VertexArrayVk::updateStreamedAttribs(const gl::Context *context,
         mCurrentArrayBufferOffsets[attribIndex]  = bufferOffset + startOffset;
         mCurrentArrayBufferStrides[attribIndex]  = stride;
         mCurrentArrayBufferDivisors[attribIndex] = divisor;
+        ASSERT(BindingIsAligned(dstFormat, mCurrentArrayBufferOffsets[attribIndex],
+                                mCurrentArrayBufferStrides[attribIndex]));
     }
 
     return angle::Result::Continue;
@@ -1242,6 +1382,7 @@ angle::Result VertexArrayVk::handleLineLoop(ContextVk *contextVk,
                                             GLsizei vertexOrIndexCount,
                                             gl::DrawElementsType indexTypeOrInvalid,
                                             const void *indices,
+                                            vk::BufferHelper **indexBufferOut,
                                             uint32_t *indexCountOut)
 {
     if (indexTypeOrInvalid != gl::DrawElementsType::InvalidEnum)
@@ -1253,10 +1394,9 @@ angle::Result VertexArrayVk::handleLineLoop(ContextVk *contextVk,
 
             if (!elementArrayBuffer)
             {
-                ANGLE_TRY(
-                    mLineLoopHelper.streamIndices(contextVk, indexTypeOrInvalid, vertexOrIndexCount,
-                                                  reinterpret_cast<const uint8_t *>(indices),
-                                                  &mCurrentElementArrayBuffer, indexCountOut));
+                ANGLE_TRY(mLineLoopHelper.streamIndices(
+                    contextVk, indexTypeOrInvalid, vertexOrIndexCount,
+                    reinterpret_cast<const uint8_t *>(indices), indexBufferOut, indexCountOut));
             }
             else
             {
@@ -1265,7 +1405,7 @@ angle::Result VertexArrayVk::handleLineLoop(ContextVk *contextVk,
                 BufferVk *elementArrayBufferVk = vk::GetImpl(elementArrayBuffer);
                 ANGLE_TRY(mLineLoopHelper.getIndexBufferForElementArrayBuffer(
                     contextVk, elementArrayBufferVk, indexTypeOrInvalid, vertexOrIndexCount, offset,
-                    &mCurrentElementArrayBuffer, indexCountOut));
+                    indexBufferOut, indexCountOut));
             }
         }
 
@@ -1285,11 +1425,15 @@ angle::Result VertexArrayVk::handleLineLoop(ContextVk *contextVk,
     if (!mLineLoopBufferFirstIndex.valid() || !mLineLoopBufferLastIndex.valid() ||
         mLineLoopBufferFirstIndex != firstVertex || mLineLoopBufferLastIndex != lastVertex)
     {
-        ANGLE_TRY(mLineLoopHelper.getIndexBufferForDrawArrays(
-            contextVk, clampedVertexCount, firstVertex, &mCurrentElementArrayBuffer));
+        ANGLE_TRY(mLineLoopHelper.getIndexBufferForDrawArrays(contextVk, clampedVertexCount,
+                                                              firstVertex, indexBufferOut));
 
         mLineLoopBufferFirstIndex = firstVertex;
         mLineLoopBufferLastIndex  = lastVertex;
+    }
+    else
+    {
+        *indexBufferOut = mLineLoopHelper.getCurrentIndexBuffer();
     }
     *indexCountOut = vertexOrIndexCount + 1;
 

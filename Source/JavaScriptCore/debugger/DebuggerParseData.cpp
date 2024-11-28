@@ -28,6 +28,8 @@
 
 #include "Parser.h"
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 void DebuggerPausePositions::forEachBreakpointLocation(int startLine, int startColumn, int endLine, int endColumn, Function<void(const JSTextPosition&)>&& callback)
@@ -203,5 +205,7 @@ bool gatherDebuggerParseDataForSource(VM& vm, SourceProvider* provider, Debugger
         return false;
     }
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 } // namespace JSC

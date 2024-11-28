@@ -38,14 +38,11 @@ namespace JSC { namespace Profiler {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(Database);
 
-static std::atomic<int> databaseCounter;
-
 static Lock registrationLock;
-static std::atomic<int> didRegisterAtExit;
 static Database* firstDatabase;
 
 Database::Database(VM& vm)
-    : m_databaseID(++databaseCounter)
+    : m_databaseID(DatabaseID::generate())
     , m_vm(vm)
     , m_shouldSaveAtExit(false)
     , m_nextRegisteredDatabase(nullptr)
@@ -70,7 +67,7 @@ Bytecodes* Database::ensureBytecodesFor(const AbstractLocker&, CodeBlock* codeBl
 {
     codeBlock = codeBlock->baselineAlternative();
     
-    HashMap<CodeBlock*, Bytecodes*>::iterator iter = m_bytecodesMap.find(codeBlock);
+    UncheckedKeyHashMap<CodeBlock*, Bytecodes*>::iterator iter = m_bytecodesMap.find(codeBlock);
     if (iter != m_bytecodesMap.end())
         return iter->value;
     
@@ -152,12 +149,16 @@ void Database::logEvent(CodeBlock* codeBlock, const char* summary, const CString
 
 void Database::addDatabaseToAtExit()
 {
-    if (++didRegisterAtExit == 1)
+    static std::once_flag onceKey;
+    std::call_once(onceKey, [] {
         atexit(atExitCallback);
-    
-    Locker locker { registrationLock };
-    m_nextRegisteredDatabase = firstDatabase;
-    firstDatabase = this;
+    });
+
+    {
+        Locker locker { registrationLock };
+        m_nextRegisteredDatabase = firstDatabase;
+        firstDatabase = this;
+    }
 }
 
 void Database::removeDatabaseFromAtExit()

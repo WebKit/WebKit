@@ -36,20 +36,20 @@
 #include "ScrollingTreeOverflowScrollingNode.h"
 #include "ScrollingTreePositionedNode.h"
 #include "ScrollingTreeStickyNode.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ScrollingTreeFixedNode);
+
 ScrollingTreeFixedNode::ScrollingTreeFixedNode(ScrollingTree& scrollingTree, ScrollingNodeID nodeID)
     : ScrollingTreeNode(scrollingTree, ScrollingNodeType::Fixed, nodeID)
 {
-    scrollingTree.fixedOrStickyNodeAdded();
+    scrollingTree.fixedOrStickyNodeAdded(*this);
 }
 
-ScrollingTreeFixedNode::~ScrollingTreeFixedNode()
-{
-    scrollingTree().fixedOrStickyNodeRemoved();
-}
+ScrollingTreeFixedNode::~ScrollingTreeFixedNode() = default;
 
 bool ScrollingTreeFixedNode::commitStateBeforeChildren(const ScrollingStateNode& stateNode)
 {

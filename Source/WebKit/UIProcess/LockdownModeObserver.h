@@ -28,15 +28,6 @@
 #include <wtf/WeakPtr.h>
 
 namespace WebKit {
-class LockdownModeObserver;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::LockdownModeObserver> : std::true_type { };
-}
-
-namespace WebKit {
 
 class LockdownModeObserver : public CanMakeWeakPtr<LockdownModeObserver> {
 public:
@@ -44,6 +35,9 @@ public:
 
     virtual void willChangeLockdownMode() = 0;
     virtual void didChangeLockdownMode() = 0;
+
+    virtual void ref() const = 0;
+    virtual void deref() const = 0;
 };
 
 } // namespace WebKit

@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=600">
+<meta http-equiv="Content-type" content="text/html; charset=utf-8">
+<title>WebGPU Hello Triangle</title>
+<link rel="stylesheet" href="css/style.css">
+<style>
+body {
+    font-family: system-ui;
+    color: #f7f7ff;
+    background-color: rgb(38, 38, 127);
+    text-align: center;
+}
+canvas {
+    margin: 0 auto;
+}
+</style>
+</head>
+<body>
+<div id="contents">
+    <h1>Simple Triangle</h1>
+    <canvas></canvas>
+</div>
+<div id="error">
+    <h2>WebGPU not available</h2>
+    <p>
+        Make sure you are on a system with WebGPU enabled. In
+        Safari, first make sure the Developer Menu is visible (Preferences >
+        Advanced), then Develop > Experimental Features > WebGPU.
+    </p>
+    <p>
+        In addition, you must be using Safari Technology Preview 92 or above.
+        You can get the latest STP <a href="https://developer.apple.com/safari/download/">here</a>.
+    </p>
+</div>
+<script>
+    async function helloTriangle() {
+        if (!navigator.gpu || GPUBufferUsage.COPY_SRC === undefined) {
+            document.body.className = 'error';
+            return;
+        }
+
+        const adapter = await navigator.gpu.requestAdapter();
+        const device = await adapter.requestDevice();
+        
+        /*** Vertex Buffer Setup ***/
+        
+        /* Vertex Data */
+        const vertexStride = 8 * 4;
+        const vertexDataSize = vertexStride * 3;
+        
+        /* GPUBufferDescriptor */
+        const vertexDataBufferDescriptor = {
+            size: vertexDataSize,
+            usage: GPUBufferUsage.VERTEX
+        };
+
+        /* GPUBuffer */
+        const vertexBuffer = device.createBuffer(vertexDataBufferDescriptor);
+        
+        /*** Shader Setup ***/
+        const wgslSource = `
+                         @group(0) @binding(0) var<storage, read> b: array<vec2f>;
+        
+                         struct Vertex {
+                             @builtin(position) Position: vec4<f32>,
+                             @location(0) color: vec4<f32>,
+                         }
+
+                         @vertex fn vsmain(@builtin(vertex_index) VertexIndex: u32) -> Vertex
+                         {
+                             var pos: array<vec2<f32>, 3> = array<vec2<f32>, 3>(
+                                 vec2<f32>( 0.0,  0.5),
+                                 vec2<f32>(-0.5, -0.5),
+                                 vec2<f32>( 0.5, -0.5)
+                             );
+                             var vertex_out : Vertex;
+                             vertex_out.Position = vec4<f32>(pos[VertexIndex], b[110].x, 1.0);
+                             vertex_out.color = vec4<f32>(pos[VertexIndex] + vec2<f32>(0.5, 0.5), b[0].x, 1.0);
+                             return vertex_out;
+                         }
+
+                         @fragment fn fsmain(in: Vertex) -> @location(0) vec4<f32>
+                         {
+                             return in.color;
+                         }
+        `;
+        const shaderModule = device.createShaderModule({ code: wgslSource });
+        
+        /* GPUPipelineStageDescriptors */
+        const vertexStageDescriptor = { module: shaderModule, entryPoint: "vsmain" };
+
+        const fragmentStageDescriptor = { module: shaderModule, entryPoint: "fsmain", targets: [ {format: "bgra8unorm" }, ],  };
+        
+        /* GPURenderPipelineDescriptor */
+
+        
+        
+        const transformBufferBindGroupLayoutEntry = {
+            binding: 0, // @group(0) @binding(0)
+            visibility: GPUShaderStage.VERTEX,
+            buffer: { type: "read-only-storage" },
+        };
+        const bindGroupLayoutDescriptor = { entries: [transformBufferBindGroupLayoutEntry] };
+        const bindGroupLayout = device.createBindGroupLayout(bindGroupLayoutDescriptor);
+        
+        
+        const pipelineLayoutDescriptor = { bindGroupLayouts: [bindGroupLayout] };
+        const pipelineLayout = device.createPipelineLayout(pipelineLayoutDescriptor);
+        
+        const renderPipelineDescriptor = {
+            layout: pipelineLayout,
+            vertex: vertexStageDescriptor,
+            fragment: fragmentStageDescriptor,
+            primitive: {topology: "triangle-list" },
+        };
+        /* GPURenderPipeline */
+        const renderPipeline = device.createRenderPipeline(renderPipelineDescriptor);
+        
+        /*** Swap Chain Setup ***/
+        
+        const canvas = document.querySelector("canvas");
+        canvas.width = 600;
+        canvas.height = 600;
+
+        const gpuContext = canvas.getContext("webgpu");
+        
+        /* GPUCanvasConfiguration */
+        const canvasConfiguration = { device: device, format: "bgra8unorm" };
+        gpuContext.configure(canvasConfiguration);
+        /* GPUTexture */
+        const currentTexture = gpuContext.getCurrentTexture();
+        
+        /*** Render Pass Setup ***/
+        
+        /* Acquire Texture To Render To */
+        
+        /* GPUTextureView */
+        const renderAttachment = currentTexture.createView();
+        
+        /* GPUColor */
+        const darkBlue = { r: 0.15, g: 0.15, b: 0.5, a: 1 };
+        
+        /* GPURenderPassColorATtachmentDescriptor */
+        const colorAttachmentDescriptor = {
+            view: renderAttachment,
+            loadOp: "clear",
+            storeOp: "store",
+            clearColor: darkBlue
+        };
+        
+        /* GPURenderPassDescriptor */
+        const renderPassDescriptor = { colorAttachments: [colorAttachmentDescriptor] };
+        
+        /*** Rendering ***/
+        
+        const transformBuffer = device.createBuffer({size: 8, usage: GPUBufferUsage.STORAGE});  // buffer's size is 8
+        const transformBufferBinding = {
+            buffer: transformBuffer,
+            offset: 0,
+            size: 4
+        };
+        const transformBufferBindGroupEntry = {
+            binding: 0,
+            resource: transformBufferBinding
+        };
+        const bindGroupDescriptor = {
+            layout:  bindGroupLayout,
+            entries: [transformBufferBindGroupEntry]
+        };
+        const bindGroup = device.createBindGroup(bindGroupDescriptor);
+        
+        let storageBuffer = device.createBuffer({size: 8, usage: GPUBufferUsage.STORAGE});  // buffer's size is 8
+        
+        /* GPUCommandEncoder */
+        const commandEncoder = device.createCommandEncoder();
+        /* GPURenderPassEncoder */
+        const renderPassEncoder = commandEncoder.beginRenderPass(renderPassDescriptor);
+        
+        renderPassEncoder.setPipeline(renderPipeline);
+        const vertexBufferSlot = 0;
+        renderPassEncoder.setBindGroup(0, bindGroup);
+        renderPassEncoder.setVertexBuffer(vertexBufferSlot, vertexBuffer, 0);
+        renderPassEncoder.draw(3, 1, 0, 0); // 3 vertices, 1 instance, 0th vertex, 0th instance.
+        renderPassEncoder.end();
+        
+        /* GPUComamndBuffer */
+        const commandBuffer = commandEncoder.finish();
+        
+        /* GPUQueue */
+        const queue = device.queue;
+        queue.submit([commandBuffer]);
+    }
+
+    window.addEventListener("DOMContentLoaded", helloTriangle);
+
+</script>
+</body>
+</html>

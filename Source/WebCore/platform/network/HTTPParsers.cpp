@@ -49,6 +49,8 @@
 #include <wtf/text/StringToIntegerConversion.h>
 #include <wtf/unicode/CharacterNames.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 // True if characters which satisfy the predicate are present, incrementing
@@ -1023,3 +1025,5 @@ CrossOriginResourcePolicy parseCrossOriginResourcePolicyHeader(StringView header
 }
 
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

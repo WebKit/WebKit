@@ -60,16 +60,13 @@ struct WorkerOptions;
 class Worker final : public AbstractWorker, public ActiveDOMObject, private WorkerScriptLoaderClient {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(Worker);
 public:
-    using AbstractWorker::weakPtrFactory;
-    using AbstractWorker::WeakValueType;
-    using AbstractWorker::WeakPtrImplType;
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
+
+    USING_CAN_MAKE_WEAKPTR(AbstractWorker);
 
     static ExceptionOr<Ref<Worker>> create(ScriptExecutionContext&, JSC::RuntimeFlags, std::variant<RefPtr<TrustedScriptURL>, String>&&, WorkerOptions&&);
     virtual ~Worker();
-
-    // ActiveDOMObject.
-    void ref() const final { RefCounted::ref(); }
-    void deref() const final { RefCounted::deref(); }
 
     ExceptionOr<void> postMessage(JSC::JSGlobalObject&, JSC::JSValue message, StructuredSerializeOptions&&);
 
@@ -99,8 +96,8 @@ private:
 
     enum EventTargetInterfaceType eventTargetInterface() const final { return EventTargetInterfaceType::Worker; }
 
-    void didReceiveResponse(ScriptExecutionContextIdentifier, ResourceLoaderIdentifier, const ResourceResponse&) final;
-    void notifyFinished(ScriptExecutionContextIdentifier) final;
+    void didReceiveResponse(ScriptExecutionContextIdentifier, std::optional<ResourceLoaderIdentifier>, const ResourceResponse&) final;
+    void notifyFinished(std::optional<ScriptExecutionContextIdentifier>) final;
 
     // ActiveDOMObject.
     void stop() final;

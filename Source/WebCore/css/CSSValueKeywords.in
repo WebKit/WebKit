@@ -948,9 +948,6 @@ padding-box
 // text
 -webkit-text
 
-// block-step-insert
-margin
-
 //
 // CSS_PROP_MASK_CLIP
 //
@@ -1034,7 +1031,7 @@ paused
 //
 flat
 preserve-3d
-optimized-3d enable-if=ENABLE_CSS_TRANSFORM_STYLE_OPTIMIZED_3D
+separated enable-if=HAVE_CORE_ANIMATION_SEPARATED_LAYERS
 
 //
 // CSS_PROP__WEBKIT_TRANSITION_TIMING_FUNCTION
@@ -1071,11 +1068,16 @@ nearest
 root
 self
 view
+// cover
+// contain
+entry
+exit
+entry-crossing
+exit-crossing
 
 //
 // CSS_PROP_ZOOM
 //
-document
 reset
 
 //
@@ -1160,6 +1162,7 @@ horizontal-bt
 after
 before
 inter-character
+legacy-inter-character
 
 // -webkit-text-combine
 // horizontal
@@ -1364,8 +1367,12 @@ ccw
 // small
 by
 close
-using
+with
 of
+// from
+// start
+// end
+origin
 
 // @font-face src
 format
@@ -1496,6 +1503,9 @@ mod
 rem
 to-zero
 // nearest
+// progress
+// from
+// to
 infinity
 -infinity id=NegativeInfinity
 NaN
@@ -1607,6 +1617,10 @@ color-layers
 
 // color-mix()
 color-mix
+
+// contrast-color()
+contrast-color
+// max
 
 // light-dark()
 light-dark
@@ -1762,6 +1776,7 @@ false
 
 // text-spacing-trim
 space-all
+trim-all
 // text-autospace
 // normal
 no-autospace
@@ -1786,5 +1801,17 @@ allow-discrete
 // inline
 -internal-textarea-auto
 
-// anchor()
+// CSS Anchor Positioning
 anchor
+anchor-size
+width
+height
+self-block
+self-inline
+anchor-center
+// position-try-order
+// normal
+most-width
+most-height
+most-block-size
+most-inline-size

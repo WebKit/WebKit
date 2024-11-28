@@ -41,8 +41,6 @@ public:
 
     ~WebGLRenderingContext();
 
-    bool isWebGL1() const final { return true; }
-
     std::optional<WebGLExtensionAny> getExtension(const String&) final;
     std::optional<Vector<String>> getSupportedExtensions() final;
 

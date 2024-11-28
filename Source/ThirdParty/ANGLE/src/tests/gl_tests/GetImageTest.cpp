@@ -1018,8 +1018,6 @@ TEST_P(GetImageTestES32, CompressedTexImageCubeMapArray)
 {
     // Verify the extension is enabled.
     ASSERT_TRUE(IsGLExtensionEnabled(kExtensionName));
-    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_texture_cube_map_array") &&
-                       !IsGLExtensionEnabled("GL_OES_texture_cube_map_array"));
 
     auto func = [](const CompressionExtension &ext, const CompressedFormat &format) {
         std::vector<uint8_t> expectedData;

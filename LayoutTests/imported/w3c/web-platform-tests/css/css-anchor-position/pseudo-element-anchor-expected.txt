@@ -1,4 +1,4 @@
 
-FAIL ::before as anchor assert_equals: expected 100 but got 0
-FAIL ::after as anchor assert_equals: expected 100 but got 0
+PASS ::before as anchor
+PASS ::after as anchor
 

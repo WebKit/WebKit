@@ -44,8 +44,12 @@ PASS background-repeat (type: discrete) has testAccumulation function
 PASS background-repeat: "round" onto "space"
 PASS background-repeat: "space" onto "round"
 PASS block-step-insert (type: discrete) has testAccumulation function
-PASS block-step-insert: "padding" onto "margin"
-PASS block-step-insert: "margin" onto "padding"
+PASS block-step-insert: "padding-box" onto "margin-box"
+PASS block-step-insert: "margin-box" onto "padding-box"
+PASS block-step-insert: "content-box" onto "margin-box"
+PASS block-step-insert: "margin-box" onto "content-box"
+PASS block-step-insert: "content-box" onto "padding-box"
+PASS block-step-insert: "padding-box" onto "content-box"
 PASS block-step-size (type: length) has testAccumulation function
 PASS block-step-size: length
 PASS block-step-size: length of rem
@@ -302,7 +306,7 @@ PASS font-variant-position (type: discrete) has testAccumulation function
 PASS font-variant-position: "super" onto "sub"
 PASS font-variant-position: "sub" onto "super"
 PASS font-variation-settings (type: fontVariationSettings) has testAccumulation function
-FAIL font-variation-settings with composite type accumulate assert_equals: The value should be "wght" 2.2 at 250ms expected "\"wght\" 2.2" but got "\"wght\" 2.1999998"
+PASS font-variation-settings with composite type accumulate
 PASS font-variation-settings (type: discrete) has testAccumulation function
 PASS font-variation-settings: ""wdth" 5" onto ""wdth" 1, "wght" 1.1"
 PASS font-variation-settings: ""wdth" 1, "wght" 1.1" onto ""wdth" 5"

@@ -470,6 +470,11 @@ void FocusController::setFocusedFrame(Frame* frame, BroadcastFocusedFrame broadc
         } while (frame);
     }
 
+#if PLATFORM(IOS_FAMILY)
+    if (oldFrame)
+        oldFrame->eventHandler().cancelSelectionAutoscroll();
+#endif
+
     if (newFrame && newFrame->view() && isFocused()) {
         newFrame->selection().setFocused(true);
         newFrame->document()->dispatchWindowEvent(Event::create(eventNames().focusEvent, Event::CanBubble::No, Event::IsCancelable::No));
@@ -547,7 +552,7 @@ bool FocusController::setInitialFocus(FocusDirection direction, KeyboardEvent* p
     // of handleFocusedUIElementChanged, because this will send the notification even if the element is the same.
     RefPtr focusedOrMainFrame = this->focusedOrMainFrame();
     if (CheckedPtr cache = focusedOrMainFrame ? focusedOrMainFrame->document()->existingAXObjectCache() : nullptr)
-        cache->postNotification(focusedOrMainFrame->document(), AXObjectCache::AXFocusedUIElementChanged);
+        cache->postNotification(focusedOrMainFrame->document(), AXNotification::AXFocusedUIElementChanged);
 
     return didAdvanceFocus;
 }
@@ -961,8 +966,6 @@ bool FocusController::setFocusedElement(Element* element, LocalFrame& newFocused
     if (oldFocusedElement && oldFocusedElement->isRootEditableElement() && !relinquishesEditingFocus(*oldFocusedElement))
         return false;
 
-    page->editorClient().willSetInputMethodState();
-
     if (shouldClearSelectionWhenChangingFocusedElement(page, WTFMove(oldFocusedElement), element))
         clearSelectionIfNeeded(oldFocusedFrame.get(), &newFocusedFrame, element);
 
@@ -1063,7 +1066,7 @@ void FocusController::setIsVisibleAndActiveInternal(bool contentIsVisible)
 
     contentAreaDidShowOrHide(view.get(), contentIsVisible);
 
-    for (auto* frame = &page->mainFrame(); frame; frame = frame->tree().traverseNext()) {
+    for (RefPtr frame = &page->mainFrame(); frame; frame = frame->tree().traverseNext()) {
         RefPtr localFrame = dynamicDowncast<LocalFrame>(frame);
         if (!localFrame)
             continue;

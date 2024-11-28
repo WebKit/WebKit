@@ -27,13 +27,13 @@
 #include "config.h"
 #include "Timer.h"
 
-#include "RuntimeApplicationChecks.h"
 #include "SharedTimer.h"
 #include "ThreadGlobalData.h"
 #include "ThreadTimers.h"
 #include <limits>
 #include <math.h>
 #include <wtf/MainThread.h>
+#include <wtf/RuntimeApplicationChecks.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/Vector.h>
 
@@ -44,6 +44,8 @@
 #if PLATFORM(COCOA)
 #include <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #endif
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace WebCore {
 
@@ -65,7 +67,7 @@ static ThreadTimerHeap& threadGlobalTimerHeap()
 }
 #endif
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(ThreadTimerHeapItem);
+WTF_MAKE_COMPACT_TZONE_OR_ISO_ALLOCATED_IMPL(ThreadTimerHeapItem);
 
 inline ThreadTimerHeapItem::ThreadTimerHeapItem(TimerBase& timer, MonotonicTime time, unsigned insertionOrder)
     : time(time)
@@ -289,7 +291,7 @@ static_assert(sizeof(DeferrableOneShotTimer) == sizeof(SameSizeAsDeferrableOneSh
 TimerBase::TimerBase()
 {
 #if USE(WEB_THREAD)
-    RELEASE_ASSERT(WebThreadIsLockedOrDisabled());
+    RELEASE_ASSERT(WebThreadIsLockedOrDisabledInMainOrWebThread());
 #endif
 }
 
@@ -511,7 +513,7 @@ void TimerBase::updateHeapIfNeeded(MonotonicTime oldTime)
 void TimerBase::setNextFireTime(MonotonicTime newTime)
 {
 #if USE(WEB_THREAD)
-    RELEASE_ASSERT(WebThreadIsLockedOrDisabled());
+    RELEASE_ASSERT(WebThreadIsLockedOrDisabledInMainOrWebThread());
 #endif
     ASSERT(canCurrentThreadAccessThreadLocalData(m_thread));
     RELEASE_ASSERT(canCurrentThreadAccessThreadLocalData(m_thread) || shouldSuppressThreadSafetyCheck());
@@ -576,3 +578,4 @@ Seconds TimerBase::nextUnalignedFireInterval() const
 
 } // namespace WebCore
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

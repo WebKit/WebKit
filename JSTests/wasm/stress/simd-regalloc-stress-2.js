@@ -1,4 +1,4 @@
-//@ requireOptions("--useWasmSIMD=1", "--useBBQJIT=0", "--useWasmLLInt=1")
+//@ requireOptions("--useWasmSIMD=1", "--useBBQJIT=1", "--useWasmLLInt=1", "--thresholdForBBQOptimizeAfterWarmUp=0", "--thresholdForBBQOptimizeSoon=0")
 //@ skip if !$isSIMDPlatform or $memoryLimited
 import * as assert from "../assert.js"
 

@@ -77,7 +77,7 @@ struct SourceCodeValue {
 
 class CodeCacheMap {
 public:
-    typedef HashMap<SourceCodeKey, SourceCodeValue, SourceCodeKey::Hash, SourceCodeKey::HashTraits> MapType;
+    typedef UncheckedKeyHashMap<SourceCodeKey, SourceCodeValue, SourceCodeKey::Hash, SourceCodeKey::HashTraits> MapType;
     typedef MapType::iterator iterator;
     typedef MapType::AddResult AddResult;
 

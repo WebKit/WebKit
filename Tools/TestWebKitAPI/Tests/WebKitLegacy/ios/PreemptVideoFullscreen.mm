@@ -101,7 +101,7 @@ TEST(WebKitLegacy, PreemptVideoFullscreen)
     RetainPtr<PreemptVideoFullscreenUIWebViewDelegate> uiDelegate = adoptNS([[PreemptVideoFullscreenUIWebViewDelegate alloc] init]);
     uiWebView.get().delegate = uiDelegate.get();
 
-    [uiWebView loadRequest:[NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"two-videos" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]]];
+    [uiWebView loadRequest:[NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"two-videos" withExtension:@"html"]]];
 
     Util::run(&didFinishLoad);
     Util::run(&gotMainFrame);

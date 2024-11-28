@@ -8,9 +8,9 @@
 #include "src/gpu/ganesh/gl/GrGLUniformHandler.h"
 
 #include "include/core/SkString.h"
-#include "include/gpu/GrBackendSurface.h"
-#include "include/gpu/gl/GrGLFunctions.h"
-#include "include/gpu/gl/GrGLInterface.h"
+#include "include/gpu/ganesh/GrBackendSurface.h"
+#include "include/gpu/ganesh/gl/GrGLFunctions.h"
+#include "include/gpu/ganesh/gl/GrGLInterface.h"
 #include "include/private/base/SkAssert.h"
 #include "src/gpu/ganesh/GrUtil.h"
 #include "src/gpu/ganesh/gl/GrGLCaps.h"

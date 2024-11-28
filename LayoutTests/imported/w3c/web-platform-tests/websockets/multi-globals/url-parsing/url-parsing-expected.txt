@@ -1,0 +1,4 @@
+
+
+PASS Multiple globals for base URL in WebSocket constructor
+

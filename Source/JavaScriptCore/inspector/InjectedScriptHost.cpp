@@ -34,6 +34,8 @@ namespace Inspector {
 
 using namespace JSC;
 
+InjectedScriptHost::InjectedScriptHost() = default;
+
 InjectedScriptHost::~InjectedScriptHost() = default;
 
 JSValue InjectedScriptHost::wrapper(JSGlobalObject* globalObject)

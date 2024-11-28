@@ -46,8 +46,8 @@ void WebPaymentCoordinatorProxy::platformCanMakePayments(CompletionHandler<void(
 #endif
         return completionHandler(false);
 
-    m_canMakePaymentsQueue->dispatch([theClass = retainPtr(PAL::getPKPaymentAuthorizationViewControllerClass()), completionHandler = WTFMove(completionHandler)]() mutable {
-        RunLoop::main().dispatch([canMakePayments = [theClass canMakePayments], completionHandler = WTFMove(completionHandler)]() mutable {
+    protectedCanMakePaymentsQueue()->dispatch([theClass = retainPtr(PAL::getPKPaymentAuthorizationViewControllerClass()), completionHandler = WTFMove(completionHandler)]() mutable {
+        RunLoop::protectedMain()->dispatch([canMakePayments = [theClass canMakePayments], completionHandler = WTFMove(completionHandler)]() mutable {
             completionHandler(canMakePayments);
         });
     });
@@ -74,16 +74,17 @@ void WebPaymentCoordinatorProxy::platformShowPaymentUI(WebPageProxyIdentifier we
 #endif
         paymentRequest = platformPaymentRequest(originatingURL, linkIconURLStrings, request);
 
-    m_client.getPaymentCoordinatorEmbeddingUserAgent(webPageProxyID, [weakThis = WeakPtr { *this }, paymentRequest, completionHandler = WTFMove(completionHandler)](const String& userAgent) mutable {
-        if (!weakThis)
+    checkedClient()->getPaymentCoordinatorEmbeddingUserAgent(webPageProxyID, [weakThis = WeakPtr { *this }, paymentRequest, completionHandler = WTFMove(completionHandler)](const String& userAgent) mutable {
+        RefPtr paymentCoordinatorProxy = weakThis.get();
+        if (!paymentCoordinatorProxy)
             return completionHandler(false);
 
-        weakThis->platformSetPaymentRequestUserAgent(paymentRequest.get(), userAgent);
+        paymentCoordinatorProxy->platformSetPaymentRequestUserAgent(paymentRequest.get(), userAgent);
 
         auto showPaymentUIRequestSeed = weakThis->m_showPaymentUIRequestSeed;
 
         [PAL::getPKPaymentAuthorizationViewControllerClass() requestViewControllerWithPaymentRequest:paymentRequest.get() completion:makeBlockPtr([paymentRequest, showPaymentUIRequestSeed, weakThis = WTFMove(weakThis), completionHandler = WTFMove(completionHandler)](PKPaymentAuthorizationViewController *viewController, NSError *error) mutable {
-            auto paymentCoordinatorProxy = weakThis.get();
+            RefPtr paymentCoordinatorProxy = weakThis.get();
             if (!paymentCoordinatorProxy)
                 return completionHandler(false);
 
@@ -98,13 +99,13 @@ void WebPaymentCoordinatorProxy::platformShowPaymentUI(WebPageProxyIdentifier we
             if (showPaymentUIRequestSeed != paymentCoordinatorProxy->m_showPaymentUIRequestSeed)
                 return completionHandler(false);
 
-            NSWindow *presentingWindow = paymentCoordinatorProxy->m_client.paymentCoordinatorPresentingWindow(*paymentCoordinatorProxy);
+            NSWindow *presentingWindow = paymentCoordinatorProxy->checkedClient()->paymentCoordinatorPresentingWindow(*paymentCoordinatorProxy);
             if (!presentingWindow)
                 return completionHandler(false);
 
             ASSERT(viewController);
 
-            paymentCoordinatorProxy->m_authorizationPresenter = makeUnique<PaymentAuthorizationViewController>(*paymentCoordinatorProxy, paymentRequest.get(), viewController);
+            paymentCoordinatorProxy->m_authorizationPresenter = PaymentAuthorizationViewController::create(*paymentCoordinatorProxy, paymentRequest.get(), viewController);
 
             ASSERT(!paymentCoordinatorProxy->m_sheetWindow);
             paymentCoordinatorProxy->m_sheetWindow = [NSWindow windowWithContentViewController:viewController];

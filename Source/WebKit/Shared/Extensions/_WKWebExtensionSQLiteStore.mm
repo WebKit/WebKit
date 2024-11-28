@@ -33,7 +33,6 @@
 #import "CocoaHelpers.h"
 #import "Logging.h"
 #import "WebExtensionConstants.h"
-#import "_WKWebExtensionSQLiteDatabase.h"
 #import "_WKWebExtensionSQLiteHelpers.h"
 #import "_WKWebExtensionSQLiteRow.h"
 #import <sqlite3.h>
@@ -285,11 +284,8 @@ using namespace WebKit;
 {
     dispatch_assert_queue(_databaseQueue);
 
-    SchemaVersion currentDatabaseSchemaVersion = self._currentDatabaseSchemaVersion;
-
-    _WKWebExtensionSQLiteRowEnumerator *rows = SQLiteDatabaseFetch(_database, @"PRAGMA user_version");
-    SchemaVersion schemaVersion = [[rows nextObject] intAtIndex:0];
-    [rows.statement invalidate];
+    auto schemaVersion = self._databaseSchemaVersion;
+    auto currentDatabaseSchemaVersion = self._currentDatabaseSchemaVersion;
     if (schemaVersion == currentDatabaseSchemaVersion)
         return schemaVersion;
 
@@ -317,6 +313,18 @@ using namespace WebKit;
     return currentDatabaseSchemaVersion;
 }
 
+- (SchemaVersion)_databaseSchemaVersion
+{
+    dispatch_assert_queue(_databaseQueue);
+    ASSERT(_database);
+
+    _WKWebExtensionSQLiteRowEnumerator *rows = SQLiteDatabaseFetch(_database, @"PRAGMA user_version");
+    SchemaVersion schemaVersion = [[rows nextObject] intAtIndex:0];
+    [rows.statement invalidate];
+
+    return schemaVersion;
+}
+
 - (DatabaseResult)_setDatabaseSchemaVersion:(SchemaVersion)newVersion
 {
     dispatch_assert_queue(_databaseQueue);
@@ -327,8 +335,6 @@ using namespace WebKit;
         RELEASE_LOG_ERROR(Extensions, "Failed to set database version for extension %{private}@: %{public}@ (%d)", _uniqueIdentifier, _database.lastErrorMessage, result);
 
     return result;
-
-    return 0;
 }
 
 - (NSString *)_savepointNameFromUUID:(NSUUID *)savepointIdentifier

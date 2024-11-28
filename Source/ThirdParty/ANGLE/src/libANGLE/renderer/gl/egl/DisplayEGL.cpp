@@ -41,10 +41,6 @@ std::vector<EGLint> RenderableTypesFromPlatformAttrib(const rx::FunctionsEGL *eg
     std::vector<EGLint> renderableTypes;
     switch (platformAttrib)
     {
-        case EGL_PLATFORM_ANGLE_TYPE_OPENGL_ANGLE:
-            renderableTypes.push_back(EGL_OPENGL_BIT);
-            break;
-
         case EGL_PLATFORM_ANGLE_TYPE_OPENGLES_ANGLE:
         {
             static_assert(EGL_OPENGL_ES3_BIT == EGL_OPENGL_ES3_BIT_KHR,

@@ -32,7 +32,7 @@
 namespace WebKit {
 
 enum class SampleBufferDisplayLayerIdentifierType { };
-using SampleBufferDisplayLayerIdentifier = LegacyNullableObjectIdentifier<SampleBufferDisplayLayerIdentifierType>;
+using SampleBufferDisplayLayerIdentifier = ObjectIdentifier<SampleBufferDisplayLayerIdentifierType>;
 
 } // namespace WebKit
 

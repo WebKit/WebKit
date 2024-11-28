@@ -29,12 +29,14 @@
 
 #include "ScrollingTreeFixedNode.h"
 #include <wtf/RetainPtr.h>
+#include <wtf/TZoneMalloc.h>
 
 OBJC_CLASS CALayer;
 
 namespace WebCore {
 
 class ScrollingTreeFixedNodeCocoa : public ScrollingTreeFixedNode {
+    WTF_MAKE_TZONE_ALLOCATED(ScrollingTreeFixedNodeCocoa);
 public:
     WEBCORE_EXPORT static Ref<ScrollingTreeFixedNodeCocoa> create(ScrollingTree&, ScrollingNodeID);
 
@@ -46,7 +48,7 @@ private:
     CALayer* layer() const final { return m_layer.get(); }
 
     bool commitStateBeforeChildren(const ScrollingStateNode&) final;
-    void applyLayerPositions() final WTF_REQUIRES_LOCK(scrollingTree().treeLock());
+    void applyLayerPositions() final WTF_REQUIRES_LOCK(scrollingTree()->treeLock());
 
     void dumpProperties(WTF::TextStream&, OptionSet<ScrollingStateTreeAsTextBehavior>) const final;
 

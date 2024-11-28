@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "ImageBuffer.h"
 #include "RenderReplaced.h"
 
 namespace WebCore {
@@ -49,10 +50,16 @@ public:
     // Rect covered by the captured contents, in RenderLayer coordinates of the captured renderer
     LayoutRect captureOverflowRect() const { return m_overflowRect; }
 
+    LayoutRect captureLocalOverflowRect() const { return m_localOverflowRect; }
+
     // Inset of the scaled capture from the visualOverflowRect()
     LayoutPoint captureContentInset() const;
 
     bool canUseExistingLayers() const { return !hasNonVisibleOverflow(); }
+
+    bool paintsContent() const final;
+
+    RefPtr<ImageBuffer> image() { return m_oldImage; }
 
 private:
     ASCIILiteral renderName() const override { return "RenderViewTransitionCapture"_s; }

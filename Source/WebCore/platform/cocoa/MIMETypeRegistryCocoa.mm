@@ -80,10 +80,10 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
 // Specify MIME type <-> extension mappings for type identifiers recognized by the system that are missing MIME type values.
-static const HashMap<String, String, ASCIICaseInsensitiveHash>& additionalMimeTypesMap()
+static const UncheckedKeyHashMap<String, String, ASCIICaseInsensitiveHash>& additionalMimeTypesMap()
 {
-    static NeverDestroyed<HashMap<String, String, ASCIICaseInsensitiveHash>> mimeTypesMap = [] {
-        HashMap<String, String, ASCIICaseInsensitiveHash> map;
+    static NeverDestroyed<UncheckedKeyHashMap<String, String, ASCIICaseInsensitiveHash>> mimeTypesMap = [] {
+        UncheckedKeyHashMap<String, String, ASCIICaseInsensitiveHash> map;
         static constexpr TypeExtensionPair additionalTypes[] = {
             // FIXME: Remove this list once rdar://112044000 (Many camera RAW image type identifiers are missing MIME types) is resolved.
             { "image/x-canon-cr2"_s, "cr2"_s },
@@ -112,10 +112,10 @@ static const HashMap<String, String, ASCIICaseInsensitiveHash>& additionalMimeTy
     return mimeTypesMap;
 }
 
-static const HashMap<String, Vector<String>, ASCIICaseInsensitiveHash>& additionalExtensionsMap()
+static const UncheckedKeyHashMap<String, Vector<String>, ASCIICaseInsensitiveHash>& additionalExtensionsMap()
 {
-    static NeverDestroyed<HashMap<String, Vector<String>, ASCIICaseInsensitiveHash>> extensionsMap = [] {
-        HashMap<String, Vector<String>, ASCIICaseInsensitiveHash> map;
+    static NeverDestroyed<UncheckedKeyHashMap<String, Vector<String>, ASCIICaseInsensitiveHash>> extensionsMap = [] {
+        UncheckedKeyHashMap<String, Vector<String>, ASCIICaseInsensitiveHash> map;
         for (auto& [extension, type] : additionalMimeTypesMap()) {
             map.ensure(type, [] {
                 return Vector<String>();

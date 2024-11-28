@@ -53,6 +53,7 @@
     WKContentView *_view;
     CGPoint _interactionPoint;
     RetainPtr<UIDatePicker> _datePicker;
+    RetainPtr<NSDateInterval> _dateInterval;
 #if HAVE(UI_CALENDAR_SELECTION_WEEK_OF_YEAR)
     RetainPtr<UICalendarView> _calendarView;
     RetainPtr<UICalendarSelectionWeekOfYear> _selectionWeekOfYear;
@@ -77,14 +78,18 @@ static NSString * const kDateFormatString = @"yyyy-MM-dd"; // "2011-01-27".
 static NSString * const kMonthFormatString = @"yyyy-MM"; // "2011-01".
 static NSString * const kTimeFormatString = @"HH:mm"; // "13:45".
 static NSString * const kDateTimeFormatString = @"yyyy-MM-dd'T'HH:mm"; // "2011-01-27T13:45"
-// Weekday is necessary for week inputs in order to append Monday to the initial value so that the NSDate reflects weeks beginning on Mondays in ISO-8601.
-static NSString * const kWeekFormatString = @"yyyy-'W'ww-EEEEE";
+static NSString * const kWeekFormatString = @"yyyy-'W'ww";
 static constexpr auto yearAndMonthDatePickerMode = static_cast<UIDatePickerMode>(4269);
 
 - (id)initWithView:(WKContentView *)view inputType:(WebKit::InputType)inputType
 {
     if (!(self = [super init]))
         return nil;
+
+    RetainPtr maximumDateFormatter = adoptNS([[NSDateFormatter alloc] init]);
+    [maximumDateFormatter setDateFormat:kDateTimeFormatString];
+    RetainPtr maximumDate = [maximumDateFormatter dateFromString:@"10000-12-31T23:59"]; // UIDatePicker cannot have more than 10,000 selectable years
+    _dateInterval = adoptNS([[NSDateInterval alloc] initWithStartDate:[NSDate distantPast] endDate:maximumDate.get()]);
 
     _view = view;
     _interactionPoint = [_view lastInteractionLocation];
@@ -115,6 +120,7 @@ static constexpr auto yearAndMonthDatePickerMode = static_cast<UIDatePickerMode>
         _calendarView = adoptNS([[UICalendarView alloc] init]);
         [_calendarView setCalendar:[NSCalendar calendarWithIdentifier:NSCalendarIdentifierISO8601]];
         [_calendarView setSelectionBehavior:_selectionWeekOfYear.get()];
+        [_calendarView setAvailableDateRange:_dateInterval.get()];
         return self;
 #endif
     default:
@@ -123,6 +129,8 @@ static constexpr auto yearAndMonthDatePickerMode = static_cast<UIDatePickerMode>
     }
 
     _datePicker = adoptNS([[UIDatePicker alloc] init]);
+    [_datePicker setMinimumDate:[_dateInterval startDate]];
+    [_datePicker setMaximumDate:[_dateInterval endDate]];
     [_datePicker addTarget:self action:@selector(_dateChanged) forControlEvents:UIControlEventValueChanged];
 
     if ([self shouldForceGregorianCalendar])
@@ -238,7 +246,7 @@ static constexpr auto yearAndMonthDatePickerMode = static_cast<UIDatePickerMode>
 - (RetainPtr<NSISO8601DateFormatter>)iso8601DateFormatterForCalendarView
 {
     RetainPtr dateFormatter = adoptNS([[NSISO8601DateFormatter alloc] init]);
-    [dateFormatter setTimeZone:[NSTimeZone timeZoneForSecondsFromGMT:0]];
+    [dateFormatter setTimeZone:[NSTimeZone localTimeZone]];
     [dateFormatter setFormatOptions: NSISO8601DateFormatWithYear | NSISO8601DateFormatWithWeekOfYear | NSISO8601DateFormatWithDashSeparatorInDate];
     return dateFormatter;
 }
@@ -280,10 +288,15 @@ static constexpr auto yearAndMonthDatePickerMode = static_cast<UIDatePickerMode>
         return;
     }
 
-    // FIXME: There may be a better way of ensuring the calculated NSDate from the initial value reflects ISO-8601 weeks starting on Monday.
-    RetainPtr parsedDate = [[self dateFormatterForPicker] dateFromString:[self _sanitizeInputValueForFormatter:[_initialValue.get() stringByAppendingString:@"-M"]]];
-    RetainPtr<NSDateComponents> dateComponents = [[NSCalendar calendarWithIdentifier:NSCalendarIdentifierISO8601] components:unitFlags fromDate:parsedDate.get() ? parsedDate.get() : [NSDate date]];
+    RetainPtr parsedDate = [[self iso8601DateFormatterForCalendarView] dateFromString:[self _sanitizeInputValueForFormatter:_initialValue.get()]];
+
+    bool dateParsedAndSelectable = parsedDate && [[_calendarView availableDateRange] containsDate:parsedDate.get()];
+
+    RetainPtr dateComponents = [[NSCalendar calendarWithIdentifier:NSCalendarIdentifierISO8601] components:unitFlags fromDate:dateParsedAndSelectable ? parsedDate.get() : [NSDate date]];
     [_selectionWeekOfYear setSelectedWeekOfYear:dateComponents.get() animated:YES];
+
+    if (!dateParsedAndSelectable)
+        [self _dateChanged];
 }
 
 #endif
@@ -301,8 +314,14 @@ static constexpr auto yearAndMonthDatePickerMode = static_cast<UIDatePickerMode>
         return;
     }
 
-    NSDate *parsedDate = [[self dateFormatterForPicker] dateFromString:[self _sanitizeInputValueForFormatter:_initialValue.get()]];
-    [_datePicker setDate:parsedDate ? parsedDate : [NSDate date]];
+    RetainPtr parsedDate = [[self dateFormatterForPicker] dateFromString:[self _sanitizeInputValueForFormatter:_initialValue.get()]];
+
+    if (!parsedDate || ![_dateInterval containsDate:parsedDate.get()]) {
+        parsedDate = [NSDate date];
+        [self _dateChanged];
+    }
+
+    [_datePicker setDate:parsedDate.get()];
 }
 
 - (UIView *)controlView

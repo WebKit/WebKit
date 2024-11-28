@@ -57,6 +57,7 @@
 #include <WebCore/ShouldRelaxThirdPartyCookieBlocking.h>
 #include <WebCore/UserInterfaceLayoutDirection.h>
 #include <WebCore/ViewportArguments.h>
+#include <WebCore/WindowFeatures.h>
 #include <wtf/RobinHoodHashSet.h>
 #include <wtf/text/WTFString.h>
 
@@ -84,9 +85,9 @@
 #include <WebCore/ShouldRequireExplicitConsentForGamepadAccess.h>
 #endif
 
-namespace IPC {
-class Decoder;
-class Encoder;
+namespace WebCore {
+enum class SandboxFlag : uint16_t;
+using SandboxFlags = OptionSet<SandboxFlag>;
 }
 
 namespace WebKit {
@@ -104,8 +105,8 @@ struct WebPageCreationParameters {
     
     WebPreferencesStore store { };
     DrawingAreaType drawingAreaType { };
-    DrawingAreaIdentifier drawingAreaIdentifier { };
-    WebPageProxyIdentifier webPageProxyIdentifier { };
+    DrawingAreaIdentifier drawingAreaIdentifier;
+    WebPageProxyIdentifier webPageProxyIdentifier;
     WebPageGroupData pageGroupData;
 
     bool isEditable { false };
@@ -136,10 +137,7 @@ struct WebPageCreationParameters {
     
     String userAgent { };
 
-    bool itemStatesWereRestoredByAPIRequest { false };
-    Vector<BackForwardListItemState> itemStates { };
-
-    VisitedLinkTableIdentifier visitedLinkTableID { };
+    VisitedLinkTableIdentifier visitedLinkTableID;
     bool canRunBeforeUnloadConfirmPanel { false };
     bool canRunModal { false };
 
@@ -323,8 +321,11 @@ struct WebPageCreationParameters {
     WebCore::ContentSecurityPolicyModeForExtension contentSecurityPolicyModeForExtension { WebCore::ContentSecurityPolicyModeForExtension::None };
 
     std::optional<RemotePageParameters> remotePageParameters { };
-    std::optional<WebCore::FrameIdentifier> openerFrameIdentifier { };
-    WebCore::FrameIdentifier mainFrameIdentifier { };
+    WebCore::FrameIdentifier mainFrameIdentifier;
+    String openedMainFrameName;
+    std::optional<WebCore::FrameIdentifier> mainFrameOpenerIdentifier { };
+    WebCore::SandboxFlags initialSandboxFlags;
+    std::optional<WebCore::WindowFeatures> windowFeatures { };
 
 #if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
     Vector<WebCore::LinkDecorationFilteringData> linkDecorationFilteringData { };

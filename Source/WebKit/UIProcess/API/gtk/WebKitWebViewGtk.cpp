@@ -33,6 +33,13 @@
 #include <glib/gi18n-lib.h>
 #include <gtk/gtk.h>
 
+struct WindowStateEvent;
+
+namespace WTF {
+template<typename T> struct IsDeprecatedTimerSmartPointerException;
+template<> struct IsDeprecatedTimerSmartPointerException<WindowStateEvent> : std::true_type { };
+}
+
 gboolean webkitWebViewAuthenticate(WebKitWebView* webView, WebKitAuthenticationRequest* request)
 {
     switch (webkit_authentication_request_get_scheme(request)) {

@@ -5,9 +5,8 @@
 if (window.testRunner)
   testRunner.waitUntilDone()
 
-window.setTimeout(function() {
-  if (window.testRunner)
-    testRunner.displayAndTrackRepaints();
+window.setTimeout(async function() {
+  await testRunner?.displayAndTrackRepaints();
 
   document.scrollingElement.scrollTop = 20;
   if (window.testRunner)

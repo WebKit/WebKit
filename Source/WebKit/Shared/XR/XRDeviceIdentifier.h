@@ -32,7 +32,7 @@
 namespace WebKit {
 
 enum class XRDeviceIdentifierType { };
-using XRDeviceIdentifier = LegacyNullableObjectIdentifier<XRDeviceIdentifierType>;
+using XRDeviceIdentifier = ObjectIdentifier<XRDeviceIdentifierType>;
 
 }
 

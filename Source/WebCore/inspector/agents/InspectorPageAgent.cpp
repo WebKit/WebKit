@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2011 Google Inc. All rights reserved.
- * Copyright (C) 2015-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -113,6 +113,12 @@ bool InspectorPageAgent::mainResourceContent(LocalFrame* frame, bool withBase64E
     if (!buffer)
         return false;
     return InspectorPageAgent::dataContent(buffer->makeContiguous()->span(), frame->document()->encoding(), withBase64Encode, result);
+}
+
+
+Ref<InspectorOverlay> InspectorPageAgent::protectedOverlay() const
+{
+    return m_overlay.get();
 }
 
 bool InspectorPageAgent::sharedBufferContent(RefPtr<FragmentedSharedBuffer>&& buffer, const String& textEncodingName, bool withBase64Encode, String* result)
@@ -336,7 +342,7 @@ DocumentLoader* InspectorPageAgent::assertDocumentLoader(Inspector::Protocol::Er
     return documentLoader;
 }
 
-InspectorPageAgent::InspectorPageAgent(PageAgentContext& context, InspectorClient* client, InspectorOverlay* overlay)
+InspectorPageAgent::InspectorPageAgent(PageAgentContext& context, InspectorClient* client, InspectorOverlay& overlay)
     : InspectorAgentBase("Page"_s, context)
     , m_frontendDispatcher(makeUnique<Inspector::PageFrontendDispatcher>(context.frontendRouter))
     , m_backendDispatcher(Inspector::PageBackendDispatcher::create(context.backendDispatcher, this))
@@ -402,6 +408,7 @@ Inspector::Protocol::ErrorStringOr<void> InspectorPageAgent::disable()
     m_client->setDeveloperPreferenceOverride(InspectorClient::DeveloperPreference::PrivateClickMeasurementDebugModeEnabled, std::nullopt);
     m_client->setDeveloperPreferenceOverride(InspectorClient::DeveloperPreference::ITPDebugModeEnabled, std::nullopt);
     m_client->setDeveloperPreferenceOverride(InspectorClient::DeveloperPreference::MockCaptureDevicesEnabled, std::nullopt);
+    m_client->setDeveloperPreferenceOverride(InspectorClient::DeveloperPreference::NeedsSiteSpecificQuirks, std::nullopt);
 
     return { };
 }
@@ -486,6 +493,7 @@ Inspector::Protocol::ErrorStringOr<void> InspectorPageAgent::overrideSetting(Ins
 
     case Inspector::Protocol::Page::Setting::NeedsSiteSpecificQuirks:
         inspectedPageSettings.setNeedsSiteSpecificQuirksInspectorOverride(value);
+        m_client->setDeveloperPreferenceOverride(InspectorClient::DeveloperPreference::NeedsSiteSpecificQuirks, value);
         return { };
 
     case Inspector::Protocol::Page::Setting::ScriptEnabled:
@@ -881,7 +889,7 @@ Inspector::Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Inspector::Protocol::Page::
 #if !PLATFORM(IOS_FAMILY)
 Inspector::Protocol::ErrorStringOr<void> InspectorPageAgent::setShowRulers(bool showRulers)
 {
-    m_overlay->setShowRulers(showRulers);
+    protectedOverlay()->setShowRulers(showRulers);
 
     return { };
 }
@@ -895,7 +903,7 @@ Inspector::Protocol::ErrorStringOr<void> InspectorPageAgent::setShowPaintRects(b
     if (m_client->overridesShowPaintRects())
         return { };
 
-    m_overlay->setShowPaintRects(show);
+    protectedOverlay()->setShowPaintRects(show);
 
     return { };
 }
@@ -1060,7 +1068,7 @@ void InspectorPageAgent::didPaint(RenderObject& renderer, const LayoutRect& rect
         return;
     }
 
-    m_overlay->showPaintRect(rootRect);
+    protectedOverlay()->showPaintRect(rootRect);
 }
 
 void InspectorPageAgent::didLayout()
@@ -1069,7 +1077,7 @@ void InspectorPageAgent::didLayout()
     if (isFirstLayout)
         m_isFirstLayoutAfterOnLoad = false;
 
-    m_overlay->update();
+    protectedOverlay()->update();
 }
 
 void InspectorPageAgent::didScroll()
@@ -1079,7 +1087,7 @@ void InspectorPageAgent::didScroll()
 
 void InspectorPageAgent::didRecalculateStyle()
 {
-    m_overlay->update();
+    protectedOverlay()->update();
 }
 
 Ref<Inspector::Protocol::Page::Frame> InspectorPageAgent::buildObjectForFrame(LocalFrame* frame)

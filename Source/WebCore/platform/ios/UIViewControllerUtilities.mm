@@ -28,7 +28,8 @@
 
 #if PLATFORM(IOS_FAMILY)
 
-#import "RuntimeApplicationChecks.h"
+#import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
+
 #import <pal/ios/UIKitSoftLink.h>
 
 @interface UIViewController (OnlyAllowedInUIViewControllerUtilities)
@@ -39,7 +40,7 @@ namespace WebCore {
 
 UIViewController *viewController(UIView *view)
 {
-    if (!IOSApplication::isMobileSafari())
+    if (!WTF::IOSApplication::isMobileSafari())
         return [PAL::getUIViewControllerClass() viewControllerForView:view];
 
     auto responder = view.nextResponder;

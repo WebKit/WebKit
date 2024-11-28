@@ -180,6 +180,13 @@ const Vector<GLDisplay::DMABufFormat>& PlatformDisplay::dmabufFormats()
 {
     return m_eglDisplay->dmabufFormats();
 }
+
+#if USE(GSTREAMER)
+const Vector<GLDisplay::DMABufFormat>& PlatformDisplay::dmabufFormatsForVideo()
+{
+    return m_eglDisplay->dmabufFormatsForVideo();
+}
+#endif
 #endif // USE(GBM)
 
 } // namespace WebCore

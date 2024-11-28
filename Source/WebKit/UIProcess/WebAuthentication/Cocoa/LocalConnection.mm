@@ -59,6 +59,11 @@ static inline String bundleName()
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(LocalConnection);
 
+Ref<LocalConnection> LocalConnection::create()
+{
+    return adoptRef(*new LocalConnection);
+}
+
 LocalConnection::~LocalConnection()
 {
     // Dismiss any showing LocalAuthentication dialogs.
@@ -176,7 +181,7 @@ RetainPtr<SecKeyRef> LocalConnection::createCredentialPrivateKey(LAContext *cont
     RetainPtr privateKeyAttributes = @{
         (id)kSecAttrAccessControl: (id)accessControlRef,
         (id)kSecAttrIsPermanent: @YES,
-        (id)kSecAttrAccessGroup: @(LocalAuthenticatorAccessGroup),
+        (id)kSecAttrAccessGroup: LocalAuthenticatorAccessGroup,
         (id)kSecAttrLabel: secAttrLabel,
         (id)kSecAttrApplicationTag: secAttrApplicationTag,
     };
@@ -212,7 +217,7 @@ RetainPtr<NSArray> LocalConnection::getExistingCredentials(const String& rpId)
         (id)kSecClass: (id)kSecClassKey,
         (id)kSecAttrKeyClass: (id)kSecAttrKeyClassPrivate,
         (id)kSecAttrSynchronizable: (id)kSecAttrSynchronizableAny,
-        (id)kSecAttrAccessGroup: @(LocalAuthenticatorAccessGroup),
+        (id)kSecAttrAccessGroup: LocalAuthenticatorAccessGroup,
         (id)kSecAttrLabel: rpId,
         (id)kSecReturnAttributes: @YES,
         (id)kSecMatchLimit: (id)kSecMatchLimitAll,

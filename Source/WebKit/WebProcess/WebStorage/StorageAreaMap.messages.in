@@ -20,7 +20,7 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-messages -> StorageAreaMap NotRefCounted {
+messages -> StorageAreaMap {
     DispatchStorageEvent(std::optional<WebKit::StorageAreaImplIdentifier> storageAreaImplID, String key, String oldValue, String newValue, String urlString, uint64_t messageIdentifier)
     ClearCache(uint64_t messageIdentifier)
 }

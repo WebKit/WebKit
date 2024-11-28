@@ -716,7 +716,7 @@ bool VisibleSelection::canEnableWritingSuggestions() const
 bool VisibleSelection::isInAutoFilledAndViewableField() const
 {
     if (RefPtr input = dynamicDowncast<HTMLInputElement>(enclosingTextFormControl(start())))
-        return input->isAutoFilledAndViewable();
+        return input->autofilledAndViewable();
     return false;
 }
 

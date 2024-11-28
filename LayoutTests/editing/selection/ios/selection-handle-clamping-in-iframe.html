@@ -52,12 +52,18 @@ async function runTest() {
     }
 
     const [startX, startY] = midPointOfRect(startRect);
-    await touchAndDragFromPointToPoint(startX, startY, startX, startY + 100);
-    await liftUpAtPoint(startX, startY + 100);
+    await UIHelper.sendEventStream(new UIHelper.EventStreamBuilder()
+        .begin(startX, startY)
+        .move(startX, startY + 150, 0.5)
+        .end()
+        .takeResult());
 
     const [endX, endY] = midPointOfRect(endRect);
-    await touchAndDragFromPointToPoint(endX, endY, endX, endY - 100);
-    await liftUpAtPoint(endX, endY - 100);
+    await UIHelper.sendEventStream(new UIHelper.EventStreamBuilder()
+        .begin(endX, endY)
+        .move(endX, endY - 150, 0.5)
+        .end()
+        .takeResult());
 
     result.textContent = target.contentWindow.getSelection().toString();
     testRunner.notifyDone();

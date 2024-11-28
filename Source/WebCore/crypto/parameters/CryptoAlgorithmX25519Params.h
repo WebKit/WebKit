@@ -28,6 +28,7 @@
 namespace WebCore {
 
 class CryptoAlgorithmX25519Params final : public CryptoAlgorithmParameters {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(CryptoAlgorithmX25519Params);
 public:
     RefPtr<CryptoKey> publicKey;
     Class parametersClass() const final { return Class::X25519Params; }

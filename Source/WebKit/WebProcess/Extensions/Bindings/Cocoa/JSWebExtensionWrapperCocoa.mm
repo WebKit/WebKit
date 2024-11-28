@@ -162,7 +162,7 @@ id WebExtensionCallbackHandler::call(id argumentOne, id argumentTwo, id argument
 
 #endif // ENABLE(WK_WEB_EXTENSIONS)
 
-id toNSObject(JSContextRef context, JSValueRef valueRef, Class containingObjectsOfClass)
+id toNSObject(JSContextRef context, JSValueRef valueRef, Class containingObjectsOfClass, NullValuePolicy nullPolicy, ValuePolicy valuePolicy)
 {
     ASSERT(context);
 
@@ -177,7 +177,10 @@ id toNSObject(JSContextRef context, JSValueRef valueRef, Class containingObjects
 
         for (NSUInteger i = 0; i < length; ++i) {
             JSValue *itemValue = [value valueAtIndex:i];
-            if (id convertedItem = toNSObject(context, itemValue.JSValueRef))
+            if (valuePolicy == ValuePolicy::StopAtTopLevel && (itemValue.isArray || itemValue._isDictionary)) {
+                if (itemValue)
+                    [mutableArray addObject:itemValue];
+            } else if (id convertedItem = toNSObject(context, itemValue.JSValueRef, Nil, nullPolicy))
                 [mutableArray addObject:convertedItem];
         }
 
@@ -191,7 +194,7 @@ id toNSObject(JSContextRef context, JSValueRef valueRef, Class containingObjects
     }
 
     if (value._isDictionary)
-        return toNSDictionary(context, valueRef);
+        return toNSDictionary(context, valueRef, nullPolicy, valuePolicy);
 
     if (value.isObject && !value.isDate && !value.isNull)
         return value;

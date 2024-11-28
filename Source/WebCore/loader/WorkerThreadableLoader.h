@@ -110,10 +110,10 @@ private:
 
         // All executed on the main thread.
         void didSendData(unsigned long long bytesSent, unsigned long long totalBytesToBeSent) override;
-        void didReceiveResponse(ScriptExecutionContextIdentifier, ResourceLoaderIdentifier, const ResourceResponse&) override;
+        void didReceiveResponse(ScriptExecutionContextIdentifier, std::optional<ResourceLoaderIdentifier>, const ResourceResponse&) override;
         void didReceiveData(const SharedBuffer&) override;
-        void didFinishLoading(ScriptExecutionContextIdentifier, ResourceLoaderIdentifier, const NetworkLoadMetrics&) override;
-        void didFail(ScriptExecutionContextIdentifier, const ResourceError&) override;
+        void didFinishLoading(ScriptExecutionContextIdentifier, std::optional<ResourceLoaderIdentifier>, const NetworkLoadMetrics&) override;
+        void didFail(std::optional<ScriptExecutionContextIdentifier>, const ResourceError&) override;
         void didFinishTiming(const ResourceTiming&) override;
         void notifyIsDone(bool isDone) final;
 

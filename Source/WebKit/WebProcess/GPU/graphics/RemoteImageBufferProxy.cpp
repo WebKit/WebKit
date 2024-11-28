@@ -42,6 +42,7 @@
 #include <WebCore/Document.h>
 #include <WebCore/WorkerGlobalScope.h>
 #include <wtf/SystemTracing.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #if HAVE(IOSURFACE)
 #include "ImageBufferRemoteIOSurfaceBackend.h"
@@ -50,6 +51,9 @@
 
 namespace WebKit {
 using namespace WebCore;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteImageBufferProxy);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteSerializedImageBufferProxy);
 
 RemoteImageBufferProxy::RemoteImageBufferProxy(Parameters parameters, const ImageBufferBackend::Info& info, RemoteRenderingBackendProxy& remoteRenderingBackendProxy, std::unique_ptr<ImageBufferBackend>&& backend, RenderingResourceIdentifier identifier)
     : ImageBuffer(parameters, info, { }, WTFMove(backend), identifier)
@@ -74,8 +78,7 @@ RemoteImageBufferProxy::~RemoteImageBufferProxy()
 
 void RemoteImageBufferProxy::assertDispatcherIsCurrent() const
 {
-    if (m_remoteRenderingBackendProxy)
-        assertIsCurrent(m_remoteRenderingBackendProxy->dispatcher());
+    ASSERT(!m_remoteRenderingBackendProxy || m_remoteRenderingBackendProxy->isCurrent());
 }
 
 template<typename T>
@@ -394,8 +397,8 @@ RefPtr<ImageBuffer> RemoteSerializedImageBufferProxy::sinkIntoImageBuffer(std::u
 
 RemoteSerializedImageBufferProxy::~RemoteSerializedImageBufferProxy()
 {
-    if (m_connection)
-        m_connection->send(Messages::RemoteSharedResourceCache::ReleaseSerializedImageBuffer(m_renderingResourceIdentifier), 0);
+    if (RefPtr connection = m_connection)
+        connection->send(Messages::RemoteSharedResourceCache::ReleaseSerializedImageBuffer(m_renderingResourceIdentifier), 0);
 }
 
 } // namespace WebKit

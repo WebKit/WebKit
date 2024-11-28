@@ -43,6 +43,7 @@ public:
     bool isPropertyAllowed(const ASCIILiteral& propertyName, WebPage*);
 
     void get(WebPage&, id items, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
+    void getKeys(WebPage&, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
     void getBytesInUse(WebPage&, id keys, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
     void set(WebPage&, NSDictionary *items, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
     void remove(WebPage&, id keys, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);

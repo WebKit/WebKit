@@ -354,6 +354,13 @@ std::unique_ptr<SkScalerContext> SkTypeface::createScalerContext(
     return scalerContext;
 }
 
+std::unique_ptr<SkScalerContext> SkTypeface::onCreateScalerContextAsProxyTypeface
+        (const SkScalerContextEffects&,
+         const SkDescriptor*,
+         sk_sp<SkTypeface>) const {
+    SK_ABORT("Not implemented.");
+}
+
 void SkTypeface::unicharsToGlyphs(const SkUnichar uni[], int count, SkGlyphID glyphs[]) const {
     if (count > 0 && glyphs && uni) {
         this->onCharsToGlyphs(uni, count, glyphs);
@@ -463,6 +470,14 @@ void SkTypeface::getFamilyName(SkString* name) const {
 
 bool SkTypeface::getPostScriptName(SkString* name) const {
     return this->onGetPostScriptName(name);
+}
+
+int SkTypeface::getResourceName(SkString* resourceName) const {
+    return this->onGetResourceName(resourceName);
+}
+
+int SkTypeface::onGetResourceName(SkString* resourceName) const {
+    return 0;
 }
 
 void SkTypeface::getGlyphToUnicodeMap(SkUnichar* dst) const {

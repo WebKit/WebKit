@@ -49,7 +49,7 @@ void GeolocationPermissionRequestManagerProxy::invalidateRequests()
 
 Ref<GeolocationPermissionRequestProxy> GeolocationPermissionRequestManagerProxy::createRequest(GeolocationIdentifier geolocationID, WebProcessProxy& process)
 {
-    auto request = GeolocationPermissionRequestProxy::create(this, geolocationID, process);
+    Ref request = GeolocationPermissionRequestProxy::create(*this, geolocationID, process);
     m_pendingRequests.add(geolocationID, request.ptr());
     return request;
 }
@@ -87,6 +87,16 @@ void GeolocationPermissionRequestManagerProxy::revokeAuthorizationToken(const St
     if (!isValidAuthorizationToken(authorizationToken))
         return;
     m_validAuthorizationTokens.remove(authorizationToken);
+}
+
+void GeolocationPermissionRequestManagerProxy::ref() const
+{
+    m_page->ref();
+}
+
+void GeolocationPermissionRequestManagerProxy::deref() const
+{
+    m_page->deref();
 }
 
 } // namespace WebKit

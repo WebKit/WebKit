@@ -116,8 +116,10 @@ public:
     using GetPushPermissionStateCallback = CompletionHandler<void(ExceptionOr<PushPermissionState>&&)>;
     virtual void getPushPermissionState(ServiceWorkerRegistrationIdentifier, GetPushPermissionStateCallback&&) = 0;
 
+#if ENABLE(NOTIFICATION_EVENT)
     using GetNotificationsCallback = CompletionHandler<void(ExceptionOr<Vector<NotificationData>>&&)>;
     virtual void getNotifications(const URL&, const String&, GetNotificationsCallback&&) = 0;
+#endif
 
     using ExceptionOrVoidCallback = CompletionHandler<void(ExceptionOr<void>&&)>;
     virtual void enableNavigationPreload(ServiceWorkerRegistrationIdentifier, ExceptionOrVoidCallback&&) = 0;

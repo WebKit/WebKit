@@ -24,13 +24,12 @@
 #include "AudioDecoder.h"
 #include "GRefPtrGStreamer.h"
 #include <wtf/TZoneMalloc.h>
-#include <wtf/ThreadSafeRefCounted.h>
 
 namespace WebCore {
 
 class GStreamerInternalAudioDecoder;
 
-class GStreamerAudioDecoder : public ThreadSafeRefCounted<GStreamerAudioDecoder>, public AudioDecoder {
+class GStreamerAudioDecoder final : public AudioDecoder {
     WTF_MAKE_TZONE_ALLOCATED(GStreamerAudioDecoder);
 
 public:

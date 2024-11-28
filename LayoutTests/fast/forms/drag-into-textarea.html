@@ -1,6 +1,6 @@
 <script>
 
-function runTest() {
+async function runTest() {
     var input = document.getElementById("input");
     var x = input.offsetLeft + input.offsetWidth / 2;
     var y = input.offsetTop + input.offsetHeight / 2;
@@ -19,12 +19,12 @@ function runTest() {
     testRunner.dumpAsText();
     testRunner.waitUntilDone();
     
-    eventSender.mouseMoveTo(x, y);
-    eventSender.mouseDown();
+    await eventSender.asyncMouseMoveTo(x, y);
+    await eventSender.asyncMouseDown();
     // Leap the event time so that mouseMove will start a new drag instead of changing selection.
     eventSender.leapForward(400);
-    eventSender.mouseMoveTo(tx, ty);
-    eventSender.mouseUp();
+    await eventSender.asyncMouseMoveTo(tx, ty);
+    await eventSender.asyncMouseUp();
 
     if (input.value == "" && textarea.value == "drag this text into the text area below")
         document.getElementById("result").innerText = "Test succeeded!";

@@ -27,22 +27,22 @@
     if (window.testRunner)
       window.testRunner.dumpAsText(true);
 
-    function endTest()
+    async function endTest()
     {
       var textarea = document.getElementById('container');
       textarea.scrollTop = 40;
       if (window.testRunner)
         window.testRunner.notifyDone();
-      window.testRunner.displayAndTrackRepaints();
+      await testRunner.displayAndTrackRepaints();
     }
 
-    function doTest()
+    async function doTest()
     {
       var textarea = document.getElementById('container');
       textarea.focus();
       textarea.selectionStart = textarea.selectionEnd = 0;
       if (window.testRunner)
-        window.testRunner.displayAndTrackRepaints();
+        await testRunner.displayAndTrackRepaints();
       window.setTimeout(endTest, 100);
     }
 

@@ -1,7 +1,7 @@
 
-FAIL first(): Promise resolves with the first value from the source Observable promise_test: Unhandled rejection with value: object "TypeError: source.first is not a function. (In 'source.first()', 'source.first' is undefined)"
-FAIL first(): Promise rejects with the error emitted from the source Observable assert_equals: Promise rejects with source Observable error expected object "Error: error from source" but got object "TypeError: source.first is not a function. (In 'source.first()', 'source.first' is undefined)"
-FAIL first(): Promise rejects with RangeError when source Observable completes without emitting any values assert_true: Upon complete(), first() Promise rejects with RangeError expected true got false
-FAIL first(): Aborting a signal rejects the Promise with an AbortError DOMException promise_test: Unhandled rejection with value: object "TypeError: source.first is not a function. (In 'source.first({ signal: controller.signal })', 'source.first' is undefined)"
-FAIL first(): Lifecycle promise_test: Unhandled rejection with value: object "TypeError: source.first is not a function. (In 'source.first()', 'source.first' is undefined)"
+PASS first(): Promise resolves with the first value from the source Observable
+PASS first(): Promise rejects with the error emitted from the source Observable
+PASS first(): Promise rejects with RangeError when source Observable completes without emitting any values
+PASS first(): Aborting a signal rejects the Promise with an AbortError DOMException
+PASS first(): Lifecycle
 

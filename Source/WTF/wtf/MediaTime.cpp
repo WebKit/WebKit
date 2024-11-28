@@ -49,6 +49,9 @@ static uint32_t greatestCommonDivisor(uint32_t a, uint32_t b)
     ASSERT(a);
     ASSERT(b);
 
+    if (a == b)
+        return a;
+
     // Euclid's Algorithm
     while (b)
         b = std::exchange(a, b) % b;
@@ -57,8 +60,12 @@ static uint32_t greatestCommonDivisor(uint32_t a, uint32_t b)
     return a;
 }
 
-static uint32_t leastCommonMultiple(uint32_t a, uint32_t b, uint32_t &result)
+static bool leastCommonMultiple(uint32_t a, uint32_t b, uint32_t& result)
 {
+    if (a == b) {
+        result = a;
+        return true;
+    }
     return safeMultiply(a, b / greatestCommonDivisor(a, b), result);
 }
 
@@ -155,6 +162,22 @@ double MediaTime::toDouble() const
     return static_cast<double>(m_timeValue) / m_timeScale;
 }
 
+int64_t MediaTime::toMicroseconds() const
+{
+    if (isInvalid() || isIndefinite())
+        return std::numeric_limits<int64_t>::quiet_NaN();
+    if (isPositiveInfinite())
+        return std::numeric_limits<int64_t>::max();
+    if (isNegativeInfinite())
+        return std::numeric_limits<int64_t>::min();
+    if (hasDoubleValue())
+        return m_timeValueAsDouble * 1000000.0;
+    auto result = CheckedInt64(m_timeValue / m_timeScale) * 1000000LL + CheckedInt64(m_timeValue % static_cast<int64_t>(m_timeScale) * 1000000LL) / static_cast<int64_t>(m_timeScale);
+    if (result.hasOverflowed())
+        return m_timeValue < 0 ? std::numeric_limits<int64_t>::min() : std::numeric_limits<int64_t>::max();
+    return result.value();
+}
+
 MediaTime MediaTime::operator+(const MediaTime& rhs) const
 {
     if (rhs.isInvalid() || isInvalid())
@@ -189,6 +212,7 @@ MediaTime MediaTime::operator+(const MediaTime& rhs) const
         commonTimeScale = MaximumTimeScale;
     a.setTimeScale(commonTimeScale);
     b.setTimeScale(commonTimeScale);
+
     while (!safeAdd(a.m_timeValue, b.m_timeValue, a.m_timeValue)) {
         if (commonTimeScale == 1)
             return a.m_timeValue > 0 ? positiveInfiniteTime() : negativeInfiniteTime();
@@ -233,6 +257,7 @@ MediaTime MediaTime::operator-(const MediaTime& rhs) const
         commonTimeScale = MaximumTimeScale;
     a.setTimeScale(commonTimeScale);
     b.setTimeScale(commonTimeScale);
+
     while (!safeSub(a.m_timeValue, b.m_timeValue, a.m_timeValue)) {
         if (commonTimeScale == 1)
             return a.m_timeValue > 0 ? positiveInfiniteTime() : negativeInfiniteTime();

@@ -32,6 +32,31 @@
 
 namespace WebCore {
 
+
+bool alwaysPageBreak(BreakBetween between)
+{
+    return between >= BreakBetween::Page;
+}
+
+CSSBoxType transformBoxToCSSBoxType(TransformBox transformBox)
+{
+    switch (transformBox) {
+    case TransformBox::StrokeBox:
+        return CSSBoxType::StrokeBox;
+    case TransformBox::ContentBox:
+        return CSSBoxType::ContentBox;
+    case TransformBox::BorderBox:
+        return CSSBoxType::BorderBox;
+    case TransformBox::FillBox:
+        return CSSBoxType::FillBox;
+    case TransformBox::ViewBox:
+        return CSSBoxType::ViewBox;
+    default:
+        ASSERT_NOT_REACHED();
+        return CSSBoxType::BorderBox;
+    }
+}
+
 TextStream& operator<<(TextStream& ts, AnimationFillMode fillMode)
 {
     switch (fillMode) {
@@ -85,8 +110,9 @@ TextStream& operator<<(TextStream& ts, BackfaceVisibility visibility)
 TextStream& operator<<(TextStream& ts, BlockStepInsert blockStepInsert)
 {
     switch (blockStepInsert) {
-    case BlockStepInsert::Margin: ts << "margin"; break;
-    case BlockStepInsert::Padding: ts << "padding"; break;
+    case BlockStepInsert::MarginBox: ts << "margin-box"; break;
+    case BlockStepInsert::PaddingBox: ts << "padding-box"; break;
+    case BlockStepInsert::ContentBox: ts << "content-box"; break;
     }
     return ts;
 }
@@ -646,6 +672,7 @@ TextStream& operator<<(TextStream& ts, ItemPosition position)
     case ItemPosition::FlexEnd: ts << "flex-end"; break;
     case ItemPosition::Left: ts << "left"; break;
     case ItemPosition::Right: ts << "right"; break;
+    case ItemPosition::AnchorCenter: ts << "anchor-center"; break;
     }
     return ts;
 }
@@ -940,6 +967,7 @@ TextStream& operator<<(TextStream& ts, RubyPosition position)
     case RubyPosition::Over: ts << "over"; break;
     case RubyPosition::Under: ts << "under"; break;
     case RubyPosition::InterCharacter: ts << "inter-character"; break;
+    case RubyPosition::LegacyInterCharacter: ts << "legacy inter-character"; break;
     }
     return ts;
 }
@@ -1176,15 +1204,6 @@ TextStream& operator<<(TextStream& ts, TextJustify justify)
     return ts;
 }
 
-TextStream& operator<<(TextStream& ts, TextOrientation orientation)
-{
-    switch (orientation) {
-    case TextOrientation::Mixed: ts << "mixed"; break;
-    case TextOrientation::Upright: ts << "upright"; break;
-    case TextOrientation::Sideways: ts << "sideways"; break;
-    }
-    return ts;
-}
 TextStream& operator<<(TextStream& ts, TextOverflow overflow)
 {
     switch (overflow) {
@@ -1300,8 +1319,8 @@ TextStream& operator<<(TextStream& ts, TransformStyle3D transformStyle)
     switch (transformStyle) {
     case TransformStyle3D::Flat: ts << "flat"; break;
     case TransformStyle3D::Preserve3D: ts << "preserve-3d"; break;
-#if ENABLE(CSS_TRANSFORM_STYLE_OPTIMIZED_3D)
-    case TransformStyle3D::Optimized3D: ts << "optimized-3d"; break;
+#if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
+    case TransformStyle3D::Separated: ts << "separated"; break;
 #endif
     }
     return ts;
@@ -1413,18 +1432,10 @@ TextStream& operator<<(TextStream& ts, MathStyle mathStyle)
 TextStream& operator<<(TextStream& ts, ContainIntrinsicSizeType containIntrinsicSizeType)
 {
     switch (containIntrinsicSizeType) {
-    case ContainIntrinsicSizeType::None:
-        ts << "none";
-        break;
-    case ContainIntrinsicSizeType::Length:
-        ts << "length";
-        break;
-    case ContainIntrinsicSizeType::AutoAndLength:
-        ts << "autoandlength";
-        break;
-    case ContainIntrinsicSizeType::AutoAndNone:
-        ts << "autoandnone";
-        break;
+    case ContainIntrinsicSizeType::None: ts << "none"; break;
+    case ContainIntrinsicSizeType::Length: ts << "length"; break;
+    case ContainIntrinsicSizeType::AutoAndLength: ts << "autoandlength"; break;
+    case ContainIntrinsicSizeType::AutoAndNone: ts << "autoandnone"; break;
     }
     return ts;
 }
@@ -1442,28 +1453,17 @@ TextStream& operator<<(TextStream& ts, OverflowContinue overflowContinue)
     return ts;
 }
 
-bool alwaysPageBreak(BreakBetween between)
+TextStream& operator<<(TextStream& ts, StyleDifferenceContextSensitiveProperty property)
 {
-    return between >= BreakBetween::Page;
-}
-
-CSSBoxType transformBoxToCSSBoxType(TransformBox transformBox)
-{
-    switch (transformBox) {
-    case TransformBox::StrokeBox:
-        return CSSBoxType::StrokeBox;
-    case TransformBox::ContentBox:
-        return CSSBoxType::ContentBox;
-    case TransformBox::BorderBox:
-        return CSSBoxType::BorderBox;
-    case TransformBox::FillBox:
-        return CSSBoxType::FillBox;
-    case TransformBox::ViewBox:
-        return CSSBoxType::ViewBox;
-    default:
-        ASSERT_NOT_REACHED();
-        return CSSBoxType::BorderBox;
+    switch (property) {
+    case StyleDifferenceContextSensitiveProperty::Transform: ts << "transform"; break;
+    case StyleDifferenceContextSensitiveProperty::Opacity: ts << "opacity"; break;
+    case StyleDifferenceContextSensitiveProperty::Filter: ts << "filter"; break;
+    case StyleDifferenceContextSensitiveProperty::ClipRect: ts << "clipRect"; break;
+    case StyleDifferenceContextSensitiveProperty::ClipPath: ts << "clipPath"; break;
+    case StyleDifferenceContextSensitiveProperty::WillChange: ts << "willChange"; break;
     }
+    return ts;
 }
 
 } // namespace WebCore

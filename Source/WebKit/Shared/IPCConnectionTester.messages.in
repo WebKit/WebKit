@@ -22,7 +22,7 @@
 
 #if ENABLE(IPC_TESTING_API)
 
-messages -> IPCConnectionTester NotRefCounted {
+messages -> IPCConnectionTester {
     AsyncMessage(uint32_t value)
     SyncMessage(uint32_t value) -> (uint32_t sameValue) Synchronous
 }

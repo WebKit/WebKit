@@ -33,8 +33,11 @@
 #include "Path.h"
 #include "RenderBlock.h"
 #include "VisibleSelection.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(DictationCaretAnimator);
 
 static constexpr size_t dictationCaretAnimatorUpdateRate = 60;
 

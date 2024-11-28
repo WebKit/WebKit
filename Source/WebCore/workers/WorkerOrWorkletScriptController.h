@@ -26,6 +26,8 @@
 
 #pragma once
 
+#include <wtf/Compiler.h>
+
 #include "FetchOptions.h"
 #include "WorkerThreadType.h"
 #include <JavaScriptCore/Debugger.h>

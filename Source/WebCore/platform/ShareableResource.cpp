@@ -43,8 +43,7 @@ ShareableResourceHandle::ShareableResourceHandle(SharedMemory::Handle&& handle, 
 RefPtr<SharedBuffer> ShareableResource::wrapInSharedBuffer()
 {
     return SharedBuffer::create(DataSegment::Provider {
-        [self = Ref { *this }]() { return self->span().data(); },
-        [self = Ref { *this }]() { return self->size(); }
+        [self = Ref { *this }]() { return self->span(); }
     });
 }
 
@@ -102,7 +101,7 @@ auto ShareableResource::createHandle() -> std::optional<Handle>
 
 std::span<const uint8_t> ShareableResource::span() const
 {
-    return m_sharedMemory->span().subspan(m_offset);
+    return m_sharedMemory->span().subspan(m_offset, m_size);
 }
 
 unsigned ShareableResource::size() const

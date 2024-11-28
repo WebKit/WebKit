@@ -99,7 +99,6 @@
 #include "RequestAnimationFrameCallback.h"
 #include "ResourceLoadInfo.h"
 #include "ResourceLoadObserver.h"
-#include "RuntimeApplicationChecks.h"
 #include "ScheduledAction.h"
 #include "Screen.h"
 #include "ScrollAnimator.h"
@@ -136,6 +135,7 @@
 #include <wtf/MathExtras.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Ref.h>
+#include <wtf/RuntimeApplicationChecks.h>
 #include <wtf/SetForScope.h>
 #include <wtf/SystemTracing.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -277,7 +277,7 @@ bool LocalDOMWindow::dispatchAllPendingBeforeUnloadEvents()
         if (!frame)
             continue;
 
-        if (!frame->checkedLoader()->shouldClose())
+        if (!frame->protectedLoader()->shouldClose())
             return false;
 
         window->enableSuddenTermination();
@@ -609,8 +609,15 @@ bool LocalDOMWindow::isCurrentlyDisplayedInFrame() const
 
 CustomElementRegistry& LocalDOMWindow::ensureCustomElementRegistry()
 {
-    if (!m_customElementRegistry)
-        m_customElementRegistry = CustomElementRegistry::create(*this, scriptExecutionContext());
+    if (!m_customElementRegistry) {
+        m_customElementRegistry = CustomElementRegistry::create(*scriptExecutionContext(), *this);
+        for (Ref shadowRoot : document()->inDocumentShadowRoots()) {
+            if (shadowRoot->mode() == ShadowRootMode::UserAgent)
+                continue;
+            const_cast<ShadowRoot&>(shadowRoot.get()).setCustomElementRegistry(*m_customElementRegistry);
+        }
+        document()->setCustomElementRegistry(*m_customElementRegistry);
+    }
     ASSERT(m_customElementRegistry->scriptExecutionContext() == document());
     return *m_customElementRegistry;
 }
@@ -1071,7 +1078,7 @@ void LocalDOMWindow::focus(bool allowFocus)
         return;
 
     // Clear the current frame's focused node if a new frame is about to be focused.
-    RefPtr focusedFrame = page->checkedFocusController()->focusedLocalFrame();
+    RefPtr focusedFrame = page->focusController().focusedLocalFrame();
     if (focusedFrame && focusedFrame != frame)
         focusedFrame->protectedDocument()->setFocusedElement(nullptr);
 
@@ -1139,9 +1146,13 @@ void LocalDOMWindow::stop()
         return;
 
     SetForScope isStopping { m_isStopping, true };
+
+    if (frame->document() && frame->document()->settings().navigationAPIEnabled())
+        protectedNavigation()->abortOngoingNavigationIfNeeded();
+
     // We must check whether the load is complete asynchronously, because we might still be parsing
     // the document until the callstack unwinds.
-    frame->checkedLoader()->stopForUserCancel(true);
+    frame->protectedLoader()->stopForUserCancel(true);
 }
 
 void LocalDOMWindow::alert(const String& message)
@@ -1269,7 +1280,7 @@ int LocalDOMWindow::outerHeight() const
     if (!page)
         return 0;
 
-    if (page->fingerprintingProtectionsEnabled())
+    if (page->shouldApplyScreenFingerprintingProtections(*protectedDocument()))
         return innerHeight();
 
 #if PLATFORM(IOS_FAMILY)
@@ -1297,7 +1308,7 @@ int LocalDOMWindow::outerWidth() const
     if (!page)
         return 0;
 
-    if (page->fingerprintingProtectionsEnabled())
+    if (page->shouldApplyScreenFingerprintingProtections(*protectedDocument()))
         return innerWidth();
 
 #if PLATFORM(IOS_FAMILY)
@@ -1362,7 +1373,7 @@ int LocalDOMWindow::screenX() const
         return 0;
 
     RefPtr page = frame->page();
-    if (!page || page->fingerprintingProtectionsEnabled())
+    if (!page || page->shouldApplyScreenFingerprintingProtections(*protectedDocument()))
         return 0;
 
     return static_cast<int>(page->chrome().windowRect().x());
@@ -1375,7 +1386,7 @@ int LocalDOMWindow::screenY() const
         return 0;
 
     RefPtr page = frame->page();
-    if (!page || page->fingerprintingProtectionsEnabled())
+    if (!page || page->shouldApplyScreenFingerprintingProtections(*protectedDocument()))
         return 0;
 
     return static_cast<int>(page->chrome().windowRect().y());
@@ -1461,7 +1472,7 @@ void LocalDOMWindow::setName(const AtomString& string)
         return;
 
     frame->tree().setSpecifiedName(string);
-    frame->checkedLoader()->client().frameNameChanged(string.string());
+    frame->protectedLoader()->client().frameNameChanged(string.string());
 }
 
 void LocalDOMWindow::setStatus(const String& string)
@@ -1802,12 +1813,12 @@ void LocalDOMWindow::moveTo(int x, int y) const
         return;
 
     RefPtr page = frame()->page();
-    auto fr = page->chrome().windowRect();
+    auto update = page->chrome().windowRect();
+    RefPtr localMainFrame = dynamicDowncast<LocalFrame>(page->mainFrame());
+    if (!localMainFrame)
+        return;
 
-    auto sr = screenAvailableRect(page->mainFrame().virtualView());
-    fr.setLocation(sr.location());
-    auto update = fr;
-    update.move(x, y);
+    update.setLocation(LayoutPoint(x, y));
     page->chrome().setWindowRect(adjustWindowRect(*page, update));
 }
 
@@ -2336,7 +2347,7 @@ void LocalDOMWindow::dispatchLoadEvent()
     // Send a separate load event to the element that owns this frame.
     if (RefPtr ownerFrame = frame()) {
         if (is<RemoteFrame>(ownerFrame->tree().parent()))
-            ownerFrame->checkedLoader()->client().dispatchLoadEventToOwnerElementInAnotherProcess();
+            ownerFrame->protectedLoader()->client().dispatchLoadEventToOwnerElementInAnotherProcess();
         else if (RefPtr owner = ownerFrame->ownerElement())
             owner->dispatchEvent(Event::create(eventNames().loadEvent, Event::CanBubble::No, Event::IsCancelable::No));
     }
@@ -2407,7 +2418,7 @@ void LocalDOMWindow::removeAllEventListeners()
 #endif
 
 #if ENABLE(TOUCH_EVENTS)
-    if (RefPtrAllowingPartiallyDestroyed<Document> document = this->document())
+    if (RefPtr<Document> document = this->document())
         document->didRemoveEventTargetNode(*document);
 #endif
 
@@ -2468,7 +2479,7 @@ void LocalDOMWindow::setLocation(LocalDOMWindow& activeWindow, const URL& comple
     // We want a new history item if we are processing a user gesture.
     LockHistory lockHistory = (locking != SetLocationLocking::LockHistoryBasedOnGestureState || !UserGestureIndicator::processingUserGesture()) ? LockHistory::Yes : LockHistory::No;
     LockBackForwardList lockBackForwardList = (locking != SetLocationLocking::LockHistoryBasedOnGestureState) ? LockBackForwardList::Yes : LockBackForwardList::No;
-    frame->checkedNavigationScheduler()->scheduleLocationChange(*activeDocument, activeDocument->protectedSecurityOrigin(),
+    frame->protectedNavigationScheduler()->scheduleLocationChange(*activeDocument, activeDocument->protectedSecurityOrigin(),
         // FIXME: What if activeDocument()->frame() is 0?
         completedURL, activeDocument->frame()->loader().outgoingReferrer(),
         lockHistory, lockBackForwardList,
@@ -2586,18 +2597,28 @@ ExceptionOr<RefPtr<Frame>> LocalDOMWindow::createWindow(const String& urlString,
     FrameLoadRequest frameLoadRequest { *activeDocument, activeDocument->protectedSecurityOrigin(), WTFMove(resourceRequest), frameName, initiatedByMainFrame };
     frameLoadRequest.setShouldOpenExternalURLsPolicy(activeDocument->shouldOpenExternalURLsPolicyToPropagate());
 
-    bool created;
-    RefPtr newFrame = WebCore::createWindow(openerFrame, WTFMove(frameLoadRequest), windowFeatures, created);
+    // https://html.spec.whatwg.org/#the-rules-for-choosing-a-browsing-context-given-a-browsing-context-name (Step 8.2)
+    if (openerFrame.document()->shouldForceNoOpenerBasedOnCOOP()) {
+        frameLoadRequest.setFrameName(blankTargetFrameName());
+        windowFeatures.noopener = true;
+    }
+
+    if (openerFrame.document()->settingsValues().blobRegistryTopOriginPartitioningEnabled && frameLoadRequest.resourceRequest().url().protocolIsBlob() && !openerFrame.document()->protectedSecurityOrigin()->isSameOriginAs(openerFrame.document()->protectedTopOrigin())) {
+        frameLoadRequest.setFrameName(blankTargetFrameName());
+        windowFeatures.noopener = true;
+    }
+    bool noopener = windowFeatures.wantsNoOpener();
+
+    auto [newFrame, created] = WebCore::createWindow(openerFrame, WTFMove(frameLoadRequest), WTFMove(windowFeatures));
     if (!newFrame)
         return RefPtr<Frame> { nullptr };
 
-    bool noopener = windowFeatures.wantsNoOpener();
     if (!noopener) {
-        ASSERT(newFrame->opener() == &openerFrame);
+        ASSERT(!newFrame->opener() || newFrame->opener() == &openerFrame);
         newFrame->page()->setOpenedByDOMWithOpener(true);
     }
 
-    if (created)
+    if (created == CreatedNewPage::Yes)
         newFrame->protectedPage()->setOpenedByDOM();
 
     RefPtr localNewFrame = dynamicDowncast<LocalFrame>(newFrame);
@@ -2607,7 +2628,7 @@ ExceptionOr<RefPtr<Frame>> LocalDOMWindow::createWindow(const String& urlString,
     if (prepareDialogFunction && localNewFrame)
         prepareDialogFunction(*localNewFrame->document()->protectedWindow());
 
-    if (created) {
+    if (created == CreatedNewPage::Yes) {
         ResourceRequest resourceRequest { completedURL, referrer, ResourceRequestCachePolicy::UseProtocolCachePolicy };
         FrameLoader::addSameSiteInfoToRequestIfNeeded(resourceRequest, openerFrame.protectedDocument().get());
         FrameLoadRequest frameLoadRequest { activeWindow.protectedDocument().releaseNonNull(), activeWindow.document()->protectedSecurityOrigin(), WTFMove(resourceRequest), selfTargetFrameName(), initiatedByMainFrame };
@@ -2615,7 +2636,7 @@ ExceptionOr<RefPtr<Frame>> LocalDOMWindow::createWindow(const String& urlString,
         newFrame->changeLocation(WTFMove(frameLoadRequest));
     } else if (!urlString.isEmpty()) {
         LockHistory lockHistory = UserGestureIndicator::processingUserGesture() ? LockHistory::No : LockHistory::Yes;
-        newFrame->checkedNavigationScheduler()->scheduleLocationChange(*activeDocument, activeDocument->protectedSecurityOrigin(), completedURL, referrer, lockHistory, LockBackForwardList::No);
+        newFrame->protectedNavigationScheduler()->scheduleLocationChange(*activeDocument, activeDocument->protectedSecurityOrigin(), completedURL, referrer, lockHistory, LockBackForwardList::No);
     }
 
     // Navigating the new frame could result in it being detached from its page by a navigation policy delegate.
@@ -2665,7 +2686,7 @@ ExceptionOr<RefPtr<WindowProxy>> LocalDOMWindow::open(LocalDOMWindow& activeWind
     if (!firstWindow.allowPopUp()) {
         // Because FrameTree::findFrameForNavigation() returns true for empty strings, we must check for empty frame names.
         // Otherwise, illegitimate window.open() calls with no name will pass right through the popup blocker.
-        if (frameName.isEmpty() || !frame->checkedLoader()->findFrameForNavigation(frameName, activeDocument.get()))
+        if (frameName.isEmpty() || !frame->protectedLoader()->findFrameForNavigation(frameName, activeDocument.get()))
             return RefPtr<WindowProxy> { nullptr };
     }
 
@@ -2696,7 +2717,7 @@ ExceptionOr<RefPtr<WindowProxy>> LocalDOMWindow::open(LocalDOMWindow& activeWind
         // For whatever reason, Firefox uses the first window rather than the active window to
         // determine the outgoing referrer. We replicate that behavior here.
         LockHistory lockHistory = UserGestureIndicator::processingUserGesture() ? LockHistory::No : LockHistory::Yes;
-        targetFrame->checkedNavigationScheduler()->scheduleLocationChange(*activeDocument, activeDocument->protectedSecurityOrigin(), completedURL, firstFrame->loader().outgoingReferrer(),
+        targetFrame->protectedNavigationScheduler()->scheduleLocationChange(*activeDocument, activeDocument->protectedSecurityOrigin(), completedURL, firstFrame->loader().outgoingReferrer(),
             lockHistory, LockBackForwardList::No);
         return &targetFrame->windowProxy();
     }

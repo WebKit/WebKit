@@ -35,6 +35,8 @@
 #import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/cocoa/VectorCocoa.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 @interface WebCoreSharedBufferData : NSData
 - (instancetype)initWithDataSegment:(const WebCore::DataSegment&)dataSegment position:(NSUInteger)position size:(NSUInteger)size;
 @end
@@ -120,7 +122,7 @@ RetainPtr<CMBlockBufferRef> FragmentedSharedBuffer::createCMBlockBuffer() const
         allocator.refCon = const_cast<DataSegment*>(&segment);
         segment.ref();
         CMBlockBufferRef partialBuffer = nullptr;
-        if (PAL::CMBlockBufferCreateWithMemoryBlock(nullptr, static_cast<void*>(const_cast<uint8_t*>(segment.data())), segment.size(), nullptr, &allocator, 0, segment.size(), 0, &partialBuffer) != kCMBlockBufferNoErr)
+        if (PAL::CMBlockBufferCreateWithMemoryBlock(nullptr, const_cast<uint8_t*>(segment.span().data()), segment.size(), nullptr, &allocator, 0, segment.size(), 0, &partialBuffer) != kCMBlockBufferNoErr)
             return nullptr;
         return adoptCF(partialBuffer);
     };
@@ -186,3 +188,5 @@ RetainPtr<NSData> SharedBufferDataView::createNSData() const
 }
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

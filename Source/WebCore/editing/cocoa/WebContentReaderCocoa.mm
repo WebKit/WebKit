@@ -48,6 +48,7 @@
 #import "HTMLIFrameElement.h"
 #import "HTMLImageElement.h"
 #import "HTMLObjectElement.h"
+#import "HTMLPictureElement.h"
 #import "HTMLSourceElement.h"
 #import "LegacyWebArchive.h"
 #import "LocalFrame.h"
@@ -296,7 +297,7 @@ static void replaceRichContentWithAttachments(LocalFrame& frame, DocumentFragmen
         return;
 
     // FIXME: Handle resources in subframe archives.
-    HashMap<AtomString, Ref<ArchiveResource>> urlToResourceMap;
+    UncheckedKeyHashMap<AtomString, Ref<ArchiveResource>> urlToResourceMap;
     for (auto& subresource : subresources)
         urlToResourceMap.set(AtomString { subresource->url().string() }, subresource.copyRef());
 
@@ -419,6 +420,43 @@ static void replaceRichContentWithAttachments(LocalFrame& frame, DocumentFragmen
 #endif
 }
 
+static void simplifyFragmentForSingleTextAttachment(NSAttributedString *string, DocumentFragment& fragment)
+{
+    auto stringLength = string.length;
+    if (!stringLength || stringLength > 2)
+        return;
+
+    RetainPtr plainText = [string string];
+    if ([plainText characterAtIndex:0] != objectReplacementCharacter)
+        return;
+
+    __block unsigned numberOfTextAttachments = 0;
+    [string enumerateAttribute:NSAttachmentAttributeName inRange:NSMakeRange(0, 1) options:0 usingBlock:^(NSTextAttachment *attachment, NSRange, BOOL *) {
+        if (attachment)
+            numberOfTextAttachments++;
+    }];
+
+    if (numberOfTextAttachments != 1)
+        return;
+
+    if (stringLength == 2 && [plainText characterAtIndex:1] != newlineCharacter)
+        return;
+
+    RefPtr pictureOrImage = [&] -> RefPtr<HTMLElement> {
+        for (Ref element : descendantsOfType<HTMLElement>(fragment)) {
+            if (is<HTMLPictureElement>(element) || is<HTMLImageElement>(element))
+                return WTFMove(element);
+        }
+        return { };
+    }();
+
+    if (!pictureOrImage)
+        return;
+
+    fragment.removeChildren();
+    fragment.appendChild(pictureOrImage.releaseNonNull());
+}
+
 RefPtr<DocumentFragment> createFragment(LocalFrame& frame, NSAttributedString *string, OptionSet<FragmentCreationOptions> fragmentCreationOptions)
 {
     if (!frame.page() || !frame.document())
@@ -449,7 +487,7 @@ RefPtr<DocumentFragment> createFragment(LocalFrame& frame, NSAttributedString *s
         return WTFMove(fragmentAndResources.fragment);
     }
 
-    HashMap<AtomString, AtomString> blobURLMap;
+    UncheckedKeyHashMap<AtomString, AtomString> blobURLMap;
     for (auto& subresource : fragmentAndResources.resources) {
         auto blob = Blob::create(&document, subresource->data().copyData(), subresource->mimeType());
         String blobURL = DOMURL::createObjectURL(document, blob);
@@ -457,6 +495,7 @@ RefPtr<DocumentFragment> createFragment(LocalFrame& frame, NSAttributedString *s
     }
 
     replaceSubresourceURLs(*fragmentAndResources.fragment, WTFMove(blobURLMap));
+    simplifyFragmentForSingleTextAttachment(string, *fragmentAndResources.fragment);
     return WTFMove(fragmentAndResources.fragment);
 }
 
@@ -499,7 +538,7 @@ static String sanitizeMarkupWithArchive(LocalFrame& frame, Document& destination
         return sanitizedMarkupForFragmentInDocument(WTFMove(fragment), *stagingDocument, msoListQuirks, markupAndArchive.markup);
     }
 
-    HashMap<AtomString, AtomString> blobURLMap;
+    UncheckedKeyHashMap<AtomString, AtomString> blobURLMap;
     for (const Ref<ArchiveResource>& subresource : markupAndArchive.archive->subresources()) {
         auto& subresourceURL = subresource->url();
         if (!shouldReplaceSubresourceURLWithBlobDuringSanitization(subresourceURL))
@@ -554,7 +593,7 @@ bool WebContentReader::readWebArchive(SharedBuffer& buffer)
     Ref frameDocument = *frame->document();
     if (!DeprecatedGlobalSettings::customPasteboardDataEnabled()) {
         m_fragment = createFragmentFromMarkup(frameDocument, result->markup, result->mainResource->url().string(), { });
-        if (DocumentLoader* loader = frame->loader().documentLoader())
+        if (RefPtr loader = frame->loader().documentLoader())
             loader->addAllArchiveResources(result->archive.get());
         return true;
     }
@@ -872,7 +911,7 @@ bool WebContentReader::readURL(const URL& url, const String& title)
 #endif // PLATFORM(IOS_FAMILY)
 
     auto sanitizedURLString = [&] {
-        if (auto* page = frame->page())
+        if (RefPtr page = frame->page())
             return page->applyLinkDecorationFiltering(url, LinkDecorationFilteringTrigger::Paste);
         return url;
     }().string();

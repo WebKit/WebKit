@@ -34,6 +34,7 @@
 #import "RemoteLayerTreePropertyApplier.h"
 #import <WebCore/AnimationUtilities.h>
 #import <WebCore/ColorSpaceCG.h>
+#import <WebCore/ContentsFormatCocoa.h>
 #import <WebCore/EventRegion.h>
 #import <WebCore/GraphicsContext.h>
 #import <WebCore/GraphicsLayerCA.h>
@@ -132,7 +133,7 @@ PlatformCALayerRemote::~PlatformCALayerRemote()
     for (const auto& layer : m_children)
         downcast<PlatformCALayerRemote>(*layer).m_superlayer = nullptr;
 
-    if (RefPtrAllowingPartiallyDestroyed<RemoteLayerTreeContext> protectedContext = m_context.get())
+    if (RefPtr<RemoteLayerTreeContext> protectedContext = m_context.get())
         protectedContext->layerWillLeaveContext(*this);
 }
 
@@ -290,6 +291,19 @@ bool PlatformCALayerRemote::containsBitmapOnly() const
     return owner() && owner()->platformCALayerContainsBitmapOnly(this);
 }
 
+DestinationColorSpace PlatformCALayerRemote::displayColorSpace() const
+{
+    if (auto displayColorSpace = contentsFormatExtendedColorSpace(contentsFormat()))
+        return displayColorSpace.value();
+
+#if !PLATFORM(IOS_FAMILY)
+    if (auto displayColorSpace = m_context ? m_context->displayColorSpace() : std::nullopt)
+        return displayColorSpace.value();
+#endif
+
+    return DestinationColorSpace::SRGB();
+}
+
 #if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
 RemoteLayerBackingStore::IncludeDisplayList PlatformCALayerRemote::shouldIncludeDisplayListInBackingStore() const
 {
@@ -312,15 +326,9 @@ void PlatformCALayerRemote::updateBackingStore()
     parameters.type = m_acceleratesDrawing ? RemoteLayerBackingStore::Type::IOSurface : RemoteLayerBackingStore::Type::Bitmap;
     parameters.size = m_properties.bounds.size();
 
-#if PLATFORM(IOS_FAMILY)
-    parameters.colorSpace = m_wantsDeepColorBackingStore ? DestinationColorSpace { extendedSRGBColorSpaceRef() } : DestinationColorSpace::SRGB();
-#else
-    if (auto displayColorSpace = m_context ? m_context->displayColorSpace() : std::nullopt)
-        parameters.colorSpace = displayColorSpace.value();
-#endif
-
+    parameters.colorSpace = displayColorSpace();
+    parameters.contentsFormat = contentsFormat();
     parameters.scale = m_properties.contentsScale;
-    parameters.deepColor = m_wantsDeepColorBackingStore;
     parameters.isOpaque = m_properties.opaque;
 
 #if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
@@ -771,15 +779,18 @@ void PlatformCALayerRemote::setAcceleratesDrawing(bool acceleratesDrawing)
     updateBackingStore();
 }
 
-bool PlatformCALayerRemote::wantsDeepColorBackingStore() const
+ContentsFormat PlatformCALayerRemote::contentsFormat() const
 {
-    return m_wantsDeepColorBackingStore;
+    return m_properties.contentsFormat;
 }
 
-void PlatformCALayerRemote::setWantsDeepColorBackingStore(bool wantsDeepColorBackingStore)
+void PlatformCALayerRemote::setContentsFormat(ContentsFormat contentsFormat)
 {
-    m_wantsDeepColorBackingStore = wantsDeepColorBackingStore;
-    updateBackingStore();
+    if (m_properties.contentsFormat == contentsFormat)
+        return;
+
+    m_properties.contentsFormat = contentsFormat;
+    m_properties.notePropertiesChanged(LayerChange::ContentsFormatChanged);
 }
 
 bool PlatformCALayerRemote::hasContents() const
@@ -1040,12 +1051,12 @@ void PlatformCALayerRemote::setEventRegion(const EventRegion& eventRegion)
 }
 
 #if ENABLE(SCROLLING_THREAD)
-ScrollingNodeID PlatformCALayerRemote::scrollingNodeID() const
+std::optional<ScrollingNodeID> PlatformCALayerRemote::scrollingNodeID() const
 {
-    return m_properties.scrollingNodeID.value_or(ScrollingNodeID { });
+    return m_properties.scrollingNodeID;
 }
 
-void PlatformCALayerRemote::setScrollingNodeID(ScrollingNodeID nodeID)
+void PlatformCALayerRemote::setScrollingNodeID(std::optional<ScrollingNodeID> nodeID)
 {
     if (nodeID == m_properties.scrollingNodeID)
         return;

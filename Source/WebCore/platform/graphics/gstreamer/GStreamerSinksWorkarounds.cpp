@@ -268,7 +268,7 @@ private:
             GRefPtr<GstCaps> caps = adoptGRef(gst_pad_get_current_caps(pad));
             GST_DEBUG_OBJECT(pad, "Sending stored pad caps to appsink: %" GST_PTR_FORMAT, caps.get());
             // This will cause a recursive call to appsinkWorkaroundProbe() which will also set `needsResendCaps` to false.
-            bool wereCapsSent = gst_pad_send_event(pad, gst_event_new_caps(caps.get()));
+            [[maybe_unused]] bool wereCapsSent = gst_pad_send_event(pad, gst_event_new_caps(caps.get()));
             GST_DEBUG_OBJECT(pad, "wereCapsSent = %s. Returning from the probe so that the buffer is sent: %" GST_PTR_FORMAT, boolForPrinting(wereCapsSent), info->data);
         }
 

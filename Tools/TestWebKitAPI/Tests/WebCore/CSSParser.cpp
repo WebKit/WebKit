@@ -171,7 +171,7 @@ static unsigned computeNumberOfTracks(const CSSValueContainingVector& valueList)
             continue;
         if (is<CSSGridIntegerRepeatValue>(value)) {
             auto& repeatValue = downcast<CSSGridIntegerRepeatValue>(value);
-            numberOfTracks += repeatValue.repetitions() * computeNumberOfTracks(repeatValue);
+            numberOfTracks += repeatValue.repetitions().resolveAsIntegerNoConversionDataRequired() * computeNumberOfTracks(repeatValue);
             continue;
         }
         ++numberOfTracks;

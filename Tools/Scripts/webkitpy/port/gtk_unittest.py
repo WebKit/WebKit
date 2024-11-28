@@ -35,8 +35,8 @@ import unittest
 from webkitpy.common.system.executive_mock import MockExecutive
 from webkitpy.common.system.filesystem_mock import MockFileSystem
 from webkitpy.port.gtk import GtkPort
-from webkitpy.port import port_testcase
-from webkitpy.thirdparty.mock import Mock
+from webkitpy.port import Driver, port_testcase
+from webkitpy.thirdparty.mock import Mock, patch
 from webkitpy.tool.mocktool import MockOptions
 
 from webkitcorepy import OutputCapture
@@ -137,3 +137,20 @@ class GtkPortTest(port_testcase.PortTestCase):
                                '/mock-checkout/LayoutTests/platform/glib/TestExpectations',
                                '/mock-checkout/LayoutTests/platform/gtk/TestExpectations'])
             self.assertEqual(captured.root.log.getvalue(), 'Multiple WebKit2GTK libraries found. Skipping GTK4 detection.\n')
+
+    def test_setup_environ_for_test_gstreamer_prefix(self):
+        environment_user = {}
+        environment_user['GST_DEBUG'] = '99'
+        environment_user['GST_PLUGIN_PATH'] = '/opt/gst/lib'
+        environment_user['GST_DEBUG_DUMP_DOT_DIR'] = '/tmp'
+        environment_user['GST_DEBUG_NO_COLOR'] = '1'
+        environment_user['GST_PLUGIN_SCANNER'] = '/opt/gst/bin/scanner'
+        environment_user['GST_TRACERS'] = 'meminfo;dbus'
+
+        with patch('os.environ', environment_user), patch('sys.platform', 'linux2'):
+            port = self.make_port()
+            driver = Driver(port, None, pixel_tests=False)
+            environment_driver_test = driver._setup_environ_for_test()
+            for var in environment_user:
+                self.assertIn(var, environment_driver_test)
+                self.assertEqual(environment_user[var], environment_driver_test[var])

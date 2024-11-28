@@ -30,10 +30,10 @@
 #import "Connection.h"
 #import "Logging.h"
 #import <WebCore/RegistrableDomain.h>
-#import <WebCore/RuntimeApplicationChecks.h>
 #import <wtf/HashMap.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/RunLoop.h>
+#import <wtf/RuntimeApplicationChecks.h>
 #import <wtf/WorkQueue.h>
 #import <wtf/cocoa/Entitlements.h>
 #import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
@@ -147,7 +147,7 @@ void determineTrackingPreventionState()
     bool appWasLinkedOnOrAfter = linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::SessionCleanupByDefault);
 
     itpQueue() = WorkQueue::create("com.apple.WebKit.itpCheckQueue"_s);
-    itpQueue()->dispatch([appWasLinkedOnOrAfter, bundleIdentifier = WebCore::applicationBundleIdentifier().isolatedCopy()] {
+    itpQueue()->dispatch([appWasLinkedOnOrAfter, bundleIdentifier = applicationBundleIdentifier().isolatedCopy()] {
         currentTrackingPreventionState = determineTrackingPreventionStateInternal(appWasLinkedOnOrAfter, bundleIdentifier) ? TrackingPreventionState::Enabled : TrackingPreventionState::Disabled;
         RunLoop::main().dispatch([] {
             itpQueue() = nullptr;
@@ -260,7 +260,7 @@ bool isParentProcessAFullWebBrowser(AuxiliaryProcess& auxiliaryProcess)
         fullWebBrowser = WTF::hasEntitlement(*auditToken, "com.apple.developer.web-browser"_s);
     });
 
-    auto bundleID = WebCore::applicationBundleIdentifier();
+    auto bundleID = applicationBundleIdentifier();
 
     if (isRunningTest(bundleID))
         return true;
@@ -313,7 +313,7 @@ bool isFullWebBrowserOrRunningTest()
     ASSERT(!isInWebKitChildProcess());
     ASSERT(RunLoop::isMain());
 
-    return isFullWebBrowserOrRunningTest(WebCore::applicationBundleIdentifier());
+    return isFullWebBrowserOrRunningTest(applicationBundleIdentifier());
 }
 
 } // namespace WebKit

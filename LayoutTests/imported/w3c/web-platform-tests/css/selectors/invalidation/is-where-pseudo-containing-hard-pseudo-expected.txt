@@ -1,0 +1,22 @@
+
+PASS subject1 initial color is grey
+PASS subject1 is red when .other-match added
+PASS subject1 is orangered when .parent added to parent
+PASS subject1 is orangered when .parent removed from parent
+PASS subject1 is red when .other-match removed
+PASS subject2 initial color is grey
+PASS subject2 is darkred when .other-match added
+PASS subject2 is pink when .parent added to parent
+PASS subject2 is pink when .parent removed from parent
+PASS subject2 is darkred when .other-match removed
+PASS subject3 initial color is grey
+PASS subject3 is green when .other-match added
+PASS subject3 is lightgreen when .parent added to parent
+PASS subject3 is lightgreen when .parent removed from parent
+PASS subject3 is green when .other-match removed
+PASS subject4 initial color is grey
+PASS subject4 is darkgreen when .other-match added
+PASS subject4 is yellowgreen when .parent added to parent
+PASS subject4 is yellowgreen when .parent removed from parent
+PASS subject4 is darkgreen when .other-match removed
+

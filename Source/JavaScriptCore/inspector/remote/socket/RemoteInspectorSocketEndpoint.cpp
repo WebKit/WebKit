@@ -32,8 +32,13 @@
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RunLoop.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace Inspector {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteInspectorSocketEndpoint);
+WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(RemoteInspectorSocketEndpoint, BaseConnection);
+WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(RemoteInspectorSocketEndpoint, ClientConnection);
 
 RemoteInspectorSocketEndpoint& RemoteInspectorSocketEndpoint::singleton()
 {

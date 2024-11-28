@@ -1,15 +1,15 @@
 <script>
-    function test()
+    async function test()
     {
+        testRunner?.waitUntilDone();
         document.body.offsetTop;    // force layout
-        if (window.testRunner)
-            testRunner.displayAndTrackRepaints();
+        await testRunner?.displayAndTrackRepaints();
         var t = document.getElementById('t');
         t.style.position = 'relative';
         document.body.offsetTop;    // force layout
         t.lastChild.removeChild(t.lastChild.lastChild);
-        if (window.testRunner)
-            testRunner.displayAndTrackRepaints();
+        await testRunner?.displayAndTrackRepaints();
+        testRunner?.notifyDone();
     }
 </script>
 <body onload="test()">

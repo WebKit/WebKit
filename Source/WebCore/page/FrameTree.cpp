@@ -213,9 +213,9 @@ Frame* FrameTree::child(unsigned index) const
     return result;
 }
 
-Frame* FrameTree::childByFrameID(FrameIdentifier frameID) const
+Frame* FrameTree::descendantByFrameID(FrameIdentifier frameID) const
 {
-    for (auto* child = firstChild(); child; child = child->tree().nextSibling()) {
+    for (auto* child = firstChild(); child; child = child->tree().traverseNext()) {
         if (child->frameID() == frameID)
             return child;
     }
@@ -402,6 +402,24 @@ Frame* FrameTree::nextRenderedSibling() const
             return sibling;
     }
     
+    return nullptr;
+}
+
+LocalFrame* FrameTree::firstLocalDescendant() const
+{
+    for (auto* child = firstChild(); child; child = child->tree().traverseNext()) {
+        if (auto* localChild = dynamicDowncast<LocalFrame>(child))
+            return localChild;
+    }
+    return nullptr;
+}
+
+LocalFrame* FrameTree::nextLocalSibling() const
+{
+    for (auto* sibling = nextSibling(); sibling; sibling = sibling->tree().nextSibling()) {
+        if (auto* localSibling = dynamicDowncast<LocalFrame>(sibling))
+            return localSibling;
+    }
     return nullptr;
 }
 

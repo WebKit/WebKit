@@ -70,7 +70,9 @@ public:
     Device& device() const { return m_device; }
     MTLSize threadsPerThreadgroup() const { return m_threadsPerThreadgroup; }
 
-    PipelineLayout& pipelineLayout() const;
+    PipelineLayout& pipelineLayout() const { return m_pipelineLayout; }
+    Ref<PipelineLayout> protectedPipelineLayout() const { return m_pipelineLayout; }
+
     const BufferBindingSizesForBindGroup* minimumBufferSizes(uint32_t) const;
 
 private:

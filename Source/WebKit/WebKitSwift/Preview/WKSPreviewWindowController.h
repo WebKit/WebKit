@@ -40,6 +40,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (instancetype)initWithURL:(NSURL *)url sceneID:(NSString *)sceneID NS_DESIGNATED_INITIALIZER;
 - (void)presentWindow;
+- (void)updateImage:(NSURL *)url NS_SWIFT_NAME(updateImage(url:));
 - (void)dismissWindow;
 @end
 

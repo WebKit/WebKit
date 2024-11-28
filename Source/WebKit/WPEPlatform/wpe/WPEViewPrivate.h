@@ -29,5 +29,5 @@
 
 void wpeViewToplevelStateChanged(WPEView*, WPEToplevelState);
 void wpeViewScaleChanged(WPEView*, double);
-void wpeViewMonitorChanged(WPEView*);
+void wpeViewScreenChanged(WPEView*);
 void wpeViewPreferredDMABufFormatsChanged(WPEView*);

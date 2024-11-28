@@ -46,7 +46,7 @@ struct OpInfo {
         typename Constraint = typename std::enable_if<(std::is_integral<IntegralType>::value || std::is_enum<IntegralType>::value) && sizeof(IntegralType) <= sizeof(uint64_t)>::type>
     explicit OpInfo(IntegralType value)
         : m_value(static_cast<uint64_t>(value)) { }
-    explicit OpInfo(RegisteredStructure structure) : m_value(static_cast<uint64_t>(bitwise_cast<uintptr_t>(structure))) { }
+    explicit OpInfo(RegisteredStructure structure) : m_value(static_cast<uint64_t>(std::bit_cast<uintptr_t>(structure))) { }
     explicit OpInfo(Operand op) : m_value(op.asBits()) { }
     explicit OpInfo(CacheableIdentifier identifier) : m_value(static_cast<uint64_t>(identifier.rawBits())) { }
     explicit OpInfo(ECMAMode ecmaMode) : m_value(ecmaMode.value()) { }

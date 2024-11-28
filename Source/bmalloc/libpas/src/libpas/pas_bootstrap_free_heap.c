@@ -40,7 +40,17 @@ static pas_aligned_allocation_result bootstrap_source_allocate_aligned(size_t si
                                                                        void* arg)
 {
     PAS_UNUSED_PARAM(arg);
-    return pas_enumerable_page_malloc_try_allocate_without_deallocating_padding(size, alignment);
+    static const bool verbose = PAS_SHOULD_LOG(PAS_LOG_BOOTSTRAP_HEAPS);
+
+    if (verbose)
+        pas_log("bootstrap heap allocating %zu\n", size);
+
+    pas_aligned_allocation_result retval = pas_enumerable_page_malloc_try_allocate_without_deallocating_padding(size, alignment);
+
+    if (verbose)
+        pas_log("bootstrap heap done allocating, returning %p.\n", retval.result);
+
+    return retval;
 }
 
 static void initialize_config(pas_large_free_heap_config* config)

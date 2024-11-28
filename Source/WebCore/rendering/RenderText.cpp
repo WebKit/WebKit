@@ -146,15 +146,15 @@ void SecureTextTimer::fired()
     m_renderer.setText(m_renderer.text(), true /* forcing setting text as it may be masked later */);
 }
 
-static HashMap<SingleThreadWeakRef<const RenderText>, String>& originalTextMap()
+static UncheckedKeyHashMap<SingleThreadWeakRef<const RenderText>, String>& originalTextMap()
 {
-    static NeverDestroyed<HashMap<SingleThreadWeakRef<const RenderText>, String>> map;
+    static NeverDestroyed<UncheckedKeyHashMap<SingleThreadWeakRef<const RenderText>, String>> map;
     return map;
 }
 
-static HashMap<SingleThreadWeakRef<const RenderText>, SingleThreadWeakPtr<RenderInline>>& inlineWrapperForDisplayContentsMap()
+static UncheckedKeyHashMap<SingleThreadWeakRef<const RenderText>, SingleThreadWeakPtr<RenderInline>>& inlineWrapperForDisplayContentsMap()
 {
-    static NeverDestroyed<HashMap<SingleThreadWeakRef<const RenderText>, SingleThreadWeakPtr<RenderInline>>> map;
+    static NeverDestroyed<UncheckedKeyHashMap<SingleThreadWeakRef<const RenderText>, SingleThreadWeakPtr<RenderInline>>> map;
     return map;
 }
 
@@ -382,8 +382,8 @@ void RenderText::styleDidChange(StyleDifference diff, const RenderStyle* oldStyl
     if (needsResetText || oldTransform != newStyle.textTransform() || oldSecurity != newStyle.textSecurity())
         RenderText::setText(originalText(), true);
 
-    // FIXME: First line change on the block comes in as equal on text with inline box parent.
-    auto needsLayoutBoxStyleUpdate = (diff >= StyleDifference::Repaint || (is<RenderInline>(parent()) && &style() != &firstLineStyle())) && layoutBox();
+    // FIXME: First line change on the block comes in as equal on text.
+    auto needsLayoutBoxStyleUpdate = layoutBox() && (diff >= StyleDifference::Repaint || (&style() != &firstLineStyle()));
     if (needsLayoutBoxStyleUpdate)
         LayoutIntegration::LineLayout::updateStyle(*this);
 }
@@ -486,7 +486,7 @@ void RenderText::collectSelectionGeometries(Vector<SelectionGeometry>& rects, un
 
         bool isFixed = false;
         auto absoluteQuad = localToAbsoluteQuad(FloatRect(rect), UseTransforms, &isFixed);
-        bool boxIsHorizontal = !is<SVGInlineTextBox>(textBox->legacyInlineBox()) ? textBox->isHorizontal() : !style().isVerticalWritingMode();
+        bool boxIsHorizontal = !is<SVGInlineTextBox>(textBox->legacyInlineBox()) ? textBox->isHorizontal() : !writingMode().isVertical();
 
         rects.append(SelectionGeometry(absoluteQuad, HTMLElement::selectionRenderingBehavior(textNode()), textBox->direction(), extentsRect.x(), extentsRect.maxX(), extentsRect.maxY(), 0, textBox->isLineBreak(), isFirstOnLine, isLastOnLine, containsStart, containsEnd, boxIsHorizontal, isFixed, view().pageNumberForBlockProgressionOffset(absoluteQuad.enclosingBoundingBox().x())));
     }
@@ -527,7 +527,7 @@ static Vector<FloatQuad> collectAbsoluteQuads(const RenderText& textRenderer, bo
         // Shorten the width of this text box if it ends in an ellipsis.
         if (clipping == ClippingOption::ClipToEllipsis) {
             if (auto ellipsisRect = ellipsisRectForTextBox(textBox, 0, textRenderer.text().length())) {
-                if (textRenderer.style().isHorizontalWritingMode())
+                if (textRenderer.writingMode().isHorizontal())
                     boundaries.setWidth(ellipsisRect->maxX() - boundaries.x());
                 else
                     boundaries.setHeight(ellipsisRect->maxY() - boundaries.y());
@@ -738,7 +738,7 @@ static VisiblePosition createVisiblePositionAfterAdjustingOffsetForBiDi(const In
 
         auto previousRun = run->previousOnLineIgnoringLineBreak();
         if ((previousRun && previousRun->bidiLevel() == run->bidiLevel())
-            || run->renderer().containingBlock()->style().direction() == run->direction()) // FIXME: left on 12CBA
+            || run->renderer().containingBlock()->writingMode().bidiDirection() == run->direction()) // FIXME: left on 12CBA
             return createVisiblePositionForBox(run, run->leftmostCaretOffset(), shouldAffinityBeDownstream);
 
         if (previousRun && previousRun->bidiLevel() > run->bidiLevel()) {
@@ -769,7 +769,7 @@ static VisiblePosition createVisiblePositionAfterAdjustingOffsetForBiDi(const In
 
     auto nextRun = run->nextOnLineIgnoringLineBreak();
     if ((nextRun && nextRun->bidiLevel() == run->bidiLevel())
-        || run->renderer().containingBlock()->style().direction() == run->direction())
+        || run->renderer().containingBlock()->writingMode().bidiDirection() == run->direction())
         return createVisiblePositionForBox(run, run->rightmostCaretOffset(), shouldAffinityBeDownstream);
 
     // offset is on the right edge
@@ -811,7 +811,7 @@ VisiblePosition RenderText::positionForPoint(const LayoutPoint& point, HitTestSo
 
     auto pointLineDirection = firstRun->isHorizontal() ? point.x() : point.y();
     auto pointBlockDirection = firstRun->isHorizontal() ? point.y() : point.x();
-    bool blocksAreFlipped = style().isFlippedBlocksWritingMode();
+    bool blocksAreFlipped = writingMode().isBlockFlipped();
 
     InlineIterator::TextBoxIterator lastRun;
     for (auto run = firstRun; run; run.traverseNextTextBox()) {
@@ -830,8 +830,8 @@ VisiblePosition RenderText::positionForPoint(const LayoutPoint& point, HitTestSo
 #if PLATFORM(IOS_FAMILY)
                 if (pointLineDirection != run->logicalLeftIgnoringInlineDirection() && point.x() < run->visualRectIgnoringBlockDirection().x() + run->logicalWidth()) {
                     auto half = LayoutUnit { run->visualRectIgnoringBlockDirection().x() + run->logicalWidth() / 2.f };
-                    auto affinity = point.x() < half ? Affinity::Downstream : Affinity::Upstream;
-                    return createVisiblePosition(offsetForPositionInRun(*run, pointLineDirection) + run->start(), affinity);
+                    shouldAffinityBeDownstream = point.x() < half ? AlwaysDownstream : AlwaysUpstream;
+                    return createVisiblePositionAfterAdjustingOffsetForBiDi(run, offsetForPositionInRun(*run, pointLineDirection), shouldAffinityBeDownstream);
                 }
 #endif
                 if (lineDirectionPointFitsInBox(pointLineDirection, run, shouldAffinityBeDownstream))
@@ -1418,7 +1418,7 @@ bool RenderText::containsOnlyCSSWhitespace(unsigned from, unsigned length) const
     return containsOnlyPossiblyCollapsibleWhitespace(text().span16().subspan(from, length));
 }
 
-Vector<std::pair<unsigned, unsigned>> RenderText::contentRangesBetweenOffsetsForType(DocumentMarker::Type type, unsigned startOffset, unsigned endOffset) const
+Vector<std::pair<unsigned, unsigned>> RenderText::contentRangesBetweenOffsetsForType(DocumentMarkerType type, unsigned startOffset, unsigned endOffset) const
 {
     if (!textNode())
         return { };
@@ -1680,7 +1680,7 @@ void RenderText::secureText(UChar maskingCharacter)
         }
     }
 
-    UChar* characters;
+    std::span<UChar> characters;
     m_text = String::createUninitialized(length, characters);
 
     for (unsigned i = 0; i < length; ++i)
@@ -2097,24 +2097,10 @@ std::optional<bool> RenderText::emphasisMarkExistsAndIsAbove(const RenderText& r
     if (style.textEmphasisMark() == TextEmphasisMark::None)
         return std::nullopt;
 
-    const OptionSet<TextEmphasisPosition> horizontalMask { TextEmphasisPosition::Left, TextEmphasisPosition::Right };
-
     auto emphasisPosition = style.textEmphasisPosition();
-    auto emphasisPositionHorizontalValue = emphasisPosition & horizontalMask;
-    ASSERT(!((emphasisPosition & TextEmphasisPosition::Over) && (emphasisPosition & TextEmphasisPosition::Under)));
-    ASSERT(emphasisPositionHorizontalValue != horizontalMask);
-
-    bool isAbove = false;
-    if (!emphasisPositionHorizontalValue)
-        isAbove = emphasisPosition.contains(TextEmphasisPosition::Over);
-    else if (style.isHorizontalWritingMode())
-        isAbove = emphasisPosition.contains(TextEmphasisPosition::Over);
-    else
-        isAbove = emphasisPositionHorizontalValue == TextEmphasisPosition::Right;
-
-    if ((style.isHorizontalWritingMode() && (emphasisPosition & TextEmphasisPosition::Under))
-        || (!style.isHorizontalWritingMode() && (emphasisPosition & TextEmphasisPosition::Left)))
-        return isAbove; // Ruby text is always over, so it cannot suppress emphasis marks under.
+    bool isAbove = !emphasisPosition.contains(TextEmphasisPosition::Under);
+    if (style.writingMode().isVerticalTypographic())
+        isAbove = !emphasisPosition.contains(TextEmphasisPosition::Left);
 
     auto findRubyAnnotation = [&]() -> RenderBlockFlow* {
         for (auto* baseCandidate = renderer.parent(); baseCandidate; baseCandidate = baseCandidate->parent()) {
@@ -2131,10 +2117,9 @@ std::optional<bool> RenderText::emphasisMarkExistsAndIsAbove(const RenderText& r
     };
 
     if (auto* annotation = findRubyAnnotation()) {
-        // The emphasis marks over are suppressed only if there is a ruby annotation box and it is not empty.
-        if (annotation->hasLines())
+        // The emphasis marks are suppressed only if there is a ruby annotation box on the same side and it is not empty.
+        if (annotation->hasLines() && isAbove == (annotation->style().rubyPosition() == RubyPosition::Over))
             return { };
-        return isAbove;
     }
 
     return isAbove;

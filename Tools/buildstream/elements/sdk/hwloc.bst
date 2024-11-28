@@ -13,8 +13,8 @@ variables:
 
 sources:
 - kind: tar
-  url: https://download.open-mpi.org/release/hwloc/v2.9/hwloc-2.9.3.tar.bz2
-  ref: 5c4062ce556f6d3451fc177ffb8673a2120f81df6835dea6a21a90fbdfff0dec
+  url: https://download.open-mpi.org/release/hwloc/v2.11/hwloc-2.11.1.tar.bz2
+  ref: 04cdfbffad225ce15f66184f0f4141327dabf288d10a8b84d13f517acb7870c6
 
 public:
   bst:

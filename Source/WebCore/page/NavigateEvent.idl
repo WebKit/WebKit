@@ -1,4 +1,5 @@
 [
+  JSCustomMarkFunction,
   EnabledBySetting=NavigationAPIEnabled,
   Exposed=Window
 ] interface NavigateEvent : Event {

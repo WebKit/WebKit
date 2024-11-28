@@ -52,7 +52,7 @@ public:
 };
 
 class WEBCORE_EXPORT NowPlayingManager : public RemoteCommandListenerClient {
-    WTF_MAKE_TZONE_ALLOCATED(NowPlayingManager);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(NowPlayingManager, WEBCORE_EXPORT);
 public:
     NowPlayingManager();
     ~NowPlayingManager();
@@ -74,7 +74,7 @@ public:
 
 private:
     virtual void clearNowPlayingInfoPrivate();
-    virtual void setNowPlayingInfoPrivate(const NowPlayingInfo&);
+    virtual void setNowPlayingInfoPrivate(const NowPlayingInfo&, bool shouldUpdateNowPlayingSuppression);
     void ensureRemoteCommandListenerCreated();
     RefPtr<RemoteCommandListener> m_remoteCommandListener;
     WeakPtr<NowPlayingManagerClient> m_client;

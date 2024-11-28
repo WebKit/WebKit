@@ -68,6 +68,7 @@ class DriverUniform
     TIntermTyped *getClipDistancesEnabled() const;
     TIntermTyped *getTransformDepth() const;
     TIntermTyped *getAlphaToCoverage() const;
+    TIntermTyped *getLayeredFramebuffer() const;
 
     virtual TIntermTyped *getViewport() const { return nullptr; }
     virtual TIntermTyped *getXfbBufferOffsets() const { return nullptr; }

@@ -5,12 +5,12 @@
         input[type="button"]::selection { color: red; }
     </style>
     <script>
-        function test() {
-            if (window.testRunner)
-                testRunner.dumpAsText();
+        async function test() {
+            testRunner?.dumpAsText();
+            testRunner?.waitUntilDone();
             document.execCommand("SelectAll");
-            if (window.testRunner)
-                testRunner.displayAndTrackRepaints();
+            await testRunner?.displayAndTrackRepaints();
+            testRunner?.notifyDone();
         }
     </script>
 </head>

@@ -114,7 +114,7 @@ var notContainNextItem = [
 ];
 
 for (var item of notContainNextItem) {
-    testTypeError(item);
+    testTypeError(item, "TypeError: WeakMap requires that an entry be an Object.");
     testCallTypeError(item);
 }
 

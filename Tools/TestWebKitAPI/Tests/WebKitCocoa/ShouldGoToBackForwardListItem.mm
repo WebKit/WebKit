@@ -58,11 +58,11 @@ TEST(WebKit, ShouldGoToBackForwardListItem)
     auto webView = adoptNS([WKWebView new]);
     [webView setNavigationDelegate:delegate.get()];
 
-    [webView loadRequest:[NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]]];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"simple" withExtension:@"html"]]];
     Util::run(&finished);
     
     finished = false;
-    [webView loadRequest:[NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"simple-iframe" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]]];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"simple-iframe" withExtension:@"html"]]];
     Util::run(&finished);
 
     finished = false;

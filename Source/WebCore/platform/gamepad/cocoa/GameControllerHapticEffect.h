@@ -28,18 +28,12 @@
 #if ENABLE(GAMEPAD) && HAVE(WIDE_GAMECONTROLLER_SUPPORT)
 
 #import <wtf/CompletionHandler.h>
+#import <wtf/RefCountedAndCanMakeWeakPtr.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/TZoneMalloc.h>
 #import <wtf/WeakPtr.h>
 
-namespace WebCore {
-class GameControllerHapticEffect;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::GameControllerHapticEffect> : std::true_type { };
-}
+OBJC_CLASS CHHapticEngine;
 
 namespace WebCore {
 
@@ -47,23 +41,28 @@ class GameControllerHapticEngines;
 struct GamepadEffectParameters;
 enum class GamepadHapticEffectType : uint8_t;
 
-class GameControllerHapticEffect : public CanMakeWeakPtr<GameControllerHapticEffect> {
+class GameControllerHapticEffect final : public RefCountedAndCanMakeWeakPtr<GameControllerHapticEffect> {
     WTF_MAKE_TZONE_ALLOCATED(GameControllerHapticEffect);
 public:
-    static std::unique_ptr<GameControllerHapticEffect> create(GameControllerHapticEngines&, GamepadHapticEffectType, const GamepadEffectParameters&);
+    static RefPtr<GameControllerHapticEffect> create(GameControllerHapticEngines&, GamepadHapticEffectType, const GamepadEffectParameters&);
     ~GameControllerHapticEffect();
 
     void start(CompletionHandler<void(bool)>&&);
     void stop();
 
-    void leftEffectFinishedPlaying();
-    void rightEffectFinishedPlaying();
-
 private:
-    GameControllerHapticEffect(RetainPtr<id>&& leftPlayer, RetainPtr<id>&& rightPlayer);
+    GameControllerHapticEffect(RetainPtr<CHHapticEngine>&& leftEngine, RetainPtr<CHHapticEngine>&& rightEngine, RetainPtr<id>&& leftPlayer, RetainPtr<id>&& rightPlayer);
 
+    void ensureStarted(Function<void(bool)>&&);
+    void startEngine(CHHapticEngine *, Function<void(bool)>&&);
+    void registerNotification(CHHapticEngine *, Function<void(bool)>&&);
+
+    RetainPtr<CHHapticEngine> m_leftEngine;
+    RetainPtr<CHHapticEngine> m_rightEngine;
     RetainPtr<id> m_leftPlayer;
     RetainPtr<id> m_rightPlayer;
+    unsigned m_engineStarted { 0 };
+    unsigned m_playerFinished { 0 };
     CompletionHandler<void(bool)> m_completionHandler;
 };
 

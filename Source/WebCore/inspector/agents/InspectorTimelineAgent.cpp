@@ -35,6 +35,7 @@
 
 #include "Event.h"
 #include "FrameSnapshotting.h"
+#include "ImageBuffer.h"
 #include "InspectorAnimationAgent.h"
 #include "InspectorCPUProfilerAgent.h"
 #include "InspectorClient.h"
@@ -61,8 +62,8 @@
 #include <wtf/text/MakeString.h>
 
 #if PLATFORM(IOS_FAMILY)
-#include "RuntimeApplicationChecks.h"
 #include "WebCoreThreadInternal.h"
+#include <wtf/RuntimeApplicationChecks.h>
 #endif
 
 #if PLATFORM(COCOA)
@@ -84,7 +85,7 @@ static CFRunLoopRef currentRunLoop()
     // we still allow this, see <rdar://problem/7403328>. Since the race condition and subsequent
     // crash are especially troublesome for iBooks, we never allow the observer to be added to the
     // main run loop in iBooks.
-    if (CocoaApplication::isIBooks())
+    if (WTF::CocoaApplication::isIBooks())
         return WebThreadRunLoop();
 #endif
     return CFRunLoopGetCurrent();

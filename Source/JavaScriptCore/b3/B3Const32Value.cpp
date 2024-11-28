@@ -189,7 +189,7 @@ Value* Const32Value::rotLConstant(Procedure& proc, const Value* other) const
 
 Value* Const32Value::bitwiseCastConstant(Procedure& proc) const
 {
-    return proc.add<ConstFloatValue>(origin(), bitwise_cast<float>(m_value));
+    return proc.add<ConstFloatValue>(origin(), std::bit_cast<float>(m_value));
 }
 
 Value* Const32Value::iToDConstant(Procedure& proc) const
@@ -258,7 +258,7 @@ TriState Const32Value::greaterEqualConstant(const Value* other) const
 
 TriState Const32Value::aboveConstant(const Value* other) const
 {
-    // UINT32_MIN > x is always false.
+    // UINT32_MIN(0) > x is always false.
     if (static_cast<uint32_t>(m_value) == std::numeric_limits<uint32_t>::min())
         return TriState::False;
     if (!other->hasInt32())
@@ -288,7 +288,7 @@ TriState Const32Value::aboveEqualConstant(const Value* other) const
 
 TriState Const32Value::belowEqualConstant(const Value* other) const
 {
-    // UINT32_MIN <= x is always true.
+    // UINT32_MIN(0) <= x is always true.
     if (static_cast<uint32_t>(m_value) == std::numeric_limits<uint32_t>::min())
         return TriState::True;
     if (!other->hasInt32())

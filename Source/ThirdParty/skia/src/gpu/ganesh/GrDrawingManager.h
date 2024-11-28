@@ -46,7 +46,6 @@ class SkData;
 enum GrSurfaceOrigin : int;
 enum class GrColorType;
 enum class GrSemaphoresSubmitted : bool;
-enum class GrSyncCpu : bool;
 struct GrFlushInfo;
 struct GrMipLevel;
 struct SkIRect;
@@ -183,7 +182,7 @@ public:
 
     void addOnFlushCallbackObject(GrOnFlushCallbackObject*);
 
-#if defined(GR_TEST_UTILS)
+#if defined(GPU_TEST_UTILS)
     void testingOnly_removeOnFlushCallbackObject(GrOnFlushCallbackObject*);
     PathRendererChain::Options testingOnly_getOptionsForPathRendererChain() {
         return fOptionsForPathRendererChain;
@@ -231,7 +230,7 @@ private:
     GrRenderTask* appendTask(sk_sp<GrRenderTask>);
     GrRenderTask* insertTaskBeforeLast(sk_sp<GrRenderTask>);
 
-    bool submitToGpu(GrSyncCpu sync);
+    bool submitToGpu();
 
     SkDEBUGCODE(void validate() const;)
 

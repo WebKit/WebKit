@@ -34,6 +34,7 @@
 #import "PlatformScreen.h"
 #import "ProcessCapabilities.h"
 #import "ProcessIdentity.h"
+#import "SharedMemory.h"
 #import <pal/spi/cg/CoreGraphicsSPI.h>
 #import <wtf/Assertions.h>
 #import <wtf/EnumTraits.h>
@@ -78,6 +79,8 @@ static auto surfaceNameToNSString(IOSurface::Name name)
         return @"WKWebView Snapshot (shareable)";
     case IOSurface::Name::ShareableLocalSnapshot:
         return @"WKWebView Snapshot (shareable local)";
+    case IOSurface::Name::WebGPU:
+        return @"WebKit WebGPU";
     }
 }
 
@@ -189,13 +192,13 @@ static NSDictionary *optionsForBiplanarSurface(IntSize size, unsigned pixelForma
     };
 }
 
-static NSDictionary *optionsFor32BitSurface(IntSize size, unsigned pixelFormat, IOSurface::Name name)
+static NSDictionary *optionsForSurface(IntSize size, unsigned bitsPerPixel, unsigned pixelFormat, IOSurface::Name name)
 {
     int width = size.width();
     int height = size.height();
 
-    unsigned bytesPerElement = 4;
-    unsigned bytesPerPixel = 4;
+    unsigned bytesPerElement = 4 * (bitsPerPixel / 32);
+    unsigned bytesPerPixel = bytesPerElement;
 
     size_t bytesPerRow = IOSurfaceAlignProperty(kIOSurfaceBytesPerRow, width * bytesPerPixel);
     ASSERT(bytesPerRow);
@@ -216,8 +219,19 @@ static NSDictionary *optionsFor32BitSurface(IntSize size, unsigned pixelFormat, 
         (id)kIOSurfaceElementHeight: @(1),
         (id)kIOSurfaceName: surfaceNameToNSString(name)
     };
-
 }
+
+static NSDictionary *optionsFor32BitSurface(IntSize size, unsigned pixelFormat, IOSurface::Name name)
+{
+    return optionsForSurface(size, 32, pixelFormat, name);
+}
+
+#if HAVE(HDR_SUPPORT)
+static NSDictionary *optionsFor64BitSurface(IntSize size, unsigned pixelFormat, IOSurface::Name name)
+{
+    return optionsForSurface(size, 64, pixelFormat, name);
+}
+#endif
 
 IOSurface::IOSurface(IntSize size, const DestinationColorSpace& colorSpace, IOSurface::Name name, Format format, bool& success)
     : m_format(format)
@@ -250,6 +264,11 @@ IOSurface::IOSurface(IntSize size, const DestinationColorSpace& colorSpace, IOSu
     case Format::RGBA:
         options = optionsFor32BitSurface(size, 'RGBA', name);
         break;
+#if HAVE(HDR_SUPPORT)
+    case Format::RGBA16F:
+        options = optionsFor64BitSurface(size, 'RGhA', name);
+        break;
+#endif
     }
     m_surface = adoptCF(IOSurfaceCreate((CFDictionaryRef)options));
     success = !!m_surface;
@@ -257,7 +276,7 @@ IOSurface::IOSurface(IntSize size, const DestinationColorSpace& colorSpace, IOSu
         setColorSpaceProperty();
         m_totalBytes = IOSurfaceGetAllocSize(m_surface.get());
     } else
-        RELEASE_LOG_ERROR(Layers, "IOSurface creation failed for size: (%d %d) and format: (%d)", size.width(), size.height(), enumToUnderlyingType(format));
+        RELEASE_LOG_ERROR(Layers, "IOSurface creation failed for size: (%d %d) and format: (%d)", size.width(), size.height(), enumToUnderlyingType(*m_format));
 }
 
 static std::optional<IOSurface::Format> formatFromSurface(IOSurfaceRef surface)
@@ -279,6 +298,11 @@ static std::optional<IOSurface::Format> formatFromSurface(IOSurfaceRef surface)
 
     if (pixelFormat == 'RGBA')
         return IOSurface::Format::RGBA;
+
+#if HAVE(HDR_SUPPORT)
+    if (pixelFormat == 'RGhA')
+        return IOSurface::Format::RGBA16F;
+#endif
 
     return { };
 }
@@ -438,6 +462,12 @@ IOSurface::BitmapConfiguration IOSurface::bitmapConfiguration() const
         break;
     case Format::RGBA:
         break;
+#if HAVE(HDR_SUPPORT)
+    case Format::RGBA16F:
+        bitsPerComponent = 16;
+        bitmapInfo = static_cast<CGBitmapInfo>(kCGImageAlphaPremultipliedLast) | static_cast<CGBitmapInfo>(kCGBitmapByteOrder16Host) | static_cast<CGBitmapInfo>(kCGBitmapFloatComponents);
+        break;
+#endif
     }
 
     return { bitmapInfo, bitsPerComponent };
@@ -614,8 +644,14 @@ void IOSurface::setOwnershipIdentity(const ProcessIdentity& resourceOwner)
 void IOSurface::setOwnershipIdentity(IOSurfaceRef surface, const ProcessIdentity& resourceOwner)
 {
 #if HAVE(IOSURFACE_SET_OWNERSHIP_IDENTITY) && HAVE(TASK_IDENTITY_TOKEN)
-    ASSERT(resourceOwner);
+#if ASSERT_ENABLED
     ASSERT(surface);
+    if (!isMemoryAttributionDisabled())
+        ASSERT(resourceOwner);
+#endif
+
+    if (!resourceOwner)
+        return;
     task_id_token_t ownerTaskIdToken = resourceOwner.taskIdToken();
     auto result = IOSurfaceSetOwnershipIdentity(surface, ownerTaskIdToken, kIOSurfaceMemoryLedgerTagGraphics, 0);
     if (result != kIOReturnSuccess)
@@ -714,6 +750,11 @@ TextStream& operator<<(TextStream& ts, IOSurface::Format format)
     case IOSurface::Format::RGBA:
         ts << "RGBA";
         break;
+#if HAVE(HDR_SUPPORT)
+    case IOSurface::Format::RGBA16F:
+        ts << "RGBA16F";
+        break;
+#endif
     }
     return ts;
 }

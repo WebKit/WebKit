@@ -47,7 +47,7 @@ private:
     Nicosia::CompositionLayer* layer() const override { return m_layer.get(); }
 
     bool commitStateBeforeChildren(const ScrollingStateNode&) override;
-    void applyLayerPositions() override WTF_REQUIRES_LOCK(scrollingTree().treeLock());
+    void applyLayerPositions() override WTF_REQUIRES_LOCK(scrollingTree()->treeLock());
 
     void dumpProperties(WTF::TextStream&, OptionSet<ScrollingStateTreeAsTextBehavior>) const override;
 

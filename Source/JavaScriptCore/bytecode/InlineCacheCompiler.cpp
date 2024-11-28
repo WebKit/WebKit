@@ -67,6 +67,8 @@
 #include <wtf/CommaPrinter.h>
 #include <wtf/ListDump.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 namespace InlineCacheCompilerInternal {
@@ -3674,7 +3676,7 @@ void InlineCacheCompiler::generateAccessCase(unsigned index, AccessCase& accessC
             jit.nukeStructureAndStoreButterfly(vm, scratchGPR, baseGPR);
         }
 
-        uint32_t structureBits = bitwise_cast<uint32_t>(accessCase.newStructure()->id());
+        uint32_t structureBits = std::bit_cast<uint32_t>(accessCase.newStructure()->id());
         jit.store32(
             CCallHelpers::TrustedImm32(structureBits),
             CCallHelpers::Address(baseGPR, JSCell::structureIDOffset()));
@@ -3707,7 +3709,7 @@ void InlineCacheCompiler::generateAccessCase(unsigned index, AccessCase& accessC
             jit.storeTrustedValue(JSValue(), CCallHelpers::Address(scratchGPR, offsetInButterfly(accessCase.m_offset) * sizeof(JSValue)));
         }
 
-        uint32_t structureBits = bitwise_cast<uint32_t>(accessCase.newStructure()->id());
+        uint32_t structureBits = std::bit_cast<uint32_t>(accessCase.newStructure()->id());
         jit.store32(
             CCallHelpers::TrustedImm32(structureBits),
             CCallHelpers::Address(baseGPR, JSCell::structureIDOffset()));
@@ -3722,7 +3724,7 @@ void InlineCacheCompiler::generateAccessCase(unsigned index, AccessCase& accessC
         ASSERT(accessCase.structure()->transitionWatchpointSetHasBeenInvalidated());
         ASSERT(accessCase.newStructure()->transitionKind() == TransitionKind::SetBrand);
 
-        uint32_t structureBits = bitwise_cast<uint32_t>(accessCase.newStructure()->id());
+        uint32_t structureBits = std::bit_cast<uint32_t>(accessCase.newStructure()->id());
         jit.store32(
             CCallHelpers::TrustedImm32(structureBits),
             CCallHelpers::Address(baseGPR, JSCell::structureIDOffset()));
@@ -4027,7 +4029,7 @@ void InlineCacheCompiler::emitModuleNamespaceLoad(ModuleNamespaceAccessCase& acc
     m_failAndIgnore.append(jit.branchIfEmpty(JSValueRegs { scratchGPR }));
     jit.moveValueRegs(JSValueRegs { scratchGPR }, valueRegs);
 #else
-    jit.load32(bitwise_cast<uint8_t*>(&accessCase.moduleEnvironment()->variableAt(accessCase.scopeOffset())) + TagOffset, scratchGPR);
+    jit.load32(std::bit_cast<uint8_t*>(&accessCase.moduleEnvironment()->variableAt(accessCase.scopeOffset())) + TagOffset, scratchGPR);
     m_failAndIgnore.append(jit.branchIfEmpty(scratchGPR));
     jit.loadValue(&accessCase.moduleEnvironment()->variableAt(accessCase.scopeOffset()), valueRegs);
 #endif
@@ -4984,7 +4986,7 @@ AccessGenerationResult InlineCacheCompiler::compile(const GCSafeConcurrentJSLock
 
         Vector<int64_t, 16> caseValues(keys.size());
         for (unsigned i = 0; i < keys.size(); ++i)
-            caseValues[i] = bitwise_cast<int32_t>(keys[i]->structure()->id());
+            caseValues[i] = std::bit_cast<int32_t>(keys[i]->structure()->id());
 
         BinarySwitch binarySwitch(m_scratchGPR, caseValues.span(), BinarySwitch::Int32);
         while (binarySwitch.advance(jit))
@@ -7828,6 +7830,10 @@ void InlineCacheHandler::aboutToDie()
 {
     if (m_stubRoutine)
         m_stubRoutine->aboutToDie();
+    // A reference to InlineCacheHandler may keep it alive later than the CodeBlock that "owns" this
+    // watchpoint but the watchpoint must not fire after the CodeBlock has finished destruction,
+    // so clear the watchpoint eagerly.
+    m_watchpoint.reset();
 }
 
 CallLinkInfo* InlineCacheHandler::callLinkInfoAt(const ConcurrentJSLocker& locker, unsigned index)
@@ -7932,6 +7938,6 @@ void printInternal(PrintStream& out, AccessType type)
 
 } // namespace WTF
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+
 #endif // ENABLE(JIT)
-
-

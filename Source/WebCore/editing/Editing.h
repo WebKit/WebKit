@@ -44,6 +44,8 @@ class VisibleSelection;
 
 struct SimpleRange;
 
+enum class TextDirection : bool;
+
 // -------------------------------------------------------------------------
 // Node
 // -------------------------------------------------------------------------
@@ -106,7 +108,13 @@ Element* elementIfEquivalent(const Element&, Node&);
 
 bool positionBeforeOrAfterNodeIsCandidate(Node&);
 
+// -------------------------------------------------------------------------
+// SimpleRange
+// -------------------------------------------------------------------------
+
+PositionRange positionsForRange(const SimpleRange&);
 WEBCORE_EXPORT HashSet<RefPtr<HTMLImageElement>> visibleImageElementsInRangeWithNonLoadedImages(const SimpleRange&);
+WEBCORE_EXPORT SimpleRange adjustToVisuallyContiguousRange(const SimpleRange&);
 
 // -------------------------------------------------------------------------
 // Position
@@ -134,6 +142,7 @@ unsigned numEnclosingMailBlockquotes(const Position&);
 void updatePositionForNodeRemoval(Position&, Node&);
 
 WEBCORE_EXPORT TextDirection directionOfEnclosingBlock(const Position&);
+TextDirection primaryDirectionForSingleLineRange(const Position& start, const Position& end);
 
 // -------------------------------------------------------------------------
 // VisiblePosition

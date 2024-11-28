@@ -42,6 +42,9 @@ enum class DOMAudioSessionState : uint8_t { Inactive, Active, Interrupted };
 class DOMAudioSession final : public RefCounted<DOMAudioSession>, public ActiveDOMObject, public EventTarget, public AudioSessionInterruptionObserver {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(DOMAudioSession);
 public:
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
+
     static Ref<DOMAudioSession> create(ScriptExecutionContext*);
     ~DOMAudioSession();
 
@@ -51,10 +54,6 @@ public:
     ExceptionOr<void> setType(Type);
     Type type() const;
     State state() const;
-
-    // ActiveDOMObject.
-    void ref() const final { RefCounted::ref(); }
-    void deref() const final { RefCounted::deref(); }
 
 private:
     explicit DOMAudioSession(ScriptExecutionContext*);

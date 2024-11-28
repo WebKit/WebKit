@@ -142,7 +142,7 @@ static NSString *browsingWarningText(BrowsingWarning::Data data)
     return WTF::switchOn(data, [&] (BrowsingWarning::SafeBrowsingWarningData data) {
         return browsingWarningText(data.result.get());
     }, [&] (BrowsingWarning::HTTPSNavigationFailureData) {
-        return WEB_UI_NSSTRING(@"This website does not support connecting securely. The information you see and enter on this website, including credit cards, phone numbers, and passwords, can be read and altered by other people.", "Not Secure Connection warning text");
+        return WEB_UI_NSSTRING(@"This website does not support connecting securely over HTTPS. The information you see and enter on this website, including credit cards, phone numbers, and passwords, can be read and altered by other people.", "Not Secure Connection warning text");
     });
 }
 

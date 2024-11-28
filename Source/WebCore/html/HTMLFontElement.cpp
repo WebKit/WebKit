@@ -36,6 +36,8 @@
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringToIntegerConversion.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(HTMLFontElement);
@@ -214,3 +216,5 @@ void HTMLFontElement::collectPresentationalHintsForAttribute(const QualifiedName
 }
 
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

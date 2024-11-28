@@ -57,6 +57,9 @@ class MediaStream final
     , public RefCounted<MediaStream> {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED_EXPORT(MediaStream, WEBCORE_EXPORT);
 public:
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
+
     static Ref<MediaStream> create(Document&);
     static Ref<MediaStream> create(Document&, MediaStream&);
     static Ref<MediaStream> create(Document&, const Vector<Ref<MediaStreamTrack>>&);
@@ -78,9 +81,7 @@ public:
 
     RefPtr<MediaStream> clone();
 
-    using MediaStreamPrivateObserver::weakPtrFactory;
-    using MediaStreamPrivateObserver::WeakValueType;
-    using MediaStreamPrivateObserver::WeakPtrImplType;
+    USING_CAN_MAKE_WEAKPTR(MediaStreamPrivateObserver);
 
     bool active() const { return m_isActive; }
     bool muted() const { return m_private->muted(); }
@@ -97,14 +98,10 @@ public:
     enum EventTargetInterfaceType eventTargetInterface() const final { return EventTargetInterfaceType::MediaStream; }
     ScriptExecutionContext* scriptExecutionContext() const final { return ContextDestructionObserver::scriptExecutionContext(); }
 
-    // ActiveDOMObject.
-    void ref() const final { RefCounted::ref(); }
-    void deref() const final { RefCounted::deref(); }
-
     void addTrackFromPlatform(Ref<MediaStreamTrack>&&);
 
 #if !RELEASE_LOG_DISABLED
-    const void* logIdentifier() const final { return m_private->logIdentifier(); }
+    uint64_t logIdentifier() const final { return m_private->logIdentifier(); }
 #endif
 
 protected:

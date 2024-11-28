@@ -50,39 +50,36 @@ using IORegistryGPUID = uint64_t;
 static std::optional<GLint> GetVirtualScreenByRegistryID(CGLPixelFormatObj pixelFormatObj,
                                                          IORegistryGPUID gpuID)
 {
-    if (@available(macOS 10.13, *))
-    {
-        // When a process does not have access to the WindowServer (as with Chromium's GPU process
-        // and WebKit's WebProcess), there is no way for OpenGL to tell which GPU is connected to a
-        // display. On 10.13+, find the virtual screen that corresponds to the preferred GPU by its
-        // registryID. CGLSetVirtualScreen can then be used to tell OpenGL which GPU it should be
-        // using.
+    // When a process does not have access to the WindowServer (as with Chromium's GPU process
+    // and WebKit's WebProcess), there is no way for OpenGL to tell which GPU is connected to a
+    // display. On 10.13+, find the virtual screen that corresponds to the preferred GPU by its
+    // registryID. CGLSetVirtualScreen can then be used to tell OpenGL which GPU it should be
+    // using.
 
-        GLint virtualScreenCount = 0;
-        CGLError error = CGLDescribePixelFormat(pixelFormatObj, 0, kCGLPFAVirtualScreenCount,
-                                                &virtualScreenCount);
+    GLint virtualScreenCount = 0;
+    CGLError error =
+        CGLDescribePixelFormat(pixelFormatObj, 0, kCGLPFAVirtualScreenCount, &virtualScreenCount);
+    if (error != kCGLNoError)
+    {
+        NOTREACHED();
+        return std::nullopt;
+    }
+
+    for (GLint virtualScreen = 0; virtualScreen < virtualScreenCount; ++virtualScreen)
+    {
+        GLint displayMask = 0;
+        error =
+            CGLDescribePixelFormat(pixelFormatObj, virtualScreen, kCGLPFADisplayMask, &displayMask);
         if (error != kCGLNoError)
         {
             NOTREACHED();
             return std::nullopt;
         }
 
-        for (GLint virtualScreen = 0; virtualScreen < virtualScreenCount; ++virtualScreen)
+        auto virtualScreenGPUID = angle::GetGpuIDFromOpenGLDisplayMask(displayMask);
+        if (virtualScreenGPUID == gpuID)
         {
-            GLint displayMask = 0;
-            error = CGLDescribePixelFormat(pixelFormatObj, virtualScreen, kCGLPFADisplayMask,
-                                           &displayMask);
-            if (error != kCGLNoError)
-            {
-                NOTREACHED();
-                return std::nullopt;
-            }
-
-            auto virtualScreenGPUID = angle::GetGpuIDFromOpenGLDisplayMask(displayMask);
-            if (virtualScreenGPUID == gpuID)
-            {
-                return virtualScreen;
-            }
+            return virtualScreen;
         }
     }
     return std::nullopt;
@@ -90,30 +87,27 @@ static std::optional<GLint> GetVirtualScreenByRegistryID(CGLPixelFormatObj pixel
 
 static std::optional<GLint> GetFirstAcceleratedVirtualScreen(CGLPixelFormatObj pixelFormatObj)
 {
-    if (@available(macOS 10.13, *))
+    GLint virtualScreenCount = 0;
+    CGLError error =
+        CGLDescribePixelFormat(pixelFormatObj, 0, kCGLPFAVirtualScreenCount, &virtualScreenCount);
+    if (error != kCGLNoError)
     {
-        GLint virtualScreenCount = 0;
-        CGLError error = CGLDescribePixelFormat(pixelFormatObj, 0, kCGLPFAVirtualScreenCount,
-                                                &virtualScreenCount);
+        NOTREACHED();
+        return std::nullopt;
+    }
+    for (GLint virtualScreen = 0; virtualScreen < virtualScreenCount; ++virtualScreen)
+    {
+        GLint isAccelerated = 0;
+        error = CGLDescribePixelFormat(pixelFormatObj, virtualScreen, kCGLPFAAccelerated,
+                                       &isAccelerated);
         if (error != kCGLNoError)
         {
             NOTREACHED();
             return std::nullopt;
         }
-        for (GLint virtualScreen = 0; virtualScreen < virtualScreenCount; ++virtualScreen)
+        if (isAccelerated)
         {
-            GLint isAccelerated = 0;
-            error = CGLDescribePixelFormat(pixelFormatObj, virtualScreen, kCGLPFAAccelerated,
-                                           &isAccelerated);
-            if (error != kCGLNoError)
-            {
-                NOTREACHED();
-                return std::nullopt;
-            }
-            if (isAccelerated)
-            {
-                return virtualScreen;
-            }
+            return virtualScreen;
         }
     }
     return std::nullopt;

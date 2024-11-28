@@ -33,6 +33,8 @@
 #import <wtf/SoftLinking.h>
 #import <wtf/WeakPtr.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 ComplexTextController::ComplexTextRun::ComplexTextRun(CTRunRef ctRun, const Font& font, const UChar* characters, unsigned stringLocation, unsigned stringLength, unsigned indexBegin, unsigned indexEnd)
@@ -168,7 +170,7 @@ void ComplexTextController::collectComplexTextRunsForCharacters(std::span<const 
 
     char32_t baseCharacter = 0;
     RetainPtr<CFDictionaryRef> stringAttributes;
-    if (font == Font::systemFallback()) {
+    if (font->isSystemFontFallbackPlaceholder()) {
         // FIXME: This code path does not support small caps.
         isSystemFallback = true;
 
@@ -273,3 +275,5 @@ void ComplexTextController::collectComplexTextRunsForCharacters(std::span<const 
 }
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

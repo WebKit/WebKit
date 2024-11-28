@@ -378,6 +378,7 @@ public:
     FeatureList enabledFeatures(SessionMode mode) const { return m_enabledFeaturesMap.get(mode); }
 
     virtual WebCore::IntSize recommendedResolution(SessionMode) { return { 1, 1 }; }
+    virtual double minimumNearClipPlane() const { return 0.1; }
 
     bool supportsOrientationTracking() const { return m_supportsOrientationTracking; }
     bool supportsViewportScaling() const { return m_supportsViewportScaling; }

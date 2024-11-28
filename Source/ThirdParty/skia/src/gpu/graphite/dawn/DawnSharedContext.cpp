@@ -19,7 +19,11 @@ namespace skgpu::graphite {
 namespace {
 
 wgpu::ShaderModule CreateNoopFragment(const wgpu::Device& device) {
+#ifdef WGPU_BREAKING_CHANGE_DROP_DESCRIPTOR
+    wgpu::ShaderSourceWGSL wgslDesc;
+#else
     wgpu::ShaderModuleWGSLDescriptor wgslDesc;
+#endif
     wgslDesc.code =
             "@fragment\n"
             "fn main() {}\n";
@@ -68,7 +72,8 @@ DawnSharedContext::~DawnSharedContext() {
 std::unique_ptr<ResourceProvider> DawnSharedContext::makeResourceProvider(
         SingleOwner* singleOwner,
         uint32_t recorderID,
-        size_t resourceBudget) {
+        size_t resourceBudget,
+        bool /* avoidBufferAlloc */) {
     return std::unique_ptr<ResourceProvider>(new DawnResourceProvider(this,
                                                                       singleOwner,
                                                                       recorderID,

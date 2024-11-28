@@ -34,6 +34,8 @@
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/WTFString.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC { namespace Yarr {
 
 enum class CreateDisjunctionPurpose : uint8_t { NotForNextAlternative, ForNextAlternative };
@@ -2191,3 +2193,5 @@ ErrorCode parse(Delegate& delegate, const StringView pattern, CompileMode compil
 }
 
 } } // namespace JSC::Yarr
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

@@ -37,6 +37,11 @@ ResponsivenessTimer::ResponsivenessTimer(ResponsivenessTimer::Client& client, Se
 
 ResponsivenessTimer::~ResponsivenessTimer() = default;
 
+Ref<ResponsivenessTimer::Client> ResponsivenessTimer::protectedClient() const
+{
+    return m_client.get();
+}
+
 void ResponsivenessTimer::invalidate()
 {
     m_timer.stop();
@@ -119,7 +124,7 @@ bool ResponsivenessTimer::mayBecomeUnresponsive() const
     if (isLibgmallocEnabled)
         return false;
 
-    return m_client->mayBecomeUnresponsive();
+    return protectedClient()->mayBecomeUnresponsive();
 #endif
 }
 

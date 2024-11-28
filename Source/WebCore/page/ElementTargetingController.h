@@ -56,6 +56,7 @@ public:
     ElementTargetingController(Page&);
 
     WEBCORE_EXPORT Vector<TargetedElementInfo> findTargets(TargetedElementRequest&&);
+    WEBCORE_EXPORT Vector<Vector<TargetedElementInfo>> findAllTargets(float);
 
     WEBCORE_EXPORT bool adjustVisibility(Vector<TargetedElementAdjustment>&&);
     void adjustVisibilityInRepeatedlyTargetedRegions(Document&);
@@ -92,10 +93,13 @@ private:
 
     void recomputeAdjustedElementsIfNeeded();
 
+    void topologicallySortElementsHelper(ElementIdentifier currentElementID, Vector<ElementIdentifier>& depthSortedIDs, HashSet<ElementIdentifier>& processingIDs, HashSet<ElementIdentifier>& unprocessedIDs, const UncheckedKeyHashMap<ElementIdentifier, HashSet<ElementIdentifier>>& elementIDToOccludedElementIDs);
+    Vector<ElementIdentifier> topologicallySortElements(const UncheckedKeyHashMap<ElementIdentifier, HashSet<ElementIdentifier>>& elementIDToOccludedElementIDs);
+
     WeakPtr<Page> m_page;
     DeferrableOneShotTimer m_recentAdjustmentClientRectsCleanUpTimer;
     WeakHashSet<Document, WeakPtrImplWithEventTargetData> m_documentsAffectedByVisibilityAdjustment;
-    HashMap<ElementIdentifier, IntRect> m_recentAdjustmentClientRects;
+    UncheckedKeyHashMap<ElementIdentifier, IntRect> m_recentAdjustmentClientRects;
     ApproximateTime m_startTimeForSelectorBasedVisibilityAdjustment;
     Timer m_selectorBasedVisibilityAdjustmentTimer;
     Vector<std::pair<Markable<ElementIdentifier>, TargetedElementSelectors>> m_visibilityAdjustmentSelectors;

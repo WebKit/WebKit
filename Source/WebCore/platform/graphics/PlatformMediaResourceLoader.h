@@ -76,7 +76,7 @@ public:
     virtual void sendH2Ping(const URL&, CompletionHandler<void(Expected<Seconds, ResourceError>&&)>&&) = 0;
 
     // Can be called on any threads. Return the function dispatcher on which the PlaftormMediaResource and PlatformMediaResourceClient must be be called on.
-    virtual Ref<RefCountedSerialFunctionDispatcher> targetDispatcher() { return MainThreadDispatcher::singleton(); }
+    virtual Ref<GuaranteedSerialFunctionDispatcher> targetDispatcher() { return MainThreadDispatcher::singleton(); }
     // requestResource will be called on the main thread, the PlatformMediaResource object is to be used on targetDispatcher().
     virtual RefPtr<PlatformMediaResource> requestResource(ResourceRequest&&, LoadOptions) = 0;
 

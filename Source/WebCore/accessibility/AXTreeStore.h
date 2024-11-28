@@ -64,9 +64,9 @@ class AXTreeStore {
     friend WEBCORE_EXPORT AXTreePtr findAXTree(Function<bool(AXTreePtr)>&&);
 public:
     AXID treeID() const { return m_id; }
-    static WeakPtr<AXObjectCache> axObjectCacheForID(AXID);
+    static WeakPtr<AXObjectCache> axObjectCacheForID(std::optional<AXID>);
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-    static RefPtr<AXIsolatedTree> isolatedTreeForID(AXID);
+    static RefPtr<AXIsolatedTree> isolatedTreeForID(std::optional<AXID>);
 #endif
 
 protected:
@@ -83,9 +83,9 @@ protected:
     const AXID m_id;
     static Lock s_storeLock;
 private:
-    static HashMap<AXID, WeakPtr<AXObjectCache>>& liveTreeMap();
+    static UncheckedKeyHashMap<AXID, WeakPtr<AXObjectCache>>& liveTreeMap();
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-    static HashMap<AXID, ThreadSafeWeakPtr<AXIsolatedTree>>& isolatedTreeMap() WTF_REQUIRES_LOCK(s_storeLock);
+    static UncheckedKeyHashMap<AXID, ThreadSafeWeakPtr<AXIsolatedTree>>& isolatedTreeMap() WTF_REQUIRES_LOCK(s_storeLock);
 #endif
 };
 
@@ -150,37 +150,37 @@ inline bool AXTreeStore<T>::contains(AXID axID)
 }
 
 template<typename T>
-inline WeakPtr<AXObjectCache> AXTreeStore<T>::axObjectCacheForID(AXID axID)
+inline WeakPtr<AXObjectCache> AXTreeStore<T>::axObjectCacheForID(std::optional<AXID> axID)
 {
-    return axID.isValid() ? liveTreeMap().get(axID) : nullptr;
+    return axID ? liveTreeMap().get(*axID) : nullptr;
 }
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 template<typename T>
-inline RefPtr<AXIsolatedTree> AXTreeStore<T>::isolatedTreeForID(AXID axID)
+inline RefPtr<AXIsolatedTree> AXTreeStore<T>::isolatedTreeForID(std::optional<AXID> axID)
 {
-    if (!axID.isValid())
+    if (!axID)
         return nullptr;
 
     Locker locker { s_storeLock };
-    return isolatedTreeMap().get(axID).get();
+    return isolatedTreeMap().get(*axID).get();
 }
 #endif
 
 template<typename T>
-inline HashMap<AXID, WeakPtr<AXObjectCache>>& AXTreeStore<T>::liveTreeMap()
+inline UncheckedKeyHashMap<AXID, WeakPtr<AXObjectCache>>& AXTreeStore<T>::liveTreeMap()
 {
     ASSERT(isMainThread());
 
-    static NeverDestroyed<HashMap<AXID, WeakPtr<AXObjectCache>>> map;
+    static NeverDestroyed<UncheckedKeyHashMap<AXID, WeakPtr<AXObjectCache>>> map;
     return map;
 }
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 template<typename T>
-inline HashMap<AXID, ThreadSafeWeakPtr<AXIsolatedTree>>& AXTreeStore<T>::isolatedTreeMap()
+inline UncheckedKeyHashMap<AXID, ThreadSafeWeakPtr<AXIsolatedTree>>& AXTreeStore<T>::isolatedTreeMap()
 {
-    static NeverDestroyed<HashMap<AXID, ThreadSafeWeakPtr<AXIsolatedTree>>> map;
+    static NeverDestroyed<UncheckedKeyHashMap<AXID, ThreadSafeWeakPtr<AXIsolatedTree>>> map;
     return map;
 }
 #endif
@@ -190,17 +190,17 @@ inline AXID AXTreeStore<T>::generateNewID()
 {
     ASSERT(isMainThread());
 
-    AXID axID;
+    std::optional<AXID> axID;
     do {
         axID = AXID::generate();
-    } while (!axID.isValid() || liveTreeMap().contains(axID));
-    return axID;
+    } while (liveTreeMap().contains(*axID));
+    return *axID;
 }
 
 template<typename T>
 Lock AXTreeStore<T>::s_storeLock;
 
-inline AXTreePtr axTreeForID(AXID axID)
+inline AXTreePtr axTreeForID(std::optional<AXID> axID)
 {
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     if (!isMainThread())

@@ -93,9 +93,9 @@ void StringBuilder::shrink(unsigned newLength)
         }
         // Allocate a fresh buffer, with a copy of the characters we are keeping.
         if (m_buffer->is8Bit())
-            allocateBuffer<LChar>(m_buffer->span8().data(), newLength);
+            allocateBuffer<LChar>(m_buffer->span8(), newLength);
         else
-            allocateBuffer<UChar>(m_buffer->span16().data(), newLength);
+            allocateBuffer<UChar>(m_buffer->span16(), newLength);
         return;
     }
 
@@ -122,29 +122,29 @@ void StringBuilder::reserveCapacity(unsigned newCapacity)
     } else {
         if (newCapacity > m_length) {
             if (!m_length)
-                allocateBuffer<LChar>(static_cast<LChar*>(nullptr), newCapacity);
+                allocateBuffer<LChar>(std::span<const LChar> { }, newCapacity);
             else if (m_string.is8Bit())
-                allocateBuffer<LChar>(m_string.span8().data(), newCapacity);
+                allocateBuffer<LChar>(m_string.span8(), newCapacity);
             else
-                allocateBuffer<UChar>(m_string.span16().data(), newCapacity);
+                allocateBuffer<UChar>(m_string.span16(), newCapacity);
         }
     }
     ASSERT(hasOverflowed() || !newCapacity || m_buffer->length() >= newCapacity);
 }
 
 // Alterative extendBufferForAppending that can be called from the header without inlining.
-LChar* StringBuilder::extendBufferForAppendingLChar(unsigned requiredLength)
+std::span<LChar> StringBuilder::extendBufferForAppendingLChar(unsigned requiredLength)
 {
     return extendBufferForAppending<LChar>(requiredLength);
 }
 
-UChar* StringBuilder::extendBufferForAppendingWithUpconvert(unsigned requiredLength)
+std::span<UChar> StringBuilder::extendBufferForAppendingWithUpconvert(unsigned requiredLength)
 {
     if (is8Bit()) {
-        allocateBuffer<UChar>(characters<LChar>(), expandedCapacity(capacity(), requiredLength));
+        allocateBuffer<UChar>(span8(), expandedCapacity(capacity(), requiredLength));
         if (UNLIKELY(hasOverflowed()))
-            return nullptr;
-        return const_cast<UChar*>(m_buffer->span16().data()) + std::exchange(m_length, requiredLength);
+            return { };
+        return spanConstCast<UChar>(m_buffer->span16().subspan(std::exchange(m_length, requiredLength)));
     }
     return extendBufferForAppending<UChar>(requiredLength);
 }
@@ -158,8 +158,8 @@ void StringBuilder::append(std::span<const UChar> characters)
         return;
     }
     RELEASE_ASSERT(characters.size() < std::numeric_limits<uint32_t>::max());
-    if (auto destination = extendBufferForAppendingWithUpconvert(saturatedSum<uint32_t>(m_length, static_cast<uint32_t>(characters.size()))))
-        StringImpl::copyCharacters(destination, characters);
+    if (auto destination = extendBufferForAppendingWithUpconvert(saturatedSum<uint32_t>(m_length, static_cast<uint32_t>(characters.size()))); destination.data())
+        StringImpl::copyCharacters(destination.data(), characters);
 }
 
 void StringBuilder::append(std::span<const LChar> characters)
@@ -168,11 +168,11 @@ void StringBuilder::append(std::span<const LChar> characters)
         return;
     RELEASE_ASSERT(characters.size() < std::numeric_limits<uint32_t>::max());
     if (is8Bit()) {
-        if (auto destination = extendBufferForAppending<LChar>(saturatedSum<uint32_t>(m_length, static_cast<uint32_t>(characters.size()))))
-            StringImpl::copyCharacters(destination, characters);
+        if (auto destination = extendBufferForAppending<LChar>(saturatedSum<uint32_t>(m_length, static_cast<uint32_t>(characters.size()))); destination.data())
+            StringImpl::copyCharacters(destination.data(), characters);
     } else {
-        if (auto destination = extendBufferForAppending<UChar>(saturatedSum<uint32_t>(m_length, static_cast<uint32_t>(characters.size()))))
-            StringImpl::copyCharacters(destination, characters);
+        if (auto destination = extendBufferForAppending<UChar>(saturatedSum<uint32_t>(m_length, static_cast<uint32_t>(characters.size()))); destination.data())
+            StringImpl::copyCharacters(destination.data(), characters);
     }
 }
 

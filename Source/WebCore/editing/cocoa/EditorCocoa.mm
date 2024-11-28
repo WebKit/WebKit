@@ -72,6 +72,7 @@
 #import <pal/spi/cocoa/NSAttributedStringSPI.h>
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/cocoa/NSURLExtras.h>
+#import <wtf/cocoa/SpanCocoa.h>
 #import <wtf/text/MakeString.h>
 
 namespace WebCore {
@@ -157,7 +158,7 @@ static RetainPtr<NSAttributedString> selectionAsAttributedString(const Document&
     if (ImageOverlay::isInsideOverlay(selection))
         return selectionInImageOverlayAsAttributedString(selection);
     auto range = selection.firstRange();
-    return range ? attributedString(*range).nsAttributedString() : adoptNS([[NSAttributedString alloc] init]);
+    return range ? attributedString(*range, IgnoreUserSelectNone::Yes).nsAttributedString() : adoptNS([[NSAttributedString alloc] init]);
 }
 
 template<typename PasteboardContent>
@@ -179,11 +180,16 @@ void Editor::writeSelectionToPasteboard(Pasteboard& pasteboard)
     content.contentOrigin = document->originIdentifierForPasteboard();
     content.canSmartCopyOrDelete = canSmartCopyOrDelete();
     if (!pasteboard.isStatic()) {
-        content.dataInWebArchiveFormat = selectionInWebArchiveFormat();
-        populateRichTextDataIfNeeded(content, document);
+        if (!document->isTextDocument()) {
+            content.dataInWebArchiveFormat = selectionInWebArchiveFormat();
+            populateRichTextDataIfNeeded(content, document);
+        }
         client()->getClientPasteboardData(selectedRange(), content.clientTypesAndData);
     }
-    content.dataInHTMLFormat = selectionInHTMLFormat();
+
+    if (!document->isTextDocument())
+        content.dataInHTMLFormat = selectionInHTMLFormat();
+
     content.dataInStringFormat = stringSelectionForPasteboardWithImageAltText();
 
     pasteboard.write(content);
@@ -196,11 +202,13 @@ void Editor::writeSelection(PasteboardWriterData& pasteboardWriterData)
     PasteboardWriterData::WebContent webContent;
     webContent.contentOrigin = document->originIdentifierForPasteboard();
     webContent.canSmartCopyOrDelete = canSmartCopyOrDelete();
-    webContent.dataInWebArchiveFormat = selectionInWebArchiveFormat();
-    populateRichTextDataIfNeeded(webContent, document);
-    webContent.dataInHTMLFormat = selectionInHTMLFormat();
-    webContent.dataInStringFormat = stringSelectionForPasteboardWithImageAltText();
+    if (!document->isTextDocument()) {
+        webContent.dataInWebArchiveFormat = selectionInWebArchiveFormat();
+        populateRichTextDataIfNeeded(webContent, document);
+        webContent.dataInHTMLFormat = selectionInHTMLFormat();
+    }
     client()->getClientPasteboardData(selectedRange(), webContent.clientTypesAndData);
+    webContent.dataInStringFormat = stringSelectionForPasteboardWithImageAltText();
 
     pasteboardWriterData.setWebContent(WTFMove(webContent));
 }
@@ -394,6 +402,43 @@ void Editor::replaceNodeFromPasteboard(Node& node, const String& pasteboardName,
 }
 
 #if ENABLE(MULTI_REPRESENTATION_HEIC)
+
+static RetainPtr<CGImageRef> fallbackImageForMultiRepresentationHEIC(std::span<const uint8_t> data)
+{
+    static constexpr size_t fallbackSize = 24;
+
+    RetainPtr nsData = WTF::toNSData(data);
+    RetainPtr adaptiveImageGlyph = adoptNS([[PlatformNSAdaptiveImageGlyph alloc] initWithImageContent:nsData.get()]);
+
+    if (!adaptiveImageGlyph)
+        return nullptr;
+
+    CGSize imageSize;
+    CGPoint imageOffset;
+    RetainPtr image = [adaptiveImageGlyph imageForProposedSize:CGSizeMake(fallbackSize, fallbackSize) scaleFactor:1 imageOffset:&imageOffset imageSize:&imageSize];
+
+    if (!image)
+        return nullptr;
+
+    RetainPtr colorSpace = CGImageGetColorSpace(image.get());
+    if (!CGColorSpaceSupportsOutput(colorSpace.get()))
+        colorSpace = adoptCF(CGColorSpaceCreateWithName(kCGColorSpaceSRGB));
+
+    size_t imageWidth = std::ceil(imageSize.width);
+    size_t imageHeight = std::ceil(imageSize.height);
+
+    RetainPtr context = adoptCF(CGBitmapContextCreate(nil, imageWidth, imageHeight, 8, 4 * imageWidth, colorSpace.get(), kCGImageAlphaPremultipliedLast));
+    if (!context)
+        return nullptr;
+
+    CGContextSetInterpolationQuality(context.get(), kCGInterpolationHigh);
+
+    CGRect destinationRect = CGRectMake((imageWidth - imageSize.width) / 2.f, (imageHeight - imageSize.height) / 2.f, imageSize.width, imageSize.height);
+    CGContextDrawImage(context.get(), destinationRect, image.get());
+
+    return adoptCF(CGBitmapContextCreateImage(context.get()));
+}
+
 void Editor::insertMultiRepresentationHEIC(const std::span<const uint8_t>& data, const String& altText)
 {
     auto document = protectedDocument();
@@ -402,7 +447,7 @@ void Editor::insertMultiRepresentationHEIC(const std::span<const uint8_t>& data,
     auto primaryBuffer = FragmentedSharedBuffer::create(data);
 
     String fallbackType = "image/png"_s;
-    auto fallbackData = encodeData(data, fallbackType, std::nullopt);
+    auto fallbackData = encodeData(fallbackImageForMultiRepresentationHEIC(data).get(), fallbackType, std::nullopt);
     auto fallbackBuffer = FragmentedSharedBuffer::create(WTFMove(fallbackData));
 
     auto picture = HTMLPictureElement::create(HTMLNames::pictureTag, document);

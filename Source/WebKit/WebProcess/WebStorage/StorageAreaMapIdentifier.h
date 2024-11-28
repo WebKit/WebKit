@@ -30,7 +30,7 @@
 namespace WebKit {
 
 enum class StorageAreaMapIdentifierType { };
-using StorageAreaMapIdentifier = LegacyNullableObjectIdentifier<StorageAreaMapIdentifierType>;
+using StorageAreaMapIdentifier = ObjectIdentifier<StorageAreaMapIdentifierType>;
 
 } // namespace WebKit
 

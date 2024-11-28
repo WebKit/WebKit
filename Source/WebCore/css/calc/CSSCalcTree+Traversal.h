@@ -101,7 +101,7 @@ template<typename F, typename Op> void forAllChildNodes(const Op& root, const F&
         {
             WTF::switchOn(root,
                 [&](const Child& root) { functor(root); },
-                [&](const NoneRaw&) { }
+                [&](const CSS::NoneRaw&) { }
             );
         }
         void operator()(const Child& root)

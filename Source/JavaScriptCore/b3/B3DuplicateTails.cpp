@@ -129,7 +129,7 @@ public:
 
             block->removeLast(m_proc);
 
-            HashMap<Value*, Value*> map;
+            UncheckedKeyHashMap<Value*, Value*> map;
             for (Value* value : *tail) {
                 Value* clone = m_proc.clone(value);
                 for (Value*& child : clone->children()) {

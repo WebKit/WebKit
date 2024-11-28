@@ -24,12 +24,11 @@ function init()
   var worker = new Worker('context-lost-worker.js');
   worker.postMessage("Start worker");
   worker.onmessage = function(e) {
-    if (e.data == "Test passed") {
-      testPassed("All tests have passed");
-    } else {
-      testFailed("Some tests failed");
+    const fn = e.data.fail ? testFailed : testPassed;
+    fn(e.data.msg);
+    if (e.data.finishTest) {
+      finishTest();
     }
-    finishTest();
     return;
   }
 }

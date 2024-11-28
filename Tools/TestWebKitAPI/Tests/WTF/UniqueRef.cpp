@@ -81,6 +81,9 @@ TEST(WTF, UniqueRef)
     C h(makeUniqueRef<A>());
     C i(makeUniqueRef<D>());
     
+    const UniqueRef<B> k = makeUniqueRef<B>(1, 2, 3);
+    k->a = 4;
+
     UNUSED_PARAM(b);
     UNUSED_PARAM(c);
     UNUSED_PARAM(d);
@@ -90,6 +93,7 @@ TEST(WTF, UniqueRef)
     UNUSED_PARAM(h);
     UNUSED_PARAM(i);
     UNUSED_PARAM(j);
+    UNUSED_PARAM(k);
 }
 
 } // namespace TestWebKitAPI

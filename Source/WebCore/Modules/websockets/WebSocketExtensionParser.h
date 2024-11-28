@@ -38,9 +38,8 @@ namespace WebCore {
 
 class WebSocketExtensionParser {
 public:
-    explicit WebSocketExtensionParser(const char* start, const char* end)
-        : m_current(start)
-        , m_end(end)
+    explicit WebSocketExtensionParser(std::span<const uint8_t> data)
+        : m_data(data)
     {
     }
     bool finished();
@@ -59,9 +58,9 @@ private:
 
     void skipSpaces();
 
-    const char* m_current;
-    const char* m_end;
+    std::span<const uint8_t> m_data;
     String m_currentToken;
+    bool m_didFailParsing { false };
 };
 
 } // namespace WebCore

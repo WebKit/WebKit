@@ -33,17 +33,24 @@ namespace WebKit {
 
 class LocalConnection;
 
-class LocalService : public AuthenticatorTransportService {
+class LocalService : public AuthenticatorTransportService, public RefCounted<LocalService> {
+    WTF_MAKE_TZONE_ALLOCATED(LocalService);
 public:
-    explicit LocalService(AuthenticatorTransportServiceObserver&);
+    static Ref<LocalService> create(AuthenticatorTransportServiceObserver&);
 
     static bool isAvailable();
+
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
+
+protected:
+    explicit LocalService(AuthenticatorTransportServiceObserver&);
 
 private:
     void startDiscoveryInternal() final;
     // Overrided by MockLocalService.
     virtual bool platformStartDiscovery() const;
-    virtual UniqueRef<LocalConnection> createLocalConnection() const;
+    virtual Ref<LocalConnection> createLocalConnection() const;
 };
 
 } // namespace WebKit

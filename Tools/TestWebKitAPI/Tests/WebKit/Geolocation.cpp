@@ -35,8 +35,6 @@
 #include <string.h>
 #include <vector>
 
-using namespace std;
-
 namespace TestWebKitAPI {
 
 enum class GeolocationEvent {
@@ -46,7 +44,7 @@ enum class GeolocationEvent {
     DisableHighAccuracy
 };
 
-ostream& operator<<(ostream& outputStream, const GeolocationEvent& geolocationEvent)
+std::ostream& operator<<(std::ostream& outputStream, const GeolocationEvent& geolocationEvent)
 {
     switch (geolocationEvent) {
     case GeolocationEvent::StartUpdating:
@@ -66,7 +64,7 @@ ostream& operator<<(ostream& outputStream, const GeolocationEvent& geolocationEv
 }
 
 struct GeolocationStateTracker {
-    vector<GeolocationEvent> events;
+    std::vector<GeolocationEvent> events;
 
     virtual ~GeolocationStateTracker() { }
     virtual void eventsChanged() { }

@@ -56,12 +56,15 @@
 #include <WebCore/UserAgent.h>
 #include <WebCore/WorkerFetchResult.h>
 #include <WebCore/WorkerInitializationData.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
 
-WebSharedWorkerContextManagerConnection::WebSharedWorkerContextManagerConnection(Ref<IPC::Connection>&& connectionToNetworkProcess, WebCore::RegistrableDomain&& registrableDomain, PageGroupIdentifier pageGroupID, WebPageProxyIdentifier webPageProxyID, WebCore::PageIdentifier pageID, const WebPreferencesStore& preferencesStore, RemoteWorkerInitializationData&& initializationData)
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebSharedWorkerContextManagerConnection);
+
+WebSharedWorkerContextManagerConnection::WebSharedWorkerContextManagerConnection(Ref<IPC::Connection>&& connectionToNetworkProcess, WebCore::Site&& site, PageGroupIdentifier pageGroupID, WebPageProxyIdentifier webPageProxyID, WebCore::PageIdentifier pageID, const WebPreferencesStore& preferencesStore, RemoteWorkerInitializationData&& initializationData)
     : m_connectionToNetworkProcess(WTFMove(connectionToNetworkProcess))
-    , m_registrableDomain(WTFMove(registrableDomain))
+    , m_site(WTFMove(site))
     , m_pageGroupID(pageGroupID)
     , m_webPageProxyID(webPageProxyID)
     , m_pageID(pageID)
@@ -84,7 +87,7 @@ WebSharedWorkerContextManagerConnection::~WebSharedWorkerContextManagerConnectio
 
 void WebSharedWorkerContextManagerConnection::establishConnection(CompletionHandler<void()>&& completionHandler)
 {
-    m_connectionToNetworkProcess->sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::EstablishSharedWorkerContextConnection { m_webPageProxyID, m_registrableDomain }, WTFMove(completionHandler), 0);
+    m_connectionToNetworkProcess->sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::EstablishSharedWorkerContextConnection { m_webPageProxyID, m_site }, WTFMove(completionHandler), 0);
 }
 
 void WebSharedWorkerContextManagerConnection::postErrorToWorkerObject(WebCore::SharedWorkerIdentifier sharedWorkerIdentifier, const String& errorMessage, int lineNumber, int columnNumber, const String& sourceURL, bool isErrorEvent)
@@ -112,9 +115,9 @@ void WebSharedWorkerContextManagerConnection::launchSharedWorker(WebCore::Client
 #endif
     pageConfiguration.storageProvider = makeUniqueRef<WebStorageProvider>(WebProcess::singleton().mediaKeysStorageDirectory(), WebProcess::singleton().mediaKeysStorageSalt());
 
-    pageConfiguration.clientCreatorForMainFrame = CompletionHandler<UniqueRef<WebCore::LocalFrameLoaderClient>(WebCore::LocalFrame&)> { [client = makeUniqueRef<RemoteWorkerFrameLoaderClient>(m_webPageProxyID, m_pageID, m_userAgent)] (auto&) mutable {
-        return WTFMove(client);
-    } };
+    pageConfiguration.mainFrameCreationParameters = WebCore::PageConfiguration::LocalMainFrameCreationParameters { CompletionHandler<UniqueRef<WebCore::LocalFrameLoaderClient>(WebCore::LocalFrame&, WebCore::FrameLoader&)> { [webPageProxyID = m_webPageProxyID, pageID = m_pageID, userAgent = m_userAgent] (auto&, auto& frameLoader) mutable {
+        return makeUniqueRefWithoutRefCountedCheck<RemoteWorkerFrameLoaderClient>(frameLoader, webPageProxyID, pageID, userAgent);
+    } }, WebCore::SandboxFlags { } };
 
     Ref page = WebCore::Page::create(WTFMove(pageConfiguration));
     if (m_preferencesStore) {

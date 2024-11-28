@@ -771,6 +771,11 @@ String DiagnosticLoggingKeys::mediaAudioCodecWatchTimeKey()
     return "watchtimeByAudioCodec"_s;
 }
 
+String DiagnosticLoggingKeys::mediaBufferingWatchTimeKey()
+{
+    return "watchtimeBuffering"_s;
+}
+
 String DiagnosticLoggingKeys::secondsKey()
 {
     return "seconds"_s;
@@ -791,30 +796,20 @@ String DiagnosticLoggingKeys::audioCodecKey()
     return "audioCodec"_s;
 }
 
-String DiagnosticLoggingKeys::mediaElementSourceTypeDiagnosticLoggingKey(HTMLMediaElementSourceType sourceType)
+String DiagnosticLoggingKeys::textTrackTypeKey()
 {
-    switch (sourceType) {
-    case HTMLMediaElementSourceType::File:
-        return "file"_s;
-    case HTMLMediaElementSourceType::HLS:
-        return "hls"_s;
-    case HTMLMediaElementSourceType::MediaSource:
-        return "mediaSource"_s;
-    case HTMLMediaElementSourceType::ManagedMediaSource:
-        return "managedMediaSource"_s;
-    case HTMLMediaElementSourceType::MediaStream:
-        return "mediaStream"_s;
-    case HTMLMediaElementSourceType::LiveStream:
-        return "liveStream"_s;
-    case HTMLMediaElementSourceType::StoredStream:
-        return "storedStream"_s;
-    }
-
-    ASSERT_NOT_REACHED();
-    return nullString();
+    return "textTrackType"_s;
 }
 
+String DiagnosticLoggingKeys::textTrackKindKey()
+{
+    return "textTrackKind"_s;
+}
 
+String DiagnosticLoggingKeys::textTrackModeKey()
+{
+    return "textTrackMode"_s;
+}
 
 } // namespace WebCore
 

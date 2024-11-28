@@ -61,21 +61,21 @@ public:
 
 private:
     friend class BaselineAlignmentState;
-    BaselineGroup(BlockFlowDirection, ItemPosition childPreference);
+    BaselineGroup(FlowDirection, ItemPosition childPreference);
 
     // Determines whether a baseline-sharing group is compatible with an item, based on its 'block-flow' and
     // 'baseline-preference'
-    bool isCompatible(BlockFlowDirection, ItemPosition) const;
+    bool isCompatible(FlowDirection, ItemPosition) const;
 
     // Determines whether the baseline-sharing group's associated block-flow is opposite (LR vs RL) to particular
     // item's writing-mode.
-    bool isOppositeBlockFlow(BlockFlowDirection) const;
+    bool isOppositeBlockFlow(FlowDirection) const;
 
     // Determines whether the baseline-sharing group's associated block-flow is orthogonal (vertical vs horizontal)
     // to particular item's writing-mode.
-    bool isOrthogonalBlockFlow(BlockFlowDirection) const;
+    bool isOrthogonalBlockFlow(FlowDirection) const;
 
-    BlockFlowDirection m_blockFlow;
+    FlowDirection m_blockFlow;
     ItemPosition m_preference;
     LayoutUnit m_maxAscent;
     SingleThreadWeakHashSet<RenderBox> m_items;

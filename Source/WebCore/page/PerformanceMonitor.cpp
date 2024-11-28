@@ -84,6 +84,16 @@ PerformanceMonitor::PerformanceMonitor(Page& page)
     }
 }
 
+void PerformanceMonitor::ref() const
+{
+    m_page->ref();
+}
+
+void PerformanceMonitor::deref() const
+{
+    m_page->deref();
+}
+
 void PerformanceMonitor::didStartProvisionalLoad()
 {
     m_postLoadCPUTime = std::nullopt;

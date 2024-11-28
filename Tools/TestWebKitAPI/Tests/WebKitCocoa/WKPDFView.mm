@@ -33,6 +33,7 @@
 #import "TestUIDelegate.h"
 #import "TestURLSchemeHandler.h"
 #import "TestWKWebView.h"
+#import "UnifiedPDFTestHelpers.h"
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKWebView.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
@@ -47,7 +48,7 @@
 #if PLATFORM(IOS) || PLATFORM(MAC) || PLATFORM(VISION)
 static NSData *pdfData()
 {
-    return [NSData dataWithContentsOfURL:[[NSBundle mainBundle] URLForResource:@"test" withExtension:@"pdf" subdirectory:@"TestWebKitAPI.resources"]];
+    return [NSData dataWithContentsOfURL:[NSBundle.test_resourcesBundle URLForResource:@"test" withExtension:@"pdf"]];
 }
 #endif
 
@@ -65,7 +66,7 @@ TEST(WebKit, WKPDFViewResizeCrash)
 {
     RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
 
-    NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"test" withExtension:@"pdf" subdirectory:@"TestWebKitAPI.resources"]];
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"test" withExtension:@"pdf"]];
     [webView loadRequest:request];
     [webView _test_waitForDidFinishNavigation];
 
@@ -82,9 +83,9 @@ TEST(WebKit, WKPDFViewResizeCrash)
 
 TEST(WebKit, WKPDFViewStablePresentationUpdateCallback)
 {
-    RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
 
-    NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"test" withExtension:@"pdf" subdirectory:@"TestWebKitAPI.resources"]];
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"test" withExtension:@"pdf"]];
     [webView loadRequest:request];
     [webView _test_waitForDidFinishNavigation];
 
@@ -154,7 +155,7 @@ TEST(WebKit, WKPDFViewFindActions)
 {
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
 
-    NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"test" withExtension:@"pdf" subdirectory:@"TestWebKitAPI.resources"]];
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"test" withExtension:@"pdf"]];
     [webView loadRequest:request];
     [webView _test_waitForDidFinishNavigation];
 
@@ -180,10 +181,10 @@ TEST(WKPDFView, BackgroundColor)
 
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
 
-    [webView synchronouslyLoadRequest:[NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"red" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]]];
+    [webView synchronouslyLoadRequest:[NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"red" withExtension:@"html"]]];
     EXPECT_TRUE(CGColorEqualToColor([webView scrollView].backgroundColor.CGColor, redColor.get()));
 
-    [webView synchronouslyLoadRequest:[NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"test" withExtension:@"pdf" subdirectory:@"TestWebKitAPI.resources"]]];
+    [webView synchronouslyLoadRequest:[NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"test" withExtension:@"pdf"]]];
     EXPECT_FALSE(CGColorEqualToColor([webView scrollView].backgroundColor.CGColor, redColor.get()));
 
     [webView synchronouslyGoBack];
@@ -196,14 +197,26 @@ TEST(WKPDFView, BackgroundColor)
 
 TEST(WKWebView, IsDisplayingPDF)
 {
-    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:adoptNS([WKWebViewConfiguration new]).get()]);
-    [webView loadData:pdfData() MIMEType:@"application/pdf" characterEncodingName:@"" baseURL:[NSURL URLWithString:@"https://www.apple.com/testPath"]];
-    [webView _test_waitForDidFinishNavigation];
-    EXPECT_TRUE([webView _isDisplayingPDF]);
+    auto runTest = [](const auto& webView) {
+        [webView loadData:pdfData() MIMEType:@"application/pdf" characterEncodingName:@"" baseURL:[NSURL URLWithString:@"https://www.apple.com/testPath"]];
+        [webView _test_waitForDidFinishNavigation];
+        EXPECT_TRUE([webView _isDisplayingPDF]);
 
-    [webView loadHTMLString:@"<meta name='viewport' content='width=device-width'><h1>hello world</h1>" baseURL:[NSURL URLWithString:@"https://www.apple.com/1"]];
-    [webView _test_waitForDidFinishNavigationWithoutPresentationUpdate];
-    EXPECT_FALSE([webView _isDisplayingPDF]);
+        [webView loadHTMLString:@"<meta name='viewport' content='width=device-width'><h1>hello world</h1>" baseURL:[NSURL URLWithString:@"https://www.apple.com/1"]];
+        [webView _test_waitForDidFinishNavigationWithoutPresentationUpdate];
+        EXPECT_FALSE([webView _isDisplayingPDF]);
+    };
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:adoptNS([WKWebViewConfiguration new]).get()]);
+
+    runTest(webView);
+
+#if ENABLE(UNIFIED_PDF)
+    if constexpr (TestWebKitAPI::unifiedPDFForTestingEnabled) {
+        webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:TestWebKitAPI::configurationForWebViewTestingUnifiedPDF().get() addToWindow:YES]);
+        runTest(webView);
+    }
+#endif
 }
 
 #endif
@@ -494,7 +507,7 @@ TEST(PDF, PrintSize)
         } else {
             EXPECT_WK_STREQ(url.path, "/test_print.pdf");
             mimeType = @"application/pdf";
-            data = [NSData dataWithContentsOfURL:[[NSBundle mainBundle] URLForResource:@"test_print" withExtension:@"pdf" subdirectory:@"TestWebKitAPI.resources"]];
+            data = [NSData dataWithContentsOfURL:[NSBundle.test_resourcesBundle URLForResource:@"test_print" withExtension:@"pdf"]];
         }
         auto response = adoptNS([[NSURLResponse alloc] initWithURL:url MIMEType:mimeType expectedContentLength:data.length textEncodingName:nil]);
         [task didReceiveResponse:response.get()];

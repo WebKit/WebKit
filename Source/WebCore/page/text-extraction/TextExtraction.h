@@ -31,6 +31,7 @@
 namespace WebCore {
 
 class Element;
+class FloatRect;
 class LocalFrame;
 class Page;
 enum class ExceptionCode : uint8_t;
@@ -38,6 +39,7 @@ enum class ExceptionCode : uint8_t;
 namespace TextExtraction {
 
 WEBCORE_EXPORT Item extractItem(std::optional<WebCore::FloatRect>&& collectionRectInRootView, Page&);
+WEBCORE_EXPORT Vector<std::pair<String, FloatRect>> extractAllTextAndRects(Page&);
 
 struct RenderedText {
     String textWithReplacedContent;

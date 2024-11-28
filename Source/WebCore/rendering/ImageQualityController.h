@@ -51,8 +51,8 @@ public:
     void rendererWillBeDestroyed(RenderBoxModelObject& renderer) { removeObject(&renderer); }
 
 private:
-    using LayerSizeMap = HashMap<const void*, LayoutSize>;
-    using ObjectLayerSizeMap = HashMap<SingleThreadWeakRef<RenderBoxModelObject>, LayerSizeMap>;
+    using LayerSizeMap = UncheckedKeyHashMap<const void*, LayoutSize>;
+    using ObjectLayerSizeMap = UncheckedKeyHashMap<SingleThreadWeakRef<RenderBoxModelObject>, LayerSizeMap>;
 
     void removeLayer(RenderBoxModelObject*, LayerSizeMap* innerMap, const void* layer);
     void set(RenderBoxModelObject*, LayerSizeMap* innerMap, const void* layer, const LayoutSize&);

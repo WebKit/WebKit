@@ -29,13 +29,19 @@
 
 namespace WebCore {
 class Element;
+class WeakPtrImplWithEventTargetData;
 
 class ComputedStylePropertyMapReadOnly final : public MainThreadStylePropertyMapReadOnly {
 public:
     static Ref<ComputedStylePropertyMapReadOnly> create(Element&);
 
+    Type type() const final { return Type::Computed; }
+    Element* elementConcurrently() const { return m_element.get(); }
+
 private:
     explicit ComputedStylePropertyMapReadOnly(Element&);
+
+    RefPtr<Element> protectedElement() const { return m_element.get(); }
 
     RefPtr<CSSValue> propertyValue(CSSPropertyID) const final;
     String shorthandPropertySerialization(CSSPropertyID) const final;
@@ -43,7 +49,9 @@ private:
     unsigned size() const final;
     Vector<StylePropertyMapReadOnly::StylePropertyMapEntry> entries(ScriptExecutionContext*) const final;
 
-    Ref<Element> m_element;
+    WeakPtr<Element, WeakPtrImplWithEventTargetData> m_element;
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_CSSOM_STYLE_PROPERTY_MAP(ComputedStylePropertyMapReadOnly, WebCore::StylePropertyMapReadOnly::Type::Computed);

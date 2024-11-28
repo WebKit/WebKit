@@ -48,7 +48,6 @@
 #include "Page.h"
 #include "Quirks.h"
 #include "RejectedPromiseTracker.h"
-#include "RuntimeApplicationChecks.h"
 #include "ScriptController.h"
 #include "ScriptModuleLoader.h"
 #include "SecurityOrigin.h"
@@ -65,6 +64,7 @@
 #include <JavaScriptCore/VMTrapsInlines.h>
 #include <wtf/Language.h>
 #include <wtf/MainThread.h>
+#include <wtf/RuntimeApplicationChecks.h>
 
 #if PLATFORM(IOS_FAMILY)
 #include "ChromeClient.h"

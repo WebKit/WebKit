@@ -8,19 +8,34 @@
 #include "src/gpu/graphite/render/BitmapTextRenderStep.h"
 
 #include "include/core/SkM44.h"
+#include "include/core/SkRefCnt.h"
+#include "include/core/SkSamplingOptions.h"
+#include "include/core/SkSize.h"
+#include "include/core/SkTileMode.h"
 #include "include/gpu/graphite/Recorder.h"
+#include "include/private/base/SkAssert.h"
+#include "include/private/base/SkDebug.h"
+#include "src/core/SkSLTypeShared.h"
 #include "src/gpu/AtlasTypes.h"
 #include "src/gpu/graphite/AtlasProvider.h"
+#include "src/gpu/graphite/Attribute.h"
 #include "src/gpu/graphite/ContextUtils.h"
+#include "src/gpu/graphite/DrawOrder.h"
 #include "src/gpu/graphite/DrawParams.h"
-#include "src/gpu/graphite/DrawWriter.h"
+#include "src/gpu/graphite/DrawTypes.h"
 #include "src/gpu/graphite/PipelineData.h"
 #include "src/gpu/graphite/RecorderPriv.h"
+#include "src/gpu/graphite/TextureProxy.h"
+#include "src/gpu/graphite/geom/Geometry.h"
+#include "src/gpu/graphite/geom/SubRunData.h"
+#include "src/gpu/graphite/geom/Transform_graphite.h"
 #include "src/gpu/graphite/render/CommonDepthStencilSettings.h"
 #include "src/gpu/graphite/text/TextAtlasManager.h"
 #include "src/sksl/SkSLString.h"
 #include "src/text/gpu/SubRunContainer.h"
 #include "src/text/gpu/VertexFiller.h"
+
+#include <string_view>
 
 using AtlasSubRun = sktext::gpu::AtlasSubRun;
 
@@ -63,7 +78,7 @@ BitmapTextRenderStep::BitmapTextRenderStep(skgpu::MaskFormat variant)
                       {"indexAndFlags", VertexAttribType::kUShort2, SkSLType::kUShort2},
                       {"strikeToSourceScale", VertexAttribType::kFloat, SkSLType::kFloat},
                       {"depth", VertexAttribType::kFloat, SkSLType::kFloat},
-                      {"ssboIndices", VertexAttribType::kUShort2, SkSLType::kUShort2}},
+                      {"ssboIndices", VertexAttribType::kUInt2, SkSLType::kUInt2}},
                      /*varyings=*/
                      {{"textureCoords", SkSLType::kFloat2},
                       {"texIndex", SkSLType::kHalf},
@@ -145,7 +160,7 @@ const char* BitmapTextRenderStep::fragmentCoverageSkSL() const {
 
 void BitmapTextRenderStep::writeVertices(DrawWriter* dw,
                                          const DrawParams& params,
-                                         skvx::ushort2 ssboIndices) const {
+                                         skvx::uint2 ssboIndices) const {
     const SubRunData& subRunData = params.geometry().subRunData();
 
     subRunData.subRun()->vertexFiller().fillInstanceData(dw,
@@ -177,14 +192,12 @@ void BitmapTextRenderStep::writeUniformsAndTextures(const DrawParams& params,
     gatherer->write(atlasDimensionsInverse);
 
     // write textures and samplers
-    const SkSamplingOptions kSamplingOptions(SkFilterMode::kNearest);
-    constexpr SkTileMode kTileModes[2] = { SkTileMode::kClamp, SkTileMode::kClamp };
     for (unsigned int i = 0; i < numProxies; ++i) {
-        gatherer->add(proxies[i], {kSamplingOptions, kTileModes});
+        gatherer->add(proxies[i], {SkFilterMode::kNearest, SkTileMode::kClamp});
     }
     // If the atlas has less than 4 active proxies we still need to set up samplers for the shader.
     for (unsigned int i = numProxies; i < kNumTextAtlasTextures; ++i) {
-        gatherer->add(proxies[0], {kSamplingOptions, kTileModes});
+        gatherer->add(proxies[0], {SkFilterMode::kNearest, SkTileMode::kClamp});
     }
 }
 

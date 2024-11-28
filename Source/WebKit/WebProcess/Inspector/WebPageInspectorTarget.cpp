@@ -48,31 +48,32 @@ WebPageInspectorTarget::~WebPageInspectorTarget() = default;
 
 String WebPageInspectorTarget::identifier() const
 {
-    return toTargetID(m_page.identifier());
+    return toTargetID(m_page->identifier());
 }
 
 void WebPageInspectorTarget::connect(Inspector::FrontendChannel::ConnectionType connectionType)
 {
     if (m_channel)
         return;
-    m_channel = makeUnique<WebPageInspectorTargetFrontendChannel>(m_page, identifier(), connectionType);
-    if (m_page.corePage())
-        m_page.corePage()->inspectorController().connectFrontend(*m_channel);
+    Ref page = m_page.get();
+    m_channel = makeUnique<WebPageInspectorTargetFrontendChannel>(page, identifier(), connectionType);
+    if (RefPtr corePage = page->corePage())
+        corePage->protectedInspectorController()->connectFrontend(*m_channel);
 }
 
 void WebPageInspectorTarget::disconnect()
 {
     if (!m_channel)
         return;
-    if (m_page.corePage())
-        m_page.corePage()->inspectorController().disconnectFrontend(*m_channel);
+    if (RefPtr corePage = m_page->corePage())
+        corePage->protectedInspectorController()->disconnectFrontend(*m_channel);
     m_channel.reset();
 }
 
 void WebPageInspectorTarget::sendMessageToTargetBackend(const String& message)
 {
-    if (m_page.corePage())
-        m_page.corePage()->inspectorController().dispatchMessageFromFrontend(message);
+    if (RefPtr corePage = m_page->corePage())
+        corePage->protectedInspectorController()->dispatchMessageFromFrontend(message);
 }
 
 String WebPageInspectorTarget::toTargetID(WebCore::PageIdentifier pageID)

@@ -53,6 +53,8 @@
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/text/CString.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(Blob);
@@ -265,7 +267,7 @@ String Blob::normalizedContentType(const String& contentType)
     return contentType.convertToASCIILowercase();
 }
 
-void Blob::loadBlob(FileReaderLoader::ReadType readType, CompletionHandler<void(BlobLoader&)>&& completionHandler)
+void Blob::loadBlob(FileReaderLoader::ReadType readType, Function<void(BlobLoader&)>&& completionHandler)
 {
     auto blobLoader = makeUnique<BlobLoader>([this, pendingActivity = makePendingActivity(*this), completionHandler = WTFMove(completionHandler)](BlobLoader& blobLoader) mutable {
         completionHandler(blobLoader);
@@ -480,3 +482,5 @@ WebCoreOpaqueRoot root(Blob* blob)
 }
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

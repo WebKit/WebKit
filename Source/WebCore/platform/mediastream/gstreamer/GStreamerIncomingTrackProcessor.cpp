@@ -69,8 +69,18 @@ void GStreamerIncomingTrackProcessor::configure(ThreadSafeWeakPtr<GStreamerMedia
 
     auto structure = gst_caps_get_structure(m_data.caps.get(), 0);
     if (auto ssrc = gstStructureGet<unsigned>(structure, "ssrc"_s)) {
+        m_data.ssrc = *ssrc;
         auto msIdAttributeName = makeString("ssrc-"_s, *ssrc, "-msid"_s);
         if (auto msIdAttribute = gstStructureGetString(structure, msIdAttributeName)) {
+            auto components = msIdAttribute.toStringWithoutCopying().split(' ');
+            if (components.size() == 2)
+                m_sdpMsIdAndTrackId = { components[0], components[1] };
+        }
+    }
+    if (auto msIdAttribute = gstStructureGetString(structure, "a-msid"_s)) {
+        if (msIdAttribute.startsWith(' '))
+            m_sdpMsIdAndTrackId = { emptyString(), msIdAttribute.substring(1).toString() };
+        else {
             auto components = msIdAttribute.toStringWithoutCopying().split(' ');
             if (components.size() == 2)
                 m_sdpMsIdAndTrackId = { components[0], components[1] };
@@ -107,7 +117,7 @@ void GStreamerIncomingTrackProcessor::configure(ThreadSafeWeakPtr<GStreamerMedia
             return GST_PAD_PROBE_OK;
 
         gst_query_add_allocation_meta(query, GST_VIDEO_META_API_TYPE, nullptr);
-        return GST_PAD_PROBE_REMOVE;
+        return GST_PAD_PROBE_HANDLED;
     }), nullptr, nullptr);
 }
 
@@ -313,7 +323,7 @@ void GStreamerIncomingTrackProcessor::trackReady()
         return;
 
     m_isReady = true;
-    GST_DEBUG_OBJECT(m_bin.get(), "Track %s on pad %" GST_PTR_FORMAT " is ready", m_data.mediaStreamId.utf8().data(), m_pad.get());
+    GST_DEBUG_OBJECT(m_bin.get(), "MediaStream %s track %s on pad %" GST_PTR_FORMAT " is ready", m_data.mediaStreamId.utf8().data(), m_data.trackId.utf8().data(), m_pad.get());
     callOnMainThread([endPoint = Ref { *endPoint }, this] {
         if (endPoint->isStopped())
             return;
@@ -329,17 +339,15 @@ const GstStructure* GStreamerIncomingTrackProcessor::stats()
     if (!m_isDecoding)
         return nullptr;
 
-    m_stats.reset(gst_structure_new_empty("incoming-video-stats"));
     GUniqueOutPtr<GstStructure> stats;
     g_object_get(m_sink.get(), "stats", &stats.outPtr(), nullptr);
 
-    auto droppedVideoFrames = gstStructureGet<uint64_t>(stats.get(), "dropped"_s);
-    if (!droppedVideoFrames)
-        return m_stats.get();
+    auto droppedVideoFrames = gstStructureGet<uint64_t>(stats.get(), "dropped"_s).value_or(0);
+    m_stats.reset(gst_structure_new("incoming-video-stats", "frames-decoded", G_TYPE_UINT64, m_decodedVideoFrames, "frames-dropped", G_TYPE_UINT64, droppedVideoFrames, nullptr));
 
-    gst_structure_set(m_stats.get(), "frames-decoded", G_TYPE_UINT64, m_decodedVideoFrames, "frames-dropped", G_TYPE_UINT64, *droppedVideoFrames, nullptr);
     if (!m_videoSize.isZero())
         gst_structure_set(m_stats.get(), "frame-width", G_TYPE_UINT, static_cast<unsigned>(m_videoSize.width()), "frame-height", G_TYPE_UINT, static_cast<unsigned>(m_videoSize.height()), nullptr);
+
     return m_stats.get();
 }
 

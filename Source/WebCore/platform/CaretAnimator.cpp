@@ -69,7 +69,7 @@ void CaretAnimator::serviceCaretAnimation()
 
 void CaretAnimator::scheduleAnimation()
 {
-    if (auto* page = this->page())
+    if (RefPtr page = this->page())
         page->scheduleRenderingUpdate(RenderingUpdateStep::CaretAnimation);
 }
 

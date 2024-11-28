@@ -34,15 +34,20 @@
 #include "WebAuthenticationConstants.h"
 #include <pal/crypto/CryptoDigest.h>
 #include <wtf/JSONValues.h>
+#include <wtf/StdLibExtras.h>
 #include <wtf/text/Base64.h>
 #include <wtf/text/WTFString.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 Vector<uint8_t> convertBytesToVector(const uint8_t byteArray[], const size_t length)
 {
     return { std::span { byteArray, length } };
 }
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 Vector<uint8_t> produceRpIdHash(const String& rpId)
 {
@@ -138,7 +143,7 @@ cbor::CBORValue::MapValue buildAttestationMap(Vector<uint8_t>&& authData, String
     if (attestation == AttestationConveyancePreference::None) {
         const size_t aaguidOffset = rpIdHashLength + flagsLength + signCounterLength;
         if (authData.size() >= aaguidOffset + aaguidLength && shouldZero == ShouldZeroAAGUID::Yes)
-            memset(authData.data() + aaguidOffset, 0, aaguidLength);
+            memsetSpan(authData.mutableSpan().subspan(aaguidOffset, aaguidLength), 0);
         format = String::fromLatin1(noneAttestationValue);
         statementMap.clear();
     }
@@ -246,5 +251,7 @@ std::optional<AuthenticatorTransport> convertStringToAuthenticatorTransport(cons
 }
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ENABLE(WEB_AUTHN)

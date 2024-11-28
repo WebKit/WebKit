@@ -29,7 +29,7 @@ function call(thisArgument)
 
     var argumentValues = [];
     // Start from 1 to ignore thisArgument
-    for (var i = 1; i < arguments.length; i++)
+    for (var i = 1; i < @argumentCount(); i++)
         @putByValDirect(argumentValues, i-1, arguments[i]);
 
     return this.@apply(thisArgument, argumentValues);

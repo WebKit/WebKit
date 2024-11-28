@@ -23,7 +23,6 @@ fast/forms/ios/scroll-to-reveal-focused-select.html [ Crash Failure ]
 fast/forms/ios/time-picker-value-change.html [ Failure ]
 [ Debug ] fast/forms/ios/form-control-refresh/select/focus-select-in-touchend.html [ Timeout ]
 fast/events/ios/should-be-able-to-dismiss-form-accessory-after-tapping-outside-iframe-with-focused-field.html [ Timeout ]
-fast/events/ios/keyboard-scrolling-distance.html [ Failure ]
 
 # iPads don't zoom when form elements are focused
 fast/forms/ios/user-scalable-scales-for-keyboard-focus-with-no-author-defined-scale.html [ Skip ]

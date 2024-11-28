@@ -24,6 +24,8 @@
 #include <array>
 #include <unicode/umachine.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 static constexpr size_t CSSValueListBuilderInlineCapacity = 4;
@@ -66,7 +68,7 @@ public:
     using CSSValue::separatorCSSText;
 
     bool customTraverseSubresources(const Function<bool(const CachedResource&)>&) const;
-    void customSetReplacementURLForSubresources(const HashMap<String, String>&);
+    void customSetReplacementURLForSubresources(const UncheckedKeyHashMap<String, String>&);
     void customClearReplacementURLForSubresources();
 
     CSSValueListBuilder copyValues() const;
@@ -155,3 +157,5 @@ void add(Hasher&, const CSSValueContainingVector&);
 
 SPECIALIZE_TYPE_TRAITS_CSS_VALUE(CSSValueContainingVector, containsVector())
 SPECIALIZE_TYPE_TRAITS_CSS_VALUE(CSSValueList, isValueList())
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

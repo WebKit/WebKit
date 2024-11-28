@@ -31,17 +31,17 @@ end)
 
 # Wasm specific bytecodes
 
-macro emitCheckAndPreparePointer(ctx, pointer, offset, size)
-    leap size - 1[pointer, offset], t5
-    bpb t5, boundsCheckingSize, .continuation
+macro emitCheckAndPreparePointer(ctx, pointer, offset, size, scratch)
+    leap size - 1[pointer, offset], scratch
+    bpb scratch, boundsCheckingSize, .continuation
     throwException(OutOfBoundsMemoryAccess)
 .continuation:
     addp memoryBase, pointer
 end
 
-macro emitCheckAndPreparePointerAddingOffset(ctx, pointer, offset, size)
-    leap size - 1[pointer, offset], t5
-    bpb t5, boundsCheckingSize, .continuation
+macro emitCheckAndPreparePointerAddingOffset(ctx, pointer, offset, size, scratch)
+    leap size - 1[pointer, offset], scratch
+    bpb scratch, boundsCheckingSize, .continuation
 .throw:
     throwException(OutOfBoundsMemoryAccess)
 .continuation:
@@ -49,9 +49,9 @@ macro emitCheckAndPreparePointerAddingOffset(ctx, pointer, offset, size)
     addp offset, pointer
 end
 
-macro emitCheckAndPreparePointerAddingOffsetWithAlignmentCheck(ctx, pointer, offset, size)
-    leap size - 1[pointer, offset], t5
-    bpb t5, boundsCheckingSize, .continuationInBounds
+macro emitCheckAndPreparePointerAddingOffsetWithAlignmentCheck(ctx, pointer, offset, size, scratch)
+    leap size - 1[pointer, offset], scratch
+    bpb scratch, boundsCheckingSize, .continuationInBounds
 .throwOOB:
     throwException(OutOfBoundsMemoryAccess)
 .continuationInBounds:
@@ -68,7 +68,7 @@ macro wasmLoadOp(name, struct, size, fn)
     wasmOp(name, struct, macro(ctx)
         mloadi(ctx, m_pointer, t0)
         wgetu(ctx, m_offset, t1)
-        emitCheckAndPreparePointer(ctx, t0, t1, size)
+        emitCheckAndPreparePointer(ctx, t0, t1, size, t5)
         fn([t0, t1], t2)
         returnq(ctx, t2)
     end)
@@ -89,7 +89,7 @@ macro wasmStoreOp(name, struct, size, fn)
     wasmOp(name, struct, macro(ctx)
         mloadi(ctx, m_pointer, t0)
         wgetu(ctx, m_offset, t1)
-        emitCheckAndPreparePointer(ctx, t0, t1, size)
+        emitCheckAndPreparePointer(ctx, t0, t1, size, t5)
         mloadq(ctx, m_value, t2)
         fn(t2, [t0, t1])
         dispatch(ctx)
@@ -916,7 +916,7 @@ macro wasmAtomicBinaryRMWOps(lowerCaseOpcode, upperCaseOpcode, fnb, fnh, fni, fn
         mloadi(ctx, m_pointer, t3)
         wgetu(ctx, m_offset, t1)
         mloadq(ctx, m_value, t0)
-        emitCheckAndPreparePointerAddingOffset(ctx, t3, t1, 1)
+        emitCheckAndPreparePointerAddingOffset(ctx, t3, t1, 1, t5)
         fnb(t0, [t3], t2, t5, t1)
         andq 0xff, t0 # FIXME: ZeroExtend8To64
         assert(macro(ok) bqbeq t0, 0xff, .ok end)
@@ -926,7 +926,7 @@ macro wasmAtomicBinaryRMWOps(lowerCaseOpcode, upperCaseOpcode, fnb, fnh, fni, fn
         mloadi(ctx, m_pointer, t3)
         wgetu(ctx, m_offset, t1)
         mloadq(ctx, m_value, t0)
-        emitCheckAndPreparePointerAddingOffsetWithAlignmentCheck(ctx, t3, t1, 2)
+        emitCheckAndPreparePointerAddingOffsetWithAlignmentCheck(ctx, t3, t1, 2, t5)
         fnh(t0, [t3], t2, t5, t1)
         andq 0xffff, t0 # FIXME: ZeroExtend16To64
         assert(macro(ok) bqbeq t0, 0xffff, .ok end)
@@ -936,7 +936,7 @@ macro wasmAtomicBinaryRMWOps(lowerCaseOpcode, upperCaseOpcode, fnb, fnh, fni, fn
         mloadi(ctx, m_pointer, t3)
         wgetu(ctx, m_offset, t1)
         mloadq(ctx, m_value, t0)
-        emitCheckAndPreparePointerAddingOffsetWithAlignmentCheck(ctx, t3, t1, 4)
+        emitCheckAndPreparePointerAddingOffsetWithAlignmentCheck(ctx, t3, t1, 4, t5)
         fni(t0, [t3], t2, t5, t1)
         assert(macro(ok) bqbeq t0, 0xffffffff, .ok end)
         returnq(ctx, t0)
@@ -945,7 +945,7 @@ macro wasmAtomicBinaryRMWOps(lowerCaseOpcode, upperCaseOpcode, fnb, fnh, fni, fn
         mloadi(ctx, m_pointer, t3)
         wgetu(ctx, m_offset, t1)
         mloadq(ctx, m_value, t0)
-        emitCheckAndPreparePointerAddingOffsetWithAlignmentCheck(ctx, t3, t1, 8)
+        emitCheckAndPreparePointerAddingOffsetWithAlignmentCheck(ctx, t3, t1, 8, t5)
         fnq(t0, [t3], t2, t5, t1)
         returnq(ctx, t0)
     end)
@@ -1166,7 +1166,7 @@ macro wasmAtomicCompareExchangeOps(lowerCaseOpcode, upperCaseOpcode, fnb, fnh, f
         wgetu(ctx, m_offset, t1)
         mloadq(ctx, m_expected, t0)
         mloadq(ctx, m_value, t2)
-        emitCheckAndPreparePointerAddingOffset(ctx, t3, t1, 1)
+        emitCheckAndPreparePointerAddingOffset(ctx, t3, t1, 1, t5)
         fnb(t0, t2, [t3], t5, t1)
         assert(macro(ok) bqbeq t0, 0xff, .ok end)
         returnq(ctx, t0)
@@ -1176,7 +1176,7 @@ macro wasmAtomicCompareExchangeOps(lowerCaseOpcode, upperCaseOpcode, fnb, fnh, f
         wgetu(ctx, m_offset, t1)
         mloadq(ctx, m_expected, t0)
         mloadq(ctx, m_value, t2)
-        emitCheckAndPreparePointerAddingOffsetWithAlignmentCheck(ctx, t3, t1, 2)
+        emitCheckAndPreparePointerAddingOffsetWithAlignmentCheck(ctx, t3, t1, 2, t5)
         fnh(t0, t2, [t3], t5, t1)
         assert(macro(ok) bqbeq t0, 0xffff, .ok end)
         returnq(ctx, t0)
@@ -1186,7 +1186,7 @@ macro wasmAtomicCompareExchangeOps(lowerCaseOpcode, upperCaseOpcode, fnb, fnh, f
         wgetu(ctx, m_offset, t1)
         mloadq(ctx, m_expected, t0)
         mloadq(ctx, m_value, t2)
-        emitCheckAndPreparePointerAddingOffsetWithAlignmentCheck(ctx, t3, t1, 4)
+        emitCheckAndPreparePointerAddingOffsetWithAlignmentCheck(ctx, t3, t1, 4, t5)
         fni(t0, t2, [t3], t5, t1)
         assert(macro(ok) bqbeq t0, 0xffffffff, .ok end)
         returnq(ctx, t0)
@@ -1196,7 +1196,7 @@ macro wasmAtomicCompareExchangeOps(lowerCaseOpcode, upperCaseOpcode, fnb, fnh, f
         wgetu(ctx, m_offset, t1)
         mloadq(ctx, m_expected, t0)
         mloadq(ctx, m_value, t2)
-        emitCheckAndPreparePointerAddingOffsetWithAlignmentCheck(ctx, t3, t1, 8)
+        emitCheckAndPreparePointerAddingOffsetWithAlignmentCheck(ctx, t3, t1, 8, t5)
         fnq(t0, t2, [t3], t5, t1)
         returnq(ctx, t0)
     end)
@@ -1328,8 +1328,8 @@ wasmOp(extern_convert_any, WasmExternConvertAny, macro(ctx)
 end)
 
 if ARM64E
-    global _wasmTailCallJSEntrySlowPathTrampoline
-    _wasmTailCallJSEntrySlowPathTrampoline:
+    global _wasmTailCallTrampoline
+    _wasmTailCallTrampoline:
         untagReturnAddress ws2
-        jmp ws0, JSEntryPtrTag
+        jmp ws0, WasmEntryPtrTag
 end

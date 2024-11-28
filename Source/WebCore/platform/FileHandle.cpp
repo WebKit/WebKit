@@ -29,6 +29,8 @@
 #include "config.h"
 #include "FileHandle.h"
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 FileHandle::FileHandle(const String& path, FileSystem::FileOpenMode mode)
@@ -101,12 +103,12 @@ bool FileHandle::open()
     return static_cast<bool>(*this);
 }
 
-int FileHandle::read(void* data, int length)
+int FileHandle::read(std::span<uint8_t> data)
 {
     if (!open())
         return -1;
 
-    return FileSystem::readFromFile(m_fileHandle, { static_cast<uint8_t*>(data), static_cast<size_t>(length) });
+    return FileSystem::readFromFile(m_fileHandle, data);
 }
 
 int FileHandle::write(std::span<const uint8_t> data)
@@ -132,7 +134,7 @@ bool FileHandle::printf(const char* format, ...)
 
     va_end(args);
 
-    return write({ reinterpret_cast<const uint8_t*>(buffer.data()), stringLength }) >= 0;
+    return write({ byteCast<uint8_t>(buffer.data()), stringLength }) >= 0;
 }
 
 void FileHandle::close()
@@ -152,3 +154,5 @@ FileSystem::PlatformFileHandle FileHandle::handle() const
 }
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

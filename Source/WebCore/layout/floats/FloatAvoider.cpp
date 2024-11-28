@@ -38,48 +38,48 @@ WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(FloatAvoider);
 
 // Floating boxes intersect their margin box with the other floats in the context,
 // while other float avoiders (e.g. non-floating formatting context roots) intersect their border box.
-FloatAvoider::FloatAvoider(LayoutPoint absoluteTopLeft, LayoutUnit borderBoxWidth, const BoxGeometry::Edges& margin, BoxGeometry::HorizontalEdges containingBlockAbsoluteContentBox, bool isFloatingPositioned, bool isLeftAligned)
+FloatAvoider::FloatAvoider(LayoutPoint absoluteTopLeft, LayoutUnit borderBoxWidth, const BoxGeometry::Edges& margin, BoxGeometry::HorizontalEdges containingBlockAbsoluteContentBox, bool isFloatingPositioned, bool isStartAligned)
     : m_absoluteTopLeft(absoluteTopLeft)
     , m_borderBoxWidth(borderBoxWidth)
     , m_margin(margin)
     , m_containingBlockAbsoluteContentBox(containingBlockAbsoluteContentBox)
     , m_isFloatingPositioned(isFloatingPositioned)
-    , m_isLeftAligned(isLeftAligned)
+    , m_isStartAligned(isStartAligned)
 {
-    m_absoluteTopLeft.setX(initialHorizontalPosition());
+    m_absoluteTopLeft.setX(initialInlineStart());
 }
 
-void FloatAvoider::setHorizontalPosition(LayoutUnit horizontalPosition)
+void FloatAvoider::setInlineStart(LayoutUnit inlineStart)
 {
-    if (isLeftAligned() && isFloatingBox())
-        horizontalPosition += marginStart();
-    if (!isLeftAligned()) {
-        horizontalPosition -= borderBoxWidth();
+    if (isStartAligned() && isFloatingBox())
+        inlineStart += marginStart();
+    if (!isStartAligned()) {
+        inlineStart -= borderBoxWidth();
         if (isFloatingBox())
-            horizontalPosition -= marginEnd();
+            inlineStart -= marginEnd();
     }
 
     auto constrainedByContainingBlock = [&] {
         // Horizontal position is constrained by the containing block's content box.
         // Compute the horizontal position for the new floating by taking both the contining block and the current left/right floats into account.
-        if (isLeftAligned())
-            return std::max(m_containingBlockAbsoluteContentBox.start + marginStart(), horizontalPosition);
+        if (isStartAligned())
+            return std::max(m_containingBlockAbsoluteContentBox.start + marginStart(), inlineStart);
         // Make sure it does not overflow the containing block on the right.
-        return std::min(horizontalPosition, m_containingBlockAbsoluteContentBox.end - marginBoxWidth() + marginStart());
+        return std::min(inlineStart, m_containingBlockAbsoluteContentBox.end - marginBoxWidth() + marginStart());
     }();
     m_absoluteTopLeft.setX(constrainedByContainingBlock);
 }
 
-void FloatAvoider::setVerticalPosition(LayoutUnit verticalPosition)
+void FloatAvoider::setBlockStart(LayoutUnit blockStart)
 {
     if (isFloatingBox())
-        verticalPosition += marginBefore();
-    m_absoluteTopLeft.setY(verticalPosition);
+        blockStart += marginBefore();
+    m_absoluteTopLeft.setY(blockStart);
 }
 
-LayoutUnit FloatAvoider::initialHorizontalPosition() const
+LayoutUnit FloatAvoider::initialInlineStart() const
 {
-    if (isLeftAligned())
+    if (isStartAligned())
         return { m_containingBlockAbsoluteContentBox.start + marginStart() };
     return { m_containingBlockAbsoluteContentBox.end - marginEnd() - borderBoxWidth() };
 }

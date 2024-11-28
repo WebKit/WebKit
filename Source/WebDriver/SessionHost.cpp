@@ -26,17 +26,34 @@
 #include "config.h"
 #include "SessionHost.h"
 
+#include <wtf/NeverDestroyed.h>
+#include <wtf/Observer.h>
+#include <wtf/WeakHashSet.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebDriver {
 
+#if ENABLE(WEBDRIVER_BIDI)
+static WeakHashSet<SessionHost::BrowserTerminatedObserver>& browserTerminatedObservers()
+{
+    static NeverDestroyed<WeakHashSet<SessionHost::BrowserTerminatedObserver>> observers;
+    return observers;
+}
+#endif
+
 void SessionHost::inspectorDisconnected()
 {
+    Ref<SessionHost> protectedThis(*this);
     // Browser closed or crashed, finish all pending commands with error.
     for (auto messageID : copyToVector(m_commandRequests.keys())) {
         auto responseHandler = m_commandRequests.take(messageID);
         responseHandler({ nullptr, true });
     }
+
+#if ENABLE(WEBDRIVER_BIDI)
+    for (auto& observer : browserTerminatedObservers())
+        observer(m_sessionID);
+#endif
 }
 
 long SessionHost::sendCommandToBackend(const String& command, RefPtr<JSON::Object>&& parameters, Function<void (CommandResponse&&)>&& responseHandler)
@@ -88,10 +105,21 @@ void SessionHost::dispatchMessage(const String& message)
     responseHandler(WTFMove(response));
 }
 
-#if !USE(GLIB)
 bool SessionHost::isRemoteBrowser() const
 {
-    return false;
+    return m_isRemoteBrowser;
+}
+
+#if ENABLE(WEBDRIVER_BIDI)
+void SessionHost::addBrowserTerminatedObserver(const BrowserTerminatedObserver& observer)
+{
+    ASSERT(!browserTerminatedObservers().contains(observer));
+    browserTerminatedObservers().add(observer);
+}
+
+void SessionHost::removeBrowserTerminatedObserver(const BrowserTerminatedObserver& observer)
+{
+    browserTerminatedObservers().remove(observer);
 }
 #endif
 

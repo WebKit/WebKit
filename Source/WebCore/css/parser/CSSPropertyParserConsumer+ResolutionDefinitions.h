@@ -24,37 +24,39 @@
 
 #pragma once
 
-#include "CSSParserToken.h"
+#include "CSSPrimitiveNumericTypes+Canonicalization.h"
 #include "CSSPropertyParserConsumer+MetaConsumerDefinitions.h"
-#include "CSSPropertyParserConsumer+Primitives.h"
-#include "CSSPropertyParserConsumer+UnevaluatedCalc.h"
-#include <optional>
-#include <wtf/Brigand.h>
 
 namespace WebCore {
-
-class CSSCalcSymbolsAllowed;
-class CSSParserTokenRange;
-
 namespace CSSPropertyParserHelpers {
 
-std::optional<ResolutionRaw> validatedRange(ResolutionRaw, CSSPropertyParserOptions);
+struct ResolutionValidator {
+    static constexpr bool isValid(CSSUnitType unitType, CSSPropertyParserOptions)
+    {
+        switch (unitType) {
+        case CSSUnitType::CSS_DPPX:
+        case CSSUnitType::CSS_X:
+        case CSSUnitType::CSS_DPI:
+        case CSSUnitType::CSS_DPCM:
+            return true;
 
-struct ResolutionKnownTokenTypeFunctionConsumer {
-    static constexpr CSSParserTokenType tokenType = FunctionToken;
-    static std::optional<UnevaluatedCalc<ResolutionRaw>> consume(CSSParserTokenRange&, CSSCalcSymbolsAllowed, CSSPropertyParserOptions);
+        default:
+            return false;
+        }
+    }
+
+    template<auto R> static bool isValid(CSS::ResolutionRaw<R> raw, CSSPropertyParserOptions)
+    {
+        return isValidDimensionValue(raw, [&] {
+            auto canonicalValue = CSS::canonicalize(raw);
+            return canonicalValue >= raw.range.min && canonicalValue <= raw.range.max;
+        });
+    }
 };
 
-struct ResolutionKnownTokenTypeDimensionConsumer {
-    static constexpr CSSParserTokenType tokenType = DimensionToken;
-    static std::optional<ResolutionRaw> consume(CSSParserTokenRange&, CSSCalcSymbolsAllowed, CSSPropertyParserOptions);
-};
-
-template<> struct ConsumerDefinition<ResolutionRaw> {
-    using type = brigand::list<ResolutionRaw, UnevaluatedCalc<ResolutionRaw>>;
-
-    using FunctionToken = ResolutionKnownTokenTypeFunctionConsumer;
-    using DimensionToken = ResolutionKnownTokenTypeDimensionConsumer;
+template<auto R> struct ConsumerDefinition<CSS::Resolution<R>> {
+    using FunctionToken = FunctionConsumerForCalcValues<CSS::Resolution<R>>;
+    using DimensionToken = DimensionConsumer<CSS::Resolution<R>, ResolutionValidator>;
 };
 
 } // namespace CSSPropertyParserHelpers

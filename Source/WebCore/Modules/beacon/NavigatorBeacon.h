@@ -30,6 +30,7 @@
 #include "ExceptionOr.h"
 #include "FetchBody.h"
 #include "Supplementable.h"
+#include <wtf/CheckedRef.h>
 #include <wtf/Forward.h>
 #include <wtf/TZoneMalloc.h>
 
@@ -59,7 +60,7 @@ private:
     void notifyFinished(CachedResource&, const NetworkLoadMetrics&, LoadWillContinueInAnotherProcess) final;
     void logError(const ResourceError&);
 
-    Navigator& m_navigator;
+    CheckedRef<Navigator> m_navigator;
     Vector<CachedResourceHandle<CachedRawResource>> m_inflightBeacons;
 };
 

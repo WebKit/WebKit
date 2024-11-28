@@ -41,6 +41,8 @@
 #include <wtf/CompactRefPtr.h>
 #include <wtf/Threading.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 inline Structure* Structure::create(VM& vm, JSGlobalObject* globalObject, JSValue prototype, const TypeInfo& typeInfo, const ClassInfo* classInfo, IndexingType indexingModeIncludingHistory, unsigned inlineCapacity)
@@ -811,7 +813,7 @@ inline Structure* StructureTransitionTable::trySingleTransition() const
 {
     uintptr_t pointer = m_data;
     if (pointer & UsingSingleSlotFlag)
-        return bitwise_cast<Structure*>(pointer & ~UsingSingleSlotFlag);
+        return std::bit_cast<Structure*>(pointer & ~UsingSingleSlotFlag);
     return nullptr;
 }
 
@@ -869,3 +871,5 @@ ALWAYS_INLINE bool Structure::canPerformFastPropertyEnumeration() const
 }
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

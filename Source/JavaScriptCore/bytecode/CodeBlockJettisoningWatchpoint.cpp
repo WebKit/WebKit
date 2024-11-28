@@ -26,17 +26,18 @@
 #include "config.h"
 #include "CodeBlockJettisoningWatchpoint.h"
 
-#include "CodeBlock.h"
+#include "CodeBlockInlines.h"
 #include "DFGCommon.h"
 
 namespace JSC {
 
 void CodeBlockJettisoningWatchpoint::fireInternal(VM&, const FireDetail& detail)
 {
+    ASSERT(!m_owner->wasDestructed());
     // If CodeBlock is no longer live, we do not fire it.
     // This works since CodeBlock is the owner of this watchpoint. When it gets destroyed, then this watchpoint also gets destroyed.
-    // Only problematic case is, (1) CodeBlock is dead, but (2) destructor is not called yet. In this case, isLive() check guards correctly.
-    if (!m_owner->isLive())
+    // Only problematic case is, (1) CodeBlock is dead, but (2) destructor is not called yet.
+    if (m_owner->isPendingDestruction())
         return;
 
     if (DFG::shouldDumpDisassembly())

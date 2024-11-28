@@ -139,7 +139,7 @@ void ViewGestureController::SwipeProgressTracker::reset()
     m_state = State::None;
 
     if (m_tickCallbackID) {
-        GtkWidget* widget = m_webPageProxy.viewWidget();
+        GtkWidget* widget = m_webPageProxy->viewWidget();
         gtk_widget_remove_tick_callback(widget, m_tickCallbackID);
         m_tickCallbackID = 0;
     }
@@ -164,7 +164,7 @@ bool ViewGestureController::SwipeProgressTracker::handleEvent(PlatformGtkScrollD
 
     // Stop current animation, if any
     if (m_state == State::Animating) {
-        GtkWidget* widget = m_webPageProxy.viewWidget();
+        GtkWidget* widget = m_webPageProxy->viewWidget();
         gtk_widget_remove_tick_callback(widget, m_tickCallbackID);
         m_tickCallbackID = 0;
 
@@ -173,7 +173,7 @@ bool ViewGestureController::SwipeProgressTracker::handleEvent(PlatformGtkScrollD
     }
 
     if (m_state == State::Pending) {
-        m_viewGestureController.beginSwipeGesture(m_targetItem.get(), m_direction);
+        m_viewGestureController->beginSwipeGesture(m_targetItem.get(), m_direction);
         m_state = State::Scrolling;
     }
 
@@ -189,7 +189,7 @@ bool ViewGestureController::SwipeProgressTracker::handleEvent(PlatformGtkScrollD
 
     double deltaX = -event->delta.width();
     if (isTouchEvent(event)) {
-        m_distance = m_webPageProxy.viewSize().width();
+        m_distance = m_webPageProxy->viewSize().width();
         deltaX *= static_cast<double>(Scrollbar::pixelsPerLineStep()) / m_distance;
     } else {
         m_distance = swipeTouchpadBaseWidth;
@@ -204,19 +204,19 @@ bool ViewGestureController::SwipeProgressTracker::handleEvent(PlatformGtkScrollD
 
     m_progress += deltaX;
 
-    bool swipingLeft = m_viewGestureController.isPhysicallySwipingLeft(m_direction);
+    bool swipingLeft = m_viewGestureController->isPhysicallySwipingLeft(m_direction);
     float maxProgress = swipingLeft ? 1 : 0;
     float minProgress = !swipingLeft ? -1 : 0;
     m_progress = clampTo<float>(m_progress, minProgress, maxProgress);
 
-    m_viewGestureController.handleSwipeGesture(m_targetItem.get(), m_progress, m_direction);
+    m_viewGestureController->handleSwipeGesture(m_targetItem.get(), m_progress, m_direction);
 
     return true;
 }
 
 bool ViewGestureController::SwipeProgressTracker::shouldCancel()
 {
-    bool swipingLeft = m_viewGestureController.isPhysicallySwipingLeft(m_direction);
+    bool swipingLeft = m_viewGestureController->isPhysicallySwipingLeft(m_direction);
     double relativeVelocity = m_velocity * (swipingLeft ? 1 : -1);
 
     if (std::abs(m_progress) > swipeCancelArea)
@@ -230,13 +230,13 @@ void ViewGestureController::SwipeProgressTracker::startAnimation()
     m_cancelled = shouldCancel();
 
     m_state = State::Animating;
-    m_viewGestureController.willEndSwipeGesture(*m_targetItem, m_cancelled);
+    m_viewGestureController->willEndSwipeGesture(*m_targetItem, m_cancelled);
 
     m_startProgress = m_progress;
     if (m_cancelled)
         m_endProgress = 0;
     else
-        m_endProgress = m_viewGestureController.isPhysicallySwipingLeft(m_direction) ? 1 : -1;
+        m_endProgress = m_viewGestureController->isPhysicallySwipingLeft(m_direction) ? 1 : -1;
 
     double velocity = swipeAnimationBaseVelocity;
     if ((m_endProgress - m_progress) * m_velocity > 0)
@@ -245,7 +245,7 @@ void ViewGestureController::SwipeProgressTracker::startAnimation()
     Seconds duration = Seconds::fromMilliseconds(std::abs((m_progress - m_endProgress) / velocity * swipeAnimationDurationMultiplier));
     duration = clampTo<Seconds>(duration, swipeMinAnimationDuration, swipeMaxAnimationDuration);
 
-    GtkWidget* widget = m_webPageProxy.viewWidget();
+    GtkWidget* widget = m_webPageProxy->viewWidget();
     m_startTime = Seconds::fromMicroseconds(gdk_frame_clock_get_frame_time(gtk_widget_get_frame_clock(widget)));
     m_endTime = m_startTime + duration;
 
@@ -274,7 +274,7 @@ gboolean ViewGestureController::SwipeProgressTracker::onAnimationTick(GdkFrameCl
 
     m_progress = m_startProgress + (m_endProgress - m_startProgress) * easeOutCubic(animationProgress);
 
-    m_viewGestureController.handleSwipeGesture(m_targetItem.get(), m_progress, m_direction);
+    m_viewGestureController->handleSwipeGesture(m_targetItem.get(), m_progress, m_direction);
     if (frameTime >= m_endTime) {
         m_tickCallbackID = 0;
         endAnimation();
@@ -287,14 +287,14 @@ gboolean ViewGestureController::SwipeProgressTracker::onAnimationTick(GdkFrameCl
 void ViewGestureController::SwipeProgressTracker::endAnimation()
 {
     m_state = State::Finishing;
-    m_viewGestureController.endSwipeGesture(m_targetItem.get(), m_cancelled);
+    m_viewGestureController->endSwipeGesture(m_targetItem.get(), m_cancelled);
 }
 
 #if !USE(GTK4)
 GRefPtr<GtkStyleContext> ViewGestureController::createStyleContext(const char* name)
 {
-    bool isRTL = m_webPageProxy.userInterfaceLayoutDirection() == WebCore::UserInterfaceLayoutDirection::RTL;
-    GtkWidget* widget = m_webPageProxy.viewWidget();
+    bool isRTL = m_webPageProxy->userInterfaceLayoutDirection() == WebCore::UserInterfaceLayoutDirection::RTL;
+    GtkWidget* widget = m_webPageProxy->viewWidget();
 
     GRefPtr<GtkWidgetPath> path = adoptGRef(gtk_widget_path_copy(gtk_widget_get_path(widget)));
 
@@ -337,11 +337,15 @@ void ViewGestureController::beginSwipeGesture(WebBackForwardListItem* targetItem
 {
     ASSERT(targetItem);
 
-    m_webPageProxy.navigationGestureDidBegin();
+    RefPtr webPageProxy = m_webPageProxy.get();
+    if (!webPageProxy)
+        return;
+
+    webPageProxy->navigationGestureDidBegin();
 
     willBeginGesture(ViewGestureType::Swipe);
 
-    FloatSize viewSize(m_webPageProxy.viewSize());
+    FloatSize viewSize(webPageProxy->viewSize());
 
 #if USE(GTK4)
     graphene_rect_t bounds = { { 0, 0 }, { viewSize.width(), viewSize.height() } };
@@ -374,7 +378,7 @@ void ViewGestureController::beginSwipeGesture(WebBackForwardListItem* targetItem
 
     if (!m_currentSwipeSnapshotPattern) {
         GdkRGBA color;
-        auto* context = gtk_widget_get_style_context(m_webPageProxy.viewWidget());
+        auto* context = gtk_widget_get_style_context(webPageProxy->viewWidget());
         if (gtk_style_context_lookup_color(context, "theme_base_color", &color))
 #if USE(GTK4)
             m_currentSwipeSnapshotPattern = adoptGRef(gsk_color_node_new(&color, &bounds));
@@ -393,14 +397,14 @@ void ViewGestureController::beginSwipeGesture(WebBackForwardListItem* targetItem
     }
 
 #if !USE(GTK4)
-    auto size = m_webPageProxy.drawingArea()->size();
+    auto size = webPageProxy->drawingArea()->size();
 
     if (!m_cssProvider) {
         m_cssProvider = adoptGRef(gtk_css_provider_new());
         gtk_css_provider_load_from_resource(m_cssProvider.get(), "/org/webkitgtk/resources/css/gtk-theme.css");
     }
 
-    int scale = gtk_widget_get_scale_factor(m_webPageProxy.viewWidget());
+    int scale = gtk_widget_get_scale_factor(webPageProxy->viewWidget());
 
     GRefPtr<GtkStyleContext> context = createStyleContext("dimming");
     m_swipeDimmingPattern = createElementPattern(context.get(), size.width(), size.height(), scale);
@@ -424,7 +428,8 @@ void ViewGestureController::beginSwipeGesture(WebBackForwardListItem* targetItem
 
 void ViewGestureController::handleSwipeGesture(WebBackForwardListItem*, double, SwipeDirection)
 {
-    gtk_widget_queue_draw(m_webPageProxy.viewWidget());
+    if (RefPtr page = m_webPageProxy.get())
+        gtk_widget_queue_draw(page->viewWidget());
 }
 
 void ViewGestureController::cancelSwipe()
@@ -442,13 +447,17 @@ void ViewGestureController::snapshot(GtkSnapshot* snapshot, GskRenderNode* pageR
 {
     bool swipingLeft = isPhysicallySwipingLeft(m_swipeProgressTracker.direction());
     bool swipingBack = m_swipeProgressTracker.direction() == SwipeDirection::Back;
-    bool isRTL = m_webPageProxy.userInterfaceLayoutDirection() == WebCore::UserInterfaceLayoutDirection::RTL;
+    RefPtr webPageProxy = m_webPageProxy.get();
+    if (!webPageProxy)
+        return;
+
+    bool isRTL = webPageProxy->userInterfaceLayoutDirection() == WebCore::UserInterfaceLayoutDirection::RTL;
     float progress = m_swipeProgressTracker.progress();
 
-    auto size = m_webPageProxy.drawingArea()->size();
+    auto size = webPageProxy->drawingArea()->size();
     int width = size.width();
     int height = size.height();
-    double scale = m_webPageProxy.deviceScaleFactor();
+    double scale = webPageProxy->deviceScaleFactor();
 
     float swipingLayerOffset = (swipingLeft ? 0 : width) + floor(width * progress * scale) / scale;
 
@@ -521,13 +530,17 @@ void ViewGestureController::draw(cairo_t* cr, cairo_pattern_t* pageGroup)
 {
     bool swipingLeft = isPhysicallySwipingLeft(m_swipeProgressTracker.direction());
     bool swipingBack = m_swipeProgressTracker.direction() == SwipeDirection::Back;
-    bool isRTL = m_webPageProxy.userInterfaceLayoutDirection() == WebCore::UserInterfaceLayoutDirection::RTL;
+    RefPtr webPageProxy = m_webPageProxy.get();
+    if (!webPageProxy)
+        return;
+
+    bool isRTL = webPageProxy->userInterfaceLayoutDirection() == WebCore::UserInterfaceLayoutDirection::RTL;
     float progress = m_swipeProgressTracker.progress();
 
-    auto size = m_webPageProxy.drawingArea()->size();
+    auto size = webPageProxy->drawingArea()->size();
     int width = size.width();
     int height = size.height();
-    double scale = m_webPageProxy.deviceScaleFactor();
+    double scale = webPageProxy->deviceScaleFactor();
 
     double swipingLayerOffset = (swipingLeft ? 0 : width) + floor(width * progress * scale) / scale;
 
@@ -628,7 +641,8 @@ void ViewGestureController::removeSwipeSnapshot()
 
     m_currentSwipeSnapshot = nullptr;
 
-    m_webPageProxy.navigationGestureSnapshotWasRemoved();
+    if (RefPtr page = m_webPageProxy.get())
+        page->navigationGestureSnapshotWasRemoved();
 
     m_backgroundColorForCurrentSnapshot = Color();
 
@@ -680,8 +694,12 @@ void ViewGestureController::setMagnification(double scale, FloatPoint origin)
 
     willBeginGesture(ViewGestureType::Magnification);
 
-    auto minMagnification = m_webPageProxy.minPageZoomFactor();
-    auto maxMagnification = m_webPageProxy.maxPageZoomFactor();
+    RefPtr webPageProxy = m_webPageProxy.get();
+    if (!webPageProxy)
+        return;
+
+    auto minMagnification = webPageProxy->minPageZoomFactor();
+    auto maxMagnification = webPageProxy->maxPageZoomFactor();
 
     double absoluteScale = scale * m_initialMagnification;
     m_magnification = clampTo<double>(absoluteScale, minMagnification, maxMagnification);

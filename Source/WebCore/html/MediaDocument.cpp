@@ -126,7 +126,7 @@ void MediaDocumentParser::createDocumentStructure()
         return;
 
     frame->loader().protectedActiveDocumentLoader()->setMainResourceDataBufferingPolicy(DataBufferingPolicy::DoNotBufferData);
-    frame->checkedLoader()->setOutgoingReferrer(document->completeURL(m_outgoingReferrer));
+    frame->protectedLoader()->setOutgoingReferrer(document->completeURL(m_outgoingReferrer));
 }
 
 void MediaDocumentParser::appendBytes(DocumentWriter&, std::span<const uint8_t>)

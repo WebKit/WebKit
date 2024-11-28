@@ -1,0 +1,5 @@
+
+
+PASS Verify MP4 MediaRecorder doesn't drop first frame
+PASS Verify WebM MediaRecorder doesn't drop first frame
+

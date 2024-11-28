@@ -2591,9 +2591,9 @@ layer at (-4284,0) size 5084x585 backgroundClip at (0,0) size 5084x585 clip at (
                 text run at (2,0) width 72: "\x{3081}\x{3044}\x{3052}\x{3064}\x{304D}\x{305F}\x{308A}\x{3066}"
           RenderInline {RUBY} at (1872,0) size 51x466
             RenderInline (generated) at (1872,0) size 51x466
-              RenderInline {RB} at (1872,0) size 51x444
-                RenderText {#text} at (1872,0) size 51x415
-                  text run at (1872,443) width -29: "\x{76F8}"
+              RenderInline {RB} at (1872,0) size 51x452
+                RenderText {#text} at (1872,0) size 51x452
+                  text run at (1872,435) width 16: "\x{76F8}"
                   text run at (1905,0) width 16: "\x{7167}"
             RenderBlock {RT} at (1859,420) size 13x46
               RenderText {#text} at (2,0) size 10x45

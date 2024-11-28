@@ -61,7 +61,7 @@ public:
 
     WEBCORE_EXPORT void addLineTo(const FloatPoint&);
     WEBCORE_EXPORT void addQuadCurveTo(const FloatPoint& controlPoint, const FloatPoint& endPoint);
-    void addBezierCurveTo(const FloatPoint& controlPoint1, const FloatPoint& controlPoint2, const FloatPoint& endPoint);
+    WEBCORE_EXPORT void addBezierCurveTo(const FloatPoint& controlPoint1, const FloatPoint& controlPoint2, const FloatPoint& endPoint);
     void addArcTo(const FloatPoint& point1, const FloatPoint& point2, float radius);
 
     void addArc(const FloatPoint&, float radius, float startAngle, float endAngle, RotationDirection);
@@ -113,7 +113,7 @@ public:
     bool strokeContains(const FloatPoint&, const Function<void(GraphicsContext&)>& strokeStyleApplier) const;
 
     WEBCORE_EXPORT FloatRect fastBoundingRect() const;
-    FloatRect boundingRect() const;
+    WEBCORE_EXPORT FloatRect boundingRect() const;
     FloatRect strokeBoundingRect(const Function<void(GraphicsContext&)>& strokeStyleApplier = { }) const;
 
     WEBCORE_EXPORT void ensureImplForTesting();

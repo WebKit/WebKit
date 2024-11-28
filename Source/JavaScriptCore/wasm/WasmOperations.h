@@ -39,6 +39,7 @@ namespace JSC {
 
 class JSArray;
 class JSWebAssemblyInstance;
+class WebAssemblyFunction;
 
 namespace Probe {
 class Context;
@@ -46,18 +47,19 @@ class Context;
 namespace Wasm {
 
 class TypeDefinition;
+class JSEntrypointCallee;
 
 typedef int64_t EncodedWasmValue;
 
-JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationJSToWasmEntryWrapperBuildFrame, void, (void*, CallFrame*));
+JSC_DECLARE_JIT_OPERATION(operationJSToWasmEntryWrapperBuildFrame, JSEntrypointCallee*, (void*, CallFrame*, WebAssemblyFunction*));
 JSC_DECLARE_JIT_OPERATION(operationJSToWasmEntryWrapperBuildReturnFrame, EncodedJSValue, (void*, CallFrame*));
 JSC_DECLARE_JIT_OPERATION(operationGetWasmCalleeStackSize, EncodedJSValue, (JSWebAssemblyInstance*, Wasm::Callee*));
-JSC_DECLARE_JIT_OPERATION(operationWasmToJSExitMarshalArguments, EncodedJSValue, (void*, CallFrame*, void*, JSWebAssemblyInstance*));
-JSC_DECLARE_JIT_OPERATION(operationWasmToJSExitMarshalReturnValues, EncodedJSValue, (void* sp, CallFrame* cfr, JSWebAssemblyInstance*));
+JSC_DECLARE_JIT_OPERATION(operationWasmToJSExitMarshalArguments, bool, (void*, CallFrame*, void*, JSWebAssemblyInstance*));
+JSC_DECLARE_JIT_OPERATION(operationWasmToJSExitMarshalReturnValues, void, (void* sp, CallFrame* cfr, JSWebAssemblyInstance*));
 
 #if ENABLE(WEBASSEMBLY_OMGJIT)
 void loadValuesIntoBuffer(Probe::Context&, const StackMap&, uint64_t* buffer, SavedFPWidth);
-JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationWasmTriggerTierUpNow, void, (JSWebAssemblyInstance*, uint32_t functionIndex));
+JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationWasmTriggerTierUpNow, void, (CallFrame*, JSWebAssemblyInstance*));
 #endif
 #if ENABLE(WEBASSEMBLY_OMGJIT) || ENABLE(WEBASSEMBLY_BBQJIT)
 JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationWasmTriggerOSREntryNow, void, (Probe::Context&));
@@ -74,7 +76,7 @@ JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationConvertToAnyref, EncodedJSValue, (JS
 JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationConvertToBigInt, EncodedJSValue, (JSWebAssemblyInstance*, EncodedWasmValue));
 
 JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationIterateResults, void, (JSWebAssemblyInstance*, const TypeDefinition*, EncodedJSValue, uint64_t*, uint64_t*));
-JSC_DECLARE_JIT_OPERATION(operationAllocateResultsArray, JSArray*, (JSWebAssemblyInstance*, const TypeDefinition*, IndexingType, JSValue*));
+JSC_DECLARE_JIT_OPERATION(operationAllocateResultsArray, JSArray*, (JSWebAssemblyInstance*, const FunctionSignature*, IndexingType, JSValue*));
 
 JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationWasmWriteBarrierSlowPath, void, (JSCell*, VM*));
 JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationPopcount32, uint32_t, (int32_t));

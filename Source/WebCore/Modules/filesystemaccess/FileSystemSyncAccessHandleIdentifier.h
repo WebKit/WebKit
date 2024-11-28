@@ -30,7 +30,7 @@
 namespace WebCore {
 
 enum class FileSystemSyncAccessHandleIdentifierType { };
-using FileSystemSyncAccessHandleIdentifier = LegacyNullableAtomicObjectIdentifier<FileSystemSyncAccessHandleIdentifierType>;
+using FileSystemSyncAccessHandleIdentifier = AtomicObjectIdentifier<FileSystemSyncAccessHandleIdentifierType>;
 
 } // namespace WebCore
 

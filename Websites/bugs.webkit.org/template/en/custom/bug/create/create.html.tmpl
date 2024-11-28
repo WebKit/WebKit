@@ -1,0 +1,427 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[% title = BLOCK %]Enter [% terms.Bug %]: [% product.name FILTER html %][% END %]
+[% use_qa_contact = Param("useqacontact") %]
+
+[% PROCESS global/header.html.tmpl
+  title = title
+  generate_api_token = 1
+  yui = [ 'autocomplete', 'calendar', 'datatable', 'button' ]
+  style_urls = ['skins/standard/bug.css']
+  javascript_urls = [ "js/attachment.js", "js/util.js",
+                      "js/field.js", "js/TUI.js", "js/bug.js" ]
+  onload = "set_assign_to($use_qa_contact); hideElementById('attachment_true');
+            showElementById('attachment_false'); showElementById('btn_no_attachment');"
+%]
+
+<script type="text/javascript">
+<!--
+
+var initialowners = new Array([% product.components.size %]);
+var last_initialowner;
+var initialccs = new Array([% product.components.size %]);
+var components = new Array([% product.components.size %]);
+var comp_desc = new Array([% product.components.size %]);
+var flags = new Array([% product.components.size %]);
+[% IF Param("useqacontact") %]
+    var initialqacontacts = new Array([% product.components.size %]);
+    var last_initialqacontact;
+[% END %]
+[% count = 0 %]
+[%- FOREACH c = product.components %]
+    [% NEXT IF NOT c.is_active %]
+    components[[% count %]] = "[% c.name FILTER js %]";
+    comp_desc[[% count %]] = "[% c.description FILTER html_light FILTER js %]";
+    initialowners[[% count %]] = "[% c.default_assignee.login FILTER js %]";
+    [% flag_list = [] %]
+    [% FOREACH f = c.flag_types.bug %]
+      [% NEXT UNLESS f.is_active %]
+      [% flag_list.push(f.id) %]
+    [% END %]
+    [% FOREACH f = c.flag_types.attachment %]
+      [% NEXT UNLESS f.is_active %]
+      [% flag_list.push(f.id) %]
+    [% END %]
+    flags[[% count %]] = [[% flag_list.join(",") FILTER js %]];
+    [% IF Param("useqacontact") %]
+        initialqacontacts[[% count %]] = "[% c.default_qa_contact.login FILTER js %]";
+    [% END %]
+
+    [% SET initial_cc_list = [] %]
+    [% FOREACH cc_user = c.initial_cc %]
+      [% initial_cc_list.push(cc_user.login) %]
+    [% END %]
+    initialccs[[% count %]] = "[% initial_cc_list.join(', ') FILTER js %]";
+
+    [% count = count + 1 %]
+[%- END %]
+
+var status_comment_required = new Array();
+[% FOREACH status = bug_status %]
+  status_comment_required['[% status.name FILTER js %]'] = 
+    [% status.comment_required_on_change_from() ? 'true' : 'false' %]
+[% END %]
+
+TUI_alternates['expert_fields'] = 'Show Advanced Fields';
+// Hide the Advanced Fields by default, unless the user has a cookie
+// that specifies otherwise.
+TUI_hide_default('expert_fields');
+// Also hide the "Paste text as attachment" textarea by default.
+TUI_hide_default('attachment_text_field');
+-->
+</script>
+
+<form name="Create" id="create" method="post" action="post_bug.cgi"
+      class="enter_bug_form" enctype="multipart/form-data"
+      onsubmit="return validateEnterBug(this)">
+<input type="hidden" name="product" value="[% product.name FILTER html %]">
+<input type="hidden" name="token" value="[% token FILTER html %]">
+
+<section class="title-section">
+    <h2>New [% product.name FILTER html %] Bug Report</h2>
+    [%# Migration note: The following file corresponds to the old Param
+      # 'entryheaderhtml'
+      #%]
+    <p>[% PROCESS 'bug/create/user-message.html.tmpl' %]</p>
+</section>
+
+<section class="comments-section">
+    [% INCLUDE "bug/field-label.html.tmpl"
+      field = bug_fields.short_desc editable = 1
+    %]
+    <input name="short_desc" value="[% short_desc FILTER html %]"
+     maxlength="255" spellcheck="true" aria-required="true"
+     class="required text_input" id="short_desc">
+
+    <div id="add_comment">
+          [% defaultcontent = BLOCK %]
+[% IF cloned_bug_id %]
++++ This [% terms.bug %] was initially created as a clone of [% terms.Bug %] #[% cloned_bug_id %] +++
+          
+          
+[% END %]
+            [%-# We are within a BLOCK. The comment will be correctly HTML-escaped
+              # by global/textarea.html.tmpl. So we must not escape the comment here. %]
+            [% comment FILTER none %]
+          [%- END %]          
+          [% INCLUDE bug/comment.html.tmpl
+             minrows        = 10
+             maxrows        = 25
+             cols           = constants.COMMENT_COLS
+             defaultcontent = defaultcontent
+           %]
+    
+      <p class="expert_fields">
+        <input type="checkbox" id="comment_is_private" name="comment_is_private"
+          [% ' checked="checked"' IF comment_is_private %]
+               onClick="updateCommentTagControl(this, 'comment')">
+        <label for="comment_is_private">
+          Make description and any new attachment private<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(visible only to members 
+          of the <em>[% Param('insidergroup') FILTER html %]</em> group)
+        </label>
+        
+        <script>
+          updateCommentTagControl(document.getElementById('comment_is_private'), 'comment');
+        </script>
+      </p>
+    </div>
+    
+  [% IF Param("maxattachmentsize") || Param("maxlocalattachment") %]
+    <div>
+        <div id="attachment_false" class="bz_default_hidden">
+          <input type="button" value="Add an attachment" onClick="handleWantsAttachment(true)">
+        </div>
+    
+        <div id="attachment_true">
+          <input type="button" id="btn_no_attachment" value="Don't add an attachment"
+                 class="bz_default_hidden"  onClick="handleWantsAttachment(false)">
+          <fieldset>
+            <legend>Add an attachment</legend>
+            <table class="attachment_entry">
+                [% PROCESS attachment/createformcontents.html.tmpl
+                   flag_types = product.flag_types.attachment
+                   any_flags_requesteeble = 1
+                   flag_table_id ="attachment_flags" %]
+            </table>
+          </fieldset>
+        </div>
+    </div>
+    [% END %]
+    
+    <p><em>Note: If you are reporting an intermittent issue that WebKit developers may not be able to easily reproduce, please also file a <a href="https://feedbackassistant.apple.com">Feedback Assistant</a> report to <a href="https://developer.apple.com/bug-reporting/profiles-and-logs/?name=sysdiagnose">include a sysdiagnose</a>.</em></p>
+</section>
+
+<aside id="bug_details">
+    
+    
+    <div class="section-reporter">
+    [% INCLUDE bug/field.html.tmpl
+      bug = default, field = bug_fields.reporter, editable = 0, labelclass="padded-label",
+      value = user.login %]
+    </div>
+    
+    <div class="section-product">
+    [% INCLUDE bug/field.html.tmpl
+      bug = default, field = bug_fields.product, editable = 0, labelclass="padded-label",
+      value = product.name %]
+    </div>
+    
+    <div class="section-component">
+      [%# We can't use the select block in these two cases for various reasons. %]
+          [% component_desc_url = BLOCK -%]
+            describecomponents.cgi?product=[% product.name FILTER uri %]
+          [% END %]
+          [% INCLUDE "bug/field-label.html.tmpl"
+            field = bug_fields.component editable = 1
+            desc_url = component_desc_url
+          %]      
+          <span id="field_container_component">
+            <select name="component" id="component" onchange="set_assign_to([% Param("useqacontact") %]);" aria-required="true" class="required">
+              [%# Build the lists of assignees and QA contacts if "usemenuforusers" is enabled. %]
+              [% IF Param("usemenuforusers") %]
+                [% assignees_list = user.get_userlist.clone %]
+                [% qa_contacts_list = user.get_userlist.clone %]
+              [% END %]
+      
+              [%- FOREACH c = product.components %]
+                [% NEXT IF NOT c.is_active %]
+                <option value="[% c.name FILTER html %]"
+                        id="v[% c.id FILTER html %]_component"
+                  [% IF c.name.lower == default.component_.lower %]
+                    [%# This is for bug/field.html.tmpl, for visibility-related
+                      # controls. %]
+                    [% default.component_id = c.id %]
+                    selected="selected"
+                  [% END %]>
+                  [% c.name FILTER html -%]
+                </option>
+                [% IF Param("usemenuforusers") %]
+                  [% INCLUDE build_userlist default_user = c.default_assignee,
+                                            userlist = assignees_list %]
+                  [% INCLUDE build_userlist default_user = c.default_qa_contact,
+                                            userlist = qa_contacts_list %]
+                [% END %]
+              [%- END %]
+            </select>
+      
+            <script type="text/javascript">
+             <!--
+               [%+ INCLUDE "bug/field-events.js.tmpl" 
+                           field = bug_fields.component, product = product %]
+             //-->
+             </script>
+             <p id="comp_desc" class="comment">Select a component to read its description.</p>
+          </span>
+      
+
+    </div>
+    
+    <div class="section-version">
+        [% INCLUDE "bug/field-label.html.tmpl"
+          field = bug_fields.version editable = 1 rowspan = 4, classname="padded-label"
+        %]
+        <span>
+        <select name="version" id="version" aria-required="true"
+                  class="required">
+            [%- FOREACH v = version %]
+              [% NEXT IF NOT v.is_active %]
+              <option value="[% v.name FILTER html %]"
+                [% ' selected="selected"' IF v.name == default.version %]>[% v.name FILTER html -%]
+              </option>
+            [%- END %]
+          </select>
+        </span>        
+    </div>
+    
+    <div class="section-platform">
+        [% INCLUDE bug/field.html.tmpl
+          bug = default, field = bug_fields.rep_platform, editable = 1, labelclass="padded-label",
+          value = default.rep_platform %]
+        [% INCLUDE bug/field.html.tmpl 
+           bug = default, field = bug_fields.op_sys, editable = 1, labelclass="padded-label",
+           value = default.op_sys %]
+    </div>
+    
+    <div class="section-priority">
+        <span class="expert_fields">
+        [% IF Param('letsubmitterchoosepriority') %]
+          [% INCLUDE bug/field.html.tmpl
+            bug = default, field = bug_fields.priority, editable = 1,  labelclass="padded-label",
+            value = default.priority %]
+        [% END %]
+        </span>
+        [% INCLUDE bug/field.html.tmpl
+          bug = default, field = bug_fields.bug_severity, editable = 1,  labelclass="padded-label",
+          value = default.bug_severity %]
+    </div>
+
+    <!-- collapsible details for "advanced fields" here -->
+
+    <div class="section-status expert_fields">
+        [% INCLUDE bug/field.html.tmpl
+          bug = default, field = bug_fields.bug_status, labelclass="padded-label",
+          editable = (bug_status.size > 1), value = default.bug_status
+          override_legal_values = bug_status %]
+    </div>
+    
+    [% IF product.flag_types.bug.size > 0 %]
+        [% display_flag_headers = 0 %]
+        [% any_flags_requesteeble = 0 %]
+    
+        [% FOREACH flag_type = product.flag_types.bug %]
+          [% NEXT UNLESS flag_type.is_active %]
+          [% display_flag_headers = 1 %]
+          [% SET any_flags_requesteeble = 1 IF flag_type.is_requestable && flag_type.is_requesteeble %]
+        [% END %]
+    
+        [% IF display_flag_headers %]
+        <div class="section-flags-maybe expert_fields">
+          [% PROCESS "flag/list.html.tmpl" flag_types = product.flag_types.bug
+                                           any_flags_requesteeble = any_flags_requesteeble
+                                           flag_table_id = "bug_flags"
+          %]
+        </div>
+        [% END %]
+    [% END %]
+
+    <div class="section-assignee expert_fields">
+        [% INCLUDE "bug/field-label.html.tmpl"
+          field = bug_fields.assigned_to, editable = 1
+        %]
+        
+        [% INCLUDE global/userselect.html.tmpl
+             id => "assigned_to"
+             name => "assigned_to"
+             value => assigned_to
+             classes => "text_input"
+             disabled => assigned_to_disabled
+             emptyok => 1
+             custom_userlist => assignees_list
+           %]
+          <noscript>(Leave blank to assign to component's default assignee)</noscript>
+    </div>
+    
+    [% IF Param("useqacontact") %]
+    <div class="section-qa-contact expert_fields">
+        [% INCLUDE "bug/field-label.html.tmpl"
+            field = bug_fields.qa_contact editable = 1
+        %]
+        <span>
+        [% INCLUDE global/userselect.html.tmpl
+            id => "qa_contact"
+            name => "qa_contact"
+            value => qa_contact
+            classes => "text_input"
+            disabled => qa_contact_disabled
+            emptyok => 1
+            custom_userlist => qa_contacts_list
+        %]
+        <noscript>(Leave blank to assign to default qa contact)</noscript>
+        </span>
+    </div>
+    [% END %]
+    
+    <div class="section-cclist expert_fields">
+        [% INCLUDE "bug/field-label.html.tmpl"
+          field = bug_fields.cc editable = 1 
+        %]
+        <span>
+          [% INCLUDE global/userselect.html.tmpl
+             id => "cc"
+             name => "cc"
+             value => cc
+             classes => "text_input"
+             disabled => cc_disabled
+             multiple => 5
+           %]
+        </span>
+        <div class="default-cc-list">
+            <label>Default [% field_descs.cc FILTER html %]:</label>
+            <div id="initial_cc"></div>
+        </div>
+    </div>
+
+    <div class="section-url expert_fields">
+        [% INCLUDE "bug/field-label.html.tmpl"
+          field = bug_fields.bug_file_loc editable = 1
+        %]
+        <input name="bug_file_loc" id="bug_file_loc" class="text_input" value="[% bug_file_loc FILTER html %]">
+    </div>
+
+    [% IF use_keywords %]
+    <div class="section-keywords expert_fields">
+    [% INCLUDE bug/field.html.tmpl
+        bug = default, field = bug_fields.keywords, editable = 1,
+        value = keywords, possible_values = all_keywords,
+        desc_url = "describekeywords.cgi", value_span = 3
+    %]
+    </div>
+    [% END %]
+
+    <div class="section-user-tags">
+    </div>
+
+    [% IF user.in_group('editbugs', product.id) %]
+    <div class="section-dependson expert_fields">
+        [% INCLUDE "bug/field-label.html.tmpl"
+            field = bug_fields.dependson editable = 1
+          %]
+      <input name="dependson" accesskey="d" value="[% dependson FILTER html %]" class="text_input">
+    </div>
+
+    <div class="section-blocks expert_fields">
+        [% INCLUDE "bug/field-label.html.tmpl"
+            field = bug_fields.blocked editable = 1
+          %]
+      <input name="blocked" accesskey="b" value="[% blocked FILTER html %]" class="text_input">
+    </div>
+    [% END %]
+
+    [% IF Param('use_see_also') %]
+    <div class="section-seealso expert_fields">
+        [% INCLUDE bug/field.html.tmpl
+             bug            = default
+             field          = bug_fields.see_also
+             editable       = 1
+             value          = see_also
+          %]
+    </div>
+    [% END %]
+
+    <div class="section-aliases expert_fields">
+        [% INCLUDE "bug/field-label.html.tmpl"
+          field = bug_fields.alias editable = 1
+        %]
+        <input name="alias" value="[% alias FILTER html %]" class="text_input">
+    </div>
+    
+    <p class="expert_fields"><input type="submit" name="maketemplate" id="maketemplate"
+     value="Save as Template" title="Save values as a bookmarkable template"
+     onclick="bz_no_validate_enter_bug=true" class="button small"></p>
+    
+    <p><a id="expert_fields_controller" class="small button controller bz_default_hidden"
+         href="javascript:TUI_toggle_class('expert_fields')">Hide
+        Advanced Fields</a>
+      [%# Show the link if the browser supports JS %]
+      <script type="text/javascript">
+         YAHOO.util.Dom.removeClass('expert_fields_controller', 'bz_default_hidden');
+      </script>
+    </p>
+    
+
+</aside>
+
+    <p><input type="submit" id="submitbug" value="Submit [% terms.Bug %]"></p>
+
+</form>
+
+[%# Links or content with more information about the bug being created. %]
+[% Hook.process("end") %]
+
+[% PROCESS global/footer.html.tmpl %]

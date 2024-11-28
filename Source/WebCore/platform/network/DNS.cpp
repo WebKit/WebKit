@@ -28,9 +28,9 @@
 #include "DNS.h"
 
 #include "DNSResolveQueue.h"
-#include "RuntimeApplicationChecks.h"
 #include <wtf/CompletionHandler.h>
 #include <wtf/MainThread.h>
+#include <wtf/RuntimeApplicationChecks.h>
 #include <wtf/URL.h>
 
 #if PLATFORM(IOS_FAMILY)
@@ -44,6 +44,8 @@
 #if OS(QNX)
 #include <sys/socket.h>
 #endif
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace WebCore {
 
@@ -74,7 +76,7 @@ void stopResolveDNS(uint64_t identifier)
 bool isIPAddressDisallowed(const URL& url)
 {
 #if PLATFORM(IOS_FAMILY)
-    static bool shouldDisallowAddressWithOnlyZeros = linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::BlocksConnectionsToAddressWithOnlyZeros) || !IOSApplication::isMyRideK12();
+    static bool shouldDisallowAddressWithOnlyZeros = linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::BlocksConnectionsToAddressWithOnlyZeros) || !WTF::IOSApplication::isMyRideK12();
 #else
     static constexpr auto shouldDisallowAddressWithOnlyZeros = true;
 #endif
@@ -180,3 +182,5 @@ unsigned IPAddress::matchingNetMaskLength(const IPAddress& other) const
 }
 
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

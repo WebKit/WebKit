@@ -23,6 +23,8 @@
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/TextPosition.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 inline void SegmentedString::Substring::appendTo(StringBuilder& builder) const
@@ -182,13 +184,14 @@ void SegmentedString::advanceAndUpdateLineNumber16()
 inline void SegmentedString::advancePastSingleCharacterSubstringWithoutUpdatingLineNumber()
 {
     ASSERT(m_currentSubstring.length == 1);
+    m_currentSubstring.length = 0;
+    m_numberOfCharactersConsumedPriorToCurrentSubstring += m_currentSubstring.numberOfCharactersConsumed();
     if (m_otherSubstrings.isEmpty()) {
-        m_currentSubstring.length = 0;
+        m_currentSubstring = { };
         m_currentCharacter = 0;
         updateAdvanceFunctionPointersForEmptyString();
         return;
     }
-    m_numberOfCharactersConsumedPriorToCurrentSubstring += m_currentSubstring.numberOfCharactersConsumed();
     m_currentSubstring = m_otherSubstrings.takeFirst();
     // If we've previously consumed some characters of the non-current string, we now account for those
     // characters as part of the current string, not as part of "prior to current string."
@@ -272,3 +275,5 @@ void SegmentedString::updateAdvanceFunctionPointersForEmptyString()
 }
 
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

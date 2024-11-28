@@ -49,13 +49,13 @@ static NSData *mainResourceData()
 
 static NSData *defaultFaviconData()
 {
-    NSURL *url = [[NSBundle mainBundle] URLForResource:@"icon" withExtension:@"png" subdirectory:@"TestWebKitAPI.resources"];
+    NSURL *url = [NSBundle.test_resourcesBundle URLForResource:@"icon" withExtension:@"png"];
     return [NSData dataWithContentsOfURL:url];
 }
 
 static NSData *customFaviconData()
 {
-    NSURL *url = [[NSBundle mainBundle] URLForResource:@"large-red-square" withExtension:@"png" subdirectory:@"TestWebKitAPI.resources"];
+    NSURL *url = [NSBundle.test_resourcesBundle URLForResource:@"large-red-square" withExtension:@"png"];
     return [NSData dataWithContentsOfURL:url];
 }
 

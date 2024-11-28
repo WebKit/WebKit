@@ -144,6 +144,10 @@ public:
     // Methods for ManagedSourceBuffer
     WEBCORE_EXPORT virtual void memoryPressure(const MediaTime& currentTime);
 
+    // Methods for Detachable MediaSource
+    virtual void detach() { }
+    WEBCORE_EXPORT virtual void attach();
+
     // Internals Utility methods
     using SamplesPromise = NativePromise<Vector<String>, PlatformMediaError>;
     WEBCORE_EXPORT virtual Ref<SamplesPromise> bufferedSamplesForTrackId(TrackID);
@@ -153,7 +157,7 @@ public:
 
 #if !RELEASE_LOG_DISABLED
     virtual const Logger& sourceBufferLogger() const = 0;
-    virtual const void* sourceBufferLogIdentifier() = 0;
+    virtual uint64_t sourceBufferLogIdentifier() = 0;
 #endif
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
@@ -166,7 +170,7 @@ public:
 #endif
 
 protected:
-    WEBCORE_EXPORT explicit SourceBufferPrivate(MediaSourcePrivate&, RefCountedSerialFunctionDispatcher&);
+    WEBCORE_EXPORT explicit SourceBufferPrivate(MediaSourcePrivate&, GuaranteedSerialFunctionDispatcher&);
     MediaTime currentTime() const;
     MediaTime mediaSourceDuration() const;
 
@@ -213,7 +217,7 @@ protected:
     WEBCORE_EXPORT RefPtr<SourceBufferPrivateClient> client() const;
 
     ThreadSafeWeakPtr<MediaSourcePrivate> m_mediaSource { nullptr };
-    const Ref<RefCountedSerialFunctionDispatcher> m_dispatcher; // SerialFunctionDispatcher the SourceBufferPrivate/MediaSourcePrivate
+    const Ref<GuaranteedSerialFunctionDispatcher> m_dispatcher; // SerialFunctionDispatcher the SourceBufferPrivate/MediaSourcePrivate
 
     SourceBufferEvictionData m_evictionData;
 
@@ -275,6 +279,7 @@ private:
     MediaTime m_groupEndTimestamp { MediaTime::zeroTime() };
 
     bool m_isMediaSourceEnded { false };
+    std::optional<InitializationSegment> m_lastInitializationSegment;
 };
 
 } // namespace WebCore

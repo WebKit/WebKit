@@ -9,7 +9,7 @@
  * be overwritten.
  */
 #include "include/core/SkRefCnt.h"
-#include "include/gpu/gl/GrGLAssembleInterface.h"
+#include "include/gpu/ganesh/gl/GrGLAssembleInterface.h"
 
 #if SK_DISABLE_WEBGL_INTERFACE || !defined(__EMSCRIPTEN__)
 struct GrGLInterface;
@@ -18,17 +18,17 @@ sk_sp<const GrGLInterface> GrGLMakeAssembledWebGLInterface(void *ctx, GrGLGetPro
 }
 #else
 
-#include "include/gpu/gl/GrGLAssembleHelpers.h"
+#include "include/gpu/ganesh/gl/GrGLAssembleHelpers.h"
 #include "src/gpu/ganesh/gl/GrGLUtil.h"
 
-// Located https://github.com/emscripten-core/emscripten/tree/7ba7700902c46734987585409502f3c63beb650f/system/include/GLES3
-#define GL_GLEXT_PROTOTYPES
-#include <GLES3/gl32.h>
-#include <GLES3/gl2ext.h>
+// Located https://github.com/emscripten-core/emscripten/tree/7ba7700902c46734987585409502f3c63beb650f/system/include/webgl
+#include <webgl/webgl1.h>
+#include <webgl/webgl1_ext.h>
+#include <webgl/webgl2.h>
 #include <webgl/webgl2_ext.h>
 
-#define GET_PROC(F) functions->f##F = gl##F
-#define GET_PROC_SUFFIX(F, S) functions->f##F = gl##F##S
+#define GET_PROC(F) functions->f##F = emscripten_gl##F
+#define GET_PROC_SUFFIX(F, S) functions->f##F = emscripten_gl##F##S
 
 sk_sp<const GrGLInterface> GrGLMakeAssembledWebGLInterface(void *ctx, GrGLGetProc get) {
     const char* verStr = reinterpret_cast<const char*>(glGetString(GR_GL_VERSION));
@@ -234,6 +234,53 @@ sk_sp<const GrGLInterface> GrGLMakeAssembledWebGLInterface(void *ctx, GrGLGetPro
         GET_PROC(SamplerParameterf);
         GET_PROC(SamplerParameteri);
         GET_PROC(SamplerParameteriv);
+    }
+
+    if (glVer >= GR_GL_VER(2,0)) {
+        GET_PROC(BeginQuery);
+        GET_PROC(DeleteQueries);
+        GET_PROC(EndQuery);
+        GET_PROC(GenQueries);
+        GET_PROC(GetQueryObjectuiv);
+        GET_PROC(GetQueryiv);
+    } else if (extensions.has("GL_EXT_disjoint_timer_query")) {
+        GET_PROC_SUFFIX(BeginQuery, EXT);
+        GET_PROC_SUFFIX(DeleteQueries, EXT);
+        GET_PROC_SUFFIX(EndQuery, EXT);
+        GET_PROC_SUFFIX(GenQueries, EXT);
+        GET_PROC_SUFFIX(GetQueryObjectuiv, EXT);
+        GET_PROC_SUFFIX(GetQueryiv, EXT);
+    } else if (extensions.has("EXT_disjoint_timer_query")) {
+        GET_PROC_SUFFIX(BeginQuery, EXT);
+        GET_PROC_SUFFIX(DeleteQueries, EXT);
+        GET_PROC_SUFFIX(EndQuery, EXT);
+        GET_PROC_SUFFIX(GenQueries, EXT);
+        GET_PROC_SUFFIX(GetQueryObjectuiv, EXT);
+        GET_PROC_SUFFIX(GetQueryiv, EXT);
+    }
+
+    if (extensions.has("GL_EXT_disjoint_timer_query")) {
+        GET_PROC_SUFFIX(QueryCounter, EXT);
+    } else if (extensions.has("EXT_disjoint_timer_query")) {
+        GET_PROC_SUFFIX(QueryCounter, EXT);
+    } else if (extensions.has("GL_EXT_disjoint_timer_query_webgl2")) {
+        GET_PROC_SUFFIX(QueryCounter, EXT);
+    } else if (extensions.has("EXT_disjoint_timer_query_webgl2")) {
+        GET_PROC_SUFFIX(QueryCounter, EXT);
+    }
+
+    if (extensions.has("GL_EXT_disjoint_timer_query")) {
+        GET_PROC_SUFFIX(GetQueryObjecti64v, EXT);
+        GET_PROC_SUFFIX(GetQueryObjectui64v, EXT);
+    } else if (extensions.has("EXT_disjoint_timer_query")) {
+        GET_PROC_SUFFIX(GetQueryObjecti64v, EXT);
+        GET_PROC_SUFFIX(GetQueryObjectui64v, EXT);
+    } else if (extensions.has("GL_EXT_disjoint_timer_query_webgl2")) {
+        GET_PROC_SUFFIX(GetQueryObjecti64v, EXT);
+        GET_PROC_SUFFIX(GetQueryObjectui64v, EXT);
+    } else if (extensions.has("EXT_disjoint_timer_query_webgl2")) {
+        GET_PROC_SUFFIX(GetQueryObjecti64v, EXT);
+        GET_PROC_SUFFIX(GetQueryObjectui64v, EXT);
     }
 
     if (glVer >= GR_GL_VER(2,0)) {

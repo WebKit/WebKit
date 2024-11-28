@@ -32,14 +32,15 @@
 #include <wtf/Function.h>
 #include <wtf/HashMap.h>
 #include <wtf/Lock.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Threading.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
 namespace Inspector {
 
-class JS_EXPORT_PRIVATE RemoteInspectorSocketEndpoint {
-    WTF_MAKE_FAST_ALLOCATED;
+class RemoteInspectorSocketEndpoint {
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(RemoteInspectorSocketEndpoint, JS_EXPORT_PRIVATE);
 public:
     class Client {
     public:
@@ -64,27 +65,27 @@ public:
         virtual void didChangeStatus(RemoteInspectorSocketEndpoint&, ConnectionID, Status) = 0;
     };
 
-    static RemoteInspectorSocketEndpoint& singleton();
+    JS_EXPORT_PRIVATE static RemoteInspectorSocketEndpoint& singleton();
 
     RemoteInspectorSocketEndpoint();
-    ~RemoteInspectorSocketEndpoint();
+    JS_EXPORT_PRIVATE ~RemoteInspectorSocketEndpoint();
 
     std::optional<ConnectionID> connectInet(const char* serverAddr, uint16_t serverPort, Client&);
-    std::optional<ConnectionID> listenInet(const char* address, uint16_t port, Listener&);
+    JS_EXPORT_PRIVATE std::optional<ConnectionID> listenInet(const char* address, uint16_t port, Listener&);
     void invalidateClient(Client&);
     void invalidateListener(Listener&);
 
-    void send(ConnectionID, std::span<const uint8_t>);
+    JS_EXPORT_PRIVATE void send(ConnectionID, std::span<const uint8_t>);
 
-    std::optional<ConnectionID> createClient(PlatformSocketType, Client&);
+    JS_EXPORT_PRIVATE std::optional<ConnectionID> createClient(PlatformSocketType, Client&);
 
     std::optional<uint16_t> getPort(ConnectionID) const;
 
-    void disconnect(ConnectionID);
+    JS_EXPORT_PRIVATE void disconnect(ConnectionID);
 
 protected:
     struct BaseConnection {
-        WTF_MAKE_STRUCT_FAST_ALLOCATED;
+        WTF_MAKE_STRUCT_TZONE_ALLOCATED(BaseConnection);
 
         BaseConnection(ConnectionID id)
             : id { id }
@@ -113,6 +114,7 @@ protected:
     };
 
     struct ClientConnection : public BaseConnection {
+        WTF_MAKE_STRUCT_TZONE_ALLOCATED(ClientConnection);
         ClientConnection(ConnectionID id, PlatformSocketType socket, Client& client)
             : BaseConnection(id)
             , client { client }
@@ -181,8 +183,8 @@ protected:
     int pollingTimeout();
 
     mutable Lock m_connectionsLock;
-    HashMap<ConnectionID, std::unique_ptr<ClientConnection>> m_clients WTF_GUARDED_BY_LOCK(m_connectionsLock);
-    HashMap<ConnectionID, std::unique_ptr<ListenerConnection>> m_listeners WTF_GUARDED_BY_LOCK(m_connectionsLock);
+    UncheckedKeyHashMap<ConnectionID, std::unique_ptr<ClientConnection>> m_clients WTF_GUARDED_BY_LOCK(m_connectionsLock);
+    UncheckedKeyHashMap<ConnectionID, std::unique_ptr<ListenerConnection>> m_listeners WTF_GUARDED_BY_LOCK(m_connectionsLock);
 
     PlatformSocketType m_wakeupSendSocket { INVALID_SOCKET_VALUE };
     PlatformSocketType m_wakeupReceiveSocket { INVALID_SOCKET_VALUE };

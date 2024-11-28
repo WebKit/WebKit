@@ -26,6 +26,7 @@
 #pragma once
 
 #include "GraphicsContext.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
@@ -37,6 +38,7 @@ enum class NullGraphicsContextPaintInvalidationReasons : uint8_t {
 };
 
 class NullGraphicsContext : public GraphicsContext {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(NullGraphicsContext);
 public:
     using PaintInvalidationReasons = NullGraphicsContextPaintInvalidationReasons;
 
@@ -137,7 +139,7 @@ private:
     void fillRectWithRoundedHole(const FloatRect&, const FloatRoundedRect&, const Color&) final { }
 
 #if ENABLE(VIDEO)
-    void paintFrameForMedia(MediaPlayer&, const FloatRect&) final { }
+    void drawVideoFrame(VideoFrame&, const FloatRect&, ImageOrientation, bool) final { }
 #endif
 
 private:

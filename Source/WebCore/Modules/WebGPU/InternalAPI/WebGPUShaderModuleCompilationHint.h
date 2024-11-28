@@ -25,12 +25,16 @@
 
 #pragma once
 
+#include "WebGPUPipelineLayout.h"
+#include <wtf/Ref.h>
+#include <wtf/WeakRef.h>
+
 namespace WebCore::WebGPU {
 
-class WebGPUPipelineLayout;
-
 struct ShaderModuleCompilationHint {
-    PipelineLayout& pipelineLayout;
+    WeakRef<PipelineLayout> pipelineLayout;
+
+    Ref<PipelineLayout> protectedPipelineLayout() const { return pipelineLayout.get(); }
 };
 
 } // namespace WebCore::WebGPU

@@ -31,9 +31,15 @@
 #include "Document.h"
 #include "XPathPredicate.h"
 #include "XPathStep.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 namespace XPath {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(Filter);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(LocationPath);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(Path);
+
         
 Filter::Filter(std::unique_ptr<Expression> expression, Vector<std::unique_ptr<Expression>> predicates)
     : m_expression(WTFMove(expression)), m_predicates(WTFMove(predicates))

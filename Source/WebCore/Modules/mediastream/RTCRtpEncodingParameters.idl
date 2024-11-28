@@ -38,5 +38,5 @@
     RTCPriorityType networkPriority;
     unsigned long maxBitrate;
     unsigned long maxFramerate;
-    double scaleResolutionDownBy = 1;
+    double scaleResolutionDownBy;
 };

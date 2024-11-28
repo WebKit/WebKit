@@ -39,6 +39,8 @@ public:
     NSString *getMessage(NSString* messageName, id substitutions);
     NSString *getUILanguage();
     void getAcceptLanguages(Ref<WebExtensionCallbackHandler>&&);
+    void getPreferredSystemLanguages(Ref<WebExtensionCallbackHandler>&&);
+    void getSystemUILanguage(Ref<WebExtensionCallbackHandler>&&);
 };
 
 } // namespace WebKit

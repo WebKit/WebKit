@@ -26,13 +26,13 @@
 #include "config.h"
 #include "StyleFilterData.h"
 
+#include "RenderStyleDifference.h"
+
 namespace WebCore {
 
-StyleFilterData::StyleFilterData()
-{
-}
+StyleFilterData::StyleFilterData() = default;
 
-inline StyleFilterData::StyleFilterData(const StyleFilterData& other)
+StyleFilterData::StyleFilterData(const StyleFilterData& other)
     : RefCounted<StyleFilterData>()
     , operations(other.operations)
 {
@@ -47,5 +47,12 @@ bool StyleFilterData::operator==(const StyleFilterData& other) const
 {
     return operations == other.operations;
 }
+
+#if !LOG_DISABLED
+void StyleFilterData::dumpDifferences(TextStream& ts, const StyleFilterData& other) const
+{
+    LOG_IF_DIFFERENT(operations);
+}
+#endif // !LOG_DISABLED
 
 } // namespace WebCore

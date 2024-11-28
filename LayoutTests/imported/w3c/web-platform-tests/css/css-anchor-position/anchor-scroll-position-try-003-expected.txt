@@ -1,4 +1,4 @@
 
 PASS Should use the first fallback position at the initial scroll offset
-FAIL Should use the second fallback position after scrolling up assert_equals: Anchored element should be at the top of anchor expected 210 but got 409
+FAIL Should use the second fallback position after scrolling up assert_equals: Anchored element should be at the top of anchor expected 210 but got 410
 

@@ -34,6 +34,7 @@
 namespace WebCore {
 
 class CryptoAlgorithmPbkdf2Params final : public CryptoAlgorithmParameters {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(CryptoAlgorithmPbkdf2Params);
 public:
     BufferSource salt;
     unsigned long iterations;

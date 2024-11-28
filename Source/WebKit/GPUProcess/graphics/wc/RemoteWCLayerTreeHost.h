@@ -33,6 +33,7 @@
 #include "WCLayerTreeHostIdentifier.h"
 #include "WCSharedSceneContextHolder.h"
 #include <WebCore/ProcessIdentifier.h>
+#include <wtf/RefCounted.h>
 #include <wtf/TZoneMalloc.h>
 
 namespace IPC {
@@ -45,16 +46,17 @@ class WCScene;
 struct UpdateInfo;
 struct WCUpdateInfo;
 
-class RemoteWCLayerTreeHost : public IPC::MessageReceiver, private IPC::MessageSender {
+class RemoteWCLayerTreeHost : public IPC::MessageReceiver, private IPC::MessageSender, public RefCounted<RemoteWCLayerTreeHost> {
     WTF_MAKE_TZONE_ALLOCATED(RemoteWCLayerTreeHost);
 public:
-    static std::unique_ptr<RemoteWCLayerTreeHost> create(GPUConnectionToWebProcess&, WebKit::WCLayerTreeHostIdentifier, uint64_t nativeWindow, bool usesOffscreenRendering);
-    RemoteWCLayerTreeHost(GPUConnectionToWebProcess&, WebKit::WCLayerTreeHostIdentifier, uint64_t nativeWindow, bool usesOffscreenRendering);
+    static Ref<RemoteWCLayerTreeHost> create(GPUConnectionToWebProcess&, WebKit::WCLayerTreeHostIdentifier, uint64_t nativeWindow, bool usesOffscreenRendering);
     ~RemoteWCLayerTreeHost();
     // message handlers
     void update(WCUpdateInfo&&, CompletionHandler<void(std::optional<WebKit::UpdateInfo>)>&&);
 
 private:
+    RemoteWCLayerTreeHost(GPUConnectionToWebProcess&, WebKit::WCLayerTreeHostIdentifier, uint64_t nativeWindow, bool usesOffscreenRendering);
+
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
     // IPC::MessageSender

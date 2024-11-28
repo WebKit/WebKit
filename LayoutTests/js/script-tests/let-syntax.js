@@ -169,3 +169,5 @@ shouldHaveSyntaxErrorStrictOnly("let: for (v in {}) break;");
 shouldHaveSyntaxErrorStrictOnly("let: for (var v = 0; false; ) {};");
 shouldHaveSyntaxErrorStrictOnly("try { } catch(let) {}");
 shouldHaveSyntaxErrorStrictOnly("let x; if (true) let: x = 3;");
+
+shouldNotHaveSyntaxError("let {let: a} = {let: 1}")

@@ -193,6 +193,28 @@ public:
         }
     }
 
+    template<unsigned NumberOfJSRs>
+    ALWAYS_INLINE void shuffleJSRs(std::array<JSValueRegs, NumberOfJSRs> sources, std::array<JSValueRegs, NumberOfJSRs> destinations)
+    {
+#if USE(JSVALUE64)
+        constexpr unsigned NumberOfRegisters = NumberOfJSRs;
+#else
+        constexpr unsigned NumberOfRegisters = NumberOfJSRs * 2;
+#endif
+        std::array<GPRReg, NumberOfRegisters> sourceRegs;
+        std::array<GPRReg, NumberOfRegisters> destinationRegs;
+
+        for (unsigned i = 0; i < NumberOfJSRs; ++i) {
+            sourceRegs[i] = sources[i].payloadGPR();
+            destinationRegs[i] = destinations[i].payloadGPR();
+#if !USE(JSVALUE64)
+            sourceRegs[i + NumberOfJSRs] = sources[i].tagGPR();
+            destinationRegs[i + NumberOfJSRs] = destinations[i].tagGPR();
+#endif
+        }
+        shuffleRegisters<GPRReg, NumberOfRegisters>(sourceRegs, destinationRegs);
+    }
+
 private:
     template<typename RegType>
     using InfoTypeForReg = decltype(toInfoFromReg(RegType(-1)));
@@ -763,19 +785,38 @@ public:
         farJump(GPRInfo::regT1, ExceptionHandlerPtrTag);
     }
 
+#if USE(JSVALUE64)
     template<typename T>
     requires (isExceptionOperationResult<T>)
     static constexpr GPRReg operationExceptionRegister()
     {
+        static_assert(assertNotOperationSignature<T>);
         if (std::is_floating_point_v<typename T::ResultType> || std::is_same_v<typename T::ResultType, void>)
             return GPRInfo::returnValueGPR;
         return GPRInfo::returnValueGPR2;
     }
+#else
+    template<typename T>
+    requires (isExceptionOperationResult<T>)
+    static constexpr GPRReg operationExceptionRegister()
+    {
+        static_assert(assertNotOperationSignature<T>);
+        if (std::is_same_v<T, ExceptionOperationResult<void>>)
+            return GPRInfo::returnValueGPR;
+        return GPRInfo::returnValueGPR2;
+    }
+#endif
 
     template<typename T>
     requires (!isExceptionOperationResult<T>)
-    static constexpr GPRReg operationExceptionRegister() { return InvalidGPRReg; }
+    static constexpr GPRReg operationExceptionRegister()
+    {
+        static_assert(assertNotOperationSignature<T>);
+        return InvalidGPRReg;
+    }
 
+    template<auto operation>
+    static constexpr GPRReg operationExceptionRegister() { return operationExceptionRegister<OperationReturnType<typename FunctionTraits<decltype(operation)>::ResultType>>(); }
 
     void prepareForTailCallSlow(RegisterSet preserved = { })
     {

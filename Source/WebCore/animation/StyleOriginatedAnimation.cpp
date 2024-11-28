@@ -131,13 +131,13 @@ void StyleOriginatedAnimation::syncPropertiesWithBackingAnimation()
 {
 }
 
-std::optional<double> StyleOriginatedAnimation::bindingsStartTime() const
+std::optional<WebAnimationTime> StyleOriginatedAnimation::bindingsStartTime() const
 {
     flushPendingStyleChanges();
     return WebAnimation::bindingsStartTime();
 }
 
-std::optional<double> StyleOriginatedAnimation::bindingsCurrentTime() const
+std::optional<WebAnimationTime> StyleOriginatedAnimation::bindingsCurrentTime() const
 {
     flushPendingStyleChanges();
     return WebAnimation::bindingsCurrentTime();
@@ -203,7 +203,7 @@ void StyleOriginatedAnimation::setTimeline(RefPtr<AnimationTimeline>&& newTimeli
 
 void StyleOriginatedAnimation::cancel(WebAnimation::Silently silently)
 {
-    auto cancelationTime = 0_s;
+    WebAnimationTime cancelationTime = 0_s;
 
     auto shouldFireEvents = shouldFireDOMEvents();
     if (shouldFireEvents != ShouldFireEvents::No) {
@@ -237,21 +237,27 @@ AnimationEffectPhase StyleOriginatedAnimation::phaseWithoutEffect() const
     return *animationCurrentTime < 0_s ? AnimationEffectPhase::Before : AnimationEffectPhase::After;
 }
 
-Seconds StyleOriginatedAnimation::effectTimeAtStart() const
+WebAnimationTime StyleOriginatedAnimation::effectTimeAtStart() const
 {
     if (auto* effect = this->effect())
         return effect->delay();
     return 0_s;
 }
 
-Seconds StyleOriginatedAnimation::effectTimeAtIteration(double iteration) const
+WebAnimationTime StyleOriginatedAnimation::effectTimeAtIteration(double iteration) const
 {
-    if (auto* effect = this->effect())
-        return effect->delay() + effect->iterationDuration() * iteration;
+    if (auto* effect = this->effect()) {
+        auto iterationDuration = effect->iterationDuration();
+        // We need not account for delay with progress-based animations as the
+        // Web Animations spec does not specify how to account for them.
+        if (iterationDuration.percentage())
+            return iterationDuration * iteration;
+        return effect->delay() + iterationDuration * iteration;
+    }
     return 0_s;
 }
 
-Seconds StyleOriginatedAnimation::effectTimeAtEnd() const
+WebAnimationTime StyleOriginatedAnimation::effectTimeAtEnd() const
 {
     if (auto* effect = this->effect())
         return effect->endTime();
@@ -275,7 +281,7 @@ auto StyleOriginatedAnimation::shouldFireDOMEvents() const -> ShouldFireEvents
     return ShouldFireEvents::No;
 }
 
-void StyleOriginatedAnimation::invalidateDOMEvents(ShouldFireEvents shouldFireEvents, Seconds elapsedTime)
+void StyleOriginatedAnimation::invalidateDOMEvents(ShouldFireEvents shouldFireEvents, WebAnimationTime elapsedTime)
 {
     if (!m_owningElement)
         return;
@@ -286,8 +292,8 @@ void StyleOriginatedAnimation::invalidateDOMEvents(ShouldFireEvents shouldFireEv
 
     double iteration = 0;
     AnimationEffectPhase currentPhase;
-    Seconds intervalStart;
-    Seconds intervalEnd;
+    WebAnimationTime intervalStart;
+    WebAnimationTime intervalEnd;
 
     auto* animationEffect = effect();
     if (animationEffect) {
@@ -295,8 +301,17 @@ void StyleOriginatedAnimation::invalidateDOMEvents(ShouldFireEvents shouldFireEv
         if (auto computedIteration = timing.currentIteration)
             iteration = *computedIteration;
         currentPhase = timing.phase;
-        intervalStart = std::max(0_s, Seconds::fromMilliseconds(std::min(-timing.delay, timing.activeDuration)));
-        intervalEnd = std::max(0_s, Seconds::fromMilliseconds(std::min(timing.endTime - timing.delay, timing.activeDuration)));
+        if (timing.activeDuration.percentage()) {
+            // We need not account for delay with progress-based animations as the
+            // Web Animations spec does not specify how to account for them.
+            auto zero = timing.activeDuration.matchingZero();
+            intervalStart = std::max(zero, timing.activeDuration);
+            intervalEnd = std::max(zero, std::min(timing.endTime, timing.activeDuration));
+        } else {
+            auto activeDuration = timing.activeDuration.time()->milliseconds();
+            intervalStart = std::max(0_s, Seconds::fromMilliseconds(std::min(-timing.delay, activeDuration)));
+            intervalEnd = std::max(0_s, Seconds::fromMilliseconds(std::min(timing.endTime.time()->milliseconds() - timing.delay, activeDuration)));
+        }
     } else {
         iteration = 0;
         currentPhase = phaseWithoutEffect();
@@ -328,7 +343,7 @@ void StyleOriginatedAnimation::invalidateDOMEvents(ShouldFireEvents shouldFireEv
             auto iterationBoundary = iteration;
             if (m_previousIteration > iteration)
                 iterationBoundary++;
-            auto elapsedTime = animationEffect ? animationEffect->iterationDuration() * (iterationBoundary - animationEffect->iterationStart()) : 0_s;
+            auto elapsedTime = animationEffect ? animationEffect->iterationDuration() * (iterationBoundary - animationEffect->iterationStart()) : zeroTime();
             enqueueDOMEvent(eventNames().animationiterationEvent, elapsedTime, effectTimeAtIteration(iteration));
         } else if (wasActive && isAfter)
             enqueueDOMEvent(eventNames().animationendEvent, intervalEnd, effectTimeAtEnd());
@@ -378,21 +393,26 @@ void StyleOriginatedAnimation::invalidateDOMEvents(ShouldFireEvents shouldFireEv
     m_previousIteration = iteration;
 }
 
-void StyleOriginatedAnimation::enqueueDOMEvent(const AtomString& eventType, Seconds elapsedTime, Seconds scheduledEffectTime)
+void StyleOriginatedAnimation::enqueueDOMEvent(const AtomString& eventType, WebAnimationTime elapsedTime, WebAnimationTime scheduledEffectTime)
 {
     if (!m_owningElement)
         return;
 
     auto scheduledTimelineTime = [&]() -> std::optional<Seconds> {
         if (auto* documentTimeline = dynamicDowncast<DocumentTimeline>(timeline())) {
-            if (auto scheduledAnimationTime = convertAnimationTimeToTimelineTime(scheduledEffectTime))
+            ASSERT(scheduledEffectTime.time());
+            if (auto scheduledAnimationTime = convertAnimationTimeToTimelineTime(*scheduledEffectTime.time()))
                 return documentTimeline->convertTimelineTimeToOriginRelativeTime(*scheduledAnimationTime);
         }
         return std::nullopt;
     }();
 
-    auto time = secondsToWebAnimationsAPITime(elapsedTime) / 1000;
-    auto event = createEvent(eventType, scheduledTimelineTime, time, m_owningPseudoElementIdentifier);
+    auto time = [&]() {
+        if (auto seconds = elapsedTime.time())
+            return secondsToWebAnimationsAPITime(*seconds) / 1000;
+        return 0.0;
+    };
+    auto event = createEvent(eventType, scheduledTimelineTime, time(), m_owningPseudoElementIdentifier);
     event->setTarget(RefPtr { m_owningElement.get() });
     enqueueAnimationEvent(WTFMove(event));
 }

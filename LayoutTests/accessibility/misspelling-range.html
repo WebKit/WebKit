@@ -34,7 +34,6 @@ if (window.accessibilityController && window.internals) {
 
     setTimeout(async () => {
         misspellingRange = null;
-        startMarker = null;
         await waitFor(() => {
             misspellingRange = text.misspellingTextMarkerRange(startRange, true);
             return text.stringForTextMarkerRange(misspellingRange) == "wrods";

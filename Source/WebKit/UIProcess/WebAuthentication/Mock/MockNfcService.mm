@@ -177,6 +177,11 @@ static NSData* NFReaderSessionTransceive(id, SEL, NSData *)
 
 #endif // HAVE(NEAR_FIELD)
 
+Ref<MockNfcService> MockNfcService::create(AuthenticatorTransportServiceObserver& observer, const WebCore::MockWebAuthenticationConfiguration& configuration)
+{
+    return adoptRef(*new MockNfcService(observer, configuration));
+}
+
 MockNfcService::MockNfcService(AuthenticatorTransportServiceObserver& observer, const WebCore::MockWebAuthenticationConfiguration& configuration)
     : NfcService(observer)
     , m_configuration(configuration)
@@ -232,7 +237,7 @@ void MockNfcService::platformStartDiscovery()
         Method methodToSwizzle5 = class_getInstanceMethod(getNFReaderSessionClass(), @selector(startPollingWithError:));
         method_setImplementation(methodToSwizzle5, (IMP)NFReaderSessionStartPollingWithError);
 
-        auto readerSession = adoptNS([allocNFReaderSessionInstance() init]);
+        auto readerSession = adoptNS([allocNFReaderSessionInstance() initWithUIType:NFReaderSessionUINone]);
         setConnection(NfcConnection::create(readerSession.get(), *this));
     }
     LOG_ERROR("No nfc authenticators is available.");
@@ -258,7 +263,7 @@ void MockNfcService::detectTags() const
         if (configuration.nfc->multiplePhysicalTags)
             [tags addObject:adoptNS([[WKMockNFTag alloc] initWithType:NFTagTypeGeneric4A tagID:adoptNS([[NSData alloc] initWithBytesNoCopy:tagID2 length:sizeof(tagID2) freeWhenDone:NO]).get()]).get()];
 
-        auto readerSession = adoptNS([allocNFReaderSessionInstance() init]);
+        auto readerSession = adoptNS([allocNFReaderSessionInstance() initWithUIType:NFReaderSessionUINone]);
         [globalNFReaderSessionDelegate readerSession:readerSession.get() didDetectTags:tags.get()];
     });
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), callback.get());

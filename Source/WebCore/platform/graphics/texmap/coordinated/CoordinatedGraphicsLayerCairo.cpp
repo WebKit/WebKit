@@ -21,26 +21,22 @@
 #include "CoordinatedGraphicsLayer.h"
 
 #if USE(COORDINATED_GRAPHICS) && USE(CAIRO)
+#include "CairoPaintingContext.h"
+#include "CairoPaintingEngine.h"
+#include "CoordinatedTileBuffer.h"
+#include "FloatRect.h"
 #include "GraphicsContext.h"
-#include "NicosiaPaintingContext.h"
-#include "NicosiaPaintingEngine.h"
 
 namespace WebCore {
 
-Ref<Nicosia::Buffer> CoordinatedGraphicsLayer::paintTile(const IntRect& tileRect, const IntRect& mappedTileRect, float contentsScale)
+Ref<CoordinatedTileBuffer> CoordinatedGraphicsLayer::paintTile(const IntRect& dirtyRect)
 {
-    auto buffer = Nicosia::UnacceleratedBuffer::create(tileRect.size(), contentsOpaque() ? Nicosia::Buffer::NoFlags : Nicosia::Buffer::SupportsAlpha);
-    m_coordinator->paintingEngine().paint(*this, buffer.get(), tileRect, mappedTileRect, IntRect { { 0, 0 }, tileRect.size() }, contentsScale);
-    return buffer;
-}
+    auto scale = effectiveContentsScale();
+    FloatRect scaledDirtyRect(dirtyRect);
+    scaledDirtyRect.scale(1 / scale);
 
-Ref<Nicosia::Buffer> CoordinatedGraphicsLayer::paintImage(Image& image)
-{
-    auto buffer = Nicosia::UnacceleratedBuffer::create(IntSize(image.size()), !image.currentFrameKnownToBeOpaque() ? Nicosia::Buffer::SupportsAlpha : Nicosia::Buffer::NoFlags);
-    Nicosia::PaintingContext::paint(buffer, [&image](GraphicsContext& context) {
-        IntRect rect { { }, IntSize { image.size() } };
-        context.drawImage(image, rect, rect, ImagePaintingOptions(CompositeOperator::Copy));
-    });
+    auto buffer = CoordinatedUnacceleratedTileBuffer::create(dirtyRect.size(), contentsOpaque() ? CoordinatedTileBuffer::NoFlags : CoordinatedTileBuffer::SupportsAlpha);
+    m_coordinator->paintingEngine().paint(*this, buffer.get(), dirtyRect, enclosingIntRect(scaledDirtyRect), IntRect { { }, dirtyRect.size() }, scale);
     return buffer;
 }
 

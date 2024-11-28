@@ -1,16 +1,16 @@
 
-FAIL Switching between document and scroll timelines [immediate] assert_equals: expected "120px" but got "100px"
-FAIL Switching between document and scroll timelines [scroll] assert_equals: expected "120px" but got "100px"
-FAIL Switching pending animation from document to scroll timelines [immediate] assert_equals: expected "120px" but got "100px"
-FAIL Switching pending animation from document to scroll timelines [scroll] assert_equals: expected "120px" but got "100px"
-FAIL Changing computed value of animation-timeline changes effective timeline [immediate] assert_equals: expected "120px" but got "100px"
-FAIL Changing computed value of animation-timeline changes effective timeline [scroll] assert_equals: expected "120px" but got "100px"
+PASS Switching between document and scroll timelines [immediate]
+PASS Switching between document and scroll timelines [scroll]
+PASS Switching pending animation from document to scroll timelines [immediate]
+PASS Switching pending animation from document to scroll timelines [scroll]
+PASS Changing computed value of animation-timeline changes effective timeline [immediate]
+PASS Changing computed value of animation-timeline changes effective timeline [scroll]
 FAIL Changing to/from animation-timeline:none [immediate] assert_equals: expected "0px" but got "100px"
 FAIL Changing to/from animation-timeline:none [scroll] assert_equals: expected "0px" but got "100px"
 FAIL Reverse animation direction [immediate] assert_equals: expected "0px" but got "190px"
 FAIL Reverse animation direction [scroll] assert_equals: expected "0px" but got "190px"
 FAIL Change to timeline attachment while paused [immediate] assert_equals: expected "0px" but got "100px"
 FAIL Change to timeline attachment while paused [scroll] assert_equals: expected "0px" but got "100px"
-FAIL Switching timelines and pausing at the same time [immediate] assert_equals: expected "120px" but got "100px"
-FAIL Switching timelines and pausing at the same time [scroll] assert_equals: expected "120px" but got "100px"
+FAIL Switching timelines and pausing at the same time [immediate] assert_equals: expected "100px" but got "120px"
+FAIL Switching timelines and pausing at the same time [scroll] assert_equals: expected "100px" but got "120px"
 

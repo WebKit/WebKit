@@ -32,6 +32,7 @@
 namespace WebCore {
 
 class CryptoAlgorithmAesGcmParams final : public CryptoAlgorithmParameters {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(CryptoAlgorithmAesGcmParams);
 public:
     BufferSource iv;
     // Use additionalDataVector() instead of additionalData. The label will be gone once additionalDataVector() is called.

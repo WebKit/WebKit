@@ -30,6 +30,8 @@
 #include <wtf/text/StringCommon.h>
 #include <wtf/text/StringView.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WTF {
 
 //---------------------------------------------------------------------
@@ -83,9 +85,9 @@ public:
         const SubjectChar* charPos = nullptr;
         ASSERT(maxN - index >= 0);
         if constexpr (sizeof(SubjectChar) == 2)
-            charPos = bitwise_cast<const SubjectChar*>(find16(bitwise_cast<const uint16_t*>(start), searchCharacter, searchLength));
+            charPos = std::bit_cast<const SubjectChar*>(find16(std::bit_cast<const uint16_t*>(start), searchCharacter, searchLength));
         else
-            charPos = bitwise_cast<const SubjectChar*>(find8(bitwise_cast<const uint8_t*>(start), searchCharacter, searchLength));
+            charPos = std::bit_cast<const SubjectChar*>(find8(std::bit_cast<const uint8_t*>(start), searchCharacter, searchLength));
         if (charPos == nullptr)
             return -1;
         return static_cast<int>(charPos - subjectPtr);
@@ -526,3 +528,5 @@ int searchString(AdaptiveStringSearcherTables& tables, std::span<const SubjectCh
 using WTF::AdaptiveStringSearcher;
 using WTF::AdaptiveStringSearcherTables;
 using WTF::searchString;
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

@@ -73,10 +73,10 @@ public:
     WEBCORE_EXPORT ~VideoPresentationInterfaceIOS();
 
     // CheckedPtr interface
-    uint32_t ptrCount() const final { return CanMakeCheckedPtr::ptrCount(); }
-    uint32_t ptrCountWithoutThreadCheck() const final { return CanMakeCheckedPtr::ptrCountWithoutThreadCheck(); }
-    void incrementPtrCount() const final { CanMakeCheckedPtr::incrementPtrCount(); }
-    void decrementPtrCount() const final { CanMakeCheckedPtr::decrementPtrCount(); }
+    uint32_t checkedPtrCount() const final { return CanMakeCheckedPtr::checkedPtrCount(); }
+    uint32_t checkedPtrCountWithoutThreadCheck() const final { return CanMakeCheckedPtr::checkedPtrCountWithoutThreadCheck(); }
+    void incrementCheckedPtrCount() const final { CanMakeCheckedPtr::incrementCheckedPtrCount(); }
+    void decrementCheckedPtrCount() const final { CanMakeCheckedPtr::decrementCheckedPtrCount(); }
 
     WEBCORE_EXPORT void setVideoPresentationModel(VideoPresentationModel*);
     PlaybackSessionInterfaceIOS& playbackSessionInterface() const { return m_playbackSessionInterface.get(); }
@@ -171,7 +171,7 @@ public:
 #endif
 
 #if !RELEASE_LOG_DISABLED
-    WEBCORE_EXPORT const void* logIdentifier() const;
+    WEBCORE_EXPORT uint64_t logIdentifier() const;
     WEBCORE_EXPORT const Logger* loggerPtr() const;
     ASCIILiteral logClassName() const { return "VideoPresentationInterfaceIOS"_s; };
     WEBCORE_EXPORT WTFLogChannel& logChannel() const;

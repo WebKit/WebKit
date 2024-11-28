@@ -75,13 +75,13 @@ public:
 
     bool hasLogicalGroupProperty(CSSPropertyID) const;
     const Property& logicalGroupProperty(CSSPropertyID) const;
-    const Property* lastPropertyResolvingLogicalPropertyPair(CSSPropertyID, TextDirection, WritingMode) const;
+    const Property* lastPropertyResolvingLogicalPropertyPair(CSSPropertyID, WritingMode) const;
 
     bool hasCustomProperty(const AtomString&) const;
     const Property& customProperty(const AtomString&) const;
 
     std::span<const CSSPropertyID> logicalGroupPropertyIDs() const;
-    const HashMap<AtomString, Property>& customProperties() const { return m_customProperties; }
+    const UncheckedKeyHashMap<AtomString, Property>& customProperties() const { return m_customProperties; }
 
     const HashSet<AnimatableCSSProperty> overriddenAnimatedProperties() const;
 
@@ -142,7 +142,7 @@ private:
     CSSPropertyID m_lowestSeenLogicalGroupProperty { lastLogicalGroupProperty };
     CSSPropertyID m_highestSeenLogicalGroupProperty { firstLogicalGroupProperty };
 
-    HashMap<AtomString, Property> m_customProperties;
+    UncheckedKeyHashMap<AtomString, Property> m_customProperties;
 };
 
 inline bool PropertyCascade::hasNormalProperty(CSSPropertyID id) const
@@ -184,7 +184,7 @@ inline const PropertyCascade::Property& PropertyCascade::logicalGroupProperty(CS
 
 inline std::span<const CSSPropertyID> PropertyCascade::logicalGroupPropertyIDs() const
 {
-    return { m_logicalGroupPropertyIDs.data(), m_seenLogicalGroupPropertyCount };
+    return std::span { m_logicalGroupPropertyIDs }.first(m_seenLogicalGroupPropertyCount);
 }
 
 inline bool PropertyCascade::hasCustomProperty(const AtomString& name) const
@@ -198,5 +198,5 @@ inline const PropertyCascade::Property& PropertyCascade::customProperty(const At
     return m_customProperties.find(name)->value;
 }
 
-}
-}
+} // namespace Style
+} // namespace WebCore

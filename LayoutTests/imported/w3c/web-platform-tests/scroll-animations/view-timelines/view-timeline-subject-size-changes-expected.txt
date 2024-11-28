@@ -1,5 +1,3 @@
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT View timeline with subject size change after the creation of the animation Test timed out
+FAIL View timeline with subject size change after the creation of the animation assert_equals: Effect at the midpoint of the active range expected "0.5" but got "0.3"
 

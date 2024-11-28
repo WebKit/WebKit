@@ -39,7 +39,6 @@ use warnings;
 
 use FindBin;
 use lib $FindBin::Bin;
-use autouse 'webkitdirs' => qw(prohibitUnknownPort);
 
 BEGIN {
    use Exporter   ();
@@ -164,6 +163,7 @@ my (
     $webdriverTouchInteractionsSupport,
     $webdriverWheelInteractionsSupport,
     $webglSupport,
+    $webGpuSwift,
     $webXRSupport,
     $wirelessPlaybackTargetSupport,
     $woff2Support,
@@ -443,6 +443,9 @@ my @features = (
 
     { option => "webgl", desc => "Toggle WebGL support",
       define => "ENABLE_WEBGL", value => \$webglSupport },
+
+    { option => "webGpuSwift", desc => "Toggle WebGpu Swift Implementation",
+      define => "ENABLE_WEBGPU_SWIFT", value => \$webGpuSwift },
 
     { option => "webxr", desc => "Toggle WebXR support",
       define => "ENABLE_WEBXR", value => \$webXRSupport },

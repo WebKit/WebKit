@@ -252,12 +252,12 @@ String HitTestResult::spellingToolTip(TextDirection& dir) const
     CheckedPtr markers = m_innerNonSharedNode->document().markersIfExists();
     if (!markers)
         return String();
-    WeakPtr marker = markers->markerContainingPoint(m_hitTestLocation.point(), DocumentMarker::Type::Grammar);
+    WeakPtr marker = markers->markerContainingPoint(m_hitTestLocation.point(), DocumentMarkerType::Grammar);
     if (!marker)
         return String();
 
     if (CheckedPtr renderer = m_innerNonSharedNode->renderer())
-        dir = renderer->style().direction();
+        dir = renderer->writingMode().computedTextDirection();
     return marker->description();
 }
 
@@ -271,7 +271,7 @@ String HitTestResult::replacedString() const
     CheckedPtr markers = m_innerNonSharedNode->document().markersIfExists();
     if (!markers)
         return String();
-    WeakPtr marker = markers->markerContainingPoint(m_hitTestLocation.point(), DocumentMarker::Type::Replacement);
+    WeakPtr marker = markers->markerContainingPoint(m_hitTestLocation.point(), DocumentMarkerType::Replacement);
     if (!marker)
         return String();
     
@@ -288,7 +288,7 @@ String HitTestResult::title(TextDirection& dir) const
             auto title = titleElement->title();
             if (!title.isNull()) {
                 if (auto renderer = titleElement->renderer())
-                    dir = renderer->style().direction();
+                    dir = renderer->writingMode().computedTextDirection();
                 return title;
             }
         }
@@ -307,7 +307,7 @@ String HitTestResult::innerTextIfTruncated(TextDirection& dir) const
             if (block->style().textOverflow() == TextOverflow::Ellipsis) {
                 for (auto lineBox = InlineIterator::firstLineBoxFor(*block); lineBox; lineBox.traverseNext()) {
                     if (lineBox->hasEllipsis()) {
-                        dir = block->style().direction();
+                        dir = block->writingMode().computedTextDirection();
                         return element->innerText();
                     }
                 }
@@ -393,7 +393,7 @@ bool HitTestResult::hasEntireImage() const
     if (!innerFrame)
         return false;
 
-    if (auto page = innerFrame->page())
+    if (RefPtr page = innerFrame->page())
         return page->hasLocalDataForURL(imageURL);
 
     return false;
@@ -416,7 +416,7 @@ URL HitTestResult::absoluteImageURL() const
         || is<HTMLObjectElement>(*element)
         || is<SVGImageElement>(*element))) {
         auto imageURL = imageNode->document().completeURL(element->imageSourceURL());
-        if (auto* page = imageNode->document().page())
+        if (RefPtr page = imageNode->document().page())
             return page->applyLinkDecorationFiltering(imageURL, LinkDecorationFilteringTrigger::Unspecified);
         return imageURL;
     }
@@ -447,7 +447,7 @@ URL HitTestResult::absoluteMediaURL() const
 #if ENABLE(VIDEO)
     if (auto* element = mediaElement()) {
         auto sourceURL = element->currentSrc();
-        if (auto* page = element->document().page())
+        if (RefPtr page = element->document().page())
             return page->applyLinkDecorationFiltering(sourceURL, LinkDecorationFilteringTrigger::Unspecified);
         return sourceURL;
     }
@@ -687,7 +687,7 @@ URL HitTestResult::absoluteLinkURL() const
         return { };
 
     auto url = m_innerURLElement->absoluteLinkURL();
-    if (auto* page = m_innerURLElement->document().page())
+    if (RefPtr page = m_innerURLElement->document().page())
         return page->applyLinkDecorationFiltering(url, LinkDecorationFilteringTrigger::Unspecified);
 
     return url;
@@ -820,7 +820,7 @@ Vector<String> HitTestResult::dictationAlternatives() const
     if (!markers)
         return Vector<String>();
 
-    WeakPtr marker = markers->markerContainingPoint(pointInInnerNodeFrame(), DocumentMarker::Type::DictationAlternatives);
+    WeakPtr marker = markers->markerContainingPoint(pointInInnerNodeFrame(), DocumentMarkerType::DictationAlternatives);
     if (!marker)
         return Vector<String>();
 

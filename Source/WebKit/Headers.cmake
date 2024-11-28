@@ -144,5 +144,6 @@ set(WebKit_PUBLIC_FRAMEWORK_HEADERS
     WebProcess/InjectedBundle/API/c/WKBundlePageUIClient.h
     WebProcess/InjectedBundle/API/c/WKBundlePrivate.h
     WebProcess/InjectedBundle/API/c/WKBundleRangeHandle.h
+    WebProcess/InjectedBundle/API/c/WKBundleRangeHandlePrivate.h
     WebProcess/InjectedBundle/API/c/WKBundleScriptWorld.h
 )

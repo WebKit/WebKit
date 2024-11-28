@@ -98,6 +98,8 @@ private:
 class OffscreenCanvas final : public ActiveDOMObject, public RefCounted<OffscreenCanvas>, public CanvasBase, public EventTarget {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED_EXPORT(OffscreenCanvas, WEBCORE_EXPORT);
 public:
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
 
     struct ImageEncodeOptions {
         String type = "image/png"_s;
@@ -147,10 +149,6 @@ public:
     void queueTaskKeepingObjectAlive(TaskSource, Function<void()>&&) final;
     void dispatchEvent(Event&) final;
     bool isDetached() const { return m_detached; };
-
-    // ActiveDOMObject.
-    void ref() const final { RefCounted::ref(); }
-    void deref() const final { RefCounted::deref(); }
 
 private:
     OffscreenCanvas(ScriptExecutionContext&, IntSize, RefPtr<PlaceholderRenderingContextSource>&&);

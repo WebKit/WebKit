@@ -58,11 +58,12 @@ public:
     virtual void enumerateMediaDevices(Document&, EnumerateDevicesCallback&&) = 0;
 
     enum DeviceChangeObserverTokenType { };
-    using DeviceChangeObserverToken = LegacyNullableObjectIdentifier<DeviceChangeObserverTokenType>;
+    using DeviceChangeObserverToken = ObjectIdentifier<DeviceChangeObserverTokenType>;
     virtual DeviceChangeObserverToken addDeviceChangeObserver(Function<void()>&&) = 0;
     virtual void removeDeviceChangeObserver(DeviceChangeObserverToken) = 0;
 
     virtual void updateCaptureState(const Document&, bool isActive, MediaProducerMediaCaptureKind, CompletionHandler<void(std::optional<Exception>&&)>&&) = 0;
+    virtual void setShouldListenToVoiceActivity(bool) = 0;
 
 protected:
     virtual ~UserMediaClient() = default;

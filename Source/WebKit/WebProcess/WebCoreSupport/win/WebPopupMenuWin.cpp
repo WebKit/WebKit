@@ -39,6 +39,9 @@ using namespace WebCore;
 static const int separatorPadding = 4;
 static const int separatorHeight = 1;
 
+// FIXME: Fix the warnings
+IGNORE_CLANG_WARNINGS_BEGIN("sign-compare")
+
 void WebPopupMenu::setUpPlatformData(const WebCore::IntRect& pageCoordinates, PlatformPopupMenuData& data)
 {
     float deviceScaleFactor = page()->deviceScaleFactor();
@@ -154,5 +157,7 @@ void WebPopupMenu::setUpPlatformData(const WebCore::IntRect& pageCoordinates, Pl
         }
     }
 }
+
+IGNORE_CLANG_WARNINGS_END
 
 } // namespace WebKit

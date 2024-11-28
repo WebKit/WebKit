@@ -64,10 +64,10 @@ private:
 
     bool isWorkerFontLoadRequest() const final { return true; }
 
-    void didReceiveResponse(ScriptExecutionContextIdentifier, ResourceLoaderIdentifier, const ResourceResponse&) final;
+    void didReceiveResponse(ScriptExecutionContextIdentifier, std::optional<ResourceLoaderIdentifier>, const ResourceResponse&) final;
     void didReceiveData(const SharedBuffer&) final;
-    void didFinishLoading(ScriptExecutionContextIdentifier, ResourceLoaderIdentifier, const NetworkLoadMetrics&) final;
-    void didFail(ScriptExecutionContextIdentifier, const ResourceError&) final;
+    void didFinishLoading(ScriptExecutionContextIdentifier, std::optional<ResourceLoaderIdentifier>, const NetworkLoadMetrics&) final;
+    void didFail(std::optional<ScriptExecutionContextIdentifier>, const ResourceError&) final;
 
     URL m_url;
     LoadedFromOpaqueSource m_loadedFromOpaqueSource;

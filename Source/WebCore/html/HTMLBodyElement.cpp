@@ -120,9 +120,6 @@ const AtomString& HTMLBodyElement::eventNameForWindowEventHandlerAttribute(const
     static NeverDestroyed map = [] {
         EventHandlerNameMap map;
         JSHTMLBodyElement::forEachWindowEventHandlerContentAttribute([&] (const AtomString& attributeName, const AtomString& eventName) {
-            // FIXME: Remove these special cases. These have has an [WindowEventHandler] line in the IDL but were not in this map before, so this preserves behavior.
-            if (attributeName == onrejectionhandledAttr.get().localName() || attributeName == onunhandledrejectionAttr.get().localName())
-                return;
             map.add(attributeName.impl(), eventName);
         });
         return map;

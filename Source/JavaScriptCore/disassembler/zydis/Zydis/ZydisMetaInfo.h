@@ -35,6 +35,9 @@
 #include "ZydisExportConfig.h"
 #include "ZycoreDefines.h"
 #include "ZycoreTypes.h"
+#include <wtf/Compiler.h>
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 #ifdef __cplusplus
 extern "C" {
@@ -84,5 +87,7 @@ ZYDIS_EXPORT const char* ZydisISAExtGetString(ZydisISAExt isa_ext);
 #ifdef __cplusplus
 }
 #endif
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif /* ZYDIS_METAINFO_H */

@@ -53,7 +53,7 @@ public:
 
 private:
     using AdapterKey = std::tuple<unsigned, float>;
-    using AdapterMap = HashMap<AdapterKey, ThreadSafeWeakPtr<SharedAudioDestinationAdapter>>;
+    using AdapterMap = UncheckedKeyHashMap<AdapterKey, ThreadSafeWeakPtr<SharedAudioDestinationAdapter>>;
     static AdapterMap& sharedMap();
 
     SharedAudioDestinationAdapter(unsigned numberOfOutputChannels, float sampleRate, AudioDestinationCreationFunction&&);

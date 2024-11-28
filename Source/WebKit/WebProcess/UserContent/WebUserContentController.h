@@ -69,8 +69,8 @@ public:
 
     InjectedBundleScriptWorld* worldForIdentifier(ContentWorldIdentifier);
 
-    void addContentWorlds(const Vector<std::pair<ContentWorldIdentifier, String>>&);
-    InjectedBundleScriptWorld* addContentWorld(const std::pair<ContentWorldIdentifier, String>&);
+    void addContentWorlds(const Vector<ContentWorldData>&);
+    InjectedBundleScriptWorld* addContentWorld(const ContentWorldData&);
     void addUserScripts(Vector<WebUserScriptData>&&, InjectUserScriptImmediately);
     void addUserStyleSheets(const Vector<WebUserStyleSheetData>&);
     void addUserScriptMessageHandlers(const Vector<WebScriptMessageHandlerData>&);

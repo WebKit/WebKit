@@ -49,6 +49,8 @@
 #import <wtf/text/StringBuilder.h>
 #import <wtf/unicode/CharacterNames.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 const ASCIILiteral WebArchivePboardType = "Apple Web Archive pasteboard type"_s;
@@ -762,16 +764,17 @@ static void setDragImageImpl(NSImage *image, NSPoint offset)
     bool flipImage;
     NSSize imageSize = image.size;
     CGRect imageRect = CGRectMake(0, 0, imageSize.width, imageSize.height);
-    NSImageRep *imageRep = [image bestRepresentationForRect:NSRectFromCGRect(imageRect) context:nil hints:nil];
+    NSRect convertedRect = NSRectFromCGRect(imageRect);
+    NSImageRep *imageRep = [image bestRepresentationForRect:convertedRect context:nil hints:nil];
     RetainPtr<NSBitmapImageRep> bitmapImage;
     if (!imageRep || ![imageRep isKindOfClass:[NSBitmapImageRep class]] || !NSEqualSizes(imageRep.size, imageSize)) {
         [image lockFocus];
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-        bitmapImage = adoptNS([[NSBitmapImageRep alloc] initWithFocusedViewRect:*(NSRect*)&imageRect]);
+        bitmapImage = adoptNS([[NSBitmapImageRep alloc] initWithFocusedViewRect:convertedRect]);
 ALLOW_DEPRECATED_DECLARATIONS_END
         [image unlockFocus];
-        
-        // we may have to flip the bits we just read if the image was flipped since it means the cache was also
+
+        // We may have to flip the bits we just read if the image was flipped since it means the cache was also
         // and CoreDragSetImage can't take a transform for rendering.
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         flipImage = image.isFlipped;
@@ -884,5 +887,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // PLATFORM(MAC)

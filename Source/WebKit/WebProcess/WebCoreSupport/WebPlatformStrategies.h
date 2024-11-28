@@ -112,7 +112,7 @@ private:
     // WebCore::PushStrategy
 #if ENABLE(DECLARATIVE_WEB_PUSH)
     void navigatorSubscribeToPushService(const URL& scope, const Vector<uint8_t>& applicationServerKey, SubscribeToPushServiceCallback&&) override;
-    void navigatorUnsubscribeFromPushService(const URL& scope, WebCore::PushSubscriptionIdentifier, UnsubscribeFromPushServiceCallback&&) override;
+    void navigatorUnsubscribeFromPushService(const URL& scope, std::optional<WebCore::PushSubscriptionIdentifier>, UnsubscribeFromPushServiceCallback&&) override;
     void navigatorGetPushSubscription(const URL& scope, GetPushSubscriptionCallback&&) override;
     void navigatorGetPushPermissionState(const URL& scope, GetPushPermissionStateCallback&&) override;
 #endif

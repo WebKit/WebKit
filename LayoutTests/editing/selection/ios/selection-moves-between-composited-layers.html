@@ -1,0 +1,79 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true SelectionHonorsOverflowScrolling=true ] -->
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+<style>
+body, html {
+    font-family: system-ui;
+    margin: 0;
+}
+
+input, button {
+    font-size: 18px;
+    outline: none;
+}
+
+#container {
+    width: 300px;
+    height: 200px;
+    border: 2px solid black;
+    border-radius: 1em;
+    padding: 1em;
+    position: fixed;
+    margin: 1em;
+    line-height: 50px;
+    text-align: center;
+    background-color: white;
+}
+
+#description, #console {
+    position: absolute;
+    z-index: -1;
+}
+</style>
+<script>
+jsTestIsAsync = true;
+
+addEventListener("load", async () => {
+    description("Verifies that the selection remains visible when the element containing the selection becomes composited. To run manually, select the text field and tap the button; the selection should remain visible");
+    document.querySelector("button").addEventListener("mousedown", (event) => {
+        container.style.position = "static";
+        event.preventDefault();
+    });
+
+    const container = document.getElementById("container");
+    const input = document.querySelector("input");
+    await UIHelper.activateElementAndWaitForInputSession(input);
+
+    input.select();
+    await UIHelper.ensurePresentationUpdate();
+    rectsBeforeStyleChange = await UIHelper.waitForSelectionToAppear();
+
+    container.style.position = "static";
+    await UIHelper.ensurePresentationUpdate();
+    rectsAfterStyleChange = await UIHelper.getUISelectionViewRects();
+
+    shouldBe("rectsBeforeStyleChange.length", "1");
+    shouldBe("rectsBeforeStyleChange.length", "rectsAfterStyleChange.length");
+    shouldBe("rectsBeforeStyleChange[0].top", "rectsAfterStyleChange[0].top");
+    shouldBe("rectsBeforeStyleChange[0].left", "rectsAfterStyleChange[0].left");
+    shouldBe("rectsBeforeStyleChange[0].width", "rectsAfterStyleChange[0].width");
+    shouldBe("rectsBeforeStyleChange[0].height", "rectsAfterStyleChange[0].height");
+
+    input.blur();
+    await UIHelper.waitForKeyboardToHide();
+
+    finishJSTest();
+});
+</script>
+</head>
+<body>
+    <div id="container">
+        <input value="WebKit" /><button id="toggle-position">position: static</button>
+    </div>
+    <pre id="description"></pre>
+    <pre id="console"></pre>
+</body>
+</html>

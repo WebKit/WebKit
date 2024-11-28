@@ -165,7 +165,7 @@ void vp9DecompressionOutputCallback(void *decoderRef,
   if (status != noErr || !imageBuffer) {
     [decoder setError:status != noErr ? status : 1];
     RTC_LOG(LS_ERROR) << "Failed to decode frame. Status: " << status;
-    decodeParams->callback(nil);
+    decodeParams->callback(nil, false);
     return;
   }
 
@@ -177,7 +177,7 @@ void vp9DecompressionOutputCallback(void *decoderRef,
                                    rotation:RTCVideoRotation_0
                                 timeStampNs:CMTimeGetSeconds(timestamp) * rtc::kNumNanosecsPerSec];
   decodedFrame.timeStamp = decodeParams->timestamp;
-  decodeParams->callback(decodedFrame);
+  decodeParams->callback(decodedFrame, false);
 }
 
 // Decoder.

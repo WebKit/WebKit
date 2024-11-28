@@ -35,6 +35,7 @@
 #include <WebCore/PageIdentifier.h>
 #include <WebCore/RectEdges.h>
 #include <memory>
+#include <wtf/CheckedPtr.h>
 #include <wtf/Deque.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/Noncopyable.h>
@@ -52,7 +53,9 @@ class MomentumEventDispatcher {
     WTF_MAKE_NONCOPYABLE(MomentumEventDispatcher);
     WTF_MAKE_TZONE_ALLOCATED(MomentumEventDispatcher);
 public:
-    class Client {
+    class Client : public CanMakeCheckedPtr<Client> {
+        WTF_MAKE_FAST_ALLOCATED;
+        WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(Client);
     friend class MomentumEventDispatcher;
     public:
         virtual ~Client() = default;
@@ -177,7 +180,7 @@ private:
 
     mutable Lock m_accelerationCurvesLock;
     HashMap<WebCore::PageIdentifier, std::optional<ScrollingAccelerationCurve>> m_accelerationCurves WTF_GUARDED_BY_LOCK(m_accelerationCurvesLock);
-    Client& m_client;
+    CheckedRef<Client> m_client;
 };
 
 } // namespace WebKit

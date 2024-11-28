@@ -32,6 +32,7 @@
 #include "Logging.h"
 #include "ScrollingStateOverflowScrollProxyNode.h"
 #include "ScrollingStateTree.h"
+#include "ScrollingTree.h"
 
 namespace WebCore {
 

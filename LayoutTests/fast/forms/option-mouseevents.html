@@ -43,44 +43,44 @@ function mouseeventverify2(event, x, y, offsetX, offsetY, target, type)
     shouldBe("event.x", event.x, x);
     shouldBe("event.y", event.y, y);
 }
-function test() {
+async function test() {
     if (window.testRunner) {
         testRunner.dumpAsText();
         testRunner.waitUntilDone();
     }
 
     if (window.eventSender) {
-        eventSender.mouseMoveTo(22, 104);
-        eventSender.mouseDown();
-        eventSender.mouseUp();
+        await eventSender.asyncMouseMoveTo(22, 104);
+        await eventSender.asyncMouseDown();
+        await eventSender.asyncMouseUp();
     }
 
     if (window.eventSender) {
-        eventSender.mouseMoveTo(22, 184);
-        eventSender.mouseDown();
-        eventSender.mouseUp();
+        await eventSender.asyncMouseMoveTo(22, 184);
+        await eventSender.asyncMouseDown();
+        await eventSender.asyncMouseUp();
     }
 
     if (window.eventSender) {
-        eventSender.mouseMoveTo(22, 262);
-        eventSender.mouseDown();
-        eventSender.mouseUp();
+        await eventSender.asyncMouseMoveTo(22, 262);
+        await eventSender.asyncMouseDown();
+        await eventSender.asyncMouseUp();
     }
 
     if (window.eventSender) {
-        eventSender.mouseMoveTo(22, 344);
-        eventSender.mouseDown();
-        eventSender.mouseUp();
-        eventSender.mouseDown();
-        eventSender.mouseUp();
+        await eventSender.asyncMouseMoveTo(22, 344);
+        await eventSender.asyncMouseDown();
+        await eventSender.asyncMouseUp();
+        await eventSender.asyncMouseDown();
+        await eventSender.asyncMouseUp();
     }
 
     if (window.eventSender) {
-        eventSender.mouseMoveTo(22, 448);
-        eventSender.mouseDown();
-        eventSender.mouseUp();
-        eventSender.mouseDown();
-        eventSender.mouseUp();
+        await eventSender.asyncMouseMoveTo(22, 448);
+        await eventSender.asyncMouseDown();
+        await eventSender.asyncMouseUp();
+        await eventSender.asyncMouseDown();
+        await eventSender.asyncMouseUp();
     }
 
     if (window.testRunner)

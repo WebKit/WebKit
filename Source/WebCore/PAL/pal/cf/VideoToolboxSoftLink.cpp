@@ -40,6 +40,8 @@ SOFT_LINK_CONSTANT_FOR_SOURCE(PAL, VideoToolbox, kVTCompressionPropertyKey_RealT
 SOFT_LINK_CONSTANT_FOR_SOURCE(PAL, VideoToolbox, kVTCompressionPropertyKey_AverageBitRate, CFStringRef)
 SOFT_LINK_CONSTANT_FOR_SOURCE(PAL, VideoToolbox, kVTCompressionPropertyKey_ProfileLevel, CFStringRef)
 
+SOFT_LINK_CONSTANT_FOR_SOURCE(PAL, VideoToolbox, kVTEncodeFrameOptionKey_ForceKeyFrame, CFStringRef)
+
 SOFT_LINK_CONSTANT_FOR_SOURCE(PAL, VideoToolbox, kVTVideoEncoderSpecification_EnableHardwareAcceleratedVideoEncoder, CFStringRef)
 SOFT_LINK_CONSTANT_FOR_SOURCE(PAL, VideoToolbox, kVTProfileLevel_H264_Baseline_AutoLevel, CFStringRef)
 SOFT_LINK_CONSTANT_FOR_SOURCE(PAL, VideoToolbox, kVTProfileLevel_H264_High_AutoLevel, CFStringRef)

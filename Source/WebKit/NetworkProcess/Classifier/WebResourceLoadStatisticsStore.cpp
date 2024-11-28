@@ -130,7 +130,7 @@ WebResourceLoadStatisticsStore::WebResourceLoadStatisticsStore(NetworkSession& n
 
     if (!resourceLoadStatisticsDirectory.isEmpty()) {
         postTask([this, resourceLoadStatisticsDirectory = resourceLoadStatisticsDirectory.isolatedCopy(), shouldIncludeLocalhost, sessionID = networkSession.sessionID()] {
-            m_statisticsStore = makeUnique<ResourceLoadStatisticsStore>(*this, m_statisticsQueue, shouldIncludeLocalhost, resourceLoadStatisticsDirectory, sessionID);
+            m_statisticsStore = ResourceLoadStatisticsStore::create(*this, m_statisticsQueue, shouldIncludeLocalhost, resourceLoadStatisticsDirectory, sessionID);
 
             auto legacyPlistFilePath = FileSystem::pathByAppendingComponent(resourceLoadStatisticsDirectory, "full_browsing_session_resourceLog.plist"_s);
             if (FileSystem::fileExists(legacyPlistFilePath))

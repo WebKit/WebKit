@@ -50,7 +50,7 @@ struct _WebKitWebEditorPrivate {
     WebKitWebPage* webPage;
 };
 
-static guint signals[LAST_SIGNAL] = { 0, };
+static std::array<unsigned, LAST_SIGNAL> signals;
 
 WEBKIT_DEFINE_FINAL_TYPE(WebKitWebEditor, webkit_web_editor, G_TYPE_OBJECT, GObject)
 

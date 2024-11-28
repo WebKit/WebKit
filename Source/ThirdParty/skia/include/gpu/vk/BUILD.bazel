@@ -17,26 +17,7 @@ skia_filegroup(
         "VulkanMutableTextureState.h",
         "VulkanTypes.h",
     ],
-)
-
-# These are Ganesh specific. In a perfect world, we'd move these to
-# //include/gpu/ganesh/vk, but that involves updating several clients.
-skia_filegroup(
-    name = "ganesh_public_hdrs",
-    srcs = [
-        "GrVkTypes.h",
-    ],
-)
-
-# Group is exported to //gn/gpu.gni:skia_gpu_vk_public.
-skia_filegroup(
-    name = "public_hdrs",
-    srcs = [
-        ":ganesh_public_hdrs",
-        ":shared_public_hdrs",
-    ],
     visibility = [
-        "//include/gpu:__pkg__",
         "//src/gpu/ganesh/vk:__pkg__",
         "//src/gpu/vk:__pkg__",
     ],

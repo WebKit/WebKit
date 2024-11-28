@@ -30,16 +30,22 @@ DawnTestContext::~DawnTestContext() {
     tick();
 }
 
-std::unique_ptr<GraphiteTestContext> DawnTestContext::Make(wgpu::BackendType backend) {
+std::unique_ptr<GraphiteTestContext> DawnTestContext::Make(wgpu::BackendType backend,
+                                                           bool useTintIR) {
     static std::unique_ptr<dawn::native::Instance> sInstance;
     static SkOnce sOnce;
 
     static constexpr const char* kToggles[] = {
         "allow_unsafe_apis",  // Needed for dual-source blending.
         "use_user_defined_labels_in_backend",
+        // Robustness impacts performance and is always disabled when running Graphite in Chrome,
+        // so this keeps Skia's tests operating closer to real-use behavior.
+        "disable_robustness",
+        // Must be last to correctly respond to `useTintIR` parameter.
+        "use_tint_ir",
     };
     wgpu::DawnTogglesDescriptor togglesDesc;
-    togglesDesc.enabledToggleCount  = std::size(kToggles);
+    togglesDesc.enabledToggleCount  = std::size(kToggles) - (useTintIR ? 0 : 1);
     togglesDesc.enabledToggles      = kToggles;
 
     // Creation of Instance is cheap but calling EnumerateAdapters can be expensive the first time,

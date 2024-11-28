@@ -71,8 +71,8 @@ public:
         void close();
         void enqueue(WebCodecsVideoFrame&, ScriptExecutionContext&);
 
-        void ref() final { m_processor->ref(); };
-        void deref() final { m_processor->deref(); };
+        void ref() const final { m_processor->ref(); };
+        void deref() const final { m_processor->deref(); };
 
     private:
 

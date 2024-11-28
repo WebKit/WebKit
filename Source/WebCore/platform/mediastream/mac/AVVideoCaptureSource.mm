@@ -243,9 +243,6 @@ AVVideoCaptureSource::AVVideoCaptureSource(AVCaptureDevice* avDevice, const Capt
     , m_objcObserver(adoptNS([[WebCoreAVVideoCaptureSourceObserver alloc] initWithCaptureSource:this]))
     , m_device(avDevice)
     , m_zoomScaleFactor(cameraZoomScaleFactor([avDevice deviceType]))
-#if PLATFORM(IOS_FAMILY)
-    , m_startupTimer(*this, &AVVideoCaptureSource::startupTimerFired)
-#endif
     , m_verifyCapturingTimer(*this, &AVVideoCaptureSource::verifyIsCapturing)
     , m_defaultTorchMode((int64_t)[m_device torchMode])
 {
@@ -326,8 +323,12 @@ void AVVideoCaptureSource::startProducingData()
 
 #if PLATFORM(IOS_FAMILY)
     m_shouldCallNotifyMutedChange = false;
+
+    if (!m_startupTimer)
+        m_startupTimer = makeUnique<Timer>(*this, &AVVideoCaptureSource::startupTimerFired);
+
     static constexpr Seconds startupTimerInterval = 1_s;
-    m_startupTimer.startOneShot(startupTimerInterval);
+    m_startupTimer->startOneShot(startupTimerInterval);
 #endif
 }
 
@@ -1146,13 +1147,11 @@ void AVVideoCaptureSource::monitorOrientation(OrientationNotifier& notifier)
 {
 #if PLATFORM(IOS_FAMILY)
     if (PAL::canLoad_AVFoundation_AVCaptureDeviceTypeExternalUnknown() && [device() deviceType] == AVCaptureDeviceTypeExternalUnknown)
-        return;
+        m_useSensorAndDeviceOrientation = false;
+#endif
 
     notifier.addObserver(*this);
     orientationChanged(notifier.orientation());
-#else
-    UNUSED_PARAM(notifier);
-#endif
 }
 
 void AVVideoCaptureSource::orientationChanged(IntDegrees orientation)
@@ -1163,8 +1162,26 @@ void AVVideoCaptureSource::orientationChanged(IntDegrees orientation)
     ALWAYS_LOG_IF(loggerPtr(), LOGIDENTIFIER, "rotation = ", m_videoFrameRotation, ", orientation = ", m_deviceOrientation);
 }
 
+void AVVideoCaptureSource::rotationAngleForHorizonLevelDisplayChanged(const String& devicePersistentId, VideoFrameRotation videoFrameRotation)
+{
+    if (captureDevice().persistentId() != devicePersistentId)
+        return;
+
+    m_useSensorAndDeviceOrientation = false;
+
+    if (videoFrameRotation == m_videoFrameRotation)
+        return;
+
+    m_videoFrameRotation = videoFrameRotation;
+    ALWAYS_LOG_IF(loggerPtr(), LOGIDENTIFIER, "rotation = ", m_videoFrameRotation);
+    notifySettingsDidChangeObservers({ RealtimeMediaSourceSettings::Flag::Width, RealtimeMediaSourceSettings::Flag::Height });
+}
+
 void AVVideoCaptureSource::computeVideoFrameRotation()
 {
+    if (!m_useSensorAndDeviceOrientation)
+        return;
+
     bool frontCamera = [device() position] == AVCaptureDevicePositionFront;
     VideoFrame::Rotation videoFrameRotation;
     switch (m_sensorOrientation - m_deviceOrientation) {
@@ -1252,7 +1269,7 @@ void AVVideoCaptureSource::captureSessionIsRunningDidChange(bool state)
         updateVerifyCapturingTimer();
 
 #if PLATFORM(IOS_FAMILY)
-        if (m_startupTimer.isActive()) {
+        if (m_startupTimer && m_startupTimer->isActive()) {
             m_shouldCallNotifyMutedChange = true;
             return;
         }

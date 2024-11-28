@@ -32,6 +32,7 @@
 #include <WebCore/PlatformLayerIdentifier.h>
 #include <WebCore/RenderingResourceIdentifier.h>
 #include <WebCore/ScrollTypes.h>
+#include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
@@ -43,32 +44,23 @@ OBJC_CLASS UIView;
 #endif
 
 namespace WebKit {
-class RemoteLayerTreeNode;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::RemoteLayerTreeNode> : std::true_type { };
-}
-
-namespace WebKit {
 
 class RemoteLayerTreeHost;
 class RemoteLayerTreeScrollbars;
 
-class RemoteLayerTreeNode : public CanMakeWeakPtr<RemoteLayerTreeNode> {
+class RemoteLayerTreeNode final : public RefCountedAndCanMakeWeakPtr<RemoteLayerTreeNode> {
     WTF_MAKE_TZONE_ALLOCATED(RemoteLayerTreeNode);
 public:
-    RemoteLayerTreeNode(WebCore::PlatformLayerIdentifier, Markable<WebCore::LayerHostingContextIdentifier>, RetainPtr<CALayer>);
+    static Ref<RemoteLayerTreeNode> create(WebCore::PlatformLayerIdentifier, Markable<WebCore::LayerHostingContextIdentifier>, RetainPtr<CALayer>);
 #if PLATFORM(IOS_FAMILY)
-    RemoteLayerTreeNode(WebCore::PlatformLayerIdentifier, Markable<WebCore::LayerHostingContextIdentifier>, RetainPtr<UIView>);
+    static Ref<RemoteLayerTreeNode> create(WebCore::PlatformLayerIdentifier, Markable<WebCore::LayerHostingContextIdentifier>, RetainPtr<UIView>);
 #endif
     ~RemoteLayerTreeNode();
 
-    static std::unique_ptr<RemoteLayerTreeNode> createWithPlainLayer(WebCore::PlatformLayerIdentifier);
+    static Ref<RemoteLayerTreeNode> createWithPlainLayer(WebCore::PlatformLayerIdentifier);
 
     CALayer *layer() const { return m_layer.get(); }
-#if ENABLE(GAZE_GLOW_FOR_INTERACTION_REGIONS)
+#if ENABLE(GAZE_GLOW_FOR_INTERACTION_REGIONS) || HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
     struct VisibleRectMarkableTraits {
         static bool isEmptyValue(const WebCore::FloatRect& value)
         {
@@ -83,11 +75,19 @@ public:
 
     const Markable<WebCore::FloatRect, VisibleRectMarkableTraits> visibleRect() const { return m_visibleRect; }
     void setVisibleRect(const WebCore::FloatRect& value) { m_visibleRect = value; }
+#endif
 
+#if ENABLE(GAZE_GLOW_FOR_INTERACTION_REGIONS)
     CALayer *ensureInteractionRegionsContainer();
     void removeInteractionRegionsContainer();
     void updateInteractionRegionAfterHierarchyChange();
 #endif
+
+#if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
+    bool shouldBeSeparated() const { return m_shouldBeSeparated; }
+    void setShouldBeSeparated(bool value) { m_shouldBeSeparated = value; }
+#endif
+
 #if PLATFORM(IOS_FAMILY)
     UIView *uiView() const { return m_uiView.get(); }
 #endif
@@ -98,7 +98,7 @@ public:
     void setEventRegion(const WebCore::EventRegion&);
 
     // Non-ancestor scroller that controls positioning of the layer.
-    std::optional<WebCore::PlatformLayerIdentifier >actingScrollContainerID() const { return m_actingScrollContainerID.asOptional(); }
+    std::optional<WebCore::PlatformLayerIdentifier> actingScrollContainerID() const { return m_actingScrollContainerID.asOptional(); }
     // Ancestor scrollers that don't affect positioning of the layer.
     const Vector<WebCore::PlatformLayerIdentifier>& stationaryScrollContainerIDs() const { return m_stationaryScrollContainerIDs; }
 
@@ -113,8 +113,8 @@ public:
     static NSString *appendLayerDescription(NSString *description, CALayer *);
 
 #if ENABLE(SCROLLING_THREAD)
-    WebCore::ScrollingNodeID scrollingNodeID() const { return m_scrollingNodeID; }
-    void setScrollingNodeID(WebCore::ScrollingNodeID nodeID) { m_scrollingNodeID = nodeID; }
+    std::optional<WebCore::ScrollingNodeID> scrollingNodeID() const { return m_scrollingNodeID; }
+    void setScrollingNodeID(std::optional<WebCore::ScrollingNodeID> nodeID) { m_scrollingNodeID = nodeID; }
 #endif
 
     Markable<WebCore::LayerHostingContextIdentifier> remoteContextHostingIdentifier() const { return m_remoteContextHostingIdentifier; }
@@ -155,6 +155,11 @@ public:
     void setBackdropRootIsOpaque(bool backdropRootIsOpaque) { m_backdropRootIsOpaque = backdropRootIsOpaque; }
 
 private:
+    RemoteLayerTreeNode(WebCore::PlatformLayerIdentifier, Markable<WebCore::LayerHostingContextIdentifier>, RetainPtr<CALayer>);
+#if PLATFORM(IOS_FAMILY)
+    RemoteLayerTreeNode(WebCore::PlatformLayerIdentifier, Markable<WebCore::LayerHostingContextIdentifier>, RetainPtr<UIView>);
+#endif
+
     void initializeLayer();
 
     WebCore::PlatformLayerIdentifier m_layerID;
@@ -162,9 +167,12 @@ private:
     Markable<WebCore::LayerHostingContextIdentifier> m_remoteContextHostedIdentifier;
 
     RetainPtr<CALayer> m_layer;
-#if ENABLE(GAZE_GLOW_FOR_INTERACTION_REGIONS)
-    Markable<WebCore::FloatRect, VisibleRectMarkableTraits> m_visibleRect;
 
+#if ENABLE(GAZE_GLOW_FOR_INTERACTION_REGIONS) || HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
+    Markable<WebCore::FloatRect, VisibleRectMarkableTraits> m_visibleRect;
+#endif
+
+#if ENABLE(GAZE_GLOW_FOR_INTERACTION_REGIONS)
     void repositionInteractionRegionsContainerIfNeeded();
     enum class InteractionRegionsInSubtree : bool { Yes, Unknown };
     void propagateInteractionRegionsChangeInHierarchy(InteractionRegionsInSubtree);
@@ -176,6 +184,11 @@ private:
     bool m_hasInteractionRegionsDescendant { false };
     RetainPtr<UIView> m_interactionRegionsContainer;
 #endif
+
+#if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
+    bool m_shouldBeSeparated { false };
+#endif
+
 #if PLATFORM(IOS_FAMILY)
     RetainPtr<UIView> m_uiView;
 #endif
@@ -183,7 +196,7 @@ private:
     WebCore::EventRegion m_eventRegion;
 
 #if ENABLE(SCROLLING_THREAD)
-    WebCore::ScrollingNodeID m_scrollingNodeID;
+    Markable<WebCore::ScrollingNodeID> m_scrollingNodeID;
 #endif
 
     Markable<WebCore::PlatformLayerIdentifier> m_actingScrollContainerID;

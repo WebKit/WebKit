@@ -29,7 +29,6 @@
 #include "FontCascadeDescription.h"
 #include "FontCascadeFonts.h"
 #include "Path.h"
-#include "RuntimeApplicationChecks.h"
 #include "TextSpacing.h"
 #include <optional>
 #include <wtf/CheckedRef.h>
@@ -38,6 +37,10 @@
 #include <wtf/WeakPtr.h>
 #include <wtf/text/CharacterProperties.h>
 #include <wtf/unicode/CharacterNames.h>
+
+#if PLATFORM(COCOA)
+#include <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
+#endif
 
 // "X11/X.h" defines Complex to 0 and conflicts
 // with Complex value in CodePath enum.
@@ -49,6 +52,7 @@ namespace WebCore {
 
 class GraphicsContext;
 class LayoutRect;
+class RenderStyle;
 class RenderText;
 class TextLayout;
 class TextRun;
@@ -198,10 +202,12 @@ public:
     WEBCORE_EXPORT GlyphData glyphDataForCharacter(char32_t, bool mirror, FontVariant = AutoVariant) const;
     bool canUseSimplifiedTextMeasuring(char32_t, FontVariant, bool whitespaceIsCollapsed, const Font&) const;
 
-    const Font* fontForCombiningCharacterSequence(StringView) const;
+    RefPtr<const Font> fontForCombiningCharacterSequence(StringView) const;
 
     static bool isCJKIdeograph(char32_t);
     static bool isCJKIdeographOrSymbol(char32_t);
+
+    static bool canUseGlyphDisplayList(const RenderStyle&);
 
     // Returns (the number of opportunities, whether the last expansion is a trailing expansion)
     // If there are no opportunities, the bool will be true iff we are forbidding leading expansions.
@@ -279,7 +285,7 @@ public:
             return false;
 #if PLATFORM(COCOA)
         // We make an exception for Books because some already available books when converted to EPUBS might contain object replacement character that should not be visible to the user.
-        return CocoaApplication::isIBooks();
+        return WTF::CocoaApplication::isIBooks();
 #else
         return false;
 #endif

@@ -1,4 +1,4 @@
-This test ensures we report the right information for tables with presentational cells.
+This test ensures we report the right information for tables with cells that change their aria-hidden state.
 
 PASS: table.rowCount === 2
 PASS: table.columnCount === 2

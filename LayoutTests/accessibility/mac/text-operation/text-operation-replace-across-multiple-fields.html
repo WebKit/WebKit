@@ -1,0 +1,68 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../../resources/accessibility-helper.js"></script>
+<script src="../../../resources/js-test.js"></script>
+</head>
+<body>
+
+<div id="test-content">
+    <p contenteditable="true" id="text">The quick brown fox jumps over the lazy dog.</p>
+    <p contenteditable="true" id="text2">TEXT2: The quick <span id="target1">brown fo</span>x jumps ov<span id="target2">er the la</span>zy dog.</p>
+    <textarea id="text3">TEXT3: The quick brown fox jumps over the lazy dog.</textarea>
+    <input type="text" id="text4" value="TEXT4: The quick brown fox jumps over the lazy dog.">
+</div>
+
+<script>
+var output = "Tests that text operations are performed as expected across multiple editable fields.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    var text = accessibilityController.accessibleElementById("text");
+    var text2 = accessibilityController.accessibleElementById("text2");
+    var text3 = accessibilityController.accessibleElementById("text3");
+    var text4 = accessibilityController.accessibleElementById("text4");
+
+    var operationResult;
+    setTimeout(async function() {
+        var markers = [
+            await selectPartialElementTextById("text", 30, 37),
+            await selectPartialElementTextById("text", 9, 20),
+            await selectElementTextById("target2"),
+            await selectElementTextById("target1"),
+            await selectPartialElementTextById("text3", 42, 46),
+            await selectPartialElementTextById("text4", 38, 41),
+        ];
+
+        await waitForNotification(text, "AXValueChanged", async () => {
+            await waitForNotification(text2, "AXValueChanged", async () => {
+                await waitForNotification(text3, "AXValueChanged", async () => {
+                    await waitForNotification(text4, "AXValueChanged", () => {
+                        const webArea = accessibilityController.rootElement.childAtIndex(0);
+                        operationResult = webArea.performTextOperation("TextOperationReplacePreserveCase", markers, "foo", /* smart replace */ true);
+                    });
+                });
+            });
+        });
+
+        output += expect("operationResult.length", "6");
+        output += expect("operationResult[0]", "'foo'");
+        output += expect("operationResult[1]", "'foo'");
+        output += expect("operationResult[2]", "'foo'");
+        output += expect("operationResult[3]", "'foo'");
+        output += expect("operationResult[4]", "'foo'");
+        output += expect("operationResult[5]", "'foo'");
+        output += expect("text.stringValue.replace(/\\s/g, ' ')", "'AXValue: The quick foo jumps over foo zy dog.'");
+        output += expect("text2.stringValue.replace(/\\s/g, ' ')", "'AXValue: TEXT2: The quick foo x jumps ov foo zy dog.'");
+        output += expect("text3.stringValue.replace(/\\s/g, ' ')", "'AXValue: TEXT3: The quick brown fox jumps over the foo dog.'");
+        output += expect("text4.stringValue.replace(/\\s/g, ' ')", "'AXValue: TEXT4: The quick brown fox jumps over foo lazy dog.'");
+
+        document.getElementById("test-content").remove();
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

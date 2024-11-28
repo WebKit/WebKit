@@ -589,8 +589,10 @@ void NetworkDataTaskSoup::didSniffContentCallback(SoupMessage* soupMessage, cons
     gpointer key, value;
     g_hash_table_iter_init(&iter, parameters);
     while (g_hash_table_iter_next(&iter, &key, &value)) {
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GTK/WPE Port
         g_string_append(sniffedType, "; ");
         soup_header_g_string_append_param(sniffedType, static_cast<const char*>(key), static_cast<const char*>(value));
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     }
     task->didSniffContent(sniffedType->str);
     g_string_free(sniffedType, TRUE);
@@ -1396,10 +1398,9 @@ void NetworkDataTaskSoup::download()
     m_downloadOutputStream = adoptGRef(G_OUTPUT_STREAM(outputStream.leakRef()));
 
     auto& downloadManager = m_session->networkProcess().downloadManager();
-    auto download = makeUnique<Download>(downloadManager, *m_pendingDownloadID, *this, *m_session, suggestedFilename());
-    auto* downloadPtr = download.get();
-    downloadManager.dataTaskBecameDownloadTask(*m_pendingDownloadID, WTFMove(download));
-    downloadPtr->didCreateDestination(m_pendingDownloadLocation);
+    Ref download = Download::create(downloadManager, *m_pendingDownloadID, *this, *m_session, suggestedFilename());
+    downloadManager.dataTaskBecameDownloadTask(*m_pendingDownloadID, download.copyRef());
+    download->didCreateDestination(m_pendingDownloadLocation);
 
     ASSERT(!m_client);
     read();

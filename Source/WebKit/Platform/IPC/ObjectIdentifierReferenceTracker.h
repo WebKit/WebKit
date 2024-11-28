@@ -178,6 +178,7 @@ namespace WTF {
 
 template<typename T> struct HashTraits<IPC::ObjectIdentifierReference<T>> : SimpleClassHashTraits<IPC::ObjectIdentifierReference<T>> {
     static constexpr bool emptyValueIsZero = HashTraits<T>::emptyValueIsZero;
+    static IPC::ObjectIdentifierReference<T> emptyValue() { return { HashTraits<T>::emptyValue(), 0 }; }
 };
 
 template<typename T> struct DefaultHash<IPC::ObjectIdentifierReference<T>> {

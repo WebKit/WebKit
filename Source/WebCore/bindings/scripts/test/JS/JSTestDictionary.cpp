@@ -25,12 +25,13 @@
 #include <JavaScriptCore/JSCInlines.h>
 
 
+
 namespace WebCore {
 using namespace JSC;
 
 template<> ConversionResult<IDLDictionary<TestDictionary>> convertDictionary<TestDictionary>(JSGlobalObject& lexicalGlobalObject, JSValue value)
 {
-    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     bool isNullOrUndefined = value.isUndefinedOrNull();
     auto* object = isNullOrUndefined ? nullptr : value.getObject();
@@ -56,3 +57,4 @@ template<> ConversionResult<IDLDictionary<TestDictionary>> convertDictionary<Tes
 }
 
 } // namespace WebCore
+

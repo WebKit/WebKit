@@ -144,7 +144,7 @@ void WebFullScreenManager::setPIPStandbyElement(WebCore::HTMLVideoElement* pipSt
         return;
 
 #if !RELEASE_LOG_DISABLED
-    auto logIdentifierForElement = [] (auto* element) { return element ? element->logIdentifier() : nullptr; };
+    auto logIdentifierForElement = [] (auto* element) { return element ? element->logIdentifier() : 0; };
 #endif
     ALWAYS_LOG(LOGIDENTIFIER, "old element ", logIdentifierForElement(m_pipStandbyElement.get()), ", new element ", logIdentifierForElement(pipStandbyElement));
 
@@ -156,11 +156,6 @@ void WebFullScreenManager::setPIPStandbyElement(WebCore::HTMLVideoElement* pipSt
     if (m_pipStandbyElement)
         m_pipStandbyElement->setVideoFullscreenStandby(true);
 #endif
-}
-
-void WebFullScreenManager::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)
-{
-    didReceiveWebFullScreenManagerMessage(connection, decoder);
 }
 
 bool WebFullScreenManager::supportsFullScreenForElement(const WebCore::Element& element, bool withKeyboard)
@@ -204,6 +199,53 @@ void WebFullScreenManager::clearElement()
     m_element = nullptr;
 }
 
+#if ENABLE(QUICKLOOK_FULLSCREEN)
+FullScreenMediaDetails WebFullScreenManager::getImageMediaDetails(CheckedPtr<RenderImage> renderImage, IsUpdating updating)
+{
+    if (!renderImage)
+        return { };
+
+    auto* cachedImage = renderImage->cachedImage();
+    if (!cachedImage || cachedImage->errorOccurred())
+        return { };
+
+    RefPtr image = cachedImage->image();
+    if (!image)
+        return { };
+    if (!(image->shouldUseQuickLookForFullscreen() || updating == IsUpdating::Yes))
+        return { };
+
+    auto* buffer = cachedImage->resourceBuffer();
+    if (!buffer)
+        return { };
+
+    auto imageSize = image->size();
+
+    auto mimeType = image->mimeType();
+    if (!MIMETypeRegistry::isSupportedImageMIMEType(mimeType))
+        mimeType = MIMETypeRegistry::mimeTypeForExtension(image->filenameExtension());
+    if (!MIMETypeRegistry::isSupportedImageMIMEType(mimeType))
+        mimeType = MIMETypeRegistry::mimeTypeForPath(cachedImage->url().string());
+    if (!MIMETypeRegistry::isSupportedImageMIMEType(mimeType))
+        return { };
+
+    auto sharedMemoryBuffer = SharedMemory::copyBuffer(*buffer);
+    if (!sharedMemoryBuffer)
+        return { };
+
+    auto imageResourceHandle = sharedMemoryBuffer->createHandle(SharedMemory::Protection::ReadOnly);
+
+    m_willUseQuickLookForFullscreen = true;
+
+    return {
+        FullScreenMediaDetails::Type::Image,
+        imageSize,
+        mimeType,
+        imageResourceHandle
+    };
+}
+#endif // ENABLE(QUICKLOOK_FULLSCREEN)
+
 void WebFullScreenManager::enterFullScreenForElement(WebCore::Element* element, WebCore::HTMLMediaElementEnums::VideoFullscreenMode mode)
 {
     ASSERT(element);
@@ -225,52 +267,8 @@ void WebFullScreenManager::enterFullScreenForElement(WebCore::Element* element, 
 #endif
 
 #if PLATFORM(VISION) && ENABLE(QUICKLOOK_FULLSCREEN)
-    CheckedPtr renderImage = dynamicDowncast<RenderImage>(element->renderer());
-    if (renderImage) {
-        auto getImageMediaDetails = [&]() -> FullScreenMediaDetails {
-            if (!renderImage)
-                return { };
-
-            auto* cachedImage = renderImage->cachedImage();
-            if (!cachedImage || cachedImage->errorOccurred())
-                return { };
-
-            RefPtr image = cachedImage->image();
-            if (!image || !image->shouldUseQuickLookForFullscreen())
-                return { };
-
-            auto* buffer = cachedImage->resourceBuffer();
-            if (!buffer)
-                return { };
-
-            auto imageSize = image->size();
-
-            auto mimeType = image->mimeType();
-            if (!MIMETypeRegistry::isSupportedImageMIMEType(mimeType))
-                mimeType = MIMETypeRegistry::mimeTypeForExtension(image->filenameExtension());
-            if (!MIMETypeRegistry::isSupportedImageMIMEType(mimeType))
-                mimeType = MIMETypeRegistry::mimeTypeForPath(cachedImage->url().string());
-            if (!MIMETypeRegistry::isSupportedImageMIMEType(mimeType))
-                return { };
-
-            auto sharedMemoryBuffer = SharedMemory::copyBuffer(*buffer);
-            if (!sharedMemoryBuffer)
-                return { };
-
-            auto imageResourceHandle = sharedMemoryBuffer->createHandle(SharedMemory::Protection::ReadOnly);
-
-            m_willUseQuickLookForFullscreen = true;
-
-            return {
-                FullScreenMediaDetails::Type::Image,
-                imageSize,
-                mimeType,
-                imageResourceHandle
-            };
-        };
-
-        mediaDetails = getImageMediaDetails();
-    }
+    if (CheckedPtr renderImage = dynamicDowncast<RenderImage>(element->renderer()))
+        mediaDetails = getImageMediaDetails(renderImage, IsUpdating::No);
 
     if (m_willUseQuickLookForFullscreen)
         m_page->freezeLayerTree(WebPage::LayerTreeFreezeReason::OutOfProcessFullscreen);
@@ -310,6 +308,18 @@ void WebFullScreenManager::enterFullScreenForElement(WebCore::Element* element, 
     }
 #endif
 }
+
+#if ENABLE(QUICKLOOK_FULLSCREEN)
+void WebFullScreenManager::updateImageSource(WebCore::Element& element)
+{
+    FullScreenMediaDetails mediaDetails;
+    CheckedPtr renderImage = dynamicDowncast<RenderImage>(element.renderer());
+    if (renderImage && m_willUseQuickLookForFullscreen) {
+        mediaDetails = getImageMediaDetails(renderImage, IsUpdating::Yes);
+        m_page->send(Messages::WebFullScreenManagerProxy::UpdateImageSource(WTFMove(mediaDetails)));
+    }
+}
+#endif // ENABLE(QUICKLOOK_FULLSCREEN)
 
 void WebFullScreenManager::exitFullScreenForElement(WebCore::Element* element)
 {
@@ -371,6 +381,16 @@ void WebFullScreenManager::didEnterFullScreen()
         close();
         return;
     }
+
+#if ENABLE(QUICKLOOK_FULLSCREEN)
+    static constexpr auto maxViewportSize = FloatSize { 10000, 10000 };
+    if (m_willUseQuickLookForFullscreen) {
+        m_oldSize = m_page->viewportConfiguration().viewLayoutSize();
+        m_scaleFactor = m_page->viewportConfiguration().layoutSizeScaleFactor();
+        m_minEffectiveWidth = m_page->viewportConfiguration().minimumEffectiveDeviceWidth();
+        m_page->setViewportConfigurationViewLayoutSize(maxViewportSize, m_scaleFactor, m_minEffectiveWidth);
+    }
+#endif
 
 #if PLATFORM(IOS_FAMILY) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
     auto* currentPlaybackControlsElement = m_page->playbackSessionManager().currentPlaybackControlsElement();
@@ -453,8 +473,10 @@ static Vector<Ref<Element>> collectFullscreenElementsFromElement(Element* elemen
 void WebFullScreenManager::didExitFullScreen()
 {
 #if PLATFORM(VISION) && ENABLE(QUICKLOOK_FULLSCREEN)
-    if (std::exchange(m_willUseQuickLookForFullscreen, false))
+    if (std::exchange(m_willUseQuickLookForFullscreen, false)) {
+        m_page->setViewportConfigurationViewLayoutSize(m_oldSize, m_scaleFactor, m_minEffectiveWidth);
         m_page->unfreezeLayerTree(WebPage::LayerTreeFreezeReason::OutOfProcessFullscreen);
+    }
 #endif
 
     m_page->isInFullscreenChanged(WebPage::IsInFullscreenMode::No);

@@ -30,8 +30,11 @@
 #include "WKBundleAPICast.h"
 #include "WebPage.h"
 #include "WebPageGroupProxy.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(InjectedBundleClient);
 
 InjectedBundleClient::InjectedBundleClient(const WKBundleClientBase* client)
 {

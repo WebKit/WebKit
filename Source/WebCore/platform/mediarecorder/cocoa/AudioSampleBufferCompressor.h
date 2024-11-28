@@ -26,32 +26,35 @@
 
 #if ENABLE(MEDIA_RECORDER) && USE(AVFOUNDATION)
 
-#import <CoreMedia/CoreMedia.h>
-#import <wtf/TZoneMalloc.h>
-#import <wtf/WorkQueue.h>
+#include <CoreMedia/CoreMedia.h>
+#include <wtf/Forward.h>
+#include <wtf/ThreadSafeWeakPtr.h>
+#include <wtf/WorkQueue.h>
 
-typedef struct opaqueCMSampleBuffer *CMSampleBufferRef;
+typedef struct opaqueCMSampleBuffer* CMSampleBufferRef;
 typedef struct OpaqueAudioConverter* AudioConverterRef;
+OBJC_CLASS NSNumber;
 
 namespace WebCore {
 
-class AudioSampleBufferCompressor {
-    WTF_MAKE_TZONE_ALLOCATED(AudioSampleBufferCompressor);
+class AudioSampleBufferCompressor : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<AudioSampleBufferCompressor, WTF::DestructionThread::Main> {
 public:
-    static std::unique_ptr<AudioSampleBufferCompressor> create(CMBufferQueueTriggerCallback, void* callbackObject);
+    static RefPtr<AudioSampleBufferCompressor> create(CMBufferQueueTriggerCallback, void* callbackObject, AudioFormatID, std::optional<AudioStreamBasicDescription>);
     ~AudioSampleBufferCompressor();
 
+    bool isEmpty() const;
     void setBitsPerSecond(unsigned);
-    void finish() { flushInternal(true); }
-    void flush() { flushInternal(false); }
+    Ref<GenericPromise> finish() { return flushInternal(true); }
+    Ref<GenericPromise> flush() { return flushInternal(false); }
+    Ref<GenericPromise> drain();
     void addSampleBuffer(CMSampleBufferRef);
-    CMSampleBufferRef getOutputSampleBuffer();
+    CMSampleBufferRef getOutputSampleBuffer() const;
     RetainPtr<CMSampleBufferRef> takeOutputSampleBuffer();
 
     unsigned bitRate() const;
 
 private:
-    AudioSampleBufferCompressor();
+    AudioSampleBufferCompressor(AudioFormatID, std::optional<AudioStreamBasicDescription>&&);
     bool initialize(CMBufferQueueTriggerCallback, void* callbackObject);
     UInt32 defaultOutputBitRate(const AudioStreamBasicDescription&) const;
 
@@ -59,13 +62,12 @@ private:
 
     void processSampleBuffer(CMSampleBufferRef);
     bool initAudioConverterForSourceFormatDescription(CMFormatDescriptionRef, AudioFormatID);
-    size_t computeBufferSizeForAudioFormat(AudioStreamBasicDescription, UInt32, Float32);
     void attachPrimingTrimsIfNeeded(CMSampleBufferRef);
     RetainPtr<NSNumber> gradualDecoderRefreshCount();
-    RetainPtr<CMSampleBufferRef> sampleBufferWithNumPackets(UInt32 numPackets, AudioBufferList);
-    void processSampleBuffersUntilLowWaterTime(CMTime);
+    RetainPtr<CMSampleBufferRef> sampleBuffer(AudioBufferList);
+    void processSampleBuffers();
     OSStatus provideSourceDataNumOutputPackets(UInt32*, AudioBufferList*, AudioStreamPacketDescription**);
-    void flushInternal(bool isFinished);
+    Ref<GenericPromise> flushInternal(bool isFinished);
 
     Ref<WorkQueue> m_serialDispatchQueue;
     CMTime m_lowWaterTime;
@@ -73,6 +75,7 @@ private:
     RetainPtr<CMBufferQueueRef> m_outputBufferQueue;
     RetainPtr<CMBufferQueueRef> m_inputBufferQueue;
     bool m_isEncoding { false };
+    bool m_isDraining { false };
 
     AudioConverterRef m_converter { nullptr };
     AudioStreamBasicDescription m_sourceFormat;
@@ -80,7 +83,7 @@ private:
     RetainPtr<CMFormatDescriptionRef> m_destinationFormatDescription;
     RetainPtr<NSNumber> m_gdrCountNum;
     UInt32 m_maxOutputPacketSize { 0 };
-    Vector<AudioStreamPacketDescription> m_destinationPacketDescriptions;
+    AudioStreamPacketDescription m_destinationPacketDescriptions;
 
     CMTime m_currentNativePresentationTimeStamp;
     CMTime m_currentOutputPresentationTimeStamp;
@@ -93,7 +96,7 @@ private:
     RetainPtr<CMBlockBufferRef> m_sampleBlockBuffer;
     size_t m_sampleBlockBufferSize { 0 };
     size_t m_currentOffsetInSampleBlockBuffer { 0 };
-    AudioFormatID m_outputCodecType { kAudioFormatMPEG4AAC };
+    const AudioFormatID m_outputCodecType;
     std::optional<unsigned> m_outputBitRate;
 };
 

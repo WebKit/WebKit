@@ -96,9 +96,9 @@ NS_SWIFT_NAME(WKWebExtension.Sidebar)
 
 /*!
  @abstract Indicate that the sidebar will be opened
- @discussion This method should be invoked by the browser when this sidebar will be opened -- i.e., its associated ``WKWebView`` will be
- displayed. If this method is not called before the sidebar is opened, then the ``WKWebView`` associated with this sidebar may not have a
- document loaded.
+ @discussion This method should be invoked by the browser when this sidebar will be opened due to some action by the user. If
+ this method is not called before the sidebar is opened, then the ``WKWebView`` associated with this sidebar may not have a
+ document loaded, and the extension may not receive the `activeTab` permission from this user interaction.
  */
 - (void)willOpenSidebar;
 

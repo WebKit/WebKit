@@ -623,7 +623,7 @@ bool doClipPlaneTest()
 mediump vec4 doFog(mediump vec4 currentFragment)
 {
 
-    float eyeDist = -pos_varying.z / pos_varying.w;
+    float eyeDist = abs(pos_varying.z / pos_varying.w);
     float f       = 1.0;
     switch (fog_mode)
     {

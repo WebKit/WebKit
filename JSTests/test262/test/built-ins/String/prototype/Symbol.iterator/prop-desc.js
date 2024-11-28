@@ -14,6 +14,8 @@ includes: [propertyHelper.js]
 ---*/
 
 assert.sameValue(typeof String.prototype[Symbol.iterator], 'function');
-verifyNotEnumerable(String.prototype, Symbol.iterator);
-verifyWritable(String.prototype, Symbol.iterator);
-verifyConfigurable(String.prototype, Symbol.iterator);
+verifyProperty(String.prototype, Symbol.iterator, {
+  writable: true,
+  enumerable: false,
+  configurable: true,
+});

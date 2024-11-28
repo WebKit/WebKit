@@ -1028,6 +1028,10 @@ PFN_vkCopyMemoryToImageEXT vkCopyMemoryToImageEXT                   = nullptr;
 PFN_vkGetImageSubresourceLayout2EXT vkGetImageSubresourceLayout2EXT = nullptr;
 PFN_vkTransitionImageLayoutEXT vkTransitionImageLayoutEXT           = nullptr;
 
+// VK_KHR_Synchronization2
+PFN_vkCmdPipelineBarrier2KHR vkCmdPipelineBarrier2KHR = nullptr;
+PFN_vkCmdWriteTimestamp2KHR vkCmdWriteTimestamp2KHR   = nullptr;
+
 void InitDebugUtilsEXTFunctions(VkInstance instance)
 {
     GET_INSTANCE_FUNC(vkCreateDebugUtilsMessengerEXT);
@@ -1062,10 +1066,10 @@ void InitImagePipeSurfaceFUCHSIAFunctions(VkInstance instance)
 #    endif
 
 #    if defined(ANGLE_PLATFORM_ANDROID)
-void InitExternalMemoryHardwareBufferANDROIDFunctions(VkInstance instance)
+void InitExternalMemoryHardwareBufferANDROIDFunctions(VkDevice device)
 {
-    GET_INSTANCE_FUNC(vkGetAndroidHardwareBufferPropertiesANDROID);
-    GET_INSTANCE_FUNC(vkGetMemoryAndroidHardwareBufferANDROID);
+    GET_DEVICE_FUNC(vkGetAndroidHardwareBufferPropertiesANDROID);
+    GET_DEVICE_FUNC(vkGetMemoryAndroidHardwareBufferANDROID);
 }
 #    endif
 
@@ -1076,9 +1080,9 @@ void InitGGPStreamDescriptorSurfaceFunctions(VkInstance instance)
 }
 #    endif  // defined(ANGLE_PLATFORM_GGP)
 
-void InitExternalSemaphoreFdFunctions(VkInstance instance)
+void InitExternalSemaphoreFdFunctions(VkDevice device)
 {
-    GET_INSTANCE_FUNC(vkImportSemaphoreFdKHR);
+    GET_DEVICE_FUNC(vkImportSemaphoreFdKHR);
 }
 
 void InitHostQueryResetFunctions(VkDevice device)
@@ -1087,10 +1091,10 @@ void InitHostQueryResetFunctions(VkDevice device)
 }
 
 // VK_KHR_external_fence_fd
-void InitExternalFenceFdFunctions(VkInstance instance)
+void InitExternalFenceFdFunctions(VkDevice device)
 {
-    GET_INSTANCE_FUNC(vkGetFenceFdKHR);
-    GET_INSTANCE_FUNC(vkImportFenceFdKHR);
+    GET_DEVICE_FUNC(vkGetFenceFdKHR);
+    GET_DEVICE_FUNC(vkImportFenceFdKHR);
 }
 
 // VK_KHR_shared_presentable_image
@@ -1171,6 +1175,12 @@ void InitHostImageCopyFunctions(VkDevice device)
     GET_DEVICE_FUNC(vkCopyMemoryToImageEXT);
     GET_DEVICE_FUNC(vkGetImageSubresourceLayout2EXT);
     GET_DEVICE_FUNC(vkTransitionImageLayoutEXT);
+}
+
+void InitSynchronization2Functions(VkDevice device)
+{
+    GET_DEVICE_FUNC(vkCmdPipelineBarrier2KHR);
+    GET_DEVICE_FUNC(vkCmdWriteTimestamp2KHR);
 }
 
 #    undef GET_INSTANCE_FUNC

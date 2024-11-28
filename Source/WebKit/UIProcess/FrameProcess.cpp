@@ -30,17 +30,19 @@
 #include "WebPageProxy.h"
 #include "WebPreferences.h"
 #include "WebProcessProxy.h"
+#include <WebCore/Site.h>
 
 namespace WebKit {
 
-FrameProcess::FrameProcess(WebProcessProxy& process, BrowsingContextGroup& group, const Site& site, const WebPreferences& preferences)
+FrameProcess::FrameProcess(WebProcessProxy& process, BrowsingContextGroup& group, const WebCore::Site& site, const WebPreferences& preferences)
     : m_process(process)
     , m_browsingContextGroup(group)
     , m_site(site)
 {
-    if (preferences.siteIsolationEnabled())
+    if (preferences.siteIsolationEnabled()) {
         group.addFrameProcess(*this);
-    else
+        process.markAsUsedForSiteIsolation();
+    } else
         m_browsingContextGroup = nullptr;
 }
 

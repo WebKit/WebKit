@@ -59,6 +59,10 @@
 #import <wtf/spi/darwin/XPCSPI.h>
 #import <wtf/text/MakeString.h>
 
+#if HAVE(MOBILE_KEY_BAG)
+#import <pal/spi/ios/MobileKeyBagSPI.h>
+#endif
+
 #if PLATFORM(IOS) || PLATFORM(VISION)
 #import "UIKitSPI.h"
 #import <UIKit/UIApplication.h>
@@ -72,41 +76,25 @@
 #define GET_ALLOWED_BUNDLE_IDENTIFIER_ADDITIONS
 #endif
 
+#if !defined(GET_ALLOWED_BUNDLE_IDENTIFIER_ADDITIONS_1)
+#define GET_ALLOWED_BUNDLE_IDENTIFIER_ADDITIONS_1
+#endif
+
 #if PLATFORM(IOS)
 
-static Vector<String> getAllowedBundleIdentifiers()
+// FIXME: This is only here temporarily for staging purposes.
+static UNUSED_FUNCTION Vector<String> getAllowedBundleIdentifiers()
 {
     Vector<String> result = { "com.apple.SafariViewService"_s };
     GET_ALLOWED_BUNDLE_IDENTIFIER_ADDITIONS;
     return result;
 }
 
-static HashSet<String> getInstalledWebClipIdentifiers()
+static String getAllowedBundleIdentifier()
 {
-    HashSet<String> webClipIdentifiers;
-
-    @autoreleasepool {
-        NSArray *webClips = [UIWebClip webClips];
-        webClipIdentifiers.reserveInitialCapacity(webClips.count);
-
-        for (UIWebClip *webClip in webClips) {
-            if (NSString *identifier = [webClip identifier])
-                webClipIdentifiers.add(identifier);
-        }
-    }
-
-    RELEASE_LOG(Push, "Found %u web clips", webClipIdentifiers.size());
-    return webClipIdentifiers;
-}
-
-static bool webClipExists(String webClipIdentifier)
-{
-    @autoreleasepool {
-        NSString *path = [UIWebClip pathForWebClipWithIdentifier:(NSString *)webClipIdentifier];
-        if (!path)
-            return false;
-        return [[NSFileManager defaultManager] fileExistsAtPath:path];
-    }
+    String result = "com.apple.SafariViewService"_s;
+    GET_ALLOWED_BUNDLE_IDENTIFIER_ADDITIONS_1;
+    return result;
 }
 
 #endif
@@ -119,6 +107,8 @@ using WebCore::PushSubscriptionSetIdentifier;
 using WebCore::SecurityOriginData;
 
 namespace WebPushD {
+
+static unsigned s_protocolVersion = protocolVersionValue;
 
 static constexpr Seconds s_incomingPushTransactionTimeout { 10_s };
 
@@ -152,17 +142,7 @@ static RetainPtr<NSString> platformNotificationCenterBundleIdentifier(String pus
     return [NSString stringWithFormat:@"com.apple.WebKit.PushBundle.%@", (NSString *)pushPartition];
 }
 
-static NSString *platformNotificationSourceForDisplay(PushClientConnection& connection)
-{
-#if PLATFORM(IOS)
-    return (NSString *)connection.associatedWebClipTitle();
-#else
-    // FIXME: Calculate appropriate value on macOS
-    return nil;
-#endif
-}
-
-#endif
+#endif // HAVE(FULL_FEATURED_USER_NOTIFICATIONS)
 
 WebPushDaemon& WebPushDaemon::singleton()
 {
@@ -193,6 +173,10 @@ void WebPushDaemon::startMockPushService()
     m_userNotificationCenterClass = [_WKMockUserNotificationCenter class];
 #endif
 
+#if PLATFORM(IOS)
+    m_webClipCachePath = FileSystem::createTemporaryFile("WebClipCache"_s);
+#endif
+
     auto messageHandler = [this](const PushSubscriptionSetIdentifier& identifier, WebKit::WebPushMessage&& message) {
         handleIncomingPush(identifier, WTFMove(message));
     };
@@ -201,12 +185,16 @@ void WebPushDaemon::startMockPushService()
     });
 }
 
-void WebPushDaemon::startPushService(const String& incomingPushServiceName, const String& databasePath)
+void WebPushDaemon::startPushService(const String& incomingPushServiceName, const String& databasePath, const String& webClipCachePath)
 {
+#if PLATFORM(IOS)
+    m_webClipCachePath = webClipCachePath;
+#endif
+
     auto messageHandler = [this](const PushSubscriptionSetIdentifier& identifier, WebKit::WebPushMessage&& message) {
         handleIncomingPush(identifier, WTFMove(message));
     };
-    PushService::create(incomingPushServiceName, databasePath, WTFMove(messageHandler), [this](auto&& pushService) mutable {
+    PushService::create(incomingPushServiceName, databasePath, WTFMove(messageHandler), [this, webClipCachePath](auto&& pushService) mutable {
 #if PLATFORM(IOS)
         if (!pushService) {
             setPushService(nullptr);
@@ -214,7 +202,8 @@ void WebPushDaemon::startPushService(const String& incomingPushServiceName, cons
         }
 
         auto& pushServiceRef = *pushService;
-        pushServiceRef.updateSubscriptionSetState(getAllowedBundleIdentifiers(), getInstalledWebClipIdentifiers(), [this, pushService = WTFMove(pushService)]() mutable {
+        auto allowedBundleIdentifier = getAllowedBundleIdentifier();
+        pushServiceRef.updateSubscriptionSetState(allowedBundleIdentifier, ensureWebClipCache().visibleWebClipIdentifiers(allowedBundleIdentifier), [this, pushService = WTFMove(pushService)]() mutable {
             setPushService(WTFMove(pushService));
         });
 #else
@@ -223,7 +212,34 @@ void WebPushDaemon::startPushService(const String& incomingPushServiceName, cons
     });
 }
 
-void WebPushDaemon::setPushService(std::unique_ptr<PushService>&& pushService)
+#if PLATFORM(IOS)
+
+WebClipCache& WebPushDaemon::ensureWebClipCache()
+{
+    if (!m_webClipCache) {
+        RELEASE_ASSERT(m_webClipCachePath);
+
+#if HAVE(MOBILE_KEY_BAG)
+        // Our data protection class only allows us to read files after the device has unlocked at
+        // least once. So we need to make sure the web clip cache path is readable before
+        // initializing the object.
+        //
+        // The only external events that cause webpushd activity are incoming IPC messages from
+        // apps and incoming push messages from apsd. Apps shouldn't be able to run and send IPCs
+        // before the device unlocks at least once. And PushService buffers incoming pushes until
+        // the device unlocks at least once. So we never expect this assert to fire.
+        RELEASE_ASSERT(MKBDeviceUnlockedSinceBoot() == 1);
+#endif
+
+        m_webClipCache = makeUnique<WebClipCache>(m_webClipCachePath);
+    }
+
+    return *m_webClipCache;
+}
+
+#endif
+
+void WebPushDaemon::setPushService(RefPtr<PushService>&& pushService)
 {
     m_pushService = WTFMove(pushService);
     m_pushServiceStarted = true;
@@ -279,21 +295,20 @@ void WebPushDaemon::connectionEventHandler(xpc_object_t request)
         return;
 
     auto version = xpc_dictionary_get_uint64(request, protocolVersionKey);
-    if (version != protocolVersionValue) {
+    if (version != s_protocolVersion) {
         RELEASE_LOG_ERROR(Push, "Received request with protocol version %llu not matching daemon protocol version %llu", version, protocolVersionValue);
         tryCloseRequestConnection(request);
         return;
     }
 
-    size_t dataSize { 0 };
-    auto data = static_cast<const uint8_t*>(xpc_dictionary_get_data(request, protocolEncodedMessageKey, &dataSize));
-    if (!data) {
+    auto data = xpc_dictionary_get_data_span(request, protocolEncodedMessageKey);
+    if (!data.data()) {
         RELEASE_LOG_ERROR(Push, "WebPushDaemon::connectionEventHandler - No encoded message data in xpc message");
         tryCloseRequestConnection(request);
         return;
     }
 
-    auto decoder = IPC::Decoder::create({ data, dataSize }, { });
+    auto decoder = IPC::Decoder::create(data, { });
     if (!decoder) {
         RELEASE_LOG_ERROR(Push, "WebPushDaemon::connectionEventHandler - Failed to create decoder for xpc message");
         tryCloseRequestConnection(request);
@@ -328,7 +343,7 @@ void WebPushDaemon::connectionEventHandler(xpc_object_t request)
 #if PLATFORM(IOS)
     auto bundleIdentifier = pushConnection->hostAppCodeSigningIdentifier();
     auto pushPartition = pushConnection->pushPartitionIfExists();
-    if (!getAllowedBundleIdentifiers().contains(bundleIdentifier) || (!pushPartition.isEmpty() && !webClipExists(pushPartition))) {
+    if (getAllowedBundleIdentifier() != bundleIdentifier || (!pushPartition.isEmpty() && !ensureWebClipCache().isWebClipVisible(bundleIdentifier, pushPartition))) {
         RELEASE_LOG_ERROR(Push, "WebPushDaemon::connectionEventHandler - Got message from unexpected bundleIdentifier = %{public}s and pushPartition = %{public}s", bundleIdentifier.ascii().data(), pushPartition.ascii().data());
         updateSubscriptionSetState();
         tryCloseRequestConnection(request);
@@ -382,15 +397,14 @@ void WebPushDaemon::updateSubscriptionSetState()
         if (!m_pushService)
             return;
 
-        auto allowedBundleIdentifiers = getAllowedBundleIdentifiers();
-        auto installedWebClipIdentifiers = getInstalledWebClipIdentifiers();
-
-        m_pushService->updateSubscriptionSetState(allowedBundleIdentifiers, installedWebClipIdentifiers, []() { });
+        auto allowedBundleIdentifier = getAllowedBundleIdentifier();
+        auto visibleWebClipIdentifiers = ensureWebClipCache().visibleWebClipIdentifiers(allowedBundleIdentifier);
+        m_pushService->updateSubscriptionSetState(allowedBundleIdentifier, visibleWebClipIdentifiers, []() { });
 
         for (auto& [xpcConnection, pushClientConnection] : m_connectionMap) {
             auto bundleIdentifier = pushClientConnection->hostAppCodeSigningIdentifier();
             auto pushPartition = pushClientConnection->pushPartitionIfExists();
-            if (!allowedBundleIdentifiers.contains(bundleIdentifier) || (!pushPartition.isEmpty() && !installedWebClipIdentifiers.contains(pushPartition))) {
+            if (bundleIdentifier != allowedBundleIdentifier || (!pushPartition.isEmpty() && !visibleWebClipIdentifiers.contains(pushPartition))) {
                 RELEASE_LOG(Push, "WebPushDaemon::updateSubscriptionSetState: killing obsolete connection %p associated with bundleIdentifier = %{public}s and pushPartition = %{public}s", xpcConnection, bundleIdentifier.ascii().data(), pushPartition.ascii().data());
                 xpc_connection_cancel(xpcConnection);
             }
@@ -489,7 +503,7 @@ void WebPushDaemon::injectEncryptedPushMessageForTesting(PushClientConnection& c
 void WebPushDaemon::handleIncomingPush(const PushSubscriptionSetIdentifier& identifier, WebKit::WebPushMessage&& message)
 {
 #if PLATFORM(IOS)
-    if (!getAllowedBundleIdentifiers().contains(identifier.bundleIdentifier) || !webClipExists(identifier.pushPartition)) {
+    if (getAllowedBundleIdentifier() != identifier.bundleIdentifier || !ensureWebClipCache().isWebClipVisible(identifier.bundleIdentifier, identifier.pushPartition)) {
         RELEASE_LOG(Push, "Got incoming push from unexpected app: %{public}s", identifier.debugDescription().utf8().data());
         updateSubscriptionSetState();
         return;
@@ -721,6 +735,9 @@ void WebPushDaemon::getPendingPushMessages(PushClientConnection& connection, Com
     WEBPUSHDAEMON_RELEASE_LOG(Push, "Fetched %zu push messages, %zu remaining", result.size(), m_pendingPushMessages.size());
 
     replySender(WTFMove(result));
+
+    if (m_pendingPushMessages.isEmpty())
+        releaseIncomingPushTransaction();
 }
 
 void WebPushDaemon::getPushTopicsForTesting(PushClientConnection& connection, CompletionHandler<void(Vector<String>, Vector<String>)>&& completionHandler)
@@ -924,14 +941,15 @@ void WebPushDaemon::showNotification(PushClientConnection& connection, const Web
         content.get().sound = [UNNotificationSound defaultSound];
 
     auto notificationCenterBundleIdentifier = platformNotificationCenterBundleIdentifier(identifier.pushPartition);
-
-#if HAVE(FULL_FEATURED_USER_NOTIFICATIONS)
     content.get().icon = [UNNotificationIcon iconForApplicationIdentifier:notificationCenterBundleIdentifier.get()];
-#endif
 
-    NSString *notificationSourceForDisplay = platformNotificationSourceForDisplay(connection);
-    if (!notificationSourceForDisplay.length)
-        notificationSourceForDisplay = (NSString *)notificationData.originString;
+    NSString *notificationSourceForDisplay = nil;
+
+#if PLATFORM(IOS)
+    const auto& webClipIdentifier = identifier.pushPartition;
+    RetainPtr webClip = [UIWebClip webClipWithIdentifier:(NSString *)webClipIdentifier];
+    notificationSourceForDisplay = [webClip title];
+#endif
 
 ALLOW_NONLITERAL_FORMAT_BEGIN
     content.get().subtitle = [NSString stringWithFormat:(NSString *)WEB_UI_STRING("from %@", "Web Push Notification string to indicate the name of the Web App/Web Site a notification was sent from, such as 'from Wikipedia'"), notificationSourceForDisplay];
@@ -983,7 +1001,7 @@ void WebPushDaemon::getNotifications(PushClientConnection& connection, const URL
                     continue;
                 }
 
-                if (notificationData->tag != tag || notificationData->serviceWorkerRegistrationURL != registrationURL)
+                if ((!tag.isEmpty() && notificationData->tag != tag) || notificationData->serviceWorkerRegistrationURL != registrationURL)
                     continue;
 
                 notificationDatas.append(*notificationData);
@@ -1173,6 +1191,12 @@ void WebPushDaemon::getAppBadgeForTesting(PushClientConnection& connection, Comp
 }
 
 #endif // HAVE(FULL_FEATURED_USER_NOTIFICATIONS)
+
+void WebPushDaemon::setProtocolVersionForTesting(PushClientConnection& connection, unsigned version, CompletionHandler<void()>&& completionHandler)
+{
+    s_protocolVersion = version;
+    completionHandler();
+}
 
 } // namespace WebPushD
 

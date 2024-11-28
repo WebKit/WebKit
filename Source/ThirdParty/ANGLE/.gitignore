@@ -63,13 +63,14 @@
 /third_party/jinja2
 /third_party/jsoncpp
 /third_party/kotlin_stdlib
-/third_party/libdrm
+/third_party/libdrm/src
 /third_party/libc++/src
 /third_party/libc++abi/src
 /third_party/libjpeg_turbo
 /third_party/libpng/src
 /third_party/libunwind/src
 /third_party/llvm-build
+/third_party/llvm-libc/src
 /third_party/llvm/src
 /third_party/lunarg-vulkantools/src
 /third_party/markupsafe
@@ -87,7 +88,8 @@
 /third_party/siso
 /third_party/qemu-linux-x64
 /third_party/qemu-mac-x64
-/third_party/r8/d8
+/third_party/r8/cipd
+/third_party/r8/d8/cipd
 /third_party/r8/lib
 /third_party/rapidjson/src
 /third_party/requests/src
@@ -97,7 +99,7 @@
 /third_party/spirv-headers/src
 /third_party/spirv-tools/src
 /third_party/SwiftShader
-/third_party/turbine/*.jar
+/third_party/turbine/cipd
 /third_party/VK-GL-CTS/src
 /third_party/vulkan-deps
 /third_party/vulkan-headers/src
@@ -112,6 +114,8 @@
 /tools/clang
 /tools/flex-bison/linux/bison
 /tools/flex-bison/linux/flex
+/tools/flex-bison/mac/bison
+/tools/flex-bison/mac/flex
 /tools/flex-bison/windows/bison.exe
 /tools/flex-bison/windows/flex.exe
 /tools/flex-bison/windows/m4.exe

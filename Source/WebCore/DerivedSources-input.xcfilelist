@@ -67,6 +67,8 @@ $(PROJECT_DIR)/Modules/WebGPU/GPUBufferMapState.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUBufferUsage.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUCanvasAlphaMode.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUCanvasConfiguration.idl
+$(PROJECT_DIR)/Modules/WebGPU/GPUCanvasToneMapping.idl
+$(PROJECT_DIR)/Modules/WebGPU/GPUCanvasToneMappingMode.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUColorDict.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUColorTargetState.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUColorWrite.idl
@@ -216,6 +218,8 @@ $(PROJECT_DIR)/Modules/WebGPU/WebExposedAPI/GPUBufferMapState.idl
 $(PROJECT_DIR)/Modules/WebGPU/WebExposedAPI/GPUBufferUsage.idl
 $(PROJECT_DIR)/Modules/WebGPU/WebExposedAPI/GPUCanvasAlphaMode.idl
 $(PROJECT_DIR)/Modules/WebGPU/WebExposedAPI/GPUCanvasConfiguration.idl
+$(PROJECT_DIR)/Modules/WebGPU/WebExposedAPI/GPUCanvasToneMapping.idl
+$(PROJECT_DIR)/Modules/WebGPU/WebExposedAPI/GPUCanvasToneMappingMode.idl
 $(PROJECT_DIR)/Modules/WebGPU/WebExposedAPI/GPUColorDict.idl
 $(PROJECT_DIR)/Modules/WebGPU/WebExposedAPI/GPUColorTargetState.idl
 $(PROJECT_DIR)/Modules/WebGPU/WebExposedAPI/GPUColorWrite.idl
@@ -568,6 +572,7 @@ $(PROJECT_DIR)/Modules/mediasource/ManagedMediaSource.idl
 $(PROJECT_DIR)/Modules/mediasource/ManagedSourceBuffer.idl
 $(PROJECT_DIR)/Modules/mediasource/MediaSource.idl
 $(PROJECT_DIR)/Modules/mediasource/MediaSourceHandle.idl
+$(PROJECT_DIR)/Modules/mediasource/MediaSourceInit.idl
 $(PROJECT_DIR)/Modules/mediasource/SourceBuffer.idl
 $(PROJECT_DIR)/Modules/mediasource/SourceBufferList.idl
 $(PROJECT_DIR)/Modules/mediasource/TextTrack+MediaSource.idl
@@ -896,6 +901,10 @@ $(PROJECT_DIR)/Modules/streams/WritableStreamDefaultWriter.idl
 $(PROJECT_DIR)/Modules/streams/WritableStreamDefaultWriter.js
 $(PROJECT_DIR)/Modules/streams/WritableStreamInternals.js
 $(PROJECT_DIR)/Modules/streams/WritableStreamSink.idl
+$(PROJECT_DIR)/Modules/url-pattern/URLPattern.idl
+$(PROJECT_DIR)/Modules/url-pattern/URLPatternInit.idl
+$(PROJECT_DIR)/Modules/url-pattern/URLPatternOptions.idl
+$(PROJECT_DIR)/Modules/url-pattern/URLPatternResult.idl
 $(PROJECT_DIR)/Modules/web-locks/NavigatorLocks.idl
 $(PROJECT_DIR)/Modules/web-locks/WebLock.idl
 $(PROJECT_DIR)/Modules/web-locks/WebLockGrantedCallback.idl
@@ -987,17 +996,31 @@ $(PROJECT_DIR)/Modules/webaudio/WebKitOfflineAudioContext.idl
 $(PROJECT_DIR)/Modules/webaudio/WebKitOscillatorNode.idl
 $(PROJECT_DIR)/Modules/webauthn/AttestationConveyancePreference.idl
 $(PROJECT_DIR)/Modules/webauthn/AuthenticationExtensionsClientInputs.idl
+$(PROJECT_DIR)/Modules/webauthn/AuthenticationExtensionsClientInputsJSON.idl
 $(PROJECT_DIR)/Modules/webauthn/AuthenticationExtensionsClientOutputs.idl
+$(PROJECT_DIR)/Modules/webauthn/AuthenticationExtensionsClientOutputsJSON.idl
+$(PROJECT_DIR)/Modules/webauthn/AuthenticationResponseJSON.idl
 $(PROJECT_DIR)/Modules/webauthn/AuthenticatorAssertionResponse.idl
 $(PROJECT_DIR)/Modules/webauthn/AuthenticatorAttachment.idl
 $(PROJECT_DIR)/Modules/webauthn/AuthenticatorAttestationResponse.idl
 $(PROJECT_DIR)/Modules/webauthn/AuthenticatorResponse.idl
+$(PROJECT_DIR)/Modules/webauthn/AuthenticatorSelectionCriteria.idl
 $(PROJECT_DIR)/Modules/webauthn/AuthenticatorTransport.idl
+$(PROJECT_DIR)/Modules/webauthn/CredentialPropertiesOutput.idl
 $(PROJECT_DIR)/Modules/webauthn/PublicKeyCredential.idl
 $(PROJECT_DIR)/Modules/webauthn/PublicKeyCredentialCreationOptions.idl
+$(PROJECT_DIR)/Modules/webauthn/PublicKeyCredentialCreationOptionsJSON.idl
 $(PROJECT_DIR)/Modules/webauthn/PublicKeyCredentialDescriptor.idl
+$(PROJECT_DIR)/Modules/webauthn/PublicKeyCredentialDescriptorJSON.idl
+$(PROJECT_DIR)/Modules/webauthn/PublicKeyCredentialEntity.idl
+$(PROJECT_DIR)/Modules/webauthn/PublicKeyCredentialParameters.idl
 $(PROJECT_DIR)/Modules/webauthn/PublicKeyCredentialRequestOptions.idl
+$(PROJECT_DIR)/Modules/webauthn/PublicKeyCredentialRequestOptionsJSON.idl
+$(PROJECT_DIR)/Modules/webauthn/PublicKeyCredentialRpEntity.idl
 $(PROJECT_DIR)/Modules/webauthn/PublicKeyCredentialType.idl
+$(PROJECT_DIR)/Modules/webauthn/PublicKeyCredentialUserEntity.idl
+$(PROJECT_DIR)/Modules/webauthn/PublicKeyCredentialUserEntityJSON.idl
+$(PROJECT_DIR)/Modules/webauthn/RegistrationResponseJSON.idl
 $(PROJECT_DIR)/Modules/webauthn/ResidentKeyRequirement.idl
 $(PROJECT_DIR)/Modules/webauthn/UserVerificationRequirement.idl
 $(PROJECT_DIR)/Modules/webcodecs/AacEncoderConfig.idl
@@ -1148,6 +1171,7 @@ $(PROJECT_DIR)/Scripts/SettingsTemplates/InternalSettingsGenerated.h.erb
 $(PROJECT_DIR)/Scripts/SettingsTemplates/InternalSettingsGenerated.idl.erb
 $(PROJECT_DIR)/Scripts/SettingsTemplates/Settings.cpp.erb
 $(PROJECT_DIR)/Scripts/SettingsTemplates/Settings.h.erb
+$(PROJECT_DIR)/Scripts/generate-process-sync-data.py
 $(PROJECT_DIR)/accessibility/AccessibilityRole.idl
 $(PROJECT_DIR)/accessibility/AriaAttributes.idl
 $(PROJECT_DIR)/animation/Animatable.idl
@@ -1186,6 +1210,7 @@ $(PROJECT_DIR)/animation/PlaybackDirection.idl
 $(PROJECT_DIR)/animation/ScrollAxis.idl
 $(PROJECT_DIR)/animation/ScrollTimeline.idl
 $(PROJECT_DIR)/animation/ScrollTimelineOptions.idl
+$(PROJECT_DIR)/animation/TimelineRangeOffset.idl
 $(PROJECT_DIR)/animation/TransitionEvent.idl
 $(PROJECT_DIR)/animation/ViewTimeline.idl
 $(PROJECT_DIR)/animation/ViewTimelineOptions.idl
@@ -1359,6 +1384,8 @@ $(PROJECT_DIR)/dom/Attr.idl
 $(PROJECT_DIR)/dom/BeforeUnloadEvent.idl
 $(PROJECT_DIR)/dom/BroadcastChannel.idl
 $(PROJECT_DIR)/dom/CDATASection.idl
+$(PROJECT_DIR)/dom/CaretPosition.idl
+$(PROJECT_DIR)/dom/CaretPositionFromPointOptions.idl
 $(PROJECT_DIR)/dom/CharacterData.idl
 $(PROJECT_DIR)/dom/CheckVisibilityOptions.idl
 $(PROJECT_DIR)/dom/ChildNode.idl
@@ -1393,6 +1420,7 @@ $(PROJECT_DIR)/dom/DeviceMotionEvent.idl
 $(PROJECT_DIR)/dom/DeviceOrientationEvent.idl
 $(PROJECT_DIR)/dom/DeviceOrientationOrMotionEvent.idl
 $(PROJECT_DIR)/dom/DeviceOrientationOrMotionPermissionState.idl
+$(PROJECT_DIR)/dom/Document+CaretPositionFromPoint.idl
 $(PROJECT_DIR)/dom/Document+CSSOMView.idl
 $(PROJECT_DIR)/dom/Document+Fullscreen.idl
 $(PROJECT_DIR)/dom/Document+HTML.idl
@@ -1525,6 +1553,7 @@ $(PROJECT_DIR)/dom/ViewTransition.idl
 $(PROJECT_DIR)/dom/ViewTransitionTypeSet.idl
 $(PROJECT_DIR)/dom/ViewTransitionUpdateCallback.idl
 $(PROJECT_DIR)/dom/VisibilityState.idl
+$(PROJECT_DIR)/dom/VisitorCallback.idl
 $(PROJECT_DIR)/dom/WheelEvent.idl
 $(PROJECT_DIR)/dom/WindowOrWorkerGlobalScope+TrustedTypes.idl
 $(PROJECT_DIR)/dom/XMLDocument.idl
@@ -1635,6 +1664,7 @@ $(PROJECT_DIR)/html/ImageBitmap.idl
 $(PROJECT_DIR)/html/ImageBitmapOptions.idl
 $(PROJECT_DIR)/html/ImageData.idl
 $(PROJECT_DIR)/html/ImageDataSettings.idl
+$(PROJECT_DIR)/html/ImageDataStorageFormat.idl
 $(PROJECT_DIR)/html/InvokerElement.idl
 $(PROJECT_DIR)/html/MediaController.idl
 $(PROJECT_DIR)/html/MediaEncryptedEvent.idl
@@ -1765,9 +1795,11 @@ $(PROJECT_DIR)/html/canvas/WebGLVertexArrayObjectOES.idl
 $(PROJECT_DIR)/html/parser/HTMLEntityNames.in
 $(PROJECT_DIR)/html/parser/create-html-entity-table
 $(PROJECT_DIR)/html/shadow/attachmentElementShadow.css
+$(PROJECT_DIR)/html/shadow/detailsElementShadow.css
 $(PROJECT_DIR)/html/shadow/imageOverlay.css
 $(PROJECT_DIR)/html/shadow/mac/imageControlsMac.css
 $(PROJECT_DIR)/html/shadow/meterElementShadow.css
+$(PROJECT_DIR)/html/shadow/spatialImageControls.css
 $(PROJECT_DIR)/html/track/AudioTrack.idl
 $(PROJECT_DIR)/html/track/AudioTrackConfiguration.idl
 $(PROJECT_DIR)/html/track/AudioTrackList.idl
@@ -1860,6 +1892,7 @@ $(PROJECT_DIR)/page/PerformanceResourceTiming.idl
 $(PROJECT_DIR)/page/PerformanceServerTiming.idl
 $(PROJECT_DIR)/page/PerformanceTiming.idl
 $(PROJECT_DIR)/page/PostMessageOptions.idl
+$(PROJECT_DIR)/page/ProcessSyncData.in
 $(PROJECT_DIR)/page/ResizeObserver.idl
 $(PROJECT_DIR)/page/ResizeObserverBoxOptions.idl
 $(PROJECT_DIR)/page/ResizeObserverCallback.idl

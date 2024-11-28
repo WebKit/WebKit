@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -1071,6 +1071,7 @@ void TestController::ensureViewSupportsOptionsForTest(const TestInvocation& test
         m_createdOtherPage = false;
     }
 
+    platformEnsureGPUProcessConfiguredForOptions(options);
     createWebViewWithOptions(options);
 
     if (!resetStateToConsistentValues(options, ResetStage::BeforeTest))
@@ -1094,6 +1095,7 @@ void TestController::resetPreferencesToConsistentValues(const TestOptions& optio
             WKPreferencesSetExperimentalFeatureForKey(preferences, false, toWK("SiteIsolationEnabled").get());
             WKPreferencesSetExperimentalFeatureForKey(preferences, true, toWK("WebGPUEnabled").get());
             WKPreferencesSetExperimentalFeatureForKey(preferences, false, toWK("HTTPSByDefaultEnabled").get());
+            WKPreferencesSetExperimentalFeatureForKey(preferences, false, toWK("WebRTCL4SEnabled").get()); // FIXME: Remove this once L4S SDP negotation is supported.
         }
 
         WKPreferencesResetAllInternalDebugFeatures(preferences);
@@ -1196,6 +1198,8 @@ bool TestController::resetStateToConsistentValues(const TestOptions& options, Re
 
     WKPageClearUserMediaState(m_mainWebView->page());
 
+    setTracksRepaints(false);
+
     // Reset notification permissions
     m_webNotificationProvider.reset();
     m_notificationOriginsToDenyOnPrompt.clear();
@@ -1273,7 +1277,7 @@ bool TestController::resetStateToConsistentValues(const TestOptions& options, Re
 
     WKPageDispatchActivityStateUpdateForTesting(m_mainWebView->page());
 
-    WKPageResetProcessState(m_mainWebView->page());
+    WKPageResetStateBetweenTests(m_mainWebView->page());
 
     m_didReceiveServerRedirectForProvisionalNavigation = false;
     m_serverTrustEvaluationCallbackCallsCount = 0;
@@ -1297,7 +1301,9 @@ bool TestController::resetStateToConsistentValues(const TestOptions& options, Re
             return false;
         }
     }
-    
+
+    WKPageClearBackForwardListForTesting(TestController::singleton().mainWebView()->page(), nullptr, [](void*) { });
+
     if (resetStage == ResetStage::AfterTest) {
         updateLiveDocumentsAfterTest();
 #if PLATFORM(COCOA)
@@ -1504,7 +1510,7 @@ WKURLRef TestController::createTestURL(const char* pathOrURL)
     if (length >= 7 && strstr(pathOrURL, "file://")) {
         auto url = adoptWK(WKURLCreateWithUTF8CString(pathOrURL));
         auto path = testPath(url.get());
-        if (!m_usingServerMode && !WTF::FileSystemImpl::fileExists(String({ path.c_str(), path.length() }))) {
+        if (!m_usingServerMode && !WTF::FileSystemImpl::fileExists(String(std::span { path }))) {
             printf("Failed: File for URL ‘%s’ was not found or is inaccessible\n", pathOrURL);
             return 0;
         }
@@ -1539,7 +1545,7 @@ WKURLRef TestController::createTestURL(const char* pathOrURL)
     auto cPath = buffer.get();
     auto url = adoptWK(WKURLCreateWithUTF8CString(cPath));
     auto path = testPath(url.get());
-    if (!m_usingServerMode && !WTF::FileSystemImpl::fileExists(String({ path.c_str(), path.length() }))) {
+    if (!m_usingServerMode && !WTF::FileSystemImpl::fileExists(String(std::span { path }))) {
         printf("Failed: File ‘%s’ was not found or is inaccessible\n", pathOrURL);
         return 0;
     }
@@ -2180,8 +2186,8 @@ void TestController::didReceiveAsyncMessageFromInjectedBundle(WKStringRef messag
         return setAppBoundDomains(arrayValue(messageBody), WTFMove(completionHandler));
 
     if (WKStringIsEqualToUTF8CString(messageName, "SetBackingScaleFactor")) {
-        WKPageSetCustomBackingScaleFactor(TestController::singleton().mainWebView()->page(), doubleValue(messageBody));
-        return completionHandler(nullptr);
+        WKPageSetCustomBackingScaleFactorWithCallback(TestController::singleton().mainWebView()->page(), doubleValue(messageBody), completionHandler.leak(), adoptAndCallCompletionHandler);
+        return;
     }
 
     if (WKStringIsEqualToUTF8CString(messageName, "RemoveAllSessionCredentials"))
@@ -2189,6 +2195,12 @@ void TestController::didReceiveAsyncMessageFromInjectedBundle(WKStringRef messag
 
     if (WKStringIsEqualToUTF8CString(messageName, "SetTopContentInset"))
         return WKPageSetTopContentInsetForTesting(TestController::singleton().mainWebView()->page(), static_cast<float>(doubleValue(messageBody)), completionHandler.leak(), adoptAndCallCompletionHandler);
+
+    if (WKStringIsEqualToUTF8CString(messageName, "ClearBackForwardList"))
+        return WKPageClearBackForwardListForTesting(TestController::singleton().mainWebView()->page(), completionHandler.leak(), adoptAndCallCompletionHandler);
+
+    if (WKStringIsEqualToUTF8CString(messageName, "DisplayAndTrackRepaints"))
+        return WKPageDisplayAndTrackRepaintsForTesting(TestController::singleton().mainWebView()->page(), completionHandler.leak(), adoptAndCallCompletionHandler);
 
     ASSERT_NOT_REACHED();
 }
@@ -2826,6 +2838,9 @@ void TestController::downloadDidWriteData(WKDownloadRef download, long long byte
 
 void TestController::webProcessDidTerminate(WKProcessTerminationReason reason)
 {
+    if (m_currentInvocation->options().shouldIgnoreWebProcessTermination())
+        return;
+
     // This function can be called multiple times when crash logs are being saved on Windows, so
     // ensure we only print the crashed message once.
     if (!m_didPrintWebProcessCrashedMessage) {
@@ -3430,6 +3445,11 @@ void TestController::setNavigationGesturesEnabled(bool value)
 void TestController::setIgnoresViewportScaleLimits(bool ignoresViewportScaleLimits)
 {
     WKPageSetIgnoresViewportScaleLimits(m_mainWebView->page(), ignoresViewportScaleLimits);
+}
+
+void TestController::setUseDarkAppearanceForTesting(bool useDarkAppearance)
+{
+    WKPageSetUseDarkAppearanceForTesting(m_mainWebView->page(), useDarkAppearance);
 }
 
 void TestController::terminateGPUProcess()
@@ -4257,6 +4277,10 @@ bool TestController::keyExistsInKeychain(const String&, const String&)
 void TestController::setAllowedMenuActions(const Vector<String>&)
 {
 }
+
+void TestController::platformEnsureGPUProcessConfiguredForOptions(const TestOptions&)
+{
+}
 #endif
 
 #if !PLATFORM(COCOA) && !PLATFORM(GTK) && !PLATFORM(WPE)
@@ -4276,6 +4300,13 @@ WKRetainPtr<WKArrayRef> TestController::getAndClearReportedWindowProxyAccessDoma
 void TestController::setServiceWorkerFetchTimeoutForTesting(double seconds)
 {
     WKWebsiteDataStoreSetServiceWorkerFetchTimeoutForTesting(websiteDataStore(), seconds);
+}
+
+void TestController::setTracksRepaints(bool trackRepaints)
+{
+    GenericVoidContext context(*this);
+    WKPageSetTracksRepaintsForTesting(TestController::singleton().mainWebView()->page(), &context, trackRepaints, genericVoidCallback);
+    runUntil(context.done, noTimeout);
 }
 
 struct PrivateClickMeasurementStringResultCallbackContext {

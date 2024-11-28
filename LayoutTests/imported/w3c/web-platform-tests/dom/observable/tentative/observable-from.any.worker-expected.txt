@@ -1,10 +1,12 @@
 
 FAIL from(): Observable.from() is a function assert_equals: Observable.from() is a function expected "function" but got "undefined"
 PASS from(): Failed conversions
-FAIL from(): Given an observable, it returns that exact observable target.on is not a function. (In 'target.on('custom')', 'target.on' is undefined)
+FAIL from(): Given an observable, it returns that exact observable target.when is not a function. (In 'target.when('custom')', 'target.when' is undefined)
 FAIL from(): Given an array Observable.from is not a function. (In 'Observable.from(array)', 'Observable.from' is undefined)
 FAIL from(): Iterable converts to Observable Observable.from is not a function. (In 'Observable.from(iterable)', 'Observable.from' is undefined)
 FAIL from(): [Symbol.iterator] side-effects (one observable) Observable.from is not a function. (In 'Observable.from(iterable)', 'Observable.from' is undefined)
+FAIL from(): [Symbol.iterator] not callable assert_equals: expected "Failed to execute 'from' on 'Observable': @@iterator must be a callable." but got "Observable.from is not a function. (In 'Observable.from(iterable)', 'Observable.from' is undefined)"
+FAIL from(): [Symbol.iterator] is not cached Observable.from is not a function. (In 'Observable.from(iterable)', 'Observable.from' is undefined)
 FAIL from(): [Symbol.iterator] side-effects (many observables) Observable.from is not a function. (In 'Observable.from(iterable)', 'Observable.from' is undefined)
 FAIL from(): [Symbol.iterator] next() throws error Observable.from is not a function. (In 'Observable.from(iterable)', 'Observable.from' is undefined)
 FAIL from(): Converts Promise to Observable promise_test: Unhandled rejection with value: object "TypeError: Observable.from is not a function. (In 'Observable.from(promise)', 'Observable.from' is undefined)"
@@ -12,4 +14,34 @@ FAIL from(): Converts rejected Promise to Observable. No `unhandledrejection` ev
 FAIL from(): Rejections not handled by subscription are reported to the global, and still not sent as an unhandledrejection event assert_not_equals: Error was reported to the global got disallowed value null
 FAIL from(): Observable that implements @@iterator protocol gets converted as an Observable, not iterator Observable.from is not a function. (In 'Observable.from(observable)', 'Observable.from' is undefined)
 FAIL from(): Promise that implements @@iterator protocol gets converted as an iterable, not Promise Observable.from is not a function. (In 'Observable.from(promise)', 'Observable.from' is undefined)
+FAIL from(): Promise whose [Symbol.iterator] returns null converts as Promise promise_test: Unhandled rejection with value: object "TypeError: Observable.from is not a function. (In 'Observable.from(promise)', 'Observable.from' is undefined)"
+FAIL from(): Rethrows the error when Converting an object whose @@iterator method *getter* throws an error assert_equals: expected object "Error: thrown from @@iterator getter" but got object "TypeError: Observable.from is not a function. (In 'Observable.from(obj)', 'Observable.from' is undefined)"
+FAIL from(): Throws 'callable' error when @@iterator property is a non-callable primitive assert_equals: expected "Failed to execute 'from' on 'Observable': @@iterator must be a callable." but got "Observable.from is not a function. (In 'Observable.from(obj)', 'Observable.from' is undefined)"
+FAIL from(): Async iterable protocol null, converts as iterator Observable.from is not a function. (In 'Observable.from(sync_iterable)', 'Observable.from' is undefined)
+FAIL from(): Asynchronous iterable conversion promise_test: Unhandled rejection with value: object "TypeError: Observable.from is not a function. (In 'Observable.from(async_iterable)', 'Observable.from' is undefined)"
+FAIL from(): Asynchronous iterable multiple in-flight subscriptions competing promise_test: Unhandled rejection with value: object "TypeError: Observable.from is not a function. (In 'Observable.from(async_iterable)', 'Observable.from' is undefined)"
+FAIL from(): Sync iterable multiple in-flight subscriptions competing Observable.from is not a function. (In 'Observable.from(array)', 'Observable.from' is undefined)
+FAIL from(): Asynchronous generator conversion: can only be used once promise_test: Unhandled rejection with value: object "TypeError: Observable.from is not a function. (In 'Observable.from(async_generator())', 'Observable.from' is undefined)"
+FAIL from(): Promise-wrapping semantics of IteratorResult interface promise_test: Unhandled rejection with value: object "TypeError: Observable.from is not a function. (In 'Observable.from(async_iterable)', 'Observable.from' is undefined)"
+FAIL from(): Errors thrown in Symbol.asyncIterator() are propagated synchronously Observable.from is not a function. (In 'Observable.from(async_iterable)', 'Observable.from' is undefined)
+FAIL from(): Errors thrown in async iterator's next() GETTER are propagated in a microtask promise_test: Unhandled rejection with value: object "TypeError: Observable.from is not a function. (In 'Observable.from(async_iterable)', 'Observable.from' is undefined)"
+FAIL from(): Errors thrown in async iterator's next() are propagated in a microtask promise_test: Unhandled rejection with value: object "TypeError: Observable.from is not a function. (In 'Observable.from(async_iterable)', 'Observable.from' is undefined)"
+FAIL from(): Aborting sync iterable midway through iteration both stops iteration and invokes `IteratorRecord#return() Observable.from is not a function. (In 'Observable.from(iterable)', 'Observable.from' is undefined)
+FAIL from(): Aborting async iterable midway through iteration both stops iteration and invokes `IteratorRecord#return() promise_test: Unhandled rejection with value: object "TypeError: Observable.from is not a function. (In 'Observable.from(iterable)', 'Observable.from' is undefined)"
+FAIL from(): Sync iterable: `Iterator#return()` must return an Object, or an error is thrown Observable.from is not a function. (In 'Observable.from(iterable)', 'Observable.from' is undefined)
+FAIL from(): Async iterable: `Iterator#return()` must return an Object, or a Promise rejects asynchronously promise_test: Unhandled rejection with value: object "TypeError: Observable.from is not a function. (In 'Observable.from(iterable)', 'Observable.from' is undefined)"
+FAIL from(): Asynchronous iterable conversion, with synchronous iterable fallback promise_test: Unhandled rejection with value: object "TypeError: Observable.from is not a function. (In 'Observable.from(async_iterable)', 'Observable.from' is undefined)"
+FAIL from(): Generator finally block runs when subscription is aborted Observable.from is not a function. (In 'Observable.from(generator())', 'Observable.from' is undefined)
+FAIL from(): Generator finally block run when Observable completes Observable.from is not a function. (In 'Observable.from(generator())', 'Observable.from' is undefined)
+FAIL from(): Generator finally block run when Observable errors Observable.from is not a function. (In 'Observable.from(generator())', 'Observable.from' is undefined)
+FAIL from(): Async generator finally block run when subscription is aborted promise_test: Unhandled rejection with value: object "TypeError: Observable.from is not a function. (In 'Observable.from(asyncGenerator())', 'Observable.from' is undefined)"
+FAIL from(): Async generator finally block runs when Observable completes promise_test: Unhandled rejection with value: object "TypeError: Observable.from is not a function. (In 'Observable.from(asyncGenerator())', 'Observable.from' is undefined)"
+FAIL from(): Async generator finally block run when Observable errors promise_test: Unhandled rejection with value: object "TypeError: Observable.from is not a function. (In 'Observable.from(asyncGenerator())', 'Observable.from' is undefined)"
+FAIL from(): Sync iterable: error thrown from IteratorRecord#return() can be synchronously caught Observable.from is not a function. (In 'Observable.from(iterable)', 'Observable.from' is undefined)
+FAIL from(): Async iterable: error thrown from IteratorRecord#return() is wrapped in rejected Promise promise_test: Unhandled rejection with value: object "TypeError: Observable.from is not a function. (In 'Observable.from(iterable)', 'Observable.from' is undefined)"
+FAIL from(): Subscribing to an iterable Observable with an aborted signal does not call next() Observable.from is not a function. (In 'Observable.from(iterable)', 'Observable.from' is undefined)
+FAIL from(): When iterable conversion aborts the subscription, next() is never called Observable.from is not a function. (In 'Observable.from(iterable)', 'Observable.from' is undefined)
+FAIL from(): When async iterable conversion aborts the subscription, next() is never called Observable.from is not a function. (In 'Observable.from(iterable)', 'Observable.from' is undefined)
+FAIL from(): Aborting an async iterable subscription stops subsequent next() calls, but old next() Promise reactions are web-observable promise_test: Unhandled rejection with value: object "TypeError: Observable.from is not a function. (In 'Observable.from(iterable)', 'Observable.from' is undefined)"
+FAIL from(): Abort after complete does NOT call IteratorRecord#return() Observable.from is not a function. (In 'Observable.from(iterable)', 'Observable.from' is undefined)
 

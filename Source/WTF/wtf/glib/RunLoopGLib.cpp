@@ -157,8 +157,8 @@ void RunLoop::notify(RunLoop::Event event, const char* name)
     });
 }
 
-RunLoop::TimerBase::TimerBase(RunLoop& runLoop)
-    : m_runLoop(runLoop)
+RunLoop::TimerBase::TimerBase(Ref<RunLoop>&& runLoop)
+    : m_runLoop(WTFMove(runLoop))
     , m_source(adoptGRef(g_source_new(&RunLoop::s_runLoopSourceFunctions, sizeof(RunLoopSource))))
 {
     auto& runLoopSource = *reinterpret_cast<RunLoopSource*>(m_source.get());

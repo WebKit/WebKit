@@ -11,16 +11,16 @@ PASS Supported mimeType video/mp4 is set immediately after constructing
 PASS Unsupported mimeType audio/ogg throws
 PASS Unsupported mimeType audio/ogg; codecs="vorbis" throws
 PASS Unsupported mimeType audio/ogg; codecs="opus" throws
-PASS Unsupported mimeType audio/webm throws
+PASS Supported mimeType audio/webm is set immediately after constructing
 PASS Unsupported mimeType audio/webm; codecs="vorbis" throws
-PASS Unsupported mimeType audio/webm; codecs="opus" throws
-PASS Unsupported mimeType video/webm throws
-PASS Unsupported mimeType video/webm; codecs="vp8" throws
+PASS Supported mimeType audio/webm; codecs="opus" is set immediately after constructing
+PASS Supported mimeType video/webm is set immediately after constructing
+PASS Supported mimeType video/webm; codecs="vp8" is set immediately after constructing
 PASS Unsupported mimeType video/webm; codecs="vp8, vorbis" throws
-PASS Unsupported mimeType video/webm; codecs="vp8, opus" throws
-PASS Unsupported mimeType video/webm; codecs="vp9" throws
+PASS Supported mimeType video/webm; codecs="vp8, opus" is set immediately after constructing
+PASS Supported mimeType video/webm; codecs="vp9" is set immediately after constructing
 PASS Unsupported mimeType video/webm; codecs="vp9, vorbis" throws
-PASS Unsupported mimeType video/webm; codecs="vp9, opus" throws
+PASS Supported mimeType video/webm; codecs="vp9, opus" is set immediately after constructing
 PASS Unsupported mimeType video/webm; codecs="av1" throws
 PASS Unsupported mimeType video/webm; codecs="av1, opus" throws
 PASS MediaRecorder sets a nonempty mimeType on 'onstart' for audio
@@ -32,7 +32,7 @@ PASS MediaRecorder mimeType is not set before 'onstart' for audio/video
 PASS MediaRecorder doesn't fire 'onstart' multiple times for audio
 PASS MediaRecorder doesn't fire 'onstart' multiple times for video
 PASS MediaRecorder doesn't fire 'onstart' multiple times for audio/video
-FAIL MediaRecorder formats mimeType well after 'start' for audio assert_regexp_match: mimeType has one codec a expected object "/^[a-z]+\/[a-z]+;[ ]*codecs=[^,]+$/" but got "audio/mp4"
-FAIL MediaRecorder formats mimeType well after 'start' for video assert_regexp_match: mimeType has one codec a expected object "/^[a-z]+\/[a-z]+;[ ]*codecs=[^,]+$/" but got "video/mp4"
-FAIL MediaRecorder formats mimeType well after 'start' for audio/video assert_regexp_match: mimeType has two codecs expected object "/^[a-z]+\/[a-z]+;[ ]*codecs=[^,]+,[^,]+$/" but got "video/mp4"
+PASS MediaRecorder formats mimeType well after 'start' for audio
+PASS MediaRecorder formats mimeType well after 'start' for video
+PASS MediaRecorder formats mimeType well after 'start' for audio/video
 

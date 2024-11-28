@@ -32,8 +32,10 @@
 #include "GlyphPage.h"
 #include "OpenTypeTypes.h"
 #include "SharedBuffer.h"
+#include <wtf/Compiler.h>
 #include <wtf/RefPtr.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib port
 
 namespace WebCore {
 using namespace std;
@@ -132,7 +134,7 @@ struct LookupTable : TableBase {
     OpenType::Offset subTableOffsets[1];
     // OpenType::UInt16 markFilteringSet; this field comes after variable length, so offset is determined dynamically.
 
-    bool getSubstitutions(HashMap<Glyph, Glyph>* map, const SharedBuffer& buffer) const
+    bool getSubstitutions(UncheckedKeyHashMap<Glyph, Glyph>* map, const SharedBuffer& buffer) const
     {
         uint16_t countSubTable = subTableCount;
         if (!isValidEnd(buffer, &subTableOffsets[countSubTable]))
@@ -209,7 +211,7 @@ struct FeatureTable : TableBase {
     OpenType::UInt16 lookupCount;
     OpenType::UInt16 lookupListIndex[1];
 
-    bool getGlyphSubstitutions(const LookupList* lookups, HashMap<Glyph, Glyph>* map, const SharedBuffer& buffer) const
+    bool getGlyphSubstitutions(const LookupList* lookups, UncheckedKeyHashMap<Glyph, Glyph>* map, const SharedBuffer& buffer) const
     {
         uint16_t count = lookupCount;
         if (!isValidEnd(buffer, &lookupListIndex[count]))
@@ -366,7 +368,7 @@ struct GSUBTable : TableBase {
         return feature;
     }
 
-    bool getVerticalGlyphSubstitutions(HashMap<Glyph, Glyph>* map, const SharedBuffer& buffer) const
+    bool getVerticalGlyphSubstitutions(UncheckedKeyHashMap<Glyph, Glyph>* map, const SharedBuffer& buffer) const
     {
         const FeatureTable* verticalFeatureTable = feature(OpenType::VertFeatureTag, buffer);
         if (!verticalFeatureTable)
@@ -551,7 +553,7 @@ void OpenTypeVerticalData::getVerticalTranslationsForGlyphs(const Font* font, co
 
 void OpenTypeVerticalData::substituteWithVerticalGlyphs(const Font* font, GlyphPage* glyphPage) const
 {
-    const HashMap<Glyph, Glyph>& map = m_verticalGlyphMap;
+    const UncheckedKeyHashMap<Glyph, Glyph>& map = m_verticalGlyphMap;
     if (map.isEmpty())
         return;
 
@@ -567,4 +569,7 @@ void OpenTypeVerticalData::substituteWithVerticalGlyphs(const Font* font, GlyphP
 }
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+
 #endif // ENABLE(OPENTYPE_VERTICAL)

@@ -47,8 +47,7 @@ const repaintRectsFromString = (str) => {
     await UIHelper.renderingUpdate();
     const target = document.getElementById("target");
 
-    window.internals?.startTrackingRepaints();
-    window.testRunner?.displayAndTrackRepaints();
+    await testRunner?.displayAndTrackRepaints();
 
     const animation = target.animate({ translate: ["200px", "200px"] }, { duration: 1, fill: "forwards" });
     await animation.finished;

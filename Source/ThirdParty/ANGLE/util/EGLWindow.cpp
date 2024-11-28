@@ -53,24 +53,15 @@ void ConfigParameters::reset()
 }
 
 // GLWindowBase implementation.
-GLWindowBase::GLWindowBase(EGLenum clientType,
-                           GLint glesMajorVersion,
-                           EGLint glesMinorVersion,
-                           EGLint profileMask)
-    : mClientType(clientType),
-      mClientMajorVersion(glesMajorVersion),
-      mClientMinorVersion(glesMinorVersion),
-      mProfileMask(profileMask)
+GLWindowBase::GLWindowBase(GLint glesMajorVersion, EGLint glesMinorVersion)
+    : mClientMajorVersion(glesMajorVersion), mClientMinorVersion(glesMinorVersion)
 {}
 
 GLWindowBase::~GLWindowBase() = default;
 
 // EGLWindow implementation.
-EGLWindow::EGLWindow(EGLenum clientType,
-                     EGLint glesMajorVersion,
-                     EGLint glesMinorVersion,
-                     EGLint profileMask)
-    : GLWindowBase(clientType, glesMajorVersion, glesMinorVersion, profileMask),
+EGLWindow::EGLWindow(EGLint glesMajorVersion, EGLint glesMinorVersion)
+    : GLWindowBase(glesMajorVersion, glesMinorVersion),
       mConfig(0),
       mDisplay(EGL_NO_DISPLAY),
       mSurface(EGL_NO_SURFACE),
@@ -528,7 +519,7 @@ EGLContext EGLWindow::createContext(EGLContext share, EGLint *extraAttributes)
         return EGL_NO_CONTEXT;
     }
 
-    eglBindAPI(mClientType);
+    eglBindAPI(EGL_OPENGL_ES_API);
     if (eglGetError() != EGL_SUCCESS)
     {
         fprintf(stderr, "Error on eglBindAPI.\n");
@@ -550,12 +541,6 @@ EGLContext EGLWindow::createContext(EGLContext share, EGLint *extraAttributes)
 
         contextAttributes.push_back(EGL_CONTEXT_MINOR_VERSION_KHR);
         contextAttributes.push_back(mClientMinorVersion);
-
-        if (mProfileMask != 0)
-        {
-            contextAttributes.push_back(EGL_CONTEXT_OPENGL_PROFILE_MASK);
-            contextAttributes.push_back(mProfileMask);
-        }
 
         // Note that the Android loader currently doesn't handle this flag despite reporting 1.5.
         // Work around this by only using the debug bit when we request a debug context.
@@ -908,12 +893,9 @@ void GLWindowBase::Delete(GLWindowBase **window)
 }
 
 // static
-EGLWindow *EGLWindow::New(EGLenum clientType,
-                          EGLint glesMajorVersion,
-                          EGLint glesMinorVersion,
-                          EGLint profileMask)
+EGLWindow *EGLWindow::New(EGLint glesMajorVersion, EGLint glesMinorVersion)
 {
-    return new EGLWindow(clientType, glesMajorVersion, glesMinorVersion, profileMask);
+    return new EGLWindow(glesMajorVersion, glesMinorVersion);
 }
 
 // static

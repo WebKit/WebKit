@@ -22,7 +22,7 @@ function runTest()
     if (!window.internals || !window.eventSender)
         return;
 
-    internals.setShowAutoFillButton(password, "Credentials");
+    internals.setAutofillButtonType(password, "Credentials");
 
     var autoFillButton = getElementByPseudoId(internals.shadowRoot(password), "-webkit-credentials-auto-fill-button");
     autoFillButton.onclick = checkEventAndDone;

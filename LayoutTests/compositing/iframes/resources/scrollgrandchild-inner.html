@@ -27,10 +27,10 @@
       testRunner.waitUntilDone();
     }
 
-    function doTest()
+    async function doTest()
     {
       if (window.testRunner)
-        testRunner.displayAndTrackRepaints();
+        await testRunner.displayAndTrackRepaints();
       // Scroll red box off screen and scroll green box into same place.
       window.scrollTo(0, 400);
       if (window.testRunner)

@@ -28,6 +28,7 @@
     ActiveDOMObject,
     Conditional=WEB_CODECS,
     EnabledBySetting=WebCodecsVideoEnabled,
+    ExportMacro=WEBCORE_EXPORT,
     Exposed=(Window,DedicatedWorker),
     InterfaceName=VideoDecoder,
     JSCustomMarkFunction,

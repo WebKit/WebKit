@@ -129,15 +129,10 @@ cl_mem Context::createImage(const cl_mem_properties *properties,
                             const cl_image_desc *desc,
                             void *hostPtr)
 {
-    const ImageDescriptor imageDesc = {FromCLenum<MemObjectType>(desc->image_type),
-                                       desc->image_width,
-                                       desc->image_height,
-                                       desc->image_depth,
-                                       desc->image_array_size,
-                                       desc->image_row_pitch,
-                                       desc->image_slice_pitch,
-                                       desc->num_mip_levels,
-                                       desc->num_samples};
+    const ImageDescriptor imageDesc(FromCLenum<MemObjectType>(desc->image_type), desc->image_width,
+                                    desc->image_height, desc->image_depth, desc->image_array_size,
+                                    desc->image_row_pitch, desc->image_slice_pitch,
+                                    desc->num_mip_levels, desc->num_samples);
     return Object::Create<Image>(*this, Memory::PropArray{}, flags, *format, imageDesc,
                                  Memory::Cast(desc->buffer), hostPtr);
 }
@@ -149,8 +144,8 @@ cl_mem Context::createImage2D(MemFlags flags,
                               size_t rowPitch,
                               void *hostPtr)
 {
-    const ImageDescriptor imageDesc = {
-        MemObjectType::Image2D, width, height, 0u, 0u, rowPitch, 0u, 0u, 0u};
+    const ImageDescriptor imageDesc(MemObjectType::Image2D, width, height, 0u, 0u, rowPitch, 0u, 0u,
+                                    0u);
     return Object::Create<Image>(*this, Memory::PropArray{}, flags, *format, imageDesc, nullptr,
                                  hostPtr);
 }
@@ -164,8 +159,8 @@ cl_mem Context::createImage3D(MemFlags flags,
                               size_t slicePitch,
                               void *hostPtr)
 {
-    const ImageDescriptor imageDesc = {
-        MemObjectType::Image3D, width, height, depth, 0u, rowPitch, slicePitch, 0u, 0u};
+    const ImageDescriptor imageDesc(MemObjectType::Image3D, width, height, depth, 0u, rowPitch,
+                                    slicePitch, 0u, 0u);
     return Object::Create<Image>(*this, Memory::PropArray{}, flags, *format, imageDesc, nullptr,
                                  hostPtr);
 }

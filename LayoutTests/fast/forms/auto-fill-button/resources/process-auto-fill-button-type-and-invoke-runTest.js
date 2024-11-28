@@ -7,8 +7,8 @@ window.onload = function ()
     let inputElements = document.getElementsByTagName("input");
     for (let inputElement of inputElements) {
         internals.setAutofilled(inputElement, inputElement.dataset.autofilled == "true");
-	internals.setAutoFilledAndViewable(inputElement, inputElement.dataset.autoFilledAndViewable == "true");
-        internals.setShowAutoFillButton(inputElement, inputElement.dataset.autoFillButtonType);
+	internals.setAutofilledAndViewable(inputElement, inputElement.dataset.autoFilledAndViewable == "true");
+        internals.setAutofillButtonType(inputElement, inputElement.dataset.autoFillButtonType);
     }
     if (window.runTest)
         window.runTest();

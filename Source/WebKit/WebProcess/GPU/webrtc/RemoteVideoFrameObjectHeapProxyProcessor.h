@@ -86,7 +86,8 @@ private:
     void clearCallbacks();
     Callback takeCallback(RemoteVideoFrameIdentifier);
 
-private:
+    Ref<WorkQueue> protectedQueue() const { return m_queue; }
+
     Lock m_connectionLock;
     RefPtr<IPC::Connection> m_connection WTF_GUARDED_BY_LOCK(m_connectionLock);
     Lock m_callbacksLock;

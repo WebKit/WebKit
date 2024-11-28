@@ -125,7 +125,7 @@ public:
     void reset();
 
 private:
-    HashMap<TextAutoSizingKey, std::unique_ptr<TextAutoSizingValue>, TextAutoSizingHash, TextAutoSizingTraits> m_textNodes;
+    UncheckedKeyHashMap<TextAutoSizingKey, std::unique_ptr<TextAutoSizingValue>, TextAutoSizingHash, TextAutoSizingTraits> m_textNodes;
 };
 
 } // namespace WebCore

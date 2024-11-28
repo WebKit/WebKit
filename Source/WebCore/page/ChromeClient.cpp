@@ -26,7 +26,15 @@
 #include "config.h"
 #include "ChromeClient.h"
 
+#include "BarcodeDetectorInterface.h"
+#include "BarcodeDetectorOptionsInterface.h"
+#include "BarcodeFormatInterface.h"
+#include "FaceDetectorInterface.h"
+#include "FaceDetectorOptionsInterface.h"
 #include "ScrollbarsController.h"
+#include "ScrollingCoordinator.h"
+#include "TextDetectorInterface.h"
+#include "WorkerClient.h"
 
 #if ENABLE(WEBGL)
 #include "GraphicsContextGL.h"
@@ -37,6 +45,11 @@ namespace WebCore {
 ChromeClient::ChromeClient() = default;
 
 ChromeClient::~ChromeClient() = default;
+
+std::unique_ptr<WorkerClient> ChromeClient::createWorkerClient(SerialFunctionDispatcher&)
+{
+    return nullptr;
+}
 
 #if ENABLE(WEBGL)
 RefPtr<GraphicsContextGL> ChromeClient::createGraphicsContextGL(const GraphicsContextGLAttributes& attributes) const
@@ -50,12 +63,37 @@ RefPtr<ImageBuffer> ChromeClient::sinkIntoImageBuffer(std::unique_ptr<WebCore::S
     return SerializedImageBuffer::sinkIntoImageBuffer(WTFMove(imageBuffer));
 }
 
-
 void ChromeClient::ensureScrollbarsController(Page&, ScrollableArea& area, bool update) const
 {
     if (update)
         return;
+
     area.ScrollableArea::createScrollbarsController();
 }
 
+RefPtr<ScrollingCoordinator> ChromeClient::createScrollingCoordinator(Page&) const
+{
+    return nullptr;
 }
+
+RefPtr<ShapeDetection::BarcodeDetector> ChromeClient::createBarcodeDetector(const ShapeDetection::BarcodeDetectorOptions&) const
+{
+    return nullptr;
+}
+
+void ChromeClient::getBarcodeDetectorSupportedFormats(CompletionHandler<void(Vector<ShapeDetection::BarcodeFormat>&&)>&& completionHandler) const
+{
+    completionHandler({ });
+}
+
+RefPtr<ShapeDetection::FaceDetector> ChromeClient::createFaceDetector(const ShapeDetection::FaceDetectorOptions&) const
+{
+    return nullptr;
+}
+
+RefPtr<ShapeDetection::TextDetector> ChromeClient::createTextDetector() const
+{
+    return nullptr;
+}
+
+} // namespace WebCore

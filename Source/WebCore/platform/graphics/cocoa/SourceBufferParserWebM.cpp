@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -52,6 +52,8 @@
 #include "CoreVideoSoftLink.h"
 
 WTF_WEAK_LINK_FORCE_IMPORT(webm::swap);
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace WTF {
 
@@ -235,7 +237,9 @@ template<> struct LogArgument<webm::Id> {
 namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(WebMParser);
-WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(WebMParserTrackData, WebMParser::TrackData);
+WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(WebMParser, TrackData);
+WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(WebMParser, VideoTrackData);
+WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(WebMParser, AudioTrackData);
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SourceBufferParserWebM);
 
 // FIXME: Remove this once kCMVideoCodecType_VP9 is added to CMFormatDescription.h
@@ -577,7 +581,7 @@ ExceptionOr<int> WebMParser::parse(SourceBufferParser::Segment&& segment)
     return m_status.code;
 }
 
-void WebMParser::setLogger(const Logger& newLogger, const void* newLogIdentifier)
+void WebMParser::setLogger(const Logger& newLogger, uint64_t newLogIdentifier)
 {
     m_logger = &newLogger;
     m_logIdentifier = newLogIdentifier;
@@ -1073,13 +1077,13 @@ WebMParser::ConsumeFrameDataResult WebMParser::VideoTrackData::consumeFrameData(
 
         if (m_headerParser.key()) {
             isKey = true;
-            setFormatDescription(createVideoInfoFromVP9HeaderParser(m_headerParser, track().video.value().colour));
+            setFormatDescription(createVideoInfoFromVP9HeaderParser(m_headerParser, track().video.value()));
         }
     } else if (codec() == CodecType::VP8) {
         auto header = parseVP8FrameHeader(segmentHeaderData);
         if (header && header->keyframe) {
             isKey = true;
-            setFormatDescription(createVideoInfoFromVP8Header(*header, track().video.value().colour));
+            setFormatDescription(createVideoInfoFromVP8Header(*header, track().video.value()));
         }
     }
 
@@ -1584,7 +1588,7 @@ void SourceBufferParserWebM::invalidate()
     m_parser.invalidate();
 }
 
-void SourceBufferParserWebM::setLogger(const Logger& newLogger, const void* newLogIdentifier)
+void SourceBufferParserWebM::setLogger(const Logger& newLogger, uint64_t newLogIdentifier)
 {
     m_logger = &newLogger;
     m_logIdentifier = newLogIdentifier;
@@ -1605,5 +1609,7 @@ void SourceBufferParserWebM::setMinimumAudioSampleDuration(float duration)
 }
 
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ENABLE(MEDIA_SOURCE)

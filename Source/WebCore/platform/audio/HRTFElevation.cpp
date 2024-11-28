@@ -44,6 +44,8 @@
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(HRTFElevation);
@@ -60,9 +62,9 @@ constexpr size_t ResponseFrameSize = 256;
 constexpr float ResponseSampleRate = 44100;
 
 static Lock audioBusMapLock;
-static HashMap<String, RefPtr<AudioBus>>& concatenatedImpulseResponsesMap() WTF_REQUIRES_LOCK(audioBusMapLock)
+static UncheckedKeyHashMap<String, RefPtr<AudioBus>>& concatenatedImpulseResponsesMap() WTF_REQUIRES_LOCK(audioBusMapLock)
 {
-    static NeverDestroyed<HashMap<String, RefPtr<AudioBus>>> audioBusMap;
+    static NeverDestroyed<UncheckedKeyHashMap<String, RefPtr<AudioBus>>> audioBusMap;
     return audioBusMap;
 }
 
@@ -319,5 +321,7 @@ void HRTFElevation::getKernelsFromAzimuth(double azimuthBlend, unsigned azimuthI
 }
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ENABLE(WEB_AUDIO)

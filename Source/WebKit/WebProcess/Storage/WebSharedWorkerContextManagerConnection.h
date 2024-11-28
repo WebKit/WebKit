@@ -31,9 +31,10 @@
 #include "WebPageProxyIdentifier.h"
 #include "WebPreferencesStore.h"
 #include <WebCore/PageIdentifier.h>
-#include <WebCore/RegistrableDomain.h>
 #include <WebCore/SharedWorkerContextManager.h>
 #include <WebCore/SharedWorkerIdentifier.h>
+#include <WebCore/Site.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 struct ClientOrigin;
@@ -48,8 +49,9 @@ class WebUserContentController;
 struct RemoteWorkerInitializationData;
 
 class WebSharedWorkerContextManagerConnection final : public WebCore::SharedWorkerContextManager::Connection, public IPC::MessageReceiver {
+    WTF_MAKE_TZONE_ALLOCATED(WebSharedWorkerContextManagerConnection);
 public:
-    WebSharedWorkerContextManagerConnection(Ref<IPC::Connection>&&, WebCore::RegistrableDomain&&, PageGroupIdentifier, WebPageProxyIdentifier, WebCore::PageIdentifier, const WebPreferencesStore&, RemoteWorkerInitializationData&&);
+    WebSharedWorkerContextManagerConnection(Ref<IPC::Connection>&&, WebCore::Site&&, PageGroupIdentifier, WebPageProxyIdentifier, WebCore::PageIdentifier, const WebPreferencesStore&, RemoteWorkerInitializationData&&);
     ~WebSharedWorkerContextManagerConnection();
 
     void establishConnection(CompletionHandler<void()>&&) final;
@@ -66,7 +68,7 @@ private:
     void close();
 
     Ref<IPC::Connection> m_connectionToNetworkProcess;
-    WebCore::RegistrableDomain m_registrableDomain;
+    const WebCore::Site m_site;
     PageGroupIdentifier m_pageGroupID;
     WebPageProxyIdentifier m_webPageProxyID;
     WebCore::PageIdentifier m_pageID;

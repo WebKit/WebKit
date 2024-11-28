@@ -44,6 +44,8 @@
 #include <wtf/SmallSet.h>
 #include <wtf/Vector.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC { namespace B3 { namespace Air {
 
 namespace {
@@ -485,7 +487,7 @@ protected:
 
     using IndexTypeSet = SmallSet<IndexType, IntHash<IndexType>>;
 
-    HashMap<IndexType, IndexTypeSet, DefaultHash<IndexType>, WTF::UnsignedWithZeroKeyHashTraits<IndexType>> m_biases;
+    UncheckedKeyHashMap<IndexType, IndexTypeSet, DefaultHash<IndexType>, WTF::UnsignedWithZeroKeyHashTraits<IndexType>> m_biases;
 
     // Instead of keeping track of the move instructions, we just keep their operands around and use the index
     // in the vector as the "identifier" for the move.
@@ -2028,7 +2030,7 @@ private:
     template<Bank bank, typename AllocatorType>
     void addSpillAndFill(const AllocatorType& allocator, BitVector& unspillableTmps)
     {
-        HashMap<Tmp, StackSlot*> stackSlots;
+        UncheckedKeyHashMap<Tmp, StackSlot*> stackSlots;
         for (Tmp tmp : allocator.spilledTmps()) {
             // All the spilled values become unspillable.
             dataLogLnIf(traceDebug, "Add unspillable tmp due to spill: ", tmp);
@@ -2277,5 +2279,7 @@ void allocateRegistersByGraphColoring(Code& code)
 }
 
 } } } // namespace JSC::B3::Air
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ENABLE(B3_JIT)

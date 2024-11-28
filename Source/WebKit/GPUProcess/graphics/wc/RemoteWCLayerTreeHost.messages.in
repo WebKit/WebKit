@@ -22,7 +22,7 @@
 
 #if USE(GRAPHICS_LAYER_WC)
 
-messages -> RemoteWCLayerTreeHost NotRefCounted {
+messages -> RemoteWCLayerTreeHost {
     Update(struct WebKit::WCUpdateInfo updateInfo) -> (std::optional<WebKit::UpdateInfo> updateInfo)
 }
 

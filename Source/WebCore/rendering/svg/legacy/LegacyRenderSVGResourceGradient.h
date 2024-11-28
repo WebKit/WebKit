@@ -87,7 +87,7 @@ private:
     virtual bool collectGradientAttributes() = 0;
     virtual Ref<Gradient> buildGradient(const RenderStyle&) const = 0;
 
-    HashMap<RenderObject*, std::unique_ptr<GradientData>> m_gradientMap;
+    UncheckedKeyHashMap<RenderObject*, std::unique_ptr<GradientData>> m_gradientMap;
 
 #if USE(CG)
     GraphicsContext* m_savedContext { nullptr };

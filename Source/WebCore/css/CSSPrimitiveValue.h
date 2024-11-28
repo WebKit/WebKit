@@ -21,7 +21,7 @@
 
 #pragma once
 
-#include "CSSAnchorValue.h"
+#include "CSSAttrValue.h"
 #include "CSSPropertyNames.h"
 #include "CSSUnits.h"
 #include "CSSValue.h"
@@ -79,11 +79,15 @@ public:
     enum class TimeUnit { Seconds, Milliseconds, Canonical = Seconds };
     template<TimeUnit, typename T = double> static T computeTime(CSSUnitType, T time);
 
+    enum class FrequencyUnit { Hz, Khz, Canonical = Hz };
+    template<FrequencyUnit, typename T = double> static T computeFrequency(CSSUnitType, T frequency);
+
     enum class ResolutionUnit { Dppx, X, Dpi, Dpcm, Canonical = Dppx };
     template<ResolutionUnit, typename T = double> static T computeResolution(CSSUnitType, T resolution);
 
     // FIXME: Some of these use primitiveUnitType() and some use primitiveType(). Many that use primitiveUnitType() are likely broken with calc().
     bool isAngle() const { return unitCategory(primitiveType()) == CSSUnitCategory::Angle; }
+    bool isAttr() const { return primitiveUnitType() == CSSUnitType::CSS_ATTR; }
     bool isFontIndependentLength() const { return isFontIndependentLength(primitiveUnitType()); }
     bool isFontRelativeLength() const { return isFontRelativeLength(primitiveUnitType()); }
     bool isParentFontRelativeLength() const { return isPercentage() || (isFontRelativeLength() && !isRootFontRelativeLength()); }
@@ -98,7 +102,6 @@ public:
     bool isTime() const { return unitCategory(primitiveType()) == CSSUnitCategory::Time; }
     bool isFrequency() const { return unitCategory(primitiveType()) == CSSUnitCategory::Frequency; }
     bool isCalculated() const { return primitiveUnitType() == CSSUnitType::CSS_CALC; }
-    bool isCalculatedPercentageWithNumber() const { return primitiveType() == CSSUnitType::CSS_CALC_PERCENTAGE_WITH_NUMBER; }
     bool isCalculatedPercentageWithLength() const { return primitiveType() == CSSUnitType::CSS_CALC_PERCENTAGE_WITH_LENGTH; }
     bool isDotsPerInch() const { return primitiveType() == CSSUnitType::CSS_DPI; }
     bool isDotsPerPixel() const { return primitiveType() == CSSUnitType::CSS_DPPX; }
@@ -108,7 +111,8 @@ public:
     bool isViewportPercentageLength() const { return isViewportPercentageLength(primitiveUnitType()); }
     bool isContainerPercentageLength() const { return isContainerPercentageLength(primitiveUnitType()); }
     bool isFlex() const { return primitiveType() == CSSUnitType::CSS_FR; }
-    bool isAnchor() const { return primitiveType() == CSSUnitType::CSS_ANCHOR; }
+
+    bool conversionToCanonicalUnitRequiresConversionData() const;
 
     static Ref<CSSPrimitiveValue> create(double);
     static Ref<CSSPrimitiveValue> create(double, CSSUnitType);
@@ -116,7 +120,7 @@ public:
     static Ref<CSSPrimitiveValue> create(const Length&);
     static Ref<CSSPrimitiveValue> create(const Length&, const RenderStyle&);
     static Ref<CSSPrimitiveValue> create(Ref<CSSCalcValue>);
-    static Ref<CSSPrimitiveValue> create(Ref<CSSAnchorValue>);
+    static Ref<CSSPrimitiveValue> create(Ref<CSSAttrValue>);
 
     static inline Ref<CSSPrimitiveValue> create(CSSValueID);
     bool isValueID() const { return primitiveUnitType() == CSSUnitType::CSS_VALUE_ID; }
@@ -132,9 +136,6 @@ public:
     static Ref<CSSPrimitiveValue> create(CSSUnresolvedColor);
     bool isUnresolvedColor() const { return primitiveUnitType() == CSSUnitType::CSS_UNRESOLVED_COLOR; }
     const CSSUnresolvedColor& unresolvedColor() const { ASSERT(isUnresolvedColor()); return *m_value.unresolvedColor; }
-
-    static Ref<CSSPrimitiveValue> createAttr(String);
-    bool isAttr() const { return primitiveUnitType() == CSSUnitType::CSS_ATTR; }
 
     bool isColor() const { return primitiveUnitType() == CSSUnitType::CSS_RGBCOLOR; }
     const Color& color() const { ASSERT(isColor()); return *reinterpret_cast<const Color*>(&m_value.colorAsInteger); }
@@ -156,7 +157,7 @@ public:
 
     ~CSSPrimitiveValue();
 
-    CSSUnitType primitiveType() const;
+    WEBCORE_EXPORT CSSUnitType primitiveType() const;
 
     // Exposed for DeprecatedCSSOMPrimitiveValue. Throws if conversion to `targetUnit` is not allowed.
     ExceptionOr<float> getFloatValueDeprecated(CSSUnitType targetUnit) const;
@@ -222,7 +223,7 @@ public:
 
     WEBCORE_EXPORT String stringValue() const;
     const CSSCalcValue* cssCalcValue() const { return isCalculated() ? m_value.calc : nullptr; }
-    const CSSAnchorValue* cssAnchorValue() const { return isAnchor() ? m_value.anchor : nullptr; }
+    const CSSAttrValue* cssAttrValue() const { return isAttr() ? m_value.attr : nullptr; }
 
     String customCSSText() const;
 
@@ -254,7 +255,7 @@ private:
     CSSPrimitiveValue(double, CSSUnitType);
     explicit CSSPrimitiveValue(Ref<CSSCalcValue>);
     explicit CSSPrimitiveValue(CSSUnresolvedColor);
-    explicit CSSPrimitiveValue(Ref<CSSAnchorValue>);
+    explicit CSSPrimitiveValue(Ref<CSSAttrValue>);
 
     CSSPrimitiveValue(StaticCSSValueTag, CSSValueID);
     CSSPrimitiveValue(StaticCSSValueTag, Color);
@@ -279,7 +280,7 @@ private:
 
     // MARK: Non-converting
     double doubleValue(const CSSToLengthConversionData&) const;
-    double doubleValueNoConversionDataRequired() const;
+    double doubleValueNoConversionDataRequired() const { ASSERT(!isCalculated()); return m_value.number; }
     double doubleValueDeprecated() const;
     double doubleValueDividingBy100IfPercentage(const CSSToLengthConversionData&) const;
     double doubleValueDividingBy100IfPercentageNoConversionDataRequired() const;
@@ -308,7 +309,7 @@ private:
         uint64_t colorAsInteger;
         const CSSUnresolvedColor* unresolvedColor;
         const CSSCalcValue* calc;
-        const CSSAnchorValue* anchor;
+        const CSSAttrValue* attr;
     } m_value;
 };
 
@@ -556,7 +557,7 @@ template<CSSPrimitiveValue::TimeUnit timeUnit, typename T> inline T CSSPrimitive
         case CSSUnitType::CSS_S:
             return value;
         case CSSUnitType::CSS_MS:
-            return value / 1000;
+            return value * CSS::secondsPerMillisecond;
         default:
             ASSERT_NOT_REACHED();
             return 0;
@@ -564,7 +565,7 @@ template<CSSPrimitiveValue::TimeUnit timeUnit, typename T> inline T CSSPrimitive
     } else if constexpr (timeUnit == TimeUnit::Milliseconds) {
         switch (type) {
         case CSSUnitType::CSS_S:
-            return value * 1000;
+            return value / CSS::secondsPerMillisecond;
         case CSSUnitType::CSS_MS:
             return value;
         default:
@@ -585,6 +586,34 @@ template<typename T, CSSPrimitiveValue::TimeUnit timeUnit> T CSSPrimitiveValue::
     ASSERT(isTime());
     return clampTo<T>(computeTime<timeUnit>(primitiveType(), valueNoConversionDataRequired<double>()));
 }
+
+// MARK: Frequency
+
+template<CSSPrimitiveValue::FrequencyUnit frequencyUnit, typename T> inline T CSSPrimitiveValue::computeFrequency(CSSUnitType type, T value)
+{
+    if constexpr (frequencyUnit == FrequencyUnit::Hz) {
+        switch (type) {
+        case CSSUnitType::CSS_HZ:
+            return value;
+        case CSSUnitType::CSS_KHZ:
+            return value * CSS::hertzPerKilohertz;
+        default:
+            ASSERT_NOT_REACHED();
+            return 0;
+        }
+    } else if constexpr (frequencyUnit == FrequencyUnit::Khz) {
+        switch (type) {
+        case CSSUnitType::CSS_HZ:
+            return value / CSS::hertzPerKilohertz;
+        case CSSUnitType::CSS_KHZ:
+            return value;
+        default:
+            ASSERT_NOT_REACHED();
+            return 0;
+        }
+    }
+}
+
 
 // MARK: Resolution
 

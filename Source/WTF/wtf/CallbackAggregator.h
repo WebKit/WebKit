@@ -70,7 +70,7 @@ using MainRunLoopCallbackAggregator = CallbackAggregatorOnThread<DestructionThre
 
 template<typename> class EagerCallbackAggregator;
 template <typename Out, typename... In>
-class EagerCallbackAggregator<Out(In...)> : public RefCounted<EagerCallbackAggregator<Out(In...)>> {
+class EagerCallbackAggregator<Out(In...)> : public ThreadSafeRefCounted<EagerCallbackAggregator<Out(In...)>> {
 public:
     template<typename CallableType, class = typename std::enable_if<std::is_rvalue_reference<CallableType&&>::value>::type>
     static Ref<EagerCallbackAggregator> create(CallableType&& callback, In... defaultArgs)
@@ -88,7 +88,7 @@ public:
     ~EagerCallbackAggregator()
     {
         if (m_callback)
-            std::apply(m_callback, m_defaultArgs);
+            std::apply(m_callback, WTFMove(m_defaultArgs));
     }
 
 private:

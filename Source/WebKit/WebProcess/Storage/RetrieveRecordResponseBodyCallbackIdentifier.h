@@ -30,7 +30,7 @@
 namespace WebKit {
 
 enum class RetrieveRecordResponseBodyCallbackIdentifierType { };
-using RetrieveRecordResponseBodyCallbackIdentifier = LegacyNullableObjectIdentifier<RetrieveRecordResponseBodyCallbackIdentifierType>;
+using RetrieveRecordResponseBodyCallbackIdentifier = ObjectIdentifier<RetrieveRecordResponseBodyCallbackIdentifierType>;
 
 } // namespace WebKit
 

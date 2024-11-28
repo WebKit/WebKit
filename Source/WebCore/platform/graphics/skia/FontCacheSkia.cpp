@@ -29,26 +29,47 @@
 #include "Font.h"
 #include "FontDescription.h"
 #include "StyleFontSizeFunctions.h"
+#if defined(__ANDROID__) || defined(ANDROID)
+#include <skia/ports/SkFontMgr_android.h>
+#elif PLATFORM(WIN)
+#include <skia/ports/SkTypeface_win.h>
+#else
 #include <skia/ports/SkFontMgr_fontconfig.h>
+#endif
 #include <wtf/Assertions.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/CharacterProperties.h>
 #include <wtf/unicode/CharacterNames.h>
 
-#if PLATFORM(GTK)
-#include "GtkUtilities.h"
+#if PLATFORM(GTK) || (PLATFORM(WPE) && ENABLE(WPE_PLATFORM))
+#include "SystemSettings.h"
+#endif
+
+#if PLATFORM(WIN)
+#include <dwrite.h>
 #endif
 
 namespace WebCore {
 
 void FontCache::platformInit()
 {
+#if PLATFORM(WIN)
+    HRESULT hr = DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, __uuidof(IDWriteFactory), reinterpret_cast<IUnknown**>(&m_DWFactory));
+    RELEASE_ASSERT(SUCCEEDED(hr));
+#endif
 }
 
 SkFontMgr& FontCache::fontManager() const
 {
-    if (!m_fontManager)
+    if (!m_fontManager) {
+#if defined(__ANDROID__) || defined(ANDROID)
+        m_fontManager = SkFontMgr_New_Android(nullptr);
+#elif OS(WINDOWS)
+        m_fontManager = SkFontMgr_New_DirectWrite(m_DWFactory.get(), nullptr);
+#else
         m_fontManager = SkFontMgr_New_FontConfig(FcConfigReference(nullptr));
+#endif
+    }
     RELEASE_ASSERT(m_fontManager);
     return *m_fontManager.get();
 }
@@ -135,13 +156,19 @@ bool FontCache::isSystemFontForbiddenForEditing(const String&)
 
 Ref<Font> FontCache::lastResortFallbackFont(const FontDescription& fontDescription)
 {
-    // We want to return a fallback font here, otherwise the logic preventing FontConfig
-    // matches for non-fallback fonts might return 0. See isFallbackFontAllowed.
     if (RefPtr<Font> font = fontForFamily(fontDescription, "serif"_s))
         return font.releaseNonNull();
 
-    // This could be reached due to improperly-installed or misconfigured fontconfig.
-    RELEASE_ASSERT_NOT_REACHED();
+    // Passing nullptr as family name makes Skia use a weak match.
+    auto typeface = fontManager().matchFamilyStyle(nullptr, skiaFontStyle(fontDescription));
+    if (!typeface) {
+        // LastResort is guaranteed to be non-null, so fallback to empty font with not glyphs.
+        typeface = SkTypeface::MakeEmpty();
+    }
+
+    FontPlatformData platformData(WTFMove(typeface), fontDescription.computedSize(), false /* syntheticBold */, false /* syntheticOblique */,
+        fontDescription.orientation(), fontDescription.widthVariant(), fontDescription.textRenderingMode(), computeFeatures(fontDescription, { }));
+    return fontForPlatformData(platformData);
 }
 
 Vector<FontSelectionCapabilities> FontCache::getFontSelectionCapabilitiesInFamily(const AtomString&, AllowUserInstalledFonts)
@@ -167,9 +194,9 @@ static String getFamilyNameStringFromFamily(const String& family)
     if (family == familyNamesData->at(FamilyNamesIndex::FantasyFamily))
         return "fantasy"_s;
 
-#if PLATFORM(GTK)
+#if PLATFORM(GTK) || (PLATFORM(WPE) && ENABLE(WPE_PLATFORM))
     if (family == familyNamesData->at(FamilyNamesIndex::SystemUiFamily) || family == "-webkit-system-font"_s)
-        return defaultGtkSystemFont();
+        return SystemSettings::singleton().defaultSystemFont();
 #endif
 
     return emptyString();

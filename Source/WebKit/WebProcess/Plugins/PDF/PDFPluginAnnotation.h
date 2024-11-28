@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(PDF_PLUGIN) && PLATFORM(MAC)
+#if ENABLE(PDF_PLUGIN)
 
 #include <WebCore/EventListener.h>
 #include <wtf/CheckedPtr.h>
@@ -56,6 +56,8 @@ public:
     WebCore::Element* element() const { return m_element.get(); }
     PDFAnnotation *annotation() const { return m_annotation.get(); }
     PDFPluginBase* plugin() const { return m_plugin.get(); }
+
+    RefPtr<WebCore::Element> protectedElement() const { return element(); }
 
     virtual void updateGeometry();
     virtual void commit();
@@ -112,4 +114,4 @@ private:
 
 } // namespace WebKit
 
-#endif // ENABLE(PDF_PLUGIN) && PLATFORM(MAC)
+#endif // ENABLE(PDF_PLUGIN)

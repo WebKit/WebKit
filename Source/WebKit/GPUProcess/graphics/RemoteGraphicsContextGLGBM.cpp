@@ -27,7 +27,9 @@
 #include "config.h"
 #include "RemoteGraphicsContextGL.h"
 
-#if ENABLE(GPU_PROCESS) && ENABLE(WEBGL) && USE(GBM)
+#if ENABLE(GPU_PROCESS) && ENABLE(WEBGL) && USE(COORDINATED_GRAPHICS) && USE(GBM)
+#include <WebCore/GLFence.h>
+#include <epoxy/gl.h>
 
 namespace WebKit {
 
@@ -37,7 +39,7 @@ public:
 
 private:
     void platformWorkQueueInitialize(WebCore::GraphicsContextGLAttributes&&) final;
-    void prepareForDisplay(CompletionHandler<void(WebCore::DMABufObject&&)>&&) final;
+    void prepareForDisplay(CompletionHandler<void(uint64_t, std::optional<WebCore::DMABufBuffer::Attributes>&&, UnixFileDescriptor&&)>&&) final;
 };
 
 RemoteGraphicsContextGLGBM::RemoteGraphicsContextGLGBM(GPUConnectionToWebProcess& connection, GraphicsContextGLIdentifier identifier, RemoteRenderingBackend& renderingBackend, Ref<IPC::StreamServerConnection>&& streamConnection)
@@ -47,23 +49,36 @@ RemoteGraphicsContextGLGBM::RemoteGraphicsContextGLGBM(GPUConnectionToWebProcess
 void RemoteGraphicsContextGLGBM::platformWorkQueueInitialize(WebCore::GraphicsContextGLAttributes&& attributes)
 {
     assertIsCurrent(workQueue());
-    m_context = WebCore::GraphicsContextGLGBM::create(WTFMove(attributes));
+    m_context = WebCore::GraphicsContextGLTextureMapperGBM::create(WTFMove(attributes));
 }
 
-void RemoteGraphicsContextGLGBM::prepareForDisplay(CompletionHandler<void(WebCore::DMABufObject&&)>&& completionHandler)
+void RemoteGraphicsContextGLGBM::prepareForDisplay(CompletionHandler<void(uint64_t, std::optional<WebCore::DMABufBuffer::Attributes>&&, UnixFileDescriptor&&)>&& completionHandler)
 {
     assertIsCurrent(workQueue());
-    m_context->prepareForDisplay();
+    std::unique_ptr<WebCore::GLFence> fence;
+    m_context->prepareForDisplayWithFinishedSignal([&fence] {
+        fence = WebCore::GLFence::createExportable();
+        if (fence)
+            return;
 
-    WebCore::DMABufObject dmabufObject(0);
-    auto& swapchain = m_context->swapchain();
-    if (swapchain.displayBO) {
-        uintptr_t handle = reinterpret_cast<uintptr_t>(swapchain.swapchain.get()) + swapchain.displayBO->handle();
-        dmabufObject = swapchain.displayBO->createDMABufObject(handle);
-        swapchain.displayBO = nullptr;
+        fence = WebCore::GLFence::create();
+    });
+
+    auto* buffer = m_context->displayBuffer();
+    if (!buffer) {
+        completionHandler(0, std::nullopt, { });
+        return;
     }
 
-    completionHandler(WTFMove(dmabufObject));
+    UnixFileDescriptor fenceFD;
+    if (fence) {
+        fenceFD = fence->exportFD();
+        if (!fenceFD)
+            fence->clientWait();
+    } else
+        glFlush();
+
+    completionHandler(buffer->id(), buffer->takeAttributes(), WTFMove(fenceFD));
 }
 
 Ref<RemoteGraphicsContextGL> RemoteGraphicsContextGL::create(GPUConnectionToWebProcess& connection, WebCore::GraphicsContextGLAttributes&& attributes, GraphicsContextGLIdentifier identifier, RemoteRenderingBackend& renderingBackend, Ref<IPC::StreamServerConnection>&& streamConnection)
@@ -75,4 +90,4 @@ Ref<RemoteGraphicsContextGL> RemoteGraphicsContextGL::create(GPUConnectionToWebP
 
 } // namespace WebKit
 
-#endif // ENABLE(GPU_PROCESS) && ENABLE(WEBGL) && USE(GBM)
+#endif // ENABLE(GPU_PROCESS) && ENABLE(WEBGL) && USE(COORDINATED_GRAPHICS) && USE(GBM)

@@ -26,6 +26,8 @@
 #include "config.h"
 #include "testb3.h"
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 #if ENABLE(B3_JIT)
 
 void testPatchpointManyWarmAnyImms()
@@ -307,10 +309,12 @@ void testCheckMegaCombo()
     auto arguments = cCallArgumentValues<intptr_t, size_t>(proc, root);
     Value* base = arguments[0];
     Value* index = arguments[1];
-    index = root->appendNew<Value>(
-        proc, ZExt32, Origin(),
-        root->appendNew<Value>(
-            proc, Trunc, Origin(), index));
+    if (is64Bit()) {
+        index = root->appendNew<Value>(
+            proc, ZExt32, Origin(),
+            root->appendNew<Value>(
+                proc, Trunc, Origin(), index));
+    }
 
     Value* ptr = root->appendNew<Value>(
         proc, Add, Origin(), base,
@@ -361,12 +365,14 @@ void testCheckTrickyMegaCombo()
     BasicBlock* root = proc.addBlock();
     auto arguments = cCallArgumentValues<intptr_t, size_t>(proc, root);
     Value* base = arguments[0];
-    Value* index = root->appendNew<Value>(
-        proc, ZExt32, Origin(),
-        root->appendNew<Value>(proc, Add, Origin(),
-            root->appendNew<Value>(
-                proc, Trunc, Origin(), arguments[1]),
-            root->appendNew<Const32Value>(proc, Origin(), 1)));
+    Value* index = arguments[1];
+    if (is64Bit()) {
+        index = root->appendNew<Value>(proc, ZExt32, Origin(),
+            root->appendNew<Value>(proc, Trunc, Origin(), index));
+    }
+    index = root->appendNew<Value>(proc, Add, Origin(),
+        index,
+        root->appendNew<ConstPtrValue>(proc, Origin(), 1));
 
     Value* ptr = root->appendNew<Value>(
         proc, Add, Origin(), base,
@@ -418,10 +424,12 @@ void testCheckTwoMegaCombos()
     auto arguments = cCallArgumentValues<intptr_t, size_t>(proc, root);
     Value* base = arguments[0];
     Value* index = arguments[1];
-    index = root->appendNew<Value>(
-        proc, ZExt32, Origin(),
-        root->appendNew<Value>(
-            proc, Trunc, Origin(), index));
+    if (is64Bit()) {
+        index = root->appendNew<Value>(
+            proc, ZExt32, Origin(),
+            root->appendNew<Value>(
+                proc, Trunc, Origin(), index));
+    }
 
     Value* ptr = root->appendNew<Value>(
         proc, Add, Origin(), base,
@@ -489,10 +497,12 @@ void testCheckTwoNonRedundantMegaCombos()
 
     Value* base = arguments[0];
     Value* index = arguments[1];
-    index = root->appendNew<Value>(
-        proc, ZExt32, Origin(),
-        root->appendNew<Value>(
-            proc, Trunc, Origin(), index));
+    if (is64Bit()) {
+        index = root->appendNew<Value>(
+            proc, ZExt32, Origin(),
+            root->appendNew<Value>(
+                proc, Trunc, Origin(), index));
+    }
     Value* branchPredicate = root->appendNew<Value>(
         proc, BitAnd, Origin(),
         arguments[2],
@@ -2365,7 +2375,7 @@ void testCallSimpleFloat(float a, float b)
             floatValue1,
             floatValue2));
 
-    CHECK(isIdentical(compileAndRun<float>(proc, bitwise_cast<int32_t>(a), bitwise_cast<int32_t>(b)), a + b));
+    CHECK(isIdentical(compileAndRun<float>(proc, std::bit_cast<int32_t>(a), std::bit_cast<int32_t>(b)), a + b));
 }
 
 extern "C" {
@@ -3264,3 +3274,5 @@ void testSExt32BitAnd(int32_t value, int32_t mask)
 }
 
 #endif // ENABLE(B3_JIT)
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

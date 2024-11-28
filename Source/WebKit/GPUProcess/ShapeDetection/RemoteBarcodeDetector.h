@@ -61,7 +61,7 @@ public:
         return adoptRef(*new RemoteBarcodeDetector(WTFMove(barcodeDetector), objectHeap, backend, identifier, webProcessIdentifier));
     }
 
-    const SharedPreferencesForWebProcess& sharedPreferencesForWebProcess() const;
+    std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess() const;
     virtual ~RemoteBarcodeDetector();
 
 private:
@@ -72,9 +72,9 @@ private:
     RemoteBarcodeDetector& operator=(const RemoteBarcodeDetector&) = delete;
     RemoteBarcodeDetector& operator=(RemoteBarcodeDetector&&) = delete;
 
-    WebCore::ShapeDetection::BarcodeDetector& backing() { return m_backing; }
-    Ref<WebCore::ShapeDetection::BarcodeDetector> protectedBacking();
-    Ref<RemoteRenderingBackend> protectedBackend();
+    WebCore::ShapeDetection::BarcodeDetector& backing() const { return m_backing; }
+    Ref<WebCore::ShapeDetection::BarcodeDetector> protectedBacking() const;
+    Ref<RemoteRenderingBackend> protectedBackend() const;
 
     void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;
 

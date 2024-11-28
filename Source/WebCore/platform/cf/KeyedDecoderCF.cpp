@@ -26,10 +26,15 @@
 #include "config.h"
 #include "KeyedDecoderCF.h"
 
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/cf/TypeCastsCF.h>
 #include <wtf/text/WTFString.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(KeyedDecoderCF);
 
 std::unique_ptr<KeyedDecoder> KeyedDecoder::decoder(std::span<const uint8_t> data)
 {
@@ -186,3 +191,5 @@ void KeyedDecoderCF::endArray()
 }
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

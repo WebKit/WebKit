@@ -67,7 +67,7 @@ private:
     struct Request {
         uint64_t spaceRequested;
         RequestCallback callback;
-        QuotaIncreaseRequestIdentifier identifier;
+        Markable<QuotaIncreaseRequestIdentifier> identifier;
     };
     Deque<Request> m_requests;
     std::optional<Request> m_currentRequest;

@@ -108,6 +108,7 @@ struct AutocorrectionContext {
 - (void)synchronouslyLoadHTMLString:(NSString *)html baseURL:(NSURL *)url;
 - (void)synchronouslyLoadHTMLString:(NSString *)html preferences:(WKWebpagePreferences *)preferences;
 - (void)synchronouslyLoadRequest:(NSURLRequest *)request;
+- (void)synchronouslyLoadSimulatedRequest:(NSURLRequest *)request responseHTMLString:(NSString *)htmlString;
 - (void)synchronouslyLoadRequest:(NSURLRequest *)request preferences:(WKWebpagePreferences *)preferences;
 - (void)synchronouslyLoadRequestIgnoringSSLErrors:(NSURLRequest *)request;
 - (void)synchronouslyLoadTestPageNamed:(NSString *)pageName;
@@ -131,7 +132,7 @@ struct AutocorrectionContext {
 
 @interface TestMessageHandler : NSObject <WKScriptMessageHandler>
 - (void)addMessage:(NSString *)message withHandler:(dispatch_block_t)handler;
-- (void)setWildcardMessageHandler:(void (^)(NSString *))handler;
+@property (nonatomic, copy) void (^didReceiveScriptMessage)(NSString *);
 @end
 
 @interface TestWKWebView : WKWebView
@@ -142,6 +143,7 @@ struct AutocorrectionContext {
 - (void)performAfterReceivingMessage:(NSString *)message action:(dispatch_block_t)action;
 - (void)performAfterReceivingAnyMessage:(void (^)(NSString *))action;
 - (void)waitForMessage:(NSString *)message;
+- (void)waitForMessages:(NSArray<NSString *> *)messages;
 
 // This function waits until a DOM load event is fired.
 // FIXME: Rename this function to better describe what "after loading" means.
@@ -156,6 +158,7 @@ struct AutocorrectionContext {
 - (void)collapseToStart;
 - (void)collapseToEnd;
 - (void)addToTestWindow;
+- (void)removeFromTestWindow;
 - (BOOL)selectionRangeHasStartOffset:(int)start endOffset:(int)end;
 - (BOOL)selectionRangeHasStartOffset:(int)start endOffset:(int)end inFrame:(WKFrameInfo *)frameInfo;
 - (void)clickOnElementID:(NSString *)elementID;
@@ -213,7 +216,7 @@ struct AutocorrectionContext {
 
 @interface TestWKWebView (SiteIsolation)
 - (_WKFrameTreeNode *)mainFrame;
-- (_WKFrameTreeNode *)firstChildFrame;
+- (WKFrameInfo *)firstChildFrame;
 - (void)evaluateJavaScript:(NSString *)string inFrame:(WKFrameInfo *)frame completionHandler:(void(^)(id, NSError *))completionHandler;
 - (WKFindResult *)findStringAndWait:(NSString *)string withConfiguration:(WKFindConfiguration *)configuration;
 @end

@@ -23,6 +23,6 @@ Frame: '<!--frame1-->'
 PASS
 
 ============== Back Forward List ==============
-curr->  (file test):contentfiltering/block-after-finished-adding-data.html  **nav target**
+curr->  (file test):contentfiltering/block-after-finished-adding-data.html
             (file test):contentfiltering/resources/fail.html (in frame "<!--frame1-->")
 ===============================================

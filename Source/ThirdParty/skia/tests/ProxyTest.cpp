@@ -12,10 +12,10 @@
 #include "include/core/SkSize.h"
 #include "include/core/SkTypes.h"
 #include "include/gpu/GpuTypes.h"
-#include "include/gpu/GrBackendSurface.h"
-#include "include/gpu/GrDirectContext.h"
-#include "include/gpu/GrTypes.h"
-#include "include/gpu/gl/GrGLTypes.h"
+#include "include/gpu/ganesh/GrBackendSurface.h"
+#include "include/gpu/ganesh/GrDirectContext.h"
+#include "include/gpu/ganesh/GrTypes.h"
+#include "include/gpu/ganesh/gl/GrGLTypes.h"
 #include "include/private/base/SkTo.h"
 #include "include/private/gpu/ganesh/GrTypesPriv.h"
 #include "src/gpu/RefCntedCallback.h"
@@ -284,6 +284,9 @@ DEF_GANESH_TEST_FOR_RENDERING_CONTEXTS(WrappedProxyTest,
         if (direct->colorTypeSupportedAsSurface(colorType)) {
             GrBackendRenderTarget backendRT = gpu->createTestingOnlyBackendRenderTarget(
                     {kWidthHeight, kWidthHeight}, grColorType, /* sampleCount= */ 1, isProtected);
+            if (!backendRT.isValid()) {
+                continue;
+            }
             sk_sp<GrSurfaceProxy> sProxy(
                     proxyProvider->wrapBackendRenderTarget(backendRT, nullptr));
             check_surface(reporter, sProxy.get(), kWidthHeight, kWidthHeight, Budgeted::kNo);

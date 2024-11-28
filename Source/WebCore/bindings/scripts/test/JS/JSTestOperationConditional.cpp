@@ -51,7 +51,6 @@
 #include "JSDOMConvertBase.h"
 #endif
 
-
 namespace WebCore {
 using namespace JSC;
 
@@ -121,18 +120,17 @@ template<> void JSTestOperationConditionalDOMConstructor::initializeProperties(V
 
 /* Hash table for prototype */
 
-static const HashTableValue JSTestOperationConditionalPrototypeTableValues[] =
-{
-    { "constructor"_s, static_cast<unsigned>(PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestOperationConditionalConstructor, 0 } },
+static const std::array<HashTableValue, 3> JSTestOperationConditionalPrototypeTableValues {
+    HashTableValue { "constructor"_s, static_cast<unsigned>(PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestOperationConditionalConstructor, 0 } },
 #if ENABLE(ConditionBase)
-    { "nonConditionalOperation"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestOperationConditionalPrototypeFunction_nonConditionalOperation, 0 } },
+    HashTableValue { "nonConditionalOperation"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestOperationConditionalPrototypeFunction_nonConditionalOperation, 0 } },
 #else
-    { { }, 0, NoIntrinsic, { HashTableValue::End } },
+    HashTableValue { { }, 0, NoIntrinsic, { HashTableValue::End } },
 #endif
 #if ENABLE(ConditionBase) && ENABLE(ConditionOperation)
-    { "conditionalOperation"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestOperationConditionalPrototypeFunction_conditionalOperation, 0 } },
+    HashTableValue { "conditionalOperation"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestOperationConditionalPrototypeFunction_conditionalOperation, 0 } },
 #else
-    { { }, 0, NoIntrinsic, { HashTableValue::End } },
+    HashTableValue { { }, 0, NoIntrinsic, { HashTableValue::End } },
 #endif
 };
 
@@ -179,7 +177,7 @@ void JSTestOperationConditional::destroy(JSC::JSCell* cell)
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestOperationConditionalConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
-    auto& vm = JSC::getVM(lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto* prototype = jsDynamicCast<JSTestOperationConditionalPrototype*>(JSValue::decode(thisValue));
     if (UNLIKELY(!prototype))
@@ -190,11 +188,11 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestOperationConditionalConstructor, (JSGlobalObject*
 #if ENABLE(ConditionBase)
 static inline JSC::EncodedJSValue jsTestOperationConditionalPrototypeFunction_nonConditionalOperationBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestOperationConditional>::ClassParameter castedThis)
 {
-    auto& vm = JSC::getVM(lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(callFrame);
-    auto& impl = castedThis->wrapped();
+    SUPPRESS_UNCOUNTED_LOCAL auto& impl = castedThis->wrapped();
     RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLUndefined>(*lexicalGlobalObject, throwScope, [&]() -> decltype(auto) { return impl.nonConditionalOperation(); })));
 }
 
@@ -208,11 +206,11 @@ JSC_DEFINE_HOST_FUNCTION(jsTestOperationConditionalPrototypeFunction_nonConditio
 #if ENABLE(ConditionBase) && ENABLE(ConditionOperation)
 static inline JSC::EncodedJSValue jsTestOperationConditionalPrototypeFunction_conditionalOperationBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestOperationConditional>::ClassParameter castedThis)
 {
-    auto& vm = JSC::getVM(lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(callFrame);
-    auto& impl = castedThis->wrapped();
+    SUPPRESS_UNCOUNTED_LOCAL auto& impl = castedThis->wrapped();
     RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLUndefined>(*lexicalGlobalObject, throwScope, [&]() -> decltype(auto) { return impl.conditionalOperation(); })));
 }
 
@@ -237,8 +235,8 @@ void JSTestOperationConditional::analyzeHeap(JSCell* cell, HeapAnalyzer& analyze
 {
     auto* thisObject = jsCast<JSTestOperationConditional*>(cell);
     analyzer.setWrappedObjectForCell(cell, &thisObject->wrapped());
-    if (thisObject->scriptExecutionContext())
-        analyzer.setLabelForCell(cell, makeString("url "_s, thisObject->scriptExecutionContext()->url().string()));
+    if (RefPtr context = thisObject->scriptExecutionContext())
+        analyzer.setLabelForCell(cell, makeString("url "_s, context->url().string()));
     Base::analyzeHeap(cell, analyzer);
 }
 
@@ -257,6 +255,7 @@ void JSTestOperationConditionalOwner::finalize(JSC::Handle<JSC::Unknown> handle,
     uncacheWrapper(world, jsTestOperationConditional->protectedWrapped().ptr(), jsTestOperationConditional);
 }
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 #if ENABLE(BINDING_INTEGRITY)
 #if PLATFORM(WIN)
 #pragma warning(disable: 4483)
@@ -281,6 +280,8 @@ template<typename T, typename = std::enable_if_t<std::is_same_v<T, TestOperation
     }
 }
 #endif
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+
 JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject*, JSDOMGlobalObject* globalObject, Ref<TestOperationConditional>&& impl)
 {
 #if ENABLE(BINDING_INTEGRITY)

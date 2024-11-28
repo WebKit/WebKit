@@ -10,12 +10,15 @@
 #include "libANGLE/renderer/vulkan/CLEventVk.h"
 #include "libANGLE/renderer/vulkan/CLMemoryVk.h"
 #include "libANGLE/renderer/vulkan/CLProgramVk.h"
+#include "libANGLE/renderer/vulkan/CLSamplerVk.h"
+#include "libANGLE/renderer/vulkan/DisplayVk.h"
 #include "libANGLE/renderer/vulkan/vk_renderer.h"
 #include "libANGLE/renderer/vulkan/vk_utils.h"
 
 #include "libANGLE/CLBuffer.h"
 #include "libANGLE/CLContext.h"
 #include "libANGLE/CLEvent.h"
+#include "libANGLE/CLImage.h"
 #include "libANGLE/CLProgram.h"
 #include "libANGLE/cl_utils.h"
 
@@ -30,7 +33,11 @@ CLContextVk::CLContextVk(const cl::Context &context, const cl::DevicePtrs device
     mDeviceQueueIndex = mRenderer->getDefaultDeviceQueueIndex();
 }
 
-CLContextVk::~CLContextVk() = default;
+CLContextVk::~CLContextVk()
+{
+    mDescriptorSetLayoutCache.destroy(getRenderer());
+    mPipelineLayoutCache.destroy(getRenderer());
+}
 
 void CLContextVk::handleError(VkResult errorCode,
                               const char *file,
@@ -102,14 +109,47 @@ angle::Result CLContextVk::createBuffer(const cl::Buffer &buffer,
 }
 
 angle::Result CLContextVk::createImage(const cl::Image &image,
-                                       cl::MemFlags flags,
-                                       const cl_image_format &format,
-                                       const cl::ImageDescriptor &desc,
                                        void *hostPtr,
                                        CLMemoryImpl::Ptr *imageOut)
 {
-    UNIMPLEMENTED();
-    ANGLE_CL_RETURN_ERROR(CL_OUT_OF_RESOURCES);
+    CLImageVk *memory = new (std::nothrow) CLImageVk(image);
+    if (memory == nullptr)
+    {
+        ANGLE_CL_RETURN_ERROR(CL_OUT_OF_HOST_MEMORY);
+    }
+    ANGLE_TRY(memory->create(hostPtr));
+    *imageOut = CLMemoryImpl::Ptr(memory);
+    mAssociatedObjects->mMemories.emplace(image.getNative());
+    return angle::Result::Continue;
+}
+
+VkFormat CLContextVk::getVkFormatFromCL(cl_image_format format)
+{
+    angle::FormatID formatID;
+    switch (format.image_channel_order)
+    {
+        case CL_R:
+            formatID = angle::Format::CLRFormatToID(format.image_channel_data_type);
+            break;
+        case CL_RG:
+            formatID = angle::Format::CLRGFormatToID(format.image_channel_data_type);
+            break;
+        case CL_RGB:
+            formatID = angle::Format::CLRGBFormatToID(format.image_channel_data_type);
+            break;
+        case CL_RGBA:
+            formatID = angle::Format::CLRGBAFormatToID(format.image_channel_data_type);
+            break;
+        case CL_BGRA:
+            formatID = angle::Format::CLBGRAFormatToID(format.image_channel_data_type);
+            break;
+        case CL_sRGBA:
+            formatID = angle::Format::CLsRGBAFormatToID(format.image_channel_data_type);
+            break;
+        default:
+            return VK_FORMAT_UNDEFINED;
+    }
+    return getPlatform()->getRenderer()->getFormat(formatID).getActualRenderableImageVkFormat();
 }
 
 angle::Result CLContextVk::getSupportedImageFormats(cl::MemFlags flags,
@@ -118,14 +158,56 @@ angle::Result CLContextVk::getSupportedImageFormats(cl::MemFlags flags,
                                                     cl_image_format *imageFormats,
                                                     cl_uint *numImageFormats)
 {
-    UNIMPLEMENTED();
-    ANGLE_CL_RETURN_ERROR(CL_OUT_OF_RESOURCES);
+    VkPhysicalDevice physicalDevice = getPlatform()->getRenderer()->getPhysicalDevice();
+    std::vector<cl_image_format> supportedFormats;
+    std::vector<cl_image_format> minSupportedFormats;
+    if (flags.intersects((CL_MEM_READ_ONLY | CL_MEM_WRITE_ONLY)))
+    {
+        minSupportedFormats.insert(minSupportedFormats.end(),
+                                   std::begin(kMinSupportedFormatsReadOrWrite),
+                                   std::end(kMinSupportedFormatsReadOrWrite));
+    }
+    else
+    {
+        minSupportedFormats.insert(minSupportedFormats.end(),
+                                   std::begin(kMinSupportedFormatsReadAndWrite),
+                                   std::end(kMinSupportedFormatsReadAndWrite));
+    }
+    for (cl_image_format format : minSupportedFormats)
+    {
+        VkFormatProperties formatProperties;
+        VkFormat vkFormat = getVkFormatFromCL(format);
+        ASSERT(vkFormat != VK_FORMAT_UNDEFINED);
+        vkGetPhysicalDeviceFormatProperties(physicalDevice, vkFormat, &formatProperties);
+        if (formatProperties.optimalTilingFeatures != 0)
+        {
+            supportedFormats.push_back(format);
+        }
+    }
+    if (numImageFormats != nullptr)
+    {
+        *numImageFormats = static_cast<cl_uint>(supportedFormats.size());
+    }
+    if (imageFormats != nullptr)
+    {
+        memcpy(imageFormats, supportedFormats.data(),
+               sizeof(cl_image_format) *
+                   std::min(static_cast<cl_uint>(supportedFormats.size()), numEntries));
+    }
+
+    return angle::Result::Continue;
 }
 
 angle::Result CLContextVk::createSampler(const cl::Sampler &sampler, CLSamplerImpl::Ptr *samplerOut)
 {
-    UNIMPLEMENTED();
-    ANGLE_CL_RETURN_ERROR(CL_OUT_OF_RESOURCES);
+    CLSamplerVk *samplerVk = new (std::nothrow) CLSamplerVk(sampler);
+    if (samplerVk == nullptr)
+    {
+        ANGLE_CL_RETURN_ERROR(CL_OUT_OF_HOST_MEMORY);
+    }
+    ANGLE_TRY(samplerVk->create());
+    *samplerOut = CLSamplerImpl::Ptr(samplerVk);
+    return angle::Result::Continue;
 }
 
 angle::Result CLContextVk::createProgramWithSource(const cl::Program &program,
@@ -191,6 +273,7 @@ angle::Result CLContextVk::linkProgram(const cl::Program &program,
     {
         ANGLE_CL_RETURN_ERROR(CL_OUT_OF_HOST_MEMORY);
     }
+    ANGLE_TRY(programImpl->init());
 
     cl::DevicePtrs linkDeviceList;
     CLProgramVk::LinkProgramsList linkProgramsList;
@@ -207,7 +290,7 @@ angle::Result CLContextVk::linkProgram(const cl::Program &program,
             // Should be valid at this point
             ASSERT(deviceProgramData != nullptr);
 
-            if (libraryOrObject.isSet(deviceProgramData->binaryType))
+            if (libraryOrObject.intersects(deviceProgramData->binaryType))
             {
                 linkPrograms.push_back(deviceProgramData);
             }

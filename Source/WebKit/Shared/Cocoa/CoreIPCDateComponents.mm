@@ -28,7 +28,7 @@
 
 namespace WebKit {
 
-NSUInteger calendarUnitForComponentIndex[] = {
+std::array calendarUnitForComponentIndex {
     NSCalendarUnitEra,
     NSCalendarUnitYear,
     NSCalendarUnitYearForWeekOfYear,
@@ -79,4 +79,3 @@ bool CoreIPCDateComponents::hasCorrectNumberOfComponentValues(const Vector<NSInt
 }
 
 } // namespace WebKit
-

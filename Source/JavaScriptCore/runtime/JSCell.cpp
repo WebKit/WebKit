@@ -32,6 +32,8 @@
 #include "Symbol.h"
 #include <wtf/LockAlgorithmInlines.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 const ASCIILiteral SymbolCoercionError { "Cannot convert a symbol to a string"_s };
@@ -264,13 +266,13 @@ JSString* JSCell::toStringSlowCase(JSGlobalObject* globalObject) const
 
 void JSCellLock::lockSlow()
 {
-    Atomic<IndexingType>* lock = bitwise_cast<Atomic<IndexingType>*>(&m_indexingTypeAndMisc);
+    Atomic<IndexingType>* lock = std::bit_cast<Atomic<IndexingType>*>(&m_indexingTypeAndMisc);
     IndexingTypeLockAlgorithm::lockSlow(*lock);
 }
 
 void JSCellLock::unlockSlow()
 {
-    Atomic<IndexingType>* lock = bitwise_cast<Atomic<IndexingType>*>(&m_indexingTypeAndMisc);
+    Atomic<IndexingType>* lock = std::bit_cast<Atomic<IndexingType>*>(&m_indexingTypeAndMisc);
     IndexingTypeLockAlgorithm::unlockSlow(*lock);
 }
 
@@ -278,16 +280,16 @@ void JSCellLock::unlockSlow()
 NEVER_INLINE NO_RETURN_DUE_TO_CRASH NOT_TAIL_CALLED void reportZappedCellAndCrash(Heap& heap, const JSCell* cell)
 {
     MarkedBlock::Handle* foundBlockHandle = nullptr;
-    uint64_t* cellWords = bitwise_cast<uint64_t*>(cell);
+    uint64_t* cellWords = std::bit_cast<uint64_t*>(cell);
 
-    uintptr_t cellAddress = bitwise_cast<uintptr_t>(cell);
+    uintptr_t cellAddress = std::bit_cast<uintptr_t>(cell);
     uint64_t headerWord = cellWords[0];
     uint64_t zapReasonAndMore = cellWords[1];
     unsigned subspaceHash = 0;
     size_t cellSize = 0;
 
     heap.objectSpace().forEachBlock([&](MarkedBlock::Handle* blockHandle) {
-        if (blockHandle->contains(bitwise_cast<JSCell*>(cell))) {
+        if (blockHandle->contains(std::bit_cast<JSCell*>(cell))) {
             foundBlockHandle = blockHandle;
             return IterationStatus::Done;
         }
@@ -307,7 +309,7 @@ NEVER_INLINE NO_RETURN_DUE_TO_CRASH NOT_TAIL_CALLED void reportZappedCellAndCras
         variousState |= static_cast<uint64_t>(foundBlockHandle->needsDestruction()) << 3;
         variousState |= static_cast<uint64_t>(foundBlock->isNewlyAllocated(cell)) << 4;
 
-        ptrdiff_t cellOffset = cellAddress - bitwise_cast<uintptr_t>(foundBlockHandle->start());
+        ptrdiff_t cellOffset = cellAddress - std::bit_cast<uintptr_t>(foundBlockHandle->start());
         bool cellIsProperlyAligned = !(cellOffset % cellSize);
         variousState |= static_cast<uint64_t>(cellIsProperlyAligned) << 5;
     } else {
@@ -354,3 +356,5 @@ NEVER_INLINE NO_RETURN_DUE_TO_CRASH NOT_TAIL_CALLED void reportZappedCellAndCras
 #endif // CPU(X86_64)
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

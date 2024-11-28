@@ -36,6 +36,7 @@
 #include "WasmModuleInformation.h"
 #include "WasmOps.h"
 #include "WasmSections.h"
+#include "WasmTypeDefinitionInlines.h"
 #include "Width.h"
 #include <type_traits>
 #include <wtf/Expected.h>
@@ -45,6 +46,8 @@
 #include <wtf/text/MakeString.h>
 #include <wtf/text/WTFString.h>
 #include <wtf/unicode/UTF8Conversion.h>
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace JSC { namespace Wasm {
 
@@ -266,7 +269,7 @@ ALWAYS_INLINE bool ParserBase::parseInt7(int8_t& result)
     if (m_offset >= m_source.size())
         return false;
     uint8_t v = m_source[m_offset++];
-    result = (v & 0x40) ? WTF::bitwise_cast<int8_t>(uint8_t(v | 0x80)) : v;
+    result = (v & 0x40) ? std::bit_cast<int8_t>(uint8_t(v | 0x80)) : v;
     return !(v & 0x80);
 }
 
@@ -275,7 +278,7 @@ ALWAYS_INLINE bool ParserBase::peekInt7(int8_t& result)
     if (m_offset >= m_source.size())
         return false;
     uint8_t v = m_source[m_offset];
-    result = (v & 0x40) ? WTF::bitwise_cast<int8_t>(uint8_t(v | 0x80)) : v;
+    result = (v & 0x40) ? std::bit_cast<int8_t>(uint8_t(v | 0x80)) : v;
     return !(v & 0x80);
 }
 
@@ -309,7 +312,7 @@ ALWAYS_INLINE typename ParserBase::PartialResult ParserBase::parseBlockSignature
 
         Type type = { typeKind, TypeDefinition::invalidIndex };
         WASM_PARSER_FAIL_IF(!(isValueType(type) || type.isVoid()), "result type of block: "_s, makeString(type.kind), " is not a value type or Void"_s);
-        result = m_typeInformation.thunkFor(type);
+        result = { m_typeInformation.thunkFor(type), nullptr };
         m_offset++;
         return { };
     }
@@ -322,7 +325,7 @@ ALWAYS_INLINE typename ParserBase::PartialResult ParserBase::parseBlockSignature
     const auto& signature = info.typeSignatures[index].get().expand();
     WASM_PARSER_FAIL_IF(!signature.is<FunctionSignature>(), "Block-like instruction signature index does not refer to a function type definition"_s);
 
-    result = signature.as<FunctionSignature>();
+    result = { signature.as<FunctionSignature>(), nullptr };
     return { };
 }
 
@@ -331,8 +334,8 @@ inline typename ParserBase::PartialResult ParserBase::parseReftypeSignature(cons
     Type resultType;
     WASM_PARSER_FAIL_IF(!parseValueType(info, resultType), "result type of block is not a valid ref type"_s);
     Vector<Type, 16> returnTypes { resultType };
-    const auto& typeDefinition = TypeInformation::typeDefinitionForFunction(returnTypes, { }).get();
-    result = &TypeInformation::getFunctionSignature(typeDefinition->index());
+    auto typeDefinition = TypeInformation::typeDefinitionForFunction(returnTypes, { });
+    result = { &TypeInformation::getFunctionSignature(typeDefinition->index()), typeDefinition };
 
     return { };
 }
@@ -385,7 +388,8 @@ ALWAYS_INLINE bool ParserBase::parseValueType(const ModuleInformation& info, Typ
                 ASSERT(static_cast<uint32_t>(heapType) >= info.typeCount() && static_cast<uint32_t>(heapType) < m_recursionGroupInformation.end);
                 ProjectionIndex groupIndex = static_cast<ProjectionIndex>(heapType - m_recursionGroupInformation.start);
                 RefPtr<TypeDefinition> def = TypeInformation::getPlaceholderProjection(groupIndex);
-                typeIndex = def->index();
+                RELEASE_ASSERT(def->refCount() > 2); // tbl + RefPtr + owner
+                typeIndex = def->index(); // Owned by TypeInformation placeholder projections singleton.
             } else {
                 ASSERT(static_cast<uint32_t>(heapType) < info.typeCount());
                 typeIndex = TypeInformation::get(info.typeSignatures[heapType].get());
@@ -428,5 +432,7 @@ ALWAYS_INLINE I32InitExpr makeI32InitExpr(uint8_t opcode, bool isExtendedConstan
 }
 
 } } // namespace JSC::Wasm
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ENABLE(WEBASSEMBLY)

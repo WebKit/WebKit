@@ -35,16 +35,8 @@
 #include <atomic>
 #include <dispatch/dispatch.h>
 #include <wtf/HashMap.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
-
-namespace WebKit {
-class RemoteLayerTreeDrawingArea;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::RemoteLayerTreeDrawingArea> : std::true_type { };
-}
 
 namespace WebCore {
 class PlatformCALayer;
@@ -57,8 +49,13 @@ namespace WebKit {
 class RemoteLayerTreeContext;
 
 class RemoteLayerTreeDrawingArea : public DrawingArea, public WebCore::GraphicsLayerClient {
+    WTF_MAKE_TZONE_ALLOCATED(RemoteLayerTreeDrawingArea);
 public:
-    RemoteLayerTreeDrawingArea(WebPage&, const WebPageCreationParameters&);
+    static RefPtr<RemoteLayerTreeDrawingArea> create(WebPage& webPage, const WebPageCreationParameters& parameters)
+    {
+        return adoptRef(*new RemoteLayerTreeDrawingArea(webPage, parameters));
+    }
+
     virtual ~RemoteLayerTreeDrawingArea();
 
     TransactionID nextTransactionID() const { return m_currentTransactionID.next(); }
@@ -69,6 +66,8 @@ public:
     void gpuProcessConnectionWasDestroyed();
 
 protected:
+    RemoteLayerTreeDrawingArea(WebPage&, const WebPageCreationParameters&);
+
     void updateRendering();
 
 private:
@@ -118,7 +117,7 @@ private:
 
     void displayDidRefresh() final;
 
-    void setDeviceScaleFactor(float) final;
+    void setDeviceScaleFactor(float, CompletionHandler<void()>&&) final;
 
     void mainFrameContentSizeChanged(WebCore::FrameIdentifier, const WebCore::IntSize&) override;
 
@@ -172,6 +171,11 @@ private:
         WebCore::FrameIdentifier frameID;
     };
     RootLayerInfo* rootLayerInfoWithFrameIdentifier(WebCore::FrameIdentifier);
+
+    // GraphicsLayerClient
+#if HAVE(HDR_SUPPORT)
+    bool hdrForImagesEnabled() const override;
+#endif
 
     Vector<RootLayerInfo, 1> m_rootLayers;
 

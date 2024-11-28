@@ -28,6 +28,7 @@
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
 
 #include <JavaScriptCore/Forward.h>
+#include <wtf/AbstractRefCounted.h>
 #include <wtf/Forward.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/WeakPtr.h>
@@ -64,7 +65,7 @@ public:
 
 #if !RELEASE_LOG_DISABLED
     virtual const Logger& logger() const = 0;
-    virtual const void* logIdentifier() const = 0;
+    virtual uint64_t logIdentifier() const = 0;
 #endif
 };
 
@@ -76,9 +77,10 @@ enum LegacyCDMSessionType {
     CDMSessionTypeRemote,
 };
 
-class WEBCORE_EXPORT LegacyCDMSession {
+class WEBCORE_EXPORT LegacyCDMSession : public AbstractRefCounted {
 public:
     virtual ~LegacyCDMSession() = default;
+    virtual void invalidate() { }
 
     virtual LegacyCDMSessionType type() { return CDMSessionTypeUnknown; }
     virtual const String& sessionId() const = 0;

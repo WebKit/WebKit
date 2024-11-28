@@ -46,10 +46,15 @@
 #include <pal/spi/cg/CoreGraphicsSPI.h>
 #include <wtf/MathExtras.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/URL.h>
 #include <wtf/text/TextStream.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(GraphicsContextCG);
 
 static void setCGFillColor(CGContextRef context, const Color& color)
 {
@@ -325,8 +330,6 @@ void GraphicsContextCG::drawNativeImageInternal(NativeImage& nativeImage, const 
     CGContextStateSaver stateSaver(context, false);
     auto transform = CGContextGetCTM(context);
 
-    convertToDestinationColorSpaceIfNeeded(image);
-
     auto subImage = image;
 
     auto adjustedDestRect = normalizedDestRect;
@@ -371,6 +374,12 @@ void GraphicsContextCG::drawNativeImageInternal(NativeImage& nativeImage, const 
     auto oldBlendMode = blendMode();
     setCGBlendMode(context, options.compositeOperator(), options.blendMode());
 
+#if HAVE(HDR_SUPPORT)
+    auto oldHeadroom = CGContextGetEDRTargetHeadroom(context);
+    if (auto headroom = options.headroom(); headroom > 1)
+        CGContextSetEDRTargetHeadroom(context, headroom);
+#endif
+
     // Make the origin be at adjustedDestRect.location()
     CGContextTranslateCTM(context, adjustedDestRect.x(), adjustedDestRect.y());
     adjustedDestRect.setLocation(FloatPoint::zero());
@@ -397,6 +406,9 @@ void GraphicsContextCG::drawNativeImageInternal(NativeImage& nativeImage, const 
         CGContextSetShouldAntialias(context, wasAntialiased);
 #endif
         setCGBlendMode(context, oldCompositeOperator, oldBlendMode);
+#if HAVE(HDR_SUPPORT)
+        CGContextSetEDRTargetHeadroom(context, oldHeadroom);
+#endif
     }
 
     LOG_WITH_STREAM(Images, stream << "GraphicsContextCG::drawNativeImageInternal " << image.get() << " size " << imageSize << " into " << destRect << " took " << (MonotonicTime::now() - startTime).milliseconds() << "ms");
@@ -1542,5 +1554,7 @@ bool GraphicsContextCG::consumeHasDrawn()
 }
 
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif

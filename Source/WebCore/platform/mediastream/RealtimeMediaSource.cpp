@@ -58,6 +58,8 @@
 #include "VideoFrameGStreamer.h"
 #endif
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 struct VideoFrameAdaptor {
@@ -1484,8 +1486,15 @@ auto RealtimeMediaSource::getPhotoSettings() -> Ref<PhotoSettingsNativePromise>
     return PhotoSettingsNativePromise::createAndReject("Not supported"_s);
 }
 
+#if USE(GSTREAMER)
+std::pair<GstClockTime, GstClockTime> RealtimeMediaSource::queryCaptureLatency() const
+{
+    return { GST_CLOCK_TIME_NONE, GST_CLOCK_TIME_NONE };
+}
+#endif
+
 #if !RELEASE_LOG_DISABLED
-void RealtimeMediaSource::setLogger(const Logger& newLogger, const void* newLogIdentifier)
+void RealtimeMediaSource::setLogger(const Logger& newLogger, uint64_t newLogIdentifier)
 {
     m_logger = &newLogger;
     m_logIdentifier = newLogIdentifier;
@@ -1511,5 +1520,7 @@ String convertEnumerationToString(RealtimeMediaSource::Type enumerationValue)
 }
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ENABLE(MEDIA_STREAM)

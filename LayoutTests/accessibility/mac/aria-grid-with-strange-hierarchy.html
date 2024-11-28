@@ -6,34 +6,36 @@
 <body id="body">
 
 <div tabindex=0 id="grid" role="grid" aria-readonly="true">
-<div  role="presentation">
-  <table role="presentation">
-          <thead>
-            <tr>
-                 <th role="columnheader" aria-sort="ascending">&nbsp;</th>
-                 <th role="columnheader">Name</th>
-                 <th role="columnheader">Time</th>
-                 <th role="columnheader">Popularity</th>
-                 <th role="columnheader"> Price</th>
-            </tr>
-          </thead>
-     
-    <tbody>
-    <tr role="row">
-        <td role="gridcell">
-          <span class="index"><span>1</span></span>
-        </td>
-        <td role="gridcell"">
-          <span><span>Test</span></span>
-        </td>
-        <td role="gridcell"">
-          <span><span>Test</span></span>
-        </td>
-        <td role="gridcell"">
-          <span><span>Test</span></span>
-        </td>
-    </tr>   
-</table></div></div>
+    <div role="presentation">
+        <table role="presentation">
+            <thead>
+                <tr id="r0">
+                    <th role="columnheader" aria-sort="ascending">&nbsp;</th>
+                    <th role="columnheader">Name</th>
+                    <th role="columnheader">Time</th>
+                    <th role="columnheader">Popularity</th>
+                    <th role="columnheader"> Price</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr role="row" id="r1">
+                    <td role="gridcell">
+                        <span class="index"><span>1</span></span>
+                    </td>
+                    <td role="gridcell">
+                        <span><span>Test</span></span>
+                    </td>
+                    <td role="gridcell">
+                        <span><span>Test</span></span>
+                    </td>
+                    <td role="gridcell">
+                        <span><span>Test</span></span>
+                    </td>
+                </tr>
+        </table>
+    </div>
+</div>
+
 <p id="description"></p>
 <div id="console"></div>
 
@@ -42,7 +44,6 @@
     description("This tests that an ARIA grid with a hierarchy that ignores render elements in between will still expose the correct elements.");
 
     if (window.accessibilityController) {
-
           // this text field should be required.
           document.getElementById("grid").focus();
           var grid = accessibilityController.focusedElement;

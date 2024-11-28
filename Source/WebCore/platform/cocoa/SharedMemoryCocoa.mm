@@ -66,6 +66,8 @@ static int toVMMemoryLedger(MemoryLedger memoryLedger)
 
 void SharedMemoryHandle::takeOwnershipOfMemory(MemoryLedger memoryLedger) const
 {
+    if (isMemoryAttributionDisabled())
+        return;
 #if HAVE(MACH_MEMORY_ENTRY)
     if (!m_handle)
         return;
@@ -80,7 +82,7 @@ void SharedMemoryHandle::takeOwnershipOfMemory(MemoryLedger memoryLedger) const
 void SharedMemoryHandle::setOwnershipOfMemory(const ProcessIdentity& processIdentity, MemoryLedger memoryLedger) const
 {
 #if HAVE(TASK_IDENTITY_TOKEN) && HAVE(MACH_MEMORY_ENTRY_OWNERSHIP_IDENTITY_TOKEN_SUPPORT)
-    if (!m_handle)
+    if (!m_handle || !processIdentity)
         return;
 
     kern_return_t kr = mach_memory_entry_ownership(m_handle.sendRight(), processIdentity.taskIdToken(), toVMMemoryLedger(memoryLedger), 0);

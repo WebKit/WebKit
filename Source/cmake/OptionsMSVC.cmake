@@ -6,6 +6,9 @@ function(MSVC_ADD_COMPILE_OPTIONS)
     endforeach ()
 endfunction()
 
+# Use AT&T syntax for inline asm
+MSVC_ADD_COMPILE_OPTIONS(/clang:-masm=att)
+
 # Create pdb files for debugging purposes, also for Release builds
 MSVC_ADD_COMPILE_OPTIONS(/Zi /GS)
 
@@ -42,6 +45,9 @@ string(REGEX REPLACE "/W3" "" CMAKE_C_FLAGS ${CMAKE_C_FLAGS})
 string(REGEX REPLACE "/W3" "" CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS})
 WEBKIT_PREPEND_GLOBAL_COMPILER_FLAGS(/W4)
 
+# Not apply class-level dllexport and dllimport attributes to inline member functions
+WEBKIT_PREPEND_GLOBAL_COMPILER_FLAGS(/Zc:dllexportInlines-)
+
 # Make sure incremental linking is turned off, as it creates unacceptably long link times.
 string(REPLACE "/INCREMENTAL[:A-Z]+" "" CMAKE_EXE_LINKER_FLAGS ${CMAKE_EXE_LINKER_FLAGS})
 string(REPLACE "/INCREMENTAL[:A-Z]+" "" CMAKE_EXE_LINKER_FLAGS_DEBUG ${CMAKE_EXE_LINKER_FLAGS_DEBUG})
@@ -57,3 +63,5 @@ cmake_path(REMOVE_FILENAME CMAKE_CXX_COMPILER OUTPUT_VARIABLE CLANG_CL_DIR)
 cmake_path(APPEND CLANG_CL_DIR "../lib/clang" ${CLANG_CL_MAJOR_VERSION} "lib/windows")
 find_library(CLANG_BUILTINS_LIBRARY clang_rt.builtins-x86_64 PATHS ${CLANG_CL_DIR} REQUIRED NO_DEFAULT_PATH)
 link_libraries(${CLANG_BUILTINS_LIBRARY})
+
+set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /STACK:8388608")

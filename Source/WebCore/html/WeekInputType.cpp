@@ -42,6 +42,8 @@
 
 namespace WebCore {
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WeekInputType);
+
 using namespace HTMLNames;
 
 static const int weekDefaultStepBase = -259200000; // The first day of 1970-W01.

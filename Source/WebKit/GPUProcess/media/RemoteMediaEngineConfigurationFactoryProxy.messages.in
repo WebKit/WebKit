@@ -23,7 +23,7 @@
 
 #if ENABLE(GPU_PROCESS)
 
-messages -> RemoteMediaEngineConfigurationFactoryProxy NotRefCounted {
+messages -> RemoteMediaEngineConfigurationFactoryProxy {
     CreateDecodingConfiguration(struct WebCore::MediaDecodingConfiguration configuration) -> (struct WebCore::MediaCapabilitiesDecodingInfo decodingInfo)
     CreateEncodingConfiguration(struct WebCore::MediaEncodingConfiguration configuration) -> (struct WebCore::MediaCapabilitiesEncodingInfo decodingInfo)
 }

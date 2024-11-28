@@ -331,7 +331,7 @@ WI.NetworkManager = class NetworkManager extends WI.Object
 
     isSourceMapURL(url)
     {
-        return this._downloadingSourceMaps.has(url) || this._failedSourceMapURLs.has(url);
+        return this._sourceMapURLMap.has(url) || this._downloadingSourceMaps.has(url) || this._failedSourceMapURLs.has(url);
     }
 
     get bootstrapScriptEnabled()
@@ -833,7 +833,7 @@ WI.NetworkManager = class NetworkManager extends WI.Object
             type: cachedResourcePayload.type,
             loaderIdentifier,
             requestIdentifier,
-            requestMethod: "GET",
+            requestMethod: WI.HTTPUtilities.RequestMethod.GET,
             requestSentTimestamp: elapsedTime,
             initiatorStackTrace: this._initiatorStackTraceFromPayload(initiator),
             initiatorSourceCodeLocation: this._initiatorSourceCodeLocationFromPayload(initiator),
@@ -992,19 +992,20 @@ WI.NetworkManager = class NetworkManager extends WI.Object
                 return;
 
             case WI.LocalResourceOverride.InterceptType.Request: {
+                let method = localResource.requestMethod ?? (isPassthrough ? request.method : "");
                 target.NetworkAgent.interceptWithRequest.invoke({
                     requestId,
                     url: localResourceOverride.generateRequestRedirectURL(request.url) ?? undefined,
-                    method: localResource.requestMethod ?? (isPassthrough ? request.method : ""),
+                    method,
                     headers: {...originalHeaders, ...localResource.requestHeaders},
                     postData: (function() {
-                        if (!WI.HTTPUtilities.RequestMethodsWithBody.has(localResource.requestMethod))
-                            return undefined;
-                        if (localResource.requestData ?? false)
-                            return btoa(localResource.requestData);
-                        if (isPassthrough)
-                            return request.data;
-                        return "";
+                        if (method && WI.HTTPUtilities.RequestMethodsWithBody.has(method)) {
+                            if (localResource.requestData ?? false)
+                                return btoa(localResource.requestData);
+                            if (isPassthrough)
+                                return request.data;
+                        }
+                        return undefined;
                     })(),
                 });
                 return;
@@ -1517,14 +1518,14 @@ WI.NetworkManager = class NetworkManager extends WI.Object
 
         let sourceMapLoaded = (error, content, mimeType, statusCode) => {
             if (error || statusCode >= 400) {
-                this._sourceMapLoadAndParseFailed(sourceMapURL);
+                this._sourceMapLoadFailed(sourceMapURL);
                 return;
             }
 
             if (content.slice(0, 3) === ")]}") {
                 let firstNewlineIndex = content.indexOf("\n");
                 if (firstNewlineIndex === -1) {
-                    this._sourceMapLoadAndParseFailed(sourceMapURL);
+                    this._sourceMapParseFailed(sourceMapURL, WI.UIString("missing newline", "missing newline @ Source Map", "Error when a JS source map is missing a starting newline."));
                     return;
                 }
 
@@ -1536,8 +1537,8 @@ WI.NetworkManager = class NetworkManager extends WI.Object
                 let baseURL = sourceMapURL.startsWith("data:") ? originalSourceCode.url : sourceMapURL;
                 let sourceMap = new WI.SourceMap(baseURL, originalSourceCode, payload);
                 this._sourceMapLoadAndParseSucceeded(sourceMapURL, sourceMap);
-            } catch {
-                this._sourceMapLoadAndParseFailed(sourceMapURL);
+            } catch (error) {
+                this._sourceMapParseFailed(sourceMapURL, error);
             }
         };
 
@@ -1550,7 +1551,7 @@ WI.NetworkManager = class NetworkManager extends WI.Object
 
         let target = WI.assumingMainTarget();
         if (!target.hasCommand("Network.loadResource")) {
-            this._sourceMapLoadAndParseFailed(sourceMapURL);
+            this._sourceMapLoadFailed(sourceMapURL);
             return;
         }
 
@@ -1564,10 +1565,31 @@ WI.NetworkManager = class NetworkManager extends WI.Object
         target.NetworkAgent.loadResource(frameIdentifier, sourceMapURL, sourceMapLoaded);
     }
 
-    _sourceMapLoadAndParseFailed(sourceMapURL)
+    _sourceMapLoadFailed(sourceMapURL)
     {
         this._downloadingSourceMaps.delete(sourceMapURL);
         this._failedSourceMapURLs.add(sourceMapURL);
+    }
+
+    _sourceMapParseFailed(sourceMapURL, error)
+    {
+        this._downloadingSourceMaps.delete(sourceMapURL);
+        this._failedSourceMapURLs.add(sourceMapURL);
+
+        if (window.InspectorTest)
+            sourceMapURL = parseURL(sourceMapURL).lastPathComponent;
+
+        let message = WI.UIString("Source Map \u0022%s\u0022 has %s").format(sourceMapURL, error);
+
+        if (window.InspectorTest) {
+            console.warn(message);
+            return;
+        }
+
+        let consoleMessage = new WI.ConsoleMessage(WI.mainTarget, WI.ConsoleMessage.MessageSource.Other, WI.ConsoleMessage.MessageLevel.Warning, message);
+        consoleMessage.shouldRevealConsole = true;
+
+        WI.consoleLogViewController.appendConsoleMessage(consoleMessage);
     }
 
     _sourceMapLoadAndParseSucceeded(sourceMapURL, sourceMap)
@@ -1578,9 +1600,6 @@ WI.NetworkManager = class NetworkManager extends WI.Object
         this._downloadingSourceMaps.delete(sourceMapURL);
 
         this._sourceMapURLMap.set(sourceMapURL, sourceMap);
-
-        for (let source of sourceMap.sources())
-            sourceMap.addResource(new WI.SourceMapResource(source, sourceMap));
 
         // Associate the SourceMap with the originalSourceCode.
         sourceMap.originalSourceCode.addSourceMap(sourceMap);

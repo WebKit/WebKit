@@ -51,7 +51,6 @@
 #include <wtf/URL.h>
 #include <wtf/text/MakeString.h>
 
-
 namespace WebCore {
 using namespace JSC;
 
@@ -108,13 +107,12 @@ static const struct CompactHashIndex JSTestNamedSetterWithLegacyUnforgeablePrope
 };
 
 
-static const HashTableValue JSTestNamedSetterWithLegacyUnforgeablePropertiesTableValues[] =
-{
-    { "unforgeableAttribute"_s, JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { HashTableValue::GetterSetterType, jsTestNamedSetterWithLegacyUnforgeableProperties_unforgeableAttribute, 0 } },
-    { "unforgeableOperation"_s, JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::Function, NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestNamedSetterWithLegacyUnforgeablePropertiesInstanceFunction_unforgeableOperation, 0 } },
+static const std::array<HashTableValue, 2> JSTestNamedSetterWithLegacyUnforgeablePropertiesTableValues {
+    HashTableValue { "unforgeableAttribute"_s, JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { HashTableValue::GetterSetterType, jsTestNamedSetterWithLegacyUnforgeableProperties_unforgeableAttribute, 0 } },
+    HashTableValue { "unforgeableOperation"_s, JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::Function, NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestNamedSetterWithLegacyUnforgeablePropertiesInstanceFunction_unforgeableOperation, 0 } },
 };
 
-static const HashTable JSTestNamedSetterWithLegacyUnforgeablePropertiesTable = { 2, 3, static_cast<uint8_t>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute | JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::Function | JSC::PropertyAttribute::ReadOnly), JSTestNamedSetterWithLegacyUnforgeableProperties::info(), JSTestNamedSetterWithLegacyUnforgeablePropertiesTableValues, JSTestNamedSetterWithLegacyUnforgeablePropertiesTableIndex };
+static const HashTable JSTestNamedSetterWithLegacyUnforgeablePropertiesTable = { 2, 3, static_cast<uint8_t>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute | JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::Function | JSC::PropertyAttribute::ReadOnly), JSTestNamedSetterWithLegacyUnforgeableProperties::info(), JSTestNamedSetterWithLegacyUnforgeablePropertiesTableValues.data(), JSTestNamedSetterWithLegacyUnforgeablePropertiesTableIndex };
 template<> const ClassInfo JSTestNamedSetterWithLegacyUnforgeablePropertiesDOMConstructor::s_info = { "TestNamedSetterWithLegacyUnforgeableProperties"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestNamedSetterWithLegacyUnforgeablePropertiesDOMConstructor) };
 
 template<> JSValue JSTestNamedSetterWithLegacyUnforgeablePropertiesDOMConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
@@ -134,9 +132,8 @@ template<> void JSTestNamedSetterWithLegacyUnforgeablePropertiesDOMConstructor::
 
 /* Hash table for prototype */
 
-static const HashTableValue JSTestNamedSetterWithLegacyUnforgeablePropertiesPrototypeTableValues[] =
-{
-    { "constructor"_s, static_cast<unsigned>(PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestNamedSetterWithLegacyUnforgeablePropertiesConstructor, 0 } },
+static const std::array<HashTableValue, 1> JSTestNamedSetterWithLegacyUnforgeablePropertiesPrototypeTableValues {
+    HashTableValue { "constructor"_s, static_cast<unsigned>(PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestNamedSetterWithLegacyUnforgeablePropertiesConstructor, 0 } },
 };
 
 const ClassInfo JSTestNamedSetterWithLegacyUnforgeablePropertiesPrototype::s_info = { "TestNamedSetterWithLegacyUnforgeableProperties"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestNamedSetterWithLegacyUnforgeablePropertiesPrototype) };
@@ -208,7 +205,7 @@ bool JSTestNamedSetterWithLegacyUnforgeableProperties::getOwnPropertySlot(JSObje
 
 bool JSTestNamedSetterWithLegacyUnforgeableProperties::getOwnPropertySlotByIndex(JSObject* object, JSGlobalObject* lexicalGlobalObject, unsigned index, PropertySlot& slot)
 {
-    auto& vm = JSC::getVM(lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto* thisObject = jsCast<JSTestNamedSetterWithLegacyUnforgeableProperties*>(object);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
@@ -228,7 +225,7 @@ bool JSTestNamedSetterWithLegacyUnforgeableProperties::getOwnPropertySlotByIndex
 
 void JSTestNamedSetterWithLegacyUnforgeableProperties::getOwnPropertyNames(JSObject* object, JSGlobalObject* lexicalGlobalObject, PropertyNameArray& propertyNames, DontEnumPropertiesMode mode)
 {
-    auto& vm = JSC::getVM(lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(lexicalGlobalObject);
     auto* thisObject = jsCast<JSTestNamedSetterWithLegacyUnforgeableProperties*>(object);
     ASSERT_GC_OBJECT_INHERITS(object, info());
     for (auto& propertyName : thisObject->wrapped().supportedPropertyNames())
@@ -278,7 +275,7 @@ bool JSTestNamedSetterWithLegacyUnforgeableProperties::putByIndex(JSCell* cell, 
     auto* thisObject = jsCast<JSTestNamedSetterWithLegacyUnforgeableProperties*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
 
-    auto& vm = JSC::getVM(lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
     auto propertyName = Identifier::from(vm, index);
@@ -338,7 +335,7 @@ static bool isLegacyUnforgeablePropertyName(PropertyName propertyName)
 bool JSTestNamedSetterWithLegacyUnforgeableProperties::deleteProperty(JSCell* cell, JSGlobalObject* lexicalGlobalObject, PropertyName propertyName, DeletePropertySlot& slot)
 {
     auto& thisObject = *jsCast<JSTestNamedSetterWithLegacyUnforgeableProperties*>(cell);
-    auto& impl = thisObject.wrapped();
+    SUPPRESS_UNCOUNTED_LOCAL auto& impl = thisObject.wrapped();
 
     // Temporary quirk for ungap/@custom-elements polyfill (rdar://problem/111008826), consider removing in 2025.
     if (auto* document = dynamicDowncast<Document>(jsDynamicCast<JSDOMGlobalObject*>(lexicalGlobalObject)->scriptExecutionContext())) {
@@ -358,7 +355,7 @@ bool JSTestNamedSetterWithLegacyUnforgeableProperties::deletePropertyByIndex(JSC
 {
     UNUSED_PARAM(lexicalGlobalObject);
     auto& thisObject = *jsCast<JSTestNamedSetterWithLegacyUnforgeableProperties*>(cell);
-    auto& impl = thisObject.wrapped();
+    SUPPRESS_UNCOUNTED_LOCAL auto& impl = thisObject.wrapped();
 
     // Temporary quirk for ungap/@custom-elements polyfill (rdar://problem/111008826), consider removing in 2025.
     if (auto* document = dynamicDowncast<Document>(jsDynamicCast<JSDOMGlobalObject*>(lexicalGlobalObject)->scriptExecutionContext())) {
@@ -366,7 +363,7 @@ bool JSTestNamedSetterWithLegacyUnforgeableProperties::deletePropertyByIndex(JSC
             return JSObject::deletePropertyByIndex(cell, lexicalGlobalObject, index);
     }
 
-    auto& vm = JSC::getVM(lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(lexicalGlobalObject);
     auto propertyName = Identifier::from(vm, index);
     if (impl.isSupportedPropertyName(propertyNameToString(propertyName))) {
         PropertySlot slotForGet { &thisObject, PropertySlot::InternalMethodType::VMInquiry, &lexicalGlobalObject->vm() };
@@ -378,7 +375,7 @@ bool JSTestNamedSetterWithLegacyUnforgeableProperties::deletePropertyByIndex(JSC
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestNamedSetterWithLegacyUnforgeablePropertiesConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
-    auto& vm = JSC::getVM(lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto* prototype = jsDynamicCast<JSTestNamedSetterWithLegacyUnforgeablePropertiesPrototype*>(JSValue::decode(thisValue));
     if (UNLIKELY(!prototype))
@@ -388,9 +385,9 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestNamedSetterWithLegacyUnforgeablePropertiesConstru
 
 static inline JSValue jsTestNamedSetterWithLegacyUnforgeableProperties_unforgeableAttributeGetter(JSGlobalObject& lexicalGlobalObject, JSTestNamedSetterWithLegacyUnforgeableProperties& thisObject)
 {
-    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto& impl = thisObject.wrapped();
+    SUPPRESS_UNCOUNTED_LOCAL auto& impl = thisObject.wrapped();
     RELEASE_AND_RETURN(throwScope, (toJS<IDLDOMString>(lexicalGlobalObject, throwScope, impl.unforgeableAttribute())));
 }
 
@@ -401,11 +398,11 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestNamedSetterWithLegacyUnforgeableProperties_unforg
 
 static inline JSC::EncodedJSValue jsTestNamedSetterWithLegacyUnforgeablePropertiesInstanceFunction_unforgeableOperationBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestNamedSetterWithLegacyUnforgeableProperties>::ClassParameter castedThis)
 {
-    auto& vm = JSC::getVM(lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(callFrame);
-    auto& impl = castedThis->wrapped();
+    SUPPRESS_UNCOUNTED_LOCAL auto& impl = castedThis->wrapped();
     RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLUndefined>(*lexicalGlobalObject, throwScope, [&]() -> decltype(auto) { return impl.unforgeableOperation(); })));
 }
 
@@ -428,8 +425,8 @@ void JSTestNamedSetterWithLegacyUnforgeableProperties::analyzeHeap(JSCell* cell,
 {
     auto* thisObject = jsCast<JSTestNamedSetterWithLegacyUnforgeableProperties*>(cell);
     analyzer.setWrappedObjectForCell(cell, &thisObject->wrapped());
-    if (thisObject->scriptExecutionContext())
-        analyzer.setLabelForCell(cell, makeString("url "_s, thisObject->scriptExecutionContext()->url().string()));
+    if (RefPtr context = thisObject->scriptExecutionContext())
+        analyzer.setLabelForCell(cell, makeString("url "_s, context->url().string()));
     Base::analyzeHeap(cell, analyzer);
 }
 
@@ -448,6 +445,7 @@ void JSTestNamedSetterWithLegacyUnforgeablePropertiesOwner::finalize(JSC::Handle
     uncacheWrapper(world, jsTestNamedSetterWithLegacyUnforgeableProperties->protectedWrapped().ptr(), jsTestNamedSetterWithLegacyUnforgeableProperties);
 }
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 #if ENABLE(BINDING_INTEGRITY)
 #if PLATFORM(WIN)
 #pragma warning(disable: 4483)
@@ -472,6 +470,8 @@ template<typename T, typename = std::enable_if_t<std::is_same_v<T, TestNamedSett
     }
 }
 #endif
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+
 JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject*, JSDOMGlobalObject* globalObject, Ref<TestNamedSetterWithLegacyUnforgeableProperties>&& impl)
 {
 #if ENABLE(BINDING_INTEGRITY)

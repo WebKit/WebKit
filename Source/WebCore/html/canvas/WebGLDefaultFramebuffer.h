@@ -53,7 +53,8 @@ public:
 private:
     WebGLDefaultFramebuffer(WebGLRenderingContextBase&);
 
-    WebGLRenderingContextBase& m_context;
+    WeakRef<WebGLRenderingContextBase> m_context;
+
     GCGLbitfield m_unpreservedBuffers { 0 };
     GCGLbitfield m_dirtyBuffers { 0 };
     bool m_hasStencil : 1;

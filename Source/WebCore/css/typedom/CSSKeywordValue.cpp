@@ -33,6 +33,7 @@
 #include "CSSMarkup.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSPropertyParser.h"
+#include "CSSValuePool.h"
 #include "ExceptionOr.h"
 #include <wtf/TZoneMallocInlines.h>
 

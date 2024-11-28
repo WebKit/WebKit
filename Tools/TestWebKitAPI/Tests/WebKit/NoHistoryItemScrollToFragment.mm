@@ -84,7 +84,7 @@ TEST(WebKit, NoHistoryItemScrollToFragment)
     [webView scrollView].delegate = delegateForScrollView.get();
 #endif
 
-    NSURL* resourceURL = [[NSBundle mainBundle] URLForResource:@"scroll-to-anchor" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+    NSURL* resourceURL = [NSBundle.test_resourcesBundle URLForResource:@"scroll-to-anchor" withExtension:@"html"];
     NSString *testFileContents = [NSString stringWithContentsOfURL:resourceURL encoding:NSUTF8StringEncoding error:nil];
     [webView synchronouslyLoadHTMLString:testFileContents];
 

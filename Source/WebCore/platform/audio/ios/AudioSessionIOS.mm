@@ -37,6 +37,7 @@
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/LoggerHelper.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/TZoneMallocInlines.h>
 #import <wtf/WorkQueue.h>
 
 #import <pal/cocoa/AVFoundationSoftLink.h>
@@ -99,6 +100,8 @@
 
 namespace WebCore {
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(AudioSessionIOS);
+
 static WeakHashSet<AudioSessionIOS::CategoryChangedObserver>& audioSessionCategoryChangedObservers()
 {
     static NeverDestroyed<WeakHashSet<AudioSessionIOS::CategoryChangedObserver>> observers;
@@ -109,6 +112,11 @@ void AudioSessionIOS::addAudioSessionCategoryChangedObserver(const CategoryChang
 {
     audioSessionCategoryChangedObservers().add(observer);
     observer(AudioSession::sharedSession(), AudioSession::sharedSession().category());
+}
+
+Ref<AudioSessionIOS> AudioSessionIOS::create()
+{
+    return adoptRef(*new AudioSessionIOS);
 }
 
 AudioSessionIOS::AudioSessionIOS()
@@ -344,7 +352,10 @@ size_t AudioSessionIOS::maximumNumberOfOutputChannels() const
 
 size_t AudioSessionIOS::preferredBufferSize() const
 {
-    return [[PAL::getAVAudioSessionClass() sharedInstance] preferredIOBufferDuration] * sampleRate();
+// FIXME: rdar://138773933
+IGNORE_WARNINGS_BEGIN("objc-multiple-method-names")
+     return [[PAL::getAVAudioSessionClass() sharedInstance] preferredIOBufferDuration] * sampleRate();
+IGNORE_WARNINGS_END
 }
 
 void AudioSessionIOS::setPreferredBufferSize(size_t bufferSize)

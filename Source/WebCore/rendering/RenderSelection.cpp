@@ -49,8 +49,8 @@ namespace {
 
 struct SelectionContext {
     
-    using RendererMap = HashMap<SingleThreadWeakRef<RenderObject>, std::unique_ptr<RenderSelectionGeometry>>;
-    using RenderBlockMap = HashMap<SingleThreadWeakRef<const RenderBlock>, std::unique_ptr<RenderBlockSelectionGeometry>>;
+    using RendererMap = UncheckedKeyHashMap<SingleThreadWeakRef<RenderObject>, std::unique_ptr<RenderSelectionGeometry>>;
+    using RenderBlockMap = UncheckedKeyHashMap<SingleThreadWeakRef<const RenderBlock>, std::unique_ptr<RenderBlockSelectionGeometry>>;
 
     unsigned startOffset;
     unsigned endOffset;

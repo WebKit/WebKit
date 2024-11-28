@@ -41,11 +41,9 @@
 
 #if USE(LIBWEBRTC)
 
-ALLOW_COMMA_BEGIN
-
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
 #include <webrtc/webkit_sdk/WebKit/WebKitUtilities.h>
-
-ALLOW_COMMA_END
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 
 #endif
 
@@ -237,7 +235,7 @@ RetainPtr<CVPixelBufferRef> SharedVideoFrameReader::readBufferFromSharedMemory()
         return { };
     }
 
-    auto result = info->createPixelBufferFromMemory(data.data() + SharedVideoFrameInfoEncodingLength, pixelBufferPool(*info));
+    auto result = info->createPixelBufferFromMemory(data.subspan(SharedVideoFrameInfoEncodingLength), pixelBufferPool(*info));
     if (result && m_resourceOwner && m_useIOSurfaceBufferPool == UseIOSurfaceBufferPool::Yes)
         setOwnershipIdentityForCVPixelBuffer(result.get(), m_resourceOwner);
     return result;

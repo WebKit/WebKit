@@ -54,6 +54,7 @@
 #include "UserAgentParts.h"
 #include <limits>
 #include <wtf/MathExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #if ENABLE(TOUCH_EVENTS)
 #include "Touch.h"
@@ -67,6 +68,8 @@
 #endif
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RangeInputType);
 
 using namespace HTMLNames;
 

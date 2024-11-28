@@ -34,7 +34,7 @@
 
 namespace IPC {
 struct AsyncReplyIDType;
-using AsyncReplyID = LegacyNullableAtomicObjectIdentifier<AsyncReplyIDType>;
+using AsyncReplyID = AtomicObjectIdentifier<AsyncReplyIDType>;
 class SharedBufferReference;
 }
 
@@ -66,6 +66,10 @@ public:
     void addWebProcessProxy(WebProcessProxy&);
     void removeWebProcessProxy(WebProcessProxy&);
 
+    // Do nothing since this is a singleton.
+    void ref() const { }
+    void deref() const { }
+
 #if PLATFORM(COCOA)
     void revokeAccess(WebProcessProxy&);
     std::optional<IPC::AsyncReplyID> grantAccessToCurrentData(WebProcessProxy&, const String& pasteboardName, CompletionHandler<void()>&&);
@@ -84,7 +88,7 @@ private:
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
     bool didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&) override;
 
-    WebProcessProxy* webProcessProxyForConnection(IPC::Connection&) const;
+    RefPtr<WebProcessProxy> webProcessProxyForConnection(IPC::Connection&) const;
 
 #if PLATFORM(IOS_FAMILY)
     void writeURLToPasteboard(IPC::Connection&, const WebCore::PasteboardURL&, const String& pasteboardName, std::optional<WebCore::PageIdentifier>);

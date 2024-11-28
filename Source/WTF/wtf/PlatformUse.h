@@ -246,10 +246,6 @@
 #define USE_SOURCE_APPLICATION_AUDIT_DATA 1
 #endif
 
-#if PLATFORM(COCOA) && USE(CA)
-#define USE_IOSURFACE_CANVAS_BACKING_STORE 1
-#endif
-
 /* The override isn't needed on iOS family, as the default behavior is to not sniff. */
 #if PLATFORM(MAC)
 #define USE_CFNETWORK_CONTENT_ENCODING_SNIFFING_OVERRIDE 1
@@ -310,10 +306,8 @@
 #endif
 
 #if !defined(USE_TZONE_MALLOC)
-#if CPU(ARM64) && OS(DARWIN) && (__SIZEOF_POINTER__ == 8)
-// Only MacroAssemblerARM64 is known to build.
-// Building with TZONE_MALLOC currently disabled for all platforms.
-#define USE_TZONE_MALLOC 0
+#if (CPU(ARM64) || CPU(X86_64)) && OS(DARWIN) && (__SIZEOF_POINTER__ == 8)
+#define USE_TZONE_MALLOC 0 /* temporarily disable FIXME rdar://140325747 */
 #else
 #define USE_TZONE_MALLOC 0
 #endif

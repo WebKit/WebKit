@@ -903,7 +903,6 @@ __ZN3WTF6VectorINS_6StringELm0ENS_15CrashOnOverflowEEaSERKS3_
 -[WebView(WebViewEditing) setEditingDelegate:]
 -[WebView(WebViewEditing) registerForEditingDelegateNotification:selector:]
 -[WebView(WebViewEditing) setEditable:]
-__ZN15WebEditorClient23willSetInputMethodStateEv
 __ZN15WebEditorClient18shouldBeginEditingEPN7WebCore5RangeE
 -[WebView(WebPrivate) _editingDelegateForwarder]
 +[WebDefaultEditingDelegate sharedEditingDelegate]

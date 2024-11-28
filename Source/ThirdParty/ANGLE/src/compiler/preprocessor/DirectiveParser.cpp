@@ -727,7 +727,6 @@ void DirectiveParser::parseVersion(Token *token)
     {
         VERSION_NUMBER,
         VERSION_PROFILE_ES,
-        VERSION_PROFILE_GL,
         VERSION_ENDLINE
     };
 
@@ -755,11 +754,7 @@ void DirectiveParser::parseVersion(Token *token)
                 }
                 if (valid)
                 {
-                    if (sh::IsDesktopGLSpec(mSettings.shaderSpec))
-                    {
-                        state = VERSION_PROFILE_GL;
-                    }
-                    else if (version < 300)
+                    if (version < 300)
                     {
                         state = VERSION_ENDLINE;
                     }
@@ -770,18 +765,7 @@ void DirectiveParser::parseVersion(Token *token)
                 }
                 break;
             case VERSION_PROFILE_ES:
-                ASSERT(!sh::IsDesktopGLSpec(mSettings.shaderSpec));
                 if (token->type != Token::IDENTIFIER || token->text != "es")
-                {
-                    mDiagnostics->report(Diagnostics::PP_INVALID_VERSION_DIRECTIVE, token->location,
-                                         token->text);
-                    valid = false;
-                }
-                state = VERSION_ENDLINE;
-                break;
-            case VERSION_PROFILE_GL:
-                ASSERT(sh::IsDesktopGLSpec(mSettings.shaderSpec));
-                if (token->type != Token::IDENTIFIER || token->text != "core")
                 {
                     mDiagnostics->report(Diagnostics::PP_INVALID_VERSION_DIRECTIVE, token->location,
                                          token->text);
@@ -797,11 +781,6 @@ void DirectiveParser::parseVersion(Token *token)
         }
 
         mTokenizer->lex(token);
-
-        if (token->type == '\n' && state == VERSION_PROFILE_GL)
-        {
-            state = VERSION_ENDLINE;
-        }
     }
 
     if (valid && (state != VERSION_ENDLINE))

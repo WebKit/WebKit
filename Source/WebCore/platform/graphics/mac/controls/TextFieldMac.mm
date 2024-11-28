@@ -32,8 +32,11 @@
 #import "GraphicsContext.h"
 #import "LocalDefaultSystemAppearance.h"
 #import "TextFieldPart.h"
+#import <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(TextFieldMac);
 
 TextFieldMac::TextFieldMac(TextFieldPart& owningPart, ControlFactoryMac& controlFactory, NSTextFieldCell* textFieldCell)
     : ControlMac(owningPart, controlFactory)

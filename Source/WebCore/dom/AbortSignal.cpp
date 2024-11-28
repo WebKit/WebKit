@@ -129,7 +129,16 @@ void AbortSignal::signalAbort(JSC::JSValue reason)
     if (m_aborted)
         return;
 
-    // 2. Set signal’s aborted flag.
+    // 2. ... if the reason is not given, set it to a new "AbortError" DOMException.
+    ASSERT(reason);
+    if (reason.isUndefined()) {
+        auto* globalObject = JSC::jsCast<JSDOMGlobalObject*>(protectedScriptExecutionContext()->globalObject());
+        if (!globalObject)
+            return;
+        reason = toJS(globalObject, globalObject, DOMException::create(ExceptionCode::AbortError));
+    }
+
+    // 2. Set signal’s abort reason to reason if it is given; otherwise to a new "AbortError" DOMException.
     markAborted(reason);
 
     Vector<Ref<AbortSignal>> dependentSignalsToAbort;

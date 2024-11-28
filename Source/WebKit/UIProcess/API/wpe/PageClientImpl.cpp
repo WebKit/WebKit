@@ -41,6 +41,8 @@
 #include <WebCore/Cursor.h>
 #include <WebCore/DOMPasteAccess.h>
 #include <WebCore/NotImplemented.h>
+#include <wpe/wpe.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #if USE(ATK)
 #include <atk/atk.h>
@@ -51,6 +53,8 @@
 #endif
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PageClientImpl);
 
 PageClientImpl::PageClientImpl(WKWPE::View& view)
     : m_view(view)
@@ -158,10 +162,6 @@ void PageClientImpl::setCursorHiddenUntilMouseMoves(bool hiddenUntilMouseMoves)
 {
     if (hiddenUntilMouseMoves)
         setCursor(WebCore::noneCursor());
-}
-
-void PageClientImpl::didChangeViewportProperties(const WebCore::ViewportAttributes&)
-{
 }
 
 void PageClientImpl::registerEditCommand(Ref<WebEditCommandProxy>&&, UndoOrRedo)

@@ -80,9 +80,6 @@ function test()
             InspectorTest.log("Fetching scripts...");
             let {middle} = await getResources();
 
-            InspectorTest.log("Blackboxing script...");
-            WI.debuggerManager.setShouldBlackboxScript(middle, true);
-
             InspectorTest.log("Finding pause location...");
             let location = middle.createSourceCodeLocation(3, 0); // first line of `middle`
 
@@ -100,9 +97,6 @@ function test()
 
             InspectorTest.log("Removing breakpoint...");
             WI.debuggerManager.removeBreakpoint(breakpoint);
-
-            InspectorTest.log("Unblackboxing script...");
-            WI.debuggerManager.setShouldBlackboxScript(middle, false);
         },
     });
 

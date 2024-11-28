@@ -47,8 +47,8 @@
 #include "LocalFrame.h"
 #include "MIMETypeRegistry.h"
 #include "ModuleFetchParameters.h"
+#include "Page.h"
 #include "PendingScript.h"
-#include "RuntimeApplicationChecks.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGScriptElement.h"
 #include "ScriptController.h"
@@ -60,6 +60,7 @@
 #include "TextNodeTraversal.h"
 #include "TrustedType.h"
 #include <JavaScriptCore/ImportMap.h>
+#include <wtf/RuntimeApplicationChecks.h>
 #include <wtf/Scope.h>
 #include <wtf/SystemTracing.h>
 #include <wtf/text/MakeString.h>
@@ -234,8 +235,8 @@ bool ScriptElement::prepareScript(const TextPosition& scriptStartPosition)
     // According to the spec, the module tag ignores the "charset" attribute as the same to the worker's
     // importScript. But WebKit supports the "charset" for importScript intentionally. So to be consistent,
     // even for the module tags, we handle the "charset" attribute.
-    if (!charsetAttributeValue().isEmpty())
-        m_characterEncoding = charsetAttributeValue();
+    if (auto attributeValue = charsetAttributeValue(); !attributeValue.isEmpty())
+        m_characterEncoding = WTFMove(attributeValue);
     else
         m_characterEncoding = document->charset();
 
@@ -274,6 +275,8 @@ bool ScriptElement::prepareScript(const TextPosition& scriptStartPosition)
     }
     }
 
+    updateTaintedOriginFromSourceURL();
+
     // All the inlined module script is handled by requestModuleScript. It produces LoadableModuleScript and inlined module script
     // is handled as the same to the external module script.
 
@@ -289,11 +292,11 @@ bool ScriptElement::prepareScript(const TextPosition& scriptStartPosition)
     } else if ((isClassicExternalScript || scriptType == ScriptType::Module) && !hasAsyncAttribute() && !m_forceAsync) {
         m_willExecuteInOrder = true;
         ASSERT(m_loadableScript);
-        document->checkedScriptRunner()->queueScriptForExecution(*this, *m_loadableScript, ScriptRunner::IN_ORDER_EXECUTION);
+        document->protectedScriptRunner()->queueScriptForExecution(*this, *m_loadableScript, ScriptRunner::IN_ORDER_EXECUTION);
     } else if (hasSourceAttribute() || scriptType == ScriptType::Module) {
         ASSERT(m_loadableScript);
         ASSERT(hasAsyncAttribute() || m_forceAsync);
-        document->checkedScriptRunner()->queueScriptForExecution(*this, *m_loadableScript, ScriptRunner::ASYNC_EXECUTION);
+        document->protectedScriptRunner()->queueScriptForExecution(*this, *m_loadableScript, ScriptRunner::ASYNC_EXECUTION);
     } else if (!hasSourceAttribute() && m_parserInserted == ParserInserted::Yes && !document->haveStylesheetsLoaded()) {
         ASSERT(scriptType == ScriptType::Classic || scriptType == ScriptType::ImportMap);
         m_willBeParserExecuted = true;
@@ -308,6 +311,22 @@ bool ScriptElement::prepareScript(const TextPosition& scriptStartPosition)
     }
 
     return true;
+}
+
+void ScriptElement::updateTaintedOriginFromSourceURL()
+{
+    if (m_taintedOrigin == JSC::SourceTaintedOrigin::KnownTainted)
+        return;
+
+    Ref document = element().document();
+    RefPtr page = document->page();
+    if (!page)
+        return;
+
+    if (!page->requiresScriptTelemetryForURL(hasSourceAttribute() ? document->completeURL(sourceAttributeValue()) : document->url()))
+        return;
+
+    m_taintedOrigin = JSC::SourceTaintedOrigin::KnownTainted;
 }
 
 bool ScriptElement::requestClassicScript(const String& sourceURL)

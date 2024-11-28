@@ -14,6 +14,7 @@
 #include "libANGLE/Framebuffer.h"
 #include "libANGLE/FramebufferAttachment.h"
 #include "libANGLE/Image.h"
+#include "libANGLE/PixelLocalStorage.h"
 #include "libANGLE/Program.h"
 #include "libANGLE/Query.h"
 #include "libANGLE/Texture.h"
@@ -614,6 +615,27 @@ const char *ValidateProgramDrawAdvancedBlendState(const Context *context,
     return nullptr;
 }
 
+ANGLE_INLINE GLenum ShPixelLocalStorageFormatToGLenum(ShPixelLocalStorageFormat format)
+{
+    switch (format)
+    {
+        case ShPixelLocalStorageFormat::NotPLS:
+            return GL_NONE;
+        case ShPixelLocalStorageFormat::RGBA8:
+            return GL_RGBA8;
+        case ShPixelLocalStorageFormat::RGBA8I:
+            return GL_RGBA8I;
+        case ShPixelLocalStorageFormat::RGBA8UI:
+            return GL_RGBA8UI;
+        case ShPixelLocalStorageFormat::R32UI:
+            return GL_R32UI;
+        case ShPixelLocalStorageFormat::R32F:
+            return GL_R32F;
+    }
+    UNREACHABLE();
+    return GL_NONE;
+}
+
 ANGLE_INLINE const char *ValidateProgramDrawStates(const Context *context,
                                                    const Extensions &extensions,
                                                    const ProgramExecutable &executable)
@@ -668,6 +690,55 @@ ANGLE_INLINE const char *ValidateProgramDrawStates(const Context *context,
         if (uniformBuffer->hasWebGLXFBBindingConflict(context->isWebGL()))
         {
             return gl::err::kUniformBufferBoundForTransformFeedback;
+        }
+    }
+
+    // ANGLE_shader_pixel_local_storage validation.
+    if (extensions.shaderPixelLocalStorageANGLE)
+    {
+        const Framebuffer *framebuffer = state.getDrawFramebuffer();
+        const PixelLocalStorage *pls   = framebuffer->peekPixelLocalStorage();
+        const auto &shaderPLSFormats   = executable.getPixelLocalStorageFormats();
+        size_t activePLSCount          = context->getState().getPixelLocalStorageActivePlanes();
+
+        if (shaderPLSFormats.size() > activePLSCount)
+        {
+            // INVALID_OPERATION is generated if a draw is issued with a fragment shader that has a
+            // pixel local uniform bound to an inactive pixel local storage plane.
+            return gl::err::kPLSDrawProgramPlanesInactive;
+        }
+
+        if (shaderPLSFormats.size() < activePLSCount)
+        {
+            // INVALID_OPERATION is generated if a draw is issued with a fragment shader that does
+            // _not_ have a pixel local uniform bound to an _active_ pixel local storage plane
+            // (i.e., the fragment shader must declare uniforms bound to every single active pixel
+            // local storage plane).
+            return gl::err::kPLSDrawProgramActivePlanesUnused;
+        }
+
+        for (size_t i = 0; i < activePLSCount; ++i)
+        {
+            const auto &plsPlane = pls->getPlane(static_cast<GLint>(i));
+            ASSERT(plsPlane.isActive());
+            if (shaderPLSFormats[i] == ShPixelLocalStorageFormat::NotPLS)
+            {
+                // INVALID_OPERATION is generated if a draw is issued with a fragment shader that
+                // does _not_ have a pixel local uniform bound to an _active_ pixel local storage
+                // plane (i.e., the fragment shader must declare uniforms bound to every single
+                // active pixel local storage plane).
+                return gl::err::kPLSDrawProgramActivePlanesUnused;
+            }
+
+            if (ShPixelLocalStorageFormatToGLenum(shaderPLSFormats[i]) !=
+                plsPlane.getInternalformat())
+            {
+                // INVALID_OPERATION is generated if a draw is issued with a fragment shader that
+                // has a pixel local storage uniform whose format layout qualifier does not
+                // identically match the internalformat of its associated pixel local storage plane
+                // on the current draw framebuffer, as enumerated in Table X.3.
+                return gl::err::kPLSDrawProgramFormatMismatch;
+            }
         }
     }
 
@@ -1763,11 +1834,9 @@ bool ValidateBlitFramebufferParameters(const Context *context,
                 return false;
             }
         }
-        // WebGL 2.0 BlitFramebuffer when blitting from a missing attachment
-        // In OpenGL ES it is undefined what happens when an operation tries to blit from a missing
-        // attachment and WebGL defines it to be an error. We do the check unconditionally as the
-        // situation is an application error that would lead to a crash in ANGLE.
-        else if (drawFramebuffer->hasEnabledDrawBuffer())
+        // In OpenGL ES, blits to/from missing attachments are silently ignored.  In WebGL 2.0, this
+        // is defined to be an error.
+        else if (context->isWebGL() && drawFramebuffer->hasEnabledDrawBuffer())
         {
             ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kBlitMissingColor);
             return false;
@@ -1806,7 +1875,7 @@ bool ValidateBlitFramebufferParameters(const Context *context,
                 }
             }
             // WebGL 2.0 BlitFramebuffer when blitting from a missing attachment
-            else if (drawBuffer)
+            else if (context->isWebGL() && drawBuffer)
             {
                 ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kBlitMissingDepthOrStencil);
                 return false;
@@ -3276,6 +3345,7 @@ bool ValidateCopyImageSubDataTarget(const Context *context,
         case GL_TEXTURE_2D_ARRAY:
         case GL_TEXTURE_CUBE_MAP:
         case GL_TEXTURE_CUBE_MAP_ARRAY_EXT:
+        case GL_TEXTURE_EXTERNAL_OES:
         {
             TextureID texture = PackParam<TextureID>(name);
             if (!context->isTexture(texture))
@@ -3321,6 +3391,7 @@ bool ValidateCopyImageSubDataLevel(const Context *context,
         case GL_TEXTURE_2D_ARRAY:
         case GL_TEXTURE_CUBE_MAP:
         case GL_TEXTURE_CUBE_MAP_ARRAY_EXT:
+        case GL_TEXTURE_EXTERNAL_OES:
         {
             if (!ValidMipLevel(context, PackParam<TextureType>(target), level))
             {
@@ -3449,6 +3520,7 @@ const InternalFormat &GetTargetFormatInfo(const Context *context,
         case GL_TEXTURE_2D_ARRAY:
         case GL_TEXTURE_CUBE_MAP:
         case GL_TEXTURE_CUBE_MAP_ARRAY_EXT:
+        case GL_TEXTURE_EXTERNAL_OES:
         {
             Texture *texture          = context->getTexture(PackParam<TextureID>(name));
             GLenum textureTargetToUse = target;
@@ -4176,7 +4248,7 @@ const char *ValidateDrawStates(const Context *context, GLenum *outErrorCode)
         const DepthStencilState &depthStencilState = state.getDepthStencilState();
         if (depthStencilState.stencilTest && stencilBits > 0)
         {
-            GLuint maxStencilValue = (1 << stencilBits) - 1;
+            auto maxStencilValue = angle::BitMask<GLuint>(stencilBits);
 
             bool differentRefs =
                 clamp(state.getStencilRef(), 0, static_cast<GLint>(maxStencilValue)) !=

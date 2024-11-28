@@ -32,22 +32,16 @@
 #include <wtf/WeakPtr.h>
 
 namespace WebKit {
-class VirtualLocalConnection;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::VirtualLocalConnection> : std::true_type { };
-}
-
-namespace WebKit {
 struct VirtualAuthenticatorConfiguration;
 
-class VirtualLocalConnection final : public CanMakeWeakPtr<VirtualLocalConnection>, public LocalConnection {
+class VirtualLocalConnection final : public LocalConnection, public CanMakeWeakPtr<VirtualLocalConnection> {
+    WTF_MAKE_TZONE_ALLOCATED(VirtualLocalConnection);
 public:
-    explicit VirtualLocalConnection(const VirtualAuthenticatorConfiguration&);
+    static Ref<VirtualLocalConnection> create(const VirtualAuthenticatorConfiguration&);
 
 private:
+    explicit VirtualLocalConnection(const VirtualAuthenticatorConfiguration&);
+
     void verifyUser(const String&, WebCore::ClientDataType, SecAccessControlRef, WebCore::UserVerificationRequirement, UserVerificationCallback&&) final;
     void verifyUser(SecAccessControlRef, LAContext *, CompletionHandler<void(UserVerification)>&&) final;
     void filterResponses(Vector<Ref<WebCore::AuthenticatorAssertionResponse>>&) const final;

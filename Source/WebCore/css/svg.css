@@ -94,3 +94,9 @@ text, tspan, tref {
 a:any-link {
     cursor: pointer;
 }
+
+/* WebKit handles zooming for SVG in a different way. font-size has to be resolved at root elements of included documents. */
+
+*|*:not(*) > svg, foreignObject > *|*:not(*) {
+    font-size: inherit;
+}

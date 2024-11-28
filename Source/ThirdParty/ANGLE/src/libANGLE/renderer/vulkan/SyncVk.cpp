@@ -173,9 +173,6 @@ angle::Result SyncHelper::prepareForClientWait(Context *context,
             RenderPassClosureReason::SyncObjectClientWait));
     }
 
-    // Submit commands if it was deferred on the context that issued the sync object
-    ANGLE_TRY(submitSyncIfDeferred(contextVk, RenderPassClosureReason::SyncObjectClientWait));
-
     *resultOut = VK_INCOMPLETE;
     return angle::Result::Continue;
 }
@@ -261,7 +258,8 @@ angle::Result SyncHelper::getStatus(Context *context, ContextVk *contextVk, bool
     }
     else
     {
-        // Do immediate check in case it actually already finished.
+        // Check completed commands once before returning, perhaps the serial is actually already
+        // finished.
         ANGLE_TRY(renderer->checkCompletedCommands(context));
         *signaledOut = renderer->hasResourceUseFinished(mUse);
     }
@@ -272,7 +270,6 @@ angle::Result SyncHelper::submitSyncIfDeferred(ContextVk *contextVk, RenderPassC
 {
     if (contextVk == nullptr)
     {
-        // This is EGLSync case. We always immediately call flushImpl.
         return angle::Result::Continue;
     }
 
@@ -667,7 +664,7 @@ egl::Error EGLSyncVk::clientWait(const egl::Display *display,
 
     bool flush = (flags & EGL_SYNC_FLUSH_COMMANDS_BIT_KHR) != 0;
 
-    ContextVk *contextVk = context ? vk::GetImpl(context) : nullptr;
+    ContextVk *contextVk = context != nullptr && flush ? vk::GetImpl(context) : nullptr;
     if (mSyncHelper->clientWait(vk::GetImpl(display), contextVk, flush,
                                 static_cast<uint64_t>(timeout), MapVkResultToEglint,
                                 outResult) == angle::Result::Stop)

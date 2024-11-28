@@ -103,6 +103,7 @@ class LayerProperties;
 class CoreIPCAVOutputContext;
 #endif
 class CoreIPCNSSomeFoundationType;
+class CoreIPCclass NSSomeOtherFoundationType;
 #if ENABLE(DATA_DETECTION)
 class CoreIPCDDScannerResult;
 #endif
@@ -304,6 +305,11 @@ template<> struct ArgumentCoder<WebKit::CoreIPCAVOutputContext> {
 template<> struct ArgumentCoder<WebKit::CoreIPCNSSomeFoundationType> {
     static void encode(Encoder&, const WebKit::CoreIPCNSSomeFoundationType&);
     static std::optional<WebKit::CoreIPCNSSomeFoundationType> decode(Decoder&);
+};
+
+template<> struct ArgumentCoder<WebKit::CoreIPCclass NSSomeOtherFoundationType> {
+    static void encode(Encoder&, const WebKit::CoreIPCclass NSSomeOtherFoundationType&);
+    static std::optional<WebKit::CoreIPCclass NSSomeOtherFoundationType> decode(Decoder&);
 };
 
 #if ENABLE(DATA_DETECTION)

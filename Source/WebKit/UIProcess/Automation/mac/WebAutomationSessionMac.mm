@@ -61,12 +61,12 @@ void WebAutomationSession::inspectBrowsingContext(const Inspector::Protocol::Aut
 
     // Don't bring the inspector to front since this may be done automatically.
     // We just want it loaded so it can pause if a breakpoint is hit during a command.
-    if (page->inspector()) {
-        page->inspector()->show();
+    if (RefPtr inspector = page->inspector()) {
+        inspector->show();
 
         // Start collecting profile information immediately so the entire session is captured.
         if (enableAutoCapturing && *enableAutoCapturing)
-            page->inspector()->togglePageProfiling();
+            inspector->togglePageProfiling();
     }
 }
 
@@ -84,15 +84,14 @@ void WebAutomationSession::sendSynthesizedEventsToPage(WebPageProxy& page, NSArr
     // As such, that method always returns 0. To fix this, we swizzle out +[NSEvent pressedMouseButtons], keep track of
     // the mouse button currently being pressed down, and supply the appropriate return value as specified in documentation.
     auto methodToSwizzle = class_getClassMethod(objc_getMetaClass(NSStringFromClass([NSEvent class]).UTF8String), @selector(pressedMouseButtons));
-    auto originalImplementation = method_setImplementation(methodToSwizzle, imp_implementationWithBlock([&mouseButtonCurrentlyDown = m_mouseButtonCurrentlyDown] {
-        switch (mouseButtonCurrentlyDown) {
-        case MouseButton::Left:
-            return 1 << 0;
-        case MouseButton::Right:
-            return 1 << 1;
-        default:
-            return 0;
+    auto originalImplementation = method_setImplementation(methodToSwizzle, imp_implementationWithBlock([&mouseButtonsCurrentlyDown = m_mouseButtonsCurrentlyDown] {
+        NSUInteger mouseButtons = 0;
+        static constexpr std::array<MouseButton, 3> potentialMouseButtons { MouseButton::Left, MouseButton::Right, MouseButton::Middle };
+        for (std::size_t idx = 0; idx < potentialMouseButtons.size(); ++idx) {
+            if (mouseButtonsCurrentlyDown.getOptional(potentialMouseButtons[idx]).value_or(false))
+                mouseButtons += (1 << idx);
         }
+        return mouseButtons;
     }));
     auto patchOriginalFunction = makeScopeExit([&methodToSwizzle, &originalImplementation] {
         method_setImplementation(methodToSwizzle, originalImplementation);
@@ -222,6 +221,7 @@ void WebAutomationSession::platformSimulateMouseInteraction(WebPageProxy& page, 
         break;
     case WebMouseEventButton::Right:
         downEventType = NSEventTypeRightMouseDown;
+        dragEventType = NSEventTypeRightMouseDragged;
         upEventType = NSEventTypeRightMouseUp;
         break;
     }
@@ -243,7 +243,7 @@ void WebAutomationSession::platformSimulateMouseInteraction(WebPageProxy& page, 
     }
     case MouseInteraction::Down:
         ASSERT(downEventType);
-        m_mouseButtonCurrentlyDown = button;
+        m_mouseButtonsCurrentlyDown.set(button, true);
 
         // Hard-code the click count to one, since clients don't expect successive simulated
         // down/up events to be potentially counted as a double click event.
@@ -251,7 +251,7 @@ void WebAutomationSession::platformSimulateMouseInteraction(WebPageProxy& page, 
         break;
     case MouseInteraction::Up:
         ASSERT(upEventType);
-        m_mouseButtonCurrentlyDown = MouseButton::None;
+        m_mouseButtonsCurrentlyDown.set(button, false);
 
         // Hard-code the click count to one, since clients don't expect successive simulated
         // down/up events to be potentially counted as a double click event.

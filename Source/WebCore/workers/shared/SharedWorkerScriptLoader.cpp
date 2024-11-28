@@ -56,21 +56,21 @@ void SharedWorkerScriptLoader::load(CompletionHandler<void(WorkerFetchResult&&, 
     m_loader->loadAsynchronously(*m_worker->scriptExecutionContext(), ResourceRequest(m_url), source, m_worker->workerFetchOptions(m_options, FetchOptions::Destination::Sharedworker), ContentSecurityPolicyEnforcement::EnforceWorkerSrcDirective, ServiceWorkersMode::All, *this, WorkerRunLoop::defaultMode(), ScriptExecutionContextIdentifier::generate());
 }
 
-void SharedWorkerScriptLoader::didReceiveResponse(ScriptExecutionContextIdentifier mainContextIdentifier, ResourceLoaderIdentifier identifier, const ResourceResponse&)
+void SharedWorkerScriptLoader::didReceiveResponse(ScriptExecutionContextIdentifier mainContextIdentifier, std::optional<ResourceLoaderIdentifier> identifier, const ResourceResponse&)
 {
     if (UNLIKELY(InspectorInstrumentation::hasFrontends())) {
         ScriptExecutionContext::ensureOnContextThread(mainContextIdentifier, [identifier] (auto& mainContext) {
-            InspectorInstrumentation::didReceiveScriptResponse(mainContext, identifier);
+            InspectorInstrumentation::didReceiveScriptResponse(mainContext, *identifier);
         });
     }
 }
 
-void SharedWorkerScriptLoader::notifyFinished(ScriptExecutionContextIdentifier mainContextIdentifier)
+void SharedWorkerScriptLoader::notifyFinished(std::optional<ScriptExecutionContextIdentifier> mainContextIdentifier)
 {
     auto* scriptExecutionContext = m_worker->scriptExecutionContext();
 
     if (UNLIKELY(InspectorInstrumentation::hasFrontends()) && scriptExecutionContext && !m_loader->failed()) {
-        ScriptExecutionContext::ensureOnContextThread(mainContextIdentifier, [identifier = m_loader->identifier(), script = m_loader->script().isolatedCopy()] (auto& mainContext) {
+        ScriptExecutionContext::ensureOnContextThread(*mainContextIdentifier, [identifier = m_loader->identifier(), script = m_loader->script().isolatedCopy()] (auto& mainContext) {
             InspectorInstrumentation::scriptImported(mainContext, identifier, script.toString());
         });
     }

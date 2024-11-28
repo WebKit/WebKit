@@ -1,0 +1,23 @@
+<script>
+async function run() {
+    let adapter = await navigator.gpu.requestAdapter();
+    let device = await adapter.requestDevice();
+    let canvas = document.createElement('canvas');
+    canvas.getContext('2d');
+    let texture = device.createTexture({
+        size: { width: 1 },
+        dimension: '1d',
+        format: 'rg16uint',
+        usage: GPUTextureUsage.COPY_DST | GPUTextureUsage.COPY_SRC | GPUTextureUsage.TEXTURE_BINDING,
+        viewFormats: [],
+    });
+    device.queue.copyExternalImageToTexture(
+        { source: canvas, origin: { x: 1, y: 1 } },
+        { texture: texture, origin: {}, aspect: 'all' },
+        { width: 0, height: 0, depthOrArrayLayers: 0 }
+    );
+}
+
+globalThis.testRunner?.waitUntilDone();
+run().finally(() => globalThis.testRunner?.notifyDone());
+</script>

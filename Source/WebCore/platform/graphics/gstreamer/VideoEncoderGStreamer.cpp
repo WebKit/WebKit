@@ -20,7 +20,7 @@
 #include "config.h"
 #include "VideoEncoderGStreamer.h"
 
-#if ENABLE(WEB_CODECS) && USE(GSTREAMER)
+#if ENABLE(VIDEO) && USE(GSTREAMER)
 
 #include "GStreamerCommon.h"
 #include "GStreamerElementHarness.h"
@@ -180,8 +180,10 @@ static std::optional<unsigned> retrieveTemporalIndex(const GRefPtr<GstSample>& s
         GST_TRACE("Looking-up layer id in %" GST_PTR_FORMAT, metaStructure);
         return gstStructureGet<unsigned>(metaStructure, "layer-id"_s);
     }
+#ifndef GST_DISABLE_GST_DEBUG
     auto name = gstStructureGetName(structure);
     GST_TRACE("Retrieval of temporal index from encoded format %s is not yet supported.", reinterpret_cast<const char*>(name.rawCharacters()));
+#endif
 #endif
     return { };
 }
@@ -341,4 +343,4 @@ void GStreamerInternalVideoEncoder::flush()
 
 } // namespace WebCore
 
-#endif // ENABLE(WEB_CODECS) && USE(GSTREAMER)
+#endif // ENABLE(VIDEO) && USE(GSTREAMER)

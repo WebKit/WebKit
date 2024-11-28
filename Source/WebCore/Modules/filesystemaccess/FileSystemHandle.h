@@ -40,10 +40,10 @@ class FileSystemStorageConnection;
 class FileSystemHandle : public ActiveDOMObject, public RefCounted<FileSystemHandle> {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(FileSystemHandle);
 public:
-    virtual ~FileSystemHandle();
-
     void ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }
+
+    virtual ~FileSystemHandle();
 
     enum class Kind : uint8_t {
         File,

@@ -47,6 +47,16 @@ WakeLockManager::~WakeLockManager()
     m_document.unregisterForVisibilityStateChangedCallbacks(*this);
 }
 
+void WakeLockManager::ref() const
+{
+    m_document.ref();
+}
+
+void WakeLockManager::deref() const
+{
+    m_document.deref();
+}
+
 void WakeLockManager::addWakeLock(Ref<WakeLockSentinel>&& lock, std::optional<PageIdentifier> pageID)
 {
     auto type = lock->type();

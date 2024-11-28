@@ -98,7 +98,7 @@ public:
     const_iterator find(const U& value) const
     {
         increaseOperationCountSinceLastCleanup();
-        if (auto* impl = value.weakPtrFactory().impl(); impl && *impl)
+        if (auto* impl = value.weakImplIfExists(); impl && *impl)
             return WeakHashSetConstIterator(*this, m_set.find(impl));
         return end();
     }
@@ -107,7 +107,7 @@ public:
     AddResult add(const U& value)
     {
         amortizedCleanupIfNeeded();
-        return m_set.add(*static_cast<const T&>(value).weakPtrFactory().template createWeakPtr<T>(const_cast<U&>(value), assertionsPolicy).m_impl);
+        return m_set.add(WeakRef<T, WeakPtrImpl>(static_cast<const T&>(value)).releaseImpl());
     }
 
     T* takeAny()
@@ -115,14 +115,14 @@ public:
         auto iterator = begin();
         if (iterator == end())
             return nullptr;
-        return m_set.take(iterator.m_position)->template get<T>();
+        return static_cast<T*>(m_set.take(iterator.m_position)->template get<T>());
     }
 
     template <typename U>
     bool remove(const U& value)
     {
         amortizedCleanupIfNeeded();
-        if (auto* impl = value.weakPtrFactory().impl(); impl && *impl)
+        if (auto* impl = value.weakImplIfExists(); impl && *impl)
             return m_set.remove(*impl);
         return false;
     }
@@ -144,7 +144,7 @@ public:
     bool contains(const U& value) const
     {
         increaseOperationCountSinceLastCleanup();
-        if (auto* impl = value.weakPtrFactory().impl(); impl && *impl)
+        if (auto* impl = value.weakImplIfExists(); impl && *impl)
             return m_set.contains(*impl);
         return false;
     }
@@ -178,7 +178,7 @@ public:
         return m_set.size();
     }
 
-    void forEach(const Function<void(T&)>& callback)
+    void forEach(NOESCAPE const Function<void(T&)>& callback)
     {
         auto items = map(m_set, [](const Ref<WeakPtrImpl>& item) {
             auto* pointer = static_cast<T*>(item->template get<T>());

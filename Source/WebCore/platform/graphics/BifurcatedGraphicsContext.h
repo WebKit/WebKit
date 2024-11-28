@@ -26,6 +26,7 @@
 #pragma once
 
 #include "GraphicsContext.h"
+#include <wtf/TZoneMalloc.h>
 #include <wtf/UniqueRef.h>
 
 namespace WebCore {
@@ -35,6 +36,7 @@ namespace WebCore {
 // Any state that is returned by GraphicsContext methods will be retrieved from the primary context.
 
 class WEBCORE_EXPORT BifurcatedGraphicsContext : public GraphicsContext {
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(BifurcatedGraphicsContext, WEBCORE_EXPORT);
     WTF_MAKE_NONCOPYABLE(BifurcatedGraphicsContext);
 public:
     BifurcatedGraphicsContext(GraphicsContext& primaryContext, GraphicsContext& secondaryContext);
@@ -113,7 +115,7 @@ public:
     void drawControlPart(ControlPart&, const FloatRoundedRect& borderRect, float deviceScaleFactor, const ControlStyle&) final;
 
 #if ENABLE(VIDEO)
-    void paintFrameForMedia(MediaPlayer&, const FloatRect& destination) final;
+    void drawVideoFrame(VideoFrame&, const FloatRect& destination, WebCore::ImageOrientation, bool shouldDiscardAlpha) final;
 #endif
 
     using GraphicsContext::scale;

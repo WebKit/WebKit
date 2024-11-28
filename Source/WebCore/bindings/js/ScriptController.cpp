@@ -47,8 +47,8 @@
 #include "PageConsoleClient.h"
 #include "PageGroup.h"
 #include "PaymentCoordinator.h"
+#include "Quirks.h"
 #include "RunJavaScriptParameters.h"
-#include "RuntimeApplicationChecks.h"
 #include "ScriptDisallowedScope.h"
 #include "ScriptSourceCode.h"
 #include "ScriptableDocumentParser.h"
@@ -75,6 +75,7 @@
 #include <JavaScriptCore/SyntheticModuleRecord.h>
 #include <JavaScriptCore/WeakGCMapInlines.h>
 #include <JavaScriptCore/WebAssemblyModuleRecord.h>
+#include <wtf/RuntimeApplicationChecks.h>
 #include <wtf/SetForScope.h>
 #include <wtf/SharedTask.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -156,6 +157,11 @@ ValueOrException ScriptController::evaluateInWorld(const ScriptSourceCode& sourc
 
     Ref protector { m_frame };
     SetForScope sourceURLScope(m_sourceURL, &sourceURL);
+
+    if (RefPtr document = m_frame.document()) {
+        if (auto script = document->quirks().scriptToEvaluateBeforeRunningScriptFromURL(sourceURL); !script.isEmpty())
+            evaluateIgnoringException({ WTFMove(script), JSC::SourceTaintedOrigin::Untainted });
+    }
 
     InspectorInstrumentation::willEvaluateScript(m_frame, sourceURL.string(), sourceCode.startLine(), sourceCode.startColumn());
 
@@ -312,7 +318,7 @@ void ScriptController::initScriptForWindowProxy(JSWindowProxy& windowProxy)
         windowProxy.window()->setConsoleClient(page->console());
     }
 
-    protectedFrame()->checkedLoader()->dispatchDidClearWindowObjectInWorld(world);
+    protectedFrame()->protectedLoader()->dispatchDidClearWindowObjectInWorld(world);
 }
 
 Ref<LocalFrame> ScriptController::protectedFrame() const
@@ -608,7 +614,7 @@ ValueOrException ScriptController::executeScriptInWorld(DOMWrapperWorld& world, 
 {
 #if ENABLE(APP_BOUND_DOMAINS)
     if (m_frame.loader().client().shouldEnableInAppBrowserPrivacyProtections()) {
-        if (auto* document = m_frame.document())
+        if (RefPtr document = m_frame.document())
             document->addConsoleMessage(MessageSource::Security, MessageLevel::Warning, "Ignoring user script injection for non-app bound domain."_s);
         SCRIPTCONTROLLER_RELEASE_LOG_ERROR(Loading, "executeScriptInWorld: Ignoring user script injection for non app-bound domain");
         return makeUnexpected(ExceptionDetails { "Ignoring user script injection for non-app bound domain"_s });
@@ -813,7 +819,7 @@ bool ScriptController::canExecuteScripts(ReasonForCallingCanExecuteScripts reaso
     if (m_frame.document() && m_frame.document()->isSandboxed(SandboxFlag::Scripts)) {
         // FIXME: This message should be moved off the console once a solution to https://bugs.webkit.org/show_bug.cgi?id=103274 exists.
         if (reason == ReasonForCallingCanExecuteScripts::AboutToExecuteScript || reason == ReasonForCallingCanExecuteScripts::AboutToCreateEventListener)
-            m_frame.document()->addConsoleMessage(MessageSource::Security, MessageLevel::Error, makeString("Blocked script execution in '"_s, m_frame.document()->url().stringCenterEllipsizedToLength(), "' because the document's frame is sandboxed and the 'allow-scripts' permission is not set."_s));
+            m_frame.protectedDocument()->addConsoleMessage(MessageSource::Security, MessageLevel::Error, makeString("Blocked script execution in '"_s, m_frame.document()->url().stringCenterEllipsizedToLength(), "' because the document's frame is sandboxed and the 'allow-scripts' permission is not set."_s));
         return false;
     }
 
@@ -866,7 +872,7 @@ void ScriptController::executeJavaScriptURL(const URL& url, RefPtr<SecurityOrigi
 
     const int javascriptSchemeLength = sizeof("javascript:") - 1;
     String decodedURL = PAL::decodeURLEscapeSequences(preNavigationCheckURLString);
-    // FIXME: This probably needs to figure out if the origin is considered tanited.
+    // FIXME: This probably needs to figure out if the origin is considered tainted.
     auto result = executeScriptIgnoringException(decodedURL.substring(javascriptSchemeLength), JSC::SourceTaintedOrigin::Untainted);
     RELEASE_ASSERT(&vm == &jsWindowProxy(mainThreadNormalWorld()).window()->vm());
 

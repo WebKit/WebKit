@@ -216,8 +216,7 @@
             "conditional": "ENABLE(VIDEO)"
         },
         "state": {
-            "argument": "required",
-            "settings-flag": "customStateSetEnabled"
+            "argument": "required"
         },
         "single-button": {
             "comment": "For scrollbar styling.",
@@ -342,10 +341,6 @@
             "status": "non-standard",
             "user-agent-part": true
         },
-        "-webkit-details-marker": {
-            "status": "non-standard",
-            "user-agent-part": true
-        },
         "-webkit-generic-cue-root": {
             "status": "non-standard",
             "user-agent-part": true
@@ -355,6 +350,11 @@
             "user-agent-part": true
         },
         "-webkit-list-button": {
+            "status": "non-standard",
+            "user-agent-part": true
+        },
+        "-webkit-media-controls": {
+            "comment": "For needsChromeMediaControlsPseudoElement quirk",
             "status": "non-standard",
             "user-agent-part": true
         },
@@ -518,6 +518,9 @@
             "conditional": "ENABLE(VIDEO)",
             "user-agent-part-string": true
         },
+        "details-content": {
+            "user-agent-part": true
+        },
         "-internal-cue-background": {
             "conditional": "ENABLE(VIDEO)",
             "status": "non-standard",
@@ -535,12 +538,9 @@
         "first-line": {
             "supports-single-colon-for-compatibility": true
         },
-        "grammar-error": {
-            "settings-flag": "grammarAndSpellingPseudoElementsEnabled"
-        },
+        "grammar-error": {},
         "highlight": {
-            "argument": "required",
-            "settings-flag": "highlightAPIEnabled"
+            "argument": "required"
         },
         "marker": {},
         "part": {
@@ -556,9 +556,7 @@
         "slotted": {
             "argument": "required"
         },
-        "spelling-error": {
-            "settings-flag": "grammarAndSpellingPseudoElementsEnabled"
-        },
+        "spelling-error": {},
         "target-text": {
             "settings-flag": "targetTextPseudoElementEnabled"
         },

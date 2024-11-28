@@ -328,6 +328,7 @@ list(APPEND WebKit_PUBLIC_FRAMEWORK_HEADERS
     UIProcess/API/Cocoa/WKContentRuleListStore.h
     UIProcess/API/Cocoa/WKContentRuleListStorePrivate.h
     UIProcess/API/Cocoa/WKContentWorld.h
+    UIProcess/API/Cocoa/WKContentWorldConfiguration.h
     UIProcess/API/Cocoa/WKContentWorldPrivate.h
     UIProcess/API/Cocoa/WKContextMenuElementInfo.h
     UIProcess/API/Cocoa/WKContextMenuElementInfoPrivate.h

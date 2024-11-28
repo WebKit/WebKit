@@ -95,7 +95,7 @@ bool WebSocketExtensionDispatcher::processHeaderValue(const String& headerValue)
     }
 
     const CString headerValueData = headerValue.utf8();
-    WebSocketExtensionParser parser(headerValueData.data(), headerValueData.data() + headerValueData.length());
+    WebSocketExtensionParser parser(headerValueData.span());
     while (!parser.finished()) {
         String extensionToken;
         HashMap<String, String> extensionParameters;

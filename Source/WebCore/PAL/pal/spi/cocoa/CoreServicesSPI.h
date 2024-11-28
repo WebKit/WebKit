@@ -25,12 +25,20 @@
 
 #pragma once
 
+#if USE(APPLE_INTERNAL_SDK)
+#include <dirhelper_priv.h>
+#else
+
+WTF_EXTERN_C_BEGIN
+char *_get_user_dir_suffix();
+bool _set_user_dir_suffix(const char *user_dir_suffix);
+WTF_EXTERN_C_END
+
+#endif
+
 WTF_EXTERN_C_BEGIN
 
 void _CSCheckFixDisable();
 CFArrayRef _UTCopyDeclaredTypeIdentifiers(void);
-
-char *_get_user_dir_suffix();
-bool _set_user_dir_suffix(const char *user_dir_suffix);
 
 WTF_EXTERN_C_END

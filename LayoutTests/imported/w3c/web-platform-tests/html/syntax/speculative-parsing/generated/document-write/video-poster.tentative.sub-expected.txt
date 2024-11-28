@@ -1,8 +1,8 @@
-CONSOLE MESSAGE: Unhandled Promise Rejection: Error: assert_not_equals: speculative case did not fetch got disallowed value ""
 
     <!-- speculative case in document.write -->
     <video poster="/html/syntax/speculative-parsing/resources/stash.py?action=put&amp;uuid=f5db0934-1d0b-4012-b025-76987af46874&amp;encodingcheck=&Gbreve;"></video>
 
 
-FAIL Speculative parsing, document.write(): video-poster Unhandled rejection: assert_not_equals: speculative case did not fetch got disallowed value ""
+
+PASS Speculative parsing, document.write(): video-poster
 

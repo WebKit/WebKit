@@ -27,16 +27,12 @@
 
 #include "Connection.h"
 #include <WebCore/DOMCacheEngine.h>
+#include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebKit {
 class CacheStorageManager;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::CacheStorageManager> : std::true_type { };
 }
 
 namespace WebCore {
@@ -45,13 +41,13 @@ struct ClientOrigin;
 
 namespace WebKit {
 class CacheStorageCache;
+class CacheStorageRecordInformation;
 class CacheStorageRegistry;
 class CacheStorageStore;
 struct CacheStorageRecord;
-struct CacheStorageRecordInformation;
 
 
-class CacheStorageManager : public CanMakeWeakPtr<CacheStorageManager> {
+class CacheStorageManager : public RefCountedAndCanMakeWeakPtr<CacheStorageManager> {
     WTF_MAKE_TZONE_ALLOCATED(CacheStorageManager);
 public:
     static String cacheStorageOriginDirectory(const String& rootDirectory, const WebCore::ClientOrigin&);
@@ -61,7 +57,7 @@ public:
     static bool hasCacheList(const String& cacheListDirectory);
 
     using QuotaCheckFunction = Function<void(uint64_t spaceRequested, CompletionHandler<void(bool)>&&)>;
-    CacheStorageManager(const String& path, CacheStorageRegistry&, const std::optional<WebCore::ClientOrigin>&, QuotaCheckFunction&&, Ref<WorkQueue>&&);
+    static Ref<CacheStorageManager> create(const String& path, CacheStorageRegistry&, const std::optional<WebCore::ClientOrigin>&, QuotaCheckFunction&&, Ref<WorkQueue>&&);
     ~CacheStorageManager();
     void openCache(const String& name, WebCore::DOMCacheEngine::CacheIdentifierCallback&&);
     void removeCache(WebCore::DOMCacheIdentifier, WebCore::DOMCacheEngine::RemoveCacheIdentifierCallback&&);
@@ -82,12 +78,14 @@ public:
     void reset();
 
 private:
+    CacheStorageManager(const String& path, CacheStorageRegistry&, const std::optional<WebCore::ClientOrigin>&, QuotaCheckFunction&&, Ref<WorkQueue>&&);
     void makeDirty();
     bool initializeCaches();
     void removeUnusedCache(WebCore::DOMCacheIdentifier);
     void initializeCacheSize(CacheStorageCache&);
     void finishInitializingSize();
     void requestSpaceAfterInitializingSize(uint64_t size, CompletionHandler<void(bool)>&&);
+    Ref<CacheStorageRegistry> protectedRegistry();
 
     bool m_isInitialized { false };
     uint64_t m_updateCounter;
@@ -95,10 +93,10 @@ private:
     std::pair<uint64_t, HashSet<WebCore::DOMCacheIdentifier>> m_pendingSize;
     String m_path;
     FileSystem::Salt m_salt;
-    CheckedRef<CacheStorageRegistry> m_registry;
+    Ref<CacheStorageRegistry> m_registry;
     QuotaCheckFunction m_quotaCheckFunction;
-    Vector<std::unique_ptr<CacheStorageCache>> m_caches;
-    HashMap<WebCore::DOMCacheIdentifier, std::unique_ptr<CacheStorageCache>> m_removedCaches;
+    Vector<Ref<CacheStorageCache>> m_caches;
+    HashMap<WebCore::DOMCacheIdentifier, Ref<CacheStorageCache>> m_removedCaches;
     HashMap<WebCore::DOMCacheIdentifier, Vector<IPC::Connection::UniqueID>> m_cacheRefConnections;
     HashSet<IPC::Connection::UniqueID> m_activeConnections;
     Ref<WorkQueue> m_queue;

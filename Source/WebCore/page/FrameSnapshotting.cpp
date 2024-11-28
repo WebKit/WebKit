@@ -116,6 +116,8 @@ RefPtr<ImageBuffer> snapshotFrameRectWithClip(LocalFrame& frame, const IntRect& 
     frame.view()->setPaintBehavior(paintBehavior);
 
     float scaleFactor = frame.page()->deviceScaleFactor();
+    if (options.flags.contains(SnapshotFlags::PaintWith3xBaseScale))
+        scaleFactor = 3;
 
     if (frame.page()->delegatesScaling())
         scaleFactor *= frame.page()->pageScaleFactor();

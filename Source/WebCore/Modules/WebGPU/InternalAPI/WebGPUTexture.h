@@ -51,6 +51,7 @@ public:
     virtual RefPtr<TextureView> createView(const std::optional<TextureViewDescriptor>&) = 0;
 
     virtual void destroy() = 0;
+    virtual void undestroy() = 0;
 
 protected:
     Texture() = default;

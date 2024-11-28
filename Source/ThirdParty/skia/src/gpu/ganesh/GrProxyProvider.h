@@ -9,7 +9,7 @@
 #define GrProxyProvider_DEFINED
 
 #include "include/core/SkRefCnt.h"
-#include "include/gpu/GrTypes.h"
+#include "include/gpu/ganesh/GrTypes.h"
 #include "include/private/gpu/ganesh/GrTypesPriv.h"
 #include "src/core/SkTDynamicHash.h"
 #include "src/gpu/RefCntedCallback.h"
@@ -271,7 +271,7 @@ public:
     bool renderingDirectly() const;
     bool isAbandoned() const;
 
-#if defined(GR_TEST_UTILS)
+#if defined(GPU_TEST_UTILS)
     /**
      * Create a texture proxy that is backed by an instantiated GrSurface.
      */

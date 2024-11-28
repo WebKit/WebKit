@@ -41,11 +41,13 @@
 #include "VMTrapsInlines.h"
 #include <wtf/UnalignedAccess.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 ALWAYS_INLINE VM& Interpreter::vm()
 {
-    return *bitwise_cast<VM*>(bitwise_cast<uint8_t*>(this) - OBJECT_OFFSETOF(VM, interpreter));
+    return *std::bit_cast<VM*>(std::bit_cast<uint8_t*>(this) - OBJECT_OFFSETOF(VM, interpreter));
 }
 
 inline CallFrame* calleeFrameForVarargs(CallFrame* callFrame, unsigned numUsedStackSlots, unsigned argumentCountIncludingThis)
@@ -79,8 +81,8 @@ inline OpcodeID Interpreter::getOpcodeID(JSC::Opcode opcode)
     // The OpcodeID is embedded in the int32_t word preceding the location of
     // the LLInt code for the opcode (see the EMBED_OPCODE_ID_IF_NEEDED macro
     // in LowLevelInterpreter.cpp).
-    const void* opcodeAddress = removeCodePtrTag(bitwise_cast<const void*>(opcode));
-    const int32_t* opcodeIDAddress = bitwise_cast<int32_t*>(opcodeAddress) - 1;
+    const void* opcodeAddress = removeCodePtrTag(std::bit_cast<const void*>(opcode));
+    const int32_t* opcodeIDAddress = std::bit_cast<int32_t*>(opcodeAddress) - 1;
     OpcodeID opcodeID = static_cast<OpcodeID>(WTF::unalignedLoad<int32_t>(opcodeIDAddress));
     ASSERT(opcodeID < NUMBER_OF_BYTECODE_IDS);
     return opcodeID;
@@ -164,3 +166,5 @@ ALWAYS_INLINE JSValue Interpreter::tryCallWithArguments(CachedCall& cachedCall, 
 #endif
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

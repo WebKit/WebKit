@@ -59,7 +59,7 @@
 #include <wtf/text/MakeString.h>
 
 #if PLATFORM(IOS_FAMILY)
-#include <RuntimeApplicationChecks.h>
+#include <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #endif
 
 #if ENABLE(CONTENT_EXTENSIONS)
@@ -74,13 +74,13 @@
 #undef SUBRESOURCELOADER_RELEASE_LOG
 #undef SUBRESOURCELOADER_RELEASE_LOG_ERROR
 #define PAGE_ID (frame() && frame()->pageID() ? frame()->pageID()->toUInt64() : 0)
-#define FRAME_ID ((frame() ? frame()->frameID() : FrameIdentifier()).object().toUInt64())
+#define FRAME_ID (frame() ? frame()->frameID().object().toUInt64() : 0)
 #if RELEASE_LOG_DISABLED
 #define SUBRESOURCELOADER_RELEASE_LOG(fmt, ...) UNUSED_VARIABLE(this)
 #define SUBRESOURCELOADER_RELEASE_LOG_ERROR(fmt, ...) UNUSED_VARIABLE(this)
 #else
-#define SUBRESOURCELOADER_RELEASE_LOG(fmt, ...) RELEASE_LOG(ResourceLoading, "%p - [pageID=%" PRIu64 ", frameID=%" PRIu64 ", frameLoader=%p, resourceID=%" PRIu64 "] SubresourceLoader::" fmt, this, PAGE_ID, FRAME_ID, frameLoader(), identifier().toUInt64(), ##__VA_ARGS__)
-#define SUBRESOURCELOADER_RELEASE_LOG_ERROR(fmt, ...) RELEASE_LOG_ERROR(ResourceLoading, "%p - [pageID=%" PRIu64 ", frameID=%" PRIu64 ", frameLoader=%p, resourceID=%" PRIu64 "] SubresourceLoader::" fmt, this, PAGE_ID, FRAME_ID, frameLoader(), identifier().toUInt64(), ##__VA_ARGS__)
+#define SUBRESOURCELOADER_RELEASE_LOG(fmt, ...) RELEASE_LOG(ResourceLoading, "%p - [pageID=%" PRIu64 ", frameID=%" PRIu64 ", frameLoader=%p, resourceID=%" PRIu64 "] SubresourceLoader::" fmt, this, PAGE_ID, FRAME_ID, frameLoader(), identifier() ? identifier()->toUInt64() : 0, ##__VA_ARGS__)
+#define SUBRESOURCELOADER_RELEASE_LOG_ERROR(fmt, ...) RELEASE_LOG_ERROR(ResourceLoading, "%p - [pageID=%" PRIu64 ", frameID=%" PRIu64 ", frameLoader=%p, resourceID=%" PRIu64 "] SubresourceLoader::" fmt, this, PAGE_ID, FRAME_ID, frameLoader(), identifier() ? identifier()->toUInt64() : 0, ##__VA_ARGS__)
 #endif
 
 namespace WebCore {
@@ -146,7 +146,7 @@ void SubresourceLoader::create(LocalFrame& frame, CachedResource& resource, Reso
 {
     Ref subloader = adoptRef(*new SubresourceLoader(frame, resource, options));
 #if PLATFORM(IOS_FAMILY)
-    if (!IOSApplication::isWebProcess()) {
+    if (!WTF::IOSApplication::isWebProcess()) {
         // On iOS, do not invoke synchronous resource load delegates while resource load scheduling
         // is disabled to avoid re-entering style selection from a different thread (see <rdar://problem/9121719>).
         // FIXME: This should be fixed for all ports in <https://bugs.webkit.org/show_bug.cgi?id=56647>.
@@ -165,7 +165,7 @@ void SubresourceLoader::create(LocalFrame& frame, CachedResource& resource, Reso
 void SubresourceLoader::startLoading()
 {
     // FIXME: this should probably be removed.
-    ASSERT(!IOSApplication::isWebProcess());
+    ASSERT(!WTF::IOSApplication::isWebProcess());
     init(ResourceRequest(m_iOSOriginalRequest), [this, protectedThis = Ref { *this }] (bool success) {
         if (!success)
             return;
@@ -232,7 +232,7 @@ void SubresourceLoader::willSendRequestInternal(ResourceRequest&& newRequest, co
         }
 
         ResourceLoader::willSendRequestInternal(WTFMove(newRequest), redirectResponse, [this, protectedThis = WTFMove(protectedThis), completionHandler = WTFMove(completionHandler), redirectResponse] (ResourceRequest&& request) mutable {
-            tracePoint(SubresourceLoadWillStart, identifier().toUInt64(), PAGE_ID, FRAME_ID);
+            tracePoint(SubresourceLoadWillStart, identifier() ? identifier()->toUInt64() : 0, PAGE_ID, FRAME_ID);
 
             if (reachedTerminalState()) {
                 SUBRESOURCELOADER_RELEASE_LOG("willSendRequestInternal: reached terminal state; calling completion handler");
@@ -618,6 +618,7 @@ static void logResourceLoaded(LocalFrame* frame, CachedResource::Type type)
     case CachedResource::Type::Ping:
     case CachedResource::Type::MediaResource:
 #if ENABLE(MODEL_ELEMENT)
+    case CachedResource::Type::EnvironmentMapResource:
     case CachedResource::Type::ModelResource:
 #endif
     case CachedResource::Type::Icon:
@@ -769,7 +770,7 @@ void SubresourceLoader::didFinishLoading(const NetworkLoadMetrics& networkLoadMe
     }
 
     if (resource->type() != CachedResource::Type::MainResource)
-        tracePoint(SubresourceLoadDidEnd, identifier().toUInt64());
+        tracePoint(SubresourceLoadDidEnd, identifier() ? identifier()->toUInt64() : 0);
 
     m_state = Finishing;
     if (m_loadingMultipartContent && !m_previousPartResponse.isNull())
@@ -817,7 +818,7 @@ void SubresourceLoader::didFail(const ResourceError& error)
     m_state = Finishing;
 
     if (resource->type() != CachedResource::Type::MainResource)
-        tracePoint(SubresourceLoadDidEnd, identifier().toUInt64());
+        tracePoint(SubresourceLoadDidEnd, identifier() ? identifier()->toUInt64() : 0);
 
     if (resource->resourceToRevalidate())
         MemoryCache::singleton().revalidationFailed(*resource);
@@ -857,11 +858,11 @@ void SubresourceLoader::willCancel(const ResourceError& error)
 #else
     m_state = Finishing;
 #endif
-    auto& memoryCache = MemoryCache::singleton();
+    Ref memoryCache = MemoryCache::singleton();
     if (resource->resourceToRevalidate())
-        memoryCache.revalidationFailed(*resource);
+        memoryCache->revalidationFailed(*resource);
     resource->setResourceError(error);
-    memoryCache.remove(*resource);
+    memoryCache->remove(*resource);
 }
 
 void SubresourceLoader::didCancel(LoadWillContinueInAnotherProcess loadWillContinueInAnotherProcess)
@@ -873,7 +874,7 @@ void SubresourceLoader::didCancel(LoadWillContinueInAnotherProcess loadWillConti
     ASSERT(resource);
 
     if (resource->type() != CachedResource::Type::MainResource)
-        tracePoint(SubresourceLoadDidEnd, identifier().toUInt64());
+        tracePoint(SubresourceLoadDidEnd, identifier() ? identifier()->toUInt64() : 0);
 
     resource->cancelLoad(loadWillContinueInAnotherProcess);
     notifyDone(LoadCompletionType::Cancel);

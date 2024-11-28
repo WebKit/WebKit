@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2024 Apple Inc. All rights reserved.
  * Copyright (C) 2012 Google Inc. All rights reserved.
  * Copyright (C) 2017 Yusuke Suzuki <utatane.tea@gmail.com>. All rights reserved.
  * Copyright (C) 2017 Mozilla Foundation. All rights reserved.
@@ -25,7 +25,7 @@ void StringBuilder::appendQuotedJSONString(const String& string)
     // Make sure we have enough buffer space to append this string for worst case without reallocating.
     // The 2 is for the '"' quotes on each end.
     // The 6 is the worst case for a single code unit that could be encoded as \uNNNN.
-    CheckedUint32 stringLength = string.length();
+    CheckedInt32 stringLength = string.length();
     stringLength *= 6;
     stringLength += 2;
     if (stringLength.hasOverflowed()) {
@@ -36,25 +36,29 @@ void StringBuilder::appendQuotedJSONString(const String& string)
     auto stringLengthValue = stringLength.value();
 
     if (is8Bit() && string.is8Bit()) {
-        if (auto* output = extendBufferForAppending<LChar>(saturatedSum<uint32_t>(m_length, stringLengthValue))) {
-            auto* end = output + stringLengthValue;
-            *output++ = '"';
+        if (auto output = extendBufferForAppending<LChar>(saturatedSum<int32_t>(m_length, stringLengthValue)); output.data()) {
+            output = output.first(stringLengthValue);
+            output[0] = '"';
+            output = output.subspan(1);
             appendEscapedJSONStringContent(output, string.span8());
-            *output++ = '"';
-            if (output < end)
-                shrink(m_length - (end - output));
+            output[0] = '"';
+            output = output.subspan(1);
+            if (!output.empty())
+                shrink(m_length - output.size());
         }
     } else {
-        if (auto* output = extendBufferForAppendingWithUpconvert(saturatedSum<uint32_t>(m_length, stringLengthValue))) {
-            auto* end = output + stringLengthValue;
-            *output++ = '"';
+        if (auto output = extendBufferForAppendingWithUpconvert(saturatedSum<int32_t>(m_length, stringLengthValue)); output.data()) {
+            output = output.first(stringLengthValue);
+            output[0] = '"';
+            output = output.subspan(1);
             if (string.is8Bit())
                 appendEscapedJSONStringContent(output, string.span8());
             else
                 appendEscapedJSONStringContent(output, string.span16());
-            *output++ = '"';
-            if (output < end)
-                shrink(m_length - (end - output));
+            output[0] = '"';
+            output = output.subspan(1);
+            if (!output.empty())
+                shrink(m_length - output.size());
         }
     }
 }

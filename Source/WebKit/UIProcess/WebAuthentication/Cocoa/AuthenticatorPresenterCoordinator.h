@@ -33,9 +33,9 @@
 #include <WebCore/WebAuthenticationConstants.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Forward.h>
+#include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/TZoneMalloc.h>
-#include <wtf/WeakPtr.h>
 
 OBJC_CLASS ASCAppleIDCredential;
 OBJC_CLASS ASCAuthorizationPresentationContext;
@@ -46,26 +46,17 @@ OBJC_CLASS NSError;
 OBJC_CLASS WKASCAuthorizationPresenterDelegate;
 
 namespace WebKit {
-class AuthenticatorPresenterCoordinator;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::AuthenticatorPresenterCoordinator> : std::true_type { };
-}
-
-namespace WebKit {
 
 class AuthenticatorManager;
 
-class AuthenticatorPresenterCoordinator : public CanMakeWeakPtr<AuthenticatorPresenterCoordinator> {
+class AuthenticatorPresenterCoordinator : public RefCountedAndCanMakeWeakPtr<AuthenticatorPresenterCoordinator> {
     WTF_MAKE_TZONE_ALLOCATED(AuthenticatorPresenterCoordinator);
     WTF_MAKE_NONCOPYABLE(AuthenticatorPresenterCoordinator);
 public:
     using TransportSet = HashSet<WebCore::AuthenticatorTransport, WTF::IntHash<WebCore::AuthenticatorTransport>, WTF::StrongEnumHashTraits<WebCore::AuthenticatorTransport>>;
     using CredentialRequestHandler = Function<void(ASCAppleIDCredential *, NSError *)>;
 
-    AuthenticatorPresenterCoordinator(const AuthenticatorManager&, const String& rpId, const TransportSet&, WebCore::ClientDataType, const String& username);
+    static Ref<AuthenticatorPresenterCoordinator> create(const AuthenticatorManager&, const String& rpId, const TransportSet&, WebCore::ClientDataType, const String& username);
     ~AuthenticatorPresenterCoordinator();
 
     void updatePresenter(WebAuthenticationStatus);
@@ -80,6 +71,8 @@ public:
     void setPin(const String&);
 
 private:
+    AuthenticatorPresenterCoordinator(const AuthenticatorManager&, const String& rpId, const TransportSet&, WebCore::ClientDataType, const String& username);
+
     WeakPtr<AuthenticatorManager> m_manager;
     RetainPtr<ASCAuthorizationPresentationContext> m_context;
     RetainPtr<ASCAuthorizationPresenter> m_presenter;

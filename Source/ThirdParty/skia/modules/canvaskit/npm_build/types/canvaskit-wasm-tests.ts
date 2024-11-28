@@ -150,6 +150,7 @@ function canvasTests(CK: CanvasKit, canvas?: Canvas, paint?: Paint, path?: Path,
     canvas.drawVertices(verts, CK.BlendMode.DstOut, paint);
     const irect = canvas.getDeviceClipBounds(); // $ExpectType Int32Array
     const irect2 = canvas.getDeviceClipBounds(irect); // $ExpectType Int32Array
+    const isCulled = canvas.quickReject(someRect); // $ExpectType boolean
     const matrTwo = canvas.getLocalToDevice(); // $ExpectType Float32Array
     const sc = canvas.getSaveCount(); // $ExpectType number
     const matrThree = canvas.getTotalMatrix(); // $ExpectType number[]
@@ -178,6 +179,7 @@ function canvasTests(CK: CanvasKit, canvas?: Canvas, paint?: Paint, path?: Path,
     const h4 = canvas.saveLayer(paint, someRect);
     const h5 = canvas.saveLayer(paint, someRect, imgFilter, CK.SaveLayerF16ColorType);
     const h6 = canvas.saveLayer(paint, someRect, null, CK.SaveLayerInitWithPrevious);
+    const h7 = canvas.saveLayer(paint, someRect, imgFilter, CK.SaveLayerInitWithPrevious, CK.TileMode.Decal);
     canvas.scale(5, 10);
     canvas.skew(10, 5);
     canvas.translate(20, 30);

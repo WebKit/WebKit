@@ -48,6 +48,10 @@
 #include "IOSurface.h"
 #endif
 
+#if USE(SKIA)
+class GrDirectContext;
+#endif
+
 namespace WTF {
 class TextStream;
 }
@@ -165,7 +169,7 @@ public:
     RenderingMode renderingMode() const { return m_backendInfo.renderingMode; }
     AffineTransform baseTransform() const { return m_backendInfo.baseTransform; }
     size_t memoryCost() const { return m_backendInfo.memoryCost; }
-    const ImageBufferBackend::Info& backendInfo() { return m_backendInfo; }
+    const ImageBufferBackend::Info& backendInfo() const { return m_backendInfo; }
 
     // Returns NativeImage of the current drawing results. Results in an immutable copy of the current back buffer.
     WEBCORE_EXPORT virtual RefPtr<NativeImage> copyNativeImage() const;
@@ -185,6 +189,22 @@ public:
     WEBCORE_EXPORT RefPtr<cairo_surface_t> createCairoSurface();
 #endif
 
+#if USE(SKIA)
+    // During DisplayList recording a fence is created, so that we can wait until the SkSurface finished rendering
+    // before we attempt to access the GPU resource from a secondary thread during replay (in threaded GPU painting mode).
+    void finishAcceleratedRenderingAndCreateFence();
+    void waitForAcceleratedRenderingFenceCompletion();
+
+    const GrDirectContext* skiaGrContext() const;
+
+    // Use to copy an accelerated ImageBuffer, cloning the ImageBufferSkiaAcceleratedBackend, creating
+    // a new SkSurface tied to the current thread (and thus the thread-local GrDirectContext), but re-using
+    // the existing backend render target, of this ImageBuffer. This avoids any GPU->GPU copies and has the
+    // sole purpose to abe able to access an accelerated ImageBuffer from another thread, that is not
+    // the creation thread.
+    RefPtr<ImageBuffer> copyAcceleratedImageBufferBorrowingBackendRenderTarget() const;
+#endif
+
 #if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
     WEBCORE_EXPORT virtual std::optional<DynamicContentScalingDisplayList> dynamicContentScalingDisplayList();
 #endif
@@ -200,6 +220,9 @@ public:
     //     buffer = nullptr;
     WEBCORE_EXPORT static RefPtr<NativeImage> sinkIntoNativeImage(RefPtr<ImageBuffer>);
     WEBCORE_EXPORT static RefPtr<ImageBuffer> sinkIntoBufferForDifferentThread(RefPtr<ImageBuffer>);
+#if USE(SKIA)
+    static RefPtr<ImageBuffer> sinkIntoImageBufferForCrossThreadTransfer(RefPtr<ImageBuffer>);
+#endif
     static std::unique_ptr<SerializedImageBuffer> sinkIntoSerializedImageBuffer(RefPtr<ImageBuffer>&&);
 
     WEBCORE_EXPORT virtual void convertToLuminanceMask();

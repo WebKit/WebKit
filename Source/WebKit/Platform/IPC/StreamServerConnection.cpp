@@ -150,12 +150,12 @@ StreamServerConnection::DispatchResult StreamServerConnection::dispatchStreamMes
             return DispatchResult::HasNoMessages;
         }
         if (decoder.messageName() == MessageName::SetStreamDestinationID) {
-            if (!processSetStreamDestinationID(WTFMove(decoder), currentReceiver))
+            if (!processSetStreamDestinationID(decoder, currentReceiver))
                 return DispatchResult::HasNoMessages;
             continue;
         }
         if (decoder.messageName() == MessageName::ProcessOutOfStreamMessage) {
-            if (!dispatchOutOfStreamMessage(WTFMove(decoder)))
+            if (!processOutOfStreamMessage(decoder))
                 return DispatchResult::HasNoMessages;
             continue;
         }
@@ -182,13 +182,13 @@ StreamServerConnection::DispatchResult StreamServerConnection::dispatchStreamMes
             ASSERT(m_receivers.isEmpty());
             return DispatchResult::HasNoMessages;
         }
-        if (!dispatchStreamMessage(WTFMove(decoder), *currentReceiver))
+        if (!processStreamMessage(decoder, *currentReceiver))
             return DispatchResult::HasNoMessages;
     }
     return DispatchResult::HasMoreMessages;
 }
 
-bool StreamServerConnection::processSetStreamDestinationID(Decoder&& decoder, RefPtr<StreamMessageReceiver>& currentReceiver)
+bool StreamServerConnection::processSetStreamDestinationID(Decoder& decoder, RefPtr<StreamMessageReceiver>& currentReceiver)
 {
     auto destinationID = decoder.decode<uint64_t>();
     if (!destinationID) {
@@ -205,32 +205,27 @@ bool StreamServerConnection::processSetStreamDestinationID(Decoder&& decoder, Re
     return true;
 }
 
-bool StreamServerConnection::dispatchStreamMessage(Decoder&& decoder, StreamMessageReceiver& receiver)
+bool StreamServerConnection::processStreamMessage(Decoder& decoder, StreamMessageReceiver& receiver)
 {
-    ASSERT(!m_isDispatchingStreamMessage);
-    m_isDispatchingStreamMessage = true;
-    receiver.didReceiveStreamMessage(*this, decoder);
-    m_isDispatchingStreamMessage = false;
-    if (!decoder.isValid()) {
-        Ref connection = m_connection;
-#if ENABLE(IPC_TESTING_API)
-        if (connection->ignoreInvalidMessageForTesting())
-            return false;
-#endif // ENABLE(IPC_TESTING_API)
-        connection->dispatchDidReceiveInvalidMessage(decoder.messageName(), decoder.indexOfObjectFailingDecoding());
+    ASSERT(!m_isProcessingStreamMessage);
+    m_isProcessingStreamMessage = true;
+    bool didSucceed = dispatchStreamMessage(decoder, receiver);
+    m_isProcessingStreamMessage = false;
+    if (!didSucceed)
         return false;
-    }
     WakeUpClient result = WakeUpClient::No;
-    if (decoder.isSyncMessage())
+    if (decoder.isSyncMessage()) {
         result = m_buffer.releaseAll();
-    else
+        if (m_syncReplyToDispatch)
+            protectedConnection()->sendSyncReply(makeUniqueRefFromNonNullUniquePtr(WTFMove(m_syncReplyToDispatch)));
+    } else
         result = m_buffer.release(decoder.currentBufferOffset());
     if (result == WakeUpClient::Yes)
         m_clientWaitSemaphore.signal();
     return true;
 }
 
-bool StreamServerConnection::dispatchOutOfStreamMessage(Decoder&& decoder)
+bool StreamServerConnection::processOutOfStreamMessage(Decoder& decoder)
 {
     std::unique_ptr<Decoder> message;
     {
@@ -247,17 +242,10 @@ bool StreamServerConnection::dispatchOutOfStreamMessage(Decoder&& decoder)
         receiver = m_receivers.get(key);
     }
     if (receiver) {
-        receiver->didReceiveStreamMessage(*this, *message);
-        if (!message->isValid()) {
-            Ref connection = m_connection;
-#if ENABLE(IPC_TESTING_API)
-            if (connection->ignoreInvalidMessageForTesting())
-                return false;
-#endif // ENABLE(IPC_TESTING_API)
-            connection->dispatchDidReceiveInvalidMessage(message->messageName(), message->indexOfObjectFailingDecoding());
+        if (!dispatchStreamMessage(*message, *receiver))
             return false;
-        }
     }
+
     // If receiver does not exist if it has been removed but messages are still pending to be
     // processed. It's ok to skip such messages.
     // FIXME: Note, corresponding skip is not possible at the moment for stream messages.
@@ -267,19 +255,40 @@ bool StreamServerConnection::dispatchOutOfStreamMessage(Decoder&& decoder)
     return true;
 }
 
+bool StreamServerConnection::dispatchStreamMessage(Decoder& message, StreamMessageReceiver& receiver)
+{
+    receiver.didReceiveStreamMessage(*this, message);
+    auto didReceiveInvalidMessage = std::exchange(m_didReceiveInvalidMessage, false);
+    if (!didReceiveInvalidMessage && message.isValid())
+        return true;
+
+    Ref connection = m_connection;
+#if ENABLE(IPC_TESTING_API)
+    if (connection->ignoreInvalidMessageForTesting()) {
+        // Typically failed decodes are not expected, and thus they cause an assertion and stream
+        // timeout.
+        // Sync message decode error on IPC testing API is a special case. IPC testing API sends only
+        // out of stream messages and thus only expects out of stream replies.
+        if (!m_isProcessingStreamMessage && message.isSyncMessage()) {
+            connection->sendSyncReply(makeUniqueRef<Encoder>(MessageName::CancelSyncMessageReply, message.syncRequestID().toUInt64()));
+            return true;
+        }
+        return false;
+    }
+#endif
+    connection->dispatchDidReceiveInvalidMessage(message.messageName(), message.indexOfObjectFailingDecoding());
+    return false;
+}
+
+void StreamServerConnection::markCurrentlyDispatchedMessageAsInvalid()
+{
+    ASSERT(m_isProcessingStreamMessage);
+    m_didReceiveInvalidMessage = true;
+}
+
 RefPtr<StreamConnectionWorkQueue> StreamServerConnection::protectedWorkQueue() const
 {
     return m_workQueue;
 }
-
-#if ENABLE(IPC_TESTING_API)
-void StreamServerConnection::sendDeserializationErrorSyncReply(Connection::SyncRequestID syncRequestID)
-{
-    auto encoder = makeUniqueRef<Encoder>(MessageName::SyncMessageReply, syncRequestID.toUInt64());
-    encoder->setSyncMessageDeserializationFailure();
-    protectedConnection()->sendSyncReply(WTFMove(encoder));
-}
-#endif
-
 
 }

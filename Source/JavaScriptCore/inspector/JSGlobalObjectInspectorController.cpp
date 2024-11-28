@@ -56,6 +56,8 @@
 #include "RemoteInspector.h"
 #endif
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace Inspector {
 
 using namespace JSC;
@@ -342,3 +344,5 @@ void JSGlobalObjectInspectorController::createLazyAgents()
 }
 
 } // namespace Inspector
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

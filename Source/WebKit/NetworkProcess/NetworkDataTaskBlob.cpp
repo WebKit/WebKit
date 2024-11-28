@@ -451,10 +451,9 @@ void NetworkDataTaskBlob::download()
     }
 
     auto& downloadManager = m_networkProcess->downloadManager();
-    auto download = makeUnique<Download>(downloadManager, *m_pendingDownloadID, *this, *m_session, suggestedFilename());
-    auto* downloadPtr = download.get();
-    downloadManager.dataTaskBecameDownloadTask(*m_pendingDownloadID, WTFMove(download));
-    downloadPtr->didCreateDestination(m_pendingDownloadLocation);
+    Ref download = Download::create(downloadManager, *m_pendingDownloadID, *this, *m_session, suggestedFilename());
+    downloadManager.dataTaskBecameDownloadTask(*m_pendingDownloadID, download.copyRef());
+    download->didCreateDestination(m_pendingDownloadLocation);
 
     ASSERT(!m_client);
 
@@ -472,7 +471,7 @@ bool NetworkDataTaskBlob::writeDownload(std::span<const uint8_t> data)
     }
 
     m_downloadBytesWritten += bytesWritten;
-    auto* download = m_networkProcess->downloadManager().download(*m_pendingDownloadID);
+    RefPtr download = m_networkProcess->downloadManager().download(*m_pendingDownloadID);
     ASSERT(download);
     download->didReceiveData(bytesWritten, m_downloadBytesWritten, m_totalSize);
     return true;
@@ -502,7 +501,7 @@ void NetworkDataTaskBlob::didFailDownload(const ResourceError& error)
     if (m_client)
         m_client->didCompleteWithError(error);
     else {
-        auto* download = m_networkProcess->downloadManager().download(*m_pendingDownloadID);
+        RefPtr download = m_networkProcess->downloadManager().download(*m_pendingDownloadID);
         ASSERT(download);
         download->didFail(error, { });
     }
@@ -516,14 +515,22 @@ void NetworkDataTaskBlob::didFinishDownload()
     FileSystem::closeFile(m_downloadFile);
     m_downloadFile = FileSystem::invalidPlatformFileHandle;
 
+#if !HAVE(MODERN_DOWNLOADPROGRESS)
     if (m_sandboxExtension) {
         m_sandboxExtension->revoke();
         m_sandboxExtension = nullptr;
     }
+#endif
 
     clearStream();
-    auto* download = m_networkProcess->downloadManager().download(*m_pendingDownloadID);
+    RefPtr download = m_networkProcess->downloadManager().download(*m_pendingDownloadID);
     ASSERT(download);
+
+#if HAVE(MODERN_DOWNLOADPROGRESS)
+    if (m_sandboxExtension)
+        download->setSandboxExtension(std::exchange(m_sandboxExtension, nullptr));
+#endif
+
     download->didFinish();
 }
 

@@ -12,10 +12,10 @@
 if (window.internals) {
     var inputs = document.querySelectorAll("input");
     for (var i = 0; i < inputs.length; ++i)
-        window.internals.setShowAutoFillButton(inputs[i], "CreditCard");
+        window.internals.setAutofillButtonType(inputs[i], "CreditCard");
 
     var dynamicInput = document.createElement("input");
-    window.internals.setShowAutoFillButton(dynamicInput, "CreditCard");
+    window.internals.setAutofillButtonType(dynamicInput, "CreditCard");
     document.querySelector("#container").appendChild(dynamicInput);
 }
 </script>

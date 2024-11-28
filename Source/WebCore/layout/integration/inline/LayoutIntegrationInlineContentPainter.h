@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "LayoutIntegrationBoxTree.h"
+#include "LayoutIntegrationBoxTreeUpdater.h"
 #include "LayoutPoint.h"
 #include "LayoutRect.h"
 #include <wtf/WeakListHashSet.h>
@@ -33,6 +33,7 @@
 namespace WebCore {
 
 class RenderBlock;
+class RenderBlockFlow;
 class RenderBox;
 class RenderInline;
 
@@ -52,7 +53,7 @@ struct InlineContent;
 
 class InlineContentPainter {
 public:
-    InlineContentPainter(PaintInfo&, const LayoutPoint& paintOffset, const RenderInline* inlineBoxWithLayer, const InlineContent&, const BoxTree&);
+    InlineContentPainter(PaintInfo&, const LayoutPoint& paintOffset, const RenderInline* inlineBoxWithLayer, const InlineContent&, const RenderBlockFlow& root);
 
     void paint();
 
@@ -60,24 +61,23 @@ private:
     void paintDisplayBox(const InlineDisplay::Box&);
     void paintEllipsis(size_t lineIndex);
     LayoutPoint flippedContentOffsetIfNeeded(const RenderBox&) const;
-    const RenderBlock& root() const { return m_boxTree.rootRenderer(); }
+    const RenderBlock& root() const;
 
     PaintInfo& m_paintInfo;
     const LayoutPoint m_paintOffset;
     LayoutRect m_damageRect;
     const RenderInline* m_inlineBoxWithLayer { nullptr };
     const InlineContent& m_inlineContent;
-    const BoxTree& m_boxTree;
+    const RenderBlockFlow& m_root;
     SingleThreadWeakListHashSet<RenderInline> m_outlineObjects;
 };
 
 class LayerPaintScope {
 public:
-    LayerPaintScope(const BoxTree&, const RenderInline* inlineBoxWithLayer);
+    LayerPaintScope(const RenderInline* inlineBoxWithLayer);
     bool includes(const InlineDisplay::Box&);
 
 private:
-    const BoxTree& m_boxTree;
     const Layout::ElementBox* const m_inlineBoxWithLayer;
     const Layout::ElementBox* m_currentExcludedInlineBox { nullptr };
 };

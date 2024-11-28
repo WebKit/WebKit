@@ -17,9 +17,9 @@
 #include "include/core/SkSize.h"
 #include "include/core/SkString.h"
 #include "include/gpu/GpuTypes.h"
-#include "include/gpu/GrBackendSurface.h"
-#include "include/gpu/GrRecordingContext.h"
-#include "include/gpu/GrTypes.h"
+#include "include/gpu/ganesh/GrBackendSurface.h"
+#include "include/gpu/ganesh/GrRecordingContext.h"
+#include "include/gpu/ganesh/GrTypes.h"
 #include "include/private/SkColorData.h"
 #include "include/private/base/SkAssert.h"
 #include "include/private/base/SkDebug.h"
@@ -27,6 +27,7 @@
 #include "include/private/base/SkTArray.h"
 #include "include/private/gpu/ganesh/GrTypesPriv.h"
 #include "src/base/SkArenaAlloc.h"
+#include "src/base/SkSafeMath.h"
 #include "src/base/SkVx.h"
 #include "src/core/SkLatticeIter.h"
 #include "src/core/SkSLTypeShared.h"
@@ -52,7 +53,7 @@
 #include "src/gpu/ganesh/ops/GrMeshDrawOp.h"
 #include "src/gpu/ganesh/ops/GrSimpleMeshDrawOpHelper.h"
 
-#if defined(GR_TEST_UTILS)
+#if defined(GPU_TEST_UTILS)
 #include "src/base/SkRandom.h"
 #include "src/gpu/ganesh/GrDrawOpTest.h"
 #include "src/gpu/ganesh/GrProxyProvider.h"
@@ -288,11 +289,13 @@ private:
 
         int patchCnt = fPatches.size();
         int numRects = 0;
+
+        SkSafeMath safeMath;
         for (int i = 0; i < patchCnt; i++) {
-            numRects += fPatches[i].fIter->numRectsToDraw();
+            numRects = safeMath.addInt(numRects, fPatches[i].fIter->numRectsToDraw());
         }
 
-        if (!numRects) {
+        if (!numRects || !safeMath) {
             return;
         }
 
@@ -396,7 +399,7 @@ private:
         if (fFilter != that->fFilter) {
             return CombineResult::kCannotCombine;
         }
-        if (GrColorSpaceXform::Equals(fColorSpaceXform.get(), that->fColorSpaceXform.get())) {
+        if (!GrColorSpaceXform::Equals(fColorSpaceXform.get(), that->fColorSpaceXform.get())) {
             return CombineResult::kCannotCombine;
         }
         if (!fHelper.isCompatible(that->fHelper, caps, this->bounds(), that->bounds())) {
@@ -408,7 +411,7 @@ private:
         return CombineResult::kMerged;
     }
 
-#if defined(GR_TEST_UTILS)
+#if defined(GPU_TEST_UTILS)
     SkString onDumpInfo() const override {
         SkString str;
 
@@ -461,7 +464,7 @@ GrOp::Owner MakeNonAA(GrRecordingContext* context,
 
 }  // namespace skgpu::ganesh::LatticeOp
 
-#if defined(GR_TEST_UTILS)
+#if defined(GPU_TEST_UTILS)
 
 /** Randomly divides subset into count divs. */
 static void init_random_divs(int divs[], int count, int subsetStart, int subsetStop,

@@ -29,13 +29,19 @@
 
 namespace WebCore {
 
-class SVGFEImageElement final : public SVGFilterPrimitiveStandardAttributes, public SVGURIReference, public CachedImageClient {
+class SVGFEImageElement final : public SVGFilterPrimitiveStandardAttributes, public SVGURIReference, private CachedImageClient {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(SVGFEImageElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGFEImageElement);
 public:
     static Ref<SVGFEImageElement> create(const QualifiedName&, Document&);
 
     virtual ~SVGFEImageElement();
+
+    // CheckedPtr interface
+    uint32_t checkedPtrCount() const { return SVGFilterPrimitiveStandardAttributes::checkedPtrCount(); }
+    uint32_t checkedPtrCountWithoutThreadCheck() const { return SVGFilterPrimitiveStandardAttributes::checkedPtrCountWithoutThreadCheck(); }
+    void incrementCheckedPtrCount() const { SVGFilterPrimitiveStandardAttributes::incrementCheckedPtrCount(); }
+    void decrementCheckedPtrCount() const { SVGFilterPrimitiveStandardAttributes::decrementCheckedPtrCount(); }
 
     bool renderingTaintsOrigin() const;
 

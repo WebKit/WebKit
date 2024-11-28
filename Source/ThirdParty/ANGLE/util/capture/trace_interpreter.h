@@ -180,6 +180,16 @@ void PackParameter<const uint64_t *>(ParamBuffer &params,
                                      const Token &token,
                                      const TraceStringMap &strings);
 
+template <>
+void PackParameter<GLGETBLOBPROCANGLE>(ParamBuffer &params,
+                                       const Token &token,
+                                       const TraceStringMap &strings);
+
+template <>
+void PackParameter<GLSETBLOBPROCANGLE>(ParamBuffer &params,
+                                       const Token &token,
+                                       const TraceStringMap &strings);
+
 #if defined(ANGLE_PLATFORM_WINDOWS)
 
 template <>

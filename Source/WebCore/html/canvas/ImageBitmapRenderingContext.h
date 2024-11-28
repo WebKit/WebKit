@@ -66,7 +66,6 @@ public:
 private:
     ImageBitmapRenderingContext(CanvasBase&, ImageBitmapRenderingContextSettings&&);
 
-    bool isBitmapRenderer() const final { return true; }
     RefPtr<ImageBuffer> transferToImageBuffer() final;
 
     void setOutputBitmap(RefPtr<ImageBitmap>);

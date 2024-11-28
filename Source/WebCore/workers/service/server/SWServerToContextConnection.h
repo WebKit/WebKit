@@ -29,14 +29,15 @@
 #include "ExceptionData.h"
 #include "NotificationEventType.h"
 #include "PageIdentifier.h"
-#include "RegistrableDomain.h"
 #include "ScriptExecutionContextIdentifier.h"
 #include "ServiceWorkerClientQueryOptions.h"
 #include "ServiceWorkerContextData.h"
 #include "ServiceWorkerIdentifier.h"
 #include "ServiceWorkerTypes.h"
+#include "Site.h"
 #include <wtf/CheckedPtr.h>
 #include <wtf/Identified.h>
+#include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/URLHash.h>
 #include <wtf/WeakPtr.h>
@@ -53,9 +54,8 @@ struct ServiceWorkerContextData;
 struct ServiceWorkerJobDataIdentifier;
 enum class WorkerThreadMode : bool;
 
-class SWServerToContextConnection: public CanMakeWeakPtr<SWServerToContextConnection>, public CanMakeCheckedPtr<SWServerToContextConnection>, public Identified<SWServerToContextConnectionIdentifier> {
+class SWServerToContextConnection: public RefCountedAndCanMakeWeakPtr<SWServerToContextConnection>, public Identified<SWServerToContextConnectionIdentifier> {
     WTF_MAKE_TZONE_ALLOCATED(SWServerToContextConnection);
-    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SWServerToContextConnection);
 public:
     WEBCORE_EXPORT virtual ~SWServerToContextConnection();
 
@@ -64,7 +64,7 @@ public:
 
     // This flag gets set when the service worker process is no longer clean (because it has loaded several eTLD+1s).
     bool shouldTerminateWhenPossible() const { return m_shouldTerminateWhenPossible; }
-    void terminateWhenPossible();
+    bool terminateWhenPossible();
 
     // Messages to the SW host process
     virtual void installServiceWorkerContext(const ServiceWorkerContextData&, const ServiceWorkerData&, const String& userAgent, WorkerThreadMode, OptionSet<AdvancedPrivacyProtections>) = 0;
@@ -73,7 +73,6 @@ public:
     virtual void fireActivateEvent(ServiceWorkerIdentifier) = 0;
     virtual void terminateWorker(ServiceWorkerIdentifier) = 0;
     virtual void didSaveScriptsToDisk(ServiceWorkerIdentifier, const ScriptBuffer&, const MemoryCompactRobinHoodHashMap<URL, ScriptBuffer>& importedScripts) = 0;
-    virtual void matchAllCompleted(uint64_t requestIdentifier, const Vector<ServiceWorkerClientData>&) = 0;
     virtual void firePushEvent(ServiceWorkerIdentifier, const std::optional<Vector<uint8_t>>&, std::optional<NotificationPayload>&&, CompletionHandler<void(bool, std::optional<NotificationPayload>&&)>&&) = 0;
     virtual void fireNotificationEvent(ServiceWorkerIdentifier, const NotificationData&, NotificationEventType, CompletionHandler<void(bool)>&&) = 0;
     virtual void fireBackgroundFetchEvent(ServiceWorkerIdentifier, const BackgroundFetchInformation&, CompletionHandler<void(bool)>&&) = 0;
@@ -87,7 +86,7 @@ public:
     WEBCORE_EXPORT void didFinishActivation(ServiceWorkerIdentifier);
     WEBCORE_EXPORT void setServiceWorkerHasPendingEvents(ServiceWorkerIdentifier, bool hasPendingEvents);
     WEBCORE_EXPORT void workerTerminated(ServiceWorkerIdentifier);
-    WEBCORE_EXPORT void matchAll(uint64_t requestIdentifier, ServiceWorkerIdentifier, const ServiceWorkerClientQueryOptions&);
+    WEBCORE_EXPORT void matchAll(ServiceWorkerIdentifier, const ServiceWorkerClientQueryOptions&, CompletionHandler<void(Vector<WebCore::ServiceWorkerClientData>&&)>&&);
     WEBCORE_EXPORT void claim(ServiceWorkerIdentifier, CompletionHandler<void(std::optional<ExceptionData>&&)>&&);
     WEBCORE_EXPORT void setScriptResource(ServiceWorkerIdentifier, URL&& scriptURL, ServiceWorkerContextData::ImportedScript&&);
     WEBCORE_EXPORT void didFailHeartBeatCheck(ServiceWorkerIdentifier);
@@ -97,22 +96,22 @@ public:
     using OpenWindowCallback = CompletionHandler<void(Expected<std::optional<ServiceWorkerClientData>, ExceptionData>&&)>;
     virtual void openWindow(ServiceWorkerIdentifier, const URL&, OpenWindowCallback&&) = 0;
 
-    const RegistrableDomain& registrableDomain() const { return m_registrableDomain; }
+    const RegistrableDomain& registrableDomain() const { return m_site.domain(); }
+    const Site& site() const { return m_site; }
     std::optional<ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier() const { return m_serviceWorkerPageIdentifier; }
 
     virtual void connectionIsNoLongerNeeded() = 0;
     virtual void terminateDueToUnresponsiveness() = 0;
 
     virtual void setInspectable(ServiceWorkerIsInspectable) = 0;
+    virtual void serviceWorkerNeedsRunning() = 0;
 
 protected:
-    WEBCORE_EXPORT SWServerToContextConnection(SWServer&, RegistrableDomain&&, std::optional<ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier);
-
-    virtual void close() = 0;
+    WEBCORE_EXPORT SWServerToContextConnection(SWServer&, Site&&, std::optional<ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier);
 
 private:
     WeakPtr<WebCore::SWServer> m_server;
-    RegistrableDomain m_registrableDomain;
+    Site m_site;
     std::optional<ScriptExecutionContextIdentifier> m_serviceWorkerPageIdentifier;
     bool m_shouldTerminateWhenPossible { false };
 };

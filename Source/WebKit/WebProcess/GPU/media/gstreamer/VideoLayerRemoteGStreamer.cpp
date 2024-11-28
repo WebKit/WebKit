@@ -26,13 +26,14 @@
 #include "config.h"
 #include "VideoLayerRemote.h"
 
-#if ENABLE(GPU_PROCESS)
+#if ENABLE(GPU_PROCESS) && ENABLE(VIDEO)
 
 #include <WebCore/NotImplemented.h>
 #include <WebCore/PlatformLayer.h>
 
 #if USE(NICOSIA)
 #include <WebCore/NicosiaPlatformLayer.h>
+#include <WebCore/TextureMapperPlatformLayerProxy.h>
 #elif USE(COORDINATED_GRAPHICS)
 #include <WebCore/TextureMapperPlatformLayerProxyProvider.h>
 #elif USE(TEXTURE_MAPPER)

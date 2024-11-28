@@ -1023,7 +1023,7 @@ TEST_F(CollectFragmentVariablesTest, EmptyDeclarator)
 
 // Test collecting variables from an instanced multiview shader that has an internal ViewID_OVR
 // varying.
-TEST_F(CollectVertexVariablesTest, ViewID_OVR)
+TEST_F(CollectVertexVariablesTest, ViewIdOVR)
 {
     const std::string &shaderString =
         "#version 300 es\n"

@@ -62,7 +62,11 @@ std::shared_ptr<ShaderTranslateTask> ShaderMtl::compile(const gl::Context *conte
     // is in place. https://bugs.webkit.org/show_bug.cgi?id=224991
     options->validateAST = false;
 
+    options->simplifyLoopConditions = true;
+
     options->initializeUninitializedLocals = true;
+
+    options->separateCompoundStructDeclarations = true;
 
     if (context->isWebGL() && mState.getShaderType() != gl::ShaderType::Compute)
     {
@@ -79,7 +83,7 @@ std::shared_ptr<ShaderTranslateTask> ShaderMtl::compile(const gl::Context *conte
     }
 
     options->clampPointSize = true;
-#if ANGLE_PLATFORM_IOS_FAMILY && !ANGLE_PLATFORM_MACCATALYST
+#if TARGET_OS_IPHONE && !TARGET_OS_MACCATALYST
     options->clampFragDepth = true;
 #endif
 

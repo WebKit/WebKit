@@ -14,6 +14,7 @@
 #include "libANGLE/renderer/vulkan/vk_utils.h"
 
 #include "libANGLE/renderer/CLKernelImpl.h"
+#include "vulkan/vulkan_core.h"
 
 namespace rx
 {
@@ -67,11 +68,23 @@ class CLKernelVk : public CLKernelImpl
 {
   public:
     using Ptr = std::unique_ptr<CLKernelVk>;
+
+    struct KernelSpecConstant
+    {
+        uint32_t ID;
+        uint32_t data;
+    };
+    // Setting a reasonable initial value
+    // https://registry.khronos.org/OpenCL/specs/3.0-unified/html/OpenCL_API.html#CL_DEVICE_MAX_PARAMETER_SIZE
+    using KernelSpecConstants = angle::FastVector<KernelSpecConstant, 128>;
+
     CLKernelVk(const cl::Kernel &kernel,
                std::string &name,
                std::string &attributes,
                CLKernelArguments &args);
     ~CLKernelVk() override;
+
+    angle::Result init();
 
     angle::Result setArg(cl_uint argIndex, size_t argSize, const void *argValue) override;
 
@@ -90,6 +103,39 @@ class CLKernelVk : public CLKernelImpl
                                              vk::PipelineHelper **pipelineOut,
                                              cl::WorkgroupCount *workgroupCountOut);
 
+    const vk::DescriptorSetLayoutDesc &getDescriptorSetLayoutDesc(DescriptorSetIndex index) const
+    {
+        return mDescriptorSetLayoutDescs[index];
+    }
+    const vk::DescriptorSetLayoutDesc &getKernelArgDescriptorSetDesc() const
+    {
+        return getDescriptorSetLayoutDesc(DescriptorSetIndex::KernelArguments);
+    }
+    const vk::DescriptorSetLayoutDesc &getLiteralSamplerDescriptorSetDesc() const
+    {
+        return getDescriptorSetLayoutDesc(DescriptorSetIndex::LiteralSampler);
+    }
+    const vk::DescriptorSetLayoutDesc &getPrintfDescriptorSetDesc() const
+    {
+        return getDescriptorSetLayoutDesc(DescriptorSetIndex::Printf);
+    }
+
+    const vk::PipelineLayoutDesc &getPipelineLayoutDesc() { return mPipelineLayoutDesc; }
+
+    VkDescriptorSet getDescriptorSet(DescriptorSetIndex index)
+    {
+        return mDescriptorSets[index]->getDescriptorSet();
+    }
+
+    std::vector<uint8_t> &getPodArgumentsData() { return mPodArgumentsData; }
+
+    bool usesPrintf() const;
+
+    angle::Result allocateDescriptorSet(
+        DescriptorSetIndex index,
+        angle::EnumIterator<DescriptorSetIndex> layoutIndex,
+        vk::OutsideRenderPassCommandBufferHelper *computePassCommands);
+
   private:
     static constexpr std::array<size_t, 3> kEmptyWorkgroupSize = {0, 0, 0};
 
@@ -98,10 +144,20 @@ class CLKernelVk : public CLKernelImpl
     std::string mName;
     std::string mAttributes;
     CLKernelArguments mArgs;
+
+    // Copy of the pod data
+    std::vector<uint8_t> mPodArgumentsData;
+
     vk::ShaderProgramHelper mShaderProgramHelper;
     vk::ComputePipelineCache mComputePipelineCache;
+    KernelSpecConstants mSpecConstants;
     vk::AtomicBindingPointer<vk::PipelineLayout> mPipelineLayout;
     vk::DescriptorSetLayoutPointerArray mDescriptorSetLayouts{};
+
+    vk::DescriptorSetArray<vk::DescriptorSetPointer> mDescriptorSets;
+
+    vk::DescriptorSetArray<vk::DescriptorSetLayoutDesc> mDescriptorSetLayoutDescs;
+    vk::PipelineLayoutDesc mPipelineLayoutDesc;
 };
 
 }  // namespace rx

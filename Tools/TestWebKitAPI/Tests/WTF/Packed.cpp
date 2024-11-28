@@ -74,15 +74,15 @@ TEST(WTF_Packed, AssignAndGet)
         static_assert(OS_CONSTANT(EFFECTIVE_ADDRESS_WIDTH) != 64);
         PackableUint8* candidates[] = {
             0,
-            bitwise_cast<PackableUint8*>(static_cast<uintptr_t>((1ULL << (OS_CONSTANT(EFFECTIVE_ADDRESS_WIDTH) / 2)) - 1)),
-            bitwise_cast<PackableUint8*>(static_cast<uintptr_t>((1ULL << (OS_CONSTANT(EFFECTIVE_ADDRESS_WIDTH) - 1)) - 1)),
+            std::bit_cast<PackableUint8*>(static_cast<uintptr_t>((1ULL << (OS_CONSTANT(EFFECTIVE_ADDRESS_WIDTH) / 2)) - 1)),
+            std::bit_cast<PackableUint8*>(static_cast<uintptr_t>((1ULL << (OS_CONSTANT(EFFECTIVE_ADDRESS_WIDTH) - 1)) - 1)),
 #if !CPU(X86_64) || OS(DARWIN) || OS(LINUX) || OS(WINDOWS)
             // These OSes will never allocate user space addresses with
             // bit 47 (i.e. OS_CONSTANT(EFFECTIVE_ADDRESS_WIDTH) - 1) set.
-            bitwise_cast<PackableUint8*>(static_cast<uintptr_t>((1ULL << OS_CONSTANT(EFFECTIVE_ADDRESS_WIDTH)) - 1)),
+            std::bit_cast<PackableUint8*>(static_cast<uintptr_t>((1ULL << OS_CONSTANT(EFFECTIVE_ADDRESS_WIDTH)) - 1)),
 #else
-            bitwise_cast<PackableUint8*>(static_cast<uintptr_t>(~((1ULL << (OS_CONSTANT(EFFECTIVE_ADDRESS_WIDTH) - 1)) - 1))), // min higher half
-            bitwise_cast<PackableUint8*>(std::numeric_limits<uintptr_t>::max()), // max higher half
+            std::bit_cast<PackableUint8*>(static_cast<uintptr_t>(~((1ULL << (OS_CONSTANT(EFFECTIVE_ADDRESS_WIDTH) - 1)) - 1))), // min higher half
+            std::bit_cast<PackableUint8*>(std::numeric_limits<uintptr_t>::max()), // max higher half
 #endif
         };
         int count = sizeof(candidates) / sizeof(uint8_t*);

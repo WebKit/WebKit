@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Security-Policy" content="connect-src https://127.0.0.1:8443">
+<script>
+if (window.testRunner) {
+    window.testRunner.waitUntilDone();
+    window.testRunner.dumpAsText();
+}
+function runTest() {
+    document.getElementById('an').click();
+}
+</script>
+</head>
+<body onload="runTest()">
+<a id="an" href="https://localhost:8443/security/contentSecurityPolicy/resources/sample.html" ping="https://localhost:8443">Click It</a>
+</body>
+</html>

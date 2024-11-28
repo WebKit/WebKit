@@ -1,3 +1,4 @@
-FAIL: Timed out waiting for notifyDone to be called
 
+
+PASS navigate event for navigation.back() - same-document in an iframe
 

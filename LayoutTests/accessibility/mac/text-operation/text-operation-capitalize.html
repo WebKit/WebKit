@@ -1,0 +1,74 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../../resources/accessibility-helper.js"></script>
+<script src="../../../resources/js-test.js"></script>
+</head>
+<body>
+
+<div id="test-content">
+    <p contenteditable="true" id="text">The quick <span id="target1">brown fo</span>x jumps ov<span id="target2">er the la</span>zy dog.</p>
+    <p contenteditable="true" id="text2">TEXT2: The quick brown fox jumps over the lazy dog.</p>
+    <p contenteditable="true" id="text3">TEXT3: The quick brown fox jumps over the lazy dog.</p>
+</div>
+
+<script>
+var output = "Tests that a Capitalize text operation transforms text to capitalized as expected.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    var text, operationResult;
+    setTimeout(async function() {
+        // Validate that text is transformed to capitalized as expected (without smart replacement).
+        text = accessibilityController.accessibleElementById("text");
+        var markers = [await selectElementTextById("target1")];
+        await waitForNotification(text, "AXValueChanged", () => {
+            operationResult = text.performTextOperation("Capitalize", markers, null, /* smart replace */ false);
+        });
+        output += expect("operationResult.length", "1");
+        output += expect("operationResult[0]", "'Brown Fo'");
+        output += expect("text.stringValue.replace(/\\s/g, ' ')", "'AXValue: The quick Brown Fox jumps over the lazy dog.'");
+
+        // Validate that text is transformed to capitalized as expected (with smart replacement).
+        markers = [await selectElementTextById("target2")];
+        await waitForNotification(text, "AXValueChanged", () => {
+            operationResult = text.performTextOperation("Capitalize", markers, null, /* smart replace */ true);
+        });
+        output += expect("operationResult.length", "1");
+        output += expect("operationResult[0]", "'Er The La'");
+        output += expect("text.stringValue.replace(/\\s/g, ' ')", "'AXValue: The quick Brown Fox jumps ov Er The La zy dog.'");
+
+        // Validate that multiple ranges of text are transformed to capitalized as expected (without smart replacement).
+        text = accessibilityController.accessibleElementById("text2");
+        markers = [await selectPartialElementTextById("text2", 42, 46), await selectPartialElementTextById("text2", 30, 37), await selectPartialElementTextById("text2", 9, 20)];
+        await waitForNotification(text, "AXValueChanged", () => {
+            operationResult = text.performTextOperation("Capitalize", markers, null, /* smart replace */ false);
+        });
+        output += expect("operationResult.length", "3");
+        output += expect("operationResult[0]", "'Lazy'");
+        output += expect("operationResult[1]", "'Ps Over'");
+        output += expect("operationResult[2]", "'E Quick Bro'");
+        output += expect("text.stringValue.replace(/\\s/g, ' ')", "'AXValue: TEXT2: ThE Quick Brown fox jumPs Over the Lazy dog.'");
+
+        // Validate that multiple ranges of text are transformed to capitalized as expected (with smart replacement).
+        // The following test is EXPECTED TO FAIL. See https://bugs.webkit.org/show_bug.cgi?id=278928
+        text = accessibilityController.accessibleElementById("text3");
+        markers = [await selectPartialElementTextById("text3", 42, 46), await selectPartialElementTextById("text3", 30, 37), await selectPartialElementTextById("text3", 9, 20)];
+        await waitForNotification(text, "AXValueChanged", () => {
+            operationResult = text.performTextOperation("Capitalize", markers, null, /* smart replace */ true);
+        });
+        output += expect("operationResult.length", "3");
+        output += expect("operationResult[0]", "'Lazy'");
+        output += expect("operationResult[1]", "'Ps Over'");
+        output += expect("operationResult[2]", "'E Quick Bro'");
+        output += expect("text.stringValue.replace(/\\s/g, ' ')", "'AXValue: TEXT3: Th E Quick Bro wn fox jum Ps Over the Lazy dog.'");
+
+        document.getElementById("test-content").remove();
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

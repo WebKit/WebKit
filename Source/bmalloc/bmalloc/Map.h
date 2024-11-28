@@ -25,6 +25,8 @@
 
 #pragma once
 
+BALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 #include "BInline.h"
 #include "Sizes.h"
 #include "Vector.h"
@@ -43,6 +45,8 @@ public:
         Key key;
         Value value;
     };
+
+    Map();
 
     size_t size() { return m_keyCount; }
     size_t capacity() { return m_table.size(); }
@@ -143,6 +147,13 @@ private:
 };
 
 template<typename Key, typename Value, typename Hash, enum AllowDeleting allowDeleting>
+inline Map<Key, Value, Hash, allowDeleting>::Map()
+    : m_keyCount(0)
+    , m_tableMask(0)
+{
+}
+
+template<typename Key, typename Value, typename Hash, enum AllowDeleting allowDeleting>
 void Map<Key, Value, Hash, allowDeleting>::rehash()
 {
     auto oldTable = std::move(m_table);
@@ -165,3 +176,5 @@ void Map<Key, Value, Hash, allowDeleting>::rehash()
 template<typename Key, typename Value, typename Hash, enum AllowDeleting allowDeleting> const unsigned Map<Key, Value, Hash, allowDeleting>::minCapacity;
 
 } // namespace bmalloc
+
+BALLOW_UNSAFE_BUFFER_USAGE_END

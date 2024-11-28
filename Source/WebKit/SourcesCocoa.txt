@@ -70,6 +70,7 @@ GPUProcess/EntryPoint/Cocoa/XPCService/GPUServiceEntryPoint.mm
 GPUProcess/cocoa/GPUConnectionToWebProcessCocoa.mm
 GPUProcess/cocoa/GPUProcessCocoa.mm
 GPUProcess/graphics/RemoteGraphicsContextGLCocoa.cpp
+GPUProcess/graphics/ScopedRenderingResourcesRequestCocoa.mm @no-unify
 GPUProcess/ios/GPUProcessIOS.mm
 GPUProcess/mac/GPUProcessMac.mm
 GPUProcess/mac/LocalAudioSessionRoutingArbitrator.cpp
@@ -160,6 +161,8 @@ Shared/Authentication/cocoa/ClientCertificateAuthenticationXPCConstants.cpp
 
 Shared/EntryPointUtilities/Cocoa/Daemon/PCMDaemonConnectionSet.mm
 Shared/EntryPointUtilities/Cocoa/Daemon/PCMDaemonEntryPoint.mm
+
+Shared/Extensions/Cocoa/WebExtensionFrameIdentifierCocoa.mm
 
 Shared/Cocoa/APIDataCocoa.mm
 Shared/Cocoa/APIObject.mm
@@ -301,7 +304,10 @@ UIProcess/API/Cocoa/_WKTextManipulationConfiguration.mm
 UIProcess/API/Cocoa/_WKTextManipulationExclusionRule.mm
 UIProcess/API/Cocoa/_WKTextManipulationItem.mm
 UIProcess/API/Cocoa/_WKTextManipulationToken.mm
+UIProcess/API/Cocoa/_WKTextPreview.mm
+UIProcess/API/Cocoa/_WKTextRun.mm
 UIProcess/API/Cocoa/_WKThumbnailView.mm
+UIProcess/API/Cocoa/_WKTouchEventGenerator.mm
 UIProcess/API/Cocoa/_WKUserContentExtensionStore.mm
 UIProcess/API/Cocoa/_WKUserContentFilter.mm
 UIProcess/API/Cocoa/_WKUserContentWorld.mm
@@ -310,6 +316,9 @@ UIProcess/API/Cocoa/_WKUserStyleSheet.mm
 UIProcess/API/Cocoa/_WKVisitedLinkStore.mm
 UIProcess/API/Cocoa/_WKWebAuthenticationAssertionResponse.mm
 UIProcess/API/Cocoa/_WKWebAuthenticationPanel.mm
+UIProcess/API/Cocoa/_WKWebPushDaemonConnection.mm
+UIProcess/API/Cocoa/_WKWebPushMessage.mm
+UIProcess/API/Cocoa/_WKWebPushSubscriptionData.mm
 UIProcess/API/Cocoa/_WKWebExtension.mm
 UIProcess/API/Cocoa/_WKWebPushAction.mm
 UIProcess/API/Cocoa/_WKWebsiteDataSize.mm
@@ -326,6 +335,7 @@ UIProcess/API/Cocoa/WKBrowsingContextController.mm
 UIProcess/API/Cocoa/WKContentRuleList.mm
 UIProcess/API/Cocoa/WKContentRuleListStore.mm
 UIProcess/API/Cocoa/WKContentWorld.mm
+UIProcess/API/Cocoa/WKContentWorldConfiguration.mm
 UIProcess/API/Cocoa/WKContextMenuElementInfo.mm
 UIProcess/API/Cocoa/WKDownload.mm
 UIProcess/API/Cocoa/WKError.mm
@@ -490,6 +500,7 @@ UIProcess/ios/CompactContextMenuPresenter.mm
 UIProcess/ios/DragDropInteractionState.mm
 UIProcess/ios/GestureRecognizerConsistencyEnforcer.mm
 UIProcess/ios/PageClientImplIOS.mm
+UIProcess/ios/PointerTouchCompatibilitySimulator.mm
 UIProcess/ios/ProcessStateMonitor.mm
 UIProcess/ios/RevealFocusedElementDeferrer.mm
 UIProcess/ios/SmartMagnificationController.mm
@@ -697,6 +708,7 @@ WebProcess/Model/ARKitInlinePreviewModelPlayer.mm
 WebProcess/Model/ios/ARKitInlinePreviewModelPlayerIOS.mm
 WebProcess/Model/mac/ARKitInlinePreviewModelPlayerMac.mm
 
+WebProcess/Plugins/PDF/PDFAnnotationTypeHelpers.mm
 WebProcess/Plugins/PDF/PDFIncrementalLoader.mm
 WebProcess/Plugins/PDF/PDFPlugin.mm
 WebProcess/Plugins/PDF/PDFPluginBase.mm
@@ -705,7 +717,7 @@ WebProcess/Plugins/PDF/PDFPluginChoiceAnnotation.mm
 WebProcess/Plugins/PDF/PDFPluginPasswordField.mm
 WebProcess/Plugins/PDF/PDFPluginPasswordForm.mm
 WebProcess/Plugins/PDF/PDFPluginTextAnnotation.mm
-WebProcess/Plugins/PDF/PDFScriptEvaluator.mm
+WebProcess/Plugins/PDF/PDFScriptEvaluation.mm
 WebProcess/Plugins/PDF/WKAccessibilityPDFDocumentObject.mm
 WebProcess/Plugins/PDF/UnifiedPDF/AsyncPDFRenderer.mm
 WebProcess/Plugins/PDF/UnifiedPDF/PDFDataDetectorItem.mm
@@ -774,6 +786,7 @@ GPUProcessProxyMessageReceiver.cpp
 GPUProcessMessageReceiver.cpp
 LibWebRTCCodecsProxyMessageReceiver.cpp
 LibWebRTCCodecsMessageReceiver.cpp
+LogStreamMessageReceiver.cpp
 ModelConnectionToWebProcessMessageReceiver.cpp
 ModelProcessConnectionMessageReceiver.cpp
 ModelProcessProxyMessageReceiver.cpp
@@ -786,8 +799,6 @@ RemoteAudioSessionProxyMessageReceiver.cpp
 RemoteAudioSourceProviderManagerMessageReceiver.cpp
 RemoteImageDecoderAVFProxyMessageReceiver.cpp
 RemoteImageDecoderAVFManagerMessageReceiver.cpp
-RemoteMediaRecorderMessageReceiver.cpp
-RemoteMediaRecorderManagerMessageReceiver.cpp
 RemoteMediaSessionHelperMessageReceiver.cpp
 RemoteMediaSessionHelperProxyMessageReceiver.cpp
 RemoteMediaSessionCoordinatorMessageReceiver.cpp

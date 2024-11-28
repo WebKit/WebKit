@@ -42,6 +42,10 @@
 #include "ImageControlsMac.h"
 #endif
 
+#if ENABLE(SPATIAL_IMAGE_CONTROLS)
+#include "SpatialImageControls.h"
+#endif
+
 namespace WebCore {
 
 WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(HTMLButtonElement);
@@ -134,6 +138,10 @@ void HTMLButtonElement::defaultEventHandler(Event& event)
 {
 #if ENABLE(SERVICE_CONTROLS)
     if (ImageControlsMac::handleEvent(*this, event))
+        return;
+#endif
+#if ENABLE(SPATIAL_IMAGE_CONTROLS)
+    if (SpatialImageControls::handleEvent(*this, event))
         return;
 #endif
     auto& eventNames = WebCore::eventNames();

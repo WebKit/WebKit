@@ -45,6 +45,9 @@ template<typename IDLType> class DOMPromiseProxyWithResolveCallback;
 
 class FontFace final : public RefCounted<FontFace>, public ActiveDOMObject, public CSSFontFaceClient {
 public:
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
+
     struct Descriptors {
         String style;
         String weight;
@@ -93,10 +96,6 @@ public:
     CSSFontFace& backing() { return m_backing; }
 
     void fontStateChanged(CSSFontFace&, CSSFontFace::Status oldState, CSSFontFace::Status newState) final;
-
-    // ActiveDOMObject.
-    void ref() const final { RefCounted::ref(); }
-    void deref() const final { RefCounted::deref(); }
 
 private:
     explicit FontFace(CSSFontSelector&);

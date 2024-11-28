@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2011, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -45,6 +45,8 @@ struct PromisedAttachmentInfo;
 
 namespace WebKit {
 
+enum class ColorControlSupportsAlpha : bool;
+
 class RemoteLayerTreeNode;
 class WebViewImpl;
 
@@ -53,6 +55,10 @@ class PageClientImpl final : public PageClientImplCocoa
     , public WebFullScreenManagerProxyClient
 #endif
     {
+    WTF_MAKE_FAST_ALLOCATED;
+#if ENABLE(FULLSCREEN_API)
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(PageClientImpl);
+#endif
 public:
     PageClientImpl(NSView *, WKWebView *);
     virtual ~PageClientImpl();
@@ -95,7 +101,6 @@ private:
     void didChangeContentSize(const WebCore::IntSize&) override;
     void setCursor(const WebCore::Cursor&) override;
     void setCursorHiddenUntilMouseMoves(bool) override;
-    void didChangeViewportProperties(const WebCore::ViewportAttributes&) override;
 
     void registerEditCommand(Ref<WebEditCommandProxy>&&, UndoOrRedo) override;
     void clearAllEditCommands() override;
@@ -148,7 +153,7 @@ private:
 #endif
 
 #if ENABLE(INPUT_TYPE_COLOR)
-    RefPtr<WebColorPicker> createColorPicker(WebPageProxy*, const WebCore::Color& initialColor, const WebCore::IntRect&, Vector<WebCore::Color>&&) override;
+    RefPtr<WebColorPicker> createColorPicker(WebPageProxy*, const WebCore::Color& initialColor, const WebCore::IntRect&, ColorControlSupportsAlpha, Vector<WebCore::Color>&&) override;
 #endif
 
 #if ENABLE(DATALIST_ELEMENT)
@@ -177,7 +182,7 @@ private:
     void gestureEventWasNotHandledByWebCore(const NativeWebGestureEvent&) override;
 #endif
 
-    void accessibilityWebProcessTokenReceived(std::span<const uint8_t>, WebCore::FrameIdentifier, pid_t) override;
+    void accessibilityWebProcessTokenReceived(std::span<const uint8_t>, pid_t) override;
 
     void makeFirstResponder() override;
     void assistiveTechnologyMakeFirstResponder() override;
@@ -290,6 +295,8 @@ private:
     void pageDidScroll(const WebCore::IntPoint&) override;
     void didRestoreScrollPosition() override;
     bool windowIsFrontWindowUnderMouse(const NativeWebMouseEvent&) override;
+
+    std::optional<float> computeAutomaticTopContentInset() override;
 
     void takeFocus(WebCore::FocusDirection) override;
 

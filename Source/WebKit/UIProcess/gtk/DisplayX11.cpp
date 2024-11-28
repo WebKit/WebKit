@@ -86,7 +86,9 @@ String Display::accessibilityBusAddressX11() const
     unsigned long itemCount, bytesAfter;
     unsigned char* data = nullptr;
     XErrorTrapper trapper(xDisplay, XErrorTrapper::Policy::Ignore);
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     XGetWindowProperty(xDisplay, RootWindowOfScreen(DefaultScreenOfDisplay(xDisplay)), atspiBusAtom, 0L, 8192, False, XA_STRING, &type, &format, &itemCount, &bytesAfter, &data);
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
     auto atspiBusAddress = String::fromUTF8(reinterpret_cast<char*>(data));
     if (data)

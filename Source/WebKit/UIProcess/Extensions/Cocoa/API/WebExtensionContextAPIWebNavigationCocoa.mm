@@ -32,7 +32,7 @@
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
-#import "WKFrameInfo.h"
+#import "WKFrameInfoPrivate.h"
 #import "WKWebViewPrivate.h"
 #import "WebExtensionFrameIdentifier.h"
 #import "WebExtensionFrameParameters.h"
@@ -50,7 +50,7 @@ static WebExtensionFrameParameters frameParametersForFrame(_WKFrameTreeNode *fra
     auto *frameURL = frameInfo.request.URL;
 
     return {
-        (bool)frameInfo._errorOccurred,
+        static_cast<bool>(frameInfo._errorOccurred),
         extensionContext->hasPermission(frameURL, tab) ? std::optional(frameURL) : std::nullopt,
         parentFrame ? toWebExtensionFrameIdentifier(parentFrame.info) : WebExtensionFrameConstants::NoneIdentifier,
         includeFrameIdentifier ? std::optional(toWebExtensionFrameIdentifier(frameInfo)) : std::nullopt

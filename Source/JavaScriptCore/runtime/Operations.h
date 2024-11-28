@@ -27,6 +27,8 @@
 #include "JSGlobalObject.h"
 #include <wtf/text/MakeString.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 #define InvalidPrototypeChain (std::numeric_limits<size_t>::max())
@@ -150,10 +152,10 @@ ALWAYS_INLINE JSString* jsString(JSGlobalObject* globalObject, JSString* s1, JSS
     VM& vm = getVM(globalObject);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    unsigned length1 = s1->length();
+    unsigned length1 = s1 ? s1->length() : 0;
     if (!length1)
         return s2;
-    unsigned length2 = s2->length();
+    unsigned length2 = s2 ? s2->length() : 0;
     if (!length2)
         return s1;
     static_assert(JSString::MaxLength == std::numeric_limits<int32_t>::max());
@@ -170,15 +172,15 @@ ALWAYS_INLINE JSString* jsString(JSGlobalObject* globalObject, JSString* s1, JSS
     VM& vm = getVM(globalObject);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    unsigned length1 = s1->length();
+    unsigned length1 = s1 ? s1->length() : 0;
     if (!length1)
         RELEASE_AND_RETURN(scope, jsString(globalObject, s2, s3));
 
-    unsigned length2 = s2->length();
+    unsigned length2 = s2 ? s2->length() : 0;
     if (!length2)
         RELEASE_AND_RETURN(scope, jsString(globalObject, s1, s3));
 
-    unsigned length3 = s3->length();
+    unsigned length3 = s3 ? s3->length() : 0;
     if (!length3)
         RELEASE_AND_RETURN(scope, jsString(globalObject, s1, s2));
 
@@ -913,3 +915,5 @@ ALWAYS_INLINE EncodedJSValue getByValWithIndex(JSGlobalObject* globalObject, JSC
 }
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

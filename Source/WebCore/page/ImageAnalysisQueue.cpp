@@ -51,6 +51,11 @@ static constexpr Seconds resumeProcessingDelay = 100_ms;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(ImageAnalysisQueue);
 
+Ref<ImageAnalysisQueue> ImageAnalysisQueue::create(Page& page)
+{
+    return adoptRef(*new ImageAnalysisQueue(page));
+}
+
 ImageAnalysisQueue::ImageAnalysisQueue(Page& page)
     : m_page(page)
     , m_resumeProcessingTimer(*this, &ImageAnalysisQueue::resumeProcessing)

@@ -1,8 +1,36 @@
 
 PASS cookieStore.set with positional name and value
 PASS cookieStore.set with name and value in options
+PASS cookieStore.set fails with empty name and empty value
 PASS cookieStore.set with empty name and an '=' in value
 PASS cookieStore.set with normal name and an '=' in value
+PASS cookieStore.set checks if name or value contain invalid character U+0000
+PASS cookieStore.set checks if name or value contain invalid character U+0001
+PASS cookieStore.set checks if name or value contain invalid character U+0002
+PASS cookieStore.set checks if name or value contain invalid character U+0003
+PASS cookieStore.set checks if name or value contain invalid character U+0004
+PASS cookieStore.set checks if name or value contain invalid character U+0005
+PASS cookieStore.set checks if name or value contain invalid character U+0006
+PASS cookieStore.set checks if name or value contain invalid character U+0007
+PASS cookieStore.set checks if name or value contain invalid character U+0008
+PASS cookieStore.set checks if name or value contain invalid character U+0010
+PASS cookieStore.set checks if name or value contain invalid character U+0011
+PASS cookieStore.set checks if name or value contain invalid character U+0012
+PASS cookieStore.set checks if name or value contain invalid character U+0013
+PASS cookieStore.set checks if name or value contain invalid character U+0014
+PASS cookieStore.set checks if name or value contain invalid character U+0015
+PASS cookieStore.set checks if name or value contain invalid character U+0016
+PASS cookieStore.set checks if name or value contain invalid character U+0017
+PASS cookieStore.set checks if name or value contain invalid character U+0018
+PASS cookieStore.set checks if name or value contain invalid character U+0019
+PASS cookieStore.set checks if name or value contain invalid character U+001A
+PASS cookieStore.set checks if name or value contain invalid character U+001B
+PASS cookieStore.set checks if name or value contain invalid character U+001C
+PASS cookieStore.set checks if name or value contain invalid character U+001D
+PASS cookieStore.set checks if name or value contain invalid character U+001E
+PASS cookieStore.set checks if name or value contain invalid character U+001F
+PASS cookieStore.set checks if name or value contain invalid character U+003B
+PASS cookieStore.set checks if name or value contain invalid character U+007F
 PASS cookieStore.set with expires set to a future Date
 PASS cookieStore.set with expires set to a past Date
 PASS cookieStore.set with expires set to a future timestamp

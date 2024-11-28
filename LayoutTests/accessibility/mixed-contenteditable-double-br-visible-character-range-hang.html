@@ -76,9 +76,14 @@ if (window.accessibilityController) {
     testRunner.setViewSize(625, 48);
     document.body.scrollTop = 29;
 
+    let visibleCharacterRangeOutput;
     setTimeout(async function() {
         const body = accessibilityController.accessibleElementById("body");
-        output += `#body AXVisibleCharacterRange: ${body.stringDescriptionOfAttributeValue("AXVisibleCharacterRange")}\n`;
+        await waitFor(() => {
+            visibleCharacterRangeOutput = body.stringDescriptionOfAttributeValue("AXVisibleCharacterRange");
+            return visibleCharacterRangeOutput && visibleCharacterRangeOutput.includes("569, 569");
+        });
+        output += `#body AXVisibleCharacterRange: ${visibleCharacterRangeOutput}\n`;
 
         debug(output);
         document.getElementById("content-wrapper").style.display = "none";

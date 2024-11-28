@@ -104,8 +104,8 @@ public:
 #endif
 
 #if !RELEASE_LOG_DISABLED
-    virtual const void* logIdentifier() const { return nullptr; }
-    virtual const void* nextChildIdentifier() const { return logIdentifier(); }
+    virtual uint64_t logIdentifier() const { return 0; }
+    virtual uint64_t nextChildIdentifier() const { return logIdentifier(); }
     virtual const Logger* loggerPtr() const { return nullptr; }
 #endif
 };
@@ -115,10 +115,10 @@ public:
     virtual ~VideoPresentationModelClient() = default;
 
     // CheckedPtr interface
-    virtual uint32_t ptrCount() const = 0;
-    virtual uint32_t ptrCountWithoutThreadCheck() const = 0;
-    virtual void incrementPtrCount() const = 0;
-    virtual void decrementPtrCount() const = 0;
+    virtual uint32_t checkedPtrCount() const = 0;
+    virtual uint32_t checkedPtrCountWithoutThreadCheck() const = 0;
+    virtual void incrementCheckedPtrCount() const = 0;
+    virtual void decrementCheckedPtrCount() const = 0;
 
     virtual void hasVideoChanged(bool) { }
     virtual void videoDimensionsChanged(const FloatSize&) { }

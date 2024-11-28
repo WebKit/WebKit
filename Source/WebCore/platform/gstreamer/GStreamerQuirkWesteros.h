@@ -29,7 +29,7 @@ namespace WebCore {
 class GStreamerQuirkWesteros final : public GStreamerQuirk {
 public:
     GStreamerQuirkWesteros();
-    const char* identifier() final { return "Westeros"; }
+    const ASCIILiteral identifier() const final { return "Westeros"_s; }
 
     void configureElement(GstElement*, const OptionSet<ElementRuntimeCharacteristics>&) final;
     std::optional<bool> isHardwareAccelerated(GstElementFactory*) final;

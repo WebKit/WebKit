@@ -6,19 +6,23 @@
 </html>
 
 <script>
-if (window.testRunner) {
-  testRunner.dumpAsText();
+onload = async () => {
+    if (!window.testRunner || !window.eventSender)
+        return;
 
-  var isMacOSX = navigator.userAgent.indexOf("Mac OS X") != -1;
-  if (isMacOSX) {
-    var box = document.getElementById("box");
-    var x = box.offsetParent.offsetLeft + box.offsetLeft + box.offsetWidth / 2;
-    var y = box.offsetParent.offsetTop + box.offsetTop + box.offsetHeight / 2;
-    eventSender.dragMode = false;
-    eventSender.mouseMoveTo(x, y);
-    eventSender.mouseDown(0, ['ctrlKey']);
-    eventSender.mouseUp(0, ['ctrlKey']);
-  }
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+
+    var isMacOSX = navigator.userAgent.indexOf("Mac OS X") != -1;
+    if (isMacOSX) {
+        var box = document.getElementById("box");
+        var x = box.offsetParent.offsetLeft + box.offsetLeft + box.offsetWidth / 2;
+        var y = box.offsetParent.offsetTop + box.offsetTop + box.offsetHeight / 2;
+        eventSender.dragMode = false;
+        await eventSender.asyncMouseMoveTo(x, y);
+        await eventSender.asyncMouseDown(0, ['ctrlKey']);
+        await eventSender.asyncMouseUp(0, ['ctrlKey']);
+    }
+    testRunner.notifyDone();
 }
-
 </script>

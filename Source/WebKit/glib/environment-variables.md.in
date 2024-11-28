@@ -1,0 +1,25 @@
+Title: Environment variables
+Slug: environment-variables
+
+# List of environment variables
+
+WebKit uses several environment variables, most of which are designed for developers or debugging purposes. These variables should be used carefully, as they can impact the behavior of the software. These environment variables and their behavior are not guaranteed to remain stable across versions of WebKit. Always ensure that your WebKit version corresponds to the documentation you are referencing to avoid compatibility issues.
+
+#if WPE
+
+- `WPE_DRM_DEVICE`
+Specifies the primary device that WebKit will use for gpu buffer allocation when it needs access to the main device. It is interesting for DRM backend. You need to specify a file path.
+Example: `dev/dri/card0`
+
+- `WPE_DRM_RENDER_NODE`:
+Specifies the render device that WebKit will use for buffer allocation, this is the one used for allocating general gpu buffers. You need to specify a file path.
+Example: `/dev/dri/renderD128`
+
+- `WPE_DMABUF_BUFFER_FORMAT`:
+You can ask WebKit to try to use a format instead the one that is recommended by the underlying system (wayland, drm, etc.), when you define this variable then no other data is going to be used from wayland so it is recommended to also define the drm devices. The value must follow the following format: `pixel_format:memory_layout:usage`:
+    - Pixel format, specifies the pixel format as a fourcc code, example: `AR24`
+    - Memory layout, defines the memory layout of the buffer, 0 for linear layout
+    - Usage, indicates how the buffers is going to be used: `rendering`, `mapping` and `scanout`
+Example: `AR24:0:scanout`
+
+#endif

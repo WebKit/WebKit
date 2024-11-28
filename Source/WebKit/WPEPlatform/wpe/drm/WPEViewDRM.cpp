@@ -28,7 +28,7 @@
 
 #include "DRMUniquePtr.h"
 #include "WPEDisplayDRMPrivate.h"
-#include "WPEMonitorDRMPrivate.h"
+#include "WPEScreenDRMPrivate.h"
 #include "WPEToplevelDRM.h"
 #include "WPEViewDRMPrivate.h"
 #include <drm_fourcc.h>
@@ -91,7 +91,7 @@ static void wpeViewDRMConstructed(GObject* object)
 
     auto* display = WPE_DISPLAY_DRM(wpe_view_get_display(view));
     auto* priv = WPE_VIEW_DRM(view)->priv;
-    priv->refreshDuration = Seconds(1 / (wpe_monitor_get_refresh_rate(wpeDisplayDRMGetMonitor(display)) / 1000.));
+    priv->refreshDuration = Seconds(1 / (wpe_screen_get_refresh_rate(wpeDisplayDRMGetScreen(display)) / 1000.));
 
     int fd = gbm_device_get_fd(wpe_display_drm_get_device(display));
     priv->eventContext.version = DRM_EVENT_CONTEXT_VERSION;
@@ -314,9 +314,9 @@ static bool wpeViewDRMCommitAtomic(WPEViewDRM* view, WPE::DRM::Buffer* buffer, s
     uint32_t flags = DRM_MODE_PAGE_FLIP_EVENT | DRM_MODE_ATOMIC_NONBLOCK;
 
     auto* display = WPE_DISPLAY_DRM(wpe_view_get_display(WPE_VIEW(view)));
-    auto* monitor = WPE_MONITOR_DRM(wpeDisplayDRMGetMonitor(display));
-    const auto& crtc = wpeMonitorDRMGetCrtc(monitor);
-    auto* mode = wpeMonitorDRMGetMode(monitor);
+    auto* screen = WPE_SCREEN_DRM(wpeDisplayDRMGetScreen(display));
+    const auto& crtc = wpeScreenDRMGetCrtc(screen);
+    auto* mode = wpeScreenDRMGetMode(screen);
     auto fd = gbm_device_get_fd(wpe_display_drm_get_device(display));
     if (!crtc.modeIsCurrent(mode)) {
         flags |= DRM_MODE_ATOMIC_ALLOW_MODESET;
@@ -361,9 +361,9 @@ static bool wpeViewDRMCommitAtomic(WPEViewDRM* view, WPE::DRM::Buffer* buffer, s
 static bool wpeViewDRMCommitLegacy(WPEViewDRM* view, const WPE::DRM::Buffer& buffer, GError** error)
 {
     auto* display = WPE_DISPLAY_DRM(wpe_view_get_display(WPE_VIEW(view)));
-    auto* monitor = WPE_MONITOR_DRM(wpeDisplayDRMGetMonitor(display));
-    const auto& crtc = wpeMonitorDRMGetCrtc(monitor);
-    auto* mode = wpeMonitorDRMGetMode(monitor);
+    auto* screen = WPE_SCREEN_DRM(wpeDisplayDRMGetScreen(display));
+    const auto& crtc = wpeScreenDRMGetCrtc(screen);
+    auto* mode = wpeScreenDRMGetMode(screen);
     auto fd = gbm_device_get_fd(wpe_display_drm_get_device(display));
     if (!crtc.modeIsCurrent(mode)) {
         const auto& connector = wpeDisplayDRMGetConnector(display);
@@ -506,8 +506,8 @@ static void wpeViewDRMScheduleCursorUpdate(WPEViewDRM* view)
 
     // Wait until the end of the frame to do the cursor update.
     auto* display = WPE_DISPLAY_DRM(wpe_view_get_display(WPE_VIEW(view)));
-    auto* monitor = WPE_MONITOR_DRM(wpeDisplayDRMGetMonitor(display));
-    auto crtcIndex = wpeMonitorDRMGetCrtc(monitor).index();
+    auto* screen = WPE_SCREEN_DRM(wpeDisplayDRMGetScreen(display));
+    auto crtcIndex = wpeScreenDRMGetCrtc(screen).index();
     int crtcBitmask = 0;
     if (crtcIndex > 1)
         crtcBitmask = ((crtcIndex << DRM_VBLANK_HIGH_CRTC_SHIFT) & DRM_VBLANK_HIGH_CRTC_MASK);

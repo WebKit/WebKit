@@ -153,6 +153,8 @@ typedef NS_ENUM(uint8_t, _WKRestrictedOpenerType) {
 + (void)_setWebPushActionHandler:(WKWebsiteDataStore *(^)(_WKWebPushAction *))handler WK_API_AVAILABLE(ios(WK_IOS_TBA));
 + (BOOL)handleNotificationResponse:(UNNotificationResponse *)response WK_API_AVAILABLE(ios(WK_IOS_TBA));
 
+- (void)_runningOrTerminatingServiceWorkerCountForTesting:(void(^)(NSUInteger))completionHandler WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+
 @end
 
 NS_ASSUME_NONNULL_END

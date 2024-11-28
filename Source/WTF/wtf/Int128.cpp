@@ -304,7 +304,7 @@ void printInternal(PrintStream& out, UInt128 value)
 {
     auto vector = numberToStringUnsigned<Vector<LChar, 50>>(value);
     vector.append('\0');
-    out.printf("%s", bitwise_cast<const char*>(vector.data()));
+    out.printf("%s", std::bit_cast<const char*>(vector.data()));
 }
 
 void printInternal(PrintStream& out, Int128 value)
@@ -320,7 +320,7 @@ void printInternal(PrintStream& out, Int128 value)
         positive = -value;
     auto vector = numberToStringUnsigned<Vector<LChar, 50>>(positive);
     vector.append('\0');
-    out.printf("-%s", bitwise_cast<const char*>(vector.data()));
+    out.printf("-%s", std::bit_cast<const char*>(vector.data()));
 }
 
 }  // namespace WTF

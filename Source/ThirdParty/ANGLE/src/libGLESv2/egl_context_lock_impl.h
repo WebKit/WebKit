@@ -13,6 +13,13 @@
 
 namespace egl
 {
+namespace priv
+{
+ANGLE_INLINE bool ClientWaitSyncHasFlush(EGLint flags)
+{
+    return (flags & EGL_SYNC_FLUSH_COMMANDS_BIT_KHR) != 0;
+}
+}  // namespace priv
 
 ANGLE_INLINE ScopedContextMutexLock GetContextLock_ChooseConfig(Thread *thread,
                                                                 egl::Display *dpyPacked)
@@ -232,9 +239,17 @@ ANGLE_INLINE ScopedContextMutexLock GetContextLock_GetCurrentContext(Thread *thr
 
 // EGL 1.5
 ANGLE_INLINE ScopedContextMutexLock GetContextLock_ClientWaitSync(Thread *thread,
-                                                                  egl::Display *dpyPacked)
+                                                                  egl::Display *dpyPacked,
+                                                                  EGLint flags)
 {
-    return TryLockCurrentContext(thread);
+    if (priv::ClientWaitSyncHasFlush(flags))
+    {
+        return TryLockCurrentContext(thread);
+    }
+    else
+    {
+        return {};
+    }
 }
 
 ANGLE_INLINE ScopedContextMutexLock GetContextLock_CreateImage(Thread *thread,
@@ -287,7 +302,10 @@ ANGLE_INLINE ScopedContextMutexLock GetContextLock_GetSyncAttrib(Thread *thread,
     return {};
 }
 
-ANGLE_INLINE ScopedContextMutexLock GetContextLock_WaitSync(Thread *thread, egl::Display *dpyPacked)
+ANGLE_INLINE ScopedContextMutexLock GetContextLock_WaitSync(Thread *thread,
+                                                            egl::Display *dpyPacked,
+                                                            EGLint flags)
+
 {
     return TryLockCurrentContext(thread);
 }
@@ -586,9 +604,17 @@ ANGLE_INLINE ScopedContextMutexLock GetContextLock_QueryDebugKHR(Thread *thread,
 
 // EGL_KHR_fence_sync
 ANGLE_INLINE ScopedContextMutexLock GetContextLock_ClientWaitSyncKHR(Thread *thread,
-                                                                     egl::Display *dpyPacked)
+                                                                     egl::Display *dpyPacked,
+                                                                     EGLint flags)
 {
-    return TryLockCurrentContext(thread);
+    if (priv::ClientWaitSyncHasFlush(flags))
+    {
+        return TryLockCurrentContext(thread);
+    }
+    else
+    {
+        return {};
+    }
 }
 
 ANGLE_INLINE ScopedContextMutexLock GetContextLock_CreateSyncKHR(Thread *thread,
@@ -721,7 +747,8 @@ ANGLE_INLINE ScopedContextMutexLock GetContextLock_SwapBuffersWithDamageKHR(Thre
 
 // EGL_KHR_wait_sync
 ANGLE_INLINE ScopedContextMutexLock GetContextLock_WaitSyncKHR(Thread *thread,
-                                                               egl::Display *dpyPacked)
+                                                               egl::Display *dpyPacked,
+                                                               EGLint flags)
 {
     return TryLockCurrentContext(thread);
 }

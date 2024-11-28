@@ -32,7 +32,8 @@
 namespace WebCore {
 
 namespace MockAudioSharedUnit {
-
+void enable();
+void disable();
 CoreAudioSharedUnit& singleton();
 void increaseBufferSize();
 

@@ -61,6 +61,7 @@
 #include "RenderSVGRoot.h"
 #include "RenderStyleInlines.h"
 #include "RenderTreeBuilder.h"
+#include "RenderViewTransitionRoot.h"
 #include "RenderWidget.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGImage.h"
@@ -80,7 +81,7 @@ RenderView::RenderView(Document& document, RenderStyle&& style)
     : RenderBlockFlow(Type::View, document, WTFMove(style))
     , m_frameView(*document.view())
     , m_initialContainingBlock(makeUniqueRef<Layout::InitialContainingBlock>(RenderStyle::clone(this->style())))
-    , m_layoutState(makeUniqueRef<Layout::LayoutState>(document, *m_initialContainingBlock, Layout::LayoutState::Type::Primary, LayoutIntegration::layoutWithFormattingContextForBox, LayoutIntegration::preferredLogicalWidths))
+    , m_layoutState(makeUniqueRef<Layout::LayoutState>(document, *m_initialContainingBlock, Layout::LayoutState::Type::Primary, LayoutIntegration::layoutWithFormattingContextForBox, LayoutIntegration::formattingContextRootLogicalWidthForType, LayoutIntegration::formattingContextRootLogicalHeightForType))
     , m_selection(*this)
 {
     // FIXME: We should find a way to enforce this at compile time.
@@ -110,8 +111,11 @@ void RenderView::styleDidChange(StyleDifference diff, const RenderStyle* oldStyl
 {
     RenderBlockFlow::styleDidChange(diff, oldStyle);
 
-    bool writingModeChanged = oldStyle && style().writingMode() != oldStyle->writingMode();
-    bool directionChanged = oldStyle && style().direction() != oldStyle->direction();
+    if (!oldStyle)
+        return;
+
+    bool writingModeChanged = writingMode().computedWritingMode() != oldStyle->writingMode().computedWritingMode();
+    bool directionChanged = writingMode().bidiDirection() != oldStyle->writingMode().bidiDirection();
 
     if ((writingModeChanged || directionChanged) && multiColumnFlow()) {
         if (protectedFrameView()->pagination().mode != Pagination::Mode::Unpaginated)
@@ -130,7 +134,7 @@ RenderBox::LogicalExtentComputedValues RenderView::computeLogicalHeight(LayoutUn
 
 inline int RenderView::viewLogicalWidth() const
 {
-    return style().isHorizontalWritingMode() ? viewWidth() : viewHeight();
+    return writingMode().isHorizontal() ? viewWidth() : viewHeight();
 }
 
 void RenderView::updateLogicalWidth()
@@ -231,7 +235,6 @@ LayoutUnit RenderView::pageOrViewLogicalHeight() const
 
 LayoutUnit RenderView::clientLogicalWidthForFixedPosition() const
 {
-    // FIXME: If the FrameView's fixedVisibleContentRect() is not empty, perhaps it should be consulted here too?
     Ref frameView = this->frameView();
     if (frameView->fixedElementsLayoutRelativeToFrame())
         return LayoutUnit((isHorizontalWritingMode() ? frameView->visibleWidth() : frameView->visibleHeight()) / frameView->frame().frameScaleFactor());
@@ -249,7 +252,6 @@ LayoutUnit RenderView::clientLogicalWidthForFixedPosition() const
 
 LayoutUnit RenderView::clientLogicalHeightForFixedPosition() const
 {
-    // FIXME: If the FrameView's fixedVisibleContentRect() is not empty, perhaps it should be consulted here too?
     Ref frameView = this->frameView();
     if (frameView->fixedElementsLayoutRelativeToFrame())
         return LayoutUnit((isHorizontalWritingMode() ? frameView->visibleHeight() : frameView->visibleWidth()) / frameView->frame().frameScaleFactor());
@@ -565,10 +567,10 @@ auto RenderView::computeVisibleRectsInContainer(const RepaintRects& rects, const
         return rects;
 
     auto adjustedRects = rects;
-    if (style().isFlippedBlocksWritingMode()) {
+    if (writingMode().isBlockFlipped()) {
         // We have to flip by hand since the view's logical height has not been determined.  We
         // can use the viewport width and height.
-        adjustedRects.flipForWritingMode(LayoutSize(viewWidth(), viewHeight()), style().isHorizontalWritingMode());
+        adjustedRects.flipForWritingMode(LayoutSize(viewWidth(), viewHeight()), writingMode().isHorizontal());
     }
 
     if (context.hasPositionFixedDescendant)
@@ -642,10 +644,10 @@ bool RenderView::shouldPaintBaseBackground() const
     auto* ownerElement = document.ownerElement();
 
     // Fill with a base color if we're the root document.
-    if (!ownerElement)
+    if (frameView.frame().isMainFrame())
         return !frameView.isTransparent();
 
-    if (ownerElement->hasTagName(HTMLNames::frameTag))
+    if (ownerElement && ownerElement->hasTagName(HTMLNames::frameTag))
         return true;
 
     // Locate the <body> element using the DOM. This is easier than trying
@@ -662,7 +664,7 @@ bool RenderView::shouldPaintBaseBackground() const
     if (is<HTMLFrameSetElement>(*body))
         return true;
 
-    auto* frameRenderer = ownerElement->renderer();
+    auto* frameRenderer = ownerElement ? ownerElement->renderer() : nullptr;
     if (!frameRenderer)
         return false;
 
@@ -738,7 +740,7 @@ int RenderView::viewWidth() const
 
 int RenderView::viewLogicalHeight() const
 {
-    int height = style().isHorizontalWritingMode() ? viewHeight() : viewWidth();
+    int height = writingMode().isHorizontal() ? viewHeight() : viewWidth();
     return height;
 }
 
@@ -780,7 +782,7 @@ Node* RenderView::nodeForHitTest() const
     return document().documentElement();
 }
 
-void RenderView::updateHitTestResult(HitTestResult& result, const LayoutPoint& point)
+void RenderView::updateHitTestResult(HitTestResult& result, const LayoutPoint& point) const
 {
     if (result.innerNode())
         return;
@@ -1069,24 +1071,6 @@ unsigned RenderView::pageCount() const
     return 0;
 }
 
-void RenderView::layerChildrenChangedDuringStyleChange(RenderLayer& layer)
-{
-    if (!m_styleChangeLayerMutationRoot) {
-        m_styleChangeLayerMutationRoot = layer;
-        return;
-    }
-
-    RenderLayer* commonAncestor = m_styleChangeLayerMutationRoot->commonAncestorWithLayer(layer);
-    m_styleChangeLayerMutationRoot = commonAncestor;
-}
-
-RenderLayer* RenderView::takeStyleChangeLayerTreeMutationRoot()
-{
-    auto* result = m_styleChangeLayerMutationRoot.get();
-    m_styleChangeLayerMutationRoot.clear();
-    return result;
-}
-
 void RenderView::registerBoxWithScrollSnapPositions(const RenderBox& box)
 {
     m_boxesWithScrollSnapPositions.add(box);
@@ -1107,6 +1091,16 @@ void RenderView::unregisterContainerQueryBox(const RenderBox& box)
     m_containerQueryBoxes.remove(box);
 }
 
+void RenderView::registerAnchor(const RenderBoxModelObject& renderer)
+{
+    m_anchors.add(renderer);
+}
+
+void RenderView::unregisterAnchor(const RenderBoxModelObject& renderer)
+{
+    m_anchors.remove(renderer);
+}
+
 void RenderView::addCounterNeedingUpdate(RenderCounter& renderer)
 {
     m_countersNeedingUpdate.add(renderer);
@@ -1117,12 +1111,12 @@ SingleThreadWeakHashSet<RenderCounter> RenderView::takeCountersNeedingUpdate()
     return std::exchange(m_countersNeedingUpdate, { });
 }
 
-SingleThreadWeakPtr<RenderElement> RenderView::viewTransitionRoot() const
+SingleThreadWeakPtr<RenderViewTransitionRoot> RenderView::viewTransitionRoot() const
 {
     return m_viewTransitionRoot;
 }
 
-void RenderView::setViewTransitionRoot(RenderElement& renderer)
+void RenderView::setViewTransitionRoot(RenderViewTransitionRoot& renderer)
 {
     m_viewTransitionRoot = renderer;
 }

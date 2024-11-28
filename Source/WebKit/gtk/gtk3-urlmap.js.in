@@ -10,7 +10,7 @@ baseURLs = [
   ["Gdk", "https://docs.gtk.org/gdk@GTK_API_VERSION@/"],
   ["Gtk", "https://docs.gtk.org/gtk@GTK_API_VERSION@/"],
   ["JavaScriptCore", "../javascriptcoregtk" + baseURLApiLevelSuffix],
-  ["Soup", "https://libsoup.org/libsoup-3.0/"],
+  ["Soup", "https://gnome.pages.gitlab.gnome.org/libsoup/libsoup-3.0/"],
   ["WebKit2", "../webkit2gtk" + baseURLApiLevelSuffix],
   ["WebKit2WebExtension", "../webkit2gtk-web-extension" + baseURLApiLevelSuffix]
 ]

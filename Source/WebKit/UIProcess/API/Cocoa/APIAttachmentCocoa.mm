@@ -198,16 +198,20 @@ void Attachment::updateFromSerializedRepresentation(Ref<WebCore::SharedBuffer>&&
     if (!m_webPage)
         return;
 
+    RefPtr pageClient = m_webPage->pageClient();
+    if (!pageClient)
+        return;
+
     auto serializedData = serializedRepresentation->createNSData();
     if (!serializedData)
         return;
 
-    NSFileWrapper *fileWrapper = [NSKeyedUnarchiver unarchivedObjectOfClasses:m_webPage->pageClient().serializableFileWrapperClasses() fromData:serializedData.get() error:nullptr];
+    RetainPtr fileWrapper = [NSKeyedUnarchiver unarchivedObjectOfClasses:pageClient->serializableFileWrapperClasses() fromData:serializedData.get() error:nullptr];
     if (![fileWrapper isKindOfClass:NSFileWrapper.class])
         return;
 
     m_isCreatedFromSerializedRepresentation = true;
-    setFileWrapperAndUpdateContentType(fileWrapper, contentType);
+    setFileWrapperAndUpdateContentType(fileWrapper.get(), contentType);
     m_webPage->updateAttachmentAttributes(*this, [] { });
 }
 

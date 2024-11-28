@@ -3,6 +3,7 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+import("gn/codec.gni")
 import("gn/fuchsia_defines.gni")
 import("gn/shared_sources.gni")
 import("gn/skia.gni")
@@ -99,11 +100,8 @@ config("skia_private") {
   if (is_skia_dev_build && !is_wasm) {
     defines += [
       "SK_ALLOW_STATIC_GLOBAL_INITIALIZERS=1",
-      "GR_TEST_UTILS=1",
+      "GPU_TEST_UTILS=1",
     ]
-    if (skia_enable_graphite) {
-      defines += [ "GRAPHITE_TEST_UTILS=1" ]
-    }
   }
   libs = []
   lib_dirs = []
@@ -205,9 +203,6 @@ template("optional") {
       if (defined(invoker.public_configs)) {
         configs = invoker.public_configs
       }
-      if (defined(invoker.public_include_dirs)) {
-        include_dirs = invoker.public_include_dirs
-      }
     }
     skia_source_set(target_name) {
       visibility = [ ":*" ]
@@ -252,7 +247,10 @@ template("optional") {
         if (!defined(deps)) {
           deps = []
         }
-        deps += [ ":test" ]
+        deps += [
+          ":test",
+          ":" + target_name,
+        ]
         all_dependent_configs = [ ":" + target_name + "_public" ]
       }
     }
@@ -319,6 +317,18 @@ optional("fontmgr_android") {
   sources_for_tests = [ "tests/FontMgrAndroidParserTest.cpp" ]
 }
 
+# if building Skia for API >= 30 and not using custom fonts, enable
+# skia_enable_fontmgr_android_ndk and disable skia_enable_fontmgr_android
+optional("fontmgr_android_ndk") {
+  enabled = skia_enable_fontmgr_android_ndk
+
+  deps = [ ":typeface_freetype" ]
+  libs = [ "android" ]
+  public_defines = [ "SK_FONTMGR_ANDROID_NDK_AVAILABLE" ]
+  public = skia_ports_fontmgr_android_ndk_public
+  sources = skia_ports_fontmgr_android_ndk_sources
+}
+
 optional("fontmgr_custom") {
   enabled =
       skia_enable_fontmgr_custom_directory ||
@@ -371,6 +381,16 @@ optional("fontmgr_fontconfig") {
   deps = [ ":typeface_freetype" ]
   sources = skia_ports_fontmgr_fontconfig_sources
   sources_for_tests = [ "tests/FontMgrFontConfigTest.cpp" ]
+}
+
+skia_source_set("fontscanner_tests") {
+  testonly = true
+
+  deps = [ ":skia" ]
+  sources = [
+    "tests/FontScanner.cpp",
+    "tests/FontScanner.h",
+  ]
 }
 
 optional("fontmgr_FontConfigInterface") {
@@ -858,6 +878,7 @@ group("compile_all_sksl_tests") {
 optional("gpu_shared") {
   enabled = skia_enable_ganesh || skia_enable_graphite
 
+  configs = []
   deps = []
   libs = []
   public_defines = []
@@ -904,6 +925,7 @@ optional("gpu_shared") {
   if (skia_use_vulkan) {
     public_defines += [ "SK_VULKAN" ]
     sources += skia_shared_vk_sources
+    configs += [ ":use_skia_vulkan_headers" ]
     if (skia_enable_vulkan_debug_layers) {
       public_defines += [ "SK_ENABLE_VK_LAYERS" ]
     }
@@ -933,6 +955,7 @@ optional("gpu") {
   if (skia_generate_workarounds) {
     deps += [ ":workaround_list" ]
   }
+  configs = []
   public_defines = []
   public_configs = []
   public_deps = []
@@ -989,7 +1012,10 @@ optional("gpu") {
     } else if (is_ios) {
       sources += [ "src/gpu/ganesh/gl/iOS/GrGLMakeNativeInterface_iOS.cpp" ]
     } else if (is_win && !skia_enable_winuwp) {
-      sources += [ "src/gpu/ganesh/gl/win/GrGLMakeNativeInterface_win.cpp" ]
+      sources += [
+        "src/gpu/ganesh/gl/win/GrGLMakeNativeInterface_win.cpp",
+        "src/gpu/ganesh/gl/win/GrGLMakeWinInterface.cpp",
+      ]
       if (target_cpu != "arm64") {
         libs += [ "OpenGL32.lib" ]
       }
@@ -1003,6 +1029,7 @@ optional("gpu") {
   if (skia_use_vulkan) {
     public += skia_gpu_vk_public
     sources += skia_gpu_vk_private
+    configs += [ ":use_skia_vulkan_headers" ]
     if (is_fuchsia) {
       if (using_fuchsia_sdk) {
         public_deps += [ "$fuchsia_sdk_root/pkg:vulkan" ]
@@ -1081,6 +1108,18 @@ optional("avif") {
   sources = [ "src/codec/SkAvifCodec.cpp" ]
 }
 
+optional("crabbyavif") {
+  enabled = skia_use_crabbyavif
+  public_defines = [ "SK_CODEC_DECODES_AVIF" ]
+
+  # AVIF decoding is provided by CrabbyAvif (a Rust library). Since skia's
+  # standalone builds do not support Rust, it is only being enabled when
+  # building for the Android framework.
+  # The dependency for Android is set in gn_to_bp.py
+  deps = []
+  sources = [ "src/codec/SkCrabbyAvifCodec.cpp" ]
+}
+
 optional("jpeg_mpf") {
   enabled = skia_use_jpeg_gainmaps &&
             (skia_use_libjpeg_turbo_encode || skia_use_libjpeg_turbo_decode)
@@ -1147,6 +1186,7 @@ optional("ndk_images") {
 }
 
 optional("graphite") {
+  configs = []
   libs = []
   frameworks = []
   public_defines = []
@@ -1188,6 +1228,7 @@ optional("graphite") {
   if (skia_use_vulkan) {
     public += skia_graphite_vk_public
     sources += skia_graphite_vk_sources
+    configs += [ ":use_skia_vulkan_headers" ]
   }
   if (skia_enable_precompile) {
     public += skia_graphite_precompile_public
@@ -1229,10 +1270,7 @@ optional("png_decode") {
   ]
 
   deps = [ "//third_party/libpng" ]
-  sources = [
-    "src/codec/SkIcoCodec.cpp",
-    "src/codec/SkPngCodec.cpp",
-  ]
+  sources = [ "src/codec/SkIcoCodec.cpp" ] + skia_codec_png
 }
 
 optional("png_encode") {
@@ -1266,22 +1304,24 @@ optional("typeface_freetype") {
   public_defines = [ "SK_TYPEFACE_FACTORY_FREETYPE" ]
   deps = [ "//third_party/freetype2" ]
   sources = skia_ports_freetype_sources
+  sources_for_tests = [ "tests/FontScanner_FreeTypeTest.cpp" ]
+}
+
+bazel_args = []
+if (is_mac && target_cpu == "arm64") {
+  # TODO: Normally the target toolchain would be specified with `--platforms` but that doesn't
+  # work. When building and running on an arm64 mac, setting `--host_platform` seems to do the
+  # right thing but may not be the right build configuration in the long run.
+  bazel_args += [ "--host_platform=//bazel/platform:mac_arm64_hermetic" ]
+}
+if (is_debug) {
+  bazel_args += [ "--compilation_mode=dbg" ]
+} else {
+  bazel_args += [ "--compilation_mode=opt" ]
 }
 
 if (skia_use_fontations) {
-  action("fontations_rust_side") {
-    bazel_args = [ "--with_fontations" ]
-    if (is_mac && target_cpu == "arm64") {
-      # TODO: Normally the target toolchain would be specified with `--platforms` but that doesn't
-      # work. When building and running on an arm64 mac, setting `--host_platform` seems to do the
-      # right thing but may not be the right build configuration in the long run.
-      bazel_args += [ "--host_platform=//bazel/platform:mac_arm64_hermetic" ]
-    }
-    if (is_debug) {
-      bazel_args += [ "--compilation_mode=dbg" ]
-    } else {
-      bazel_args += [ "--compilation_mode=opt" ]
-    }
+  action("fontations_rust_side_bazel_build") {
     script = "gn/bazel_build.py"
     sources = [
       "src/ports/fontations/BUILD.bazel",
@@ -1296,67 +1336,163 @@ if (skia_use_fontations) {
         ] + bazel_args
   }
 
-  action("fontations_ffi") {
-    bazel_args = [ "--with_fontations" ]
-    if (is_mac && target_cpu == "arm64") {
-      # TODO: Normally the target toolchain would be specified with `--platforms` but that doesn't
-      # work. When building and running on an arm64 mac, setting `--host_platform` seems to do the
-      # right thing but may not be the right build configuration in the long run.
-      bazel_args += [ "--host_platform=//bazel/platform:mac_arm64_hermetic" ]
-    }
-    if (is_debug) {
-      bazel_args += [ "--compilation_mode=dbg" ]
-    } else {
-      bazel_args += [ "--compilation_mode=opt" ]
-    }
+  # We only use Bazel to get the generated `.cc` and `.h` file and then compile
+  # them on GN/ninja side using `skia_source_set` below.  This ensures that the
+  # same C++ stdlib and compiler is used throughout the build (in some scenarios
+  # Bazel may end up using different ones).
+  action("fontations_ffi_bazel_build") {
     script = "gn/bazel_build.py"
     sources = [
       "src/ports/fontations/BUILD.bazel",
       "src/ports/fontations/src/ffi.rs",
     ]
     outputs = [
-      "$root_out_dir/libfontations_ffi.a",
       "$root_out_dir/src/ports/fontations/src/ffi.rs.h",
+      "$root_out_dir/src/ports/fontations/src/ffi.rs.cc",
     ]
     args = [
              "//src/ports/fontations:fontations_ffi",
-             rebase_path("//bazel-bin/src/ports/fontations/libfontations_ffi.a",
-                         root_build_dir),
 
              # we want the header to not simply be copied into the output directory,
              # but in the same path as the Bazel build uses.
              rebase_path("//bazel-bin/src/ports/fontations/src/ffi.rs.h",
                          root_build_dir) + "=src/ports/fontations/src/ffi.rs.h",
+             rebase_path("//bazel-bin/src/ports/fontations/src/ffi.rs.cc",
+                         root_build_dir) +
+                 "=src/ports/fontations/src/ffi.rs.cc",
            ] + bazel_args
+  }
+  config("fontations_ffi_public_config") {
+    include_dirs = [
+      # This is where `src/ports/fontations/src/ffi.rs.h` was put by Bazel
+      "$root_out_dir",
+    ]
+  }
+  config("fontations_ffi_private_config") {
+    include_dirs = [
+      # This entry is needed so that `ffi.rs.cc` can resolve
+      # `#include "src/ports/fontations/src/ffi.rs.h"`
+      ".",
+    ]
+  }
+  skia_source_set("fontations_ffi") {
+    deps = [
+      ":fontations_ffi_bazel_build",
+      ":fontations_rust_side_bazel_build",
+    ]
+    public = [ "${root_out_dir}/src/ports/fontations/src/ffi.rs.h" ]
+    sources = [ "${root_out_dir}/src/ports/fontations/src/ffi.rs.cc" ]
+    libs = [ "$root_out_dir/libbridge_rust_side.a" ]
+    public_configs = [ ":fontations_ffi_public_config" ]
+    configs = [ ":fontations_ffi_private_config" ]
   }
 }
 
 optional("typeface_fontations") {
   public_defines = [ "SK_TYPEFACE_FACTORY_FONTATIONS" ]
   enabled = skia_use_fontations
-  if (enabled) {
-    # this is where src/ports/fontations/src/ffi.rs.h was generated and exists.
-    public_include_dirs = [ "$root_out_dir" ]
-  }
-
-  deps = [
-    ":fontations_ffi",
-    ":fontations_rust_side",
-  ]
-
-  libs = [
-    "$root_out_dir/libfontations_ffi.a",
-    "$root_out_dir/libbridge_rust_side.a",
-  ]
-  sources = skia_ports_typeface_fontations_sources + [
-              "src/ports/SkFontScanner_fontations.cpp",
-              "src/ports/SkFontScanner_fontations.h",
-            ]
-
+  public_deps = [ ":fontations_ffi" ]
+  sources = skia_ports_typeface_fontations_sources
   sources_for_tests = [
     "tests/FontationsTest.cpp",
     "tests/FontationsFtCompTest.cpp",
+    "tests/FontScanner_FontationsTest.cpp",
   ]
+}
+
+if (skia_use_rust_png) {
+  # We only use Bazel to get the generated `.cc` and `.h` file and then compile
+  # them on GN/ninja side using `skia_source_set` below.  This ensures that the
+  # same C++ stdlib and compiler is used throughout the build (in some scenarios
+  # Bazel may end up using different ones).
+  action("rust_png_ffi_bazel_build") {
+    script = "gn/bazel_build.py"
+    sources = [
+      "experimental/rust_png/ffi/BUILD.bazel",
+      "experimental/rust_png/ffi/FFI.h",
+      "experimental/rust_png/ffi/FFI.rs",
+    ]
+    outputs = [
+      "$root_out_dir/librust_png_ffi_rs.a",
+      "$root_out_dir/experimental/rust_png/ffi/FFI.rs.h",
+      "$root_out_dir/experimental/rust_png/ffi/FFI.rs.cc",
+    ]
+    args =
+        [
+          "//experimental/rust_png/ffi:*",
+
+          rebase_path("//bazel-bin/experimental/rust_png/ffi/libffi_rs.a",
+                      root_build_dir) + "=librust_png_ffi_rs.a",
+
+          # we want the `cxx`-generated headers to not simply be copied into
+          # the output directory, but in the same path as the Bazel build
+          # uses.
+          rebase_path("//bazel-bin/experimental/rust_png/ffi/FFI.rs.h",
+                      root_build_dir) + "=experimental/rust_png/ffi/FFI.rs.h",
+          rebase_path("//bazel-bin/experimental/rust_png/ffi/FFI.rs.cc",
+                      root_build_dir) + "=experimental/rust_png/ffi/FFI.rs.cc",
+        ] + bazel_args
+  }
+  action("rust_png_cxx_core_bazel_build") {
+    script = "gn/bazel_build.py"
+    sources = [
+      "WORKSPACE.bazel",
+      "bazel/external/cxx/BUILD.bazel",
+      "bazel/external/cxx/BUILD.bazel.skia",
+    ]
+    outputs = [
+      "$root_out_dir/librust_png_cxx_core_lib.a",
+      "$root_out_dir/third_party/rust/cxx/v1/cxx.h",
+    ]
+    args = [
+             "@cxx//:core-lib",
+
+             rebase_path("//bazel-bin/external/cxx/libcore-lib.a",
+                         root_build_dir) + "=librust_png_cxx_core_lib.a",
+
+             # we want the `cxx.h` header to not simply be copied into the
+             # output directory, but in the same path as the Bazel build uses.
+             rebase_path(
+                     "//bazel-bin/external/cxx/_virtual_includes/core-lib/third_party/rust/cxx/v1/cxx.h",
+                     root_build_dir) + "=third_party/rust/cxx/v1/cxx.h",
+           ] + bazel_args
+  }
+  config("rust_png_cxx_bridge_public_config") {
+    include_dirs = [
+      # This is where `experimental/rust_png/ffi/FFI.rs.h` and
+      # `third_party/rust/cxx/v1/cxx.h` were put by Bazel
+      "$root_out_dir",
+    ]
+  }
+  config("rust_png_cxx_bridge_private_config") {
+    include_dirs = [
+      # This entry is needed so that `FFI.rs.cc` can resolve
+      # `#include "experimental/rust_png/ffi/FFI.h"`
+      ".",
+    ]
+  }
+  skia_source_set("rust_png_cxx_bridge") {
+    deps = [ ":rust_png_ffi_bazel_build" ]
+    public = [ "${root_out_dir}/experimental/rust_png/ffi/FFI.rs.h" ]
+    sources = [ "${root_out_dir}/experimental/rust_png/ffi/FFI.rs.cc" ]
+    libs = [ "$root_out_dir/librust_png_ffi_rs.a" ]
+    public_configs = [ ":rust_png_cxx_bridge_public_config" ]
+    configs = [ ":rust_png_cxx_bridge_private_config" ]
+  }
+}
+
+optional("rust_png") {
+  public_defines = [ "SK_USE_RUST_PNG" ]
+  enabled = skia_use_rust_png
+  public = skia_codec_rust_png_public  # From `gn/codec.gni`
+  sources = skia_codec_rust_png  # From `gn/codec.gni`
+  sources_for_tests = [ "tests/SkPngRustDecoderTest.cpp" ]
+
+  deps = [
+    ":rust_png_cxx_bridge",
+    ":rust_png_cxx_core_bazel_build",
+  ]
+  libs = [ "$root_out_dir/librust_png_cxx_core_lib.a" ]
 }
 
 optional("webp_decode") {
@@ -1406,7 +1542,8 @@ if (skia_enable_ganesh && skia_generate_workarounds) {
     # GN insists its outputs should go somewhere underneath root_out_dir, so we trick it with a
     # path that starts with root_out_dir and then uses ".." to back up into the src dir.
     output_file =
-        rebase_path("include/gpu/GrDriverBugWorkaroundsAutogen.h", root_out_dir)
+        rebase_path("include/gpu/ganesh/GrDriverBugWorkaroundsAutogen.h",
+                    root_out_dir)
 
     outputs = [ "$root_out_dir/$output_file" ]
     args = [
@@ -1429,6 +1566,7 @@ skia_component("skia") {
   public_deps = [
     ":fontmgr_FontConfigInterface",
     ":fontmgr_android",
+    ":fontmgr_android_ndk",
     ":fontmgr_custom_directory",
     ":fontmgr_custom_embedded",
     ":fontmgr_custom_empty",
@@ -1450,6 +1588,7 @@ skia_component("skia") {
   deps = [
     ":android_utils",
     ":avif",
+    ":crabbyavif",
     ":heif",
     ":hsw",
     ":jpeg_decode",
@@ -1481,7 +1620,7 @@ skia_component("skia") {
   sources += skia_effects_sources
   sources += skia_colorfilters_sources
   sources += skia_effects_imagefilter_sources
-  sources += skia_codec_core
+  sources += skia_codec_shared
   sources += skia_codec_decode_bmp
   sources += skia_encode_srcs
   sources += skia_sksl_core_sources
@@ -1493,8 +1632,6 @@ skia_component("skia") {
     "src/android/SkAnimatedImage.cpp",
     "src/codec/SkAndroidCodec.cpp",
     "src/codec/SkAndroidCodecAdapter.cpp",
-    "src/codec/SkEncodedInfo.cpp",
-    "src/codec/SkParseEncodedOrigin.cpp",
     "src/codec/SkSampledCodec.cpp",
     "src/ports/SkDiscardableMemory_none.cpp",
     "src/ports/SkMemory_malloc.cpp",
@@ -1523,7 +1660,6 @@ skia_component("skia") {
     sources += skia_ports_windows_sources + [
                  "src/ports/SkDebug_win.cpp",
                  "src/ports/SkImageGeneratorWIC.cpp",
-                 "src/ports/SkOSLibrary_win.cpp",
                ]
     libs += [
       "Ole32.lib",
@@ -1538,10 +1674,7 @@ skia_component("skia") {
       ]
     }
   } else {
-    sources += [
-      "src/ports/SkOSFile_posix.cpp",
-      "src/ports/SkOSLibrary_posix.cpp",
-    ]
+    sources += [ "src/ports/SkOSFile_posix.cpp" ]
     if (is_ios) {
       sources += [ "src/ports/SkOSFile_ios.h" ]
     }
@@ -1713,8 +1846,9 @@ group("modules") {
   }
 }
 
-config("our_vulkan_headers") {
+config("use_skia_vulkan_headers") {
   include_dirs = [ "include/third_party/vulkan" ]
+  defines = [ "SK_USE_INTERNAL_VULKAN_HEADERS" ]
 }
 
 config("vulkan_memory_allocator") {
@@ -1804,7 +1938,7 @@ if (skia_enable_tools) {
   skia_source_set("public_headers_warnings_check") {
     sources = [ "tools/public_headers_warnings_check.cpp" ]
     configs = [
-      ":our_vulkan_headers",
+      ":use_skia_vulkan_headers",
       ":cpp17",
     ]
     if (defined(skia_header_target_default_configs)) {
@@ -1913,19 +2047,30 @@ if (skia_enable_tools) {
     }
   }
 
+  test_lib("load_dynamic_library") {
+    configs = [ ":skia_private" ]
+    deps = [ ":skia" ]
+    sources = [ "tools/library/LoadDynamicLibrary.h" ]
+    if (is_win) {
+      sources += [ "tools/library/LoadDynamicLibrary_win.cpp" ]
+    } else {
+      sources += [ "tools/library/LoadDynamicLibrary_posix.cpp" ]
+    }
+  }
+
   test_lib("gpu_tool_utils") {
     public_defines = []
 
     # Bots and even devs may not have Vulkan headers, so put
     # include/third_party/vulkan on our path so they're always available.
-    all_dependent_configs = [ ":our_vulkan_headers" ]
+    all_dependent_configs = [ ":use_skia_vulkan_headers" ]
 
     defines = []
     if (skia_enable_discrete_gpu) {
       defines += [ "SK_ENABLE_DISCRETE_GPU" ]
     }
 
-    deps = []
+    deps = [ ":load_dynamic_library" ]
     public_deps = []
     sources = [
       "tools/gpu/BackendSurfaceFactory.cpp",
@@ -1947,6 +2092,8 @@ if (skia_enable_tools) {
       "tools/gpu/ProtectedUtils.h",
       "tools/gpu/ProxyUtils.cpp",
       "tools/gpu/ProxyUtils.h",
+      "tools/gpu/TestCanvas.cpp",
+      "tools/gpu/TestCanvas.h",
       "tools/gpu/TestContext.cpp",
       "tools/gpu/TestOps.cpp",
       "tools/gpu/TestOps.h",
@@ -1955,7 +2102,6 @@ if (skia_enable_tools) {
       "tools/gpu/mock/MockTestContext.cpp",
       "tools/text/gpu/TextBlobTools.cpp",
     ]
-    sources += skia_utils_gpu
 
     libs = []
     frameworks = []
@@ -2085,6 +2231,11 @@ if (skia_enable_tools) {
     deps = [ ":flags" ]
     public_deps = [ ":gpu_tool_utils" ]
   }
+  test_lib("common_flags_graphite") {
+    sources = [ "tools/flags/CommonFlagsGraphite.cpp" ]
+    deps = [ ":flags" ]
+    public_deps = [ ":gpu_tool_utils" ]
+  }
   test_lib("common_flags_images") {
     sources = [ "tools/flags/CommonFlagsImages.cpp" ]
     deps = [ ":flags" ]
@@ -2142,6 +2293,7 @@ if (skia_enable_tools) {
       "tools/TestFontDataProvider.h",
       "tools/ToolUtils.cpp",
       "tools/ToolUtils.h",
+      "tools/TsanSuppressions.cpp",
       "tools/UrlDataManager.cpp",
       "tools/UrlDataManager.h",
       "tools/debugger/DebugCanvas.cpp",
@@ -2305,6 +2457,8 @@ if (skia_enable_tools) {
       ":fontmgr_android_tests",
       ":fontmgr_fontconfig_tests",
       ":fontmgr_mac_ct_tests",
+      ":fontscanner_tests",
+      ":rust_png_tests",
       ":skia",
       ":test",
       ":tool_utils",
@@ -2383,7 +2537,7 @@ if (skia_enable_tools) {
     }
     test_app("imgcvt") {
       sources = [ "tools/imgcvt.cpp" ]
-      configs = [ ":our_vulkan_headers" ]
+      configs = [ ":use_skia_vulkan_headers" ]
       deps = [
         ":skia",
         "modules/skcms",
@@ -2401,6 +2555,7 @@ if (skia_enable_tools) {
       deps = [
         ":common_flags_config",
         ":common_flags_gpu",
+        ":common_flags_graphite",
         ":common_flags_images",
         ":compile_all_sksl_tests",
         ":flags",
@@ -2459,6 +2614,7 @@ if (skia_enable_tools) {
       ":bench",
       ":common_flags_config",
       ":common_flags_gpu",
+      ":common_flags_graphite",
       ":common_flags_images",
       ":flags",
       ":gm",
@@ -2475,7 +2631,7 @@ if (skia_enable_tools) {
 
   test_app("skpinfo") {
     sources = [ "tools/skpinfo.cpp" ]
-    configs = [ ":our_vulkan_headers" ]
+    configs = [ ":use_skia_vulkan_headers" ]
     deps = [
       ":flags",
       ":skia",
@@ -2774,6 +2930,12 @@ if (skia_enable_tools) {
     }
   }
 
+  if (is_ios && skia_enable_skottie) {
+    group("skottie_ios") {
+      deps = [ "tools/skottie_ios_app" ]
+    }
+  }
+
   test_lib("sk_app") {
     public_deps = [
       ":gpu_tool_utils",
@@ -2919,12 +3081,14 @@ if (skia_enable_tools) {
         "tools/viewer/ManyRectsSlide.cpp",
         "tools/viewer/MaterialShadowsSlide.cpp",
         "tools/viewer/MegaStrokeSlide.cpp",
+        "tools/viewer/MeshGradientSlide.cpp",
         "tools/viewer/MeshSlide.cpp",
         "tools/viewer/MixerSlide.cpp",
         "tools/viewer/MotionMarkSlide.cpp",
         "tools/viewer/PatchSlide.cpp",
         "tools/viewer/PathClipSlide.cpp",
         "tools/viewer/PathEffectsSlide.cpp",
+        "tools/viewer/PathLerpSlide.cpp",
         "tools/viewer/PathOverstrokeSlide.cpp",
         "tools/viewer/PathSlide.cpp",
         "tools/viewer/PathTessellatorsSlide.cpp",
@@ -2974,7 +3138,9 @@ if (skia_enable_tools) {
       libs = []
 
       deps = [
+        ":common_flags_config",
         ":common_flags_gpu",
+        ":common_flags_graphite",
         ":flags",
         ":gm",
         ":gpu_tool_utils",
@@ -3009,7 +3175,7 @@ if (skia_enable_tools) {
       # Bots and even devs may not have Vulkan headers, so put
       # include/third_party/vulkan on our path so they're always available.
       all_dependent_configs = [
-        ":our_vulkan_headers",
+        ":use_skia_vulkan_headers",
         ":vulkan_memory_allocator",
       ]
 
@@ -3018,7 +3184,16 @@ if (skia_enable_tools) {
       sources += [ "tools/gpu/vk/VkTestMemoryAllocator.cpp" ]
       sources += [ "tools/gpu/vk/VkTestUtils.h" ]
       sources += [ "tools/gpu/vk/VkTestUtils.cpp" ]
-      deps = [ ":skia" ]
+      deps = [
+        ":load_dynamic_library",
+        ":skia",
+      ]
+    }
+  }
+
+  if (is_ios && skia_use_metal && skia_enable_ganesh) {
+    group("minimal_ios_mtl_skia_app") {
+      deps = [ "experimental/minimal_ios_mtl_skia_app" ]
     }
   }
 
@@ -3393,18 +3568,6 @@ if (skia_enable_tools) {
       sources = [ "fuzz/oss_fuzz/FuzzParsePath.cpp" ]
       deps = []
     }
-  }
-}
-
-if (is_ios && skia_use_metal && skia_enable_ganesh) {
-  group("minimal_ios_mtl_skia_app") {
-    deps = [ "experimental/minimal_ios_mtl_skia_app" ]
-  }
-}
-
-if (is_ios && skia_enable_skottie) {
-  group("skottie_ios") {
-    deps = [ "tools/skottie_ios_app" ]
   }
 }
 

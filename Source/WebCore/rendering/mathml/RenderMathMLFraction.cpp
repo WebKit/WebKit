@@ -53,23 +53,23 @@ bool RenderMathMLFraction::isValid() const
 {
     // Verify whether the list of children is valid:
     // <mfrac> numerator denominator </mfrac>
-    auto* child = firstChildBox();
+    auto* child = firstInFlowChildBox();
     if (!child)
         return false;
-    child = child->nextSiblingBox();
-    return child && !child->nextSiblingBox();
+    child = child->nextInFlowSiblingBox();
+    return child && !child->nextInFlowSiblingBox();
 }
 
 RenderBox& RenderMathMLFraction::numerator() const
 {
     ASSERT(isValid());
-    return *firstChildBox();
+    return *firstInFlowChildBox();
 }
 
 RenderBox& RenderMathMLFraction::denominator() const
 {
     ASSERT(isValid());
-    return *firstChildBox()->nextSiblingBox();
+    return *firstInFlowChildBox()->nextInFlowSiblingBox();
 }
 
 LayoutUnit RenderMathMLFraction::defaultLineThickness() const
@@ -188,14 +188,19 @@ void RenderMathMLFraction::computePreferredLogicalWidths()
 
     LayoutUnit numeratorWidth = numerator().maxPreferredLogicalWidth() + marginIntrinsicLogicalWidthForChild(numerator());
     LayoutUnit denominatorWidth = denominator().maxPreferredLogicalWidth() + marginIntrinsicLogicalWidthForChild(denominator());
-    m_minPreferredLogicalWidth = m_maxPreferredLogicalWidth = std::max(numeratorWidth, denominatorWidth) + borderAndPaddingLogicalWidth();
+    m_minPreferredLogicalWidth = m_maxPreferredLogicalWidth = std::max(numeratorWidth, denominatorWidth);
+
+    auto sizes = sizeAppliedToMathContent(LayoutPhase::CalculatePreferredLogicalWidth);
+    applySizeToMathContent(LayoutPhase::CalculatePreferredLogicalWidth, sizes);
+
+    adjustPreferredLogicalWidthsForBorderAndPadding();
 
     setPreferredLogicalWidthsDirty(false);
 }
 
 LayoutUnit RenderMathMLFraction::horizontalOffset(RenderBox& child, MathMLFractionElement::FractionAlignment align) const
 {
-    LayoutUnit contentBoxInlineSize = logicalWidth() - borderAndPaddingLogicalWidth();
+    LayoutUnit contentBoxInlineSize = logicalWidth();
     LayoutUnit childMarginBoxInlineSize = child.marginStart() + child.logicalWidth() + child.marginEnd();
     switch (align) {
     case MathMLFractionElement::FractionAlignmentRight:
@@ -216,14 +221,16 @@ LayoutUnit RenderMathMLFraction::fractionAscent() const
 
     LayoutUnit numeratorAscent = ascentForChild(numerator()) + numerator().marginBefore();
     if (LayoutUnit thickness = lineThickness())
-        return borderAndPaddingBefore() + std::max(mathAxisHeight() + thickness / 2, numeratorAscent + fractionParameters().numeratorShiftUp);
+        return std::max(mathAxisHeight() + thickness / 2, numeratorAscent + fractionParameters().numeratorShiftUp);
 
-    return borderAndPaddingBefore() + numeratorAscent + stackParameters().numeratorShiftUp;
+    return numeratorAscent + stackParameters().numeratorShiftUp;
 }
 
 void RenderMathMLFraction::layoutBlock(bool relayoutChildren, LayoutUnit)
 {
     ASSERT(needsLayout());
+
+    insertPositionedChildrenIntoContainingBlock();
 
     if (!relayoutChildren && simplifiedLayout())
         return;
@@ -233,6 +240,8 @@ void RenderMathMLFraction::layoutBlock(bool relayoutChildren, LayoutUnit)
         return;
     }
 
+    layoutFloatingChildren();
+
     recomputeLogicalWidth();
 
     numerator().layoutIfNeeded();
@@ -241,13 +250,11 @@ void RenderMathMLFraction::layoutBlock(bool relayoutChildren, LayoutUnit)
 
     LayoutUnit numeratorMarginBoxInlineSize = numerator().marginStart() + numerator().logicalWidth() + numerator().marginEnd();
     LayoutUnit denominatorMarginBoxInlineSize = denominator().marginStart() + denominator().logicalWidth() + denominator().marginEnd();
-    setLogicalWidth(std::max(numeratorMarginBoxInlineSize, denominatorMarginBoxInlineSize) + borderAndPaddingLogicalWidth());
+    setLogicalWidth(std::max(numeratorMarginBoxInlineSize, denominatorMarginBoxInlineSize));
 
-    LayoutUnit borderAndPaddingLeft = style().isLeftToRightDirection() ? borderAndPaddingStart() : borderAndPaddingEnd();
-
-    LayoutUnit verticalOffset = borderAndPaddingBefore(); // This is the top of the renderer.
+    LayoutUnit verticalOffset = 0; // This is the top of the renderer.
     verticalOffset += numerator().marginBefore();
-    LayoutPoint numeratorLocation(borderAndPaddingLeft + numerator().marginLeft() + horizontalOffset(numerator(), element().numeratorAlignment()), verticalOffset);
+    LayoutPoint numeratorLocation(numerator().marginLeft() + horizontalOffset(numerator(), element().numeratorAlignment()), verticalOffset);
     numerator().setLocation(numeratorLocation);
 
     LayoutUnit denominatorAscent = ascentForChild(denominator()) + denominator().marginBefore();
@@ -256,16 +263,18 @@ void RenderMathMLFraction::layoutBlock(bool relayoutChildren, LayoutUnit)
     verticalOffset += parameters.denominatorShiftDown - denominatorAscent;
 
     verticalOffset += denominator().marginBefore();
-    LayoutPoint denominatorLocation(borderAndPaddingLeft + denominator().marginLeft() + horizontalOffset(denominator(), element().denominatorAlignment()), verticalOffset);
+    LayoutPoint denominatorLocation(denominator().marginLeft() + horizontalOffset(denominator(), element().denominatorAlignment()), verticalOffset);
     denominator().setLocation(denominatorLocation);
 
-    if (numerator().isOutOfFlowPositioned())
-        numerator().containingBlock()->insertPositionedObject(numerator());
-    if (denominator().isOutOfFlowPositioned())
-        denominator().containingBlock()->insertPositionedObject(denominator());
+    verticalOffset += denominator().logicalHeight() + denominator().marginAfter(); // This is the bottom of our renderer.
 
-    verticalOffset += denominator().logicalHeight() + denominator().marginAfter() + borderAndPaddingAfter(); // This is the bottom of our renderer.
     setLogicalHeight(verticalOffset);
+
+    auto sizes = sizeAppliedToMathContent(LayoutPhase::Layout);
+    auto shift = applySizeToMathContent(LayoutPhase::Layout, sizes);
+    shiftInFlowChildren(shift, 0);
+
+    adjustLayoutForBorderAndPadding();
 
     layoutPositionedObjects(relayoutChildren);
 
@@ -281,21 +290,22 @@ void RenderMathMLFraction::paint(PaintInfo& info, const LayoutPoint& paintOffset
     if (info.context().paintingDisabled() || info.phase != PaintPhase::Foreground || style().usedVisibility() != Visibility::Visible || !isValid() || !thickness)
         return;
 
-    LayoutUnit borderAndPaddingLeft = style().isLeftToRightDirection() ? borderAndPaddingStart() : borderAndPaddingEnd();
-    IntPoint adjustedPaintOffset = roundedIntPoint(paintOffset + location() + LayoutPoint(borderAndPaddingLeft, fractionAscent() - mathAxisHeight()));
+    LayoutUnit borderAndPaddingLeft = writingMode().isBidiLTR() ? borderAndPaddingStart() : borderAndPaddingEnd();
+    IntPoint adjustedPaintOffset = roundedIntPoint(paintOffset + location() + LayoutPoint(borderAndPaddingLeft, borderAndPaddingBefore() + fractionAscent() - mathAxisHeight()));
 
     GraphicsContextStateSaver stateSaver(info.context());
 
     info.context().setStrokeThickness(thickness);
     info.context().setStrokeStyle(StrokeStyle::SolidStroke);
     info.context().setStrokeColor(style().visitedDependentColorWithColorFilter(CSSPropertyColor));
+    // MathML Core says the fraction bar takes the full width of the content box.
     info.context().drawLine(adjustedPaintOffset, roundedIntPoint(LayoutPoint(adjustedPaintOffset.x() + logicalWidth() - borderAndPaddingLogicalWidth(), LayoutUnit(adjustedPaintOffset.y()))));
 }
 
 std::optional<LayoutUnit> RenderMathMLFraction::firstLineBaseline() const
 {
     if (isValid())
-        return LayoutUnit { roundf(static_cast<float>(fractionAscent())) };
+        return LayoutUnit { roundf(static_cast<float>(borderAndPaddingBefore() + fractionAscent())) };
     return RenderMathMLRow::firstLineBaseline();
 }
 

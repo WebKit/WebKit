@@ -90,7 +90,7 @@ private:
 #endif
     };
 
-    using Map = HashMap<AtomString, MapEntry>;
+    using Map = UncheckedKeyHashMap<AtomString, MapEntry>;
 
     mutable Map m_map;
 };

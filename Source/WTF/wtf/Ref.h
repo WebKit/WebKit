@@ -327,33 +327,8 @@ inline RefPtr<match_constness_t<Source, Target>> dynamicDowncast(Ref<Source, Ptr
     return static_reference_cast<match_constness_t<Source, Target>>(WTFMove(source));
 }
 
-template<typename T> struct RefDerefTraitsAllowingPartiallyDestroyed {
-    static ALWAYS_INLINE T* refIfNotNull(T* ptr)
-    {
-        if (LIKELY(ptr))
-            ptr->refAllowingPartiallyDestroyed();
-        return ptr;
-    }
-
-    static ALWAYS_INLINE T& ref(T& ref)
-    {
-        ref.refAllowingPartiallyDestroyed();
-        return ref;
-    }
-
-    static ALWAYS_INLINE void derefIfNotNull(T* ptr)
-    {
-        if (LIKELY(ptr))
-            ptr->derefAllowingPartiallyDestroyed();
-    }
-};
-
-template<typename T>
-using RefAllowingPartiallyDestroyed = Ref<T, RawPtrTraits<T>, RefDerefTraitsAllowingPartiallyDestroyed<T>>;
-
 } // namespace WTF
 
 using WTF::Ref;
-using WTF::RefAllowingPartiallyDestroyed;
 using WTF::adoptRef;
 using WTF::static_reference_cast;

@@ -36,7 +36,6 @@
 #include "CSSGradientValue.h"
 #include "CSSGridTemplateAreasValue.h"
 #include "CSSPropertyParserConsumer+Font.h"
-#include "CSSPropertyParserHelpers.h"
 #include "CSSRectValue.h"
 #include "CSSRegisteredCustomProperty.h"
 #include "CSSShadowValue.h"
@@ -68,7 +67,7 @@ namespace Style {
     static void applyValue##property(BuilderState&, CSSValue&)
 
 template<typename T> inline T forwardInheritedValue(T&& value) { return std::forward<T>(value); }
-inline Length forwardInheritedValue(const Length& value) { auto copy = value; return copy; }
+inline WebCore::Length forwardInheritedValue(const WebCore::Length& value) { auto copy = value; return copy; }
 inline LengthSize forwardInheritedValue(const LengthSize& value) { auto copy = value; return copy; }
 inline LengthBox forwardInheritedValue(const LengthBox& value) { auto copy = value; return copy; }
 inline GapLength forwardInheritedValue(const GapLength& value) { auto copy = value; return copy; }
@@ -109,8 +108,6 @@ public:
     DECLARE_PROPERTY_CUSTOM_HANDLERS(FontVariantNumeric);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(FontVariantEastAsian);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(GridTemplateAreas);
-    DECLARE_PROPERTY_CUSTOM_HANDLERS(GridTemplateColumns);
-    DECLARE_PROPERTY_CUSTOM_HANDLERS(GridTemplateRows);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(LetterSpacing);
 #if ENABLE(TEXT_AUTOSIZING)
     DECLARE_PROPERTY_CUSTOM_HANDLERS(LineHeight);
@@ -210,13 +207,6 @@ inline void BuilderCustom::applyValueZoom(BuilderState& builderState, CSSValue& 
     if (primitiveValue.valueID() == CSSValueNormal) {
         resetUsedZoom(builderState);
         builderState.setZoom(RenderStyle::initialZoom());
-    } else if (primitiveValue.valueID() == CSSValueReset) {
-        builderState.setUsedZoom(RenderStyle::initialZoom());
-        builderState.setZoom(RenderStyle::initialZoom());
-    } else if (primitiveValue.valueID() == CSSValueDocument) {
-        float docZoom = builderState.rootElementStyle() ? builderState.rootElementStyle()->zoom() : RenderStyle::initialZoom();
-        builderState.setUsedZoom(docZoom);
-        builderState.setZoom(docZoom);
     } else if (primitiveValue.isPercentage()) {
         resetUsedZoom(builderState);
         if (float percent = primitiveValue.resolveAsPercentage<float>(builderState.cssToLengthConversionData()))
@@ -245,7 +235,7 @@ inline void BuilderCustom::applyValueVerticalAlign(BuilderState& builderState, C
 
 inline void BuilderCustom::applyInheritTextIndent(BuilderState& builderState)
 {
-    builderState.style().setTextIndent(Length { builderState.parentStyle().textIndent() });
+    builderState.style().setTextIndent(WebCore::Length { builderState.parentStyle().textIndent() });
     builderState.style().setTextIndentLine(builderState.parentStyle().textIndentLine());
     builderState.style().setTextIndentType(builderState.parentStyle().textIndentType());
 }
@@ -259,7 +249,7 @@ inline void BuilderCustom::applyInitialTextIndent(BuilderState& builderState)
 
 inline void BuilderCustom::applyValueTextIndent(BuilderState& builderState, CSSValue& value)
 {
-    Length lengthOrPercentageValue;
+    WebCore::Length lengthPercentageValue;
     TextIndentLine textIndentLineValue = RenderStyle::initialTextIndentLine();
     TextIndentType textIndentTypeValue = RenderStyle::initialTextIndentType();
 
@@ -267,7 +257,7 @@ inline void BuilderCustom::applyValueTextIndent(BuilderState& builderState, CSSV
         for (auto& item : *valueList) {
             auto& primitiveValue = downcast<CSSPrimitiveValue>(item);
             if (!primitiveValue.valueID())
-                lengthOrPercentageValue = primitiveValue.convertToLength<FixedIntegerConversion | PercentConversion | CalculatedConversion>(builderState.cssToLengthConversionData());
+                lengthPercentageValue = primitiveValue.convertToLength<FixedIntegerConversion | PercentConversion | CalculatedConversion>(builderState.cssToLengthConversionData());
             else if (primitiveValue.valueID() == CSSValueEachLine)
                 textIndentLineValue = TextIndentLine::EachLine;
             else if (primitiveValue.valueID() == CSSValueHanging)
@@ -275,14 +265,14 @@ inline void BuilderCustom::applyValueTextIndent(BuilderState& builderState, CSSV
         }
     } else if (auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value)) {
         // Values coming from CSSTypedOM didn't go through the parser and may not have been converted to a CSSValueList.
-        lengthOrPercentageValue = primitiveValue->convertToLength<FixedIntegerConversion | PercentConversion | CalculatedConversion>(builderState.cssToLengthConversionData());
+        lengthPercentageValue = primitiveValue->convertToLength<FixedIntegerConversion | PercentConversion | CalculatedConversion>(builderState.cssToLengthConversionData());
     } else
         return;
 
-    if (lengthOrPercentageValue.isUndefined())
+    if (lengthPercentageValue.isUndefined())
         return;
 
-    builderState.style().setTextIndent(WTFMove(lengthOrPercentageValue));
+    builderState.style().setTextIndent(WTFMove(lengthPercentageValue));
     builderState.style().setTextIndentLine(textIndentLineValue);
     builderState.style().setTextIndentType(textIndentTypeValue);
 }
@@ -325,14 +315,14 @@ public:
             break;
         case Slice:
             // Masks have a different initial value for slices. Preserve the value of "0 fill" for backwards compatibility.
-            image.setImageSlices(type == BorderImage ? LengthBox(Length(100, LengthType::Percent), Length(100, LengthType::Percent), Length(100, LengthType::Percent), Length(100, LengthType::Percent)) : LengthBox(LengthType::Fixed));
+            image.setImageSlices(type == BorderImage ? LengthBox(WebCore::Length(100, LengthType::Percent), WebCore::Length(100, LengthType::Percent), WebCore::Length(100, LengthType::Percent), WebCore::Length(100, LengthType::Percent)) : LengthBox(LengthType::Fixed));
             image.setFill(false);
             break;
         case Width:
             // FIXME: This is a local variable to work around a bug in the GCC 8.1 Address Sanitizer.
             // Might be slightly less efficient when the type is not BorderImage since this is unused in that case.
             // Should be switched back to a temporary when possible. See https://webkit.org/b/186980
-            LengthBox lengthBox(Length(1, LengthType::Relative), Length(1, LengthType::Relative), Length(1, LengthType::Relative), Length(1, LengthType::Relative));
+            LengthBox lengthBox(WebCore::Length(1, LengthType::Relative), WebCore::Length(1, LengthType::Relative), WebCore::Length(1, LengthType::Relative), WebCore::Length(1, LengthType::Relative));
             // Masks have a different initial value for widths. They use an 'auto' value rather than trying to fit to the border.
             image.setBorderSlices(type == BorderImage ? lengthBox : LengthBox());
             image.setOverridesBorderWidths(false);
@@ -398,12 +388,12 @@ DEFINE_BORDER_IMAGE_MODIFIER_HANDLER(MaskBorder, Width)
 
 inline void BuilderCustom::applyInheritWordSpacing(BuilderState& builderState)
 {
-    builderState.style().setWordSpacing(Length { builderState.parentStyle().computedWordSpacing() });
+    builderState.style().setWordSpacing(WebCore::Length { builderState.parentStyle().computedWordSpacing() });
 }
 
 inline void BuilderCustom::applyInheritLetterSpacing(BuilderState& builderState)
 {
-    builderState.style().setLetterSpacing(Length { builderState.parentStyle().computedLetterSpacing() });
+    builderState.style().setLetterSpacing(WebCore::Length { builderState.parentStyle().computedLetterSpacing() });
 }
 
 inline void BuilderCustom::applyInitialLetterSpacing(BuilderState& builderState)
@@ -448,8 +438,8 @@ inline void BuilderCustom::applyValueLetterSpacing(BuilderState& builderState, C
 
 inline void BuilderCustom::applyInheritLineHeight(BuilderState& builderState)
 {
-    builderState.style().setLineHeight(Length { builderState.parentStyle().lineHeight() });
-    builderState.style().setSpecifiedLineHeight(Length { builderState.parentStyle().specifiedLineHeight() });
+    builderState.style().setLineHeight(WebCore::Length { builderState.parentStyle().lineHeight() });
+    builderState.style().setSpecifiedLineHeight(WebCore::Length { builderState.parentStyle().specifiedLineHeight() });
 }
 
 inline void BuilderCustom::applyInitialLineHeight(BuilderState& builderState)
@@ -512,7 +502,7 @@ inline void BuilderCustom::applyValueLineHeight(BuilderState& builderState, CSSV
 
     auto lineHeight = BuilderConverter::convertLineHeight(builderState, value, 1);
 
-    Length computedLineHeight;
+    WebCore::Length computedLineHeight;
     if (lineHeight.isNormal())
         computedLineHeight = lineHeight;
     else {
@@ -592,7 +582,7 @@ inline void BuilderCustom::applyValueCaretColor(BuilderState& builderState, CSSV
 
 inline void BuilderCustom::applyInitialClip(BuilderState& builderState)
 {
-    builderState.style().setClip(Length(), Length(), Length(), Length());
+    builderState.style().setClip(WebCore::Length(), WebCore::Length(), WebCore::Length(), WebCore::Length());
     builderState.style().setHasClip(false);
 }
 
@@ -601,8 +591,8 @@ inline void BuilderCustom::applyInheritClip(BuilderState& builderState)
     auto& parentStyle = builderState.parentStyle();
     if (!parentStyle.hasClip())
         return applyInitialClip(builderState);
-    builderState.style().setClip(Length { parentStyle.clipTop() }, Length { parentStyle.clipRight() },
-        Length { parentStyle.clipBottom() }, Length { parentStyle.clipLeft() });
+    builderState.style().setClip(WebCore::Length { parentStyle.clipTop() }, WebCore::Length { parentStyle.clipRight() },
+        WebCore::Length { parentStyle.clipBottom() }, WebCore::Length { parentStyle.clipLeft() });
     builderState.style().setHasClip(true);
 }
 
@@ -636,7 +626,7 @@ inline void BuilderCustom::applyValueWebkitLocale(BuilderState& builderState, CS
 
 inline void BuilderCustom::applyValueWritingMode(BuilderState& builderState, CSSValue& value)
 {
-    builderState.setWritingMode(fromCSSValue<WritingMode>(value));
+    builderState.setWritingMode(fromCSSValue<StyleWritingMode>(value));
     builderState.style().setHasExplicitlySetWritingMode();
 }
 
@@ -693,10 +683,10 @@ inline void BuilderCustom::applyTextOrBoxShadowValue(BuilderState& builderState,
     for (auto& item : downcast<CSSValueList>(value)) {
         auto& shadowValue = downcast<CSSShadowValue>(item);
         auto& conversionData = builderState.cssToLengthConversionData();
-        auto x = shadowValue.x->resolveAsLength<Length>(conversionData);
-        auto y = shadowValue.y->resolveAsLength<Length>(conversionData);
-        auto blur = shadowValue.blur ? shadowValue.blur->resolveAsLength<Length>(conversionData) : Length(0, LengthType::Fixed);
-        auto spread = shadowValue.spread ? shadowValue.spread->resolveAsLength<Length>(conversionData) : Length(0, LengthType::Fixed);
+        auto x = shadowValue.x->resolveAsLength<WebCore::Length>(conversionData);
+        auto y = shadowValue.y->resolveAsLength<WebCore::Length>(conversionData);
+        auto blur = shadowValue.blur ? shadowValue.blur->resolveAsLength<WebCore::Length>(conversionData) : WebCore::Length(0, LengthType::Fixed);
+        auto spread = shadowValue.spread ? shadowValue.spread->resolveAsLength<WebCore::Length>(conversionData) : WebCore::Length(0, LengthType::Fixed);
         ShadowStyle shadowStyle = shadowValue.style && shadowValue.style->valueID() == CSSValueInset ? ShadowStyle::Inset : ShadowStyle::Normal;
         // If no color value is specified, the color is currentColor
         auto color = StyleColor::currentColor();
@@ -1147,7 +1137,9 @@ inline void BuilderCustom::applyValueCursor(BuilderState& builderState, CSSValue
     auto& list = downcast<CSSValueList>(value);
     for (auto& item : list) {
         if (auto* image = dynamicDowncast<CSSCursorImageValue>(item)) {
-            builderState.style().addCursor(builderState.createStyleImage(*image), image->hotSpot());
+            auto styleImage = image->createStyleImage(builderState);
+            auto hotSpot = styleImage->hotSpot();
+            builderState.style().addCursor(WTFMove(styleImage), hotSpot);
             continue;
         }
 
@@ -1265,13 +1257,19 @@ inline void BuilderCustom::applyValueContent(BuilderState& builderState, CSSValu
             builderState.style().setHasAttrContent();
         else
             const_cast<RenderStyle&>(builderState.parentStyle()).setHasAttrContent();
-        QualifiedName attr(nullAtom(), primitiveValue.stringValue().impl(), nullAtom());
+
+        auto value = primitiveValue.cssAttrValue();
+        QualifiedName attr(nullAtom(), value->attributeName().impl(), nullAtom());
         const AtomString& attributeValue = builderState.element() ? builderState.element()->getAttribute(attr) : nullAtom();
 
         // Register the fact that the attribute value affects the style.
         builderState.registerContentAttribute(attr.localName());
 
-        return attributeValue.isNull() ? emptyAtom() : attributeValue.impl();
+        if (attributeValue.isNull()) {
+            auto fallback = dynamicDowncast<CSSPrimitiveValue>(value->fallback());
+            return fallback && fallback->isString() ? fallback->stringValue().impl() : emptyAtom();
+        }
+        return attributeValue.impl();
     };
 
     bool didSet = false;
@@ -1535,9 +1533,16 @@ inline float BuilderCustom::smallerFontSize(float size)
 
 inline float BuilderCustom::determineRubyTextSizeMultiplier(BuilderState& builderState)
 {
-    if (builderState.style().rubyPosition() != RubyPosition::InterCharacter)
+    if (!builderState.style().isInterCharacterRubyPosition())
         return 0.5f;
 
+    auto rubyPosition = builderState.style().rubyPosition();
+    if (rubyPosition == RubyPosition::InterCharacter) {
+        // If the writing mode of the enclosing ruby container is vertical, 'inter-character' value has the same effect as over.
+        return !builderState.parentStyle().writingMode().isVerticalTypographic() ? 0.3f : 0.5f;
+    }
+
+    // Legacy inter-character behavior.
     // FIXME: This hack is to ensure tone marks are the same size as
     // the bopomofo. This code will go away if we make a special renderer
     // for the tone marks eventually.
@@ -1579,7 +1584,7 @@ inline void BuilderCustom::applyValueFontStyle(BuilderState& state, CSSValue& va
 
     std::optional<FontSelectionValue> slope;
     if (!CSSPropertyParserHelpers::isSystemFontShorthand(keyword))
-        slope = BuilderConverter::convertFontStyleFromValue(value);
+        slope = BuilderConverter::convertFontStyleFromValue(state, value);
 
     applyFontStyle(state, slope, keyword == CSSValueItalic ? FontStyleAxis::ital : FontStyleAxis::slnt);
 }
@@ -1681,69 +1686,12 @@ inline void BuilderCustom::applyValueGridTemplateAreas(BuilderState& builderStat
     auto& gridTemplateAreasValue = downcast<CSSGridTemplateAreasValue>(value);
     const NamedGridAreaMap& newNamedGridAreas = gridTemplateAreasValue.gridAreaMap();
 
-    NamedGridLinesMap implicitNamedGridColumnLines;
-    NamedGridLinesMap implicitNamedGridRowLines;
-    BuilderConverter::createImplicitNamedGridLinesFromGridArea(newNamedGridAreas, implicitNamedGridColumnLines, GridTrackSizingDirection::ForColumns);
-    BuilderConverter::createImplicitNamedGridLinesFromGridArea(newNamedGridAreas, implicitNamedGridRowLines, GridTrackSizingDirection::ForRows);
-    builderState.style().setImplicitNamedGridColumnLines(implicitNamedGridColumnLines);
-    builderState.style().setImplicitNamedGridRowLines(implicitNamedGridRowLines);
+    builderState.style().setImplicitNamedGridColumnLines(BuilderConverter::createImplicitNamedGridLinesFromGridArea(builderState, newNamedGridAreas, GridTrackSizingDirection::ForColumns));
+    builderState.style().setImplicitNamedGridRowLines(BuilderConverter::createImplicitNamedGridLinesFromGridArea(builderState, newNamedGridAreas, GridTrackSizingDirection::ForRows));
 
     builderState.style().setNamedGridArea(gridTemplateAreasValue.gridAreaMap());
     builderState.style().setNamedGridAreaRowCount(gridTemplateAreasValue.rowCount());
     builderState.style().setNamedGridAreaColumnCount(gridTemplateAreasValue.columnCount());
-}
-
-#define SET_TRACKS_DATA_INTERNAL(trackList, style, parentStyle, TrackType) \
-    ASSERT(trackList || parentStyle); \
-    style.setGrid##TrackType##List(trackList ? *trackList : parentStyle->grid##TrackType##List()); \
-
-#define SET_INHERIT_TRACKS_DATA(style, parentStyle, TrackType) \
-    GridTrackList* trackList = nullptr; \
-    const RenderStyle* parentStylePointer = &parentStyle; \
-    SET_TRACKS_DATA_INTERNAL(trackList, style, parentStylePointer, TrackType)
-
-#define SET_TRACKS_DATA(trackList, style, TrackType) \
-    GridTrackList* trackListPointer = &trackList; \
-    const RenderStyle* parentStyle = nullptr; \
-    SET_TRACKS_DATA_INTERNAL(trackListPointer, style, parentStyle, TrackType)
-
-inline void BuilderCustom::applyInitialGridTemplateColumns(BuilderState& builderState)
-{
-    GridTrackList initialTrackList;
-    SET_TRACKS_DATA(initialTrackList, builderState.style(), Column);
-}
-
-inline void BuilderCustom::applyInheritGridTemplateColumns(BuilderState& builderState)
-{
-    SET_INHERIT_TRACKS_DATA(builderState.style(), builderState.parentStyle(), Column);
-}
-
-inline void BuilderCustom::applyValueGridTemplateColumns(BuilderState& builderState, CSSValue& value)
-{
-    GridTrackList trackList;
-    if (!BuilderConverter::createGridTrackList(value, trackList, builderState))
-        return;
-    SET_TRACKS_DATA(trackList, builderState.style(), Column);
-}
-
-inline void BuilderCustom::applyInitialGridTemplateRows(BuilderState& builderState)
-{
-    GridTrackList initialTrackList;
-    SET_TRACKS_DATA(initialTrackList, builderState.style(), Row);
-}
-
-inline void BuilderCustom::applyInheritGridTemplateRows(BuilderState& builderState)
-{
-    SET_INHERIT_TRACKS_DATA(builderState.style(), builderState.parentStyle(), Row);
-}
-
-inline void BuilderCustom::applyValueGridTemplateRows(BuilderState& builderState, CSSValue& value)
-{
-    GridTrackList trackList;
-    if (!BuilderConverter::createGridTrackList(value, trackList, builderState))
-        return;
-
-    SET_TRACKS_DATA(trackList, builderState.style(), Row);
 }
 
 inline void BuilderCustom::applyValueStrokeWidth(BuilderState& builderState, CSSValue& value)
@@ -1825,7 +1773,7 @@ inline void BuilderCustom::applyValueContainIntrinsicWidth(BuilderState& builder
 
         if (primitiveValue->isLength()) {
             style.setContainIntrinsicWidthType(ContainIntrinsicSizeType::Length);
-            auto width = primitiveValue->resolveAsLength<Length>(builderState.cssToLengthConversionData().copyWithAdjustedZoom(1.0f));
+            auto width = primitiveValue->resolveAsLength<WebCore::Length>(builderState.cssToLengthConversionData().copyWithAdjustedZoom(1.0f));
             style.setContainIntrinsicWidth(width);
         }
         return;
@@ -1841,7 +1789,7 @@ inline void BuilderCustom::applyValueContainIntrinsicWidth(BuilderState& builder
     else {
         ASSERT(downcast<CSSPrimitiveValue>(pair->second()).isLength());
         style.setContainIntrinsicWidthType(ContainIntrinsicSizeType::AutoAndLength);
-        auto lengthValue = downcast<CSSPrimitiveValue>(pair->second()).resolveAsLength<Length>(builderState.cssToLengthConversionData().copyWithAdjustedZoom(1.0f));
+        auto lengthValue = downcast<CSSPrimitiveValue>(pair->second()).resolveAsLength<WebCore::Length>(builderState.cssToLengthConversionData().copyWithAdjustedZoom(1.0f));
         style.setContainIntrinsicWidth(lengthValue);
     }
 }
@@ -1869,7 +1817,7 @@ inline void BuilderCustom::applyValueContainIntrinsicHeight(BuilderState& builde
 
         if (primitiveValue->isLength()) {
             style.setContainIntrinsicHeightType(ContainIntrinsicSizeType::Length);
-            auto height = primitiveValue->resolveAsLength<Length>(builderState.cssToLengthConversionData().copyWithAdjustedZoom(1.0f));
+            auto height = primitiveValue->resolveAsLength<WebCore::Length>(builderState.cssToLengthConversionData().copyWithAdjustedZoom(1.0f));
             style.setContainIntrinsicHeight(height);
         }
         return;
@@ -1885,7 +1833,7 @@ inline void BuilderCustom::applyValueContainIntrinsicHeight(BuilderState& builde
     else {
         ASSERT(downcast<CSSPrimitiveValue>(pair->second()).isLength());
         style.setContainIntrinsicHeightType(ContainIntrinsicSizeType::AutoAndLength);
-        auto lengthValue = downcast<CSSPrimitiveValue>(pair->second()).resolveAsLength<Length>(builderState.cssToLengthConversionData().copyWithAdjustedZoom(1.0f));
+        auto lengthValue = downcast<CSSPrimitiveValue>(pair->second()).resolveAsLength<WebCore::Length>(builderState.cssToLengthConversionData().copyWithAdjustedZoom(1.0f));
         style.setContainIntrinsicHeight(lengthValue);
     }
 }

@@ -30,6 +30,9 @@
 
 #include "ZycoreLibC.h"
 #include "ZycoreList.h"
+#include <wtf/Compiler.h>
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 #if defined(ZYAN_CLANG)
 #pragma clang diagnostic push
@@ -691,5 +694,7 @@ ZyanStatus ZyanListGetSize(const ZyanList* list, ZyanUSize* size)
 #endif
 
 /* ============================================================================================== */
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif /* ENABLE(ZYDIS) */

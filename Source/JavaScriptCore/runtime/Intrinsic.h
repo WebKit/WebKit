@@ -179,6 +179,7 @@ namespace JSC {
     macro(AtomicsLoadIntrinsic) \
     macro(AtomicsNotifyIntrinsic) \
     macro(AtomicsOrIntrinsic) \
+    macro(AtomicsPauseIntrinsic) \
     macro(AtomicsStoreIntrinsic) \
     macro(AtomicsSubIntrinsic) \
     macro(AtomicsWaitIntrinsic) \
@@ -187,6 +188,7 @@ namespace JSC {
     macro(ParseIntIntrinsic) \
     macro(FunctionToStringIntrinsic) \
     macro(FunctionBindIntrinsic) \
+    macro(IteratorHelperCreateIntrinsic) \
     \
     /* Getter intrinsics. */ \
     macro(TypedArrayLengthIntrinsic) \

@@ -30,7 +30,7 @@
 namespace WebKit {
 
 struct WebExtensionTabIdentifierType;
-using WebExtensionTabIdentifier = LegacyNullableObjectIdentifier<WebExtensionTabIdentifierType>;
+using WebExtensionTabIdentifier = ObjectIdentifier<WebExtensionTabIdentifierType>;
 
 namespace WebExtensionTabConstants {
 
@@ -69,19 +69,17 @@ inline std::optional<WebExtensionTabIdentifier> toWebExtensionTabIdentifier(doub
         return std::nullopt;
     }
 
-    WebExtensionTabIdentifier result { static_cast<uint64_t>(identifier) };
-    if (!result.isValid()) {
+    auto identifierAsUint64 = static_cast<uint64_t>(identifier);
+    if (!WebExtensionTabIdentifier::isValidIdentifier(identifierAsUint64)) {
         ASSERT_NOT_REACHED();
         return WebExtensionTabConstants::NoneIdentifier;
     }
 
-    return result;
+    return WebExtensionTabIdentifier { identifierAsUint64 };
 }
 
 inline double toWebAPI(const WebExtensionTabIdentifier& identifier)
 {
-    ASSERT(identifier.isValid());
-
     if (isNone(identifier))
         return WebExtensionTabConstants::None;
 

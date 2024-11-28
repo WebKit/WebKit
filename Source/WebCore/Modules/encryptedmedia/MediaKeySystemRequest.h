@@ -45,12 +45,11 @@ template <typename IDLType> class DOMPromiseDeferred;
 
 class MediaKeySystemRequest : public RefCounted<MediaKeySystemRequest>, public ActiveDOMObject, public Identified<MediaKeySystemRequestIdentifier> {
 public:
-    WEBCORE_EXPORT static Ref<MediaKeySystemRequest> create(Document&, const String& keySystem, Ref<DeferredPromise>&&);
-    virtual ~MediaKeySystemRequest();
-
-    // ActiveDOMObject.
     void ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }
+
+    WEBCORE_EXPORT static Ref<MediaKeySystemRequest> create(Document&, const String& keySystem, Ref<DeferredPromise>&&);
+    virtual ~MediaKeySystemRequest();
 
     void setAllowCallback(CompletionHandler<void(Ref<DeferredPromise>&&)>&& callback) { m_allowCompletionHandler = WTFMove(callback); }
     WEBCORE_EXPORT void start();

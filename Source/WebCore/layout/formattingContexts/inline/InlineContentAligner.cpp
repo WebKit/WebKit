@@ -36,7 +36,7 @@ static inline void shiftDisplayBox(InlineDisplay::Box& displayBox, InlineLayoutU
 {
     if (!offset)
         return;
-    auto isHorizontalWritingMode = inlineFormattingContext.root().style().isHorizontalWritingMode();
+    auto isHorizontalWritingMode = inlineFormattingContext.root().style().writingMode().isHorizontal();
     isHorizontalWritingMode ? displayBox.moveHorizontally(offset) : displayBox.moveVertically(offset);
     if (!displayBox.isTextOrSoftLineBreak() && !displayBox.isRootInlineBox())
         inlineFormattingContext.geometryForBox(displayBox.layoutBox()).moveHorizontally(LayoutUnit { offset });
@@ -50,7 +50,7 @@ static inline void expandInlineBox(InlineLayoutUnit expansion, InlineDisplay::Bo
     }
     if (!expansion)
         return;
-    inlineFormattingContext.root().style().isHorizontalWritingMode() ? displayBox.expandHorizontally(expansion) : displayBox.expandVertically(expansion);
+    inlineFormattingContext.root().writingMode().isHorizontal() ? displayBox.expandHorizontally(expansion) : displayBox.expandVertically(expansion);
     auto& boxGeometry = inlineFormattingContext.geometryForBox(displayBox.layoutBox());
     boxGeometry.setContentBoxWidth(boxGeometry.contentBoxWidth() + LayoutUnit { expansion });
 }
@@ -65,7 +65,7 @@ struct InlineBoxIndexAndExpansion {
     size_t index { 0 };
     InlineLayoutUnit expansion { 0.f };
 };
-static InlineBoxIndexAndExpansion expandInlineBoxWithDescendants(size_t inlineBoxIndex, InlineDisplay::Boxes& displayBoxes, const HashMap<const Box*, InlineLayoutUnit>& alignmentOffsetList,  InlineFormattingContext& inlineFormattingContext)
+static InlineBoxIndexAndExpansion expandInlineBoxWithDescendants(size_t inlineBoxIndex, InlineDisplay::Boxes& displayBoxes, const UncheckedKeyHashMap<const Box*, InlineLayoutUnit>& alignmentOffsetList,  InlineFormattingContext& inlineFormattingContext)
 {
     if (inlineBoxIndex >= displayBoxes.size() || !displayBoxes[inlineBoxIndex].isInlineBox()) {
         ASSERT_NOT_REACHED();
@@ -95,7 +95,7 @@ struct BaseIndexAndOffset {
     size_t index { 0 };
     InlineLayoutUnit offset { 0.f };
 };
-static BaseIndexAndOffset shiftRubyBaseContentByAlignmentOffset(BaseIndexAndOffset baseIndexAndOffset, InlineDisplay::Boxes& displayBoxes, const HashMap<const Box*, InlineLayoutUnit>& alignmentOffsetList, InlineContentAligner::AdjustContentOnlyInsideRubyBase adjustContentOnlyInsideRubyBase, InlineFormattingContext& inlineFormattingContext)
+static BaseIndexAndOffset shiftRubyBaseContentByAlignmentOffset(BaseIndexAndOffset baseIndexAndOffset, InlineDisplay::Boxes& displayBoxes, const UncheckedKeyHashMap<const Box*, InlineLayoutUnit>& alignmentOffsetList, InlineContentAligner::AdjustContentOnlyInsideRubyBase adjustContentOnlyInsideRubyBase, InlineFormattingContext& inlineFormattingContext)
 {
     auto baseIndex = baseIndexAndOffset.index;
     if (baseIndex >= displayBoxes.size() || !displayBoxes[baseIndex].layoutBox().isRubyBase()) {
@@ -334,7 +334,7 @@ InlineLayoutUnit InlineContentAligner::applyRubyAlign(RubyAlign rubyAlign, Line:
     }
 }
 
-void InlineContentAligner::applyRubyBaseAlignmentOffset(InlineDisplay::Boxes& displayBoxes, const HashMap<const Box*, InlineLayoutUnit>& alignmentOffsetList, AdjustContentOnlyInsideRubyBase adjustContentOnlyInsideRubyBase, InlineFormattingContext& inlineFormattingContext)
+void InlineContentAligner::applyRubyBaseAlignmentOffset(InlineDisplay::Boxes& displayBoxes, const UncheckedKeyHashMap<const Box*, InlineLayoutUnit>& alignmentOffsetList, AdjustContentOnlyInsideRubyBase adjustContentOnlyInsideRubyBase, InlineFormattingContext& inlineFormattingContext)
 {
     ASSERT(!alignmentOffsetList.isEmpty());
 

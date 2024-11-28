@@ -40,17 +40,12 @@ namespace WebKit {
 class WebSharedWorkerServer;
 }
 
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::WebSharedWorkerServer> : std::true_type { };
-}
-
 namespace PAL {
 class SessionID;
 }
 
 namespace WebCore {
-
+class Site;
 struct ClientOrigin;
 struct WorkerFetchResult;
 struct WorkerInitializationData;
@@ -84,21 +79,21 @@ public:
     void terminateContextConnectionWhenPossible(const WebCore::RegistrableDomain&, WebCore::ProcessIdentifier);
     void addContextConnection(WebSharedWorkerServerToContextConnection&);
     void removeContextConnection(WebSharedWorkerServerToContextConnection&);
-    void addConnection(std::unique_ptr<WebSharedWorkerServerConnection>&&);
+    void addConnection(Ref<WebSharedWorkerServerConnection>&&);
     void removeConnection(WebCore::ProcessIdentifier);
 
 private:
-    void createContextConnection(const WebCore::RegistrableDomain&, std::optional<WebCore::ProcessIdentifier> requestingProcessIdentifier);
+    void createContextConnection(const WebCore::Site&, std::optional<WebCore::ProcessIdentifier> requestingProcessIdentifier);
     bool needsContextConnectionForRegistrableDomain(const WebCore::RegistrableDomain&) const;
     void contextConnectionCreated(WebSharedWorkerServerToContextConnection&);
     void didFinishFetchingSharedWorkerScript(WebSharedWorker&, WebCore::WorkerFetchResult&&, WebCore::WorkerInitializationData&&);
     void shutDownSharedWorker(const WebCore::SharedWorkerKey&);
 
     CheckedRef<NetworkSession> m_session;
-    HashMap<WebCore::ProcessIdentifier, std::unique_ptr<WebSharedWorkerServerConnection>> m_connections;
+    HashMap<WebCore::ProcessIdentifier, Ref<WebSharedWorkerServerConnection>> m_connections;
     HashMap<WebCore::RegistrableDomain, WeakRef<WebSharedWorkerServerToContextConnection>> m_contextConnections;
     HashSet<WebCore::RegistrableDomain> m_pendingContextConnectionDomains;
-    HashMap<WebCore::SharedWorkerKey, std::unique_ptr<WebSharedWorker>> m_sharedWorkers;
+    HashMap<WebCore::SharedWorkerKey, Ref<WebSharedWorker>> m_sharedWorkers;
 };
 
 } // namespace WebKit

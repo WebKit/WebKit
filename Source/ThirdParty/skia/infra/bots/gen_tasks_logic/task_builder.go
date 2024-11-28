@@ -12,6 +12,7 @@ import (
 
 	"go.skia.org/infra/go/cipd"
 	"go.skia.org/infra/task_scheduler/go/specs"
+	"go.skia.org/skia/infra/bots/deps"
 )
 
 // taskBuilder is a helper for creating a task.
@@ -166,6 +167,24 @@ func (b *taskBuilder) cipd(pkgs ...*specs.CipdPackage) {
 	}
 }
 
+// cipdFromDEPS adds a CIPD package, which is pinned in DEPS, to the task.
+func (b *taskBuilder) cipdFromDEPS(pkgName string) {
+	dep, err := deps.Get(pkgName)
+	if err != nil {
+		panic(err)
+	}
+	taskDriverPkg := &cipd.Package{
+		// Note: the DEPS parser normalizes dependency IDs, which includes
+		// stripping suffixes like "/${platform}" or ".git". When specifying a
+		// package to a Swarming task, those suffixes are necessary, so we use
+		// the passed-in package name, which we assume is correct and complete.
+		Name:    pkgName,
+		Path:    dep.Path,
+		Version: dep.Version,
+	}
+	b.cipd(taskDriverPkg)
+}
+
 // useIsolatedAssets returns true if this task should use assets which are
 // isolated rather than downloading directly from CIPD.
 func (b *taskBuilder) useIsolatedAssets() bool {
@@ -213,8 +232,9 @@ func (b *taskBuilder) asset(assets ...string) {
 // usesCCache adds attributes to tasks which need bazel (via bazelisk).
 func (b *taskBuilder) usesBazel(hostOSArch string) {
 	archToPkg := map[string]string{
-		"linux_x64": "bazelisk_linux_amd64",
-		"mac_x64":   "bazelisk_mac_amd64",
+		"linux_x64":   "bazelisk_linux_amd64",
+		"mac_x64":     "bazelisk_mac_amd64",
+		"windows_x64": "bazelisk_win_amd64",
 	}
 	pkg, ok := archToPkg[hostOSArch]
 	if !ok {
@@ -229,16 +249,25 @@ func (b *taskBuilder) usesCCache() {
 	b.cache(CACHES_CCACHE...)
 }
 
+// shellsOutToBazel returns true if this task normally uses GN but some step
+// shells out to Bazel to build stuff, e.g. rust code.
+func (b *taskBuilder) shellsOutToBazel() bool {
+	return b.extraConfig("Vello", "Fontations", "RustPNG")
+}
+
 // usesGit adds attributes to tasks which use git.
 func (b *taskBuilder) usesGit() {
 	b.cache(CACHES_GIT...)
-	if b.matchOs("Win") || b.matchExtraConfig("Win") {
+	if b.isWindows() {
 		b.cipd(specs.CIPD_PKGS_GIT_WINDOWS_AMD64...)
-	} else if b.matchOs("Mac") || b.matchExtraConfig("Mac") {
+	} else if b.isMac() {
 		b.cipd(specs.CIPD_PKGS_GIT_MAC_AMD64...)
-	} else {
+	} else if b.isLinux() {
 		b.cipd(specs.CIPD_PKGS_GIT_LINUX_AMD64...)
+	} else {
+		panic("Unknown host OS for " + b.Name)
 	}
+	b.addToPATH("cipd_bin_packages", "cipd_bin_packages/bin")
 }
 
 // usesGo adds attributes to tasks which use go. Recipes should use
@@ -356,26 +385,31 @@ func (b *taskBuilder) getRecipeProps() string {
 
 // cipdPlatform returns the CIPD platform for this task.
 func (b *taskBuilder) cipdPlatform() string {
-	if b.role("Upload") {
-		return cipd.PlatformLinuxAmd64
-	} else if b.matchOs("Win") || b.matchExtraConfig("Win") {
-		return cipd.PlatformWindowsAmd64
-	} else if b.matchOs("Mac") {
-		return cipd.PlatformMacAmd64
-	} else if b.matchArch("Arm64") {
-		return cipd.PlatformLinuxArm64
-	} else if b.matchOs("Android", "ChromeOS") {
-		return cipd.PlatformLinuxArm64
-	} else if b.matchOs("iOS") {
-		return cipd.PlatformLinuxArm64
-	} else {
-		return cipd.PlatformLinuxAmd64
+	os, arch := b.goPlatform()
+	if os == "darwin" {
+		os = "mac"
 	}
+	return os + "-" + arch
 }
 
 // usesPython adds attributes to tasks which use python.
 func (b *taskBuilder) usesPython() {
-	pythonPkgs := cipd.PkgsPython[b.cipdPlatform()]
+	// This is sort of a hack to work around the fact that the upstream CIPD
+	// package definitions separate out the platforms for some packages, which
+	// causes some complications when we don't know which platform we're going
+	// to run on, for example Android tasks which may run on RPI in our lab or
+	// on a Linux server elsewhere. Just grab an arbitrary set of Python
+	// packages and then replace the fixed platform with the `${platform}`
+	// placeholder. This does introduce the possibility of failure in cases
+	// where the package does not exist at a given tag for a given platform.
+	fakePlatform := cipd.PlatformLinuxAmd64
+	pythonPkgs, ok := cipd.PkgsPython[fakePlatform]
+	if !ok {
+		panic("No Python packages for platform " + fakePlatform)
+	}
+	for _, pkg := range pythonPkgs {
+		pkg.Name = strings.Replace(pkg.Name, fakePlatform, "${platform}", 1)
+	}
 	b.cipd(pythonPkgs...)
 	b.addToPATH(
 		"cipd_bin_packages/cpython3",
@@ -387,6 +421,11 @@ func (b *taskBuilder) usesPython() {
 	})
 	b.envPrefixes("VPYTHON_VIRTUALENV_ROOT", "cache/vpython3")
 	b.env("VPYTHON_LOG_TRACE", "1")
+}
+
+func (b *taskBuilder) usesLUCIAuth() {
+	b.cipd(CIPD_PKG_LUCI_AUTH)
+	b.addToPATH("cipd_bin_packages", "cipd_bin_packages/bin")
 }
 
 func (b *taskBuilder) usesNode() {
@@ -414,4 +453,54 @@ func (b *taskBuilder) needsLottiesWithAssets() {
 		Path:    "lotties_with_assets",
 		Version: "version:4",
 	})
+}
+
+// goPlatform derives the GOOS and GOARCH for this task.
+func (b *taskBuilder) goPlatform() (string, string) {
+	os := ""
+	if b.isWindows() {
+		os = "windows"
+	} else if b.isMac() {
+		os = "darwin"
+	} else if b.isLinux() || b.matchOs("Android", "ChromeOS", "iOS") {
+		// Tests on Android/ChromeOS/iOS are hosted on RPI.
+		os = "linux"
+	} else {
+		panic("unknown GOOS for " + b.Name)
+	}
+
+	arch := "amd64"
+	if b.role("Upload") {
+		arch = "amd64"
+	} else if b.matchArch("Arm64") || b.matchBazelHost("on_rpi") || b.matchOs("Android", "ChromeOS", "iOS") {
+		// Tests on Android/ChromeOS/iOS are hosted on RPI.
+		// WARNING: This assumption is not necessarily true with Android devices
+		// hosted in other environments.
+		arch = "arm64"
+	} else if b.isLinux() || b.isMac() || b.isWindows() {
+		arch = "amd64"
+	} else {
+		panic("unknown GOARCH for " + b.Name)
+	}
+	return os, arch
+}
+
+// taskDriver sets the task up to use the given task driver, either by depending
+// on the BuildTaskDrivers task to build the task driver immediately before use,
+// or by pulling the pre-built task driver from CIPD. Returns the path to the
+// task driver binary, which can be used directly as part of the task's command.
+func (b *taskBuilder) taskDriver(name string, preBuilt bool) string {
+	if preBuilt {
+		// We assume all task drivers are built under the "skia/tools" prefix
+		// and, being built per-platform, use the ${platform} suffix to
+		// automatically select the correct platform when the task runs.
+		b.cipdFromDEPS("skia/tools/" + name + "/${platform}")
+		// DEPS specifies that task drivers belong in the "task_drivers"
+		// directory.
+		return "task_drivers/" + name
+	} else {
+		os, arch := b.goPlatform()
+		b.dep(b.buildTaskDrivers(os, arch))
+		return "./" + name
+	}
 }

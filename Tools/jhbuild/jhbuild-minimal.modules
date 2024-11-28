@@ -5,11 +5,14 @@
 
   <metamodule id="webkitgtk-minimal-dependencies">
     <dependencies>
+      <dep package="icu"/>
+      <dep package="harfbuzz"/>
+      <dep package="libxml2"/>
       <dep package="atk"/>
       <dep package="at-spi2-atk"/>
       <dep package="glib"/>
       <dep package="glib-networking"/>
-      <dep package="icu"/>
+      <dep package="libavif"/>
       <dep package="libdrm"/>
       <dep package="libjxl"/>
       <dep package="libsoup"/>
@@ -23,11 +26,14 @@
 
   <metamodule id="webkitwpe-minimal-dependencies">
     <dependencies>
+      <dep package="icu"/>
+      <dep package="harfbuzz"/>
+      <dep package="libxml2"/>
       <dep package="atk"/>
       <dep package="at-spi2-atk"/>
       <dep package="glib"/>
       <dep package="glib-networking"/>
-      <dep package="icu"/>
+      <dep package="libavif"/>
       <dep package="libdrm"/>
       <dep package="libjxl"/>
       <dep package="libsoup"/>
@@ -40,48 +46,28 @@
   </metamodule>
 
   <!-- Please use http/https to access repositories to be friendly to users stuck behind firewalls. -->
-  <repository type="git" name="github.com"
-      href="https://github.com"/>
-  <repository type="tarball" name="github-tarball"
-      href="https://github.com"/>
-  <repository type="tarball" name="sourceware.org-mirror"
-      href="http://mirrors.kernel.org/sources.redhat.com/"/>
-  <repository type="tarball" name="ftp.gnome.org"
-      href="http://ftp.gnome.org"/>
-  <repository type="tarball" name="download.gnome.org"
-      href="https://download.gnome.org"/>
-  <repository type="git" name="git.gnome.org"
-      href="https://git.gnome.org/browse/"/>
-  <repository type="tarball" name="cairographics.org"
-      href="http://cairographics.org"/>
-  <repository type="tarball" name="freedesktop.org"
-      href="http://www.freedesktop.org"/>
-  <repository type="tarball" name="xorg"
-      href="http://xorg.freedesktop.org"/>
-  <repository type="tarball" name="xmlsoft.org"
-      href="http://xmlsoft.org"/>
-  <repository type="tarball" name="savannah.gnu.org"
-      href="http://download.savannah.gnu.org/releases/"/>
- <repository type="tarball" name="dri.freedesktop.org"
-      href="https://dri.freedesktop.org"/>
-  <repository type="tarball" name="mesa.freedesktop.org"
-      href="https://mesa.freedesktop.org"/>
+  <!-- Git repositories. -->
+  <repository type="git" name="aomedia.googlesource.com"
+      href="https://aomedia.googlesource.com"/>
+  <repository type="git" name="chromium.googlesource.com"
+      href="https://chromium.googlesource.com"/>
   <repository type="git" name="git.freedesktop.org"
       href="https://gitlab.freedesktop.org"/>
-  <repository type="tarball" name="llvm.org"
-      href="http://llvm.org"/>
-  <repository type="tarball" name="webkitgtk-jhbuild-mirror"
-      href="http://webkitgtk.org/jhbuild_mirror/"/>
-  <repository type="tarball" name="gnupg.org"
-      href="https://www.gnupg.org/ftp/gcrypt/"/>
+  <repository type="git" name="gitlab.gnome.org"
+      href="https://gitlab.gnome.org"/>
+  <repository type="git" name="github.com"
+      href="https://github.com"/>
+  <!-- Tarball repositories. -->
+  <repository type="tarball" name="github-tarball"
+      href="https://github.com"/>
+  <repository type="tarball" name="ftp.gnome.org"
+      href="http://ftp.gnome.org"/>
 
   <!-- meson 0.62.2 required to build gstreamer-1.22.7 -->
   <if condition-set="require-meson">
     <distutils id="meson" python3="1">
       <branch module="mesonbuild/meson"
-              version="0.62.2"
               tag="0.62.2"
-              checkoutdir="meson-${version}"
               repo="github.com"/>
     </distutils>
   </if>
@@ -108,14 +94,98 @@
     </branch>
   </meson>
 
-  <autotools id="icu" autogen-sh="./source/configure" autogenargs="--disable-samples --enable-weak-threads">
-    <pkg-config>icu-i18n.pc</pkg-config>
-    <branch module="unicode-org/icu/releases/download/release-63-1/icu4c-63_1-src.tgz" version="63.1" checkoutdir="icu"
-            repo="github-tarball"
-            hash="sha256:05c490b69454fce5860b7e8e2821231674af0a11d7ef2febea9a32512998cb9d">
-      <patch file="icudata-stdlibs.patch" strip="1"/>
-    </branch>
+  <autotools id="icu" autogen-sh="./source/configure" autogenargs="--disable-samples --disable-tests">
+     <pkg-config>icu-i18n.pc</pkg-config>
+     <branch module="/unicode-org/icu/releases/download/release-70-1/icu4c-70_1-src.tgz"
+             version="70.1"
+             checkoutdir="icu-${version}"
+             repo="github-tarball"
+             hash="sha256:8d205428c17bf13bb535300669ed28b338a157b1c01ae66d31d0d3e2d47c3fd5">
+       <patch file="icudata-stdlibs.patch" strip="1"/>
+     </branch>
   </autotools>
+
+  <meson id="harfbuzz" mesonargs="-Dintrospection=enabled -Dgobject=enabled -Dtests=disabled -Ddocs=disabled">
+    <pkg-config>harfbuzz.pc</pkg-config>
+    <dependencies>
+      <dep package="freetype"/>
+      <dep package="glib"/>
+      <dep package="gobject-introspection"/>
+      <dep package="icu"/>
+    </dependencies>
+    <branch module="harfbuzz/harfbuzz"
+            repo="github.com"
+            tag="2.7.4"
+            version="2.7.4"
+            checkoutdir="harfbuzz-${version}">
+       <patch file="harfbuzz-disable-Wcast-function-type-strict.patch" strip="1"/>
+    </branch>
+  </meson>
+
+  <meson id="freetype" mesonargs="-Dbrotli=enabled -Dbzip2=enabled -Dharfbuzz=disabled -Dpng=enabled -Dzlib=enabled">
+    <pkg-config>freetype2.pc</pkg-config>
+    <branch module="freetype/freetype"
+            repo="git.freedesktop.org"
+            tag="VER-2-11-1"
+            version="2.11.1"
+            checkoutdir="libpsl-${version}"/>
+  </meson>
+
+  <meson id="gobject-introspection">
+    <pkg-config>gobject-introspection-1.0.pc</pkg-config>
+    <dependencies>
+      <dep package="glib"/>
+    </dependencies>
+    <branch module="GNOME/gobject-introspection"
+            repo="github.com"
+            tag="1.72.0"
+            version="1.72.0"
+            checkoutdir="gobject-introspection-${version}"/>
+  </meson>
+
+  <autotools id="libxml2">
+    <pkg-config>libxml-2.0.pc</pkg-config>
+    <dependencies>
+      <dep package="glib"/>
+      <dep package="icu"/>
+    </dependencies>
+    <branch module="GNOME/libxml2"
+            repo="github.com"
+            version="2.9.13"
+            tag="v2.9.13"
+            checkoutdir="libxml2-${version}"/>
+  </autotools>
+
+  <!-- Allows USE_AVIF support -->
+  <cmake id="libavif" cmakeargs="-DCMAKE_BUILD_TYPE=Release -DAVIF_ENABLE_WERROR=OFF">
+    <pkg-config>libavif.pc</pkg-config>
+    <dependencies>
+      <dep package="aom"/>
+      <dep package="libyuv"/>
+    </dependencies>
+    <branch module="AOMediaCodec/libavif"
+            repo="github.com"
+            version="0.9.3"
+            tag="v0.9.3"/>
+  </cmake>
+
+  <cmake id="libyuv">
+    <branch module="libyuv/libyuv"
+            repo="chromium.googlesource.com"
+            tag="stable"
+            checkoutdir="libyuv"/>
+  </cmake>
+
+  <cmake id="aom" cmakeargs="-DBUILD_SHARED_LIBS=1 -DENABLE_DOCS=OFF -DENABLE_EXAMPLES=OFF -DENABLE_TOOLS=OFF -DENABLE_TESTS=OFF">
+    <pkg-config>aom.pc</pkg-config>
+    <branch module="aom"
+            repo="aomedia.googlesource.com"
+            version="3.3.0"
+            tag="v3.3.0"
+            checkoutdir="libaom-${version}">
+       <patch file="fix-aom-build-arm32.patch" strip="1"/>
+    </branch>
+  </cmake>
 
   <!-- libdrm required for function 'drmGetFormatName' (defined since 'libdrm-2.4.113') -->
   <meson id="libdrm" mesonargs="-Dtegra=enabled -Dcairo-tests=disabled -Dman-pages=disabled -Dvalgrind=disabled -Dudev=false -Dtests=false">
@@ -134,11 +204,11 @@
       <dep package="glib-networking"/>
       <dep package="libpsl"/>
     </dependencies>
-    <branch module="/sources/libsoup/3.0/libsoup-${version}.tar.xz"
-            version="3.0.7"
-            repo="download.gnome.org"
-            hash="sha256:ebdf90cf3599c11acbb6818a9d9e3fc9d2c68e56eb829b93962972683e1bf7c8">
-    </branch>
+    <branch module="GNOME/libsoup.git"
+            repo="github.com"
+            tag="3.6.0"
+            version="3.6.0"
+            checkoutdir="libsoup-${version}"/>
   </meson>
 
   <autotools id="libpsl" autogenargs="--enable-runtime=libicu --enable-builtin=libicu">
@@ -146,10 +216,11 @@
     <dependencies>
       <dep package="icu"/>
     </dependencies>
-    <branch module="rockdaboot/libpsl/releases/download/libpsl-${version}/libpsl-${version}.tar.gz"
-            version="0.20.2"
-            repo="github-tarball"
-            hash="sha256:f8fd0aeb66252dfcc638f14d9be1e2362fdaf2ca86bde0444ff4d5cc961b560f"/>
+    <branch module="rockdaboot/libpsl"
+            repo="github.com"
+            version="0.21.0"
+            tag="libpsl-0.21.0"
+            checkoutdir="libpsl-${version}"/>
   </autotools>
 
   <!-- libmanette >= 0.2.4 required for GamePad support -->
@@ -164,10 +235,12 @@
   <!-- OpenXR required for WebXR support -->
   <cmake id="openxr">
     <pkg-config>openxr.pc</pkg-config>
-    <branch module="KhronosGroup/OpenXR-SDK/archive/release-${version}.tar.gz" version="1.0.11"
+    <branch module="KhronosGroup/OpenXR-SDK/archive/release-${version}.tar.gz" version="1.0.20"
             checkoutdir="openxr-${version}"
             repo="github-tarball"
-            hash="sha256:8f28f0f7707487435578264ac18e14af17a5eab2062fc925fe01cd96ed802dce"/>
+            hash="sha256:b32703d30b4f40f5cb1a16e7242e3587ad5b3b47893c90dce884b162c5ca0e02">
+      <patch file="openxr-skip-experimental-filesystem-detection.patch" strip="1"/>
+    </branch>
   </cmake>
 
   <!-- libvpx needed for libwebrtc -->
@@ -180,30 +253,34 @@
             hash="sha256:965e51c91ad9851e2337aebcc0f517440c637c506f3a03948062e3d5ea129a83"/>
   </autotools>
 
-  <meson id="glib"
-         mesonargs="-Dlibmount=disabled -Dselinux=disabled">
+  <meson id="glib" mesonargs="-Dlibmount=disabled -Dselinux=disabled -Dgtk_doc=false -Dtests=false">
     <pkg-config>glib-2.0.pc</pkg-config>
-    <branch module="/sources/glib/2.72/glib-${version}.tar.xz"
+    <branch module="GNOME/glib"
+            repo="github.com"
+            tag="2.72.4"
             version="2.72.4"
-            repo="download.gnome.org"
-            hash="sha256:8848aba518ba2f4217d144307a1d6cb9afcc92b54e5c13ac1f8c4d4608e96f0e">
-    </branch>
+            checkoutdir="glib-${version}"/>
   </meson>
 
   <meson id="glib-networking">
     <dependencies>
       <dep package="glib"/>
     </dependencies>
-    <branch module="/sources/glib-networking/2.70/glib-networking-${version}.tar.xz" version="2.70.0"
-            repo="download.gnome.org"
-            hash="sha256:66b408e7afa86c582fe38963db56133869ab4b57d34e48ec56aba621940d6f35"/>
+    <branch module="GNOME/glib-networking"
+            repo="github.com"
+            tag="2.70.0"
+            version="2.70.0"
+            checkoutdir="glib-networking-${version}"/>
   </meson>
 
   <!-- atk needed to build with A11y support -->
   <meson id="atk" mesonargs="-Dintrospection=false">
-      <branch module="/sources/atk/2.38/atk-${version}.tar.xz" version="2.38.0"
-            repo="download.gnome.org"
-            hash="sha256:ac4de2a4ef4bd5665052952fe169657e65e895c5057dffb3c2a810f6191a0c36"/>
+    <pkg-config>atk.pc</pkg-config>
+    <branch module="Archive/atk.git"
+            repo="gitlab.gnome.org"
+            tag="2.38.0"
+            version="2.38.0"
+            checkoutdir="atk-${version}"/>
     <dependencies>
       <dep package="glib"/>
     </dependencies>
@@ -211,10 +288,12 @@
 
   <!-- at-spi2-core needed to build with A11y support -->
   <meson id="at-spi2-core" mesonargs="-Dintrospection=no -Dx11=no">
-    <branch module="/sources/at-spi2-core/2.44/at-spi2-core-${version}.tar.xz" version="2.44.1"
-            repo="download.gnome.org"
-            hash="sha256:4beb23270ba6cf7caf20b597354d75194d89afb69d2efcf15f4271688ba6f746">
-    </branch>
+    <pkg-config>atspi-2.pc</pkg-config>
+    <branch module="GNOME/at-spi2-core"
+            repo="github.com"
+            tag="AT_SPI2_CORE_2_44_1"
+            version="2.44.1"
+            checkoutdir="at-spi2-core-${version}"/>
     <dependencies>
       <dep package="glib"/>
     </dependencies>
@@ -222,10 +301,12 @@
 
   <!-- at-spi2-atk needed to build with A11y support -->
   <meson id="at-spi2-atk" mesonargs="">
-      <branch module="/sources/at-spi2-atk/2.38/at-spi2-atk-${version}.tar.xz" version="2.38.0"
-            repo="download.gnome.org"
-            hash="sha256:cfa008a5af822b36ae6287f18182c40c91dd699c55faa38605881ed175ca464f">
-    </branch>
+    <pkg-config>atk-bridge-2.0.pc</pkg-config>
+    <branch module="Archive/at-spi2-atk.git"
+            repo="gitlab.gnome.org"
+            tag="AT_SPI2_ATK_2_38_0"
+            version="2.38.0"
+            checkoutdir="at-spi2-atk-${version}"/>
     <dependencies>
       <dep package="glib"/>
       <dep package="atk"/>

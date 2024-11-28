@@ -52,6 +52,12 @@
 #include "OpenTypeVerticalData.h"
 #endif
 
+#if PLATFORM(WIN)
+#include <dwrite.h>
+#endif
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(FontCache);
@@ -115,10 +121,10 @@ struct FontDataCacheKeyTraits : WTF::GenericHashTraits<FontPlatformData> {
     }
 };
 
-using FontPlatformDataCache = HashMap<FontPlatformDataCacheKey, std::unique_ptr<FontPlatformData>, FontPlatformDataCacheKeyHash, FontPlatformDataCacheKeyHashTraits>;
-using FontDataCache = HashMap<FontPlatformData, Ref<Font>, FontDataCacheKeyHash, FontDataCacheKeyTraits>;
+using FontPlatformDataCache = UncheckedKeyHashMap<FontPlatformDataCacheKey, std::unique_ptr<FontPlatformData>, FontPlatformDataCacheKeyHash, FontPlatformDataCacheKeyHashTraits>;
+using FontDataCache = UncheckedKeyHashMap<FontPlatformData, Ref<Font>, FontDataCacheKeyHash, FontDataCacheKeyTraits>;
 #if ENABLE(OPENTYPE_VERTICAL)
-using FontVerticalDataCache = HashMap<FontPlatformData, RefPtr<OpenTypeVerticalData>, FontDataCacheKeyHash, FontDataCacheKeyTraits>;
+using FontVerticalDataCache = UncheckedKeyHashMap<FontPlatformData, RefPtr<OpenTypeVerticalData>, FontDataCacheKeyHash, FontDataCacheKeyTraits>;
 #endif
 
 struct FontCache::FontDataCaches {
@@ -500,3 +506,5 @@ void FontCache::platformReleaseNoncriticalMemory()
 #endif
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

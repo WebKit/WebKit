@@ -55,6 +55,7 @@ public:
 
     RemoteAdapterProxy& parent() { return m_parent; }
     RemoteGPUProxy& root() { return m_parent->root(); }
+    Ref<RemoteGPUProxy> protectedRoot() { return m_parent->root(); }
     WebGPUIdentifier backing() const { return m_backing; }
 
 private:
@@ -70,12 +71,12 @@ private:
     template<typename T>
     WARN_UNUSED_RETURN IPC::Error send(T&& message)
     {
-        return root().streamClientConnection().send(WTFMove(message), backing());
+        return root().protectedStreamClientConnection()->send(WTFMove(message), backing());
     }
     template<typename T, typename C>
-    WARN_UNUSED_RETURN IPC::StreamClientConnection::AsyncReplyID sendWithAsyncReply(T&& message, C&& completionHandler)
+    WARN_UNUSED_RETURN std::optional<IPC::StreamClientConnection::AsyncReplyID> sendWithAsyncReply(T&& message, C&& completionHandler)
     {
-        return root().streamClientConnection().sendWithAsyncReply(WTFMove(message), completionHandler, backing());
+        return root().protectedStreamClientConnection()->sendWithAsyncReply(WTFMove(message), completionHandler, backing());
     }
 
     Ref<WebCore::WebGPU::Queue> queue() final;
@@ -102,6 +103,7 @@ private:
     void createRenderPipelineAsync(const WebCore::WebGPU::RenderPipelineDescriptor&, CompletionHandler<void(RefPtr<WebCore::WebGPU::RenderPipeline>&&, String&&)>&&) final;
 
     RefPtr<WebCore::WebGPU::CommandEncoder> createCommandEncoder(const std::optional<WebCore::WebGPU::CommandEncoderDescriptor>&) final;
+    Ref<WebCore::WebGPU::CommandEncoder> createInvalidCommandEncoder();
     RefPtr<WebCore::WebGPU::RenderBundleEncoder> createRenderBundleEncoder(const WebCore::WebGPU::RenderBundleEncoderDescriptor&) final;
 
     RefPtr<WebCore::WebGPU::QuerySet> createQuerySet(const WebCore::WebGPU::QuerySetDescriptor&) final;
@@ -113,14 +115,25 @@ private:
     void setLabelInternal(const String&) final;
     void resolveDeviceLostPromise(CompletionHandler<void(WebCore::WebGPU::DeviceLostReason)>&&) final;
 
+    Ref<ConvertToBackingContext> protectedConvertToBackingContext() const;
+
+    Ref<WebCore::WebGPU::CommandEncoder> invalidCommandEncoder() final;
+    Ref<WebCore::WebGPU::CommandBuffer> invalidCommandBuffer() final;
+    Ref<WebCore::WebGPU::RenderPassEncoder> invalidRenderPassEncoder() final;
+    Ref<WebCore::WebGPU::ComputePassEncoder> invalidComputePassEncoder() final;
+    void pauseAllErrorReporting(bool pause) final;
+
     WebGPUIdentifier m_backing;
-    WebGPUIdentifier m_queueBacking;
     Ref<ConvertToBackingContext> m_convertToBackingContext;
     Ref<RemoteAdapterProxy> m_parent;
     Ref<RemoteQueueProxy> m_queue;
 #if PLATFORM(COCOA) && ENABLE(VIDEO)
     WebKit::SharedVideoFrameWriter m_sharedVideoFrameWriter;
 #endif
+    Ref<WebCore::WebGPU::CommandEncoder> m_invalidCommandEncoder;
+    Ref<WebCore::WebGPU::RenderPassEncoder> m_invalidRenderPassEncoder;
+    Ref<WebCore::WebGPU::ComputePassEncoder> m_invalidComputePassEncoder;
+    Ref<WebCore::WebGPU::CommandBuffer> m_invalidCommandBuffer;
 };
 
 } // namespace WebKit::WebGPU

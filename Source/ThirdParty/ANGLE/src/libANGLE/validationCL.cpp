@@ -7,11 +7,10 @@
 // based on the OpenCL Specification V3.0.7, see https://www.khronos.org/registry/OpenCL/
 // Each used CL error code is preceeded by a citation of the relevant rule in the spec.
 
+#include "libANGLE/cl_utils.h"
 #include "libANGLE/validationCL_autogen.h"
 
 #include "common/string_utils.h"
-
-#include "libANGLE/cl_utils.h"
 
 #define ANGLE_VALIDATE_VERSION(version, major, minor)          \
     do                                                         \
@@ -256,14 +255,14 @@ cl_int ValidateEnqueueBuffer(const CommandQueue &queue,
 
     // CL_INVALID_OPERATION if a read function is called on buffer which
     // has been created with CL_MEM_HOST_WRITE_ONLY or CL_MEM_HOST_NO_ACCESS.
-    if (hostRead && buf.getFlags().isSet(CL_MEM_HOST_WRITE_ONLY | CL_MEM_HOST_NO_ACCESS))
+    if (hostRead && buf.getFlags().intersects(CL_MEM_HOST_WRITE_ONLY | CL_MEM_HOST_NO_ACCESS))
     {
         return CL_INVALID_OPERATION;
     }
 
     // CL_INVALID_OPERATION if a write function is called on buffer which
     // has been created with CL_MEM_HOST_READ_ONLY or CL_MEM_HOST_NO_ACCESS.
-    if (hostWrite && buf.getFlags().isSet(CL_MEM_HOST_READ_ONLY | CL_MEM_HOST_NO_ACCESS))
+    if (hostWrite && buf.getFlags().intersects(CL_MEM_HOST_READ_ONLY | CL_MEM_HOST_NO_ACCESS))
     {
         return CL_INVALID_OPERATION;
     }
@@ -384,14 +383,14 @@ cl_int ValidateEnqueueImage(const CommandQueue &queue, cl_mem image, bool hostRe
 
     // CL_INVALID_OPERATION if a read function is called on image which
     // has been created with CL_MEM_HOST_WRITE_ONLY or CL_MEM_HOST_NO_ACCESS.
-    if (hostRead && img.getFlags().isSet(CL_MEM_HOST_WRITE_ONLY | CL_MEM_HOST_NO_ACCESS))
+    if (hostRead && img.getFlags().intersects(CL_MEM_HOST_WRITE_ONLY | CL_MEM_HOST_NO_ACCESS))
     {
         return CL_INVALID_OPERATION;
     }
 
     // CL_INVALID_OPERATION if a write function is called on image which
     // has been created with CL_MEM_HOST_READ_ONLY or CL_MEM_HOST_NO_ACCESS.
-    if (hostWrite && img.getFlags().isSet(CL_MEM_HOST_READ_ONLY | CL_MEM_HOST_NO_ACCESS))
+    if (hostWrite && img.getFlags().intersects(CL_MEM_HOST_READ_ONLY | CL_MEM_HOST_NO_ACCESS))
     {
         return CL_INVALID_OPERATION;
     }
@@ -490,8 +489,14 @@ cl_int ValidateHostRegionForImage(const Image &image,
         {
             return CL_INVALID_VALUE;
         }
+        else if (slicePitch < rowPitch)
+        {
+            return CL_INVALID_VALUE;
+        }
         // CL_INVALID_VALUE if slice_pitch is not 0 and is less than row_pitch x height.
-        if (slicePitch < rowPitch * region[1])
+        else if (((image.getType() == MemObjectType::Image2D_Array) ||
+                  (image.getType() == MemObjectType::Image3D)) &&
+                 (slicePitch < rowPitch * region[1]))
         {
             return CL_INVALID_VALUE;
         }
@@ -840,7 +845,8 @@ cl_int ValidateGetCommandQueueInfo(cl_command_queue command_queue,
     }
     const CommandQueue &queue = command_queue->cast<CommandQueue>();
     // or if command_queue is not a valid command-queue for param_name.
-    if (param_name == CommandQueueInfo::Size && queue.isOnDevice())
+    if (param_name == CommandQueueInfo::Size && queue.isOnDevice() &&
+        !queue.getDevice().hasDeviceEnqueueCaps())
     {
         return CL_INVALID_COMMAND_QUEUE;
     }
@@ -901,7 +907,7 @@ cl_int ValidateCreateBuffer(cl_context context, MemFlags flags, size_t size, con
     // CL_INVALID_HOST_PTR
     // if host_ptr is NULL and CL_MEM_USE_HOST_PTR or CL_MEM_COPY_HOST_PTR are set in flags or
     // if host_ptr is not NULL but CL_MEM_COPY_HOST_PTR or CL_MEM_USE_HOST_PTR are not set in flags.
-    if ((host_ptr != nullptr) != flags.isSet(CL_MEM_USE_HOST_PTR | CL_MEM_COPY_HOST_PTR))
+    if ((host_ptr != nullptr) != flags.intersects(CL_MEM_USE_HOST_PTR | CL_MEM_COPY_HOST_PTR))
     {
         return CL_INVALID_HOST_PTR;
     }
@@ -1722,7 +1728,7 @@ cl_int ValidateGetEventProfilingInfo(cl_event event,
         return CL_PROFILING_INFO_NOT_AVAILABLE;
     }
     // or if the CL_QUEUE_PROFILING_ENABLE flag is not set for the command-queue.
-    if (evt.getCommandQueue()->getProperties().isNotSet(CL_QUEUE_PROFILING_ENABLE))
+    if (evt.getCommandQueue()->getProperties().excludes(CL_QUEUE_PROFILING_ENABLE))
     {
         return CL_PROFILING_INFO_NOT_AVAILABLE;
     }
@@ -2087,8 +2093,8 @@ cl_int ValidateEnqueueMapBuffer(cl_command_queue command_queue,
     // or if buffer has been created with CL_MEM_HOST_READ_ONLY or CL_MEM_HOST_NO_ACCESS
     // and CL_MAP_WRITE or CL_MAP_WRITE_INVALIDATE_REGION is set in map_flags.
     ANGLE_VALIDATE(
-        ValidateEnqueueBuffer(queue, buffer, map_flags.isSet(CL_MAP_READ),
-                              map_flags.isSet(CL_MAP_WRITE | CL_MAP_WRITE_INVALIDATE_REGION)));
+        ValidateEnqueueBuffer(queue, buffer, map_flags.intersects(CL_MAP_READ),
+                              map_flags.intersects(CL_MAP_WRITE | CL_MAP_WRITE_INVALIDATE_REGION)));
 
     // CL_INVALID_VALUE if region being mapped given by (offset, size) is out of bounds
     // or if size is 0 or if values specified in map_flags are not valid.
@@ -2122,8 +2128,8 @@ cl_int ValidateEnqueueMapImage(cl_command_queue command_queue,
     // or if image has been created with CL_MEM_HOST_READ_ONLY or CL_MEM_HOST_NO_ACCESS
     // and CL_MAP_WRITE or CL_MAP_WRITE_INVALIDATE_REGION is set in map_flags.
     ANGLE_VALIDATE(
-        ValidateEnqueueImage(queue, image, map_flags.isSet(CL_MAP_READ),
-                             map_flags.isSet(CL_MAP_WRITE | CL_MAP_WRITE_INVALIDATE_REGION)));
+        ValidateEnqueueImage(queue, image, map_flags.intersects(CL_MAP_READ),
+                             map_flags.intersects(CL_MAP_WRITE | CL_MAP_WRITE_INVALIDATE_REGION)));
     const Image &img = image->cast<Image>();
 
     ANGLE_VALIDATE(ValidateImageForDevice(img, queue.getDevice(), origin, region));
@@ -2223,6 +2229,12 @@ cl_int ValidateEnqueueNDRangeKernel(cl_command_queue command_queue,
         return CL_INVALID_GLOBAL_OFFSET;
     }
 
+    // CL_INVALID_KERNEL_ARGS if all the kernel arguments have not been set for the kernel
+    if (!krnl.areAllArgsSet())
+    {
+        return CL_INVALID_KERNEL_ARGS;
+    }
+
     size_t compileWorkGroupSize[3] = {0, 0, 0};
     if (IsError(krnl.getWorkGroupInfo(const_cast<cl_device_id>(device.getNative()),
                                       KernelWorkGroupInfo::CompileWorkGroupSize,
@@ -2232,6 +2244,22 @@ cl_int ValidateEnqueueNDRangeKernel(cl_command_queue command_queue,
     }
     if (local_work_size != nullptr)
     {
+        // CL_INVALID_WORK_GROUP_SIZE when non-uniform work-groups are not supported, the size of
+        // each work-group must be uniform. If local_work_size is specified, the values specified in
+        // global_work_size[0],...,global_work_size[work_dim - 1] must be evenly divisible by
+        // the corresponding values specified in local_work_size[0],...,
+        // local_work_size[work_dim-1].
+        if (!device.supportsNonUniformWorkGroups())
+        {
+            for (cl_uint i = 0; i < work_dim; ++i)
+            {
+                if (global_work_size[i] % local_work_size[i] != 0)
+                {
+                    return CL_INVALID_WORK_GROUP_SIZE;
+                }
+            }
+        }
+
         for (cl_uint i = 0; i < work_dim; ++i)
         {
             // CL_INVALID_WORK_GROUP_SIZE when non-uniform work-groups are not supported, the size
@@ -2318,7 +2346,7 @@ cl_int ValidateEnqueueNativeKernel(cl_command_queue command_queue,
 
     // CL_INVALID_OPERATION if the device associated with command_queue
     // cannot execute the native kernel.
-    if (queue.getDevice().getInfo().execCapabilities.isNotSet(CL_EXEC_NATIVE_KERNEL))
+    if (queue.getDevice().getInfo().execCapabilities.excludes(CL_EXEC_NATIVE_KERNEL))
     {
         return CL_INVALID_OPERATION;
     }
@@ -2607,26 +2635,28 @@ cl_int ValidateCreateSubBuffer(cl_mem buffer,
     const MemFlags bufFlags = buf.getFlags();
     // CL_INVALID_VALUE if buffer was created with CL_MEM_WRITE_ONLY
     // and flags specifies CL_MEM_READ_WRITE or CL_MEM_READ_ONLY,
-    if ((bufFlags.isSet(CL_MEM_WRITE_ONLY) && flags.isSet(CL_MEM_READ_WRITE | CL_MEM_READ_ONLY)) ||
+    if ((bufFlags.intersects(CL_MEM_WRITE_ONLY) &&
+         flags.intersects(CL_MEM_READ_WRITE | CL_MEM_READ_ONLY)) ||
         // or if buffer was created with CL_MEM_READ_ONLY
         // and flags specifies CL_MEM_READ_WRITE or CL_MEM_WRITE_ONLY,
-        (bufFlags.isSet(CL_MEM_READ_ONLY) && flags.isSet(CL_MEM_READ_WRITE | CL_MEM_WRITE_ONLY)) ||
+        (bufFlags.intersects(CL_MEM_READ_ONLY) &&
+         flags.intersects(CL_MEM_READ_WRITE | CL_MEM_WRITE_ONLY)) ||
         // or if flags specifies CL_MEM_USE_HOST_PTR, CL_MEM_ALLOC_HOST_PTR or CL_MEM_COPY_HOST_PTR.
-        flags.isSet(CL_MEM_USE_HOST_PTR | CL_MEM_ALLOC_HOST_PTR | CL_MEM_COPY_HOST_PTR))
+        flags.intersects(CL_MEM_USE_HOST_PTR | CL_MEM_ALLOC_HOST_PTR | CL_MEM_COPY_HOST_PTR))
     {
         return CL_INVALID_VALUE;
     }
 
     // CL_INVALID_VALUE if buffer was created with CL_MEM_HOST_WRITE_ONLY
     // and flags specify CL_MEM_HOST_READ_ONLY,
-    if ((bufFlags.isSet(CL_MEM_HOST_WRITE_ONLY) && flags.isSet(CL_MEM_HOST_READ_ONLY)) ||
+    if ((bufFlags.intersects(CL_MEM_HOST_WRITE_ONLY) && flags.intersects(CL_MEM_HOST_READ_ONLY)) ||
         // or if buffer was created with CL_MEM_HOST_READ_ONLY
         // and flags specify CL_MEM_HOST_WRITE_ONLY,
-        (bufFlags.isSet(CL_MEM_HOST_READ_ONLY) && flags.isSet(CL_MEM_HOST_WRITE_ONLY)) ||
+        (bufFlags.intersects(CL_MEM_HOST_READ_ONLY) && flags.intersects(CL_MEM_HOST_WRITE_ONLY)) ||
         // or if buffer was created with CL_MEM_HOST_NO_ACCESS
         // and flags specify CL_MEM_HOST_READ_ONLY or CL_MEM_HOST_WRITE_ONLY.
-        (bufFlags.isSet(CL_MEM_HOST_NO_ACCESS) &&
-         flags.isSet(CL_MEM_HOST_READ_ONLY | CL_MEM_HOST_WRITE_ONLY)))
+        (bufFlags.intersects(CL_MEM_HOST_NO_ACCESS) &&
+         flags.intersects(CL_MEM_HOST_READ_ONLY | CL_MEM_HOST_WRITE_ONLY)))
     {
         return CL_INVALID_VALUE;
     }
@@ -2652,6 +2682,18 @@ cl_int ValidateCreateSubBuffer(cl_mem buffer,
     if (region->size == 0u)
     {
         return CL_INVALID_BUFFER_SIZE;
+    }
+
+    // CL_MISALIGNED_SUB_BUFFER_OFFSET when the sub-buffer object is created with an offset that is
+    // not aligned to CL_DEVICE_MEM_BASE_ADDR_ALIGN value (which is in bits!) for devices associated
+    // with the context.
+    const Memory &memory = buffer->cast<Memory>();
+    for (const DevicePtr &device : memory.getContext().getDevices())
+    {
+        if (region->origin % (device->getInfo().memBaseAddrAlign / CHAR_BIT) != 0)
+        {
+            return CL_MISALIGNED_SUB_BUFFER_OFFSET;
+        }
     }
 
     return CL_SUCCESS;
@@ -3057,7 +3099,7 @@ cl_int ValidateCreateImage(cl_context context,
     // CL_INVALID_HOST_PTR
     // if host_ptr is NULL and CL_MEM_USE_HOST_PTR or CL_MEM_COPY_HOST_PTR are set in flags or
     // if host_ptr is not NULL but CL_MEM_COPY_HOST_PTR or CL_MEM_USE_HOST_PTR are not set in flags.
-    if ((host_ptr != nullptr) != flags.isSet(CL_MEM_USE_HOST_PTR | CL_MEM_COPY_HOST_PTR))
+    if ((host_ptr != nullptr) != flags.intersects(CL_MEM_USE_HOST_PTR | CL_MEM_COPY_HOST_PTR))
     {
         return CL_INVALID_HOST_PTR;
     }
@@ -3255,7 +3297,7 @@ cl_int ValidateLinkProgram(cl_context context,
                 return CL_INVALID_PROGRAM;
             }
 
-            if (libraryOrObject.isNotSet(binaryType))
+            if (libraryOrObject.excludes(binaryType))
             {
                 if (foundAnyLibraryOrObject)
                 {
@@ -3558,15 +3600,15 @@ cl_int ValidateCreateCommandQueueWithProperties(cl_context context,
                     if (props.hasOtherBitsThan(validProps) ||
                         // If CL_QUEUE_ON_DEVICE is set, CL_QUEUE_OUT_OF_ORDER_EXEC_MODE_ENABLE
                         // must also be set.
-                        (props.isSet(CL_QUEUE_ON_DEVICE) &&
-                         !props.isSet(CL_QUEUE_OUT_OF_ORDER_EXEC_MODE_ENABLE)) ||
+                        (props.intersects(CL_QUEUE_ON_DEVICE) &&
+                         !props.intersects(CL_QUEUE_OUT_OF_ORDER_EXEC_MODE_ENABLE)) ||
                         // CL_QUEUE_ON_DEVICE_DEFAULT can only be used with CL_QUEUE_ON_DEVICE.
-                        (props.isSet(CL_QUEUE_ON_DEVICE_DEFAULT) &&
-                         !props.isSet(CL_QUEUE_ON_DEVICE)))
+                        (props.intersects(CL_QUEUE_ON_DEVICE_DEFAULT) &&
+                         !props.intersects(CL_QUEUE_ON_DEVICE)))
                     {
                         return CL_INVALID_VALUE;
                     }
-                    isQueueOnDevice = props.isSet(CL_QUEUE_ON_DEVICE);
+                    isQueueOnDevice = props.intersects(CL_QUEUE_ON_DEVICE);
                     break;
                 }
                 case CL_QUEUE_SIZE:
@@ -3802,6 +3844,10 @@ cl_int ValidateCreateProgramWithIL(cl_context context, const void *il, size_t le
 
 cl_int ValidateCloneKernel(cl_kernel source_kernel)
 {
+    if (!Kernel::IsValid(source_kernel))
+    {
+        return CL_INVALID_KERNEL;
+    }
     return CL_SUCCESS;
 }
 

@@ -32,6 +32,8 @@
 #include <wtf/ListDump.h>
 #include <wtf/TZoneMallocInlines.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 namespace ShadowChickenInternal {
@@ -510,3 +512,4 @@ JSArray* ShadowChicken::functionsOnStack(JSGlobalObject* globalObject, CallFrame
 
 } // namespace JSC
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

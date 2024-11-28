@@ -56,7 +56,7 @@ void webkitWebViewLoadFailedWithTLSErrors(WebKitWebView*, const char* failingURI
 void webkitWebViewGetLoadDecisionForIcon(WebKitWebView*, const WebCore::LinkIcon&, Function<void(bool)>&&);
 void webkitWebViewSetIcon(WebKitWebView*, const WebCore::LinkIcon&, API::Data&);
 #endif
-RefPtr<WebKit::WebPageProxy> webkitWebViewCreateNewPage(WebKitWebView*, Ref<API::PageConfiguration>&&, WebCore::WindowFeatures&&, WebKitNavigationAction*);
+RefPtr<WebKit::WebPageProxy> webkitWebViewCreateNewPage(WebKitWebView*, Ref<API::PageConfiguration>&&, WebKitNavigationAction*);
 void webkitWebViewReadyToShowPage(WebKitWebView*);
 void webkitWebViewRunAsModal(WebKitWebView*);
 void webkitWebViewClosePage(WebKitWebView*);

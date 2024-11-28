@@ -242,13 +242,13 @@ IDBError MemoryIDBBackingStore::createIndex(const IDBResourceIdentifier& transac
     auto error = objectStore->createIndex(*rawTransaction, info);
     if (error.isNull()) {
         objectStoreInfo->addExistingIndex(info);
-        m_databaseInfo->setMaxIndexID(info.identifier());
+        m_databaseInfo->setMaxIndexID(info.identifier().toRawValue());
     }
 
     return error;
 }
 
-IDBError MemoryIDBBackingStore::deleteIndex(const IDBResourceIdentifier& transactionIdentifier, IDBObjectStoreIdentifier objectStoreIdentifier, uint64_t indexIdentifier)
+IDBError MemoryIDBBackingStore::deleteIndex(const IDBResourceIdentifier& transactionIdentifier, IDBObjectStoreIdentifier objectStoreIdentifier, IDBIndexIdentifier indexIdentifier)
 {
     LOG(IndexedDB, "MemoryIDBBackingStore::deleteIndex");
 
@@ -276,7 +276,7 @@ IDBError MemoryIDBBackingStore::deleteIndex(const IDBResourceIdentifier& transac
     return error;
 }
 
-IDBError MemoryIDBBackingStore::renameIndex(const IDBResourceIdentifier& transactionIdentifier, IDBObjectStoreIdentifier objectStoreIdentifier, uint64_t indexIdentifier, const String& newName)
+IDBError MemoryIDBBackingStore::renameIndex(const IDBResourceIdentifier& transactionIdentifier, IDBObjectStoreIdentifier objectStoreIdentifier, IDBIndexIdentifier indexIdentifier, const String& newName)
 {
     LOG(IndexedDB, "MemoryIDBBackingStore::renameIndex");
 
@@ -419,7 +419,7 @@ IDBError MemoryIDBBackingStore::getAllRecords(const IDBResourceIdentifier& trans
         return IDBError { ExceptionCode::UnknownError, "No backing store object store found"_s };
 
     if (getAllRecordsData.indexIdentifier) {
-        auto* index = objectStore->indexForIdentifier(getAllRecordsData.indexIdentifier);
+        auto* index = objectStore->indexForIdentifier(*getAllRecordsData.indexIdentifier);
         if (!index)
             return IDBError { ExceptionCode::UnknownError, "No backing store index found"_s };
 
@@ -430,7 +430,7 @@ IDBError MemoryIDBBackingStore::getAllRecords(const IDBResourceIdentifier& trans
     return IDBError { };
 }
 
-IDBError MemoryIDBBackingStore::getIndexRecord(const IDBResourceIdentifier& transactionIdentifier, IDBObjectStoreIdentifier objectStoreIdentifier, uint64_t indexIdentifier, IndexedDB::IndexRecordType recordType, const IDBKeyRangeData& range, IDBGetResult& outValue)
+IDBError MemoryIDBBackingStore::getIndexRecord(const IDBResourceIdentifier& transactionIdentifier, IDBObjectStoreIdentifier objectStoreIdentifier, IDBIndexIdentifier indexIdentifier, IndexedDB::IndexRecordType recordType, const IDBKeyRangeData& range, IDBGetResult& outValue)
 {
     LOG(IndexedDB, "MemoryIDBBackingStore::getIndexRecord");
 
@@ -445,7 +445,7 @@ IDBError MemoryIDBBackingStore::getIndexRecord(const IDBResourceIdentifier& tran
     return IDBError { };
 }
 
-IDBError MemoryIDBBackingStore::getCount(const IDBResourceIdentifier& transactionIdentifier, IDBObjectStoreIdentifier objectStoreIdentifier, uint64_t indexIdentifier, const IDBKeyRangeData& range, uint64_t& outCount)
+IDBError MemoryIDBBackingStore::getCount(const IDBResourceIdentifier& transactionIdentifier, IDBObjectStoreIdentifier objectStoreIdentifier, std::optional<IDBIndexIdentifier> indexIdentifier, const IDBKeyRangeData& range, uint64_t& outCount)
 {
     LOG(IndexedDB, "MemoryIDBBackingStore::getCount");
 
@@ -532,7 +532,8 @@ IDBError MemoryIDBBackingStore::openCursor(const IDBResourceIdentifier& transact
 
     switch (info.cursorSource()) {
     case IndexedDB::CursorSource::ObjectStore: {
-        RefPtr objectStore = m_objectStoresByIdentifier.get(IDBObjectStoreIdentifier { info.sourceIdentifier() });
+        auto identifier = std::get<IDBObjectStoreIdentifier>(info.sourceIdentifier());
+        RefPtr objectStore = m_objectStoresByIdentifier.get(identifier);
         if (!objectStore)
             return IDBError { ExceptionCode::UnknownError, "No backing store object store found"_s };
 
@@ -548,7 +549,8 @@ IDBError MemoryIDBBackingStore::openCursor(const IDBResourceIdentifier& transact
         if (!objectStore)
             return IDBError { ExceptionCode::UnknownError, "No backing store object store found"_s };
 
-        auto* index = objectStore->indexForIdentifier(info.sourceIdentifier());
+        auto identifier = std::get<IDBIndexIdentifier>(info.sourceIdentifier());
+        auto* index = objectStore->indexForIdentifier(identifier);
         if (!index)
             return IDBError { ExceptionCode::UnknownError, "No backing store index found"_s };
 

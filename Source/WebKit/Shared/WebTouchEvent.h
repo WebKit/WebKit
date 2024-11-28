@@ -52,16 +52,18 @@ public:
     };
 
     WebPlatformTouchPoint() = default;
-    WebPlatformTouchPoint(unsigned identifier, WebCore::IntPoint location, State phase)
+    WebPlatformTouchPoint(unsigned identifier, WebCore::IntPoint locationInRootView, WebCore::IntPoint locationInViewport, State phase)
         : m_identifier(identifier)
-        , m_location(location)
+        , m_locationInRootView(locationInRootView)
+        , m_locationInViewport(locationInViewport)
         , m_phase(phase)
     {
     }
 #if ENABLE(IOS_TOUCH_EVENTS)
-    WebPlatformTouchPoint(unsigned identifier, WebCore::IntPoint location, State phase, double radiusX, double radiusY, double rotationAngle, double force, double altitudeAngle, double azimuthAngle, TouchType touchType)
+    WebPlatformTouchPoint(unsigned identifier, WebCore::IntPoint locationInRootView, WebCore::IntPoint locationInViewport, State phase, double radiusX, double radiusY, double rotationAngle, double force, double altitudeAngle, double azimuthAngle, TouchType touchType)
         : m_identifier(identifier)
-        , m_location(location)
+        , m_locationInRootView(locationInRootView)
+        , m_locationInViewport(locationInViewport)
         , m_phase(phase)
         , m_radiusX(radiusX)
         , m_radiusY(radiusY)
@@ -75,7 +77,8 @@ public:
 #endif
 
     unsigned identifier() const { return m_identifier; }
-    WebCore::IntPoint location() const { return m_location; }
+    WebCore::IntPoint locationInRootView() const { return m_locationInRootView; }
+    WebCore::IntPoint locationInViewport() const { return m_locationInViewport; }
     State phase() const { return m_phase; }
     State state() const { return phase(); }
 
@@ -99,7 +102,8 @@ public:
 
 private:
     unsigned m_identifier { 0 };
-    WebCore::IntPoint m_location;
+    WebCore::IntPoint m_locationInRootView;
+    WebCore::IntPoint m_locationInViewport;
     State m_phase { State::Released };
 #if ENABLE(IOS_TOUCH_EVENTS)
     double m_radiusX { 0 };

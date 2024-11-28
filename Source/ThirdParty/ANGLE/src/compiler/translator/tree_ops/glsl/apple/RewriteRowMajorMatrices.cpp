@@ -925,7 +925,8 @@ class RewriteRowMajorMatricesTraverser : public TIntermTraverser
                 secondaryIndices = indices;
 
                 // Indices after this point are not interesting.  There can't actually be any other
-                // index nodes other than desktop GLSL's swizzles on scalars, like M[1][2].yyy.
+                // index nodes.  Unlike desktop GLSL, ESSL does not support swizzles on scalars
+                // (like M[1][2].yyy).
                 ++accessorIndex;
                 break;
             }

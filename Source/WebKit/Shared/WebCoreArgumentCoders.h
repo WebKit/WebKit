@@ -33,8 +33,10 @@
 #include <wtf/EnumTraits.h>
 
 #if USE(SKIA)
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
 #include <skia/core/SkColorSpace.h>
 #include <skia/core/SkData.h>
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 #endif
 
 #if PLATFORM(GTK)
@@ -50,7 +52,7 @@ class FontPlatformData;
 
 namespace IPC {
 
-#if !USE(CORE_TEXT)
+#if !USE(CORE_TEXT) && !USE(SKIA)
 template<> struct ArgumentCoder<WebCore::Font> {
     static void encode(Encoder&, const WebCore::Font&);
     static std::optional<Ref<WebCore::Font>> decode(Decoder&);
@@ -72,6 +74,16 @@ template<> struct ArgumentCoder<WebCore::FontCustomPlatformData> {
 #endif
 
 #if USE(SKIA)
+template<> struct ArgumentCoder<SkString> {
+    static void encode(Encoder&, const SkString&);
+    static std::optional<SkString> decode(Decoder&);
+};
+
+template<> struct ArgumentCoder<SkFontStyle::Slant> {
+    static void encode(Encoder&, const SkFontStyle::Slant&);
+    static std::optional<SkFontStyle::Slant> decode(Decoder&);
+};
+
 template<> struct ArgumentCoder<sk_sp<SkColorSpace>> {
     static void encode(Encoder&, const sk_sp<SkColorSpace>&);
     static void encode(StreamConnectionEncoder&, const sk_sp<SkColorSpace>&);

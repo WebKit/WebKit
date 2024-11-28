@@ -68,6 +68,7 @@ static gboolean windowMaximized;
 static gboolean windowFullscreen;
 static gboolean useWPEPlatformAPI;
 static const char* defaultWindowTitle = "WPEWebKit MiniBrowser";
+static const char* configFile;
 #endif
 
 static gboolean parseWindowSize(const char*, const char* value, gpointer, GError** error)
@@ -122,6 +123,7 @@ static const GOptionEntry commandLineOptions[] =
     { "use-wpe-platform-api", 0, 0, G_OPTION_ARG_NONE, &useWPEPlatformAPI, "Use the WPE platform API", nullptr },
     { "maximized", 'm', 0, G_OPTION_ARG_NONE, &windowMaximized, "Start with maximized window", nullptr },
     { "fullscreen", 'f', 0, G_OPTION_ARG_NONE, &windowFullscreen, "Start with fullscreen window", nullptr },
+    { "config-file", 0, 0, G_OPTION_ARG_FILENAME, &configFile, "Config file to load for settings", "FILE" },
 #endif
     { "size", 's', 0, G_OPTION_ARG_CALLBACK, reinterpret_cast<gpointer>(parseWindowSize), "Specify the window size to use, e.g. --size=\"800x600\"", nullptr },
     { "version", 'v', 0, G_OPTION_ARG_NONE, &printVersion, "Print the WPE version", nullptr },
@@ -395,6 +397,24 @@ static WebKitFeature* findFeature(WebKitFeatureList* featureList, const char* id
     return nullptr;
 }
 
+#if ENABLE_WPE_PLATFORM
+void loadConfigFile(WPESettings* settings)
+{
+    GError* error = nullptr;
+    GKeyFile* keyFile = g_key_file_new();
+    if (!g_key_file_load_from_file(keyFile, configFile, G_KEY_FILE_NONE, &error)) {
+        g_warning("Error loading key file '%s': %s", configFile, error->message);
+        g_clear_error(&error);
+        return;
+    }
+
+    if (!wpe_settings_load_from_keyfile(settings, keyFile, &error)) {
+        g_warning("Error parsing config file '%s': %s", configFile, error->message);
+        g_clear_error(&error);
+    }
+}
+#endif
+
 static void activate(GApplication* application, WPEToolingBackends::ViewBackend* backend)
 {
     g_application_hold(application);
@@ -581,6 +601,8 @@ static void activate(GApplication* application, WPEToolingBackends::ViewBackend*
         g_signal_connect(wpeView, "event", G_CALLBACK(wpeViewEventCallback), webView);
         wpe_toplevel_set_title(wpeToplevel, defaultWindowTitle);
         g_signal_connect(webView, "notify::title", G_CALLBACK(webViewTitleChanged), wpeView);
+        if (configFile)
+            loadConfigFile(wpe_display_get_settings(wpe_view_get_display(wpeView)));
     }
 #endif
 
@@ -619,6 +641,7 @@ int main(int argc, char *argv[])
 {
 #if ENABLE_DEVELOPER_MODE
     g_setenv("WEBKIT_INJECTED_BUNDLE_PATH", WEBKIT_INJECTED_BUNDLE_PATH, FALSE);
+    g_setenv("WEBKIT_INSPECTOR_RESOURCES_PATH", WEBKIT_INSPECTOR_RESOURCES_PATH, FALSE);
 #endif
 
     GOptionContext* context = g_option_context_new(nullptr);

@@ -1,0 +1,16 @@
+Test deletion of <picture>.
+
+Initial state:
+| "Test"
+| <picture>
+|   <source>
+|     media="(min-width: 600px)"
+|     srcset="resources/apple.gif"
+|   <source>
+|     srcset="resources/mozilla.gif"
+|   <img>
+|     src=""
+| <#selection-caret>
+
+After deletion:
+| "Test<#selection-caret>"

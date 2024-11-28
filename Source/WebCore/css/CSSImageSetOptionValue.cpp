@@ -31,14 +31,14 @@
 namespace WebCore {
 
 CSSImageSetOptionValue::CSSImageSetOptionValue(Ref<CSSValue>&& image, Ref<CSSPrimitiveValue>&& resolution)
-    : CSSValue(ImageSetOptionClass)
+    : CSSValue(ClassType::ImageSetOption)
     , m_image(WTFMove(image))
     , m_resolution(WTFMove(resolution))
 {
 }
 
 CSSImageSetOptionValue::CSSImageSetOptionValue(Ref<CSSValue>&& image, Ref<CSSPrimitiveValue>&& resolution, String&& type)
-    : CSSValue(ImageSetOptionClass)
+    : CSSValue(ClassType::ImageSetOption)
     , m_image(WTFMove(image))
     , m_resolution(WTFMove(resolution))
     , m_mimeType(WTFMove(type))
@@ -103,7 +103,7 @@ bool CSSImageSetOptionValue::customTraverseSubresources(const Function<bool(cons
     return m_resolution->traverseSubresources(handler) || m_image->traverseSubresources(handler);
 }
 
-void CSSImageSetOptionValue::customSetReplacementURLForSubresources(const HashMap<String, String>& replacementURLStrings)
+void CSSImageSetOptionValue::customSetReplacementURLForSubresources(const UncheckedKeyHashMap<String, String>& replacementURLStrings)
 {
     m_image->setReplacementURLForSubresources(replacementURLStrings);
     m_resolution->setReplacementURLForSubresources(replacementURLStrings);

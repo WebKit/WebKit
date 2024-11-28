@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -97,7 +97,7 @@ SymbolTable* JSWebAssemblyModule::exportSymbolTable() const
     return m_exportSymbolTable.get();
 }
 
-Wasm::TypeIndex JSWebAssemblyModule::typeIndexFromFunctionIndexSpace(unsigned functionIndexSpace) const
+Wasm::TypeIndex JSWebAssemblyModule::typeIndexFromFunctionIndexSpace(Wasm::FunctionSpaceIndex functionIndexSpace) const
 {
     return m_module->typeIndexFromFunctionIndexSpace(functionIndexSpace);
 }

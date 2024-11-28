@@ -63,7 +63,7 @@ void SVGTitleElement::removedFromAncestor(RemovalType removalType, ContainerNode
 {
     SVGElement::removedFromAncestor(removalType, oldParentOfRemovedTree);
     if (removalType.disconnectedFromDocument && isTitleElementRemovedFromSVGSVGElement(*this, oldParentOfRemovedTree)) {
-        RefAllowingPartiallyDestroyed<Document> document = this->document();
+        Ref<Document> document = this->document();
         document->titleElementRemoved(*this);
     }
 }

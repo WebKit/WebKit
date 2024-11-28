@@ -64,16 +64,15 @@ bool SourceBufferPrivateGStreamer::isContentTypeSupported(const ContentType& typ
     return containerType == "audio/mpeg"_s || containerType.endsWith("mp4"_s) || containerType.endsWith("aac"_s) || containerType.endsWith("webm"_s);
 }
 
-Ref<SourceBufferPrivateGStreamer> SourceBufferPrivateGStreamer::create(MediaSourcePrivateGStreamer& mediaSource, const ContentType& contentType, MediaPlayerPrivateGStreamerMSE& playerPrivate)
+Ref<SourceBufferPrivateGStreamer> SourceBufferPrivateGStreamer::create(MediaSourcePrivateGStreamer& mediaSource, const ContentType& contentType)
 {
-    return adoptRef(*new SourceBufferPrivateGStreamer(mediaSource, contentType, playerPrivate));
+    return adoptRef(*new SourceBufferPrivateGStreamer(mediaSource, contentType));
 }
 
-SourceBufferPrivateGStreamer::SourceBufferPrivateGStreamer(MediaSourcePrivateGStreamer& mediaSource, const ContentType& contentType, MediaPlayerPrivateGStreamerMSE& playerPrivate)
+SourceBufferPrivateGStreamer::SourceBufferPrivateGStreamer(MediaSourcePrivateGStreamer& mediaSource, const ContentType& contentType)
     : SourceBufferPrivate(mediaSource)
     , m_type(contentType)
-    , m_playerPrivate(playerPrivate)
-    , m_appendPipeline(makeUnique<AppendPipeline>(*this, playerPrivate))
+    , m_appendPipeline(makeUnique<AppendPipeline>(*this, *player()))
 #if !RELEASE_LOG_DISABLED
     , m_logger(mediaSource.logger())
     , m_logIdentifier(mediaSource.nextSourceBufferLogIdentifier())
@@ -94,7 +93,8 @@ Ref<MediaPromise> SourceBufferPrivateGStreamer::appendInternal(Ref<SharedBuffer>
 {
     ASSERT(isMainThread());
 
-    GST_DEBUG_OBJECT(m_playerPrivate.pipeline(), "Appending %zu bytes", data->size());
+    if (RefPtr player = this->player())
+        GST_DEBUG_OBJECT(player->pipeline(), "Appending %zu bytes", data->size());
 
     ASSERT(!m_appendPromise);
     m_appendPromise.emplace();
@@ -116,7 +116,8 @@ void SourceBufferPrivateGStreamer::resetParserStateInternal()
     if (!m_appendPipeline)
         return;
 
-    GST_DEBUG_OBJECT(m_playerPrivate.pipeline(), "resetting parser state");
+    if (RefPtr player = this->player())
+        GST_DEBUG_OBJECT(player->pipeline(), "resetting parser state");
     m_appendPipeline->resetParserState();
 }
 
@@ -149,16 +150,21 @@ void SourceBufferPrivateGStreamer::flush(TrackID trackId)
     if (!mediaSource)
         return;
 
+    RefPtr player = this->player();
+
     ASSERT(m_tracks.contains(trackId));
     auto track = m_tracks[trackId];
     if (!downcast<MediaSourcePrivateGStreamer>(mediaSource)->hasAllTracks()) {
-        GST_DEBUG_OBJECT(m_playerPrivate.pipeline(), "Source element has not emitted tracks yet, so we only need to clear the queue. trackId = '%s'", track->stringId().string().utf8().data());
+        if (player)
+            GST_DEBUG_OBJECT(player->pipeline(), "Source element has not emitted tracks yet, so we only need to clear the queue. trackId = '%" PRIu64 "'", track->id());
         track->clearQueue();
         return;
     }
 
-    GST_DEBUG_OBJECT(m_playerPrivate.pipeline(), "Source element has emitted tracks, let it handle the flush, which may cause a pipeline flush as well. trackId = '%s'", track->stringId().string().utf8().data());
-    webKitMediaSrcFlush(m_playerPrivate.webKitMediaSrc(), track->stringId());
+    if (!player)
+        return;
+    GST_DEBUG_OBJECT(player->pipeline(), "Source element has emitted tracks, let it handle the flush, which may cause a pipeline flush as well. trackId = '%" PRIu64 "'", track->id());
+    webKitMediaSrcFlush(player->webKitMediaSrc(), track->id());
 }
 
 void SourceBufferPrivateGStreamer::enqueueSample(Ref<MediaSample>&& sample, TrackID trackId)
@@ -169,11 +175,12 @@ void SourceBufferPrivateGStreamer::enqueueSample(Ref<MediaSample>&& sample, Trac
     ASSERT(gstSample);
     ASSERT(gst_sample_get_buffer(gstSample.get()));
 
-    GST_TRACE_OBJECT(m_playerPrivate.pipeline(), "enqueing sample trackId=%" PRIu64 " presentationSize=%.0fx%.0f at PTS %" GST_TIME_FORMAT " duration: %" GST_TIME_FORMAT,
-        trackId, sample->presentationSize().width(), sample->presentationSize().height(),
-        GST_TIME_ARGS(WebCore::toGstClockTime(sample->presentationTime())),
-        GST_TIME_ARGS(WebCore::toGstClockTime(sample->duration())));
-
+    if (RefPtr player = this->player()) {
+        GST_TRACE_OBJECT(player->pipeline(), "enqueing sample trackId=%" PRIu64 " presentationSize=%.0fx%.0f at PTS %" GST_TIME_FORMAT " duration: %" GST_TIME_FORMAT,
+            trackId, sample->presentationSize().width(), sample->presentationSize().height(),
+            GST_TIME_ARGS(WebCore::toGstClockTime(sample->presentationTime())),
+            GST_TIME_ARGS(WebCore::toGstClockTime(sample->duration())));
+    }
     ASSERT(m_tracks.contains(trackId));
     auto track = m_tracks[trackId];
     track->enqueueObject(adoptGRef(GST_MINI_OBJECT(gstSample.leakRef())));
@@ -185,7 +192,8 @@ bool SourceBufferPrivateGStreamer::isReadyForMoreSamples(TrackID trackId)
     ASSERT(m_tracks.contains(trackId));
     auto track = m_tracks[trackId];
     bool ret = track->isReadyForMoreSamples();
-    GST_TRACE_OBJECT(m_playerPrivate.pipeline(), "isReadyForMoreSamples: %s", boolForPrinting(ret));
+    if (RefPtr player = this->player())
+        GST_TRACE_OBJECT(player->pipeline(), "isReadyForMoreSamples: %s", boolForPrinting(ret));
     return ret;
 }
 
@@ -209,7 +217,8 @@ void SourceBufferPrivateGStreamer::allSamplesInTrackEnqueued(TrackID trackId)
     ASSERT(isMainThread());
     ASSERT(m_tracks.contains(trackId));
     auto track = m_tracks[trackId];
-    GST_DEBUG_OBJECT(m_playerPrivate.pipeline(), "Enqueueing EOS for track '%s'", track->stringId().string().utf8().data());
+    if (RefPtr player = this->player())
+        GST_DEBUG_OBJECT(player->pipeline(), "Enqueueing EOS for track '%" PRIu64 "'", track->id());
     track->enqueueObject(adoptGRef(GST_MINI_OBJECT(gst_event_new_eos())));
 }
 
@@ -219,22 +228,22 @@ bool SourceBufferPrivateGStreamer::precheckInitializationSegment(const Initializ
         auto* videoTrackInfo = static_cast<VideoTrackPrivateGStreamer*>(trackInfo.track.get());
         GRefPtr<GstCaps> initialCaps = videoTrackInfo->initialCaps();
         ASSERT(initialCaps);
-        if (!m_tracks.contains(trackInfo.track->id()))
-            m_tracks.try_emplace(trackInfo.track->id(), MediaSourceTrackGStreamer::create(TrackPrivateBaseGStreamer::TrackType::Video, trackInfo.track->id(), videoTrackInfo->stringId(), WTFMove(initialCaps)));
+        if (!m_tracks.contains(videoTrackInfo->id()))
+            m_tracks.try_emplace(videoTrackInfo->id(), MediaSourceTrackGStreamer::create(TrackPrivateBaseGStreamer::TrackType::Video, videoTrackInfo->id(), WTFMove(initialCaps)));
     }
     for (auto& trackInfo : segment.audioTracks) {
         auto* audioTrackInfo = static_cast<AudioTrackPrivateGStreamer*>(trackInfo.track.get());
         GRefPtr<GstCaps> initialCaps = audioTrackInfo->initialCaps();
         ASSERT(initialCaps);
-        if (!m_tracks.contains(trackInfo.track->id()))
-            m_tracks.try_emplace(trackInfo.track->id(), MediaSourceTrackGStreamer::create(TrackPrivateBaseGStreamer::TrackType::Audio, trackInfo.track->id(), audioTrackInfo->stringId(), WTFMove(initialCaps)));
+        if (!m_tracks.contains(audioTrackInfo->id()))
+            m_tracks.try_emplace(audioTrackInfo->id(), MediaSourceTrackGStreamer::create(TrackPrivateBaseGStreamer::TrackType::Audio, audioTrackInfo->id(), WTFMove(initialCaps)));
     }
     for (auto& trackInfo : segment.textTracks) {
         auto* textTrackInfo = static_cast<InbandTextTrackPrivateGStreamer*>(trackInfo.track.get());
         GRefPtr<GstCaps> initialCaps = textTrackInfo->initialCaps();
         ASSERT(initialCaps);
-        if (!m_tracks.contains(trackInfo.track->id()))
-            m_tracks.try_emplace(trackInfo.track->id(), MediaSourceTrackGStreamer::create(TrackPrivateBaseGStreamer::TrackType::Text, trackInfo.track->id(), textTrackInfo->stringId(), WTFMove(initialCaps)));
+        if (!m_tracks.contains(textTrackInfo->id()))
+            m_tracks.try_emplace(textTrackInfo->id(), MediaSourceTrackGStreamer::create(TrackPrivateBaseGStreamer::TrackType::Text, textTrackInfo->id(), WTFMove(initialCaps)));
     }
 
     return true;
@@ -243,7 +252,7 @@ bool SourceBufferPrivateGStreamer::precheckInitializationSegment(const Initializ
 void SourceBufferPrivateGStreamer::processInitializationSegment(std::optional<InitializationSegment>&& segment)
 {
     if (RefPtr mediaSource = m_mediaSource.get(); mediaSource && segment)
-        static_cast<MediaSourcePrivateGStreamer*>(mediaSource.get())->startPlaybackIfHasAllTracks();
+        downcast<MediaSourcePrivateGStreamer>(mediaSource)->startPlaybackIfHasAllTracks();
 }
 
 void SourceBufferPrivateGStreamer::didReceiveAllPendingSamples()
@@ -269,6 +278,28 @@ WTFLogChannel& SourceBufferPrivateGStreamer::logChannel() const
     return LogMediaSource;
 }
 #endif
+
+std::optional<TrackID> SourceBufferPrivateGStreamer::tryRegisterTrackId(TrackID preferredId)
+{
+    ASSERT(isMainThread());
+
+    RefPtr mediaSource = m_mediaSource.get();
+    if (!mediaSource)
+        return std::nullopt;
+
+    return downcast<MediaSourcePrivateGStreamer>(mediaSource)->registerTrackId(preferredId);
+}
+
+bool SourceBufferPrivateGStreamer::tryUnregisterTrackId(TrackID trackId)
+{
+    ASSERT(isMainThread());
+
+    RefPtr mediaSource = m_mediaSource.get();
+    if (!mediaSource)
+        return false;
+
+    return downcast<MediaSourcePrivateGStreamer>(mediaSource)->unregisterTrackId(trackId);
+}
 
 size_t SourceBufferPrivateGStreamer::platformMaximumBufferSize() const
 {
@@ -379,6 +410,22 @@ size_t SourceBufferPrivateGStreamer::platformEvictionThreshold() const
             evictionThreshold = parseInteger<size_t>(stringView, 10).value_or(0);
     });
     return evictionThreshold;
+}
+
+RefPtr<MediaPlayerPrivateGStreamerMSE> SourceBufferPrivateGStreamer::player() const
+{
+    if (RefPtr mediaSource = m_mediaSource.get())
+        return downcast<MediaPlayerPrivateGStreamerMSE>(mediaSource->player());
+    return nullptr;
+}
+
+void SourceBufferPrivateGStreamer::detach()
+{
+    for (auto& track : m_tracks)
+        flush(track.first);
+
+    if (RefPtr mediaSource = m_mediaSource.get())
+        downcast<MediaSourcePrivateGStreamer>(mediaSource)->detach();
 }
 
 #undef GST_CAT_DEFAULT

@@ -26,12 +26,14 @@
 #include "config.h"
 #include "WebPageTesting.h"
 
+#include "DrawingArea.h"
 #include "NotificationPermissionRequestManager.h"
 #include "PluginView.h"
 #include "WebNotificationClient.h"
 #include "WebPage.h"
 #include "WebPageTestingMessages.h"
 #include "WebProcess.h"
+#include <WebCore/BackForwardController.h>
 #include <WebCore/Editor.h>
 #include <WebCore/FocusController.h>
 #include <WebCore/IntPoint.h>
@@ -89,7 +91,7 @@ void WebPageTesting::isEditingCommandEnabled(const String& commandName, Completi
         return completionHandler(pluginView->isEditingCommandEnabled(commandName));
 #endif
 
-    auto command = frame->checkedEditor()->command(commandName);
+    auto command = frame->protectedEditor()->command(commandName);
     completionHandler(command.isSupported() && command.isEnabled());
 }
 
@@ -117,18 +119,61 @@ void WebPageTesting::setTopContentInset(float contentInset, CompletionHandler<vo
     completionHandler();
 }
 
-void WebPageTesting::setPageScaleFactor(double scale, IntPoint origin, CompletionHandler<void()>&& completionHandler)
+Ref<WebPage> WebPageTesting::protectedPage() const
+{
+    return m_page.get();
+}
+
+void WebPageTesting::resetStateBetweenTests()
+{
+    if (RefPtr mainFrame = protectedPage()->mainFrame()) {
+        mainFrame->disownOpener();
+        mainFrame->tree().clearName();
+    }
+    if (RefPtr corePage = protectedPage()->corePage()) {
+        // Force consistent "responsive" behavior for WebPage::eventThrottlingDelay() for testing. Tests can override via internals.
+        corePage->setEventThrottlingBehaviorOverride(WebCore::EventThrottlingBehavior::Responsive);
+    }
+}
+
+void WebPageTesting::clearCachedBackForwardListCounts(CompletionHandler<void()>&& completionHandler)
 {
     RefPtr page = m_page->corePage();
     if (!page)
         return completionHandler();
-    page->setPageScaleFactor(scale, origin);
+
+    Ref backForwardListProxy = static_cast<WebBackForwardListProxy&>(page->backForward().client());
+    backForwardListProxy->clearCachedListCounts();
     completionHandler();
 }
 
-Ref<WebPage> WebPageTesting::protectedPage() const
+void WebPageTesting::setTracksRepaints(bool trackRepaints, CompletionHandler<void()>&& completionHandler)
 {
-    return m_page.get();
+    RefPtr page = m_page->corePage();
+    if (!page)
+        return completionHandler();
+
+    for (auto& rootFrame : page->rootFrames()) {
+        if (RefPtr view = rootFrame->view())
+            view->setTracksRepaints(trackRepaints);
+    }
+    completionHandler();
+}
+
+void WebPageTesting::displayAndTrackRepaints(CompletionHandler<void()>&& completionHandler)
+{
+    RefPtr page = m_page->corePage();
+    if (!page)
+        return completionHandler();
+
+    protectedPage()->protectedDrawingArea()->updateRenderingWithForcedRepaint();
+    for (auto& rootFrame : page->rootFrames()) {
+        if (RefPtr view = rootFrame->view()) {
+            view->setTracksRepaints(true);
+            view->resetTrackedRepaints();
+        }
+    }
+    completionHandler();
 }
 
 } // namespace WebKit

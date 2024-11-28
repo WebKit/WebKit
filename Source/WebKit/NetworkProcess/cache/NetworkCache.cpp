@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -60,7 +60,7 @@ namespace NetworkCache {
 
 using namespace FileSystem;
 
-WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(CacheRetrieveInfo, Cache::RetrieveInfo);
+WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(Cache, RetrieveInfo);
 
 static const AtomString& resourceType()
 {
@@ -111,17 +111,21 @@ Cache::Cache(NetworkProcess& networkProcess, const String& storageDirectory, Ref
 {
 #if ENABLE(NETWORK_CACHE_SPECULATIVE_REVALIDATION)
     if (options.contains(CacheOption::SpeculativeRevalidation)) {
-        m_lowPowerModeNotifier = makeUnique<WebCore::LowPowerModeNotifier>([this](bool isLowPowerModeEnabled) {
+        m_lowPowerModeNotifier = makeUnique<WebCore::LowPowerModeNotifier>([weakThis = WeakPtr { *this }](bool isLowPowerModeEnabled) {
             ASSERT(WTF::RunLoop::isMain());
+            RefPtr protectedThis = weakThis.get();
+            if (!protectedThis)
+                return;
+
             if (isLowPowerModeEnabled)
-                m_speculativeLoadManager = nullptr;
+                protectedThis->m_speculativeLoadManager = nullptr;
             else {
-                ASSERT(!m_speculativeLoadManager);
-                m_speculativeLoadManager = makeUnique<SpeculativeLoadManager>(*this, m_storage.get());
+                ASSERT(!protectedThis->m_speculativeLoadManager);
+                protectedThis->m_speculativeLoadManager = makeUnique<SpeculativeLoadManager>(*protectedThis, protectedThis->protectedStorage());
             }
         });
         if (!m_lowPowerModeNotifier->isLowPowerModeEnabled())
-            m_speculativeLoadManager = makeUnique<SpeculativeLoadManager>(*this, m_storage.get());
+            m_speculativeLoadManager = makeUnique<SpeculativeLoadManager>(*this, protectedStorage());
     }
 #endif
 
@@ -360,12 +364,12 @@ void Cache::startAsyncRevalidationIfNeeded(const WebCore::ResourceRequest& reque
         auto addResult = m_pendingAsyncRevalidationByPage.ensure(frameID, [] {
             return WeakHashSet<AsyncRevalidation>();
         });
-        auto revalidation = makeUnique<AsyncRevalidation>(*this, frameID, request, WTFMove(entry), isNavigatingToAppBoundDomain, allowPrivacyProxy, advancedPrivacyProtections, [this, key](auto result) {
+        Ref revalidation = AsyncRevalidation::create(*this, frameID, request, WTFMove(entry), isNavigatingToAppBoundDomain, allowPrivacyProxy, advancedPrivacyProtections, [this, key](auto result) {
             ASSERT(m_pendingAsyncRevalidations.contains(key));
             m_pendingAsyncRevalidations.remove(key);
             LOG(NetworkCache, "(NetworkProcess) revalidation completed for '%s' with result %d", key.identifier().utf8().data(), static_cast<int>(result));
         });
-        addResult.iterator->value.add(*revalidation);
+        addResult.iterator->value.add(revalidation.get());
         return revalidation;
     });
 }
@@ -399,9 +403,10 @@ void Cache::retrieve(const WebCore::ResourceRequest& request, std::optional<Glob
     info.priority = priority;
 
 #if ENABLE(NETWORK_CACHE_SPECULATIVE_REVALIDATION)
-    bool canUseSpeculativeRevalidation = frameID && m_speculativeLoadManager && canRequestUseSpeculativeRevalidation(request);
+    CheckedPtr speculativeLoadManager = m_speculativeLoadManager.get();
+    bool canUseSpeculativeRevalidation = frameID && speculativeLoadManager && canRequestUseSpeculativeRevalidation(request);
     if (canUseSpeculativeRevalidation)
-        m_speculativeLoadManager->registerLoad(*frameID, request, storageKey, isNavigatingToAppBoundDomain, allowPrivacyProxy, advancedPrivacyProtections);
+        speculativeLoadManager->registerLoad(*frameID, request, storageKey, isNavigatingToAppBoundDomain, allowPrivacyProxy, advancedPrivacyProtections);
 #endif
 
     auto retrieveDecision = makeRetrieveDecision(request);
@@ -411,8 +416,8 @@ void Cache::retrieve(const WebCore::ResourceRequest& request, std::optional<Glob
     }
 
 #if ENABLE(NETWORK_CACHE_SPECULATIVE_REVALIDATION)
-    if (canUseSpeculativeRevalidation && m_speculativeLoadManager->canRetrieve(storageKey, request, *frameID)) {
-        m_speculativeLoadManager->retrieve(storageKey, [networkProcess = Ref { networkProcess() }, request, completionHandler = WTFMove(completionHandler), info = WTFMove(info), sessionID = m_sessionID](std::unique_ptr<Entry> entry) mutable {
+    if (canUseSpeculativeRevalidation && speculativeLoadManager->canRetrieve(storageKey, request, *frameID)) {
+        speculativeLoadManager->retrieve(storageKey, [networkProcess = Ref { networkProcess() }, request, completionHandler = WTFMove(completionHandler), info = WTFMove(info), sessionID = m_sessionID](std::unique_ptr<Entry> entry) mutable {
             info.wasSpeculativeLoad = true;
             if (entry && WebCore::verifyVaryingRequestHeaders(networkProcess->storageSession(sessionID), entry->varyingRequestHeaders(), request))
                 completeRetrieve(WTFMove(completionHandler), WTFMove(entry), info);
@@ -426,15 +431,15 @@ void Cache::retrieve(const WebCore::ResourceRequest& request, std::optional<Glob
     m_storage->retrieve(storageKey, priority, [this, protectedThis = Ref { *this }, request, completionHandler = WTFMove(completionHandler), info = WTFMove(info), storageKey, networkProcess = Ref { networkProcess() }, sessionID = m_sessionID, frameID, isNavigatingToAppBoundDomain, allowPrivacyProxy, advancedPrivacyProtections](auto record, auto timings) mutable {
         info.storageTimings = timings;
 
-        if (!record) {
+        if (record.isNull()) {
             LOG(NetworkCache, "(NetworkProcess) not found in storage");
             completeRetrieve(WTFMove(completionHandler), nullptr, info);
             return false;
         }
 
-        ASSERT(record->key == storageKey);
+        ASSERT(record.key == storageKey);
 
-        auto entry = Entry::decodeStorageRecord(*record);
+        auto entry = Entry::decodeStorageRecord(record);
 
         auto useDecision = entry ? makeUseDecision(networkProcess, sessionID, *entry, request) : UseDecision::NoDueToDecodeFailure;
         switch (useDecision) {

@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "ContentWorldData.h"
 #include "UserContentControllerIdentifier.h"
 #include "WebCompiledContentRuleListData.h"
 #include "WebUserContentControllerDataTypes.h"
@@ -33,7 +34,7 @@ namespace WebKit {
 
 struct UserContentControllerParameters {
     UserContentControllerIdentifier identifier;
-    Vector<std::pair<ContentWorldIdentifier, String>> userContentWorlds;
+    Vector<ContentWorldData> userContentWorlds;
     Vector<WebUserScriptData> userScripts;
     Vector<WebUserStyleSheetData> userStyleSheets;
     Vector<WebScriptMessageHandlerData> messageHandlers;

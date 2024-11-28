@@ -651,4 +651,12 @@ typedef NS_ENUM(NSInteger, NSTextBlockLayer) {
 @end
 #endif
 
+#if ENABLE(DRAG_SUPPORT)
+@protocol UIDragInteractionDelegate_SPI<UIDragInteractionDelegate>
+@optional
+- (void)_dragInteraction:(UIDragInteraction *)interaction prepareForSession:(id<UIDragSession>)session completion:(void(^)(void))completion;
+- (void)_dragInteraction:(UIDragInteraction *)interaction itemsForAddingToSession:(id<UIDragSession>)session withTouchAtPoint:(CGPoint)point completion:(void(^)(NSArray<UIDragItem *> *))completion;
+@end
+#endif // ENABLE(DRAG_SUPPORT)
+
 #endif // PLATFORM(IOS_FAMILY)

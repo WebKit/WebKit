@@ -110,7 +110,7 @@ CodePtr<JSEntryPtrTag> jsToWasmICCodePtr(CodeSpecializationKind kind, JSObject* 
     if (kind != CodeForCall)
         return nullptr;
     if (auto* wasmFunction = jsDynamicCast<WebAssemblyFunction*>(callee))
-        return wasmFunction->jsCallEntrypoint();
+        return wasmFunction->jsCallICEntrypoint();
 #else
     UNUSED_PARAM(kind);
     UNUSED_PARAM(callee);

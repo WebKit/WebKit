@@ -70,7 +70,7 @@ void ChildChangeInvalidation::invalidateForChangedElement(Element& changedElemen
         checkingContext.matchesAllHasScopes = true;
 
         for (auto* selector : invalidationRuleSet.invalidationSelectors) {
-            if (isFirst) {
+            if (isFirst && invalidationRuleSet.isNegation == IsNegation::No) {
                 // If this :has() matches ignoring this mutation, nothing actually changes and we don't need to invalidate.
                 // FIXME: We could cache this state across invalidations instead of just testing a single sibling.
                 auto* sibling = m_childChange.previousSiblingElement ? m_childChange.previousSiblingElement : m_childChange.nextSiblingElement;
@@ -99,7 +99,7 @@ void ChildChangeInvalidation::invalidateForChangedElement(Element& changedElemen
                 continue;
             if (!hasMatchingInvalidationSelector(invalidationRuleSet))
                 continue;
-            Invalidator::addToMatchElementRuleSets(matchElementRuleSets, invalidationRuleSet);
+            Invalidator::addToMatchElementRuleSetsRespectingNegation(matchElementRuleSets, invalidationRuleSet);
         }
     };
 

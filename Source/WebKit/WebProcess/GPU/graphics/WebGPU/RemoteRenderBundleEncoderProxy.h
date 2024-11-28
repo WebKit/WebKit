@@ -60,11 +60,12 @@ private:
     RemoteRenderBundleEncoderProxy& operator=(RemoteRenderBundleEncoderProxy&&) = delete;
 
     WebGPUIdentifier backing() const { return m_backing; }
+    Ref<ConvertToBackingContext> protectedConvertToBackingContext() const;
     
     template<typename T>
     WARN_UNUSED_RETURN IPC::Error send(T&& message)
     {
-        return root().streamClientConnection().send(WTFMove(message), backing());
+        return root().protectedStreamClientConnection()->send(WTFMove(message), backing());
     }
 
     void setPipeline(const WebCore::WebGPU::RenderPipeline&) final;
@@ -86,8 +87,7 @@ private:
         std::optional<Vector<WebCore::WebGPU::BufferDynamicOffset>>&& dynamicOffsets) final;
 
     void setBindGroup(WebCore::WebGPU::Index32, const WebCore::WebGPU::BindGroup&,
-        const uint32_t* dynamicOffsetsArrayBuffer,
-        size_t dynamicOffsetsArrayBufferLength,
+        std::span<const uint32_t> dynamicOffsetsArrayBuffer,
         WebCore::WebGPU::Size64 dynamicOffsetsDataStart,
         WebCore::WebGPU::Size32 dynamicOffsetsDataLength) final;
 

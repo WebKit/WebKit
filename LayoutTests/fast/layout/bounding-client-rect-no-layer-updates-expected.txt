@@ -1,0 +1,19 @@
+Test that layout and render layer updates do not happen for style changes that do not need them.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS result.actualLayoutCount is result.expectedLayoutCount
+PASS result.actualLayerUpdateCount is result.expectedLayerUpdateCount
+PASS result.actualLayoutCount is result.expectedLayoutCount
+PASS result.actualLayerUpdateCount is result.expectedLayerUpdateCount
+PASS result.actualLayoutCount is result.expectedLayoutCount
+PASS result.actualLayerUpdateCount is result.expectedLayerUpdateCount
+PASS result.actualLayoutCount is result.expectedLayoutCount
+PASS result.actualLayerUpdateCount is result.expectedLayerUpdateCount
+PASS result.actualLayoutCount is result.expectedLayoutCount
+PASS result.actualLayerUpdateCount is result.expectedLayerUpdateCount
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

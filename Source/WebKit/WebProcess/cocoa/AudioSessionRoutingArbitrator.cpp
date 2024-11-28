@@ -49,11 +49,6 @@ AudioSessionRoutingArbitrator::AudioSessionRoutingArbitrator(WebProcess& process
 
 AudioSessionRoutingArbitrator::~AudioSessionRoutingArbitrator() = default;
 
-ASCIILiteral AudioSessionRoutingArbitrator::supplementName()
-{
-    return "AudioSessionRoutingArbitrator"_s;
-}
-
 void AudioSessionRoutingArbitrator::beginRoutingArbitrationWithCategory(AudioSession::CategoryType category, CompletionHandler<void(RoutingArbitrationError, DefaultRouteChanged)>&& callback)
 {
     WebProcess::singleton().parentProcessConnection()->sendWithAsyncReply(Messages::AudioSessionRoutingArbitratorProxy::BeginRoutingArbitrationWithCategory(category), WTFMove(callback), AudioSessionRoutingArbitratorProxy::destinationId());

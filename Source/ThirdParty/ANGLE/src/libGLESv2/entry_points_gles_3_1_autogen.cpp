@@ -15,7 +15,7 @@
 #include "libANGLE/Context.h"
 #include "libANGLE/Context.inl.h"
 #include "libANGLE/capture/capture_gles_3_1_autogen.h"
-#include "libANGLE/context_private_call_gles_autogen.h"
+#include "libANGLE/context_private_call_autogen.h"
 #include "libANGLE/entry_points_utils.h"
 #include "libANGLE/validationES31.h"
 #include "libGLESv2/global_state.h"

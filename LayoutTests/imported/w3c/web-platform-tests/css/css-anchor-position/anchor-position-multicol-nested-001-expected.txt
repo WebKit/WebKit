@@ -3,11 +3,11 @@ The green box should be a union of blue boxes, and the purple box should be at t
 
 FAIL .target 1 assert_equals:
 <div class="target" data-offset-x="11" data-offset-y="-19" data-expected-width="180" data-expected-height="100"></div>
-width expected 180 but got 0
+width expected 180 but got 20
 FAIL .target 2 assert_equals:
 <div class="target" data-offset-x="13" data-offset-y="97" data-expected-width="180" data-expected-height="100"></div>
-width expected 180 but got 0
+width expected 180 but got 20
 FAIL .target 3 assert_equals:
 <div class="target" data-offset-x="175" data-offset-y="13" data-expected-width="180" data-expected-height="100"></div>
-width expected 180 but got 0
+width expected 180 but got 20
 

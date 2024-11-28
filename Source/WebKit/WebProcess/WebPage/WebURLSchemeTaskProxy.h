@@ -69,7 +69,7 @@ private:
     void queueTask(Function<void()>&& task) { m_queuedTasks.append(WTFMove(task)); }
     void processNextPendingTask();
 
-    WebURLSchemeHandlerProxy& m_urlSchemeHandler;
+    WeakRef<WebURLSchemeHandlerProxy> m_urlSchemeHandler;
     RefPtr<WebCore::ResourceLoader> m_coreLoader;
     RefPtr<WebFrame> m_frame;
     WebCore::ResourceRequest m_request;

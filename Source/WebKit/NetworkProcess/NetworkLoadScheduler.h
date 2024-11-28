@@ -31,18 +31,10 @@
 #include <tuple>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
+#include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/WeakListHashSet.h>
 #include <wtf/WeakPtr.h>
-
-namespace WebKit {
-class NetworkLoadScheduler;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::NetworkLoadScheduler> : std::true_type { };
-}
 
 namespace WebCore {
 class ResourceError;
@@ -52,10 +44,14 @@ namespace WebKit {
 
 class NetworkLoad;
 
-class NetworkLoadScheduler : public CanMakeWeakPtr<NetworkLoadScheduler> {
+class NetworkLoadScheduler : public RefCountedAndCanMakeWeakPtr<NetworkLoadScheduler> {
     WTF_MAKE_TZONE_ALLOCATED(NetworkLoadScheduler);
 public:
-    NetworkLoadScheduler();
+    static Ref<NetworkLoadScheduler> create()
+    {
+        return adoptRef(*new NetworkLoadScheduler);
+    }
+
     ~NetworkLoadScheduler();
 
     void schedule(NetworkLoad&);
@@ -69,6 +65,8 @@ public:
     void clearPageData(WebCore::PageIdentifier);
 
 private:
+    NetworkLoadScheduler();
+
     void scheduleLoad(NetworkLoad&);
     void unscheduleLoad(NetworkLoad&);
 

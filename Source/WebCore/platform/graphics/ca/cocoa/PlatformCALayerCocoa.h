@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "ContentsFormat.h"
 #include "PlatformCALayer.h"
 
 OBJC_CLASS NSObject;
@@ -104,7 +105,7 @@ public:
     void setBackingStoreAttached(bool) override;
     bool backingStoreAttached() const override;
 
-#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
+#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION) || HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
     void setVisibleRect(const FloatRect&) override;
 #endif
 
@@ -120,8 +121,8 @@ public:
     bool acceleratesDrawing() const override;
     void setAcceleratesDrawing(bool) override;
 
-    bool wantsDeepColorBackingStore() const override;
-    void setWantsDeepColorBackingStore(bool) override;
+    ContentsFormat contentsFormat() const override;
+    void setContentsFormat(ContentsFormat) override;
 
     bool hasContents() const override;
     CFTypeRef contents() const override;
@@ -182,8 +183,8 @@ public:
     void setEventRegion(const EventRegion&) override;
 
 #if ENABLE(SCROLLING_THREAD)
-    ScrollingNodeID scrollingNodeID() const override { return m_scrollingNodeID; }
-    void setScrollingNodeID(ScrollingNodeID nodeID) override { m_scrollingNodeID = nodeID; }
+    std::optional<ScrollingNodeID> scrollingNodeID() const override { return m_scrollingNodeID; }
+    void setScrollingNodeID(std::optional<ScrollingNodeID> nodeID) override { m_scrollingNodeID = nodeID; }
 #endif
 
 #if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
@@ -228,10 +229,10 @@ private:
     GraphicsLayer::CustomAppearance m_customAppearance { GraphicsLayer::CustomAppearance::None };
     std::unique_ptr<FloatRoundedRect> m_shapeRoundedRect;
 #if ENABLE(SCROLLING_THREAD)
-    ScrollingNodeID m_scrollingNodeID;
+    Markable<ScrollingNodeID> m_scrollingNodeID;
 #endif
     EventRegion m_eventRegion;
-    bool m_wantsDeepColorBackingStore { false };
+    ContentsFormat m_contentsFormat { ContentsFormat::RGBA8 };
     bool m_backingStoreAttached { true };
     bool m_backdropRootIsOpaque { false };
 };

@@ -30,6 +30,8 @@
 #include <JavaScriptCore/JSGenericTypedArrayViewInlines.h>
 #include <wtf/unicode/CharacterNames.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 RefPtr<Uint8Array> TextEncoderStreamEncoder::encode(const String& input)
@@ -82,3 +84,5 @@ RefPtr<Uint8Array> TextEncoderStreamEncoder::flush()
 }
 
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

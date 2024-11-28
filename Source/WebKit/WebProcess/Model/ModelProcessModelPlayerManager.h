@@ -32,6 +32,7 @@
 #include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
+class ModelPlayer;
 class ModelPlayerClient;
 }
 
@@ -51,7 +52,7 @@ public:
     ModelProcessConnection& modelProcessConnection();
 
     Ref<ModelProcessModelPlayer> createModelProcessModelPlayer(WebPage&, WebCore::ModelPlayerClient&);
-    void deleteModelProcessModelPlayer(WebCore::ModelPlayerIdentifier);
+    void deleteModelProcessModelPlayer(WebCore::ModelPlayer&);
 
     void didReceivePlayerMessage(IPC::Connection&, IPC::Decoder&);
 

@@ -36,6 +36,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/WeakRef.h>
+#include <wtf/WorkQueue.h>
 
 namespace IPC {
 class Decoder;
@@ -78,6 +79,8 @@ private:
     using LayerCreationCallback = CompletionHandler<void(std::optional<LayerHostingContextID>)>&&;
     void createLayer(SampleBufferDisplayLayerIdentifier, bool hideRootLayer, WebCore::IntSize, bool shouldMaintainAspectRatio, bool canShowWhileLocked, LayerCreationCallback);
     void releaseLayer(SampleBufferDisplayLayerIdentifier);
+
+    Ref<WorkQueue> protectedQueue() const { return m_queue; }
 
     ThreadSafeWeakPtr<GPUConnectionToWebProcess> m_connectionToWebProcess;
     Ref<IPC::Connection> m_connection;

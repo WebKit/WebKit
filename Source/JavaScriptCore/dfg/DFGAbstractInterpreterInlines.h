@@ -63,6 +63,8 @@
 #include <wtf/BooleanLattice.h>
 #include <wtf/CheckedArithmetic.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC { namespace DFG {
 
 template<typename AbstractStateType>
@@ -603,8 +605,21 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         } else if (node->binaryUseKind() == AnyBigIntUse)
             setTypeForNode(node, SpecBigInt);
         else {
+            auto& value1 = forNode(node->child1());
+            auto& value2 = forNode(node->child2());
+            if (value1.isType(SpecInt32Only) && value2.isType(SpecInt32Only)) {
+                didFoldClobberWorld();
+                setTypeForNode(node, SpecInt32Only);
+                break;
+            }
+
             clobberWorld();
-            setTypeForNode(node, SpecInt32Only | SpecBigInt);
+            if (value1.isType(SpecFullNumber) || value2.isType(SpecFullNumber))
+                setTypeForNode(node, SpecInt32Only);
+            else if (value1.isType(SpecBigInt) || value2.isType(SpecBigInt))
+                setTypeForNode(node, SpecBigInt);
+            else
+                setTypeForNode(node, SpecInt32Only | SpecBigInt);
         }
         break;
     }
@@ -623,14 +638,56 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
 
         if (handleConstantBinaryBitwiseOp(node))
             break;
-        
-        if (node->op() == ArithBitAnd
-            && (isBoolInt32Speculation(forNode(node->child1()).m_type) ||
-                isBoolInt32Speculation(forNode(node->child2()).m_type))) {
-            setNonCellTypeForNode(node, SpecBoolInt32);
-            break;
+
+        if (node->op() == ArithBitAnd) {
+            ASSERT(node->child1().useKind() != UntypedUse);
+            if (node->child2()->isInt32Constant() && !node->child2()->asInt32()) {
+                setConstant(node, jsNumber(0));
+                break;
+            }
+
+            if ((node->child2()->isInt32Constant() && node->child2()->asInt32() == -1) || (node->child1() == node->child2())) {
+                m_state.setShouldTryConstantFolding(true);
+                forNode(node) = forNode(node->child1());
+                break;
+            }
+
+            if (isBoolInt32Speculation(forNode(node->child1()).m_type) || isBoolInt32Speculation(forNode(node->child2()).m_type)) {
+                setNonCellTypeForNode(node, SpecBoolInt32);
+                break;
+            }
         }
-        
+
+        if (node->op() == ArithBitOr) {
+            ASSERT(node->child1().useKind() != UntypedUse);
+            if (node->child2()->isInt32Constant() && node->child2()->asInt32() == -1) {
+                setConstant(node, jsNumber(-1));
+                break;
+            }
+
+            if ((node->child2()->isInt32Constant() && !node->child2()->asInt32()) || (node->child1() == node->child2())) {
+                m_state.setShouldTryConstantFolding(true);
+                forNode(node) = forNode(node->child1());
+                break;
+            }
+        }
+
+        if (node->op() == ArithBitXor) {
+            ASSERT(node->child1().useKind() != UntypedUse);
+            // x ^ x -> 0 (XOR with itself results in 0)
+            if (node->child1() == node->child2()) {
+                setConstant(node, jsNumber(0));
+                break;
+            }
+
+            // x ^ 0 -> x (Identity for XOR)
+            if (node->child2()->isInt32Constant() && !node->child2()->asInt32()) {
+                m_state.setShouldTryConstantFolding(true);
+                forNode(node) = forNode(node->child1());
+                break;
+            }
+        }
+
         setNonCellTypeForNode(node, SpecInt32Only);
         break;
     }
@@ -691,7 +748,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         if (child && child.isNumber()) {
             double asDouble = child.asNumber();
             int32_t asInt = JSC::toInt32(asDouble);
-            if (bitwise_cast<int64_t>(static_cast<double>(asInt)) == bitwise_cast<int64_t>(asDouble)) {
+            if (std::bit_cast<int64_t>(static_cast<double>(asInt)) == std::bit_cast<int64_t>(asDouble)) {
                 setConstant(node, JSValue(asInt));
                 break;
             }
@@ -806,8 +863,18 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         else {
             DFG_ASSERT(m_graph, node, node->binaryUseKind() == UntypedUse);
             clobberWorld();
-            // FIXME: do we really need SpecString here for ValueSub? It seems like we only need it for ValueAdd.
-            setTypeForNode(node, SpecString | SpecBytecodeNumber | SpecBigInt);
+            if (node->op() == ValueAdd)
+                setTypeForNode(node, SpecString | SpecBytecodeNumber | SpecBigInt);
+            else {
+                auto& value1 = forNode(node->child1());
+                auto& value2 = forNode(node->child2());
+                if (value1.isType(SpecFullNumber) || value2.isType(SpecFullNumber))
+                    setTypeForNode(node, SpecBytecodeNumber);
+                else if (value1.isType(SpecBigInt) || value2.isType(SpecBigInt))
+                    setTypeForNode(node, SpecBigInt);
+                else
+                    setTypeForNode(node, SpecBytecodeNumber | SpecBigInt);
+            }
         }
         break;
     }
@@ -1137,7 +1204,14 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             setTypeForNode(node, SpecBigInt32);
         else {
             clobberWorld();
-            setTypeForNode(node, SpecBytecodeNumber | SpecBigInt);
+            auto& value1 = forNode(node->child1());
+            auto& value2 = forNode(node->child2());
+            if (value1.isType(SpecFullNumber) || value2.isType(SpecFullNumber))
+                setTypeForNode(node, SpecBytecodeNumber);
+            else if (value1.isType(SpecBigInt) || value2.isType(SpecBigInt))
+                setTypeForNode(node, SpecBigInt);
+            else
+                setTypeForNode(node, SpecBytecodeNumber | SpecBigInt);
         }
         break;
     }
@@ -1215,7 +1289,14 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             setTypeForNode(node, SpecBigInt);
         else {
             clobberWorld();
-            setTypeForNode(node, SpecBytecodeNumber | SpecBigInt);
+            auto& value1 = forNode(node->child1());
+            auto& value2 = forNode(node->child2());
+            if (value1.isType(SpecFullNumber) || value2.isType(SpecFullNumber))
+                setTypeForNode(node, SpecBytecodeNumber);
+            else if (value1.isType(SpecBigInt) || value2.isType(SpecBigInt))
+                setTypeForNode(node, SpecBigInt);
+            else
+                setTypeForNode(node, SpecBytecodeNumber | SpecBigInt);
         }
         break;
     }
@@ -2188,17 +2269,28 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         }
         
         if (node->child1() == node->child2()) {
-            if (node->isBinaryUseKind(Int32Use) ||
-                node->isBinaryUseKind(Int52RepUse) ||
-                node->isBinaryUseKind(BigInt32Use) ||
-                node->isBinaryUseKind(HeapBigIntUse) ||
-                node->isBinaryUseKind(AnyBigIntUse) ||
-                node->isBinaryUseKind(StringUse) ||
-                node->isBinaryUseKind(BooleanUse) ||
-                node->isBinaryUseKind(SymbolUse) ||
-                node->isBinaryUseKind(StringIdentUse) ||
-                node->isBinaryUseKind(ObjectUse) ||
-                node->isSymmetricBinaryUseKind(ObjectUse, ObjectOrOtherUse)) {
+            auto& value = forNode(node->child1());
+            if (node->isBinaryUseKind(Int32Use)
+                || node->isBinaryUseKind(Int52RepUse)
+                || node->isBinaryUseKind(BigInt32Use)
+                || node->isBinaryUseKind(HeapBigIntUse)
+                || node->isBinaryUseKind(AnyBigIntUse)
+                || node->isBinaryUseKind(StringUse)
+                || node->isBinaryUseKind(BooleanUse)
+                || node->isBinaryUseKind(SymbolUse)
+                || node->isBinaryUseKind(StringUse)
+                || node->isBinaryUseKind(StringIdentUse)
+                || node->isBinaryUseKind(ObjectUse)
+                || node->isSymmetricBinaryUseKind(ObjectUse, ObjectOrOtherUse)
+                || value.isType(SpecInt32Only)
+                || value.isType(SpecInt52Any)
+                || value.isType(SpecAnyIntAsDouble)
+                || value.isType(SpecBigInt)
+                || value.isType(SpecString)
+                || value.isType(SpecBoolean)
+                || value.isType(SpecSymbol)
+                || value.isType(SpecObject)
+                || value.isType(SpecOther)) {
                 switch (node->op()) {
                 case CompareLess:
                 case CompareGreater:
@@ -2272,6 +2364,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         if (node->child1() == node->child2()) {
             // FIXME: Is there any case not involving NaN where x === x is not guaranteed to return true?
             // If not I might slightly simplify that check.
+            auto& value = forNode(node->child1());
             if (node->isBinaryUseKind(BooleanUse)
                 || node->isSymmetricBinaryUseKind(BooleanUse, UntypedUse)
                 || node->isBinaryUseKind(Int32Use)
@@ -2288,7 +2381,16 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                 || node->isSymmetricBinaryUseKind(StringUse, UntypedUse)
                 || node->isBinaryUseKind(BigInt32Use)
                 || node->isBinaryUseKind(HeapBigIntUse)
-                || node->isBinaryUseKind(AnyBigIntUse)) {
+                || node->isBinaryUseKind(AnyBigIntUse)
+                || value.isType(SpecInt32Only)
+                || value.isType(SpecInt52Any)
+                || value.isType(SpecAnyIntAsDouble)
+                || value.isType(SpecBigInt)
+                || value.isType(SpecString)
+                || value.isType(SpecBoolean)
+                || value.isType(SpecSymbol)
+                || value.isType(SpecObject)
+                || value.isType(SpecOther)) {
                 setConstant(node, jsBoolean(true));
                 break;
             }
@@ -2794,7 +2896,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         break;
     }
 
-    case ArraySpliceExtract:
+    case ArraySplice:
         clobberWorld();
         makeBytecodeTopForNode(node);
         break;
@@ -3303,6 +3405,11 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         break;
     }
 
+    case NewArrayWithSizeAndStructure: {
+        setTypeForNode(node, SpecArray);
+        break;
+    }
+
     case NewArrayWithConstantSize:
         setForNode(node, m_graph.globalObjectFor(node->origin.semantic)->arrayStructureForIndexingTypeDuringAllocation(node->indexingMode()));
         break;
@@ -3781,13 +3888,25 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         break;
     }
 
-    case GetClosureVar:
-        if (JSValue value = m_graph.tryGetConstantClosureVar(forNode(node->child1()), node->scopeOffset())) {
-            setConstant(node, *m_graph.freeze(value));
+    case GetClosureVar: {
+        JSValue value = m_graph.tryGetConstantClosureVar(forNode(node->child1()), node->scopeOffset());
+        if (node->hasDoubleResult()) {
+            if (value && value.isNumber()) {
+                if (!std::isnan(value.asNumber())) {
+                    setConstant(node, *m_graph.freeze(value));
+                    break;
+                }
+            }
+            setTypeForNode(node, SpecBytecodeRealNumber);
             break;
         }
-        makeBytecodeTopForNode(node);
+
+        if (value)
+            setConstant(node, *m_graph.freeze(value));
+        else
+            makeBytecodeTopForNode(node);
         break;
+    }
             
     case PutClosureVar:
         break;
@@ -4014,6 +4133,12 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         
         if (value.m_structure.isSubsetOf(set))
             m_state.setShouldTryConstantFolding(true);
+        else if (value.m_type) {
+            if (set.onlyStructure().get() == m_vm.stringStructure.get()
+                || set.onlyStructure().get() == m_vm.symbolStructure.get()
+                || set.onlyStructure().get() == m_vm.bigIntStructure.get())
+                m_state.setShouldTryConstantFolding(true);
+        }
 
         SpeculatedType admittedTypes = SpecNone;
         switch (node->child1().useKind()) {
@@ -4430,15 +4555,21 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         // by something other than AI, maybe by CSE for example) that obscures AI's view of the structure
         // at the point where GetByOffset runs. Currently, when that happens, we'll have to rely entirely
         // on the type that ByteCodeParser was able to prove.
-        AbstractValue value = m_graph.inferredValueForProperty(
-            forNode(node->child2()), data.offset, m_state.structureClobberState());
+        AbstractValue value = m_graph.inferredValueForProperty(forNode(node->child2()), data.offset, m_state.structureClobberState());
 
         // If we decide that there does not exist any value that this can return, then it's probably
         // because the compilation was already invalidated.
         if (value.isClear())
             m_state.setIsValid(false);
 
-        setForNode(node, value);
+        if (node->hasDoubleResult()) {
+            if (value.isType(SpecBytecodeRealNumber))
+                setForNode(node, value);
+            else
+                setTypeForNode(node, SpecBytecodeRealNumber);
+        } else
+            setForNode(node, value);
+
         if (value.m_value)
             m_state.setShouldTryConstantFolding(true);
         break;
@@ -4501,7 +4632,13 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         if (forNode(node->child1()).changeStructure(m_graph, baseSet) == Contradiction)
             m_state.setIsValid(false);
         
-        setForNode(node, result);
+        if (node->hasDoubleResult()) {
+            if (result.isType(SpecBytecodeRealNumber))
+                setForNode(node, result);
+            else
+                setTypeForNode(node, SpecBytecodeRealNumber);
+        } else
+            setForNode(node, result);
         break;
     }
             
@@ -4893,12 +5030,19 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         break;
     }
 
-    case GetGlobalVar:
-        makeHeapTopForNode(node);
+    case GetGlobalVar: {
+        if (node->hasDoubleResult())
+            setTypeForNode(node, SpecBytecodeRealNumber);
+        else
+            makeHeapTopForNode(node);
         break;
+    }
 
     case GetGlobalLexicalVariable:
-        makeBytecodeTopForNode(node);
+        if (node->hasDoubleResult())
+            setTypeForNode(node, SpecBytecodeRealNumber);
+        else
+            makeBytecodeTopForNode(node);
         break;
 
     case GetDynamicVar:
@@ -5010,10 +5154,10 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             if (callee && newTarget) {
                 JSGlobalObject* globalObject = m_graph.globalObjectFor(node->origin.semantic);
                 if (callee->globalObject() == globalObject) {
-                    if (callee->classInfo() == ObjectConstructor::info() && node->numChildren() == 2) {
-                        if (FunctionRareData* rareData = newTarget->rareData()) {
-                            if (rareData->allocationProfileWatchpointSet().isStillValid() && globalObject->structureCacheClearedWatchpointSet().isStillValid()) {
-                                Structure* structure = rareData->internalFunctionAllocationStructure();
+                    if (FunctionRareData* rareData = newTarget->rareData()) {
+                        if (rareData->allocationProfileWatchpointSet().isStillValid() && globalObject->structureCacheClearedWatchpointSet().isStillValid()) {
+                            Structure* structure = rareData->internalFunctionAllocationStructure();
+                            if (callee->classInfo() == ObjectConstructor::info() && node->numChildren() == 2) {
                                 if (structure && structure->classInfoForCells() == JSFinalObject::info() && structure->hasMonoProto()) {
                                     m_graph.freeze(rareData);
                                     m_graph.watchpoints().addLazily(rareData->allocationProfileWatchpointSet());
@@ -5023,6 +5167,22 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                                     didFoldClobberWorld();
                                     setForNode(node, structure);
                                     break;
+                                }
+                            }
+
+                            if (callee->classInfo() == ArrayConstructor::info() && node->numChildren() == 3 && !m_graph.hasExitSite(node->origin.semantic, BadType) && !m_graph.hasExitSite(node->origin.semantic, OutOfBounds)) {
+                                if (structure && structure->classInfoForCells() == JSArray::info() && structure->hasMonoProto() && !hasAnyArrayStorage(structure->indexingType())) {
+                                    if (m_graph.isWatchingHavingABadTimeWatchpoint(node)) {
+
+                                        m_graph.freeze(rareData);
+                                        m_graph.watchpoints().addLazily(rareData->allocationProfileWatchpointSet());
+                                        m_graph.freeze(globalObject);
+                                        m_graph.watchpoints().addLazily(globalObject->structureCacheClearedWatchpointSet());
+                                        m_state.setShouldTryConstantFolding(true);
+                                        didFoldClobberWorld();
+                                        setTypeForNode(node, SpecArray);
+                                        break;
+                                    }
                                 }
                             }
                         }
@@ -5631,5 +5791,7 @@ void AbstractInterpreter<AbstractStateType>::executeDoubleUnaryOpEffects(Node* n
 }
 
 } } // namespace JSC::DFG
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ENABLE(DFG_JIT)

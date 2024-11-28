@@ -63,7 +63,6 @@
 #include "JSTestDefaultToJSONEnum.h"
 #endif
 
-
 namespace WebCore {
 using namespace JSC;
 
@@ -129,11 +128,10 @@ template<> void JSTestDefaultToJSONInheritDOMConstructor::initializeProperties(V
 
 /* Hash table for prototype */
 
-static const HashTableValue JSTestDefaultToJSONInheritPrototypeTableValues[] =
-{
-    { "constructor"_s, static_cast<unsigned>(PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestDefaultToJSONInheritConstructor, 0 } },
-    { "inheritLongAttribute"_s, JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { HashTableValue::GetterSetterType, jsTestDefaultToJSONInherit_inheritLongAttribute, setJSTestDefaultToJSONInherit_inheritLongAttribute } },
-    { "toJSON"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestDefaultToJSONInheritPrototypeFunction_toJSON, 0 } },
+static const std::array<HashTableValue, 3> JSTestDefaultToJSONInheritPrototypeTableValues {
+    HashTableValue { "constructor"_s, static_cast<unsigned>(PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestDefaultToJSONInheritConstructor, 0 } },
+    HashTableValue { "inheritLongAttribute"_s, JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { HashTableValue::GetterSetterType, jsTestDefaultToJSONInherit_inheritLongAttribute, setJSTestDefaultToJSONInherit_inheritLongAttribute } },
+    HashTableValue { "toJSON"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestDefaultToJSONInheritPrototypeFunction_toJSON, 0 } },
 };
 
 const ClassInfo JSTestDefaultToJSONInheritPrototype::s_info = { "TestDefaultToJSONInherit"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestDefaultToJSONInheritPrototype) };
@@ -178,7 +176,7 @@ JSValue JSTestDefaultToJSONInherit::getConstructor(VM& vm, const JSGlobalObject*
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestDefaultToJSONInheritConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
-    auto& vm = JSC::getVM(lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto* prototype = jsDynamicCast<JSTestDefaultToJSONInheritPrototype*>(JSValue::decode(thisValue));
     if (UNLIKELY(!prototype))
@@ -188,9 +186,9 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestDefaultToJSONInheritConstructor, (JSGlobalObject*
 
 static inline JSValue jsTestDefaultToJSONInherit_inheritLongAttributeGetter(JSGlobalObject& lexicalGlobalObject, JSTestDefaultToJSONInherit& thisObject)
 {
-    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto& impl = thisObject.wrapped();
+    SUPPRESS_UNCOUNTED_LOCAL auto& impl = thisObject.wrapped();
     RELEASE_AND_RETURN(throwScope, (toJS<IDLLong>(lexicalGlobalObject, throwScope, impl.inheritLongAttribute())));
 }
 
@@ -201,10 +199,10 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestDefaultToJSONInherit_inheritLongAttribute, (JSGlo
 
 static inline bool setJSTestDefaultToJSONInherit_inheritLongAttributeSetter(JSGlobalObject& lexicalGlobalObject, JSTestDefaultToJSONInherit& thisObject, JSValue value)
 {
-    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(&lexicalGlobalObject);
     UNUSED_PARAM(vm);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto& impl = thisObject.wrapped();
+    SUPPRESS_UNCOUNTED_LOCAL auto& impl = thisObject.wrapped();
     auto nativeValueConversionResult = convert<IDLLong>(lexicalGlobalObject, value);
     if (UNLIKELY(nativeValueConversionResult.hasException(throwScope)))
         return false;
@@ -221,10 +219,10 @@ JSC_DEFINE_CUSTOM_SETTER(setJSTestDefaultToJSONInherit_inheritLongAttribute, (JS
 
 static inline EncodedJSValue jsTestDefaultToJSONInheritPrototypeFunction_toJSONBody(JSGlobalObject* lexicalGlobalObject, CallFrame*, JSTestDefaultToJSONInherit* castedThis)
 {
-    auto& vm = JSC::getVM(lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     UNUSED_PARAM(throwScope);
-    auto& impl = castedThis->wrapped();
+    SUPPRESS_UNCOUNTED_LOCAL auto& impl = castedThis->wrapped();
     auto* result = constructEmptyObject(lexicalGlobalObject);
     if (DeprecatedGlobalSettings::testDeprecatedGlobalSettingEnabled()) {
         auto longAttributeValue = toJS<IDLLong>(*lexicalGlobalObject, throwScope, impl.longAttribute());
@@ -303,8 +301,8 @@ void JSTestDefaultToJSONInherit::analyzeHeap(JSCell* cell, HeapAnalyzer& analyze
 {
     auto* thisObject = jsCast<JSTestDefaultToJSONInherit*>(cell);
     analyzer.setWrappedObjectForCell(cell, &thisObject->wrapped());
-    if (thisObject->scriptExecutionContext())
-        analyzer.setLabelForCell(cell, makeString("url "_s, thisObject->scriptExecutionContext()->url().string()));
+    if (RefPtr context = thisObject->scriptExecutionContext())
+        analyzer.setLabelForCell(cell, makeString("url "_s, context->url().string()));
     Base::analyzeHeap(cell, analyzer);
 }
 

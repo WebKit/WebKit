@@ -356,8 +356,16 @@ def _run_tests(args, tests, extra_flags, env, screenshot_dir, results, test_resu
 
         if args.isolated_script_test_filter:
             traces = angle_test_util.FilterTests(traces, args.isolated_script_test_filter)
+            assert traces, 'Test filter did not match any tests'
 
-        batches = _get_batches(traces, args.batch_size)
+        if angle_test_util.IsAndroid():
+            # On Android, screen orientation changes between traces can result in small pixel diffs
+            # making results depend on the ordering of traces. Disable batching.
+            batch_size = 1
+        else:
+            batch_size = args.batch_size
+
+        batches = _get_batches(traces, batch_size)
 
         for batch in batches:
             if angle_test_util.IsAndroid():
@@ -454,7 +462,8 @@ def main():
         default=0)
     parser.add_argument(
         '--batch-size',
-        help='Number of tests to run in a group. Default: %d' % DEFAULT_BATCH_SIZE,
+        help='Number of tests to run in a group. Default: %d (disabled on Android)' %
+        DEFAULT_BATCH_SIZE,
         type=int,
         default=DEFAULT_BATCH_SIZE)
     parser.add_argument(

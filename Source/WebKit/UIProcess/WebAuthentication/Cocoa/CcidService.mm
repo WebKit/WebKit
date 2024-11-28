@@ -55,6 +55,11 @@
 
 namespace WebKit {
 
+Ref<CcidService> CcidService::create(AuthenticatorTransportServiceObserver& observer)
+{
+    return adoptRef(*new CcidService(observer));
+}
+
 CcidService::CcidService(AuthenticatorTransportServiceObserver& observer)
     : FidoService(observer)
     , m_restartTimer(RunLoop::main(), this, &CcidService::platformStartDiscovery)
@@ -69,7 +74,7 @@ CcidService::~CcidService()
 void CcidService::didConnectTag()
 {
     auto connection = m_connection;
-    getInfo(WTF::makeUnique<CtapCcidDriver>(connection.releaseNonNull(), m_connection->contactless() ? WebCore::AuthenticatorTransport::Nfc : WebCore::AuthenticatorTransport::SmartCard));
+    getInfo(CtapCcidDriver::create(connection.releaseNonNull(), m_connection->contactless() ? WebCore::AuthenticatorTransport::Nfc : WebCore::AuthenticatorTransport::SmartCard));
 }
 
 void CcidService::startDiscoveryInternal()

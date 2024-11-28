@@ -75,12 +75,14 @@ void FormDataConsumer::consumeData(const Vector<uint8_t>& content)
 
 void FormDataConsumer::consumeFile(const String& filename)
 {
+    m_isReadingFile = true;
     m_fileQueue->dispatch([weakThis = WeakPtr { *this }, identifier = m_context->identifier(), path = filename.isolatedCopy()]() mutable {
         ScriptExecutionContext::postTaskTo(identifier, [weakThis = WTFMove(weakThis), content = FileSystem::readEntireFile(path)](auto&) {
             RefPtr protectedThis = weakThis.get();
-            if (!protectedThis)
+            if (!protectedThis || !protectedThis->m_isReadingFile)
                 return;
 
+            protectedThis->m_isReadingFile = false;
             if (!content) {
                 protectedThis->didFail(Exception { ExceptionCode::InvalidStateError, "Unable to read form data file"_s });
                 return;
@@ -122,14 +124,16 @@ void FormDataConsumer::consume(std::span<const uint8_t> content)
     if (!m_callback)
         return;
 
-    bool result = m_callback(WTFMove(content));
-    if (!result) {
-        cancel();
-        return;
-    }
+    if (!content.empty()) {
+        bool result = m_callback(WTFMove(content));
+        if (!result) {
+            cancel();
+            return;
+        }
 
-    if (!m_callback)
-        return;
+        if (!m_callback)
+            return;
+    }
 
     read();
 }
@@ -147,6 +151,7 @@ void FormDataConsumer::cancel()
     m_callback = nullptr;
     if (auto loader = std::exchange(m_blobLoader, { }))
         loader->cancel();
+    m_isReadingFile = false;
     m_context = nullptr;
 }
 

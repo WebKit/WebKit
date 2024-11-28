@@ -106,7 +106,7 @@ Ref<JSC::DOMJIT::CallDOMGetterSnippet> compileNodeNextSiblingAttribute()
 
 Ref<JSC::DOMJIT::CallDOMGetterSnippet> compileNodePreviousSiblingAttribute()
 {
-    auto snippet = createCallDOMGetterForOffsetAccess<Node>(Node::previousSiblingMemoryOffset(), DOMJIT::operationToJSNode, IsContainerGuardRequirement::NotRequired, Node::previousSiblingPointerMask());
+    auto snippet = createCallDOMGetterForOffsetAccess<Node>(Node::previousSiblingMemoryOffset(), DOMJIT::operationToJSNode, IsContainerGuardRequirement::NotRequired);
     snippet->effect = JSC::DOMJIT::Effect::forDef(DOMJIT::AbstractHeapRepository::Node_previousSibling);
     return snippet;
 }

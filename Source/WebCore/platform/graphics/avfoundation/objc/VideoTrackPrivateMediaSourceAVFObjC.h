@@ -28,6 +28,7 @@
 
 #include "IntSize.h"
 #include "VideoTrackPrivateAVF.h"
+#include <wtf/TZoneMalloc.h>
 
 #if ENABLE(MEDIA_SOURCE)
 
@@ -40,6 +41,7 @@ class AVTrackPrivateAVFObjCImpl;
 class SourceBufferPrivateAVFObjC;
 
 class VideoTrackPrivateMediaSourceAVFObjC final : public VideoTrackPrivateAVF {
+    WTF_MAKE_TZONE_ALLOCATED(VideoTrackPrivateMediaSourceAVFObjC);
     WTF_MAKE_NONCOPYABLE(VideoTrackPrivateMediaSourceAVFObjC)
 public:
     static Ref<VideoTrackPrivateMediaSourceAVFObjC> create(AVAssetTrack* track)

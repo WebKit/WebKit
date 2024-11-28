@@ -43,6 +43,7 @@
 #include "JSGeneratorFunction.h"
 #include "JSImmutableButterfly.h"
 #include "JSInternalPromise.h"
+#include "JSIteratorHelper.h"
 #include "JSLexicalEnvironment.h"
 #include "JSMapIterator.h"
 #include "JSSetIterator.h"
@@ -52,6 +53,8 @@
 #include <wtf/Assertions.h>
 
 IGNORE_WARNINGS_BEGIN("frame-address")
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace JSC { namespace FTL {
 
@@ -146,6 +149,9 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationPopulateObjectInOSR, void, (JSGlobalO
             break;
         case JSSetIteratorType:
             materialize(jsCast<JSSetIterator*>(target));
+            break;
+        case JSIteratorHelperType:
+            materialize(jsCast<JSIteratorHelper*>(target));
             break;
         case JSPromiseType:
             if (target->classInfo() == JSInternalPromise::info())
@@ -360,6 +366,11 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationMaterializeObjectInOSR, JSCell*, (JSG
         case JSSetIteratorType: {
             JSSetIterator* result = JSSetIterator::createWithInitialValues(vm, structure);
             RELEASE_ASSERT(materialization->properties().size() - 1 == JSSetIterator::numberOfInternalFields);
+            return result;
+        }
+        case JSIteratorHelperType: {
+            JSIteratorHelper* result = JSIteratorHelper::createWithInitialValues(vm, structure);
+            RELEASE_ASSERT(materialization->properties().size() - 1 == JSIteratorHelper::numberOfInternalFields);
             return result;
         }
         case JSPromiseType: {
@@ -717,6 +728,10 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationSwitchStringAndGetIndex, unsigned, (J
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
+    unsigned length = string->length();
+    if (length < unlinkedTable->minLength() || length > unlinkedTable->maxLength())
+        return std::numeric_limits<unsigned>::max();
+
     auto str = string->value(globalObject);
 
     RETURN_IF_EXCEPTION(throwScope, 0);
@@ -758,7 +773,7 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationCompileFTLLazySlowPath, void*, (CallF
 
 JSC_DEFINE_NOEXCEPT_JIT_OPERATION_WITH_ATTRIBUTES(operationReportBoundsCheckEliminationErrorAndCrash, NO_RETURN_DUE_TO_CRASH, void, (intptr_t codeBlockAsIntPtr, int32_t nodeIndex, int32_t child1Index, int32_t child2Index, int32_t checkedIndex, int32_t bounds))
 {
-    CodeBlock* codeBlock = bitwise_cast<CodeBlock*>(codeBlockAsIntPtr);
+    CodeBlock* codeBlock = std::bit_cast<CodeBlock*>(codeBlockAsIntPtr);
     dataLogLn("Bounds Check Eimination error found @ D@", nodeIndex, ": AssertInBounds(index D@", child1Index, ": ", checkedIndex, ", bounds D@", child2Index, " ", bounds, ") in ", codeBlock);
     CRASH();
 }
@@ -767,5 +782,6 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION_WITH_ATTRIBUTES(operationReportBoundsCheckElim
 
 IGNORE_WARNINGS_END
 
-#endif // ENABLE(FTL_JIT)
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
+#endif // ENABLE(FTL_JIT)

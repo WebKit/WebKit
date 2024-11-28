@@ -90,9 +90,9 @@ class CppProtocolTypesImplementationGenerator(CppGenerator):
             return []
 
         lines = []
-        lines.append('static const ASCIILiteral enum_constant_values[] = {')
+        lines.append('static const auto enum_constant_values = std::to_array<ASCIILiteral>({')
         lines.extend(['    "%s"_s,' % enum_value for enum_value in self.assigned_enum_values()])
-        lines.append('};')
+        lines.append('});')
         lines.append('')
         lines.append('String getEnumConstantValue(int code) {')
         lines.append('    return enum_constant_values[code];')
@@ -109,7 +109,7 @@ class CppProtocolTypesImplementationGenerator(CppGenerator):
             body_lines.extend([
                 'template<> std::optional<%s> parseEnumValueFromString<%s>(const String& protocolString)' % (cpp_protocol_type, cpp_protocol_type),
                 '{',
-                '    static const size_t constantValues[] = {',
+                '    static const auto constantValues = std::to_array<size_t>({',
             ])
 
             enum_values = enum_type.enum_values()
@@ -117,7 +117,7 @@ class CppProtocolTypesImplementationGenerator(CppGenerator):
                 body_lines.append('        (size_t)%s::%s,' % (cpp_protocol_type, Generator.stylized_name_for_enum_value(enum_value)))
 
             body_lines.extend([
-                '    };',
+                '    });',
                 '    for (size_t i = 0; i < %d; ++i)' % len(enum_values),
                 '        if (protocolString == enum_constant_values[constantValues[i]])',
                 '            return (%s)constantValues[i];' % cpp_protocol_type,

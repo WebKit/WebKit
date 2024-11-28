@@ -136,7 +136,7 @@ std::optional<SVGPathSegType> SVGPathStringViewSource::parseSVGSegmentType()
     });
 }
 
-std::optional<SVGPathSource::MoveToSegment> SVGPathStringViewSource::parseMoveToSegment()
+std::optional<SVGPathSource::MoveToSegment> SVGPathStringViewSource::parseMoveToSegment(FloatPoint)
 {
     return parse([](auto& buffer) -> std::optional<MoveToSegment> {
         auto targetPoint = parseFloatPoint(buffer);
@@ -149,7 +149,7 @@ std::optional<SVGPathSource::MoveToSegment> SVGPathStringViewSource::parseMoveTo
     });
 }
 
-std::optional<SVGPathSource::LineToSegment> SVGPathStringViewSource::parseLineToSegment()
+std::optional<SVGPathSource::LineToSegment> SVGPathStringViewSource::parseLineToSegment(FloatPoint)
 {
     return parse([](auto& buffer) -> std::optional<LineToSegment> {
         auto targetPoint = parseFloatPoint(buffer);
@@ -162,7 +162,7 @@ std::optional<SVGPathSource::LineToSegment> SVGPathStringViewSource::parseLineTo
     });
 }
 
-std::optional<SVGPathSource::LineToHorizontalSegment> SVGPathStringViewSource::parseLineToHorizontalSegment()
+std::optional<SVGPathSource::LineToHorizontalSegment> SVGPathStringViewSource::parseLineToHorizontalSegment(FloatPoint)
 {
     return parse([](auto& buffer) -> std::optional<LineToHorizontalSegment> {
         auto x = parseNumber(buffer);
@@ -175,7 +175,7 @@ std::optional<SVGPathSource::LineToHorizontalSegment> SVGPathStringViewSource::p
     });
 }
 
-std::optional<SVGPathSource::LineToVerticalSegment> SVGPathStringViewSource::parseLineToVerticalSegment()
+std::optional<SVGPathSource::LineToVerticalSegment> SVGPathStringViewSource::parseLineToVerticalSegment(FloatPoint)
 {
     return parse([](auto& buffer) -> std::optional<LineToVerticalSegment> {
         auto y = parseNumber(buffer);
@@ -188,7 +188,7 @@ std::optional<SVGPathSource::LineToVerticalSegment> SVGPathStringViewSource::par
     });
 }
 
-std::optional<SVGPathSource::CurveToCubicSegment> SVGPathStringViewSource::parseCurveToCubicSegment()
+std::optional<SVGPathSource::CurveToCubicSegment> SVGPathStringViewSource::parseCurveToCubicSegment(FloatPoint)
 {
     return parse([](auto& buffer) -> std::optional<CurveToCubicSegment> {
         auto point1 = parseFloatPoint(buffer);
@@ -211,7 +211,7 @@ std::optional<SVGPathSource::CurveToCubicSegment> SVGPathStringViewSource::parse
     });
 }
 
-std::optional<SVGPathSource::CurveToCubicSmoothSegment> SVGPathStringViewSource::parseCurveToCubicSmoothSegment()
+std::optional<SVGPathSource::CurveToCubicSmoothSegment> SVGPathStringViewSource::parseCurveToCubicSmoothSegment(FloatPoint)
 {
     return parse([](auto& buffer) -> std::optional<CurveToCubicSmoothSegment> {
         auto point2 = parseFloatPoint(buffer);
@@ -229,7 +229,7 @@ std::optional<SVGPathSource::CurveToCubicSmoothSegment> SVGPathStringViewSource:
     });
 }
 
-std::optional<SVGPathSource::CurveToQuadraticSegment> SVGPathStringViewSource::parseCurveToQuadraticSegment()
+std::optional<SVGPathSource::CurveToQuadraticSegment> SVGPathStringViewSource::parseCurveToQuadraticSegment(FloatPoint)
 {
     return parse([](auto& buffer) -> std::optional<CurveToQuadraticSegment> {
         auto point1 = parseFloatPoint(buffer);
@@ -247,7 +247,7 @@ std::optional<SVGPathSource::CurveToQuadraticSegment> SVGPathStringViewSource::p
     });
 }
 
-std::optional<SVGPathSource::CurveToQuadraticSmoothSegment> SVGPathStringViewSource::parseCurveToQuadraticSmoothSegment()
+std::optional<SVGPathSource::CurveToQuadraticSmoothSegment> SVGPathStringViewSource::parseCurveToQuadraticSmoothSegment(FloatPoint)
 {
     return parse([](auto& buffer) -> std::optional<CurveToQuadraticSmoothSegment> {
         auto targetPoint = parseFloatPoint(buffer);
@@ -260,7 +260,7 @@ std::optional<SVGPathSource::CurveToQuadraticSmoothSegment> SVGPathStringViewSou
     });
 }
 
-std::optional<SVGPathSource::ArcToSegment> SVGPathStringViewSource::parseArcToSegment()
+std::optional<SVGPathSource::ArcToSegment> SVGPathStringViewSource::parseArcToSegment(FloatPoint)
 {
     return parse([](auto& buffer) -> std::optional<ArcToSegment> {
         auto rx = parseNumber(buffer);

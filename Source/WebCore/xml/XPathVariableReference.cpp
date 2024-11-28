@@ -26,11 +26,13 @@
 
 #include "config.h"
 #include "XPathVariableReference.h"
-
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 namespace XPath {
-    
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(VariableReference);
+
 VariableReference::VariableReference(const String& name)
     : m_name(name)
 {

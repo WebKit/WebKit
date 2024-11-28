@@ -1,0 +1,11 @@
+Tests that text operations are performed as expected at node boundaries.
+
+PASS: operationResult.length === 2
+PASS: operationResult[0] === ' foo '
+PASS: operationResult[1] === ' foo '
+PASS: testContent.stringValue.replace(/\s/g, ' ') === 'AXValue: The quick brown foo  fox jumps over  foo the lazy dog.'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -76,6 +76,13 @@ namespace Instanceof {
     static constexpr GPRReg scratch1GPR { scratchRegisters[0] };
     static_assert(noOverlap(stubInfoGPR, valueJSR, protoJSR, GPRInfo::handlerGPR, scratch1GPR), "Required for call to slow operation");
     static_assert(noOverlap(resultJSR, stubInfoGPR));
+
+    namespace Custom {
+        static constexpr GPRReg globalObjectGPR = stubInfoGPR;
+        static constexpr JSValueRegs valueJSR = Instanceof::valueJSR;
+        static constexpr GPRReg constructorGPR = scratch1GPR;
+        static constexpr JSValueRegs hasInstanceJSR = protoJSR;
+    }
 }
 
 namespace JFalse {

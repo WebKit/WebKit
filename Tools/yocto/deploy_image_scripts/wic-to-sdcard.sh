@@ -44,8 +44,14 @@ else
     cat "${WICIMAGE}" | xz -dc | dd bs=4k status=progress of="${DEVICESDCARD}"
 fi
 
+if [[ $DEVICESDCARD =~ /dev/sd. ]]; then
+    export P2="2"
+else
+    export P2="p2"
+fi
+
 if which growpart &>/dev/null; then
-    SECONDPART="${DEVICESDCARD}p2"
+    SECONDPART="${DEVICESDCARD}${P2}"
     if test -w "${SECONDPART}"; then
         sudo growpart "${DEVICESDCARD}" 2
         sudo resize2fs "${SECONDPART}"

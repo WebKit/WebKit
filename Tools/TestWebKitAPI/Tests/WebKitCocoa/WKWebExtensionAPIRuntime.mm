@@ -418,12 +418,15 @@ TEST(WKWebExtensionAPIRuntime, SendMessageFromContentScript)
         @"  browser.test.assertEq(typeof sender, 'object', 'sender should be an object')",
 
         @"  browser.test.assertEq(typeof sender.tab, 'object', 'sender.tab should be an object')",
-        @"  browser.test.assertEq(sender.tab.url, expectedURL, 'sender.tab.url should be the expected URL')",
+        @"  browser.test.assertEq(sender?.tab?.url, expectedURL, 'sender.tab.url should be the expected URL')",
 
-        @"  browser.test.assertEq(sender.url, expectedURL, 'sender.url should be the expected URL')",
-        @"  browser.test.assertEq(sender.origin, expectedOrigin, 'sender.origin should be the expected origin')",
+        @"  browser.test.assertEq(sender?.url, expectedURL, 'sender.url should be the expected URL')",
+        @"  browser.test.assertEq(sender?.origin, expectedOrigin, 'sender.origin should be the expected origin')",
 
-        @"  browser.test.assertEq(sender.frameId, 0, 'sender.frameId should be 0')",
+        @"  browser.test.assertEq(sender?.frameId, 0, 'sender.frameId should be 0')",
+
+        @"  browser.test.assertEq(typeof sender?.documentId, 'string', 'sender.documentId should be')",
+        @"  browser.test.assertEq(sender?.documentId?.length, 36, 'sender.documentId.length should be')",
 
         @"  sendResponse({ content: 'Received' })",
         @"})",
@@ -474,12 +477,15 @@ TEST(WKWebExtensionAPIRuntime, SendMessageFromContentScriptWithAsyncReply)
         @"  browser.test.assertEq(typeof sender, 'object', 'sender should be an object')",
 
         @"  browser.test.assertEq(typeof sender.tab, 'object', 'sender.tab should be an object')",
-        @"  browser.test.assertEq(sender.tab.url, expectedURL, 'sender.tab.url should be the expected URL')",
+        @"  browser.test.assertEq(sender?.tab?.url, expectedURL, 'sender.tab.url should be the expected URL')",
 
-        @"  browser.test.assertEq(sender.url, expectedURL, 'sender.url should be the expected URL')",
-        @"  browser.test.assertEq(sender.origin, expectedOrigin, 'sender.origin should be the expected origin')",
+        @"  browser.test.assertEq(sender?.url, expectedURL, 'sender.url should be the expected URL')",
+        @"  browser.test.assertEq(sender?.origin, expectedOrigin, 'sender.origin should be the expected origin')",
 
-        @"  browser.test.assertEq(sender.frameId, 0, 'sender.frameId should be 0')",
+        @"  browser.test.assertEq(sender?.frameId, 0, 'sender.frameId should be 0')",
+
+        @"  browser.test.assertEq(typeof sender?.documentId, 'string', 'sender.documentId should be')",
+        @"  browser.test.assertEq(sender?.documentId?.length, 36, 'sender.documentId.length should be')",
 
         @"  setTimeout(() => sendResponse({ content: 'Received' }), 1000)",
 
@@ -532,12 +538,15 @@ TEST(WKWebExtensionAPIRuntime, SendMessageFromContentScriptWithPromiseReply)
         @"  browser.test.assertEq(typeof sender, 'object', 'sender should be an object')",
 
         @"  browser.test.assertEq(typeof sender.tab, 'object', 'sender.tab should be an object')",
-        @"  browser.test.assertEq(sender.tab.url, expectedURL, 'sender.tab.url should be the expected URL')",
+        @"  browser.test.assertEq(sender?.tab?.url, expectedURL, 'sender.tab.url should be the expected URL')",
 
-        @"  browser.test.assertEq(sender.url, expectedURL, 'sender.url should be the expected URL')",
-        @"  browser.test.assertEq(sender.origin, expectedOrigin, 'sender.origin should be the expected origin')",
+        @"  browser.test.assertEq(sender?.url, expectedURL, 'sender.url should be the expected URL')",
+        @"  browser.test.assertEq(sender?.origin, expectedOrigin, 'sender.origin should be the expected origin')",
 
-        @"  browser.test.assertEq(sender.frameId, 0, 'sender.frameId should be 0')",
+        @"  browser.test.assertEq(sender?.frameId, 0, 'sender.frameId should be 0')",
+
+        @"  browser.test.assertEq(typeof sender?.documentId, 'string', 'sender.documentId should be')",
+        @"  browser.test.assertEq(sender?.documentId?.length, 36, 'sender.documentId.length should be')",
 
         @"  return Promise.resolve({ content: 'Received' })",
         @"})",
@@ -588,12 +597,15 @@ TEST(WKWebExtensionAPIRuntime, SendMessageFromContentScriptWithAsyncPromiseReply
         @"  browser.test.assertEq(typeof sender, 'object', 'sender should be an object')",
 
         @"  browser.test.assertEq(typeof sender.tab, 'object', 'sender.tab should be an object')",
-        @"  browser.test.assertEq(sender.tab.url, expectedURL, 'sender.tab.url should be the expected URL')",
+        @"  browser.test.assertEq(sender?.tab?.url, expectedURL, 'sender.tab.url should be the expected URL')",
 
-        @"  browser.test.assertEq(sender.url, expectedURL, 'sender.url should be the expected URL')",
-        @"  browser.test.assertEq(sender.origin, expectedOrigin, 'sender.origin should be the expected origin')",
+        @"  browser.test.assertEq(sender?.url, expectedURL, 'sender.url should be the expected URL')",
+        @"  browser.test.assertEq(sender?.origin, expectedOrigin, 'sender.origin should be the expected origin')",
 
-        @"  browser.test.assertEq(sender.frameId, 0, 'sender.frameId should be 0')",
+        @"  browser.test.assertEq(sender?.frameId, 0, 'sender.frameId should be 0')",
+
+        @"  browser.test.assertEq(typeof sender?.documentId, 'string', 'sender.documentId should be')",
+        @"  browser.test.assertEq(sender?.documentId?.length, 36, 'sender.documentId.length should be')",
 
         @"  return new Promise((resolve) => {",
         @"    setTimeout(() => resolve({ content: 'Received' }), 1000)",
@@ -646,12 +658,15 @@ TEST(WKWebExtensionAPIRuntime, SendMessageFromContentScriptWithNoReply)
         @"  browser.test.assertEq(typeof sender, 'object', 'sender should be an object')",
 
         @"  browser.test.assertEq(typeof sender.tab, 'object', 'sender.tab should be an object')",
-        @"  browser.test.assertEq(sender.tab.url, expectedURL, 'sender.tab.url should be the expected URL')",
+        @"  browser.test.assertEq(sender?.tab?.url, expectedURL, 'sender.tab.url should be the expected URL')",
 
-        @"  browser.test.assertEq(sender.url, expectedURL, 'sender.url should be the expected URL')",
-        @"  browser.test.assertEq(sender.origin, expectedOrigin, 'sender.origin should be the expected origin')",
+        @"  browser.test.assertEq(sender?.url, expectedURL, 'sender.url should be the expected URL')",
+        @"  browser.test.assertEq(sender?.origin, expectedOrigin, 'sender.origin should be the expected origin')",
 
-        @"  browser.test.assertEq(sender.frameId, 0, 'sender.frameId should be 0')",
+        @"  browser.test.assertEq(sender?.frameId, 0, 'sender.frameId should be 0')",
+
+        @"  browser.test.assertEq(typeof sender?.documentId, 'string', 'sender.documentId should be')",
+        @"  browser.test.assertEq(sender?.documentId?.length, 36, 'sender.documentId.length should be')",
 
         @"  return false",
         @"})",
@@ -1779,10 +1794,16 @@ TEST(WKWebExtensionAPIRuntime, SendMessageFromWebPage)
         @"  browser.test.assertEq(typeof sender, 'object', 'sender should be an object')",
         @"  browser.test.assertEq(typeof sender?.url, 'string', 'sender.url should be a string')",
         @"  browser.test.assertEq(typeof sender?.origin, 'string', 'sender.origin should be a string')",
+
         @"  browser.test.assertTrue(sender?.url?.startsWith('http'), 'sender.url should start with http')",
         @"  browser.test.assertTrue(sender?.origin?.startsWith('http'), 'sender.origin should start with http')",
+
         @"  browser.test.assertEq(typeof sender?.tab, 'object', 'sender.tab should be an object')",
+
         @"  browser.test.assertEq(sender?.frameId, 0, 'sender.frameId should be 0')",
+
+        @"  browser.test.assertEq(typeof sender?.documentId, 'string', 'sender.documentId should be')",
+        @"  browser.test.assertEq(sender?.documentId?.length, 36, 'sender.documentId.length should be')",
 
         @"  sendResponse('Received')",
         @"})",

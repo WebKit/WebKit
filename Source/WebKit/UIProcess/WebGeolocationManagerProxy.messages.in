@@ -20,8 +20,9 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+[SharedPreferencesNeedsConnection]
 messages -> WebGeolocationManagerProxy {
-    StartUpdating(WebCore::RegistrableDomain registrableDomain, WebKit::WebPageProxyIdentifier pageProxyID, String authorizationToken, bool enableHighAccuracy)
-    StopUpdating(WebCore::RegistrableDomain registrableDomain)
-    SetEnableHighAccuracy(WebCore::RegistrableDomain registrableDomain, bool enabled)
+    [EnabledBy=GeolocationAPIEnabled] StartUpdating(WebCore::RegistrableDomain registrableDomain, WebKit::WebPageProxyIdentifier pageProxyID, String authorizationToken, bool enableHighAccuracy)
+    [EnabledBy=GeolocationAPIEnabled] StopUpdating(WebCore::RegistrableDomain registrableDomain)
+    [EnabledBy=GeolocationAPIEnabled] SetEnableHighAccuracy(WebCore::RegistrableDomain registrableDomain, bool enabled)
 }

@@ -32,6 +32,7 @@
 #include "MessageReceiveQueueMap.h"
 #include "MessageReceiver.h"
 #include "ReceiverMatcher.h"
+#include "SyncRequestID.h"
 #include "Timeout.h"
 #include <wtf/Assertions.h>
 #include <wtf/CheckedPtr.h>
@@ -101,6 +102,7 @@ enum class Error : uint8_t {
     WaitingOnAlreadyDispatchedMessage,
     AttemptingToWaitInsideSyncMessageHandling,
     SyncMessageInterruptedWait,
+    SyncMessageCancelled,
     CantWaitForSyncReplies,
     FailedToEncodeMessageArguments,
     FailedToDecodeReplyArguments,
@@ -129,8 +131,7 @@ extern ASCIILiteral errorAsString(Error);
 #define MESSAGE_CHECK_OPTIONAL_CONNECTION_BASE(assertion, connection) do { \
     if (UNLIKELY(!(assertion))) { \
         RELEASE_LOG_FAULT(IPC, __FILE__ " " CONNECTION_STRINGIFY_MACRO(__LINE__) ": Invalid message dispatched %" PUBLIC_LOG_STRING, WTF_PRETTY_FUNCTION); \
-        if (RefPtr processConnection = connection) \
-            processConnection->markCurrentlyDispatchedMessageAsInvalid(); \
+        (connection)->markCurrentlyDispatchedMessageAsInvalid(); \
         return; \
     } \
 } while (0)
@@ -166,13 +167,12 @@ template<typename AsyncReplyResult> struct AsyncReplyError {
 };
 
 class Decoder;
-class Encoder;
 class MachMessage;
 class UnixMessage;
 class WorkQueueMessageReceiver;
 
 struct AsyncReplyIDType;
-using AsyncReplyID = LegacyNullableAtomicObjectIdentifier<AsyncReplyIDType>;
+using AsyncReplyID = AtomicObjectIdentifier<AsyncReplyIDType>;
 
 // Sync message sender is expected to hold this instance alive as long as the reply() is being
 // accessed. View type data types in replies, such as std::span, refer to data stored in
@@ -220,16 +220,12 @@ private:
 
 struct ConnectionAsyncReplyHandler {
     CompletionHandler<void(Decoder*)> completionHandler;
-    AsyncReplyID replyID;
+    Markable<AsyncReplyID> replyID;
 };
-
-enum class ConnectionSyncRequestIDType { };
-using ConnectionSyncRequestID = LegacyNullableAtomicObjectIdentifier<ConnectionSyncRequestIDType>;
 
 class Connection : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<Connection, WTF::DestructionThread::MainRunLoop> {
 public:
-    enum class SyncRequestIDType { };
-    using SyncRequestID = ConnectionSyncRequestID;
+    using SyncRequestID = IPC::SyncRequestID;
     using AsyncReplyID = IPC::AsyncReplyID;
 
     class Client : public MessageReceiver, public CanMakeThreadSafeCheckedPtr<Client> {
@@ -310,7 +306,7 @@ public:
     Client* client() const { return m_client.get(); }
 
     enum UniqueIDType { };
-    using UniqueID = LegacyNullableAtomicObjectIdentifier<UniqueIDType>;
+    using UniqueID = AtomicObjectIdentifier<UniqueIDType>;
     using DecoderOrError = Expected<UniqueRef<Decoder>, Error>;
 
     static RefPtr<Connection> connection(UniqueID);
@@ -351,11 +347,11 @@ public:
     void addMessageReceiver(FunctionDispatcher&, MessageReceiver&, ReceiverName, uint64_t destinationID = 0);
     void removeMessageReceiver(ReceiverName, uint64_t destinationID = 0);
 
-    bool open(Client&, SerialFunctionDispatcher& = RunLoop::current());
+    bool open(Client&, SerialFunctionDispatcher& = RunLoop::protectedCurrent().get());
     // Ensures that messages sent prior to the call are not affected by invalidate() or crash done after the call returns.
     Error flushSentMessages(Timeout);
     void invalidate();
-    void markCurrentlyDispatchedMessageAsInvalid();
+    inline void markCurrentlyDispatchedMessageAsInvalid();
 
     template<typename PC, typename BasePromise>
     struct ConvertedPromise {
@@ -378,9 +374,9 @@ public:
         static auto convertError(IPC::Error error) { return makeUnexpected(error); }
     };
 
-    template<typename T, typename C> AsyncReplyID sendWithAsyncReply(T&& message, C&& completionHandler, uint64_t destinationID = 0, OptionSet<SendOption> = { }); // Thread-safe, but the reply will be called on the Connection's dispatcher
+    template<typename T, typename C> std::optional<AsyncReplyID> sendWithAsyncReply(T&& message, C&& completionHandler, uint64_t destinationID = 0, OptionSet<SendOption> = { }); // Thread-safe, but the reply will be called on the Connection's dispatcher
     template<typename PC = NoOpPromiseConverter, typename T, typename Promise = typename ConvertedPromise<PC, typename T::Promise>::Type> Ref<Promise> sendWithPromisedReply(T&& message, uint64_t destinationID = 0, OptionSet<SendOption> = { }); // Thread-safe.
-    template<typename T, typename C> AsyncReplyID sendWithAsyncReplyOnDispatcher(T&& message, RefCountedSerialFunctionDispatcher&, C&& completionHandler, uint64_t destinationID = 0, OptionSet<SendOption> = { }); // Thread-safe.
+    template<typename T, typename C> std::optional<AsyncReplyID> sendWithAsyncReplyOnDispatcher(T&& message, GuaranteedSerialFunctionDispatcher&, C&& completionHandler, uint64_t destinationID = 0, OptionSet<SendOption> = { }); // Thread-safe.
     template<typename T> Error send(T&& message, uint64_t destinationID, OptionSet<SendOption> sendOptions = { }, std::optional<Thread::QOS> qos = std::nullopt); // Thread-safe.
     template<typename T> static Error send(UniqueID, T&& message, uint64_t destinationID, OptionSet<SendOption> sendOptions = { }, std::optional<Thread::QOS> qos = std::nullopt); // Thread-safe.
 
@@ -395,7 +391,7 @@ public:
 
     // // Thread-safe, but the reply will be called on the Connection's dispatcher
     template<typename T, typename C, typename RawValue>
-    AsyncReplyID sendWithAsyncReply(T&& message, C&& completionHandler, const ObjectIdentifierGenericBase<RawValue>& destinationID, OptionSet<SendOption> sendOptions = { })
+    std::optional<AsyncReplyID> sendWithAsyncReply(T&& message, C&& completionHandler, const ObjectIdentifierGenericBase<RawValue>& destinationID, OptionSet<SendOption> sendOptions = { })
     {
         return sendWithAsyncReply<T, C>(std::forward<T>(message), std::forward<C>(completionHandler), destinationID.toUInt64(), sendOptions);
     }
@@ -432,9 +428,11 @@ public:
 
     using AsyncReplyHandler = ConnectionAsyncReplyHandler;
     Error sendMessageWithAsyncReply(UniqueRef<Encoder>&&, AsyncReplyHandler, OptionSet<SendOption> sendOptions, std::optional<Thread::QOS> = std::nullopt);
-    UniqueRef<Encoder> createSyncMessageEncoder(MessageName, uint64_t destinationID, SyncRequestID&);
+    std::pair<UniqueRef<Encoder>, SyncRequestID> createSyncMessageEncoder(MessageName, uint64_t destinationID);
     DecoderOrError sendSyncMessage(SyncRequestID, UniqueRef<Encoder>&&, Timeout, OptionSet<SendSyncOption> sendSyncOptions);
     Error sendSyncReply(UniqueRef<Encoder>&&);
+    template<typename T, typename... Arguments>
+    void sendAsyncReply(AsyncReplyID, Arguments&&...);
 
     void wakeUpRunLoop();
 
@@ -499,12 +497,12 @@ private:
 
     struct AsyncReplyHandlerWithDispatcher {
         CompletionHandler<void(std::unique_ptr<Decoder>&&)> completionHandler;
-        AsyncReplyID replyID;
+        Markable<AsyncReplyID> replyID;
     };
 
     bool isAsyncReplyHandlerWithDispatcher(AsyncReplyID);
     CompletionHandler<void(std::unique_ptr<Decoder>&&)> takeAsyncReplyHandlerWithDispatcher(AsyncReplyID);
-    template<typename T, typename C> static AsyncReplyHandlerWithDispatcher makeAsyncReplyHandlerWithDispatcher(C&& completionHandler, RefCountedSerialFunctionDispatcher&);
+    template<typename T, typename C> static AsyncReplyHandlerWithDispatcher makeAsyncReplyHandlerWithDispatcher(C&& completionHandler, GuaranteedSerialFunctionDispatcher&);
     template<typename T, typename PC, typename Promise> static AsyncReplyHandlerWithDispatcher makeAsyncReplyHandlerWithDispatcher(typename Promise::Producer&&);
 
     Error sendMessageWithAsyncReplyWithDispatcher(UniqueRef<Encoder>&&, AsyncReplyHandlerWithDispatcher&&, OptionSet<SendOption> sendOptions, std::optional<Thread::QOS> = std::nullopt);
@@ -648,15 +646,17 @@ private:
     void readyReadHandler();
     bool processMessage();
     bool sendOutputMessage(UnixMessage&);
+    int socketDescriptor() const;
 
     Vector<uint8_t> m_readBuffer;
     Vector<int> m_fileDescriptors;
-    int m_socketDescriptor;
     std::unique_ptr<UnixMessage> m_pendingOutputMessage;
 #if USE(GLIB)
     GRefPtr<GSocket> m_socket;
     GSocketMonitor m_readSocketMonitor;
     GSocketMonitor m_writeSocketMonitor;
+#else
+    int m_socketDescriptor;
 #endif
 #if PLATFORM(PLAYSTATION)
     RefPtr<WTF::Thread> m_socketMonitor;
@@ -679,6 +679,7 @@ private:
 
     OSObjectPtr<xpc_connection_t> m_xpcConnection;
     std::atomic<bool> m_didRequestProcessTermination { false };
+    std::optional<audit_token_t> m_auditToken;
 #elif OS(WINDOWS)
     // Called on the connection queue.
     void readEventHandler();
@@ -731,7 +732,7 @@ Error Connection::send(UniqueID connectionID, T&& message, uint64_t destinationI
 }
 
 template<typename T, typename C>
-Connection::AsyncReplyID Connection::sendWithAsyncReply(T&& message, C&& completionHandler, uint64_t destinationID, OptionSet<SendOption> sendOptions)
+std::optional<Connection::AsyncReplyID> Connection::sendWithAsyncReply(T&& message, C&& completionHandler, uint64_t destinationID, OptionSet<SendOption> sendOptions)
 {
     static_assert(!T::isSync, "Async message expected");
     auto handler = makeAsyncReplyHandler<T>(std::forward<C>(completionHandler));
@@ -741,11 +742,11 @@ Connection::AsyncReplyID Connection::sendWithAsyncReply(T&& message, C&& complet
     if (sendMessageWithAsyncReply(WTFMove(encoder), WTFMove(handler), sendOptions) == Error::NoError)
         return replyID;
     // FIXME: Propagate the error back.
-    return { };
+    return std::nullopt;
 }
 
 template<typename T, typename C>
-Connection::AsyncReplyID Connection::sendWithAsyncReplyOnDispatcher(T&& message, RefCountedSerialFunctionDispatcher& dispatcher, C&& completionHandler, uint64_t destinationID, OptionSet<SendOption> sendOptions)
+std::optional<Connection::AsyncReplyID> Connection::sendWithAsyncReplyOnDispatcher(T&& message, GuaranteedSerialFunctionDispatcher& dispatcher, C&& completionHandler, uint64_t destinationID, OptionSet<SendOption> sendOptions)
 {
     static_assert(!T::isSync, "Async message expected");
     auto handler = makeAsyncReplyHandlerWithDispatcher<T>(std::forward<C>(completionHandler), dispatcher);
@@ -755,7 +756,7 @@ Connection::AsyncReplyID Connection::sendWithAsyncReplyOnDispatcher(T&& message,
     if (sendMessageWithAsyncReplyWithDispatcher(WTFMove(encoder), WTFMove(handler), sendOptions) == Error::NoError)
         return replyID;
     // FIXME: Propagate the error back.
-    return { };
+    return std::nullopt;
 }
 
 template<typename PC, typename T, typename Promise>
@@ -775,8 +776,7 @@ Ref<Promise> Connection::sendWithPromisedReply(T&& message, uint64_t destination
 template<typename T> Connection::SendSyncResult<T> Connection::sendSync(T&& message, uint64_t destinationID, Timeout timeout, OptionSet<SendSyncOption> sendSyncOptions)
 {
     static_assert(T::isSync, "Sync message expected");
-    SyncRequestID syncRequestID;
-    auto encoder = createSyncMessageEncoder(T::name(), destinationID, syncRequestID);
+    auto [encoder, syncRequestID] = createSyncMessageEncoder(T::name(), destinationID);
 
     if (sendSyncOptions.contains(SendSyncOption::UseFullySynchronousModeForTesting)) {
         encoder->setFullySynchronousModeForTesting();
@@ -793,12 +793,22 @@ template<typename T> Connection::SendSyncResult<T> Connection::sendSync(T&& mess
         return { replyDecoderOrError.error() };
     }
 
+    UniqueRef decoder = WTFMove(replyDecoderOrError.value());
+    if (decoder->messageName() == MessageName::CancelSyncMessageReply)
+        return { Error::SyncMessageCancelled };
     std::optional<typename T::ReplyArguments> replyArguments;
-    *replyDecoderOrError.value() >> replyArguments;
+    *decoder >> replyArguments;
     if (!replyArguments)
         return { Error::FailedToDecodeReplyArguments };
+    return SendSyncResult<T> { WTFMove(decoder), WTFMove(*replyArguments) };
+}
 
-    return SendSyncResult<T> { WTFMove(replyDecoderOrError.value()), WTFMove(*replyArguments) };
+template<typename T, typename... Arguments>
+void Connection::sendAsyncReply(AsyncReplyID asyncReplyID, Arguments&&... arguments)
+{
+    auto encoder = makeUniqueRef<Encoder>(T::asyncMessageReplyName(), asyncReplyID.toUInt64());
+    (encoder.get() << ... << std::forward<Arguments>(arguments));
+    sendSyncReply(WTFMove(encoder));
 }
 
 template<typename T> Error Connection::waitForAndDispatchImmediately(uint64_t destinationID, Timeout timeout, OptionSet<WaitForOption> waitForOptions)
@@ -826,7 +836,7 @@ template<typename T> Error Connection::waitForAsyncReplyAndDispatchImmediately(A
     ASSERT(decoderOrError.value()->messageReceiverName() == ReceiverName::AsyncReply);
     ASSERT(decoderOrError.value()->destinationID() == replyID.toUInt64());
     ASSERT(!isAsyncReplyHandlerWithDispatcher(replyID), "Not supported with AsyncReplyHandlerWithDispatcher");
-    auto handler = takeAsyncReplyHandler(LegacyNullableAtomicObjectIdentifier<AsyncReplyIDType>(decoderOrError.value()->destinationID()));
+    auto handler = takeAsyncReplyHandler(AtomicObjectIdentifier<AsyncReplyIDType>(decoderOrError.value()->destinationID()));
     if (!handler) {
         ASSERT_NOT_REACHED();
         return Error::FailedToFindReplyHandler;
@@ -867,7 +877,7 @@ Connection::AsyncReplyHandler Connection::makeAsyncReplyHandler(C&& completionHa
 }
 
 template<typename T, typename C>
-Connection::AsyncReplyHandlerWithDispatcher Connection::makeAsyncReplyHandlerWithDispatcher(C&& completionHandler, RefCountedSerialFunctionDispatcher& dispatcher)
+Connection::AsyncReplyHandlerWithDispatcher Connection::makeAsyncReplyHandlerWithDispatcher(C&& completionHandler, GuaranteedSerialFunctionDispatcher& dispatcher)
 {
     // We use CompletionHandlerCallThread::AnyThread as it is up to the caller to determine the threading-model.
     // We can just guarantee that the CompletionHandler will be run on the dispatcher provided, we don't want to enforce
@@ -936,6 +946,13 @@ void Connection::cancelReply(C&& completionHandler)
     {
         completionHandler(AsyncReplyError<std::tuple_element_t<Indices, typename T::ReplyArguments>>::create()...);
     }(std::make_index_sequence<std::tuple_size_v<typename T::ReplyArguments>> { });
+}
+
+inline void Connection::markCurrentlyDispatchedMessageAsInvalid()
+{
+    // This should only be called while processing a message.
+    ASSERT(m_inDispatchMessageCount > 0);
+    m_didReceiveInvalidMessage = true;
 }
 
 class UnboundedSynchronousIPCScope {

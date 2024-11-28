@@ -33,10 +33,10 @@
 #include <WebCore/HTMLModelElementCamera.h>
 #include <WebCore/ResourceError.h>
 #include <wtf/MachSendRight.h>
+#include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/URL.h>
-#include <wtf/WeakPtr.h>
 
 OBJC_CLASS ASVInlinePreview;
 
@@ -45,24 +45,15 @@ OBJC_CLASS WKModelView;
 #endif
 
 namespace WebKit {
-class ModelElementController;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::ModelElementController> : std::true_type { };
-}
-
-namespace WebKit {
 
 class WebPageProxy;
 
-class ModelElementController : public CanMakeWeakPtr<ModelElementController> {
+class ModelElementController : public RefCountedAndCanMakeWeakPtr<ModelElementController> {
     WTF_MAKE_TZONE_ALLOCATED(ModelElementController);
 public:
-    explicit ModelElementController(WebPageProxy&);
+    static Ref<ModelElementController> create(WebPageProxy&);
 
-    WebPageProxy& page();
+    WebPageProxy* page();
 
 #if ENABLE(ARKIT_INLINE_PREVIEW)
     void getCameraForModelElement(ModelIdentifier, CompletionHandler<void(Expected<WebCore::HTMLModelElementCamera, WebCore::ResourceError>)>&&);
@@ -94,6 +85,8 @@ public:
 #endif
 
 private:
+    explicit ModelElementController(WebPageProxy&);
+
 #if ENABLE(ARKIT_INLINE_PREVIEW)
     ASVInlinePreview * previewForModelIdentifier(ModelIdentifier);
 #endif
@@ -102,7 +95,7 @@ private:
     WKModelView * modelViewForModelIdentifier(ModelIdentifier);
 #endif
 
-    WeakRef<WebPageProxy> m_webPageProxy;
+    WeakPtr<WebPageProxy> m_webPageProxy;
 #if ENABLE(ARKIT_INLINE_PREVIEW_MAC)
     RetainPtr<ASVInlinePreview> previewForUUID(const String&);
     HashMap<String, RetainPtr<ASVInlinePreview>> m_inlinePreviews;

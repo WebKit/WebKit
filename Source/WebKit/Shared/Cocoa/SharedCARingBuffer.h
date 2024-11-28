@@ -32,14 +32,17 @@
 #include <WebCore/SharedMemory.h>
 #include <wtf/Atomics.h>
 #include <wtf/Function.h>
+#include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
 
 class SharedCARingBufferBase : public WebCore::CARingBuffer {
+    WTF_MAKE_TZONE_ALLOCATED(SharedCARingBufferBase);
 protected:
     SharedCARingBufferBase(size_t bytesPerFrame, size_t frameCount, uint32_t numChannelStream, Ref<WebCore::SharedMemory>);
-    void* data() final { return byteCast<Byte>(m_storage->mutableSpan().data()) + sizeof(TimeBoundsBuffer); }
-    TimeBoundsBuffer& timeBoundsBuffer() final { return *reinterpret_cast<TimeBoundsBuffer*>(m_storage->mutableSpan().data()); }
+    void* data() final { return byteCast<Byte>(m_storage->mutableSpan().subspan(sizeof(TimeBoundsBuffer)).data()); }
+    TimeBoundsBuffer& timeBoundsBuffer() final { return spanReinterpretCast<TimeBoundsBuffer>(m_storage->mutableSpan().first(sizeof(TimeBoundsBuffer))).front(); }
 
     Ref<WebCore::SharedMemory> m_storage;
 };
@@ -52,6 +55,7 @@ struct ConsumerSharedCARingBufferHandle {
 };
 
 class ConsumerSharedCARingBuffer final : public SharedCARingBufferBase {
+    WTF_MAKE_TZONE_ALLOCATED(ConsumerSharedCARingBuffer);
 public:
     using Handle = ConsumerSharedCARingBufferHandle;
 
@@ -66,6 +70,7 @@ protected:
 };
 
 class ProducerSharedCARingBuffer final : public SharedCARingBufferBase {
+    WTF_MAKE_TZONE_ALLOCATED(ProducerSharedCARingBuffer);
 public:
     struct Pair {
         std::unique_ptr<ProducerSharedCARingBuffer> producer;

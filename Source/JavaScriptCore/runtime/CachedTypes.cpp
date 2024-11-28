@@ -43,10 +43,14 @@
 #include "UnlinkedModuleProgramCodeBlock.h"
 #include "UnlinkedProgramCodeBlock.h"
 #include <wtf/MallocPtr.h>
+#include <wtf/MallocSpan.h>
 #include <wtf/Packed.h>
 #include <wtf/RobinHoodHashMap.h>
+#include <wtf/StdLibExtras.h>
 #include <wtf/UUID.h>
 #include <wtf/text/AtomStringImpl.h>
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace JSC {
 
@@ -160,14 +164,15 @@ public:
         }
 
         size_t size = m_baseOffset + m_currentPage->size();
-        MallocPtr<uint8_t, VMMalloc> buffer = MallocPtr<uint8_t, VMMalloc>::malloc(size);
+        auto buffer = MallocSpan<uint8_t, VMMalloc>::malloc(size);
+        auto bufferSpan = buffer.mutableSpan();
         unsigned offset = 0;
         for (const auto& page : m_pages) {
-            memcpy(buffer.get() + offset, page.buffer(), page.size());
+            memcpySpan(bufferSpan.subspan(offset), page.span());
             offset += page.size();
         }
         RELEASE_ASSERT(offset == size);
-        return CachedBytecode::create(WTFMove(buffer), size, WTFMove(m_leafExecutables));
+        return CachedBytecode::create(WTFMove(buffer), WTFMove(m_leafExecutables));
     }
 
 private:
@@ -205,8 +210,7 @@ private:
     class Page {
     public:
         Page(size_t size)
-            : m_buffer(MallocPtr<uint8_t, VMMalloc>::malloc(size))
-            , m_capacity(size)
+            : m_buffer(MallocSpan<uint8_t, VMMalloc>::malloc(size))
         {
         }
 
@@ -215,7 +219,7 @@ private:
             size_t alignment = std::min(alignof(std::max_align_t), static_cast<size_t>(WTF::roundUpToPowerOfTwo(size)));
             ptrdiff_t offset = roundUpToMultipleOf(alignment, m_offset);
             size = roundUpToMultipleOf(alignment, size);
-            if (static_cast<size_t>(offset + size) > m_capacity)
+            if (static_cast<size_t>(offset + size) > capacity())
                 return false;
 
             result = offset;
@@ -223,17 +227,20 @@ private:
             return true;
         }
 
-        uint8_t* buffer() const { return m_buffer.get(); }
+        // FIXME: Port call sites for span() / mutableSpan() and remove.
+        const uint8_t* buffer() const { return m_buffer.span().data(); }
+        uint8_t* buffer() { return m_buffer.mutableSpan().data(); }
         size_t size() const { return static_cast<size_t>(m_offset); }
 
-        std::span<uint8_t> mutableSpan() { return { m_buffer.get(), size() }; }
-        std::span<const uint8_t> span() const { return { m_buffer.get(), size() }; }
+        std::span<uint8_t> mutableSpan() { return m_buffer.mutableSpan().first(size()); }
+        std::span<const uint8_t> span() const { return m_buffer.span().first(size()); }
 
         bool getOffset(const void* address, ptrdiff_t& result) const
         {
-            const uint8_t* addr = static_cast<const uint8_t*>(address);
-            if (addr >= m_buffer.get() && addr < m_buffer.get() + m_offset) {
-                result = addr - m_buffer.get();
+            auto* addr = static_cast<const uint8_t*>(address);
+            auto* bufferStart = buffer();
+            if (addr >= bufferStart && addr < bufferStart + m_offset) {
+                result = addr - bufferStart;
                 return true;
             }
             return false;
@@ -244,14 +251,15 @@ private:
             ptrdiff_t size = roundUpToMultipleOf(alignof(std::max_align_t), m_offset);
             if (size == m_offset)
                 return;
-            RELEASE_ASSERT(static_cast<size_t>(size) <= m_capacity);
+            RELEASE_ASSERT(static_cast<size_t>(size) <= capacity());
             m_offset = size;
         }
 
     private:
-        MallocPtr<uint8_t, VMMalloc> m_buffer;
+        size_t capacity() const { return m_buffer.sizeInBytes(); }
+
+        MallocSpan<uint8_t, VMMalloc> m_buffer;
         ptrdiff_t m_offset { 0 };
-        size_t m_capacity;
     };
 
     void allocateNewPage(size_t size = 0)
@@ -274,7 +282,7 @@ private:
     ptrdiff_t m_baseOffset;
     Page* m_currentPage;
     Vector<Page> m_pages;
-    HashMap<const void*, ptrdiff_t> m_ptrToOffsetMap;
+    UncheckedKeyHashMap<const void*, ptrdiff_t> m_ptrToOffsetMap;
     LeafExecutableMap m_leafExecutables;
 };
 
@@ -303,9 +311,9 @@ size_t Decoder::size() const
 
 ptrdiff_t Decoder::offsetOf(const void* ptr)
 {
-    const uint8_t* addr = static_cast<const uint8_t*>(ptr);
+    auto* addr = static_cast<const uint8_t*>(ptr);
     auto cachedBytecodeSpan = m_cachedBytecode->span();
-    ASSERT(addr >= cachedBytecodeSpan.data() && addr < (cachedBytecodeSpan.data() + cachedBytecodeSpan.size()));
+    ASSERT(addr >= cachedBytecodeSpan.data() && addr < cachedBytecodeSpan.data() + cachedBytecodeSpan.size());
     return addr - cachedBytecodeSpan.data();
 }
 
@@ -425,14 +433,14 @@ protected:
     const uint8_t* buffer() const
     {
         ASSERT(!isEmpty());
-        return bitwise_cast<const uint8_t*>(this) + m_offset;
+        return std::bit_cast<const uint8_t*>(this) + m_offset;
     }
 
     template<typename T>
     const T* buffer() const
     {
-        ASSERT(!(bitwise_cast<uintptr_t>(buffer()) % alignof(T)));
-        return bitwise_cast<const T*>(buffer());
+        ASSERT(!(std::bit_cast<uintptr_t>(buffer()) % alignof(T)));
+        return std::bit_cast<const T*>(buffer());
     }
 
     uint8_t* allocate(Encoder& encoder, size_t size)
@@ -452,7 +460,7 @@ protected:
     T* allocate(Encoder& encoder, unsigned size = 1)
     {
         uint8_t* result = allocate(encoder, sizeof(T) * size);
-        ASSERT(!(bitwise_cast<uintptr_t>(result) % alignof(T)));
+        ASSERT(!(std::bit_cast<uintptr_t>(result) % alignof(T)));
         return new (result) T[size];
     }
 
@@ -664,9 +672,9 @@ private:
 };
 
 template<typename Key, typename Value, typename HashArg = DefaultHash<SourceType<Key>>, typename KeyTraitsArg = HashTraits<SourceType<Key>>, typename MappedTraitsArg = HashTraits<SourceType<Value>>, typename TableTraits = WTF::HashTableTraits>
-class CachedHashMap : public VariableLengthObject<HashMap<SourceType<Key>, SourceType<Value>, HashArg, KeyTraitsArg, MappedTraitsArg, TableTraits>> {
+class CachedHashMap : public VariableLengthObject<UncheckedKeyHashMap<SourceType<Key>, SourceType<Value>, HashArg, KeyTraitsArg, MappedTraitsArg, TableTraits>> {
     template<typename K, typename V>
-    using Map = HashMap<K, V, HashArg, KeyTraitsArg, MappedTraitsArg, TableTraits>;
+    using Map = UncheckedKeyHashMap<K, V, HashArg, KeyTraitsArg, MappedTraitsArg, TableTraits>;
 
 public:
     void encode(Encoder& encoder, const Map<SourceType<Key>, SourceType<Value>>& map)
@@ -881,17 +889,20 @@ public:
     void encode(Encoder& encoder, const UnlinkedSimpleJumpTable& jumpTable)
     {
         m_min = jumpTable.m_min;
+        m_defaultOffset = jumpTable.m_defaultOffset;
         m_branchOffsets.encode(encoder, jumpTable.m_branchOffsets);
     }
 
     void decode(Decoder& decoder, UnlinkedSimpleJumpTable& jumpTable) const
     {
         jumpTable.m_min = m_min;
+        jumpTable.m_defaultOffset = m_defaultOffset;
         m_branchOffsets.decode(decoder, jumpTable.m_branchOffsets);
     }
 
 private:
     int32_t m_min;
+    int32_t m_defaultOffset;
     CachedVector<int32_t> m_branchOffsets;
 };
 
@@ -900,15 +911,24 @@ public:
     void encode(Encoder& encoder, const UnlinkedStringJumpTable& jumpTable)
     {
         m_offsetTable.encode(encoder, jumpTable.m_offsetTable);
+        m_minLength = jumpTable.m_minLength;
+        m_maxLength = jumpTable.m_maxLength;
+        m_defaultOffset = jumpTable.m_defaultOffset;
     }
 
     void decode(Decoder& decoder, UnlinkedStringJumpTable& jumpTable) const
     {
         m_offsetTable.decode(decoder, jumpTable.m_offsetTable);
+        jumpTable.m_minLength = m_minLength;
+        jumpTable.m_maxLength = m_maxLength;
+        jumpTable.m_defaultOffset = m_defaultOffset;
     }
 
 private:
     CachedMemoryCompactLookupOnlyRobinHoodHashMap<CachedRefPtr<CachedStringImpl>, UnlinkedStringJumpTable::OffsetLocation> m_offsetTable;
+    unsigned m_minLength { 0 };
+    unsigned m_maxLength { 0 };
+    int32_t m_defaultOffset { 0 };
 };
 
 class CachedBitVector : public VariableLengthObject<BitVector> {
@@ -1461,13 +1481,13 @@ public:
 
     JSInstructionStream* decode(Decoder& decoder) const
     {
-        Vector<uint8_t, 0, UnsafeVectorOverflow, 16, InstructionStreamMalloc> instructionsVector;
+        Vector<uint8_t, 0, UnsafeVectorOverflow, 16, InstructionStreamBufferMalloc> instructionsVector;
         m_instructions.decode(decoder, instructionsVector);
         return new JSInstructionStream(WTFMove(instructionsVector));
     }
 
 private:
-    CachedVector<uint8_t, 0, UnsafeVectorOverflow, InstructionStreamMalloc> m_instructions;
+    CachedVector<uint8_t, 0, UnsafeVectorOverflow, InstructionStreamBufferMalloc> m_instructions;
 };
 
 class CachedMetadataTable : public CachedObject<UnlinkedMetadataTable> {
@@ -2540,9 +2560,9 @@ bool GenericCacheEntry::decode(Decoder& decoder, std::pair<SourceCodeKey, Unlink
 
     switch (m_tag) {
     case CachedProgramCodeBlockTag:
-        return bitwise_cast<const CacheEntry<UnlinkedProgramCodeBlock>*>(this)->decode(decoder, reinterpret_cast<std::pair<SourceCodeKey, UnlinkedProgramCodeBlock*>&>(result));
+        return std::bit_cast<const CacheEntry<UnlinkedProgramCodeBlock>*>(this)->decode(decoder, reinterpret_cast<std::pair<SourceCodeKey, UnlinkedProgramCodeBlock*>&>(result));
     case CachedModuleCodeBlockTag:
-        return bitwise_cast<const CacheEntry<UnlinkedModuleProgramCodeBlock>*>(this)->decode(decoder, reinterpret_cast<std::pair<SourceCodeKey, UnlinkedModuleProgramCodeBlock*>&>(result));
+        return std::bit_cast<const CacheEntry<UnlinkedModuleProgramCodeBlock>*>(this)->decode(decoder, reinterpret_cast<std::pair<SourceCodeKey, UnlinkedModuleProgramCodeBlock*>&>(result));
     case CachedEvalCodeBlockTag:
         // We do not cache eval code blocks
         RELEASE_ASSERT_NOT_REACHED();
@@ -2558,9 +2578,9 @@ bool GenericCacheEntry::isStillValid(Decoder& decoder, const SourceCodeKey& key,
 
     switch (tag) {
     case CachedProgramCodeBlockTag:
-        return bitwise_cast<const CacheEntry<UnlinkedProgramCodeBlock>*>(this)->isStillValid(decoder, key);
+        return std::bit_cast<const CacheEntry<UnlinkedProgramCodeBlock>*>(this)->isStillValid(decoder, key);
     case CachedModuleCodeBlockTag:
-        return bitwise_cast<const CacheEntry<UnlinkedModuleProgramCodeBlock>*>(this)->isStillValid(decoder, key);
+        return std::bit_cast<const CacheEntry<UnlinkedModuleProgramCodeBlock>*>(this)->isStillValid(decoder, key);
     case CachedEvalCodeBlockTag:
         // We do not cache eval code blocks
         RELEASE_ASSERT_NOT_REACHED();
@@ -2606,15 +2626,14 @@ RefPtr<CachedBytecode> encodeFunctionCodeBlock(VM& vm, const UnlinkedFunctionCod
 
 UnlinkedCodeBlock* decodeCodeBlockImpl(VM& vm, const SourceCodeKey& key, Ref<CachedBytecode> cachedBytecode)
 {
-    const auto* cachedEntry = bitwise_cast<const GenericCacheEntry*>(cachedBytecode->span().data());
-    Ref<Decoder> decoder = Decoder::create(vm, WTFMove(cachedBytecode), &key.source().provider());
+    auto* cachedEntry = std::bit_cast<const GenericCacheEntry*>(cachedBytecode->span().data());
+    Ref decoder = Decoder::create(vm, WTFMove(cachedBytecode), &key.source().provider());
     std::pair<SourceCodeKey, UnlinkedCodeBlock*> entry;
     {
         DeferGC deferGC(vm);
         if (!cachedEntry->decode(decoder.get(), entry))
             return nullptr;
     }
-
     if (entry.first != key)
         return nullptr;
     return entry.second;
@@ -2622,10 +2641,11 @@ UnlinkedCodeBlock* decodeCodeBlockImpl(VM& vm, const SourceCodeKey& key, Ref<Cac
 
 bool isCachedBytecodeStillValid(VM& vm, Ref<CachedBytecode> cachedBytecode, const SourceCodeKey& key, SourceCodeType type)
 {
-    if (!cachedBytecode->size())
+    auto span = cachedBytecode->span();
+    if (span.empty())
         return false;
-    const auto* cachedEntry = bitwise_cast<const GenericCacheEntry*>(cachedBytecode->span().data());
-    Ref<Decoder> decoder = Decoder::create(vm, WTFMove(cachedBytecode));
+    auto* cachedEntry = std::bit_cast<const GenericCacheEntry*>(span.data());
+    Ref decoder = Decoder::create(vm, WTFMove(cachedBytecode));
     return cachedEntry->isStillValid(decoder.get(), key, tagFromSourceCodeType(type));
 }
 
@@ -2637,3 +2657,5 @@ void decodeFunctionCodeBlock(Decoder& decoder, int32_t cachedFunctionCodeBlockOf
 }
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

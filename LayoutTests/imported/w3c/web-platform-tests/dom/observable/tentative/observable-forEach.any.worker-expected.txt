@@ -1,21 +1,8 @@
 
-FAIL forEach(): Visitor callback called synchronously for each value promise_test: Unhandled rejection with value: object "TypeError: source.forEach is not a function. (In 'source.forEach((value) => {
-    results.push(value);
-  })', 'source.forEach' is undefined)"
-FAIL Errors thrown by Observable reject the returned promise assert_equals: expected object "Error: error" but got object "TypeError: source.forEach is not a function. (In 'source.forEach(() => {
-      assert_unreached("Visitor callback is not invoked when Observable errors");
-    })', 'source.forEach' is undefined)"
-FAIL Errors pushed by Observable reject the returned promise assert_equals: expected object "Error: error" but got object "TypeError: source.forEach is not a function. (In 'source.forEach(() => {
-      assert_unreached("Visitor callback is not invoked when Observable errors");
-    })', 'source.forEach' is undefined)"
-FAIL Errors thrown in the visitor callback reject the promise and unsubscribe from the source promise_test: Unhandled rejection with value: object "TypeError: source.forEach is not a function. (In 'source.forEach((value) => {
-    results.push(value);
-    if (value === 2) {
-      throw error;
-    }
-  })', 'source.forEach' is undefined)"
-FAIL forEach visitor callback rejection microtask ordering promise_test: Unhandled rejection with value: object "TypeError: source.forEach is not a function. (In 'source.forEach(() => {}, {signal: controller.signal})', 'source.forEach' is undefined)"
-FAIL forEach() promise resolves with undefined promise_test: Unhandled rejection with value: object "TypeError: source.forEach is not a function. (In 'source.forEach((value) => {
-    results.push(value);
-  })', 'source.forEach' is undefined)"
+PASS forEach(): Visitor callback called synchronously for each value
+PASS Errors thrown by Observable reject the returned promise
+PASS Errors pushed by Observable reject the returned promise
+PASS Errors thrown in the visitor callback reject the promise and unsubscribe from the source
+PASS forEach visitor callback rejection microtask ordering
+PASS forEach() promise resolves with undefined
 

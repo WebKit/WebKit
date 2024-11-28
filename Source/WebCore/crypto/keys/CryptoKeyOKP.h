@@ -37,7 +37,7 @@ class CryptoKeyOKP final : public CryptoKey {
 public:
     using KeyMaterial = Vector<uint8_t>;
 
-    enum class NamedCurve {
+    enum class NamedCurve : bool {
         X25519,
         Ed25519,
     };
@@ -73,7 +73,7 @@ private:
     String generateJwkD() const;
     String generateJwkX() const;
 
-    static bool isPlatformSupportedCurve(NamedCurve);
+    static bool supportsNamedCurve();
     static std::optional<CryptoKeyPair> platformGeneratePair(CryptoAlgorithmIdentifier, NamedCurve, bool extractable, CryptoKeyUsageBitmap);
     static bool platformCheckPairedKeys(CryptoAlgorithmIdentifier, NamedCurve, const Vector<uint8_t>&, const Vector<uint8_t>&);
     Vector<uint8_t> platformExportRaw() const;

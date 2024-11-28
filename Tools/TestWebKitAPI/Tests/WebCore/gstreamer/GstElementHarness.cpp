@@ -281,7 +281,15 @@ TEST_F(GStreamerTest, harnessParseMP4)
     // the first events on each.
     EXPECT_EQ(harness->outputStreams().size(), 2);
     for (auto& stream : harness->outputStreams()) {
-        auto event = stream->pullEvent();
+        // Since GStreamer 1.24.9 the stream collection is stored on the pad and not forwarded by parsebin.
+        // https://gitlab.freedesktop.org/gstreamer/gstreamer/-/merge_requests/7609
+        auto event = adoptGRef(gst_pad_get_sticky_event(stream->pad().get(), GST_EVENT_STREAM_COLLECTION, 0));
+        ASSERT_NOT_NULL(event.get());
+        GRefPtr<GstStreamCollection> collection;
+        gst_event_parse_stream_collection(event.get(), &collection.outPtr());
+        ASSERT_EQ(gst_stream_collection_get_size(collection.get()), 2);
+
+        event = stream->pullEvent();
         ASSERT_NOT_NULL(event.get());
         EXPECT_STREQ(GST_EVENT_TYPE_NAME(event.get()), "stream-start");
 
@@ -291,13 +299,6 @@ TEST_F(GStreamerTest, harnessParseMP4)
         GstCaps* eventCaps;
         gst_event_parse_caps(event.get(), &eventCaps);
         ASSERT_TRUE(gst_caps_is_equal(stream->outputCaps().get(), eventCaps));
-
-        event = stream->pullEvent();
-        ASSERT_NOT_NULL(event.get());
-        EXPECT_STREQ(GST_EVENT_TYPE_NAME(event.get()), "stream-collection");
-        GRefPtr<GstStreamCollection> collection;
-        gst_event_parse_stream_collection(event.get(), &collection.outPtr());
-        ASSERT_EQ(gst_stream_collection_get_size(collection.get()), 2);
     }
 
     // We haven't pulled any buffer yet, so our buffer tracker should report empty metrics.

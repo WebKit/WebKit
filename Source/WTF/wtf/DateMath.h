@@ -89,11 +89,11 @@ inline double jsCurrentTime()
     return floor(WallTime::now().secondsSinceEpoch().milliseconds());
 }
 
-extern WTF_EXPORT_PRIVATE const ASCIILiteral weekdayName[7];
-extern WTF_EXPORT_PRIVATE const ASCIILiteral monthName[12];
-extern WTF_EXPORT_PRIVATE const ASCIILiteral monthFullName[12];
-extern WTF_EXPORT_PRIVATE const int firstDayOfMonth[2][12];
-extern WTF_EXPORT_PRIVATE const int8_t daysInMonths[12];
+extern WTF_EXPORT_PRIVATE const std::array<ASCIILiteral, 7> weekdayName;
+extern WTF_EXPORT_PRIVATE const std::array<ASCIILiteral, 12> monthName;
+extern WTF_EXPORT_PRIVATE const std::array<ASCIILiteral, 12> monthFullName;
+extern WTF_EXPORT_PRIVATE const std::array<std::array<int, 12>, 2> firstDayOfMonth;
+extern WTF_EXPORT_PRIVATE const std::array<int8_t, 12> daysInMonths;
 
 static constexpr double hoursPerDay = 24.0;
 static constexpr double minutesPerHour = 60.0;

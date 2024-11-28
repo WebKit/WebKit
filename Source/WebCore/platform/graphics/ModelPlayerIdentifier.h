@@ -30,6 +30,6 @@
 namespace WebCore {
 
 struct ModelPlayerIdentifierType;
-using ModelPlayerIdentifier = LegacyNullableObjectIdentifier<ModelPlayerIdentifierType>;
+using ModelPlayerIdentifier = ObjectIdentifier<ModelPlayerIdentifierType>;
 
 } // namespace WebCore

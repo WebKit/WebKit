@@ -27,6 +27,7 @@
 
 #include <WebCore/IntRect.h>
 #include <WebCore/ValidationMessageClient.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -41,6 +42,7 @@ namespace WebKit {
 class WebPage;
 
 class WebValidationMessageClient final : public WebCore::ValidationMessageClient {
+    WTF_MAKE_TZONE_ALLOCATED(WebValidationMessageClient);
 public:
     explicit WebValidationMessageClient(WebPage&);
     ~WebValidationMessageClient();

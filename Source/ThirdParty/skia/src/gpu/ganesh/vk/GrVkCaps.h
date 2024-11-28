@@ -8,8 +8,8 @@
 #ifndef GrVkCaps_DEFINED
 #define GrVkCaps_DEFINED
 
-#include "include/gpu/GrBackendSurface.h"
-#include "include/gpu/GrTypes.h"
+#include "include/gpu/ganesh/GrBackendSurface.h"
+#include "include/gpu/ganesh/GrTypes.h"
 #include "include/gpu/vk/VulkanTypes.h"
 #include "include/private/base/SkAssert.h"
 #include "include/private/base/SkTArray.h"
@@ -197,6 +197,8 @@ public:
 
     bool supportsDeviceFaultInfo() const { return fSupportsDeviceFaultInfo; }
 
+    bool supportsFrameBoundary() const { return fSupportsFrameBoundary; }
+
     // Returns whether we prefer to record draws directly into a primary command buffer.
     bool preferPrimaryOverSecondaryCommandBuffers() const {
         return fPreferPrimaryOverSecondaryCommandBuffers;
@@ -295,7 +297,7 @@ public:
 
     bool supportsMemorylessAttachments() const { return fSupportsMemorylessAttachments; }
 
-#if defined(GR_TEST_UTILS)
+#if defined(GPU_TEST_UTILS)
     std::vector<GrTest::TestFormatColorTypeCombination> getTestingCombinations() const override;
 #endif
 
@@ -484,6 +486,8 @@ private:
     bool fSupportsDRMFormatModifiers = false;
 
     bool fSupportsDeviceFaultInfo = false;
+
+    bool fSupportsFrameBoundary = false;
 
     bool fPreferPrimaryOverSecondaryCommandBuffers = true;
     bool fMustInvalidatePrimaryCmdBufferStateAfterClearAttachments = false;

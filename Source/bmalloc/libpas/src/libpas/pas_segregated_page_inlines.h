@@ -205,7 +205,7 @@ static PAS_ALWAYS_INLINE void pas_segregated_page_switch_lock_impl(
     pas_segregated_page* page,
     pas_lock** held_lock)
 {
-    static const bool verbose = false;
+    static const bool verbose = PAS_SHOULD_LOG(PAS_LOG_SEGREGATED_HEAPS);
     
     pas_lock* held_lock_value;
     pas_lock* page_lock;
@@ -326,7 +326,7 @@ pas_segregated_page_deallocate_with_page(pas_segregated_page* page,
                                          pas_segregated_page_config page_config,
                                          pas_segregated_page_role role)
 {
-    static const bool verbose = false;
+    static const bool verbose = PAS_SHOULD_LOG(PAS_LOG_SEGREGATED_HEAPS);
     static const bool count_things = false;
 
     static uint64_t count_exclusive;

@@ -22,8 +22,8 @@
 
 import sys
 
-if sys.version_info < (3, 6):
-    raise ImportError("resultsdbpy requires Python 3.6 or above")
+if sys.version_info < (3, 9):  # noqa: UP036
+    raise ImportError("resultsdbpy requires Python 3.9 or above")
 
 import os
 import platform
@@ -45,8 +45,8 @@ try:
 except ImportError:
     raise ImportError(
         "'webkitcorepy' could not be found on your Python path.\n" +
-        "You are not running from a WebKit checkout.\n" +
-        "Please install webkitcorepy with `pip install webkitcorepy --extra-index-url <package index URL>`"
+        "You are not running from a complete WebKit checkout.\n" +
+        "See https://github.com/WebKit/WebKit/tree/main/Tools/Scripts/libraries/webkitcorepy"
     )
 
 version = Version(3, 1, 9)

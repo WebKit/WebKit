@@ -41,6 +41,7 @@
 #import <WebKit/_WKOverlayScrollbarStyle.h>
 #import <WebKit/_WKRectEdge.h>
 #import <WebKit/_WKRenderingProgressEvents.h>
+#import <WebKit/_WKTextPreview.h>
 
 typedef NS_ENUM(NSInteger, _WKPaginationMode) {
     _WKPaginationModeUnpaginated,
@@ -82,6 +83,15 @@ typedef NS_ENUM(NSInteger, _WKShouldOpenExternalURLsPolicy) {
     _WKShouldOpenExternalURLsPolicyAllow,
     _WKShouldOpenExternalURLsPolicyAllowExternalSchemesButNotAppLinks,
 } WK_API_AVAILABLE(macos(12.0), ios(15.0));
+
+typedef NS_ENUM(NSInteger, _WKWebProcessState) {
+    _WKWebProcessStateNotRunning,
+    _WKWebProcessStateForeground,
+    _WKWebProcessStateBackground,
+    _WKWebProcessStateSuspended,
+} WK_API_AVAILABLE(macos(WK_MAC_TBA));
+
+#define HAVE_WK_WEB_PROCESS_STATE 1
 
 #if TARGET_OS_IPHONE
 
@@ -131,6 +141,7 @@ typedef NS_ENUM(NSInteger, _WKImmediateActionType) {
 @class _WKTextInputContext;
 @class _WKTextManipulationConfiguration;
 @class _WKTextManipulationItem;
+@class _WKTextRun;
 @class _WKThumbnailView;
 @class _WKWebViewPrintFormatter;
 
@@ -176,6 +187,14 @@ typedef NS_ENUM(NSInteger, _WKImmediateActionType) {
 - (void)_loadAndDecodeImage:(NSURLRequest *)request constrainedToSize:(CGSize)maxSize maximumBytesFromNetwork:(size_t)maximumBytesFromNetwork completionHandler:(void (^)(UIImage *, NSError *))completionHandler WK_API_AVAILABLE(macos(15.0), ios(18.0), visionos(2.0));
 #else
 - (void)_loadAndDecodeImage:(NSURLRequest *)request constrainedToSize:(CGSize)maxSize maximumBytesFromNetwork:(size_t)maximumBytesFromNetwork completionHandler:(void (^)(NSImage *, NSError *))completionHandler WK_API_AVAILABLE(macos(15.0), ios(18.0), visionos(2.0));
+#endif
+- (void)_getInformationFromImageData:(NSData *)imageData completionHandler:(void (^)(NSString *typeIdentifier, NSArray<NSValue *> *availableSizes, NSError *error))completionHandler WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
+
+- (void)_createIconDataFromImageData:(NSData *)imageData withLengths:(NSArray<NSNumber *> *)lengths completionHandler:(void (^)(NSData *, NSError *))completionHandler WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
+#if TARGET_OS_OSX
+- (void)_decodeImageData:(NSData *)imageData preferredSize:(NSValue *)preferredSize completionHandler:(void (^)(NSImage *, NSError *))completionHandler WK_API_AVAILABLE(macos(WK_MAC_TBA));
+#else
+- (void)_decodeImageData:(NSData *)imageData preferredSize:(NSValue *)preferredSize completionHandler:(void (^)(UIImage *, NSError *))completionHandler WK_API_AVAILABLE(ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
 #endif
 
 @property (nonatomic, readonly) NSArray *_certificateChain WK_API_DEPRECATED_WITH_REPLACEMENT("certificateChain", macos(10.10, 10.11), ios(8.0, 9.0));
@@ -228,6 +247,8 @@ for this property.
 - (void)_completeTextManipulationForItems:(NSArray<_WKTextManipulationItem *> *)items completion:(void(^)(NSArray<NSError *> *errors))completionHandler WK_API_AVAILABLE(macos(11.0), ios(14.0));
 
 @property (nonatomic, setter=_setAddsVisitedLinks:) BOOL _addsVisitedLinks;
+
+@property (nonatomic, copy, setter=_setCORSDisablingPatterns:) NSArray<NSString *> *_corsDisablingPatterns WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
 
 @property (nonatomic, readonly) BOOL _networkRequestsInProgress;
 
@@ -420,6 +441,12 @@ for this property.
 - (NSUUID *)_enableFinalTextAnimationForElementWithID:(NSString *)elementID WK_API_AVAILABLE(macos(15.0), ios(18.0), visionos(2.0));
 - (void)_disableTextAnimationWithUUID:(NSUUID *)nsUUID WK_API_AVAILABLE(macos(15.0), ios(18.0), visionos(2.0));
 
+#if TARGET_OS_IPHONE && !TARGET_OS_WATCH
+- (void)_targetedPreviewForElementWithID:(NSString *)elementID completionHandler:(WK_SWIFT_UI_ACTOR void (^)(UITargetedPreview *))completionHandler WK_API_AVAILABLE(ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
+#elif TARGET_OS_OSX
+- (void)_textPreviewsForElementWithID:(NSString *)elementID completionHandler:(WK_SWIFT_UI_ACTOR void (^)(NSArray<_WKTextPreview *> *))completionHandler WK_API_AVAILABLE(macos(WK_MAC_TBA));
+#endif
+
 // FIXME: Remove old `-[WKWebView _themeColor]` SPI <rdar://76662644>
 #if TARGET_OS_IPHONE
 @property (nonatomic, readonly) UIColor *_themeColor WK_API_DEPRECATED_WITH_REPLACEMENT("themeColor", ios(15.0, 15.0));
@@ -558,7 +585,11 @@ typedef NS_OPTIONS(NSUInteger, WKDisplayCaptureSurfaces) {
 
 - (void)_setStatisticsCrossSiteLoadWithLinkDecorationForTesting:(NSString *)fromHost withToHost:(NSString *)toHost withWasFiltered:(BOOL)wasFiltered withCompletionHandler:(void(^)(void))completionHandler WK_API_AVAILABLE(macos(15.0), ios(18.0), visionos(2.0));
 
+- (void)_requestAllTextWithCompletionHandler:(void(^)(NSArray<_WKTextRun *> *))completionHandler WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
+
 - (void)_requestTargetedElementInfo:(_WKTargetedElementRequest *)request completionHandler:(void(^)(NSArray<_WKTargetedElementInfo *> *))completionHandler WK_API_AVAILABLE(macos(15.0), ios(18.0), visionos(2.0));
+
+- (void)_requestAllTargetableElementsInfo:(CGFloat)hitTestInterval completionHandler:(void(^)(NSArray<NSArray<_WKTargetedElementInfo *> *> *))completionHandler WK_API_AVAILABLE(visionos(2.0)) WK_API_UNAVAILABLE(macos, ios);
 
 @property (nonatomic, readonly) NSURL *_requiredWebExtensionBaseURL WK_API_AVAILABLE(macos(15.0), ios(18.0), visionos(2.0));
 
@@ -570,6 +601,9 @@ typedef NS_OPTIONS(NSUInteger, WKDisplayCaptureSurfaces) {
 - (void)_simulateClickOverFirstMatchingTextInViewportWithUserInteraction:(NSString *)targetText completionHandler:(void(^)(BOOL))completionHandler WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
 
 @property (nonatomic, setter=_setDontResetTransientActivationAfterRunJavaScript:) BOOL _dontResetTransientActivationAfterRunJavaScript WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
+
+// This property is KVO compliant.
+@property (nonatomic, readonly) _WKWebProcessState _webProcessState WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
 
 @end
 
@@ -831,12 +865,14 @@ typedef NS_OPTIONS(NSUInteger, WKDisplayCaptureSurfaces) {
 
 - (void)_setFont:(NSFont *)font sender:(id)sender WK_API_AVAILABLE(macos(13.3));
 
+- (void)_setTopContentInset:(CGFloat)topContentInset immediate:(BOOL)immediate WK_API_AVAILABLE(macos(WK_MAC_TBA));
+
 - (void)_showWritingTools WK_API_AVAILABLE(macos(WK_MAC_TBA));
 
 @end
 
 @interface WKWebView (WKWindowSnapshot)
-- (NSImage *)_windowSnapshotInRect:(CGRect)rect withOptions:(CGWindowImageOption)options;
+- (NSImage *)_windowSnapshotInRect:(CGRect)rect withOptions:(CGWindowImageOption)options NS_RETURNS_RETAINED;
 @end
 
 #endif // !TARGET_OS_IPHONE

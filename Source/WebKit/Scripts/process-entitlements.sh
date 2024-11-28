@@ -188,11 +188,23 @@ function webcontent_sandbox_entitlements()
     plistbuddy Add :com.apple.private.security.mutable-state-flags:2 string local:WebContentProcessLaunched
     plistbuddy Add :com.apple.private.security.mutable-state-flags:3 string EnableQuickLookSandboxResources
     plistbuddy Add :com.apple.private.security.mutable-state-flags:4 string ParentProcessCanEnableQuickLookStateFlag
+    plistbuddy Add :com.apple.private.security.mutable-state-flags:5 string BlockOpenDirectoryInWebContentSandbox
+    plistbuddy Add :com.apple.private.security.mutable-state-flags:6 string BlockMobileAssetInWebContentSandbox
+    plistbuddy Add :com.apple.private.security.mutable-state-flags:7 string BlockMobileGestaltInWebContentSandbox
+    plistbuddy Add :com.apple.private.security.mutable-state-flags:8 string BlockWebInspectorInWebContentSandbox
+    plistbuddy Add :com.apple.private.security.mutable-state-flags:9 string BlockIconServicesInWebContentSandbox
+    plistbuddy Add :com.apple.private.security.mutable-state-flags:10 string BlockFontServiceInWebContentSandbox
     plistbuddy Add :com.apple.private.security.enable-state-flags array
     plistbuddy Add :com.apple.private.security.enable-state-flags:0 string EnableExperimentalSandbox
     plistbuddy Add :com.apple.private.security.enable-state-flags:1 string BlockIOKitInWebContentSandbox
     plistbuddy Add :com.apple.private.security.enable-state-flags:2 string local:WebContentProcessLaunched
     plistbuddy Add :com.apple.private.security.enable-state-flags:3 string ParentProcessCanEnableQuickLookStateFlag
+    plistbuddy Add :com.apple.private.security.enable-state-flags:4 string BlockOpenDirectoryInWebContentSandbox
+    plistbuddy Add :com.apple.private.security.enable-state-flags:5 string BlockMobileAssetInWebContentSandbox
+    plistbuddy Add :com.apple.private.security.enable-state-flags:6 string BlockMobileGestaltInWebContentSandbox
+    plistbuddy Add :com.apple.private.security.enable-state-flags:7 string BlockWebInspectorInWebContentSandbox
+    plistbuddy Add :com.apple.private.security.enable-state-flags:8 string BlockIconServicesInWebContentSandbox
+    plistbuddy Add :com.apple.private.security.enable-state-flags:9 string BlockFontServiceInWebContentSandbox
 }
 
 function extract_notification_names() {
@@ -475,6 +487,8 @@ function ios_family_process_webcontent_captiveportal_entitlements()
 
 function ios_family_process_gpu_entitlements()
 {
+    plistbuddy add :application-identifier string "${PRODUCT_BUNDLE_IDENTIFIER}"
+
     plistbuddy Add :com.apple.security.fatal-exceptions array
     plistbuddy Add :com.apple.security.fatal-exceptions:0 string jit
 
@@ -484,6 +498,7 @@ function ios_family_process_gpu_entitlements()
     plistbuddy Add :com.apple.developer.coremedia.allow-alternate-video-decoder-selection bool YES
     plistbuddy Add :com.apple.mediaremote.set-playback-state bool YES
     plistbuddy Add :com.apple.mediaremote.external-artwork-validation bool YES
+    plistbuddy add :com.apple.mediaremote.ui-control bool YES
     plistbuddy Add :com.apple.private.allow-explicit-graphics-priority bool YES
     plistbuddy Add :com.apple.private.coremedia.extensions.audiorecording.allow bool YES
     plistbuddy Add :com.apple.private.mediaexperience.startrecordinginthebackground.allow bool YES
@@ -550,10 +565,15 @@ function ios_family_process_webpushd_entitlements()
     plistbuddy Add :com.apple.uikitservices.app.value-access bool YES
     plistbuddy Add :com.apple.private.usernotifications.app-management-domain.proxy string com.apple.WebKit.PushBundles
     plistbuddy Add :com.apple.frontboard.launchapplications bool YES
+    plistbuddy Add :com.apple.private.security.storage.os_eligibility.readonly bool YES
+    plistbuddy Add :com.apple.security.exception.files.absolute-path.read-only array
+    plistbuddy Add :com.apple.security.exception.files.absolute-path.read-only:0 string /private/var/db/os_eligibility/eligibility.plist
 }
 
 function ios_family_process_network_entitlements()
 {
+    plistbuddy add :application-identifier string "${PRODUCT_BUNDLE_IDENTIFIER}"
+
     plistbuddy Add :com.apple.private.coreservices.canmaplsdatabase bool YES
     plistbuddy Add :com.apple.private.webkit.adattributiond bool YES
     plistbuddy Add :com.apple.private.webkit.webpush bool YES

@@ -8,6 +8,8 @@
 
 #if ENABLE(WEBXR) && PLATFORM(COCOA)
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 WTF_MAKE_TZONE_ALLOCATED_IMPL(PlatformXRPose);
 
 WebCore::FloatPoint3D PlatformXRPose::position() const
@@ -65,5 +67,7 @@ PlatformXRPose::PlatformXRPose(const simd_float4x4& transform, const simd_float4
 {
     m_simdTransform = simd_mul(parentTransform, transform);
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ENABLE(WEBXR) && PLATFORM(COCOA)

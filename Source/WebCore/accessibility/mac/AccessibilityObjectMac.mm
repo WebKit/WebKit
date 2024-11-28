@@ -214,7 +214,7 @@ static bool isEmptyGroup(AccessibilityObject& object)
         return false;
 
     return [object.rolePlatformString() isEqual:NSAccessibilityGroupRole]
-        && object.children().isEmpty()
+        && object.unignoredChildren().isEmpty()
         && ![renderWidgetChildren(object) count];
 }
 
@@ -422,14 +422,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         return "AXSubscriptStyleGroup"_s;
 
     switch (role) {
-    case AccessibilityRole::RubyBase:
-        return "AXRubyBase"_s;
-    case AccessibilityRole::RubyBlock:
-        return "AXRubyBlock"_s;
     case AccessibilityRole::RubyInline:
         return "AXRubyInline"_s;
-    case AccessibilityRole::RubyRun:
-        return "AXRubyRun"_s;
     case AccessibilityRole::RubyText:
         return "AXRubyText"_s;
     default:
@@ -830,7 +824,7 @@ void AXRemoteFrame::initializePlatformElementWithRemoteToken(std::span<const uin
     m_processIdentifier = processIdentifier;
     if ([wrapper() respondsToSelector:@selector(accessibilitySetPresenterProcessIdentifier:)])
         [(id)wrapper() accessibilitySetPresenterProcessIdentifier:processIdentifier];
-    m_remoteFramePlatformElement = adoptNS([[NSAccessibilityRemoteUIElement alloc] initWithRemoteToken:toNSData(token).get()]);
+    m_remoteFramePlatformElement = adoptNS([[NSAccessibilityRemoteUIElement alloc] initWithRemoteToken:toNSData(BufferSource { token }).get()]);
 
     if (auto* cache = axObjectCache())
         cache->onRemoteFrameInitialized(*this);
@@ -856,7 +850,6 @@ PlatformRoleMap createPlatformRoleMap()
         { AccessibilityRole::TextArea, NSAccessibilityTextAreaRole },
         { AccessibilityRole::ScrollArea, NSAccessibilityScrollAreaRole },
         { AccessibilityRole::PopUpButton, NSAccessibilityPopUpButtonRole },
-        { AccessibilityRole::MenuButton, NSAccessibilityMenuButtonRole },
         { AccessibilityRole::Table, NSAccessibilityTableRole },
         { AccessibilityRole::Application, NSAccessibilityApplicationRole },
         { AccessibilityRole::Group, NSAccessibilityGroupRole },
@@ -876,7 +869,6 @@ PlatformRoleMap createPlatformRoleMap()
         { AccessibilityRole::Toolbar, NSAccessibilityToolbarRole },
         { AccessibilityRole::ProgressIndicator, NSAccessibilityProgressIndicatorRole },
         { AccessibilityRole::Meter, NSAccessibilityLevelIndicatorRole },
-        { AccessibilityRole::Incrementor, NSAccessibilityIncrementorRole },
         { AccessibilityRole::ComboBox, NSAccessibilityComboBoxRole },
         { AccessibilityRole::DateTime, @"AXDateTimeArea" },
         { AccessibilityRole::Splitter, NSAccessibilitySplitterRole },
@@ -951,10 +943,7 @@ PlatformRoleMap createPlatformRoleMap()
         { AccessibilityRole::Switch, NSAccessibilityCheckBoxRole },
         { AccessibilityRole::SearchField, NSAccessibilityTextFieldRole },
         { AccessibilityRole::Pre, NSAccessibilityGroupRole },
-        { AccessibilityRole::RubyBase, NSAccessibilityGroupRole },
-        { AccessibilityRole::RubyBlock, NSAccessibilityGroupRole },
         { AccessibilityRole::RubyInline, NSAccessibilityGroupRole },
-        { AccessibilityRole::RubyRun, NSAccessibilityGroupRole },
         { AccessibilityRole::RubyText, NSAccessibilityGroupRole },
         { AccessibilityRole::Details, NSAccessibilityGroupRole },
         { AccessibilityRole::Summary, NSAccessibilityDisclosureTriangleRole },

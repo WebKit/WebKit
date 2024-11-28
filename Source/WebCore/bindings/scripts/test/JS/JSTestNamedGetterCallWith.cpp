@@ -47,7 +47,6 @@
 #include <wtf/URL.h>
 #include <wtf/text/MakeString.h>
 
-
 namespace WebCore {
 using namespace JSC;
 
@@ -108,9 +107,8 @@ template<> void JSTestNamedGetterCallWithDOMConstructor::initializeProperties(VM
 
 /* Hash table for prototype */
 
-static const HashTableValue JSTestNamedGetterCallWithPrototypeTableValues[] =
-{
-    { "constructor"_s, static_cast<unsigned>(PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestNamedGetterCallWithConstructor, 0 } },
+static const std::array<HashTableValue, 1> JSTestNamedGetterCallWithPrototypeTableValues {
+    HashTableValue { "constructor"_s, static_cast<unsigned>(PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestNamedGetterCallWithConstructor, 0 } },
 };
 
 const ClassInfo JSTestNamedGetterCallWithPrototype::s_info = { "TestNamedGetterCallWith"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestNamedGetterCallWithPrototype) };
@@ -182,7 +180,7 @@ bool JSTestNamedGetterCallWith::getOwnPropertySlot(JSObject* object, JSGlobalObj
 
 bool JSTestNamedGetterCallWith::getOwnPropertySlotByIndex(JSObject* object, JSGlobalObject* lexicalGlobalObject, unsigned index, PropertySlot& slot)
 {
-    auto& vm = JSC::getVM(lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto* thisObject = jsCast<JSTestNamedGetterCallWith*>(object);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
@@ -202,7 +200,7 @@ bool JSTestNamedGetterCallWith::getOwnPropertySlotByIndex(JSObject* object, JSGl
 
 void JSTestNamedGetterCallWith::getOwnPropertyNames(JSObject* object, JSGlobalObject* lexicalGlobalObject, PropertyNameArray& propertyNames, DontEnumPropertiesMode mode)
 {
-    auto& vm = JSC::getVM(lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(lexicalGlobalObject);
     auto* thisObject = jsCast<JSTestNamedGetterCallWith*>(object);
     ASSERT_GC_OBJECT_INHERITS(object, info());
     for (auto& propertyName : thisObject->wrapped().supportedPropertyNames())
@@ -251,7 +249,7 @@ bool JSTestNamedGetterCallWith::putByIndex(JSCell* cell, JSGlobalObject* lexical
     auto* thisObject = jsCast<JSTestNamedGetterCallWith*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
 
-    auto& vm = JSC::getVM(lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
     throwScope.assertNoException();
@@ -286,7 +284,7 @@ bool JSTestNamedGetterCallWith::defineOwnProperty(JSObject* object, JSGlobalObje
 bool JSTestNamedGetterCallWith::deleteProperty(JSCell* cell, JSGlobalObject* lexicalGlobalObject, PropertyName propertyName, DeletePropertySlot& slot)
 {
     auto& thisObject = *jsCast<JSTestNamedGetterCallWith*>(cell);
-    auto& impl = thisObject.wrapped();
+    SUPPRESS_UNCOUNTED_LOCAL auto& impl = thisObject.wrapped();
 
     // Temporary quirk for ungap/@custom-elements polyfill (rdar://problem/111008826), consider removing in 2025.
     if (auto* document = dynamicDowncast<Document>(jsDynamicCast<JSDOMGlobalObject*>(lexicalGlobalObject)->scriptExecutionContext())) {
@@ -306,7 +304,7 @@ bool JSTestNamedGetterCallWith::deletePropertyByIndex(JSCell* cell, JSGlobalObje
 {
     UNUSED_PARAM(lexicalGlobalObject);
     auto& thisObject = *jsCast<JSTestNamedGetterCallWith*>(cell);
-    auto& impl = thisObject.wrapped();
+    SUPPRESS_UNCOUNTED_LOCAL auto& impl = thisObject.wrapped();
 
     // Temporary quirk for ungap/@custom-elements polyfill (rdar://problem/111008826), consider removing in 2025.
     if (auto* document = dynamicDowncast<Document>(jsDynamicCast<JSDOMGlobalObject*>(lexicalGlobalObject)->scriptExecutionContext())) {
@@ -314,7 +312,7 @@ bool JSTestNamedGetterCallWith::deletePropertyByIndex(JSCell* cell, JSGlobalObje
             return JSObject::deletePropertyByIndex(cell, lexicalGlobalObject, index);
     }
 
-    auto& vm = JSC::getVM(lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(lexicalGlobalObject);
     auto propertyName = Identifier::from(vm, index);
     if (impl.isSupportedPropertyName(propertyNameToString(propertyName))) {
         PropertySlot slotForGet { &thisObject, PropertySlot::InternalMethodType::VMInquiry, &lexicalGlobalObject->vm() };
@@ -326,7 +324,7 @@ bool JSTestNamedGetterCallWith::deletePropertyByIndex(JSCell* cell, JSGlobalObje
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestNamedGetterCallWithConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
-    auto& vm = JSC::getVM(lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto* prototype = jsDynamicCast<JSTestNamedGetterCallWithPrototype*>(JSValue::decode(thisValue));
     if (UNLIKELY(!prototype))
@@ -348,8 +346,8 @@ void JSTestNamedGetterCallWith::analyzeHeap(JSCell* cell, HeapAnalyzer& analyzer
 {
     auto* thisObject = jsCast<JSTestNamedGetterCallWith*>(cell);
     analyzer.setWrappedObjectForCell(cell, &thisObject->wrapped());
-    if (thisObject->scriptExecutionContext())
-        analyzer.setLabelForCell(cell, makeString("url "_s, thisObject->scriptExecutionContext()->url().string()));
+    if (RefPtr context = thisObject->scriptExecutionContext())
+        analyzer.setLabelForCell(cell, makeString("url "_s, context->url().string()));
     Base::analyzeHeap(cell, analyzer);
 }
 
@@ -368,6 +366,7 @@ void JSTestNamedGetterCallWithOwner::finalize(JSC::Handle<JSC::Unknown> handle, 
     uncacheWrapper(world, jsTestNamedGetterCallWith->protectedWrapped().ptr(), jsTestNamedGetterCallWith);
 }
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 #if ENABLE(BINDING_INTEGRITY)
 #if PLATFORM(WIN)
 #pragma warning(disable: 4483)
@@ -392,6 +391,8 @@ template<typename T, typename = std::enable_if_t<std::is_same_v<T, TestNamedGett
     }
 }
 #endif
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+
 JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject*, JSDOMGlobalObject* globalObject, Ref<TestNamedGetterCallWith>&& impl)
 {
 #if ENABLE(BINDING_INTEGRITY)

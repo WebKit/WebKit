@@ -36,15 +36,6 @@
 #include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
-namespace WebKit {
-class RemoteCDMFactory;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::RemoteCDMFactory> : std::true_type { };
-}
-
 namespace WebCore {
 class Settings;
 }
@@ -70,6 +61,9 @@ public:
     explicit RemoteCDMFactory(WebProcess&);
     virtual ~RemoteCDMFactory();
 
+    void ref() const;
+    void deref() const;
+
     static ASCIILiteral supplementName();
 
     GPUProcessConnection& gpuProcessConnection();
@@ -87,6 +81,7 @@ private:
     std::unique_ptr<WebCore::CDMPrivate> createCDM(const String&, const WebCore::CDMPrivateClient&) final;
     bool supportsKeySystem(const String&) final;
 
+    WeakRef<WebProcess> m_webProcess;
     HashMap<RemoteCDMInstanceSessionIdentifier, WeakPtr<RemoteCDMInstanceSession>> m_sessions;
     HashMap<RemoteCDMIdentifier, std::unique_ptr<RemoteCDM>> m_cdms;
 };

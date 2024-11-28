@@ -32,12 +32,13 @@
 #import "Logging.h"
 #import "ResourceRequest.h"
 #import "ResourceResponse.h"
-#import "RuntimeApplicationChecks.h"
 #import "SharedBuffer.h"
 #import <objc/runtime.h>
 #import <pal/spi/cocoa/NEFilterSourceSPI.h>
 #import <wtf/SoftLinking.h>
+#import <wtf/TZoneMallocInlines.h>
 #import <wtf/URL.h>
+#import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #import <wtf/threads/BinarySemaphore.h>
 
 static inline NSData *replacementDataFromDecisionInfo(NSDictionary *decisionInfo)
@@ -47,6 +48,8 @@ static inline NSData *replacementDataFromDecisionInfo(NSDictionary *decisionInfo
 }
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(NetworkExtensionContentFilter);
 
 bool NetworkExtensionContentFilter::enabled()
 {

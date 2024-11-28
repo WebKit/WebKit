@@ -33,6 +33,7 @@
 #if ENABLE(WK_WEB_EXTENSIONS)
 
 #import "CocoaHelpers.h"
+#import "WKNSError.h"
 #import "WKNavigationActionPrivate.h"
 #import "WKNavigationDelegatePrivate.h"
 #import "WKUIDelegatePrivate.h"
@@ -49,6 +50,7 @@
 #import "WebExtensionTabParameters.h"
 #import "WebPageProxy.h"
 #import "WebProcessProxy.h"
+#import <WebCore/LocalizedStrings.h>
 #import <wtf/BlockPtr.h>
 
 #if PLATFORM(IOS_FAMILY)
@@ -78,6 +80,8 @@ constexpr auto popoverStableSizeDuration = 75_ms;
 constexpr auto popoverShowTimeout = 750_ms;
 constexpr auto popoverStableSizeDuration = 225_ms;
 #endif
+
+constexpr auto updateThrottleDuration = 15_ms;
 
 using namespace WebKit;
 
@@ -238,6 +242,20 @@ using namespace WebKit;
 
     _webExtensionAction->popupDidFinishDocumentLoad();
 }
+
+#if PLATFORM(MAC)
+- (void)webView:(WKWebView *)webView runOpenPanelWithParameters:(WKOpenPanelParameters *)parameters initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)(NSArray<NSURL *> *URLs))completionHandler
+{
+    RefPtr extensionContext = _webExtensionAction ? _webExtensionAction->extensionContext() : nullptr;
+    if (!extensionContext) {
+        completionHandler(nil);
+        return;
+    }
+
+    extensionContext->runOpenPanel(webView, parameters, completionHandler);
+}
+#endif // PLATFORM(MAC)
+
 @end
 
 #if PLATFORM(IOS_FAMILY)
@@ -445,12 +463,11 @@ static void* kvoContext = &kvoContext;
 
         [self _updateDetentForSheetPresentationController:dynamic_objc_cast<UISheetPresentationController>(presentationController)];
     } else {
-        CGSize boundsSize = _popupWebView.bounds.size;
         CGSize contentSize = _popupWebView.scrollView.contentSize;
         CGSize desiredSize = CGSizeMake(std::min(contentSize.width, maximumPopoverWidth), std::min(contentSize.height, maximumPopoverHeight));
 
-        CGFloat minimumWidth = std::min(desiredSize.width, boundsSize.width);
-        CGFloat minimumHeight = _popupWebView.contentSizeHasStabilized ? std::min(desiredSize.height, boundsSize.height) : minimumPopoverHeight;
+        CGFloat minimumWidth = desiredSize.width;
+        CGFloat minimumHeight = _popupWebView.contentSizeHasStabilized ? std::min(desiredSize.height, minimumPopoverHeight) : minimumPopoverHeight;
         CGSize minimumLayoutSize = CGSizeMake(minimumWidth, minimumHeight);
 
         [_popupWebView _overrideLayoutParametersWithMinimumLayoutSize:minimumLayoutSize minimumUnobscuredSizeOverride:minimumLayoutSize maximumUnobscuredSizeOverride:CGSizeZero];
@@ -589,26 +606,19 @@ WebExtensionContext* WebExtensionAction::extensionContext() const
     return m_extensionContext.get();
 }
 
-RefPtr<WebExtensionTab> WebExtensionAction::tab() const
-{
-    return m_tab.and_then([](auto const& maybeTab) {
-        return std::optional(RefPtr(maybeTab.get()));
-    }).value_or(nullptr);
-}
-
-RefPtr<WebExtensionWindow> WebExtensionAction::window() const
-{
-    return m_window.and_then([](auto const& maybeWindow) {
-        return std::optional(RefPtr(maybeWindow.get()));
-    }).value_or(nullptr);
-}
-
 void WebExtensionAction::clearCustomizations()
 {
+#if ENABLE(WK_WEB_EXTENSIONS_ICON_VARIANTS)
+    if (!m_customIcons && !m_customIconVariants && m_customPopupPath.isNull() && m_customLabel.isNull() && m_customBadgeText.isNull() && !m_customEnabled && !m_blockedResourceCount)
+#else
     if (!m_customIcons && m_customPopupPath.isNull() && m_customLabel.isNull() && m_customBadgeText.isNull() && !m_customEnabled && !m_blockedResourceCount)
+#endif
         return;
 
-    m_customIcons = nil;
+    m_customIcons = nullptr;
+#if ENABLE(WK_WEB_EXTENSIONS_ICON_VARIANTS)
+    m_customIconVariants = nullptr;
+#endif
     m_customPopupPath = nullString();
     m_customLabel = nullString();
     m_customBadgeText = nullString();
@@ -620,6 +630,7 @@ void WebExtensionAction::clearCustomizations()
     m_popoverAppearance = Appearance::Default;
 #endif
 
+    clearIconCache();
     propertiesDidChange();
 }
 
@@ -632,8 +643,58 @@ void WebExtensionAction::clearBlockedResourceCount()
 
 void WebExtensionAction::propertiesDidChange()
 {
-    dispatch_async(dispatch_get_main_queue(), makeBlockPtr([this, protectedThis = Ref { *this }]() {
-        [NSNotificationCenter.defaultCenter postNotificationName:WKWebExtensionActionPropertiesDidChangeNotification object:wrapper() userInfo:nil];
+    if (m_updatePending)
+        return;
+
+    m_updatePending = true;
+
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, updateThrottleDuration.nanosecondsAs<int64_t>()), dispatch_get_main_queue(), makeBlockPtr([this, protectedThis = Ref { *this }]() {
+        m_updatePending = false;
+
+        RefPtr extensionContext = m_extensionContext.get();
+        if (!extensionContext)
+            return;
+
+        RefPtr extensionController = extensionContext->extensionController();
+        if (!extensionController)
+            return;
+
+        auto *delegate = extensionController->delegate();
+        if (![delegate respondsToSelector:@selector(webExtensionController:didUpdateAction:forExtensionContext:)])
+            return;
+
+        if (isTabAction()) {
+            // Tab actions are not inherited by other actions, so just call the delegate directly.
+            [delegate webExtensionController:extensionController->wrapper() didUpdateAction:wrapper() forExtensionContext:extensionContext->wrapper()];
+            return;
+        }
+
+        auto callDelegateForTabs = [=](auto&& tabs) {
+            for (Ref tab : tabs) {
+                Ref tabAction = extensionContext->getAction(tab.ptr());
+
+                // Skip tabs with no custom action (i.e., default or window action).
+                if (!tabAction->isTabAction())
+                    continue;
+
+                [delegate webExtensionController:extensionController->wrapper() didUpdateAction:tabAction->wrapper() forExtensionContext:extensionContext->wrapper()];
+            }
+        };
+
+        if (isWindowAction()) {
+            // Call the delegate about tab-specific actions that inherit from the window.
+            RefPtr window = protectedThis->window();
+            callDelegateForTabs(window->tabs());
+            return;
+        }
+
+        ASSERT(isDefaultAction());
+
+        // Call the delegate about the default action, since it is retrievable via the API.
+        [delegate webExtensionController:extensionController->wrapper() didUpdateAction:wrapper() forExtensionContext:extensionContext->wrapper()];
+
+        // Call the delegate about tab-specific actions inheriting from the default.
+        callDelegateForTabs(extensionContext->openTabs());
     }).get());
 }
 
@@ -654,37 +715,93 @@ WebExtensionAction* WebExtensionAction::fallbackAction() const
     return nullptr;
 }
 
-CocoaImage *WebExtensionAction::icon(CGSize idealSize)
+RefPtr<WebCore::Icon> WebExtensionAction::icon(WebCore::FloatSize idealSize)
 {
     if (!extensionContext())
         return nil;
 
-    if (m_customIcons) {
-        auto *result = extensionContext()->extension().bestImageInIconsDictionary(m_customIcons.get(), idealSize, [&](auto *error) {
-            extensionContext()->recordError(error);
-        });
+#if ENABLE(WK_WEB_EXTENSIONS_ICON_VARIANTS)
+    if (m_customIconVariants || m_customIcons)
+#else
+    if (m_customIcons)
+#endif
+    {
+        // Clear the cache if the display scales change (connecting display, etc.)
+        auto currentScales = availableScreenScales();
+        if (currentScales != m_cachedIconScales)
+            clearIconCache();
 
-        if (result)
+        if (m_cachedIcon && idealSize == m_cachedIconIdealSize)
+            return m_cachedIcon;
+
+        RefPtr<WebCore::Icon> result;
+
+#if ENABLE(WK_WEB_EXTENSIONS_ICON_VARIANTS)
+        if (m_customIconVariants) {
+            result = extensionContext()->extension().bestIconVariant(m_customIconVariants, WebCore::FloatSize(idealSize), [&](Ref<API::Error> error) {
+                extensionContext()->recordError(::WebKit::wrapper(error));
+            });
+        } else
+#endif // ENABLE(WK_WEB_EXTENSIONS_ICON_VARIANTS)
+        if (m_customIcons) {
+            result = extensionContext()->extension().bestIcon(m_customIcons, WebCore::FloatSize(idealSize), [&](Ref<API::Error> error) {
+                extensionContext()->recordError(::WebKit::wrapper(error));
+            });
+        }
+
+        if (result) {
+            m_cachedIcon = result;
+            m_cachedIconScales = currentScales;
+            m_cachedIconIdealSize = idealSize;
+
             return result;
+        }
 
-        // If custom icons fail, fallback to the default icons.
+        clearIconCache();
+
+        // If custom icons fail, fallback.
     }
 
     if (RefPtr fallback = fallbackAction())
         return fallback->icon(idealSize);
 
     // Default
-    return extensionContext()->extension().actionIcon(idealSize);
+    return extensionContext()->extension().actionIcon(WebCore::FloatSize(idealSize));
 }
 
-void WebExtensionAction::setIconsDictionary(NSDictionary *icons)
+void WebExtensionAction::setIcons(RefPtr<JSON::Object> icons)
 {
-    if ([(m_customIcons ?: @{ }) isEqualToDictionary:(icons ?: @{ })])
+    if (m_customIcons == icons)
         return;
 
-    m_customIcons = icons.count ? icons : nil;
+    m_customIcons = icons->size() ? icons : nullptr;
+#if ENABLE(WK_WEB_EXTENSIONS_ICON_VARIANTS)
+    m_customIconVariants = nullptr;
+#endif
 
+    clearIconCache();
     propertiesDidChange();
+}
+
+#if ENABLE(WK_WEB_EXTENSIONS_ICON_VARIANTS)
+void WebExtensionAction::setIconVariants(RefPtr<JSON::Array> iconVariants)
+{
+    if (m_customIconVariants == iconVariants)
+        return;
+
+    m_customIconVariants = iconVariants->length() ? iconVariants : nullptr;
+    m_customIcons = nullptr;
+
+    clearIconCache();
+    propertiesDidChange();
+}
+#endif // ENABLE(WK_WEB_EXTENSIONS_ICON_VARIANTS)
+
+void WebExtensionAction::clearIconCache()
+{
+    m_cachedIcon = nil;
+    m_cachedIconScales = { };
+    m_cachedIconIdealSize = { };
 }
 
 String WebExtensionAction::popupPath() const
@@ -720,7 +837,7 @@ void WebExtensionAction::setPopupPath(String path)
 NSString *WebExtensionAction::popupWebViewInspectionName()
 {
     if (m_popupWebViewInspectionName.isEmpty())
-        m_popupWebViewInspectionName = WEB_UI_FORMAT_CFSTRING("%@ — Extension Popup Page", "Label for an inspectable Web Extension popup page", (__bridge CFStringRef)extensionContext()->extension().displayShortName());
+        m_popupWebViewInspectionName = WEB_UI_FORMAT_CFSTRING("%@ — Extension Popup Page", "Label for an inspectable Web Extension popup page", extensionContext()->extension().displayShortName().createCFString().get());
 
     return m_popupWebViewInspectionName;
 }
@@ -1009,6 +1126,9 @@ void WebExtensionAction::popupSizeDidChange()
 
 void WebExtensionAction::closePopup()
 {
+    if (!popupPresented())
+        return;
+
     ASSERT(hasPopupWebView());
 
     RELEASE_LOG_DEBUG(Extensions, "Popup closed");
@@ -1049,7 +1169,7 @@ String WebExtensionAction::label(FallbackWhenEmpty fallback) const
         return fallback->label();
 
     // Default
-    if (auto *defaultLabel = extensionContext()->extension().displayActionLabel(); defaultLabel.length || fallback == FallbackWhenEmpty::No)
+    if (auto defaultLabel = extensionContext()->extension().displayActionLabel(); !defaultLabel.isEmpty() || fallback == FallbackWhenEmpty::No)
         return defaultLabel;
 
     return extensionContext()->extension().displayName();

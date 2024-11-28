@@ -48,9 +48,8 @@ public:
     void deref() const final { HTMLElement::deref(); }
 
     using HTMLElement::scriptExecutionContext;
-    using HTMLElement::weakPtrFactory;
-    using HTMLElement::WeakValueType;
-    using HTMLElement::WeakPtrImplType;
+
+    USING_CAN_MAKE_WEAKPTR(HTMLElement);
 
     const AtomString& kind();
     void setKind(const AtomString&);

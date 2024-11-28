@@ -30,6 +30,8 @@
 #include "PreciseAllocation.h"
 #include "SlotVisitor.h"
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 ALWAYS_INLINE void SlotVisitor::appendUnbarriered(JSValue* slot, size_t count)
@@ -54,7 +56,7 @@ ALWAYS_INLINE void SlotVisitor::appendUnbarriered(JSCell* cell)
         }
     } else {
         MarkedBlock& block = cell->markedBlock();
-        dependency = block.aboutToMark(m_markingVersion);
+        dependency = block.aboutToMark(m_markingVersion, cell);
         if (LIKELY(block.isMarked(cell, dependency))) {
             if (LIKELY(!m_heapAnalyzer))
                 return;
@@ -90,7 +92,7 @@ ALWAYS_INLINE void SlotVisitor::appendHiddenUnbarriered(JSCell* cell)
             return;
     } else {
         MarkedBlock& block = cell->markedBlock();
-        dependency = block.aboutToMark(m_markingVersion);
+        dependency = block.aboutToMark(m_markingVersion, cell);
         if (LIKELY(block.isMarked(cell, dependency)))
             return;
     }
@@ -195,3 +197,5 @@ IterationStatus SlotVisitor::forEachMarkStack(const Func& func)
 }
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

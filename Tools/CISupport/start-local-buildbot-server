@@ -377,8 +377,8 @@ class BuildbotTestRunner(object):
 
 
 if __name__ == '__main__':
-    if sys.version_info < (3, 5):
-        print('ERROR: Please use Python 3. This script is not compatible with Python 2.')
+    if sys.version_info < (3, 9):  # noqa: UP036
+        print('ERROR: Minimum supported Python version for this code is Python 3.9')
         sys.exit(1)
 
     parser = argparse.ArgumentParser()

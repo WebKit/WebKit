@@ -102,9 +102,11 @@
 #include "ContentChangeObserver.h"
 #endif
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
-WTF_MAKE_COMPACT_TZONE_OR_ISO_ALLOCATED_IMPL(Node);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(Node);
 
 using namespace HTMLNames;
 
@@ -113,17 +115,18 @@ struct SameSizeAsNode : EventTarget, CanMakeCheckedPtr<SameSizeAsNode> {
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SameSizeAsNode);
 public:
 #if ASSERT_ENABLED
-    uint32_t m_isAllocatedMemory;
     bool inRemovedLastRefFunction;
     bool adoptionIsRequired;
 #endif
     uint32_t refCountAndParentBit;
     uint32_t nodeFlags;
+    uint16_t elementStateFlags;
+    uint16_t styleBitfields;
     void* parentNode;
     void* treeScope;
-    uint8_t previous[8];
+    void* previous;
     void* next;
-    uint8_t rendererWithStyleFlags[8];
+    void* renderer;
     uint8_t rareDataWithBitfields[8];
 };
 
@@ -193,6 +196,8 @@ static ASCIILiteral stringForRareDataUseType(NodeRareData::UseType useType)
         return "ExplicitlySetAttrElementsMap"_s;
     case NodeRareData::UseType::Popover:
         return "Popover"_s;
+    case NodeRareData::UseType::UserInfo:
+        return "UserInfo"_s;
     }
     return { };
 }
@@ -215,7 +220,7 @@ void Node::dumpStatistics()
     size_t fragmentNodes = 0;
     size_t shadowRootNodes = 0;
 
-    HashMap<String, size_t> perTagCount;
+    UncheckedKeyHashMap<String, size_t> perTagCount;
 
     size_t attributes = 0;
     size_t attributesWithAttr = 0;
@@ -223,7 +228,7 @@ void Node::dumpStatistics()
     size_t elementsWithRareData = 0;
     size_t elementsWithNamedNodeMap = 0;
 
-    HashMap<uint32_t, size_t> rareDataSingleUseTypeCounts;
+    UncheckedKeyHashMap<uint32_t, size_t> rareDataSingleUseTypeCounts;
     size_t mixedRareDataUseCount = 0;
 
     for (auto& node : liveNodeSet()) {
@@ -254,7 +259,7 @@ void Node::dumpStatistics()
 
                 // Tag stats
                 Element& element = uncheckedDowncast<Element>(node);
-                HashMap<String, size_t>::AddResult result = perTagCount.add(element.tagName(), 1);
+                UncheckedKeyHashMap<String, size_t>::AddResult result = perTagCount.add(element.tagName(), 1);
                 if (!result.isNewEntry)
                     result.iterator->value++;
 
@@ -418,7 +423,6 @@ Node::~Node()
 {
     ASSERT(isMainThread());
     ASSERT(deletionHasBegun());
-    ASSERT(!deletionHasEnded());
     ASSERT(!m_adoptionIsRequired);
 
     InspectorInstrumentation::willDestroyDOMNode(*this);
@@ -434,7 +438,7 @@ Node::~Node()
 
     ASSERT(!renderer());
     ASSERT(!parentNode());
-    ASSERT(!m_previous.pointer());
+    ASSERT(!m_previousSibling);
     ASSERT(!m_next);
 
     {
@@ -456,9 +460,9 @@ Node::~Node()
     }
 #endif
 
-#if ASSERT_ENABLED
-    m_isAllocatedMemory = IsAllocatedMemory::Scribble;
-#endif
+    // FIXME: Test performance, then add a RELEASE_ASSERT for this too.
+    if (refCount() > 1)
+        WTF::RefCountedBase::printRefDuringDestructionLogAndCrash(this);
 }
 
 void Node::willBeDeletedFrom(Document& document)
@@ -2458,6 +2462,16 @@ static inline bool tryAddEventListener(Node* targetNode, const AtomString& event
         document->addTouchEventHandler(*targetNode);
 #endif
 
+#if ENABLE(CONTENT_CHANGE_OBSERVER)
+    if (typeInfo.isInCategory(EventCategory::MouseMoveRelated)) {
+        if (WeakPtr observer = document->contentChangeObserverIfExists())
+            observer->didAddMouseMoveRelatedEventListener(eventType, *targetNode);
+    }
+#endif
+
+    if (CheckedPtr cache = document->existingAXObjectCache())
+        cache->onEventListenerAdded(*targetNode, eventType);
+
     return true;
 }
 
@@ -2500,6 +2514,9 @@ static inline bool didRemoveEventListenerOfType(Node& targetNode, const AtomStri
         document->removeTouchEventHandler(targetNode);
 #endif
 
+    if (CheckedPtr cache = document->existingAXObjectCache())
+        cache->onEventListenerRemoved(targetNode, eventType);
+
     return true;
 }
 
@@ -2540,9 +2557,9 @@ WeakHashSet<MutationObserverRegistration>* Node::transientMutationObserverRegist
     return &data->transientRegistry;
 }
 
-HashMap<Ref<MutationObserver>, MutationRecordDeliveryOptions> Node::registeredMutationObservers(MutationObserverOptionType type, const QualifiedName* attributeName)
+UncheckedKeyHashMap<Ref<MutationObserver>, MutationRecordDeliveryOptions> Node::registeredMutationObservers(MutationObserverOptionType type, const QualifiedName* attributeName)
 {
-    HashMap<Ref<MutationObserver>, MutationRecordDeliveryOptions> observers;
+    UncheckedKeyHashMap<Ref<MutationObserver>, MutationRecordDeliveryOptions> observers;
     ASSERT((type == MutationObserverOptionType::Attributes && attributeName) || !attributeName);
 
     auto collectMatchingObserversForMutation = [&](MutationObserverRegistration& registration) {
@@ -2698,7 +2715,7 @@ void Node::defaultEventHandler(Event& event)
 #if ENABLE(CONTEXT_MENUS)
     case EventType::contextmenu:
         if (RefPtr frame = document().frame()) {
-            if (auto* page = frame->page())
+            if (RefPtr page = frame->page())
                 page->contextMenuController().handleContextMenuEvent(event);
         }
         break;
@@ -3075,6 +3092,8 @@ TextStream& operator<<(TextStream& ts, const Node& node)
 }
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #if ENABLE(TREE_DEBUGGING)
 

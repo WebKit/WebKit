@@ -74,7 +74,7 @@
 #include <wtf/TZoneMallocInlines.h>
 
 #if PLATFORM(IOS_FAMILY)
-#include "RuntimeApplicationChecks.h"
+#include <wtf/RuntimeApplicationChecks.h>
 #endif
 
 namespace WebCore {
@@ -83,7 +83,7 @@ using namespace HTMLNames;
 
 WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderBoxModelObject);
 
-// The HashMap for storing continuation pointers.
+// The UncheckedKeyHashMap for storing continuation pointers.
 // An inline can be split with blocks occuring in between the inline content.
 // When this occurs we need a pointer to the next object. We can basically be
 // split into a sequence of inlines and blocks. The continuation will either be
@@ -134,6 +134,18 @@ static FirstLetterRemainingTextMap& firstLetterRemainingTextMap()
 {
     static NeverDestroyed<FirstLetterRemainingTextMap> map;
     return map;
+}
+
+void RenderBoxModelObject::styleWillChange(StyleDifference diff, const RenderStyle& newStyle)
+{
+    const RenderStyle* oldStyle = hasInitializedStyle() ? &style() : nullptr;
+
+    if (!style().anchorNames().isEmpty())
+        view().registerAnchor(*this);
+    else if (oldStyle && !oldStyle->anchorNames().isEmpty())
+        view().unregisterAnchor(*this);
+
+    RenderLayerModelObject::styleWillChange(diff, newStyle);
 }
 
 void RenderBoxModelObject::setSelectionState(HighlightState state)
@@ -209,8 +221,8 @@ void RenderBoxModelObject::updateFromStyle()
     setHasVisibleBoxDecorations(hasVisibleBoxDecorationStyle());
     setInline(styleToUse.isDisplayInlineType());
     setPositionState(styleToUse.position());
-    setHorizontalWritingMode(styleToUse.isHorizontalWritingMode());
-    if (styleToUse.isFlippedBlocksWritingMode())
+    setHorizontalWritingMode(styleToUse.writingMode().isHorizontal());
+    if (writingMode().isBlockFlipped())
         view().frameView().setHasFlippedBlockRenderers(true);
     setPaintContainmentApplies(shouldApplyPaintContainment());
 }
@@ -306,7 +318,7 @@ DecodingMode RenderBoxModelObject::decodingModeForImageDraw(const Image& image, 
 {
     // Some document types force synchronous decoding.
 #if PLATFORM(IOS_FAMILY)
-    if (IOSApplication::isIBooksStorytime())
+    if (WTF::IOSApplication::isIBooksStorytime())
         return DecodingMode::Synchronous;
 #endif
 
@@ -361,13 +373,9 @@ DecodingMode RenderBoxModelObject::decodingModeForImageDraw(const Image& image, 
 
     // Animated image case.
     if (bitmapImage->isAnimated()) {
-        if (!(bitmapImage->isLargeForDecoding() && settings().animatedImageAsyncDecodingEnabled()))
-            return DecodingMode::Synchronous;
-
-        if (bitmapImage->hasEverAnimated())
+        if (bitmapImage->isLargeForDecoding() && settings().animatedImageAsyncDecodingEnabled())
             return DecodingMode::Asynchronous;
-
-        return defaultDecodingMode();
+        return DecodingMode::Synchronous;
     }
 
     // Large image case.
@@ -391,7 +399,7 @@ LayoutSize RenderBoxModelObject::relativePositionOffset() const
     auto& bottom = style.bottom();
 
     auto offset = accumulateInFlowPositionOffsets(this);
-    if (top.isFixed() && bottom.isAuto() && left.isFixed() && right.isAuto() && containingBlock->style().isLeftToRightDirection()) {
+    if (top.isFixed() && bottom.isAuto() && left.isFixed() && right.isAuto() && containingBlock->writingMode().isAnyLeftToRight()) {
         offset.expand(left.value(), top.value());
         return offset;
     }
@@ -407,12 +415,12 @@ LayoutSize RenderBoxModelObject::relativePositionOffset() const
             auto* renderBox = dynamicDowncast<RenderBox>(*this);
             if (!renderBox)
                 return containingBlock->availableWidth();
-            if (auto overridingContainingBlockContentWidth = renderBox->overridingContainingBlockContentWidth(containingBlock->style().writingMode()))
+            if (auto overridingContainingBlockContentWidth = renderBox->overridingContainingBlockContentWidth(containingBlock->writingMode()))
                 return overridingContainingBlockContentWidth->value_or(0_lu);
             return containingBlock->availableWidth();
         };
         if (!left.isAuto()) {
-            if (!right.isAuto() && !containingBlock->style().isLeftToRightDirection())
+            if (!right.isAuto() && !containingBlock->writingMode().isAnyLeftToRight())
                 offset.setWidth(-valueForLength(right, !right.isFixed() ? availableWidth() : 0_lu));
             else
                 offset.expand(valueForLength(left, !left.isFixed() ? availableWidth() : 0_lu), 0_lu);
@@ -476,7 +484,7 @@ LayoutPoint RenderBoxModelObject::adjustedPositionRelativeToOffsetParent(const L
             if (isOutOfFlowPositioned()) {
                 auto& outOfFlowStyle = style();
                 ASSERT(containingBlock());
-                auto isHorizontalWritingMode = containingBlock() ? containingBlock()->style().isHorizontalWritingMode() : true;
+                auto isHorizontalWritingMode = containingBlock() ? containingBlock()->writingMode().isHorizontal() : true;
                 if (!outOfFlowStyle.hasStaticInlinePosition(isHorizontalWritingMode))
                     topLeft.setX(LayoutUnit { });
                 if (!outOfFlowStyle.hasStaticBlockPosition(isHorizontalWritingMode))
@@ -649,7 +657,7 @@ FloatRect RenderBoxModelObject::constrainingRectForStickyPosition() const
 
         float scrollbarOffset = 0;
         if (enclosingClippingBox.hasLayer() && enclosingClippingBox.shouldPlaceVerticalScrollbarOnLeft() && scrollableArea)
-            scrollbarOffset = scrollableArea->verticalScrollbarWidth(IgnoreOverlayScrollbarSize, isHorizontalWritingMode());
+            scrollbarOffset = scrollableArea->verticalScrollbarWidth(OverlayScrollbarSizeRelevancy::IgnoreOverlayScrollbarSize, isHorizontalWritingMode());
 
         constrainingRect.setLocation(FloatPoint(scrollOffset.x() + scrollbarOffset, scrollOffset.y()));
         return constrainingRect;
@@ -709,13 +717,7 @@ void RenderBoxModelObject::paintMaskForTextFillBox(GraphicsContext& context, con
         for (auto box = inlineBox->firstLeafBox(), end = inlineBox->endLeafBox(); box != end; box.traverseNextOnLine()) {
             if (!box->isText())
                 continue;
-            if (auto* legacyTextBox = downcast<LegacyInlineTextBox>(box->legacyInlineBox())) {
-                LegacyTextBoxPainter textBoxPainter(*legacyTextBox, maskInfo, paintOffset);
-                textBoxPainter.paint();
-                continue;
-            }
-            ModernTextBoxPainter textBoxPainter(box->modernPath().inlineContent(), box->modernPath().box(), maskInfo, paintOffset);
-            textBoxPainter.paint();
+            TextBoxPainter { box->modernPath().inlineContent(), box->modernPath().box(), box->modernPath().box().style(), maskInfo, paintOffset }.paint();
         }
         return;
     }

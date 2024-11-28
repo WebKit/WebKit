@@ -31,12 +31,10 @@
     SecureContext
 ]
 interface GPUAdapter {
-    readonly attribute DOMString name;
     [SameObject] readonly attribute GPUSupportedFeatures features;
     [SameObject] readonly attribute GPUSupportedLimits limits;
-    readonly attribute boolean isFallbackAdapter;
     [SameObject] readonly attribute GPUAdapterInfo info;
+    readonly attribute boolean isFallbackAdapter;
 
     [CallWith=CurrentScriptExecutionContext] Promise<GPUDevice> requestDevice(optional GPUDeviceDescriptor descriptor);
-    Promise<GPUAdapterInfo> requestAdapterInfo(optional sequence<DOMString> unmaskHints = []);
 };

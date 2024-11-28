@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -e
+
 # On Linux systems, this script needs to be run with root rights.
 if [ `uname` != "Darwin" ] && [ $UID -ne 0 ]; then
     sudo $0

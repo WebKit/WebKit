@@ -26,7 +26,7 @@
 #include "config.h"
 #include "LibWebRTCVPXVideoEncoder.h"
 
-#if ENABLE(WEB_CODECS) && USE(LIBWEBRTC) && PLATFORM(COCOA)
+#if USE(LIBWEBRTC) && PLATFORM(COCOA)
 
 #include "VideoFrameLibWebRTC.h"
 #include <wtf/NeverDestroyed.h>
@@ -35,6 +35,7 @@
 #include <wtf/WorkQueue.h>
 #include <wtf/text/MakeString.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 ALLOW_UNUSED_PARAMETERS_BEGIN
 ALLOW_COMMA_BEGIN
 
@@ -47,6 +48,9 @@ ALLOW_COMMA_BEGIN
 
 ALLOW_COMMA_END
 ALLOW_UNUSED_PARAMETERS_END
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace WebCore {
 
@@ -324,4 +328,6 @@ void LibWebRTCVPXInternalVideoEncoder::OnDroppedFrame(DropReason)
 
 }
 
-#endif // ENABLE(WEB_CODECS) && USE(LIBWEBRTC)
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+
+#endif // USE(LIBWEBRTC)

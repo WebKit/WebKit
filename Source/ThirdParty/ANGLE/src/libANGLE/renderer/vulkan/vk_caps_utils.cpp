@@ -406,6 +406,9 @@ void Renderer::ensureCapsInitialized() const
     mNativeExtensions.textureMirrorClampToEdgeEXT =
         getFeatures().supportsSamplerMirrorClampToEdge.enabled;
 
+    // Enable EXT_texture_shadow_lod
+    mNativeExtensions.textureShadowLodEXT = true;
+
     // Enable EXT_multi_draw_indirect
     mNativeExtensions.multiDrawIndirectEXT = true;
 
@@ -945,12 +948,7 @@ void Renderer::ensureCapsInitialized() const
 
     GLint reservedVaryingComponentCount = 0;
 
-    if (getFeatures().supportsTransformFeedbackExtension.enabled &&
-        (!getFeatures().supportsDepthClipControl.enabled ||
-         getFeatures().enablePreRotateSurfaces.enabled ||
-         getFeatures().emulatedPrerotation90.enabled ||
-         getFeatures().emulatedPrerotation180.enabled ||
-         getFeatures().emulatedPrerotation270.enabled))
+    if (getFeatures().supportsTransformFeedbackExtension.enabled)
     {
         reservedVaryingComponentCount += kReservedVaryingComponentsForTransformFeedbackExtension;
     }
@@ -996,19 +994,16 @@ void Renderer::ensureCapsInitialized() const
 
     if (getFeatures().supportsShaderFramebufferFetch.enabled)
     {
-        // Enable GL_EXT_shader_framebuffer_fetch
-        // gl::IMPLEMENTATION_MAX_DRAW_BUFFERS is used to support the extension.
-        mNativeExtensions.shaderFramebufferFetchEXT =
-            mNativeCaps.maxDrawBuffers >= gl::IMPLEMENTATION_MAX_DRAW_BUFFERS;
+        mNativeExtensions.shaderFramebufferFetchEXT = true;
         mNativeExtensions.shaderFramebufferFetchARM = mNativeExtensions.shaderFramebufferFetchEXT;
+        // ANGLE correctly maps gl_LastFragColorARM to input attachment 0 and has no problem with
+        // MRT.
+        mNativeCaps.fragmentShaderFramebufferFetchMRT = true;
     }
 
     if (getFeatures().supportsShaderFramebufferFetchNonCoherent.enabled)
     {
-        // Enable GL_EXT_shader_framebuffer_fetch_non_coherent
-        // For supporting this extension, gl::IMPLEMENTATION_MAX_DRAW_BUFFERS is used.
-        mNativeExtensions.shaderFramebufferFetchNonCoherentEXT =
-            mNativeCaps.maxDrawBuffers >= gl::IMPLEMENTATION_MAX_DRAW_BUFFERS;
+        mNativeExtensions.shaderFramebufferFetchNonCoherentEXT = true;
     }
 
     // Enable Program Binary extension.
@@ -1286,6 +1281,9 @@ void Renderer::ensureCapsInitialized() const
     mNativeExtensions.readDepthStencilNV = true;
     mNativeExtensions.readStencilNV      = true;
 
+    // GL_EXT_clear_texture
+    mNativeExtensions.clearTextureEXT = true;
+
     // GL_QCOM_shading_rate
     mNativeExtensions.shadingRateQCOM = mFeatures.supportsFragmentShadingRate.enabled;
 
@@ -1317,6 +1315,63 @@ void Renderer::ensureCapsInitialized() const
     {
         mNativePLSOptions.type = ShPixelLocalStorageType::FramebufferFetch;
         ASSERT(mNativePLSOptions.fragmentSyncType == ShFragmentSynchronizationType::NotSupported);
+    }
+
+    // If framebuffer fetch is to be enabled/used, cap maxColorAttachments/maxDrawBuffers to
+    // maxPerStageDescriptorInputAttachments.  Note that 4 is the minimum required value for
+    // maxColorAttachments and maxDrawBuffers in GL, and also happens to be the minimum required
+    // value for maxPerStageDescriptorInputAttachments in Vulkan.  This means that capping the color
+    // attachment count to maxPerStageDescriptorInputAttachments can never lead to an invalid value.
+    const bool hasMRTFramebufferFetch =
+        mNativeExtensions.shaderFramebufferFetchEXT ||
+        mNativeExtensions.shaderFramebufferFetchNonCoherentEXT ||
+        mNativePLSOptions.type == ShPixelLocalStorageType::FramebufferFetch;
+    if (hasMRTFramebufferFetch)
+    {
+        mNativeCaps.maxColorAttachments = std::min<uint32_t>(
+            mNativeCaps.maxColorAttachments, limitsVk.maxPerStageDescriptorInputAttachments);
+        mNativeCaps.maxDrawBuffers = std::min<uint32_t>(
+            mNativeCaps.maxDrawBuffers, limitsVk.maxPerStageDescriptorInputAttachments);
+
+        // Make sure no more than the allowed input attachments bindings are used by descriptor set
+        // layouts.  This number matches the number of color attachments because of framebuffer
+        // fetch, and that limit is later capped to IMPLEMENTATION_MAX_DRAW_BUFFERS in Context.cpp.
+        mMaxColorInputAttachmentCount = std::min<uint32_t>(mNativeCaps.maxColorAttachments,
+                                                           gl::IMPLEMENTATION_MAX_DRAW_BUFFERS);
+    }
+    else if (mFeatures.emulateAdvancedBlendEquations.enabled)
+    {
+        // ANGLE may also use framebuffer fetch to emulate KHR_blend_equation_advanced, which needs
+        // a single input attachment.
+        mMaxColorInputAttachmentCount = 1;
+    }
+    else
+    {
+        // mMaxColorInputAttachmentCount is left as 0 to catch bugs if a future user of framebuffer
+        // fetch functionality does not update the logic in this if/else chain.
+    }
+
+    // Enable the ARM_shader_framebuffer_fetch_depth_stencil extension only if the number of input
+    // descriptor exceeds the color attachment count by at least 2 (for depth and stencil), or if
+    // the number of color attachments can be reduced to accomodate for the 2 depth/stencil images.
+    if (mFeatures.supportsShaderFramebufferFetchDepthStencil.enabled)
+    {
+        const uint32_t maxColorAttachmentsWithDepthStencilInput = std::min<uint32_t>(
+            mNativeCaps.maxColorAttachments, limitsVk.maxPerStageDescriptorInputAttachments - 2);
+        const uint32_t maxDrawBuffersWithDepthStencilInput = std::min<uint32_t>(
+            mNativeCaps.maxDrawBuffers, limitsVk.maxPerStageDescriptorInputAttachments - 2);
+
+        // As long as the minimum required color attachments (4) is satisfied, the extension can be
+        // exposed.
+        if (maxColorAttachmentsWithDepthStencilInput >= 4 &&
+            maxDrawBuffersWithDepthStencilInput >= 4)
+        {
+            mNativeExtensions.shaderFramebufferFetchDepthStencilARM = true;
+            mNativeCaps.maxColorAttachments = maxColorAttachmentsWithDepthStencilInput;
+            mNativeCaps.maxDrawBuffers      = maxDrawBuffersWithDepthStencilInput;
+            mMaxColorInputAttachmentCount =
+                std::min<uint32_t>(mMaxColorInputAttachmentCount, mNativeCaps.maxColorAttachments);
+        }
     }
 
     mNativeExtensions.logicOpANGLE = mPhysicalDeviceFeatures.logicOp == VK_TRUE;
@@ -1413,13 +1468,11 @@ egl::Config GenerateDefaultConfig(DisplayVk *display,
     const VkPhysicalDeviceProperties &physicalDeviceProperties =
         renderer->getPhysicalDeviceProperties();
     gl::Version maxSupportedESVersion                = renderer->getMaxSupportedESVersion();
-    Optional<gl::Version> maxSupportedDesktopVersion = display->getMaxSupportedDesktopVersion();
 
     // ES3 features are required to emulate ES1
     EGLint es1Support     = (maxSupportedESVersion.major >= 3 ? EGL_OPENGL_ES_BIT : 0);
     EGLint es2Support     = (maxSupportedESVersion.major >= 2 ? EGL_OPENGL_ES2_BIT : 0);
     EGLint es3Support     = (maxSupportedESVersion.major >= 3 ? EGL_OPENGL_ES3_BIT : 0);
-    EGLint desktopSupport = (maxSupportedDesktopVersion.valid() ? EGL_OPENGL_BIT : 0);
 
     egl::Config config;
 
@@ -1448,7 +1501,7 @@ egl::Config GenerateDefaultConfig(DisplayVk *display,
     config.nativeRenderable   = EGL_TRUE;
     config.nativeVisualID     = static_cast<EGLint>(GetNativeVisualID(colorFormat));
     config.nativeVisualType   = EGL_NONE;
-    config.renderableType     = es1Support | es2Support | es3Support | desktopSupport;
+    config.renderableType     = es1Support | es2Support | es3Support;
     config.sampleBuffers      = (sampleCount > 0) ? 1 : 0;
     config.samples            = sampleCount;
     config.surfaceType        = EGL_WINDOW_BIT | EGL_PBUFFER_BIT;

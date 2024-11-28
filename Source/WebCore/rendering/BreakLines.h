@@ -117,6 +117,9 @@ private:
     public:
         static constexpr UChar firstCharacter = '!';
         static constexpr UChar lastCharacter = 0xFF;
+        static constexpr unsigned rowCount = lastCharacter - firstCharacter + 1;
+        static constexpr unsigned columnCount = (lastCharacter - firstCharacter) / 8 + 1;
+
         static inline bool unsafeLookup(UChar before, UChar after) // Must range check before calling.
         {
             const unsigned beforeIndex = before - firstCharacter;
@@ -124,9 +127,7 @@ private:
             return breakTable[beforeIndex][afterIndex / 8] & (1 << (afterIndex % 8));
         }
     private:
-        static constexpr unsigned rowCount = lastCharacter - firstCharacter + 1;
-        static constexpr unsigned columnCount = (lastCharacter - firstCharacter) / 8 + 1;
-        WEBCORE_EXPORT static const uint8_t breakTable[rowCount][columnCount];
+        WEBCORE_EXPORT static const std::array<std::array<uint8_t, columnCount>, rowCount> breakTable;
     };
     static const LineBreakTable lineBreakTable;
 };

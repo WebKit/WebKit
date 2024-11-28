@@ -11,6 +11,12 @@ if (USE_CAPSTONE)
     add_subdirectory(ThirdParty/capstone)
 endif ()
 
+if (USE_SYSTEM_UNIFDEF)
+  find_package(Unifdef REQUIRED)
+else ()
+  add_subdirectory(ThirdParty/unifdef)
+endif ()
+
 add_subdirectory(JavaScriptCore)
 
 if (ENABLE_WEBGL OR USE_ANGLE_EGL)
@@ -62,6 +68,10 @@ endif ()
 
 if (ENABLE_WEBDRIVER)
     add_subdirectory(WebDriver)
+endif ()
+
+if (ENABLE_WEBGPU)
+    add_subdirectory(WebGPU)
 endif ()
 
 WEBKIT_INCLUDE_CONFIG_FILES_IF_EXISTS()

@@ -752,8 +752,7 @@ TPrecision TIntermAggregate::derivePrecision() const
         return mArguments[0]->getAsTyped()->getPrecision();
     }
 
-    // Every possibility must be explicitly handled, except for desktop-GLSL-specific built-ins
-    // for which precision does't matter.
+    // Every possibility must be explicitly handled.
     return EbpUndefined;
 }
 
@@ -2504,7 +2503,7 @@ const TConstantUnion *TIntermConstantUnion::FoldBinary(TOperator op,
             resultArray = new TConstantUnion[objectSize];
             for (size_t i = 0; i < objectSize; i++)
             {
-                if (IsFloatDivision(leftType.getBasicType(), rightType.getBasicType()))
+                if (leftType.getBasicType() == EbtFloat)
                 {
                     // Float division requested, possibly with implicit conversion
                     ASSERT(op == EOpDiv);
@@ -4215,20 +4214,6 @@ TConstantUnion *TIntermConstantUnion::FoldAggregateBuiltIn(TIntermAggregate *agg
             return nullptr;
     }
     return resultArray;
-}
-
-bool TIntermConstantUnion::IsFloatDivision(TBasicType t1, TBasicType t2)
-{
-    ImplicitTypeConversion conversion = GetConversion(t1, t2);
-    ASSERT(conversion != ImplicitTypeConversion::Invalid);
-    if (conversion == ImplicitTypeConversion::Same)
-    {
-        if (t1 == EbtFloat)
-            return true;
-        return false;
-    }
-    ASSERT(t1 == EbtFloat || t2 == EbtFloat);
-    return true;
 }
 
 // TIntermPreprocessorDirective implementation.

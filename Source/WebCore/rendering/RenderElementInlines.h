@@ -24,8 +24,8 @@
 
 namespace WebCore {
 
-inline Overflow RenderElement::effectiveOverflowBlockDirection() const { return style().isHorizontalWritingMode() ? effectiveOverflowY() : effectiveOverflowX(); }
-inline Overflow RenderElement::effectiveOverflowInlineDirection() const { return style().isHorizontalWritingMode() ? effectiveOverflowX() : effectiveOverflowY(); }
+inline Overflow RenderElement::effectiveOverflowBlockDirection() const { return writingMode().isHorizontal() ? effectiveOverflowY() : effectiveOverflowX(); }
+inline Overflow RenderElement::effectiveOverflowInlineDirection() const { return writingMode().isHorizontal() ? effectiveOverflowX() : effectiveOverflowY(); }
 inline bool RenderElement::hasBackdropFilter() const { return style().hasBackdropFilter(); }
 inline bool RenderElement::hasBackground() const { return style().hasBackground(); }
 inline bool RenderElement::hasBlendMode() const { return style().hasBlendMode(); }
@@ -50,7 +50,8 @@ inline bool RenderElement::canContainAbsolutelyPositionedObjects() const
         || (hasBackdropFilter() && !isDocumentElementRenderer())
         || (isRenderBlock() && style().willChange() && style().willChange()->createsContainingBlockForAbsolutelyPositioned(isDocumentElementRenderer()))
         || isRenderOrLegacyRenderSVGForeignObject()
-        || shouldApplyLayoutOrPaintContainment();
+        || shouldApplyLayoutContainment()
+        || shouldApplyPaintContainment();
 }
 
 inline bool RenderElement::canContainFixedPositionObjects() const
@@ -60,7 +61,8 @@ inline bool RenderElement::canContainFixedPositionObjects() const
         || (hasBackdropFilter() && !isDocumentElementRenderer())
         || (isRenderBlock() && style().willChange() && style().willChange()->createsContainingBlockForOutOfFlowPositioned(isDocumentElementRenderer()))
         || isRenderOrLegacyRenderSVGForeignObject()
-        || shouldApplyLayoutOrPaintContainment();
+        || shouldApplyLayoutContainment()
+        || shouldApplyPaintContainment();
 }
 
 inline bool RenderElement::createsGroupForStyle(const RenderStyle& style)
@@ -70,53 +72,37 @@ inline bool RenderElement::createsGroupForStyle(const RenderStyle& style)
 
 inline bool RenderElement::shouldApplyAnyContainment() const
 {
-    return shouldApplyLayoutOrPaintContainment() || shouldApplySizeOrStyleContainment(style().containsSizeOrInlineSize() || style().containsStyle());
-}
-
-inline bool RenderElement::shouldApplyInlineSizeContainment() const
-{
-    return WebCore::isSkippedContentRoot(style(), element()) || shouldApplySizeOrStyleContainment(style().containsInlineSize());
-}
-
-inline bool RenderElement::shouldApplyLayoutContainment() const
-{
-    return shouldApplyLayoutOrPaintContainment(style().containsLayout() || style().contentVisibility() != ContentVisibility::Visible);
-}
-
-inline bool RenderElement::shouldApplyLayoutOrPaintContainment(bool containsAccordingToStyle) const
-{
-    return containsAccordingToStyle && (!isInline() || isAtomicInlineLevelBox()) && style().display() != DisplayType::RubyAnnotation && (!isTablePart() || isRenderBlockFlow());
-}
-
-inline bool RenderElement::shouldApplyLayoutOrPaintContainment() const
-{
-    return shouldApplyLayoutOrPaintContainment(style().containsLayoutOrPaint()) || shouldApplySizeOrStyleContainment(style().contentVisibility() != ContentVisibility::Visible);
-}
-
-inline bool RenderElement::shouldApplyPaintContainment() const
-{
-    return shouldApplyLayoutOrPaintContainment(style().containsPaint()) || shouldApplySizeOrStyleContainment(style().contentVisibility() != ContentVisibility::Visible);
-}
-
-inline bool RenderElement::shouldApplySizeContainment() const
-{
-    return WebCore::isSkippedContentRoot(style(), element()) || shouldApplySizeOrStyleContainment(style().containsSize());
+    return shouldApplyLayoutContainment() || shouldApplySizeContainment() || shouldApplyInlineSizeContainment() || shouldApplyStyleContainment() || shouldApplyPaintContainment();
 }
 
 inline bool RenderElement::shouldApplySizeOrInlineSizeContainment() const
 {
-    return WebCore::isSkippedContentRoot(style(), element()) || shouldApplySizeOrStyleContainment(style().containsSizeOrInlineSize());
+    return shouldApplySizeContainment() || shouldApplyInlineSizeContainment();
 }
 
-// FIXME: try to avoid duplication with isSkippedContentRoot.
-inline bool RenderElement::shouldApplySizeOrStyleContainment(bool containsAccordingToStyle) const
+inline bool RenderElement::shouldApplyLayoutContainment() const
 {
-    return containsAccordingToStyle && (!isInline() || isAtomicInlineLevelBox()) && style().display() != DisplayType::RubyAnnotation && (!isTablePart() || isRenderTableCaption()) && !isRenderTable();
+    return element() && WebCore::shouldApplyLayoutContainment(style(), *element());
+}
+
+inline bool RenderElement::shouldApplySizeContainment() const
+{
+    return element() && WebCore::shouldApplySizeContainment(style(), *element());
+}
+
+inline bool RenderElement::shouldApplyInlineSizeContainment() const
+{
+    return element() && WebCore::shouldApplyInlineSizeContainment(style(), *element());
 }
 
 inline bool RenderElement::shouldApplyStyleContainment() const
 {
-    return shouldApplySizeOrStyleContainment(style().containsStyle() || style().contentVisibility() != ContentVisibility::Visible);
+    return element() && WebCore::shouldApplyStyleContainment(style(), *element());
+}
+
+inline bool RenderElement::shouldApplyPaintContainment() const
+{
+    return element() && WebCore::shouldApplyPaintContainment(style(), *element());
 }
 
 inline bool RenderElement::visibleToHitTesting(const std::optional<HitTestRequest>& request) const
@@ -140,6 +126,11 @@ inline LayoutSize adjustLayoutSizeForAbsoluteZoom(LayoutSize size, const RenderE
 inline LayoutUnit adjustLayoutUnitForAbsoluteZoom(LayoutUnit value, const RenderElement& renderer)
 {
     return adjustLayoutUnitForAbsoluteZoom(value, renderer.style());
+}
+
+inline bool isSkippedContentRoot(const RenderElement& renderer)
+{
+    return renderer.element() && WebCore::isSkippedContentRoot(renderer.style(), *renderer.element());
 }
 
 } // namespace WebCore

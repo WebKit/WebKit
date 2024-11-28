@@ -30,6 +30,8 @@
 #include <wtf/SHA1.h>
 #include <wtf/SixCharacterHash.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 CodeBlockHash::CodeBlockHash(std::span<const char, 6> string)
@@ -62,10 +64,10 @@ CodeBlockHash::CodeBlockHash(const SourceCode& sourceCode, CodeSpecializationKin
         unsigned length = str.length();
         unsigned step = (length >> 10) + 1;
 
-        sha1.addBytes(std::span { bitwise_cast<uint8_t*>(&length), sizeof(length) });
+        sha1.addBytes(std::span { std::bit_cast<uint8_t*>(&length), sizeof(length) });
         do {
             UChar character = str[index];
-            sha1.addBytes(std::span { bitwise_cast<uint8_t*>(&character), sizeof(character) });
+            sha1.addBytes(std::span { std::bit_cast<uint8_t*>(&character), sizeof(character) });
             oldIndex = index;
             index += step;
         } while (index > oldIndex && index < length);
@@ -97,3 +99,4 @@ void CodeBlockHash::dump(PrintStream& out) const
 
 } // namespace JSC
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

@@ -1,11 +1,8 @@
 
-FAIL find(): Promise resolves with the first value that passes the predicate promise_test: Unhandled rejection with value: object "TypeError: source.find is not a function. (In 'source.find((value) => value === "b")', 'source.find' is undefined)"
-FAIL find(): Promise resolves with undefined if no value passes the predicate promise_test: Unhandled rejection with value: object "TypeError: source.find is not a function. (In 'source.find(() => false)', 'source.find' is undefined)"
-FAIL find(): Promise rejects with the error emitted from the source Observable promise_test: Unhandled rejection with value: object "TypeError: source.find is not a function. (In 'source.find(() => true)', 'source.find' is undefined)"
-FAIL find(): Promise rejects with any error thrown from the predicate promise_test: Unhandled rejection with value: object "TypeError: source.find is not a function. (In 'source.find(() => {throw error})', 'source.find' is undefined)"
-FAIL find(): Passes the index of the value to the predicate promise_test: Unhandled rejection with value: object "TypeError: source.find is not a function. (In 'source.find((value, index) => {
-    indices.push(index);
-    return false;
-  })', 'source.find' is undefined)"
-FAIL find(): Rejects with AbortError when the signal is aborted promise_test: Unhandled rejection with value: object "TypeError: source.find is not a function. (In 'source.find(() => true, { signal: controller.signal })', 'source.find' is undefined)"
+PASS find(): Promise resolves with the first value that passes the predicate
+PASS find(): Promise resolves with undefined if no value passes the predicate
+PASS find(): Promise rejects with the error emitted from the source Observable
+PASS find(): Promise rejects with any error thrown from the predicate
+PASS find(): Passes the index of the value to the predicate
+PASS find(): Rejects with AbortError when the signal is aborted
 

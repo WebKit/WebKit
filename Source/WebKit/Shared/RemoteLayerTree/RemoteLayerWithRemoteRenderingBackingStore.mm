@@ -33,15 +33,18 @@
 #import "RemoteRenderingBackendProxy.h"
 #import "SwapBuffersDisplayRequirement.h"
 #import <WebCore/PlatformCALayerClient.h>
+#import <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteLayerWithRemoteRenderingBackingStore);
 
 using namespace WebCore;
 
 RemoteLayerWithRemoteRenderingBackingStore::RemoteLayerWithRemoteRenderingBackingStore(PlatformCALayerRemote& layer)
     : RemoteLayerBackingStore(layer)
 {
-    auto* collection = backingStoreCollection();
+    RefPtr collection = backingStoreCollection();
     if (!collection) {
         ASSERT_NOT_REACHED();
         return;
@@ -107,9 +110,12 @@ void RemoteLayerWithRemoteRenderingBackingStore::ensureBackingStore(const Parame
         return;
 
     m_parameters = parameters;
-    clearBackingStore();
-    if (m_bufferSet)
-        m_bufferSet->setConfiguration(size(), scale(), colorSpace(), pixelFormat(), type() == RemoteLayerBackingStore::Type::IOSurface ? RenderingMode::Accelerated : RenderingMode::Unaccelerated, m_layer.containsBitmapOnly() ? WebCore::RenderingPurpose::BitmapOnlyLayerBacking : WebCore::RenderingPurpose::LayerBacking);
+    m_cleared = true;
+    if (m_bufferSet) {
+        auto renderingMode = type() == RemoteLayerBackingStore::Type::IOSurface ? RenderingMode::Accelerated : RenderingMode::Unaccelerated;
+        auto renderingPurpose = m_layer->containsBitmapOnly() ? WebCore::RenderingPurpose::BitmapOnlyLayerBacking : WebCore::RenderingPurpose::LayerBacking;
+        m_bufferSet->setConfiguration(size(), scale(), colorSpace(), pixelFormat(), renderingMode, renderingPurpose);
+    }
 }
 
 void RemoteLayerWithRemoteRenderingBackingStore::encodeBufferAndBackendInfos(IPC::Encoder& encoder) const

@@ -50,7 +50,6 @@
 #include <wtf/URL.h>
 #include <wtf/text/MakeString.h>
 
-
 namespace WebCore {
 using namespace JSC;
 
@@ -106,16 +105,15 @@ STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSTestLegacyNoInterfaceObjectPrototype, JSTe
 
 /* Hash table for prototype */
 
-static const HashTableValue JSTestLegacyNoInterfaceObjectPrototypeTableValues[] =
-{
-    { "readonlyStringAttribute"_s, JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { HashTableValue::GetterSetterType, jsTestLegacyNoInterfaceObject_readonlyStringAttribute, 0 } },
-    { "readWriteStringAttribute"_s, JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { HashTableValue::GetterSetterType, jsTestLegacyNoInterfaceObject_readWriteStringAttribute, setJSTestLegacyNoInterfaceObject_readWriteStringAttribute } },
-    { "customGetterSetterStringAttribute"_s, JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { HashTableValue::GetterSetterType, jsTestLegacyNoInterfaceObject_customGetterSetterStringAttribute, setJSTestLegacyNoInterfaceObject_customGetterSetterStringAttribute } },
-    { "nodeAttribute"_s, JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { HashTableValue::GetterSetterType, jsTestLegacyNoInterfaceObject_nodeAttribute, setJSTestLegacyNoInterfaceObject_nodeAttribute } },
-    { "voidOperation"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestLegacyNoInterfaceObjectPrototypeFunction_voidOperation, 0 } },
-    { "customOperation"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestLegacyNoInterfaceObjectPrototypeFunction_customOperation, 0 } },
-    { "CONSTANT1"_s, PropertyAttribute::ReadOnly | PropertyAttribute::DontDelete | PropertyAttribute::ConstantInteger, NoIntrinsic, { HashTableValue::ConstantType, 1 } },
-    { "CONSTANT2"_s, PropertyAttribute::ReadOnly | PropertyAttribute::DontDelete | PropertyAttribute::ConstantInteger, NoIntrinsic, { HashTableValue::ConstantType, 2 } },
+static const std::array<HashTableValue, 8> JSTestLegacyNoInterfaceObjectPrototypeTableValues {
+    HashTableValue { "readonlyStringAttribute"_s, JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { HashTableValue::GetterSetterType, jsTestLegacyNoInterfaceObject_readonlyStringAttribute, 0 } },
+    HashTableValue { "readWriteStringAttribute"_s, JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { HashTableValue::GetterSetterType, jsTestLegacyNoInterfaceObject_readWriteStringAttribute, setJSTestLegacyNoInterfaceObject_readWriteStringAttribute } },
+    HashTableValue { "customGetterSetterStringAttribute"_s, JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { HashTableValue::GetterSetterType, jsTestLegacyNoInterfaceObject_customGetterSetterStringAttribute, setJSTestLegacyNoInterfaceObject_customGetterSetterStringAttribute } },
+    HashTableValue { "nodeAttribute"_s, JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { HashTableValue::GetterSetterType, jsTestLegacyNoInterfaceObject_nodeAttribute, setJSTestLegacyNoInterfaceObject_nodeAttribute } },
+    HashTableValue { "voidOperation"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestLegacyNoInterfaceObjectPrototypeFunction_voidOperation, 0 } },
+    HashTableValue { "customOperation"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestLegacyNoInterfaceObjectPrototypeFunction_customOperation, 0 } },
+    HashTableValue { "CONSTANT1"_s, PropertyAttribute::ReadOnly | PropertyAttribute::DontDelete | PropertyAttribute::ConstantInteger, NoIntrinsic, { HashTableValue::ConstantType, 1 } },
+    HashTableValue { "CONSTANT2"_s, PropertyAttribute::ReadOnly | PropertyAttribute::DontDelete | PropertyAttribute::ConstantInteger, NoIntrinsic, { HashTableValue::ConstantType, 2 } },
 };
 
 const ClassInfo JSTestLegacyNoInterfaceObjectPrototype::s_info = { "TestLegacyNoInterfaceObject"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestLegacyNoInterfaceObjectPrototype) };
@@ -156,9 +154,9 @@ void JSTestLegacyNoInterfaceObject::destroy(JSC::JSCell* cell)
 
 static inline JSValue jsTestLegacyNoInterfaceObject_readonlyStringAttributeGetter(JSGlobalObject& lexicalGlobalObject, JSTestLegacyNoInterfaceObject& thisObject)
 {
-    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto& impl = thisObject.wrapped();
+    SUPPRESS_UNCOUNTED_LOCAL auto& impl = thisObject.wrapped();
     RELEASE_AND_RETURN(throwScope, (toJS<IDLDOMString>(lexicalGlobalObject, throwScope, impl.readonlyStringAttribute())));
 }
 
@@ -169,9 +167,9 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestLegacyNoInterfaceObject_readonlyStringAttribute, 
 
 static inline JSValue jsTestLegacyNoInterfaceObject_readWriteStringAttributeGetter(JSGlobalObject& lexicalGlobalObject, JSTestLegacyNoInterfaceObject& thisObject)
 {
-    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto& impl = thisObject.wrapped();
+    SUPPRESS_UNCOUNTED_LOCAL auto& impl = thisObject.wrapped();
     RELEASE_AND_RETURN(throwScope, (toJS<IDLDOMString>(lexicalGlobalObject, throwScope, impl.readWriteStringAttribute())));
 }
 
@@ -182,10 +180,10 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestLegacyNoInterfaceObject_readWriteStringAttribute,
 
 static inline bool setJSTestLegacyNoInterfaceObject_readWriteStringAttributeSetter(JSGlobalObject& lexicalGlobalObject, JSTestLegacyNoInterfaceObject& thisObject, JSValue value)
 {
-    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(&lexicalGlobalObject);
     UNUSED_PARAM(vm);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto& impl = thisObject.wrapped();
+    SUPPRESS_UNCOUNTED_LOCAL auto& impl = thisObject.wrapped();
     auto nativeValueConversionResult = convert<IDLDOMString>(lexicalGlobalObject, value);
     if (UNLIKELY(nativeValueConversionResult.hasException(throwScope)))
         return false;
@@ -213,7 +211,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestLegacyNoInterfaceObject_customGetterSetterStringA
 
 static inline bool setJSTestLegacyNoInterfaceObject_customGetterSetterStringAttributeSetter(JSGlobalObject& lexicalGlobalObject, JSTestLegacyNoInterfaceObject& thisObject, JSValue value)
 {
-    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(&lexicalGlobalObject);
     UNUSED_PARAM(vm);
     thisObject.setCustomGetterSetterStringAttribute(lexicalGlobalObject, value);
     return true;
@@ -226,9 +224,9 @@ JSC_DEFINE_CUSTOM_SETTER(setJSTestLegacyNoInterfaceObject_customGetterSetterStri
 
 static inline JSValue jsTestLegacyNoInterfaceObject_nodeAttributeGetter(JSGlobalObject& lexicalGlobalObject, JSTestLegacyNoInterfaceObject& thisObject)
 {
-    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto& impl = thisObject.wrapped();
+    SUPPRESS_UNCOUNTED_LOCAL auto& impl = thisObject.wrapped();
     RELEASE_AND_RETURN(throwScope, (toJS<IDLInterface<Node>>(lexicalGlobalObject, *thisObject.globalObject(), throwScope, impl.nodeAttribute())));
 }
 
@@ -239,10 +237,10 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestLegacyNoInterfaceObject_nodeAttribute, (JSGlobalO
 
 static inline bool setJSTestLegacyNoInterfaceObject_nodeAttributeSetter(JSGlobalObject& lexicalGlobalObject, JSTestLegacyNoInterfaceObject& thisObject, JSValue value)
 {
-    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(&lexicalGlobalObject);
     UNUSED_PARAM(vm);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto& impl = thisObject.wrapped();
+    SUPPRESS_UNCOUNTED_LOCAL auto& impl = thisObject.wrapped();
     auto nativeValueConversionResult = convert<IDLInterface<Node>>(lexicalGlobalObject, value, [](JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope) { throwAttributeTypeError(lexicalGlobalObject, scope, "TestLegacyNoInterfaceObject"_s, "nodeAttribute"_s, "Node"_s); });
     if (UNLIKELY(nativeValueConversionResult.hasException(throwScope)))
         return false;
@@ -259,7 +257,7 @@ JSC_DEFINE_CUSTOM_SETTER(setJSTestLegacyNoInterfaceObject_nodeAttribute, (JSGlob
 
 static inline JSValue jsTestLegacyNoInterfaceObjectConstructor_staticStringAttributeGetter(JSGlobalObject& lexicalGlobalObject)
 {
-    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     RELEASE_AND_RETURN(throwScope, (toJS<IDLDOMString>(lexicalGlobalObject, throwScope, TestLegacyNoInterfaceObject::staticStringAttribute())));
 }
@@ -271,7 +269,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestLegacyNoInterfaceObjectConstructor_staticStringAt
 
 static inline bool setJSTestLegacyNoInterfaceObjectConstructor_staticStringAttributeSetter(JSGlobalObject& lexicalGlobalObject, JSValue value)
 {
-    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(&lexicalGlobalObject);
     UNUSED_PARAM(vm);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto nativeValueConversionResult = convert<IDLDOMString>(lexicalGlobalObject, value);
@@ -290,11 +288,11 @@ JSC_DEFINE_CUSTOM_SETTER(setJSTestLegacyNoInterfaceObjectConstructor_staticStrin
 
 static inline JSC::EncodedJSValue jsTestLegacyNoInterfaceObjectPrototypeFunction_voidOperationBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestLegacyNoInterfaceObject>::ClassParameter castedThis)
 {
-    auto& vm = JSC::getVM(lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(callFrame);
-    auto& impl = castedThis->wrapped();
+    SUPPRESS_UNCOUNTED_LOCAL auto& impl = castedThis->wrapped();
     RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLUndefined>(*lexicalGlobalObject, throwScope, [&]() -> decltype(auto) { return impl.voidOperation(); })));
 }
 
@@ -305,7 +303,7 @@ JSC_DEFINE_HOST_FUNCTION(jsTestLegacyNoInterfaceObjectPrototypeFunction_voidOper
 
 static inline JSC::EncodedJSValue jsTestLegacyNoInterfaceObjectPrototypeFunction_customOperationBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestLegacyNoInterfaceObject>::ClassParameter castedThis)
 {
-    auto& vm = JSC::getVM(lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(callFrame);
@@ -319,7 +317,7 @@ JSC_DEFINE_HOST_FUNCTION(jsTestLegacyNoInterfaceObjectPrototypeFunction_customOp
 
 static inline JSC::EncodedJSValue jsTestLegacyNoInterfaceObjectConstructorFunction_staticOperationBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame)
 {
-    auto& vm = JSC::getVM(lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(callFrame);
@@ -345,8 +343,8 @@ void JSTestLegacyNoInterfaceObject::analyzeHeap(JSCell* cell, HeapAnalyzer& anal
 {
     auto* thisObject = jsCast<JSTestLegacyNoInterfaceObject*>(cell);
     analyzer.setWrappedObjectForCell(cell, &thisObject->wrapped());
-    if (thisObject->scriptExecutionContext())
-        analyzer.setLabelForCell(cell, makeString("url "_s, thisObject->scriptExecutionContext()->url().string()));
+    if (RefPtr context = thisObject->scriptExecutionContext())
+        analyzer.setLabelForCell(cell, makeString("url "_s, context->url().string()));
     Base::analyzeHeap(cell, analyzer);
 }
 
@@ -365,6 +363,7 @@ void JSTestLegacyNoInterfaceObjectOwner::finalize(JSC::Handle<JSC::Unknown> hand
     uncacheWrapper(world, jsTestLegacyNoInterfaceObject->protectedWrapped().ptr(), jsTestLegacyNoInterfaceObject);
 }
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 #if ENABLE(BINDING_INTEGRITY)
 #if PLATFORM(WIN)
 #pragma warning(disable: 4483)
@@ -389,6 +388,8 @@ template<typename T, typename = std::enable_if_t<std::is_same_v<T, TestLegacyNoI
     }
 }
 #endif
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+
 JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject*, JSDOMGlobalObject* globalObject, Ref<TestLegacyNoInterfaceObject>&& impl)
 {
 #if ENABLE(BINDING_INTEGRITY)

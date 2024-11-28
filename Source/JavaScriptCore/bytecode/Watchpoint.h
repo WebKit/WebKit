@@ -468,7 +468,7 @@ private:
     
     static WatchpointSet* fat(uintptr_t data)
     {
-        return bitwise_cast<WatchpointSet*>(data);
+        return std::bit_cast<WatchpointSet*>(data);
     }
     
     WatchpointSet* fat()

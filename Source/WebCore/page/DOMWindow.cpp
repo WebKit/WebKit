@@ -118,7 +118,7 @@ void DOMWindow::close()
     }
 
     RefPtr localFrame = dynamicDowncast<LocalFrame>(frame);
-    if (localFrame && !localFrame->checkedLoader()->shouldClose())
+    if (localFrame && !localFrame->protectedLoader()->shouldClose())
         return;
 
     ResourceLoadObserver::shared().updateCentralStatisticsStore([] { });

@@ -39,6 +39,7 @@ GStreamerQuirkBroadcom::GStreamerQuirkBroadcom()
 
 void GStreamerQuirkBroadcom::configureElement(GstElement* element, const OptionSet<ElementRuntimeCharacteristics>& characteristics)
 {
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib port
     if (!g_strcmp0(G_OBJECT_TYPE_NAME(element), "Gstbrcmaudiosink"))
         g_object_set(G_OBJECT(element), "async", TRUE, nullptr);
     else if (g_str_has_prefix(GST_ELEMENT_NAME(element), "brcmaudiodecoder")) {
@@ -46,6 +47,7 @@ void GStreamerQuirkBroadcom::configureElement(GstElement* element, const OptionS
         if (characteristics.contains(ElementRuntimeCharacteristics::IsLiveStream))
             g_object_set(G_OBJECT(element), "limit_buffering_ms", 1000, nullptr);
     }
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
     if (!characteristics.contains(ElementRuntimeCharacteristics::IsMediaStream))
         return;
@@ -58,8 +60,10 @@ void GStreamerQuirkBroadcom::configureElement(GstElement* element, const OptionS
 
 std::optional<bool> GStreamerQuirkBroadcom::isHardwareAccelerated(GstElementFactory* factory)
 {
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib port
     if (g_str_has_prefix(GST_OBJECT_NAME(factory), "brcm"))
         return true;
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
     return std::nullopt;
 }

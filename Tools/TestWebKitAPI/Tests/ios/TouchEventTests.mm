@@ -90,13 +90,10 @@ static Class touchEventsGestureRecognizerClass()
 namespace TestWebKitAPI {
 
 static WebKit::WKTouchPoint globalTouchPoint { CGPointZero, CGPointZero, 100, UITouchPhaseBegan, 1, 0, 0, 0, WebKit::WKTouchPointType::Direct };
-static WebKit::WKTouchEvent globalTouchEvent { WebKit::WKTouchEventType::Begin, CACurrentMediaTime(), CGPointZero, CGPointZero, 1, 0, false, { globalTouchPoint }, { }, { }, true };
+static WebKit::WKTouchEvent globalTouchEvent { WebKit::WKTouchEventType::Begin, CACurrentMediaTime(), CGPointZero, 1, 0, false, { globalTouchPoint }, { }, { }, true };
 static void updateSimulatedTouchEvent(CGPoint location, UITouchPhase phase)
 {
-    globalTouchPoint.locationInScreenCoordinates = location;
-    globalTouchPoint.locationInDocumentCoordinates = location;
-    globalTouchEvent.locationInScreenCoordinates = location;
-    globalTouchEvent.locationInDocumentCoordinates = location;
+    globalTouchEvent.locationInRootViewCoordinates = location;
     globalTouchPoint.phase = phase;
     switch (phase) {
     case UITouchPhaseBegan:
@@ -137,7 +134,7 @@ TEST(TouchEventTests, DestroyWebViewWhileHandlingTouchEnd)
         [hostWindow setHidden:NO];
         [hostWindow addSubview:globalWebView];
 
-        [globalWebView loadRequest:[NSURLRequest requestWithURL:[NSBundle.mainBundle URLForResource:@"active-touch-events" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]]];
+        [globalWebView loadRequest:[NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"active-touch-events" withExtension:@"html"]]];
         [globalWebView _test_waitForDidFinishNavigation];
 
         updateSimulatedTouchEvent(CGPointMake(100, 100), UITouchPhaseBegan);

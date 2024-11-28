@@ -198,7 +198,7 @@ private:
     void layoutGridItems(GridLayoutState&);
     void layoutMasonryItems(GridLayoutState&);
 
-    void populateGridPositionsForDirection(GridTrackSizingDirection);
+    void populateGridPositionsForDirection(const GridTrackSizingAlgorithm&, GridTrackSizingDirection);
 
     LayoutUnit gridAreaBreadthForOutOfFlowGridItem(const RenderBox&, GridTrackSizingDirection);
     LayoutUnit logicalOffsetForOutOfFlowGridItem(const RenderBox&, GridTrackSizingDirection, LayoutUnit) const;
@@ -284,7 +284,7 @@ private:
 
     mutable GridMasonryLayout m_masonryLayout;
 
-    using OutOfFlowPositionsMap = HashMap<SingleThreadWeakRef<const RenderBox>, std::optional<size_t>>;
+    using OutOfFlowPositionsMap = UncheckedKeyHashMap<SingleThreadWeakRef<const RenderBox>, std::optional<size_t>>;
     OutOfFlowPositionsMap m_outOfFlowItemColumn;
     OutOfFlowPositionsMap m_outOfFlowItemRow;
 

@@ -64,7 +64,7 @@ void RoundedRect::Radii::scale(float factor)
         m_bottomRight = LayoutSize();
 }
 
-void RoundedRect::Radii::expand(const LayoutUnit& topWidth, const LayoutUnit& bottomWidth, const LayoutUnit& leftWidth, const LayoutUnit& rightWidth)
+void RoundedRect::Radii::expand(LayoutUnit topWidth, LayoutUnit bottomWidth, LayoutUnit leftWidth, LayoutUnit rightWidth)
 {
     if (m_topLeft.width() > 0 && m_topLeft.height() > 0) {
         m_topLeft.setWidth(std::max<LayoutUnit>(0, m_topLeft.width() + leftWidth));
@@ -84,17 +84,22 @@ void RoundedRect::Radii::expand(const LayoutUnit& topWidth, const LayoutUnit& bo
     }
 }
 
-void RoundedRect::inflateWithRadii(const LayoutUnit& size)
+void RoundedRect::inflateWithRadii(LayoutUnit amount)
 {
     LayoutRect old = m_rect;
 
-    m_rect.inflate(size);
+    if (amount < 0) {
+        m_rect.inflateX(std::max(-m_rect.width() / 2, amount));
+        m_rect.inflateY(std::max(-m_rect.height() / 2, amount));
+    } else
+        m_rect.inflate(amount);
+
     // Considering the inflation factor of shorter size to scale the radii seems appropriate here
     float factor;
     if (m_rect.width() < m_rect.height())
-        factor = old.width() ? (float)m_rect.width() / old.width() : int(0);
+        factor = old.width() ? (float)m_rect.width() / old.width() : 0.0f;
     else
-        factor = old.height() ? (float)m_rect.height() / old.height() : int(0);
+        factor = old.height() ? (float)m_rect.height() / old.height() : 0.0f;
 
     m_radii.scale(factor);
 }
@@ -165,7 +170,7 @@ void RoundedRect::Radii::makeRenderableInRect(const LayoutRect& rect)
 
 }
 
-RoundedRect::RoundedRect(const LayoutUnit& x, const LayoutUnit& y, const LayoutUnit& width, const LayoutUnit& height)
+RoundedRect::RoundedRect(LayoutUnit x, LayoutUnit y, LayoutUnit width, LayoutUnit height)
     : m_rect(x, y, width, height)
 {
 }

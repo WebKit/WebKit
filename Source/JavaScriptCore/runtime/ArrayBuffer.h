@@ -25,6 +25,10 @@
 
 #pragma once
 
+#include <wtf/Compiler.h>
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 #include "ArrayBufferSharingMode.h"
 #include "BufferMemoryHandle.h"
 #include "GCIncomingRefCounted.h"
@@ -456,3 +460,5 @@ private:
 } // namespace JSC
 
 using JSC::ArrayBuffer;
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

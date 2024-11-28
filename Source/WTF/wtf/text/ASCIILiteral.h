@@ -30,10 +30,15 @@
 #include <string>
 #include <type_traits>
 #include <wtf/ASCIICType.h>
+#include <wtf/Compiler.h>
 #include <wtf/Forward.h>
 #include <wtf/HashFunctions.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/SuperFastHash.h>
+
+#if USE(CF)
+typedef const struct __CFString * CFStringRef;
+#endif
 
 OBJC_CLASS NSString;
 
@@ -48,7 +53,7 @@ public:
     static constexpr ASCIILiteral fromLiteralUnsafe(const char* string)
     {
         ASSERT_UNDER_CONSTEXPR_CONTEXT(string);
-        return ASCIILiteral { string };
+        return ASCIILiteral { unsafeMakeSpan(string, std::char_traits<char>::length(string) + 1) };
     }
 
     WTF_EXPORT_PRIVATE void dump(PrintStream& out) const;
@@ -63,7 +68,8 @@ public:
 
     constexpr const char* characters() const { return m_charactersWithNullTerminator.data(); }
     constexpr size_t length() const { return !m_charactersWithNullTerminator.empty() ? m_charactersWithNullTerminator.size() - 1 : 0; }
-    std::span<const LChar> span8() const { return { bitwise_cast<const LChar*>(characters()), length() }; }
+    constexpr std::span<const char> span() const { return m_charactersWithNullTerminator.first(length()); }
+    std::span<const LChar> span8() const { return byteCast<LChar>(m_charactersWithNullTerminator.first(length())); }
     std::span<const char> spanIncludingNullTerminator() const { return m_charactersWithNullTerminator; }
     size_t isEmpty() const { return m_charactersWithNullTerminator.size() <= 1; }
 
@@ -78,13 +84,17 @@ public:
     static ASCIILiteral deletedValue();
     bool isDeletedValue() const { return characters() == reinterpret_cast<char*>(-1); }
 
+#if USE(CF)
+    WTF_EXPORT_PRIVATE RetainPtr<CFStringRef> createCFString() const;
+#endif
+
 private:
-    constexpr explicit ASCIILiteral(const char* characters)
-        : m_charactersWithNullTerminator(characters, std::char_traits<char>::length(characters) + 1)
+    constexpr explicit ASCIILiteral(std::span<const char> spanWithNullTerminator)
+        : m_charactersWithNullTerminator(spanWithNullTerminator)
     {
 #if ASSERT_ENABLED
-    for (size_t i = 0; i < length(); ++i)
-        ASSERT_UNDER_CONSTEXPR_CONTEXT(isASCII(m_charactersWithNullTerminator[i]));
+        for (size_t i = 0, size = length(); i < size; ++i)
+            ASSERT_UNDER_CONSTEXPR_CONTEXT(isASCII(m_charactersWithNullTerminator[i]));
 #endif
     }
 
@@ -132,20 +142,21 @@ inline ASCIILiteral ASCIILiteral::deletedValue()
 
 inline namespace StringLiterals {
 
-constexpr ASCIILiteral operator"" _s(const char* characters, size_t)
+constexpr ASCIILiteral operator""_s(const char* characters, size_t)
 {
     auto result = ASCIILiteral::fromLiteralUnsafe(characters);
     ASSERT_UNDER_CONSTEXPR_CONTEXT(result.characters() == characters);
     return result;
 }
 
-constexpr std::span<const LChar> operator"" _span(const char* characters, size_t n)
+constexpr std::span<const LChar> operator""_span(const char* characters, size_t n)
 {
+    auto span = byteCast<LChar>(unsafeMakeSpan(characters, n));
 #if ASSERT_ENABLED
-    for (size_t i = 0; i < n; ++i)
-        ASSERT_UNDER_CONSTEXPR_CONTEXT(isASCII(characters[i]));
+    for (size_t i = 0, size = span.size(); i < size; ++i)
+        ASSERT_UNDER_CONSTEXPR_CONTEXT(isASCII(span[i]));
 #endif
-    return std::span { bitwise_cast<const LChar*>(characters), n };
+    return span;
 }
 
 } // inline StringLiterals

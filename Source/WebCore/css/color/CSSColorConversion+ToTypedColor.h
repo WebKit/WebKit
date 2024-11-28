@@ -25,88 +25,80 @@
 
 #pragma once
 
+#include "CSSColorConversion+Normalize.h"
 #include "CSSColorDescriptors.h"
-#include "CSSPropertyParserConsumer+RawResolver.h"
-#include "CSSPropertyParserConsumer+RawTypes.h"
-#include "ColorNormalization.h"
-#include "ColorTypes.h"
 
 namespace WebCore {
 
-// This file implements support for converting "raw" parsed values
-// (e.g. tuple of `std::variant<NumberRaw, PercentRaw>`) into typed
-// colors (e.g. `SRGBA<float>`).
+// This file implements support for converting style resolved parsed values (e.g. tuple
+// of `std::variant<Style::Number<>, Style::Percentage<>, ...>`) into typed colors (e.g. `SRGBA<float>`).
 
-template<typename Descriptor>
-GetColorType<Descriptor> normalizeRawComponents(CSSColorParseType<Descriptor>);
-
-template<typename Descriptor, unsigned Index>
-float normalizeComponent(NumberRaw number)
+template<typename Descriptor, unsigned Index> float convertToTypeColorComponent(Style::Number<> number)
 {
     constexpr auto info = std::get<Index>(Descriptor::components);
+    constexpr auto multiplier = info.numberMultiplier;
+    constexpr auto min = info.min * info.numberMultiplier;
+    constexpr auto max = info.max * info.numberMultiplier;
 
     if constexpr (info.type == ColorComponentType::Angle)
         return normalizeHue(number.value);
     else if constexpr (info.min == -std::numeric_limits<double>::infinity() && info.max == std::numeric_limits<double>::infinity())
-        return number.value * info.numberMultiplier;
+        return number.value * multiplier;
     else if constexpr (info.min == -std::numeric_limits<double>::infinity())
-        return std::min(number.value * info.numberMultiplier, info.max);
+        return std::min(number.value * multiplier, max);
     else if constexpr (info.max == std::numeric_limits<double>::infinity())
-        return std::max(number.value * info.numberMultiplier, info.min);
+        return std::max(number.value * multiplier, min);
     else
-        return std::clamp(number.value * info.numberMultiplier, info.min, info.max);
+        return std::clamp(number.value * multiplier, min, max);
 }
 
-template<typename Descriptor, unsigned Index>
-float normalizeComponent(PercentRaw percent)
+template<typename Descriptor, unsigned Index> float convertToTypeColorComponent(Style::Percentage<> percent)
 {
     constexpr auto info = std::get<Index>(Descriptor::components);
+    constexpr auto multiplier = info.percentMultiplier * info.numberMultiplier;
+    constexpr auto min = info.min * info.numberMultiplier;
+    constexpr auto max = info.max * info.numberMultiplier;
 
     if constexpr (info.min == -std::numeric_limits<double>::infinity() && info.max == std::numeric_limits<double>::infinity())
-        return percent.value * info.percentMultiplier;
+        return percent.value * multiplier;
     else if constexpr (info.min == -std::numeric_limits<double>::infinity())
-        return std::min(percent.value * info.percentMultiplier, info.max);
+        return std::min(percent.value * multiplier, max);
     else if constexpr (info.max == std::numeric_limits<double>::infinity())
-        return std::max(percent.value * info.percentMultiplier, info.min);
+        return std::max(percent.value * multiplier, min);
     else
-        return std::clamp(percent.value * info.percentMultiplier, info.min, info.max);
+        return std::clamp(percent.value * multiplier, min, max);
 }
 
-template<typename Descriptor, unsigned Index>
-float normalizeComponent(AngleRaw angle)
+template<typename Descriptor, unsigned Index> float convertToTypeColorComponent(Style::Angle<> angle)
 {
     constexpr auto info = std::get<Index>(Descriptor::components);
     static_assert(info.type == ColorComponentType::Angle);
 
-    return normalizeHue(CSSPrimitiveValue::computeDegrees(angle.type, angle.value));
+    return normalizeHue(angle.value);
 }
 
-template<typename Descriptor, unsigned Index>
-float normalizeComponent(NoneRaw)
+template<typename Descriptor, unsigned Index> float convertToTypeColorComponent(Style::None)
 {
     return std::numeric_limits<double>::quiet_NaN();
 }
 
-template<typename Descriptor, unsigned Index, typename... Ts>
-float normalizeComponent(const std::variant<Ts...>& variant)
+template<typename Descriptor, unsigned Index, typename... Ts> float convertToTypeColorComponent(const std::variant<Ts...>& variant)
 {
-    return WTF::switchOn(variant, [](auto value) { return normalizeComponent<Descriptor, Index>(value); });
+    return WTF::switchOn(variant, [](auto value) { return convertToTypeColorComponent<Descriptor, Index>(value); });
 }
 
-template<typename Descriptor, unsigned Index, typename T>
-float normalizeComponent(const std::optional<T>& optional, float defaultValue)
+template<typename Descriptor, unsigned Index, typename T> float convertToTypeColorComponent(const std::optional<T>& optional, float defaultValue)
 {
-    return optional ? normalizeComponent<Descriptor, Index>(*optional) : defaultValue;
+    return optional ? convertToTypeColorComponent<Descriptor, Index>(*optional) : defaultValue;
 }
 
-template<typename Descriptor>
-GetColorType<Descriptor> convertToTypedColor(CSSColorParseType<Descriptor> parsed, double defaultAlpha)
+template<typename Descriptor> GetColorType<Descriptor> convertToTypedColor(StyleColorParseType<Descriptor> parsed, double defaultAlpha)
 {
     return {
-        normalizeComponent<Descriptor, 0>(std::get<0>(parsed)),
-        normalizeComponent<Descriptor, 1>(std::get<1>(parsed)),
-        normalizeComponent<Descriptor, 2>(std::get<2>(parsed)),
-        normalizeComponent<Descriptor, 3>(std::get<3>(parsed), defaultAlpha)
+        convertToTypeColorComponent<Descriptor, 0>(std::get<0>(parsed)),
+        convertToTypeColorComponent<Descriptor, 1>(std::get<1>(parsed)),
+        convertToTypeColorComponent<Descriptor, 2>(std::get<2>(parsed)),
+        convertToTypeColorComponent<Descriptor, 3>(std::get<3>(parsed), defaultAlpha)
     };
 }
 

@@ -41,7 +41,6 @@
 #include <wtf/URL.h>
 #include <wtf/text/MakeString.h>
 
-
 namespace WebCore {
 using namespace JSC;
 
@@ -101,9 +100,8 @@ template<> void JSTestDefaultToJSONIndirectInheritanceDOMConstructor::initialize
 
 /* Hash table for prototype */
 
-static const HashTableValue JSTestDefaultToJSONIndirectInheritancePrototypeTableValues[] =
-{
-    { "constructor"_s, static_cast<unsigned>(PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestDefaultToJSONIndirectInheritanceConstructor, 0 } },
+static const std::array<HashTableValue, 1> JSTestDefaultToJSONIndirectInheritancePrototypeTableValues {
+    HashTableValue { "constructor"_s, static_cast<unsigned>(PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestDefaultToJSONIndirectInheritanceConstructor, 0 } },
 };
 
 const ClassInfo JSTestDefaultToJSONIndirectInheritancePrototype::s_info = { "TestDefaultToJSONIndirectInheritance"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestDefaultToJSONIndirectInheritancePrototype) };
@@ -148,7 +146,7 @@ JSValue JSTestDefaultToJSONIndirectInheritance::getConstructor(VM& vm, const JSG
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestDefaultToJSONIndirectInheritanceConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
-    auto& vm = JSC::getVM(lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto* prototype = jsDynamicCast<JSTestDefaultToJSONIndirectInheritancePrototype*>(JSValue::decode(thisValue));
     if (UNLIKELY(!prototype))
@@ -170,8 +168,8 @@ void JSTestDefaultToJSONIndirectInheritance::analyzeHeap(JSCell* cell, HeapAnaly
 {
     auto* thisObject = jsCast<JSTestDefaultToJSONIndirectInheritance*>(cell);
     analyzer.setWrappedObjectForCell(cell, &thisObject->wrapped());
-    if (thisObject->scriptExecutionContext())
-        analyzer.setLabelForCell(cell, makeString("url "_s, thisObject->scriptExecutionContext()->url().string()));
+    if (RefPtr context = thisObject->scriptExecutionContext())
+        analyzer.setLabelForCell(cell, makeString("url "_s, context->url().string()));
     Base::analyzeHeap(cell, analyzer);
 }
 

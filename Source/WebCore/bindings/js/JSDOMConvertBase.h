@@ -25,10 +25,16 @@
 
 #pragma once
 
+#include <wtf/Compiler.h>
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 #include "JSDOMConvertResult.h"
 #include "JSDOMExceptionHandling.h"
 #include <JavaScriptCore/Error.h>
 #include <concepts>
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 namespace WebCore {
 
@@ -45,8 +51,10 @@ namespace Detail {
 
 template<typename T> inline T* getPtrOrRef(const T* p) { return const_cast<T*>(p); }
 template<typename T> inline T& getPtrOrRef(const T& p) { return const_cast<T&>(p); }
-template<typename T> inline T* getPtrOrRef(const RefPtr<T>& p) { return p.get(); }
-template<typename T> inline T& getPtrOrRef(const Ref<T>& p) { return p.get(); }
+template<typename T, typename PtrTraits, typename RefDerefTraits> inline T* getPtrOrRef(const RefPtr<T, PtrTraits, RefDerefTraits>& p) { return p.get(); }
+template<typename T, typename PtrTraits, typename RefDerefTraits> inline T& getPtrOrRef(const Ref<T, PtrTraits, RefDerefTraits>& p) { return p.get(); }
+template<typename T, typename WeakPtrImpl, typename PtrTraits> inline T* getPtrOrRef(const WeakPtr<T, WeakPtrImpl, PtrTraits>& p) { return p.get(); }
+template<typename T, typename WeakPtrImpl> inline T& getPtrOrRef(const WeakRef<T, WeakPtrImpl>& p) { return p.get(); }
 
 }
 

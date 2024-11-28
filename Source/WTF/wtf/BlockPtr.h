@@ -32,19 +32,38 @@
 
 #if __has_include(<ptrauth.h>)
 #include <ptrauth.h>
+
+#ifdef __ptrauth_block_copy_helper
 #define WTF_COPY_FUNCTION_POINTER_QUALIFIER __ptrauth_block_copy_helper
+#else
+#define WTF_COPY_FUNCTION_POINTER_QUALIFIER
+#endif
+
+#ifdef __ptrauth_block_destroy_helper
 #define WTF_DISPOSE_FUNCTION_POINTER_QUALIFIER __ptrauth_block_destroy_helper
+#else
+#define WTF_DISPOSE_FUNCTION_POINTER_QUALIFIER
+#endif
+
+#ifdef __ptrauth_block_invocation_pointer
 #define WTF_INVOKE_FUNCTION_POINTER_QUALIFIER __ptrauth_block_invocation_pointer
+#else
+#define WTF_INVOKE_FUNCTION_POINTER_QUALIFIER
+#endif
+
 #ifdef __ptrauth_objc_isa_pointer
 #define WTF_ISA_POINTER_QUALIFIER __ptrauth_objc_isa_pointer
 #else
 #define WTF_ISA_POINTER_QUALIFIER
 #endif
+
 #else
+
 #define WTF_COPY_FUNCTION_POINTER_QUALIFIER
 #define WTF_DISPOSE_FUNCTION_POINTER_QUALIFIER
 #define WTF_INVOKE_FUNCTION_POINTER_QUALIFIER
 #define WTF_ISA_POINTER_QUALIFIER
+
 #endif
 
 // Because ARC enablement is a compile-time choice, and we compile this header

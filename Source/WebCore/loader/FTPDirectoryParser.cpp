@@ -34,6 +34,8 @@
 #include <pthread.h>
 #endif
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 #if OS(WINDOWS) && !defined(gmtime_r)
@@ -1392,5 +1394,7 @@ FTPEntryType parseOneFTPLine(const char* line, ListState& state, ListResult& res
 }
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ENABLE(FTPDIR)

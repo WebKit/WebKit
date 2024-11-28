@@ -41,6 +41,8 @@
 #include <wtf/MathExtras.h>
 #include <wtf/TZoneMallocInlines.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RealtimeAnalyser);
@@ -181,7 +183,7 @@ void RealtimeAnalyser::doFFTAnalysisIfNecessary()
         destination[i] = static_cast<float>(k * destination[i] + (1 - k) * scalarMagnitude);
     }
 
-    if (m_noiseInjectionPolicies.contains(NoiseInjectionPolicy::Minimal))
+    if (m_noiseInjectionPolicies)
         AudioUtilities::applyNoise(destination, n, 0.25);
 }
 
@@ -293,5 +295,7 @@ void RealtimeAnalyser::getByteTimeDomainData(Uint8Array& destinationArray)
 }
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ENABLE(WEB_AUDIO)

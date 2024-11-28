@@ -29,6 +29,6 @@
 namespace WebCore {
 
 struct MediaKeySystemRequestIdentifierType;
-using MediaKeySystemRequestIdentifier = LegacyNullableObjectIdentifier<MediaKeySystemRequestIdentifierType>;
+using MediaKeySystemRequestIdentifier = ObjectIdentifier<MediaKeySystemRequestIdentifierType>;
 
 } // namespace WebCore

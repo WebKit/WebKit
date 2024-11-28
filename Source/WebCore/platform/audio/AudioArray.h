@@ -34,6 +34,8 @@
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/TZoneMallocInlines.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 template<typename T>
@@ -150,5 +152,7 @@ typedef AudioArray<float> AudioFloatArray;
 typedef AudioArray<double> AudioDoubleArray;
 
 } // WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // AudioArray_h

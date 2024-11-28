@@ -67,9 +67,7 @@ public:
     virtual bool flushAndCollectHandles(HashMap<RemoteImageBufferSetIdentifier, std::unique_ptr<BufferSetBackendHandle>>&) = 0;
 };
 
-// A RemoteImageBufferSet is a set of three ImageBuffers (front, back,
-// secondary back) owned by the GPU process, for the purpose of drawing
-// successive (layer) frames.
+// A RemoteImageBufferSet is an ImageBufferSet, where the actual ImageBuffers are owned by the GPU process.
 // To draw a frame, the consumer allocates a new RemoteDisplayListRecorderProxy and
 // asks the RemoteImageBufferSet set to map it to an appropriate new front
 // buffer (either by picking one of the back buffers, or by allocating a new
@@ -78,6 +76,8 @@ public:
 // Usage is done through RemoteRenderingBackendProxy::prepareImageBufferSetsForDisplay,
 // so that a Vector of RemoteImageBufferSets can be used with a single
 // IPC call.
+// FIXME: It would be nice if this could actually be a subclass of ImageBufferSet, but
+// probably can't while it uses batching for prepare and volatility.
 class RemoteImageBufferSetProxy : public IPC::WorkQueueMessageReceiver, public Identified<RemoteImageBufferSetIdentifier> {
 public:
     RemoteImageBufferSetProxy(RemoteRenderingBackendProxy&);

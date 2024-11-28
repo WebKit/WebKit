@@ -200,7 +200,7 @@ CachedFrame::CachedFrame(Frame& frame)
 
     // The main frame is reused for the navigation and the opener link to its should thus persist.
     if (localFrame) {
-        CheckedRef frameLoader = localFrame->loader();
+        Ref frameLoader = localFrame->loader();
         if (!frame.isMainFrame())
             localFrame->detachFromAllOpenedFrames();
 
@@ -248,7 +248,7 @@ void CachedFrame::open()
     ASSERT(m_document || is<RemoteFrameView>(m_view.get()));
 
     if (RefPtr localFrameView = dynamicDowncast<LocalFrameView>(m_view.get()))
-        localFrameView->protectedFrame()->checkedLoader()->open(*this);
+        localFrameView->protectedFrame()->protectedLoader()->open(*this);
 }
 
 void CachedFrame::clear()
@@ -291,7 +291,7 @@ void CachedFrame::destroy()
     Ref frame = m_view->frame();
     if (!m_isMainFrame && m_view->frame().page()) {
         if (RefPtr localFrame = dynamicDowncast<LocalFrame>(frame.get()))
-            localFrame->checkedLoader()->detachViewsAndDocumentLoader();
+            localFrame->protectedLoader()->detachViewsAndDocumentLoader();
         frame->detachFromPage();
     }
     

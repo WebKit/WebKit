@@ -30,7 +30,7 @@
 namespace WebCore::WebGPU {
 
 struct PresentationContextDescriptor {
-    CompositorIntegration& compositorIntegration;
+    Ref<CompositorIntegration> compositorIntegration;
 };
 
 } // namespace WebCore::WebGPU

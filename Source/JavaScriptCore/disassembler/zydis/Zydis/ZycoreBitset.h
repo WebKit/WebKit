@@ -37,6 +37,9 @@
 #include "ZycoreStatus.h"
 #include "ZycoreTypes.h"
 #include "ZycoreVector.h"
+#include <wtf/Compiler.h>
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 #ifdef __cplusplus
 extern "C" {
@@ -480,5 +483,7 @@ ZYCORE_EXPORT ZyanStatus ZyanBitsetNone(const ZyanBitset* bitset);
 #ifdef __cplusplus
 }
 #endif
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif /* ZYCORE_BITSET_H */

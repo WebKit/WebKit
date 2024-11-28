@@ -31,5 +31,8 @@
 
 WKWebsiteDataStore *WKWebsiteDataStoreGetDataStore(WKWebsiteDataStoreRef dataStore)
 {
-    return dataStore ? wrapper(WebKit::toImpl(dataStore)) : nil;
+    if (!dataStore)
+        return nil;
+    RefPtr impl = WebKit::toImpl(dataStore);
+    return wrapper(impl);
 }

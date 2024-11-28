@@ -24,7 +24,7 @@
 #if ENABLE(GPU_PROCESS)
 
 [EnabledBy=WebGPUEnabled]
-messages -> RemoteCommandEncoder NotRefCounted Stream {
+messages -> RemoteCommandEncoder Stream {
     void BeginRenderPass(WebKit::WebGPU::RenderPassDescriptor descriptor, WebKit::WebGPUIdentifier identifier)
     void BeginComputePass(std::optional<WebKit::WebGPU::ComputePassDescriptor> descriptor, WebKit::WebGPUIdentifier identifier)
     void CopyBufferToBuffer(WebKit::WebGPUIdentifier source, WebCore::WebGPU::Size64 sourceOffset, WebKit::WebGPUIdentifier destination, WebCore::WebGPU::Size64 destinationOffset, WebCore::WebGPU::Size64 size)

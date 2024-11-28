@@ -164,8 +164,8 @@ enum ContextMenuAction {
     ContextMenuItemPDFTwoPages,
     ContextMenuItemPDFTwoPagesContinuous,
     ContextMenuItemTagShowMediaStats,
-    ContextMenuItemTagCopyLinkToHighlight,
-    ContextMenuItemLastNonCustomTag = ContextMenuItemTagCopyLinkToHighlight,
+    ContextMenuItemTagCopyLinkWithHighlight,
+    ContextMenuItemLastNonCustomTag = ContextMenuItemTagCopyLinkWithHighlight,
     ContextMenuItemBaseCustomTag = 5000,
     ContextMenuItemLastCustomTag = 5999,
     ContextMenuItemBaseApplicationTag = 10000

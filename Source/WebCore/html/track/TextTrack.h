@@ -46,6 +46,9 @@ class VTTRegionList;
 class TextTrack : public TrackBase, public EventTarget, public ActiveDOMObject {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(TextTrack);
 public:
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
+
     static Ref<TextTrack> create(ScriptExecutionContext*, const AtomString& kind, TrackID, const AtomString& label, const AtomString& language);
     static Ref<TextTrack> create(ScriptExecutionContext*, const AtomString& kind, const AtomString& id, const AtomString& label, const AtomString& language);
     virtual ~TextTrack();
@@ -106,7 +109,11 @@ public:
     virtual bool isEasyToRead() const { return false; }
 
     int trackIndex();
-    void invalidateTrackIndex();
+    void invalidateTrackIndex()
+    {
+        m_trackIndex = std::nullopt;
+        m_renderedTrackIndex = std::nullopt;
+    }
 
     bool isRendered();
     bool isSpoken();
@@ -127,10 +134,6 @@ public:
     virtual bool isInband() const { return false; }
 
     virtual MediaTime startTimeVariance() const { return MediaTime::zeroTime(); }
-
-    // ActiveDOMObject.
-    void ref() const final { RefCounted::ref(); }
-    void deref() const final { RefCounted::deref(); }
 
     const std::optional<Vector<String>>& styleSheets() const { return m_styleSheets; }
 

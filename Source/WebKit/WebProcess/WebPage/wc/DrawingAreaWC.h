@@ -35,24 +35,21 @@
 #include <WebCore/Timer.h>
 
 namespace WebKit {
-class DrawingAreaWC;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::DrawingAreaWC> : std::true_type { };
-}
-
-namespace WebKit {
 
 class DrawingAreaWC final
     : public DrawingArea
     , public GraphicsLayerWC::Observer {
 public:
-    DrawingAreaWC(WebPage&, const WebPageCreationParameters&);
+    static Ref<DrawingAreaWC> create(WebPage& webPage, const WebPageCreationParameters& parameters)
+    {
+        return adoptRef(*new DrawingAreaWC(webPage, parameters));
+    }
+
     ~DrawingAreaWC() override;
 
 private:
+    DrawingAreaWC(WebPage&, const WebPageCreationParameters&);
+
     // DrawingArea
     WebCore::GraphicsLayerFactory* graphicsLayerFactory() override;
     void setNeedsDisplay() override;
@@ -60,7 +57,6 @@ private:
     void scroll(const WebCore::IntRect& scrollRect, const WebCore::IntSize& scrollDelta) override;
     void updateRenderingWithForcedRepaintAsync(WebPage&, CompletionHandler<void()>&&) override;
     void triggerRenderingUpdate() override;
-    void didChangeViewportAttributes(WebCore::ViewportAttributes&&) override { }
     void deviceOrPageScaleFactorChanged() override { }
     bool enterAcceleratedCompositingModeIfNeeded() override { return false; }
     void setLayerTreeStateIsFrozen(bool) override;

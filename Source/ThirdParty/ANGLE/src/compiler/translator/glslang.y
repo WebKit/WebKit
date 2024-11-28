@@ -224,13 +224,13 @@ extern void yyerror(YYLTYPE* yylloc, TParseContext* context, void *scanner, cons
 %type <interm.intermNode> iteration_statement jump_statement statement_no_new_scope statement_with_scope
 %type <interm> single_declaration init_declarator_list
 
-%type <interm.param> parameter_declaration parameter_declarator parameter_type_specifier
+%type <interm.param> parameter_declaration parameter_declarator
 %type <interm.layoutQualifier> layout_qualifier_id_list layout_qualifier_id
 
 // Note: array_specifier guaranteed to be non-null.
 %type <interm.arraySizes> array_specifier
 
-%type <interm.type> fully_specified_type type_specifier
+%type <interm.type> fully_specified_type type_specifier parameter_type_specifier
 
 %type <interm.precision> precision_qualifier
 %type <interm.layoutQualifier> layout_qualifier
@@ -655,7 +655,7 @@ function_header_with_parameters
     : function_header parameter_declaration {
         // Add the parameter
         $$ = $1;
-        if ($2.type->getBasicType() != EbtVoid)
+        if ($2.type.getBasicType() != EbtVoid)
         {
             $1->addParameter($2.createVariable(&context->symbolTable));
         }
@@ -669,7 +669,7 @@ function_header_with_parameters
         $$ = $1;
         // Only first parameter of one-parameter functions can be void
         // The check for named parameters not being void is done in parameter_declarator
-        if ($3.type->getBasicType() == EbtVoid)
+        if ($3.type.getBasicType() == EbtVoid)
         {
             // This parameter > first is void
             context->error(@2, "cannot be a parameter type except for '(void)'", "void");
@@ -702,33 +702,32 @@ parameter_declarator
         $$ = context->parseParameterDeclarator($1, ImmutableString($2.string), @2);
     }
     | type_specifier identifier array_specifier {
-        $$ = context->parseParameterArrayDeclarator(ImmutableString($2.string), @2, *($3), @3, &$1);
+        $$ = context->parseParameterArrayDeclarator($1, ImmutableString($2.string), @2, $3, @3);
     }
     ;
 
 parameter_declaration
     : type_qualifier parameter_declarator {
         $$ = $2;
-        context->checkIsParameterQualifierValid(@2, *$1, $2.type);
+        context->parseParameterQualifier(@2, *$1, $$.type);
     }
     | parameter_declarator {
         $$ = $1;
-        $$.type->setQualifier(EvqParamIn);
+        $$.type.setQualifier(EvqParamIn);
     }
     | type_qualifier parameter_type_specifier {
-        $$ = $2;
-        context->checkIsParameterQualifierValid(@2, *$1, $2.type);
+        $$ = context->parseParameterDeclarator($2, kEmptyImmutableString, @2);
+        context->parseParameterQualifier(@2, *$1, $$.type);
     }
     | parameter_type_specifier {
-        $$ = $1;
-        $$.type->setQualifier(EvqParamIn);
+        $$ = context->parseParameterDeclarator($1, kEmptyImmutableString, @1);
+        $$.type.setQualifier(EvqParamIn);
     }
     ;
 
 parameter_type_specifier
     : type_specifier {
-        TParameter param = { 0, new TType($1) };
-        $$ = param;
+        $$ = $1;
     }
     ;
 
@@ -1579,7 +1578,10 @@ statement_list
 
 expression_statement
     : SEMICOLON  { $$ = context->addEmptyStatement(@$); }
-    | expression SEMICOLON  { $$ = $1; }
+    | expression SEMICOLON  {
+        context->checkIsValidExpressionStatement(@$, $1);
+        $$ = $1;
+    }
     ;
 
 selection_statement

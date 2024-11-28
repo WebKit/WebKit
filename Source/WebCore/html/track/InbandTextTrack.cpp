@@ -203,7 +203,7 @@ MediaTime InbandTextTrack::startTimeVariance() const
 }
 
 #if !RELEASE_LOG_DISABLED
-void InbandTextTrack::setLogger(const Logger& logger, const void* logIdentifier)
+void InbandTextTrack::setLogger(const Logger& logger, uint64_t logIdentifier)
 {
     TextTrack::setLogger(logger, logIdentifier);
     m_private->setLogger(logger, this->logIdentifier());

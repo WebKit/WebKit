@@ -1,5 +1,14 @@
 This directory contains an official PDF.js release version, distributed at: https://github.com/mozilla/pdf.js
 
+=======================================================================
+
+Since April 2024, the version of PDF.js is frozen due to the discovery of binary code. Please do not
+update PDF.js until we have removed the binary code:
+
+https://bugs.webkit.org/show_bug.cgi?id=273435
+
+=======================================================================
+
 To update to a newer version:
 
 1. Delete existing files except for this README.webkit.

@@ -114,6 +114,7 @@ private:
     bool itemsAreClones(HistoryItem&, HistoryItem*) const;
     void updateBackForwardListClippedAtTarget(bool doClip);
     void updateCurrentItem();
+    bool isFrameLoadComplete() const { return m_frameLoadComplete; }
 
     Ref<Frame> protectedFrame() const;
 

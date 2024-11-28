@@ -28,22 +28,25 @@
 
 #include "APIArray.h"
 #include "WKAPICast.h"
+#include <wtf/StdLibExtras.h>
 
 WKTypeID WKArrayGetTypeID()
 {
     return WebKit::toAPI(API::Array::APIType);
 }
 
-WKArrayRef WKArrayCreate(WKTypeRef* values, size_t numberOfValues)
+WKArrayRef WKArrayCreate(WKTypeRef* rawValues, size_t numberOfValues)
 {
+    auto values = unsafeMakeSpan(rawValues, numberOfValues);
     Vector<RefPtr<API::Object>> elements(numberOfValues, [values](size_t i) -> RefPtr<API::Object> {
         return WebKit::toImpl(values[i]);
     });
     return WebKit::toAPI(&API::Array::create(WTFMove(elements)).leakRef());
 }
 
-WKArrayRef WKArrayCreateAdoptingValues(WKTypeRef* values, size_t numberOfValues)
+WKArrayRef WKArrayCreateAdoptingValues(WKTypeRef* rawValues, size_t numberOfValues)
 {
+    auto values = unsafeMakeSpan(rawValues, numberOfValues);
     Vector<RefPtr<API::Object>> elements(numberOfValues, [values](size_t i) {
         return adoptRef(WebKit::toImpl(values[i]));
     });

@@ -182,6 +182,18 @@ void Seat::processEvent(struct libinput_event* event)
     case LIBINPUT_EVENT_KEYBOARD_KEY:
         handleKeyEvent(libinput_event_get_keyboard_event(event));
         break;
+    case LIBINPUT_EVENT_TOUCH_DOWN:
+        handleTouchDownEvent(libinput_event_get_touch_event(event));
+        break;
+    case LIBINPUT_EVENT_TOUCH_UP:
+        handleTouchUpEvent(libinput_event_get_touch_event(event));
+        break;
+    case LIBINPUT_EVENT_TOUCH_MOTION:
+        handleTouchMotionEvent(libinput_event_get_touch_event(event));
+        break;
+    case LIBINPUT_EVENT_TOUCH_CANCEL:
+        handleTouchCancelEvent(libinput_event_get_touch_event(event));
+        break;
     default:
         break;
     }
@@ -423,6 +435,76 @@ void Seat::handleKey(uint32_t time, uint32_t key, bool pressed, bool fromRepeat)
         g_source_set_ready_time(m_keyboard.repeat.source.get(), readyTime);
     } else
         g_source_set_ready_time(m_keyboard.repeat.source.get(), 0);
+}
+
+void Seat::handleTouchDownEvent(struct libinput_event_touch* event)
+{
+    if (!m_view)
+        return;
+
+    m_touch.time = libinput_event_touch_get_time(event);
+
+    int id = libinput_event_touch_get_seat_slot(event);
+    double x = libinput_event_touch_get_x_transformed(event, wpe_view_get_width(m_view.get()));
+    double y = libinput_event_touch_get_y_transformed(event, wpe_view_get_height(m_view.get()));
+    m_touch.points.add(id, std::pair<double, double>(x, y));
+
+    auto* wpeEvent = wpe_event_touch_new(WPE_EVENT_TOUCH_DOWN, m_view.get(), m_touch.source, m_touch.time, modifiers(), id, x, y);
+    wpe_view_event(m_view.get(), wpeEvent);
+    wpe_event_unref(wpeEvent);
+}
+
+void Seat::handleTouchUpEvent(struct libinput_event_touch* event)
+{
+    if (!m_view)
+        return;
+
+    int id = libinput_event_touch_get_seat_slot(event);
+    const auto& iter = m_touch.points.find(id);
+    if (iter == m_touch.points.end())
+        return;
+
+    m_touch.time = libinput_event_touch_get_time(event);
+
+    auto* wpeEvent = wpe_event_touch_new(WPE_EVENT_TOUCH_UP, m_view.get(), m_touch.source, m_touch.time, modifiers(), id, iter->value.first, iter->value.second);
+    wpe_view_event(m_view.get(), wpeEvent);
+    wpe_event_unref(wpeEvent);
+
+    m_touch.points.remove(id);
+}
+
+void Seat::handleTouchMotionEvent(struct libinput_event_touch* event)
+{
+    if (!m_view)
+        return;
+
+    int id = libinput_event_touch_get_seat_slot(event);
+    const auto& iter = m_touch.points.find(id);
+    if (iter == m_touch.points.end())
+        return;
+
+    m_touch.time = libinput_event_touch_get_time(event);
+
+    double x = libinput_event_touch_get_x_transformed(event, wpe_view_get_width(m_view.get()));
+    double y = libinput_event_touch_get_y_transformed(event, wpe_view_get_height(m_view.get()));
+    iter->value = { x, y };
+
+    auto* wpeEvent = wpe_event_touch_new(WPE_EVENT_TOUCH_MOVE, m_view.get(), m_touch.source, m_touch.time, modifiers(), id, x, y);
+    wpe_view_event(m_view.get(), wpeEvent);
+    wpe_event_unref(wpeEvent);
+}
+
+void Seat::handleTouchCancelEvent(struct libinput_event_touch*)
+{
+    if (!m_view)
+        return;
+
+    for (const auto& iter : m_touch.points) {
+        auto* wpeEvent = wpe_event_touch_new(WPE_EVENT_TOUCH_CANCEL, m_view.get(), m_touch.source, 0, modifiers(), iter.key, iter.value.first, iter.value.second);
+        wpe_view_event(m_view.get(), wpeEvent);
+        wpe_event_unref(wpeEvent);
+    }
+    m_touch.points.clear();
 }
 
 } // namespace DRM

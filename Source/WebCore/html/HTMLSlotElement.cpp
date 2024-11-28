@@ -65,11 +65,9 @@ HTMLSlotElement::InsertedIntoAncestorResult HTMLSlotElement::insertedIntoAncesto
     if (insertionType.treeScopeChanged && isInShadowTree()) {
         if (auto* shadowRoot = containingShadowRoot())
             shadowRoot->addSlotElementByName(attributeWithoutSynchronization(nameAttr), *this);
-
-        return Node::InsertedIntoAncestorResult::NeedsPostInsertionCallback;
     }
 
-    return Node::InsertedIntoAncestorResult::Done;
+    return InsertedIntoAncestorResult::NeedsPostInsertionCallback;
 }
 
 void HTMLSlotElement::removedFromAncestor(RemovalType removalType, ContainerNode& oldParentOfRemovedTree)

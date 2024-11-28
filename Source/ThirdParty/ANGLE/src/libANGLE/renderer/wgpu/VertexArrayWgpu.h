@@ -11,6 +11,8 @@
 #define LIBANGLE_RENDERER_WGPU_VERTEXARRAYWGPU_H_
 
 #include "libANGLE/renderer/VertexArrayImpl.h"
+#include "libANGLE/renderer/wgpu/BufferWgpu.h"
+#include "libANGLE/renderer/wgpu/wgpu_pipeline_state.h"
 
 namespace rx
 {
@@ -24,6 +26,34 @@ class VertexArrayWgpu : public VertexArrayImpl
                             const gl::VertexArray::DirtyBits &dirtyBits,
                             gl::VertexArray::DirtyAttribBitsArray *attribBits,
                             gl::VertexArray::DirtyBindingBitsArray *bindingBits) override;
+
+    webgpu::BufferHelper *getVertexBuffer(size_t slot) const { return mCurrentArrayBuffers[slot]; }
+    webgpu::BufferHelper *getIndexBuffer() const { return mCurrentIndexBuffer; }
+
+    angle::Result syncClientArrays(const gl::Context *context,
+                                   const gl::AttributesMask &activeAttributesMask,
+                                   GLint first,
+                                   GLsizei count,
+                                   GLsizei instanceCount,
+                                   gl::DrawElementsType drawElementsTypeOrInvalid,
+                                   const void *indices,
+                                   GLint baseVertex,
+                                   bool primitiveRestartEnabled,
+                                   const void **adjustedIndicesPtr);
+
+  private:
+    angle::Result syncDirtyAttrib(ContextWgpu *contextWgpu,
+                                  const gl::VertexAttribute &attrib,
+                                  const gl::VertexBinding &binding,
+                                  size_t attribIndex);
+    angle::Result syncDirtyElementArrayBuffer(ContextWgpu *contextWgpu);
+
+    gl::AttribArray<webgpu::PackedVertexAttribute> mCurrentAttribs;
+    gl::AttribArray<webgpu::BufferHelper> mStreamingArrayBuffers;
+    gl::AttribArray<webgpu::BufferHelper *> mCurrentArrayBuffers;
+
+    webgpu::BufferHelper mStreamingIndexBuffer;
+    webgpu::BufferHelper *mCurrentIndexBuffer = nullptr;
 };
 
 }  // namespace rx

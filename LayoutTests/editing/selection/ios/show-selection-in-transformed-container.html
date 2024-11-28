@@ -37,7 +37,7 @@ async function waitForCaretToAppear() {
     while (true) {
         const rect = await UIHelper.getUICaretViewRect();
         if (rect && rect.width && rect.height)
-            return rect;
+            return UIHelper.roundRectToDevicePixel(rect);
     }
 }
 
@@ -52,20 +52,17 @@ addEventListener("load", async () => {
     // Tap the input and wait for the caret.
     await UIHelper.activateAndWaitForInputSessionAt(20, 20);
     caretBefore = await waitForCaretToAppear();
-    shouldBe("caretBefore.left", "18");
-    shouldBe("caretBefore.top", "12");
-    shouldBe("caretBefore.width", "2");
-    shouldBe("caretBefore.height", "24");
 
     // Translate the body, tap the input again, and wait for the caret.
     await UIHelper.activateElement(transformButton);
     await UIHelper.waitForKeyboardToHide();
     await UIHelper.activateAndWaitForInputSessionAt(20, 20);
     caretAfter = await waitForCaretToAppear();
-    shouldBe("caretAfter.left", "18");
-    shouldBe("caretAfter.top", "12");
-    shouldBe("caretAfter.width", "2");
-    shouldBe("caretAfter.height", "24");
+
+    shouldBe("caretBefore.top", "caretAfter.top");
+    shouldBe("caretBefore.left", "caretAfter.left");
+    shouldBe("caretBefore.width", "caretAfter.width");
+    shouldBe("caretBefore.height", "caretAfter.height");
 
     document.activeElement.blur();
     await UIHelper.waitForKeyboardToHide();

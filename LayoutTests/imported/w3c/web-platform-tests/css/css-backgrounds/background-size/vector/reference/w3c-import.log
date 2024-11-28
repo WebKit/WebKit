@@ -1,0 +1,56 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/reference/background-size-vector-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/reference/background-size-vector-008-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/reference/background-size-vector-021-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/reference/background-size-vector-022-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/reference/diagonal-percentage-vector-background-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/reference/ref-t-lime128x16-aqua128x16.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/reference/ref-t-lime128x192-aqua128x192.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/reference/ref-t-lime16x128-aqua16x128.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/reference/ref-t-lime16x192-aqua16x192.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/reference/ref-t-lime24x192-aqua24x192.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/reference/ref-t-lime2x16-aqua2x16.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/reference/ref-t-lime8x16-aqua8x16.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/reference/ref-tall-empty.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/reference/ref-tall-lime.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/reference/ref-tall-lime192x384-aqua192x384.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/reference/ref-tall-lime256x16-aqua256x16.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/reference/ref-tall-lime256x384-aqua256x384.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/reference/ref-tall-lime256x512-aqua256x256.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/reference/ref-tall-lime256x768.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/reference/ref-tall-lime2x16-aqua2x16.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/reference/ref-tall-lime32x128-aqua32x128.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/reference/ref-tall-lime48x384-aqua48x384.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/reference/ref-tall-lime4x16-aqua4x16.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/reference/ref-tall-lime8x16-aqua8x16.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/reference/ref-tall-lime8x32-aqua8x32.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/reference/ref-wide-empty.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/reference/ref-wide-lime.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/reference/ref-wide-lime12x128-aqua12x128.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/reference/ref-wide-lime12x16-aqua12x16.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/reference/ref-wide-lime12x24-aqua12x24.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/reference/ref-wide-lime12x96-aqua12x96.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/reference/ref-wide-lime16x128-aqua16x128.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/reference/ref-wide-lime2x16-aqua2x16.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/reference/ref-wide-lime64x128-aqua64x128.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/reference/ref-wide-lime768x128-aqua768x128.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/reference/ref-wide-lime768x16-aqua768x16.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/reference/ref-wide-lime768x256.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/reference/ref-wide-lime8x128-aqua8x128.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/reference/ref-wide-lime8x16-aqua8x16.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/reference/ref-wide-lime8x64-aqua8x64.html

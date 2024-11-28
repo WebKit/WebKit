@@ -69,6 +69,9 @@ public:
     const_iterator end() const { return m_data.end(); }
     void clear() { m_data.fill(0); }
 
+    template<TemporalUnit unit>
+    std::optional<Int128> totalNanoseconds() const;
+
     Duration operator-() const
     {
         Duration result(*this);

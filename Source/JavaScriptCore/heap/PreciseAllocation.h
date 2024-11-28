@@ -29,6 +29,8 @@
 #include "WeakSet.h"
 #include <wtf/StdLibExtras.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 class IsoSubspace;
@@ -55,17 +57,17 @@ public:
     
     static PreciseAllocation* fromCell(const void* cell)
     {
-        return bitwise_cast<PreciseAllocation*>(bitwise_cast<char*>(cell) - headerSize());
+        return std::bit_cast<PreciseAllocation*>(std::bit_cast<char*>(cell) - headerSize());
     }
     
     HeapCell* cell() const
     {
-        return bitwise_cast<HeapCell*>(bitwise_cast<char*>(this) + headerSize());
+        return std::bit_cast<HeapCell*>(std::bit_cast<char*>(this) + headerSize());
     }
     
     static bool isPreciseAllocation(HeapCell* cell)
     {
-        return bitwise_cast<uintptr_t>(cell) & halfAlignment;
+        return std::bit_cast<uintptr_t>(cell) & halfAlignment;
     }
     
     Subspace* subspace() const { return m_subspace; }
@@ -99,15 +101,15 @@ public:
 
     bool aboveLowerBound(const void* rawPtr)
     {
-        char* ptr = bitwise_cast<char*>(rawPtr);
-        char* begin = bitwise_cast<char*>(cell());
+        char* ptr = std::bit_cast<char*>(rawPtr);
+        char* begin = std::bit_cast<char*>(cell());
         return ptr >= begin;
     }
     
     bool belowUpperBound(const void* rawPtr)
     {
-        char* ptr = bitwise_cast<char*>(rawPtr);
-        char* begin = bitwise_cast<char*>(cell());
+        char* ptr = std::bit_cast<char*>(rawPtr);
+        char* begin = std::bit_cast<char*>(cell());
         char* end = begin + cellSize();
         // We cannot #include IndexingHeader.h because reasons. The fact that IndexingHeader is 8
         // bytes is wired deep into our engine, so this isn't so bad.
@@ -184,7 +186,9 @@ private:
 
 inline void* PreciseAllocation::basePointer() const
 {
-    return bitwise_cast<char*>(this) - m_adjustment;
+    return std::bit_cast<char*>(this) - m_adjustment;
 }
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

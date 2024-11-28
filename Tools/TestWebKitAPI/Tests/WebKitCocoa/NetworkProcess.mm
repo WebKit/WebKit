@@ -29,6 +29,8 @@
 #import "PlatformUtilities.h"
 #import "Test.h"
 #import "TestProtocol.h"
+#import "TestUIDelegate.h"
+#import "TestURLSchemeHandler.h"
 #import "TestWKWebView.h"
 #import "Utilities.h"
 #import <WebKit/WKProcessPoolPrivate.h>

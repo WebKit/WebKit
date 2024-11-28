@@ -26,12 +26,12 @@
 #include "config.h"
 #include "FragmentDirectiveParser.h"
 
+#include "FragmentDirectiveUtilities.h"
 #include "Logging.h"
 #include <wtf/Deque.h>
 #include <wtf/URL.h>
 #include <wtf/URLParser.h>
 #include <wtf/text/TextStream.h>
-
 
 namespace WebCore {
 
@@ -42,6 +42,8 @@ FragmentDirectiveParser::FragmentDirectiveParser(StringView fragmentDirective)
     m_fragmentDirective = fragmentDirective;
     m_isValid = true;
 }
+
+FragmentDirectiveParser::~FragmentDirectiveParser() = default;
 
 // https://wicg.github.io/scroll-to-text-fragment/#parse-a-text-directive
 void FragmentDirectiveParser::parseFragmentDirective(StringView fragmentDirective)
@@ -88,6 +90,11 @@ void FragmentDirectiveParser::parseFragmentDirective(StringView fragmentDirectiv
                 LOG_WITH_STREAM(TextFragment, stream << " could not decode prefix ");
         }
         
+        if (tokens.isEmpty()) {
+            LOG_WITH_STREAM(TextFragment, stream << " not enough tokens ");
+            continue;
+        }
+
         if (tokens.last().startsWith('-') && tokens.last().length() > 1) {
             tokens.last() = tokens.last().substring(1);
             
@@ -103,13 +110,13 @@ void FragmentDirectiveParser::parseFragmentDirective(StringView fragmentDirectiv
         }
         
         if (auto start = WTF::URLParser::formURLDecode(tokens.first()))
-            parsedTextDirective.textStart = WTFMove(*start);
+            parsedTextDirective.startText = WTFMove(*start);
         else
             LOG_WITH_STREAM(TextFragment, stream << " could not decode start ");
         
         if (tokens.size() == 2) {
             if (auto end = WTF::URLParser::formURLDecode(tokens.last()))
-                parsedTextDirective.textEnd = WTFMove(*end);
+                parsedTextDirective.endText = WTFMove(*end);
             else
                 LOG_WITH_STREAM(TextFragment, stream << " could not decode end ");
         }

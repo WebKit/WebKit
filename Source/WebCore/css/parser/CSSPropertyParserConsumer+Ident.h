@@ -28,6 +28,7 @@
 #include "CSSParserToken.h"
 #include "CSSParserTokenRange.h"
 #include "CSSPrimitiveValue.h"
+#include "CSSValuePool.h"
 #include <optional>
 #include <wtf/RefPtr.h>
 
@@ -109,6 +110,7 @@ RefPtr<CSSPrimitiveValue> consumeCustomIdent(CSSParserTokenRange&, bool shouldLo
 // MARK: <dashed-ident>
 // https://drafts.csswg.org/css-values/#dashed-idents
 
+String consumeDashedIdentRaw(CSSParserTokenRange&, bool shouldLowercase = false);
 RefPtr<CSSPrimitiveValue> consumeDashedIdent(CSSParserTokenRange&, bool shouldLowercase = false);
 
 } // namespace CSSPropertyParserHelpers

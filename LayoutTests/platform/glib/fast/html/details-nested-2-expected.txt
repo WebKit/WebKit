@@ -4,20 +4,19 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DETAILS} at (0,0) size 784x136 [border: (8px solid #555599)]
-        RenderBlock {SUMMARY} at (8,8) size 768x34 [border: (8px solid #9999CC)]
-          RenderDetailsMarker {DIV} at (8,11) size 11x11: down
-          RenderText {#text} at (24,8) size 63x17
-            text run at (24,8) width 5: " "
-            text run at (28,8) width 59: "summary"
-        RenderBlock {DETAILS} at (8,42) size 768x68 [border: (8px solid #995555)]
-          RenderBlock {SUMMARY} at (8,8) size 752x34 [border: (8px solid #CC9999)]
-            RenderDetailsMarker {DIV} at (8,11) size 11x11: down
-            RenderText {#text} at (24,8) size 265x17
-              text run at (24,8) width 5: " "
-              text run at (28,8) width 261: "nested summary (details-deails-summary)"
-          RenderBlock (anonymous) at (8,42) size 752x18
-            RenderText {#text} at (0,0) size 179x17
-              text run at (0,0) width 179: "nested details (details-deails)"
-        RenderBlock (anonymous) at (8,110) size 768x18
-          RenderText {#text} at (0,0) size 40x17
-            text run at (0,0) width 40: "details"
+        RenderListItem {SUMMARY} at (8,8) size 768x34 [border: (8px solid #9999CC)]
+          RenderListMarker at (8,8) size 12x17: "\x{25BE}"
+          RenderText {#text} at (20,8) size 58x17
+            text run at (20,8) width 58: "summary"
+        RenderBlock {SLOT} at (8,42) size 768x86
+          RenderBlock {DETAILS} at (0,0) size 768x68 [border: (8px solid #995555)]
+            RenderListItem {SUMMARY} at (8,8) size 752x34 [border: (8px solid #CC9999)]
+              RenderListMarker at (8,8) size 12x17: "\x{25BE}"
+              RenderText {#text} at (20,8) size 260x17
+                text run at (20,8) width 260: "nested summary (details-deails-summary)"
+            RenderBlock {SLOT} at (8,42) size 752x18
+              RenderText {#text} at (0,0) size 179x17
+                text run at (0,0) width 179: "nested details (details-deails)"
+          RenderBlock (anonymous) at (0,68) size 768x18
+            RenderText {#text} at (0,0) size 40x17
+              text run at (0,0) width 40: "details"

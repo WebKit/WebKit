@@ -78,7 +78,9 @@ struct NetworkProcessCreationParameters {
 #if ENABLE(WEB_PUSH_NOTIFICATIONS)
     bool builtInNotificationsEnabled { false };
 #endif
-
+#if PLATFORM(COCOA)
+    bool enableModernDownloadProgress { false };
+#endif
     Vector<WebsiteDataStoreParameters> websiteDataStoreParameters;
     Vector<std::pair<WebCore::ProcessIdentifier, WebCore::RegistrableDomain>> allowedFirstPartiesForCookies;
     HashSet<String> localhostAliasesForTesting;

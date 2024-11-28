@@ -76,6 +76,8 @@
 #include <wtf/PointerComparison.h>
 #include <wtf/text/TextStream.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 #if !LOG_DISABLED
@@ -682,15 +684,13 @@ static inline GridTrackList blendFunc(const GridTrackList& from, const GridTrack
     return result;
 }
 
-static inline RefPtr<BasicShapePath> blendFunc(BasicShapePath* from, BasicShapePath* to, const CSSPropertyBlendingContext& context)
+static inline RefPtr<StylePathData> blendFunc(StylePathData* from, StylePathData* to, const CSSPropertyBlendingContext& context)
 {
     if (context.isDiscrete)
         return context.progress < 0.5 ? from : to;
     ASSERT(from && to);
-    auto blendedValue = to->blend(*from, context);
-    return &downcast<BasicShapePath>(blendedValue.leakRef());
+    return from->blend(*to, context);
 }
-
 
 class AnimationPropertyWrapperBase {
     WTF_MAKE_NONCOPYABLE(AnimationPropertyWrapperBase);
@@ -1017,8 +1017,8 @@ private:
     {
         auto fromLengthPoint = value(from);
         auto toLengthPoint = value(to);
-        return lengthsRequireBlendingForAccumulativeIteration(fromLengthPoint.x(), toLengthPoint.x())
-            || lengthsRequireBlendingForAccumulativeIteration(fromLengthPoint.y(), toLengthPoint.y());
+        return lengthsRequireBlendingForAccumulativeIteration(fromLengthPoint.x, toLengthPoint.x)
+            || lengthsRequireBlendingForAccumulativeIteration(fromLengthPoint.y, toLengthPoint.y);
     }
 
     void blend(RenderStyle& destination, const RenderStyle& from, const RenderStyle& to, const CSSPropertyBlendingContext& context) const final
@@ -1048,7 +1048,7 @@ private:
         auto valueFrom = value(from);
         auto valueTo = value(to);
 
-        return !valueFrom.x().isAuto() && !valueTo.x().isAuto() && !valueFrom.x().isNormal() && !valueTo.x().isNormal();
+        return !valueFrom.x.isAuto() && !valueTo.x.isAuto() && !valueFrom.x.isNormal() && !valueTo.x.isNormal();
     }
 };
 
@@ -3663,7 +3663,7 @@ private:
 };
 
 
-class DWrapper final : public RefCountedPropertyWrapper<BasicShapePath> {
+class DWrapper final : public RefCountedPropertyWrapper<StylePathData> {
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Animation);
 public:
     DWrapper()
@@ -3920,7 +3920,6 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         new PropertyWrapperStyleColor(CSSPropertyStrokeColor, &RenderStyle::strokeColor, &RenderStyle::setStrokeColor),
 
         new PropertyWrapperBaselineShift,
-        new PropertyWrapper<SVGLengthValue>(CSSPropertyKerning, &RenderStyle::kerning, &RenderStyle::setKerning),
 #if ENABLE(VARIATION_FONTS)
         new DiscretePropertyWrapper<FontOpticalSizing>(CSSPropertyFontOpticalSizing, &RenderStyle::fontOpticalSizing, &RenderStyle::setFontOpticalSizing),
         new PropertyWrapperFontVariationSettings,
@@ -4041,7 +4040,7 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         new DiscretePropertyWrapper<BlendMode>(CSSPropertyBackgroundBlendMode, &RenderStyle::backgroundBlendMode, &RenderStyle::setBackgroundBlendMode),
         new DiscretePropertyWrapper<StyleAppearance>(CSSPropertyAppearance, &RenderStyle::appearance, &RenderStyle::setAppearance),
 #if ENABLE(DARK_MODE_CSS)
-        new DiscretePropertyWrapper<StyleColorScheme>(CSSPropertyColorScheme, &RenderStyle::colorScheme, &RenderStyle::setColorScheme),
+        new DiscretePropertyWrapper<Style::ColorScheme>(CSSPropertyColorScheme, &RenderStyle::colorScheme, &RenderStyle::setColorScheme),
 #endif
         new PropertyWrapperAspectRatio,
         new DiscretePropertyWrapper<const FontPalette&>(CSSPropertyFontPalette, &RenderStyle::fontPalette, &RenderStyle::setFontPalette),
@@ -4096,10 +4095,11 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         new DiscretePropertyWrapper<ScrollSnapStop>(CSSPropertyScrollSnapStop, &RenderStyle::scrollSnapStop, &RenderStyle::setScrollSnapStop),
         new DiscretePropertyWrapper<ScrollSnapType>(CSSPropertyScrollSnapType, &RenderStyle::scrollSnapType, &RenderStyle::setScrollSnapType),
         new DiscretePropertyWrapper<const Vector<Style::ScopedName>&>(CSSPropertyViewTransitionClass, &RenderStyle::viewTransitionClasses, &RenderStyle::setViewTransitionClasses),
-        new DiscretePropertyWrapper<std::optional<Style::ScopedName>>(CSSPropertyViewTransitionName, &RenderStyle::viewTransitionName, &RenderStyle::setViewTransitionName),
+        new DiscretePropertyWrapper<Style::ViewTransitionName>(CSSPropertyViewTransitionName, &RenderStyle::viewTransitionName, &RenderStyle::setViewTransitionName),
         new DiscretePropertyWrapper<FieldSizing>(CSSPropertyFieldSizing, &RenderStyle::fieldSizing, &RenderStyle::setFieldSizing),
-        new DiscretePropertyWrapper<const Vector<AtomString>&>(CSSPropertyAnchorName, &RenderStyle::anchorNames, &RenderStyle::setAnchorNames),
-        new DiscretePropertyWrapper<const AtomString&>(CSSPropertyPositionAnchor, &RenderStyle::positionAnchor, &RenderStyle::setPositionAnchor),
+        new DiscretePropertyWrapper<const Vector<Style::ScopedName>&>(CSSPropertyAnchorName, &RenderStyle::anchorNames, &RenderStyle::setAnchorNames),
+        new DiscretePropertyWrapper<const std::optional<Style::ScopedName>&>(CSSPropertyPositionAnchor, &RenderStyle::positionAnchor, &RenderStyle::setPositionAnchor),
+        new DiscretePropertyWrapper<Style::PositionTryOrder>(CSSPropertyPositionTryOrder, &RenderStyle::positionTryOrder, &RenderStyle::setPositionTryOrder),
         new DiscretePropertyWrapper<const BlockEllipsis&>(CSSPropertyBlockEllipsis, &RenderStyle::blockEllipsis, &RenderStyle::setBlockEllipsis),
         new DiscretePropertyWrapper<size_t>(CSSPropertyMaxLines, &RenderStyle::maxLines, &RenderStyle::setMaxLines),
         new DiscretePropertyWrapper<OverflowContinue>(CSSPropertyContinue, &RenderStyle::overflowContinue, &RenderStyle::setOverflowContinue)
@@ -4274,6 +4274,9 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         case CSSPropertyAnimationIterationCount:
         case CSSPropertyAnimationName:
         case CSSPropertyAnimationPlayState:
+        case CSSPropertyAnimationRange:
+        case CSSPropertyAnimationRangeStart:
+        case CSSPropertyAnimationRangeEnd:
         case CSSPropertyAnimationTimeline:
         case CSSPropertyAnimationTimingFunction:
         case CSSPropertyContain:
@@ -4290,6 +4293,7 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         case CSSPropertySpeakAs:
         case CSSPropertyTextCombineUpright:
         case CSSPropertyTextOrientation:
+        case CSSPropertyTimelineScope:
         case CSSPropertyTransition:
         case CSSPropertyTransitionBehavior:
         case CSSPropertyTransitionDelay:
@@ -4381,7 +4385,7 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
             if (CSSProperty::isDescriptorOnly(property))
                 continue;
 
-            auto resolvedProperty = CSSProperty::resolveDirectionAwareProperty(property, RenderStyle::initialDirection(), RenderStyle::initialWritingMode());
+            auto resolvedProperty = CSSProperty::resolveDirectionAwareProperty(property, WritingMode());
             ASSERT_UNUSED(resolvedProperty, wrapperForProperty(resolvedProperty));
             break;
         }
@@ -4750,3 +4754,5 @@ int CSSPropertyAnimation::getNumProperties()
 }
 
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

@@ -180,7 +180,7 @@ const FeatureSchema* MediaQueryParser::schemaForFeatureName(const AtomString& na
     auto* schema = GenericMediaQueryParser<MediaQueryParser>::schemaForFeatureName(name, context, state);
 
     if (schema == &Features::prefersDarkInterface()) {
-        if (!context.useSystemAppearance && !isUASheetBehavior(context.mode))
+        if (!context.context.useSystemAppearance && !isUASheetBehavior(context.context.mode))
             return nullptr;
     }
     

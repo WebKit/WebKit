@@ -28,7 +28,7 @@
 var imagesLeftToLoad = 0;
 var testContainer = document.getElementById('test-container');
 
-function checkCursors() {
+async function checkCursors() {
     debug('Checking cursors with device pixel ratio of ' + window.devicePixelRatio);  
     debug('----------------------------------------------');
 	
@@ -38,7 +38,7 @@ function checkCursors() {
         debug('TEST CASE: ' + node.textContent);
         // Make sure the node is visible and move the mouse over top of it.
         document.scrollingElement.scrollTop = node.offsetTop - 50;
-        eventSender.mouseMoveTo(node.offsetLeft + 3, node.offsetTop - document.scrollingElement.scrollTop + 3);
+        await eventSender.asyncMouseMoveTo(node.offsetLeft + 3, node.offsetTop - document.scrollingElement.scrollTop + 3);
 
         // Get details of the current mouse cursor.
         // Note that we could return structured data which we then validate, but that's a lot more
@@ -49,14 +49,14 @@ function checkCursors() {
     }
 }
 
-function runTests() {
+async function runTests() {
     if (window.eventSender) {
-        checkCursors();
+        await checkCursors();
         // Repeat in high-dpi mode
         testRunner.setBackingScaleFactor(2, function() {
             // Failed images are apparently reset on scale factor change. 
-            loadImages([{ url: 'doesntexist.png', error: true }], function() {
-                checkCursors();
+            loadImages([{ url: 'doesntexist.png', error: true }], async function() {
+                await checkCursors();
                 testContainer.style.display = 'none';
                 finishJSTest();
             });

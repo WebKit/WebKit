@@ -98,6 +98,15 @@ class RenderTargetVk final : public FramebufferAttachmentRenderTarget
                                              const vk::ImageView **imageViewOut) const;
     angle::Result getResolveImageView(vk::Context *context,
                                       const vk::ImageView **imageViewOut) const;
+    angle::Result getDepthOrStencilImageView(vk::Context *context,
+                                             VkImageAspectFlagBits aspect,
+                                             const vk::ImageView **imageViewOut) const;
+    angle::Result getDepthOrStencilImageViewForCopy(vk::Context *context,
+                                                    VkImageAspectFlagBits aspect,
+                                                    const vk::ImageView **imageViewOut) const;
+    angle::Result getResolveDepthOrStencilImageView(vk::Context *context,
+                                                    VkImageAspectFlagBits aspect,
+                                                    const vk::ImageView **imageViewOut) const;
 
     // For 3D textures, the 2D view created for render target is invalid to read from.  The
     // following will return a view to the whole image (for all types, including 3D and 2DArray).
@@ -156,17 +165,59 @@ class RenderTargetVk final : public FramebufferAttachmentRenderTarget
         ASSERT(!mFramebufferCacheManager.containsKey(sharedFramebufferCacheKey));
         mFramebufferCacheManager.addKey(sharedFramebufferCacheKey);
     }
-    void release(ContextVk *contextVk) { mFramebufferCacheManager.releaseKeys(contextVk); }
-    void destroy(vk::Renderer *renderer) { mFramebufferCacheManager.destroyKeys(renderer); }
+    void releaseFramebuffers(ContextVk *contextVk)
+    {
+        mFramebufferCacheManager.releaseKeys(contextVk);
+    }
+    // Releases framebuffers and resets Image and ImageView pointers, while keeping other
+    // members intact, in order to allow |updateSwapchainImage| call later.
+    void releaseImageAndViews(ContextVk *contextVk)
+    {
+        releaseFramebuffers(contextVk);
+        invalidateImageAndViews();
+    }
+    // Releases framebuffers and resets all members to the initial state.
+    void destroy(vk::Renderer *renderer)
+    {
+        mFramebufferCacheManager.destroyKeys(renderer);
+        reset();
+    }
+
+    // Helpers to update rendertarget colorspace
+    void updateWriteColorspace(gl::SrgbWriteControlMode srgbWriteControlMode)
+    {
+        ASSERT(mImage && mImage->valid() && mImageViews);
+        mImageViews->updateSrgbWiteControlMode(*mImage, srgbWriteControlMode);
+    }
+    bool hasColorspaceOverrideForRead() const
+    {
+        ASSERT(mImage && mImage->valid() && mImageViews);
+        return mImageViews->hasColorspaceOverrideForRead(*mImage);
+    }
+    bool hasColorspaceOverrideForWrite() const
+    {
+        ASSERT(mImage && mImage->valid() && mImageViews);
+        return mImageViews->hasColorspaceOverrideForWrite(*mImage);
+    }
+    angle::FormatID getColorspaceOverrideFormatForWrite(angle::FormatID format) const
+    {
+        ASSERT(mImage && mImage->valid() && mImageViews);
+        return mImageViews->getColorspaceOverrideFormatForWrite(format);
+    }
 
   private:
+    void invalidateImageAndViews();
     void reset();
 
     angle::Result getImageViewImpl(vk::Context *context,
                                    const vk::ImageHelper &image,
-                                   gl::SrgbWriteControlMode mode,
                                    vk::ImageViewHelper *imageViews,
                                    const vk::ImageView **imageViewOut) const;
+    angle::Result getDepthOrStencilImageViewImpl(vk::Context *context,
+                                                 const vk::ImageHelper &image,
+                                                 vk::ImageViewHelper *imageViews,
+                                                 VkImageAspectFlagBits aspect,
+                                                 const vk::ImageView **imageViewOut) const;
 
     vk::ImageOrBufferViewSubresourceSerial getSubresourceSerialImpl(
         vk::ImageViewHelper *imageViews) const;

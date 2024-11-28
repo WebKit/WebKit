@@ -40,6 +40,7 @@ class UpdateDescriptorSetsBuilder;
 // - Set 1 contains all textures (including texture buffers).
 // - Set 2 contains all other shader resources, such as uniform and storage blocks, atomic counter
 //   buffers, images and image buffers.
+// - Set 3 reserved for OpenCL
 
 enum class DescriptorSetIndex : uint32_t
 {
@@ -48,7 +49,13 @@ enum class DescriptorSetIndex : uint32_t
     Texture        = 1,         // Textures set index
     ShaderResource = 2,         // Other shader resources set index
 
-    InvalidEnum = 3,
+    // CL specific naming for set indices
+    LiteralSampler  = 0,
+    KernelArguments = 1,
+    ModuleConstants = 2,
+    Printf          = 3,
+
+    InvalidEnum = 4,
     EnumCount   = InvalidEnum,
 };
 
@@ -117,6 +124,42 @@ enum class RenderPassStoreOp
     DontCare = VK_ATTACHMENT_STORE_OP_DONT_CARE,
     None,
 };
+
+enum class FramebufferFetchMode
+{
+    None,
+    Color,
+    DepthStencil,
+    ColorAndDepthStencil,
+};
+FramebufferFetchMode GetProgramFramebufferFetchMode(const gl::ProgramExecutable *executable);
+ANGLE_INLINE bool FramebufferFetchModeHasColor(FramebufferFetchMode framebufferFetchMode)
+{
+    static_assert(ToUnderlying(FramebufferFetchMode::Color) == 0x1);
+    static_assert(ToUnderlying(FramebufferFetchMode::ColorAndDepthStencil) == 0x3);
+    return (ToUnderlying(framebufferFetchMode) & 0x1) != 0;
+}
+ANGLE_INLINE bool FramebufferFetchModeHasDepthStencil(FramebufferFetchMode framebufferFetchMode)
+{
+    static_assert(ToUnderlying(FramebufferFetchMode::DepthStencil) == 0x2);
+    static_assert(ToUnderlying(FramebufferFetchMode::ColorAndDepthStencil) == 0x3);
+    return (ToUnderlying(framebufferFetchMode) & 0x2) != 0;
+}
+ANGLE_INLINE FramebufferFetchMode FramebufferFetchModeMerge(FramebufferFetchMode mode1,
+                                                            FramebufferFetchMode mode2)
+{
+    constexpr uint32_t kNone         = ToUnderlying(FramebufferFetchMode::None);
+    constexpr uint32_t kColor        = ToUnderlying(FramebufferFetchMode::Color);
+    constexpr uint32_t kDepthStencil = ToUnderlying(FramebufferFetchMode::DepthStencil);
+    constexpr uint32_t kColorAndDepthStencil =
+        ToUnderlying(FramebufferFetchMode::ColorAndDepthStencil);
+    static_assert(kNone == 0);
+    static_assert((kColor & kColorAndDepthStencil) == kColor);
+    static_assert((kDepthStencil & kColorAndDepthStencil) == kDepthStencil);
+    static_assert((kColor | kDepthStencil) == kColorAndDepthStencil);
+
+    return static_cast<FramebufferFetchMode>(ToUnderlying(mode1) | ToUnderlying(mode2));
+}
 
 // There can be a maximum of IMPLEMENTATION_MAX_DRAW_BUFFERS color and resolve attachments, plus -
 // - one depth/stencil attachment
@@ -225,11 +268,22 @@ class alignas(4) RenderPassDesc final
     void setViewCount(GLsizei viewCount) { mViewCount = static_cast<uint8_t>(viewCount); }
     uint8_t viewCount() const { return mViewCount; }
 
-    void setFramebufferFetchMode(bool hasFramebufferFetch)
+    void setFramebufferFetchMode(FramebufferFetchMode framebufferFetchMode)
     {
-        mHasFramebufferFetch = hasFramebufferFetch;
+        SetBitField(mFramebufferFetchMode, framebufferFetchMode);
     }
-    bool hasFramebufferFetch() const { return mHasFramebufferFetch; }
+    FramebufferFetchMode framebufferFetchMode() const
+    {
+        return static_cast<FramebufferFetchMode>(mFramebufferFetchMode);
+    }
+    bool hasColorFramebufferFetch() const
+    {
+        return FramebufferFetchModeHasColor(framebufferFetchMode());
+    }
+    bool hasDepthStencilFramebufferFetch() const
+    {
+        return FramebufferFetchModeHasDepthStencil(framebufferFetchMode());
+    }
 
     void updateRenderToTexture(bool isRenderToTexture) { mIsRenderToTexture = isRenderToTexture; }
     bool isRenderToTexture() const { return mIsRenderToTexture; }
@@ -286,8 +340,8 @@ class alignas(4) RenderPassDesc final
     // sRGB
     uint8_t mSrgbWriteControl : 1;
 
-    // Framebuffer fetch
-    uint8_t mHasFramebufferFetch : 1;
+    // Framebuffer fetch, one of FramebufferFetchMode values
+    uint8_t mFramebufferFetchMode : 2;
 
     // Depth/stencil resolve
     uint8_t mResolveDepth : 1;
@@ -308,7 +362,7 @@ class alignas(4) RenderPassDesc final
     uint8_t mHasFragmentShadingAttachment : 1;
 
     // Available space for expansion.
-    uint8_t mPadding2 : 6;
+    uint8_t mPadding2 : 5;
 
     // Whether each color attachment has a corresponding resolve attachment.  Color resolve
     // attachments can be used to optimize resolve through glBlitFramebuffer() as well as support
@@ -442,10 +496,7 @@ struct PackedAttribDesc final
 {
     uint8_t format;
     uint8_t divisor;
-
-    // Desktop drivers support
     uint16_t offset : kAttributeOffsetMaxBits;
-
     uint16_t compressed : 1;
 };
 
@@ -850,12 +901,18 @@ class GraphicsPipelineDesc final
 
     void setRenderPassDesc(const RenderPassDesc &renderPassDesc);
     void updateRenderPassDesc(GraphicsPipelineTransitionBits *transition,
-                              const RenderPassDesc &renderPassDesc);
+                              const angle::FeaturesVk &features,
+                              const RenderPassDesc &renderPassDesc,
+                              FramebufferFetchMode framebufferFetchMode);
     void setRenderPassSampleCount(GLint samples);
-    void setRenderPassFramebufferFetchMode(bool hasFramebufferFetch);
-    bool getRenderPassFramebufferFetchMode() const
+    void setRenderPassFramebufferFetchMode(FramebufferFetchMode framebufferFetchMode);
+    bool getRenderPassColorFramebufferFetchMode() const
     {
-        return mSharedNonVertexInput.renderPass.hasFramebufferFetch();
+        return mSharedNonVertexInput.renderPass.hasColorFramebufferFetch();
+    }
+    bool getRenderPassDepthStencilFramebufferFetchMode() const
+    {
+        return mSharedNonVertexInput.renderPass.hasDepthStencilFramebufferFetch();
     }
 
     void setRenderPassFoveation(bool isFoveated);
@@ -1363,6 +1420,8 @@ class PipelineCacheAccess
                                    const VkComputePipelineCreateInfo &createInfo,
                                    vk::Pipeline *pipelineOut);
 
+    VkResult getCacheData(vk::Context *context, size_t *cacheSize, void *cacheData);
+
     void merge(Renderer *renderer, const vk::PipelineCache &pipelineCache);
 
     bool isThreadSafe() const { return mMutex != nullptr; }
@@ -1375,7 +1434,7 @@ class PipelineCacheAccess
 };
 
 // Monolithic pipeline creation tasks are created as soon as a pipeline is created out of libraries.
-// However, they are not immediately posted to the worker queue to allow pacing.  One each use of a
+// However, they are not immediately posted to the worker queue to allow pacing.  On each use of a
 // pipeline, an attempt is made to post the task.
 class CreateMonolithicPipelineTask : public Context, public angle::Closure
 {
@@ -1600,11 +1659,10 @@ struct ImageSubresourceRange
     // which is usually 1, except for multiview in which case it can be up to
     // gl::IMPLEMENTATION_MAX_2D_ARRAY_TEXTURE_LAYERS.
     uint32_t layerMode : 3;
-    // Values from vk::SrgbDecodeMode.  Unused with draw views.
-    uint32_t srgbDecodeMode : 1;
-    // For read views: Values from gl::SrgbOverride, either Default or SRGB.
-    // For draw views: Values from gl::SrgbWriteControlMode.
-    uint32_t srgbMode : 1;
+    // For reads: Values are either ImageViewColorspace::Linear or ImageViewColorspace::SRGB
+    uint32_t readColorspace : 1;
+    // For writes: Values are either ImageViewColorspace::Linear or ImageViewColorspace::SRGB
+    uint32_t writeColorspace : 1;
 
     static_assert(gl::IMPLEMENTATION_MAX_TEXTURE_LEVELS < (1 << 5),
                   "Not enough bits for level count");
@@ -1619,8 +1677,8 @@ static_assert(sizeof(ImageSubresourceRange) == sizeof(uint32_t), "Size mismatch"
 inline bool operator==(const ImageSubresourceRange &a, const ImageSubresourceRange &b)
 {
     return a.level == b.level && a.levelCount == b.levelCount && a.layer == b.layer &&
-           a.layerMode == b.layerMode && a.srgbDecodeMode == b.srgbDecodeMode &&
-           a.srgbMode == b.srgbMode;
+           a.layerMode == b.layerMode && a.readColorspace == b.readColorspace &&
+           a.writeColorspace == b.writeColorspace;
 }
 
 constexpr ImageSubresourceRange kInvalidImageSubresourceRange = {0, 0, 0, 0, 0, 0};
@@ -1723,8 +1781,6 @@ class WriteDescriptorDescs
     size_t getTotalDescriptorCount() const { return mCurrentInfoIndex; }
     size_t getDynamicDescriptorSetCount() const { return mDynamicDescriptorSetCount; }
 
-    void streamOut(std::ostream &os) const;
-
   private:
     bool hasWriteDescAtIndex(uint32_t bindingIndex) const
     {
@@ -1742,11 +1798,16 @@ class WriteDescriptorDescs
                          VkDescriptorType descriptorType,
                          uint32_t descriptorCount);
 
+    void updateInputAttachment(uint32_t binding,
+                               ImageLayout layout,
+                               RenderTargetVk *renderTargetVk);
+
     // After a preliminary minimum size, use heap memory.
     angle::FastMap<WriteDescriptorDesc, kFastDescriptorSetDescLimit> mDescs;
     size_t mDynamicDescriptorSetCount = 0;
     uint32_t mCurrentInfoIndex        = 0;
 };
+std::ostream &operator<<(std::ostream &os, const WriteDescriptorDescs &desc);
 
 class DescriptorSetDesc
 {
@@ -1764,6 +1825,7 @@ class DescriptorSetDesc
 
     size_t hash() const;
 
+    size_t size() const { return mDescriptorInfos.size(); }
     void resize(size_t count) { mDescriptorInfos.resize(count); }
 
     size_t getKeySizeBytes() const { return mDescriptorInfos.size() * sizeof(DescriptorInfoDesc); }
@@ -1780,21 +1842,24 @@ class DescriptorSetDesc
         return mDescriptorInfos[infoDescIndex];
     }
 
+    const DescriptorInfoDesc &getInfoDesc(uint32_t infoDescIndex) const
+    {
+        return mDescriptorInfos[infoDescIndex];
+    }
+
     void updateDescriptorSet(Renderer *renderer,
                              const WriteDescriptorDescs &writeDescriptorDescs,
                              UpdateDescriptorSetsBuilder *updateBuilder,
                              const DescriptorDescHandles *handles,
                              VkDescriptorSet descriptorSet) const;
 
-    void streamOut(std::ostream &os) const;
-
   private:
     // After a preliminary minimum size, use heap memory.
     angle::FastVector<DescriptorInfoDesc, kFastDescriptorSetDescLimit> mDescriptorInfos;
 };
+std::ostream &operator<<(std::ostream &os, const DescriptorSetDesc &desc);
 
 class DescriptorPoolHelper;
-using RefCountedDescriptorPoolHelper = RefCounted<DescriptorPoolHelper>;
 
 // SharedDescriptorSetCacheKey.
 // Because DescriptorSet must associate with a pool, we need to define a structure that wraps both.
@@ -1901,19 +1966,11 @@ class DescriptorSetDescBuilder final
                                          FramebufferVk *framebufferVk,
                                          const WriteDescriptorDescs &writeDescriptorDescs);
 
-    // Specific helpers for image descriptors.
-    void updatePreCacheActiveTextures(const gl::ActiveTextureMask &activeTextures,
+    // Specialized update for textures.
+    void updatePreCacheActiveTextures(Context *context,
+                                      const gl::ProgramExecutable &executable,
                                       const gl::ActiveTextureArray<TextureVk *> &textures,
                                       const gl::SamplerBindingVector &samplers);
-
-    angle::Result updateFullActiveTextures(Context *context,
-                                           const ShaderInterfaceVariableInfoMap &variableInfoMap,
-                                           const WriteDescriptorDescs &writeDescriptorDescs,
-                                           const gl::ProgramExecutable &executable,
-                                           const gl::ActiveTextureArray<TextureVk *> &textures,
-                                           const gl::SamplerBindingVector &samplers,
-                                           PipelineType pipelineType,
-                                           const SharedDescriptorSetCacheKey &sharedCacheKey);
 
     void updateDescriptorSet(Renderer *renderer,
                              const WriteDescriptorDescs &writeDescriptorDescs,
@@ -1924,6 +1981,13 @@ class DescriptorSetDescBuilder final
     size_t getDynamicOffsetsSize() const { return mDynamicOffsets.size(); }
 
   private:
+    void updateInputAttachment(Context *context,
+                               uint32_t binding,
+                               ImageLayout layout,
+                               const vk::ImageView *imageView,
+                               ImageOrBufferViewSubresourceSerial serial,
+                               const WriteDescriptorDescs &writeDescriptorDescs);
+
     void setEmptyBuffer(uint32_t infoDescIndex,
                         VkDescriptorType descriptorType,
                         const BufferHelper &emptyBuffer);
@@ -1932,14 +1996,6 @@ class DescriptorSetDescBuilder final
     angle::FastVector<DescriptorDescHandles, kFastDescriptorSetDescLimit> mHandles;
     angle::FastVector<uint32_t, kFastDescriptorSetDescLimit> mDynamicOffsets;
 };
-
-// Specialized update for textures.
-void UpdatePreCacheActiveTextures(const gl::ProgramExecutable &executable,
-                                  const std::vector<gl::SamplerBinding> &samplerBindings,
-                                  const gl::ActiveTextureMask &activeTextures,
-                                  const gl::ActiveTextureArray<TextureVk *> &textures,
-                                  const gl::SamplerBindingVector &samplers,
-                                  DescriptorSetDesc *desc);
 
 // In the FramebufferDesc object:
 //  - Depth/stencil serial is at index 0
@@ -2001,8 +2057,8 @@ class FramebufferDesc
 
     void updateLayerCount(uint32_t layerCount);
     uint32_t getLayerCount() const { return mLayerCount; }
-    void setFramebufferFetchMode(bool hasFramebufferFetch);
-    bool hasFramebufferFetch() const { return mHasFramebufferFetch; }
+    void setColorFramebufferFetchMode(bool hasColorFramebufferFetch);
+    bool hasColorFramebufferFetch() const { return mHasColorFramebufferFetch; }
 
     bool isMultiview() const { return mIsMultiview; }
 
@@ -2020,7 +2076,9 @@ class FramebufferDesc
     uint16_t mMaxIndex : 5;
 
     // Whether the render pass has input attachments or not.
-    uint16_t mHasFramebufferFetch : 1;
+    // Note that depth/stencil framebuffer fetch is only implemented for dynamic rendering, and so
+    // does not interact with this class.
+    uint16_t mHasColorFramebufferFetch : 1;
     static_assert(gl::IMPLEMENTATION_MAX_FRAMEBUFFER_LAYERS < (1 << 9) - 1,
                   "Not enough bits for mLayerCount");
 
@@ -2063,7 +2121,7 @@ CreateSharedFramebufferCacheKey(const FramebufferDesc &desc)
 class SamplerHelper final : angle::NonCopyable
 {
   public:
-    SamplerHelper(ContextVk *contextVk);
+    SamplerHelper(vk::Context *context);
     ~SamplerHelper();
 
     explicit SamplerHelper(SamplerHelper &&samplerHelper);
@@ -2128,9 +2186,18 @@ class SharedCacheKeyManager
     void assertAllEntriesDestroyed();
 
   private:
+    size_t updateEmptySlotBits();
+
     // Tracks an array of cache keys with refcounting. Note this owns one refcount of
     // SharedCacheKeyT object.
-    std::vector<SharedCacheKeyT> mSharedCacheKeys;
+    std::deque<SharedCacheKeyT> mSharedCacheKeys;
+
+    // To speed up searching for available slot in the mSharedCacheKeys, we use bitset to track
+    // available (i.e, empty) slot
+    static constexpr size_t kInvalidSlot  = -1;
+    static constexpr size_t kSlotBitCount = 64;
+    using SlotBitMask                     = angle::BitSet64<kSlotBitCount>;
+    std::vector<SlotBitMask> mEmptySlotBits;
 };
 
 using FramebufferCacheManager   = SharedCacheKeyManager<SharedFramebufferCacheKey>;
@@ -2680,6 +2747,7 @@ class SamplerYcbcrConversionCache final
 };
 
 // Descriptor Set Cache
+template <typename T>
 class DescriptorSetCache final : angle::NonCopyable
 {
   public:
@@ -2699,33 +2767,25 @@ class DescriptorSetCache final : angle::NonCopyable
 
     void resetCache() { mPayload.clear(); }
 
-    ANGLE_INLINE bool getDescriptorSet(const vk::DescriptorSetDesc &desc,
-                                       VkDescriptorSet *descriptorSetOut,
-                                       vk::RefCountedDescriptorPoolHelper **poolOut)
+    bool getDescriptorSet(const vk::DescriptorSetDesc &desc, T *descriptorSetOut)
     {
         auto iter = mPayload.find(desc);
         if (iter != mPayload.end())
         {
-            *descriptorSetOut = iter->second->getDescriptorSet();
-            *poolOut          = iter->second->getPool();
+            *descriptorSetOut = iter->second;
             return true;
         }
         return false;
     }
 
-    ANGLE_INLINE void insertDescriptorSet(const vk::DescriptorSetDesc &desc,
-                                          VkDescriptorSet descriptorSet,
-                                          vk::RefCountedDescriptorPoolHelper *pool)
+    void insertDescriptorSet(const vk::DescriptorSetDesc &desc, const T &descriptorSetHelper)
     {
-        mPayload.emplace(desc, std::make_unique<dsCacheEntry>(descriptorSet, pool));
+        mPayload.emplace(desc, descriptorSetHelper);
     }
 
-    ANGLE_INLINE void eraseDescriptorSet(const vk::DescriptorSetDesc &desc)
-    {
-        mPayload.erase(desc);
-    }
+    void eraseDescriptorSet(const vk::DescriptorSetDesc &desc) { mPayload.erase(desc); }
 
-    ANGLE_INLINE size_t getTotalCacheSize() const { return mPayload.size(); }
+    size_t getTotalCacheSize() const { return mPayload.size(); }
 
     size_t getTotalCacheKeySizeBytes() const
     {
@@ -2737,27 +2797,10 @@ class DescriptorSetCache final : angle::NonCopyable
         }
         return totalSize;
     }
-
     bool empty() const { return mPayload.empty(); }
 
   private:
-    class dsCacheEntry
-    {
-      public:
-        dsCacheEntry(VkDescriptorSet descriptorSet, vk::RefCountedDescriptorPoolHelper *pool)
-            : mDescriptorSet(descriptorSet), mPool(pool)
-        {}
-        VkDescriptorSet getDescriptorSet() const { return mDescriptorSet; }
-        vk::RefCountedDescriptorPoolHelper *getPool() const { return mPool; }
-
-      private:
-        VkDescriptorSet mDescriptorSet;
-        // Weak pointer to the pool this descriptorSet allocated from. The RefCount is tracking if
-        // this pool is bound as the current pool in any ProgramExecutableVk or not, so we should
-        // not add refcount from the cache.
-        vk::RefCountedDescriptorPoolHelper *mPool;
-    };
-    angle::HashMap<vk::DescriptorSetDesc, std::unique_ptr<dsCacheEntry>> mPayload;
+    angle::HashMap<vk::DescriptorSetDesc, T> mPayload;
 };
 
 // There is 1 default uniform binding used per stage.

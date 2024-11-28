@@ -50,6 +50,9 @@
 namespace API {
 using namespace WebKit;
 
+PageConfiguration::Data::Data()
+    : openedSite(aboutBlankURL()) { }
+
 Ref<WebKit::BrowsingContextGroup> PageConfiguration::Data::createBrowsingContextGroup()
 {
     return BrowsingContextGroup::create();
@@ -111,6 +114,36 @@ void PageConfiguration::setBrowsingContextGroup(RefPtr<BrowsingContextGroup>&& g
     m_data.browsingContextGroup = WTFMove(group);
 }
 
+const std::optional<WebCore::WindowFeatures>& PageConfiguration::windowFeatures() const
+{
+    return m_data.windowFeatures;
+}
+
+void PageConfiguration::setWindowFeatures(WebCore::WindowFeatures&& windowFeatures)
+{
+    m_data.windowFeatures = WTFMove(windowFeatures);
+}
+
+const WebCore::Site& PageConfiguration::openedSite() const
+{
+    return m_data.openedSite;
+}
+
+void PageConfiguration::setOpenedSite(const WebCore::Site& site)
+{
+    m_data.openedSite = site;
+}
+
+const WTF::String& PageConfiguration::openedMainFrameName() const
+{
+    return m_data.openedMainFrameName;
+}
+
+void PageConfiguration::setOpenedMainFrameName(const WTF::String& name)
+{
+    m_data.openedMainFrameName = name;
+}
+
 auto PageConfiguration::openerInfo() const -> const std::optional<OpenerInfo>&
 {
     return m_data.openerInfo;
@@ -122,6 +155,16 @@ void PageConfiguration::setOpenerInfo(std::optional<OpenerInfo>&& info)
 }
 
 bool PageConfiguration::OpenerInfo::operator==(const OpenerInfo&) const = default;
+
+WebCore::SandboxFlags PageConfiguration::initialSandboxFlags() const
+{
+    return m_data.initialSandboxFlags;
+}
+
+void PageConfiguration::setInitialSandboxFlags(WebCore::SandboxFlags sandboxFlags)
+{
+    m_data.initialSandboxFlags = sandboxFlags;
+}
 
 WebProcessPool& PageConfiguration::processPool() const
 {
@@ -210,11 +253,6 @@ void PageConfiguration::setPreferences(RefPtr<WebPreferences>&& preferences)
 WebPageProxy* PageConfiguration::relatedPage() const
 {
     return m_data.relatedPage.get();
-}
-
-void PageConfiguration::setRelatedPage(WeakPtr<WebPageProxy>&& relatedPage)
-{
-    m_data.relatedPage = WTFMove(relatedPage);
 }
 
 WebPageProxy* PageConfiguration::pageToCloneSessionStorageFrom() const
@@ -341,6 +379,23 @@ void PageConfiguration::setApplicationManifest(RefPtr<ApplicationManifest>&& app
 {
     m_data.applicationManifest = WTFMove(applicationManifest);
 }
+#endif
+
+#if ENABLE(APPLE_PAY)
+
+bool PageConfiguration::applePayEnabled() const
+{
+    if (auto applePayEnabledOverride = m_data.applePayEnabledOverride)
+        return *applePayEnabledOverride;
+
+    return preferences().applePayEnabled();
+}
+
+void PageConfiguration::setApplePayEnabled(bool enabled)
+{
+    m_data.applePayEnabledOverride = enabled;
+}
+
 #endif
 
 } // namespace API

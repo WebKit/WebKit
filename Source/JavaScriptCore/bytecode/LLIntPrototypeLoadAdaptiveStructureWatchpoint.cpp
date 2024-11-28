@@ -26,7 +26,7 @@
 #include "config.h"
 #include "LLIntPrototypeLoadAdaptiveStructureWatchpoint.h"
 
-#include "CodeBlock.h"
+#include "CodeBlockInlines.h"
 #include "Instruction.h"
 #include "JSCellInlines.h"
 
@@ -48,6 +48,11 @@ LLIntPrototypeLoadAdaptiveStructureWatchpoint::LLIntPrototypeLoadAdaptiveStructu
 {
 }
 
+LLIntPrototypeLoadAdaptiveStructureWatchpoint::~LLIntPrototypeLoadAdaptiveStructureWatchpoint()
+{
+    ASSERT(!m_owner || !m_owner->wasDestructed());
+}
+
 void LLIntPrototypeLoadAdaptiveStructureWatchpoint::initialize(CodeBlock* codeBlock, const ObjectPropertyCondition& key, BytecodeIndex bytecodeOffset)
 {
     m_owner = codeBlock;
@@ -64,7 +69,8 @@ void LLIntPrototypeLoadAdaptiveStructureWatchpoint::install(VM&)
 
 void LLIntPrototypeLoadAdaptiveStructureWatchpoint::fireInternal(VM& vm, const FireDetail&)
 {
-    if (!m_owner->isLive())
+    ASSERT(!m_owner->wasDestructed());
+    if (m_owner->isPendingDestruction())
         return;
 
     if (m_key.isWatchable(PropertyCondition::EnsureWatchability)) {
@@ -94,6 +100,21 @@ void LLIntPrototypeLoadAdaptiveStructureWatchpoint::fireInternal(VM& vm, const F
             break;
         case OpIteratorNext::getValue:
             clearLLIntGetByIdCache(metadata.m_valueModeMetadata);
+            break;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+        }
+        break;
+    }
+
+    case op_instanceof: {
+        auto& metadata = instruction->as<OpInstanceof>().metadata(m_owner.get());
+        switch (m_bytecodeIndex.get().checkpoint()) {
+        case OpInstanceof::getPrototype:
+            clearLLIntGetByIdCache(metadata.m_hasInstanceModeMetadata);
+            break;
+        case OpInstanceof::instanceof:
+            clearLLIntGetByIdCache(metadata.m_prototypeModeMetadata);
             break;
         default:
             RELEASE_ASSERT_NOT_REACHED();

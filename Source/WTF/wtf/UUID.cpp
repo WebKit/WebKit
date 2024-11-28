@@ -61,7 +61,7 @@ static UInt128 generateCryptographicallyRandomUUIDVersion4()
 {
     UInt128 buffer { };
     static_assert(sizeof(buffer) == 16);
-    cryptographicallyRandomValues({ reinterpret_cast<uint8_t*>(&buffer), sizeof(buffer) });
+    cryptographicallyRandomValues(asMutableByteSpan(buffer));
     return convertRandomUInt128ToUUIDVersion4(buffer);
 }
 
@@ -196,11 +196,11 @@ String bootSessionUUIDString()
     static std::once_flag onceKey;
     std::call_once(onceKey, [] {
         constexpr size_t maxUUIDLength = 37;
-        char uuid[maxUUIDLength];
+        std::array<char, maxUUIDLength> uuid;
         size_t uuidLength = maxUUIDLength;
-        if (sysctlbyname("kern.bootsessionuuid", uuid, &uuidLength, nullptr, 0))
+        if (sysctlbyname("kern.bootsessionuuid", uuid.data(), &uuidLength, nullptr, 0))
             return;
-        bootSessionUUID.construct(std::span { static_cast<const char*>(uuid), uuidLength - 1 });
+        bootSessionUUID.construct(std::span<const char> { uuid }.first(uuidLength - 1));
     });
     return bootSessionUUID;
 #else

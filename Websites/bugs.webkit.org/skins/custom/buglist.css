@@ -1,0 +1,347 @@
+table th,
+.bz_buglist_header th,
+.bz_buglist_header th a {
+    font-size: var(--font-size-small);
+    text-transform: uppercase;
+    color: var(--text-color-coolgray);
+    white-space: nowrap;
+    vertical-align: middle;
+}
+
+p:has(input[type=submit]) {
+    text-align: right;
+}
+
+.bz_buglist tbody td {
+    padding: 0.8rem;
+    border-bottom: 1px solid var(--table-rule-color);
+}
+
+.bz_row_odd, .bz_row_even {
+    background-color: transparent;
+}
+
+.bug-list-meta {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    margin: 0.5rem 0;
+}
+
+.bz_result_count {
+    display: block;
+    font-size: var(--font-size-small);
+    font-weight: 600;
+    color: var(--text-color-coolgray);
+    text-align: right;
+    align-content: center;
+}
+
+.search_description {
+    display: block;
+    font-size: var(--font-size-small);
+    font-weight: 600;
+    color: var(--text-color-coolgray);
+    align-content: center;
+}
+.search_description strong {
+    color: var(--text-color-coolgray);
+}
+
+.search_description li {
+    white-space: nowrap;
+}
+
+th.first-child, td.first-child, a.bz_secure {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+}
+
+table.bz_buglist td, table.bz_buglist th {
+    padding: 0.8rem;
+}
+td.bz_id_column,
+td.bz_changeddate_column {
+    font-family: "SF Mono", monospace;
+    font-size-adjust: 0.53;
+}
+.bz_id_column a {
+    color: var(--link-color);
+    text-decoration: none;
+}
+.bz_short_desc_column a, .bz_short_short_desc_column a {
+    color: var(--link-color);
+    text-decoration: none;
+}
+
+.bz_id_column a:hover,
+.bz_short_desc_column a:hover, .bz_short_short_desc_column a:hover {
+    color: var(--link-color);
+    text-decoration: underline;
+}
+
+tr.bz_secure td.first-child, a.bz_secure {
+    background-image: url("images/secure.svg");
+    background-size: 1.2rem;
+    background-repeat: no-repeat;
+    background-position: 0% 50%;
+    padding-left: 1.2rem;
+}
+
+/* Zero Results */
+
+.zero-results {
+    display: flex;
+}
+
+.zero-results div {
+    align-content: center;
+}
+
+.zero-results div,
+.zero-results img {
+    flex: 1 1 100%;
+}
+
+.zero-results img {
+    width: 100%;
+    height: auto;
+    max-width: 50vw;
+    margin-top: -3rem;
+}
+
+.zero_result_links {
+    margin: 3rem auto;
+    text-align: center;
+    font-size: 100%;
+    line-height: 3;
+    padding: 0;    
+}
+
+.zero_result_links li {
+    display: inline;
+    list-style: none;
+    margin: 0 0.5rem;
+}
+
+/* Bug list Menu */
+
+#xml img,
+.bz_query_links a img {
+    display: none;
+}
+
+#xml,
+.bz_query_links a {
+    position: relative;
+    background-size: 1.2rem;
+    background-position: center;
+    background-repeat: no-repeat;
+    display: inline-block;
+    width: 2.2rem;
+    aspect-ratio: 1 / 1;
+    padding: 0.3rem;
+
+    vertical-align: bottom;
+}
+
+#xml {
+    top: -2px;
+    background-color: var(--button-background-color);
+}
+
+#xml, xml:after {
+    width: 2.8rem;
+}
+
+#xml:hover {
+    background-color: var(--submit-button-background-color);
+}
+
+#xml:after,
+.bz_query_links a:after {
+    content: " ";
+    font-size: 1.2rem;
+    position: absolute;
+    width: 2.2rem;
+    aspect-ratio: 1 / 1;
+    mask-size: 1.6rem;
+    left: 0;
+    mask-position: center;
+    mask-repeat: no-repeat;
+    background-color: var(--link-color);
+    padding: 0 0.3rem;
+
+}
+
+#xml:hover:after,
+.bz_query_links a:hover:after {
+    background-color: var(--inverse-text-color);
+    
+}
+
+#xml:after {
+    top: 0;
+    padding: 0.3rem;
+    mask-image: url("/images/xml.svg");
+}
+
+.csv,
+.bz_query_links a:nth-child(1):after {
+    mask-image: url("/images/csv.svg");
+}
+
+.rss,
+.bz_query_links a:nth-child(2):after {
+    mask-image: url("/images/rss.svg");
+}
+
+.cal,
+.bz_query_links a:nth-child(3):after {
+    mask-image: url("/images/calendar.svg");
+}
+
+#bugzilla-body .bz_query_single_product {
+    text-align: left;
+    margin: 1.5rem 0;
+}
+
+.bz_query_single_product a {
+    font-size: 1.1rem;
+    display: inline-block;
+    white-space: wrap;
+    box-sizing: border-box;
+    text-align: center;
+}
+
+
+/** Bug Tables **/
+
+#bugzilla-body {
+    max-width: calc(100vw - 2rem);
+    overflow: scroll;
+}
+
+.bz_buglist {
+    width: 100%;
+    margin: 0 auto;
+    table-layout: fixed;
+    word-wrap: break-word;
+}
+
+.bz_buglist .bz_row_odd,
+.bz_buglist .bz_row_even {
+    color: var(--text-color);
+}
+
+.bz_buglist th,
+.bz_buglist td {
+     overflow: hidden;
+     text-overflow: ellipsis;
+     white-space: nowrap;
+}
+
+.bz_buglist .bz_id_column {
+    width: 5.8rem;
+}
+
+.bz_buglist .bz_product_column {
+    width: 6rem;
+}
+
+.bz_buglist .bz_component_column {
+    width: 9.2%;
+}
+
+.bz_buglist .bz_bug_status_column {
+    width: 5rem;
+}
+
+.bz_buglist .bz_resolution_column {
+    width: 5rem;
+}
+
+.bz_buglist .bz_reporter_column,
+.bz_buglist .bz_assigned_to_column {
+    width: 12%;
+}
+
+.bz_buglist .bz_short_desc_column {
+    white-space: normal;
+}
+
+.bz_buglist .bz_changeddate_column {
+    width: 10rem;
+    text-align: right;
+    padding-right: 0;
+}
+
+@media only screen and (max-width: 1500px) {
+    .bz_buglist .bz_product_column {
+        display: none;
+    }
+
+}
+
+@media only screen and (max-width: 1300px) {
+    .bz_buglist .bz_assigned_to_column {
+        display: none;
+    }
+}
+
+@media only screen and (max-width: 900px) {
+    .bz_buglist .bz_component_column {
+        display: none;
+    }
+}
+
+@media only screen and (max-width: 730px) {
+    .bz_buglist .bz_bug_status_column {
+        display: none;
+    }
+    #header,
+    #bugzilla-body {
+        padding: 2vw;
+    }
+}
+
+@media only screen and (max-width: 600px) {
+    .bz_buglist th, .bz_buglist td {
+        display: none;
+    }
+    
+    .bz_buglist .bz_id_column {
+    }
+
+    .bz_buglist .bz_id_column,
+    .bz_buglist .bz_short_desc_column {
+        display: table-cell;
+        vertical-align: top;
+        
+    }
+
+    .bz_buglist .bz_short_desc_column {
+        max-width: 85vw;
+    }
+}
+
+@media only screen and (max-width: 428px) {
+    #header,
+    #bugzilla-body {
+        padding: 2vw;
+    }
+    
+    .bz_buglist th, .bz_buglist td {
+        font-size: 1.2rem;
+    }
+    
+    .bug-list-meta {
+        grid-template-columns: 1fr;
+        margin: 0.5rem 0;
+    }
+    
+    .bz_query_single_product a {
+        width: 100%;
+        text-align: center;
+    }
+
+}

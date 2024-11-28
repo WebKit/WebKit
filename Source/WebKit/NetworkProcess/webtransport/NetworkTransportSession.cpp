@@ -73,7 +73,7 @@ void NetworkTransportSession::sendStreamSendBytes(WebTransportStreamIdentifier i
 
 void NetworkTransportSession::streamSendBytes(WebTransportStreamIdentifier identifier, std::span<const uint8_t> bytes, bool withFin, CompletionHandler<void()>&& completionHandler)
 {
-    if (auto* stream = m_bidirectionalStreams.get(identifier))
+    if (RefPtr stream = m_bidirectionalStreams.get(identifier))
         stream->sendBytes(bytes, withFin);
     else if (auto* stream = m_sendStreams.get(identifier))
         stream->sendBytes(bytes, withFin);
@@ -128,6 +128,14 @@ void NetworkTransportSession::receiveIncomingUnidirectionalStream()
 void NetworkTransportSession::receiveBidirectionalStream()
 {
     // FIXME: Implement and send Messages::WebTransportSession::ReceiveBidirectionalStream.
+}
+
+std::optional<SharedPreferencesForWebProcess> NetworkTransportSession::sharedPreferencesForWebProcess() const
+{
+    if (auto connectionToWebProcess = m_connectionToWebProcess.get())
+        return connectionToWebProcess->sharedPreferencesForWebProcess();
+
+    return std::nullopt;
 }
 
 }

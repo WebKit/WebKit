@@ -54,7 +54,6 @@
 #import "PlatformStrategies.h"
 #import "RenderBlock.h"
 #import "RenderImage.h"
-#import "RuntimeApplicationChecks.h"
 #import "SharedBuffer.h"
 #import "WebContentReader.h"
 #import "WebNSAttributedStringExtras.h"
@@ -62,7 +61,9 @@
 #import <AppKit/AppKit.h>
 #import <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/RuntimeApplicationChecks.h>
 #import <wtf/cocoa/NSURLExtras.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 
 namespace WebCore {
 
@@ -183,10 +184,10 @@ RefPtr<SharedBuffer> Editor::dataSelectionForPasteboard(const String& pasteboard
         return selectionInWebArchiveFormat();
 
     if (pasteboardType == String(legacyRTFDPasteboardType()))
-        return dataInRTFDFormat(attributedString(*adjustedSelectionRange()).nsAttributedString().get());
+        return dataInRTFDFormat(attributedString(*adjustedSelectionRange(), IgnoreUserSelectNone::Yes).nsAttributedString().get());
 
     if (pasteboardType == String(legacyRTFPasteboardType())) {
-        auto string = attributedString(*adjustedSelectionRange()).nsAttributedString();
+        auto string = attributedString(*adjustedSelectionRange(), IgnoreUserSelectNone::Yes).nsAttributedString();
         // FIXME: Why is this stripping needed here, but not in writeSelectionToPasteboard?
         if ([string containsAttachments])
             string = attributedStringByStrippingAttachmentCharacters(string.get());

@@ -61,7 +61,7 @@ struct _WebKitBackForwardListPrivate {
     BackForwardListItemsMap itemsMap;
 };
 
-static guint signals[LAST_SIGNAL] = { 0, };
+static std::array<unsigned, LAST_SIGNAL> signals;
 
 WEBKIT_DEFINE_FINAL_TYPE(WebKitBackForwardList, webkit_back_forward_list, G_TYPE_OBJECT, GObject)
 

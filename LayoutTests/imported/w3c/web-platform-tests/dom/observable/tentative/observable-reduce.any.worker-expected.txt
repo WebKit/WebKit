@@ -1,0 +1,21 @@
+
+FAIL reduce(): Reduces the values of the Observable, starting with the initial seed value promise_test: Unhandled rejection with value: object "TypeError: source.reduce is not a function. (In 'source.reduce((acc, value, index) => {
+    reducerArguments.push([acc, value, index]);
+    return acc + value;
+  }, 0)', 'source.reduce' is undefined)"
+FAIL reduce(): Rejects if the source observable emits an error assert_equals: expected object "Error: from the source" but got object "TypeError: source.reduce is not a function. (In 'source.reduce((acc, value) => acc + value, 0)', 'source.reduce' is undefined)"
+FAIL reduce(): Seeds with the first value of the source, if no initial value is provided promise_test: Unhandled rejection with value: object "TypeError: source.reduce is not a function. (In 'source.reduce((acc, value, index) => {
+    reducerArguments.push([acc, value, index]);
+    return acc + value;
+  })', 'source.reduce' is undefined)"
+FAIL reduce(): Errors thrown in reducer reject the promise and abort the source assert_equals: expected object "Error: from the reducer" but got object "TypeError: source.reduce is not a function. (In 'source.reduce((acc, value) => {
+      if (value === 2) {
+        logs.push('throw error');
+        throw error;
+      }
+      return acc + value;
+    }, 0)', 'source.reduce' is undefined)"
+FAIL reduce(): When source is empty, promise resolves with initial value promise_test: Unhandled rejection with value: object "TypeError: source.reduce is not a function. (In 'source.reduce(() => 'reduced', 'seed')', 'source.reduce' is undefined)"
+PASS reduce(): When source is empty, AND no seed value is provided, the promise rejects with a TypeError
+FAIL reduce(): Reject with an AbortError if the subscription is aborted before the source completes assert_true: expected true got false
+

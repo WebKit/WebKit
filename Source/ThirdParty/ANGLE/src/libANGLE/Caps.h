@@ -728,9 +728,6 @@ struct DeviceExtensions
     // EGL_ANGLE_device_cgl
     bool deviceCGL = false;
 
-    // EGL_ANGLE_device_eagl
-    bool deviceEAGL = false;
-
     // EGL_ANGLE_device_metal
     bool deviceMetal = false;
 
@@ -796,9 +793,6 @@ struct ClientExtensions
 
     // EGL_ANGLE_platform_angle_metal
     bool platformANGLEMetal = false;
-
-    // EGL_ANGLE_platform_angle_device_context_volatile_eagl
-    bool platformANGLEDeviceContextVolatileEagl = false;
 
     // EGL_ANGLE_platform_angle_device_context_volatile_cgl
     bool platformANGLEDeviceContextVolatileCgl = false;

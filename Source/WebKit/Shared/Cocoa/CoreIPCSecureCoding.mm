@@ -31,7 +31,7 @@
 #import "ArgumentCodersCocoa.h"
 #import "AuxiliaryProcessCreationParameters.h"
 #import "WKCrashReporter.h"
-#import <WebCore/RuntimeApplicationChecks.h>
+#import <wtf/RuntimeApplicationChecks.h>
 #import <wtf/TZoneMallocInlines.h>
 #import <wtf/text/StringHash.h>
 
@@ -44,7 +44,7 @@ static std::unique_ptr<HashSet<String>>& internalClassNamesExemptFromSecureCodin
     static dispatch_once_t onceToken;
     static NeverDestroyed<std::unique_ptr<HashSet<String>>> exemptClassNames;
     dispatch_once(&onceToken, ^{
-        if (WebCore::isInAuxiliaryProcess())
+        if (isInAuxiliaryProcess())
             return;
 
         id object = [[NSUserDefaults standardUserDefaults] objectForKey:@"WebKitCrashOnSecureCodingWithExemptClassesKey"];
@@ -73,7 +73,7 @@ const HashSet<String>* classNamesExemptFromSecureCodingCrash()
 
 void applyProcessCreationParameters(const AuxiliaryProcessCreationParameters& parameters)
 {
-    RELEASE_ASSERT(WebCore::isInAuxiliaryProcess());
+    RELEASE_ASSERT(isInAuxiliaryProcess());
 
     auto& exemptClassNames = internalClassNamesExemptFromSecureCodingCrash();
     RELEASE_ASSERT(!exemptClassNames);

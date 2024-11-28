@@ -32,8 +32,13 @@
 #import "FloatRoundedRect.h"
 #import "GraphicsContext.h"
 #import "MenuListButtonPart.h"
+#import <wtf/TZoneMallocInlines.h>
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(MenuListButtonMac);
 
 MenuListButtonMac::MenuListButtonMac(MenuListButtonPart& owningPart, ControlFactoryMac& controlFactory)
     : ControlMac(owningPart, controlFactory)
@@ -220,5 +225,7 @@ void MenuListButtonMac::draw(GraphicsContext& context, const FloatRoundedRect& b
 }
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // PLATFORM(MAC)

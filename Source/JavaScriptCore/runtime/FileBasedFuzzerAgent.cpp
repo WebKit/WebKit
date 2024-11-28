@@ -32,6 +32,8 @@
 #include <wtf/AnsiColors.h>
 #include <wtf/TZoneMallocInlines.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(FileBasedFuzzerAgent);
@@ -90,6 +92,8 @@ SpeculatedType FileBasedFuzzerAgent::getPredictionInternal(CodeBlock* codeBlock,
     case op_get_by_val_with_this:
     case op_construct:
     case op_construct_varargs:
+    case op_super_construct:
+    case op_super_construct_varargs:
     case op_call_varargs:
     case op_call_direct_eval:
     case op_tail_call:
@@ -113,3 +117,5 @@ SpeculatedType FileBasedFuzzerAgent::getPredictionInternal(CodeBlock* codeBlock,
 }
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

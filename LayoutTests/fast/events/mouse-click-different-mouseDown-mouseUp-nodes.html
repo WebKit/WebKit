@@ -43,11 +43,11 @@ document.getElementById("childDiv").onclick = function() {
     childGotClickEvent = true;
 };
 
-onload = function() {
+onload = async function() {
     if (window.eventSender) {
-        eventSender.mouseMoveTo(10, 300);
-        eventSender.mouseDown();
-        eventSender.mouseUp();    
+        await eventSender.asyncMouseMoveTo(10, 300);
+        await eventSender.asyncMouseDown();
+        await eventSender.asyncMouseUp();    
     }
 
     setTimeout(function() {

@@ -51,10 +51,10 @@ class ThreadableLoaderClient : public CanMakeWeakPtr<ThreadableLoaderClient>, pu
 public:
     virtual void didSendData(unsigned long long /*bytesSent*/, unsigned long long /*totalBytesToBeSent*/) { }
 
-    virtual void didReceiveResponse(ScriptExecutionContextIdentifier, ResourceLoaderIdentifier, const ResourceResponse&) { }
+    virtual void didReceiveResponse(ScriptExecutionContextIdentifier, std::optional<ResourceLoaderIdentifier>, const ResourceResponse&) { }
     virtual void didReceiveData(const SharedBuffer&) { }
-    virtual void didFinishLoading(ScriptExecutionContextIdentifier, ResourceLoaderIdentifier, const NetworkLoadMetrics&) { }
-    virtual void didFail(ScriptExecutionContextIdentifier, const ResourceError&) { }
+    virtual void didFinishLoading(ScriptExecutionContextIdentifier, std::optional<ResourceLoaderIdentifier>, const NetworkLoadMetrics&) { }
+    virtual void didFail(std::optional<ScriptExecutionContextIdentifier>, const ResourceError&) { }
     virtual void didFinishTiming(const ResourceTiming&) { }
     virtual void notifyIsDone(bool) { ASSERT_NOT_REACHED(); }
 

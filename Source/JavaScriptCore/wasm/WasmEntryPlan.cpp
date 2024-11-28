@@ -215,26 +215,22 @@ void EntryPlan::compileFunctions(CompilationEffort effort)
         }
 
         for (uint32_t index = functionIndex; index < functionIndexEnd; ++index)
-            compileFunction(index);
+            compileFunction(FunctionCodeIndex(index));
 
         if (!areWasmToWasmStubsCompiled) {
-#if ENABLE(JIT)
             if (UNLIKELY(!generateWasmToWasmStubs())) {
                 Locker locker { m_lock };
                 fail(makeString("Out of executable memory at stub generation"_s));
                 return;
             }
-#endif
         }
 
         if (!areWasmToJSStubsCompiled) {
-#if ENABLE(JIT)
             if (UNLIKELY(!generateWasmToJSStubs())) {
                 Locker locker { m_lock };
                 fail(makeString("Out of executable memory at stub generation"_s));
                 return;
             }
-#endif
         }
     }
 }
@@ -272,21 +268,17 @@ bool EntryPlan::completeSyncIfPossible()
 void EntryPlan::generateStubsIfNecessary()
 {
     if (!std::exchange(m_areWasmToWasmStubsCompiled, true)) {
-#if ENABLE(JIT)
         if (UNLIKELY(!generateWasmToWasmStubs())) {
             fail(makeString("Out of executable memory at stub generation"_s));
             return;
         }
-#endif
     }
 
     if (!std::exchange(m_areWasmToJSStubsCompiled, true)) {
-#if ENABLE(JIT)
         if (UNLIKELY(!generateWasmToJSStubs())) {
             fail(makeString("Out of executable memory at stub generation"_s));
             return;
         }
-#endif
     }
 }
 
@@ -301,7 +293,7 @@ bool EntryPlan::generateWasmToWasmStubs()
             continue;
         dataLogLnIf(WasmEntryPlanInternal::verbose, "Processing import function number "_s, importFunctionIndex, ": "_s, makeString(import->module), ": "_s, makeString(import->field));
 #if ENABLE(JIT)
-        if (Options::useJIT()) {
+        if (Options::useWasmJIT()) {
             auto binding = wasmToWasm(importFunctionIndex);
             if (UNLIKELY(!binding))
                 return false;
@@ -324,7 +316,7 @@ bool EntryPlan::generateWasmToJSStubs()
     for (unsigned importIndex = 0; importIndex < m_moduleInformation->importFunctionCount(); ++importIndex) {
 #if ENABLE(JIT)
         Wasm::TypeIndex typeIndex = m_moduleInformation->importFunctionTypeIndices.at(importIndex);
-        if (Options::useJIT()) {
+        if (Options::useWasmJIT()) {
             auto binding = wasmToJS(typeIndex, importIndex);
             if (UNLIKELY(!binding))
                 return false;

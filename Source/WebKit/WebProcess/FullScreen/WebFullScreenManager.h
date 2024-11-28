@@ -49,6 +49,7 @@ class Element;
 class WeakPtrImplWithEventTargetData;
 class GraphicsLayer;
 class HTMLVideoElement;
+class RenderImage;
 }
 
 namespace WebKit {
@@ -66,6 +67,9 @@ public:
 
     bool supportsFullScreenForElement(const WebCore::Element&, bool withKeyboard);
     void enterFullScreenForElement(WebCore::Element*, WebCore::HTMLMediaElementEnums::VideoFullscreenMode);
+#if ENABLE(QUICKLOOK_FULLSCREEN)
+    void updateImageSource(WebCore::Element&);
+#endif // ENABLE(QUICKLOOK_FULLSCREEN)
     void exitFullScreenForElement(WebCore::Element*);
 
     void willEnterFullScreen(WebCore::HTMLMediaElementEnums::VideoFullscreenMode = WebCore::HTMLMediaElementEnums::VideoFullscreenModeStandard);
@@ -93,8 +97,6 @@ protected:
     void setFullscreenInsets(const WebCore::FloatBoxExtent&);
     void setFullscreenAutoHideDuration(Seconds);
 
-    void didReceiveWebFullScreenManagerMessage(IPC::Connection&, IPC::Decoder&);
-
     WebCore::IntRect m_initialFrame;
     WebCore::IntRect m_finalFrame;
     WebCore::IntPoint m_scrollPosition;
@@ -102,6 +104,11 @@ protected:
     Ref<WebPage> m_page;
     RefPtr<WebCore::Element> m_element;
     WeakPtr<WebCore::Element, WebCore::WeakPtrImplWithEventTargetData> m_elementToRestore;
+#if ENABLE(QUICKLOOK_FULLSCREEN)
+    WebCore::FloatSize m_oldSize;
+    double m_scaleFactor { 1 };
+    double m_minEffectiveWidth { 0 };
+#endif
 #if ENABLE(VIDEO)
     RefPtr<WebCore::HTMLVideoElement> m_pipStandbyElement;
 #endif
@@ -116,7 +123,7 @@ private:
 
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const { return m_logger; }
-    const void* logIdentifier() const { return m_logIdentifier; }
+    uint64_t logIdentifier() const { return m_logIdentifier; }
     ASCIILiteral logClassName() const { return "WebFullScreenManager"_s; }
     WTFLogChannel& logChannel() const;
 #endif
@@ -138,6 +145,8 @@ private:
 #endif // ENABLE(VIDEO)
 
 #if ENABLE(QUICKLOOK_FULLSCREEN)
+    enum class IsUpdating : bool { No, Yes };
+    FullScreenMediaDetails getImageMediaDetails(CheckedPtr<WebCore::RenderImage>, IsUpdating);
     bool m_willUseQuickLookForFullscreen { false };
 #endif
 
@@ -145,7 +154,7 @@ private:
     bool m_inWindowFullScreenMode { false };
 #if !RELEASE_LOG_DISABLED
     Ref<const Logger> m_logger;
-    const void* m_logIdentifier;
+    const uint64_t m_logIdentifier;
 #endif
 };
 

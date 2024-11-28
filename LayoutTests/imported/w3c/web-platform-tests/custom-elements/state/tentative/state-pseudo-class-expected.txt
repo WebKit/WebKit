@@ -1,9 +1,0 @@
-
-PASS :state() parsing passes
-PASS :state() parsing failures
-PASS :state(foo) serialization
-PASS :state(foo) in simple cases
-PASS :state(foo) and other pseudo classes
-FAIL :state(foo) and ::part() assert_equals: ::part() followed by :state(innerFoo) expected "0.5" but got "0"
-PASS :state(foo) and :host()
-

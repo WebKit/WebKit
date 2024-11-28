@@ -113,9 +113,6 @@ class StrokeClosedArc;
 class StrokeQuadCurve;
 class StrokeBezierCurve;
 #endif
-#if ENABLE(VIDEO)
-class PaintFrameForMedia;
-#endif
 #if USE(CG)
 class ApplyFillPattern;
 class ApplyStrokePattern;
@@ -193,9 +190,6 @@ using Item = std::variant
     , StrokeQuadCurve
     , StrokeBezierCurve
 #endif
-#if ENABLE(VIDEO)
-    , PaintFrameForMedia
-#endif
 #if USE(CG)
     , ApplyFillPattern
     , ApplyStrokePattern
@@ -214,6 +208,10 @@ struct ApplyItemResult {
     std::optional<RenderingResourceIdentifier> resourceIdentifier;
 };
 
+enum class ReplayOption : uint8_t {
+    FlushImagesAndWaitForCompletion = 1 << 0,
+};
+
 enum class AsTextFlag : uint8_t {
     IncludePlatformOperations      = 1 << 0,
     IncludeResourceIdentifiers     = 1 << 1,
@@ -221,7 +219,7 @@ enum class AsTextFlag : uint8_t {
 
 bool isValid(const Item&);
 
-ApplyItemResult applyItem(GraphicsContext&, const ResourceHeap&, ControlFactory&, const Item&);
+ApplyItemResult applyItem(GraphicsContext&, const ResourceHeap&, ControlFactory&, const Item&, OptionSet<ReplayOption>);
 
 bool shouldDumpItem(const Item&, OptionSet<AsTextFlag>);
 

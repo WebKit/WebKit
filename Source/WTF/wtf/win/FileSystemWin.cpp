@@ -118,10 +118,10 @@ CString fileSystemRepresentation(const String& path)
     auto characters = StringView(path).upconvertedCharacters();
     int size = WideCharToMultiByte(CP_ACP, 0, wcharFrom(characters), path.length(), 0, 0, 0, 0);
 
-    char* buffer;
+    std::span<char> buffer;
     CString string = CString::newUninitialized(size, buffer);
 
-    WideCharToMultiByte(CP_ACP, 0, wcharFrom(characters), path.length(), buffer, size, 0, 0);
+    WideCharToMultiByte(CP_ACP, 0, wcharFrom(characters), path.length(), buffer.data(), buffer.size(), 0, 0);
 
     return string;
 }
@@ -160,7 +160,7 @@ static String generateTemporaryPath(const Function<bool(const String&)>& action)
 {
     wchar_t tempPath[MAX_PATH];
     int tempPathLength = ::GetTempPathW(std::size(tempPath), tempPath);
-    if (tempPathLength <= 0 || tempPathLength > std::size(tempPath))
+    if (tempPathLength <= 0 || static_cast<size_t>(tempPathLength) >= std::size(tempPath))
         return String();
 
     String proposedPath;
@@ -346,8 +346,8 @@ std::optional<uint32_t> volumeFileBlockSize(const String& path)
 
 MappedFileData::~MappedFileData()
 {
-    if (m_fileData)
-        UnmapViewOfFile(m_fileData);
+    if (m_fileData.data())
+        UnmapViewOfFile(m_fileData.data());
 }
 
 bool MappedFileData::mapFileHandle(PlatformFileHandle handle, FileOpenMode openMode, MappedFileMode)
@@ -356,13 +356,11 @@ bool MappedFileData::mapFileHandle(PlatformFileHandle handle, FileOpenMode openM
         return false;
 
     auto size = fileSize(handle);
-    if (!size || *size > std::numeric_limits<size_t>::max() || *size > std::numeric_limits<decltype(m_fileSize)>::max()) {
+    if (!size || *size > std::numeric_limits<size_t>::max())
         return false;
-    }
 
-    if (!*size) {
+    if (!*size)
         return true;
-    }
 
     DWORD pageProtection = PAGE_READONLY;
     DWORD desiredAccess = FILE_MAP_READ;
@@ -385,10 +383,11 @@ bool MappedFileData::mapFileHandle(PlatformFileHandle handle, FileOpenMode openM
     if (!m_fileMapping)
         return false;
 
-    m_fileData = MapViewOfFile(m_fileMapping.get(), desiredAccess, 0, 0, *size);
-    if (!m_fileData)
+    auto* data = MapViewOfFile(m_fileMapping.get(), desiredAccess, 0, 0, *size);
+    if (!data)
         return false;
-    m_fileSize = *size;
+
+    m_fileData = { static_cast<uint8_t*>(data), static_cast<size_t>(*size) };
     return true;
 }
 

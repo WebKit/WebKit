@@ -31,6 +31,7 @@
 #import "APIAttachment.h"
 #import "APIContextMenuClient.h"
 #import "CocoaImage.h"
+#import "EditorState.h"
 #import "ImageAnalysisUtilities.h"
 #import "MenuUtilities.h"
 #import "PageClientImplMac.h"
@@ -413,23 +414,6 @@ void WebContextMenuProxyMac::removeBackgroundFromControlledImage()
 #endif // ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
 }
 
-#if !HAVE(SHARING_SERVICE_PICKER_STANDARD_SHARE_MENU_ITEM)
-static void getStandardShareMenuItem(NSArray *items, void (^completionHandler)(NSMenuItem *))
-{
-    // FIXME (<rdar://problem/54551500>): Replace this with the async variant of +[NSMenuItem standardShareMenuItemForItems:] when it's available.
-    auto sharingServicePicker = adoptNS([[NSSharingServicePicker alloc] initWithItems:items]);
-    [sharingServicePicker setStyle:NSSharingServicePickerStyleMenu];
-    [sharingServicePicker getMenuWithCompletion:^(NSMenu *shareMenu) {
-        ASSERT(isMainThread());
-        shareMenu.delegate = (id <NSMenuDelegate>)sharingServicePicker.get();
-        auto shareMenuItem = adoptNS([[NSMenuItem alloc] initWithTitle:WEB_UI_STRING("Share", "Title for Share context menu item.") action:nil keyEquivalent:@""]);
-        [shareMenuItem setRepresentedObject:sharingServicePicker.get()];
-        [shareMenuItem setSubmenu:shareMenu];
-        completionHandler(shareMenuItem.get());
-    }];
-}
-#endif
-
 void WebContextMenuProxyMac::getShareMenuItem(CompletionHandler<void(NSMenuItem *)>&& completionHandler)
 {
     ASSERT(m_context.webHitTestResultData());
@@ -451,16 +435,12 @@ void WebContextMenuProxyMac::getShareMenuItem(CompletionHandler<void(NSMenuItem 
 
     if (hitTestData.imageSharedMemory) {
         if (auto image = adoptNS([[NSImage alloc] initWithData:hitTestData.imageSharedMemory->toNSData().get()])) {
-#if HAVE(NSPREVIEWREPRESENTINGACTIVITYITEM)
             NSString *title = hitTestData.imageText;
             if (!title.length)
                 title = WEB_UI_NSSTRING(@"Image", "Fallback title for images in the share sheet");
 
             auto activityItem = adoptNS([[NSPreviewRepresentingActivityItem alloc] initWithItem:image.get() title:title image:image.get() icon:nil]);
             [items addObject:activityItem.get()];
-#else
-            [items addObject:image.get()];
-#endif
         }
     }
 
@@ -472,35 +452,11 @@ void WebContextMenuProxyMac::getShareMenuItem(CompletionHandler<void(NSMenuItem 
         return;
     }
 
-#if HAVE(SHARING_SERVICE_PICKER_STANDARD_SHARE_MENU_ITEM)
     auto sharingServicePicker = adoptNS([[NSSharingServicePicker alloc] initWithItems:items.get()]);
     NSMenuItem *shareMenuItem = [sharingServicePicker standardShareMenuItem];
     [shareMenuItem setRepresentedObject:sharingServicePicker.get()];
     shareMenuItem.identifier = _WKMenuItemIdentifierShareMenu;
     completionHandler(shareMenuItem);
-#else
-    getStandardShareMenuItem(items.get(), makeBlockPtr([completionHandler = WTFMove(completionHandler), protectedThis = Ref { *this }, this](NSMenuItem *item) mutable {
-        if (!item) {
-            completionHandler(nil);
-            return;
-        }
-
-        NSSharingServicePicker *sharingServicePicker = item.representedObject;
-        WKSharingServicePickerDelegate *sharingServicePickerDelegate = WKSharingServicePickerDelegate.sharedSharingServicePickerDelegate;
-        sharingServicePicker.delegate = sharingServicePickerDelegate;
-
-        sharingServicePickerDelegate.filtersEditingServices = NO;
-        sharingServicePickerDelegate.handlesEditingReplacement = NO;
-        sharingServicePickerDelegate.menuProxy = this;
-
-        // Setting the picker lets the delegate retain it to keep it alive, but this picker is kept alive by the menu item.
-        sharingServicePickerDelegate.picker = nil;
-
-        item.identifier = _WKMenuItemIdentifierShareMenu;
-
-        completionHandler(item);
-    }).get());
-#endif
 }
 #endif
 
@@ -605,8 +561,8 @@ static NSString *menuItemIdentifier(const WebCore::ContextMenuAction action)
     case ContextMenuItemTagAddHighlightToNewQuickNote:
         return _WKMenuItemIdentifierAddHighlightToNewQuickNote;
 
-    case ContextMenuItemTagCopyLinkToHighlight:
-        return _WKMenuItemIdentifierCopyLinkToHighlight;
+    case ContextMenuItemTagCopyLinkWithHighlight:
+        return _WKMenuItemIdentifierCopyLinkWithHighlight;
 
     case ContextMenuItemTagOpenFrameInNewWindow:
         return _WKMenuItemIdentifierOpenFrameInNewWindow;
@@ -864,11 +820,35 @@ void WebContextMenuProxyMac::getContextMenuItem(const WebContextMenuItemData& it
         // FIXME: (rdar://127608508) Remove this `respondsToSelector` check when possible.
         if ([NSMenuItem.class respondsToSelector:@selector(standardWritingToolsMenuItem)]) {
             RetainPtr menuItem = [NSMenuItem standardWritingToolsMenuItem];
+            [[menuItem submenu] setAutoenablesItems:NO];
 
             for (NSMenuItem *subItem in [menuItem submenu].itemArray) {
                 if (subItem.isSeparatorItem)
                     continue;
 
+                bool shouldEnableItem = [&] {
+                    auto tag = [subItem tag];
+                    if (tag == WTRequestedToolIndex)
+                        return true;
+
+                    bool editorStateIsContentEditable = false;
+                    bool allowProofreadingAndRewritingTools = true;
+
+                    if (RefPtr page = this->page()) {
+                        auto& editorState = page->editorState();
+                        editorStateIsContentEditable = editorState.isContentEditable;
+
+                        if (editorStateIsContentEditable)
+                            allowProofreadingAndRewritingTools = editorState.hasPostLayoutData() && !editorState.postLayoutData->paragraphContextForCandidateRequest.isEmpty();
+                    }
+
+                    if (tag == WTRequestedToolCompose)
+                        return editorStateIsContentEditable;
+
+                    return allowProofreadingAndRewritingTools;
+                }();
+
+                subItem.enabled = static_cast<BOOL>(shouldEnableItem);
                 subItem.target = WKMenuTarget.sharedMenuTarget;
             }
 

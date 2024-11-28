@@ -333,5 +333,5 @@ void wgpuSamplerRelease(WGPUSampler sampler)
 
 void wgpuSamplerSetLabel(WGPUSampler sampler, const char* label)
 {
-    WebGPU::fromAPI(sampler).setLabel(WebGPU::fromAPI(label));
+    WebGPU::protectedFromAPI(sampler)->setLabel(WebGPU::fromAPI(label));
 }

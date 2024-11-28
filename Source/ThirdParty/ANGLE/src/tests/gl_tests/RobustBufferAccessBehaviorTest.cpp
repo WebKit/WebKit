@@ -48,8 +48,7 @@ class RobustBufferAccessBehaviorTest : public ANGLETest<>
         Library *driverLib = ANGLETestEnvironment::GetDriverLibrary(GLESDriverType::AngleEGL);
 
         const PlatformParameters &params = GetParam();
-        mEGLWindow = EGLWindow::New(params.clientType, params.majorVersion, params.minorVersion,
-                                    params.profileMask);
+        mEGLWindow                       = EGLWindow::New(params.majorVersion, params.minorVersion);
         if (!mEGLWindow->initializeDisplay(mOSWindow, driverLib, GLESDriverType::AngleEGL,
                                            GetParam().eglParameters))
         {

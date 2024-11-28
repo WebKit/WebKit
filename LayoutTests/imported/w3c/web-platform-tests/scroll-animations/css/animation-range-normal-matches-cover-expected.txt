@@ -1,3 +1,3 @@
 
-FAIL Changing the animation range updates the play state assert_equals: Expecting 2 animations expected 2 but got 0
+FAIL Changing the animation range updates the play state assert_approx_equals: values do not match for "currentTime at start of normal range" expected 0 +/- 0.125 but got 100
 

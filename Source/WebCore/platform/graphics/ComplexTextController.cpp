@@ -43,6 +43,8 @@
 #include <CoreText/CoreText.h>
 #endif
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(ComplexTextController);
@@ -316,6 +318,7 @@ void ComplexTextController::collectComplexTextRuns()
     bool dontSynthesizeSmallCaps = !m_font.fontDescription().hasAutoFontSynthesisSmallCaps();
     bool engageAllSmallCapsProcessing = fontVariantCaps == FontVariantCaps::AllSmall || fontVariantCaps == FontVariantCaps::AllPetite;
     bool engageSmallCapsProcessing = engageAllSmallCapsProcessing || fontVariantCaps == FontVariantCaps::Small || fontVariantCaps == FontVariantCaps::Petite;
+    auto shouldProcessTextSpacingTrim = !m_font.textSpacingTrim().isSpaceAll();
 
     if (engageAllSmallCapsProcessing || engageSmallCapsProcessing)
         m_smallCapsBuffer.resize(m_end);
@@ -323,10 +326,11 @@ void ComplexTextController::collectComplexTextRuns()
     unsigned currentIndex = 0;
     unsigned indexOfFontTransition = 0;
 
-    const Font* font = nullptr;
-    const Font* nextFont = nullptr;
-    const Font* synthesizedFont = nullptr;
-    const Font* smallSynthesizedFont = nullptr;
+    RefPtr<const Font> font;
+    RefPtr<const Font> nextFont;
+    RefPtr<const Font> synthesizedFont;
+    RefPtr<const Font> smallSynthesizedFont;
+    RefPtr<const Font> halfWidthFont;
 
     CachedTextBreakIterator graphemeClusterIterator(m_run.text(), { }, TextBreakIterator::CharacterMode { }, m_font.fontDescription().computedLocale());
 
@@ -338,11 +342,17 @@ void ComplexTextController::collectComplexTextRuns()
     // would need to be updated accordingly too.
     nextFont = m_font.fontForCombiningCharacterSequence(baseOfString.first(currentIndex));
 
+    if (shouldProcessTextSpacingTrim && nextFont && !nextFont->isSystemFontFallbackPlaceholder()) {
+        TextSpacing::CharactersData charactersData = { .currentCharacter = baseCharacter, .currentCharacterClass = TextSpacing::characterClass(baseCharacter) };
+        halfWidthFont = TextSpacing::getHalfWidthFontIfNeeded(*nextFont, m_font.textSpacingTrim(), charactersData);
+        nextFont = halfWidthFont ? halfWidthFont : nextFont;
+    }
+
     bool isSmallCaps = false;
     bool nextIsSmallCaps = false;
 
     auto capitalizedBase = capitalized(baseCharacter);
-    if (shouldSynthesizeSmallCaps(dontSynthesizeSmallCaps, nextFont, baseCharacter, capitalizedBase, fontVariantCaps, engageAllSmallCapsProcessing)) {
+    if (shouldSynthesizeSmallCaps(dontSynthesizeSmallCaps, nextFont.get(), baseCharacter, capitalizedBase, fontVariantCaps, engageAllSmallCapsProcessing)) {
         synthesizedFont = &nextFont->noSynthesizableFeaturesFont();
         smallSynthesizedFont = synthesizedFont->smallCapsFont(m_font.fontDescription());
         char32_t characterToWrite = capitalizedBase ? capitalizedBase.value() : baseOfString[0];
@@ -354,9 +364,10 @@ void ComplexTextController::collectComplexTextRuns()
     }
 
     while (currentIndex < m_end) {
-        font = nextFont;
+        font = nextFont.get();
         isSmallCaps = nextIsSmallCaps;
         auto previousIndex = currentIndex;
+        halfWidthFont = nullptr;
 
         advanceByCombiningCharacterSequence(graphemeClusterIterator, currentIndex, baseCharacter);
 
@@ -378,8 +389,14 @@ void ComplexTextController::collectComplexTextRuns()
 
         nextFont = m_font.fontForCombiningCharacterSequence(baseOfString.subspan(previousIndex, currentIndex - previousIndex));
 
+        if (shouldProcessTextSpacingTrim && nextFont && !nextFont->isSystemFontFallbackPlaceholder()) {
+            TextSpacing::CharactersData charactersData = { .currentCharacter = baseCharacter, .currentCharacterClass = TextSpacing::characterClass(baseCharacter) };
+            halfWidthFont = TextSpacing::getHalfWidthFontIfNeeded(*nextFont, m_font.textSpacingTrim(), charactersData);
+            nextFont = halfWidthFont ? halfWidthFont : nextFont;
+        }
+
         capitalizedBase = capitalized(baseCharacter);
-        if (!synthesizedFont && shouldSynthesizeSmallCaps(dontSynthesizeSmallCaps, nextFont, baseCharacter, capitalizedBase, fontVariantCaps, engageAllSmallCapsProcessing)) {
+        if (!synthesizedFont && shouldSynthesizeSmallCaps(dontSynthesizeSmallCaps, nextFont.get(), baseCharacter, capitalizedBase, fontVariantCaps, engageAllSmallCapsProcessing)) {
             // Rather than synthesize each character individually, we should synthesize the entire "run" if any character requires synthesis.
             synthesizedFont = &nextFont->noSynthesizableFeaturesFont();
             smallSynthesizedFont = synthesizedFont->smallCapsFont(m_font.fontDescription());
@@ -394,11 +411,11 @@ void ComplexTextController::collectComplexTextRuns()
                 unsigned itemStart = indexOfFontTransition;
                 if (synthesizedFont) {
                     if (isSmallCaps)
-                        collectComplexTextRunsForCharacters(m_smallCapsBuffer.subspan(itemStart, itemLength), itemStart, smallSynthesizedFont);
+                        collectComplexTextRunsForCharacters(m_smallCapsBuffer.subspan(itemStart, itemLength), itemStart, smallSynthesizedFont.get());
                     else
-                        collectComplexTextRunsForCharacters(baseOfString.subspan(itemStart, itemLength), itemStart, synthesizedFont);
+                        collectComplexTextRunsForCharacters(baseOfString.subspan(itemStart, itemLength), itemStart, synthesizedFont.get());
                 } else
-                    collectComplexTextRunsForCharacters(baseOfString.subspan(itemStart, itemLength), itemStart, font);
+                    collectComplexTextRunsForCharacters(baseOfString.subspan(itemStart, itemLength), itemStart, font.get());
                 if (nextFont != font) {
                     synthesizedFont = nullptr;
                     smallSynthesizedFont = nullptr;
@@ -415,11 +432,11 @@ void ComplexTextController::collectComplexTextRuns()
         unsigned itemStart = indexOfFontTransition;
         if (synthesizedFont) {
             if (nextIsSmallCaps)
-                collectComplexTextRunsForCharacters(m_smallCapsBuffer.subspan(itemStart, itemLength), itemStart, smallSynthesizedFont);
+                collectComplexTextRunsForCharacters(m_smallCapsBuffer.subspan(itemStart, itemLength), itemStart, smallSynthesizedFont.get());
             else
-                collectComplexTextRunsForCharacters(baseOfString.subspan(itemStart, itemLength), itemStart, synthesizedFont);
+                collectComplexTextRunsForCharacters(baseOfString.subspan(itemStart, itemLength), itemStart, synthesizedFont.get());
         } else
-            collectComplexTextRunsForCharacters(baseOfString.subspan(itemStart, itemLength), itemStart, nextFont);
+            collectComplexTextRunsForCharacters(baseOfString.subspan(itemStart, itemLength), itemStart, nextFont.get());
     }
 
     if (!m_run.ltr())
@@ -859,3 +876,5 @@ ComplexTextController::ComplexTextRun::ComplexTextRun(const Vector<FloatSize>& a
 }
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

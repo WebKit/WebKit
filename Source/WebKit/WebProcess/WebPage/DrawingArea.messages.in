@@ -20,7 +20,7 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-messages -> DrawingArea NotRefCounted {
+messages -> DrawingArea {
 #if USE(COORDINATED_GRAPHICS) || USE(TEXTURE_MAPPER)
     UpdateGeometry(WebCore::IntSize size) -> ()
     SetDeviceScaleFactor(float deviceScaleFactor)
@@ -32,7 +32,7 @@ messages -> DrawingArea NotRefCounted {
 
 #if PLATFORM(COCOA)
     UpdateGeometry(WebCore::IntSize viewSize, bool flushSynchronously, MachSendRight fencePort) -> ()
-    SetDeviceScaleFactor(float deviceScaleFactor)
+    SetDeviceScaleFactor(float deviceScaleFactor) -> ()
     SetColorSpace(struct std::optional<WebCore::DestinationColorSpace> colorSpace)
     SetViewExposedRect(std::optional<WebCore::FloatRect> viewExposedRect)
 

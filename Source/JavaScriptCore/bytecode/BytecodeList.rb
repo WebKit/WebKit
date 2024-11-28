@@ -176,6 +176,28 @@ op :construct_varargs,
         makeCall: nil,
     }
 
+op :super_construct_varargs,
+    args: {
+        dst: VirtualRegister,
+        callee: VirtualRegister,
+        thisValue?: VirtualRegister,
+        arguments?: VirtualRegister,
+        firstFree: VirtualRegister,
+        firstVarArg: int,
+        valueProfile: unsigned,
+    },
+    metadata: {
+        callLinkInfo: DataOnlyCallLinkInfo,
+        cachedCallee: WriteBarrier[JSCell],
+    },
+    tmps: {
+        argCountIncludingThis: unsigned
+    },
+    checkpoints: {
+        determiningArgCount: nil,
+        makeCall: nil,
+    }
+
 # Semantically, this is iterator = symbolIterator.@call(iterable); next = iterator.next;
 # where symbolIterator the result of iterable[Symbol.iterator] (which is done in a different bytecode).
 # For builtin iterators, however, this has special behavior where next becomes the empty value, which
@@ -200,6 +222,26 @@ op :iterator_open,
     checkpoints: {
         symbolCall: nil,
         getNext: nil,
+    }
+
+# Semantically, this is dst = value instanceof constructor.
+op :instanceof,
+    args: {
+        dst: VirtualRegister,
+        value: VirtualRegister,
+        constructor: VirtualRegister,
+        hasInstanceOrPrototype: VirtualRegister,
+        hasInstanceValueProfile: unsigned,
+        prototypeValueProfile: unsigned,
+    },
+    metadata: {
+        hasInstanceModeMetadata: GetByIdModeMetadata,
+        prototypeModeMetadata: GetByIdModeMetadata,
+    },
+    checkpoints: {
+        getHasInstance: nil,
+        getPrototype: nil,
+        instanceof: nil,
     }
 
 # Opcodes with metadata come next, in decreasing order of metadata alignment requirements
@@ -248,6 +290,19 @@ op :construct,
     },
     metadata: {
         callLinkInfo: DataOnlyCallLinkInfo,
+    }
+
+op :super_construct,
+    args: {
+        dst: VirtualRegister,
+        callee: VirtualRegister,
+        argc: unsigned,
+        argv: unsigned,
+        valueProfile: unsigned,
+    },
+    metadata: {
+        callLinkInfo: DataOnlyCallLinkInfo,
+        cachedCallee: WriteBarrier[JSCell],
     }
 
 op :tail_call,
@@ -972,7 +1027,6 @@ op_group :SwitchValue,
     ],
     args: {
         tableIndex: unsigned,
-        defaultOffset: BoundLabel,
         scrutinee: VirtualRegister,
     }
 
@@ -1335,21 +1389,6 @@ op :overrides_has_instance,
         hasInstanceValue: VirtualRegister,
     }
 
-op :instanceof,
-    args: {
-        dst: VirtualRegister,
-        value: VirtualRegister,
-        prototype: VirtualRegister,
-    }
-
-op :instanceof_custom,
-    args: {
-        dst: VirtualRegister,
-        value: VirtualRegister,
-        constructor: VirtualRegister,
-        hasInstanceValue: VirtualRegister,
-    }
-
 op :typeof,
     args: {
         dst: VirtualRegister,
@@ -1429,8 +1468,10 @@ op :llint_handle_uncaught_exception
 op :op_call_return_location
 op :op_call_ignore_result_return_location
 op :op_construct_return_location
+op :op_super_construct_return_location
 op :op_call_varargs_return_location
 op :op_construct_varargs_return_location
+op :op_super_construct_varargs_return_location
 op :op_get_by_id_return_location
 op :op_get_by_id_direct_return_location
 op :op_get_length_return_location
@@ -1450,16 +1491,19 @@ op :wasm_function_prologue_trampoline
 op :wasm_function_prologue
 op :wasm_function_prologue_simd_trampoline
 op :wasm_function_prologue_simd
-op :js_to_wasm_wrapper_entry_crash_for_simd_parameters
 op :js_to_wasm_wrapper_entry
 op :wasm_to_wasm_wrapper_entry
 op :wasm_to_js_wrapper_entry
+op :ipint_trampoline
+op :ipint_entry
 
 op :js_trampoline_op_call
 op :js_trampoline_op_call_ignore_result
 op :js_trampoline_op_construct
+op :js_trampoline_op_super_construct
 op :js_trampoline_op_call_varargs
 op :js_trampoline_op_construct_varargs
+op :js_trampoline_op_super_construct_varargs
 op :js_trampoline_op_iterator_next
 op :js_trampoline_op_iterator_open
 op :js_trampoline_op_call_direct_eval_slow
@@ -1473,6 +1517,8 @@ op :wasm_trampoline_wasm_call_ref
 op :wasm_trampoline_wasm_tail_call
 op :wasm_trampoline_wasm_tail_call_indirect
 op :wasm_trampoline_wasm_tail_call_ref
+op :wasm_trampoline_wasm_ipint_call
+op :wasm_trampoline_wasm_ipint_tail_call
 
 end_section :NativeHelpers
 
@@ -1506,6 +1552,12 @@ op :llint_cloop_did_return_from_js_22
 op :llint_cloop_did_return_from_js_23
 op :llint_cloop_did_return_from_js_24
 op :llint_cloop_did_return_from_js_25
+op :llint_cloop_did_return_from_js_26
+op :llint_cloop_did_return_from_js_27
+op :llint_cloop_did_return_from_js_28
+op :llint_cloop_did_return_from_js_29
+op :llint_cloop_did_return_from_js_30
+op :llint_cloop_did_return_from_js_31
 
 end_section :CLoopReturnHelpers
 
@@ -1525,6 +1577,7 @@ op :throw_from_fault_handler_trampoline_reg_instance
 op :call_return_location
 op :call_indirect_return_location
 op :call_ref_return_location
+op :ipint_call_return_location
 
 # FIXME: Wasm and JS LLInt should share common opcodes
 # https://bugs.webkit.org/show_bug.cgi?id=203656
@@ -1847,6 +1900,11 @@ op :rethrow,
         exception: VirtualRegister,
     }
 
+op :throw_ref,
+    args: {
+        exception: VirtualRegister,
+    }
+
 op_group :Catch,
     [
         :catch,
@@ -1864,6 +1922,21 @@ op_group :CatchAll,
     ],
     args: {
         exception: VirtualRegister,
+    }
+
+op_group :TryTableCatch,
+    [
+        :try_table_catch,
+        :try_table_catchref,
+        :try_table_catchall,
+        :try_table_catchallref,
+    ],
+    args: {
+        kind: unsigned,
+        exceptionIndex: unsigned,
+        exception: VirtualRegister,
+        argumentCount: unsigned,
+        startOffset: unsigned,
     }
 
 op :ref_i31,

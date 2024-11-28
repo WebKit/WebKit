@@ -26,6 +26,7 @@
 #include "ScriptWrappable.h"
 #include "ShareData.h"
 #include "Supplementable.h"
+#include <wtf/CheckedPtr.h>
 #include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
@@ -34,6 +35,7 @@ class Blob;
 class DeferredPromise;
 class DOMMimeTypeArray;
 class DOMPluginArray;
+class Page;
 class ShareDataReader;
 
 class Navigator final
@@ -46,7 +48,13 @@ class Navigator final
 #endif
 {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(Navigator);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(Navigator);
 public:
+#if ENABLE(DECLARATIVE_WEB_PUSH)
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
+#endif
+
     static Ref<Navigator> create(ScriptExecutionContext* context, LocalDOMWindow& window) { return adoptRef(*new Navigator(context, window)); }
     virtual ~Navigator();
 
@@ -67,15 +75,16 @@ public:
     bool standalone() const;
 #endif
 
-#if ENABLE(IOS_TOUCH_EVENTS) && !PLATFORM(MACCATALYST)
-    int maxTouchPoints() const { return 5; }
-#else
-    int maxTouchPoints() const { return 0; }
-#endif
+    int maxTouchPoints() const;
 
     GPU* gpu();
 
+    Page* page();
+    RefPtr<Page> protectedPage();
+
+    const Document* document() const;
     Document* document();
+    RefPtr<Document> protectedDocument();
 
     void setAppBadge(std::optional<unsigned long long>, Ref<DeferredPromise>&&);
     void clearAppBadge(Ref<DeferredPromise>&&);
@@ -84,8 +93,6 @@ public:
     void clearClientBadge(Ref<DeferredPromise>&&);
 
 #if ENABLE(DECLARATIVE_WEB_PUSH)
-    void ref() const final { RefCounted::ref(); }
-    void deref() const final { RefCounted::deref(); }
     PushManager& pushManager();
 #endif
 
@@ -108,7 +115,7 @@ private:
     bool isActive() const final { return true; }
 
     void subscribeToPushService(const Vector<uint8_t>& applicationServerKey, DOMPromiseDeferred<IDLInterface<PushSubscription>>&&) final;
-    void unsubscribeFromPushService(PushSubscriptionIdentifier, DOMPromiseDeferred<IDLBoolean>&&) final;
+    void unsubscribeFromPushService(std::optional<PushSubscriptionIdentifier>, DOMPromiseDeferred<IDLBoolean>&&) final;
     void getPushSubscription(DOMPromiseDeferred<IDLNullable<IDLInterface<PushSubscription>>>&&) final;
     void getPushPermissionState(DOMPromiseDeferred<IDLEnumeration<PushPermissionState>>&&) final;
 

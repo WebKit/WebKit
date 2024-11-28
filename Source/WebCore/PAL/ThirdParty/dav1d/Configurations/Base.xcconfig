@@ -23,6 +23,7 @@
 
 #include "../../../../../Configurations/CommonBase.xcconfig"
 
+AD_HOC_CODE_SIGNING_ALLOWED = YES;
 CODE_SIGN_IDENTITY = -;
 
 ALWAYS_SEARCH_USER_PATHS = NO;
@@ -94,8 +95,6 @@ DEAD_CODE_STRIPPING[config=Debug] = NO;
 
 DEBUG_DEFINES = NDEBUG;
 DEBUG_DEFINES[config=Debug] = ;
-
-EXCLUDED_SOURCE_FILE_NAMES = libWebKitAdditions.a;
 
 WK_DEFAULT_GCC_OPTIMIZATION_LEVEL[sdk=iphone*] = 3;
 WK_DEFAULT_GCC_OPTIMIZATION_LEVEL[sdk=iphone*][config=Debug] = 0;

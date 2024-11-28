@@ -24,7 +24,7 @@
 #if ENABLE(GPU_PROCESS)
 
 [EnabledBy=WebXRWebGPUBindingsEnabled]
-messages -> RemoteXRView NotRefCounted Stream {
+messages -> RemoteXRView Stream {
 void Destruct()
 }
 

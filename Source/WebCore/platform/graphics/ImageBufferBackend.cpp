@@ -27,10 +27,12 @@
 #include "ImageBufferBackend.h"
 
 #include "GraphicsContext.h"
-#include "Image.h"
+#include "ImageBuffer.h"
 #include "PixelBuffer.h"
 #include "PixelBufferConversion.h"
 #include <wtf/TZoneMallocInlines.h>
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace WebCore {
 
@@ -155,6 +157,13 @@ AffineTransform ImageBufferBackend::calculateBaseTransform(const Parameters& par
     return baseTransform;
 }
 
+#if USE(SKIA)
+RefPtr<ImageBuffer> ImageBufferBackend::copyAcceleratedImageBufferBorrowingBackendRenderTarget(const ImageBuffer&) const
+{
+    return nullptr;
+}
+#endif
+
 TextStream& operator<<(TextStream& ts, VolatilityState state)
 {
     switch (state) {
@@ -171,3 +180,5 @@ TextStream& operator<<(TextStream& ts, const ImageBufferBackend& imageBufferBack
 }
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

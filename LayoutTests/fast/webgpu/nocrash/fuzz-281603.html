@@ -1,0 +1,36 @@
+<script>
+async function run() {
+    let adapter = await navigator.gpu.requestAdapter()
+    let device = await adapter.requestDevice();
+    let texture = device.createTexture({ size: [1], dimension: '3d', format: 'r8sint', usage: GPUTextureUsage.RENDER_ATTACHMENT });
+    let pipelineLayout = device.createPipelineLayout({ bindGroupLayouts: [] });
+    let textureView = texture.createView();
+    let shaderModule = device.createShaderModule({
+    code: ` 
+        @vertex fn n() -> @builtin(position) vec4f {
+            return vec4f();
+        }
+        @fragment fn p() -> @location(0) i32 {
+            return 0;
+        }
+    `
+    });
+    let pipeline = device.createRenderPipeline({
+        layout: pipelineLayout,
+        fragment: { module: shaderModule, targets: [ { format: 'r8sint' } ] },
+        vertex: { module: shaderModule }
+    });
+    let commandEncoder = device.createCommandEncoder();
+    let buffer = device.createBuffer({ size: 4263, usage: GPUBufferUsage.INDIRECT });
+    let renderPassEncoder = commandEncoder.beginRenderPass({ colorAttachments: [{ view: textureView, depthSlice: 0, loadOp: 'clear', storeOp: 'store' }] });
+    let renderBundleEncoder = device.createRenderBundleEncoder({ colorFormats: ['r8sint'] });
+    renderBundleEncoder.setPipeline(pipeline);
+    renderBundleEncoder.draw(3, 3, 4_294_967_295);
+    renderBundleEncoder.drawIndexedIndirect(buffer, 0);
+    let renderBundle = renderBundleEncoder.finish();
+    renderPassEncoder.executeBundles([renderBundle]);
+}
+
+globalThis.testRunner?.waitUntilDone();
+run().finally(() => globalThis.testRunner?.notifyDone());
+</script>

@@ -3,6 +3,15 @@
 <head>
 <title>Outer Subframe</title>
 <style>
+@font-face {
+    font-family: Ahem; src: url(Ahem.ttf);
+}
+
+html, body {
+    font-family: Ahem;
+    -webkit-text-size-adjust: none;
+}
+
 iframe {
     width: 100px;
     height: 100px;
@@ -23,6 +32,15 @@ iframe {
             subframe.srcdoc = `
                 <head>
                     <title>Inner Subframe</title>
+                    <style>
+                    @font-face {
+                        font-family: Ahem; src: url(Ahem.ttf);
+                    }
+                    html, body {
+                        font-family: Ahem;
+                        -webkit-text-size-adjust: none;
+                    }
+                    </style>
                 </head>
                 <body>
                     <a href='https://webkit.org'>The ones who see things differently.</a>

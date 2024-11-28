@@ -21,7 +21,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 [EnabledBy=WebLocksAPIEnabled]
-messages -> WebLockRegistryProxy NotRefCounted {
+messages -> WebLockRegistryProxy {
     RequestLock(struct WebCore::ClientOrigin clientOrigin, WebCore::WebLockIdentifier identifier, WebCore::ScriptExecutionContextIdentifier clientID, String name, enum:bool WebCore::WebLockMode mode, bool steal, bool ifAvailable)
     ReleaseLock(struct WebCore::ClientOrigin clientOrigin, WebCore::WebLockIdentifier identifier, WebCore::ScriptExecutionContextIdentifier clientID, String name)
     AbortLockRequest(struct WebCore::ClientOrigin clientOrigin, WebCore::WebLockIdentifier identifier, WebCore::ScriptExecutionContextIdentifier clientID, String name) -> (bool wasAborted)

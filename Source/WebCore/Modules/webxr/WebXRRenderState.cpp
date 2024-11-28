@@ -62,6 +62,13 @@ WebXRRenderState::WebXRRenderState(const WebXRRenderState& other)
 {
 }
 
+#if ENABLE(WEBXR_LAYERS)
+void WebXRRenderState::setLayers(const Vector<Ref<WebXRLayer>>& layers)
+{
+    m_layers = layers;
+}
+#endif
+
 } // namespace WebCore
 
 #endif // ENABLE(WEBXR)

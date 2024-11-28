@@ -51,8 +51,7 @@ ContentWorld* ContentWorld::worldForIdentifier(WebKit::ContentWorldIdentifier id
     return sharedWorldIdentifierMap().get(identifier);
 }
 
-ContentWorld::ContentWorld(const WTF::String& name)
-    : m_name(name)
+static WebKit::ContentWorldIdentifier generateIdentifier()
 {
     static std::once_flag once;
     std::call_once(once, [] {
@@ -61,8 +60,14 @@ ContentWorld::ContentWorld(const WTF::String& name)
         auto identifier = WebKit::ContentWorldIdentifier::generate();
         ASSERT_UNUSED(identifier, identifier.toUInt64() >= WebKit::pageContentWorldIdentifier().toUInt64());
     });
+    return WebKit::ContentWorldIdentifier::generate();
+}
 
-    m_identifier = WebKit::ContentWorldIdentifier::generate();
+ContentWorld::ContentWorld(const WTF::String& name, OptionSet<WebKit::ContentWorldOption> options)
+    : m_identifier(generateIdentifier())
+    , m_name(name)
+    , m_options(options)
+{
     auto addResult = sharedWorldIdentifierMap().add(m_identifier, *this);
     ASSERT_UNUSED(addResult, addResult.isNewEntry);
 }
@@ -73,11 +78,11 @@ ContentWorld::ContentWorld(WebKit::ContentWorldIdentifier identifier)
     ASSERT(m_identifier == WebKit::pageContentWorldIdentifier());
 }
 
-Ref<ContentWorld> ContentWorld::sharedWorldWithName(const WTF::String& name)
+Ref<ContentWorld> ContentWorld::sharedWorldWithName(const WTF::String& name, OptionSet<WebKit::ContentWorldOption> options)
 {
     RefPtr<ContentWorld> newContentWorld;
     auto result = sharedWorldNameMap().ensure(name, [&] {
-        newContentWorld = adoptRef(*new ContentWorld(name));
+        newContentWorld = adoptRef(*new ContentWorld(name, options));
         return WeakRef { *newContentWorld };
     });
     return newContentWorld ? newContentWorld.releaseNonNull() : Ref { result.iterator->value.get() };
@@ -91,7 +96,7 @@ ContentWorld& ContentWorld::pageContentWorld()
 
 ContentWorld& ContentWorld::defaultClientWorld()
 {
-    static NeverDestroyed<RefPtr<ContentWorld>> world(adoptRef(new ContentWorld(WTF::String { })));
+    static NeverDestroyed<RefPtr<ContentWorld>> world(adoptRef(new ContentWorld(WTF::String { }, { })));
     return *world.get();
 }
 

@@ -65,7 +65,7 @@ private:
     void focusedElementChanged(WebCore::Element*) override;
     void focusedFrameChanged(WebCore::Frame*) final;
 
-    WebCore::Page* createWindow(WebCore::LocalFrame&, const WebCore::WindowFeatures&, const WebCore::NavigationAction&) final;
+    RefPtr<WebCore::Page> createWindow(WebCore::LocalFrame&, const String& openedMainFrameName, const WebCore::WindowFeatures&, const WebCore::NavigationAction&) final;
     void show() final;
 
     bool canRunModal() const final;
@@ -118,8 +118,8 @@ private:
 
     void scrollContainingScrollViewsToRevealRect(const WebCore::IntRect&) const final;
 
-    bool shouldUnavailablePluginMessageBeButton(WebCore::RenderEmbeddedObject::PluginUnavailabilityReason) const final;
-    void unavailablePluginButtonClicked(WebCore::Element&, WebCore::RenderEmbeddedObject::PluginUnavailabilityReason) const final;
+    bool shouldUnavailablePluginMessageBeButton(WebCore::PluginUnavailabilityReason) const final;
+    void unavailablePluginButtonClicked(WebCore::Element&, WebCore::PluginUnavailabilityReason) const final;
     void mouseDidMoveOverElement(const WebCore::HitTestResult&, OptionSet<WebCore::PlatformEventModifier>, const String&, WebCore::TextDirection) final;
 
     void setToolTip(const String&);
@@ -139,16 +139,16 @@ private:
 #endif
 
 #if ENABLE(INPUT_TYPE_COLOR)
-    std::unique_ptr<WebCore::ColorChooser> createColorChooser(WebCore::ColorChooserClient&, const WebCore::Color&) final;
+    RefPtr<WebCore::ColorChooser> createColorChooser(WebCore::ColorChooserClient&, const WebCore::Color&) final;
 #endif
 
 #if ENABLE(DATALIST_ELEMENT)
-    std::unique_ptr<WebCore::DataListSuggestionPicker> createDataListSuggestionPicker(WebCore::DataListSuggestionsClient&) final;
+    RefPtr<WebCore::DataListSuggestionPicker> createDataListSuggestionPicker(WebCore::DataListSuggestionsClient&) final;
     bool canShowDataListSuggestionLabels() const final { return false; }
 #endif
 
 #if ENABLE(DATE_AND_TIME_INPUT_TYPES)
-    std::unique_ptr<WebCore::DateTimeChooser> createDateTimeChooser(WebCore::DateTimeChooserClient&) final;
+    RefPtr<WebCore::DateTimeChooser> createDateTimeChooser(WebCore::DateTimeChooserClient&) final;
 #endif
 
     void setTextIndicator(const WebCore::TextIndicatorData&) const final;

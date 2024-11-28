@@ -29,7 +29,6 @@
 #include "AutomationBackendDispatchers.h"
 #include "AutomationFrontendDispatchers.h"
 #include "Connection.h"
-#include "MessageReceiver.h"
 #include "MessageSender.h"
 #include "SimulatedInputDispatcher.h"
 #include "WebEvent.h"
@@ -40,6 +39,7 @@
 #include <wtf/CompletionHandler.h>
 #include <wtf/Forward.h>
 #include <wtf/RunLoop.h>
+#include <wtf/WeakPtr.h>
 
 #if ENABLE(REMOTE_INSPECTOR)
 #include <JavaScriptCore/RemoteAutomationTarget.h>
@@ -102,11 +102,7 @@ public:
 
 using AutomationCompletionHandler = WTF::CompletionHandler<void(std::optional<AutomationCommandError>)>;
 
-class WebAutomationSession final : public API::ObjectImpl<API::Object::Type::AutomationSession>, public IPC::MessageReceiver
-#if ENABLE(REMOTE_INSPECTOR)
-    , public Inspector::RemoteAutomationTarget
-#endif
-    , public Inspector::AutomationBackendDispatcherHandler
+class WebAutomationSession final : public API::ObjectImpl<API::Object::Type::AutomationSession>, public Inspector::AutomationBackendDispatcherHandler, public CanMakeWeakPtr<WebAutomationSession>
 #if ENABLE(WEBDRIVER_ACTIONS_API)
     , public SimulatedInputDispatcher::Client
 #endif
@@ -114,6 +110,26 @@ class WebAutomationSession final : public API::ObjectImpl<API::Object::Type::Aut
 public:
     WebAutomationSession();
     ~WebAutomationSession();
+
+#if ENABLE(REMOTE_INSPECTOR)
+    class Debuggable : public Inspector::RemoteAutomationTarget {
+    public:
+        static Ref<Debuggable> create(WebAutomationSession&);
+
+        void sessionDestroyed();
+
+    // Inspector::RemoteAutomationTarget API
+    String name() const;
+    void dispatchMessageFromRemote(String&& message);
+    void connect(Inspector::FrontendChannel&, bool isAutomaticConnection = false, bool immediatelyPause = false);
+    void disconnect(Inspector::FrontendChannel&);
+
+    private:
+        explicit Debuggable(WebAutomationSession&);
+
+        WeakPtr<WebAutomationSession> m_session;
+    };
+#endif // ENABLE(REMOTE_INSPECTOR)
 
     void setClient(std::unique_ptr<API::AutomationSessionClient>&&);
 
@@ -138,12 +154,16 @@ public:
     bool shouldAllowGetUserMediaForPage(const WebPageProxy&) const;
 
 #if ENABLE(REMOTE_INSPECTOR)
-    // Inspector::RemoteAutomationTarget API
     String name() const { return m_sessionIdentifier; }
     void dispatchMessageFromRemote(String&& message);
     void connect(Inspector::FrontendChannel&, bool isAutomaticConnection = false, bool immediatelyPause = false);
     void disconnect(Inspector::FrontendChannel&);
+
+    void init();
+    bool isPaired() const;
+    bool isPendingTermination() const;
 #endif
+
     void terminate();
 
 #if ENABLE(WEBDRIVER_ACTIONS_API)
@@ -184,7 +204,7 @@ public:
     void goForwardInBrowsingContext(const String&, std::optional<Inspector::Protocol::Automation::PageLoadStrategy>&&, std::optional<double>&& pageLoadTimeout, Ref<GoForwardInBrowsingContextCallback>&&);
     void reloadBrowsingContext(const String&, std::optional<Inspector::Protocol::Automation::PageLoadStrategy>&&, std::optional<double>&& pageLoadTimeout, Ref<ReloadBrowsingContextCallback>&&);
     void waitForNavigationToComplete(const Inspector::Protocol::Automation::BrowsingContextHandle&, const Inspector::Protocol::Automation::FrameHandle&, std::optional<Inspector::Protocol::Automation::PageLoadStrategy>&&, std::optional<double>&& pageLoadTimeout, Ref<WaitForNavigationToCompleteCallback>&&);
-    void evaluateJavaScriptFunction(const Inspector::Protocol::Automation::BrowsingContextHandle&, const Inspector::Protocol::Automation::FrameHandle&, const String& function, Ref<JSON::Array>&& arguments, std::optional<bool>&& expectsImplicitCallbackArgument, std::optional<double>&& callbackTimeout, Ref<EvaluateJavaScriptFunctionCallback>&&);
+    void evaluateJavaScriptFunction(const Inspector::Protocol::Automation::BrowsingContextHandle&, const Inspector::Protocol::Automation::FrameHandle&, const String& function, Ref<JSON::Array>&& arguments, std::optional<bool>&& expectsImplicitCallbackArgument, std::optional<bool>&& forceUserGesture, std::optional<double>&& callbackTimeout, Ref<EvaluateJavaScriptFunctionCallback>&&);
     void performMouseInteraction(const Inspector::Protocol::Automation::BrowsingContextHandle&, Ref<JSON::Object>&& requestedPosition, Inspector::Protocol::Automation::MouseButton, Inspector::Protocol::Automation::MouseInteraction, Ref<JSON::Array>&& keyModifiers, Ref<PerformMouseInteractionCallback>&&);
     void performKeyboardInteractions(const Inspector::Protocol::Automation::BrowsingContextHandle&, Ref<JSON::Array>&& interactions, Ref<PerformKeyboardInteractionsCallback>&&);
     void performInteractionSequence(const Inspector::Protocol::Automation::BrowsingContextHandle&, const Inspector::Protocol::Automation::FrameHandle&, Ref<JSON::Array>&& sources, Ref<JSON::Array>&& steps, Ref<PerformInteractionSequenceCallback>&&);
@@ -257,13 +277,6 @@ private:
     void maximizeWindowForPage(WebPageProxy&, WTF::CompletionHandler<void()>&&);
     void hideWindowForPage(WebPageProxy&, WTF::CompletionHandler<void()>&&);
 
-    // IPC::MessageReceiver (Implemented by generated code in WebAutomationSessionMessageReceiver.cpp).
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
-
-    // Called by WebAutomationSession messages.
-    void didEvaluateJavaScriptFunction(uint64_t callbackID, const String& result, const String& errorType);
-    void didTakeScreenshot(uint64_t callbackID, std::optional<WebCore::ShareableBitmap::Handle>&&, const String& errorType);
-
     // Platform-dependent implementations.
 #if ENABLE(WEBDRIVER_MOUSE_INTERACTIONS)
     void updateClickCount(MouseButton, const WebCore::IntPoint&, Seconds maxTime = 1_s, int maxDistance = 0);
@@ -301,6 +314,10 @@ private:
     std::optional<unichar> charCodeIgnoringModifiersForVirtualKey(Inspector::Protocol::Automation::VirtualKey) const;
 #endif
 
+    Ref<Inspector::FrontendRouter> protectedFrontendRouter() const;
+    Ref<Inspector::BackendDispatcher> protectedBackendDispatcher() const;
+    Ref<Debuggable> protectedDebuggable() const;
+
     WeakPtr<WebProcessPool> m_processPool;
 
     std::unique_ptr<API::AutomationSessionClient> m_client;
@@ -334,9 +351,6 @@ private:
     uint64_t m_nextEvaluateJavaScriptCallbackID { 1 };
     HashMap<uint64_t, RefPtr<Inspector::AutomationBackendDispatcherHandler::EvaluateJavaScriptFunctionCallback>> m_evaluateJavaScriptFunctionCallbacks;
 
-    uint64_t m_nextScreenshotCallbackID { 1 };
-    HashMap<uint64_t, RefPtr<Inspector::AutomationBackendDispatcherHandler::TakeScreenshotCallback>> m_screenshotCallbacks;
-
     enum class WindowTransitionedToState {
         Fullscreen,
         Unfullscreen,
@@ -365,13 +379,14 @@ private:
 #if ENABLE(WEBDRIVER_MOUSE_INTERACTIONS)
     MonotonicTime m_lastClickTime;
     MouseButton m_lastClickButton { MouseButton::None };
-    MouseButton m_mouseButtonCurrentlyDown { MouseButton::None };
+    HashMap<MouseButton, bool, WTF::IntHash<MouseButton>, WTF::StrongEnumHashTraits<MouseButton>> m_mouseButtonsCurrentlyDown;
     WebCore::IntPoint m_lastClickPosition;
     unsigned m_clickCount { 1 };
 #endif
 
 #if ENABLE(REMOTE_INSPECTOR)
     Inspector::FrontendChannel* m_remoteChannel { nullptr };
+    Ref<Debuggable> m_debuggable;
 #endif
 
 };

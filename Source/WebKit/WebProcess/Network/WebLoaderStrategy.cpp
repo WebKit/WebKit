@@ -67,13 +67,13 @@
 #include <WebCore/PlatformStrategies.h>
 #include <WebCore/ReferrerPolicy.h>
 #include <WebCore/ResourceLoader.h>
-#include <WebCore/RuntimeApplicationChecks.h>
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/Settings.h>
 #include <WebCore/SubresourceLoader.h>
 #include <WebCore/UserContentProvider.h>
 #include <pal/SessionID.h>
 #include <wtf/CompletionHandler.h>
+#include <wtf/RuntimeApplicationChecks.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/CString.h>
 
@@ -89,8 +89,8 @@
 #define WEBLOADERSTRATEGY_RELEASE_LOG_ERROR_BASIC(fmt, ...) RELEASE_LOG_ERROR(Network, "%p - WebLoaderStrategy::" fmt, this, ##__VA_ARGS__)
 
 #define WEBLOADERSTRATEGY_RELEASE_LOG_STANDARD_TEMPLATE "%p - [resourceLoader=%p, frameLoader=%p, frame=%p, webPageID=%" PRIu64 ", frameID=%" PRIu64 ", resourceID=%" PRIu64 "] WebLoaderStrategy::"
-#define WEBLOADERSTRATEGY_RELEASE_LOG_STANDARD_PARAMETERS this, &resourceLoader, resourceLoader.frameLoader(), resourceLoader.frame(), trackingParameters.pageID ? trackingParameters.pageID->toUInt64() : 0, trackingParameters.frameID.object().toUInt64(), trackingParameters.resourceID.toUInt64()
-#define WEBLOADERSTRATEGY_WITH_FRAMELOADER_RELEASE_LOG_STANDARD_PARAMETERS this, nullptr, &frameLoader, &frameLoader.frame(), trackingParameters.pageID ? trackingParameters.pageID->toUInt64() : 0, trackingParameters.frameID.object().toUInt64(), trackingParameters.resourceID.toUInt64()
+#define WEBLOADERSTRATEGY_RELEASE_LOG_STANDARD_PARAMETERS this, &resourceLoader, resourceLoader.frameLoader(), resourceLoader.frame(), trackingParameters.pageID ? trackingParameters.pageID->toUInt64() : 0, trackingParameters.frameID ? trackingParameters.frameID->object().toUInt64() : 0, trackingParameters.resourceID ? trackingParameters.resourceID->toUInt64() : 0
+#define WEBLOADERSTRATEGY_WITH_FRAMELOADER_RELEASE_LOG_STANDARD_PARAMETERS this, nullptr, &frameLoader, &frameLoader.frame(), trackingParameters.pageID ? trackingParameters.pageID->toUInt64() : 0, trackingParameters.frameID ? trackingParameters.frameID->object().toUInt64() : 0, trackingParameters.resourceID ? trackingParameters.resourceID->toUInt64() : 0
 
 #define WEBLOADERSTRATEGY_RELEASE_LOG(fmt, ...) RELEASE_LOG(Network, WEBLOADERSTRATEGY_RELEASE_LOG_STANDARD_TEMPLATE fmt, WEBLOADERSTRATEGY_RELEASE_LOG_STANDARD_PARAMETERS, ##__VA_ARGS__)
 #define WEBLOADERSTRATEGY_RELEASE_LOG_ERROR(fmt, ...) RELEASE_LOG_ERROR(Network, WEBLOADERSTRATEGY_RELEASE_LOG_STANDARD_TEMPLATE fmt, WEBLOADERSTRATEGY_RELEASE_LOG_STANDARD_PARAMETERS, ##__VA_ARGS__)
@@ -103,13 +103,22 @@ using namespace WebCore;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(WebLoaderStrategy);
 
-WebLoaderStrategy::WebLoaderStrategy()
-    : m_internallyFailedLoadTimer(RunLoop::main(), this, &WebLoaderStrategy::internallyFailedLoadTimerFired)
+WebLoaderStrategy::WebLoaderStrategy(WebProcess& webProcess)
+    : m_webProcess(webProcess)
+    , m_internallyFailedLoadTimer(RunLoop::main(), this, &WebLoaderStrategy::internallyFailedLoadTimerFired)
 {
 }
 
-WebLoaderStrategy::~WebLoaderStrategy()
+WebLoaderStrategy::~WebLoaderStrategy() = default;
+
+void WebLoaderStrategy::ref() const
 {
+    m_webProcess->ref();
+}
+
+void WebLoaderStrategy::deref() const
+{
+    m_webProcess->deref();
 }
 
 void WebLoaderStrategy::loadResource(LocalFrame& frame, CachedResource& resource, ResourceRequest&& request, const ResourceLoaderOptions& options, CompletionHandler<void(RefPtr<SubresourceLoader>&&)>&& completionHandler)
@@ -157,6 +166,7 @@ static Seconds maximumBufferingTime(CachedResource* resource)
     case CachedResource::Type::ApplicationManifest:
 #endif
 #if ENABLE(MODEL_ELEMENT)
+    case CachedResource::Type::EnvironmentMapResource:
     case CachedResource::Type::ModelResource:
 #endif
         return Seconds::infinity();
@@ -182,21 +192,21 @@ static Seconds maximumBufferingTime(CachedResource* resource)
 
 void WebLoaderStrategy::scheduleLoad(ResourceLoader& resourceLoader, CachedResource* resource, bool shouldClearReferrerOnHTTPSToHTTPRedirect)
 {
-    auto identifier = resourceLoader.identifier();
-    ASSERT(identifier);
+    auto identifier = *resourceLoader.identifier();
 
     auto* frameLoader = resourceLoader.frameLoader();
     ASSERT(frameLoader);
     auto& frameLoaderClient = frameLoader->client();
 
-    WebResourceLoader::TrackingParameters trackingParameters;
+    WebResourceLoader::TrackingParameters trackingParameters {
+        .pageID = frameLoader->frame().pageID(),
+        .frameID = frameLoader->frameID(),
+        .resourceID = identifier
+    };
     if (auto* webFrameLoaderClient = toWebLocalFrameLoaderClient(frameLoaderClient))
-        trackingParameters.webPageProxyID = valueOrDefault(webFrameLoaderClient->webPageProxyID());
+        trackingParameters.webPageProxyID = webFrameLoaderClient->webPageProxyID();
     else if (auto* workerFrameLoaderClient = dynamicDowncast<RemoteWorkerFrameLoaderClient>(frameLoaderClient))
         trackingParameters.webPageProxyID = workerFrameLoaderClient->webPageProxyID();
-    trackingParameters.pageID = frameLoader->frame().pageID();
-    trackingParameters.frameID = frameLoader->frameID();
-    trackingParameters.resourceID = identifier;
 
 #if ENABLE(WEB_ARCHIVE) || ENABLE(MHTML)
     // If the DocumentLoader schedules this as an archive resource load,
@@ -339,6 +349,7 @@ static void addParametersShared(const LocalFrame* frame, NetworkResourceLoadPara
     if (auto* document = frame->document()) {
         parameters.crossOriginEmbedderPolicy = document->crossOriginEmbedderPolicy();
         parameters.isClearSiteDataHeaderEnabled = document->settings().clearSiteDataHTTPHeaderEnabled();
+        parameters.isClearSiteDataExecutionContextEnabled = document->settings().clearSiteDataExecutionContextsSupportEnabled();
     }
 
     if (auto* page = frame->page()) {
@@ -371,8 +382,7 @@ static void addParametersShared(const LocalFrame* frame, NetworkResourceLoadPara
 
 void WebLoaderStrategy::scheduleLoadFromNetworkProcess(ResourceLoader& resourceLoader, const ResourceRequest& request, const WebResourceLoader::TrackingParameters& trackingParameters, bool shouldClearReferrerOnHTTPSToHTTPRedirect, Seconds maximumBufferingTime)
 {
-    auto identifier = resourceLoader.identifier();
-    ASSERT(identifier);
+    auto identifier = *resourceLoader.identifier();
 
     auto* frame = resourceLoader.frame();
 
@@ -515,7 +525,7 @@ void WebLoaderStrategy::scheduleLoadFromNetworkProcess(ResourceLoader& resourceL
     loadParameters.isCrossOriginOpenerPolicyEnabled = document && document->settings().crossOriginOpenerPolicyEnabled();
     loadParameters.isDisplayingInitialEmptyDocument = frame && frame->loader().stateMachine().isDisplayingInitialEmptyDocument();
     if (frame)
-        loadParameters.effectiveSandboxFlags = frame->loader().effectiveSandboxFlags();
+        loadParameters.effectiveSandboxFlags = frame->sandboxFlagsFromSandboxAttributeNotCSP();
     if (auto* openerFrame = frame ? dynamicDowncast<LocalFrame>(frame->opener()) : nullptr) {
         if (auto openerDocument = openerFrame->document())
             loadParameters.openerURL = openerDocument->url();
@@ -537,7 +547,7 @@ void WebLoaderStrategy::scheduleLoadFromNetworkProcess(ResourceLoader& resourceL
     std::optional<NetworkResourceLoadIdentifier> existingNetworkResourceLoadIdentifierToResume;
     if (loadParameters.isMainFrameNavigation)
         existingNetworkResourceLoadIdentifierToResume = std::exchange(m_existingNetworkResourceLoadIdentifierToResume, std::nullopt);
-    WEBLOADERSTRATEGY_RELEASE_LOG("scheduleLoad: Resource is being scheduled with the NetworkProcess (priority=%d, existingNetworkResourceLoadIdentifierToResume=%" PRIu64 ")", static_cast<int>(resourceLoader.request().priority()), valueOrDefault(existingNetworkResourceLoadIdentifierToResume).toUInt64());
+    WEBLOADERSTRATEGY_RELEASE_LOG("scheduleLoad: Resource is being scheduled with the NetworkProcess (priority=%d, existingNetworkResourceLoadIdentifierToResume=%" PRIu64 ")", static_cast<int>(resourceLoader.request().priority()), existingNetworkResourceLoadIdentifierToResume ? existingNetworkResourceLoadIdentifierToResume->toUInt64() : 0);
 
     if (WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::ScheduleResourceLoad(loadParameters, existingNetworkResourceLoadIdentifierToResume), 0) != IPC::Error::NoError) {
         WEBLOADERSTRATEGY_RELEASE_LOG_ERROR("scheduleLoad: Unable to schedule resource with the NetworkProcess (priority=%d)", static_cast<int>(resourceLoader.request().priority()));
@@ -566,7 +576,7 @@ void WebLoaderStrategy::internallyFailedLoadTimerFired()
 void WebLoaderStrategy::startLocalLoad(WebCore::ResourceLoader& resourceLoader)
 {
     resourceLoader.start();
-    m_webResourceLoaders.set(resourceLoader.identifier(), WebResourceLoader::create(resourceLoader, { }));
+    m_webResourceLoaders.set(*resourceLoader.identifier(), WebResourceLoader::create(resourceLoader, { }));
 }
 
 void WebLoaderStrategy::addURLSchemeTaskProxy(WebURLSchemeTaskProxy& task)
@@ -591,7 +601,7 @@ void WebLoaderStrategy::remove(ResourceLoader* resourceLoader)
         return;
     }
 
-    if (RefPtr task = m_urlSchemeTasks.take(resourceLoader->identifier()).get()) {
+    if (RefPtr task = m_urlSchemeTasks.take(*identifier).get()) {
         ASSERT(!m_internallyFailedResourceLoaders.contains(resourceLoader));
         task->stopLoading();
         return;
@@ -602,13 +612,13 @@ void WebLoaderStrategy::remove(ResourceLoader* resourceLoader)
         return;
     }
 
-    RefPtr<WebResourceLoader> loader = m_webResourceLoaders.take(identifier);
+    RefPtr<WebResourceLoader> loader = m_webResourceLoaders.take(*identifier);
     // Loader may not be registered if we created it, but haven't scheduled yet (a bundle client can decide to cancel such request via willSendRequest).
     if (!loader)
         return;
 
     if (auto* networkProcessConnection = WebProcess::singleton().existingNetworkProcessConnection())
-        networkProcessConnection->connection().send(Messages::NetworkConnectionToWebProcess::RemoveLoadIdentifier(identifier), 0);
+        networkProcessConnection->connection().send(Messages::NetworkConnectionToWebProcess::RemoveLoadIdentifier(*identifier), 0);
 
     // It's possible that this WebResourceLoader might be just about to message back to the NetworkProcess (e.g. ContinueWillSendRequest)
     // but there's no point in doing so anymore.
@@ -713,9 +723,9 @@ void WebLoaderStrategy::loadResourceSynchronously(FrameLoader& frameLoader, WebC
     auto* webPage = webFrame ? webFrame->page() : nullptr;
     auto* page = webPage ? webPage->corePage() : nullptr;
 
-    auto webPageProxyID = webPage ? webPage->webPageProxyIdentifier() : WebPageProxyIdentifier { };
+    auto webPageProxyID = webPage ? std::optional { webPage->webPageProxyIdentifier() } : std::nullopt;
     auto pageID = webPage ? std::optional { webPage->identifier() } : std::nullopt;
-    auto frameID = webFrame ? webFrame->frameID() : FrameIdentifier { };
+    auto frameID = webFrame ? std::optional { webFrame->frameID() } : std::nullopt;
 
     WebResourceLoader::TrackingParameters trackingParameters;
     trackingParameters.pageID = pageID;
@@ -862,7 +872,7 @@ void WebLoaderStrategy::startPingLoad(LocalFrame& frame, ResourceRequest& reques
 #endif
 
     if (completionHandler)
-        m_pingLoadCompletionHandlers.add(loadParameters.identifier, WTFMove(completionHandler));
+        m_pingLoadCompletionHandlers.add(*loadParameters.identifier, WTFMove(completionHandler));
 
     WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::LoadPing { loadParameters }, 0);
 }
@@ -980,7 +990,7 @@ void WebLoaderStrategy::isResourceLoadFinished(CachedResource& resource, Complet
         return;
     }
 
-    WebProcess::singleton().ensureNetworkProcessConnection().connection().sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::IsResourceLoadFinished(resource.loader()->identifier()), WTFMove(callback), 0);
+    WebProcess::singleton().ensureNetworkProcessConnection().connection().sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::IsResourceLoadFinished(*resource.loader()->identifier()), WTFMove(callback), 0);
 }
 
 void WebLoaderStrategy::setOnLineState(bool isOnLine)
@@ -1055,7 +1065,7 @@ void WebLoaderStrategy::setResourceLoadSchedulingMode(WebCore::Page& page, WebCo
 void WebLoaderStrategy::prioritizeResourceLoads(const Vector<WebCore::SubresourceLoader*>& resources)
 {
     auto identifiers = resources.map([](auto* loader) -> WebCore::ResourceLoaderIdentifier {
-        return loader->identifier();
+        return *loader->identifier();
     });
 
     auto& connection = WebProcess::singleton().ensureNetworkProcessConnection().connection();

@@ -35,14 +35,19 @@
 
 namespace WebKit {
 
+static RetainPtr<NSDictionary> dictionaryForWebKitSecureCodingTypeFromWKKeyedCoder(id object)
+{
+    auto archiver = adoptNS([WKKeyedCoder new]);
+    [object encodeWithCoder:archiver.get()];
+    return [archiver accumulatedDictionary];
+}
+
 static RetainPtr<NSDictionary> dictionaryForWebKitSecureCodingType(id object)
 {
     if (WebKit::CoreIPCSecureCoding::conformsToWebKitSecureCoding(object))
         return [object _webKitPropertyListData];
 
-    auto archiver = adoptNS([WKKeyedCoder new]);
-    [object encodeWithCoder:archiver.get()];
-    return [archiver accumulatedDictionary];
+    return dictionaryForWebKitSecureCodingTypeFromWKKeyedCoder(object);
 }
 
 template<typename T> static RetainPtr<NSDictionary> dictionaryFromVector(const Vector<std::pair<String, RetainPtr<T>>>& vector)
@@ -142,11 +147,11 @@ RetainPtr<id> CoreIPCAVOutputContext::toID() const
         propertyList[@"AVOutputContextSerializationKeyContextID"] = m_AVOutputContextSerializationKeyContextID.get();
     if (m_AVOutputContextSerializationKeyContextType)
         propertyList[@"AVOutputContextSerializationKeyContextType"] = m_AVOutputContextSerializationKeyContextType.get();
-    if (![PAL::getAVOutputContextClass() instancesRespondToSelector:@selector(_initWithWebKitPropertyListData:)]) {
-        auto unarchiver = adoptNS([[WKKeyedCoder alloc] initWithDictionary:propertyList]);
-        return adoptNS([[PAL::getAVOutputContextClass() alloc] initWithCoder:unarchiver.get()]);
-    }
-    return adoptNS([[PAL::getAVOutputContextClass() alloc] _initWithWebKitPropertyListData:propertyList]);
+    if ([PAL::getAVOutputContextClass() instancesRespondToSelector:@selector(_initWithWebKitPropertyListData:)])
+        return adoptNS([[PAL::getAVOutputContextClass() alloc] _initWithWebKitPropertyListData:propertyList]);
+
+    auto unarchiver = adoptNS([[WKKeyedCoder alloc] initWithDictionary:propertyList]);
+    return adoptNS([[PAL::getAVOutputContextClass() alloc] initWithCoder:unarchiver.get()]);
 }
 #endif // USE(AVFOUNDATION)
 
@@ -220,7 +225,37 @@ RetainPtr<id> CoreIPCNSSomeFoundationType::toID() const
     if (m_OptionalDictionaryKey)
         propertyList[@"OptionalDictionaryKey"] = m_OptionalDictionaryKey.get();
     RELEASE_ASSERT([NSSomeFoundationType instancesRespondToSelector:@selector(_initWithWebKitPropertyListData:)]);
-    return adoptNS([[NSSomeFoundationType alloc] _initWithWebKitPropertyListData:propertyList]);
+    if ([NSSomeFoundationType instancesRespondToSelector:@selector(_initWithWebKitPropertyListData:)])
+        return adoptNS([[NSSomeFoundationType alloc] _initWithWebKitPropertyListData:propertyList]);
+
+    auto unarchiver = adoptNS([[WKKeyedCoder alloc] initWithDictionary:propertyList]);
+    return adoptNS([[NSSomeFoundationType alloc] initWithCoder:unarchiver.get()]);
+}
+
+CoreIPCclass NSSomeOtherFoundationType::CoreIPCclass NSSomeOtherFoundationType(
+    RetainPtr<NSDictionary>&& DictionaryKey
+)
+    : m_DictionaryKey(WTFMove(DictionaryKey))
+{
+}
+
+CoreIPCclass NSSomeOtherFoundationType::CoreIPCclass NSSomeOtherFoundationType(class NSSomeOtherFoundationType *object)
+{
+    auto dictionary = dictionaryForWebKitSecureCodingTypeFromWKKeyedCoder(object);
+    m_DictionaryKey = (NSDictionary *)[dictionary objectForKey:@"DictionaryKey"];
+    if (![m_DictionaryKey isKindOfClass:IPC::getClass<NSDictionary>()])
+        m_DictionaryKey = nullptr;
+
+}
+
+RetainPtr<id> CoreIPCclass NSSomeOtherFoundationType::toID() const
+{
+    auto propertyList = [NSMutableDictionary dictionaryWithCapacity:1];
+    if (m_DictionaryKey)
+        propertyList[@"DictionaryKey"] = m_DictionaryKey.get();
+
+    auto unarchiver = adoptNS([[WKKeyedCoder alloc] initWithDictionary:propertyList]);
+    return adoptNS([[class NSSomeOtherFoundationType alloc] initWithCoder:unarchiver.get()]);
 }
 
 #if ENABLE(DATA_DETECTION)
@@ -288,7 +323,11 @@ RetainPtr<id> CoreIPCDDScannerResult::toID() const
     propertyList[@"DataArrayKey"] = arrayFromVector(m_DataArrayKey).get();
     propertyList[@"SecTrustArrayKey"] = arrayFromVector(m_SecTrustArrayKey).get();
     RELEASE_ASSERT([PAL::getDDScannerResultClass() instancesRespondToSelector:@selector(_initWithWebKitPropertyListData:)]);
-    return adoptNS([[PAL::getDDScannerResultClass() alloc] _initWithWebKitPropertyListData:propertyList]);
+    if ([PAL::getDDScannerResultClass() instancesRespondToSelector:@selector(_initWithWebKitPropertyListData:)])
+        return adoptNS([[PAL::getDDScannerResultClass() alloc] _initWithWebKitPropertyListData:propertyList]);
+
+    auto unarchiver = adoptNS([[WKKeyedCoder alloc] initWithDictionary:propertyList]);
+    return adoptNS([[PAL::getDDScannerResultClass() alloc] initWithCoder:unarchiver.get()]);
 }
 #endif // ENABLE(DATA_DETECTION)
 

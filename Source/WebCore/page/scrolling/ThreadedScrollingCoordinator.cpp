@@ -32,8 +32,11 @@
 #include "ScrollingThread.h"
 #include "ThreadedScrollingTree.h"
 #include "WheelEventTestMonitor.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ThreadedScrollingCoordinator);
 
 ThreadedScrollingCoordinator::ThreadedScrollingCoordinator(Page* page)
     : AsyncScrollingCoordinator(page)

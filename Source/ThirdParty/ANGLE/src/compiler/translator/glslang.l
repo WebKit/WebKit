@@ -382,9 +382,9 @@ O           [0-7]
 "fvec3"        |
 "fvec4"        |
 
+"sampler2DRectShadow" |
 "sampler1D"    |
 "sampler1DShadow" |
-"sampler2DRectShadow" |
 
 "sizeof"       |
 "cast"         |

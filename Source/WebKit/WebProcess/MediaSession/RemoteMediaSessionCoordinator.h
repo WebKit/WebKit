@@ -31,6 +31,7 @@
 #include <WebCore/MediaSessionCoordinatorPrivate.h>
 #include <wtf/RefPtr.h>
 #include <wtf/TZoneMalloc.h>
+#include <wtf/WeakRef.h>
 
 namespace IPC {
 class Connection;
@@ -78,7 +79,9 @@ private:
     ASCIILiteral logClassName() const { return "RemoteMediaSessionCoordinator"_s; }
     WTFLogChannel& logChannel() const;
 
-    WebPage& m_page;
+    Ref<WebPage> protectedPage() const;
+
+    WeakRef<WebPage> m_page;
     String m_identifier;
 };
 

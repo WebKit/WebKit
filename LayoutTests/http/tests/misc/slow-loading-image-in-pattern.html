@@ -12,13 +12,16 @@ You should see a 400x300 rect containing a tiled rendering of the Acid3 referenc
 </defs>
 <rect width="400" height="300" fill="url(#pattern)"/>
 </svg>
-<script>
-// Force a layout
-document.body.offsetWidth;
+<script>    
+onload = async () => {
+    // Force a layout
+    document.body.offsetWidth;
 
-// Repaint immediately before image arrived
-if (window.testRunner)
-    testRunner.displayAndTrackRepaints();
+    testRunner?.waitUntilDone();
+    // Repaint immediately before image arrived
+    await testRunner?.displayAndTrackRepaints();
+    testRunner?.notifyDone();
+}
 </script>
 </body>
 </html>

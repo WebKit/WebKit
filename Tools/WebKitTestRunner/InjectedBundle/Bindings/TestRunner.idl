@@ -102,11 +102,12 @@ interface TestRunner {
     undefined setShouldDecideResponsePolicyAfterDelay(boolean value);
     undefined setNavigationGesturesEnabled(boolean value);
     undefined setIgnoresViewportScaleLimits(boolean value);
+    undefined setUseDarkAppearanceForTesting(boolean useDarkAppearance);
     undefined setShouldDownloadUndisplayableMIMETypes(boolean value);
     undefined stopLoading();
 
     // Special DOM functions.
-    undefined clearBackForwardList();
+    Promise<undefined> clearBackForwardList();
     undefined execCommand(DOMString name, DOMString showUI, DOMString value);
     boolean isCommandEnabled(DOMString name);
     unsigned long windowCount();
@@ -121,7 +122,7 @@ interface TestRunner {
     undefined testRepaint();
     undefined repaintSweepHorizontally();
     undefined display();
-    undefined displayAndTrackRepaints();
+    Promise<undefined> displayAndTrackRepaints();
     undefined displayOnLoadFinish();
     undefined dontForceRepaint();
 

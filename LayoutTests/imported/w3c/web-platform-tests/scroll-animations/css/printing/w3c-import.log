@@ -14,14 +14,9 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
-/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/css/printing/animation-timeline-none-with-progress-print.tentative-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/css/printing/animation-timeline-none-with-progress-print.tentative.html
-/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/css/printing/animation-timeline-none-with-progress-ref.html
-/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/css/printing/scroll-timeline-default-iframe-print-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/css/printing/scroll-timeline-default-iframe-print.html
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/css/printing/scroll-timeline-default-print-ref.html
-/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/css/printing/scroll-timeline-default-print.tentative-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/css/printing/scroll-timeline-default-print.tentative.html
-/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/css/printing/scroll-timeline-specified-scroller-print-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/css/printing/scroll-timeline-specified-scroller-print.html
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/css/printing/scroll-timeline-specified-scroller-ref.html

@@ -206,6 +206,18 @@ window.UIHelper = class UIHelper {
         });
     }
 
+    static roundToDevicePixel(value)
+    {
+        return Math.round(value * devicePixelRatio) / devicePixelRatio;
+    }
+
+    static roundRectToDevicePixel(rect)
+    {
+        return Object.fromEntries(Object.keys(rect).map(key => {
+            return [key, this.roundToDevicePixel(rect[key])];
+        }));
+    }
+
     static tapAt(x, y, modifiers=[])
     {
         console.assert(this.isIOSFamily());
@@ -982,6 +994,34 @@ window.UIHelper = class UIHelper {
         });
     }
 
+    static async isSelectionVisuallyContiguous()
+    {
+        const rects = await this.getUISelectionViewRects();
+        if (!rects?.length)
+            return false;
+
+        rects.sort((a, b) => {
+            if (a.top < b.top)
+                return -1;
+            if (a.top > b.top)
+                return 1;
+            return a.left < b.left ? -1 : (a.left > b.left ? 1 : 0);
+        });
+
+        for (let i = 1; i < rects.length; ++i) {
+            const previousRect = rects[i - 1];
+            const rect = rects[i];
+
+            if (previousRect.top !== rect.top)
+                continue;
+
+            if (previousRect.left + previousRect.width < rect.left)
+                return false;
+        }
+
+        return true;
+    }
+
     static getSelectionStartGrabberViewRect()
     {
         if (!this.isWebKit2() || !this.isIOSFamily())
@@ -1294,13 +1334,21 @@ window.UIHelper = class UIHelper {
         return new Promise(resolve => testRunner.runUIScript(uiScript, resolve));
     }
 
-    static applyAutocorrection(newText, oldText)
+    static selectWordForReplacement()
+    {
+        if (!this.isWebKit2())
+            return;
+
+        return new Promise(resolve => testRunner.runUIScript("uiController.selectWordForReplacement()", resolve));
+    }
+
+    static applyAutocorrection(newText, oldText, underline)
     {
         if (!this.isWebKit2())
             return;
 
         const [escapedNewText, escapedOldText] = [newText.replace(/`/g, "\\`"), oldText.replace(/`/g, "\\`")];
-        const uiScript = `uiController.applyAutocorrection(\`${escapedNewText}\`, \`${escapedOldText}\`, () => uiController.uiScriptComplete())`;
+        const uiScript = `uiController.applyAutocorrection(\`${escapedNewText}\`, \`${escapedOldText}\`, () => uiController.uiScriptComplete(), ${underline})`;
         return new Promise(resolve => testRunner.runUIScript(uiScript, resolve));
     }
 
@@ -1962,7 +2010,8 @@ window.UIHelper = class UIHelper {
 
     static async longPressElement(element)
     {
-        return this.longPressAtPoint(element.offsetLeft + element.offsetWidth / 2, element.offsetTop + element.offsetHeight / 2);
+        const { x, y } = this.midPointOfRect(element.getBoundingClientRect());
+        return this.longPressAtPoint(x, y);
     }
 
     static async longPressAtPoint(x, y)

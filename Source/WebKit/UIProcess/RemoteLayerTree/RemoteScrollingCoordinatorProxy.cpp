@@ -39,11 +39,14 @@
 #include "WebPageProxy.h"
 #include "WebProcessProxy.h"
 #include <WebCore/PerformanceLoggingClient.h>
-#include <WebCore/RuntimeApplicationChecks.h>
 #include <WebCore/ScrollingStateTree.h>
 #include <WebCore/ScrollingTreeFrameScrollingNode.h>
+#include <wtf/RuntimeApplicationChecks.h>
 #include <wtf/TZoneMallocInlines.h>
+
+#if PLATFORM(IOS_FAMILY)
 #include <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
+#endif
 
 namespace WebKit {
 using namespace WebCore;
@@ -73,11 +76,11 @@ Ref<WebPageProxy> RemoteScrollingCoordinatorProxy::protectedWebPageProxy() const
     return m_webPageProxy.get();
 }
 
-ScrollingNodeID RemoteScrollingCoordinatorProxy::rootScrollingNodeID() const
+std::optional<ScrollingNodeID> RemoteScrollingCoordinatorProxy::rootScrollingNodeID() const
 {
     // FIXME: Locking
     if (!m_scrollingTree->rootNode())
-        return { };
+        return std::nullopt;
 
     return m_scrollingTree->rootNode()->scrollingNodeID();
 }
@@ -178,37 +181,6 @@ void RemoteScrollingCoordinatorProxy::currentSnapPointIndicesDidChange(WebCore::
     m_webPageProxy->legacyMainFrameProcess().send(Messages::RemoteScrollingCoordinator::CurrentSnapPointIndicesChangedForNode(nodeID, horizontal, vertical), m_webPageProxy->webPageIDInMainFrameProcess());
 }
 
-// This comes from the scrolling tree.
-void RemoteScrollingCoordinatorProxy::scrollingTreeNodeDidScroll(ScrollingNodeID scrolledNodeID, const FloatPoint& newScrollPosition, const std::optional<FloatPoint>& layoutViewportOrigin, ScrollingLayerPositionAction scrollingLayerPositionAction)
-{
-    // Scroll updates for the main frame are sent via WebPageProxy::updateVisibleContentRects()
-    // so don't send them here.
-    if (!propagatesMainFrameScrolls() && scrolledNodeID == rootScrollingNodeID())
-        return;
-
-    Ref webPageProxy = m_webPageProxy.get();
-    if (webPageProxy->scrollingUpdatesDisabledForTesting())
-        return;
-
-    webPageProxy->scrollingNodeScrollViewDidScroll(scrolledNodeID);
-
-    if (m_scrollingTree->isHandlingProgrammaticScroll())
-        return;
-
-    auto scrollUpdate = ScrollUpdate { scrolledNodeID, newScrollPosition, layoutViewportOrigin, ScrollUpdateType::PositionUpdate, scrollingLayerPositionAction };
-    m_scrollingTree->addPendingScrollUpdate(WTFMove(scrollUpdate));
-
-    LOG_WITH_STREAM(Scrolling, stream << "RemoteScrollingCoordinatorProxy::scrollingTreeNodeDidScroll " << scrolledNodeID << " to " << newScrollPosition << " waitingForDidScrollReply " << m_waitingForDidScrollReply);
-
-    if (WebKit::RemoteLayerTreeScrollingPerformanceData* scrollPerfData = webPageProxy->scrollingPerformanceData())
-        scrollPerfData->didScroll(m_scrollingTree->layoutViewport());
-
-    if (!m_waitingForDidScrollReply) {
-        sendScrollingTreeNodeDidScroll();
-        return;
-    }
-}
-
 void RemoteScrollingCoordinatorProxy::sendScrollingTreeNodeDidScroll()
 {
     if (!m_scrollingTree) {
@@ -217,15 +189,39 @@ void RemoteScrollingCoordinatorProxy::sendScrollingTreeNodeDidScroll()
     }
 
     Ref webPageProxy = m_webPageProxy.get();
+    if (webPageProxy->scrollingUpdatesDisabledForTesting())
+        return;
+
     auto scrollUpdates = m_scrollingTree->takePendingScrollUpdates();
     for (unsigned i = 0; i < scrollUpdates.size(); ++i) {
         const auto& update = scrollUpdates[i];
         bool isLastUpdate = i == scrollUpdates.size() - 1;
 
+        webPageProxy->scrollingNodeScrollViewDidScroll(update.nodeID);
+
         LOG_WITH_STREAM(Scrolling, stream << "RemoteScrollingCoordinatorProxy::sendScrollingTreeNodeDidScroll - node " << update.nodeID << " scroll position " << update.scrollPosition << " isLastUpdate " << isLastUpdate);
+
+        auto* scrollPerfData = webPageProxy->scrollingPerformanceData();
+        // update.layoutViewportOrigin is set for frame scrolls.
+        if (scrollPerfData && update.layoutViewportOrigin) {
+            auto layoutViewport = m_scrollingTree->layoutViewport();
+            layoutViewport.setLocation(*update.layoutViewportOrigin);
+            scrollPerfData->didScroll(layoutViewport);
+        }
+
         webPageProxy->sendScrollPositionChangedForNode(scrollingTree()->frameIDForScrollingNodeID(update.nodeID), update.nodeID, update.scrollPosition, update.layoutViewportOrigin, update.updateLayerPositionAction == ScrollingLayerPositionAction::Sync, isLastUpdate);
         m_waitingForDidScrollReply = true;
     }
+}
+
+void RemoteScrollingCoordinatorProxy::scrollingThreadAddedPendingUpdate()
+{
+    LOG_WITH_STREAM(Scrolling, stream << "RemoteScrollingCoordinatorProxy::scrollingThreadAddedPendingUpdate - m_waitingForDidScrollReply " << m_waitingForDidScrollReply);
+
+    if (m_waitingForDidScrollReply)
+        return;
+
+    sendScrollingTreeNodeDidScroll();
 }
 
 void RemoteScrollingCoordinatorProxy::receivedLastScrollingTreeNodeDidScrollReply()
@@ -350,7 +346,7 @@ bool RemoteScrollingCoordinatorProxy::hasScrollableOrZoomedMainFrame() const
         return false;
 
 #if PLATFORM(IOS_FAMILY)
-    if (WebCore::IOSApplication::isEventbrite() && !linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::SupportsOverflowHiddenOnMainFrame))
+    if (WTF::IOSApplication::isEventbrite() && !linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::SupportsOverflowHiddenOnMainFrame))
         return true;
 #endif
 
@@ -393,16 +389,16 @@ void RemoteScrollingCoordinatorProxy::receivedWheelEventWithPhases(PlatformWheel
     m_webPageProxy->legacyMainFrameProcess().send(Messages::RemoteScrollingCoordinator::ReceivedWheelEventWithPhases(phase, momentumPhase), m_webPageProxy->webPageIDInMainFrameProcess());
 }
 
-void RemoteScrollingCoordinatorProxy::deferWheelEventTestCompletionForReason(ScrollingNodeID nodeID, WheelEventTestMonitor::DeferReason reason)
+void RemoteScrollingCoordinatorProxy::deferWheelEventTestCompletionForReason(std::optional<ScrollingNodeID> nodeID, WheelEventTestMonitor::DeferReason reason)
 {
     if (isMonitoringWheelEvents() && nodeID)
-        m_webPageProxy->legacyMainFrameProcess().send(Messages::RemoteScrollingCoordinator::StartDeferringScrollingTestCompletionForNode(nodeID, reason), m_webPageProxy->webPageIDInMainFrameProcess());
+        m_webPageProxy->legacyMainFrameProcess().send(Messages::RemoteScrollingCoordinator::StartDeferringScrollingTestCompletionForNode(*nodeID, reason), m_webPageProxy->webPageIDInMainFrameProcess());
 }
 
-void RemoteScrollingCoordinatorProxy::removeWheelEventTestCompletionDeferralForReason(ScrollingNodeID nodeID, WheelEventTestMonitor::DeferReason reason)
+void RemoteScrollingCoordinatorProxy::removeWheelEventTestCompletionDeferralForReason(std::optional<ScrollingNodeID> nodeID, WheelEventTestMonitor::DeferReason reason)
 {
     if (isMonitoringWheelEvents() && nodeID)
-        m_webPageProxy->legacyMainFrameProcess().send(Messages::RemoteScrollingCoordinator::StopDeferringScrollingTestCompletionForNode(nodeID, reason), m_webPageProxy->webPageIDInMainFrameProcess());
+        m_webPageProxy->legacyMainFrameProcess().send(Messages::RemoteScrollingCoordinator::StopDeferringScrollingTestCompletionForNode(*nodeID, reason), m_webPageProxy->webPageIDInMainFrameProcess());
 }
 
 void RemoteScrollingCoordinatorProxy::viewWillStartLiveResize()
@@ -428,7 +424,7 @@ bool RemoteScrollingCoordinatorProxy::overlayScrollbarsEnabled()
     return m_scrollingTree->overlayScrollbarsEnabled();
 }
 
-String RemoteScrollingCoordinatorProxy::scrollbarStateForScrollingNodeID(WebCore::ScrollingNodeID scrollingNodeID, bool isVertical)
+String RemoteScrollingCoordinatorProxy::scrollbarStateForScrollingNodeID(std::optional<WebCore::ScrollingNodeID> scrollingNodeID, bool isVertical)
 {
     if (auto node = m_scrollingTree->nodeForID(scrollingNodeID)) {
         if (auto* scrollingNode = dynamicDowncast<ScrollingTreeScrollingNode>(*node))
@@ -456,6 +452,14 @@ bool RemoteScrollingCoordinatorProxy::isMonitoringWheelEvents()
 {
     if (m_scrollingTree)
         return m_scrollingTree->isMonitoringWheelEvents();
+    return false;
+}
+
+bool RemoteScrollingCoordinatorProxy::hasFixedOrSticky() const
+{
+    if (RefPtr scrollingTree = m_scrollingTree)
+        return scrollingTree->hasFixedOrSticky();
+
     return false;
 }
 

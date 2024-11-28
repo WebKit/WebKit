@@ -240,6 +240,16 @@ public:
     }
 
     /**
+     * Whether the encoded input uses 16 or more bits per component.
+     */
+    bool hasHighBitDepthEncodedData() const {
+        // API design note: We don't return `bitsPerComponent` because it may be
+        // misleading in some cases - see https://crbug.com/359350061#comment4
+        // for more details.
+        return this->getEncodedInfo().bitsPerComponent() >= 16;
+    }
+
+    /**
      *  Returns the image orientation stored in the EXIF data.
      *  If there is no EXIF data, or if we cannot read the EXIF data, returns kTopLeft.
      */
@@ -637,6 +647,12 @@ public:
      *  Return the number of frames in the image.
      *
      *  May require reading through the stream.
+     *
+     *  Note that some codecs may be unable to gather `FrameInfo` for all frames
+     *  in case of `kIncompleteInput`.  For such codecs `getFrameCount` may
+     *  initially report a low frame count.  After the underlying `SkStream`
+     *  provides additional data, then calling `getFrameCount` again may return
+     *  an updated, increased frame count.
      */
     int getFrameCount() {
         return this->onGetFrameCount();
@@ -795,6 +811,10 @@ protected:
         return fSrcXformFormat;
     }
 
+    virtual bool onGetGainmapCodec(SkGainmapInfo*, std::unique_ptr<SkCodec>*) { return false; }
+
+    // TODO(issues.skia.org/363544350): This API only works for JPEG images. Remove this API once
+    // it is no longer used.
     virtual bool onGetGainmapInfo(SkGainmapInfo*, std::unique_ptr<SkStream>*) { return false; }
 
     virtual SkISize onGetScaledDimensions(float /*desiredScale*/) const {

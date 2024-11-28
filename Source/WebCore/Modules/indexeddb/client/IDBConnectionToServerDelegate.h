@@ -26,6 +26,7 @@
 #pragma once
 
 #include "IDBDatabaseConnectionIdentifier.h"
+#include "IDBIndexIdentifier.h"
 #include "IDBObjectStoreIdentifier.h"
 #include "IDBResourceIdentifier.h"
 #include <wtf/WeakPtr.h>
@@ -72,7 +73,7 @@ class IDBConnectionToServerDelegate : public CanMakeWeakPtr<IDBConnectionToServe
 public:
     virtual ~IDBConnectionToServerDelegate() = default;
 
-    virtual IDBConnectionIdentifier identifier() const = 0;
+    virtual std::optional<IDBConnectionIdentifier> identifier() const = 0;
     virtual void deleteDatabase(const IDBOpenRequestData&) = 0;
     virtual void openDatabase(const IDBOpenRequestData&) = 0;
     virtual void abortTransaction(const IDBResourceIdentifier&) = 0;
@@ -84,7 +85,7 @@ public:
     virtual void clearObjectStore(const IDBRequestData&, IDBObjectStoreIdentifier) = 0;
     virtual void createIndex(const IDBRequestData&, const IDBIndexInfo&) = 0;
     virtual void deleteIndex(const IDBRequestData&, IDBObjectStoreIdentifier, const String& indexName) = 0;
-    virtual void renameIndex(const IDBRequestData&, IDBObjectStoreIdentifier, uint64_t indexIdentifier, const String& newName) = 0;
+    virtual void renameIndex(const IDBRequestData&, IDBObjectStoreIdentifier, IDBIndexIdentifier, const String& newName) = 0;
     virtual void putOrAdd(const IDBRequestData&, const IDBKeyData&, const IDBValue&, const IndexedDB::ObjectStoreOverwriteMode) = 0;
     virtual void getRecord(const IDBRequestData&, const IDBGetRecordData&) = 0;
     virtual void getAllRecords(const IDBRequestData&, const IDBGetAllRecordsData&) = 0;

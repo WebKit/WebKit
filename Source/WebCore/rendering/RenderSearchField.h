@@ -47,10 +47,10 @@ public:
     WEBCORE_EXPORT std::span<const RecentSearch> recentSearches();
 
     // CheckedPtr interface.
-    uint32_t ptrCount() const final { return RenderTextControlSingleLine::ptrCount(); }
-    uint32_t ptrCountWithoutThreadCheck() const final { return RenderTextControlSingleLine::ptrCountWithoutThreadCheck(); }
-    void incrementPtrCount() const final { RenderTextControlSingleLine::incrementPtrCount(); }
-    void decrementPtrCount() const final { RenderTextControlSingleLine::decrementPtrCount(); }
+    uint32_t checkedPtrCount() const final { return RenderTextControlSingleLine::checkedPtrCount(); }
+    uint32_t checkedPtrCountWithoutThreadCheck() const final { return RenderTextControlSingleLine::checkedPtrCountWithoutThreadCheck(); }
+    void incrementCheckedPtrCount() const final { RenderTextControlSingleLine::incrementCheckedPtrCount(); }
+    void decrementCheckedPtrCount() const final { RenderTextControlSingleLine::decrementCheckedPtrCount(); }
 
 private:
     void willBeDestroyed() override;

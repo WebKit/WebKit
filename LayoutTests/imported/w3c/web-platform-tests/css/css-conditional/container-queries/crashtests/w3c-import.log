@@ -65,3 +65,5 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/crashtests/table-in-columns-003-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/crashtests/table-in-columns-004-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/crashtests/table-in-columns-005-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/crashtests/top-layer-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/crashtests/top-layer-nested-crash.html

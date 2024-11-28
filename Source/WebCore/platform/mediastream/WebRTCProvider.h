@@ -46,7 +46,7 @@ struct MediaDecodingConfiguration;
 struct MediaEncodingConfiguration;
 
 class WEBCORE_EXPORT WebRTCProvider {
-    WTF_MAKE_TZONE_ALLOCATED(WebRTCProvider);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(WebRTCProvider, WEBCORE_EXPORT);
 public:
     static UniqueRef<WebRTCProvider> create();
     WebRTCProvider() = default;
@@ -80,6 +80,9 @@ public:
     virtual void setLoggingLevel(WTFLogLevel);
     virtual void clearFactory();
 
+    void setPortAllocatorRange(StringView);
+    std::optional<std::pair<int, int>> portAllocatorRange() const;
+
 protected:
 #if ENABLE(WEB_RTC)
     std::optional<RTCRtpCapabilities>& audioDecodingCapabilities();
@@ -105,6 +108,8 @@ protected:
     bool m_supportsVP9Profile0 { false };
     bool m_supportsVP9Profile2 { false };
     bool m_supportsMDNS { false };
+
+    std::optional<std::pair<int, int>> m_portAllocatorRange;
 
 private:
     virtual void initializeAudioDecodingCapabilities();

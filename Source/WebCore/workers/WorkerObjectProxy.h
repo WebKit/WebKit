@@ -42,6 +42,8 @@ class Worker;
 
 // A proxy to talk to the worker object.
 class WorkerObjectProxy : public WorkerReportingProxy {
+    WTF_MAKE_FAST_ALLOCATED;
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(WorkerObjectProxy);
 public:
     virtual void postMessageToWorkerObject(MessageWithMessagePorts&&) = 0;
     virtual void postTaskToWorkerObject(Function<void(Worker&)>&&) { }

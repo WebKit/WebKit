@@ -112,7 +112,7 @@ public:
     void appendReferencedFilePaths(Vector<String>&) const;
 
 private:
-    HashMap<FormElementKey, Deque<FormControlState>> m_map;
+    UncheckedKeyHashMap<FormElementKey, Deque<FormControlState>> m_map;
 };
 
 FormController::SavedFormState FormController::SavedFormState::consumeSerializedState(AtomStringVectorReader& reader)
@@ -175,7 +175,7 @@ public:
 
 private:
     WeakHashMap<HTMLFormElement, String, WeakPtrImplWithEventTargetData> m_formToKeyMap;
-    HashMap<String, unsigned> m_formSignatureToNextIndexMap;
+    UncheckedKeyHashMap<String, unsigned> m_formSignatureToNextIndexMap;
 };
 
 static bool shouldBeUsedForFormSignature(const Element& element)
@@ -255,7 +255,7 @@ static String formStateSignature()
 
 Vector<AtomString> FormController::formElementsState(const Document& document) const
 {
-    HashMap<AtomString, Vector<Ref<const ValidatedFormListedElement>>> formKeyToControlsMap;
+    UncheckedKeyHashMap<AtomString, Vector<Ref<const ValidatedFormListedElement>>> formKeyToControlsMap;
 
     {
         // FIXME: We should be saving the state of form controls in shadow trees, too.

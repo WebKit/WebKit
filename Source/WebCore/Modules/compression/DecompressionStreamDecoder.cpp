@@ -60,35 +60,13 @@ ExceptionOr<RefPtr<Uint8Array>> DecompressionStreamDecoder::flush()
     return RefPtr { Uint8Array::create(WTFMove(compressedData)) };
 }
 
-inline ExceptionOr<Ref<JSC::ArrayBuffer>> DecompressionStreamDecoder::decompress(std::span<const uint8_t> input)
+ExceptionOr<Ref<JSC::ArrayBuffer>> DecompressionStreamDecoder::decompress(std::span<const uint8_t> input)
 {
+#if PLATFORM(COCOA)
+    if (m_format == Formats::CompressionFormat::Brotli)
+        return decompressAppleCompressionFramework(input);
+#endif
     return decompressZlib(input);
-}
-
-ExceptionOr<bool> DecompressionStreamDecoder::initialize() 
-{
-    int result = Z_OK;
-    m_initialized = true;
-
-    switch (m_format) {
-    case Formats::CompressionFormat::Deflate:
-        result = inflateInit2(&m_zstream, -15);
-        break;
-    case Formats::CompressionFormat::Zlib:
-        result = inflateInit2(&m_zstream, 15);
-        break;
-    case Formats::CompressionFormat::Gzip:
-        result = inflateInit2(&m_zstream, 15 + 16);
-        break;
-    default:
-        RELEASE_ASSERT_NOT_REACHED();
-        break;
-    }
-
-    if (result != Z_OK)
-        return Exception { ExceptionCode::TypeError, "Initialization Failed."_s };
-
-    return true;
 }
 
 // The decompression algorithm is broken up into 2 steps.
@@ -99,7 +77,7 @@ ExceptionOr<bool> DecompressionStreamDecoder::initialize()
 // step we may have data buffered and will need to continue to keep flushing out the rest.
 bool DecompressionStreamDecoder::didInflateFinish(int result) const
 {
-    return !m_zstream.avail_in && (!m_didFinish || (m_didFinish && result == Z_STREAM_END));
+    return !m_zstream.getPlatformStream().avail_in && (!m_didFinish || (m_didFinish && result == Z_STREAM_END));
 }
 
 // See https://www.zlib.net/manual.html#Constants
@@ -110,7 +88,22 @@ static bool didInflateFail(int result)
 
 bool DecompressionStreamDecoder::didInflateContainExtraBytes(int result) const
 {
-    return (result == Z_STREAM_END && m_zstream.avail_in) || (result == Z_BUF_ERROR && m_didFinish);
+    return (result == Z_STREAM_END && m_zstream.getPlatformStream().avail_in) || (result == Z_BUF_ERROR && m_didFinish);
+}
+
+static ZStream::Algorithm decompressionAlgorithm(Formats::CompressionFormat format)
+{
+    switch (format) {
+    case Formats::CompressionFormat::Brotli:
+        RELEASE_ASSERT_NOT_REACHED();
+    case Formats::CompressionFormat::Gzip:
+        return ZStream::Algorithm::Gzip;
+    case Formats::CompressionFormat::Zlib:
+        return ZStream::Algorithm::Zlib;
+    case Formats::CompressionFormat::Deflate:
+        return ZStream::Algorithm::Deflate;
+    }
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 ExceptionOr<Ref<JSC::ArrayBuffer>> DecompressionStreamDecoder::decompressZlib(std::span<const uint8_t> input)
@@ -121,14 +114,11 @@ ExceptionOr<Ref<JSC::ArrayBuffer>> DecompressionStreamDecoder::decompressZlib(st
     int result;    
     bool shouldDecompress = true;
 
-    m_zstream.next_in = const_cast<z_const Bytef*>(input.data());
-    m_zstream.avail_in = input.size();
+    if (!m_zstream.initializeIfNecessary(decompressionAlgorithm(m_format), ZStream::Operation::Decompression))
+        return Exception { ExceptionCode::TypeError, "Initialization Failed."_s };
 
-    if (!m_initialized) {
-        auto initializeResult = initialize();
-        if (initializeResult.hasException())
-            return initializeResult.releaseException();
-    }
+    m_zstream.getPlatformStream().next_in = const_cast<z_const Bytef*>(input.data());
+    m_zstream.getPlatformStream().avail_in = input.size();
 
     while (shouldDecompress) {
         Vector<uint8_t> output;
@@ -143,10 +133,10 @@ ExceptionOr<Ref<JSC::ArrayBuffer>> DecompressionStreamDecoder::decompressZlib(st
 
         output.grow(allocateSize);
 
-        m_zstream.next_out = output.data();
-        m_zstream.avail_out = output.size();
+        m_zstream.getPlatformStream().next_out = output.data();
+        m_zstream.getPlatformStream().avail_out = output.size();
 
-        result = inflate(&m_zstream, m_didFinish ? Z_FINISH : Z_NO_FLUSH);
+        result = inflate(&m_zstream.getPlatformStream(), m_didFinish ? Z_FINISH : Z_NO_FLUSH);
         
         if (didInflateFail(result))
             return Exception { ExceptionCode::TypeError, "Failed to Decode Data."_s };
@@ -156,7 +146,7 @@ ExceptionOr<Ref<JSC::ArrayBuffer>> DecompressionStreamDecoder::decompressZlib(st
 
         if (didInflateFinish(result)) {
             shouldDecompress = false;
-            output.shrink(allocateSize - m_zstream.avail_out);
+            output.shrink(allocateSize - m_zstream.getPlatformStream().avail_out);
         } else {
             if (allocateSize < maxAllocationSize)
                 allocateSize *= 2;
@@ -171,78 +161,5 @@ ExceptionOr<Ref<JSC::ArrayBuffer>> DecompressionStreamDecoder::decompressZlib(st
 
     return decompressedData.releaseNonNull();
 }
-
-#if PLATFORM(COCOA)
-ExceptionOr<bool> DecompressionStreamDecoder::initializeAppleCompressionFramework() 
-{
-    m_initialized = true;
-
-    auto result = compression_stream_init(&m_stream, COMPRESSION_STREAM_DECODE, COMPRESSION_ZLIB);
-    if (result != COMPRESSION_STATUS_OK)
-        return Exception { ExceptionCode::TypeError, "Initialization Failed."_s };
-
-    return true;
-}
-
-ExceptionOr<Ref<JSC::ArrayBuffer>> DecompressionStreamDecoder::decompressAppleCompressionFramework(std::span<const uint8_t> input)
-{
-    size_t allocateSize = startingAllocationSize;
-    auto storage = SharedBufferBuilder();
-
-    compression_status result;    
-    bool shouldDecompress = true;
-
-    if (!m_initialized) {
-        auto initializeResult = initializeAppleCompressionFramework();
-        if (initializeResult.hasException())
-            return initializeResult.releaseException();
-    }
-
-    m_stream.src_ptr = input.data();
-    m_stream.src_size = input.size();
-    
-    while (shouldDecompress) {
-        Vector<uint8_t> output;
-        if (!output.tryReserveInitialCapacity(allocateSize)) {
-            allocateSize /= 4;
-
-            if (allocateSize < startingAllocationSize)
-                return Exception { ExceptionCode::OutOfMemoryError };
-
-            continue;
-        }
-
-        output.grow(allocateSize);
-
-        m_stream.dst_ptr = output.data();
-        m_stream.dst_size = output.size();
-
-        result = compression_stream_process(&m_stream, m_didFinish ? COMPRESSION_STREAM_FINALIZE : 0);
-        
-        if (result == COMPRESSION_STATUS_ERROR)
-            return Exception { ExceptionCode::TypeError, "Failed to Decode Data."_s };
-
-        if ((result == COMPRESSION_STATUS_END && m_stream.src_size)
-            || (m_didFinish && m_stream.src_size))
-            return Exception { ExceptionCode::TypeError, "Extra bytes past the end."_s };
-
-        if (!m_stream.src_size) {
-            shouldDecompress = false;
-            output.shrink(allocateSize - m_stream.dst_size);
-        } else {
-            if (allocateSize < maxAllocationSize)
-                allocateSize *= 2;
-        }
-
-        storage.append(output);
-    }
-
-    RefPtr decompressedData = storage.takeAsArrayBuffer();
-    if (!decompressedData)
-        return Exception { ExceptionCode::OutOfMemoryError };
-
-    return decompressedData.releaseNonNull();
-}
-#endif
 
 } // namespace WebCore

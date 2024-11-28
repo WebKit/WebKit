@@ -101,4 +101,38 @@ TEST(Path, DefinitelyNotEqual)
     ASSERT_FALSE(path2.definitelyEqual(path1));
 }
 
+TEST(Path, CurveBoundingRect)
+{
+    auto currentPoint = FloatPoint { 100, 0 };
+    auto endPoint = FloatPoint { 300, 0 };
+    auto controlPoint = FloatPoint { 200, 328 };
+
+    Path path1;
+    path1.moveTo(currentPoint);
+    path1.addQuadCurveTo(controlPoint, endPoint);
+
+    auto fastboundingRect1 = path1.fastBoundingRect();
+    auto boundingRect1 = path1.boundingRect();
+
+    ASSERT_TRUE(fastboundingRect1 != boundingRect1);
+    ASSERT_TRUE(fastboundingRect1.contains(boundingRect1));
+
+    // Build an equivalent cubic BezierCurve for the above QuadraticCurve.
+    auto controlPoint1 = currentPoint + controlPoint.scaled(2);
+    auto controlPoint2 = endPoint + controlPoint.scaled(2);
+
+    static const float gOneOverThree = 1 / 3.f;
+
+    controlPoint1.scale(gOneOverThree);
+    controlPoint2.scale(gOneOverThree);
+
+    Path path2;
+    path2.moveTo(currentPoint);
+    path2.addBezierCurveTo(controlPoint1, controlPoint2, endPoint);
+
+    auto boundingRect2 = path2.boundingRect();
+
+    ASSERT_TRUE(areEssentiallyEqual(boundingRect1, boundingRect2));
+}
+
 }

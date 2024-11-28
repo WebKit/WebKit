@@ -1,4 +1,4 @@
-// Copyright (C) 2010-2023 Apple Inc. All rights reserved.
+// Copyright (C) 2010-2024 Apple Inc. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions
@@ -83,9 +83,11 @@ WARNING_CFLAGS = $(inherited) $(WK_FIXME_WARNING_CFLAGS) -Wthread-safety;
 WK_FIXME_WARNING_CFLAGS = -Wno-unused-parameter -Wno-undef;
 
 DEBUG_DEFINES = NDEBUG;
-DEBUG_DEFINES[config=Debug] = ;
+DEBUG_DEFINES[config=Debug] = $(WK_ENABLE_CONJECTURE_ASSERT_YES);
 
 WK_DEFAULT_GCC_OPTIMIZATION_LEVEL[config=Debug] = 0;
+
+AD_HOC_CODE_SIGNING_ALLOWED = YES;
 
 SUPPORTED_PLATFORMS = iphoneos iphonesimulator macosx appletvos appletvsimulator watchos watchsimulator xros xrsimulator;
 SUPPORTS_MACCATALYST = YES;

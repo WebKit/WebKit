@@ -31,7 +31,13 @@
 enum class MemoryRestriction {
     kRwxToRw,
     kRwxToRx,
+    kRwToRw,
+    kRwToRo,
 };
+
+#if USE(APPLE_INTERNAL_SDK)
+#include <WebKitAdditions/JSGlobalObjectAdditions.h>
+#endif
 
 #if defined(OS_THREAD_SELF_RESTRICT) != defined(OS_THREAD_SELF_RESTRICT_SUPPORTED)
 #error Must override both or neither of OS_THREAD_SELF_RESTRICT and OS_THREAD_SELF_RESTRICT_SUPPORTED
@@ -60,11 +66,15 @@ static ALWAYS_INLINE void threadSelfRestrict()
 #if USE(INLINE_JIT_PERMISSIONS_API)
 #include <BrowserEngineCore/BEMemory.h>
 
-template <MemoryRestriction>
+template <MemoryRestriction restriction>
 static ALWAYS_INLINE bool threadSelfRestrictSupported()
 {
-    return (&be_memory_inline_jit_restrict_with_witness_supported != nullptr
+    if constexpr ((restriction == MemoryRestriction::kRwxToRw)
+        || (restriction == MemoryRestriction::kRwxToRx)) {
+        return (&be_memory_inline_jit_restrict_with_witness_supported != nullptr
             && !!be_memory_inline_jit_restrict_with_witness_supported());
+    }
+    return false;
 }
 
 template <MemoryRestriction restriction>
@@ -82,10 +92,14 @@ static ALWAYS_INLINE void threadSelfRestrict()
 #elif USE(PTHREAD_JIT_PERMISSIONS_API)
 #include <pthread.h>
 
-template <MemoryRestriction>
+template <MemoryRestriction restriction>
 static ALWAYS_INLINE bool threadSelfRestrictSupported()
 {
-    return !!pthread_jit_write_protect_supported_np();
+    if constexpr ((restriction == MemoryRestriction::kRwxToRw)
+        || (restriction == MemoryRestriction::kRwxToRx)) {
+        return !!pthread_jit_write_protect_supported_np();
+    }
+    return false;
 }
 
 template <MemoryRestriction restriction>
@@ -103,10 +117,14 @@ static ALWAYS_INLINE void threadSelfRestrict()
 #elif USE(APPLE_INTERNAL_SDK)
 #include <os/thread_self_restrict.h>
 
-template <MemoryRestriction>
+template <MemoryRestriction restriction>
 SUPPRESS_ASAN static ALWAYS_INLINE bool threadSelfRestrictSupported()
 {
-    return !!os_thread_self_restrict_rwx_is_supported();
+    if constexpr ((restriction == MemoryRestriction::kRwxToRw)
+        || (restriction == MemoryRestriction::kRwxToRx)) {
+        return !!os_thread_self_restrict_rwx_is_supported();
+    }
+    return false;
 }
 
 template <MemoryRestriction restriction>

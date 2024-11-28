@@ -45,7 +45,7 @@ public:
     RenderMultiColumnSet* firstMultiColumnSet() const;
     RenderMultiColumnSet* lastMultiColumnSet() const;
     RenderBox* firstColumnSetOrSpanner() const;
-    bool hasColumnSpanner() const { return !m_spannerMap->isEmpty(); }
+    bool hasColumnSpanner() const { return !m_spannerMap.isEmpty(); }
     static RenderBox* nextColumnSetOrSpannerSiblingOf(const RenderBox*);
     static RenderBox* previousColumnSetOrSpannerSiblingOf(const RenderBox*);
 
@@ -96,8 +96,8 @@ public:
     // FIXME: Eventually as column and fragment flow threads start nesting, this will end up changing.
     bool shouldCheckColumnBreaks() const override;
 
-    using SpannerMap = HashMap<SingleThreadWeakRef<const RenderBox>, SingleThreadWeakPtr<RenderMultiColumnSpannerPlaceholder>>;
-    SpannerMap& spannerMap() { return *m_spannerMap; }
+    using SpannerMap = UncheckedKeyHashMap<SingleThreadWeakRef<const RenderBox>, SingleThreadWeakPtr<RenderMultiColumnSpannerPlaceholder>>;
+    SpannerMap& spannerMap() { return m_spannerMap; }
 
 private:
     ASCIILiteral renderName() const override;
@@ -115,7 +115,7 @@ private:
     bool isPageLogicalHeightKnown() const override;
 
 private:
-    std::unique_ptr<SpannerMap> m_spannerMap;
+    SpannerMap m_spannerMap;
 
     // The last set we worked on. It's not to be used as the "current set". The concept of a
     // "current set" is difficult, since layout may jump back and forth in the tree, due to wrong

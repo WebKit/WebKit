@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,6 +33,7 @@
 #include "EventNames.h"
 #include "PermissionsPolicy.h"
 #include "PlatformMediaSessionManager.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
@@ -70,12 +71,12 @@ Ref<DOMAudioSession> DOMAudioSession::create(ScriptExecutionContext* context)
 DOMAudioSession::DOMAudioSession(ScriptExecutionContext* context)
     : ActiveDOMObject(context)
 {
-    AudioSession::sharedSession().addInterruptionObserver(*this);
+    AudioSession::protectedSharedSession()->addInterruptionObserver(*this);
 }
 
 DOMAudioSession::~DOMAudioSession()
 {
-    AudioSession::sharedSession().removeInterruptionObserver(*this);
+    AudioSession::protectedSharedSession()->removeInterruptionObserver(*this);
 }
 
 ExceptionOr<void> DOMAudioSession::setType(Type type)
@@ -90,7 +91,7 @@ ExceptionOr<void> DOMAudioSession::setType(Type type)
     document->topDocument().setAudioSessionType(type);
 
     auto categoryOverride = fromDOMAudioSessionType(type);
-    AudioSession::sharedSession().setCategoryOverride(categoryOverride);
+    AudioSession::protectedSharedSession()->setCategoryOverride(categoryOverride);
 
     if (categoryOverride == AudioSessionCategory::None)
         PlatformMediaSessionManager::updateAudioSessionCategoryIfNecessary();

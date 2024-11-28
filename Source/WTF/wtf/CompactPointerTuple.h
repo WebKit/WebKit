@@ -83,7 +83,7 @@ public:
     {
     }
 
-    PointerType pointer() const { return bitwise_cast<PointerType>(m_data & pointerMask); }
+    PointerType pointer() const { return std::bit_cast<PointerType>(m_data & pointerMask); }
     void setPointer(PointerType pointer)
     {
         m_data = encode(pointer, type());
@@ -111,7 +111,7 @@ private:
 
     static uint64_t encode(PointerType pointer, Type type)
     {
-        return bitwise_cast<uint64_t>(pointer) | encodeType(type);
+        return std::bit_cast<uint64_t>(pointer) | encodeType(type);
     }
 
     uint64_t m_data { 0 };

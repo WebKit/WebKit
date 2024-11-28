@@ -27,6 +27,7 @@
 
 #import <WebCore/IntRect.h>
 #import <WebCore/ValidationMessageClient.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 class Element;
@@ -35,6 +36,7 @@ class Element;
 @class WebView;
 
 class WebValidationMessageClient final : public WebCore::ValidationMessageClient {
+    WTF_MAKE_TZONE_ALLOCATED(WebValidationMessageClient);
 public:
     explicit WebValidationMessageClient(WebView*);
     ~WebValidationMessageClient();

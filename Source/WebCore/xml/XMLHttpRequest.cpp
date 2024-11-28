@@ -45,7 +45,6 @@
 #include "ParsedContentType.h"
 #include "ResourceError.h"
 #include "ResourceRequest.h"
-#include "RuntimeApplicationChecks.h"
 #include "SecurityOriginPolicy.h"
 #include "Settings.h"
 #include "StringAdaptors.h"
@@ -62,6 +61,7 @@
 #include <JavaScriptCore/JSLock.h>
 #include <pal/text/TextCodecUTF8.h>
 #include <wtf/RefCountedLeakCounter.h>
+#include <wtf/RuntimeApplicationChecks.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/CString.h>
@@ -895,7 +895,7 @@ void XMLHttpRequest::handleCancellation()
     }));
 }
 
-void XMLHttpRequest::didFail(ScriptExecutionContextIdentifier, const ResourceError& error)
+void XMLHttpRequest::didFail(std::optional<ScriptExecutionContextIdentifier>, const ResourceError& error)
 {
     // If we are already in an error state, for instance we called abort(), bail out early.
     if (m_error)
@@ -932,7 +932,7 @@ void XMLHttpRequest::didFail(ScriptExecutionContextIdentifier, const ResourceErr
     networkError();
 }
 
-void XMLHttpRequest::didFinishLoading(ScriptExecutionContextIdentifier, ResourceLoaderIdentifier, const NetworkLoadMetrics&)
+void XMLHttpRequest::didFinishLoading(ScriptExecutionContextIdentifier, std::optional<ResourceLoaderIdentifier>, const NetworkLoadMetrics&)
 {
     Ref protectedThis { *this };
 
@@ -983,7 +983,7 @@ void XMLHttpRequest::didSendData(unsigned long long bytesSent, unsigned long lon
     }
 }
 
-void XMLHttpRequest::didReceiveResponse(ScriptExecutionContextIdentifier, ResourceLoaderIdentifier, const ResourceResponse& response)
+void XMLHttpRequest::didReceiveResponse(ScriptExecutionContextIdentifier, std::optional<ResourceLoaderIdentifier>, const ResourceResponse& response)
 {
     m_response = response;
 }
@@ -1033,14 +1033,14 @@ Ref<TextResourceDecoder> XMLHttpRequest::createDecoder() const
         FALLTHROUGH;
     case ResponseType::Text:
     case ResponseType::Json: {
-        auto decoder = TextResourceDecoder::create("text/plain"_s, "UTF-8");
+        auto decoder = TextResourceDecoder::create("text/plain"_s, "UTF-8"_s);
         if (responseType() == ResponseType::Json)
             decoder->setAlwaysUseUTF8();
         return decoder;
     }
     case ResponseType::Document: {
         if (equalLettersIgnoringASCIICase(responseMIMEType(), "text/html"_s))
-            return TextResourceDecoder::create("text/html"_s, "UTF-8");
+            return TextResourceDecoder::create("text/html"_s, "UTF-8"_s);
         auto decoder = TextResourceDecoder::create("application/xml"_s);
         // Don't stop on encoding errors, unlike it is done for other kinds of XML resources. This matches the behavior of previous WebKit versions, Firefox and Opera.
         decoder->useLenientXMLDecoding();
@@ -1051,7 +1051,7 @@ Ref<TextResourceDecoder> XMLHttpRequest::createDecoder() const
         ASSERT_NOT_REACHED();
         break;
     }
-    return TextResourceDecoder::create("text/plain"_s, "UTF-8");
+    return TextResourceDecoder::create("text/plain"_s, "UTF-8"_s);
 }
 
 void XMLHttpRequest::didReceiveData(const SharedBuffer& buffer)

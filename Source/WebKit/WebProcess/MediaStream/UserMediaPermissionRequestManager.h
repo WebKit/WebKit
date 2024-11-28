@@ -32,15 +32,7 @@
 #include <wtf/Ref.h>
 #include <wtf/RefPtr.h>
 #include <wtf/TZoneMalloc.h>
-
-namespace WebKit {
-class UserMediaPermissionRequestManager;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::UserMediaPermissionRequestManager> : std::true_type { };
-}
+#include <wtf/WeakRef.h>
 
 namespace WebKit {
 
@@ -53,12 +45,13 @@ class UserMediaPermissionRequestManager : public WebCore::MediaCanStartListener
 {
     WTF_MAKE_TZONE_ALLOCATED(UserMediaPermissionRequestManager);
 public:
-    using WebCore::MediaCanStartListener::weakPtrFactory;
-    using WebCore::MediaCanStartListener::WeakValueType;
-    using WebCore::MediaCanStartListener::WeakPtrImplType;
+    USING_CAN_MAKE_WEAKPTR(WebCore::MediaCanStartListener);
 
     explicit UserMediaPermissionRequestManager(WebPage&);
     ~UserMediaPermissionRequestManager() = default;
+
+    void ref() const final;
+    void deref() const final;
 
     void startUserMediaRequest(WebCore::UserMediaRequest&);
     void cancelUserMediaRequest(WebCore::UserMediaRequest&);
@@ -85,7 +78,9 @@ private:
     // WebCore::MediaCanStartListener
     void mediaCanStart(WebCore::Document&) final;
 
-    WebPage& m_page;
+    Ref<WebPage> protectedPage() const;
+
+    WeakRef<WebPage> m_page;
 
     HashMap<WebCore::UserMediaRequestIdentifier, Ref<WebCore::UserMediaRequest>> m_ongoingUserMediaRequests;
     HashMap<RefPtr<WebCore::Document>, Vector<Ref<WebCore::UserMediaRequest>>> m_pendingUserMediaRequests;

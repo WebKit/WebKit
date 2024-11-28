@@ -1,9 +1,4 @@
 
-FAIL forEach()'s internal observer's next steps do not crash in a detached document promise_test: Unhandled rejection with value: object "TypeError: source.forEach is not a function. (In 'source.forEach(value => {
-      parentResults.push(value);
-    })', 'source.forEach' is undefined)"
-FAIL forEach()'s internal observer's next steps do not crash when visitor callback detaches the document promise_test: Unhandled rejection with value: object "TypeError: source.forEach is not a function. (In 'source.forEach(value => {
-      window.frameElement.remove();
-      parentResults.push(value);
-    })', 'source.forEach' is undefined)"
+PASS forEach()'s internal observer's next steps do not crash in a detached document
+PASS forEach()'s internal observer's next steps do not crash when visitor callback detaches the document
 

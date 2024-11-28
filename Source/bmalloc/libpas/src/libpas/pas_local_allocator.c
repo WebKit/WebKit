@@ -46,7 +46,7 @@ PAS_DEFINE_LOCK(pas_local_allocator_refill_efficiency);
 void pas_local_allocator_construct(pas_local_allocator* allocator,
                                    pas_segregated_size_directory* directory)
 {
-    static const bool verbose = false;
+    static const bool verbose = PAS_SHOULD_LOG(PAS_LOG_OTHER);
 
     pas_local_allocator_scavenger_data_construct(
         &allocator->scavenger_data, pas_local_allocator_allocator_kind);
@@ -149,7 +149,7 @@ static bool stop_impl(
     pas_lock_lock_mode page_lock_mode,
     pas_lock_hold_mode heap_lock_hold_mode)
 {
-    static const bool verbose = false;
+    static const bool verbose = PAS_SHOULD_LOG(PAS_LOG_OTHER);
     
     pas_segregated_view view;
     pas_segregated_page* page;
@@ -214,7 +214,7 @@ bool pas_local_allocator_stop(
     pas_lock_lock_mode page_lock_mode,
     pas_lock_hold_mode heap_lock_hold_mode)
 {
-    static const bool verbose = false;
+    static const bool verbose = PAS_SHOULD_LOG(PAS_LOG_OTHER);
     
     bool result;
     bool is_in_use;

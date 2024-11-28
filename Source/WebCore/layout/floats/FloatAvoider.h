@@ -41,21 +41,21 @@ public:
     FloatAvoider(LayoutPoint absoluteTopLeft, LayoutUnit borderBoxWidth, const BoxGeometry::Edges& margin, BoxGeometry::HorizontalEdges containingBlockAbsoluteContentBox, bool isFloatingPositioned, bool isLeftAligned);
     virtual ~FloatAvoider() = default;
 
-    void setHorizontalPosition(LayoutUnit);
-    void setVerticalPosition(LayoutUnit);
-    void resetHorizontalPosition() { m_absoluteTopLeft.setX(initialHorizontalPosition()); }
+    void setInlineStart(LayoutUnit);
+    void setBlockStart(LayoutUnit);
+    void resetInlineStart() { m_absoluteTopLeft.setX(initialInlineStart()); }
 
     bool overflowsContainingBlock() const;
 
-    LayoutUnit top() const;
-    LayoutUnit left() const;
-    LayoutUnit right() const;
+    LayoutUnit blockStart() const;
+    LayoutUnit inlineStart() const;
+    LayoutUnit inlineEnd() const;
 
-    bool isLeftAligned() const { return m_isLeftAligned; }
+    bool isStartAligned() const { return m_isStartAligned; }
 
 private:
     LayoutUnit borderBoxWidth() const { return m_borderBoxWidth; }
-    LayoutUnit initialHorizontalPosition() const;
+    LayoutUnit initialInlineStart() const;
 
     LayoutUnit marginBefore() const { return m_margin.vertical.before; }
     LayoutUnit marginAfter() const { return m_margin.vertical.after; }
@@ -73,31 +73,31 @@ private:
     BoxGeometry::Edges m_margin;
     BoxGeometry::HorizontalEdges m_containingBlockAbsoluteContentBox;
     bool m_isFloatingPositioned { true };
-    bool m_isLeftAligned { true };
+    bool m_isStartAligned { true };
 };
 
-inline LayoutUnit FloatAvoider::top() const
+inline LayoutUnit FloatAvoider::blockStart() const
 {
-    auto top = m_absoluteTopLeft.y();
+    auto blockStart = m_absoluteTopLeft.y();
     if (isFloatingBox())
-        top -= marginBefore();
-    return top;
+        blockStart -= marginBefore();
+    return blockStart;
 }
 
-inline LayoutUnit FloatAvoider::left() const
+inline LayoutUnit FloatAvoider::inlineStart() const
 {
-    auto left = m_absoluteTopLeft.x();
+    auto inlineStart = m_absoluteTopLeft.x();
     if (isFloatingBox())
-        left -= marginStart();
-    return left;
+        inlineStart -= marginStart();
+    return inlineStart;
 }
 
-inline LayoutUnit FloatAvoider::right() const
+inline LayoutUnit FloatAvoider::inlineEnd() const
 {
-    auto right = left() + borderBoxWidth();
+    auto inlineEnd = inlineStart() + borderBoxWidth();
     if (isFloatingBox())
-        right += marginEnd();
-    return right;
+        inlineEnd += marginEnd();
+    return inlineEnd;
 }
 
 }

@@ -56,7 +56,6 @@
 #include "TestNamespaceObjectImpl.h"
 #endif
 
-
 namespace WebCore {
 using namespace JSC;
 
@@ -79,20 +78,19 @@ using JSTestNamespaceObjectDOMConstructor = JSDOMConstructorNotCallable<JSTestNa
 
 /* Hash table for constructor */
 
-static const HashTableValue JSTestNamespaceObjectConstructorTableValues[] =
-{
-    { "namespaceAttribute"_s, static_cast<unsigned>(JSC::PropertyAttribute::ReadOnly), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestNamespaceObjectConstructor_namespaceAttribute, 0 } },
+static const std::array<HashTableValue, 5> JSTestNamespaceObjectConstructorTableValues {
+    HashTableValue { "namespaceAttribute"_s, static_cast<unsigned>(JSC::PropertyAttribute::ReadOnly), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestNamespaceObjectConstructor_namespaceAttribute, 0 } },
 #if ENABLE(Condition1)
-    { "namespaceAttributeFromPartial"_s, static_cast<unsigned>(JSC::PropertyAttribute::ReadOnly), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestNamespaceObjectConstructor_namespaceAttributeFromPartial, 0 } },
+    HashTableValue { "namespaceAttributeFromPartial"_s, static_cast<unsigned>(JSC::PropertyAttribute::ReadOnly), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestNamespaceObjectConstructor_namespaceAttributeFromPartial, 0 } },
 #else
-    { { }, 0, NoIntrinsic, { HashTableValue::End } },
+    HashTableValue { { }, 0, NoIntrinsic, { HashTableValue::End } },
 #endif
-    { "overloadedNamespaceOperation"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestNamespaceObjectConstructorFunction_overloadedNamespaceOperation, 1 } },
-    { "enabledBySettingNamespaceOperation"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestNamespaceObjectConstructorFunction_enabledBySettingNamespaceOperation, 0 } },
+    HashTableValue { "overloadedNamespaceOperation"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestNamespaceObjectConstructorFunction_overloadedNamespaceOperation, 1 } },
+    HashTableValue { "enabledBySettingNamespaceOperation"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestNamespaceObjectConstructorFunction_enabledBySettingNamespaceOperation, 0 } },
 #if ENABLE(Condition1)
-    { "namespaceOperationFromPartial"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestNamespaceObjectConstructorFunction_namespaceOperationFromPartial, 0 } },
+    HashTableValue { "namespaceOperationFromPartial"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestNamespaceObjectConstructorFunction_namespaceOperationFromPartial, 0 } },
 #else
-    { { }, 0, NoIntrinsic, { HashTableValue::End } },
+    HashTableValue { { }, 0, NoIntrinsic, { HashTableValue::End } },
 #endif
 };
 
@@ -152,7 +150,7 @@ void JSTestNamespaceObject::destroy(JSC::JSCell* cell)
 
 static inline JSValue jsTestNamespaceObjectConstructor_namespaceAttributeGetter(JSGlobalObject& lexicalGlobalObject)
 {
-    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     RELEASE_AND_RETURN(throwScope, (toJS<IDLUnsignedLong>(lexicalGlobalObject, throwScope, TestNamespaceObject::namespaceAttribute())));
 }
@@ -165,7 +163,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestNamespaceObjectConstructor_namespaceAttribute, (J
 #if ENABLE(Condition1)
 static inline JSValue jsTestNamespaceObjectConstructor_namespaceAttributeFromPartialGetter(JSGlobalObject& lexicalGlobalObject)
 {
-    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     RELEASE_AND_RETURN(throwScope, (toJS<IDLDouble>(lexicalGlobalObject, throwScope, WebCore::TestNamespaceObjectImpl::namespaceAttributeFromPartial())));
 }
@@ -179,7 +177,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestNamespaceObjectConstructor_namespaceAttributeFrom
 
 static inline JSC::EncodedJSValue jsTestNamespaceObjectConstructorFunction_overloadedNamespaceOperation1Body(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame)
 {
-    auto& vm = JSC::getVM(lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(callFrame);
@@ -196,7 +194,7 @@ static inline JSC::EncodedJSValue jsTestNamespaceObjectConstructorFunction_overl
 
 static inline JSC::EncodedJSValue jsTestNamespaceObjectConstructorFunction_overloadedNamespaceOperation2Body(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame)
 {
-    auto& vm = JSC::getVM(lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(callFrame);
@@ -213,7 +211,7 @@ static inline JSC::EncodedJSValue jsTestNamespaceObjectConstructorFunction_overl
 
 static inline JSC::EncodedJSValue jsTestNamespaceObjectConstructorFunction_overloadedNamespaceOperationOverloadDispatcher(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame)
 {
-    auto& vm = JSC::getVM(lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(callFrame);
@@ -239,7 +237,7 @@ JSC_DEFINE_HOST_FUNCTION(jsTestNamespaceObjectConstructorFunction_overloadedName
 
 static inline JSC::EncodedJSValue jsTestNamespaceObjectConstructorFunction_enabledBySettingNamespaceOperationBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame)
 {
-    auto& vm = JSC::getVM(lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(callFrame);
@@ -258,7 +256,7 @@ JSC_DEFINE_HOST_FUNCTION(jsTestNamespaceObjectConstructorFunction_enabledBySetti
 #if ENABLE(Condition1)
 static inline JSC::EncodedJSValue jsTestNamespaceObjectConstructorFunction_namespaceOperationFromPartialBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame)
 {
-    auto& vm = JSC::getVM(lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(callFrame);

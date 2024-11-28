@@ -5,6 +5,10 @@ Test form interactions (reset / submit):
 
 
 
+
+
 PASS :user-valid selector should respond to user action
 PASS :user-valid selector properly interacts with submit & reset buttons
+PASS Checkboxes should match :user-valid after the user clicks on it.
+PASS Date inputs should match :user-valid after the user types a value into it.
 

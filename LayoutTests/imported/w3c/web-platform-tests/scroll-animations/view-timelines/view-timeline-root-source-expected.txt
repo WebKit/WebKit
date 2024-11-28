@@ -1,5 +1,3 @@
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT Test view-timeline with document scrolling element. Test timed out
+FAIL Test view-timeline with document scrolling element. assert_equals: expected "1" but got "0"
 

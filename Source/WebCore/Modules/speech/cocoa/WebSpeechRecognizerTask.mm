@@ -41,7 +41,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface WebSpeechRecognizerTaskImpl : NSObject<SFSpeechRecognitionTaskDelegate, SFSpeechRecognizerDelegate> {
 @private
-    WebCore::SpeechRecognitionConnectionClientIdentifier _identifier;
+    Markable<WebCore::SpeechRecognitionConnectionClientIdentifier> _identifier;
     BlockPtr<void(const WebCore::SpeechRecognitionUpdate&)> _delegateCallback;
     bool _doMultipleRecognitions;
     uint64_t _maxAlternatives;
@@ -123,7 +123,7 @@ NS_ASSUME_NONNULL_BEGIN
         if (alternatives.size() == _maxAlternatives)
             break;
     }
-    _delegateCallback(WebCore::SpeechRecognitionUpdate::createResult(_identifier, { WebCore::SpeechRecognitionResultData { WTFMove(alternatives), !!isFinal } }));
+    _delegateCallback(WebCore::SpeechRecognitionUpdate::createResult(*_identifier, { WebCore::SpeechRecognitionResultData { WTFMove(alternatives), !!isFinal } }));
 }
 
 - (void)audioSamplesAvailable:(CMSampleBufferRef)sampleBuffer
@@ -170,7 +170,7 @@ NS_ASSUME_NONNULL_BEGIN
         return;
 
     _hasSentSpeechStart = true;
-    _delegateCallback(WebCore::SpeechRecognitionUpdate::create(_identifier, WebCore::SpeechRecognitionUpdateType::SpeechStart));
+    _delegateCallback(WebCore::SpeechRecognitionUpdate::create(*_identifier, WebCore::SpeechRecognitionUpdateType::SpeechStart));
 }
 
 - (void)sendSpeechEndIfNeeded
@@ -179,7 +179,7 @@ NS_ASSUME_NONNULL_BEGIN
         return;
 
     _hasSentSpeechEnd = true;
-    _delegateCallback(WebCore::SpeechRecognitionUpdate::create(_identifier, WebCore::SpeechRecognitionUpdateType::SpeechEnd));
+    _delegateCallback(WebCore::SpeechRecognitionUpdate::create(*_identifier, WebCore::SpeechRecognitionUpdateType::SpeechEnd));
 }
 
 - (void)sendEndIfNeeded
@@ -188,7 +188,7 @@ NS_ASSUME_NONNULL_BEGIN
         return;
 
     _hasSentEnd = true;
-    _delegateCallback(WebCore::SpeechRecognitionUpdate::create(_identifier, WebCore::SpeechRecognitionUpdateType::End));
+    _delegateCallback(WebCore::SpeechRecognitionUpdate::create(*_identifier, WebCore::SpeechRecognitionUpdateType::End));
 }
 
 #pragma mark SFSpeechRecognizerDelegate
@@ -201,7 +201,7 @@ NS_ASSUME_NONNULL_BEGIN
         return;
 
     auto error = WebCore::SpeechRecognitionError { WebCore::SpeechRecognitionErrorType::ServiceNotAllowed, "Speech recognition service becomes unavailable"_s };
-    _delegateCallback(WebCore::SpeechRecognitionUpdate::createError(_identifier, WTFMove(error)));
+    _delegateCallback(WebCore::SpeechRecognitionUpdate::createError(*_identifier, WTFMove(error)));
 }
 
 #pragma mark SFSpeechRecognitionTaskDelegate
@@ -241,7 +241,7 @@ NS_ASSUME_NONNULL_BEGIN
 
     if (!successfully) {
         auto error = WebCore::SpeechRecognitionError { WebCore::SpeechRecognitionErrorType::Aborted, task.error.localizedDescription };
-        _delegateCallback(WebCore::SpeechRecognitionUpdate::createError(_identifier, WTFMove(error)));
+        _delegateCallback(WebCore::SpeechRecognitionUpdate::createError(*_identifier, WTFMove(error)));
     }
     
     [self sendEndIfNeeded];

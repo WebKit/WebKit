@@ -213,6 +213,7 @@ public:
 
     static constexpr int s_maxTransitionLength = 64;
     static constexpr int s_maxTransitionLengthForNonEvalPutById = 512;
+    static constexpr int s_maxTransitionLengthForRemove = 4096; // Picked from benchmarking measurement.
 
     using SeenProperties = TinyBloomFilter<CompactPtr<UniquedStringImpl>::StorageType>;
 
@@ -282,6 +283,22 @@ public:
         else
             maxTransitionLength = s_maxTransitionLength;
         return transitionCountEstimate() > maxTransitionLength;
+    }
+
+    inline bool shouldDoCacheableDictionaryTransitionForRemoveAndAttributeChange()
+    {
+        return transitionCountEstimate() > s_maxTransitionLengthForRemove || transitionCountHasOverflowed();
+    }
+
+    ALWAYS_INLINE bool transitionCountHasOverflowed() const
+    {
+        int transitionCount = 0;
+        for (auto* structure = this; structure; structure = structure->previousID()) {
+            if (++transitionCount > s_maxTransitionLength)
+                return true;
+        }
+
+        return false;
     }
 
     JS_EXPORT_PRIVATE static Structure* addPropertyTransition(VM&, Structure*, PropertyName, unsigned attributes, PropertyOffset&);
@@ -1015,17 +1032,6 @@ private:
             rareData()->clearPreviousID();
         else
             m_previousOrRareData.clear();
-    }
-
-    ALWAYS_INLINE bool transitionCountHasOverflowed() const
-    {
-        int transitionCount = 0;
-        for (auto* structure = this; structure; structure = structure->previousID()) {
-            if (++transitionCount > s_maxTransitionLength)
-                return true;
-        }
-
-        return false;
     }
 
     bool isValid(JSGlobalObject*, StructureChain* cachedPrototypeChain, JSObject* base) const;

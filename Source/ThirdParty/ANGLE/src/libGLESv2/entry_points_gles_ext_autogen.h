@@ -90,6 +90,12 @@ GL_MultiDrawElementsInstancedBaseVertexBaseInstanceANGLE(GLenum mode,
                                                          const GLuint *baseInstances,
                                                          GLsizei drawcount);
 
+// GL_ANGLE_blob_cache
+ANGLE_EXPORT void GL_APIENTRY GL_BlobCacheCallbacksANGLE(GLSETBLOBPROCANGLE set,
+                                                         GLGETBLOBPROCANGLE get,
+                                                         const void *userParam);
+ANGLE_EXPORT void GL_APIENTRY GL_GetPointervANGLE(GLenum pname, void **params);
+
 // GL_ANGLE_client_arrays
 
 // GL_ANGLE_clip_cull_distance
@@ -758,6 +764,8 @@ ANGLE_EXPORT void GL_APIENTRY GL_ReleaseTexturesANGLE(GLuint numTextures,
 
 // GL_ARM_shader_framebuffer_fetch
 
+// GL_ARM_shader_framebuffer_fetch_depth_stencil
+
 // GL_CHROMIUM_bind_uniform_location
 ANGLE_EXPORT void GL_APIENTRY GL_BindUniformLocationCHROMIUM(GLuint program,
                                                              GLint location,
@@ -1175,6 +1183,8 @@ ANGLE_EXPORT void GL_APIENTRY GL_ImportSemaphoreFdEXT(GLuint semaphore,
                                                       GLenum handleType,
                                                       GLint fd);
 
+// GL_EXT_separate_depth_stencil
+
 // GL_EXT_separate_shader_objects
 ANGLE_EXPORT void GL_APIENTRY GL_ActiveShaderProgramEXT(GLuint pipeline, GLuint program);
 ANGLE_EXPORT void GL_APIENTRY GL_BindProgramPipelineEXT(GLuint pipeline);
@@ -1395,6 +1405,8 @@ ANGLE_EXPORT void GL_APIENTRY GL_TexBufferRangeEXT(GLenum target,
 
 // GL_EXT_texture_norm16
 
+// GL_EXT_texture_query_lod
+
 // GL_EXT_texture_rg
 
 // GL_EXT_texture_sRGB_R8
@@ -1402,6 +1414,8 @@ ANGLE_EXPORT void GL_APIENTRY GL_TexBufferRangeEXT(GLenum target,
 // GL_EXT_texture_sRGB_RG8
 
 // GL_EXT_texture_sRGB_decode
+
+// GL_EXT_texture_shadow_lod
 
 // GL_EXT_texture_storage
 ANGLE_EXPORT void GL_APIENTRY GL_TexStorage1DEXT(GLenum target,

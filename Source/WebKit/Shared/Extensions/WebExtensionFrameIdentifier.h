@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2023-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,22 +25,19 @@
 
 #pragma once
 
-#include "FrameInfoData.h"
-#include "WebFrame.h"
-#include "WebPage.h"
-#include <WebCore/Frame.h>
 #include <WebCore/FrameIdentifier.h>
 #include <wtf/ObjectIdentifier.h>
 
-#ifdef __OBJC__
-#import "WKFrameInfoPrivate.h"
-#import "_WKFrameHandle.h"
-#endif
+OBJC_CLASS WKFrameInfo;
 
 namespace WebKit {
 
+class WebFrame;
+class WebPage;
+struct FrameInfoData;
+
 struct WebExtensionFrameIdentifierType;
-using WebExtensionFrameIdentifier = LegacyNullableObjectIdentifier<WebExtensionFrameIdentifierType>;
+using WebExtensionFrameIdentifier = ObjectIdentifier<WebExtensionFrameIdentifierType>;
 
 namespace WebExtensionFrameConstants {
 
@@ -77,104 +74,22 @@ inline bool isValid(std::optional<WebExtensionFrameIdentifier> identifier)
     return identifier && !isNone(identifier.value());
 }
 
-inline WebCore::FrameIdentifier toWebCoreFrameIdentifier(const WebExtensionFrameIdentifier& identifier, const WebPage& page)
-{
-    if (isMainFrame(identifier))
-        return page.mainWebFrame().frameID();
+WebCore::FrameIdentifier toWebCoreFrameIdentifier(const WebExtensionFrameIdentifier&, const WebPage&);
 
-    WebCore::FrameIdentifier result { LegacyNullableObjectIdentifier<WebCore::FrameIdentifierType> { identifier.toUInt64() }, WebCore::Process::identifier() };
-    ASSERT(result.object().isValid());
-    return result;
-}
+bool matchesFrame(const WebExtensionFrameIdentifier&, const WebFrame&);
 
-inline bool matchesFrame(const WebExtensionFrameIdentifier& identifier, const WebFrame& frame)
-{
-    if (RefPtr coreFrame = frame.coreFrame(); coreFrame && coreFrame->isMainFrame() && isMainFrame(identifier))
-        return true;
-
-    if (RefPtr page = frame.page(); page && &page->mainWebFrame() == &frame && isMainFrame(identifier))
-        return true;
-
-    return frame.frameID().object().toUInt64() == identifier.toUInt64();
-}
-
-inline WebExtensionFrameIdentifier toWebExtensionFrameIdentifier(WebCore::FrameIdentifier frameIdentifier)
-{
-    WebExtensionFrameIdentifier result { frameIdentifier.object().toUInt64() };
-    if (!result.isValid()) {
-        ASSERT_NOT_REACHED();
-        return WebExtensionFrameConstants::NoneIdentifier;
-    }
-
-    return result;
-}
-
-inline WebExtensionFrameIdentifier toWebExtensionFrameIdentifier(const WebFrame& frame)
-{
-    if (RefPtr coreFrame = frame.coreFrame(); coreFrame && coreFrame->isMainFrame())
-        return WebExtensionFrameConstants::MainFrameIdentifier;
-
-    if (RefPtr page = frame.page(); page && &page->mainWebFrame() == &frame)
-        return WebExtensionFrameConstants::MainFrameIdentifier;
-
-    return toWebExtensionFrameIdentifier(frame.frameID());
-}
-
-inline WebExtensionFrameIdentifier toWebExtensionFrameIdentifier(const FrameInfoData& frameInfoData)
-{
-    if (frameInfoData.isMainFrame)
-        return WebExtensionFrameConstants::MainFrameIdentifier;
-
-    return toWebExtensionFrameIdentifier(frameInfoData.frameID);
-}
+WebExtensionFrameIdentifier toWebExtensionFrameIdentifier(std::optional<WebCore::FrameIdentifier>);
+WebExtensionFrameIdentifier toWebExtensionFrameIdentifier(const WebFrame&);
+WebExtensionFrameIdentifier toWebExtensionFrameIdentifier(const FrameInfoData&);
 
 #ifdef __OBJC__
-inline WebExtensionFrameIdentifier toWebExtensionFrameIdentifier(WKFrameInfo *frameInfo)
-{
-    if (frameInfo.isMainFrame)
-        return WebExtensionFrameConstants::MainFrameIdentifier;
+WebExtensionFrameIdentifier toWebExtensionFrameIdentifier(WKFrameInfo *);
+#endif
 
-    // FIXME: <rdar://117932176> Stop using FrameIdentifier/_WKFrameHandle for WebExtensionFrameIdentifier,
-    // which needs to be just one number and probably should only be generated in the UI process
-    // to prevent collisions with numbers generated in different web content processes, especially with site isolation.
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    WebExtensionFrameIdentifier result { frameInfo._handle.frameID };
-ALLOW_DEPRECATED_DECLARATIONS_END
-    if (!result.isValid()) {
-        ASSERT_NOT_REACHED();
-        return WebExtensionFrameConstants::NoneIdentifier;
-    }
-
-    return result;
-}
-#endif // __OBJC__
-
-inline std::optional<WebExtensionFrameIdentifier> toWebExtensionFrameIdentifier(double identifier)
-{
-    if (identifier == WebExtensionFrameConstants::MainFrame)
-        return WebExtensionFrameConstants::MainFrameIdentifier;
-
-    if (identifier == WebExtensionFrameConstants::None)
-        return WebExtensionFrameConstants::NoneIdentifier;
-
-    if (!std::isfinite(identifier) || identifier <= 0 || identifier >= static_cast<double>(WebExtensionFrameConstants::NoneIdentifier.toUInt64()))
-        return std::nullopt;
-
-    double integral;
-    if (std::modf(identifier, &integral) != 0.0) {
-        // Only integral numbers can be used.
-        return std::nullopt;
-    }
-
-    WebExtensionFrameIdentifier result { static_cast<uint64_t>(identifier) };
-    ASSERT(result.isValid());
-    return result;
-}
+std::optional<WebExtensionFrameIdentifier> toWebExtensionFrameIdentifier(double identifier);
 
 inline double toWebAPI(const WebExtensionFrameIdentifier& identifier)
 {
-    ASSERT(identifier.isValid());
-
     if (isMainFrame(identifier))
         return WebExtensionFrameConstants::MainFrame;
 

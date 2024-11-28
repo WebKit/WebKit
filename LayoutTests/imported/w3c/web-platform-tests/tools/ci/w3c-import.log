@@ -15,6 +15,7 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/tools/ci/__init__.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/ci/check_for_updated_refs.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/ci/ci_built_diff.sh
 /LayoutTests/imported/w3c/web-platform-tests/tools/ci/ci_resources_unittest.sh
 /LayoutTests/imported/w3c/web-platform-tests/tools/ci/ci_tools_integration_test.sh

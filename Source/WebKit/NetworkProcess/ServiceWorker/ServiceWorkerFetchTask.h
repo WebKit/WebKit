@@ -79,7 +79,7 @@ public:
     void continueFetchTaskWith(WebCore::ResourceRequest&&);
 
     WebCore::FetchIdentifier fetchIdentifier() const { return m_fetchIdentifier; }
-    WebCore::ServiceWorkerIdentifier serviceWorkerIdentifier() const { return m_serviceWorkerIdentifier; }
+    std::optional<WebCore::ServiceWorkerIdentifier> serviceWorkerIdentifier() const { return m_serviceWorkerIdentifier; }
 
     WebCore::ResourceRequest takeRequest() { return WTFMove(m_currentRequest); }
 
@@ -130,8 +130,8 @@ private:
     WeakPtr<NetworkResourceLoader> m_loader;
     WeakPtr<WebSWServerToContextConnection> m_serviceWorkerConnection;
     WebCore::FetchIdentifier m_fetchIdentifier;
-    WebCore::SWServerConnectionIdentifier m_serverConnectionIdentifier;
-    WebCore::ServiceWorkerIdentifier m_serviceWorkerIdentifier;
+    Markable<WebCore::SWServerConnectionIdentifier> m_serverConnectionIdentifier;
+    Markable<WebCore::ServiceWorkerIdentifier> m_serviceWorkerIdentifier;
     WebCore::ResourceRequest m_currentRequest;
     std::unique_ptr<WebCore::Timer> m_timeoutTimer;
     Markable<WebCore::ServiceWorkerRegistrationIdentifier> m_serviceWorkerRegistrationIdentifier;

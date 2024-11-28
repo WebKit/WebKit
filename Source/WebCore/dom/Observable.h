@@ -33,13 +33,15 @@
 
 namespace WebCore {
 
+class DeferredPromise;
 class InternalObserver;
-class ScriptExecutionContext;
 class JSSubscriptionObserverCallback;
-class PredicateCallback;
 class MapperCallback;
-struct SubscriptionObserver;
+class PredicateCallback;
+class ScriptExecutionContext;
+class VisitorCallback;
 struct SubscribeOptions;
+struct SubscriptionObserver;
 
 class Observable final : public ScriptWrappable, public RefCounted<Observable> {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(Observable);
@@ -52,7 +54,7 @@ public:
     explicit Observable(Ref<SubscriberCallback>);
 
     void subscribe(ScriptExecutionContext&, std::optional<ObserverUnion>, SubscribeOptions);
-    void subscribeInternal(ScriptExecutionContext&, Ref<InternalObserver>, SubscribeOptions);
+    void subscribeInternal(ScriptExecutionContext&, Ref<InternalObserver>&&, const SubscribeOptions&);
 
     Ref<Observable> map(ScriptExecutionContext&, MapperCallback&);
 
@@ -61,6 +63,15 @@ public:
     Ref<Observable> take(ScriptExecutionContext&, uint64_t);
 
     Ref<Observable> drop(ScriptExecutionContext&, uint64_t);
+
+    // Promise-returning operators.
+
+    void first(ScriptExecutionContext&, const SubscribeOptions&, Ref<DeferredPromise>&&);
+    void forEach(ScriptExecutionContext&, Ref<VisitorCallback>&&, const SubscribeOptions&, Ref<DeferredPromise>&&);
+    void last(ScriptExecutionContext&, const SubscribeOptions&, Ref<DeferredPromise>&&);
+    void find(ScriptExecutionContext&, Ref<PredicateCallback>&&, const SubscribeOptions&, Ref<DeferredPromise>&&);
+    void every(ScriptExecutionContext&, Ref<PredicateCallback>&&, const SubscribeOptions&, Ref<DeferredPromise>&&);
+    void some(ScriptExecutionContext&, Ref<PredicateCallback>&&, const SubscribeOptions&, Ref<DeferredPromise>&&);
 
 private:
     Ref<SubscriberCallback> m_subscriberCallback;

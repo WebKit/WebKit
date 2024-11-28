@@ -168,6 +168,10 @@ public:
     }
 #endif
 
+    bool hasValidAtom() const { return !m_atom.isNull(); }
+    const String& atom() const { return m_atom; }
+    void setAtom(String&& atom) { m_atom = WTFMove(atom); }
+
 private:
     friend class RegExpCache;
     RegExp(VM&, const String&, OptionSet<Yarr::Flags>);
@@ -211,10 +215,11 @@ private:
         // This first element of the RHS vector is the subpatternId in the non-duplicate case.
         // For the duplicate case, the first element is the namedCaptureGroupId.
         // The remaining elements are the subpatternIds for each of the duplicate groups.
-        HashMap<String, Vector<unsigned>> m_namedGroupToParenIndices;
+        UncheckedKeyHashMap<String, Vector<unsigned>> m_namedGroupToParenIndices;
     };
 
     String m_patternString;
+    String m_atom;
     RegExpState m_state { NotCompiled };
     OptionSet<Yarr::Flags> m_flags;
     Yarr::ErrorCode m_constructionErrorCode { Yarr::ErrorCode::NoError };

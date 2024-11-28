@@ -30,7 +30,6 @@
 #import "Logging.h"
 #import "WebPreferencesDefaultValues.h"
 #import "XPCUtilities.h"
-#import <WebCore/RuntimeApplicationChecks.h>
 #import <crt_externs.h>
 #import <mach-o/dyld.h>
 #import <mach/mach_error.h>
@@ -45,6 +44,7 @@
 #import <wtf/FileSystem.h>
 #import <wtf/MachSendRight.h>
 #import <wtf/RunLoop.h>
+#import <wtf/RuntimeApplicationChecks.h>
 #import <wtf/SoftLinking.h>
 #import <wtf/Threading.h>
 #import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
@@ -302,9 +302,9 @@ void ProcessLauncher::launchProcess()
         });
     };
 
-    launchWithExtensionKit(*this, m_launchOptions.processType, m_client, WTFMove(handler));
+    launchWithExtensionKit(*this, m_launchOptions.processType, m_client.get(), WTFMove(handler));
 #else
-    auto name = serviceName(m_launchOptions, m_client);
+    auto name = serviceName(m_launchOptions, m_client.get());
     m_xpcConnection = adoptOSObject(xpc_connection_create(name, nullptr));
     finishLaunchingProcess(name);
 #endif
@@ -321,8 +321,11 @@ void ProcessLauncher::finishLaunchingProcess(ASCIILiteral name)
     // 1. When the application and system frameworks simply have different localized resources available, we should match the application.
     // 1.1. An important case is WebKitTestRunner, where we should use English localizations for all system frameworks.
     // 2. When AppleLanguages is passed as command line argument for UI process, or set in its preferences, we should respect it in child processes.
+#if !USE(EXTENSIONKIT)
     auto initializationMessage = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
     _CFBundleSetupXPCBootstrap(initializationMessage.get());
+    xpc_connection_set_bootstrap(m_xpcConnection.get(), initializationMessage.get());
+#endif
 
     // Create the listening port.
     mach_port_t listeningPort = MACH_PORT_NULL;
@@ -395,7 +398,7 @@ void ProcessLauncher::finishLaunchingProcess(ASCIILiteral name)
     xpc_dictionary_set_mach_send(bootstrapMessage.get(), "server-port", listeningPort);
 
     xpc_dictionary_set_string(bootstrapMessage.get(), "client-identifier", !clientIdentifier.isEmpty() ? clientIdentifier.utf8().data() : *_NSGetProgname());
-    xpc_dictionary_set_string(bootstrapMessage.get(), "client-bundle-identifier", WebCore::applicationBundleIdentifier().utf8().data());
+    xpc_dictionary_set_string(bootstrapMessage.get(), "client-bundle-identifier", applicationBundleIdentifier().utf8().data());
     xpc_dictionary_set_string(bootstrapMessage.get(), "process-identifier", String::number(m_launchOptions.processIdentifier.toUInt64()).utf8().data());
     RetainPtr processName = [&] {
 #if PLATFORM(MAC)

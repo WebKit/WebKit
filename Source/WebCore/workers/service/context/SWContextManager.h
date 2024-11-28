@@ -33,6 +33,7 @@
 #include "ServiceWorkerClientQueryOptions.h"
 #include "ServiceWorkerIdentifier.h"
 #include "ServiceWorkerThreadProxy.h"
+#include <wtf/AbstractRefCounted.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/HashMap.h>
 #include <wtf/Lock.h>
@@ -50,7 +51,7 @@ class SWContextManager {
 public:
     WEBCORE_EXPORT static SWContextManager& singleton();
 
-    class Connection {
+    class Connection : public AbstractRefCounted {
     public:
         virtual ~Connection() { }
 
@@ -83,8 +84,6 @@ public:
         virtual bool isThrottleable() const = 0;
         virtual PageIdentifier pageIdentifier() const = 0;
 
-        virtual void ref() const = 0;
-        virtual void deref() const = 0;
         virtual void stop() = 0;
 
         virtual void reportConsoleMessage(ServiceWorkerIdentifier, MessageSource, MessageLevel, const String& message, unsigned long requestIdentifier) = 0;

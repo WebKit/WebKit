@@ -35,6 +35,7 @@
 #import "APIHTTPCookieStore.h"
 #import "CocoaHelpers.h"
 #import "WKWebViewConfiguration.h"
+#import "WKWebViewPrivate.h"
 #import "WKWebsiteDataStoreInternal.h"
 #import "WebExtensionContextProxyMessages.h"
 #import "WebExtensionCookieParameters.h"
@@ -108,9 +109,9 @@ void WebExtensionContext::fetchCookies(WebsiteDataStore& dataStore, const URL& u
     };
 
     if (url.isValid())
-        dataStore.cookieStore().cookiesForURL(url.isolatedCopy(), WTFMove(internalCompletionHandler));
+        dataStore.protectedCookieStore()->cookiesForURL(url.isolatedCopy(), WTFMove(internalCompletionHandler));
     else
-        dataStore.cookieStore().cookies(WTFMove(internalCompletionHandler));
+        dataStore.protectedCookieStore()->cookies(WTFMove(internalCompletionHandler));
 }
 
 void WebExtensionContext::cookiesGet(std::optional<PAL::SessionID> sessionID, const String& name, const URL& url, CompletionHandler<void(Expected<std::optional<WebExtensionCookieParameters>, WebExtensionError>&&)>&& completionHandler)
@@ -223,7 +224,7 @@ void WebExtensionContext::cookiesGetAllCookieStores(CompletionHandler<void(Expec
 {
     HashMap<PAL::SessionID, Vector<WebExtensionTabIdentifier>> stores;
 
-    auto defaultSessionID = extensionController()->configuration().defaultWebsiteDataStore().sessionID();
+    auto defaultSessionID = extensionController()->protectedConfiguration()->defaultWebsiteDataStore().sessionID();
     stores.set(defaultSessionID, Vector<WebExtensionTabIdentifier> { });
 
     for (Ref tab : openTabs()) {

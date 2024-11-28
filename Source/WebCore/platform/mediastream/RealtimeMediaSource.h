@@ -47,6 +47,7 @@
 #include "RealtimeMediaSourceFactory.h"
 #include "RealtimeMediaSourceIdentifier.h"
 #include "VideoFrameTimeMetadata.h"
+#include <wtf/AbstractRefCounted.h>
 #include <wtf/CheckedPtr.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Forward.h>
@@ -112,9 +113,9 @@ public:
     virtual void hasStartedProducingData() { }
 };
 
-class WEBCORE_EXPORT RealtimeMediaSource
+class WEBCORE_EXPORT RealtimeMediaSource : public AbstractRefCounted
 #if !RELEASE_LOG_DISABLED
-    : public LoggerHelper
+    , public LoggerHelper
 #endif
 {
 public:
@@ -123,10 +124,10 @@ public:
         virtual ~AudioSampleObserver() = default;
 
         // CheckedPtr interface
-        virtual uint32_t ptrCount() const = 0;
-        virtual uint32_t ptrCountWithoutThreadCheck() const = 0;
-        virtual void incrementPtrCount() const = 0;
-        virtual void decrementPtrCount() const = 0;
+        virtual uint32_t checkedPtrCount() const = 0;
+        virtual uint32_t checkedPtrCountWithoutThreadCheck() const = 0;
+        virtual void incrementCheckedPtrCount() const = 0;
+        virtual void decrementCheckedPtrCount() const = 0;
 
         // May be called on a background thread.
         virtual void audioSamplesAvailable(const WTF::MediaTime&, const PlatformAudioData&, const AudioStreamDescription&, size_t /*numberOfFrames*/) = 0;
@@ -225,8 +226,6 @@ public:
 
     virtual const RealtimeMediaSourceCapabilities& capabilities() = 0;
     virtual const RealtimeMediaSourceSettings& settings() = 0;
-    virtual void ref() const = 0;
-    virtual void deref() const = 0;
     virtual ThreadSafeWeakPtrControlBlock& controlBlock() const = 0;
 
     using TakePhotoNativePromise = NativePromise<std::pair<Vector<uint8_t>, String>, String>;
@@ -276,10 +275,10 @@ public:
     virtual bool isIncomingVideoSource() const { return false; }
 
 #if !RELEASE_LOG_DISABLED
-    virtual void setLogger(const Logger&, const void*);
+    virtual void setLogger(const Logger&, uint64_t);
     const Logger* loggerPtr() const { return m_logger.get(); }
     const Logger& logger() const final { ASSERT(m_logger); return *m_logger.get(); }
-    const void* logIdentifier() const final { return m_logIdentifier; }
+    uint64_t logIdentifier() const final { return m_logIdentifier; }
     ASCIILiteral logClassName() const override { return "RealtimeMediaSource"_s; }
     WTFLogChannel& logChannel() const final;
 #endif
@@ -302,6 +301,10 @@ public:
     void registerOwnerCallback(OwnerCallback&&);
 
     virtual bool isPowerEfficient() const { return false; }
+
+#if USE(GSTREAMER)
+    virtual std::pair<GstClockTime, GstClockTime> queryCaptureLatency() const;
+#endif
 
 protected:
     RealtimeMediaSource(const CaptureDevice&, MediaDeviceHashSalts&& hashSalts = { }, std::optional<PageIdentifier> = std::nullopt);
@@ -368,7 +371,7 @@ private:
 
 #if !RELEASE_LOG_DISABLED
     RefPtr<const Logger> m_logger;
-    const void* m_logIdentifier;
+    uint64_t m_logIdentifier { 0 };
     MonotonicTime m_lastFrameLogTime;
     unsigned m_frameCount { 0 };
 #endif

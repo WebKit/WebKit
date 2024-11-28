@@ -30,16 +30,12 @@
 
 namespace WebCore {
 
-struct ParsedTextDirective {
-    String textStart;
-    String textEnd;
-    String prefix;
-    String suffix;
-};
+struct ParsedTextDirective;
 
 class FragmentDirectiveParser {
 public:
     WEBCORE_EXPORT explicit FragmentDirectiveParser(StringView);
+    WEBCORE_EXPORT ~FragmentDirectiveParser();
     
     const Vector<ParsedTextDirective>& parsedTextDirectives() const { return m_parsedTextDirectives; };
     StringView fragmentDirective() const { return m_fragmentDirective; };

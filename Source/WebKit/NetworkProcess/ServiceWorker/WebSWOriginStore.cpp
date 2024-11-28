@@ -30,8 +30,11 @@
 #include "WebSWClientConnectionMessages.h"
 #include "WebSWServerConnection.h"
 #include <WebCore/SecurityOrigin.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebSWOriginStore);
 
 using namespace WebCore;
 
@@ -60,8 +63,8 @@ void WebSWOriginStore::clearStore()
 void WebSWOriginStore::importComplete()
 {
     m_isImported = true;
-    for (auto& connection : m_webSWServerConnections)
-        connection.send(Messages::WebSWClientConnection::SetSWOriginTableIsImported());
+    for (Ref connection : m_webSWServerConnections)
+        connection->send(Messages::WebSWClientConnection::SetSWOriginTableIsImported());
 }
 
 void WebSWOriginStore::registerSWServerConnection(WebSWServerConnection& connection)
@@ -90,8 +93,8 @@ void WebSWOriginStore::sendStoreHandle(WebSWServerConnection& connection)
 
 void WebSWOriginStore::didInvalidateSharedMemory()
 {
-    for (auto& connection : m_webSWServerConnections)
-        sendStoreHandle(CheckedRef { connection }.get());
+    for (Ref connection : m_webSWServerConnections)
+        sendStoreHandle(connection.get());
 }
 
 } // namespace WebKit

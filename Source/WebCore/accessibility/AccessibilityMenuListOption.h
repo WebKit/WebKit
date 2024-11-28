@@ -34,11 +34,11 @@ class HTMLOptionElement;
 
 class AccessibilityMenuListOption final : public AccessibilityNodeObject {
 public:
-    static Ref<AccessibilityMenuListOption> create(HTMLOptionElement&);
+    static Ref<AccessibilityMenuListOption> create(AXID, HTMLOptionElement&);
     void setParent(AccessibilityObject* parent) { m_parent = parent; }
 
 private:
-    explicit AccessibilityMenuListOption(HTMLOptionElement&);
+    explicit AccessibilityMenuListOption(AXID, HTMLOptionElement&);
 
     bool isMenuListOption() const final { return true; }
 

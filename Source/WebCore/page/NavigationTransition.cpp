@@ -45,9 +45,9 @@ void NavigationTransition::resolvePromise()
     m_finished->resolve();
 }
 
-void NavigationTransition::rejectPromise(Exception& exception)
+void NavigationTransition::rejectPromise(Exception& exception, JSC::JSValue exceptionObject)
 {
-    m_finished->reject(exception, RejectAsHandled::Yes);
+    m_finished->reject(exception, RejectAsHandled::Yes, exceptionObject);
 }
 
 DOMPromise* NavigationTransition::finished()

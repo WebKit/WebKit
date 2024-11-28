@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../../imported/w3c/web-platform-tests/css/support/parsing-testcommon.js"></script>
+</head>
+<body>
+<script>
+test_invalid_value("perspective", "-10px");
+test_invalid_value("perspective", "10");
+test_invalid_value("perspective", "-10");
+
+test_invalid_value("-webkit-perspective", "-10px");
+test_invalid_value("-webkit-perspective", "-10");
+</script>
+</body>
+</html>

@@ -204,6 +204,146 @@ inline String fromAPI(const char* string)
     return String::fromUTF8(string);
 }
 
+inline Ref<Adapter> protectedFromAPI(WGPUAdapter adapter)
+{
+    return static_cast<Adapter&>(*adapter);
+}
+
+inline Ref<BindGroup> protectedFromAPI(WGPUBindGroup bindGroup)
+{
+    return static_cast<BindGroup&>(*bindGroup);
+}
+
+inline Ref<BindGroupLayout> protectedFromAPI(WGPUBindGroupLayout bindGroupLayout)
+{
+    return static_cast<BindGroupLayout&>(*bindGroupLayout);
+}
+
+inline Ref<Buffer> protectedFromAPI(WGPUBuffer buffer)
+{
+    return static_cast<Buffer&>(*buffer);
+}
+
+inline Ref<CommandBuffer> protectedFromAPI(WGPUCommandBuffer commandBuffer)
+{
+    return static_cast<CommandBuffer&>(*commandBuffer);
+}
+
+inline Ref<CommandEncoder> protectedFromAPI(WGPUCommandEncoder commandEncoder)
+{
+    return static_cast<CommandEncoder&>(*commandEncoder);
+}
+
+inline Ref<ComputePassEncoder> protectedFromAPI(WGPUComputePassEncoder computePassEncoder)
+{
+    return static_cast<ComputePassEncoder&>(*computePassEncoder);
+}
+
+inline Ref<ComputePipeline> protectedFromAPI(WGPUComputePipeline computePipeline)
+{
+    return static_cast<ComputePipeline&>(*computePipeline);
+}
+
+inline Ref<Device> protectedFromAPI(WGPUDevice device)
+{
+    return static_cast<Device&>(*device);
+}
+
+inline Ref<ExternalTexture> protectedFromAPI(WGPUExternalTexture texture)
+{
+    return static_cast<ExternalTexture&>(*texture);
+}
+
+inline Ref<Instance> protectedFromAPI(WGPUInstance instance)
+{
+    return static_cast<Instance&>(*instance);
+}
+
+inline Ref<PipelineLayout> protectedFromAPI(WGPUPipelineLayout pipelineLayout)
+{
+    return static_cast<PipelineLayout&>(*pipelineLayout);
+}
+
+inline Ref<QuerySet> protectedFromAPI(WGPUQuerySet querySet)
+{
+    return static_cast<QuerySet&>(*querySet);
+}
+
+inline Ref<Queue> protectedFromAPI(WGPUQueue queue)
+{
+    return static_cast<Queue&>(*queue);
+}
+
+inline Ref<RenderBundle> protectedFromAPI(WGPURenderBundle renderBundle)
+{
+    return static_cast<RenderBundle&>(*renderBundle);
+}
+
+inline Ref<RenderBundleEncoder> protectedFromAPI(WGPURenderBundleEncoder renderBundleEncoder)
+{
+    return static_cast<RenderBundleEncoder&>(*renderBundleEncoder);
+}
+
+inline Ref<RenderPassEncoder> protectedFromAPI(WGPURenderPassEncoder renderPassEncoder)
+{
+    return static_cast<RenderPassEncoder&>(*renderPassEncoder);
+}
+
+inline Ref<RenderPipeline> protectedFromAPI(WGPURenderPipeline renderPipeline)
+{
+    return static_cast<RenderPipeline&>(*renderPipeline);
+}
+
+inline Ref<Sampler> protectedFromAPI(WGPUSampler sampler)
+{
+    return static_cast<Sampler&>(*sampler);
+}
+
+inline Ref<ShaderModule> protectedFromAPI(WGPUShaderModule shaderModule)
+{
+    return static_cast<ShaderModule&>(*shaderModule);
+}
+
+inline Ref<PresentationContext> protectedFromAPI(WGPUSurface surface)
+{
+    return static_cast<PresentationContext&>(*surface);
+}
+
+inline Ref<PresentationContext> protectedFromAPI(WGPUSwapChain swapChain)
+{
+    return static_cast<PresentationContext&>(*swapChain);
+}
+
+inline Ref<Texture> protectedFromAPI(WGPUTexture texture)
+{
+    return static_cast<Texture&>(*texture);
+}
+
+inline Ref<TextureView> protectedFromAPI(WGPUTextureView textureView)
+{
+    return static_cast<TextureView&>(*textureView);
+}
+
+inline Ref<XRBinding> protectedFromAPI(WGPUXRBinding binding)
+{
+    return static_cast<XRBinding&>(*binding);
+}
+
+inline Ref<XRSubImage> protectedFromAPI(WGPUXRSubImage subImage)
+{
+    return static_cast<XRSubImage&>(*subImage);
+}
+
+inline Ref<XRProjectionLayer> protectedFromAPI(WGPUXRProjectionLayer layer)
+{
+    return static_cast<XRProjectionLayer&>(*layer);
+}
+
+inline Ref<XRView> protectedFromAPI(WGPUXRView view)
+{
+    return static_cast<XRView&>(*view);
+}
+
 template<typename R, typename... Args>
 inline BlockPtr<R (Args...)> fromAPI(R (^ __strong &&block)(Args...))
 {

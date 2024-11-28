@@ -1,13 +1,15 @@
 <html>
 <head>
-<meta name="fuzzy" content="maxDifference=0-16; totalPixels=0-57600" />
+<meta name="fuzzy" content="maxDifference=3-16; totalPixels=27386-57600" />
 <title>webm file with alternate reference frame</title>
 <script src="../resources/testharness.js"></script>
+<script>window.requirePixelDump = true</script>
+<script src="video-test.js"></script>
 <script src="utilities.js"></script>
 <script>
     // VP8 files were generated such that alternative reference frames were used:
-    // $ fmpeg -i dragon.webm -c:v libvpx -vf scale=320:-1 -auto-alt-ref 1 -arnr-maxframes 5 -arnr-strength 3 -pass 1 test-vp8-hiddenframes.webm
-    // $ fmpeg -i dragon.webm -c:v libvpx -vf scale=320:-1 -auto-alt-ref 1 -arnr-maxframes 5 -arnr-strength 3 -pass 2 test-vp8-hiddenframes.webm
+    // $ ffmpeg -i dragon.webm -c:v libvpx -vf scale=320:-1 -auto-alt-ref 1 -arnr-maxframes 5 -arnr-strength 3 -pass 1 test-vp8-hiddenframes.webm
+    // $ ffmpeg -i dragon.webm -c:v libvpx -vf scale=320:-1 -auto-alt-ref 1 -arnr-maxframes 5 -arnr-strength 3 -pass 2 test-vp8-hiddenframes.webm
     // The command used to extract the last frame in png format was:
     // $ ffmpeg -sseof -3 -i test-vp8-hiddenframes.webm -pred mixed -pix_fmt rgb24 -sws_flags +accurate_rnd+full_chroma_int -update 1 -q:v 1 test-vp8-hiddenframes.png
     async function init()
@@ -17,11 +19,15 @@
 
         let v = document.getElementsByTagName('video')[0];
         v.src = "content/test-vp8-hiddenframes.webm";
-        await once(v, 'loadedmetadata');
-        v.play();
+        await waitFor(v, 'loadedmetadata', true);
+        await waitForVideoFrame(v); // make sure the first frame got displayed before waiting for the last one.
         // duration of the last frame.
         v.currentTime = v.duration - 0.038;
-        await Promise.all([ once(v, 'ended'), once(v, 'seeked')]);
+        let promise = new Promise(resolve => v.requestVideoFrameCallback(resolve));
+        await waitFor(v, 'seeked', true);
+        v.play();
+        await waitFor(v, 'ended', true);
+        await promise;
 
         if (window.testRunner)
             testRunner.notifyDone();

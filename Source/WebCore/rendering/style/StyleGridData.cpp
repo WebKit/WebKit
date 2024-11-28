@@ -27,6 +27,7 @@
 #include "StyleGridData.h"
 
 #include "RenderStyleInlines.h"
+#include "RenderStyleDifference.h"
 
 namespace WebCore {
 
@@ -99,6 +100,23 @@ inline StyleGridData::StyleGridData(const StyleGridData& o)
     , m_masonryRows(o.m_masonryRows)
     , m_masonryColumns(o.m_masonryColumns)
 {
+}
+
+bool StyleGridData::operator==(const StyleGridData& o) const
+{
+    return m_columns == o.m_columns
+        && m_rows == o.m_rows
+        && implicitNamedGridColumnLines == o.implicitNamedGridColumnLines
+        && implicitNamedGridRowLines == o.implicitNamedGridRowLines
+        && gridAutoFlow == o.gridAutoFlow
+        && gridAutoRows == o.gridAutoRows
+        && gridAutoColumns == o.gridAutoColumns
+        && namedGridArea == o.namedGridArea
+        && namedGridAreaRowCount == o.namedGridAreaRowCount
+        && namedGridAreaColumnCount == o.namedGridAreaColumnCount
+        && m_masonryRows == o.m_masonryRows
+        && m_masonryColumns == o.m_masonryColumns
+        && masonryAutoFlow == o.masonryAutoFlow;
 }
 
 void StyleGridData::setRows(const GridTrackList& list)
@@ -233,5 +251,41 @@ Ref<StyleGridData> StyleGridData::copy() const
 {
     return adoptRef(*new StyleGridData(*this));
 }
+
+#if !LOG_DISABLED
+void StyleGridData::dumpDifferences(TextStream& ts, const StyleGridData& other) const
+{
+    LOG_IF_DIFFERENT(m_columns);
+    LOG_IF_DIFFERENT(m_rows);
+
+    LOG_IF_DIFFERENT(m_gridColumnTrackSizes);
+    LOG_IF_DIFFERENT(m_gridRowTrackSizes);
+
+    LOG_IF_DIFFERENT(m_namedGridColumnLines);
+    LOG_IF_DIFFERENT(m_namedGridColumnLines);
+
+    // m_orderedNamedGridColumnLines and m_orderedNamedGridRowLines are not part of the diff.
+
+    LOG_IF_DIFFERENT(m_autoRepeatNamedGridColumnLines);
+    LOG_IF_DIFFERENT(m_autoRepeatNamedGridRowLines);
+
+    // m_autoRepeatOrderedNamedGridColumnLines and m_autoRepeatOrderedNamedGridRowLines are not part of the diff.
+
+    LOG_IF_DIFFERENT(m_gridAutoRepeatColumns);
+    LOG_IF_DIFFERENT(m_gridAutoRepeatRows);
+
+    LOG_IF_DIFFERENT(m_autoRepeatColumnsInsertionPoint);
+    LOG_IF_DIFFERENT(m_autoRepeatRowsInsertionPoint);
+
+    LOG_IF_DIFFERENT(m_autoRepeatColumnsType);
+    LOG_IF_DIFFERENT(m_autoRepeatRowsType);
+
+    LOG_IF_DIFFERENT(m_subgridRows);
+    LOG_IF_DIFFERENT(m_subgridColumns);
+
+    LOG_IF_DIFFERENT(m_masonryRows);
+    LOG_IF_DIFFERENT(m_masonryRows);
+}
+#endif // !LOG_DISABLED
 
 } // namespace WebCore

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <style>
+        #text {
+            font: 20px/1 Ahem;
+            text-decoration: underline;
+        }
+    </style>
+    <script>
+        function repaintTest() {
+            if (!window.testRunner) {
+                alert('This test requires testRunner to run!');
+                return;
+            }
+
+            if (!window.internals) {
+                alert('This test requires window.interals to run!');
+                return;
+            }
+
+            window.internals.startTrackingRepaints();
+            window.testRunner.dumpAsText(false);
+
+            const target = document.getElementById('text');
+            target.style.textUnderlineOffset = "-5px";
+
+            const repaintRects = window.internals.repaintRectsAsText();
+            window.internals.stopTrackingRepaints();
+
+            const pre = document.getElementById('repaintRects');
+            pre.innerHTML = repaintRects;
+        }
+    </script>
+</head>
+
+<body onload="repaintTest()">
+    <p id="text">Text</p>
+    <pre id="repaintRects"></pre>
+</body>
+
+</html>

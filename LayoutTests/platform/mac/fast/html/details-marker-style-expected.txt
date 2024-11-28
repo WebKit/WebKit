@@ -1,29 +1,29 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x474
-  RenderBlock {HTML} at (0,0) size 800x474
-    RenderBody {BODY} at (8,8) size 784x458
-      RenderBlock {DIV} at (0,0) size 784x86
-        RenderBlock {DETAILS} at (0,0) size 784x86
-          RenderBlock {SUMMARY} at (0,0) size 784x86
-            RenderDetailsMarker {DIV} at (0,0) size 112x80 [border: (8px solid #00FF00) (16px solid #00FF00) (24px solid #00FF00) (32px solid #00FF00)]: right
-            RenderText {#text} at (121,57) size 94x29
-              text run at (121,57) width 94: "Summary"
-      RenderBlock {DIV} at (0,85) size 118x184
-        RenderBlock {DETAILS} at (0,0) size 118x183
-          RenderBlock {SUMMARY} at (0,0) size 118x183
-            RenderDetailsMarker {DIV} at (0,0) size 112x80 [border: (8px solid #00FF00) (16px solid #00FF00) (24px solid #00FF00) (32px solid #00FF00)]: down
-            RenderText {#text} at (89,89) size 29x94
-              text run at (89,89) width 95: "Summary"
-      RenderBlock {DIV} at (0,268) size 784x47
-        RenderBlock {DETAILS} at (0,0) size 784x46
-          RenderBlock {SUMMARY} at (0,0) size 784x46
-            RenderDetailsMarker {DIV} at (0,0) size 64x40 [border: (8px solid #00FF00)]: right
-            RenderText {#text} at (73,18) size 94x28
-              text run at (73,18) width 94: "Summary"
-      RenderBlock {DIV} at (0,314) size 70x144
-        RenderBlock {DETAILS} at (0,0) size 70x143
-          RenderBlock {SUMMARY} at (0,0) size 70x143
-            RenderDetailsMarker {DIV} at (0,0) size 64x40 [border: (8px solid #00FF00)]: down
-            RenderText {#text} at (42,49) size 28x94
-              text run at (42,49) width 94: "Summary"
+layer at (0,0) size 800x301
+  RenderBlock {HTML} at (0,0) size 800x302
+    RenderBody {BODY} at (8,8) size 784x286
+      RenderBlock {DIV} at (0,0) size 784x28
+        RenderBlock {DETAILS} at (0,0) size 784x28
+          RenderListItem {SUMMARY} at (0,0) size 784x28
+            RenderListMarker at (0,0) size 19x28: "\x{25B8}"
+            RenderText {#text} at (18,0) size 95x28
+              text run at (18,0) width 95: "Summary"
+      RenderBlock {DIV} at (0,28) size 28x115
+        RenderBlock {DETAILS} at (0,0) size 28x115
+          RenderListItem {SUMMARY} at (0,0) size 28x115
+            RenderListMarker at (0,0) size 28x22: "\x{25BE}"
+            RenderText {#text} at (0,21) size 28x94
+              text run at (0,21) width 94: "Summary"
+      RenderBlock {DIV} at (0,142) size 784x29
+        RenderBlock {DETAILS} at (0,0) size 784x28
+          RenderListItem {SUMMARY} at (0,0) size 784x28
+            RenderListMarker at (0,0) size 19x28: "\x{25B8}"
+            RenderText {#text} at (18,0) size 95x28
+              text run at (18,0) width 95: "Summary"
+      RenderBlock {DIV} at (0,170) size 28x116
+        RenderBlock {DETAILS} at (0,0) size 28x115
+          RenderListItem {SUMMARY} at (0,0) size 28x115
+            RenderListMarker at (0,0) size 28x22: "\x{25BE}"
+            RenderText {#text} at (0,21) size 28x94
+              text run at (0,21) width 94: "Summary"

@@ -340,7 +340,7 @@ CLDeviceImpl::CreateDatas CLPlatformCL::createDevices() const
                         nullptr) == CL_SUCCESS)
                 {
                     // If default device found, select it
-                    if (types[index].isSet(CL_DEVICE_TYPE_DEFAULT))
+                    if (types[index].intersects(CL_DEVICE_TYPE_DEFAULT))
                     {
                         defaultIndex = index;
                     }

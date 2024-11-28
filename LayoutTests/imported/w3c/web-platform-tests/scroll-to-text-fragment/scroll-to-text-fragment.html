@@ -31,6 +31,16 @@ let test_cases = [
     description: 'Text directive with invalid syntax (context terms without "-") should not parse as a text directive'
   },
   {
+    fragment: '#:~:text=foo-',
+    expect_position: 'top',
+    description: 'Text directive with invalid syntax (only prefix, no start text) should not parse as a text directive'
+  },
+  {
+    fragment: '#:~:text=-foo',
+    expect_position: 'top',
+    description: 'Text directive with invalid syntax (only suffix, no start text) should not parse as a text directive'
+  },
+  {
     fragment: '#element:~:directive',
     expect_position: 'element',
     description: 'Generic fragment directive with existing element fragment should scroll to element'
@@ -45,6 +55,11 @@ let test_cases = [
     fragment: '#:~:text=test',
     expect_position: 'text',
     description:  'Exact text with no context should match text'
+  },
+  {
+    fragment: '#:~:text=TEST',
+    expect_position: 'text',
+    description:  'Case-insensitive search with no context should match text'
   },
   {
     fragment: '#:~:text=this is a-,test',
@@ -229,6 +244,11 @@ let test_cases = [
     fragment: '#:~:text=horizontally%20scrolled%20text',
     expect_position: 'horizontal-scroll',
     description: 'Text directive should horizontally scroll into view'
+  },
+  {
+    fragment: '#:~:text=Element,This',
+    expect_position: 'element',
+    description: 'Text directive that spans a range larger than the viewport should scroll the start into view'
   }
 ];
 
@@ -245,7 +265,8 @@ for (const test_case of test_cases) {
     // If the position is not 'top', the :target element should be the positioned element.
     assert_true(data.scrollPosition == 'top' || data.target == data.scrollPosition);
     assert_equals(data.href.indexOf(':~:'), -1, 'Expected fragment directive to be stripped from the URL.');
-    assert_equals(data.performanceEntry.indexOf(':~:'), -1, 'Expected fragment directive to be stripped from the URL in performance metrics.' );
+    assert_true(data.performanceNavigationEntries.every(entry => entry.indexOf(':~:') === -1), 'Expected fragment directive to be stripped from the URL in navigation performance metrics.')
+    assert_true(data.performanceResourcesEntries.every(entry => entry.indexOf(':~:') === -1), 'Expected fragment directive to be stripped from the URL in resource performance metrics.')
     assert_equals(data.scrollPosition, test_case.expect_position,
                   `Expected ${test_case.fragment} (${test_case.description}) to scroll to ${test_case.expect_position}.`);
   }), `Test navigation with fragment: ${test_case.description}.`);

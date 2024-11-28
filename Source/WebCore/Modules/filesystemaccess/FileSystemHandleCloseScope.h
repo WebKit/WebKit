@@ -41,15 +41,15 @@ public:
     {
         ASSERT(RunLoop::isMain());
 
-        if (m_identifier.isValid())
-            m_connection->closeHandle(m_identifier);
+        if (m_identifier)
+            m_connection->closeHandle(*m_identifier);
     }
 
     std::pair<FileSystemHandleIdentifier, bool> release()
     {
         Locker locker { m_lock };
-        ASSERT_WITH_MESSAGE(m_identifier.isValid(), "FileSystemHandleCloseScope should not be released more than once");
-        return { std::exchange(m_identifier, { }), m_isDirectory };
+        ASSERT_WITH_MESSAGE(!!m_identifier, "FileSystemHandleCloseScope should not be released more than once");
+        return { *std::exchange(m_identifier, std::nullopt), m_isDirectory };
     }
 
 private:
@@ -62,7 +62,7 @@ private:
     }
 
     Lock m_lock;
-    FileSystemHandleIdentifier m_identifier WTF_GUARDED_BY_LOCK(m_lock);
+    Markable<FileSystemHandleIdentifier> m_identifier WTF_GUARDED_BY_LOCK(m_lock);
     bool m_isDirectory;
     Ref<FileSystemStorageConnection> m_connection;
 };

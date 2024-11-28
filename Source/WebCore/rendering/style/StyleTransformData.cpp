@@ -23,6 +23,7 @@
 #include "StyleTransformData.h"
 
 #include "RenderStyleInlines.h"
+#include "RenderStyleDifference.h"
 
 namespace WebCore {
 
@@ -56,5 +57,16 @@ bool StyleTransformData::operator==(const StyleTransformData& other) const
 {
     return x == other.x && y == other.y && z == other.z && transformBox == other.transformBox && operations == other.operations;
 }
+
+#if !LOG_DISABLED
+void StyleTransformData::dumpDifferences(TextStream& ts, const StyleTransformData& other) const
+{
+    LOG_IF_DIFFERENT(operations);
+    LOG_IF_DIFFERENT(x);
+    LOG_IF_DIFFERENT(y);
+    LOG_IF_DIFFERENT(z);
+    LOG_IF_DIFFERENT(transformBox);
+}
+#endif // !LOG_DISABLED
 
 } // namespace WebCore

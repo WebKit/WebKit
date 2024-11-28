@@ -800,8 +800,12 @@ class ContextVk : public ContextImpl, public vk::Context, public MultisampleText
     // Put the context in framebuffer fetch mode.  If the permanentlySwitchToFramebufferFetchMode
     // feature is enabled, this is done on first encounter of framebuffer fetch, and makes the
     // context use framebuffer-fetch-enabled render passes from here on.
-    angle::Result switchToFramebufferFetchMode(bool hasFramebufferFetch);
-    bool isInFramebufferFetchMode() const { return mIsInFramebufferFetchMode; }
+    angle::Result switchToColorFramebufferFetchMode(bool hasColorFramebufferFetch);
+    bool isInColorFramebufferFetchMode() const
+    {
+        ASSERT(!getFeatures().preferDynamicRendering.enabled);
+        return mIsInColorFramebufferFetchMode;
+    }
 
     const angle::PerfMonitorCounterGroups &getPerfMonitorCounters() override;
 
@@ -1108,6 +1112,9 @@ class ContextVk : public ContextImpl, public vk::Context, public MultisampleText
 
     class ScopedDescriptorSetUpdates;
 
+    bool isSingleBufferedWindowCurrent() const;
+    bool hasSomethingToFlush() const;
+
     angle::Result setupDraw(const gl::Context *context,
                             gl::PrimitiveMode mode,
                             GLint firstVertexOrInvalid,
@@ -1135,7 +1142,8 @@ class ContextVk : public ContextImpl, public vk::Context, public MultisampleText
     angle::Result setupLineLoopIndexedIndirectDraw(const gl::Context *context,
                                                    gl::PrimitiveMode mode,
                                                    gl::DrawElementsType indexType,
-                                                   vk::BufferHelper *srcIndirectBuf,
+                                                   vk::BufferHelper *srcIndexBuffer,
+                                                   vk::BufferHelper *srcIndirectBuffer,
                                                    VkDeviceSize indirectBufferOffset,
                                                    vk::BufferHelper **indirectBufferOut);
     angle::Result setupLineLoopIndirectDraw(const gl::Context *context,
@@ -1308,8 +1316,7 @@ class ContextVk : public ContextImpl, public vk::Context, public MultisampleText
     angle::Result handleDirtyComputeUniforms(DirtyBits::Iterator *dirtyBitsIterator);
 
     // Common parts of the common dirty bit handlers.
-    angle::Result handleDirtyUniformsImpl(DirtyBits::Iterator *dirtyBitsIterator,
-                                          vk::CommandBufferHelperCommon *commandBufferHelper);
+    angle::Result handleDirtyUniformsImpl(DirtyBits::Iterator *dirtyBitsIterator);
     angle::Result handleDirtyMemoryBarrierImpl(DirtyBits::Iterator *dirtyBitsIterator,
                                                DirtyBits dirtyBitMask);
     template <typename CommandBufferT>
@@ -1421,6 +1428,12 @@ class ContextVk : public ContextImpl, public vk::Context, public MultisampleText
 
     void updateDither();
 
+    // For dynamic rendering only, mark the current render pass as being in framebuffer fetch mode.
+    // In this mode, the FramebufferVk object and its render pass description are unaffected by
+    // framebuffer fetch use, and the context needs to just configure the command buffer for
+    // framebuffer fetch.
+    void onFramebufferFetchUse(vk::FramebufferFetchMode framebufferFetchMode);
+
     // When the useNonZeroStencilWriteMaskStaticState workaround is enabled, the static state for
     // stencil should be non-zero despite the state being dynamic.  This is done when:
     //
@@ -1531,6 +1544,7 @@ class ContextVk : public ContextImpl, public vk::Context, public MultisampleText
 
     // The offset we had the last time we bound the index buffer.
     const GLvoid *mLastIndexBufferOffset;
+    vk::BufferHelper *mCurrentIndexBuffer;
     VkDeviceSize mCurrentIndexBufferOffset;
     gl::DrawElementsType mCurrentDrawElementsType;
     angle::PackedEnumMap<gl::DrawElementsType, VkIndexType> mIndexTypeMap;
@@ -1565,12 +1579,6 @@ class ContextVk : public ContextImpl, public vk::Context, public MultisampleText
 
     // This info is used in the descriptor update step.
     gl::ActiveTextureArray<TextureVk *> mActiveTextures;
-
-    // We use textureSerial to optimize texture binding updates. Each permutation of a
-    // {VkImage/VkSampler} generates a unique serial. These object ids are combined to form a unique
-    // signature for each descriptor set. This allows us to keep a cache of descriptor sets and
-    // avoid calling vkAllocateDesctiporSets each texture update.
-    vk::DescriptorSetDesc mActiveTexturesDesc;
 
     vk::DescriptorSetDescBuilder mShaderBuffersDescriptorDesc;
     // The WriteDescriptorDescs from ProgramExecutableVk with InputAttachment update.
@@ -1658,12 +1666,19 @@ class ContextVk : public ContextImpl, public vk::Context, public MultisampleText
     // glFlush in that mode).
     bool mHasAnyCommandsPendingSubmission;
 
-    // Whether framebuffer fetch is active.  When the permanentlySwitchToFramebufferFetchMode
+    // Whether color framebuffer fetch is active.  When the permanentlySwitchToFramebufferFetchMode
     // feature is enabled, if any program uses framebuffer fetch, rendering switches to assuming
     // framebuffer fetch could happen in any render pass.  This incurs a potential cost due to usage
     // of the GENERAL layout instead of COLOR_ATTACHMENT_OPTIMAL, but has definite benefits of
     // avoiding render pass breaks when a framebuffer fetch program is used mid render pass.
-    bool mIsInFramebufferFetchMode;
+    //
+    // This only applies to legacy render passes (i.e. when dynamic rendering is NOT used).  In the
+    // case of dynamic rendering, every render pass starts with the assumption of not needing input
+    // attachments and switches later if it needs to with no penalty.
+    //
+    // Note that depth/stencil framebuffer fetch does not need this sort of tracking because it is
+    // only enabled with dynamic rendering.
+    bool mIsInColorFramebufferFetchMode;
 
     // True if current started render pass is allowed to reactivate.
     bool mAllowRenderPassToReactivate;
@@ -1756,7 +1771,8 @@ ANGLE_INLINE angle::Result ContextVk::onVertexAttributeChange(size_t attribIndex
                                                               GLuint relativeOffset,
                                                               const vk::BufferHelper *vertexBuffer)
 {
-    const GLuint staticStride = mRenderer->useVertexInputBindingStrideDynamicState() ? 0 : stride;
+    const GLuint staticStride =
+        mRenderer->getFeatures().useVertexInputBindingStrideDynamicState.enabled ? 0 : stride;
 
     if (!getFeatures().supportsVertexInputDynamicState.enabled)
     {

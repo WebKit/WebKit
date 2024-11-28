@@ -10,14 +10,14 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 Cookies sent with HTTP request:
 PASS Do not have cookie "strict".
-PASS Do not have cookie "implicit-lax".
-PASS Do not have cookie "lax-because-invalid-SameSite-value".
+PASS Has cookie "implicit-none" with value 6.
+PASS Has cookie "none-because-invalid-SameSite-value" with value 6.
 PASS Do not have cookie "lax".
 
 Cookies visible in DOM:
 PASS Do not have DOM cookie "strict".
-PASS Do not have DOM cookie "implicit-lax".
-PASS Do not have DOM cookie "lax-because-invalid-SameSite-value".
+PASS Has DOM cookie "implicit-none" with value 6.
+PASS Has DOM cookie "none-because-invalid-SameSite-value" with value 6.
 PASS Do not have DOM cookie "lax".
 PASS successfullyParsed is true
 

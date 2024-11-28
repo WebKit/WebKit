@@ -24,4 +24,9 @@ TemporalHelpers.assertPlainDateTime(result, 2021, 5, "M05", 17, 12, 34, 56, 0, 0
 actual.splice(0);  // empty it for the next check
 
 assert.throws(TypeError, () => Temporal.PlainDateTime.from(7, options));
-assert.compareArray(actual, expected, "Failing call");
+assert.compareArray(actual, [], "Failing call before options is processed");
+
+actual.splice(0);
+
+assert.throws(RangeError, () => Temporal.PlainDateTime.from({ year: 2021, month: 2, day: 29 }, options));
+assert.compareArray(actual, expected, "Failing call after options is processed");

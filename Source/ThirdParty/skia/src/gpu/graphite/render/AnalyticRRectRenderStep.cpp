@@ -7,11 +7,33 @@
 
 #include "src/gpu/graphite/render/AnalyticRRectRenderStep.h"
 
+#include "include/core/SkM44.h"
+#include "include/core/SkPaint.h"
+#include "include/core/SkRRect.h"
+#include "include/core/SkScalar.h"
+#include "include/private/base/SkAssert.h"
+#include "include/private/base/SkFloatingPoint.h"
+#include "include/private/base/SkPoint_impl.h"
+#include "src/base/SkEnumBitMask.h"
 #include "src/base/SkVx.h"
 #include "src/core/SkRRectPriv.h"
+#include "src/core/SkSLTypeShared.h"
+#include "src/gpu/BufferWriter.h"
+#include "src/gpu/graphite/Attribute.h"
+#include "src/gpu/graphite/BufferManager.h"
+#include "src/gpu/graphite/DrawOrder.h"
 #include "src/gpu/graphite/DrawParams.h"
+#include "src/gpu/graphite/DrawTypes.h"
 #include "src/gpu/graphite/DrawWriter.h"
+#include "src/gpu/graphite/geom/EdgeAAQuad.h"
+#include "src/gpu/graphite/geom/Geometry.h"
+#include "src/gpu/graphite/geom/Rect.h"
+#include "src/gpu/graphite/geom/Shape.h"
+#include "src/gpu/graphite/geom/Transform_graphite.h"
 #include "src/gpu/graphite/render/CommonDepthStencilSettings.h"
+
+#include <cstdint>
+#include <string_view>
 
 // This RenderStep is flexible and can draw filled rectangles, filled quadrilaterals with per-edge
 // AA, filled rounded rectangles with arbitrary corner radii, stroked rectangles with any join,
@@ -369,7 +391,7 @@ AnalyticRRectRenderStep::AnalyticRRectRenderStep(StaticBufferManager* bufferMana
                              // TODO: pack depth and ssbo index into one 32-bit attribute, if we can
                              // go without needing both render step and paint ssbo index attributes.
                              {"depth", VertexAttribType::kFloat, SkSLType::kFloat},
-                             {"ssboIndices", VertexAttribType::kUShort2, SkSLType::kUShort2},
+                             {"ssboIndices", VertexAttribType::kUInt2, SkSLType::kUInt2},
 
                              {"mat0", VertexAttribType::kFloat3, SkSLType::kFloat3},
                              {"mat1", VertexAttribType::kFloat3, SkSLType::kFloat3},
@@ -458,7 +480,7 @@ const char* AnalyticRRectRenderStep::fragmentCoverageSkSL() const {
 
 void AnalyticRRectRenderStep::writeVertices(DrawWriter* writer,
                                             const DrawParams& params,
-                                            skvx::ushort2 ssboIndices) const {
+                                            skvx::uint2 ssboIndices) const {
     SkASSERT(params.geometry().isShape() || params.geometry().isEdgeAAQuad());
 
     DrawWriter::Instances instance{*writer, fVertexBuffer, fIndexBuffer, kIndexCount};

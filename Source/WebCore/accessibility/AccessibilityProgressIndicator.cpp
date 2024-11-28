@@ -35,15 +35,15 @@ namespace WebCore {
     
 using namespace HTMLNames;
 
-AccessibilityProgressIndicator::AccessibilityProgressIndicator(RenderObject& renderer)
-    : AccessibilityRenderObject(renderer)
+AccessibilityProgressIndicator::AccessibilityProgressIndicator(AXID axID, RenderObject& renderer)
+    : AccessibilityRenderObject(axID, renderer)
 {
     ASSERT(is<RenderProgress>(renderer) || is<RenderMeter>(renderer) || is<HTMLProgressElement>(renderer.node()) || is<HTMLMeterElement>(renderer.node()));
 }
 
-Ref<AccessibilityProgressIndicator> AccessibilityProgressIndicator::create(RenderObject& renderer)
+Ref<AccessibilityProgressIndicator> AccessibilityProgressIndicator::create(AXID axID, RenderObject& renderer)
 {
-    return adoptRef(*new AccessibilityProgressIndicator(renderer));
+    return adoptRef(*new AccessibilityProgressIndicator(axID, renderer));
 }
 
 bool AccessibilityProgressIndicator::computeIsIgnored() const

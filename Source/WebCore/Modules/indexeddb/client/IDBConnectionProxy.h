@@ -27,6 +27,7 @@
 
 #include "IDBConnectionToServer.h"
 #include "IDBDatabaseNameAndVersionRequest.h"
+#include "IDBIndexIdentifier.h"
 #include "IDBObjectStoreIdentifier.h"
 #include "IDBResourceIdentifier.h"
 #include "TransactionOperation.h"
@@ -61,7 +62,7 @@ namespace IDBClient {
 class IDBConnectionToServer;
 
 class WEBCORE_EXPORT IDBConnectionProxy final {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(IDBConnectionProxy);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED_EXPORT(IDBConnectionProxy, WEBCORE_EXPORT);
 public:
     IDBConnectionProxy(IDBConnectionToServer&);
 
@@ -84,7 +85,7 @@ public:
     void openCursor(TransactionOperation&, const IDBCursorInfo&);
     void iterateCursor(TransactionOperation&, const IDBIterateCursorData&);
     void renameObjectStore(TransactionOperation&, IDBObjectStoreIdentifier, const String& newName);
-    void renameIndex(TransactionOperation&, IDBObjectStoreIdentifier, uint64_t indexIdentifier, const String& newName);
+    void renameIndex(TransactionOperation&, IDBObjectStoreIdentifier, IDBIndexIdentifier, const String& newName);
 
     void fireVersionChangeEvent(IDBDatabaseConnectionIdentifier, const IDBResourceIdentifier& requestIdentifier, uint64_t requestedVersion);
     void didFireVersionChangeEvent(IDBDatabaseConnectionIdentifier, const IDBResourceIdentifier& requestIdentifier, const IndexedDB::ConnectionClosedOnBehalfOfServer = IndexedDB::ConnectionClosedOnBehalfOfServer::No);
@@ -138,9 +139,9 @@ private:
     void callConnectionOnMainThread(void (IDBConnectionToServer::*method)(Parameters...), Arguments&&... arguments)
     {
         if (isMainThread())
-            (m_connectionToServer.*method)(std::forward<Arguments>(arguments)...);
+            (m_connectionToServer.get().*method)(std::forward<Arguments>(arguments)...);
         else
-            postMainThreadTask(m_connectionToServer, method, arguments...);
+            postMainThreadTask(m_connectionToServer.get(), method, arguments...);
     }
 
     template<typename... Arguments>
@@ -155,7 +156,7 @@ private:
     void scheduleMainThreadTasks();
     void handleMainThreadTasks();
 
-    IDBConnectionToServer& m_connectionToServer;
+    CheckedRef<IDBConnectionToServer> m_connectionToServer;
     IDBConnectionIdentifier m_serverConnectionIdentifier;
 
     Lock m_databaseConnectionMapLock;

@@ -1,5 +1,3 @@
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT entries() in an iframe must be updated after navigating back to a bfcached page Test timed out
+NOTRUN entries() in an iframe must be updated after navigating back to a bfcached page Could have been BFCached but actually wasn't
 

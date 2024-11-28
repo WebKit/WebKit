@@ -31,6 +31,8 @@
 #include "GradientColorStops.h"
 #include <pal/spi/cg/CoreGraphicsSPI.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 GradientRendererCG::GradientRendererCG(ColorInterpolationMethod colorInterpolationMethod, const GradientColorStops& stops)
@@ -503,6 +505,29 @@ GradientRendererCG::Strategy GradientRendererCG::makeGradient(ColorInterpolation
         return cachedCGColorSpace<ColorSpaceFor<OutputSpaceColorType>>();
     }();
 
+    // CoreGraphics has a bug where if the last two stops are at 1, it fails to extend the last stop's color. This can be visible in radial gradients.
+    auto apply139572277Workaround = [&]() {
+        if (numberOfStops < 2)
+            return;
+
+        if (locations[numberOfStops - 2] == 1.0 && locations[numberOfStops - 1] == 1.0) {
+            // Replicate the last color stop.
+            locations.append(1.0);
+
+            auto lastColorComponentIndex = 4 * (numberOfStops - 1);
+
+            colorComponents.reserveCapacity((numberOfStops + 1) * 4);
+            colorComponents.append(colorComponents[lastColorComponentIndex]);
+            colorComponents.append(colorComponents[lastColorComponentIndex + 1]);
+            colorComponents.append(colorComponents[lastColorComponentIndex + 2]);
+            colorComponents.append(colorComponents[lastColorComponentIndex + 3]);
+
+            ++numberOfStops;
+        }
+    };
+
+    apply139572277Workaround();
+
 #if HAVE(CORE_GRAPHICS_GRADIENT_CREATE_WITH_OPTIONS)
     return Gradient { adoptCF(CGGradientCreateWithColorComponentsAndOptions(cgColorSpace, colorComponents.data(), locations.data(), numberOfStops, gradientOptionsDictionary(colorInterpolationMethod))) };
 #else
@@ -704,3 +729,5 @@ void GradientRendererCG::drawConicGradient(CGContextRef platformContext, CGPoint
 }
 
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

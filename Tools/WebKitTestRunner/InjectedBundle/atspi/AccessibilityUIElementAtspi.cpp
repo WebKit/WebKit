@@ -114,11 +114,8 @@ static RefPtr<AccessibilityUIElement> elementForRelationAtIndex(WebCore::Accessi
     if (targets.isEmpty() || index >= targets.size())
         return nullptr;
 
-    auto target = targets[index];
-    if (!target)
-        return nullptr;
-
-    return AccessibilityUIElement::create(target.get());
+    Ref target = targets[index];
+    return AccessibilityUIElement::create(target.ptr());
 }
 
 RefPtr<AccessibilityUIElement> AccessibilityUIElement::linkedUIElementAtIndex(unsigned index)
@@ -211,7 +208,7 @@ RefPtr<AccessibilityUIElement> AccessibilityUIElement::rowAtIndex(unsigned index
     if (index >= rows.size())
         return nullptr;
 
-    return AccessibilityUIElement::create(rows[index].get());
+    return AccessibilityUIElement::create(rows[index].ptr());
 }
 
 RefPtr<AccessibilityUIElement> AccessibilityUIElement::selectedChildAtIndex(unsigned index) const
@@ -341,24 +338,24 @@ static String attributesOfElement(AccessibilityUIElement& element)
     return builder.toString();
 }
 
-static String attributesOfElements(Vector<RefPtr<AccessibilityUIElement>>& elements)
+static String attributesOfElements(Vector<Ref<AccessibilityUIElement>>& elements)
 {
     StringBuilder builder;
     for (auto& element : elements)
-        builder.append(attributesOfElement(*element), "\n------------\n"_s);
+        builder.append(attributesOfElement(element), "\n------------\n"_s);
     return builder.toString();
 }
 
-static Vector<RefPtr<AccessibilityUIElement>> elementsVector(const Vector<RefPtr<WebCore::AccessibilityObjectAtspi>>& wrappers)
+static Vector<Ref<AccessibilityUIElement>> elementsVector(const Vector<Ref<WebCore::AccessibilityObjectAtspi>>& wrappers)
 {
-    Vector<RefPtr<AccessibilityUIElement>> elements;
+    Vector<Ref<AccessibilityUIElement>> elements;
     elements.reserveInitialCapacity(wrappers.size());
     for (auto& wrapper : wrappers)
-        elements.append(AccessibilityUIElement::create(wrapper.get()));
+        elements.append(AccessibilityUIElement::create(wrapper.ptr()));
     return elements;
 }
 
-static String attributesOfElements(const Vector<RefPtr<WebCore::AccessibilityObjectAtspi>>& wrappers)
+static String attributesOfElements(const Vector<Ref<WebCore::AccessibilityObjectAtspi>>& wrappers)
 {
     auto elements = elementsVector(wrappers);
     return attributesOfElements(elements);
@@ -485,12 +482,12 @@ JSValueRef AccessibilityUIElement::uiElementArrayAttributeValue(JSContextRef, JS
     return nullptr;
 }
 
-static JSValueRef makeJSArray(JSContextRef context, const Vector<RefPtr<AccessibilityUIElement>>& elements)
+static JSValueRef makeJSArray(JSContextRef context, const Vector<Ref<AccessibilityUIElement>>& elements)
 {
     size_t elementCount = elements.size();
     auto valueElements = makeUniqueArray<JSValueRef>(elementCount);
     for (size_t i = 0; i < elementCount; i++)
-        valueElements[i] = JSObjectMake(context, elements[i]->wrapperClass(), elements[i].get());
+        valueElements[i] = JSObjectMake(context, elements[i]->wrapperClass(), elements[i].ptr());
 
     return JSObjectMakeArray(context, elementCount, valueElements.get(), nullptr);
 }

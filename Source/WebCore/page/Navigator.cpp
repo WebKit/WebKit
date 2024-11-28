@@ -266,7 +266,7 @@ void Navigator::initializePluginAndMimeTypeArrays()
     bool needsEmptyNavigatorPluginsQuirk = frame && frame->document() && frame->document()->quirks().shouldNavigatorPluginsBeEmpty();
     if (!frame || !frame->page() || needsEmptyNavigatorPluginsQuirk) {
         if (needsEmptyNavigatorPluginsQuirk)
-            frame->document()->addConsoleMessage(MessageSource::Other, MessageLevel::Info, "QUIRK: Navigator plugins / mimeTypes empty on marcus.com. More information at https://bugs.webkit.org/show_bug.cgi?id=248798"_s);
+            frame->protectedDocument()->addConsoleMessage(MessageSource::Other, MessageLevel::Info, "QUIRK: Navigator plugins / mimeTypes empty on marcus.com. More information at https://bugs.webkit.org/show_bug.cgi?id=248798"_s);
         m_plugins = DOMPluginArray::create(*this);
         m_mimeTypes = DOMMimeTypeArray::create(*this);
         return;
@@ -387,10 +387,32 @@ GPU* Navigator::gpu()
     return m_gpuForWebGPU.get();
 }
 
-Document* Navigator::document()
+Page* Navigator::page()
 {
     auto* frame = this->frame();
+    return frame ? frame->page() : nullptr;
+}
+
+RefPtr<Page> Navigator::protectedPage()
+{
+    return page();
+}
+
+const Document* Navigator::document() const
+{
+    RefPtr frame = this->frame();
     return frame ? frame->document() : nullptr;
+}
+
+Document* Navigator::document()
+{
+    RefPtr frame = this->frame();
+    return frame ? frame->document() : nullptr;
+}
+
+RefPtr<Document> Navigator::protectedDocument()
+{
+    return document();
 }
 
 void Navigator::setAppBadge(std::optional<unsigned long long> badge, Ref<DeferredPromise>&& promise)
@@ -476,7 +498,7 @@ void Navigator::subscribeToPushService(const Vector<uint8_t>& applicationServerK
     });
 }
 
-void Navigator::unsubscribeFromPushService(PushSubscriptionIdentifier subscriptionIdentifier, DOMPromiseDeferred<IDLBoolean>&& promise)
+void Navigator::unsubscribeFromPushService(std::optional<PushSubscriptionIdentifier> subscriptionIdentifier, DOMPromiseDeferred<IDLBoolean>&& promise)
 {
     LOG(Push, "Navigator::unsubscribeFromPushService");
 
@@ -518,5 +540,16 @@ void Navigator::getPushPermissionState(DOMPromiseDeferred<IDLEnumeration<PushPer
 }
 
 #endif // #if ENABLE(DECLARATIVE_WEB_PUSH)
+
+int Navigator::maxTouchPoints() const
+{
+#if ENABLE(IOS_TOUCH_EVENTS) && !PLATFORM(MACCATALYST)
+    RefPtr document = this->document();
+    if (!document || !document->quirks().needsZeroMaxTouchPointsQuirk())
+        return 5;
+#endif
+
+    return 0;
+}
 
 } // namespace WebCore

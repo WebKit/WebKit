@@ -22,7 +22,7 @@ sources:
 - kind: git_repo
   url: github_com:rui314/mold.git
   track: v2.*
-  ref: v2.30.0-0-gc7f6a91da512ef8a2634a1bef5d4ba82104659fe
+  ref: v2.33.0-0-g1ab637cea4e76401d7a85039f68be8cd10d58324
 public:
   bst:
     integration-commands:

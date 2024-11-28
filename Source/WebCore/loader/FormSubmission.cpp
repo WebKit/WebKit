@@ -75,7 +75,7 @@ static void appendMailtoPostFormDataToURL(URL& url, const FormData& data, const 
         body = PAL::decodeURLEscapeSequences(makeStringByReplacingAll(makeStringByReplacingAll(body, '&', "\r\n"_s), '+', ' '));
     }
 
-    Vector<uint8_t> bodyData(std::span<const char>("body=", static_cast<size_t>(5)));
+    Vector<uint8_t> bodyData("body="_s.span8());
     FormDataBuilder::encodeStringAsFormData(bodyData, body.utf8());
     body = makeStringByReplacingAll(bodyData.span(), '+', "%20"_s);
 

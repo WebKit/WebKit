@@ -52,8 +52,10 @@
 #include <wtf/TZoneMallocInlines.h>
 
 #if PLATFORM(IOS_FAMILY)
-#include "RuntimeApplicationChecks.h"
+#include <wtf/RuntimeApplicationChecks.h>
 #endif
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace WebCore {
 
@@ -287,8 +289,13 @@ void HTMLObjectElement::renderFallbackContent()
     scheduleUpdateForAfterStyleResolution();
     invalidateStyleAndRenderersForSubtree();
 
+    // Presence of a UA shadow root indicates render invalidation during embedded PDF plugin bringup, and not a failed render.
+    // It's safe to special case here because UA shadow root cannot be attached to <object>/<embed> programmatically.
+    if (userAgentShadowRoot())
+        return;
+
     // Before we give up and use fallback content, check to see if this is a MIME type issue.
-    auto* loader = imageLoader();
+    RefPtr loader = imageLoader();
     if (loader && loader->image() && loader->image()->status() != CachedResource::LoadError) {
         m_serviceType = loader->image()->response().mimeType();
         if (!isImageType()) {
@@ -400,3 +407,5 @@ bool HTMLObjectElement::canContainRangeEndPoint() const
 }
 
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

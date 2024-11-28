@@ -479,6 +479,7 @@ public:
     // with a 15-bit pattern within the range 0x0002..0xFFFC.
     static constexpr size_t DoubleEncodeOffsetBit = 49;
     static constexpr int64_t DoubleEncodeOffset = 1ll << DoubleEncodeOffsetBit;
+
     // If all bits in the mask are set, this indicates an integer number,
     // if any but not all are set this value is a double precision number.
     static constexpr int64_t NumberTag = 0xfffe000000000000ll;
@@ -749,7 +750,7 @@ bool sameValue(JSGlobalObject*, JSValue a, JSValue b);
 ALWAYS_INLINE void ensureStillAliveHere(JSValue value)
 {
 #if USE(JSVALUE64)
-    asm volatile ("" : : "g"(bitwise_cast<uint64_t>(value)) : "memory");
+    asm volatile ("" : : "g"(std::bit_cast<uint64_t>(value)) : "memory");
 #else
     asm volatile ("" : : "g"(value.payload()) : "memory");
 #endif

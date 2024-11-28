@@ -90,11 +90,10 @@ void RTCDataChannelRemoteHandler::readyToSend()
         m_connection->close(m_remoteIdentifier);
 }
 
-void RTCDataChannelRemoteHandler::setClient(RTCDataChannelHandlerClient& client, ScriptExecutionContextIdentifier contextIdentifier)
+void RTCDataChannelRemoteHandler::setClient(RTCDataChannelHandlerClient& client, std::optional<ScriptExecutionContextIdentifier> contextIdentifier)
 {
     m_client = &client;
-    ASSERT(m_localIdentifier.channelIdentifier);
-    m_connection->connectToSource(*this, contextIdentifier, m_localIdentifier, m_remoteIdentifier);
+    m_connection->connectToSource(*this, contextIdentifier, *m_localIdentifier, m_remoteIdentifier);
 }
 
 bool RTCDataChannelRemoteHandler::sendStringData(const CString& text)

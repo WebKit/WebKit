@@ -30,6 +30,6 @@
 namespace WebCore {
 
 struct BackForwardItemIdentifierType;
-using BackForwardItemIdentifier = ProcessQualified<LegacyNullableObjectIdentifier<BackForwardItemIdentifierType>>;
+using BackForwardItemIdentifier = ProcessQualified<ObjectIdentifier<BackForwardItemIdentifierType>>;
 
 } // namespace WebCore

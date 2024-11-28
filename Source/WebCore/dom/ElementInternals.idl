@@ -43,7 +43,7 @@
 
     readonly attribute NodeList labels;
 
-    [EnabledBySetting=CustomStateSetEnabled, SameObject] readonly attribute CustomStateSet states;
+    [SameObject] readonly attribute CustomStateSet states;
 
     [Reflect] attribute DOMString? role;
     [Reflect=aria_activedescendant] attribute Element? ariaActiveDescendantElement;

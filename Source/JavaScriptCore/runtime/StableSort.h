@@ -28,6 +28,8 @@
 #include "ArgList.h"
 #include <wtf/StdLibExtras.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 static ALWAYS_INLINE bool coerceComparatorResultToBoolean(JSGlobalObject* globalObject, JSValue comparatorResult)
@@ -136,3 +138,5 @@ static ALWAYS_INLINE std::span<ElementType> arrayStableSort(VM& vm, std::span<El
 }
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

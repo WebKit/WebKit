@@ -80,7 +80,7 @@ struct TZoneHeapBase {
 
     static pas_heap_ref& provideHeap()
     {
-        static bmalloc_type type = BMALLOC_TYPE_INITIALIZER(roundUpToMulipleOf8(sizeof(LibPasBmallocHeapType)), roundUpToMulipleOf8(alignof(LibPasBmallocHeapType)), __PRETTY_FUNCTION__);
+        static const bmalloc_type type = BMALLOC_TYPE_INITIALIZER(roundUpToMulipleOf8(sizeof(LibPasBmallocHeapType)), roundUpToMulipleOf8(alignof(LibPasBmallocHeapType)), __PRETTY_FUNCTION__);
         static pas_heap_ref* heap = nullptr;
 
         if (!heap)
@@ -93,10 +93,7 @@ struct TZoneHeapBase {
     {
         bmalloc_type type = BMALLOC_TYPE_INITIALIZER((unsigned)roundUpToMulipleOf8(differentSize), roundUpToMulipleOf8(alignof(LibPasBmallocHeapType)), __PRETTY_FUNCTION__);
 
-        TZONE_LOG_DEBUG("Unannotated TZone type %s:%d:%s\n", __FILE__, __LINE__, __PRETTY_FUNCTION__);
-
-        //  &&&& Should we figure out a way to cache this different sized heap?
-        return *TZoneHeapManager::singleton().heapRefForTZoneType(&type);
+        return *TZoneHeapManager::singleton().heapRefForTZoneTypeDifferentSize(&type);
     }
 };
 
@@ -202,9 +199,7 @@ struct CompactTZoneHeap : public TZoneHeapBase<Type> {
 };
 #endif // BUSE(LIBPAS) -> so end of !BUSE(LIBPAS)
 
-// Use this together with MAKE_BISO_MALLOCED_IMPL.
-#define MAKE_BTZONE_MALLOCED(isoType, heapType, exportMacro) \
-public: \
+#define MAKE_BTZONE_MALLOCED_COMMON(isoType, heapType, exportMacro) \
     static exportMacro ::bmalloc::api::heapType<isoType>& btzoneHeap(); \
     \
     void* operator new(size_t, void* p) { return p; } \
@@ -223,8 +218,17 @@ public: \
     } \
     exportMacro static void freeAfterDestruction(void*); \
     \
-    using WTFIsFastAllocated = int; \
+    using WTFIsFastAllocated = int;
+
+// Use these two macros together with MAKE_BTZONE_MALLOCED_IMPL.
+#define MAKE_BTZONE_MALLOCED(isoType, heapType, exportMacro) \
+public: \
+    MAKE_BTZONE_MALLOCED_COMMON(isoType, heapType, exportMacro) \
 private: \
+    using __makeTZoneMallocedMacroSemicolonifier BUNUSED_TYPE_ALIAS = int
+
+#define MAKE_STRUCT_BTZONE_MALLOCED(isoType, heapType, exportMacro) \
+    MAKE_BTZONE_MALLOCED_COMMON(isoType, heapType, exportMacro) \
     using __makeTZoneMallocedMacroSemicolonifier BUNUSED_TYPE_ALIAS = int
 
 } } // namespace bmalloc::api

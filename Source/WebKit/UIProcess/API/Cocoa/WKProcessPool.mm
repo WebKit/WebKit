@@ -529,6 +529,30 @@ WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
     WebKit::setLockdownModeEnabledGloballyForTesting(std::nullopt);
 }
 
++ (void)_setEnableMetalDebugDeviceInNewGPUProcessesForTesting:(BOOL)enable
+{
+    WebKit::GPUProcessProxy::setEnableMetalDebugDeviceInNewGPUProcessesForTesting(enable);
+}
+
++ (void)_setEnableMetalShaderValidationInNewGPUProcessesForTesting:(BOOL)enable
+{
+    WebKit::GPUProcessProxy::setEnableMetalShaderValidationInNewGPUProcessesForTesting(enable);
+}
+
++ (BOOL)_isMetalDebugDeviceEnabledInGPUProcessForTesting
+{
+    if (auto gpuProcess = WebKit::GPUProcessProxy::singletonIfCreated())
+        return gpuProcess->isMetalDebugDeviceEnabledForTesting();
+    return WebKit::GPUProcessProxy::isMetalDebugDeviceEnabledInNewGPUProcessesForTesting();
+}
+
++ (BOOL)_isMetalShaderValidationEnabledInGPUProcessForTesting
+{
+    if (auto gpuProcess = WebKit::GPUProcessProxy::singletonIfCreated())
+        return gpuProcess->isMetalShaderValidationEnabledForTesting();
+    return WebKit::GPUProcessProxy::isMetalShaderValidationEnabledInNewGPUProcessesForTesting();
+}
+
 - (BOOL)_isCookieStoragePartitioningEnabled
 {
     return _processPool->cookieStoragePartitioningEnabled();

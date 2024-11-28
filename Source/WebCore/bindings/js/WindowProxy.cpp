@@ -214,11 +214,6 @@ DOMWindow* WindowProxy::window() const
     return m_frame ? m_frame->window() : nullptr;
 }
 
-WindowProxy::ProxyMap::ValuesConstIteratorRange WindowProxy::jsWindowProxies() const
-{
-    return m_jsWindowProxies->values();
-}
-
 WindowProxy::ProxyMap WindowProxy::releaseJSWindowProxies()
 {
     return std::exchange(m_jsWindowProxies, makeUniqueRef<ProxyMap>());

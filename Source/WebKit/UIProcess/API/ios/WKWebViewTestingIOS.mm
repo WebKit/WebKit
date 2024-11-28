@@ -30,6 +30,7 @@
 
 #import "RemoteLayerTreeDrawingAreaProxy.h"
 #import "RemoteLayerTreeViews.h"
+#import "RemoteScrollingCoordinatorProxy.h"
 #import "SystemPreviewController.h"
 #import "UIKitSPI.h"
 #import "WKContentViewInteraction.h"
@@ -201,20 +202,19 @@ static void dumpSeparatedLayerProperties(TextStream&, CALayer *) { }
 static String allowListedClassToString(UIView *view)
 {
     static constexpr ComparableASCIILiteral allowedClassesArray[] = {
-        "UIView",
-        "WKBackdropView",
-        "WKCompositingView",
-        "WKContentView",
-        "WKModelView",
-        "WKRemoteView",
-        "WKScrollView",
-        "WKSeparatedModelView",
-        "WKShapeView",
-        "WKSimpleBackdropView",
-        "WKTransformView",
-        "WKUIRemoteView",
-        "WKWebView",
-        "_UILayerHostView",
+        "UIView"_s,
+        "WKBackdropView"_s,
+        "WKCompositingView"_s,
+        "WKContentView"_s,
+        "WKModelView"_s,
+        "WKScrollView"_s,
+        "WKSeparatedModelView"_s,
+        "WKShapeView"_s,
+        "WKSimpleBackdropView"_s,
+        "WKTransformView"_s,
+        "WKUIRemoteView"_s,
+        "WKWebView"_s,
+        "_UILayerHostView"_s,
     };
     static constexpr SortedArraySet allowedClasses { allowedClassesArray };
 
@@ -298,9 +298,13 @@ static void dumpUIView(TextStream& ts, UIView *view)
     return ts.release();
 }
 
-- (NSString *)_scrollbarState:(unsigned long long)scrollingNodeID processID:(unsigned long long)processID isVertical:(bool)isVertical
+- (NSString *)_scrollbarState:(unsigned long long)rawScrollingNodeID processID:(unsigned long long)processID isVertical:(bool)isVertical
 {
-    if (_page->scrollingCoordinatorProxy()->rootScrollingNodeID() == WebCore::ScrollingNodeID(LegacyNullableObjectIdentifier<WebCore::ScrollingNodeIDType>(scrollingNodeID), LegacyNullableObjectIdentifier<WebCore::ProcessIdentifierType>(processID))) {
+    std::optional<WebCore::ScrollingNodeID> scrollingNodeID;
+    if (ObjectIdentifier<WebCore::ProcessIdentifierType>::isValidIdentifier(processID) && ObjectIdentifier<WebCore::ScrollingNodeIDType>::isValidIdentifier(rawScrollingNodeID))
+        scrollingNodeID = WebCore::ScrollingNodeID(ObjectIdentifier<WebCore::ScrollingNodeIDType>(rawScrollingNodeID), ObjectIdentifier<WebCore::ProcessIdentifierType>(processID));
+
+    if (_page->scrollingCoordinatorProxy()->rootScrollingNodeID() == scrollingNodeID) {
         TextStream ts(TextStream::LineMode::MultipleLine);
         {
             TextStream::GroupScope scope(ts);
@@ -308,7 +312,7 @@ static void dumpUIView(TextStream& ts, UIView *view)
         }
         return ts.release();
     }
-    return _page->scrollbarStateForScrollingNodeID(WebCore::ScrollingNodeID(LegacyNullableObjectIdentifier<WebCore::ScrollingNodeIDType>(scrollingNodeID), LegacyNullableObjectIdentifier<WebCore::ProcessIdentifierType>(processID)), isVertical);
+    return _page->scrollbarStateForScrollingNodeID(scrollingNodeID, isVertical);
 }
 
 - (NSNumber *)_stableStateOverride

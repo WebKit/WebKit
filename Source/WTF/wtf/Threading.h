@@ -30,6 +30,10 @@
 
 #pragma once
 
+#include <wtf/Compiler.h>
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 #include <mutex>
 #include <stdint.h>
 #include <wtf/Atomics.h>
@@ -51,6 +55,8 @@
 #include <wtf/Vector.h>
 #include <wtf/WordLock.h>
 #include <wtf/text/AtomStringTable.h>
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #if USE(PTHREADS) && !OS(DARWIN)
 #include <signal.h>
@@ -169,7 +175,7 @@ public:
 
     private:
         static constexpr size_t s_maxKeys = 32;
-        static Atomic<int> s_numberOfKeys;
+        static Atomic<size_t> s_numberOfKeys;
         static std::array<Atomic<DestroyFunction>, s_maxKeys> s_destroyFunctions;
         std::array<void*, s_maxKeys> m_slots { };
     };

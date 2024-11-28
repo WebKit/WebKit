@@ -96,7 +96,7 @@ static pas_allocation_result allocate_impl(pas_large_heap* heap,
                                            const pas_heap_config* heap_config,
                                            pas_physical_memory_transaction* transaction)
 {
-    static const bool verbose = false;
+    static const bool verbose = PAS_SHOULD_LOG(PAS_LOG_LARGE_HEAPS);
     
     pas_allocation_result result;
     const pas_heap_type* type;
@@ -117,9 +117,8 @@ static pas_allocation_result allocate_impl(pas_large_heap* heap,
     *size = pas_round_up_to_power_of_2(*size, *alignment);
     
     if (verbose) {
-        printf("Allocating large object of size %zu\n", *size);
-        printf("Cartesian tree minimum = %p\n", pas_cartesian_tree_minimum(&heap->free_heap.tree));
-        printf("Num mapped bytes = %zu\n", heap->free_heap.num_mapped_bytes);
+        printf("large heap allocating large object of size %zu\n", *size);
+        printf("large heap cartesian tree minimum = %p, num mapped bytes = %zu\n", pas_cartesian_tree_minimum(&heap->free_heap.tree), heap->free_heap.num_mapped_bytes);
     }
     
     initialize_config(&config, &data, heap, heap_config);
@@ -134,7 +133,7 @@ static pas_allocation_result allocate_impl(pas_large_heap* heap,
         return pas_allocation_result_create_failure();
 
     if (verbose)
-        pas_log("Committing the memory we allocated starting at %p.\n", (void*)result.begin);
+        pas_log("large heap committing the memory we allocated starting at %p.\n", (void*)result.begin);
     
     if (heap_config->aligned_allocator_talks_to_sharing_pool &&
         !pas_large_sharing_pool_allocate_and_commit(
@@ -149,7 +148,7 @@ static pas_allocation_result allocate_impl(pas_large_heap* heap,
     }
 
     PAS_ASSERT(pas_is_aligned(result.begin, *alignment));
-    PAS_PROFILE(LARGE_HEAP_ALLOCATION, result.begin, *size, allocation_mode);
+    PAS_PROFILE(LARGE_HEAP_ALLOCATION, heap_config, result.begin, *size, allocation_mode);
     
     return result;
 }
@@ -226,7 +225,8 @@ bool pas_large_heap_try_deallocate(uintptr_t begin,
 
         return false;
     }
-    
+
+    PAS_PROFILE(LARGE_MAP_TOOK_ENTRY, heap_config, map_entry.begin, map_entry.end);
     PAS_ASSERT(pas_heap_config_kind_get_config(
                    pas_heap_for_large_heap(map_entry.heap)->config_kind)
                == heap_config);
@@ -269,6 +269,7 @@ bool pas_large_heap_try_shrink(uintptr_t begin,
     if (pas_large_map_entry_is_empty(map_entry))
         return false;
 
+    PAS_PROFILE(LARGE_MAP_TOOK_ENTRY, heap_config, map_entry.begin, map_entry.end);
     heap = map_entry.heap;
     type = pas_heap_for_large_heap(heap)->type;
 

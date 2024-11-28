@@ -46,10 +46,6 @@
 #include "UserAgentStyleSheets.h"
 #include <wtf/text/Base64.h>
 
-#if PLATFORM(GTK)
-#include <gtk/gtk.h>
-#endif
-
 #if PLATFORM(WIN)
 #include "WebCoreBundleWin.h"
 #include <wtf/FileSystem.h>
@@ -57,6 +53,10 @@
 
 #if ENABLE(MODERN_MEDIA_CONTROLS)
 #include "UserAgentScripts.h"
+#endif
+
+#if PLATFORM(GTK) || PLATFORM(WPE)
+#include "SystemSettings.h"
 #endif
 
 namespace WebCore {
@@ -341,8 +341,8 @@ LengthBox RenderThemeAdwaita::popupInternalPaddingBox(const RenderStyle& style) 
         return { };
 
     auto zoomedArrowSize = menuListButtonArrowSize * style.usedZoom();
-    int leftPadding = menuListButtonPadding + (style.direction() == TextDirection::RTL ? zoomedArrowSize : 0);
-    int rightPadding = menuListButtonPadding + (style.direction() == TextDirection::LTR ? zoomedArrowSize : 0);
+    int leftPadding = menuListButtonPadding + (style.writingMode().isBidiRTL() ? zoomedArrowSize : 0);
+    int rightPadding = menuListButtonPadding + (style.writingMode().isBidiLTR() ? zoomedArrowSize : 0);
 
     return { menuListButtonPadding, rightPadding, menuListButtonPadding, leftPadding };
 }
@@ -388,17 +388,16 @@ void RenderThemeAdwaita::adjustListButtonStyle(RenderStyle& style, const Element
 }
 #endif // ENABLE(DATALIST_ELEMENT)
 
-#if PLATFORM(GTK)
+#if PLATFORM(GTK) || PLATFORM(WPE)
 std::optional<Seconds> RenderThemeAdwaita::caretBlinkInterval() const
 {
-    gboolean shouldBlink;
-    gint time;
-    g_object_get(gtk_settings_get_default(), "gtk-cursor-blink", &shouldBlink, "gtk-cursor-blink-time", &time, nullptr);
-    if (shouldBlink)
-        return { 500_us * time };
+    auto shouldBlink = SystemSettings::singleton().cursorBlink();
+    auto blinkTime = SystemSettings::singleton().cursorBlinkTime();
+    if (shouldBlink.value_or(true))
+        return { 500_us * blinkTime.value_or(1200) };
     return { };
 }
-#endif
+#endif // PLATFORM(GTK) || PLATFORM(WPE)
 
 void RenderThemeAdwaita::setAccentColor(const Color& color)
 {

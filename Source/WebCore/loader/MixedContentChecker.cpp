@@ -103,7 +103,7 @@ static void logConsoleWarningForUpgrade(const LocalFrame& frame, bool blocked, c
     }();
 
     auto message = makeString((!blocked ? ""_s : "[blocked] "_s), "The page at "_s, frame.document()->url().stringCenterEllipsizedToLength(), " requested insecure content from "_s, target.stringCenterEllipsizedToLength(), ". This content was "_s, errorString, !isUpgradingLocalhostDisabled ? " be served over HTTPS.\n"_s : "\n"_s);
-    frame.document()->addConsoleMessage(MessageSource::Security, MessageLevel::Warning, message);
+    frame.protectedDocument()->addConsoleMessage(MessageSource::Security, MessageLevel::Warning, message);
 }
 
 static bool isUpgradeMixedContentEnabled(Document& document)
@@ -133,7 +133,7 @@ static bool frameAndAncestorsCanDisplayInsecureContent(LocalFrame& frame, MixedC
 
     if (allowed) {
         document->setFoundMixedContent(SecurityContext::MixedContentType::Inactive);
-        frame.checkedLoader()->client().didDisplayInsecureContent();
+        frame.protectedLoader()->client().didDisplayInsecureContent();
     }
 
     return allowed;
@@ -157,7 +157,7 @@ bool MixedContentChecker::frameAndAncestorsCanRunInsecureContent(LocalFrame& fra
 
     if (allowed) {
         document->setFoundMixedContent(SecurityContext::MixedContentType::Active);
-        frame.checkedLoader()->client().didRunInsecureContent(securityOrigin);
+        frame.protectedLoader()->client().didRunInsecureContent(securityOrigin);
     }
 
     return allowed;
@@ -166,6 +166,11 @@ bool MixedContentChecker::frameAndAncestorsCanRunInsecureContent(LocalFrame& fra
 static bool destinationIsImageAudioOrVideo(FetchOptions::Destination destination)
 {
     return destination == FetchOptions::Destination::Audio || destination == FetchOptions::Destination::Image || destination == FetchOptions::Destination::Video;
+}
+
+static bool destinationIsImageAndInitiatorIsImageset(FetchOptions::Destination destination, Initiator initiator)
+{
+    return destination == FetchOptions::Destination::Image && initiator == Initiator::Imageset;
 }
 
 bool MixedContentChecker::shouldUpgradeInsecureContent(LocalFrame& frame, IsUpgradable isUpgradable, const URL& url, FetchOptions::Mode mode, FetchOptions::Destination destination, Initiator initiator)
@@ -185,19 +190,32 @@ bool MixedContentChecker::shouldUpgradeInsecureContent(LocalFrame& frame, IsUpgr
 
     auto shouldUpgradeIPAddressAndLocalhostForTesting = document->settings().iPAddressAndLocalhostMixedContentUpgradeTestingEnabled();
 
-    // The request's URL is not upgraded in the following cases.
-    // 4.1.1 request’s URL is a potentially trustworthy URL.
-    if (url.protocolIs("https"_s)
-        // 4.1.2 request’s URL’s host is an IP address.
-        || (!shouldUpgradeIPAddressAndLocalhostForTesting && URL::hostIsIPAddress(url.host()))
-        // 4.1.4 request’s destination is not "image", "audio", or "video".
-        || (!destinationIsImageAudioOrVideo(destination))
-        // 4.1.5 request’s destination is "image" and request’s initiator is "imageset".
-        || (destination == FetchOptions::Destination::Image && initiator == Initiator::Imageset)
-        // and CORS is excluded
-        || (mode == FetchOptions::Mode::Cors && !(document->quirks().needsRelaxedCorsMixedContentCheckQuirk() && destinationIsImageAudioOrVideo(destination))))
+    // 4.1 The request's URL is not upgraded in the following cases.
+    if (!canModifyRequest(url, destination, initiator, shouldUpgradeIPAddressAndLocalhostForTesting))
         return false;
+    // or CORS is excluded
+    if (mode == FetchOptions::Mode::Cors && !(document->quirks().needsRelaxedCorsMixedContentCheckQuirk() && destinationIsImageAudioOrVideo(destination)))
+        return false;
+
     logConsoleWarningForUpgrade(frame, /* blocked */ false, url, shouldUpgradeIPAddressAndLocalhostForTesting);
+    return true;
+}
+
+bool MixedContentChecker::canModifyRequest(const URL& url, FetchOptions::Destination destination, Initiator initiator, bool shouldUpgradeIPAddressAndLocalhostForTesting)
+{
+    // 4.1.1 request’s URL is a potentially trustworthy URL.
+    if (url.protocolIs("https"_s))
+        return false;
+    // 4.1.2 request’s URL’s host is an IP address.
+    if (!shouldUpgradeIPAddressAndLocalhostForTesting && URL::hostIsIPAddress(url.host()))
+        return false;
+    // 4.1.4 request’s destination is not "image", "audio", or "video".
+    if (!destinationIsImageAudioOrVideo(destination))
+        return false;
+    // 4.1.5 request’s destination is "image" and request’s initiator is "imageset".
+    auto schemeIsHandledBySchemeHandler = LegacySchemeRegistry::schemeIsHandledBySchemeHandler(url.protocol());
+    if (!schemeIsHandledBySchemeHandler && destinationIsImageAndInitiatorIsImageset(destination, initiator))
+        return false;
     return true;
 }
 
@@ -241,7 +259,7 @@ void MixedContentChecker::checkFormForMixedContent(LocalFrame& frame, const URL&
     auto message = makeString("The page at "_s, frame.document()->url().stringCenterEllipsizedToLength(), " contains a form which targets an insecure URL "_s, url.stringCenterEllipsizedToLength(), ".\n"_s);
     frame.protectedDocument()->addConsoleMessage(MessageSource::Security, MessageLevel::Warning, message);
 
-    frame.checkedLoader()->client().didDisplayInsecureContent();
+    frame.protectedLoader()->client().didDisplayInsecureContent();
 }
 
 } // namespace WebCore

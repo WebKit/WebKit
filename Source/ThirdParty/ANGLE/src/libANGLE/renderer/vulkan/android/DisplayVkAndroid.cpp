@@ -66,7 +66,7 @@ egl::ConfigSet DisplayVkAndroid::generateConfigs()
     // Assume GL_RGB8 and GL_RGBA8 is always available.
     std::vector<GLenum> kColorFormats        = {GL_RGBA8, GL_RGB8};
     std::vector<GLenum> kDesiredColorFormats = {GL_RGB565, GL_RGB10_A2, GL_RGBA16F};
-    if (!getRenderer()->getFeatures().supportsSurfacelessQueryExtension.enabled)
+    if (!getFeatures().supportsSurfacelessQueryExtension.enabled)
     {
         // Old path: Assume GL_RGB565 is available, as it is generally available on the devices
         // that support Vulkan.

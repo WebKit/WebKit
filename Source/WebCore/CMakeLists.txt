@@ -65,6 +65,7 @@ set(WebCore_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/Modules/speech"
     "${WEBCORE_DIR}/Modules/storage"
     "${WEBCORE_DIR}/Modules/streams"
+    "${WEBCORE_DIR}/Modules/url-pattern"
     "${WEBCORE_DIR}/Modules/web-locks"
     "${WEBCORE_DIR}/Modules/webaudio"
     "${WEBCORE_DIR}/Modules/webauthn"
@@ -98,6 +99,13 @@ set(WebCore_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/css/typedom/color"
     "${WEBCORE_DIR}/css/typedom/numeric"
     "${WEBCORE_DIR}/css/typedom/transform"
+    "${WEBCORE_DIR}/css/values"
+    "${WEBCORE_DIR}/css/values/backgrounds"
+    "${WEBCORE_DIR}/css/values/color-adjust"
+    "${WEBCORE_DIR}/css/values/images"
+    "${WEBCORE_DIR}/css/values/motion"
+    "${WEBCORE_DIR}/css/values/primitives"
+    "${WEBCORE_DIR}/css/values/shapes"
     "${WEBCORE_DIR}/cssjit"
     "${WEBCORE_DIR}/dom"
     "${WEBCORE_DIR}/dom/messageports"
@@ -180,6 +188,13 @@ set(WebCore_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/replay"
     "${WEBCORE_DIR}/storage"
     "${WEBCORE_DIR}/style"
+    "${WEBCORE_DIR}/style/values"
+    "${WEBCORE_DIR}/style/values/backgrounds"
+    "${WEBCORE_DIR}/style/values/color-adjust"
+    "${WEBCORE_DIR}/style/values/images"
+    "${WEBCORE_DIR}/style/values/motion"
+    "${WEBCORE_DIR}/style/values/primitives"
+    "${WEBCORE_DIR}/style/values/shapes"
     "${WEBCORE_DIR}/svg"
     "${WEBCORE_DIR}/svg/animation"
     "${WEBCORE_DIR}/svg/graphics"
@@ -442,6 +457,7 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/mediasource/ManagedSourceBuffer.idl
     Modules/mediasource/MediaSource.idl
     Modules/mediasource/MediaSourceHandle.idl
+    Modules/mediasource/MediaSourceInit.idl
     Modules/mediasource/SourceBuffer.idl
     Modules/mediasource/SourceBufferList.idl
     Modules/mediasource/TextTrack+MediaSource.idl
@@ -660,6 +676,11 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/streams/WritableStreamDefaultWriter.idl
     Modules/streams/WritableStreamSink.idl
 
+    Modules/url-pattern/URLPattern.idl
+    Modules/url-pattern/URLPatternInit.idl
+    Modules/url-pattern/URLPatternOptions.idl
+    Modules/url-pattern/URLPatternResult.idl
+
     Modules/web-locks/NavigatorLocks.idl
     Modules/web-locks/WebLock.idl
     Modules/web-locks/WebLockGrantedCallback.idl
@@ -746,17 +767,32 @@ set(WebCore_NON_SVG_IDL_FILES
 
     Modules/webauthn/AttestationConveyancePreference.idl
     Modules/webauthn/AuthenticationExtensionsClientInputs.idl
+    Modules/webauthn/AuthenticationExtensionsClientInputsJSON.idl
     Modules/webauthn/AuthenticationExtensionsClientOutputs.idl
+    Modules/webauthn/AuthenticationExtensionsClientOutputsJSON.idl
+    Modules/webauthn/AuthenticationResponseJSON.idl
     Modules/webauthn/AuthenticatorAssertionResponse.idl
     Modules/webauthn/AuthenticatorAttachment.idl
     Modules/webauthn/AuthenticatorAttestationResponse.idl
     Modules/webauthn/AuthenticatorResponse.idl
+    Modules/webauthn/AuthenticatorSelectionCriteria.idl
     Modules/webauthn/AuthenticatorTransport.idl
+    Modules/webauthn/CredentialPropertiesOutput.idl
     Modules/webauthn/PublicKeyCredential.idl
     Modules/webauthn/PublicKeyCredentialCreationOptions.idl
+    Modules/webauthn/PublicKeyCredentialCreationOptionsJSON.idl
     Modules/webauthn/PublicKeyCredentialDescriptor.idl
+    Modules/webauthn/PublicKeyCredentialDescriptorJSON.idl
+    Modules/webauthn/PublicKeyCredentialEntity.idl
+    Modules/webauthn/PublicKeyCredentialParameters.idl
     Modules/webauthn/PublicKeyCredentialRequestOptions.idl
+    Modules/webauthn/PublicKeyCredentialRequestOptionsJSON.idl
+    Modules/webauthn/PublicKeyCredentialRpEntity.idl
+    Modules/webauthn/PublicKeyCredentialUserEntity.idl
+    Modules/webauthn/PublicKeyCredentialUserEntityJSON.idl
+
     Modules/webauthn/PublicKeyCredentialType.idl
+    Modules/webauthn/RegistrationResponseJSON.idl
     Modules/webauthn/ResidentKeyRequirement.idl
     Modules/webauthn/UserVerificationRequirement.idl
 
@@ -879,6 +915,7 @@ set(WebCore_NON_SVG_IDL_FILES
     animation/ScrollAxis.idl
     animation/ScrollTimeline.idl
     animation/ScrollTimelineOptions.idl
+    animation/TimelineRangeOffset.idl
     animation/ViewTimeline.idl
     animation/ViewTimelineOptions.idl
     animation/WebAnimation.idl
@@ -1026,6 +1063,8 @@ set(WebCore_NON_SVG_IDL_FILES
     dom/BeforeUnloadEvent.idl
     dom/BroadcastChannel.idl
     dom/CDATASection.idl
+    dom/CaretPosition.idl
+    dom/CaretPositionFromPointOptions.idl
     dom/CharacterData.idl
     dom/CheckVisibilityOptions.idl
     dom/ChildNode.idl
@@ -1060,6 +1099,7 @@ set(WebCore_NON_SVG_IDL_FILES
     dom/DeviceOrientationEvent.idl
     dom/DeviceOrientationOrMotionPermissionState.idl
     dom/Document+CSSOMView.idl
+    dom/Document+CaretPositionFromPoint.idl
     dom/Document+Fullscreen.idl
     dom/Document+HTML.idl
     dom/Document+HTMLObsolete.idl
@@ -1184,6 +1224,7 @@ set(WebCore_NON_SVG_IDL_FILES
     dom/ViewTransitionTypeSet.idl
     dom/ViewTransitionUpdateCallback.idl
     dom/VisibilityState.idl
+    dom/VisitorCallback.idl
     dom/WheelEvent.idl
     dom/WindowOrWorkerGlobalScope+TrustedTypes.idl
     dom/XMLDocument.idl
@@ -1288,6 +1329,7 @@ set(WebCore_NON_SVG_IDL_FILES
     html/ImageBitmapOptions.idl
     html/ImageData.idl
     html/ImageDataSettings.idl
+    html/ImageDataStorageFormat.idl
     html/InvokerElement.idl
     html/MediaController.idl
     html/MediaEncryptedEvent.idl
@@ -1796,6 +1838,8 @@ list(APPEND WebCore_NON_SVG_IDL_FILES
     Modules/WebGPU/GPUBufferUsage.idl
     Modules/WebGPU/GPUCanvasAlphaMode.idl
     Modules/WebGPU/GPUCanvasConfiguration.idl
+    Modules/WebGPU/GPUCanvasToneMapping.idl
+    Modules/WebGPU/GPUCanvasToneMappingMode.idl
     Modules/WebGPU/GPUColorDict.idl
     Modules/WebGPU/GPUColorTargetState.idl
     Modules/WebGPU/GPUColorWrite.idl
@@ -1948,6 +1992,7 @@ set(WebCore_USER_AGENT_STYLE_SHEETS
     ${WEBCORE_DIR}/css/svg.css
     ${WEBCORE_DIR}/css/viewTransitions.css
     ${WEBCORE_DIR}/html/shadow/attachmentElementShadow.css
+    ${WEBCORE_DIR}/html/shadow/detailsElementShadow.css
     ${WEBCORE_DIR}/html/shadow/imageOverlay.css
     ${WEBCORE_DIR}/html/shadow/meterElementShadow.css
 )
@@ -2488,6 +2533,17 @@ add_custom_command(
     COMMAND ${CMAKE_COMMAND} -E cat ${MODERN_MEDIA_CONTROLS_SCRIPTS} > ${WebCore_DERIVED_SOURCES_DIR}/ModernMediaControls.js
     VERBATIM)
 
+# Generate process sync data files
+add_custom_command(
+    OUTPUT ${WebCore_DERIVED_SOURCES_DIR}/ProcessSyncClient.cpp ${WebCore_DERIVED_SOURCES_DIR}/ProcessSyncClient.h ${WebCore_DERIVED_SOURCES_DIR}/ProcessSyncData.h ${WebCore_DERIVED_SOURCES_DIR}/ProcessSyncData.serialization.in
+    MAIN_DEPENDENCY ${WEBCORE_DIR}/page/ProcessSyncData.in
+    DEPENDS ${WEBCORE_DIR}/Scripts/generate-process-sync-data.py
+    COMMAND ${PYTHON_EXECUTABLE} ${WEBCORE_DIR}/Scripts/generate-process-sync-data.py ${WEBCORE_DIR}/page/ProcessSyncData.in ${WebCore_DERIVED_SOURCES_DIR}
+    VERBATIM)
+list(APPEND WebCore_SOURCES ${WebCore_DERIVED_SOURCES_DIR}/ProcessSyncClient.cpp)
+list(APPEND WebCore_SOURCES ${WebCore_DERIVED_SOURCES_DIR}/ProcessSyncClient.h)
+list(APPEND WebCore_SOURCES ${WebCore_DERIVED_SOURCES_DIR}/ProcessSyncData.h)
+
 # Modules that the bindings generator scripts may use
 set(SCRIPTS_RESOLVE_SUPPLEMENTAL
     ${WEBCORE_DIR}/bindings/scripts/IDLParser.pm
@@ -2529,6 +2585,13 @@ set(WebCoreTestSupport_INTERFACE_INCLUDE_DIRECTORIES
 WEBKIT_FRAMEWORK_DECLARE(WebCore)
 WEBKIT_LIBRARY_DECLARE(WebCoreTestSupport)
 WEBKIT_INCLUDE_CONFIG_FILES_IF_EXISTS()
+
+if (PORT STREQUAL GTK OR PORT STREQUAL WPE)
+    WEBKIT_ADD_TARGET_CXX_FLAGS(WebCore
+        -Wunsafe-buffer-usage
+        -fsafe-buffer-usage-suggestions
+    )
+endif ()
 
 list(APPEND WebCoreTestSupport_LIBRARIES ${WebCore_LIBRARIES})
 list(APPEND WebCoreTestSupport_PRIVATE_LIBRARIES ${WebCore_PRIVATE_LIBRARIES})
@@ -2856,8 +2919,9 @@ WEBKIT_COMPUTE_SOURCES(WebCore)
 target_precompile_headers(WebCore PRIVATE WebCorePrefix.h)
 
 list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
-    Modules/WebGPU/InternalAPI/WebGPU.serialization.in
+    ${WebCore_DERIVED_SOURCES_DIR}/ProcessSyncData.serialization.in
 
+    Modules/WebGPU/InternalAPI/WebGPU.serialization.in
     Modules/indexeddb/IndexedDB.serialization.in
 
     page/ActivityState.serialization.in
@@ -2871,11 +2935,8 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/ScrollTypes.serialization.in
 
     platform/audio/PlatformMediaSession.serialization.in
-
     platform/graphics/InbandTextTrackPrivate.serialization.in
-
     platform/mediastream/MDNSRegisterError.serialization.in
-
     platform/network/ProtectionSpaceBase.serialization.in
 )
 

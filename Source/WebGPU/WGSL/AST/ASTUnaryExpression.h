@@ -26,6 +26,7 @@
 #pragma once
 
 #include "ASTExpression.h"
+#include <array>
 #include <wtf/EnumTraits.h>
 #include <wtf/Forward.h>
 #include <wtf/text/ASCIILiteral.h>
@@ -47,11 +48,11 @@ WGSL_AST_UNARYOP_IMPL
 
 constexpr ASCIILiteral toASCIILiteral(UnaryOperation op)
 {
-    constexpr ASCIILiteral unaryOperationNames[] = {
+    constexpr auto unaryOperationNames = std::to_array<ASCIILiteral>({
 #define WGSL_AST_UNARYOP(x, y) y##_s,
 WGSL_AST_UNARYOP_IMPL
 #undef WGSL_AST_UNARYOP
-    };
+    });
 
     return unaryOperationNames[WTF::enumToUnderlyingType(op)];
 }

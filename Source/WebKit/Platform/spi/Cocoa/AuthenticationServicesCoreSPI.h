@@ -29,6 +29,7 @@
 
 @interface ASCWebKitSPISupport : NSObject
 @property (class, nonatomic) BOOL shouldUseAlternateCredentialStore;
+@property (class, nonatomic, readonly) BOOL shouldUseAlternateKeychainAttribute;
 + (void)getArePasskeysDisallowedForRelyingParty:(nonnull NSString *)relyingParty withCompletionHandler:(void (^ _Nonnull)(BOOL))completionHandler NS_REFINED_FOR_SWIFT;
 + (void)getCanCurrentProcessAccessPasskeysForRelyingParty:(nonnull NSString *)relyingParty withCompletionHandler:(void (^ _Nonnull)(BOOL))completionHandler;
 + (void)getClientCapabilitiesForRelyingParty:(nonnull NSString *)relyingParty withCompletionHandler:(void (^ _Nonnull)(NSDictionary<NSString *, NSNumber *> * _Nonnull))completionHandler;
@@ -303,7 +304,7 @@ typedef NS_ENUM(NSInteger, ASCredentialRequestStyle) {
 @property (nonatomic, copy, readonly) NSString *relyingPartyIdentifier;
 @property (nonatomic, copy, readonly) NSData *attestationObject;
 @property (nonatomic, copy, readonly) NSData *rawClientDataJSON;
-@property (nonatomic, copy) NSArray<NSNumber *> *transports;
+@property (nonatomic, copy) NSArray<NSString *> *transports;
 @property (nonatomic, copy, nullable) NSData *extensionOutputsCBOR;
 @property (nonatomic, copy, readonly) NSString *attachment;
 
@@ -320,7 +321,7 @@ typedef NS_ENUM(NSInteger, ASCredentialRequestStyle) {
 @property (nonatomic, copy, readonly) NSData *rawClientDataJSON;
 @property (nonatomic, copy, readonly) NSString *relyingPartyIdentifier;
 @property (nonatomic, copy, readonly) NSData *attestationObject;
-@property (nonatomic, copy) NSArray<NSNumber *> *transports;
+@property (nonatomic, copy) NSArray<NSString *> *transports;
 @property (nonatomic, copy, readonly, nullable) NSData *extensionOutputsCBOR;
 @property (nonatomic, copy, readonly) NSString *attachment;
 

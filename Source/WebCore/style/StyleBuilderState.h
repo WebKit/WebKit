@@ -78,7 +78,7 @@ public:
     void setFontSize(FontCascadeDescription&, float size);
     inline void setZoom(float);
     inline void setUsedZoom(float);
-    inline void setWritingMode(WritingMode);
+    inline void setWritingMode(StyleWritingMode);
     inline void setTextOrientation(TextOrientation);
 
     bool fontDirty() const { return m_fontDirty; }
@@ -94,8 +94,8 @@ public:
     bool useSVGZoomRulesForLength() const;
     ScopeOrdinal styleScopeOrdinal() const { return m_currentProperty->styleScopeOrdinal; }
 
-    RefPtr<StyleImage> createStyleImage(const CSSValue&);
-    FilterOperations createFilterOperations(const CSSValue&);
+    RefPtr<StyleImage> createStyleImage(const CSSValue&) const;
+    FilterOperations createFilterOperations(const CSSValue&) const;
 
     static bool isColorFromPrimitiveValueDerivedFromElement(const CSSPrimitiveValue&);
     StyleColor colorFromPrimitiveValue(const CSSPrimitiveValue&, ForVisitedLink = ForVisitedLink::No) const;
@@ -104,7 +104,7 @@ public:
     void registerContentAttribute(const AtomString& attributeLocalName);
 
     const CSSToLengthConversionData& cssToLengthConversionData() const { return m_cssToLengthConversionData; }
-    CSSToStyleMap& styleMap() { return m_styleMap; }
+    const CSSToStyleMap& styleMap() const { return m_styleMap; }
 
     void setIsBuildingKeyframeStyle() { m_isBuildingKeyframeStyle = true; }
 
@@ -114,6 +114,9 @@ public:
     }
 
     CSSPropertyID cssPropertyID() const;
+
+    bool isCurrentPropertyInvalidAtComputedValueTime() const;
+    void setCurrentPropertyInvalidAtComputedValueTime();
 
 private:
     // See the comment in maybeUpdateFontForLetterSpacing() about why this needs to be a friend.
@@ -143,7 +146,7 @@ private:
     HashSet<AtomString> m_inProgressCustomProperties;
     HashSet<AtomString> m_inCycleCustomProperties;
     WTF::BitSet<numCSSProperties> m_inProgressProperties;
-    WTF::BitSet<numCSSProperties> m_inUnitCycleProperties;
+    WTF::BitSet<numCSSProperties> m_invalidAtComputedValueTimeProperties;
 
     const PropertyCascade::Property* m_currentProperty { nullptr };
     SelectorChecker::LinkMatchMask m_linkMatch { };

@@ -31,6 +31,8 @@
 #include <wtf/CompletionHandler.h>
 #include <wtf/MainThread.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 Ref<MessagePortChannel> MessagePortChannel::create(MessagePortChannelRegistry& registry, const MessagePortIdentifier& port1, const MessagePortIdentifier& port2)
@@ -39,16 +41,15 @@ Ref<MessagePortChannel> MessagePortChannel::create(MessagePortChannelRegistry& r
 }
 
 MessagePortChannel::MessagePortChannel(MessagePortChannelRegistry& registry, const MessagePortIdentifier& port1, const MessagePortIdentifier& port2)
-    : m_registry(registry)
+    : m_ports { port1, port2 }
+    , m_registry(registry)
 {
     ASSERT(isMainThread());
 
     relaxAdoptionRequirement();
 
-    m_ports[0] = port1;
     m_processes[0] = port1.processIdentifier;
     m_entangledToProcessProtectors[0] = this;
-    m_ports[1] = port2;
     m_processes[1] = port2.processIdentifier;
     m_entangledToProcessProtectors[1] = this;
 
@@ -190,3 +191,5 @@ bool MessagePortChannel::hasAnyMessagesPendingOrInFlight() const
 }
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

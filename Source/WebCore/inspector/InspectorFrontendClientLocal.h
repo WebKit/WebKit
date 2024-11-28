@@ -54,7 +54,7 @@ class InspectorFrontendClientLocal : public InspectorFrontendClient {
     WTF_MAKE_NONCOPYABLE(InspectorFrontendClientLocal);
 public:
     class WEBCORE_EXPORT Settings {
-        WTF_MAKE_TZONE_ALLOCATED(Settings);
+        WTF_MAKE_TZONE_ALLOCATED_EXPORT(Settings, WEBCORE_EXPORT);
     public:
         Settings() = default;
         virtual ~Settings() = default;
@@ -145,7 +145,9 @@ private:
     friend class FrontendMenuProvider;
     std::optional<bool> evaluationResultToBoolean(InspectorFrontendAPIDispatcher::EvaluationResult);
 
-    InspectorController* m_inspectedPageController { nullptr };
+    RefPtr<InspectorController> protectedInspectedPageController() const;
+
+    WeakPtr<InspectorController> m_inspectedPageController;
     WeakPtr<Page> m_frontendPage;
     // TODO(yurys): this ref shouldn't be needed.
     RefPtr<InspectorFrontendHost> m_frontendHost;

@@ -222,6 +222,7 @@ void SessionHost::connectToBrowser(std::unique_ptr<ConnectToBrowserAsyncData>&& 
 
 void SessionHost::connectionDidClose()
 {
+    Ref<SessionHost> protectedThis(*this);
     m_browser = nullptr;
     m_isRemoteBrowser = false;
 
@@ -389,11 +390,6 @@ void SessionHost::sendMessageToBackend(const String& message)
     ASSERT(m_connectionID);
     ASSERT(m_target.id);
     m_socketConnection->sendMessage("SendMessageToBackend", g_variant_new("(tts)", m_connectionID, m_target.id, message.utf8().data()));
-}
-
-bool SessionHost::isRemoteBrowser() const
-{
-    return m_isRemoteBrowser;
 }
 
 } // namespace WebDriver

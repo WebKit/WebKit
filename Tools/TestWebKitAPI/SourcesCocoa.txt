@@ -29,7 +29,6 @@ WKWebViewConfigurationExtras.mm
 cocoa/CGImagePixelReader.cpp
 cocoa/DaemonTestUtilities.mm
 cocoa/DragAndDropSimulator.mm
-cocoa/EnableUISideCompositingScope.mm
 cocoa/ImageAnalysisTestingUtilities.mm
 cocoa/NSItemProviderAdditions.mm
 cocoa/PlatformUtilitiesCocoa.mm
@@ -44,7 +43,9 @@ cocoa/TestUIDelegate.mm
 cocoa/TestWebExtensionsDelegate.mm
 cocoa/TestWKWebView.mm
 cocoa/TestWKWebViewConfiguration.mm
+cocoa/UISideCompositingScope.mm
 cocoa/UserMediaCaptureUIDelegate.mm
+ios/IOSMouseEventTestHarness.mm
 
 Tests/WebKitCocoa/AVFoundationPreference.mm
 Tests/WebKitCocoa/AdaptiveImageGlyph.mm
@@ -127,6 +128,7 @@ Tests/WebKitCocoa/FullscreenAlert.mm
 Tests/WebKitCocoa/FullscreenDelegate.mm
 Tests/WebKitCocoa/FullscreenLayoutConstraints.mm
 Tests/WebKitCocoa/FullscreenRemoveNodeBeforeEnter.mm
+Tests/WebKitCocoa/FullscreenScrollAndResize.mm
 Tests/WebKitCocoa/FullscreenVideoTextRecognition.mm
 Tests/WebKitCocoa/GPUProcess.mm
 Tests/WebKitCocoa/Geolocation.mm
@@ -179,6 +181,7 @@ Tests/WebKitCocoa/MediaType.mm
 Tests/WebKitCocoa/MemoryFootprintThreshold.mm
 Tests/WebKitCocoa/MessagePortProviders.mm
 Tests/WebKitCocoa/ModalAlerts.mm
+Tests/WebKitCocoa/MouseSupportUIDelegate.mm
 Tests/WebKitCocoa/NSAttributedStringWebKitAdditions.mm
 Tests/WebKitCocoa/NSFileManagerExtras.mm
 Tests/WebKitCocoa/Navigation.mm
@@ -237,6 +240,7 @@ Tests/WebKitCocoa/RunScriptAfterDocumentLoad.mm
 Tests/WebKitCocoa/SafeBrowsing.mm
 Tests/WebKitCocoa/SampledPageTopColor.mm
 Tests/WebKitCocoa/SchemeRegistry.mm
+Tests/WebKitCocoa/ScriptTelemetryTests.mm
 Tests/WebKitCocoa/ServiceWorkerBasic.mm
 Tests/WebKitCocoa/SessionStorage.mm
 Tests/WebKitCocoa/ShouldGoToBackForwardListItem.mm
@@ -264,6 +268,7 @@ Tests/WebKitCocoa/TextWidth.mm
 Tests/WebKitCocoa/TimeZoneOverride.mm
 Tests/WebKitCocoa/TopContentInset.mm
 Tests/WebKitCocoa/UIDelegate.mm
+Tests/WebKitCocoa/UnifiedPDFTestHelpers.mm
 Tests/WebKitCocoa/UnifiedPDFTests.mm
 Tests/WebKitCocoa/UploadDirectory.mm
 Tests/WebKitCocoa/UseSelectionAsFindString.mm
@@ -295,6 +300,7 @@ Tests/WebKitCocoa/WKNavigationResponse.mm
 Tests/WebKitCocoa/WKObject.mm
 Tests/WebKitCocoa/WKPageHasMediaStreamingActivity.mm
 Tests/WebKitCocoa/WKPDFView.mm
+Tests/WebKitCocoa/WKPreferences.mm
 Tests/WebKitCocoa/WKPrinting.mm
 Tests/WebKitCocoa/WKProcessPoolConfiguration.mm
 Tests/WebKitCocoa/WKRequestActivatedElementInfo.mm

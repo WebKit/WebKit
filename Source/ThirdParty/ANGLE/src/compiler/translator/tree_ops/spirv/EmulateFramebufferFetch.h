@@ -3,8 +3,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
-// EmulateFramebufferFetch.h: Replace input, gl_LastFragData and gl_LastFragColorARM with usages of
-// input attachments.
+// EmulateFramebufferFetch.h: Replace inout, gl_LastFragData, gl_LastFragColorARM,
+// gl_LastFragDepthARM and gl_LastFragStencilARM with usages of input attachments.
 //
 
 #ifndef COMPILER_TRANSLATOR_TREEOPS_SPIRV_EMULATEFRAMEBUFFERFETCH_H_

@@ -36,6 +36,9 @@
 
 namespace TestWebKitAPI {
 
+// FIXME: http://webkit.org/b/281082 Many TestWTF.WTF_Condition tests time out on Windows
+#if !PLATFORM(WIN)
+
 namespace {
 
 static Lock lock;
@@ -235,6 +238,8 @@ TEST(WTF_Condition, TenProducersTenConsumersHundredSlotsNotifyOne)
 {
     runTest(10, 10, 100, 50000, AlwaysNotifyOne);
 }
+
+#endif
 
 TEST(WTF_Condition, TimeoutTimesOut)
 {

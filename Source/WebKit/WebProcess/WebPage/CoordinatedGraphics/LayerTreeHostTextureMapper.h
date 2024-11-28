@@ -45,7 +45,15 @@ class GraphicsLayerFactory;
 class IntRect;
 class IntSize;
 class Page;
-struct ViewportAttributes;
+}
+
+namespace WebKit {
+class LayerTreeHost;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedTimerSmartPointerException;
+template<> struct IsDeprecatedTimerSmartPointerException<WebKit::LayerTreeHost> : std::true_type { };
 }
 
 namespace WebKit {
@@ -74,7 +82,6 @@ public:
     void resumeRendering();
     WebCore::GraphicsLayerFactory* graphicsLayerFactory();
     void contentsSizeChanged(const WebCore::IntSize&);
-    void didChangeViewportAttributes(WebCore::ViewportAttributes&&);
     void setIsDiscardable(bool);
     void deviceOrPageScaleFactorChanged();
     void backgroundColorDidChange();

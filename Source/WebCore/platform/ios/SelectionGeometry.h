@@ -90,6 +90,8 @@ public:
     void setIsHorizontal(bool isHorizontal) { m_isHorizontal = isHorizontal; }
     void setBehavior(SelectionRenderingBehavior behavior) { m_behavior = behavior; }
 
+    WEBCORE_EXPORT void move(float x, float y);
+
 private:
     FloatQuad m_quad;
     SelectionRenderingBehavior m_behavior { SelectionRenderingBehavior::CoalesceBoundingRects };

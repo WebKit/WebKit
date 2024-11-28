@@ -30,6 +30,7 @@
 #include "CSSPaintImageValue.h"
 #include "CSSPrimitiveValueMappings.h"
 #include "CSSValuePool.h"
+#include "ComputedStyleDependencies.h"
 #include "PaintWorkletGlobalScope.h"
 #include "PropertyAllowlist.h"
 #include "StyleBuilderGenerated.h"
@@ -160,14 +161,14 @@ bool PropertyCascade::hasProperty(CSSPropertyID propertyID, const CSSValue& valu
     return propertyID < firstLogicalGroupProperty ? hasNormalProperty(propertyID) : hasLogicalGroupProperty(propertyID);
 }
 
-const PropertyCascade::Property* PropertyCascade::lastPropertyResolvingLogicalPropertyPair(CSSPropertyID propertyID, TextDirection direction, WritingMode writingMode) const
+const PropertyCascade::Property* PropertyCascade::lastPropertyResolvingLogicalPropertyPair(CSSPropertyID propertyID, WritingMode writingMode) const
 {
     ASSERT(CSSProperty::isInLogicalPropertyGroup(propertyID));
 
     auto pairID = [&] {
         if (CSSProperty::isDirectionAwareProperty(propertyID))
-            return CSSProperty::resolveDirectionAwareProperty(propertyID, direction, writingMode);
-        return CSSProperty::unresolvePhysicalProperty(propertyID, direction, writingMode);
+            return CSSProperty::resolveDirectionAwareProperty(propertyID, writingMode);
+        return CSSProperty::unresolvePhysicalProperty(propertyID, writingMode);
     }();
     ASSERT(pairID != CSSPropertyInvalid);
 
@@ -382,15 +383,15 @@ void PropertyCascade::addImportantMatches(CascadeLevel cascadeLevel)
 
 void PropertyCascade::sortLogicalGroupPropertyIDs()
 {
-    auto begin = m_logicalGroupPropertyIDs.begin();
-    auto end = begin;
+    size_t endIndex = 0;
     for (uint16_t id = m_lowestSeenLogicalGroupProperty; id <= m_highestSeenLogicalGroupProperty; ++id) {
         auto propertyID = static_cast<CSSPropertyID>(id);
         if (hasLogicalGroupProperty(propertyID))
-            *end++ = propertyID;
+            m_logicalGroupPropertyIDs[endIndex++] = propertyID;
     }
-    m_seenLogicalGroupPropertyCount = end - begin;
-    std::sort(begin, end, [&](auto id1, auto id2) {
+    m_seenLogicalGroupPropertyCount = endIndex;
+    auto logicalGroupPropertyIDs = std::span { m_logicalGroupPropertyIDs }.first(endIndex);
+    std::sort(logicalGroupPropertyIDs.begin(), logicalGroupPropertyIDs.end(), [&](auto id1, auto id2) {
         return logicalGroupPropertyIndex(id1) < logicalGroupPropertyIndex(id2);
     });
 }

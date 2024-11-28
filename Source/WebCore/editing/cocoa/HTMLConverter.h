@@ -28,7 +28,9 @@
 
 namespace WebCore {
 
-WEBCORE_EXPORT AttributedString attributedString(const SimpleRange&);
+enum class IgnoreUserSelectNone : bool;
+
+WEBCORE_EXPORT AttributedString attributedString(const SimpleRange&, IgnoreUserSelectNone);
 
 // This alternate implementation of HTML conversion doesn't handle as many advanced features,
 // such as tables, and doesn't produce document attributes, but it does use TextIterator so
@@ -39,6 +41,7 @@ enum class IncludedElement : uint8_t {
     Images = 1 << 0,
     Attachments = 1 << 1,
     PreservedContent = 1 << 2,
+    NonRenderedContent = 1 << 3,
 };
 
 WEBCORE_EXPORT AttributedString editingAttributedString(const SimpleRange&, OptionSet<IncludedElement> = { IncludedElement::Images });

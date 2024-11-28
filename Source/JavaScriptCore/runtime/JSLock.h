@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2005-2024 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -55,17 +55,9 @@ class VM;
 class JSGlobalObject;
 class JSLock;
 
-// This class is used to protect the initialization of the legacy single 
-// shared VM.
-class GlobalJSLock {
-    WTF_MAKE_NONCOPYABLE(GlobalJSLock);
-public:
-    JS_EXPORT_PRIVATE GlobalJSLock();
-    JS_EXPORT_PRIVATE ~GlobalJSLock();
-private:
-    static Lock s_sharedInstanceMutex;
-};
-
+// FIXME: We should either have a specialization of WTF::Locker for JSLock or only allow using JSLockHolder.
+// It's weird that WTF::Locker<JSLock> doesn't ref() the VM for the lifetime of the lock and it's unclear
+// there's any noticable performance difference.
 class JSLockHolder {
 public:
     JS_EXPORT_PRIVATE JSLockHolder(VM*);

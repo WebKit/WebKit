@@ -31,6 +31,8 @@
 #include <wtf/text/MakeString.h>
 #include <wtf/text/TextStream.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 template <typename T>
@@ -41,8 +43,6 @@ public:
     // Generally, objects are identified uniquely per process, but if multiple processes share them to a single
     // process, the single process should distinguish between them by augmenting the objects with the
     // ProcessIdentifier of the process which created them.
-
-    ProcessQualified() = default;
 
     ProcessQualified(T&& object, ProcessIdentifier processIdentifier)
         : m_object(WTFMove(object))
@@ -90,7 +90,7 @@ public:
 
     struct MarkableTraits {
         static bool isEmptyValue(const ProcessQualified& identifier) { return T::MarkableTraits::isEmptyValue(identifier.object()); }
-        static constexpr ProcessQualified emptyValue() { return { T::MarkableTraits::emptyValue(), { } }; }
+        static constexpr ProcessQualified emptyValue() { return { T::MarkableTraits::emptyValue(), ProcessIdentifier::MarkableTraits::emptyValue() }; }
     };
 
 private:
@@ -157,19 +157,20 @@ template<typename T> struct DefaultHash<WebCore::ProcessQualified<T>> {
 
 template<typename T> struct HashTraits<WebCore::ProcessQualified<T>> : SimpleClassHashTraits<WebCore::ProcessQualified<T>> {
     static constexpr bool emptyValueIsZero = HashTraits<T>::emptyValueIsZero;
-    static WebCore::ProcessQualified<T> emptyValue() { return { HashTraits<T>::emptyValue(), { } }; }
+    static WebCore::ProcessQualified<T> emptyValue() { return { HashTraits<T>::emptyValue(), HashTraits<WebCore::ProcessIdentifier>::emptyValue() }; }
+    static bool isEmptyValue(const WebCore::ProcessQualified<T>& value) { return value.object().isHashTableEmptyValue(); }
 };
 
 class ProcessQualifiedStringTypeAdapter {
 public:
     unsigned length() const { return lengthOfIntegerAsString(m_processIdentifier) + lengthOfIntegerAsString(m_objectIdentifier) + 1; }
     bool is8Bit() const { return true; }
-    template<typename CharacterType> void writeTo(CharacterType* destination) const
+    template<typename CharacterType> void writeTo(std::span<CharacterType> destination) const
     {
         auto processIdentifierLength = lengthOfIntegerAsString(m_processIdentifier);
         writeIntegerToBuffer(m_processIdentifier, destination);
-        *(destination + processIdentifierLength) = '-';
-        writeIntegerToBuffer(m_objectIdentifier, destination + processIdentifierLength + 1);
+        destination[processIdentifierLength] = '-';
+        writeIntegerToBuffer(m_objectIdentifier, destination.subspan(processIdentifierLength + 1));
     }
 protected:
     explicit ProcessQualifiedStringTypeAdapter(uint64_t processIdentifier, uint64_t objectIdentifier)
@@ -189,3 +190,5 @@ public:
 };
 
 } // namespace WTF
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

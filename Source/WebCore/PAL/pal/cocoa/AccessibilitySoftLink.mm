@@ -27,6 +27,7 @@
 
 #if HAVE(ACCESSIBILITY_FRAMEWORK)
 
+#import <dispatch/dispatch.h>
 #import <wtf/SoftLinking.h>
 
 SOFT_LINK_FRAMEWORK_FOR_SOURCE_WITH_EXPORT(PAL, Accessibility, PAL_EXPORT);

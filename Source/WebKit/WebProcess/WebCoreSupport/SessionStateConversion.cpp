@@ -64,63 +64,59 @@ static HTTPBody toHTTPBody(const FormData& formData)
     return httpBody;
 }
 
-static FrameState toFrameState(const HistoryItem& historyItem)
+Ref<FrameState> toFrameState(const HistoryItem& historyItem)
 {
-    FrameState frameState;
+    Ref frameState = FrameState::create();
 
-    frameState.urlString = historyItem.urlString();
-    frameState.originalURLString = historyItem.originalURLString();
-    frameState.referrer = historyItem.referrer();
-    frameState.target = historyItem.target();
-    frameState.frameID = historyItem.frameID();
+    frameState->urlString = historyItem.urlString();
+    frameState->originalURLString = historyItem.originalURLString();
+    frameState->referrer = historyItem.referrer();
+    frameState->target = historyItem.target();
+    frameState->frameID = historyItem.frameID();
 
-    frameState.setDocumentState(historyItem.documentState());
+    frameState->setDocumentState(historyItem.documentState());
     if (RefPtr<SerializedScriptValue> stateObject = historyItem.stateObject())
-        frameState.stateObjectData = stateObject->wireBytes();
+        frameState->stateObjectData = stateObject->wireBytes();
 
-    frameState.documentSequenceNumber = historyItem.documentSequenceNumber();
-    frameState.itemSequenceNumber = historyItem.itemSequenceNumber();
+    frameState->documentSequenceNumber = historyItem.documentSequenceNumber();
+    frameState->itemSequenceNumber = historyItem.itemSequenceNumber();
 
-    frameState.scrollPosition = historyItem.scrollPosition();
-    frameState.shouldRestoreScrollPosition = historyItem.shouldRestoreScrollPosition();
-    frameState.pageScaleFactor = historyItem.pageScaleFactor();
+    frameState->scrollPosition = historyItem.scrollPosition();
+    frameState->shouldRestoreScrollPosition = historyItem.shouldRestoreScrollPosition();
+    frameState->pageScaleFactor = historyItem.pageScaleFactor();
 
     if (FormData* formData = const_cast<HistoryItem&>(historyItem).formData()) {
         HTTPBody httpBody = toHTTPBody(*formData);
         httpBody.contentType = historyItem.formContentType();
 
-        frameState.httpBody = WTFMove(httpBody);
+        frameState->httpBody = WTFMove(httpBody);
     }
 
+    frameState->identifier = historyItem.identifier();
+    frameState->hasCachedPage = historyItem.isInBackForwardCache();
+    frameState->shouldOpenExternalURLsPolicy = historyItem.shouldOpenExternalURLsPolicy();
+    frameState->sessionStateObject = historyItem.stateObject();
+    frameState->wasCreatedByJSWithoutUserInteraction = historyItem.wasCreatedByJSWithoutUserInteraction();
+    frameState->wasRestoredFromSession = historyItem.wasRestoredFromSession();
+    frameState->policyContainer = historyItem.policyContainer();
+
+    static constexpr auto maxTitleLength = 1000u; // Closest power of 10 above the W3C recommendation for Title length.
+    frameState->title = historyItem.title().left(maxTitleLength);
+
 #if PLATFORM(IOS_FAMILY)
-    frameState.exposedContentRect = historyItem.exposedContentRect();
-    frameState.unobscuredContentRect = historyItem.unobscuredContentRect();
-    frameState.minimumLayoutSizeInScrollViewCoordinates = historyItem.minimumLayoutSizeInScrollViewCoordinates();
-    frameState.contentSize = historyItem.contentSize();
-    frameState.scaleIsInitial = historyItem.scaleIsInitial();
-    frameState.obscuredInsets = historyItem.obscuredInsets();
+    frameState->exposedContentRect = historyItem.exposedContentRect();
+    frameState->unobscuredContentRect = historyItem.unobscuredContentRect();
+    frameState->minimumLayoutSizeInScrollViewCoordinates = historyItem.minimumLayoutSizeInScrollViewCoordinates();
+    frameState->contentSize = historyItem.contentSize();
+    frameState->scaleIsInitial = historyItem.scaleIsInitial();
+    frameState->obscuredInsets = historyItem.obscuredInsets();
 #endif
 
-    frameState.children = historyItem.children().map([](auto& childHistoryItem) {
+    frameState->children = historyItem.children().map([](auto& childHistoryItem) {
         return toFrameState(childHistoryItem);
     });
 
     return frameState;
-}
-
-BackForwardListItemState toBackForwardListItemState(const WebCore::HistoryItem& historyItem)
-{
-    static constexpr unsigned maxTitleLength = 1000; // Closest power of 10 above the W3C recommendation for Title length.
-
-    BackForwardListItemState state;
-    state.identifier = historyItem.identifier();
-    state.pageState.title = historyItem.title().left(maxTitleLength);
-    state.pageState.mainFrameState = toFrameState(historyItem);
-    state.pageState.shouldOpenExternalURLsPolicy = historyItem.shouldOpenExternalURLsPolicy();
-    state.pageState.sessionStateObject = historyItem.stateObject();
-    state.pageState.wasCreatedByJSWithoutUserInteraction = historyItem.wasCreatedByJSWithoutUserInteraction();
-    state.hasCachedPage = historyItem.isInBackForwardCache();
-    return state;
 }
 
 static Ref<FormData> toFormData(const HTTPBody& httpBody)
@@ -140,7 +136,7 @@ static Ref<FormData> toFormData(const HTTPBody& httpBody)
     return formData;
 }
 
-static void applyFrameState(WebCore::HistoryItemClient& client, HistoryItem& historyItem, const FrameState& frameState)
+static void applyFrameState(HistoryItemClient& client, HistoryItem& historyItem, const FrameState& frameState)
 {
     historyItem.setOriginalURLString(frameState.originalURLString);
     historyItem.setReferrer(frameState.referrer);
@@ -168,6 +164,13 @@ static void applyFrameState(WebCore::HistoryItemClient& client, HistoryItem& his
         historyItem.setFormData(toFormData(httpBody));
     }
 
+    historyItem.setShouldOpenExternalURLsPolicy(frameState.shouldOpenExternalURLsPolicy);
+    historyItem.setStateObject(frameState.sessionStateObject.get());
+    historyItem.setWasCreatedByJSWithoutUserInteraction(frameState.wasCreatedByJSWithoutUserInteraction);
+    historyItem.setWasRestoredFromSession(frameState.wasRestoredFromSession);
+    if (auto policyContainer = frameState.policyContainer)
+        historyItem.setPolicyContainer(*policyContainer);
+
 #if PLATFORM(IOS_FAMILY)
     historyItem.setExposedContentRect(frameState.exposedContentRect);
     historyItem.setUnobscuredContentRect(frameState.unobscuredContentRect);
@@ -177,21 +180,18 @@ static void applyFrameState(WebCore::HistoryItemClient& client, HistoryItem& his
     historyItem.setObscuredInsets(frameState.obscuredInsets);
 #endif
 
-    for (const auto& childFrameState : frameState.children) {
-        Ref<HistoryItem> childHistoryItem = HistoryItem::create(client, childFrameState.urlString, { }, { });
+    for (auto& childFrameState : frameState.children) {
+        Ref childHistoryItem = HistoryItem::create(client, childFrameState->urlString, { }, { }, childFrameState->identifier);
         applyFrameState(client, childHistoryItem, childFrameState);
 
         historyItem.addChildItem(WTFMove(childHistoryItem));
     }
 }
 
-Ref<HistoryItem> toHistoryItem(WebCore::HistoryItemClient& client, const BackForwardListItemState& itemState)
+Ref<HistoryItem> toHistoryItem(HistoryItemClient& client, const FrameState& frameState)
 {
-    Ref<HistoryItem> historyItem = HistoryItem::create(client, itemState.pageState.mainFrameState.urlString, itemState.pageState.title, { }, itemState.identifier);
-    historyItem->setShouldOpenExternalURLsPolicy(itemState.pageState.shouldOpenExternalURLsPolicy);
-    historyItem->setStateObject(itemState.pageState.sessionStateObject.get());
-    applyFrameState(client, historyItem, itemState.pageState.mainFrameState);
-
+    Ref historyItem = HistoryItem::create(client, frameState.urlString, frameState.title, { }, frameState.identifier);
+    applyFrameState(client, historyItem, frameState);
     return historyItem;
 }
 

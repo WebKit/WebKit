@@ -36,6 +36,8 @@
 
 #include <pal/cocoa/AVFoundationSoftLink.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace PAL {
 
 OutputContext::OutputContext(RetainPtr<AVOutputContext>&& context)
@@ -104,5 +106,7 @@ Vector<OutputDevice> OutputContext::outputDevices() const
 
 
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif

@@ -1,0 +1,14 @@
+diff --git a/src/hb.hh b/src/hb.hh
+index 274a0e98d..f33547c8f 100644
+--- a/src/hb.hh
++++ b/src/hb.hh
+@@ -122,6 +122,8 @@
+ /* Ignored intentionally. */
+ #ifndef HB_NO_PRAGMA_GCC_DIAGNOSTIC_IGNORED
+ #pragma GCC diagnostic ignored "-Wclass-memaccess"
++#pragma GCC diagnostic ignored "-Wcast-function-type-strict" // https://github.com/harfbuzz/harfbuzz/pull/3859#issuecomment-1295409126
++#pragma GCC diagnostic ignored "-Wunused-but-set-variable"
+ #pragma GCC diagnostic ignored "-Wformat-nonliteral"
+ #pragma GCC diagnostic ignored "-Wformat-zero-length"
+ #pragma GCC diagnostic ignored "-Wmissing-field-initializers"
+

@@ -8,10 +8,13 @@ includes: [compareArray.js, temporalHelpers.js]
 features: [Temporal]
 ---*/
 
-const expected = [
+const expectedOptionsReading = [
   "get options.overflow",
   "get options.overflow.toString",
   "call options.overflow.toString",
+];
+
+const expected = [
   "get fields.calendar",
   // PrepareTemporalFields
   "get fields.day",
@@ -26,7 +29,7 @@ const expected = [
   "get fields.year",
   "get fields.year.valueOf",
   "call fields.year.valueOf",
-];
+].concat(expectedOptionsReading);
 const actual = [];
 
 const fields = TemporalHelpers.propertyBagObserver(actual, {
@@ -44,3 +47,13 @@ const options = TemporalHelpers.propertyBagObserver(actual, {
 
 Temporal.PlainMonthDay.from(fields, options);
 assert.compareArray(actual, expected, "order of operations");
+
+actual.splice(0);  // clear for next test
+
+Temporal.PlainMonthDay.from(new Temporal.PlainMonthDay(5, 2), options);
+assert.compareArray(actual, expectedOptionsReading, "order of operations when cloning a PlainMonthDay instance");
+
+actual.splice(0);
+
+Temporal.PlainMonthDay.from("05-02", options);
+assert.compareArray(actual, expectedOptionsReading, "order of operations when parsing a string");

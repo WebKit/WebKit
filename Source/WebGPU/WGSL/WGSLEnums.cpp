@@ -60,7 +60,7 @@ namespace WGSL {
     }
 
 #define ENUM_DEFINE_PARSE_ENTRY_(__type, __name, __string, ...) \
-    { #__string, __type::__name },
+    { #__string##_s, __type::__name },
 
 #define ENUM_DEFINE_PARSE_ENTRY(__name) \
     ENUM_DEFINE_PARSE_ENTRY_ LPAREN __name, CONTINUATION

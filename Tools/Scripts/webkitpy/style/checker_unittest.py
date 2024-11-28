@@ -337,6 +337,7 @@ class CheckerDispatcherSkipTest(unittest.TestCase):
         # variable.
         paths = [
             os.path.join('LayoutTests', 'foo.txt'),
+            os.path.join('LayoutTests', 'imported', 'foo.py'),
             os.path.join('WebDriverTests', 'foo.py'),
         ]
         for path in paths:

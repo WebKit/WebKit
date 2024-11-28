@@ -17,8 +17,8 @@
 #include "include/core/SkString.h"
 #include "include/core/SkTypes.h"
 #include "include/effects/SkRuntimeEffect.h"
-#include "include/gpu/GrDirectContext.h"
-#include "include/gpu/GrTypes.h"
+#include "include/gpu/ganesh/GrDirectContext.h"
+#include "include/gpu/ganesh/GrTypes.h"
 #include "include/private/base/SingleOwner.h"
 #include "include/private/base/SkDebug.h"
 #include "include/private/base/SkTemplates.h"
@@ -108,7 +108,7 @@ bool GrDirectContextPriv::compile(const GrProgramDesc& desc, const GrProgramInfo
 
 
 //////////////////////////////////////////////////////////////////////////////
-#if defined(GR_TEST_UTILS)
+#if defined(GPU_TEST_UTILS)
 
 void GrDirectContextPriv::dumpCacheStats(SkString* out) const {
 #if GR_CACHE_STATS

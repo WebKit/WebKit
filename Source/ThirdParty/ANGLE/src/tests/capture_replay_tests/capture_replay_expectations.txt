@@ -242,3 +242,6 @@
 # CoherentBufferTracker deadlocks and flaky crashes
 42266529 LINUX : BufferDataTestES3.* = SKIP_FOR_CAPTURE
 42266529 LINUX : BufferStorageTestES3.* = SKIP_FOR_CAPTURE
+
+# Crashes on win and linux trace bots
+372059358 : MultisampleTestES3.CopyTexImage2DFromMsaaDefaultFbo/* = SKIP_FOR_CAPTURE

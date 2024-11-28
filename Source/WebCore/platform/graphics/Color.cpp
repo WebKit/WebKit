@@ -173,9 +173,7 @@ double Color::lightness() const
 
 double Color::luminance() const
 {
-    return callOnUnderlyingType([&] (const auto& underlyingColor) {
-        return WebCore::relativeLuminance(underlyingColor);
-    });
+    return WebCore::relativeLuminance(*this);
 }
 
 bool Color::anyComponentIsNone() const

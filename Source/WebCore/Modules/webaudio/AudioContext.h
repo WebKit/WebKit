@@ -55,6 +55,9 @@ public:
     static ExceptionOr<Ref<AudioContext>> create(Document&, AudioContextOptions&&);
     ~AudioContext();
 
+    void ref() const final { ThreadSafeRefCounted::ref(); }
+    void deref() const final { ThreadSafeRefCounted::ref(); }
+
     WEBCORE_EXPORT static void setDefaultSampleRateForTesting(std::optional<float>);
 
     void close(DOMPromiseDeferred<void>&&);
@@ -104,7 +107,7 @@ private:
 
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const final;
-    const void* logIdentifier() const final { return BaseAudioContext::logIdentifier(); }
+    uint64_t logIdentifier() const final { return BaseAudioContext::logIdentifier(); }
 #endif
 
     void constructCommon();
@@ -134,7 +137,7 @@ private:
     bool isSuspended() const final;
     bool isPlaying() const final;
     bool isAudible() const final;
-    MediaSessionGroupIdentifier mediaSessionGroupIdentifier() const final;
+    std::optional<MediaSessionGroupIdentifier> mediaSessionGroupIdentifier() const final;
     bool isNowPlayingEligible() const final;
     std::optional<NowPlayingInfo> nowPlayingInfo() const final;
     WeakPtr<PlatformMediaSession> selectBestMediaSession(const Vector<WeakPtr<PlatformMediaSession>>&, PlatformMediaSession::PlaybackControlsPurpose) final;

@@ -31,6 +31,7 @@
 #include "CachedResourceHandle.h"
 #include "MediaMetadataInit.h"
 #include "MediaSession.h"
+#include <wtf/CheckedRef.h>
 #include <wtf/Function.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/URL.h>
@@ -42,12 +43,14 @@ namespace WebCore {
 class CachedImage;
 class Document;
 class Image;
+class WeakPtrImplWithEventTargetData;
 struct MediaImage;
 
 using MediaSessionMetadata = MediaMetadataInit;
 
 class ArtworkImageLoader final : public CachedImageClient {
     WTF_MAKE_TZONE_ALLOCATED_EXPORT(ArtworkImageLoader, WEBCORE_EXPORT);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(ArtworkImageLoader);
 public:
     using ArtworkImageLoaderCallback = Function<void(Image*)>;
     // The callback will only be called upon success or explicit failure to retrieve the image. If the operation is interrupted following the
@@ -61,7 +64,7 @@ protected:
     void notifyFinished(CachedResource&, const NetworkLoadMetrics&, LoadWillContinueInAnotherProcess) override;
 
 private:
-    Document& m_document;
+    WeakRef<Document, WeakPtrImplWithEventTargetData> m_document;
     const String m_src;
     ArtworkImageLoaderCallback m_callback;
     CachedResourceHandle<CachedImage> m_cachedImage;

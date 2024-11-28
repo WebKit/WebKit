@@ -27,10 +27,13 @@
 #include "MapPrototype.h"
 
 #include "BuiltinNames.h"
+#include "CachedCall.h"
 #include "GetterSetter.h"
+#include "InterpreterInlines.h"
 #include "JSCInlines.h"
 #include "JSMapInlines.h"
 #include "JSMapIterator.h"
+#include "VMEntryScopeInlines.h"
 
 namespace JSC {
 
@@ -41,6 +44,8 @@ static JSC_DECLARE_HOST_FUNCTION(mapProtoFuncDelete);
 static JSC_DECLARE_HOST_FUNCTION(mapProtoFuncGet);
 static JSC_DECLARE_HOST_FUNCTION(mapProtoFuncHas);
 static JSC_DECLARE_HOST_FUNCTION(mapProtoFuncSet);
+static JSC_DECLARE_HOST_FUNCTION(mapProtoFuncGetOrInsert);
+static JSC_DECLARE_HOST_FUNCTION(mapProtoFuncGetOrInsertComputed);
 static JSC_DECLARE_HOST_FUNCTION(mapProtoFuncValues);
 static JSC_DECLARE_HOST_FUNCTION(mapProtoFuncKeys);
 static JSC_DECLARE_HOST_FUNCTION(mapProtoFuncEntries);
@@ -83,6 +88,11 @@ void MapPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
     JSFunction* setFunc = JSFunction::create(vm, globalObject, 2, vm.propertyNames->set.string(), mapProtoFuncSet, ImplementationVisibility::Public, JSMapSetIntrinsic);
     putDirectWithoutTransition(vm, vm.propertyNames->set, setFunc, static_cast<unsigned>(PropertyAttribute::DontEnum));
     putDirectWithoutTransition(vm, vm.propertyNames->builtinNames().setPrivateName(), setFunc, static_cast<unsigned>(PropertyAttribute::DontEnum));
+
+    if (Options::useMapGetOrInsert()) {
+        JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("getOrInsert"_s, mapProtoFuncGetOrInsert, static_cast<unsigned>(PropertyAttribute::DontEnum), 2, ImplementationVisibility::Public);
+        JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("getOrInsertComputed"_s, mapProtoFuncGetOrInsertComputed, static_cast<unsigned>(PropertyAttribute::DontEnum), 2, ImplementationVisibility::Public);
+    }
 
     JSFunction* sizeGetter = JSFunction::create(vm, globalObject, 0, "get size"_s, mapProtoFuncSize, ImplementationVisibility::Public);
     GetterSetter* sizeAccessor = GetterSetter::create(vm, globalObject, sizeGetter, nullptr);
@@ -174,6 +184,57 @@ JSC_DEFINE_HOST_FUNCTION(mapProtoFuncSet, (JSGlobalObject* globalObject, CallFra
     map->set(globalObject, callFrame->argument(0), callFrame->argument(1));
     RETURN_IF_EXCEPTION(scope, JSValue::encode(jsUndefined()));
     return JSValue::encode(thisValue);
+}
+
+JSC_DEFINE_HOST_FUNCTION(mapProtoFuncGetOrInsert, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSMap* map = getMap(globalObject, callFrame->thisValue());
+    RETURN_IF_EXCEPTION(scope, JSValue::encode(jsUndefined()));
+
+    JSValue key = callFrame->argument(0);
+
+    RELEASE_AND_RETURN(scope, JSValue::encode(map->getOrInsert(globalObject, key, [&] {
+        return callFrame->argument(1);
+    })));
+}
+
+JSC_DEFINE_HOST_FUNCTION(mapProtoFuncGetOrInsertComputed, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSMap* map = getMap(globalObject, callFrame->thisValue());
+    RETURN_IF_EXCEPTION(scope, JSValue::encode(jsUndefined()));
+
+    map->materializeIfNeeded(globalObject);
+    RETURN_IF_EXCEPTION(scope, JSValue::encode(jsUndefined()));
+
+    JSValue key = callFrame->argument(0);
+
+    JSValue valueCallback = callFrame->argument(1);
+    if (!valueCallback.isCallable())
+        return throwVMTypeError(globalObject, scope, "Map.prototype.getOrInsertComputed requires the callback argument to be callable."_s);
+
+    RELEASE_AND_RETURN(scope, JSValue::encode(map->getOrInsert(globalObject, key, [&] {
+        auto callData = JSC::getCallData(valueCallback);
+        ASSERT(callData.type != CallData::Type::None);
+
+        if (LIKELY(callData.type == CallData::Type::JS)) {
+            CachedCall cachedCall(globalObject, jsCast<JSFunction*>(valueCallback), 2);
+            RETURN_IF_EXCEPTION(scope, JSValue());
+
+            return cachedCall.callWithArguments(globalObject, jsUndefined(), key);
+        }
+
+        MarkedArgumentBuffer args;
+        args.append(key);
+        ASSERT(!args.hasOverflowed());
+
+        return call(globalObject, valueCallback, callData, jsUndefined(), args);
+    })));
 }
 
 inline JSValue createMapIteratorObject(JSGlobalObject* globalObject, CallFrame* callFrame, IterationKind kind)

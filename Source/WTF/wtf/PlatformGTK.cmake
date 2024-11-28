@@ -9,6 +9,7 @@ list(APPEND WTF_SOURCES
     glib/FileSystemGlib.cpp
     glib/GRefPtr.cpp
     glib/GSocketMonitor.cpp
+    glib/GSpanExtras.cpp
     glib/RunLoopGLib.cpp
     glib/Sandbox.cpp
     glib/SocketConnection.cpp
@@ -32,6 +33,7 @@ list(APPEND WTF_PUBLIC_HEADERS
     glib/GMutexLocker.h
     glib/GRefPtr.h
     glib/GSocketMonitor.h
+    glib/GSpanExtras.h
     glib/GThreadSafeWeakPtr.h
     glib/GTypedefs.h
     glib/GUniquePtr.h

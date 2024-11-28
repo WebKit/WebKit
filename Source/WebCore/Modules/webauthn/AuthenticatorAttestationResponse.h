@@ -29,6 +29,7 @@
 
 #include "AuthenticatorResponse.h"
 #include "AuthenticatorTransport.h"
+#include "RegistrationResponseJSON.h"
 
 namespace WebCore {
 
@@ -44,6 +45,7 @@ public:
     RefPtr<ArrayBuffer> getAuthenticatorData() const;
     RefPtr<ArrayBuffer> getPublicKey() const;
     int64_t getPublicKeyAlgorithm() const;
+    RegistrationResponseJSON::AuthenticatorAttestationResponseJSON toJSON();
 
 private:
     AuthenticatorAttestationResponse(Ref<ArrayBuffer>&&, Ref<ArrayBuffer>&&, AuthenticatorAttachment, Vector<AuthenticatorTransport>&&);

@@ -40,26 +40,26 @@ namespace WebCore {
 
 using namespace HTMLNames;
     
-AccessibilityTree::AccessibilityTree(RenderObject& renderer)
-    : AccessibilityRenderObject(renderer)
+AccessibilityTree::AccessibilityTree(AXID axID, RenderObject& renderer)
+    : AccessibilityRenderObject(axID, renderer)
 {
 }
 
-AccessibilityTree::AccessibilityTree(Node& node)
-    : AccessibilityRenderObject(node)
+AccessibilityTree::AccessibilityTree(AXID axID, Node& node)
+    : AccessibilityRenderObject(axID, node)
 {
 }
 
 AccessibilityTree::~AccessibilityTree() = default;
     
-Ref<AccessibilityTree> AccessibilityTree::create(RenderObject& renderer)
+Ref<AccessibilityTree> AccessibilityTree::create(AXID axID, RenderObject& renderer)
 {
-    return adoptRef(*new AccessibilityTree(renderer));
+    return adoptRef(*new AccessibilityTree(axID, renderer));
 }
 
-Ref<AccessibilityTree> AccessibilityTree::create(Node& node)
+Ref<AccessibilityTree> AccessibilityTree::create(AXID axID, Node& node)
 {
-    return adoptRef(*new AccessibilityTree(node));
+    return adoptRef(*new AccessibilityTree(axID, node));
 }
 
 bool AccessibilityTree::computeIsIgnored() const
@@ -90,11 +90,12 @@ bool AccessibilityTree::isTreeValid() const
     while (!queue.isEmpty()) {
         Ref child = queue.takeFirst();
 
-        if (!is<Element>(child.get()))
+        auto* childElement = dynamicDowncast<Element>(child.get());
+        if (!childElement)
             continue;
-        if (nodeHasRole(child.ptr(), "treeitem"_s))
+        if (hasRole(*childElement, "treeitem"_s))
             continue;
-        if (!nodeHasRole(child.ptr(), "group"_s) && !nodeHasRole(child.ptr(), "presentation"_s))
+        if (!hasAnyRole(*childElement, { "group"_s, "presentation"_s }))
             return false;
 
         for (RefPtr groupChild = child->firstChild(); groupChild; groupChild = queue.last()->nextSibling())

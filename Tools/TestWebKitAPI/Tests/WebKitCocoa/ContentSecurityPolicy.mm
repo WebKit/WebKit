@@ -25,25 +25,24 @@
 
 #import "config.h"
 
+#import "HTTPServer.h"
+#import "TestNavigationDelegate.h"
 #import "TestWKWebView.h"
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <wtf/RetainPtr.h>
 
-TEST(WKWebView, DISABLED_SetOverrideContentSecurityPolicyWithEmptyStringForPageWithCSP)
+TEST(WKWebView, SetOverrideContentSecurityPolicyWithEmptyStringForPageWithCSP)
 {
     @autoreleasepool {
         RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
         [configuration _setOverrideContentSecurityPolicy:@""];
 
         RetainPtr<TestWKWebView> webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
-        NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"page-with-csp" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+        NSURLRequest *request = [NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"page-with-csp" withExtension:@"html"]];
         [webView loadRequest:request];
 
-        [webView waitForMessage:@"MainFrame: A"];
-        [webView waitForMessage:@"MainFrame: B"];
-        [webView waitForMessage:@"Subframe: A"];
-        [webView waitForMessage:@"Subframe: B"];
+        [webView waitForMessages:@[@"MainFrame: A", @"MainFrame: B", @"Subframe: A", @"Subframe: B"]];
     }
 }
 
@@ -54,11 +53,10 @@ TEST(WKWebView, SetOverrideContentSecurityPolicyForPageWithCSP)
         [configuration _setOverrideContentSecurityPolicy:@"script-src 'nonce-b'"];
 
         RetainPtr<TestWKWebView> webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
-        NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"page-with-csp" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+        NSURLRequest *request = [NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"page-with-csp" withExtension:@"html"]];
         [webView loadRequest:request];
 
-        [webView waitForMessage:@"MainFrame: B"];
-        [webView waitForMessage:@"Subframe: B"];
+        [webView waitForMessages:@[@"MainFrame: B", @"Subframe: B"]];
     }
 }
 
@@ -69,11 +67,10 @@ TEST(WKWebView, SetOverrideContentSecurityPolicyForPageWithoutCSP)
         [configuration _setOverrideContentSecurityPolicy:@"script-src 'nonce-b'"];
 
         RetainPtr<TestWKWebView> webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
-        NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"page-without-csp" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+        NSURLRequest *request = [NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"page-without-csp" withExtension:@"html"]];
         [webView loadRequest:request];
 
-        [webView waitForMessage:@"MainFrame: B"];
-        [webView waitForMessage:@"Subframe: B"];
+        [webView waitForMessages:@[@"MainFrame: B", @"Subframe: B"]];
     }
 }
 
@@ -82,7 +79,7 @@ TEST(WKWebView, CheckViolationReportDocumentURIForFileProtocol)
     @autoreleasepool {
         auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
         auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
-        NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"csp-document-uri-report" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+        NSURLRequest *request = [NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"csp-document-uri-report" withExtension:@"html"]];
         [webView loadRequest:request];
 
         [webView waitForMessage:@"document-uri: file"];
@@ -94,7 +91,7 @@ TEST(WKWebView, CheckViolationReportDocumentURIForDataProtocol)
     @autoreleasepool {
         auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
         auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
-        NSString *path = [NSBundle.mainBundle pathForResource:@"csp-document-uri-report" ofType:@"html" inDirectory:@"TestWebKitAPI.resources"];
+        NSString *path = [NSBundle.test_resourcesBundle pathForResource:@"csp-document-uri-report" ofType:@"html"];
         NSString* content = [NSString stringWithContentsOfFile:path encoding:NSUTF8StringEncoding error:NULL];
 
         NSURLRequest *loadRequest = [NSURLRequest requestWithURL:[NSURL URLWithString:@"data:text/html"]];
@@ -111,10 +108,21 @@ TEST(WKWebView, CheckViolationReportDocumentURIForAboutProtocol)
     @autoreleasepool {
         auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
         auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
-        NSString *path = [NSBundle.mainBundle pathForResource:@"csp-document-uri-report" ofType:@"html" inDirectory:@"TestWebKitAPI.resources"];
+        NSString *path = [NSBundle.test_resourcesBundle pathForResource:@"csp-document-uri-report" ofType:@"html"];
         NSString* content = [NSString stringWithContentsOfFile:path encoding:NSUTF8StringEncoding error:NULL];
 
         [webView loadHTMLString:content baseURL:nil];
         [webView waitForMessage:@"document-uri: about"];
     }
+}
+
+TEST(ContentSecurityPolicy, InvalidRequireTrustedTypesFor)
+{
+    using namespace TestWebKitAPI;
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "content-security-policy"_s, "require-trusted-types-for 'script html'"_s } }, "hi"_s } }
+    });
+    auto webView = adoptNS([WKWebView new]);
+    [webView loadRequest:server.request()];
+    [webView _test_waitForDidFinishNavigation];
 }

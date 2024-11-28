@@ -12,6 +12,8 @@ PASS animation-fill-mode
 PASS animation-iteration-count
 PASS animation-name
 PASS animation-play-state
+PASS animation-range-end
+PASS animation-range-start
 PASS animation-timeline
 PASS animation-timing-function
 PASS appearance
@@ -174,7 +176,6 @@ PASS isolation
 PASS justify-content
 PASS justify-items
 PASS justify-self
-PASS kerning
 PASS left
 PASS letter-spacing
 PASS lighting-color
@@ -257,6 +258,7 @@ PASS right
 PASS rotate
 PASS row-gap
 PASS ruby-align
+PASS ruby-position
 PASS rx
 PASS ry
 PASS scale
@@ -326,6 +328,7 @@ PASS text-underline-offset
 PASS text-underline-position
 PASS text-wrap-mode
 PASS text-wrap-style
+PASS timeline-scope
 PASS top
 PASS touch-action
 PASS transform

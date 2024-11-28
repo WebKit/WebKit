@@ -39,7 +39,7 @@ let AutomationSessionProxy = class AutomationSessionProxy
 
     // Public
 
-    evaluateJavaScriptFunction(functionString, argumentStrings, expectsImplicitCallbackArgument, frameID, processID, callbackID, resultCallback, callbackTimeout)
+    evaluateJavaScriptFunction(functionString, argumentStrings, expectsImplicitCallbackArgument, forceUserGesture, frameID, processID, callbackID, resultCallback, callbackTimeout)
     {
         this._execute(functionString, argumentStrings, expectsImplicitCallbackArgument, callbackTimeout)
             .then(result => { resultCallback(frameID, processID, callbackID, this._jsonStringify(result)); })

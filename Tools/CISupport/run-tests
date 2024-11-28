@@ -54,7 +54,7 @@ if __name__ == '__main__':
         sys.stdout = StringIO()
         runner = testing.PythonTestRunner(
             description='Run Python unit tests for our various build masters.',
-            modules={os.path.join(os.path.dirname(__file__), ): ['build-webkit-org', 'ews-build']},
+            modules={os.path.join(os.path.dirname(__file__), ): ['build-webkit-org', 'ews-build', 'Shared']},
             loggers=[logging.getLogger(), log],
         )
     finally:

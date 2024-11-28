@@ -28,6 +28,7 @@
 #if ENABLE(PDF_PLUGIN)
 
 #include "PDFPluginIdentifier.h"
+#include "WebFoundTextRange.h"
 #include <WebCore/FindOptions.h>
 #include <WebCore/PluginViewBase.h>
 #include <WebCore/ResourceResponse.h>
@@ -89,6 +90,9 @@ public:
     void setPageScaleFactor(double, std::optional<WebCore::IntPoint> origin);
     double pageScaleFactor() const;
     void pluginScaleFactorDidChange();
+#if PLATFORM(IOS_FAMILY)
+    void pluginDidInstallPDFDocument(double initialScaleFactor);
+#endif
 
     void topContentInsetDidChange();
 
@@ -102,6 +106,11 @@ public:
     Vector<WebCore::FloatRect> rectsForTextMatchesInRect(const WebCore::IntRect&) const;
     bool drawsFindOverlay() const;
     RefPtr<WebCore::TextIndicator> textIndicatorForCurrentSelection(OptionSet<WebCore::TextIndicatorOption>, WebCore::TextIndicatorPresentationTransition);
+
+    Vector<WebFoundTextRange::PDFData> findTextMatches(const String& target, WebCore::FindOptions);
+    Vector<WebCore::FloatRect> rectsForTextMatch(const WebFoundTextRange::PDFData&);
+    RefPtr<WebCore::TextIndicator> textIndicatorForTextMatch(const WebFoundTextRange::PDFData&, WebCore::TextIndicatorPresentationTransition);
+    void scrollToRevealTextMatch(const WebFoundTextRange::PDFData&);
 
     String selectionString() const;
 
@@ -169,7 +178,7 @@ private:
 
     WebCore::ScrollableArea* scrollableArea() const final;
     bool usesAsyncScrolling() const final;
-    WebCore::ScrollingNodeID scrollingNodeID() const final;
+    std::optional<WebCore::ScrollingNodeID> scrollingNodeID() const final;
     void willAttachScrollingNode() final;
     void didAttachScrollingNode() final;
 
@@ -219,7 +228,9 @@ private:
     bool sendEditingCommandToPDFForTesting(const String& commandName, const String& argument) final;
     void setPDFDisplayModeForTesting(const String&) final;
     Vector<WebCore::FloatRect> pdfAnnotationRectsForTesting() const override;
-    void registerPDFTestCallback(RefPtr<WebCore::VoidCallback> &&) final;
+    void unlockPDFDocumentForTesting(const String& password) final;
+    void setPDFTextAnnotationValueForTesting(unsigned pageIndex, unsigned annotationIndex, const String& value) final;
+    void registerPDFTestCallback(RefPtr<WebCore::VoidCallback>&&) final;
 };
 
 } // namespace WebKit

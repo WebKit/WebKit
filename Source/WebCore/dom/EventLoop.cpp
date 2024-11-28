@@ -464,6 +464,7 @@ void EventLoopTaskGroup::queueTask(std::unique_ptr<EventLoopTask>&& task)
 }
 
 class EventLoopFunctionDispatchTask : public EventLoopTask {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(EventLoopFunctionDispatchTask);
 public:
     EventLoopFunctionDispatchTask(TaskSource source, EventLoopTaskGroup& group, EventLoop::TaskFunction&& function)
         : EventLoopTask(source, group)

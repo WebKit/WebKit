@@ -48,7 +48,7 @@ static NSString *typesKey = @"types";
 static NSString *tabIdKey = @"tabId";
 static NSString *windowIdKey = @"windowId";
 
-_WKWebExtensionWebRequestResourceType _WKWebExtensionWebRequestResourceTypeFromResourceLoadInfo(const ResourceLoadInfo& resourceLoadInfo)
+_WKWebExtensionWebRequestResourceType toWebExtensionWebRequestResourceType(const ResourceLoadInfo& resourceLoadInfo)
 {
     switch (resourceLoadInfo.type) {
     case ResourceLoadInfo::Type::Document:
@@ -132,9 +132,10 @@ static NSArray<WKWebExtensionMatchPattern *> *toMatchPatterns(NSArray<NSString *
         WKWebExtensionMatchPattern *pattern = [[WKWebExtensionMatchPattern alloc] initWithString:rawPattern error:&error];
         if (!pattern) {
             if (outErrorMessage)
-                *outErrorMessage = toErrorString(nil, urlsKey, @"'%@' is an invalid match pattern. %@", rawPattern, error.userInfo[NSDebugDescriptionErrorKey]);
+                *outErrorMessage = toErrorString(nil, urlsKey, @"'%@' is an invalid match pattern. %@", rawPattern, error.localizedDescription);
             return nil;
         }
+
         [patterns addObject:pattern];
     }
 
@@ -263,7 +264,7 @@ static std::optional<WebExtensionWindowIdentifier> toWindowID(NSNumber *rawValue
     return NO;
 }
 
-_WKWebExtensionWebRequestResourceType _WKWebExtensionWebRequestResourceTypeFromResourceLoadInfo(const WebKit::ResourceLoadInfo&)
+_WKWebExtensionWebRequestResourceType toWebExtensionWebRequestResourceType(const WebKit::ResourceLoadInfo&)
 {
     return _WKWebExtensionWebRequestResourceTypeOther;
 }

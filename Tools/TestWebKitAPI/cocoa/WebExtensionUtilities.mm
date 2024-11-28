@@ -38,6 +38,7 @@
 #import <WebKit/WKWebExtensionWindowConfiguration.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 
 @interface TestWebExtensionManager () <WKWebExtensionControllerDelegatePrivate>
 @end
@@ -562,9 +563,9 @@ static WKUserContentController *userContentController(BOOL usingPrivateBrowsing)
         self->_selected = selected;
 
         if (selected)
-            [self->_extensionController didSelectTabs:[NSSet setWithObject:self]];
+            [self->_extensionController didSelectTabs:@[ self ]];
         else
-            [self->_extensionController didDeselectTabs:[NSSet setWithObject:self]];
+            [self->_extensionController didDeselectTabs:@[ self ]];
 
         completionHandler(nil);
     });
@@ -577,6 +578,11 @@ static WKUserContentController *userContentController(BOOL usingPrivateBrowsing)
 
         completionHandler(nil);
     });
+}
+
+- (BOOL)shouldBypassPermissionsForWebExtensionContext:(WKWebExtensionContext *)context
+{
+    return _shouldBypassPermissions;
 }
 
 @end
@@ -949,17 +955,19 @@ CocoaColor *pixelColor(CocoaImage *image, CGPoint point)
     auto *color = [bitmap colorAtX:point.x y:point.y];
     return color;
 #else
+    image = [image.imageAsset imageWithTraitCollection:UITraitCollection.currentTraitCollection];
+
     UIGraphicsBeginImageContext(image.size);
 
     [image drawAtPoint:CGPointZero];
 
-    CGContextRef context = UIGraphicsGetCurrentContext();
-    unsigned char *data = (unsigned char *)CGBitmapContextGetData(context);
+    auto context = UIGraphicsGetCurrentContext();
+    auto *data = (unsigned char *)CGBitmapContextGetData(context);
     if (!data)
         return nil;
 
     unsigned offset = ((image.size.width * point.y) + point.x) * 4;
-    UIColor *color = [UIColor colorWithRed:data[offset] / 255.0 green:data[offset + 1] / 255.0 blue:data[offset + 2] / 255.0 alpha:data[offset + 3] / 255.0];
+    auto *color = [UIColor colorWithRed:data[offset] / 255.0 green:data[offset + 1] / 255.0 blue:data[offset + 2] / 255.0 alpha:data[offset + 3] / 255.0];
 
     UIGraphicsEndImageContext();
 

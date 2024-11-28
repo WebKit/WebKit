@@ -30,6 +30,6 @@
 namespace WebCore {
 
 enum class ServiceWorkerIdentifierType { };
-using ServiceWorkerIdentifier = LegacyNullableAtomicObjectIdentifier<ServiceWorkerIdentifierType>;
+using ServiceWorkerIdentifier = AtomicObjectIdentifier<ServiceWorkerIdentifierType>;
 
 } // namespace WebCore

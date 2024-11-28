@@ -26,6 +26,7 @@
 #pragma once
 
 #include <wtf/TZoneMalloc.h>
+#include <wtf/WeakRef.h>
 
 namespace WebCore {
 
@@ -44,7 +45,8 @@ public:
     FloatRect expandedBounds() const;
 
 private:
-    CanvasRenderingContext2DBase& m_context;
+    Ref<CanvasRenderingContext2DBase> protectedContext() const { return m_context.get(); }
+    WeakRef<CanvasRenderingContext2DBase> m_context;
 };
 
 } // namespace WebCore

@@ -1,0 +1,60 @@
+<script>
+async function run() {
+    let adapter0 = await navigator.gpu.requestAdapter();
+    let device0 = await adapter0.requestDevice();
+    let texture = device0.createTexture({
+        size: { width: 96, height: 40 },
+        format: 'rg8sint',
+        usage: GPUTextureUsage.TEXTURE_BINDING,
+        viewFormats: [],
+    });
+    let texture2 = device0.createTexture({
+        size: { width: 24, height: 10, },
+        format: 'rgba32sint',
+        usage: GPUTextureUsage.RENDER_ATTACHMENT,
+    });
+    let textureView = texture.createView();
+    let textureView2 = texture2.createView();
+    let bindGroupLayout = device0.createBindGroupLayout({
+        entries: [{
+            binding: 0,
+            visibility: GPUShaderStage.FRAGMENT | GPUShaderStage.VERTEX,
+            texture: { sampleType: 'sint' },
+        }],
+    });
+    let pipelineLayout1 = device0.createPipelineLayout({
+        bindGroupLayouts: [bindGroupLayout]
+    });
+    let shaderModule0 = device0.createShaderModule({ code: `
+        @vertex fn vertex0() -> @builtin(position) vec4f {
+            return vec4f();
+        }
+        @fragment fn fragment0() -> @location(200) vec4i {
+            return vec4i();
+        }
+    `});
+    let pipeline1 = await device0.createRenderPipelineAsync({
+        layout: pipelineLayout1,
+        fragment: { module: shaderModule0, targets: [{ format: 'rgba32sint' }] },
+        vertex: { module: shaderModule0, buffers: [] },
+    });
+    let bindGroup = device0.createBindGroup({
+        layout: bindGroupLayout,
+        entries: [{ binding: 0, resource: textureView }],
+    });
+    let commandEncoder = device0.createCommandEncoder({});
+    let renderPassEncoder = commandEncoder.beginRenderPass({
+        colorAttachments: [{ view: textureView2, loadOp: 'load', storeOp: 'store' }],
+        maxDrawCount: 1,
+    });
+    let renderBundleEncoder = device0.createRenderBundleEncoder({ colorFormats: ['rgba32sint'] });
+    renderBundleEncoder.setPipeline(pipeline1);
+    renderBundleEncoder.setBindGroup(0, bindGroup);
+    renderBundleEncoder.draw(0);
+    renderBundleEncoder.draw(0);
+    renderPassEncoder.executeBundles([renderBundleEncoder.finish()]);
+}
+
+globalThis.testRunner?.waitUntilDone();
+run().finally(() => globalThis.testRunner?.notifyDone());
+</script>

@@ -21,7 +21,8 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #if ENABLE(ROUTING_ARBITRATION)
-messages -> AudioSessionRoutingArbitratorProxy NotRefCounted {
+[EnabledBy=MediaPlaybackEnabled]
+messages -> AudioSessionRoutingArbitratorProxy {
     BeginRoutingArbitrationWithCategory(enum:uint8_t WebCore::AudioSessionCategory category) -> (enum:uint8_t WebCore::AudioSessionRoutingArbitrationError error, enum:bool WebCore::AudioSessionRoutingArbitrationClient::DefaultRouteChanged defaultRouteChanged)
     EndRoutingArbitration();
 }

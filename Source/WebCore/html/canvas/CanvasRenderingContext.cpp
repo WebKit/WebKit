@@ -46,6 +46,10 @@
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/URL.h>
 
+#if USE(SKIA)
+#include "CanvasRenderingContext2DBase.h"
+#endif
+
 namespace WebCore {
 
 WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(CanvasRenderingContext);
@@ -63,8 +67,9 @@ Lock& CanvasRenderingContext::instancesLock()
     return s_instancesLock;
 }
 
-CanvasRenderingContext::CanvasRenderingContext(CanvasBase& canvas)
+CanvasRenderingContext::CanvasRenderingContext(CanvasBase& canvas, Type type)
     : m_canvas(canvas)
+    , m_type(type)
 {
     Locker locker { instancesLock() };
     instances().add(this);
@@ -100,7 +105,11 @@ bool CanvasRenderingContext::isSurfaceBufferTransparentBlack(SurfaceBuffer) cons
 
 bool CanvasRenderingContext::delegatesDisplay() const
 {
-    return false;
+#if USE(SKIA)
+    if (auto* context2D = dynamicDowncast<CanvasRenderingContext2DBase>(*this))
+        return context2D->isAccelerated();
+#endif
+    return isPlaceholder() || isGPUBased();
 }
 
 RefPtr<GraphicsLayerContentsDisplayDelegate> CanvasRenderingContext::layerContentsDisplayDelegate()

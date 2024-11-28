@@ -116,14 +116,14 @@ const BorderValue& RenderTableRow::borderAdjoiningStartCell(const RenderTableCel
 {
     ASSERT_UNUSED(cell, cell.isFirstOrLastCellInRow());
     // FIXME: https://webkit.org/b/79272 - Add support for mixed directionality at the cell level.
-    return style().borderStart();
+    return style().borderStart(table()->writingMode());
 }
 
 const BorderValue& RenderTableRow::borderAdjoiningEndCell(const RenderTableCell& cell) const
 {
     ASSERT_UNUSED(cell, cell.isFirstOrLastCellInRow());
     // FIXME: https://webkit.org/b/79272 - Add support for mixed directionality at the cell level.
-    return style().borderEnd();
+    return style().borderEnd(table()->writingMode());
 }
 
 void RenderTableRow::didInsertTableCell(RenderTableCell& child, RenderObject* beforeChild)
@@ -144,7 +144,7 @@ void RenderTableRow::layout()
     ASSERT(needsLayout());
 
     // Table rows do not add translation.
-    LayoutStateMaintainer statePusher(*this, LayoutSize(), isTransformed() || hasReflection() || style().isFlippedBlocksWritingMode());
+    LayoutStateMaintainer statePusher(*this, LayoutSize(), isTransformed() || hasReflection() || writingMode().isBlockFlipped());
 
     auto* layoutState = view().frameView().layoutContext().layoutState();
     bool paginated = layoutState->isPaginated();

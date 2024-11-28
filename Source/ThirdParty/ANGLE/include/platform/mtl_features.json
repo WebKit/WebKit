@@ -107,13 +107,6 @@
             ]
         },
         {
-            "name": "allow_sampler_compare_lod",
-            "category": "Features",
-            "description": [
-                "The renderer supports sample_compare with lod"
-            ]
-        },
-        {
             "name": "allow_buffer_read_write",
             "category": "Features",
             "description": [
@@ -425,14 +418,6 @@
                 "Mac GPU Family 2 is required to support all the features of OpenGL ES 2.0"
             ],
             "issue": "http://anglebug.com/40096869"
-        },
-        {
-            "name": "require_msl_2_1",
-            "category": "Features",
-            "description": [
-                "MSL 2.1 is required to support all the features of OpenGL ES 2.0"
-            ],
-            "issue": "http://anglebug.com/42266694"
         },
         {
             "name": "rescope_global_variables",

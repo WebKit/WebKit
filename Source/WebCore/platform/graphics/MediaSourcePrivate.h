@@ -41,6 +41,7 @@
 namespace WebCore {
 
 class ContentType;
+class MediaPlayerPrivateInterface;
 class SourceBufferPrivate;
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
 class LegacyCDMSession;
@@ -72,6 +73,8 @@ public:
 
     RefPtr<MediaSourcePrivateClient> client() const;
     virtual RefPtr<MediaPlayerPrivateInterface> player() const = 0;
+    virtual void setPlayer(MediaPlayerPrivateInterface*) = 0;
+    virtual void shutdown();
 
     virtual constexpr MediaPlatformType platformType() const = 0;
     virtual AddStatus addSourceBuffer(const ContentType&, bool webMParserEnabled, RefPtr<SourceBufferPrivate>&) = 0;
@@ -124,14 +127,14 @@ public:
 #endif
 
 protected:
-    MediaSourcePrivate(MediaSourcePrivateClient&, RefCountedSerialFunctionDispatcher&);
+    MediaSourcePrivate(MediaSourcePrivateClient&, GuaranteedSerialFunctionDispatcher&);
     void ensureOnDispatcher(Function<void()>&&) const;
 
     Vector<RefPtr<SourceBufferPrivate>> m_sourceBuffers;
     Vector<SourceBufferPrivate*> m_activeSourceBuffers;
     std::atomic<bool> m_isEnded { false }; // Set on MediaSource's dispatcher.
     std::atomic<MediaSourceReadyState> m_readyState; // Set on MediaSource's dispatcher.
-    const Ref<RefCountedSerialFunctionDispatcher> m_dispatcher; // SerialFunctionDispatcher the SourceBufferPrivate/MediaSourcePrivate is running on.
+    const Ref<GuaranteedSerialFunctionDispatcher> m_dispatcher; // SerialFunctionDispatcher the SourceBufferPrivate/MediaSourcePrivate is running on.
 
 private:
     mutable Lock m_lock;

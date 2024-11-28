@@ -24,7 +24,7 @@
 #if ENABLE(GPU_PROCESS)
 
 [EnabledBy=WebGPUEnabled]
-messages -> RemoteDevice NotRefCounted Stream {
+messages -> RemoteDevice Stream {
     void Destroy()
     void Destruct()
     void CreateXRBinding(WebKit::WebGPUIdentifier identifier)
@@ -47,6 +47,7 @@ messages -> RemoteDevice NotRefCounted Stream {
     void ResolveUncapturedErrorEvent() -> (bool hasUncapturedError, std::optional<WebKit::WebGPU::Error> error)
     void ResolveDeviceLostPromise() -> (WebCore::WebGPU::DeviceLostReason reason)
     void SetLabel(String label)
+    void PauseAllErrorReporting(bool pauseErrorReporting)
 #if PLATFORM(COCOA) && ENABLE(VIDEO)
     void SetSharedVideoFrameSemaphore(IPC::Semaphore semaphore) NotStreamEncodable
     void SetSharedVideoFrameMemory(WebCore::SharedMemory::Handle storageHandle) NotStreamEncodable

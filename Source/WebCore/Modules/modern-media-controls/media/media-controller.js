@@ -27,6 +27,51 @@ const maxNonLiveDuration = 604800; // 604800 seconds == 1 week
 
 class MediaController
 {
+    static EmptyRanges = {
+        get length() { return 0; },
+        start: function(index) { return undefined; },
+        end: function(index) { return undefined; },
+    }
+
+    static NullMedia = {
+        get audioTracks() { return []; },
+        get autoplay() { return false; },
+        get buffered() { return EmptyRanges; },
+        get controls() { return false; },
+        get currentTime() { return 0; },
+        set currentTime(time) { },
+        get defaultPlaybackRate() { return 1; },
+        set defaultPlaybackRate(rate) { },
+        get duration() { return 0; },
+        get error() { return null; },
+        get muted() { return false; },
+        set muted(muted) { },
+        get networkState() { return HTMLMediaElement.NETWORK_NO_SOURCE; },
+        get paused() { return false; },
+        get playbackRate() { return 1; },
+        set playbackRate(rate) { },
+        get played() { return EmptyRanges; },
+        get readyState() { return HTMLMediaElement.HAVE_NOTHING; },
+        get seekable() { return EmptyRanges; },
+        get textTracks() { return []; },
+        get videoTracks() { return []; },
+        get volume() { return 1; },
+        set volume(volume) { },
+        get webkitCurrentPlaybackTargetIsWireless() { return false; },
+        get webkitPresentationMode() { return "inline"; },
+        get webkitSupportsFullscreen() { return false; },
+
+        pause: function() { },
+        play: function() { },
+        fastSeek: function(time) { },
+        requestPictureInPicture: function() { },
+        webkitEnterFullscreen: function() { },
+        webkitExitFullscreen: function() { },
+        webkitSetPresentationMode: function(mode) { },
+        webkitShowPlaybackTargetPicker: function() { },
+        webkitSupportsPresentationMode: function(mode) { return false; },
+    };
+
     constructor(shadowRoot, media, host)
     {
         this.shadowRootWeakRef = new WeakRef(shadowRoot);
@@ -53,6 +98,7 @@ class MediaController
         scheduler.flushScheduledLayoutCallbacks();
 
         shadowRoot.addEventListener("resize", this);
+        shadowRoot.addEventListener("fullscreenchange", this);
 
         media.videoTracks.addEventListener("addtrack", this);
         media.videoTracks.addEventListener("removetrack", this);
@@ -71,7 +117,7 @@ class MediaController
     // Public
     get media()
     {
-        return this.mediaWeakRef ? this.mediaWeakRef.deref() : null;
+        return this.mediaWeakRef.deref() ?? MediaController.NullMedia;
     }
 
     get shadowRoot()
@@ -211,6 +257,8 @@ class MediaController
             this._updateControlsIfNeeded();
             // We must immediately perform layouts so that we don't lag behind the media layout size.
             scheduler.flushScheduledLayoutCallbacks();
+        } else if (event.type === "fullscreenchange" && event.currentTarget === this.shadowRoot) {
+            this._updateControlsAvailability();
         } else if (event.type === "keydown" && this.isFullscreen && event.key === " ") {
             this.togglePlayback();
             event.preventDefault();
@@ -303,6 +351,9 @@ class MediaController
     deinitialize()
     {
         this.shadowRoot.removeChild(this.container);
+        window.removeEventListener("keydown", this);
+        if (this.controls)
+            this.controls.disable();
         return true;
     }
 
@@ -313,6 +364,9 @@ class MediaController
         this.mediaWeakRef = new WeakRef(media);
         this.host = host;
         shadowRoot.appendChild(this.container);
+        window.addEventListener("keydown", this);
+        if (this.controls)
+            this.controls.reenable();
         return true;
     }
 
@@ -366,14 +420,14 @@ class MediaController
 
         if (this.host && this.host.inWindowFullscreen) {
             this._stopPropagationOnClickEvents();
-            if (!this.host.supportsSeeking)
-                this.controls.timeControl.scrubber.disabled = true;
-
             if (!this.host.supportsRewind)
                 this.controls.rewindButton.dropped = true;
         }
 
         this._updateControlsAvailability();
+
+        if (this.host?.needsChromeMediaControlsPseudoElement)
+            this.controls.element.setAttribute('useragentpart', '-webkit-media-controls');
     }
 
     _stopPropagationOnClickEvents()

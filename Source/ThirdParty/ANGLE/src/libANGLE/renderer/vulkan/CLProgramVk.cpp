@@ -6,14 +6,20 @@
 // CLProgramVk.cpp: Implements the class methods for CLProgramVk.
 
 #include "libANGLE/renderer/vulkan/CLProgramVk.h"
+#include "common/log_utils.h"
 #include "libANGLE/renderer/vulkan/CLContextVk.h"
 #include "libANGLE/renderer/vulkan/CLDeviceVk.h"
+#include "libANGLE/renderer/vulkan/clspv_utils.h"
+#include "libANGLE/renderer/vulkan/vk_cache_utils.h"
+#include "libANGLE/renderer/vulkan/vk_helpers.h"
 
 #include "libANGLE/CLContext.h"
 #include "libANGLE/CLKernel.h"
 #include "libANGLE/CLProgram.h"
 #include "libANGLE/cl_utils.h"
 
+#include "common/PackedEnums.h"
+#include "common/string_utils.h"
 #include "common/system_utils.h"
 
 #include "clspv/Compiler.h"
@@ -23,8 +29,6 @@
 
 #include "spirv-tools/libspirv.hpp"
 #include "spirv-tools/optimizer.hpp"
-
-#include "common/string_utils.h"
 
 namespace rx
 {
@@ -64,7 +68,19 @@ spv_result_t ParseReflection(CLProgramVk::SpvReflectionData &reflectionData,
                         reflectionData.spvStrLookup[spvInstr.words[9]];
 
                     // Save kernel name to reflection table for later use/lookup in parser routine
+                    reflectionData.kernelIDs.insert(spvInstr.words[2]);
                     reflectionData.spvStrLookup[spvInstr.words[2]] = std::string(functionName);
+
+                    // If we already parsed some args ahead of time, populate them now
+                    if (reflectionData.kernelArgMap.contains(functionName))
+                    {
+                        for (const auto &arg : reflectionData.kernelArgMap)
+                        {
+                            uint32_t ordinal = arg.second.ordinal;
+                            reflectionData.kernelArgsMap[functionName].at(ordinal) =
+                                std::move(arg.second);
+                        }
+                    }
                     break;
                 }
                 case NonSemanticClspvReflectionArgumentInfo:
@@ -106,9 +122,6 @@ spv_result_t ParseReflection(CLProgramVk::SpvReflectionData &reflectionData,
                         kernelArg.info.accessQualifier  = kernelArgInfo.accessQualifier;
                         kernelArg.info.typeQualifier    = kernelArgInfo.typeQualifier;
                     }
-                    CLKernelArguments &kernelArgs =
-                        reflectionData
-                            .kernelArgsMap[reflectionData.spvStrLookup[spvInstr.words[5]]];
                     kernelArg.type    = spvInstr.words[4];
                     kernelArg.used    = true;
                     kernelArg.ordinal = reflectionData.spvIntLookup[spvInstr.words[6]];
@@ -117,14 +130,28 @@ spv_result_t ParseReflection(CLProgramVk::SpvReflectionData &reflectionData,
                     kernelArg.op5     = reflectionData.spvIntLookup[spvInstr.words[9]];
                     kernelArg.op6     = reflectionData.spvIntLookup[spvInstr.words[10]];
 
-                    if (!kernelArgs.empty())
+                    if (reflectionData.kernelIDs.contains(spvInstr.words[5]))
                     {
+                        CLKernelArguments &kernelArgs =
+                            reflectionData
+                                .kernelArgsMap[reflectionData.spvStrLookup[spvInstr.words[5]]];
                         kernelArgs.at(kernelArg.ordinal) = std::move(kernelArg);
                     }
+                    else
+                    {
+                        // Reflection kernel not yet parsed, place in temp storage for now
+                        reflectionData
+                            .kernelArgMap[reflectionData.spvStrLookup[spvInstr.words[5]]] =
+                            std::move(kernelArg);
+                    }
+
                     break;
                 }
                 case NonSemanticClspvReflectionArgumentUniform:
                 case NonSemanticClspvReflectionArgumentWorkgroup:
+                case NonSemanticClspvReflectionArgumentSampler:
+                case NonSemanticClspvReflectionArgumentStorageImage:
+                case NonSemanticClspvReflectionArgumentSampledImage:
                 case NonSemanticClspvReflectionArgumentStorageBuffer:
                 case NonSemanticClspvReflectionArgumentPodPushConstant:
                 case NonSemanticClspvReflectionArgumentPointerPushConstant:
@@ -140,20 +167,35 @@ spv_result_t ParseReflection(CLProgramVk::SpvReflectionData &reflectionData,
                         kernelArg.info.accessQualifier  = kernelArgInfo.accessQualifier;
                         kernelArg.info.typeQualifier    = kernelArgInfo.typeQualifier;
                     }
-                    CLKernelArguments &kernelArgs =
-                        reflectionData
-                            .kernelArgsMap[reflectionData.spvStrLookup[spvInstr.words[5]]];
+
                     kernelArg.type    = spvInstr.words[4];
                     kernelArg.used    = true;
                     kernelArg.ordinal = reflectionData.spvIntLookup[spvInstr.words[6]];
                     kernelArg.op3     = reflectionData.spvIntLookup[spvInstr.words[7]];
                     kernelArg.op4     = reflectionData.spvIntLookup[spvInstr.words[8]];
-                    kernelArgs.at(kernelArg.ordinal) = std::move(kernelArg);
+
+                    if (reflectionData.kernelIDs.contains(spvInstr.words[5]))
+                    {
+                        CLKernelArguments &kernelArgs =
+                            reflectionData
+                                .kernelArgsMap[reflectionData.spvStrLookup[spvInstr.words[5]]];
+                        kernelArgs.at(kernelArg.ordinal) = std::move(kernelArg);
+                    }
+                    else
+                    {
+                        // Reflection kernel not yet parsed, place in temp storage for now
+                        reflectionData
+                            .kernelArgMap[reflectionData.spvStrLookup[spvInstr.words[5]]] =
+                            std::move(kernelArg);
+                    }
                     break;
                 }
                 case NonSemanticClspvReflectionPushConstantGlobalSize:
                 case NonSemanticClspvReflectionPushConstantGlobalOffset:
                 case NonSemanticClspvReflectionPushConstantRegionOffset:
+                case NonSemanticClspvReflectionPushConstantNumWorkgroups:
+                case NonSemanticClspvReflectionPushConstantRegionGroupOffset:
+                case NonSemanticClspvReflectionPushConstantEnqueuedLocalSize:
                 {
                     uint32_t offset = reflectionData.spvIntLookup[spvInstr.words[5]];
                     uint32_t size   = reflectionData.spvIntLookup[spvInstr.words[6]];
@@ -163,10 +205,15 @@ spv_result_t ParseReflection(CLProgramVk::SpvReflectionData &reflectionData,
                 }
                 case NonSemanticClspvReflectionSpecConstantWorkgroupSize:
                 {
-                    reflectionData.specConstantWorkgroupSizeIDs = {
-                        reflectionData.spvIntLookup[spvInstr.words[5]],
-                        reflectionData.spvIntLookup[spvInstr.words[6]],
-                        reflectionData.spvIntLookup[spvInstr.words[7]]};
+                    reflectionData.specConstantIDs[SpecConstantType::WorkgroupSizeX] =
+                        reflectionData.spvIntLookup[spvInstr.words[5]];
+                    reflectionData.specConstantIDs[SpecConstantType::WorkgroupSizeY] =
+                        reflectionData.spvIntLookup[spvInstr.words[6]];
+                    reflectionData.specConstantIDs[SpecConstantType::WorkgroupSizeZ] =
+                        reflectionData.spvIntLookup[spvInstr.words[7]];
+                    reflectionData.specConstantsUsed[SpecConstantType::WorkgroupSizeX] = true;
+                    reflectionData.specConstantsUsed[SpecConstantType::WorkgroupSizeY] = true;
+                    reflectionData.specConstantsUsed[SpecConstantType::WorkgroupSizeZ] = true;
                     break;
                 }
                 case NonSemanticClspvReflectionPropertyRequiredWorkgroupSize:
@@ -176,6 +223,70 @@ spv_result_t ParseReflection(CLProgramVk::SpvReflectionData &reflectionData,
                         reflectionData.spvIntLookup[spvInstr.words[6]],
                         reflectionData.spvIntLookup[spvInstr.words[7]],
                         reflectionData.spvIntLookup[spvInstr.words[8]]};
+                    break;
+                }
+                case NonSemanticClspvReflectionSpecConstantWorkDim:
+                {
+                    reflectionData.specConstantIDs[SpecConstantType::WorkDimension] =
+                        reflectionData.spvIntLookup[spvInstr.words[5]];
+                    reflectionData.specConstantsUsed[SpecConstantType::WorkDimension] = true;
+                    break;
+                }
+                case NonSemanticClspvReflectionSpecConstantGlobalOffset:
+                    reflectionData.specConstantIDs[SpecConstantType::GlobalOffsetX] =
+                        reflectionData.spvIntLookup[spvInstr.words[5]];
+                    reflectionData.specConstantIDs[SpecConstantType::GlobalOffsetY] =
+                        reflectionData.spvIntLookup[spvInstr.words[6]];
+                    reflectionData.specConstantIDs[SpecConstantType::GlobalOffsetZ] =
+                        reflectionData.spvIntLookup[spvInstr.words[7]];
+                    reflectionData.specConstantsUsed[SpecConstantType::GlobalOffsetX] = true;
+                    reflectionData.specConstantsUsed[SpecConstantType::GlobalOffsetY] = true;
+                    reflectionData.specConstantsUsed[SpecConstantType::GlobalOffsetZ] = true;
+                    break;
+                case NonSemanticClspvReflectionPrintfInfo:
+                {
+                    // Info on the format string used in the builtin printf call in kernel
+                    uint32_t printfID        = reflectionData.spvIntLookup[spvInstr.words[5]];
+                    std::string formatString = reflectionData.spvStrLookup[spvInstr.words[6]];
+                    reflectionData.printfInfoMap[printfID].id              = printfID;
+                    reflectionData.printfInfoMap[printfID].formatSpecifier = formatString;
+                    for (int i = 6; i < spvInstr.num_operands; i++)
+                    {
+                        uint16_t offset = spvInstr.operands[i].offset;
+                        size_t size     = reflectionData.spvIntLookup[spvInstr.words[offset]];
+                        reflectionData.printfInfoMap[printfID].argSizes.push_back(
+                            static_cast<uint32_t>(size));
+                    }
+
+                    break;
+                }
+                case NonSemanticClspvReflectionPrintfBufferStorageBuffer:
+                {
+                    // Info about the printf storage buffer that contains the formatted content
+                    uint32_t set     = reflectionData.spvIntLookup[spvInstr.words[5]];
+                    uint32_t binding = reflectionData.spvIntLookup[spvInstr.words[6]];
+                    uint32_t size    = reflectionData.spvIntLookup[spvInstr.words[7]];
+                    reflectionData.printfBufferStorage = {set, binding, 0, size};
+                    break;
+                }
+                case NonSemanticClspvReflectionPrintfBufferPointerPushConstant:
+                {
+                    ERR() << "Shouldn't be here. Support of printf builtin function is enabled "
+                             "through "
+                             "PrintfBufferStorageBuffer. Check optins passed down to clspv";
+                    UNREACHABLE();
+                    return SPV_UNSUPPORTED;
+                }
+                case NonSemanticClspvReflectionNormalizedSamplerMaskPushConstant:
+                case NonSemanticClspvReflectionImageArgumentInfoChannelOrderPushConstant:
+                case NonSemanticClspvReflectionImageArgumentInfoChannelDataTypePushConstant:
+                {
+                    uint32_t ordinal            = reflectionData.spvIntLookup[spvInstr.words[6]];
+                    uint32_t offset             = reflectionData.spvIntLookup[spvInstr.words[7]];
+                    uint32_t size               = reflectionData.spvIntLookup[spvInstr.words[8]];
+                    VkPushConstantRange pcRange = {.stageFlags = 0, .offset = offset, .size = size};
+                    reflectionData.imagePushConstants[spvInstr.words[4]].push_back(
+                        {.pcRange = pcRange, .ordinal = ordinal});
                     break;
                 }
                 default:
@@ -228,9 +339,6 @@ std::string ProcessBuildOptions(const std::vector<std::string> &optionTokens,
         default:
             break;
     }
-
-    // Other internal Clspv compiler flags that are needed/required
-    processedOptions += " --long-vector";
 
     return processedOptions;
 }
@@ -366,15 +474,19 @@ angle::Result CLProgramVk::init(const size_t *lengths,
 
 CLProgramVk::~CLProgramVk()
 {
-    for (vk::BindingPointer<rx::vk::DynamicDescriptorPool> &pool : mDescriptorPools)
+    for (vk::DynamicDescriptorPoolPointer &pool : mDynamicDescriptorPools)
     {
         pool.reset();
     }
-    mPoolBinding.reset();
+    for (vk::DescriptorPoolPointer &pool : mDescriptorPools)
+    {
+        pool.reset();
+    }
     mShader.get().destroy(mContext->getDevice());
-    mMetaDescriptorPool.destroy(mContext->getRenderer());
-    mDescSetLayoutCache.destroy(mContext->getRenderer());
-    mPipelineLayoutCache.destroy(mContext->getRenderer());
+    for (DescriptorSetIndex index : angle::AllEnums<DescriptorSetIndex>())
+    {
+        mMetaDescriptorPools[index].destroy(mContext->getRenderer());
+    }
 }
 
 angle::Result CLProgramVk::build(const cl::DevicePtrs &devices,
@@ -639,60 +751,7 @@ angle::Result CLProgramVk::createKernel(const cl::Kernel &kernel,
         ANGLE_CL_RETURN_ERROR(CL_OUT_OF_HOST_MEMORY);
     }
 
-    // Update push contant range and add layout bindings for arguments
-    vk::DescriptorSetLayoutDesc descriptorSetLayoutDesc;
-    VkPushConstantRange pcRange = devProgram->pushConstRange;
-    for (const auto &arg : kernelImpl->getArgs())
-    {
-        VkDescriptorType descType = VK_DESCRIPTOR_TYPE_MAX_ENUM;
-        switch (arg.type)
-        {
-            case NonSemanticClspvReflectionArgumentStorageBuffer:
-            case NonSemanticClspvReflectionArgumentPodStorageBuffer:
-                descType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
-                break;
-            case NonSemanticClspvReflectionArgumentUniform:
-            case NonSemanticClspvReflectionArgumentPodUniform:
-            case NonSemanticClspvReflectionArgumentPointerUniform:
-                descType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-                break;
-            case NonSemanticClspvReflectionArgumentPodPushConstant:
-                // Get existing push constant range and see if we need to update
-                if (arg.pushConstOffset + arg.pushConstantSize > pcRange.offset + pcRange.size)
-                {
-                    pcRange.size = arg.pushConstOffset + arg.pushConstantSize - pcRange.offset;
-                }
-                continue;
-            default:
-                continue;
-        }
-        descriptorSetLayoutDesc.addBinding(arg.descriptorBinding, descType, 1,
-                                           VK_SHADER_STAGE_COMPUTE_BIT, nullptr);
-    }
-
-    // Get descriptor set layout from cache (creates if missed)
-    ANGLE_CL_IMPL_TRY_ERROR(
-        mDescSetLayoutCache.getDescriptorSetLayout(
-            mContext, descriptorSetLayoutDesc,
-            &kernelImpl->getDescriptorSetLayouts()[DescriptorSetIndex::ShaderResource]),
-        CL_INVALID_OPERATION);
-
-    // Get pipeline layout from cache (creates if missed)
-    vk::PipelineLayoutDesc pipelineLayoutDesc;
-    pipelineLayoutDesc.updateDescriptorSetLayout(DescriptorSetIndex::ShaderResource,
-                                                 descriptorSetLayoutDesc);
-    pipelineLayoutDesc.updatePushConstantRange(pcRange.stageFlags, pcRange.offset, pcRange.size);
-    ANGLE_CL_IMPL_TRY_ERROR(mPipelineLayoutCache.getPipelineLayout(
-                                mContext, pipelineLayoutDesc, kernelImpl->getDescriptorSetLayouts(),
-                                &kernelImpl->getPipelineLayout()),
-                            CL_INVALID_OPERATION);
-
-    // Setup descriptor pool
-    ANGLE_CL_IMPL_TRY_ERROR(mMetaDescriptorPool.bindCachedDescriptorPool(
-                                mContext, descriptorSetLayoutDesc, 1, &mDescSetLayoutCache,
-                                &mDescriptorPools[DescriptorSetIndex::ShaderResource]),
-                            CL_INVALID_OPERATION);
-
+    ANGLE_TRY(kernelImpl->init());
     *kernelOut = std::move(kernelImpl);
 
     return angle::Result::Continue;
@@ -779,10 +838,8 @@ bool CLProgramVk::buildInternal(const cl::DevicePtrs &devices,
         const cl::RefPointer<cl::Device> &device = devices.at(i);
         DeviceProgramData &deviceProgramData     = mAssociatedDevicePrograms[device->getNative()];
 
-        cl_uint addressBits;
-        ANGLE_CL_IMPL_TRY(
-            device->getInfo(cl::DeviceInfo::AddressBits, sizeof(cl_uint), &addressBits, nullptr));
-        processedOptions += addressBits == 64 ? " -arch=spir64" : " -arch=spir";
+        // add clspv compiler options based on device features
+        processedOptions += ClspvGetCompilerOptions(&device->getImpl<CLDeviceVk>());
 
         cl_uint addressBits;
         ANGLE_CL_IMPL_TRY(
@@ -902,7 +959,7 @@ bool CLProgramVk::buildInternal(const cl::DevicePtrs &devices,
             }
             // Strip SPIR-V binary if Vk implementation does not support non-semantic info
             angle::spirv::Blob spvBlob =
-                !mContext->getRenderer()->getFeatures().supportsShaderNonSemanticInfo.enabled
+                !mContext->getFeatures().supportsShaderNonSemanticInfo.enabled
                     ? stripReflection(&deviceProgramData)
                     : deviceProgramData.binary;
             ASSERT(!spvBlob.empty());
@@ -926,6 +983,20 @@ bool CLProgramVk::buildInternal(const cl::DevicePtrs &devices,
                 {
                     pushConstantMaxOffset = pushConstant.second.offset;
                     pushConstantMaxSize   = pushConstant.second.size;
+                }
+            }
+            for (const auto &pushConstant : deviceProgramData.reflectionData.imagePushConstants)
+            {
+                for (const auto imageConstant : pushConstant.second)
+                {
+                    pushConstantMinOffet = imageConstant.pcRange.offset < pushConstantMinOffet
+                                               ? imageConstant.pcRange.offset
+                                               : pushConstantMinOffet;
+                    if (imageConstant.pcRange.offset >= pushConstantMaxOffset)
+                    {
+                        pushConstantMaxOffset = imageConstant.pcRange.offset;
+                        pushConstantMaxSize   = imageConstant.pcRange.size;
+                    }
                 }
             }
             deviceProgramData.pushConstRange.stageFlags = VK_SHADER_STAGE_COMPUTE_BIT;
@@ -961,15 +1032,19 @@ angle::spirv::Blob CLProgramVk::stripReflection(const DeviceProgramData *deviceP
     return binaryStripped;
 }
 
-angle::Result CLProgramVk::allocateDescriptorSet(const vk::DescriptorSetLayout &descriptorSetLayout,
-                                                 VkDescriptorSet *descriptorSetOut)
+angle::Result CLProgramVk::allocateDescriptorSet(const DescriptorSetIndex setIndex,
+                                                 const vk::DescriptorSetLayout &descriptorSetLayout,
+                                                 vk::CommandBufferHelperCommon *commandBuffer,
+                                                 vk::DescriptorSetPointer *descriptorSetOut)
 {
-    if (mDescriptorPools[DescriptorSetIndex::ShaderResource].get().valid())
+    if (mDynamicDescriptorPools[setIndex])
     {
-        ANGLE_CL_IMPL_TRY_ERROR(
-            mDescriptorPools[DescriptorSetIndex::ShaderResource].get().allocateDescriptorSet(
-                mContext, descriptorSetLayout, &mPoolBinding, descriptorSetOut),
-            CL_INVALID_OPERATION);
+        ANGLE_CL_IMPL_TRY_ERROR(mDynamicDescriptorPools[setIndex]->allocateDescriptorSet(
+                                    mContext, descriptorSetLayout, descriptorSetOut),
+                                CL_INVALID_OPERATION);
+        mDescriptorPools[setIndex] = (*descriptorSetOut)->getPool();
+        commandBuffer->retainResource(mDescriptorPools[setIndex].get());
+        commandBuffer->retainResource(descriptorSetOut->get());
     }
     return angle::Result::Continue;
 }
@@ -984,6 +1059,17 @@ void CLProgramVk::setBuildStatus(const cl::DevicePtrs &devices, cl_build_status 
         DeviceProgramData &deviceProgram = mAssociatedDevicePrograms.at(device->getNative());
         deviceProgram.buildStatus        = status;
     }
+}
+
+const angle::HashMap<uint32_t, ClspvPrintfInfo> *CLProgramVk::getPrintfDescriptors(
+    const std::string &kernelName) const
+{
+    const DeviceProgramData *deviceProgram = getDeviceProgramData(kernelName.c_str());
+    if (deviceProgram)
+    {
+        return &deviceProgram->reflectionData.printfInfoMap;
+    }
+    return nullptr;
 }
 
 }  // namespace rx

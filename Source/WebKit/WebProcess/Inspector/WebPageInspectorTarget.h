@@ -29,6 +29,7 @@
 #include <WebCore/PageIdentifier.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/TZoneMalloc.h>
+#include <wtf/WeakRef.h>
 
 namespace WebKit {
 
@@ -53,7 +54,7 @@ public:
     static String toTargetID(WebCore::PageIdentifier);
 
 private:
-    WebPage& m_page;
+    WeakRef<WebPage> m_page;
     std::unique_ptr<WebPageInspectorTargetFrontendChannel> m_channel;
 };
 

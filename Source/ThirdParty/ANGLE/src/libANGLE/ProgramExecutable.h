@@ -148,6 +148,7 @@ struct ProgramOutput
     ProgramOutput(const sh::ShaderVariable &var);
     bool isBuiltIn() const { return pod.isBuiltIn; }
     bool isArray() const { return pod.isArray; }
+    int getLocation() const { return pod.location; }
     unsigned int getOutermostArraySize() const { return pod.outermostArraySize; }
     void resetEffectiveLocation()
     {
@@ -340,7 +341,9 @@ class ProgramExecutable final : public angle::Subject
     {
         return !getLinkedTransformFeedbackVaryings().empty();
     }
-    bool usesFramebufferFetch() const { return mPod.fragmentInoutIndices.any(); }
+    bool usesColorFramebufferFetch() const { return mPod.fragmentInoutIndices.any(); }
+    bool usesDepthFramebufferFetch() const { return mPod.hasDepthInputAttachment; }
+    bool usesStencilFramebufferFetch() const { return mPod.hasStencilInputAttachment; }
 
     // Count the number of uniform and storage buffer declarations, counting arrays as one.
     size_t getTransformFeedbackBufferCount() const { return mTransformFeedbackStrides.size(); }
@@ -366,6 +369,10 @@ class ProgramExecutable final : public angle::Subject
         return mSamplerBoundTextureUnits;
     }
     const std::vector<ImageBinding> &getImageBindings() const { return mImageBindings; }
+    const std::vector<ShPixelLocalStorageFormat> &getPixelLocalStorageFormats() const
+    {
+        return mPixelLocalStorageFormats;
+    }
     std::vector<ImageBinding> *getImageBindings() { return &mImageBindings; }
     const RangeUI &getDefaultUniformRange() const { return mPod.defaultUniformRange; }
     const RangeUI &getSamplerUniformRange() const { return mPod.samplerUniformRange; }
@@ -374,6 +381,8 @@ class ProgramExecutable final : public angle::Subject
     DrawBufferMask getFragmentInoutIndices() const { return mPod.fragmentInoutIndices; }
     bool hasClipDistance() const { return mPod.hasClipDistance; }
     bool hasDiscard() const { return mPod.hasDiscard; }
+    bool hasDepthInputAttachment() const { return mPod.hasDepthInputAttachment; }
+    bool hasStencilInputAttachment() const { return mPod.hasStencilInputAttachment; }
     bool enablesPerSampleShading() const { return mPod.enablesPerSampleShading; }
     BlendEquationBitSet getAdvancedBlendEquations() const { return mPod.advancedBlendEquations; }
     const std::vector<TransformFeedbackVarying> &getLinkedTransformFeedbackVaryings() const
@@ -865,10 +874,11 @@ class ProgramExecutable final : public angle::Subject
         uint8_t hasClipDistance : 1;
         uint8_t hasDiscard : 1;
         uint8_t hasYUVOutput : 1;
+        uint8_t hasDepthInputAttachment : 1;
+        uint8_t hasStencilInputAttachment : 1;
         uint8_t enablesPerSampleShading : 1;
         uint8_t canDrawWith : 1;
         uint8_t isSeparable : 1;
-        uint8_t pad : 2;
 
         // 12 bytes
         sh::WorkGroupSize computeShaderLocalSize;
@@ -976,6 +986,10 @@ class ProgramExecutable final : public angle::Subject
 
     // An array of the images that are used by the program
     std::vector<ImageBinding> mImageBindings;
+
+    // ANGLE_shader_pixel_local_storage: A mapping from binding index to the PLS uniform format at
+    // that index.
+    std::vector<ShPixelLocalStorageFormat> mPixelLocalStorageFormats;
 
     ShaderMap<std::vector<sh::ShaderVariable>> mLinkedOutputVaryings;
     ShaderMap<std::vector<sh::ShaderVariable>> mLinkedInputVaryings;

@@ -57,7 +57,7 @@ TEST(IndexedDB, StoreBlobThenRemoveData)
     RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     [[configuration userContentController] addScriptMessageHandler:handler.get() name:@"testHandler"];
     RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
-    RetainPtr request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"StoreBlobToBeDeleted" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+    RetainPtr request = [NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"StoreBlobToBeDeleted" withExtension:@"html"]];
     [webView loadRequest:request.get()];
 
     TestWebKitAPI::Util::run(&readyToContinue);
@@ -137,7 +137,7 @@ TEST(IndexedDB, StoreBlobThenDeleteDatabase)
     RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     [[configuration userContentController] addScriptMessageHandler:handler.get() name:@"testHandler"];
     RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
-    RetainPtr request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"StoreBlobToBeDeleted" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+    RetainPtr request = [NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"StoreBlobToBeDeleted" withExtension:@"html"]];
     [webView loadRequest:request.get()];
     TestWebKitAPI::Util::run(&readyToContinue);
     EXPECT_WK_STREQ(@"Success", (NSString *)[lastScriptMessage body]);

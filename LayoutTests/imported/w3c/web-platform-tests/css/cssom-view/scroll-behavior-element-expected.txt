@@ -1,4 +1,5 @@
 
+PASS Make sure the page is ready for animation.
 PASS Element with auto scroll-behavior ; scroll() with default behavior
 PASS Element with auto scroll-behavior ; scroll() with auto behavior
 PASS Element with auto scroll-behavior ; scroll() with instant behavior

@@ -189,6 +189,11 @@ void GStreamerCapturer::setupPipeline()
     }
 
     m_pipeline = makeElement("pipeline");
+    auto clock = adoptGRef(gst_system_clock_obtain());
+    gst_pipeline_use_clock(GST_PIPELINE(m_pipeline.get()), clock.get());
+    gst_element_set_base_time(m_pipeline.get(), 0);
+    gst_element_set_start_time(m_pipeline.get(), GST_CLOCK_TIME_NONE);
+
     registerActivePipeline(m_pipeline);
 
     GRefPtr<GstElement> source = createSource();
@@ -234,6 +239,26 @@ void GStreamerCapturer::stop()
 {
     GST_INFO_OBJECT(pipeline(), "Stopping");
     tearDown(false);
+}
+
+bool GStreamerCapturer::isStopped() const
+{
+    if (!m_pipeline)
+        return true;
+
+    return GST_STATE(m_pipeline.get()) == GST_STATE_NULL;
+}
+
+std::pair<GstClockTime, GstClockTime> GStreamerCapturer::queryLatency()
+{
+    if (!m_sink)
+        return { GST_CLOCK_TIME_NONE, GST_CLOCK_TIME_NONE };
+
+    GstClockTime minLatency, maxLatency;
+    if (gst_base_sink_query_latency(GST_BASE_SINK_CAST(m_sink.get()), nullptr, nullptr, &minLatency, &maxLatency))
+        return { minLatency, maxLatency };
+
+    return { GST_CLOCK_TIME_NONE, GST_CLOCK_TIME_NONE };
 }
 
 bool GStreamerCapturer::isInterrupted() const

@@ -104,12 +104,6 @@ void generateToAir(Procedure& procedure)
     // This puts the IR in quirks mode.
     lowerMacros(procedure);
 
-#if USE(JSVALUE32_64)
-    lowerInt64(procedure);
-    if (procedure.optLevel() >= 2)
-        reduceStrength(procedure);
-#endif
-
     if (procedure.optLevel() >= 2) {
         optimizeAssociativeExpressionTrees(procedure);
         reduceStrength(procedure);
@@ -117,6 +111,9 @@ void generateToAir(Procedure& procedure)
         // FIXME: Add more optimizations here.
         // https://bugs.webkit.org/show_bug.cgi?id=150507
     }
+#if USE(JSVALUE32_64)
+    lowerInt64(procedure);
+#endif
 
     lowerMacrosAfterOptimizations(procedure);
     legalizeMemoryOffsets(procedure);

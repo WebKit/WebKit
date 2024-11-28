@@ -33,6 +33,8 @@
 #include <wtf/CrossThreadCopier.h>
 #include <wtf/FlipBytes.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 namespace CryptoAlgorithmAESCTRInternal {
@@ -196,7 +198,7 @@ void CryptoAlgorithmAESCTR::exportKey(CryptoKeyFormat format, Ref<CryptoKey>&& k
     callback(format, WTFMove(result));
 }
 
-ExceptionOr<size_t> CryptoAlgorithmAESCTR::getKeyLength(const CryptoAlgorithmParameters& parameters)
+ExceptionOr<std::optional<size_t>> CryptoAlgorithmAESCTR::getKeyLength(const CryptoAlgorithmParameters& parameters)
 {
     return CryptoKeyAES::getKeyLength(parameters);
 }
@@ -314,3 +316,5 @@ auto CryptoAlgorithmAESCTR::CounterBlockHelper::CounterBlockBits::operator &=(co
 }
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

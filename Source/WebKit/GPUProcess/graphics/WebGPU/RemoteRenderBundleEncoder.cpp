@@ -35,6 +35,7 @@
 #include "StreamServerConnection.h"
 #include "WebGPUObjectHeap.h"
 #include <WebCore/WebGPUBindGroup.h>
+#include <WebCore/WebGPUBuffer.h>
 #include <WebCore/WebGPURenderBundle.h>
 #include <WebCore/WebGPURenderBundleEncoder.h>
 #include <WebCore/WebGPURenderPipeline.h>
@@ -54,7 +55,7 @@ RemoteRenderBundleEncoder::RemoteRenderBundleEncoder(GPUConnectionToWebProcess& 
     , m_gpuConnectionToWebProcess(gpuConnectionToWebProcess)
     , m_gpu(gpu)
 {
-    m_streamConnection->startReceivingMessages(*this, Messages::RemoteRenderBundleEncoder::messageReceiverName(), m_identifier.toUInt64());
+    protectedStreamConnection()->startReceivingMessages(*this, Messages::RemoteRenderBundleEncoder::messageReceiverName(), m_identifier.toUInt64());
 }
 
 RemoteRenderBundleEncoder::~RemoteRenderBundleEncoder() = default;
@@ -69,53 +70,53 @@ RefPtr<IPC::Connection> RemoteRenderBundleEncoder::connection() const
 
 void RemoteRenderBundleEncoder::destruct()
 {
-    m_objectHeap->removeObject(m_identifier);
+    protectedObjectHeap()->removeObject(m_identifier);
 }
 
 void RemoteRenderBundleEncoder::stopListeningForIPC()
 {
-    m_streamConnection->stopReceivingMessages(Messages::RemoteRenderBundleEncoder::messageReceiverName(), m_identifier.toUInt64());
+    protectedStreamConnection()->stopReceivingMessages(Messages::RemoteRenderBundleEncoder::messageReceiverName(), m_identifier.toUInt64());
 }
 
 void RemoteRenderBundleEncoder::setPipeline(WebGPUIdentifier renderPipeline)
 {
-    auto convertedRenderPipeline = m_objectHeap->convertRenderPipelineFromBacking(renderPipeline);
+    auto convertedRenderPipeline = protectedObjectHeap()->convertRenderPipelineFromBacking(renderPipeline);
     ASSERT(convertedRenderPipeline);
     if (!convertedRenderPipeline)
         return;
 
-    m_backing->setPipeline(*convertedRenderPipeline);
+    protectedBacking()->setPipeline(*convertedRenderPipeline);
 }
 
 void RemoteRenderBundleEncoder::setIndexBuffer(WebGPUIdentifier buffer, WebCore::WebGPU::IndexFormat indexFormat, std::optional<WebCore::WebGPU::Size64> offset, std::optional<WebCore::WebGPU::Size64> size)
 {
-    auto convertedBuffer = m_objectHeap->convertBufferFromBacking(buffer);
+    RefPtr convertedBuffer = protectedObjectHeap()->convertBufferFromBacking(buffer).get();
     ASSERT(convertedBuffer);
     if (!convertedBuffer)
         return;
 
-    m_backing->setIndexBuffer(*convertedBuffer, indexFormat, offset, size);
+    protectedBacking()->setIndexBuffer(*convertedBuffer, indexFormat, offset, size);
 }
 
 void RemoteRenderBundleEncoder::setVertexBuffer(WebCore::WebGPU::Index32 slot, WebGPUIdentifier buffer, std::optional<WebCore::WebGPU::Size64> offset, std::optional<WebCore::WebGPU::Size64> size)
 {
-    auto convertedBuffer = m_objectHeap->convertBufferFromBacking(buffer);
+    RefPtr convertedBuffer = protectedObjectHeap()->convertBufferFromBacking(buffer).get();
     ASSERT(convertedBuffer);
     if (!convertedBuffer)
         return;
 
-    m_backing->setVertexBuffer(slot, convertedBuffer.get(), offset, size);
+    protectedBacking()->setVertexBuffer(slot, convertedBuffer.get(), offset, size);
 }
 
 void RemoteRenderBundleEncoder::unsetVertexBuffer(WebCore::WebGPU::Index32 slot, std::optional<WebCore::WebGPU::Size64> offset, std::optional<WebCore::WebGPU::Size64> size)
 {
-    m_backing->setVertexBuffer(slot, nullptr, offset, size);
+    protectedBacking()->setVertexBuffer(slot, nullptr, offset, size);
 }
 
 void RemoteRenderBundleEncoder::draw(WebCore::WebGPU::Size32 vertexCount, std::optional<WebCore::WebGPU::Size32> instanceCount,
     std::optional<WebCore::WebGPU::Size32> firstVertex, std::optional<WebCore::WebGPU::Size32> firstInstance)
 {
-    m_backing->draw(vertexCount, instanceCount, firstVertex, firstInstance);
+    protectedBacking()->draw(vertexCount, instanceCount, firstVertex, firstInstance);
 }
 
 void RemoteRenderBundleEncoder::drawIndexed(WebCore::WebGPU::Size32 indexCount, std::optional<WebCore::WebGPU::Size32> instanceCount,
@@ -123,69 +124,85 @@ void RemoteRenderBundleEncoder::drawIndexed(WebCore::WebGPU::Size32 indexCount, 
     std::optional<WebCore::WebGPU::SignedOffset32> baseVertex,
     std::optional<WebCore::WebGPU::Size32> firstInstance)
 {
-    m_backing->drawIndexed(indexCount, instanceCount, firstIndex, baseVertex, firstInstance);
+    protectedBacking()->drawIndexed(indexCount, instanceCount, firstIndex, baseVertex, firstInstance);
 }
 
 void RemoteRenderBundleEncoder::drawIndirect(WebGPUIdentifier indirectBuffer, WebCore::WebGPU::Size64 indirectOffset)
 {
-    auto convertedIndirectBuffer = m_objectHeap->convertBufferFromBacking(indirectBuffer);
+    RefPtr convertedIndirectBuffer = protectedObjectHeap()->convertBufferFromBacking(indirectBuffer).get();
     ASSERT(convertedIndirectBuffer);
     if (!convertedIndirectBuffer)
         return;
 
-    m_backing->drawIndirect(*convertedIndirectBuffer, indirectOffset);
+    protectedBacking()->drawIndirect(*convertedIndirectBuffer, indirectOffset);
 }
 
 void RemoteRenderBundleEncoder::drawIndexedIndirect(WebGPUIdentifier indirectBuffer, WebCore::WebGPU::Size64 indirectOffset)
 {
-    auto convertedIndirectBuffer = m_objectHeap->convertBufferFromBacking(indirectBuffer);
+    RefPtr convertedIndirectBuffer = protectedObjectHeap()->convertBufferFromBacking(indirectBuffer).get();
     ASSERT(convertedIndirectBuffer);
     if (!convertedIndirectBuffer)
         return;
 
-    m_backing->drawIndexedIndirect(*convertedIndirectBuffer, indirectOffset);
+    protectedBacking()->drawIndexedIndirect(*convertedIndirectBuffer, indirectOffset);
 }
 
 void RemoteRenderBundleEncoder::setBindGroup(WebCore::WebGPU::Index32 index, WebGPUIdentifier bindGroup,
     std::optional<Vector<WebCore::WebGPU::BufferDynamicOffset>>&& dynamicOffsets)
 {
-    auto convertedBindGroup = m_objectHeap->convertBindGroupFromBacking(bindGroup);
+    auto convertedBindGroup = protectedObjectHeap()->convertBindGroupFromBacking(bindGroup);
     ASSERT(convertedBindGroup);
     if (!convertedBindGroup)
         return;
 
-    m_backing->setBindGroup(index, *convertedBindGroup, WTFMove(dynamicOffsets));
+    protectedBacking()->setBindGroup(index, *convertedBindGroup, WTFMove(dynamicOffsets));
 }
 
 void RemoteRenderBundleEncoder::pushDebugGroup(String&& groupLabel)
 {
-    m_backing->pushDebugGroup(WTFMove(groupLabel));
+    protectedBacking()->pushDebugGroup(WTFMove(groupLabel));
 }
 
 void RemoteRenderBundleEncoder::popDebugGroup()
 {
-    m_backing->popDebugGroup();
+    protectedBacking()->popDebugGroup();
 }
 
 void RemoteRenderBundleEncoder::insertDebugMarker(String&& markerLabel)
 {
-    m_backing->insertDebugMarker(WTFMove(markerLabel));
+    protectedBacking()->insertDebugMarker(WTFMove(markerLabel));
 }
 
 void RemoteRenderBundleEncoder::finish(const WebGPU::RenderBundleDescriptor& descriptor, WebGPUIdentifier identifier)
 {
-    auto convertedDescriptor = m_objectHeap->convertFromBacking(descriptor);
+    Ref objectHeap = m_objectHeap.get();
+    auto convertedDescriptor = objectHeap->convertFromBacking(descriptor);
     MESSAGE_CHECK(convertedDescriptor);
 
-    auto renderBundle = m_backing->finish(*convertedDescriptor);
+    auto renderBundle = protectedBacking()->finish(*convertedDescriptor);
     MESSAGE_CHECK(renderBundle);
-    auto remoteRenderBundle = RemoteRenderBundle::create(*renderBundle, m_objectHeap, m_streamConnection.copyRef(), m_gpu, identifier);
-    m_objectHeap->addObject(identifier, remoteRenderBundle);
+    auto remoteRenderBundle = RemoteRenderBundle::create(*renderBundle, objectHeap, m_streamConnection.copyRef(), protectedGPU(), identifier);
+    objectHeap->addObject(identifier, remoteRenderBundle);
 }
 
 void RemoteRenderBundleEncoder::setLabel(String&& label)
 {
-    m_backing->setLabel(WTFMove(label));
+    protectedBacking()->setLabel(WTFMove(label));
+}
+
+Ref<WebCore::WebGPU::RenderBundleEncoder> RemoteRenderBundleEncoder::protectedBacking() const
+{
+    return m_backing;
+}
+
+Ref<IPC::StreamServerConnection> RemoteRenderBundleEncoder::protectedStreamConnection() const
+{
+    return m_streamConnection;
+}
+
+Ref<WebGPU::ObjectHeap> RemoteRenderBundleEncoder::protectedObjectHeap() const
+{
+    return m_objectHeap.get();
 }
 
 } // namespace WebKit

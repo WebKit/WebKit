@@ -26,7 +26,7 @@
 #import "config.h"
 #import "PDFPluginPasswordForm.h"
 
-#if PLATFORM(MAC)
+#if ENABLE(PDF_PLUGIN)
 
 #import <WebCore/ElementInlines.h>
 #import <WebCore/HTMLElement.h>
@@ -88,4 +88,4 @@ void PDFPluginPasswordForm::updateGeometry()
 
 } // namespace WebKit
 
-#endif // PLATFORM(MAC)
+#endif // ENABLE(PDF_PLUGIN)

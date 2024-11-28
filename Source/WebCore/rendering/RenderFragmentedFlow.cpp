@@ -72,7 +72,7 @@ void RenderFragmentedFlow::styleDidChange(StyleDifference diff, const RenderStyl
 {
     RenderBlockFlow::styleDidChange(diff, oldStyle);
 
-    if (oldStyle && oldStyle->writingMode() != style().writingMode())
+    if (oldStyle && oldStyle->writingMode().computedWritingMode() != writingMode().computedWritingMode())
         invalidateFragments();
 }
 
@@ -171,7 +171,8 @@ void RenderFragmentedFlow::updateLogicalWidth()
     // If the fragments have non-uniform logical widths, then insert inset information for the RenderFragmentedFlow.
     for (auto& fragment : m_fragmentList) {
         LayoutUnit fragmentLogicalWidth = fragment.pageLogicalWidth();
-        LayoutUnit logicalLeft = style().direction() == TextDirection::LTR ? 0_lu : logicalWidth - fragmentLogicalWidth;
+        LayoutUnit logicalLeft = writingMode().isLogicalLeftInlineStart() ? 0_lu
+            : logicalWidth - fragmentLogicalWidth;
         fragment.setRenderBoxFragmentInfo(*this, logicalLeft, fragmentLogicalWidth, false);
     }
 }
@@ -759,7 +760,8 @@ void RenderFragmentedFlow::updateFragmentsFragmentedFlowPortionRect()
         LayoutUnit fragmentLogicalWidth = fragment.pageLogicalWidth();
         LayoutUnit fragmentLogicalHeight = std::min<LayoutUnit>(RenderFragmentedFlow::maxLogicalHeight() - logicalHeight, fragment.logicalHeightOfAllFragmentedFlowContent());
 
-        LayoutRect fragmentRect(style().direction() == TextDirection::LTR ? 0_lu : logicalWidth() - fragmentLogicalWidth, logicalHeight, fragmentLogicalWidth, fragmentLogicalHeight);
+        LayoutRect fragmentRect(writingMode().isLogicalLeftInlineStart() ? 0_lu
+            : logicalWidth() - fragmentLogicalWidth, logicalHeight, fragmentLogicalWidth, fragmentLogicalHeight);
 
         fragment.setFragmentedFlowPortionRect(isHorizontalWritingMode() ? fragmentRect : fragmentRect.transposedRect());
 
@@ -836,10 +838,10 @@ LayoutUnit RenderFragmentedFlow::offsetFromLogicalTopOfFirstFragment(const Rende
                 currentBlockLocation.moveBy(section->location());
         }
 
-        if (containerBlock->style().writingMode() != currentBlock->style().writingMode()) {
+        if (containerBlock->writingMode().blockDirection() != currentBlock->writingMode().blockDirection()) {
             // We have to put the block rect in container coordinates
             // and we have to take into account both the container and current block flipping modes
-            if (containerBlock->style().isFlippedBlocksWritingMode()) {
+            if (containerBlock->writingMode().isBlockFlipped()) {
                 if (containerBlock->isHorizontalWritingMode())
                     blockRect.setY(currentBlock->height() - blockRect.maxY());
                 else
@@ -893,7 +895,7 @@ LayoutRect RenderFragmentedFlow::mapFromLocalToFragmentedFlow(const RenderBox* b
             return LayoutRect();
         LayoutPoint currentBoxLocation = box->location();
 
-        if (containerBlock->style().writingMode() != box->style().writingMode())
+        if (containerBlock->writingMode().blockDirection() != box->writingMode().blockDirection())
             box->flipForWritingMode(boxRect);
 
         boxRect.moveBy(currentBoxLocation);
@@ -919,7 +921,7 @@ LayoutRect RenderFragmentedFlow::mapFromFragmentedFlowToLocal(const RenderBox* b
     LayoutPoint currentBoxLocation = box->location();
     localRect.moveBy(-currentBoxLocation);
 
-    if (containerBlock->style().writingMode() != box->style().writingMode())
+    if (containerBlock->writingMode().blockDirection() != box->writingMode().blockDirection())
         box->flipForWritingMode(localRect);
 
     return localRect;
@@ -927,7 +929,7 @@ LayoutRect RenderFragmentedFlow::mapFromFragmentedFlowToLocal(const RenderBox* b
 
 void RenderFragmentedFlow::flipForWritingModeLocalCoordinates(LayoutRect& rect) const
 {
-    if (!style().isFlippedBlocksWritingMode())
+    if (!writingMode().isBlockFlipped())
         return;
     
     if (isHorizontalWritingMode())

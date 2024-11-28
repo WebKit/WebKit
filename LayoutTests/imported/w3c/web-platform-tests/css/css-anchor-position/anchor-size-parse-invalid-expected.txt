@@ -1,12 +1,12 @@
 
-PASS e.style['margin-top'] = "anchor-size(--foo width)" should not set the property value
-PASS e.style['top'] = "anchor-size(--foo width)" should not set the property value
 PASS e.style['font-size'] = "anchor-size(--foo width)" should not set the property value
 PASS e.style['width'] = "anchor-size(--foo, width)" should not set the property value
 PASS e.style['width'] = "anchor-size(--foo width,)" should not set the property value
 PASS e.style['width'] = "anchor-size(--foo width height)" should not set the property value
 PASS e.style['width'] = "anchor-size(--foo width, 10px 20%)" should not set the property value
 PASS e.style['width'] = "anchor-size(--foo width, 10px, 20%)" should not set the property value
+PASS e.style['width'] = "anchor-size(--foo,)" should not set the property value
+PASS e.style['width'] = "anchor-size(, 10px)" should not set the property value
 PASS e.style['width'] = "anchor-size(foo width)" should not set the property value
 PASS e.style['width'] = "anchor-size(--foo top)" should not set the property value
 PASS e.style['width'] = "anchor-size(--foo 10em)" should not set the property value

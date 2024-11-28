@@ -1,0 +1,5 @@
+Test passes if border widths are rounded up when they are greater than 0 and less than 1, and rounded down when they are greater than 1.
+
+
+PASS Test that border widths are rounded up when they are greater than 0px but less than 1px, and rounded down when they are greater than 1px.
+

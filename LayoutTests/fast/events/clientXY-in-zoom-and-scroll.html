@@ -20,12 +20,12 @@
 
     var event;
 
-    function sendClick()
+    async function sendClick()
     {
         if (window.eventSender) {
-            eventSender.mouseMoveTo(100, 100);
-            eventSender.mouseDown();
-            eventSender.mouseUp();
+            await eventSender.asyncMouseMoveTo(100, 100);
+            await eventSender.asyncMouseDown();
+            await eventSender.asyncMouseUp();
         }
     }
 
@@ -63,9 +63,6 @@
         shouldBe("event.pageX", "100");
         shouldBe("event.pageY", "100");
     }
-    window.addEventListener("click", base, false);
-    sendClick();
-    window.removeEventListener("click", base, false);
     
     // Just zoomed.
     function justZoomed(e)
@@ -77,11 +74,6 @@
         shouldBe("event.pageX", "83");
         shouldBe("event.pageY", "83");
     }
-    window.addEventListener("click", justZoomed, false);
-    zoomPageIn();
-    sendClick();
-    zoomPageOut();
-    window.removeEventListener("click", justZoomed, false);
 
     // Just scrolled.
     function justScrolled(e)
@@ -93,11 +85,6 @@
         shouldBe("event.pageX", "150");
         shouldBe("event.pageY", "150");
     }
-    window.addEventListener("click", justScrolled, false);
-    scrollPage(50, 50);
-    sendClick();
-    scrollPage(0, 0);
-    window.removeEventListener("click", justScrolled, false);
 
     // Zoomed and scrolled.
     function zoomedAndScrolled(e)
@@ -109,15 +96,38 @@
         shouldBe("event.pageX", "133");
         shouldBe("event.pageY", "133");
     }
-    window.addEventListener("click", zoomedAndScrolled, false);
-    zoomPageIn();
-    scrollPage(50, 50);
-    sendClick();
-    zoomPageOut();
-    scrollPage(0, 0);
-    window.removeEventListener("click", zoomedAndScrolled, false);
 
-    if (window.testRunner) {
+    onload = async () => {
+        if (!window.testRunner)
+            return;
+
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+
+        window.addEventListener("click", base, false);
+        await sendClick();
+        window.removeEventListener("click", base, false);
+
+        window.addEventListener("click", justZoomed, false);
+        zoomPageIn();
+        await sendClick();
+        zoomPageOut();
+        window.removeEventListener("click", justZoomed, false);
+
+        window.addEventListener("click", justScrolled, false);
+        scrollPage(50, 50);
+        await sendClick();
+        scrollPage(0, 0);
+        window.removeEventListener("click", justScrolled, false);
+
+        window.addEventListener("click", zoomedAndScrolled, false);
+        zoomPageIn();
+        scrollPage(50, 50);
+        await sendClick();
+        zoomPageOut();
+        scrollPage(0, 0);
+        window.removeEventListener("click", zoomedAndScrolled, false);
+
         var area = document.getElementById('testArea');
         area.parentNode.removeChild(area);
 

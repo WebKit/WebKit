@@ -1,6 +1,6 @@
 
-FAIL width attribute + width property assert_approx_equals: mspace width overridden by inline style expected 200 +/- 1 but got 500
-FAIL height/depth attributes + height property assert_approx_equals: mspace height overridden by inline style expected 200 +/- 1 but got 300
-FAIL height attribute + height property assert_approx_equals: mspace height overridden by inline style expected 200 +/- 1 but got 300
-FAIL depth attribute + height property assert_approx_equals: mspace height overridden by inline style expected 200 +/- 1 but got 300
+PASS width attribute + width property
+PASS height/depth attributes + height property
+PASS height attribute + height property
+PASS depth attribute + height property
 

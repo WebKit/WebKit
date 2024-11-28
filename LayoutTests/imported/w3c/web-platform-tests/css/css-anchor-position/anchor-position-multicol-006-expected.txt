@@ -1,14 +1,10 @@
 
 FAIL .target 1 assert_equals:
 <div class="target target1" data-expected-height="50"></div>
-height expected 50 but got 0
-FAIL .target 2 assert_equals:
-<div class="target target2" data-expected-height="30"></div>
-height expected 30 but got 0
+height expected 50 but got 30
+PASS .target 2
 FAIL .target 3 assert_equals:
 <div class="target target1" data-expected-height="50"></div>
-height expected 50 but got 0
-FAIL .target 4 assert_equals:
-<div class="target target2" data-expected-height="30"></div>
-height expected 30 but got 0
+height expected 50 but got 30
+PASS .target 4
 

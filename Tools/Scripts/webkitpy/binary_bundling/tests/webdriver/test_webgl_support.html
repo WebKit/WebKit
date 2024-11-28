@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebGL Support Info</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        h1 {
+            color: #333;
+        }
+        .info {
+            margin-bottom: 20px;
+        }
+        ul {
+            list-style-type: disc;
+            margin-left: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>WebGL Support Information</h1>
+
+    <div class="info">
+        <h2>WebGL 1.0 Support</h2>
+        <p id="webgl-status">Checking...</p>
+        <h3>Supported Extensions (WebGL 1.0)</h3>
+        <ul id="webgl-extensions"></ul>
+    </div>
+
+    <div class="info">
+        <h2>WebGL 2.0 Support</h2>
+        <p id="webgl2-status">Checking...</p>
+        <h3>Supported Extensions (WebGL 2.0)</h3>
+        <ul id="webgl2-extensions"></ul>
+    </div>
+
+    <script>
+        // Function to check WebGL support and extensions
+        function checkWebGLSupport() {
+            const webglStatus = document.getElementById('webgl-status');
+            const webgl2Status = document.getElementById('webgl2-status');
+            const webglExtensionsList = document.getElementById('webgl-extensions');
+            const webgl2ExtensionsList = document.getElementById('webgl2-extensions');
+
+            // Check WebGL 1.0 support
+            const canvas = document.createElement('canvas');
+            const gl = canvas.getContext('webgl');
+            if (gl) {
+                webglStatus.textContent = 'WebGL 1.0 is supported.';
+                const extensions = gl.getSupportedExtensions();
+                if (extensions) {
+                    extensions.forEach(ext => {
+                        const li = document.createElement('li');
+                        li.textContent = ext;
+                        webglExtensionsList.appendChild(li);
+                    });
+                }
+            } else {
+                webglStatus.textContent = 'WebGL 1.0 is not supported.';
+            }
+
+            // Check WebGL 2.0 support
+            const canvas2 = document.createElement('canvas');
+            const gl2 = canvas2.getContext('webgl2');
+            if (gl2) {
+                webgl2Status.textContent = 'WebGL 2.0 is supported.';
+                const extensions2 = gl2.getSupportedExtensions();
+                if (extensions2) {
+                    extensions2.forEach(ext => {
+                        const li = document.createElement('li');
+                        li.textContent = ext;
+                        webgl2ExtensionsList.appendChild(li);
+                    });
+                }
+            } else {
+                webgl2Status.textContent = 'WebGL 2.0 is not supported.';
+            }
+        }
+
+        // Run the check on page load
+        window.onload = checkWebGLSupport;
+    </script>
+</body>
+</html>

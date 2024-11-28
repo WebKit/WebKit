@@ -50,6 +50,7 @@ public:
 private:
     bool canHaveChildren() const override { return false; }
     void computePreferredLogicalWidths() override;
+    void computeIntrinsicLogicalWidths(LayoutUnit&, LayoutUnit&) const override { ASSERT_NOT_REACHED(); }
 };
 
 } // namespace WebCore

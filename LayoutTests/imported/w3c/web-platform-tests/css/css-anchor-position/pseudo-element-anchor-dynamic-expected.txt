@@ -1,4 +1,4 @@
 
-FAIL ::before as anchor dynamically generated assert_equals: expected 100 but got 0
-FAIL ::after as anchor dynamically generated assert_equals: expected 100 but got 0
+PASS ::before as anchor dynamically generated
+PASS ::after as anchor dynamically generated
 

@@ -74,6 +74,7 @@ class ProtectionSpace;
 class ResourceRequest;
 class SecurityOrigin;
 class SecurityOriginData;
+class Site;
 enum class ShouldSample : bool;
 enum class StorageAccessPromptWasShown : bool;
 enum class StorageAccessWasGranted : uint8_t;
@@ -88,9 +89,9 @@ namespace WebKit {
 
 class DownloadProxy;
 class DownloadProxyMap;
+class ListDataObserver;
 class WebPageProxy;
 class WebUserContentControllerProxy;
-class StorageAccessPromptQuirkObserver;
 
 enum class BackgroundFetchChange : uint8_t;
 enum class LoadedWebArchive : bool;
@@ -229,7 +230,8 @@ public:
     void flushCookies(PAL::SessionID, CompletionHandler<void()>&&);
 
     void testProcessIncomingSyncMessagesWhenWaitingForSyncReply(WebPageProxyIdentifier, CompletionHandler<void(bool)>&&);
-    void terminateUnresponsiveServiceWorkerProcesses(WebCore::ProcessIdentifier);
+    void processHasUnresponseServiceWorker(WebCore::ProcessIdentifier);
+    void terminateIdleServiceWorkers(WebCore::ProcessIdentifier, CompletionHandler<void()>&&);
 
     void requestTermination();
 
@@ -359,13 +361,12 @@ private:
     bool didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&) override;
     void didClose(IPC::Connection&) override;
     void didReceiveInvalidMessage(IPC::Connection&, IPC::MessageName, int32_t indexOfObjectFailingDecoding) override;
-    bool didReceiveSyncNetworkProcessProxyMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&);
+    // Note: uses dispatchMessage, dispatchSyncMessage from superclass.
 
     // ResponsivenessTimer::Client
     void didBecomeUnresponsive() final;
 
     // Message handlers
-    void didReceiveNetworkProcessProxyMessage(IPC::Connection&, IPC::Decoder&);
     void didReceiveAuthenticationChallenge(PAL::SessionID, WebPageProxyIdentifier, const std::optional<WebCore::SecurityOriginData>&, WebCore::AuthenticationChallenge&&, bool, AuthenticationChallengeIdentifier);
     void negotiatedLegacyTLS(WebPageProxyIdentifier);
     void didNegotiateModernTLS(WebPageProxyIdentifier, const URL&);
@@ -389,14 +390,14 @@ private:
     void requestBackgroundFetchPermission(PAL::SessionID, const WebCore::ClientOrigin&, CompletionHandler<void(bool)>&&);
     void notifyBackgroundFetchChange(PAL::SessionID, const String&, BackgroundFetchChange);
     void remoteWorkerContextConnectionNoLongerNeeded(RemoteWorkerType, WebCore::ProcessIdentifier);
-    void establishRemoteWorkerContextConnectionToNetworkProcess(RemoteWorkerType, WebCore::RegistrableDomain&&, std::optional<WebCore::ProcessIdentifier> requestingProcessIdentifier, std::optional<WebCore::ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, PAL::SessionID, CompletionHandler<void(WebCore::ProcessIdentifier)>&&);
+    void establishRemoteWorkerContextConnectionToNetworkProcess(RemoteWorkerType, WebCore::Site&&, std::optional<WebCore::ProcessIdentifier> requestingProcessIdentifier, std::optional<WebCore::ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, PAL::SessionID, CompletionHandler<void(std::optional<WebCore::ProcessIdentifier>)>&&);
     void registerRemoteWorkerClientProcess(RemoteWorkerType, WebCore::ProcessIdentifier clientProcessIdentifier, WebCore::ProcessIdentifier remoteWorkerProcessIdentifier);
     void unregisterRemoteWorkerClientProcess(RemoteWorkerType, WebCore::ProcessIdentifier clientProcessIdentifier, WebCore::ProcessIdentifier remoteWorkerProcessIdentifier);
     void reportConsoleMessage(PAL::SessionID, const URL&, const WebCore::SecurityOriginData&, MessageSource, MessageLevel, const String& message, unsigned long requestIdentifier);
 
     void terminateWebProcess(WebCore::ProcessIdentifier);
 
-    void triggerBrowsingContextGroupSwitchForNavigation(WebPageProxyIdentifier, WebCore::NavigationIdentifier, WebCore::BrowsingContextGroupSwitchDecision, const WebCore::RegistrableDomain& responseDomain, NetworkResourceLoadIdentifier existingNetworkResourceLoadIdentifierToResume, CompletionHandler<void(bool success)>&&);
+    void triggerBrowsingContextGroupSwitchForNavigation(WebPageProxyIdentifier, WebCore::NavigationIdentifier, WebCore::BrowsingContextGroupSwitchDecision, const WebCore::Site& responseSite, NetworkResourceLoadIdentifier existingNetworkResourceLoadIdentifierToResume, CompletionHandler<void(bool success)>&&);
 
     void requestStorageSpace(PAL::SessionID, const WebCore::ClientOrigin&, uint64_t quota, uint64_t currentSize, uint64_t spaceRequired, CompletionHandler<void(std::optional<uint64_t> quota)>&&);
     void increaseQuota(PAL::SessionID, const WebCore::ClientOrigin&, QuotaIncreaseRequestIdentifier, uint64_t currentQuota, uint64_t currentUsage, uint64_t spaceRequested);
@@ -429,14 +430,14 @@ private:
     LegacyCustomProtocolManagerProxy m_customProtocolManagerProxy;
 #endif
 
-    ProcessThrottler::ActivityVariant m_activityFromWebProcesses;
+    RefPtr<ProcessThrottler::Activity> m_activityFromWebProcesses;
 
 #if ENABLE(CONTENT_EXTENSIONS)
     WeakHashSet<WebUserContentControllerProxy> m_webUserContentControllerProxies;
 #endif
 
 #if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
-    RefPtr<StorageAccessPromptQuirkObserver> m_storageAccessPromptQuirksDataUpdateObserver;
+    RefPtr<ListDataObserver> m_storageAccessPromptQuirksDataUpdateObserver;
 #endif
 
     struct UploadActivity {
@@ -468,7 +469,7 @@ private:
     // because the network process is not allowed to talk to talk to runningboardd due
     // to sandboxing. See rdar://112406083 & rdar://112086186 for potential long-term
     // fixes.
-    UniqueRef<ProcessThrottlerActivity> m_backgroundActivityToPreventSuspension;
+    Ref<ProcessThrottlerActivity> m_backgroundActivityToPreventSuspension;
 #endif
 
 #if PLATFORM(IOS_FAMILY)

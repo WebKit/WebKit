@@ -28,6 +28,8 @@
 
 #include <wtf/NeverDestroyed.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 String convertEnumerationToString(PlatformMediaError enumerationValue)
@@ -61,5 +63,7 @@ String convertEnumerationToString(PlatformMediaError enumerationValue)
     ASSERT(static_cast<size_t>(enumerationValue) < std::size(values));
     return values[static_cast<size_t>(enumerationValue)];
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 } // namespace WebCore

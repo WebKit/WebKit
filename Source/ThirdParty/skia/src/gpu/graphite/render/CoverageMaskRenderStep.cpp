@@ -6,12 +6,34 @@
  */
 #include "src/gpu/graphite/render/CoverageMaskRenderStep.h"
 
+#include "include/core/SkM44.h"
+#include "include/core/SkMatrix.h"
+#include "include/core/SkRefCnt.h"
+#include "include/core/SkSamplingOptions.h"
+#include "include/core/SkScalar.h"
+#include "include/core/SkSize.h"
+#include "include/core/SkTileMode.h"
+#include "include/private/base/SkAssert.h"
+#include "include/private/base/SkDebug.h"
+#include "src/base/SkEnumBitMask.h"
+#include "src/core/SkSLTypeShared.h"
+#include "src/gpu/BufferWriter.h"
+#include "src/gpu/graphite/Attribute.h"
 #include "src/gpu/graphite/ContextUtils.h"
+#include "src/gpu/graphite/DrawOrder.h"
 #include "src/gpu/graphite/DrawParams.h"
+#include "src/gpu/graphite/DrawTypes.h"
 #include "src/gpu/graphite/DrawWriter.h"
-#include "src/gpu/graphite/PathAtlas.h"
+#include "src/gpu/graphite/PipelineData.h"
+#include "src/gpu/graphite/TextureProxy.h"
 #include "src/gpu/graphite/geom/CoverageMaskShape.h"
+#include "src/gpu/graphite/geom/Geometry.h"
+#include "src/gpu/graphite/geom/Rect.h"
+#include "src/gpu/graphite/geom/Transform_graphite.h"
 #include "src/gpu/graphite/render/CommonDepthStencilSettings.h"
+
+#include <cstdint>
+#include <string_view>
 
 namespace skgpu::graphite {
 
@@ -57,7 +79,7 @@ CoverageMaskRenderStep::CoverageMaskRenderStep()
                       // Remaining translation extracted from actual 'maskToDevice' transform.
                       {"deviceOrigin", VertexAttribType::kFloat2, SkSLType::kFloat2},
                       {"depth"     , VertexAttribType::kFloat, SkSLType::kFloat},
-                      {"ssboIndices", VertexAttribType::kUShort2, SkSLType::kUShort2},
+                      {"ssboIndices", VertexAttribType::kUInt2, SkSLType::kUInt2},
                       // deviceToLocal matrix for producing local coords for shader evaluation
                       {"mat0", VertexAttribType::kFloat3, SkSLType::kFloat3},
                       {"mat1", VertexAttribType::kFloat3, SkSLType::kFloat3},
@@ -97,7 +119,7 @@ const char* CoverageMaskRenderStep::fragmentCoverageSkSL() const {
 
 void CoverageMaskRenderStep::writeVertices(DrawWriter* dw,
                                            const DrawParams& params,
-                                           skvx::ushort2 ssboIndices) const {
+                                           skvx::uint2 ssboIndices) const {
     const CoverageMaskShape& coverageMask = params.geometry().coverageMaskShape();
     const TextureProxy* proxy = coverageMask.textureProxy();
     SkASSERT(proxy);
@@ -211,9 +233,8 @@ void CoverageMaskRenderStep::writeUniformsAndTextures(const DrawParams& params,
             params.transform().type() <= Transform::Type::kSimpleRectStaysRect &&
             params.transform().maxScaleFactor() == 1.f &&
             all(deviceOrigin == floor(deviceOrigin + SK_ScalarNearlyZero));
-    constexpr SkTileMode kTileModes[2] = {SkTileMode::kClamp, SkTileMode::kClamp};
-    gatherer->add(sk_ref_sp(proxy),
-                  {pixelAligned ? SkFilterMode::kNearest : SkFilterMode::kLinear, kTileModes});
+    gatherer->add(sk_ref_sp(proxy), {pixelAligned ? SkFilterMode::kNearest : SkFilterMode::kLinear,
+                                     SkTileMode::kClamp});
 }
 
 }  // namespace skgpu::graphite

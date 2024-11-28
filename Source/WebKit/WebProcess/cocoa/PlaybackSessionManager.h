@@ -77,10 +77,10 @@ private:
     friend class VideoPresentationInterfaceContext;
 
     // CheckedPtr interface
-    uint32_t ptrCount() const final { return CanMakeCheckedPtr::ptrCount(); }
-    uint32_t ptrCountWithoutThreadCheck() const final { return CanMakeCheckedPtr::ptrCountWithoutThreadCheck(); }
-    void incrementPtrCount() const final { CanMakeCheckedPtr::incrementPtrCount(); }
-    void decrementPtrCount() const final { CanMakeCheckedPtr::decrementPtrCount(); }
+    uint32_t checkedPtrCount() const final { return CanMakeCheckedPtr::checkedPtrCount(); }
+    uint32_t checkedPtrCountWithoutThreadCheck() const final { return CanMakeCheckedPtr::checkedPtrCountWithoutThreadCheck(); }
+    void incrementCheckedPtrCount() const final { CanMakeCheckedPtr::incrementCheckedPtrCount(); }
+    void decrementCheckedPtrCount() const final { CanMakeCheckedPtr::decrementCheckedPtrCount(); }
 
     // PlaybackSessionModelClient
     void durationChanged(double) final;
@@ -203,7 +203,7 @@ private:
 
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const { return m_logger; }
-    const void* logIdentifier() const { return m_logIdentifier; }
+    uint64_t logIdentifier() const { return m_logIdentifier; }
     ASCIILiteral logClassName() const { return "VideoPresentationManager"_s; }
     WTFLogChannel& logChannel() const;
 #endif
@@ -211,12 +211,12 @@ private:
     WeakPtr<WebPage> m_page;
     WeakHashSet<WebCore::HTMLMediaElement> m_mediaElements;
     HashMap<PlaybackSessionContextIdentifier, ModelInterfaceTuple> m_contextMap;
-    PlaybackSessionContextIdentifier m_controlsManagerContextId;
+    Markable<PlaybackSessionContextIdentifier> m_controlsManagerContextId;
     HashCountedSet<PlaybackSessionContextIdentifier> m_clientCounts;
 
 #if !RELEASE_LOG_DISABLED
     Ref<const Logger> m_logger;
-    const void* m_logIdentifier;
+    const uint64_t m_logIdentifier;
 #endif
 };
 

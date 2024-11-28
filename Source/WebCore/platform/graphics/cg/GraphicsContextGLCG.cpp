@@ -47,6 +47,8 @@
 #include <wtf/RetainPtr.h>
 #include <wtf/StdLibExtras.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 enum SourceDataFormatBase {
@@ -466,7 +468,7 @@ bool GraphicsContextGLImageExtractor::extractImage(bool premultiplyAlpha, bool i
     if (!m_pixelData)
         return false;
 
-    m_imagePixelData = reinterpret_cast<const void*>(CFDataGetBytePtr(m_pixelData.get()));
+    m_imagePixelData = CFDataGetBytePtr(m_pixelData.get());
 
     unsigned srcUnpackAlignment = 0;
     size_t bytesPerRow = CGImageGetBytesPerRow(decodedImage->platformImage().get());
@@ -492,7 +494,7 @@ bool GraphicsContextGLImageExtractor::extractImage(bool premultiplyAlpha, bool i
             source += srcStrideInElements;
             destination += dstStrideInElements;
         }
-        m_imagePixelData = reinterpret_cast<const void*>(m_formalizedRGBA8Data.get());
+        m_imagePixelData = m_formalizedRGBA8Data.get();
         m_imageSourceFormat = DataFormat::RGBA8;
         m_imageSourceUnpackAlignment = 1;
     }
@@ -526,5 +528,7 @@ RefPtr<NativeImage> GraphicsContextGL::createNativeImageFromPixelBuffer(const Gr
 }
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ENABLE(WEBGL)

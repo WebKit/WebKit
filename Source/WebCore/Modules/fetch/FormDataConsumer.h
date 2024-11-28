@@ -50,6 +50,8 @@ public:
     void start() { read(); }
     void cancel();
 
+    bool hasPendingActivity() const { return !!m_blobLoader || m_isReadingFile; }
+
 private:
     FormDataConsumer(const FormData&, ScriptExecutionContext&, Callback&&);
 
@@ -69,6 +71,7 @@ private:
     size_t m_currentElementIndex { 0 };
     Ref<WorkQueue> m_fileQueue;
     std::unique_ptr<BlobLoader> m_blobLoader;
+    bool m_isReadingFile { false };
 };
 
 } // namespace WebCore

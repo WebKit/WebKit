@@ -178,6 +178,7 @@ static id attributeValue(id element, NSString *attribute)
         @"AXErrorMessageFor",
         @"AXFlowFrom",
         @"AXIsInCell",
+        @"_AXIsInTable",
         @"AXIsInDescriptionListDetail",
         @"AXIsInDescriptionListTerm",
         @"AXIsIndeterminate",
@@ -340,6 +341,42 @@ static NSDictionary *searchTextParameterizedAttributeForCriteria(JSContextRef co
         [parameterizedAttribute setObject:[NSString stringWithJSStringRef:direction] forKey:@"AXSearchTextDirection"];
 
     return parameterizedAttribute;
+}
+
+static NSDictionary *textOperationParameterizedAttribute(JSContextRef context, JSStringRef operationType, JSValueRef markerRanges, JSValueRef replacementStrings, bool shouldSmartReplace)
+{
+    NSMutableDictionary *attributeParameters = [NSMutableDictionary dictionary];
+
+    if (operationType)
+        [attributeParameters setObject:[NSString stringWithJSStringRef:operationType] forKey:@"AXTextOperationType"];
+
+    if (markerRanges) {
+        JSObjectRef markerRangesArray = JSValueToObject(context, markerRanges, nullptr);
+        unsigned markerRangesArrayLength = arrayLength(context, markerRangesArray);
+        NSMutableArray *platformRanges = [NSMutableArray array];
+        for (unsigned i = 0; i < markerRangesArrayLength; ++i) {
+            auto propertyAtIndex = JSObjectGetPropertyAtIndex(context, markerRangesArray, i, nullptr);
+            auto markerRangeRef = toTextMarkerRange(JSValueToObject(context, propertyAtIndex, nullptr));
+            [platformRanges addObject:markerRangeRef->platformTextMarkerRange()];
+        }
+        [attributeParameters setObject:platformRanges forKey:@"AXTextOperationMarkerRanges"];
+    }
+
+    if (JSValueIsString(context, replacementStrings))
+        [attributeParameters setObject:toWTFString(context, replacementStrings) forKey:@"AXTextOperationReplacementString"];
+    else {
+        NSMutableArray *individualReplacementStringsParameter = [NSMutableArray array];
+        JSObjectRef replacementStringsArray = JSValueToObject(context, replacementStrings, nullptr);
+        unsigned replacementStringsArrayLength = arrayLength(context, replacementStringsArray);
+        for (unsigned i = 0; i < replacementStringsArrayLength; ++i)
+            [individualReplacementStringsParameter addObject:toWTFString(context, JSObjectGetPropertyAtIndex(context, replacementStringsArray, i, nullptr))];
+
+        [attributeParameters setObject:individualReplacementStringsParameter forKey:@"AXTextOperationIndividualReplacementStrings"];
+    }
+
+    [attributeParameters setObject:[NSNumber numberWithBool:shouldSmartReplace] forKey:@"AXTextOperationSmartReplace"];
+
+    return attributeParameters;
 }
 
 static NSDictionary *misspellingSearchParameterizedAttributeForCriteria(AccessibilityTextMarkerRange* start, bool forward)
@@ -1464,6 +1501,18 @@ JSValueRef AccessibilityUIElement::searchTextWithCriteria(JSContextRef context, 
 
     return nullptr;
 }
+
+JSValueRef AccessibilityUIElement::performTextOperation(JSContextRef context, JSStringRef operationType, JSValueRef markerRanges, JSValueRef replacementStrings, bool shouldSmartReplace)
+{
+    BEGIN_AX_OBJC_EXCEPTIONS
+    NSDictionary *parameterizedAttribute = textOperationParameterizedAttribute(context, operationType, markerRanges, replacementStrings, shouldSmartReplace);
+    auto result = attributeValueForParameter(@"AXTextOperation", parameterizedAttribute);
+    if ([result isKindOfClass:[NSArray class]])
+        return makeValueRefForValue(context, result.get());
+    END_AX_OBJC_EXCEPTIONS
+
+    return nullptr;
+}
 #endif
 
 JSRetainPtr<JSStringRef> AccessibilityUIElement::attributesOfColumnHeaders()
@@ -1985,6 +2034,11 @@ bool AccessibilityUIElement::isInCell() const
     return boolAttributeValueNS(@"AXIsInCell");
 }
 
+bool AccessibilityUIElement::isInTable() const
+{
+    return boolAttributeValueNS(@"_AXIsInTable");
+}
+
 void AccessibilityUIElement::takeFocus()
 {
     setAttributeValue(m_element.getAutoreleased(), NSAccessibilityFocusedAttribute, @YES);
@@ -2349,19 +2403,72 @@ RefPtr<AccessibilityUIElement> AccessibilityUIElement::accessibilityElementForTe
     return nullptr;
 }
 
+static NSString *descriptionForColor(CGColorRef color)
+{
+    // This is a hack to get an OK description for a CGColor by crudely parsing its debug description, e.g.:
+    //
+    // <CGColor 0x13bf07670> <CGColorSpace 0x12be0ce40> [ (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; sRGB IEC61966-2.1)] ( 0 0 0 0 )
+    // Ideally we convert it to a WebCore::Color and then call serializationForCSS(const Color&), but I can't
+    // get that to link succesfully, despite these symbols being WEBCORE_EXPORTed.
+    auto string = adoptNS([[NSMutableString alloc] init]);
+    [string appendFormat:@"%@", color];
+    NSArray *stringComponents = [string componentsSeparatedByString:@">"];
+    if (stringComponents.count)
+        return [[stringComponents objectAtIndex:stringComponents.count - 1] stringByReplacingOccurrencesOfString:@"]" withString:@""];
+    return nil;
+}
+
+static void appendColorDescription(RetainPtr<NSMutableString> string, NSString* attributeKey, NSDictionary<NSString *, id> *attributes)
+{
+    id color = [attributes objectForKey:attributeKey];
+    if (!color)
+        return;
+
+    if (CFGetTypeID(color) == CGColorGetTypeID())
+        [string appendFormat:@"%@:%@\n", attributeKey, descriptionForColor((CGColorRef)color)];
+}
+
 static JSRetainPtr<JSStringRef> createJSStringRef(id string)
 {
     auto mutableString = adoptNS([[NSMutableString alloc] init]);
-    id attributes = [string attributesAtIndex:0 effectiveRange:nil];
-    id attributeEnumerationBlock = ^(NSDictionary<NSString *, id> *attrs, NSRange range, BOOL *stop) {
-        BOOL misspelled = [[attrs objectForKey:NSAccessibilityMisspelledTextAttribute] boolValue];
+    id attributeEnumerationBlock = ^(NSDictionary<NSString *, id> *attributes, NSRange range, BOOL *stop) {
+        [mutableString appendFormat:@"Attributes in range %@:\n", NSStringFromRange(range)];
+        BOOL misspelled = [[attributes objectForKey:NSAccessibilityMisspelledTextAttribute] boolValue];
         if (misspelled)
-            misspelled = [[attrs objectForKey:NSAccessibilityMarkedMisspelledTextAttribute] boolValue];
+            misspelled = [[attributes objectForKey:NSAccessibilityMarkedMisspelledTextAttribute] boolValue];
         if (misspelled)
             [mutableString appendString:@"Misspelled, "];
         id font = [attributes objectForKey:(__bridge id)kAXFontTextAttribute];
         if (font)
-            [mutableString appendFormat:@"%@ - %@, ", (__bridge id)kAXFontTextAttribute, font];
+            [mutableString appendFormat:@"%@: %@\n", (__bridge id)kAXFontTextAttribute, font];
+
+        appendColorDescription(mutableString, NSAccessibilityForegroundColorTextAttribute, attributes);
+        appendColorDescription(mutableString, NSAccessibilityBackgroundColorTextAttribute, attributes);
+
+        int scriptState = [[attributes objectForKey:NSAccessibilitySuperscriptTextAttribute] intValue];
+        if (scriptState == -1) {
+            // -1 == subscript
+            [mutableString appendFormat:@"%@: -1\n", NSAccessibilitySuperscriptTextAttribute];
+        } else if (scriptState == 1) {
+            // 1 == superscript
+            [mutableString appendFormat:@"%@: 1\n", NSAccessibilitySuperscriptTextAttribute];
+        }
+
+        BOOL hasTextShadow = [[attributes objectForKey:NSAccessibilityShadowTextAttribute] boolValue];
+        if (hasTextShadow)
+            [mutableString appendFormat:@"%@: YES\n", NSAccessibilityShadowTextAttribute];
+
+        BOOL hasUnderline = [[attributes objectForKey:NSAccessibilityUnderlineTextAttribute] boolValue];
+        if (hasUnderline) {
+            [mutableString appendFormat:@"%@: YES\n", NSAccessibilityUnderlineTextAttribute];
+            appendColorDescription(mutableString, NSAccessibilityUnderlineColorTextAttribute, attributes);
+        }
+
+        BOOL hasLinethrough = [[attributes objectForKey:NSAccessibilityStrikethroughTextAttribute] boolValue];
+        if (hasLinethrough) {
+            [mutableString appendFormat:@"%@: YES\n", NSAccessibilityStrikethroughTextAttribute];
+            appendColorDescription(mutableString, NSAccessibilityStrikethroughColorTextAttribute, attributes);
+        }
     };
     [string enumerateAttributesInRange:NSMakeRange(0, [string length]) options:(NSAttributedStringEnumerationOptions)0 usingBlock:attributeEnumerationBlock];
     [mutableString appendString:[string string]];

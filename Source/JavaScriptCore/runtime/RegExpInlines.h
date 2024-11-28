@@ -37,6 +37,8 @@
 #include <string.h>
 #endif
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 #if REGEXP_FUNC_TEST_DATA_GEN
@@ -131,6 +133,17 @@ ALWAYS_INLINE int RegExp::matchInline(JSGlobalObject* nullOrGlobalObject, VM& vm
     ovector.resize(offsetVectorSize());
     int* offsetVector = ovector.data();
 
+    if constexpr (matchFrom == Yarr::MatchFrom::VMThread) {
+        if (hasValidAtom()) {
+            size_t found = StringView(s).find(vm.adaptiveStringSearcherTables(), atom(), startOffset);
+            if (found == notFound)
+                return -1;
+            offsetVector[0] = found;
+            offsetVector[1] = found + atom().length();
+            return found;
+        }
+    }
+
     int result;
 #if ENABLE(YARR_JIT)
     if (m_state == JITCode) {
@@ -170,31 +183,6 @@ ALWAYS_INLINE int RegExp::matchInline(JSGlobalObject* nullOrGlobalObject, VM& vm
         constexpr bool usesPatternContextBuffer = false;
         Yarr::MatchingContextHolder regExpContext(vm, usesPatternContextBuffer, this, matchFrom);
         result = Yarr::interpret(m_regExpBytecode.get(), s, startOffset, reinterpret_cast<unsigned*>(offsetVector));
-    }
-
-    // FIXME: The YARR engine should handle unsigned or size_t length matches.
-    // The YARR Interpreter is "unsigned" clean, while the YARR JIT hasn't been addressed.
-    // The offset vector handling needs to change as well.
-    // Right now we convert a match where the offsets overflowed into match failure.
-    // There are two places in WebCore that call the interpreter directly that need to
-    // have their offsets changed to int as well. They are yarr/RegularExpression.cpp
-    // and inspector/ContentSearchUtilities.cpp
-    if (s.length() > INT_MAX) {
-        bool overflowed = false;
-
-        if (result < -1)
-            overflowed = true;
-
-        for (unsigned i = 0; i <= m_numSubpatterns; i++) {
-            if ((offsetVector[i*2] < -1) || ((offsetVector[i*2] >= 0) && (offsetVector[i*2+1] < -1))) {
-                overflowed = true;
-                offsetVector[i*2] = -1;
-                offsetVector[i*2+1] = -1;
-            }
-        }
-
-        if (overflowed)
-            result = -1;
     }
 
     ASSERT(result >= -1);
@@ -267,6 +255,15 @@ ALWAYS_INLINE MatchResult RegExp::matchInline(JSGlobalObject* nullOrGlobalObject
     if (m_state == ParseError)
         return throwError();
 
+    if constexpr (matchFrom == Yarr::MatchFrom::VMThread) {
+        if (hasValidAtom()) {
+            size_t found = StringView(s).find(vm.adaptiveStringSearcherTables(), atom(), startOffset);
+            if (found == notFound)
+                return MatchResult::failed();
+            return MatchResult { found, found + atom().length() };
+        }
+    }
+
 #if ENABLE(YARR_JIT)
     if (m_state == JITCode) {
         MatchResult result;
@@ -319,3 +316,5 @@ ALWAYS_INLINE MatchResult RegExp::matchInline(JSGlobalObject* nullOrGlobalObject
 }
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

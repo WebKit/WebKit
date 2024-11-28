@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -62,44 +62,37 @@ public:
     CodePtr<WasmEntryPtrTag> jsEntrypoint(ArityCheckMode arity)
     {
         ASSERT_UNUSED(arity, arity == ArityCheckNotRequired || arity == MustCheckArity);
-        return m_jsEntrypoint.entrypoint();
+        return m_jsToWasmCallee->entrypoint();
     }
 
-    CodePtr<JSEntryPtrTag> jsCallEntrypoint()
+    CodePtr<JSEntryPtrTag> jsCallICEntrypoint()
     {
 #if ENABLE(JIT)
-        if (m_jsToWasmICCallee)
-            return m_jsToWasmICCallee->entrypoint().retagged<JSEntryPtrTag>();
-        return jsCallEntrypointSlow();
+        // Prep the entrypoint for the slow path.
+        executable()->entrypointFor(CodeForCall, MustCheckArity);
+        if (!m_jsToWasmICJITCode)
+            m_jsToWasmICJITCode = signature().jsToWasmICEntrypoint();
+        return m_jsToWasmICJITCode;
 #else
         return nullptr;
 #endif
     }
 
+    static constexpr ptrdiff_t offsetOfBoxedWasmCallee() { return OBJECT_OFFSETOF(WebAssemblyFunction, m_boxedWasmCallee); }
     static constexpr ptrdiff_t offsetOfJSToWasmCallee() { return OBJECT_OFFSETOF(WebAssemblyFunction, m_jsToWasmCallee); }
 
 private:
     DECLARE_VISIT_CHILDREN;
     WebAssemblyFunction(VM&, NativeExecutable*, JSGlobalObject*, Structure*, JSWebAssemblyInstance*, Wasm::JSEntrypointCallee& jsEntrypoint, Wasm::Callee* wasmCallee, WasmToWasmImportableFunction::LoadLocation entrypointLoadLocation, Wasm::TypeIndex, RefPtr<const Wasm::RTT>);
 
-#if ENABLE(JIT)
     CodePtr<JSEntryPtrTag> jsCallEntrypointSlow();
-#endif
-    bool usesTagRegisters() const;
-    RegisterAtOffsetList usedCalleeSaveRegisters() const;
 
-    RegisterSet calleeSaves() const;
-
-    // It's safe to just hold the raw callee because we have a reference
-    // to our Instance, which points to the Module that exported us, which
-    // ensures that the actual Signature/code doesn't get deallocated.
-    Wasm::JSEntrypointCallee& m_jsEntrypoint;
     // This is the callee needed by LLInt/IPInt
     uintptr_t m_boxedWasmCallee;
     // This let's the JS->Wasm interpreter find its metadata
-    RefPtr<Wasm::JITLessJSEntrypointCallee> m_jsToWasmCallee;
+    Ref<Wasm::JSEntrypointCallee> m_jsToWasmCallee;
 #if ENABLE(JIT)
-    RefPtr<Wasm::JSToWasmICCallee> m_jsToWasmICCallee;
+    CodePtr<JSEntryPtrTag> m_jsToWasmICJITCode;
 #endif
 };
 

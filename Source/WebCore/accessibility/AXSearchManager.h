@@ -96,13 +96,13 @@ public:
     std::optional<AXTextMarkerRange> findMatchingRange(AccessibilitySearchCriteria&&);
 private:
     AXCoreObject::AccessibilityChildrenVector findMatchingObjectsInternal(const AccessibilitySearchCriteria&);
-    bool matchWithResultsLimit(RefPtr<AXCoreObject>, const AccessibilitySearchCriteria&, AXCoreObject::AccessibilityChildrenVector&);
-    bool match(RefPtr<AXCoreObject>, const AccessibilitySearchCriteria&);
-    bool matchText(RefPtr<AXCoreObject>, const String&);
-    bool matchForSearchKeyAtIndex(RefPtr<AXCoreObject>, const AccessibilitySearchCriteria&, size_t);
+    bool matchWithResultsLimit(Ref<AXCoreObject>, const AccessibilitySearchCriteria&, AXCoreObject::AccessibilityChildrenVector&);
+    bool match(Ref<AXCoreObject>, const AccessibilitySearchCriteria&);
+    bool matchText(Ref<AXCoreObject>, const String&);
+    bool matchForSearchKeyAtIndex(Ref<AXCoreObject>, const AccessibilitySearchCriteria&, size_t);
 
     // Keeps the ranges of misspellings for each object.
-    HashMap<AXID, Vector<AXTextMarkerRange>> m_misspellingRanges;
+    UncheckedKeyHashMap<AXID, Vector<AXTextMarkerRange>> m_misspellingRanges;
 };
 
 inline AXCoreObject::AccessibilityChildrenVector AXSearchManager::findMatchingObjects(AccessibilitySearchCriteria&& criteria)

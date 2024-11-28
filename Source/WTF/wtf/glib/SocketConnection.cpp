@@ -67,7 +67,9 @@ bool SocketConnection::read()
             m_readBuffer.reserveCapacity(m_readBuffer.capacity() + defaultBufferSize);
         m_readBuffer.grow(m_readBuffer.capacity());
         GUniqueOutPtr<GError> error;
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
         auto bytesRead = g_socket_receive(g_socket_connection_get_socket(m_connection.get()), m_readBuffer.data() + previousBufferSize, m_readBuffer.size() - previousBufferSize, nullptr, &error.outPtr());
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
         if (bytesRead == -1) {
             if (g_error_matches(error.get(), G_IO_ERROR, G_IO_ERROR_WOULD_BLOCK)) {
                 m_readBuffer.shrink(previousBufferSize);
@@ -112,7 +114,9 @@ bool SocketConnection::readMessage()
     if (m_readBuffer.size() < sizeof(uint32_t))
         return false;
 
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     auto* messageData = m_readBuffer.data();
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     uint32_t bodySizeHeader;
     memcpy(&bodySizeHeader, messageData, sizeof(uint32_t));
     messageData += sizeof(uint32_t);
@@ -162,7 +166,9 @@ bool SocketConnection::readMessage()
     }
 
     if (m_readBuffer.size() > messageSize) {
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
         std::memmove(m_readBuffer.data(), m_readBuffer.data() + messageSize.value(), m_readBuffer.size() - messageSize.value());
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
         m_readBuffer.shrink(m_readBuffer.size() - messageSize.value());
     } else
         m_readBuffer.shrink(0);
@@ -191,7 +197,9 @@ void SocketConnection::sendMessage(const char* messageName, GVariant* parameters
     size_t previousBufferSize = m_writeBuffer.size();
     m_writeBuffer.grow(previousBufferSize + sizeof(uint32_t) + sizeof(MessageFlags) + bodySize.value());
 
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     auto* messageData = m_writeBuffer.data() + previousBufferSize;
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     uint32_t bodySizeHeader = htonl(bodySize.value());
     memcpy(messageData, &bodySizeHeader, sizeof(uint32_t));
     messageData += sizeof(uint32_t);
@@ -228,7 +236,9 @@ void SocketConnection::write()
     }
 
     if (m_writeBuffer.size() > static_cast<size_t>(bytesWritten)) {
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
         std::memmove(m_writeBuffer.data(), m_writeBuffer.data() + bytesWritten, m_writeBuffer.size() - bytesWritten);
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
         m_writeBuffer.shrink(m_writeBuffer.size() - bytesWritten);
     } else
         m_writeBuffer.shrink(0);

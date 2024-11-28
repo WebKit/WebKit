@@ -61,6 +61,7 @@
 #include "PaymentMethod.h"
 #include "PaymentRequestUtilities.h"
 #include "PaymentRequestValidator.h"
+#include "ScriptTelemetryCategory.h"
 #include "SecurityOrigin.h"
 #include "Settings.h"
 #include "UserGestureIndicator.h"
@@ -531,7 +532,7 @@ ExceptionOr<bool> ApplePaySession::supportsVersion(Document& document, unsigned 
 static bool shouldDiscloseApplePayCapability(Document& document)
 {
     auto* page = document.page();
-    if (!page || page->usesEphemeralSession())
+    if (!page || page->usesEphemeralSession() || document.requiresScriptExecutionTelemetry(ScriptTelemetryCategory::Payments))
         return false;
 
     return document.settings().applePayCapabilityDisclosureAllowed();

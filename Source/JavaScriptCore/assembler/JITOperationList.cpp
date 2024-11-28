@@ -38,6 +38,8 @@
 #include <dlfcn.h>
 #endif
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 #if ENABLE(JIT_OPERATION_VALIDATION) || ENABLE(JIT_OPERATION_DISASSEMBLY)
@@ -120,30 +122,31 @@ LLINT_DECLARE_ROUTINE_VALIDATE(checkpoint_osr_exit_trampoline);
 LLINT_DECLARE_ROUTINE_VALIDATE(checkpoint_osr_exit_from_inlined_call_trampoline);
 LLINT_DECLARE_ROUTINE_VALIDATE(normal_osr_exit_trampoline);
 LLINT_DECLARE_ROUTINE_VALIDATE(fuzzer_return_early_from_loop_hint);
-LLINT_DECLARE_ROUTINE_VALIDATE(js_to_wasm_wrapper_entry_crash_for_simd_parameters);
 LLINT_DECLARE_ROUTINE_VALIDATE(js_to_wasm_wrapper_entry);
 LLINT_DECLARE_ROUTINE_VALIDATE(wasm_to_wasm_wrapper_entry);
 LLINT_DECLARE_ROUTINE_VALIDATE(wasm_to_js_wrapper_entry);
+LLINT_DECLARE_ROUTINE_VALIDATE(ipint_trampoline);
+LLINT_DECLARE_ROUTINE_VALIDATE(ipint_entry);
 
 #if ENABLE(JIT_OPERATION_VALIDATION)
-#define LLINT_OP_EXTRAS(validateLabel) bitwise_cast<void*>(validateLabel)
+#define LLINT_OP_EXTRAS(validateLabel) reinterpret_cast<void*>(validateLabel)
 #else // ENABLE(JIT_OPERATION_DISASSEMBLY)
 #define LLINT_OP_EXTRAS(validateLabel)
 #endif
 
 #define LLINT_ROUTINE(functionName) { \
-        bitwise_cast<void*>(LLInt::getCodeFunctionPtr<CFunctionPtrTag>(functionName)), \
+        std::bit_cast<void*>(LLInt::getCodeFunctionPtr<CFunctionPtrTag>(functionName)), \
         LLINT_OP_EXTRAS(LLINT_ROUTINE_VALIDATE(functionName)) \
     },
 
 #define LLINT_OP(name) { \
-        bitwise_cast<void*>(LLInt::getCodeFunctionPtr<CFunctionPtrTag>(name)), \
+        std::bit_cast<void*>(LLInt::getCodeFunctionPtr<CFunctionPtrTag>(name)), \
         LLINT_OP_EXTRAS(LLINT_RETURN_VALIDATE(name)) \
     }, { \
-        bitwise_cast<void*>(LLInt::getWide16CodeFunctionPtr<CFunctionPtrTag>(name)), \
+        std::bit_cast<void*>(LLInt::getWide16CodeFunctionPtr<CFunctionPtrTag>(name)), \
         LLINT_OP_EXTRAS(LLINT_RETURN_WIDE16_VALIDATE(name)) \
     }, { \
-        bitwise_cast<void*>(LLInt::getWide32CodeFunctionPtr<CFunctionPtrTag>(name)), \
+        std::bit_cast<void*>(LLInt::getWide32CodeFunctionPtr<CFunctionPtrTag>(name)), \
         LLINT_OP_EXTRAS(LLINT_RETURN_WIDE32_VALIDATE(name)) \
     },
 
@@ -180,13 +183,18 @@ static LLIntOperations llintOperations()
             LLINT_ROUTINE(normal_osr_exit_trampoline)
             LLINT_ROUTINE(fuzzer_return_early_from_loop_hint)
             LLINT_ROUTINE(js_to_wasm_wrapper_entry)
-            LLINT_ROUTINE(js_to_wasm_wrapper_entry_crash_for_simd_parameters)
             LLINT_ROUTINE(wasm_to_wasm_wrapper_entry)
             LLINT_ROUTINE(wasm_to_js_wrapper_entry)
+            LLINT_ROUTINE(ipint_trampoline)
+            LLINT_ROUTINE(ipint_entry)
 
             LLINT_OP(op_catch)
             LLINT_OP(wasm_catch)
             LLINT_OP(wasm_catch_all)
+            LLINT_OP(wasm_try_table_catch)
+            LLINT_OP(wasm_try_table_catchref)
+            LLINT_OP(wasm_try_table_catchall)
+            LLINT_OP(wasm_try_table_catchallref)
             LLINT_OP(llint_generic_return_point)
 
             FOR_EACH_LLINT_OPCODE_WITH_RETURN(LLINT_RETURN_LOCATION)
@@ -280,5 +288,7 @@ void JITOperationList::populateDisassemblyLabelsInEmbedder(const JITOperationAnn
 #endif // ENABLE(JIT_OPERATION_DISASSEMBLY)
 
 #endif // ENABLE(JIT_OPERATION_VALIDATION) || ENABLE(JIT_OPERATION_DISASSEMBLY)
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 } // namespace JSC

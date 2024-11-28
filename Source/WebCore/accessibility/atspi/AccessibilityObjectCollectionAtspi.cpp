@@ -324,7 +324,7 @@ bool AccessibilityObjectAtspi::CollectionMatchRule::match(AccessibilityObjectAts
     return true;
 }
 
-void AccessibilityObjectAtspi::addMatchesInCanonicalOrder(Vector<RefPtr<AccessibilityObjectAtspi>>& matchList, CollectionMatchRule& rule, uint32_t maxResultCount, bool traverse)
+void AccessibilityObjectAtspi::addMatchesInCanonicalOrder(Vector<Ref<AccessibilityObjectAtspi>>& matchList, CollectionMatchRule& rule, uint32_t maxResultCount, bool traverse)
 {
     const auto& children = m_coreObject->children();
     for (auto& child : children) {
@@ -333,7 +333,7 @@ void AccessibilityObjectAtspi::addMatchesInCanonicalOrder(Vector<RefPtr<Accessib
             continue;
 
         if (rule.match(*wrapper)) {
-            matchList.append(wrapper);
+            matchList.append(*wrapper);
             if (maxResultCount && matchList.size() >= maxResultCount)
                 return;
         }
@@ -346,12 +346,12 @@ void AccessibilityObjectAtspi::addMatchesInCanonicalOrder(Vector<RefPtr<Accessib
     }
 }
 
-Vector<RefPtr<AccessibilityObjectAtspi>> AccessibilityObjectAtspi::matches(CollectionMatchRule& rule, Atspi::CollectionSortOrder sortOrder, uint32_t maxResultCount, bool traverse)
+Vector<Ref<AccessibilityObjectAtspi>> AccessibilityObjectAtspi::matches(CollectionMatchRule& rule, Atspi::CollectionSortOrder sortOrder, uint32_t maxResultCount, bool traverse)
 {
     if (!m_coreObject)
         return { };
 
-    Vector<RefPtr<AccessibilityObjectAtspi>> matchList;
+    Vector<Ref<AccessibilityObjectAtspi>> matchList;
 
     switch (sortOrder) {
     case Atspi::CollectionSortOrder::SortOrderInvalid:

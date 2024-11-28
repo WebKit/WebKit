@@ -95,6 +95,19 @@ String WebRemoteFrameClient::renderTreeAsText(size_t baseIndent, OptionSet<Rende
     return result;
 }
 
+String WebRemoteFrameClient::layerTreeAsText(size_t baseIndent, OptionSet<LayerTreeAsTextOptions> options)
+{
+    RefPtr page = m_frame->page();
+    if (!page)
+        return "Test Error - Missing page"_s;
+    options.add(LayerTreeAsTextOptions::IncludeRootLayers);
+    auto sendResult = page->sendSync(Messages::WebPageProxy::LayerTreeAsTextForTesting(m_frame->frameID(), baseIndent, options));
+    if (!sendResult.succeeded())
+        return "Test Error - sending WebPageProxy::LayerTreeAsTextForTesting failed"_s;
+    auto [result] = sendResult.takeReply();
+    return result;
+}
+
 void WebRemoteFrameClient::unbindRemoteAccessibilityFrames(int processIdentifier)
 {
 #if PLATFORM(COCOA)
@@ -167,6 +180,16 @@ void WebRemoteFrameClient::dispatchDecidePolicyForNavigationAction(const Navigat
     WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(navigationAction, request, redirectResponse, formState, clientRedirectSourceForHistory, navigationID, WTFMove(hitTestResult), hasOpener, isPerformingHTTPFallback, sandboxFlags, policyDecisionMode, WTFMove(function));
 }
 
+void WebRemoteFrameClient::updateSandboxFlags(WebCore::SandboxFlags sandboxFlags)
+{
+    WebFrameLoaderClient::updateSandboxFlags(sandboxFlags);
+}
+
+void WebRemoteFrameClient::updateOpener(const WebCore::Frame& newOpener)
+{
+    WebFrameLoaderClient::updateOpener(newOpener);
+}
+
 void WebRemoteFrameClient::applyWebsitePolicies(WebsitePoliciesData&& websitePolicies)
 {
     RefPtr coreFrame = m_frame->coreRemoteFrame();
@@ -179,6 +202,12 @@ void WebRemoteFrameClient::applyWebsitePolicies(WebsitePoliciesData&& websitePol
     coreFrame->setCustomUserAgentAsSiteSpecificQuirks(websitePolicies.customUserAgentAsSiteSpecificQuirks);
     coreFrame->setAdvancedPrivacyProtections(websitePolicies.advancedPrivacyProtections);
     coreFrame->setCustomNavigatorPlatform(websitePolicies.customNavigatorPlatform);
+}
+
+void WebRemoteFrameClient::updateScrollingMode(ScrollbarMode scrollingMode)
+{
+    if (auto* page = m_frame->page())
+        page->send(Messages::WebPageProxy::UpdateScrollingMode(m_frame->frameID(), scrollingMode));
 }
 
 }

@@ -41,6 +41,9 @@ class DOMException;
 class FontFaceSet final : public RefCounted<FontFaceSet>, private FontEventClient, public EventTarget, public ActiveDOMObject {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(FontFaceSet);
 public:
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
+
     static Ref<FontFaceSet> create(ScriptExecutionContext&, const Vector<Ref<FontFace>>& initialFaces);
     static Ref<FontFaceSet> create(ScriptExecutionContext&, CSSFontFaceSet& backing);
     virtual ~FontFaceSet();
@@ -74,10 +77,6 @@ public:
         size_t m_index { 0 }; // FIXME: There needs to be a mechanism to handle when fonts are added or removed from the middle of the FontFaceSet.
     };
     Iterator createIterator(ScriptExecutionContext*) { return Iterator(*this); }
-
-    // ActiveDOMObject.
-    void ref() const final { RefCounted::ref(); }
-    void deref() const final { RefCounted::deref(); }
 
 private:
     struct PendingPromise : RefCounted<PendingPromise> {
@@ -114,7 +113,7 @@ private:
     FontFaceSet& readyPromiseResolve();
 
     Ref<CSSFontFaceSet> m_backing;
-    HashMap<RefPtr<FontFace>, Vector<Ref<PendingPromise>>> m_pendingPromises;
+    UncheckedKeyHashMap<RefPtr<FontFace>, Vector<Ref<PendingPromise>>> m_pendingPromises;
     UniqueRef<ReadyPromise> m_readyPromise;
 
     bool m_isDocumentLoaded { true };

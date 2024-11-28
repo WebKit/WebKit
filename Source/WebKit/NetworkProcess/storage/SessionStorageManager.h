@@ -50,16 +50,16 @@ public:
     void connectionClosed(IPC::Connection::UniqueID);
     void removeNamespace(StorageNamespaceIdentifier);
 
-    StorageAreaIdentifier connectToSessionStorageArea(IPC::Connection::UniqueID, StorageAreaMapIdentifier, const WebCore::ClientOrigin&, StorageNamespaceIdentifier);
+    std::optional<StorageAreaIdentifier> connectToSessionStorageArea(IPC::Connection::UniqueID, StorageAreaMapIdentifier, const WebCore::ClientOrigin&, StorageNamespaceIdentifier);
     void cancelConnectToSessionStorageArea(IPC::Connection::UniqueID, StorageNamespaceIdentifier);
     void disconnectFromStorageArea(IPC::Connection::UniqueID, StorageAreaIdentifier);
     void cloneStorageArea(StorageNamespaceIdentifier, StorageNamespaceIdentifier);
 
 private:
-    StorageAreaIdentifier addStorageArea(std::unique_ptr<MemoryStorageArea>, StorageNamespaceIdentifier);
+    StorageAreaIdentifier addStorageArea(Ref<MemoryStorageArea>&&, StorageNamespaceIdentifier);
 
     CheckedRef<StorageAreaRegistry> m_registry;
-    HashMap<StorageAreaIdentifier, std::unique_ptr<MemoryStorageArea>> m_storageAreas;
+    HashMap<StorageAreaIdentifier, Ref<MemoryStorageArea>> m_storageAreas;
     HashMap<StorageNamespaceIdentifier, StorageAreaIdentifier> m_storageAreasByNamespace;
 };
 

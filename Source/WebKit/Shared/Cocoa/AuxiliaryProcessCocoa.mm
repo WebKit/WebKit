@@ -34,7 +34,6 @@
 #import "WKWebView.h"
 #import "XPCServiceEntryPoint.h"
 #import <WebCore/FloatingPointEnvironment.h>
-#import <WebCore/RuntimeApplicationChecks.h>
 #import <mach/task.h>
 #import <objc/runtime.h>
 #import <pal/spi/cg/CoreGraphicsSPI.h>
@@ -42,6 +41,7 @@
 #import <pal/spi/cocoa/NotifySPI.h>
 #import <wtf/FileSystem.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/RuntimeApplicationChecks.h>
 #import <wtf/cocoa/Entitlements.h>
 #import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #import <wtf/cocoa/SoftLinking.h>
@@ -100,8 +100,7 @@ void AuxiliaryProcess::platformInitialize(const AuxiliaryProcessInitializationPa
 
     [[NSFileManager defaultManager] changeCurrentDirectoryPath:[[NSBundle mainBundle] bundlePath]];
 
-    WebCore::setApplicationBundleIdentifier(parameters.clientBundleIdentifier);
-    setSDKAlignedBehaviors(parameters.clientSDKAlignedBehaviors);
+    setApplicationBundleIdentifier(parameters.clientBundleIdentifier);
 
 #if PLATFORM(MAC)
     disableDowngradeToLayoutManager();
@@ -225,16 +224,6 @@ void AuxiliaryProcess::preferenceDidUpdate(const String& domain, const String& k
     setPreferenceValue(domain, key, value);
     handlePreferenceChange(domain, key, value);
 }
-
-#if ENABLE(CFPREFS_DIRECT_MODE)
-void AuxiliaryProcess::preferencesDidUpdate(HashMap<String, std::optional<String>> domainlessPreferences, HashMap<std::pair<String, String>, std::optional<String>> preferences)
-{
-    for (auto& [key, value] : domainlessPreferences)
-        preferenceDidUpdate(String(), key, value);
-    for (auto& [key, value] : preferences)
-        preferenceDidUpdate(key.first, key.second, value);
-}
-#endif
 
 #if !HAVE(UPDATE_WEB_ACCESSIBILITY_SETTINGS) && PLATFORM(IOS_FAMILY)
 static const WTF::String& increaseContrastPreferenceKey()

@@ -103,6 +103,8 @@
 #include "MediaPlayerPrivateHolePunch.h"
 #endif
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(MediaPlayer);
@@ -112,10 +114,12 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(MediaPlayerFactory);
 
 class NullMediaPlayerPrivate final : public MediaPlayerPrivateInterface, public RefCounted<NullMediaPlayerPrivate> {
 public:
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
+
     static Ref<NullMediaPlayerPrivate> create(MediaPlayer& player) { return adoptRef(*new NullMediaPlayerPrivate(player)); }
 
-    void ref() final { RefCounted<NullMediaPlayerPrivate>::ref(); }
-    void deref() final { RefCounted<NullMediaPlayerPrivate>::deref(); }
+    constexpr MediaPlayerType mediaPlayerType() const final { return MediaPlayerType::Null; }
 
     void load(const String&) final { }
 #if ENABLE(MEDIA_SOURCE)
@@ -232,6 +236,7 @@ private:
     const std::optional<Vector<FourCC>>& allowedMediaCaptionFormatTypes() const final { return nullOptionalFourCCVector(); }
 
     class NullMediaResourceLoader final : public PlatformMediaResourceLoader {
+        WTF_MAKE_TZONE_ALLOCATED_INLINE(NullMediaResourceLoader);
         void sendH2Ping(const URL&, CompletionHandler<void(Expected<Seconds, ResourceError>&&)>&& completionHandler) final
         {
             completionHandler(makeUnexpected(ResourceError { }));
@@ -371,6 +376,11 @@ const MediaPlayerPrivateInterface* MediaPlayer::playerPrivate() const
 }
 
 MediaPlayerPrivateInterface* MediaPlayer::playerPrivate()
+{
+    return m_private.get();
+}
+
+RefPtr<MediaPlayerPrivateInterface> MediaPlayer::protectedPlayerPrivate()
 {
     return m_private.get();
 }
@@ -725,7 +735,7 @@ void MediaPlayer::setBufferingPolicy(BufferingPolicy policy)
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
 
-std::unique_ptr<LegacyCDMSession> MediaPlayer::createSession(const String& keySystem, LegacyCDMSessionClient& client)
+RefPtr<LegacyCDMSession> MediaPlayer::createSession(const String& keySystem, LegacyCDMSessionClient& client)
 {
     return m_private->createSession(keySystem, client);
 }
@@ -1161,32 +1171,21 @@ void MediaPlayer::setPreload(MediaPlayer::Preload preload)
     m_private->setPreload(preload);
 }
 
-void MediaPlayer::paint(GraphicsContext& p, const FloatRect& r)
+void MediaPlayer::paint(GraphicsContext& context, const FloatRect& destination)
 {
-    m_private->paint(p, r);
+    m_private->paint(context, destination);
 }
 
-#if !USE(AVFOUNDATION)
-
-bool MediaPlayer::copyVideoTextureToPlatformTexture(GraphicsContextGL* context, PlatformGLObject texture, GCGLenum target, GCGLint level, GCGLenum internalFormat, GCGLenum format, GCGLenum type, bool premultiplyAlpha, bool flipY)
+void MediaPlayer::paintCurrentFrameInContext(GraphicsContext& context, const FloatRect& destination)
 {
-    return m_private->copyVideoTextureToPlatformTexture(context, texture, target, level, internalFormat, format, type, premultiplyAlpha, flipY);
+    m_private->paintCurrentFrameInContext(context, destination);
 }
-
-#endif
 
 RefPtr<VideoFrame> MediaPlayer::videoFrameForCurrentTime()
 {
     return m_private->videoFrameForCurrentTime();
 }
 
-
-#if PLATFORM(COCOA) && !HAVE(AVSAMPLEBUFFERDISPLAYLAYER_COPYDISPLAYEDPIXELBUFFER)
-void MediaPlayer::willBeAskedToPaintGL()
-{
-    m_private->willBeAskedToPaintGL();
-}
-#endif
 
 RefPtr<NativeImage> MediaPlayer::nativeImageForCurrentTime()
 {
@@ -1596,9 +1595,12 @@ CachedResourceLoader* MediaPlayer::cachedResourceLoader()
     return client().mediaPlayerCachedResourceLoader();
 }
 
-Ref<PlatformMediaResourceLoader> MediaPlayer::createResourceLoader()
+Ref<PlatformMediaResourceLoader> MediaPlayer::mediaResourceLoader()
 {
-    return client().mediaPlayerCreateResourceLoader();
+    if (!m_mediaResourceLoader)
+        m_mediaResourceLoader = client().mediaPlayerCreateResourceLoader();
+
+    return *m_mediaResourceLoader;
 }
 
 void MediaPlayer::addAudioTrack(AudioTrackPrivate& track)
@@ -1885,7 +1887,7 @@ void MediaPlayer::audioOutputDeviceChanged()
     m_private->audioOutputDeviceChanged();
 }
 
-MediaPlayerIdentifier MediaPlayer::identifier() const
+std::optional<MediaPlayerIdentifier> MediaPlayer::identifier() const
 {
     return m_private->identifier();
 }
@@ -2142,5 +2144,7 @@ String convertSpatialVideoMetadataToString(const SpatialVideoMetadata& metadata)
 }
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ENABLE(VIDEO)

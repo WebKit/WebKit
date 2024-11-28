@@ -26,14 +26,14 @@
 
 #include <optional>
 #include <wtf/Forward.h>
-#include <wtf/RefCounted.h>
+#include <wtf/ThreadSafeRefCounted.h>
 
 namespace WebKit {
 
+class CacheStorageRecordInformation;
 struct CacheStorageRecord;
-struct CacheStorageRecordInformation;
 
-class CacheStorageStore : public RefCounted<CacheStorageStore> {
+class CacheStorageStore : public ThreadSafeRefCounted<CacheStorageStore> {
 public:
     virtual ~CacheStorageStore() = default;
     using ReadAllRecordInfosCallback = CompletionHandler<void(Vector<CacheStorageRecordInformation>&&)>;

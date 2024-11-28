@@ -28,6 +28,10 @@
 #include "Length.h"
 #include "StyleColor.h"
 
+namespace WTF {
+class TextStream;
+}
+
 namespace WebCore {
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StyleInheritedData);
@@ -38,6 +42,10 @@ public:
     Ref<StyleInheritedData> copy() const;
 
     bool operator==(const StyleInheritedData&) const;
+
+#if !LOG_DISABLED
+    void dumpDifferences(TextStream&, const StyleInheritedData&) const;
+#endif
 
     bool fastPathInheritedEqual(const StyleInheritedData&) const;
     bool nonFastPathInheritedEqual(const StyleInheritedData&) const;

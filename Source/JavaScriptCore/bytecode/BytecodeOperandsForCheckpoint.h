@@ -49,6 +49,12 @@ unsigned valueProfileOffsetFor(const Bytecode& bytecode, unsigned checkpointInde
         case OpIteratorNext::getValue: return bytecode.m_valueValueProfile;
         default: RELEASE_ASSERT_NOT_REACHED();
         }
+    } else if constexpr (Bytecode::opcodeID == op_instanceof) {
+        switch (checkpointIndex) {
+        case OpInstanceof::getHasInstance: return bytecode.m_hasInstanceValueProfile;
+        case OpInstanceof::getPrototype: return bytecode.m_prototypeValueProfile;
+        default: RELEASE_ASSERT_NOT_REACHED();
+        }
     } else 
         return bytecode.m_valueProfile;
 }

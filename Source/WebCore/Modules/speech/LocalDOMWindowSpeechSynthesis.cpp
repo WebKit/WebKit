@@ -63,7 +63,7 @@ LocalDOMWindowSpeechSynthesis* LocalDOMWindowSpeechSynthesis::from(DOMWindow* wi
     if (!supplement) {
         auto newSupplement = makeUnique<LocalDOMWindowSpeechSynthesis>(window);
         supplement = newSupplement.get();
-        provideTo(dynamicDowncast<LocalDOMWindow>(window), supplementName(), WTFMove(newSupplement));
+        provideTo(localWindow.get(), supplementName(), WTFMove(newSupplement));
     }
     return supplement;
 }

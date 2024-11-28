@@ -35,7 +35,7 @@
 
 namespace Nicosia {
 
-WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(SceneIntegrationUpdateScope, SceneIntegration::UpdateScope);
+WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(SceneIntegration, UpdateScope);
 
 SceneIntegration::SceneIntegration(Scene& scene, Client& client)
 {
@@ -90,7 +90,7 @@ SceneIntegration::UpdateScope::~UpdateScope()
         [](Nicosia::Scene::State& state)
         {
             for (auto& compositionLayer : state.layers)
-                compositionLayer->flushState([](auto&) { });
+                compositionLayer->flushState();
         });
 
     auto& sceneIntegrationObj = m_sceneIntegration.get();

@@ -27,9 +27,9 @@ namespace rx
 // differently afterwards:
 //
 // - The Vulkan backend which generates binary (i.e. SPIR-V), does nothing more
-// - The backends that generate text (HLSL and MSL), do nothing at this stage, but modify the text
-//   at link time before invoking the native compiler.  These expensive calls are handled in link
-//   sub-tasks (see LinkSubTask in ProgramImpl.h).
+// - The backends that generate text (HLSL, MSL, WGSL), do nothing at this stage, but modify the
+//   text at link time before invoking the native compiler.  These expensive calls are handled in
+//   link sub-tasks (see LinkSubTask in ProgramImpl.h).
 // - The GL backend needs to invoke the native driver, which is problematic when done in another
 //   thread (and is avoided).
 //

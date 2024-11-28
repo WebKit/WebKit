@@ -29,6 +29,7 @@
 
 #include "AudioSessionCocoa.h"
 #include <pal/spi/cf/CoreAudioSPI.h>
+#include <wtf/TZoneMalloc.h>
 
 typedef UInt32 AudioObjectID;
 typedef struct AudioObjectPropertyAddress AudioObjectPropertyAddress;
@@ -36,11 +37,14 @@ typedef struct AudioObjectPropertyAddress AudioObjectPropertyAddress;
 namespace WebCore {
 
 class AudioSessionMac final : public AudioSessionCocoa {
+    WTF_MAKE_TZONE_ALLOCATED(AudioSessionMac);
 public:
-    AudioSessionMac() = default;
+    static Ref<AudioSessionMac> create();
     virtual ~AudioSessionMac() = default;
 
 private:
+    AudioSessionMac() = default;
+
     void addSampleRateObserverIfNeeded() const;
     void addBufferSizeObserverIfNeeded() const;
     void addDefaultDeviceObserverIfNeeded() const;
@@ -82,7 +86,7 @@ private:
     void removeConfigurationChangeObserver(AudioSessionConfigurationChangeObserver&) final;
 
     WTFLogChannel& logChannel() const;
-    const void* logIdentifier() const;
+    uint64_t logIdentifier() const;
 
     std::optional<bool> m_lastMutedState;
     mutable WeakHashSet<AudioSessionConfigurationChangeObserver> m_configurationChangeObservers;

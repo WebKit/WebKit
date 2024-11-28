@@ -26,15 +26,16 @@
 #pragma once
 
 #include "Timer.h"
-
 #include <wtf/CPUTime.h>
+#include <wtf/CheckedPtr.h>
 #include <wtf/Function.h>
 #include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
-class CPUMonitor {
+class CPUMonitor final : public CanMakeCheckedPtr<CPUMonitor> {
     WTF_MAKE_TZONE_ALLOCATED_EXPORT(CPUMonitor, WEBCORE_EXPORT);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(CPUMonitor);
 public:
     using ExceededCPULimitHandler = Function<void(double)>;
     WEBCORE_EXPORT CPUMonitor(Seconds checkInterval, ExceededCPULimitHandler&&);

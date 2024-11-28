@@ -43,16 +43,16 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-AccessibilityListBoxOption::AccessibilityListBoxOption(HTMLElement& element)
-    : AccessibilityNodeObject(&element)
+AccessibilityListBoxOption::AccessibilityListBoxOption(AXID axID, HTMLElement& element)
+    : AccessibilityNodeObject(axID, &element)
 {
 }
 
 AccessibilityListBoxOption::~AccessibilityListBoxOption() = default;
 
-Ref<AccessibilityListBoxOption> AccessibilityListBoxOption::create(HTMLElement& element)
+Ref<AccessibilityListBoxOption> AccessibilityListBoxOption::create(AXID axID, HTMLElement& element)
 {
-    return adoptRef(*new AccessibilityListBoxOption(element));
+    return adoptRef(*new AccessibilityListBoxOption(axID, element));
 }
 
 bool AccessibilityListBoxOption::isEnabled() const
@@ -146,11 +146,6 @@ Element* AccessibilityListBoxOption::actionElement() const
 {
     ASSERT(is<HTMLElement>(m_node.get()));
     return dynamicDowncast<Element>(m_node.get());
-}
-
-Node* AccessibilityListBoxOption::node() const
-{
-    return m_node.get();
 }
 
 AccessibilityObject* AccessibilityListBoxOption::parentObject() const

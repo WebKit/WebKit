@@ -35,6 +35,7 @@
 
 #if PLATFORM(COCOA)
 #include <CoreFoundation/CoreFoundation.h>
+#include <wtf/cf/VectorCF.h>
 #include <wtf/spi/cocoa/SecuritySPI.h>
 #endif
 
@@ -57,7 +58,7 @@ std::optional<WTF::WallTime> Coder<WTF::WallTime>::decode(Decoder& decoder)
 void Coder<WebCore::CertificateInfo>::encode(Encoder& encoder, const WebCore::CertificateInfo& instance)
 {
 #if PLATFORM(COCOA)
-    auto data = adoptCF(SecTrustSerialize(instance.trust().get(), nullptr));
+    RetainPtr data = adoptCF(SecTrustSerialize(instance.trust().get(), nullptr));
     if (!data) {
         encoder << false;
         return;
@@ -65,7 +66,7 @@ void Coder<WebCore::CertificateInfo>::encode(Encoder& encoder, const WebCore::Ce
     encoder << true;
     uint64_t length = CFDataGetLength(data.get());
     encoder << length;
-    encoder.encodeFixedLengthData({ CFDataGetBytePtr(data.get()), static_cast<size_t>(length) });
+    encoder.encodeFixedLengthData(span(data.get()));
 #endif
 }
 

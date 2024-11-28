@@ -67,16 +67,18 @@ public:
 
     virtual ScrollableArea* scrollableArea() const { return nullptr; }
     virtual bool usesAsyncScrolling() const { return false; }
-    virtual ScrollingNodeID scrollingNodeID() const { return { }; }
+    virtual std::optional<ScrollingNodeID> scrollingNodeID() const { return std::nullopt; }
     virtual void willAttachScrollingNode() { }
     virtual void didAttachScrollingNode() { }
 
 #if PLATFORM(COCOA)
     virtual id accessibilityAssociatedPluginParentForElement(Element*) const { return nullptr; }
 #endif
-    virtual void setPDFDisplayModeForTesting(const String&) { };
+    virtual void setPDFDisplayModeForTesting(const String&) { }
     virtual bool sendEditingCommandToPDFForTesting(const String&, const String&) { return false; }
     virtual Vector<FloatRect> pdfAnnotationRectsForTesting() const { return { }; }
+    virtual void unlockPDFDocumentForTesting(const String&) { }
+    virtual void setPDFTextAnnotationValueForTesting(unsigned /* pageIndex */, unsigned /* annotationIndex */, const String& /* value */) { };
 
     virtual void releaseMemory() { }
 

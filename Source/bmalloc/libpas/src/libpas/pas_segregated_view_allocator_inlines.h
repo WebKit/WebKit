@@ -51,7 +51,7 @@ static PAS_ALWAYS_INLINE pas_segregated_view
 pas_segregated_view_will_start_allocating(pas_segregated_view view,
                                           pas_segregated_page_config page_config)
 {
-    static const bool verbose = false;
+    static const bool verbose = PAS_SHOULD_LOG(PAS_LOG_SEGREGATED_HEAPS);
 
     pas_segregated_exclusive_view* exclusive;
     pas_segregated_partial_view* partial;
@@ -329,7 +329,7 @@ pas_segregated_view_did_stop_allocating(pas_segregated_view view,
                                         pas_segregated_page* page,
                                         pas_segregated_page_config page_config)
 {
-    static const bool verbose = false;
+    static const bool verbose = PAS_SHOULD_LOG(PAS_LOG_SEGREGATED_HEAPS);
 
     bool should_notify_eligibility;
     bool should_notify_emptiness;

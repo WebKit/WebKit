@@ -26,7 +26,6 @@
 #pragma once
 
 #include "CSSParserTokenRange.h"
-#include "CSSPropertyParserHelpers.h"
 #include "CSSValueKeywords.h"
 #include "CSSValueList.h"
 #include "CSSValuePool.h"

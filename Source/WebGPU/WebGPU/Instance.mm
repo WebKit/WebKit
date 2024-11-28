@@ -222,17 +222,17 @@ WGPUProc wgpuGetProcAddress(WGPUDevice, const char*)
 
 WGPUSurface wgpuInstanceCreateSurface(WGPUInstance instance, const WGPUSurfaceDescriptor* descriptor)
 {
-    return WebGPU::releaseToAPI(WebGPU::fromAPI(instance).createSurface(*descriptor));
+    return WebGPU::releaseToAPI(WebGPU::protectedFromAPI(instance)->createSurface(*descriptor));
 }
 
 void wgpuInstanceProcessEvents(WGPUInstance instance)
 {
-    WebGPU::fromAPI(instance).processEvents();
+    WebGPU::protectedFromAPI(instance)->processEvents();
 }
 
 void wgpuInstanceRequestAdapter(WGPUInstance instance, const WGPURequestAdapterOptions* options, WGPURequestAdapterCallback callback, void* userdata)
 {
-    WebGPU::fromAPI(instance).requestAdapter(*options, [callback, userdata](WGPURequestAdapterStatus status, Ref<WebGPU::Adapter>&& adapter, String&& message) {
+    WebGPU::protectedFromAPI(instance)->requestAdapter(*options, [callback, userdata](WGPURequestAdapterStatus status, Ref<WebGPU::Adapter>&& adapter, String&& message) {
         if (status != WGPURequestAdapterStatus_Success) {
             callback(status, nullptr, message.utf8().data(), userdata);
             return;
@@ -244,7 +244,7 @@ void wgpuInstanceRequestAdapter(WGPUInstance instance, const WGPURequestAdapterO
 
 void wgpuInstanceRequestAdapterWithBlock(WGPUInstance instance, WGPURequestAdapterOptions const * options, WGPURequestAdapterBlockCallback callback)
 {
-    WebGPU::fromAPI(instance).requestAdapter(*options, [callback = WebGPU::fromAPI(WTFMove(callback))](WGPURequestAdapterStatus status, Ref<WebGPU::Adapter>&& adapter, String&& message) {
+    WebGPU::protectedFromAPI(instance)->requestAdapter(*options, [callback = WebGPU::fromAPI(WTFMove(callback))](WGPURequestAdapterStatus status, Ref<WebGPU::Adapter>&& adapter, String&& message) {
         if (status != WGPURequestAdapterStatus_Success) {
             callback(status, nullptr, message.utf8().data());
             return;
@@ -257,130 +257,130 @@ void wgpuInstanceRequestAdapterWithBlock(WGPUInstance instance, WGPURequestAdapt
 // Fuzzer things
 WGPUBool wgpuBufferIsValid(WGPUBuffer buffer)
 {
-    return WebGPU::fromAPI(buffer).isValid();
+    return WebGPU::protectedFromAPI(buffer)->isValid();
 }
 
 WGPUBool wgpuAdapterIsValid(WGPUAdapter adapter)
 {
-    return WebGPU::fromAPI(adapter).isValid();
+    return WebGPU::protectedFromAPI(adapter)->isValid();
 }
 
 WGPUBool wgpuBindGroupIsValid(WGPUBindGroup bindGroup)
 {
-    return WebGPU::fromAPI(bindGroup).isValid();
+    return WebGPU::protectedFromAPI(bindGroup)->isValid();
 }
 
 WGPUBool wgpuBindGroupLayoutIsValid(WGPUBindGroupLayout bindGroupLayout)
 {
-    return WebGPU::fromAPI(bindGroupLayout).isValid();
+    return WebGPU::protectedFromAPI(bindGroupLayout)->isValid();
 }
 
 WGPUBool wgpuCommandBufferIsValid(WGPUCommandBuffer commandBuffer)
 {
-    return WebGPU::fromAPI(commandBuffer).isValid();
+    return WebGPU::protectedFromAPI(commandBuffer)->isValid();
 }
 
 WGPUBool wgpuCommandEncoderIsValid(WGPUCommandEncoder commandEncoder)
 {
-    return WebGPU::fromAPI(commandEncoder).isValid();
+    return WebGPU::protectedFromAPI(commandEncoder)->isValid();
 }
 
 WGPUBool wgpuComputePassEncoderIsValid(WGPUComputePassEncoder computePassEncoder)
 {
-    return WebGPU::fromAPI(computePassEncoder).isValid();
+    return WebGPU::protectedFromAPI(computePassEncoder)->isValid();
 }
 
 WGPUBool wgpuComputePipelineIsValid(WGPUComputePipeline computePipeline)
 {
-    return WebGPU::fromAPI(computePipeline).isValid();
+    return WebGPU::protectedFromAPI(computePipeline)->isValid();
 }
 
 WGPUBool wgpuDeviceIsValid(WGPUDevice device)
 {
-    return WebGPU::fromAPI(device).isValid();
+    return WebGPU::protectedFromAPI(device)->isValid();
 }
 
 WGPUBool wgpuExternalTextureIsValid(WGPUExternalTexture externalTexture)
 {
-    return WebGPU::fromAPI(externalTexture).isValid();
+    return WebGPU::protectedFromAPI(externalTexture)->isValid();
 }
 
 WGPUBool wgpuPipelineLayoutIsValid(WGPUPipelineLayout pipelineLayout)
 {
-    return WebGPU::fromAPI(pipelineLayout).isValid();
+    return WebGPU::protectedFromAPI(pipelineLayout)->isValid();
 }
 
 WGPUBool wgpuPresentationContextIsValid(WGPUSurface presentationContext)
 {
-    return WebGPU::fromAPI(presentationContext).isValid();
+    return WebGPU::protectedFromAPI(presentationContext)->isValid();
 }
 
 WGPUBool wgpuQuerySetIsValid(WGPUQuerySet querySet)
 {
-    return WebGPU::fromAPI(querySet).isValid();
+    return WebGPU::protectedFromAPI(querySet)->isValid();
 }
 
 WGPUBool wgpuQueueIsValid(WGPUQueue queue)
 {
-    return WebGPU::fromAPI(queue).isValid();
+    return WebGPU::protectedFromAPI(queue)->isValid();
 }
 
 WGPUBool wgpuRenderBundleEncoderIsValid(WGPURenderBundleEncoder renderBundleEncoder)
 {
-    return WebGPU::fromAPI(renderBundleEncoder).isValid();
+    return WebGPU::protectedFromAPI(renderBundleEncoder)->isValid();
 }
 
 WGPUBool wgpuRenderBundleIsValid(WGPURenderBundle renderBundle)
 {
-    return WebGPU::fromAPI(renderBundle).isValid();
+    return WebGPU::protectedFromAPI(renderBundle)->isValid();
 }
 
 WGPUBool wgpuRenderPassEncoderIsValid(WGPURenderPassEncoder renderPassEncoder)
 {
-    return WebGPU::fromAPI(renderPassEncoder).isValid();
+    return WebGPU::protectedFromAPI(renderPassEncoder)->isValid();
 }
 
 WGPUBool wgpuRenderPipelineIsValid(WGPURenderPipeline renderPipeline)
 {
-    return WebGPU::fromAPI(renderPipeline).isValid();
+    return WebGPU::protectedFromAPI(renderPipeline)->isValid();
 }
 
 WGPUBool wgpuSamplerIsValid(WGPUSampler sampler)
 {
-    return WebGPU::fromAPI(sampler).isValid();
+    return WebGPU::protectedFromAPI(sampler)->isValid();
 }
 
 WGPUBool wgpuShaderModuleIsValid(WGPUShaderModule shaderModule)
 {
-    return WebGPU::fromAPI(shaderModule).isValid();
+    return WebGPU::protectedFromAPI(shaderModule)->isValid();
 }
 
 WGPUBool wgpuTextureIsValid(WGPUTexture texture)
 {
-    return WebGPU::fromAPI(texture).isValid();
+    return WebGPU::protectedFromAPI(texture)->isValid();
 }
 
 WGPUBool wgpuTextureViewIsValid(WGPUTextureView textureView)
 {
-    return WebGPU::fromAPI(textureView).isValid();
+    return WebGPU::protectedFromAPI(textureView)->isValid();
 }
 
 WGPUBool wgpuXRBindingIsValid(WGPUXRBinding binding)
 {
-    return WebGPU::fromAPI(binding).isValid();
+    return WebGPU::protectedFromAPI(binding)->isValid();
 }
 
 WGPUBool wgpuXRSubImageIsValid(WGPUXRSubImage subImage)
 {
-    return WebGPU::fromAPI(subImage).isValid();
+    return WebGPU::protectedFromAPI(subImage)->isValid();
 }
 
 WGPUBool wgpuXRProjectionLayerIsValid(WGPUXRProjectionLayer layer)
 {
-    return WebGPU::fromAPI(layer).isValid();
+    return WebGPU::protectedFromAPI(layer)->isValid();
 }
 
 WGPUBool wgpuXRViewIsValid(WGPUXRView view)
 {
-    return WebGPU::fromAPI(view).isValid();
+    return WebGPU::protectedFromAPI(view)->isValid();
 }

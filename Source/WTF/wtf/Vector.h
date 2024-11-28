@@ -31,7 +31,7 @@
 #include <wtf/FailureAction.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/Forward.h>
-#include <wtf/MallocPtr.h>
+#include <wtf/MallocSpan.h>
 #include <wtf/MathExtras.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/NotFound.h>
@@ -42,6 +42,8 @@
 #if ASAN_ENABLED && __has_include(<sanitizer/asan_interface.h>)
 #include <sanitizer/asan_interface.h>
 #endif
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace JSC {
 class LLIntOffsetsExtractor;
@@ -58,7 +60,7 @@ struct VectorDestructor;
 template<typename T>
 struct VectorDestructor<false, T>
 {
-    static void destruct(T*, T*) {}
+    static void destruct(T*, T*) { }
 };
 
 template<typename T>
@@ -253,6 +255,11 @@ struct VectorTypeOperations
         VectorDestructor<!std::is_trivially_destructible<T>::value, T>::destruct(begin, end);
     }
 
+    static void destruct(std::span<T> span)
+    {
+        VectorDestructor<!std::is_trivially_destructible<T>::value, T>::destruct(std::to_address(span.begin()), std::to_address(span.end()));
+    }
+
     static void initializeIfNonPOD(T* begin, T* end)
     {
         VectorInitializer<VectorTraits<T>::needsInitialization, VectorTraits<T>::canInitializeWithMemset, T>::initializeIfNonPOD(begin, end);
@@ -274,14 +281,29 @@ struct VectorTypeOperations
         VectorMover<VectorTraits<T>::canMoveWithMemcpy, T>::move(src, srcEnd, dst);
     }
 
+    static void move(std::span<T> src, std::span<T> dst)
+    {
+        VectorMover<VectorTraits<T>::canMoveWithMemcpy, T>::move(std::to_address(src.begin()), std::to_address(src.end()), std::to_address(dst.begin()));
+    }
+
     static void moveOverlapping(T* src, T* srcEnd, T* dst)
     {
         VectorMover<VectorTraits<T>::canMoveWithMemcpy, T>::moveOverlapping(src, srcEnd, dst);
     }
 
+    static void moveOverlapping(std::span<T> src, std::span<T> dst)
+    {
+        VectorMover<VectorTraits<T>::canMoveWithMemcpy, T>::moveOverlapping(std::to_address(src.begin()), std::to_address(src.end()), std::to_address(dst.begin()));
+    }
+
     static void uninitializedCopy(const T* src, const T* srcEnd, T* dst)
     {
         VectorCopier<VectorTraits<T>::canCopyWithMemcpy, T>::uninitializedCopy(src, srcEnd, dst);
+    }
+
+    static void uninitializedCopy(std::span<const T> src, std::span<T> dst)
+    {
+        VectorCopier<VectorTraits<T>::canCopyWithMemcpy, T>::uninitializedCopy(std::to_address(src.begin()), std::to_address(src.end()), std::to_address(dst.begin()));
     }
 
     static void uninitializedFill(T* dst, T* dstEnd, const T& val)
@@ -366,12 +388,13 @@ public:
     static constexpr ptrdiff_t bufferMemoryOffset() { return OBJECT_OFFSETOF(VectorBufferBase, m_buffer); }
     size_t capacity() const { return m_capacity; }
 
-    MallocPtr<T, Malloc> releaseBuffer()
+    std::span<T> capacitySpan() { return unsafeMakeSpan(m_buffer, m_capacity); }
+    std::span<const T> capacitySpan() const { return unsafeMakeSpan(m_buffer, m_capacity); }
+
+    MallocSpan<T, Malloc> releaseBuffer()
     {
-        T* buffer = m_buffer;
-        m_buffer = nullptr;
         m_capacity = 0;
-        return adoptMallocPtr<T, Malloc>(buffer);
+        return adoptMallocSpan<T, Malloc>(unsafeMakeSpan(std::exchange(m_buffer, nullptr), std::exchange(m_size, 0)));
     }
 
 protected:
@@ -450,6 +473,7 @@ public:
     using Base::bufferMemoryOffset;
 
     using Base::releaseBuffer;
+    using Base::capacitySpan;
 
 protected:
     using Base::m_size;
@@ -577,10 +601,11 @@ public:
 #endif
 
     using Base::buffer;
+    using Base::capacitySpan;
     using Base::capacity;
     using Base::bufferMemoryOffset;
 
-    MallocPtr<T, Malloc> releaseBuffer()
+    MallocSpan<T, Malloc> releaseBuffer()
     {
         if (buffer() == inlineBuffer())
             return { };
@@ -712,7 +737,7 @@ public:
     }
 
     template<std::invocable<size_t> Functor>
-    Vector(size_t size, const Functor& valueGenerator)
+    Vector(size_t size, NOESCAPE const Functor& valueGenerator)
     {
         reserveInitialCapacity(size);
 
@@ -854,10 +879,10 @@ public:
     
     bool contains(const auto&) const;
     size_t find(const auto&) const;
-    size_t findIf(const Invocable<bool(const T&)> auto& matches) const;
+    size_t findIf(NOESCAPE const Invocable<bool(const T&)> auto& matches) const;
     size_t reverseFind(const auto&) const;
-    size_t reverseFindIf(const Invocable<bool(const T&)> auto& matches) const;
-    bool containsIf(const Invocable<bool(const T&)> auto& matches) const { return findIf(matches) != notFound; }
+    size_t reverseFindIf(NOESCAPE const Invocable<bool(const T&)> auto& matches) const;
+    bool containsIf(NOESCAPE const Invocable<bool(const T&)> auto& matches) const { return findIf(matches) != notFound; }
 
     bool appendIfNotContains(const auto&);
 
@@ -893,7 +918,7 @@ public:
     template<typename U, size_t otherCapacity, typename OtherOverflowHandler, size_t otherMinCapacity, typename OtherMalloc> void appendVector(const Vector<U, otherCapacity, OtherOverflowHandler, otherMinCapacity, OtherMalloc>&);
     template<typename U, size_t otherCapacity, typename OtherOverflowHandler, size_t otherMinCapacity, typename OtherMalloc> void appendVector(Vector<U, otherCapacity, OtherOverflowHandler, otherMinCapacity, OtherMalloc>&&);
 
-    void appendUsingFunctor(size_t, const Invocable<T(size_t)> auto&);
+    void appendUsingFunctor(size_t, NOESCAPE const Invocable<T(size_t)> auto&);
 
     void insert(size_t position, value_type&& value) { insert<value_type>(position, std::forward<value_type>(value)); }
     void insertFill(size_t position, const T& value, size_t dataSize);
@@ -904,12 +929,12 @@ public:
     void remove(size_t position);
     void remove(size_t position, size_t length);
     bool removeFirst(const auto&);
-    bool removeFirstMatching(const Invocable<bool(T&)> auto&, size_t startIndex = 0);
+    bool removeFirstMatching(NOESCAPE const Invocable<bool(T&)> auto&, size_t startIndex = 0);
     bool removeLast(const auto&);
-    bool removeLastMatching(const Invocable<bool(T&)> auto&);
-    bool removeLastMatching(const Invocable<bool(T&)> auto&, size_t startIndex);
+    bool removeLastMatching(NOESCAPE const Invocable<bool(T&)> auto&);
+    bool removeLastMatching(NOESCAPE const Invocable<bool(T&)> auto&, size_t startIndex);
     unsigned removeAll(const auto&);
-    unsigned removeAllMatching(const Invocable<bool(T&)> auto&, size_t startIndex = 0);
+    unsigned removeAllMatching(NOESCAPE const Invocable<bool(T&)> auto&, size_t startIndex = 0);
 
     void removeLast()
     {
@@ -922,9 +947,9 @@ public:
     void fill(const T& val) { fill(val, size()); }
 
     template<typename Iterator> void appendRange(Iterator start, Iterator end);
-    template<typename ContainerType, typename MapFunction> void appendContainerWithMapping(ContainerType&&, const MapFunction&);
+    template<typename ContainerType, typename MapFunction> void appendContainerWithMapping(ContainerType&&, NOESCAPE const MapFunction&);
 
-    MallocPtr<T, Malloc> releaseBuffer();
+    MallocSpan<T, Malloc> releaseBuffer();
 
     void swap(Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>& other)
     {
@@ -949,10 +974,10 @@ public:
     void checkConsistency();
 
     template<typename ResultVector>
-    ResultVector map(const std::invocable<const T&> auto& mapFunction) const;
+    ResultVector map(NOESCAPE const std::invocable<const T&> auto& mapFunction) const;
 
     template<std::invocable<const T&> MapFunction>
-    Vector<std::invoke_result_t<MapFunction, const T&>> map(const MapFunction&) const;
+    Vector<std::invoke_result_t<MapFunction, const T&>> map(NOESCAPE const MapFunction&) const;
 
     bool isHashTableDeletedValue() const { return m_size == std::numeric_limits<decltype(m_size)>::max(); }
 
@@ -1121,7 +1146,7 @@ bool Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::contains(c
 }
 
 template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity, typename Malloc>
-size_t Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::findIf(const Invocable<bool(const T&)> auto& matches) const
+size_t Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::findIf(NOESCAPE const Invocable<bool(const T&)> auto& matches) const
 {
     for (size_t i = 0; i < size(); ++i) {
         if (matches(at(i)))
@@ -1150,7 +1175,7 @@ size_t Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::reverseF
 }
 
 template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity, typename Malloc>
-size_t Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::reverseFindIf(const Invocable<bool(const T&)> auto& matches) const
+size_t Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::reverseFindIf(NOESCAPE const Invocable<bool(const T&)> auto& matches) const
 {
     for (size_t i = 1; i <= size(); ++i) {
         const size_t index = size() - i;
@@ -1206,7 +1231,7 @@ void Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::appendRang
 }
 
 template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity, typename Malloc>
-void Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::appendUsingFunctor(size_t size, const Invocable<T(size_t)> auto& valueGenerator)
+void Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::appendUsingFunctor(size_t size, NOESCAPE const Invocable<T(size_t)> auto& valueGenerator)
 {
     reserveCapacity(this->size() + size);
     for (size_t i = 0; i < size; ++i)
@@ -1217,7 +1242,7 @@ template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t min
 template<FailureAction action>
 bool Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::expandCapacity(size_t newMinCapacity)
 {
-    return reserveCapacity<action>(std::max(newMinCapacity, std::max(static_cast<size_t>(minCapacity), capacity() + capacity() / 4 + 1)));
+    return reserveCapacity<action>(std::max(newMinCapacity, std::max(static_cast<size_t>(minCapacity), Malloc::nextCapacity(capacity()))));
 }
 
 template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity, typename Malloc>
@@ -1694,7 +1719,7 @@ inline bool Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::rem
 }
 
 template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity, typename Malloc>
-inline bool Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::removeFirstMatching(const Invocable<bool(T&)> auto& matches, size_t startIndex)
+inline bool Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::removeFirstMatching(NOESCAPE const Invocable<bool(T&)> auto& matches, size_t startIndex)
 {
     for (size_t i = startIndex; i < size(); ++i) {
         if (matches(at(i))) {
@@ -1714,13 +1739,13 @@ inline bool Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::rem
 }
 
 template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity, typename Malloc>
-inline bool Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::removeLastMatching(const Invocable<bool(T&)> auto& matches)
+inline bool Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::removeLastMatching(NOESCAPE const Invocable<bool(T&)> auto& matches)
 {
     return removeLastMatching(matches, size());
 }
 
 template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity, typename Malloc>
-inline bool Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::removeLastMatching(const Invocable<bool(T&)> auto& matches, size_t startIndex)
+inline bool Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::removeLastMatching(NOESCAPE const Invocable<bool(T&)> auto& matches, size_t startIndex)
 {
     for (size_t i = std::min(startIndex + 1, size()); i > 0; --i) {
         if (matches(at(i - 1))) {
@@ -1740,7 +1765,7 @@ inline unsigned Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>:
 }
 
 template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity, typename Malloc>
-inline unsigned Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::removeAllMatching(const Invocable<bool(T&)> auto& matches, size_t startIndex)
+inline unsigned Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::removeAllMatching(NOESCAPE const Invocable<bool(T&)> auto& matches, size_t startIndex)
 {
     iterator holeBegin = end();
     iterator holeEnd = end();
@@ -1774,7 +1799,7 @@ inline void Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::rev
 
 template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity, typename Malloc>
 template<typename ResultVector>
-inline ResultVector Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::map(const std::invocable<const T&> auto& mapFunction) const
+inline ResultVector Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::map(NOESCAPE const std::invocable<const T&> auto& mapFunction) const
 {
     ResultVector result;
     result.reserveInitialCapacity(size());
@@ -1788,14 +1813,14 @@ size_t containerSize(const ContainerType& container) { return std::size(containe
 
 template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity, typename Malloc>
 template<std::invocable<const T&> MapFunction>
-inline Vector<std::invoke_result_t<MapFunction, const T&>> Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::map(const MapFunction& mapFunction) const
+inline Vector<std::invoke_result_t<MapFunction, const T&>> Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::map(NOESCAPE const MapFunction& mapFunction) const
 {
     return map<Vector<typename std::invoke_result_t<MapFunction, const T&>>, MapFunction>(mapFunction);
 }
 
 template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity, typename Malloc>
 template<typename ContainerType, typename MapFunction>
-void Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::appendContainerWithMapping(ContainerType&& container, const MapFunction& mapFunction)
+void Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::appendContainerWithMapping(ContainerType&& container, NOESCAPE const MapFunction& mapFunction)
 {
     reserveCapacity(size() + containerSize(container));
     for (auto&& item : container)
@@ -1803,21 +1828,20 @@ void Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::appendCont
 }
 
 template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity, typename Malloc>
-inline MallocPtr<T, Malloc> Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::releaseBuffer()
+inline MallocSpan<T, Malloc> Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::releaseBuffer()
 {
     // FIXME: Find a way to preserve annotations on the returned buffer.
     // ASan requires that all annotations are removed before deallocation,
-    // and MallocPtr doesn't implement that.
+    // and MallocSpan doesn't implement that.
     asanSetBufferSizeToFullCapacity();
 
     auto buffer = Base::releaseBuffer();
-    if (inlineCapacity && !buffer && m_size) {
+    if (inlineCapacity && buffer.span().empty() && m_size) {
         // If the vector had some data, but no buffer to release,
         // that means it was using the inline buffer. In that case,
         // we create a brand new buffer so the caller always gets one.
-        size_t bytes = m_size * sizeof(T);
-        buffer = adoptMallocPtr<T, Malloc>(static_cast<T*>(Malloc::malloc(bytes)));
-        memcpy(buffer.get(), data(), bytes);
+        buffer = MallocSpan<T, Malloc>::malloc(m_size * sizeof(T));
+        memcpySpan(buffer.mutableSpan(), span());
     }
     m_size = 0;
     // FIXME: Should we call Base::restoreInlineBufferIfNeeded() here?
@@ -1901,7 +1925,7 @@ struct Mapper<MapFunction, DestinationVectorType, SourceType, typename std::enab
 };
 
 template<size_t inlineCapacity = 0, typename OverflowHandler = CrashOnOverflow, size_t minCapacity = 16, typename MapFunction, typename SourceType>
-Vector<typename std::invoke_result<MapFunction, typename CollectionInspector<SourceType>::SourceItemType&&>::type, inlineCapacity, OverflowHandler, minCapacity> map(SourceType&& source, MapFunction&& mapFunction)
+Vector<typename std::invoke_result<MapFunction, typename CollectionInspector<SourceType>::SourceItemType&&>::type, inlineCapacity, OverflowHandler, minCapacity> map(SourceType&& source, NOESCAPE MapFunction&& mapFunction)
 {
     using SourceItemType = typename CollectionInspector<SourceType>::SourceItemType;
     using DestinationItemType = typename std::invoke_result<MapFunction, SourceItemType&&>::type;
@@ -1913,7 +1937,7 @@ Vector<typename std::invoke_result<MapFunction, typename CollectionInspector<Sou
 }
 
 template<size_t inlineCapacity = 0, typename OverflowHandler = CrashOnOverflow, size_t minCapacity = 16, typename MapFunction, typename SourceType>
-Vector<typename std::invoke_result<MapFunction, typename CollectionInspector<SourceType>::SourceItemType&>::type, inlineCapacity, OverflowHandler, minCapacity> map(SourceType& source, MapFunction&& mapFunction)
+Vector<typename std::invoke_result<MapFunction, typename CollectionInspector<SourceType>::SourceItemType&>::type, inlineCapacity, OverflowHandler, minCapacity> map(SourceType& source, NOESCAPE MapFunction&& mapFunction)
 {
     using SourceItemType = typename CollectionInspector<SourceType>::SourceItemType;
     using DestinationItemType = typename std::invoke_result<MapFunction, SourceItemType&>::type;
@@ -1957,7 +1981,7 @@ struct CompactMapper {
     using SourceItemType = typename CollectionInspector<SourceType>::SourceItemType;
     using ResultItemType = typename std::invoke_result<MapFunction, SourceItemType&>::type;
 
-    static void compactMap(DestinationVectorType& result, const SourceType& source, const MapFunction& mapFunction)
+    static void compactMap(DestinationVectorType& result, const SourceType& source, NOESCAPE const MapFunction& mapFunction)
     {
         for (auto&& item : source) {
             auto itemResult = mapFunction(item);
@@ -1973,7 +1997,7 @@ struct CompactMapper<MapFunction, DestinationVectorType, SourceType, typename st
     using SourceItemType = typename CollectionInspector<SourceType>::SourceItemType;
     using ResultItemType = typename std::invoke_result<MapFunction, SourceItemType&&>::type;
 
-    static void compactMap(DestinationVectorType& result, SourceType&& source, const MapFunction& mapFunction)
+    static void compactMap(DestinationVectorType& result, SourceType&& source, NOESCAPE const MapFunction& mapFunction)
     {
         for (auto&& item : source) {
             auto itemResult = mapFunction(WTFMove(item));
@@ -1985,7 +2009,7 @@ struct CompactMapper<MapFunction, DestinationVectorType, SourceType, typename st
 };
 
 template<size_t inlineCapacity = 0, typename OverflowHandler = CrashOnOverflow, size_t minCapacity = 16, typename MapFunction, typename SourceType>
-Vector<typename CompactMapTraits<typename std::invoke_result<MapFunction, typename CollectionInspector<SourceType>::SourceItemType&&>::type>::ItemType, inlineCapacity, OverflowHandler, minCapacity> compactMap(SourceType&& source, MapFunction&& mapFunction)
+Vector<typename CompactMapTraits<typename std::invoke_result<MapFunction, typename CollectionInspector<SourceType>::SourceItemType&&>::type>::ItemType, inlineCapacity, OverflowHandler, minCapacity> compactMap(SourceType&& source, NOESCAPE MapFunction&& mapFunction)
 {
     using SourceItemType = typename CollectionInspector<SourceType>::SourceItemType;
     using ResultItemType = typename std::invoke_result<MapFunction, SourceItemType&&>::type;
@@ -1999,7 +2023,7 @@ Vector<typename CompactMapTraits<typename std::invoke_result<MapFunction, typena
 }
 
 template<size_t inlineCapacity = 0, typename OverflowHandler = CrashOnOverflow, size_t minCapacity = 16, typename MapFunction, typename SourceType>
-Vector<typename CompactMapTraits<typename std::invoke_result<MapFunction, typename CollectionInspector<SourceType>::SourceItemType&>::type>::ItemType, inlineCapacity, OverflowHandler, minCapacity> compactMap(SourceType& source, MapFunction&& mapFunction)
+Vector<typename CompactMapTraits<typename std::invoke_result<MapFunction, typename CollectionInspector<SourceType>::SourceItemType&>::type>::ItemType, inlineCapacity, OverflowHandler, minCapacity> compactMap(SourceType& source, NOESCAPE MapFunction&& mapFunction)
 {
     using SourceItemType = typename CollectionInspector<SourceType>::SourceItemType;
     using ResultItemType = typename std::invoke_result<MapFunction, SourceItemType&>::type;
@@ -2043,7 +2067,7 @@ struct FlatMapper<MapFunction, SourceType> {
 };
 
 template<typename MapFunction, typename SourceType>
-Vector<typename FlatMapper<MapFunction, SourceType>::DestinationItemType> flatMap(SourceType&& source, MapFunction&& mapFunction)
+Vector<typename FlatMapper<MapFunction, SourceType>::DestinationItemType> flatMap(SourceType&& source, NOESCAPE MapFunction&& mapFunction)
 {
     return FlatMapper<MapFunction, SourceType>::flatMap(std::forward<SourceType>(source), std::forward<MapFunction>(mapFunction));
 }
@@ -2105,3 +2129,5 @@ using WTF::copyToVectorSpecialization;
 using WTF::compactMap;
 using WTF::flatMap;
 using WTF::removeRepeatedElements;
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

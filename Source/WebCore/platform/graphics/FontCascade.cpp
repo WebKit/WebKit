@@ -43,6 +43,8 @@
 #include <wtf/text/AtomStringHash.h>
 #include <wtf/text/StringBuilder.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(FontCascade);
@@ -476,40 +478,40 @@ bool FontCascade::hasValidAverageCharWidth() const
 #endif
 
     static constexpr ComparableASCIILiteral names[] = {
-        "#GungSeo",
-        "#HeadLineA",
-        "#PCMyungjo",
-        "#PilGi",
-        "American Typewriter",
-        "Apple Braille",
-        "Apple LiGothic",
-        "Apple LiSung",
-        "Apple Symbols",
-        "AppleGothic",
-        "AppleMyungjo",
-        "Arial Hebrew",
-        "Chalkboard",
-        "Cochin",
-        "Corsiva Hebrew",
-        "Courier",
-        "Euphemia UCAS",
-        "Geneva",
-        "Gill Sans",
-        "Hei",
-        "Helvetica",
-        "Hoefler Text",
-        "InaiMathi",
-        "Kai",
-        "Lucida Grande",
-        "Marker Felt",
-        "Monaco",
-        "Mshtakan",
-        "New Peninim MT",
-        "Osaka",
-        "Raanana",
-        "STHeiti",
-        "Symbol",
-        "Times",
+        "#GungSeo"_s,
+        "#HeadLineA"_s,
+        "#PCMyungjo"_s,
+        "#PilGi"_s,
+        "American Typewriter"_s,
+        "Apple Braille"_s,
+        "Apple LiGothic"_s,
+        "Apple LiSung"_s,
+        "Apple Symbols"_s,
+        "AppleGothic"_s,
+        "AppleMyungjo"_s,
+        "Arial Hebrew"_s,
+        "Chalkboard"_s,
+        "Cochin"_s,
+        "Corsiva Hebrew"_s,
+        "Courier"_s,
+        "Euphemia UCAS"_s,
+        "Geneva"_s,
+        "Gill Sans"_s,
+        "Hei"_s,
+        "Helvetica"_s,
+        "Hoefler Text"_s,
+        "InaiMathi"_s,
+        "Kai"_s,
+        "Lucida Grande"_s,
+        "Marker Felt"_s,
+        "Monaco"_s,
+        "Mshtakan"_s,
+        "New Peninim MT"_s,
+        "Osaka"_s,
+        "Raanana"_s,
+        "STHeiti"_s,
+        "Symbol"_s,
+        "Times"_s,
     };
     static constexpr SortedArraySet set { names };
     return !set.contains(family);
@@ -1688,7 +1690,7 @@ int FontCascade::offsetForPositionForComplexText(const TextRun& run, float x, bo
 
 #if !PLATFORM(COCOA) && !USE(HARFBUZZ)
 // FIXME: Unify this with the macOS and iOS implementation.
-const Font* FontCascade::fontForCombiningCharacterSequence(StringView stringView) const
+RefPtr<const Font> FontCascade::fontForCombiningCharacterSequence(StringView stringView) const
 {
     ASSERT(stringView.length() > 0);
     char32_t baseCharacter = *stringView.codePoints().begin();
@@ -1876,7 +1878,7 @@ bool shouldSynthesizeSmallCaps(bool dontSynthesizeSmallCaps, const Font* nextFon
 
     if (dontSynthesizeSmallCaps)
         return false;
-    if (!nextFont || nextFont == Font::systemFallback())
+    if (!nextFont || nextFont->isSystemFontFallbackPlaceholder())
         return false;
     if (engageAllSmallCapsProcessing && isUnicodeCompatibleASCIIWhitespace(baseCharacter))
         return false;
@@ -1899,3 +1901,5 @@ std::optional<char32_t> capitalized(char32_t baseCharacter)
 }
 
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

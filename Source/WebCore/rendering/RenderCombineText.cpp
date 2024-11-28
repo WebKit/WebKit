@@ -109,7 +109,7 @@ void RenderCombineText::combineTextIfNeeded()
     m_needsFontUpdate = false;
 
     // text-combine-upright works only in vertical typographic mode.
-    if (style().typographicMode() == TypographicMode::Horizontal)
+    if (!writingMode().isVerticalTypographic())
         return;
 
     auto description = originalFont().fontDescription();

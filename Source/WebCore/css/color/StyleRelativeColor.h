@@ -36,7 +36,7 @@
 namespace WebCore {
 
 template<typename Descriptor, unsigned Index>
-using StyleRelativeColorComponent = GetComponentResultWithCalcAndSymbolsResult<Descriptor, Index>;
+using StyleRelativeColorComponent = GetCSSColorParseTypeWithCalcAndSymbolsComponentResult<Descriptor, Index>;
 
 template<typename D>
 struct StyleRelativeColor {

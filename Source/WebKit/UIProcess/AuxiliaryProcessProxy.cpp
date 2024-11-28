@@ -35,6 +35,7 @@
 #include "WebPageProxy.h"
 #include "WebPageProxyIdentifier.h"
 #include "WebProcessProxy.h"
+#include <algorithm>
 #include <wtf/RunLoop.h>
 #include <wtf/Scope.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -86,7 +87,7 @@ AuxiliaryProcessProxy::AuxiliaryProcessProxy(ShouldTakeUIBackgroundAssertion sho
 
 AuxiliaryProcessProxy::~AuxiliaryProcessProxy()
 {
-    throttler().didDisconnectFromProcess();
+    protectedThrottler()->didDisconnectFromProcess();
 
     if (RefPtr connection = m_connection)
         connection->invalidate();
@@ -128,8 +129,6 @@ void AuxiliaryProcessProxy::populateOverrideLanguagesLaunchOptions(ProcessLaunch
 
 void AuxiliaryProcessProxy::getLaunchOptions(ProcessLauncher::LaunchOptions& launchOptions)
 {
-    launchOptions.processIdentifier = m_processIdentifier;
-
     if (const char* userDirectorySuffix = getenv("DIRHELPER_USER_DIR_SUFFIX")) {
         if (auto userDirectorySuffixString = String::fromUTF8(userDirectorySuffix); !userDirectorySuffixString.isNull())
             launchOptions.extraInitializationData.add<HashTranslatorASCIILiteral>("user-directory-suffix"_s, userDirectorySuffixString);
@@ -177,7 +176,7 @@ void AuxiliaryProcessProxy::connect()
 {
     ASSERT(!m_processLauncher);
     m_processStart = MonotonicTime::now();
-    ProcessLauncher::LaunchOptions launchOptions;
+    ProcessLauncher::LaunchOptions launchOptions { m_processIdentifier };
     getLaunchOptions(launchOptions);
     m_processLauncher = ProcessLauncher::create(this, WTFMove(launchOptions));
 }
@@ -196,17 +195,6 @@ void AuxiliaryProcessProxy::terminate()
     // FIXME: We should really merge process launching into IPC connection creation and get rid of the process launcher.
     if (RefPtr processLauncher = m_processLauncher)
         processLauncher->terminateProcess();
-}
-
-AuxiliaryProcessProxy::State AuxiliaryProcessProxy::state() const
-{
-    if (m_processLauncher && m_processLauncher->isLaunching())
-        return AuxiliaryProcessProxy::State::Launching;
-
-    if (!m_connection)
-        return AuxiliaryProcessProxy::State::Terminated;
-
-    return AuxiliaryProcessProxy::State::Running;
 }
 
 String AuxiliaryProcessProxy::stateString() const
@@ -262,7 +250,7 @@ bool AuxiliaryProcessProxy::sendMessage(UniqueRef<IPC::Encoder>&& encoder, Optio
 
     if (asyncReplyHandler && canSendMessage() && shouldStartProcessThrottlerActivity == ShouldStartProcessThrottlerActivity::Yes) {
         auto completionHandler = WTFMove(asyncReplyHandler->completionHandler);
-        asyncReplyHandler->completionHandler = [activity = throttler().quietBackgroundActivity(description(encoder->messageName())), completionHandler = WTFMove(completionHandler)](IPC::Decoder* decoder) mutable {
+        asyncReplyHandler->completionHandler = [activity = protectedThrottler()->quietBackgroundActivity(description(encoder->messageName())), completionHandler = WTFMove(completionHandler)](IPC::Decoder* decoder) mutable {
             completionHandler(decoder);
         };
     }
@@ -288,12 +276,25 @@ bool AuxiliaryProcessProxy::sendMessage(UniqueRef<IPC::Encoder>&& encoder, Optio
     }
 
     if (asyncReplyHandler && asyncReplyHandler->completionHandler) {
-        RunLoop::current().dispatch([completionHandler = WTFMove(asyncReplyHandler->completionHandler)]() mutable {
+        RunLoop::protectedCurrent()->dispatch([completionHandler = WTFMove(asyncReplyHandler->completionHandler)]() mutable {
             completionHandler(nullptr);
         });
     }
     
     return false;
+}
+
+bool AuxiliaryProcessProxy::sendMessageAfterResuming(Vector<uint8_t>&& coalescingKey, UniqueRef<IPC::Encoder>&& encoder)
+{
+    ASSERT(m_isSuspended);
+
+    if (!canSendMessage())
+        return false;
+
+    LOG(ProcessSuspension, "%p - AuxiliaryProcessProxy::sendMessageAfterResuming: deferring sending message %s to destination %" PRIu64 " in pid %i because it is suspended", this, description(encoder->messageName()).characters(), encoder->destinationID(), processID());
+
+    m_messagesToSendOnResume.set(WTFMove(coalescingKey), std::make_pair(m_messagesToSendOnResumeIndex++, encoder.moveToUniquePtr()));
+    return true;
 }
 
 void AuxiliaryProcessProxy::addMessageReceiver(IPC::ReceiverName messageReceiverName, IPC::MessageReceiver& messageReceiver)
@@ -339,7 +340,7 @@ void AuxiliaryProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::C
         return;
 
 #if PLATFORM(MAC) && USE(RUNNINGBOARD)
-    m_lifetimeActivity = throttler().foregroundActivity("Lifetime Activity"_s).moveToUniquePtr();
+    m_lifetimeActivity = throttler().foregroundActivity("Lifetime Activity"_s);
     m_boostedJetsamAssertion = ProcessAssertion::create(*this, "Jetsam Boost"_s, ProcessAssertionType::BoostedJetsam);
 #endif
 
@@ -408,7 +409,7 @@ void AuxiliaryProcessProxy::replyToPendingMessages()
 void AuxiliaryProcessProxy::shutDownProcess()
 {
     auto scopeExit = WTF::makeScopeExit([&] {
-        throttler().didDisconnectFromProcess();
+        protectedThrottler()->didDisconnectFromProcess();
     });
 
     switch (state()) {
@@ -487,7 +488,7 @@ bool AuxiliaryProcessProxy::platformIsBeingDebugged() const
 
 void AuxiliaryProcessProxy::stopResponsivenessTimer()
 {
-    responsivenessTimer().stop();
+    checkedResponsivenessTimer()->stop();
 }
 
 void AuxiliaryProcessProxy::beginResponsivenessChecks()
@@ -506,9 +507,9 @@ void AuxiliaryProcessProxy::startResponsivenessTimer(UseLazyStop useLazyStop)
     }
 
     if (useLazyStop == UseLazyStop::Yes)
-        responsivenessTimer().startWithLazyStop();
+        checkedResponsivenessTimer()->startWithLazyStop();
     else
-        responsivenessTimer().start();
+        checkedResponsivenessTimer()->start();
 }
 
 bool AuxiliaryProcessProxy::mayBecomeUnresponsive()
@@ -527,7 +528,7 @@ void AuxiliaryProcessProxy::checkForResponsiveness(CompletionHandler<void()>&& r
     sendWithAsyncReply(Messages::AuxiliaryProcess::MainThreadPing(), [weakThis = WeakPtr { *this }, responsivenessHandler = WTFMove(responsivenessHandler)]() mutable {
         // Schedule an asynchronous task because our completion handler may have been called as a result of the AuxiliaryProcessProxy
         // being in the middle of destruction.
-        RunLoop::main().dispatch([weakThis = WTFMove(weakThis), responsivenessHandler = WTFMove(responsivenessHandler)]() mutable {
+        RunLoop::protectedMain()->dispatch([weakThis = WTFMove(weakThis), responsivenessHandler = WTFMove(responsivenessHandler)]() mutable {
             if (RefPtr protectedThis = weakThis.get())
                 protectedThis->stopResponsivenessTimer();
 
@@ -604,16 +605,34 @@ void AuxiliaryProcessProxy::didChangeThrottleState(ProcessThrottleState state)
     if (m_isSuspended == isNowSuspended)
         return;
     m_isSuspended = isNowSuspended;
-#if ENABLE(CFPREFS_DIRECT_MODE)
-    if (!m_isSuspended && (!m_domainlessPreferencesUpdatedWhileSuspended.isEmpty() || !m_preferencesUpdatedWhileSuspended.isEmpty()))
-        send(Messages::AuxiliaryProcess::PreferencesDidUpdate(std::exchange(m_domainlessPreferencesUpdatedWhileSuspended, { }), std::exchange(m_preferencesUpdatedWhileSuspended, { })), 0);
-#endif
+
+    if (!isNowSuspended && !m_messagesToSendOnResume.isEmpty()) {
+        Vector<std::pair<unsigned, std::unique_ptr<IPC::Encoder>>> indexMessagePairs;
+        indexMessagePairs.reserveInitialCapacity(m_messagesToSendOnResume.size());
+
+        for (auto& indexMessagePair : m_messagesToSendOnResume.values())
+            indexMessagePairs.append(WTFMove(indexMessagePair));
+
+        // Send messages in the order that they were enqueued after coalescing.
+        std::sort(indexMessagePairs.begin(), indexMessagePairs.end(), [](const auto& pair1, const auto& pair2) {
+            return pair1.first < pair2.first;
+        });
+
+        for (auto& indexMessagePair : indexMessagePairs) {
+            auto& encoder = indexMessagePair.second;
+            LOG(ProcessSuspension, "%p - AuxiliaryProcessProxy::didChangeThrottleState: sending deferred message %s to destination %" PRIu64 " in pid %i because it resumed", this, description(encoder->messageName()).characters(), encoder->destinationID(), processID());
+            sendMessage(makeUniqueRefFromNonNullUniquePtr(WTFMove(encoder)), { });
+        }
+
+        m_messagesToSendOnResume.clear();
+        m_messagesToSendOnResumeIndex = 0;
+    }
 }
 
 AuxiliaryProcessProxy::InitializationActivityAndGrant AuxiliaryProcessProxy::initializationActivityAndGrant()
 {
     return {
-        throttler().foregroundActivity("Process initialization"_s)
+        protectedThrottler()->foregroundActivity("Process initialization"_s)
 #if USE(EXTENSIONKIT)
         , launchGrant()
 #endif

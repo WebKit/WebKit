@@ -19,14 +19,16 @@ const badOffsets = [
   null,       // must be a string
   true,       // must be a string
   1000n,      // must be a string
+  {},         // must be a string
+  Symbol()    // must be a string
 ];
 offsetOptions.forEach((offsetOption) => {
   badOffsets.forEach((offset) => {
     const arg = { year: 2021, month: 10, day: 28, offset, timeZone };
     assert.throws(
-      typeof(offset) === 'string' ? RangeError : TypeError,
+      typeof(offset) === 'string' || (typeof offset === "object" && offset !== null) ? RangeError : TypeError,
       () => Temporal.ZonedDateTime.from(arg, { offset: offsetOption }),
-      `"${offset} is not a valid offset string (with offset option ${offsetOption})`
+        `"${String(offset)} is not a valid offset string (with offset option ${offsetOption})`
     );
   });
 });

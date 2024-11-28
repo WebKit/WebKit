@@ -40,6 +40,8 @@
 #include <wtf/TZoneMalloc.h>
 #include <wtf/TZoneMallocInlines.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 const ClassInfo StructureRareData::s_info = { "StructureRareData"_s, nullptr, nullptr, nullptr, CREATE_METHOD_TABLE(StructureRareData) };
@@ -264,7 +266,7 @@ CachedSpecialPropertyAdaptiveInferredPropertyValueWatchpoint::CachedSpecialPrope
 
 bool CachedSpecialPropertyAdaptiveInferredPropertyValueWatchpoint::isValid() const
 {
-    return m_structureRareData->isLive();
+    return !m_structureRareData->isPendingDestruction();
 }
 
 void CachedSpecialPropertyAdaptiveInferredPropertyValueWatchpoint::handleFire(VM& vm, const FireDetail&)
@@ -286,3 +288,5 @@ void CachedSpecialPropertyAdaptiveInferredPropertyValueWatchpoint::handleFire(VM
 }
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

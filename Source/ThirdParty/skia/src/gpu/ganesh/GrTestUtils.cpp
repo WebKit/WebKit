@@ -6,7 +6,7 @@
  */
 #include "src/gpu/ganesh/GrTestUtils.h"
 
-#if defined(GR_TEST_UTILS)
+#if defined(GPU_TEST_UTILS)
 
 #include "include/core/SkAlphaType.h"
 #include "include/core/SkColorSpace.h"
@@ -312,7 +312,7 @@ bool TestDashPathEffect::onFilterPath(SkPath* dst, const SkPath& src, SkStrokeRe
                                       fPhase);
 }
 
-SkPathEffect::DashType TestDashPathEffect::onAsADash(DashInfo* info) const {
+SkPathEffectBase::DashType TestDashPathEffect::asADash(DashInfo* info) const {
     if (info) {
         if (info->fCount >= fCount && info->fIntervals) {
             memcpy(info->fIntervals, fIntervals.get(), fCount * sizeof(SkScalar));
@@ -320,7 +320,7 @@ SkPathEffect::DashType TestDashPathEffect::onAsADash(DashInfo* info) const {
         info->fCount = fCount;
         info->fPhase = fPhase;
     }
-    return kDash_DashType;
+    return DashType::kDash;
 }
 
 sk_sp<SkColorSpace> TestColorSpace(SkRandom* random) {

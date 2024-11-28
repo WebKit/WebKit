@@ -543,7 +543,7 @@ void PluginView::paint(GraphicsContext& context, const IntRect& dirtyRect, Widge
         return;
 
     if (m_transientPaintingSnapshot) {
-        if (!context.platformContext()) {
+        if (!context.hasPlatformContext()) {
             RefPtr image = m_transientPaintingSnapshot->createImage();
             if (!image)
                 return;
@@ -640,6 +640,38 @@ RefPtr<TextIndicator> PluginView::textIndicatorForCurrentSelection(OptionSet<Web
     return protectedPlugin()->textIndicatorForCurrentSelection(options, transition);
 }
 
+Vector<WebFoundTextRange::PDFData> PluginView::findTextMatches(const String& target, WebCore::FindOptions options)
+{
+    if (!m_isInitialized)
+        return { };
+
+    return protectedPlugin()->findTextMatches(target, options);
+}
+
+Vector<FloatRect> PluginView::rectsForTextMatch(const WebFoundTextRange::PDFData& match)
+{
+    if (!m_isInitialized)
+        return { };
+
+    return protectedPlugin()->rectsForTextMatch(match);
+}
+
+RefPtr<WebCore::TextIndicator> PluginView::textIndicatorForTextMatch(const WebFoundTextRange::PDFData& match, WebCore::TextIndicatorPresentationTransition transition)
+{
+    if (!m_isInitialized)
+        return { };
+
+    return protectedPlugin()->textIndicatorForTextMatch(match, transition);
+}
+
+void PluginView::scrollToRevealTextMatch(const WebFoundTextRange::PDFData& match)
+{
+    if (!m_isInitialized)
+        return;
+
+    return protectedPlugin()->scrollToRevealTextMatch(match);
+}
+
 String PluginView::selectionString() const
 {
     if (!m_isInitialized)
@@ -731,10 +763,10 @@ bool PluginView::usesAsyncScrolling() const
     return protectedPlugin()->usesAsyncScrolling();
 }
 
-ScrollingNodeID PluginView::scrollingNodeID() const
+std::optional<ScrollingNodeID> PluginView::scrollingNodeID() const
 {
     if (!m_isInitialized)
-        return { };
+        return std::nullopt;
 
     return protectedPlugin()->scrollingNodeID();
 }
@@ -1048,9 +1080,19 @@ void PluginView::setPDFDisplayModeForTesting(const String& mode)
     protectedPlugin()->setPDFDisplayModeForTesting(mode);
 }
 
+void PluginView::unlockPDFDocumentForTesting(const String& password)
+{
+    protectedPlugin()->attemptToUnlockPDF(password);
+}
+
 Vector<WebCore::FloatRect> PluginView::pdfAnnotationRectsForTesting() const
 {
     return protectedPlugin()->annotationRectsForTesting();
+}
+
+void PluginView::setPDFTextAnnotationValueForTesting(unsigned pageIndex, unsigned annotationIndex, const String& value)
+{
+    return protectedPlugin()->setTextAnnotationValueForTesting(pageIndex, annotationIndex, value);
 }
 
 void PluginView::registerPDFTestCallback(RefPtr<VoidCallback>&& callback)
@@ -1067,6 +1109,13 @@ void PluginView::openWithPreview(CompletionHandler<void(const String&, FrameInfo
 {
     protectedPlugin()->openWithPreview(WTFMove(completionHandler));
 }
+
+#if PLATFORM(IOS_FAMILY)
+void PluginView::pluginDidInstallPDFDocument(double initialScale)
+{
+    protectedWebPage()->pluginDidInstallPDFDocument(initialScale);
+}
+#endif
 
 } // namespace WebKit
 

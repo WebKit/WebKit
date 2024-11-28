@@ -46,6 +46,7 @@ add_definitions(-DPKGLIBDIR="${LIB_INSTALL_DIR}/webkit${WEBKITGTK_API_INFIX}gtk-
 
 if (NOT DEVELOPER_MODE AND NOT CMAKE_SYSTEM_NAME MATCHES "Darwin")
     WEBKIT_ADD_TARGET_PROPERTIES(WebKit LINK_FLAGS "-Wl,--version-script,${CMAKE_CURRENT_SOURCE_DIR}/webkitglib-symbols.map")
+    set_property(TARGET WebKit APPEND PROPERTY LINK_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/webkitglib-symbols.map")
 endif ()
 
 set(WebKit_USE_PREFIX_HEADER ON)
@@ -63,17 +64,18 @@ list(APPEND WebKit_MESSAGES_IN_FILES
 
     WebProcess/WebPage/dmabuf/AcceleratedSurfaceDMABuf
 
-    WebProcess/gtk/GtkSettingsManagerProxy
+    WebProcess/glib/SystemSettingsManager
 )
 
 if (USE_GBM)
-  list(APPEND WebKit_SERIALIZATION_IN_FILES Shared/glib/DMABufObject.serialization.in)
+  list(APPEND WebKit_SERIALIZATION_IN_FILES Shared/gbm/DMABufBuffer.serialization.in)
 endif ()
 
 list(APPEND WebKit_SERIALIZATION_IN_FILES
     Shared/glib/DMABufRendererBufferFormat.serialization.in
     Shared/glib/DMABufRendererBufferMode.serialization.in
     Shared/glib/InputMethodState.serialization.in
+    Shared/glib/SystemSettings.serialization.in
     Shared/glib/UserMessage.serialization.in
 
     Shared/gtk/ArgumentCodersGtk.serialization.in
@@ -284,8 +286,6 @@ list(APPEND WebKit_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBKIT_DIR}/Platform/generic"
     "${WEBKIT_DIR}/Shared/API/c/gtk"
     "${WEBKIT_DIR}/Shared/API/glib"
-    "${WEBKIT_DIR}/Shared/CoordinatedGraphics"
-    "${WEBKIT_DIR}/Shared/CoordinatedGraphics/threadedcompositor"
     "${WEBKIT_DIR}/Shared/Extensions"
     "${WEBKIT_DIR}/Shared/glib"
     "${WEBKIT_DIR}/Shared/gtk"
@@ -441,7 +441,10 @@ add_custom_command(
     VERBATIM
 )
 
-WEBKIT_BUILD_INSPECTOR_GRESOURCES(${WebKitGTK_DERIVED_SOURCES_DIR})
+WEBKIT_BUILD_INSPECTOR_GRESOURCES(
+    "${WebKitGTK_DERIVED_SOURCES_DIR}"
+    "${WebKitGTK_DERIVED_SOURCES_DIR}/InspectorGResourceBundle.c"
+)
 
 set(WebKitResources "")
 list(APPEND WebKitResources "<file alias=\"css/gtk-theme.css\">gtk-theme.css</file>\n")
@@ -591,7 +594,9 @@ GI_INTROSPECT(WebKit${WEBKITGTK_API_INFIX} ${WEBKITGTK_API_VERSION} webkit${WEBK
 )
 
 GI_DOCGEN(WebKit${WEBKITGTK_API_INFIX} gtk/gtk${GTK_API_VERSION}-webkitgtk.toml.in
-    CONTENT_TEMPLATES gtk/gtk${GTK_API_VERSION}-urlmap.js
+    CONTENT_TEMPLATES
+        gtk/gtk${GTK_API_VERSION}-urlmap.js
+        glib/environment-variables.md
 )
 
 if (ENABLE_2022_GLIB_API)

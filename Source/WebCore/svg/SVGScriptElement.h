@@ -59,7 +59,7 @@ private:
 
     // ScriptElement
     String sourceAttributeValue() const final { return href(); }
-    String charsetAttributeValue() const final { return String(); }
+    AtomString charsetAttributeValue() const final { return nullAtom(); }
     String typeAttributeValue() const final { return getAttribute(SVGNames::typeAttr).string(); }
     String languageAttributeValue() const final { return String(); }
     bool hasAsyncAttribute() const final { return false; }

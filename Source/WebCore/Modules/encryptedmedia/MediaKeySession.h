@@ -65,16 +65,13 @@ template<typename IDLType> class DOMPromiseProxy;
 class MediaKeySession final : public RefCounted<MediaKeySession>, public EventTarget, public ActiveDOMObject, public CDMInstanceSessionClient {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED_EXPORT(MediaKeySession, WEBCORE_EXPORT);
 public:
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
+
     static Ref<MediaKeySession> create(Document&, WeakPtr<MediaKeys>&&, MediaKeySessionType, bool useDistinctiveIdentifier, Ref<CDM>&&, Ref<CDMInstanceSession>&&);
     WEBCORE_EXPORT virtual ~MediaKeySession();
 
-    using CDMInstanceSessionClient::weakPtrFactory;
-    using CDMInstanceSessionClient::WeakValueType;
-    using CDMInstanceSessionClient::WeakPtrImplType;
-
-    // ActiveDOMObject.
-    void ref() const final { RefCounted::ref(); }
-    void deref() const final { RefCounted::deref(); }
+    USING_CAN_MAKE_WEAKPTR(CDMInstanceSessionClient);
 
     bool isClosed() const { return m_closed; }
 
@@ -127,10 +124,10 @@ private:
     const Logger& logger() const { return m_logger; }
     ASCIILiteral logClassName() const { return "MediaKeySession"_s; }
     WTFLogChannel& logChannel() const;
-    const void* logIdentifier() const { return m_logIdentifier; }
+    uint64_t logIdentifier() const { return m_logIdentifier; }
 
     Ref<Logger> m_logger;
-    const void* m_logIdentifier;
+    const uint64_t m_logIdentifier;
 #endif
 
     WeakPtr<MediaKeys> m_keys;

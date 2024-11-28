@@ -30,6 +30,12 @@
 #include "VM.h"
 #include <wtf/EnumClassOperatorOverloads.h>
 
+#if OS(WINDOWS)
+#include <intrin.h>
+#endif
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC  {
 
 class JSWebAssemblyInstance;
@@ -175,7 +181,7 @@ using JSInstruction = BaseInstruction<JSOpcodeTraits>;
         CalleeBits callee() const { return CalleeBits(this[static_cast<int>(CallFrameSlot::callee)].unboxedInt64()); }
         SUPPRESS_ASAN CalleeBits unsafeCallee() const { return CalleeBits(this[static_cast<int>(CallFrameSlot::callee)].asanUnsafeUnboxedInt64()); }
         CodeBlock* codeBlock() const;
-        CodeBlock** addressOfCodeBlock() const { return bitwise_cast<CodeBlock**>(this + static_cast<int>(CallFrameSlot::codeBlock)); }
+        CodeBlock** addressOfCodeBlock() const { return std::bit_cast<CodeBlock**>(this + static_cast<int>(CallFrameSlot::codeBlock)); }
         inline SUPPRESS_ASAN CodeBlock* unsafeCodeBlock() const;
         inline JSScope* scope(int scopeRegisterOffset) const;
 
@@ -270,7 +276,7 @@ using JSInstruction = BaseInstruction<JSOpcodeTraits>;
         // arguments(0) will not fetch the 'this' value. To get/set 'this',
         // use thisValue() and setThisValue() below.
 
-        JSValue* addressOfArgumentsStart() const { return bitwise_cast<JSValue*>(this + argumentOffset(0)); }
+        JSValue* addressOfArgumentsStart() const { return std::bit_cast<JSValue*>(this + argumentOffset(0)); }
         JSValue argument(size_t argument) const
         {
             if (argument >= argumentCount())
@@ -383,7 +389,7 @@ JS_EXPORT_PRIVATE bool isFromJSCode(void* returnAddress);
             : "rbp" /* clobber rbp */ \
         ); \
         ASSERT(JSC::isFromJSCode(removeCodePtrTag<void*>(__builtin_return_address(0)))); \
-        bitwise_cast<JSC::CallFrame*>(*((uintptr_t**) _AddressOfReturnAddress() - 1)); \
+        std::bit_cast<JSC::CallFrame*>(*((uintptr_t**) _AddressOfReturnAddress() - 1)); \
     })
 #else // !OS(WINDOWS)
 // FIXME (see rdar://72897291): Work around a Clang bug where __builtin_return_address()
@@ -391,7 +397,7 @@ JS_EXPORT_PRIVATE bool isFromJSCode(void* returnAddress);
 #define DECLARE_CALL_FRAME(vm) \
     ({ \
         ASSERT(JSC::isFromJSCode(removeCodePtrTag<void*>(__builtin_return_address(0)))); \
-        bitwise_cast<JSC::CallFrame*>(__builtin_frame_address(1)); \
+        std::bit_cast<JSC::CallFrame*>(__builtin_frame_address(1)); \
     })
 #endif // !OS(WINDOWS)
 #else
@@ -417,3 +423,5 @@ template<> struct HashTraits<JSC::CallSiteIndex> : SimpleClassHashTraits<JSC::Ca
 };
 
 } // namespace WTF
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

@@ -84,7 +84,7 @@ private:
 
     static void modifyFromContext(CFMutableDictionaryRef attributes, const FontDescription&, const FontCreationContext&, ApplyTraitsVariations, float weight, float width, float slope, CGFloat size, const OpticalSizingType&);
 
-    using VariationsMap = HashMap<FontTag, float, FourCharacterTagHash, FourCharacterTagHashTraits>;
+    using VariationsMap = UncheckedKeyHashMap<FontTag, float, FourCharacterTagHash, FourCharacterTagHashTraits>;
     static void addAttributesForOpticalSizing(CFMutableDictionaryRef attributes, VariationsMap& variationsToBeApplied, const OpticalSizingType&, CGFloat size);
     static void applyVariations(CFMutableDictionaryRef attributes, const VariationsMap& variationsToBeApplied);
 

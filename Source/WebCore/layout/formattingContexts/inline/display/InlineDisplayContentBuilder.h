@@ -64,8 +64,8 @@ private:
     size_t processRubyBase(size_t rubyBaseStart, InlineDisplay::Boxes&, Vector<WTF::Range<size_t>>& interlinearRubyColumnRangeList, Vector<size_t>& rubyBaseStartIndexListWithAnnotation);
     void processRubyContent(InlineDisplay::Boxes&, const LineLayoutResult&);
 
-    void setInlineBoxGeometry(Layout::BoxGeometry&, const InlineRect&, bool isFirstInlineBoxFragment);
-    void adjustVisualGeometryForDisplayBox(size_t displayBoxNodeIndex, InlineLayoutUnit& accumulatedOffset, InlineLayoutUnit lineBoxLogicalTop, const DisplayBoxTree&, InlineDisplay::Boxes&, const HashMap<const Box*, IsFirstLastIndex>&);
+    void setInlineBoxGeometry(const Box& inlineBox, Layout::BoxGeometry&, const InlineRect&, bool isFirstInlineBoxFragment);
+    void adjustVisualGeometryForDisplayBox(size_t displayBoxNodeIndex, InlineLayoutUnit& accumulatedOffset, InlineLayoutUnit lineBoxLogicalTop, const DisplayBoxTree&, InlineDisplay::Boxes&, const UncheckedKeyHashMap<const Box*, IsFirstLastIndex>&);
     size_t ensureDisplayBoxForContainer(const ElementBox&, DisplayBoxTree&, AncestorStack&, InlineDisplay::Boxes&);
 
     InlineRect flipLogicalRectToVisualForWritingModeWithinLine(const InlineRect& logicalRect, const InlineRect& lineLogicalRect, WritingMode) const;

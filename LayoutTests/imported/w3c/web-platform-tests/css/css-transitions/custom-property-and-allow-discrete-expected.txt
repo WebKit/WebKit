@@ -1,3 +1,4 @@
 
 PASS It is possible to transition an unregistered custom property using "transition-behavior: allows-discrete"
+PASS It is possible to transition an unregistered custom property using "transition-behavior: allows-discrete" when setting "transition-property" in the style change that yields the transition
 

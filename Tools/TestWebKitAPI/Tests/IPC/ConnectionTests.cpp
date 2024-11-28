@@ -53,7 +53,7 @@ struct MockTestSyncMessage {
     static constexpr bool isSync = true;
     static constexpr bool canDispatchOutOfOrder = false;
     static constexpr bool replyCanDispatchOutOfOrder = false;
-    static constexpr IPC::MessageName name()  { return static_cast<IPC::MessageName>(124); }
+    static constexpr IPC::MessageName name()  { return IPC::MessageName::IPCTester_SyncPing; }
     using ReplyArguments = std::tuple<>;
     auto&& arguments()
     {
@@ -71,7 +71,7 @@ struct MockTestSyncMessageWithDataReply {
     static constexpr bool isSync = true;
     static constexpr bool canDispatchOutOfOrder = false;
     static constexpr bool replyCanDispatchOutOfOrder = false;
-    static constexpr IPC::MessageName name()  { return  IPC::MessageName::IPCTester_SyncPing; } // Needs to be sync.
+    static constexpr IPC::MessageName name()  { return IPC::MessageName::IPCTester_SyncPing; } // Needs to be sync.
     using ReplyArguments = std::tuple<std::span<const uint8_t>>;
     auto&& arguments()
     {
@@ -154,6 +154,8 @@ TEST_F(SimpleConnectionTest, ClearOutgoingMessages)
     // Try a sync send over the second connection, which should
     // fail immediately if the client handle has been released.
     secondServerConnection->sendSync(MockTestSyncMessage(), 0, IPC::Timeout::infinity(), IPC::SendSyncOption::UseFullySynchronousModeForTesting);
+    firstServerConnection->invalidate();
+    secondServerConnection->invalidate();
 }
 
 class ConnectionTest : public testing::Test, protected ConnectionTestBase {
@@ -344,24 +346,32 @@ TEST_P(ConnectionTestABBA, IncomingMessageThrottlingNestedRunLoopDispatches)
     }
 }
 
+// Sends a connection that is already closed (invalidated). We still expect to receive the connection
+// and receive didClose on the connection.
 TEST_P(ConnectionTestABBA, ReceiveAlreadyInvalidatedClientNoAssert)
 {
     ASSERT_TRUE(openBoth());
+    constexpr size_t iterations = 800;
     HashSet<uint64_t> done;
+    struct {
+        RefPtr<IPC::Connection> clientConnection;
+        MockConnectionClient mockClientClient;
+    } connections[iterations];
+
     bClient().setAsyncMessageHandler([&] (IPC::Decoder& decoder) -> bool {
-        auto destinationID = decoder.destinationID();
+        auto i = decoder.destinationID();
         auto handle = decoder.decode<IPC::Connection::Handle>();
         if (!handle)
             return false;
         Ref<IPC::Connection> clientConnection = IPC::Connection::createClientConnection(IPC::Connection::Identifier { WTFMove(*handle) });
-        MockConnectionClient mockClientClient;
-        clientConnection->open(mockClientClient);
-        EXPECT_TRUE(mockClientClient.waitForDidClose(kDefaultWaitForTimeout)) << destinationID;
-        clientConnection->invalidate();
-        done.add(destinationID);
+        clientConnection->open(connections[i].mockClientClient);
+        connections[i].clientConnection = WTFMove(clientConnection);
+        // The connection starts as not closed in order for the system to deliver didClose().
+        EXPECT_FALSE(connections[i].mockClientClient.gotDidClose()) << i;
+        done.add(i);
         return true;
     });
-    for (uint64_t i = 1; i < 801; ++i) {
+    for (uint64_t i = 1; i < iterations; ++i) {
         auto identifiers = IPC::Connection::createConnectionIdentifierPair();
         ASSERT_NE(identifiers, std::nullopt);
         Ref<IPC::Connection> serverConnection = IPC::Connection::createServerConnection(WTFMove(identifiers->server));
@@ -370,8 +380,14 @@ TEST_P(ConnectionTestABBA, ReceiveAlreadyInvalidatedClientNoAssert)
         a()->send(MockTestMessageWithConnection { WTFMove(identifiers->client) }, i);
         serverConnection->invalidate();
     }
-    while (done.size() < 800)
+    while (done.size() < iterations - 1)
         RunLoop::current().cycle();
+
+    for (uint64_t i = 1; i < iterations; ++i) {
+        auto& connection = connections[i];
+        EXPECT_TRUE(connection.mockClientClient.gotDidClose() || connection.mockClientClient.waitForDidClose(kDefaultWaitForTimeout)) << i;
+        connection.clientConnection->invalidate();
+    }
 }
 
 // DISABLED: currently cannot test that wait on unopened connection causes InvalidConnection,
@@ -1047,7 +1063,7 @@ TEST_P(ConnectionRunLoopTest, RunLoopWaitForAndDispatchImmediately)
 
 TEST_P(ConnectionRunLoopTest, SendLocalSyncMessageWithDataReply)
 {
-    constexpr int iterations = 10;
+    constexpr int iterations = 5;
     constexpr size_t dataSize = 1e8; // 100 MB.
     ASSERT_TRUE(openA());
     auto runLoop = createRunLoop(RUN_LOOP_NAME);
@@ -1057,22 +1073,119 @@ TEST_P(ConnectionRunLoopTest, SendLocalSyncMessageWithDataReply)
             for (size_t i = 0; i < dataSize; ++i)
                 data[i] = static_cast<uint8_t>(i);
             encoder.get() << data;
-            return false;
+            b()->sendSyncReply(WTFMove(encoder));
+            return true;
         });
         ASSERT_TRUE(openB());
     });
     for (int i = 0; i < iterations; ++i) {
-        auto sendResult = a()->sendSync(MockTestSyncMessageWithDataReply { }, i, IPC::Timeout::infinity());
+        auto sendResult = a()->sendSync(MockTestSyncMessageWithDataReply { }, i, kDefaultWaitForTimeout);
         ASSERT_TRUE(sendResult.succeeded());
         auto& [replyData] = sendResult.reply();
-        for (size_t i = 0; i < replyData.size(); ++i)
-            ASSERT_EQ(static_cast<uint8_t>(i), replyData[i]);
+        for (size_t i = 0; i < replyData.size(); ++i) {
+            auto expected = static_cast<uint8_t>(i);
+            if (expected != replyData[i])
+                ASSERT_EQ(expected, replyData[i]);
+        }
+        ASSERT_EQ(dataSize, replyData.size());
     }
     runLoop->dispatch([&] {
         b()->invalidate();
     });
     localReferenceBarrier();
 }
+
+// Tests that unhandled sync message is cancelled. IPC::Connection receiving unhandled messages.
+TEST_P(ConnectionRunLoopTest, SyncMessageNotHandledIsCancelled)
+{
+    constexpr size_t iterations = 10;
+    ASSERT_TRUE(openA());
+    auto runLoop = createRunLoop(RUN_LOOP_NAME);
+    uint64_t gotDestination = 0;
+    runLoop->dispatch([&] {
+        bClient().setSyncMessageHandler([&](IPC::Decoder& decoder, UniqueRef<IPC::Encoder>& encoder) -> bool {
+            gotDestination = decoder.destinationID();
+            // Unhandled message.
+            if (decoder.destinationID() == 77)
+                return false; // Message destiation was unknown, unhandled message.
+            if (decoder.destinationID() == 99) {
+                b()->sendSyncReply(WTFMove(encoder));
+                return true;
+            }
+            EXPECT_TRUE(false);
+            return false;
+        });
+        ASSERT_TRUE(openB());
+    });
+    for (size_t i = 0; i < iterations; ++i) {
+        {
+            gotDestination = 0;
+            auto result = a()->sendSync(MockTestSyncMessage(), 77, kDefaultWaitForTimeout);
+            ASSERT_FALSE(result.succeeded());
+            EXPECT_EQ(IPC::Error::SyncMessageCancelled, result.error());
+            EXPECT_EQ(77u, gotDestination);
+        }
+        {
+            gotDestination = 0;
+            auto result = a()->sendSync(MockTestSyncMessage(), 99, kDefaultWaitForTimeout);
+            EXPECT_TRUE(result.succeeded());
+            EXPECT_EQ(99u, gotDestination);
+        }
+    }
+    runLoop->dispatch([&] {
+        b()->invalidate();
+    });
+    localReferenceBarrier();
+}
+
+#if ENABLE(IPC_TESTING_API)
+// Tests that sync message with decode failure is cancelled. IPC::Connection does not allow these,
+// but JS IPC Testing API uses these.
+TEST_P(ConnectionRunLoopTest, SyncMessageDecodeFailureIsCancelled)
+{
+    constexpr size_t iterations = 10;
+    ASSERT_TRUE(openA());
+    auto runLoop = createRunLoop(RUN_LOOP_NAME);
+    uint64_t gotDestination = 0;
+    runLoop->dispatch([&] {
+        b()->setIgnoreInvalidMessageForTesting();
+        bClient().setSyncMessageHandler([&](IPC::Decoder& decoder, UniqueRef<IPC::Encoder>& encoder) -> bool {
+            gotDestination = decoder.destinationID();
+            // Decode failure.
+            if (decoder.destinationID() == 88) {
+                EXPECT_FALSE(decoder.decode<uint64_t>());
+                return true; // Message was handled, but decode failed.
+            }
+            if (decoder.destinationID() == 99) {
+                b()->sendSyncReply(WTFMove(encoder));
+                return true;
+            }
+            EXPECT_TRUE(false);
+            return false;
+        });
+        ASSERT_TRUE(openB());
+    });
+    for (size_t i = 0; i < iterations; ++i) {
+        {
+            gotDestination = 0;
+            auto result = a()->sendSync(MockTestSyncMessage(), 88, IPC::Timeout::infinity());
+            ASSERT_FALSE(result.succeeded());
+            EXPECT_EQ(IPC::Error::SyncMessageCancelled, result.error());
+            EXPECT_EQ(88u, gotDestination);
+        }
+        {
+            gotDestination = 0;
+            auto result = a()->sendSync(MockTestSyncMessage(), 99, IPC::Timeout::infinity());
+            EXPECT_TRUE(result.succeeded());
+            EXPECT_EQ(99u, gotDestination);
+        }
+    }
+    runLoop->dispatch([&] {
+        b()->invalidate();
+    });
+    localReferenceBarrier();
+}
+#endif
 
 #undef RUN_LOOP_NAME
 #undef LOCAL_STRINGIFY

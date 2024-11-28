@@ -1,0 +1,53 @@
+<script>
+async function run() {
+    let adapter = await navigator.gpu.requestAdapter()
+    let device = await adapter.requestDevice()
+    let texture = device.createTexture({ size: { width: 15, depthOrArrayLayers: 1 }, dimension: '3d', format: 'rg32sint', usage: GPUTextureUsage.RENDER_ATTACHMENT });
+    let textureView = texture.createView();
+    let buffer = device.createBuffer({ size: 11456, usage: GPUBufferUsage.INDIRECT });
+    let buffer2 = device.createBuffer({ size: 80, usage: GPUBufferUsage.VERTEX });
+    let buffer3 = device.createBuffer({ size: 2131, usage: GPUBufferUsage.INDEX });
+    let pipelineLayout = device.createPipelineLayout({ bindGroupLayouts: [] });
+    let shaderModule = device.createShaderModule({ code: ` 
+        fn r(v: f32) -> f32 { return v; }
+        fn al(v: u32) -> u32 { return v; }
+        var<private> y: array<array<array<z, 1>, 1>, 2> = array(array(array(z())), array<array<z, 1>, 1>());
+        struct z {
+            @location(0) i: vec4i
+        }
+        @fragment fn fragment1() -> z {
+            var ag: z;
+            let ak: ptr<private, array<z, 1>> = &y[1][u32(al(203))];
+            y[pack4x8snorm(saturate(vec4f(0.1093, 0.1074, 0.1643, r(0.08611))))][al(270)][al(302)].i ^= vec4i(ak[0].i);
+            return ag;
+        }
+        @vertex fn s() -> @builtin(position) vec4f {
+            return vec4f();
+        }
+    `});
+    let commandEncoder = device.createCommandEncoder();
+    let renderPassEncoder = commandEncoder.beginRenderPass({ colorAttachments: [{ view: textureView, depthSlice: 0, loadOp: 'load', storeOp: 'discard' }] });
+    renderPassEncoder.setVertexBuffer(0, buffer2);
+    renderPassEncoder.setIndexBuffer(buffer3, 'uint16', 2_130);
+    let renderPipeline = device.createRenderPipeline({
+        layout: pipelineLayout,
+        fragment: { module: shaderModule, targets: [{ format: 'rg32sint', writeMask: GPUColorWrite.RED }] },
+        vertex: {
+            module: shaderModule,
+            buffers: [
+                {
+                    arrayStride: 148,
+                    attributes: [
+                        { format: 'float32x2', offset: 8, shaderLocation: 0 },
+                    ]
+                }
+            ]
+        }
+    });
+    renderPassEncoder.setPipeline(renderPipeline);
+    renderPassEncoder.drawIndexedIndirect(buffer, 2_468);
+}
+
+globalThis.testRunner?.waitUntilDone();
+run().finally(() => setTimeout(() => globalThis.testRunner?.notifyDone(), 250));
+</script>

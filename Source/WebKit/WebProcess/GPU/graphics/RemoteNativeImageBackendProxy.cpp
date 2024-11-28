@@ -90,6 +90,11 @@ DestinationColorSpace RemoteNativeImageBackendProxy::colorSpace() const
     return m_platformBackend.colorSpace();
 }
 
+Headroom RemoteNativeImageBackendProxy::headroom() const
+{
+    return m_platformBackend.headroom();
+}
+
 bool RemoteNativeImageBackendProxy::isRemoteNativeImageBackendProxy() const
 {
     return true;

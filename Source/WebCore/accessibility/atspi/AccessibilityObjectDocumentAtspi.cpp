@@ -94,9 +94,9 @@ String AccessibilityObjectAtspi::documentAttribute(const String& name) const
     return { };
 }
 
-HashMap<String, String> AccessibilityObjectAtspi::documentAttributes() const
+UncheckedKeyHashMap<String, String> AccessibilityObjectAtspi::documentAttributes() const
 {
-    HashMap<String, String> map;
+    UncheckedKeyHashMap<String, String> map;
     if (!m_coreObject)
         return map;
 

@@ -16,6 +16,13 @@ included_patterns = list(map(Path, os.environ.get("INCLUDED_SOURCE_FILE_NAMES", 
 migrate_rule = os.environ.get("SCRIPT_INPUT_FILE_1")
 timestamp = os.environ.get("SCRIPT_OUTPUT_FILE_0")
 
+# Normally, the script checks that input and output basenames match, to ensure that the two
+# filelists have given paths in matching order. To intentionally rename a file during the copy,
+# add its input and output basenames here.
+allowed_renames = [
+    ('WebKit.h', 'WebKitLegacy.h')
+]
+
 
 def pattern_match(path, pattern):
     # Using the number of path components in `pattern`, only match that many
@@ -36,7 +43,7 @@ for file_number in range(int(os.environ["SCRIPT_OUTPUT_FILE_LIST_COUNT"])):
         input_file = Path(input_file.rstrip())
         output_file = Path(output_file.rstrip())
 
-        if input_file.name != output_file.name:
+        if input_file.name != output_file.name and (input_file.name, output_file.name) not in allowed_renames:
             sys.exit(f"error: Trying to copy {input_file} to {output_file}, but the file names don't match. "
                      "Files should always have the same name when copied. "
                      "Ensure that the paths in this script phase's input and output xcfilelists match.")

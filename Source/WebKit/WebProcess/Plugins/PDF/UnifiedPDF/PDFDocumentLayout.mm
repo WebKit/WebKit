@@ -81,11 +81,11 @@ RetainPtr<PDFPage> PDFDocumentLayout::pageAtIndex(PageIndex index) const
 
 auto PDFDocumentLayout::indexForPage(RetainPtr<PDFPage> page) const -> std::optional<PageIndex>
 {
-    for (PageIndex pageIndex = 0; pageIndex < [m_pdfDocument pageCount]; ++pageIndex) {
-        if (page == [m_pdfDocument pageAtIndex:pageIndex])
-            return pageIndex;
-    }
-    return std::nullopt;
+
+    auto pageIndex = [m_pdfDocument indexForPage:page.get()];
+    if (pageIndex == NSNotFound)
+        return { };
+    return pageIndex;
 }
 
 PDFDocumentLayout::PageIndex PDFDocumentLayout::nearestPageIndexForDocumentPoint(FloatPoint documentSpacePoint, const std::optional<PDFLayoutRow>& visibleRow) const
@@ -275,6 +275,7 @@ auto PDFDocumentLayout::pageIndexAndPagePointForDocumentYOffset(float documentYO
             // Handle side by side pages with different sizes.
             std::optional<PageIndex> targetPageIndex = [&](PageIndex index) -> std::optional<PageIndex> {
                 auto leftPageBounds = layoutBoundsForPageAtIndex(index);
+                leftPageBounds.inflate(PDFDocumentLayout::documentMargin);
                 if (documentYOffset >= leftPageBounds.y() && documentYOffset < leftPageBounds.maxY())
                     return index;
 
@@ -283,6 +284,7 @@ auto PDFDocumentLayout::pageIndexAndPagePointForDocumentYOffset(float documentYO
                     return { };
 
                 auto rightPageBounds = layoutBoundsForPageAtIndex(rightPageIndex);
+                rightPageBounds.inflate(PDFDocumentLayout::documentMargin);
                 if (documentYOffset >= rightPageBounds.y() && documentYOffset < rightPageBounds.maxY())
                     return rightPageIndex;
 
@@ -308,11 +310,13 @@ auto PDFDocumentLayout::pageIndexAndPagePointForDocumentYOffset(float documentYO
     return { pageCount - 1, { } };
 }
 
-void PDFDocumentLayout::updateLayout(IntSize pluginSize, ShouldUpdateAutoSizeScale shouldUpdateScale)
+auto PDFDocumentLayout::updateLayout(IntSize pluginSize, ShouldUpdateAutoSizeScale shouldUpdateScale) -> OptionSet<LayoutUpdateChange>
 {
+    OptionSet<LayoutUpdateChange> layoutUpdateChanges;
+
     auto pageCount = this->pageCount();
-    m_pageGeometry.clear();
-    m_documentBounds = { };
+    auto oldPageGeometry = std::exchange(m_pageGeometry, { });
+    auto oldDocumentBounds = std::exchange(m_documentBounds, { });
 
     auto normalizeRotation = [](IntDegrees degrees) {
         if (degrees < 0)
@@ -366,9 +370,15 @@ void PDFDocumentLayout::updateLayout(IntSize pluginSize, ShouldUpdateAutoSizeSca
         m_pageGeometry.append({ pageCropBox, pageBounds, rotation });
     }
 
+    layoutUpdateChanges.set(LayoutUpdateChange::PageGeometries, oldPageGeometry != m_pageGeometry);
+
     layoutPages(pluginSize, maxRowSize, shouldUpdateScale);
 
+    layoutUpdateChanges.set(LayoutUpdateChange::DocumentBounds, oldDocumentBounds != m_documentBounds);
+
     LOG_WITH_STREAM(PDF, stream << "PDFDocumentLayout::updateLayout() - plugin size " << pluginSize << " document bounds " << m_documentBounds << " scale " << m_scale);
+
+    return layoutUpdateChanges;
 }
 
 void PDFDocumentLayout::layoutPages(FloatSize availableSize, FloatSize maxRowSize, ShouldUpdateAutoSizeScale shouldUpdateScale)

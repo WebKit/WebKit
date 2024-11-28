@@ -438,9 +438,8 @@ Result<void> Parser<Lexer>::parseRequireDirective()
 template<typename Lexer>
 void Parser<Lexer>::maybeSplitToken(unsigned index)
 {
-    Token* token = &m_tokens[index];
     TokenType replacement;
-    switch (token->type) {
+    switch (m_tokens[index + 0].type) {
     case TokenType::GtGt:
         replacement = TokenType::Gt;
         break;
@@ -454,9 +453,9 @@ void Parser<Lexer>::maybeSplitToken(unsigned index)
         return;
     }
 
-    ASSERT(token[1].type == TokenType::Placeholder);
-    token[0].type = TokenType::Gt;
-    token[1].type = replacement;
+    ASSERT(m_tokens[index + 1].type == TokenType::Placeholder);
+    m_tokens[index + 0].type = TokenType::Gt;
+    m_tokens[index + 1].type = replacement;
 }
 
 template<typename Lexer>
@@ -743,7 +742,7 @@ Result<AST::Attribute::Ref> Parser<Lexer>::parseAttribute()
             PARSE(sampling, Identifier);
             auto* interpolationSampling = parseInterpolationSampling(sampling);
             if (!interpolationSampling)
-                FAIL("Unknown interpolation sampling. Expected 'center', 'centroid' or 'sample'"_s);
+                FAIL("Unknown interpolation sampling. Expected 'center', 'centroid', 'sample', 'first' or 'either"_s);
             sampleType = *interpolationSampling;
         }
         if (current().type == TokenType::Comma)
@@ -1277,6 +1276,7 @@ Result<AST::Statement::Ref> Parser<Lexer>::parseIfStatementWithAttributes(AST::A
         // The syntax following an 'else' keyword can be either an 'if'
         // statement or a brace-delimited compound statement.
         if (current().type == TokenType::KeywordIf) {
+            CHECK_RECURSION();
             PARSE(elseStmt, IfStatementWithAttributes, { }, _startOfElementPosition);
             maybeElseStmt = &elseStmt.get();
         } else {
@@ -1864,6 +1864,7 @@ template<typename Lexer>
 Result<AST::Expression::List> Parser<Lexer>::parseArgumentExpressionList()
 {
     START_PARSE();
+    CHECK_RECURSION();
     CONSUME_TYPE(ParenLeft);
 
     AST::Expression::List arguments;

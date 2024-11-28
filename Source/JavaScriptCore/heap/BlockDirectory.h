@@ -79,8 +79,6 @@ public:
     DestructionMode destruction() const { return m_attributes.destruction; }
     HeapCell::Kind cellKind() const { return m_attributes.cellKind; }
 
-    bool isFreeListedCell(const void* target);
-
     inline void forEachBlock(const std::invocable<MarkedBlock::Handle*> auto&);
     inline void forEachNotEmptyBlock(const std::invocable<MarkedBlock::Handle*> auto&);
     
@@ -148,7 +146,10 @@ public:
     
     MarkedBlock::Handle* findBlockToSweep() { return findBlockToSweep(m_unsweptCursor); }
     MarkedBlock::Handle* findBlockToSweep(unsigned& unsweptCursor);
-    
+
+    // FIXME: rdar://139998916
+    MarkedBlock::Handle* findMarkedBlockHandleDebug(MarkedBlock*);
+
     void didFinishUsingBlock(MarkedBlock::Handle*);
     void didFinishUsingBlock(AbstractLocker&, MarkedBlock::Handle*) WTF_REQUIRES_LOCK(m_bitvectorLock);
 

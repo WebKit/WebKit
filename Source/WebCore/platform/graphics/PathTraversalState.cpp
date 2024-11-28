@@ -25,6 +25,8 @@
 #include <wtf/MathExtras.h>
 #include <wtf/Vector.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 static const float kPathSegmentLengthTolerance = 0.00001f;
@@ -226,7 +228,7 @@ bool PathTraversalState::finalizeAppendPathElement()
     return m_success;
 }
 
-bool PathTraversalState::appendPathElement(PathElement::Type type, const FloatPoint* points)
+bool PathTraversalState::appendPathElement(PathElement::Type type, std::span<const FloatPoint> points)
 {
     switch (type) {
     case PathElement::Type::MoveToPoint:
@@ -249,7 +251,7 @@ bool PathTraversalState::appendPathElement(PathElement::Type type, const FloatPo
     return finalizeAppendPathElement();
 }
 
-bool PathTraversalState::processPathElement(PathElement::Type type, const FloatPoint* points)
+bool PathTraversalState::processPathElement(PathElement::Type type, std::span<const FloatPoint> points)
 {
     if (m_success)
         return true;
@@ -266,3 +268,4 @@ bool PathTraversalState::processPathElement(PathElement::Type type, const FloatP
 
 }
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

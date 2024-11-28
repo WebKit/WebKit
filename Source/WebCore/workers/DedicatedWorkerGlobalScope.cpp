@@ -54,6 +54,10 @@
 #include "WorkerAnimationController.h"
 #endif
 
+#if USE(SKIA)
+#include "JSImageBitmap.h"
+#endif
+
 namespace WebCore {
 
 WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(DedicatedWorkerGlobalScope);
@@ -91,7 +95,17 @@ void DedicatedWorkerGlobalScope::prepareForDestruction()
 
 ExceptionOr<void> DedicatedWorkerGlobalScope::postMessage(JSC::JSGlobalObject& state, JSC::JSValue messageValue, StructuredSerializeOptions&& options)
 {
+#if USE(SKIA)
+    // When using skia, transferring ownership of accelerated ImageBitmaps causes GrDirectContext mismatches,
+    // threfore, we need to let ImageBitmap know so that it can act accordingly.
+    for (const auto& transferItem : options.transfer) {
+        if (auto* imageBitmap = JSImageBitmap::toWrapped(state.vm(), transferItem.get()))
+            imageBitmap->prepareForCrossThreadTransfer();
+    }
+#endif
+
     Vector<Ref<MessagePort>> ports;
+
     auto message = SerializedScriptValue::create(state, messageValue, WTFMove(options.transfer), ports, SerializationForStorage::No, SerializationContext::WorkerPostMessage);
     if (message.hasException())
         return message.releaseException();

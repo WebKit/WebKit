@@ -37,6 +37,12 @@
     [EnabledBySetting=DeclarativeShadowRootsSerializerAPIsEnabled] readonly attribute boolean serializable;
     readonly attribute Element host;
     attribute EventHandler onslotchange;
+
+    // FIXME: Move to DocumentOrShadowRoot.idl once it's always enabled
+    [EnabledBySetting=ScopedCustomElementRegistryEnabled, NewObject, ImplementedAs=createElementForBindings] Element createElement([AtomString] DOMString localName);
+    [EnabledBySetting=ScopedCustomElementRegistryEnabled, NewObject] Element createElementNS([AtomString] DOMString? namespaceURI, [AtomString] DOMString qualifiedName);
+
+    [ImplementedAs=registryForBindings, EnabledBySetting=ScopedCustomElementRegistryEnabled] readonly attribute CustomElementRegistry? registry;
 };
 
 ShadowRoot includes DocumentOrShadowRoot;

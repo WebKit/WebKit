@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "PlatformXR.h"
 #include "WebGPUTextureFormat.h"
 #include "WebGPUTextureUsage.h"
 #include "WebGPUXREye.h"
@@ -35,10 +36,17 @@
 #include <wtf/RefCounted.h>
 #include <wtf/WeakPtr.h>
 
+namespace WTF {
+class MachSendRight;
+}
+
+namespace WebCore {
+class WebXRRigidTransform;
+}
+
 namespace WebCore::WebGPU {
 
 class Device;
-class WebXRRigidTransform;
 class XRGPUSubImage;
 class XRProjectionLayer;
 class XRFrame;
@@ -66,7 +74,9 @@ public:
     virtual void setDeltaPose(WebXRRigidTransform*) = 0;
 
     // WebXRLayer
-    virtual void startFrame() = 0;
+#if PLATFORM(COCOA)
+    virtual void startFrame(size_t frameIndex, MachSendRight&& colorBuffer, MachSendRight&& depthBuffer, MachSendRight&& completionSyncEvent, size_t reusableTextureIndex) = 0;
+#endif
     virtual void endFrame() = 0;
 
 protected:

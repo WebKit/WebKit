@@ -6,7 +6,7 @@ bazel_deps()
 
 load("//toolchain:download_toolchains.bzl", "download_toolchains_for_skia")
 
-download_toolchains_for_skia("clang_linux_amd64", "clang_mac", "ndk_linux_amd64")
+download_toolchains_for_skia("clang_linux_amd64", "clang_mac", "clang_windows_amd64", "ndk_linux_amd64", "clang_ios")
 
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive", "http_file")
 load("//bazel:gcs_mirror.bzl", "gcs_mirror_url")
@@ -80,44 +80,6 @@ pip_install(
     name = "py_deps",
     python_interpreter_target = interpreter,
     requirements = "//:requirements.txt",
-)
-
-#######################################################################################
-# Maven
-#######################################################################################
-
-# https://github.com/bazelbuild/rules_jvm_external
-http_archive(
-    name = "rules_jvm_external",
-    sha256 = "cd1a77b7b02e8e008439ca76fd34f5b07aecb8c752961f9640dea15e9e5ba1ca",
-    strip_prefix = "rules_jvm_external-4.2",
-    urls = gcs_mirror_url(
-        sha256 = "cd1a77b7b02e8e008439ca76fd34f5b07aecb8c752961f9640dea15e9e5ba1ca",
-        url = "https://github.com/bazelbuild/rules_jvm_external/archive/4.2.zip",
-    ),
-)
-
-load("@rules_jvm_external//:repositories.bzl", "rules_jvm_external_deps")
-
-rules_jvm_external_deps()
-
-load("@rules_jvm_external//:setup.bzl", "rules_jvm_external_setup")
-
-rules_jvm_external_setup()
-
-load("@rules_jvm_external//:defs.bzl", "maven_install")
-
-maven_install(
-    artifacts = [
-        # The version released after this one (1.6.0-rc1) did not resolve unknown symbol errors when
-        # building.
-        # https://b.corp.google.com/issues/269331711
-        "androidx.annotation:annotation:1.5.0",
-    ],
-    repositories = [
-        "https://maven.google.com",
-        "https://repo1.maven.org/maven2",
-    ],
 )
 
 #######################################################################################
@@ -311,10 +273,10 @@ browser_repositories(
 
 http_archive(
     name = "rules_rust",
-    integrity = "sha256-GuRaQT0LlDOYcyDfKtQQ22oV+vtsiM8P0b87qsvoJts=",
+    sha256 = "671ddb3fe5ebcf9dd34d051eca7352fbaf33fa53bf61eed0b75a4c34829e5480",
     urls = gcs_mirror_url(
-        sha256 = "1ae45a413d0b9433987320df2ad410db6a15fafb6c88cf0fd1bf3baacbe826db",
-        url = "https://github.com/bazelbuild/rules_rust/releases/download/0.39.0/rules_rust-v0.39.0.tar.gz",
+        sha256 = "671ddb3fe5ebcf9dd34d051eca7352fbaf33fa53bf61eed0b75a4c34829e5480",
+        url = "https://github.com/bazelbuild/rules_rust/releases/download/0.52.2/rules_rust-v0.52.2.tar.gz",
     ),
 )
 
@@ -325,7 +287,10 @@ rules_rust_dependencies()
 
 rust_register_toolchains(
     edition = "2021",
-    extra_target_triples = ["aarch64-apple-darwin"],
+    extra_target_triples = [
+        "aarch64-apple-darwin",
+        "aarch64-apple-ios",
+    ],
     versions = [
         # supported versions from https://github.com/bazelbuild/rules_rust/blob/5c715ec50602e2ba6ca2ebfdd870662a6e6d1eda/util/fetch_shas_VERSIONS.txt
         # The rust rules validate a toolchain by sha256 hash, as listed in https://github.com/bazelbuild/rules_rust/blob/5c715ec50602e2ba6ca2ebfdd870662a6e6d1eda/rust/known_shas.bzl
@@ -345,17 +310,17 @@ crate_universe_dependencies()
 http_archive(
     name = "cxxbridge_cmd",
     build_file = "//bazel/external/cxxbridge_cmd:BUILD.bazel.skia",
-    sha256 = "b20c2a31fb5a2e2aeebced19e35d78a974301171391b39e36d5ebb00bea2aa93",
-    strip_prefix = "cxxbridge-cmd-1.0.94",
+    sha256 = "1e3d98437a33d422ba30975d549f754d50300404096f17f5037abce2d91e3cfa",
+    strip_prefix = "cxxbridge-cmd-1.0.128",
     type = "tar.gz",
     urls = gcs_mirror_url(
         ext = ".tar.gz",
-        sha256 = "b20c2a31fb5a2e2aeebced19e35d78a974301171391b39e36d5ebb00bea2aa93",
-        url = "https://crates.io/api/v1/crates/cxxbridge-cmd/1.0.94/download",
+        sha256 = "1e3d98437a33d422ba30975d549f754d50300404096f17f5037abce2d91e3cfa",
+        url = "https://crates.io/api/v1/crates/cxxbridge-cmd/1.0.128/download",
     ),
 )
 
-load("@rules_rust//crate_universe:defs.bzl", "crates_repository")
+load("@rules_rust//crate_universe:defs.bzl", "crate", "crates_repository")
 
 # This finds all the dependencies needed to build cxxbridge_cmd...
 crates_repository(
@@ -375,13 +340,13 @@ cxxbridge_cmd_deps()
 http_archive(
     name = "cxx",
     build_file = "//bazel/external/cxx:BUILD.bazel.skia",
-    sha256 = "f61f1b6389c3fe1c316bf8a4dccc90a38208354b330925bce1f74a6c4756eb93",
-    strip_prefix = "cxx-1.0.94",
+    sha256 = "54ccead7d199d584d139148b04b4a368d1ec7556a1d9ea2548febb1b9d49f9a4",
+    strip_prefix = "cxx-1.0.128",
     type = "tar.gz",
     urls = gcs_mirror_url(
         ext = ".tar.gz",
-        sha256 = "f61f1b6389c3fe1c316bf8a4dccc90a38208354b330925bce1f74a6c4756eb93",
-        url = "https://crates.io/api/v1/crates/cxx/1.0.94/download",
+        sha256 = "54ccead7d199d584d139148b04b4a368d1ec7556a1d9ea2548febb1b9d49f9a4",
+        url = "https://crates.io/api/v1/crates/cxx/1.0.128/download",
     ),
 )
 
@@ -426,6 +391,44 @@ crates_repository(
 load("@icu4x_deps//:defs.bzl", icu4x_deps = "crate_repositories")
 
 icu4x_deps()
+
+# The repository of third-party crates (currently just the `png` crate)
+# to support `//experimental/rust_png` code.
+crates_repository(
+    name = "rust_png",
+    annotations = {
+        "png": [crate.annotation(
+            patch_args = ["-p6"],
+            # Patches from https://crrev.com/c/5922033:
+            # New public API for `png` crate: `fn next_frame_info`.
+            #
+            # TODO(lukasza, kjlubick): Remove this whole annotation once a new
+            # version of `png` is released on crates.io (presumably including
+            # the already merged PRs).
+            patches = [
+                "@//experimental/rust_png/patches:0101-Add-test-coverage-for-PolledAfterEndOfImage-error.patch",
+                "@//experimental/rust_png/patches:0102-Add-test-showing-next_frame-after-next_row-is-tempor.patch",
+                "@//experimental/rust_png/patches:0103-Call-finish_decoding-after-last-next_row.patch",
+                "@//experimental/rust_png/patches:0104-Simplify-how-Reader-tracks-how-many-frames-remain-to.patch",
+                "@//experimental/rust_png/patches:0105-Fix-a-subset-of-issues-identified-by-cargo-clippy.patch",
+                "@//experimental/rust_png/patches:0106-Avoid-infinite-loop-when-retrying-after-earlier-fata.patch",
+                "@//experimental/rust_png/patches:0107-New-API-Reader.next_frame_control-for-advancing-to-t.patch",
+            ],
+        )],
+    },
+    cargo_lockfile = "//experimental/rust_png/ffi:Cargo.lock",
+    packages = {
+        "png": crate.spec(
+            # Note: for additional performance gains `features = ["unstable"]`
+            # can be enabled, but this requires the nightly, unstable `rustc`.
+            version = "0.17",
+        ),
+    },
+)
+
+load("@rust_png//:defs.bzl", rust_png_crates = "crate_repositories")
+
+rust_png_crates()
 
 # Skia uses crates from the vello repository that are under development and have not been published
 # to crates.io. Normally we could fetch them directly from the git mirror in the Cargo.lock file as
@@ -513,22 +516,22 @@ c_plus_plus_deps()
 # https://bazel.build/reference/be/workspace#new_local_repository
 local_repository(
     name = "freetype_config",
-    path = "bazel/external/freetype/config",
+    path = "third_party/freetype2/include",
 )
 
 local_repository(
     name = "harfbuzz_config",
-    path = "bazel/external/harfbuzz/config",
+    path = "third_party/harfbuzz",
 )
 
 local_repository(
     name = "icu_utils",
-    path = "bazel/external/icu/utils",
+    path = "third_party/icu",
 )
 
 local_repository(
     name = "expat_config",
-    path = "bazel/external/expat/config",
+    path = "third_party/expat/include",
 )
 
 load("//bazel:cipd_install.bzl", "cipd_install")
@@ -658,11 +661,10 @@ http_file(
 
 http_archive(
     name = "io_bazel_rules_docker",
-    sha256 = "27d53c1d646fc9537a70427ad7b034734d08a9c38924cc6357cc973fed300820",
-    strip_prefix = "rules_docker-0.24.0",
+    sha256 = "b1e80761a8a8243d03ebca8845e9cc1ba6c82ce7c5179ce2b295cd36f7e394bf",
     urls = gcs_mirror_url(
-        sha256 = "27d53c1d646fc9537a70427ad7b034734d08a9c38924cc6357cc973fed300820",
-        url = "https://github.com/bazelbuild/rules_docker/releases/download/v0.24.0/rules_docker-v0.24.0.tar.gz",
+        sha256 = "b1e80761a8a8243d03ebca8845e9cc1ba6c82ce7c5179ce2b295cd36f7e394bf",
+        url = "https://github.com/bazelbuild/rules_docker/releases/download/v0.25.0/rules_docker-v0.25.0.tar.gz",
     ),
 )
 
@@ -689,7 +691,7 @@ load(
 # Pulls the gcr.io/skia-public/debugger-app-base container.
 container_pull(
     name = "debugger-app-base",
-    digest = "sha256:0b6aba4d3d733aadb6276c11da709477c218fc38c883138640e2fc920a31bf66",
+    digest = "sha256:931df19ec3352eb10475a9795a6ff571e513a85c3323f2e419e2621e3c088d6c",
     registry = "gcr.io",
     repository = "skia-public/debugger-app-base",
 )
@@ -697,7 +699,7 @@ container_pull(
 # Pulls the gcr.io/skia-public/jsfiddle-base container.
 container_pull(
     name = "jsfiddle-base",
-    digest = "sha256:699f74900f78c219668bab8ca0aee402a4a9f53b5d5ae83fb1c13c7fbea485d5",
+    digest = "sha256:034839b9814bde95bfe002eb6e3f5a9bcf8a88ca2a7cfce8a348cc4e86854463",
     registry = "gcr.io",
     repository = "skia-public/jsfiddle-base",
 )
@@ -705,7 +707,7 @@ container_pull(
 # Pulls the gcr.io/skia-public/shaders-base container.
 container_pull(
     name = "shaders-base",
-    digest = "sha256:cb3395657dd9ab666cb22542b8af1483fe947c4ce0de4902972c5b3c8b51d2d9",
+    digest = "sha256:99b73d05cdae7c1c0e5eee3ec34f13b1438ffd3bd58d08e9937db98797cde30c",
     registry = "gcr.io",
     repository = "skia-public/shaders-base",
 )
@@ -713,7 +715,41 @@ container_pull(
 # Pulls the gcr.io/skia-public/skottie-base container.
 container_pull(
     name = "skottie-base",
-    digest = "sha256:eba2fc6806525902b01888dbe234492fff410bc74674098890c5a2bd44ad38df",
+    digest = "sha256:a049ff55ff145ba585cc32fb348a613a8cfb357046c2b56c6d95344410ea4f77",
     registry = "gcr.io",
     repository = "skia-public/skottie-base",
 )
+
+http_archive(
+    name = "build_bazel_rules_apple",
+    sha256 = "62847b3f444ce514ae386704a119ad7b29fa6dfb65a38bff4ae239f2389a0429",
+    url = "https://github.com/bazelbuild/rules_apple/releases/download/3.8.0/rules_apple.3.8.0.tar.gz",
+)
+
+load(
+    "@build_bazel_rules_apple//apple:repositories.bzl",
+    "apple_rules_dependencies",
+)
+
+apple_rules_dependencies()
+
+load(
+    "@build_bazel_rules_swift//swift:repositories.bzl",
+    "swift_rules_dependencies",
+)
+
+swift_rules_dependencies()
+
+load(
+    "@build_bazel_rules_swift//swift:extras.bzl",
+    "swift_rules_extra_dependencies",
+)
+
+swift_rules_extra_dependencies()
+
+load(
+    "@build_bazel_apple_support//lib:repositories.bzl",
+    "apple_support_dependencies",
+)
+
+apple_support_dependencies()

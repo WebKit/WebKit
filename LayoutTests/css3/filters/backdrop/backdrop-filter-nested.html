@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="fuzzy" content="maxDifference=0-3; totalPixels=0-15128" />
+  <style>
+    .container {
+      display: grid;
+      backdrop-filter: blur(0px);
+    }
+
+    .container > * {
+      grid-area: -1/1;
+    }
+
+    .a {
+      backdrop-filter: blur(1px);
+    }
+
+    .b {
+      background-color: rgba(0,0,0,0.01);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <div class="a">The background on this text should not be black.</div>
+    <div class="b"></div>
+  </div>
+  
+</body>
+</html>

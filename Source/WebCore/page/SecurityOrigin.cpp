@@ -33,13 +33,13 @@
 #include "LegacySchemeRegistry.h"
 #include "OriginAccessEntry.h"
 #include "PublicSuffixStore.h"
-#include "RuntimeApplicationChecks.h"
 #include "SecurityPolicy.h"
 #include <pal/text/TextEncoding.h>
 #include "ThreadableBlobRegistry.h"
 #include <wtf/FileSystem.h>
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/RuntimeApplicationChecks.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/URL.h>
 #include <wtf/text/MakeString.h>
@@ -402,10 +402,10 @@ bool SecurityOrigin::canDisplay(const URL& url, const OriginAccessPatterns& patt
 SecurityOrigin::Policy SecurityOrigin::canShowNotifications() const
 {
     if (m_universalAccess)
-        return AlwaysAllow;
+        return Policy::AlwaysAllow;
     if (isOpaque())
-        return AlwaysDeny;
-    return Ask;
+        return Policy::AlwaysDeny;
+    return Policy::Ask;
 }
 
 bool SecurityOrigin::isSameOriginAs(const SecurityOrigin& other) const
@@ -588,22 +588,21 @@ Ref<SecurityOrigin> SecurityOrigin::create(WebCore::SecurityOriginData&& data, S
     return origin;
 }
 
-// FIXME: other should be a const SecurityOrigin& because we assume it is non-null.
-bool SecurityOrigin::equal(const SecurityOrigin* other) const
+bool SecurityOrigin::equal(const SecurityOrigin& other) const
 {
-    if (other == this)
+    if (&other == this)
         return true;
 
-    if (isOpaque() || other->isOpaque())
-        return data().opaqueOriginIdentifier() == other->data().opaqueOriginIdentifier();
+    if (isOpaque() || other.isOpaque())
+        return data().opaqueOriginIdentifier() == other.data().opaqueOriginIdentifier();
     
-    if (!isSameSchemeHostPort(*other))
+    if (!isSameSchemeHostPort(other))
         return false;
 
-    if (m_domainWasSetInDOM != other->m_domainWasSetInDOM)
+    if (m_domainWasSetInDOM != other.m_domainWasSetInDOM)
         return false;
 
-    if (m_domainWasSetInDOM && m_domain != other->m_domain)
+    if (m_domainWasSetInDOM && m_domain != other.m_domain)
         return false;
 
     return true;

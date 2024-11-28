@@ -30,9 +30,9 @@
 #include "MessageArgumentDescriptions.h"
 #include "MessageNames.h"
 #include "StreamServerConnection.h"
-#include <WebCore/RuntimeApplicationChecks.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/ProcessID.h>
+#include <wtf/RuntimeApplicationChecks.h>
 #include <wtf/StdLibExtras.h>
 
 namespace IPC {
@@ -49,25 +49,23 @@ constexpr unsigned loggingContainerSizeLimit = 200;
 #if !LOG_DISABLED
 enum class ForReply : bool { No, Yes };
 
-inline TextStream textStreamForLogging(const Connection& connection, MessageName messageName, void* object, ForReply forReply)
+template<typename C>
+inline TextStream textStreamForLogging(const C& connection, MessageName messageName, void* object, ForReply forReply)
 {
     TextStream stream(TextStream::LineMode::SingleLine, { }, loggingContainerSizeLimit);
     stream << '[';
-#if OS(DARWIN)
-    // The remote process ID is not available when the connection was not made
-    // for an XPC service, e.g. for the Web -> GPU process connection.
-    if (connection.remoteProcessID())
-        stream << connection.remoteProcessID() << ' ';
-#else
-    UNUSED_PARAM(connection);
-#endif
+
+    if constexpr(requires { connection.remoteProcessID(); }) {
+        if (auto pid = connection.remoteProcessID())
+            stream << pid << ' ';
+    }
 
     switch (forReply) {
     case ForReply::No:
-        stream << "-> "_s << WebCore::processTypeDescription(WebCore::processType()) << ' ' << getCurrentProcessID() << " receiver "_s << object << "] "_s << description(messageName);
+        stream << "-> "_s << processTypeDescription(processType()) << ' ' << getCurrentProcessID() << " receiver "_s << object << "] "_s << description(messageName);
         break;
     case ForReply::Yes:
-        stream << "<- "_s << WebCore::processTypeDescription(WebCore::processType()) << ' ' << getCurrentProcessID() << "] "_s << description(messageName) << " Reply"_s;
+        stream << "<- "_s << processTypeDescription(processType()) << ' ' << getCurrentProcessID() << "] "_s << description(messageName) << " Reply"_s;
         break;
     }
 
@@ -75,8 +73,8 @@ inline TextStream textStreamForLogging(const Connection& connection, MessageName
 }
 #endif
 
-template<typename ArgsTuple, size_t... ArgsIndex>
-void logMessageImpl(const Connection& connection, MessageName messageName, void* object, const ArgsTuple& args, std::index_sequence<ArgsIndex...>)
+template<typename C, typename ArgsTuple, size_t... ArgsIndex>
+void logMessageImpl(const C& connection, MessageName messageName, void* object, const ArgsTuple& args, std::index_sequence<ArgsIndex...>)
 {
 #if !LOG_DISABLED
     if (LOG_CHANNEL(IPCMessages).state != WTFLogChannelState::On)
@@ -95,14 +93,14 @@ void logMessageImpl(const Connection& connection, MessageName messageName, void*
 #endif
 }
 
-template<typename ArgsTuple, typename ArgsIndices = std::make_index_sequence<std::tuple_size<ArgsTuple>::value>>
-void logMessage(const Connection& connection, MessageName messageName, void* object, const ArgsTuple& args)
+template<typename C, typename ArgsTuple, typename ArgsIndices = std::make_index_sequence<std::tuple_size<ArgsTuple>::value>>
+void logMessage(const C& connection, MessageName messageName, void* object, const ArgsTuple& args)
 {
     logMessageImpl(connection, messageName, object, args, ArgsIndices());
 }
 
-template<typename... T>
-void logReply(const Connection& connection, MessageName messageName, const T&... args)
+template<typename C, typename... T>
+void logReply(const C& connection, MessageName messageName, const T&... args)
 {
 #if !LOG_DISABLED
     if (!sizeof...(T))
@@ -218,8 +216,8 @@ struct MethodSignatureValidation<R(MethodArgumentTypes...) const>
 
 // Main dispatch functions
 
-template<typename MessageType, typename T, typename U, typename MF>
-void handleMessage(Connection& connection, Decoder& decoder, T* object, MF U::* function)
+template<typename MessageType, typename C, typename T, typename U, typename MF>
+void handleMessage(C& connection, Decoder& decoder, T* object, MF U::* function)
 {
     using ValidationType = MethodSignatureValidation<MF>;
     static_assert(std::is_same_v<typename ValidationType::MessageArguments, typename MessageType::Arguments>);
@@ -256,7 +254,7 @@ bool handleMessageSynchronous(Connection& connection, Decoder& decoder, UniqueRe
 
     auto arguments = decoder.decode<typename MessageType::Arguments>();
     if (UNLIKELY(!arguments))
-        return false;
+        return true; // Message handler found, but decode failed.
 
     static_assert(std::is_same_v<typename ValidationType::CompletionHandlerArguments, typename MessageType::ReplyArguments>);
     using CompletionHandlerType = typename ValidationType::CompletionHandlerType;
@@ -282,31 +280,23 @@ void handleMessageSynchronous(StreamServerConnection& connection, Decoder& decod
     using ValidationType = MethodSignatureValidation<MF>;
     static_assert(std::is_same_v<typename ValidationType::MessageArguments, typename MessageType::Arguments>);
 
-    auto syncRequestID = decoder.decode<Connection::SyncRequestID>();
-    if (UNLIKELY(!syncRequestID))
-        return;
-
     auto arguments = decoder.decode<typename MessageType::Arguments>();
-    if (UNLIKELY(!arguments)) {
-#if ENABLE(IPC_TESTING_API)
-        connection.sendDeserializationErrorSyncReply(*syncRequestID);
-#endif
+    if (UNLIKELY(!arguments))
         return;
-    }
 
     static_assert(std::is_same_v<typename ValidationType::CompletionHandlerArguments, typename MessageType::ReplyArguments>);
     using CompletionHandlerType = typename ValidationType::CompletionHandlerType;
 
-    logMessage(connection.protectedConnection(), MessageType::name(), object, *arguments);
+    logMessage(connection, MessageType::name(), object, *arguments);
     callMemberFunction(object, function, WTFMove(*arguments),
-        CompletionHandlerType([syncRequestID, connection = Ref { connection }] (auto&&... args) mutable {
-            logReply(connection->protectedConnection(), MessageType::name(), args...);
-            connection->sendSyncReply<MessageType>(*syncRequestID, std::forward<decltype(args)>(args)...);
+        CompletionHandlerType([syncRequestID = decoder.syncRequestID(), connection = Ref { connection }] (auto&&... args) mutable {
+            logReply(connection, MessageType::name(), args...);
+            connection->sendSyncReply<MessageType>(syncRequestID, std::forward<decltype(args)>(args)...);
         }));
 }
 
-template<typename MessageType, typename T, typename U, typename MF>
-void handleMessageAsync(Connection& connection, Decoder& decoder, T* object, MF U::* function)
+template<typename MessageType, typename C, typename T, typename U, typename MF>
+void handleMessageAsync(C& connection, Decoder& decoder, T* object, MF U::* function)
 {
     using ValidationType = MethodSignatureValidation<MF>;
     static_assert(std::is_same_v<typename ValidationType::MessageArguments, typename MessageType::Arguments>);
@@ -314,7 +304,7 @@ void handleMessageAsync(Connection& connection, Decoder& decoder, T* object, MF 
     auto arguments = decoder.decode<typename MessageType::Arguments>();
     if (UNLIKELY(!arguments))
         return;
-    auto replyID = decoder.decode<Connection::AsyncReplyID>();
+    auto replyID = decoder.decode<IPC::AsyncReplyID>();
     if (UNLIKELY(!replyID))
         return;
 
@@ -323,10 +313,7 @@ void handleMessageAsync(Connection& connection, Decoder& decoder, T* object, MF 
 
     CompletionHandlerType completionHandler {
         [replyID = *replyID, connection = Ref { connection }] (auto&&... args) mutable {
-            auto encoder = makeUniqueRef<Encoder>(MessageType::asyncMessageReplyName(), replyID.toUInt64());
-            logReply(connection, MessageType::name(), args...);
-            (encoder.get() << ... << std::forward<decltype(args)>(args));
-            connection->sendSyncReply(WTFMove(encoder));
+            connection->template sendAsyncReply<MessageType>(replyID, std::forward<decltype(args)>(args)...);
         }, MessageType::callbackThread };
 
     logMessage(connection, MessageType::name(), object, *arguments);

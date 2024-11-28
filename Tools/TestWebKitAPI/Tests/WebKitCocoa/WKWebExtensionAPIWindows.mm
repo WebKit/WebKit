@@ -161,6 +161,38 @@ TEST(WKWebExtensionAPIWindows, GetCurrentFromOptionsPage)
     [manager run];
 }
 
+TEST(WKWebExtensionAPIWindows, GetCurrentWindowAfterTabMove)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"const initialWindow = await browser.windows.getCurrent()",
+        @"browser.test.assertEq(typeof initialWindow, 'object', 'Initial window should be an object')",
+        @"browser.test.assertEq(typeof initialWindow.id, 'number', 'Initial window ID should be a number')",
+
+        @"browser.tabs.onAttached.addListener(async (tabId, attachInfo) => {",
+        @"  const currentWindowAfterMove = await browser.windows.getCurrent()",
+        @"  browser.test.assertEq(currentWindowAfterMove.id, initialWindow.id, 'Current window ID should remain the initial window')",
+
+        @"  browser.test.notifyPass()",
+        @"})",
+
+        @"browser.test.yield('Move Tab')",
+    ]);
+
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:windowsManifest resources:@{ @"background.js": backgroundScript }]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    auto *newTab = [manager.get().defaultWindow openNewTab];
+    auto *newWindow = [manager openNewWindow];
+
+    [manager loadAndRun];
+
+    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Move Tab");
+
+    [newWindow moveTab:newTab toIndex:0];
+
+    [manager run];
+}
+
 TEST(WKWebExtensionAPIWindows, GetLastFocused)
 {
     auto *backgroundScript = Util::constructScript(@[
@@ -189,6 +221,54 @@ TEST(WKWebExtensionAPIWindows, GetLastFocused)
     };
 
     [manager loadAndRun];
+}
+
+TEST(WKWebExtensionAPIWindows, GetLastFocusedWithPrivateAccess)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"const lastFocusedWindow = await browser.windows.getLastFocused()",
+
+        @"browser.test.assertEq(typeof lastFocusedWindow, 'object', 'Last focused window should be an object')",
+        @"browser.test.assertTrue(lastFocusedWindow.incognito, 'Last focused window should be incognito')",
+
+        @"browser.test.notifyPass()",
+    ]);
+
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:windowsManifest resources:@{ @"background.js": backgroundScript }]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    manager.get().context.hasAccessToPrivateData = YES;
+
+    [manager load];
+
+    auto *privateWindow = [manager openNewWindowUsingPrivateBrowsing:YES];
+    [manager focusWindow:privateWindow];
+
+    [manager run];
+}
+
+TEST(WKWebExtensionAPIWindows, GetLastFocusedWithoutPrivateAccess)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"const lastFocusedWindow = await browser.windows.getLastFocused()",
+
+        @"browser.test.assertEq(typeof lastFocusedWindow, 'object', 'Last focused window should be an object')",
+        @"browser.test.assertFalse(lastFocusedWindow.incognito, 'Last focused window should not be incognito')",
+
+        @"browser.test.notifyPass()",
+    ]);
+
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:windowsManifest resources:@{ @"background.js": backgroundScript }]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    manager.get().context.hasAccessToPrivateData = NO;
+
+    [manager load];
+
+    auto *privateWindow = [manager openNewWindowUsingPrivateBrowsing:YES];
+    [manager focusWindow:privateWindow];
+
+    [manager run];
 }
 
 TEST(WKWebExtensionAPIWindows, GetAll)
@@ -392,6 +472,33 @@ TEST(WKWebExtensionAPIWindows, RemovedEvent)
     EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Close Window");
 
     [manager closeWindow:manager.get().defaultWindow];
+    [manager run];
+}
+
+TEST(WKWebExtensionAPIWindows, RemoveListenerDuringEvent)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"function windowListener() {",
+        @"  browser.windows.onCreated.removeListener(windowListener)",
+        @"  browser.test.assertFalse(browser.windows.onCreated.hasListener(windowListener), 'Listener should be removed')",
+        @"}",
+
+        @"browser.windows.onCreated.addListener(windowListener)",
+        @"browser.windows.onCreated.addListener(() => browser.test.notifyPass())",
+
+        @"browser.test.assertTrue(browser.windows.onCreated.hasListener(windowListener), 'Listener should be registered')",
+
+        @"browser.test.yield('Open Window')"
+    ]);
+
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:windowsManifest resources:@{ @"background.js": backgroundScript }]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    [manager loadAndRun];
+
+    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Open Window");
+
+    [manager openNewWindow];
     [manager run];
 }
 

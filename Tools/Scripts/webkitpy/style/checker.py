@@ -271,8 +271,6 @@ _PATH_RULES_SPECIFIER = [
       os.path.join('Source', 'WebCore', 'platform', 'graphics', 'gstreamer', 'GStreamerSinksWorkarounds.h'),
       os.path.join('Source', 'WebCore', 'platform', 'graphics', 'gstreamer', 'GLVideoSinkGStreamer.cpp'),
       os.path.join('Source', 'WebCore', 'platform', 'graphics', 'gstreamer', 'GLVideoSinkGStreamer.h'),
-      os.path.join('Source', 'WebCore', 'platform', 'graphics', 'gstreamer', 'DMABufVideoSinkGStreamer.cpp'),
-      os.path.join('Source', 'WebCore', 'platform', 'graphics', 'gstreamer', 'DMABufVideoSinkGStreamer.h'),
       os.path.join('Source', 'WebCore', 'platform', 'graphics', 'gstreamer', 'TextCombinerGStreamer.cpp'),
       os.path.join('Source', 'WebCore', 'platform', 'graphics', 'gstreamer', 'TextCombinerGStreamer.h'),
       os.path.join('Source', 'WebCore', 'platform', 'graphics', 'gstreamer', 'TextCombinerPadGStreamer.cpp'),
@@ -461,7 +459,7 @@ _NEVER_SKIPPED_FILES = _NEVER_SKIPPED_JS_FILES + [
     re.compile('.*TestExpectations$'),
     re.compile('.*TestExpectations.json$'),
     # Avoid imported WebDriverTests python machinery
-    re.compile('(?!WebDriverTests).{0,14}.*.py$'),
+    re.compile('^LayoutTests.(?!imported).*\\.py$'),
     re.compile('^' + re.escape(os.path.join('LayoutTests', 'imported', 'w3c', 'resources', 'import-expectations.json')) + r'$'),
 ]
 

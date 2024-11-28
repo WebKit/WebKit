@@ -50,7 +50,7 @@ WEBCORE_EXPORT FloatRect unionRectIgnoringZeroRects(const Vector<FloatRect>&);
 FloatPoint mapPoint(FloatPoint, const FloatRect& srcRect, const FloatRect& destRect);
 
 // Map rect from srcRect to an equivalent rect in destRect.
-FloatRect mapRect(const FloatRect&, const FloatRect& srcRect, const FloatRect& destRect);
+WEBCORE_EXPORT FloatRect mapRect(const FloatRect&, const FloatRect& srcRect, const FloatRect& destRect);
 
 WEBCORE_EXPORT FloatRect largestRectWithAspectRatioInsideRect(float aspectRatio, const FloatRect&);
 WEBCORE_EXPORT FloatRect smallestRectWithAspectRatioAroundRect(float aspectRatio, const FloatRect&);

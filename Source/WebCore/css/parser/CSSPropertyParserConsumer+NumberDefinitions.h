@@ -24,37 +24,21 @@
 
 #pragma once
 
-#include "CSSParserToken.h"
 #include "CSSPropertyParserConsumer+MetaConsumerDefinitions.h"
-#include "CSSPropertyParserConsumer+Primitives.h"
-#include "CSSPropertyParserConsumer+UnevaluatedCalc.h"
-#include <optional>
-#include <wtf/Brigand.h>
 
 namespace WebCore {
-
-class CSSCalcSymbolsAllowed;
-class CSSParserTokenRange;
-
 namespace CSSPropertyParserHelpers {
 
-std::optional<NumberRaw> validatedRange(NumberRaw, CSSPropertyParserOptions);
-
-struct NumberKnownTokenTypeFunctionConsumer {
-    static constexpr CSSParserTokenType tokenType = FunctionToken;
-    static std::optional<UnevaluatedCalc<NumberRaw>> consume(CSSParserTokenRange&, CSSCalcSymbolsAllowed, CSSPropertyParserOptions);
+struct NumberValidator {
+    template<auto R> static bool isValid(CSS::NumberRaw<R> raw, CSSPropertyParserOptions)
+    {
+        return isValidCanonicalValue(raw);
+    }
 };
 
-struct NumberKnownTokenTypeNumberConsumer {
-    static constexpr CSSParserTokenType tokenType = NumberToken;
-    static std::optional<NumberRaw> consume(CSSParserTokenRange&, CSSCalcSymbolsAllowed, CSSPropertyParserOptions);
-};
-
-template<> struct ConsumerDefinition<NumberRaw> {
-    using type = brigand::list<NumberRaw, UnevaluatedCalc<NumberRaw>>;
-
-    using FunctionToken = NumberKnownTokenTypeFunctionConsumer;
-    using NumberToken = NumberKnownTokenTypeNumberConsumer;
+template<auto R> struct ConsumerDefinition<CSS::Number<R>> {
+    using FunctionToken = FunctionConsumerForCalcValues<CSS::Number<R>>;
+    using NumberToken = NumberConsumer<CSS::Number<R>, NumberValidator>;
 };
 
 } // namespace CSSPropertyParserHelpers

@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2003-2021 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2024 Apple Inc. All rights reserved.
  *  Copyright (C) 2003 Peter Kelly (pmk@post.com)
  *  Copyright (C) 2006 Alexey Proskuryakov (ap@nypop.com)
  *
@@ -45,6 +45,8 @@
 #include <wtf/Assertions.h>
 #include <wtf/StdMap.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 static JSC_DECLARE_HOST_FUNCTION(arrayProtoFuncToLocaleString);
@@ -61,6 +63,7 @@ static JSC_DECLARE_HOST_FUNCTION(arrayProtoFuncSplice);
 static JSC_DECLARE_HOST_FUNCTION(arrayProtoFuncUnShift);
 static JSC_DECLARE_HOST_FUNCTION(arrayProtoFuncIndexOf);
 static JSC_DECLARE_HOST_FUNCTION(arrayProtoFuncLastIndexOf);
+static JSC_DECLARE_HOST_FUNCTION(arrayProtoFuncConcat);
 
 // ------------------------------ ArrayPrototype ----------------------------
 
@@ -89,7 +92,7 @@ void ArrayPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
     putDirectWithoutTransition(vm, vm.propertyNames->iteratorSymbol, globalObject->arrayProtoValuesFunction(), static_cast<unsigned>(PropertyAttribute::DontEnum));
 
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->toLocaleString, arrayProtoFuncToLocaleString, static_cast<unsigned>(PropertyAttribute::DontEnum), 0, ImplementationVisibility::Public);
-    JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().concatPublicName(), arrayPrototypeConcatCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().concatPublicName(), arrayProtoFuncConcat, static_cast<unsigned>(PropertyAttribute::DontEnum), 1, ImplementationVisibility::Public);
     JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().fillPublicName(), arrayPrototypeFillCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->join, arrayProtoFuncJoin, static_cast<unsigned>(PropertyAttribute::DontEnum), 1, ImplementationVisibility::Public);
     JSC_NATIVE_INTRINSIC_FUNCTION_WITHOUT_TRANSITION("pop"_s, arrayProtoFuncPop, static_cast<unsigned>(PropertyAttribute::DontEnum), 0, ImplementationVisibility::Public, ArrayPopIntrinsic);
@@ -1384,7 +1387,7 @@ ALWAYS_INLINE JSValue fastIndexOf(JSGlobalObject* globalObject, VM& vm, JSArray*
         auto data = butterfly.contiguous().data();
         if (direction == IndexOfDirection::Forward) {
             for (; index < length; ++index) {
-                // Array#indexOf uses `===` semantics (not HashMap isEqual semantics).
+                // Array#indexOf uses `===` semantics (not UncheckedKeyHashMap isEqual semantics).
                 // And the hole never matches against Int32 value.
                 if (searchInt32 == data[index].get())
                     return jsNumber(index);
@@ -1392,7 +1395,7 @@ ALWAYS_INLINE JSValue fastIndexOf(JSGlobalObject* globalObject, VM& vm, JSArray*
         } else {
             do {
                 ASSERT(index < length);
-                // Array#lastIndexOf uses `===` semantics (not HashMap isEqual semantics).
+                // Array#lastIndexOf uses `===` semantics (not UncheckedKeyHashMap isEqual semantics).
                 // And the hole never matches against Int32 value.
                 if (searchInt32 == data[index].get())
                     return jsNumber(index);
@@ -1406,7 +1409,7 @@ ALWAYS_INLINE JSValue fastIndexOf(JSGlobalObject* globalObject, VM& vm, JSArray*
 
         if (direction == IndexOfDirection::Forward) {
             if (searchElement.isObject()) {
-                auto* result = bitwise_cast<const WriteBarrier<Unknown>*>(WTF::find64(bitwise_cast<const uint64_t*>(data + index), JSValue::encode(searchElement), length - index));
+                auto* result = std::bit_cast<const WriteBarrier<Unknown>*>(WTF::find64(std::bit_cast<const uint64_t*>(data + index), JSValue::encode(searchElement), length - index));
                 if (result)
                     return jsNumber(result - data);
                 return jsNumber(-1);
@@ -1443,7 +1446,7 @@ ALWAYS_INLINE JSValue fastIndexOf(JSGlobalObject* globalObject, VM& vm, JSArray*
         auto data = butterfly.contiguousDouble().data();
         if (direction == IndexOfDirection::Forward) {
             for (; index < length; ++index) {
-                // Array#indexOf uses `===` semantics (not HashMap isEqual semantics).
+                // Array#indexOf uses `===` semantics (not UncheckedKeyHashMap isEqual semantics).
                 // And the hole never matches since it is NaN.
                 if (data[index] == searchNumber)
                     return jsNumber(index);
@@ -1451,7 +1454,7 @@ ALWAYS_INLINE JSValue fastIndexOf(JSGlobalObject* globalObject, VM& vm, JSArray*
         } else {
             do {
                 ASSERT(index < length);
-                // Array#lastIndexOf uses `===` semantics (not HashMap isEqual semantics).
+                // Array#lastIndexOf uses `===` semantics (not UncheckedKeyHashMap isEqual semantics).
                 // And the hole never matches since it is NaN.
                 if (data[index] == searchNumber)
                     return jsNumber(index);
@@ -1557,48 +1560,7 @@ JSC_DEFINE_HOST_FUNCTION(arrayProtoFuncLastIndexOf, (JSGlobalObject* globalObjec
     return JSValue::encode(jsNumber(-1));
 }
 
-enum class FillMode {
-    Undefined,
-    Empty,
-};
-
-template<FillMode fillMode>
-static bool moveElements(JSGlobalObject* globalObject, VM& vm, JSArray* target, unsigned targetOffset, JSArray* source, unsigned sourceLength)
-{
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    if (LIKELY(!hasAnyArrayStorage(source->indexingType()) && !source->holesMustForwardToPrototype())) {
-        for (unsigned i = 0; i < sourceLength; ++i) {
-            JSValue value = source->tryGetIndexQuickly(i);
-            if constexpr (fillMode == FillMode::Empty) {
-                if (!value)
-                    continue;
-            } else {
-                if (!value)
-                    value = jsUndefined();
-            }
-            target->putDirectIndex(globalObject, targetOffset + i, value, 0, PutDirectIndexShouldThrow);
-            RETURN_IF_EXCEPTION(scope, false);
-        }
-    } else {
-        for (unsigned i = 0; i < sourceLength; ++i) {
-            JSValue value = getProperty(globalObject, source, i);
-            RETURN_IF_EXCEPTION(scope, false);
-            if constexpr (fillMode == FillMode::Empty) {
-                if (!value)
-                    continue;
-            } else {
-                if (!value)
-                    value = jsUndefined();
-            }
-            target->putDirectIndex(globalObject, targetOffset + i, value, 0, PutDirectIndexShouldThrow);
-            RETURN_IF_EXCEPTION(scope, false);
-        }
-    }
-    return true;
-}
-
-static JSValue concatAppendOne(JSGlobalObject* globalObject, VM& vm, JSArray* first, JSValue second)
+static JSArray* concatAppendOne(JSGlobalObject* globalObject, VM& vm, JSArray* first, JSValue second)
 {
     auto scope = DECLARE_THROW_SCOPE(vm);
 
@@ -1619,7 +1581,7 @@ static JSValue concatAppendOne(JSGlobalObject* globalObject, VM& vm, JSArray* fi
     if (second.isObject()) {
         JSType type = asObject(second)->type();
         if (UNLIKELY(type == ProxyObjectType || type == DerivedArrayType))
-            return jsNull();
+            return { };
     }
 
     unsigned resultSize = checkedResultSize;
@@ -1641,7 +1603,7 @@ static JSValue concatAppendOne(JSGlobalObject* globalObject, VM& vm, JSArray* fi
     if (!success) {
         RETURN_IF_EXCEPTION(scope, { });
 
-        bool success = moveElements<FillMode::Empty>(globalObject, vm, result, 0, first, firstArraySize);
+        bool success = moveArrayElements<ArrayFillMode::Empty>(globalObject, vm, result, 0, first, firstArraySize);
         EXCEPTION_ASSERT(!scope.exception() == success);
         if (UNLIKELY(!success))
             return { };
@@ -1652,99 +1614,10 @@ static JSValue concatAppendOne(JSGlobalObject* globalObject, VM& vm, JSArray* fi
     return result;
 }
 
-template<typename T>
-void clearElement(T& element)
+static JSArray* concatAppendArray(JSGlobalObject* globalObject, VM& vm, JSArray* firstArray, JSArray* secondArray)
 {
-    element.clear();
-}
-
-template<>
-void clearElement(double& element)
-{
-    element = PNaN;
-}
-
-template<FillMode fillMode, typename T, typename U>
-ALWAYS_INLINE void copyElements(T* buffer, unsigned offset, U* source, unsigned sourceSize, IndexingType sourceType)
-{
-    if (sourceType == ArrayWithUndecided) {
-        if constexpr (fillMode == FillMode::Empty) {
-            for (unsigned i = 0; i < sourceSize; ++i)
-                clearElement<T>(buffer[i + offset]);
-        } else {
-            for (unsigned i = 0; i < sourceSize; ++i)
-                buffer[i + offset].setWithoutWriteBarrier(jsUndefined());
-        }
-        return;
-    }
-
-    if constexpr (std::is_same_v<T, U>) {
-        if constexpr (fillMode == FillMode::Empty) {
-            if constexpr (std::is_same_v<T, double>)
-                memcpy(buffer + offset, source, sizeof(double) * sourceSize);
-            else
-                gcSafeMemcpy(buffer + offset, source, sizeof(JSValue) * sourceSize);
-            return;
-        } else {
-            for (unsigned i = 0; i < sourceSize; ++i) {
-                JSValue value = source[i].get();
-                if (!value)
-                    value = jsUndefined();
-                buffer[i + offset].setWithoutWriteBarrier(value);
-            }
-        }
-    } else if constexpr (std::is_same_v<T, double>) {
-        ASSERT(sourceType == ArrayWithInt32);
-        static_assert(fillMode == FillMode::Empty);
-        for (unsigned i = 0; i < sourceSize; ++i) {
-            JSValue value = source[i].get();
-            if (value)
-                buffer[i + offset] = value.asInt32();
-            else
-                buffer[i + offset] = PNaN;
-        }
-    } else {
-        static_assert(std::is_same_v<U, double>);
-        for (unsigned i = 0; i < sourceSize; ++i) {
-            double value = source[i];
-            if (value == value)
-                buffer[i + offset].setWithoutWriteBarrier(JSValue(JSValue::EncodeAsDouble, value));
-            else {
-                if constexpr (fillMode == FillMode::Undefined)
-                    buffer[i + offset].setWithoutWriteBarrier(jsUndefined());
-                else
-                    buffer[i + offset].clear();
-            }
-        }
-    }
-};
-
-JSC_DEFINE_HOST_FUNCTION(arrayProtoPrivateFuncConcatMemcpy, (JSGlobalObject* globalObject, CallFrame* callFrame))
-{
-    ASSERT(callFrame->argumentCount() == 2);
-    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSArray* firstArray = jsCast<JSArray*>(callFrame->uncheckedArgument(0));
-    
-    // This code assumes that neither array has set Symbol.isConcatSpreadable. If the first array
-    // has indexed accessors then one of those accessors might change the value of Symbol.isConcatSpreadable
-    // on the second argument.
-    if (UNLIKELY(shouldUseSlowPut(firstArray->indexingType())))
-        return JSValue::encode(jsNull());
-
-    // We need to check the species constructor here since checking it in the JS wrapper is too expensive for the non-optimizing tiers.
-    bool isValid = arraySpeciesWatchpointIsValid(vm, firstArray);
-    RETURN_IF_EXCEPTION(scope, { });
-    if (UNLIKELY(!isValid))
-        return JSValue::encode(jsNull());
-
-    JSValue second = callFrame->uncheckedArgument(1);
-    if (!isJSArray(second))
-        RELEASE_AND_RETURN(scope, JSValue::encode(concatAppendOne(globalObject, vm, firstArray, second)));
-
-    JSArray* secondArray = jsCast<JSArray*>(second);
-    
     Butterfly* firstButterfly = firstArray->butterfly();
     Butterfly* secondButterfly = secondArray->butterfly();
 
@@ -1756,7 +1629,7 @@ JSC_DEFINE_HOST_FUNCTION(arrayProtoPrivateFuncConcatMemcpy, (JSGlobalObject* glo
 
     if (UNLIKELY(checkedResultSize.hasOverflowed())) {
         throwOutOfMemoryError(globalObject, scope);
-        return encodedJSValue();
+        return { };
     }
 
     unsigned resultSize = checkedResultSize;
@@ -1766,50 +1639,50 @@ JSC_DEFINE_HOST_FUNCTION(arrayProtoPrivateFuncConcatMemcpy, (JSGlobalObject* glo
     IndexingType type = firstArray->mergeIndexingTypeForCopying(secondType, allowPromotion);
     if (type == NonArray || !firstArray->canFastCopy(secondArray) || resultSize >= MIN_SPARSE_ARRAY_INDEX) {
         JSArray* result = constructEmptyArray(globalObject, nullptr, resultSize);
-        RETURN_IF_EXCEPTION(scope, encodedJSValue());
+        RETURN_IF_EXCEPTION(scope, { });
 
-        bool success = moveElements<FillMode::Empty>(globalObject, vm, result, 0, firstArray, firstArraySize);
+        bool success = moveArrayElements<ArrayFillMode::Empty>(globalObject, vm, result, 0, firstArray, firstArraySize);
         EXCEPTION_ASSERT(!scope.exception() == success);
         if (UNLIKELY(!success))
-            return encodedJSValue();
-        success = moveElements<FillMode::Empty>(globalObject, vm, result, firstArraySize, secondArray, secondArraySize);
+            return { };
+        success = moveArrayElements<ArrayFillMode::Empty>(globalObject, vm, result, firstArraySize, secondArray, secondArraySize);
         EXCEPTION_ASSERT(!scope.exception() == success);
         if (UNLIKELY(!success))
-            return encodedJSValue();
+            return { };
 
-        return JSValue::encode(result);
+        return result;
     }
 
     Structure* resultStructure = globalObject->arrayStructureForIndexingTypeDuringAllocation(type);
     if (UNLIKELY(hasAnyArrayStorage(resultStructure->indexingType())))
-        return JSValue::encode(jsNull());
+        return { };
 
     ASSERT(!globalObject->isHavingABadTime());
     ObjectInitializationScope initializationScope(vm);
     JSArray* result = JSArray::tryCreateUninitializedRestricted(initializationScope, resultStructure, resultSize);
     if (UNLIKELY(!result)) {
         throwOutOfMemoryError(globalObject, scope);
-        return encodedJSValue();
+        return { };
     }
 
     if (type == ArrayWithDouble) {
         double* buffer = result->butterfly()->contiguousDouble().data();
         if (firstType == ArrayWithDouble)
-            copyElements<FillMode::Empty>(buffer, 0, firstButterfly->contiguousDouble().data(), firstArraySize, firstType);
+            copyArrayElements<ArrayFillMode::Empty>(buffer, 0, firstButterfly->contiguousDouble().data(), firstArraySize, firstType);
         else
-            copyElements<FillMode::Empty>(buffer, 0, firstButterfly->contiguous().data(), firstArraySize, firstType);
+            copyArrayElements<ArrayFillMode::Empty>(buffer, 0, firstButterfly->contiguous().data(), firstArraySize, firstType);
         if (secondType == ArrayWithDouble)
-            copyElements<FillMode::Empty>(buffer, firstArraySize, secondButterfly->contiguousDouble().data(), secondArraySize, secondType);
+            copyArrayElements<ArrayFillMode::Empty>(buffer, firstArraySize, secondButterfly->contiguousDouble().data(), secondArraySize, secondType);
         else
-            copyElements<FillMode::Empty>(buffer, firstArraySize, secondButterfly->contiguous().data(), secondArraySize, secondType);
+            copyArrayElements<ArrayFillMode::Empty>(buffer, firstArraySize, secondButterfly->contiguous().data(), secondArraySize, secondType);
     } else if (type != ArrayWithUndecided) {
         WriteBarrier<Unknown>* buffer = result->butterfly()->contiguous().data();
-        copyElements<FillMode::Empty>(buffer, 0, firstButterfly->contiguous().data(), firstArraySize, firstType);
-        copyElements<FillMode::Empty>(buffer, firstArraySize, secondButterfly->contiguous().data(), secondArraySize, secondType);
+        copyArrayElements<ArrayFillMode::Empty>(buffer, 0, firstButterfly->contiguous().data(), firstArraySize, firstType);
+        copyArrayElements<ArrayFillMode::Empty>(buffer, firstArraySize, secondButterfly->contiguous().data(), secondArraySize, secondType);
     }
 
     ASSERT(result->butterfly()->publicLength() == resultSize);
-    return JSValue::encode(result);
+    return result;
 }
 
 JSC_DEFINE_HOST_FUNCTION(arrayProtoPrivateFuncAppendMemcpy, (JSGlobalObject* globalObject, CallFrame* callFrame))
@@ -1829,11 +1702,11 @@ JSC_DEFINE_HOST_FUNCTION(arrayProtoPrivateFuncAppendMemcpy, (JSGlobalObject* glo
         return JSValue::encode(jsUndefined());
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
     scope.release();
-    moveElements<FillMode::Empty>(globalObject, vm, resultArray, startIndex, otherArray, otherArray->length());
+    moveArrayElements<ArrayFillMode::Empty>(globalObject, vm, resultArray, startIndex, otherArray, otherArray->length());
     return JSValue::encode(jsUndefined());
 }
 
-JSC_DEFINE_HOST_FUNCTION(arrayProtoPrivateFuncFromFast, (JSGlobalObject* globalObject, CallFrame* callFrame))
+JSC_DEFINE_HOST_FUNCTION(arrayProtoPrivateFuncFromFastFillWithUndefined, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -1846,82 +1719,187 @@ JSC_DEFINE_HOST_FUNCTION(arrayProtoPrivateFuncFromFast, (JSGlobalObject* globalO
     if (UNLIKELY(!isJSArray(arrayValue)))
         return JSValue::encode(jsUndefined());
 
-    auto* array = jsCast<JSArray*>(arrayValue);
-    if (UNLIKELY(!array->isIteratorProtocolFastAndNonObservable()))
+    JSArray* array = tryCloneArrayFromFast<ArrayFillMode::Undefined>(globalObject, arrayValue);
+    RETURN_IF_EXCEPTION(scope, { });
+    if (array)
+        return JSValue::encode(array);
+
+    return JSValue::encode(jsUndefined());
+}
+
+JSC_DEFINE_HOST_FUNCTION(arrayProtoPrivateFuncFromFastFillWithEmpty, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSValue constructor = callFrame->uncheckedArgument(0);
+    if (UNLIKELY(constructor != globalObject->arrayConstructor() && constructor.isObject()))
         return JSValue::encode(jsUndefined());
 
-    IndexingType sourceType = array->indexingType();
-    if (UNLIKELY(shouldUseSlowPut(sourceType) || sourceType == ArrayClass))
+    JSValue arrayValue = callFrame->uncheckedArgument(1);
+    if (UNLIKELY(!isJSArray(arrayValue)))
         return JSValue::encode(jsUndefined());
 
-    Butterfly* butterfly= array->butterfly();
-    unsigned resultSize = butterfly->publicLength();
-    if (hasAnyArrayStorage(sourceType) || resultSize >= MIN_SPARSE_ARRAY_INDEX) {
-        JSArray* result = constructEmptyArray(globalObject, nullptr, resultSize);
-        RETURN_IF_EXCEPTION(scope, { });
+    JSArray* array = tryCloneArrayFromFast<ArrayFillMode::Empty>(globalObject, arrayValue);
+    RETURN_IF_EXCEPTION(scope, { });
+    if (array)
+        return JSValue::encode(array);
 
-        scope.release();
-        moveElements<FillMode::Undefined>(globalObject, vm, result, 0, array, resultSize);
-        return JSValue::encode(result);
-    }
+    return JSValue::encode(jsUndefined());
+}
 
-    ASSERT(sourceType == ArrayWithDouble || sourceType == ArrayWithInt32 || sourceType == ArrayWithContiguous || sourceType == ArrayWithUndecided);
-    IndexingType resultType = sourceType;
-    if (sourceType == ArrayWithDouble) {
-        double* buffer = butterfly->contiguousDouble().data();
-        for (unsigned i = 0; i < resultSize; ++i) {
-            double value = buffer[i];
-            if (std::isnan(value)) {
-                resultType = ArrayWithContiguous;
-                break;
+JSC_DEFINE_HOST_FUNCTION(arrayProtoFuncConcat, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSValue thisValue = callFrame->thisValue();
+
+    if (!callFrame->argumentCount()) {
+        if (isJSArray(thisValue)) {
+            auto* array = jsCast<JSArray*>(thisValue);
+            if (LIKELY(arrayMissingIsConcatSpreadable(vm, array) && arraySpeciesWatchpointIsValid(vm, array))) {
+                JSArray* result = tryCloneArrayFromFast<ArrayFillMode::Empty>(globalObject, array);
+                RETURN_IF_EXCEPTION(scope, { });
+                if (LIKELY(result))
+                    return JSValue::encode(result);
             }
         }
-    } else if (sourceType == ArrayWithInt32) {
-        auto* buffer = butterfly->contiguous().data();
-        if (UNLIKELY(WTF::find64(bitwise_cast<const uint64_t*>(buffer), JSValue::encode(JSValue()), resultSize)))
-            resultType = ArrayWithContiguous;
-    } else if (sourceType == ArrayWithUndecided && resultSize)
-        resultType = ArrayWithContiguous;
+    } else if (callFrame->argumentCount() == 1) {
+        JSValue argumentValue = callFrame->uncheckedArgument(0);
+        if (isJSArray(thisValue)) {
+            auto* firstArray = jsCast<JSArray*>(thisValue);
+            if (LIKELY(arrayMissingIsConcatSpreadable(vm, firstArray) && arraySpeciesWatchpointIsValid(vm, firstArray))) {
+                // This code assumes that neither array has set Symbol.isConcatSpreadable. If the first array
+                // has indexed accessors then one of those accessors might change the value of Symbol.isConcatSpreadable
+                // on the second argument.
+                if (LIKELY(!shouldUseSlowPut(firstArray->indexingType()))) {
+                    if (!argumentValue.isObject()) {
+                        auto* result = concatAppendOne(globalObject, vm, firstArray, argumentValue);
+                        RETURN_IF_EXCEPTION(scope, { });
+                        if (LIKELY(result))
+                            return JSValue::encode(result);
+                    } else {
+                        auto* argumentObject = jsCast<JSObject*>(argumentValue);
+                        if (LIKELY(arrayMissingIsConcatSpreadable(vm, argumentObject))) {
+                            if (!isJSArray(argumentObject)) {
+                                auto* result = concatAppendOne(globalObject, vm, firstArray, argumentValue);
+                                RETURN_IF_EXCEPTION(scope, { });
+                                if (LIKELY(result))
+                                    return JSValue::encode(result);
+                            } else {
+                                auto* result = concatAppendArray(globalObject, vm, firstArray, jsCast<JSArray*>(argumentValue));
+                                RETURN_IF_EXCEPTION(scope, { });
+                                if (LIKELY(result))
+                                    return JSValue::encode(result);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
 
-    Structure* resultStructure = globalObject->arrayStructureForIndexingTypeDuringAllocation(resultType);
-    if (UNLIKELY(hasAnyArrayStorage(resultStructure->indexingType())))
-        return JSValue::encode(jsUndefined());
+    thisValue = thisValue.toThis(globalObject, ECMAMode::strict());
+    RETURN_IF_EXCEPTION(scope, { });
+    if (thisValue.isUndefinedOrNull())
+        return throwVMTypeError(globalObject, scope, "Array.prototype.concat requires that |this| not be null or undefined"_s);
+    JSObject* currentElementObject = thisValue.toObject(globalObject);
+    RETURN_IF_EXCEPTION(scope, { });
 
-    ASSERT(!globalObject->isHavingABadTime());
-    ObjectInitializationScope initializationScope(vm);
-    JSArray* result = JSArray::tryCreateUninitializedRestricted(initializationScope, resultStructure, resultSize);
-    if (UNLIKELY(!result)) {
-        throwOutOfMemoryError(globalObject, scope);
+    std::pair<SpeciesConstructResult, JSObject*> speciesResult = speciesConstructArray(globalObject, currentElementObject, 0);
+    EXCEPTION_ASSERT(!!scope.exception() == (speciesResult.first == SpeciesConstructResult::Exception));
+    if (UNLIKELY(speciesResult.first == SpeciesConstructResult::Exception))
         return { };
-    }
-    ASSERT(result->butterfly()->publicLength() == resultSize);
 
-    if (resultType == ArrayWithUndecided) {
-        ASSERT(!resultSize);
-        return JSValue::encode(result);
-    }
-
-    if (resultType == ArrayWithDouble) {
-        ASSERT(sourceType == ArrayWithDouble);
-        double* buffer = result->butterfly()->contiguousDouble().data();
-        copyElements<FillMode::Empty>(buffer, 0, butterfly->contiguousDouble().data(), resultSize, ArrayWithDouble);
-        return JSValue::encode(result);
+    JSObject* result;
+    if (speciesResult.first == SpeciesConstructResult::CreatedObject)
+        result = speciesResult.second;
+    else {
+        result = constructEmptyArray(globalObject, nullptr);
+        RETURN_IF_EXCEPTION(scope, { });
     }
 
-    if (resultType == ArrayWithInt32) {
-        ASSERT(sourceType == ArrayWithInt32);
-        auto* buffer = result->butterfly()->contiguous().data();
-        copyElements<FillMode::Empty>(buffer, 0, butterfly->contiguous().data(), resultSize, ArrayWithInt32);
-        return JSValue::encode(result);
+    uint64_t resultIndex = 0;
+    uint64_t argumentIndex = 0;
+    JSValue currentElement = currentElementObject;
+    for (;;) {
+        bool isSpreadable = false;
+        if (currentElement.isObject()) {
+            auto* object = asObject(currentElement);
+            if (arrayMissingIsConcatSpreadable(vm, object)) {
+                isSpreadable = JSC::isArray(globalObject, object);
+                RETURN_IF_EXCEPTION(scope, { });
+            } else {
+                JSValue spreadable = object->get(globalObject, vm.propertyNames->isConcatSpreadableSymbol);
+                RETURN_IF_EXCEPTION(scope, { });
+                if (spreadable.isUndefined()) {
+                    isSpreadable = JSC::isArray(globalObject, object);
+                    RETURN_IF_EXCEPTION(scope, { });
+                } else {
+                    isSpreadable = spreadable.toBoolean(globalObject);
+                    RETURN_IF_EXCEPTION(scope, { });
+                }
+            }
+        }
+
+        if (isSpreadable) {
+            ASSERT(currentElement.isObject());
+            auto* object = asObject(currentElement);
+            uint64_t length = toLength(globalObject, object);
+            RETURN_IF_EXCEPTION(scope, { });
+
+            CheckedUint64 checkedResultSize = length;
+            checkedResultSize += resultIndex;
+            if (UNLIKELY(checkedResultSize.hasOverflowed() || checkedResultSize.value() > maxSafeIntegerAsUInt64())) {
+                throwTypeError(globalObject, scope, "Length exceeded the maximum array length"_s);
+                return { };
+            }
+            uint64_t resultSize = checkedResultSize.value();
+
+            if (isJSArray(result) && isJSArray(object) && resultSize <= MAX_ARRAY_INDEX) {
+                JSArray* resultArray = jsCast<JSArray*>(result);
+                JSArray* otherArray = jsCast<JSArray*>(object);
+                unsigned startIndex = resultIndex;
+                bool success = resultArray->appendMemcpy(globalObject, vm, resultIndex, otherArray);
+                RETURN_IF_EXCEPTION(scope, encodedJSValue());
+                if (!success) {
+                    moveArrayElements<ArrayFillMode::Empty>(globalObject, vm, resultArray, startIndex, otherArray, otherArray->length());
+                    RETURN_IF_EXCEPTION(scope, { });
+                }
+                resultIndex += length;
+            } else {
+                for (uint64_t index = 0; index < length; ++index) {
+                    JSValue element = getProperty(globalObject, object, index);
+                    RETURN_IF_EXCEPTION(scope, { });
+                    if (element) {
+                        result->putDirectIndex(globalObject, resultIndex, element, 0, PutDirectIndexShouldThrow);
+                        RETURN_IF_EXCEPTION(scope, { });
+                    }
+                    ++resultIndex;
+                }
+            }
+        } else {
+            if (UNLIKELY(resultIndex >= maxSafeIntegerAsUInt64())) {
+                throwTypeError(globalObject, scope, "Length exceeded the maximum array length"_s);
+                return { };
+            }
+            result->putDirectIndex(globalObject, resultIndex, currentElement, 0, PutDirectIndexShouldThrow);
+            RETURN_IF_EXCEPTION(scope, { });
+            ++resultIndex;
+        }
+
+        if (argumentIndex >= callFrame->argumentCount())
+            break;
+        currentElement = callFrame->uncheckedArgument(argumentIndex);
+        ++argumentIndex;
     }
 
-    ASSERT(resultType == ArrayWithContiguous);
-    auto* buffer = result->butterfly()->contiguous().data();
-    if (sourceType == ArrayWithDouble)
-        copyElements<FillMode::Undefined>(buffer, 0, butterfly->contiguousDouble().data(), resultSize, ArrayWithDouble);
-    else
-        copyElements<FillMode::Undefined>(buffer, 0, butterfly->contiguous().data(), resultSize, sourceType);
+    scope.release();
+    setLength(globalObject, vm, result, resultIndex);
     return JSValue::encode(result);
 }
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

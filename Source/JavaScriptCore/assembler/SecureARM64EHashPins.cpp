@@ -67,14 +67,18 @@ struct ValidateNonReentrancyScope {
 // This class is allocated once per process, so static lock is ok.
 static Lock hashPinsLock;
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 ALWAYS_INLINE static ExecutableMemoryHandle::MemoryPtr allocateInExecutableMemory(size_t size)
 {
     ExecutableMemoryHandle* handle = ExecutableAllocator::singleton().allocate(size, JITCompilationMustSucceed).leakRef();
     RELEASE_ASSERT(handle);
     void* memory = handle->start().untaggedPtr<char*>();
-    RELEASE_ASSERT(isJITPC(memory) && isJITPC(bitwise_cast<char*>(memory) + size - 1));
+    RELEASE_ASSERT(isJITPC(memory) && isJITPC(std::bit_cast<char*>(memory) + size - 1));
     return handle->start();
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 ALWAYS_INLINE SecureARM64EHashPins::Page::Page()
 {
@@ -92,10 +96,12 @@ static ALWAYS_INLINE void initializePage(const WriteToJITRegionScope&, SecureARM
 
 #define VALIDATE_THIS_VALUE() RELEASE_ASSERT(this == &g_jscConfig.arm64eHashPins) 
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 ALWAYS_INLINE auto SecureARM64EHashPins::metadata() -> Metadata*
 {
     VALIDATE_THIS_VALUE();
-    return bitwise_cast<Metadata*>(m_memory) - 1;
+    return std::bit_cast<Metadata*>(m_memory) - 1;
 }
 
 void SecureARM64EHashPins::initializeAtStartup()
@@ -115,6 +121,8 @@ void SecureARM64EHashPins::initializeAtStartup()
         initializePage(writeScope, firstPage());
     }
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 bool SecureARM64EHashPins::allocatePinForCurrentThreadImpl(const AbstractLocker&)
 {

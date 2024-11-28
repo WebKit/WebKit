@@ -414,7 +414,7 @@ pas_allocation_result pas_fast_large_free_heap_try_allocate(pas_fast_large_free_
                                                             pas_alignment alignment,
                                                             pas_large_free_heap_config* config)
 {
-    static const bool verbose = false;
+    static const bool verbose = PAS_SHOULD_LOG(PAS_LOG_LARGE_HEAPS);
     pas_generic_large_free_heap_config generic_heap_config;
     if (verbose)
         pas_log("heap %p allocating %zu, alignment %zu\n", heap, size, alignment.alignment);
@@ -431,7 +431,7 @@ void pas_fast_large_free_heap_deallocate(pas_fast_large_free_heap* heap,
                                          pas_zero_mode zero_mode,
                                          pas_large_free_heap_config* config)
 {
-    static const bool verbose = false;
+    static const bool verbose = PAS_SHOULD_LOG(PAS_LOG_LARGE_HEAPS);
     pas_generic_large_free_heap_config generic_heap_config;
     if (verbose)
         pas_log("heap %p deallocating %p of size %zu\n", heap, (void*)begin, end - begin);

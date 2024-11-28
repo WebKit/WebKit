@@ -220,7 +220,7 @@ void WebExtensionContext::firePortMessageEventsIfNeeded(WebExtensionContentWorld
         return;
 
     case WebExtensionContentWorldType::Native:
-        if (auto nativePort = m_nativePortMap.get(channelIdentifier))
+        if (RefPtr nativePort = m_nativePortMap.get(channelIdentifier))
             nativePort->receiveMessage(parseJSON(messageJSON, JSONOptions::FragmentsAllowed), std::nullopt);
         return;
 
@@ -253,7 +253,7 @@ void WebExtensionContext::sendQueuedNativePortMessagesIfNeeded(WebExtensionPortC
     if (messages.isEmpty())
         return;
 
-    auto nativePort = m_nativePortMap.get(channelIdentifier);
+    RefPtr nativePort = m_nativePortMap.get(channelIdentifier);
     if (!nativePort)
         return;
 
@@ -306,7 +306,7 @@ void WebExtensionContext::firePortDisconnectEventIfNeeded(WebExtensionContentWor
         return;
 
     case WebExtensionContentWorldType::Native:
-        if (auto nativePort = m_nativePortMap.get(channelIdentifier))
+        if (RefPtr nativePort = m_nativePortMap.get(channelIdentifier))
             nativePort->reportDisconnection(std::nullopt);
         return;
 

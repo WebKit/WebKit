@@ -28,18 +28,9 @@
 #if ENABLE(INPUT_TYPE_COLOR)
 
 #include <WebCore/ColorChooser.h>
-#include <wtf/CheckedPtr.h>
+#include <wtf/RefCountedAndCanMakeWeakPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
-
-namespace WebKit {
-class WebColorChooser;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::WebColorChooser> : std::true_type { };
-}
-
 
 namespace WebCore {
 class Color;
@@ -50,10 +41,18 @@ namespace WebKit {
 
 class WebPage;
 
-class WebColorChooser : public WebCore::ColorChooser, public CanMakeWeakPtr<WebColorChooser> {
+class WebColorChooser : public WebCore::ColorChooser, public RefCountedAndCanMakeWeakPtr<WebColorChooser> {
+    WTF_MAKE_TZONE_ALLOCATED(WebColorChooser);
 public:
-    WebColorChooser(WebPage*, WebCore::ColorChooserClient*, const WebCore::Color&);
+    static Ref<WebColorChooser> create(WebPage* page, WebCore::ColorChooserClient* client, const WebCore::Color& initialColor)
+    {
+        return adoptRef(*new WebColorChooser(page, client, initialColor));
+    }
+
     virtual ~WebColorChooser();
+
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
 
     void didChooseColor(const WebCore::Color&);
     void didEndChooser();
@@ -64,7 +63,9 @@ public:
     void endChooser() override;
 
 private:
-    CheckedPtr<WebCore::ColorChooserClient> m_colorChooserClient;
+    WebColorChooser(WebPage*, WebCore::ColorChooserClient*, const WebCore::Color&);
+
+    WeakPtr<WebCore::ColorChooserClient> m_colorChooserClient;
     WeakPtr<WebPage> m_page;
 };
 

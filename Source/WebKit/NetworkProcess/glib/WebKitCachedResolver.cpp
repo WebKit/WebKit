@@ -32,10 +32,10 @@
 
 using namespace WebKit;
 
-typedef struct {
+struct WebKitCachedResolverPrivate {
     GRefPtr<GResolver> wrappedResolver;
-    DNSCache cache;
-} WebKitCachedResolverPrivate;
+    Ref<DNSCache> cache { DNSCache::create() };
+};
 
 struct _WebKitCachedResolver {
     GResolver parentInstance;
@@ -76,13 +76,13 @@ WEBKIT_DEFINE_ASYNC_DATA_STRUCT(LookupAsyncData)
 static GList* webkitCachedResolverLookupByName(GResolver* resolver, const char* hostname, GCancellable* cancellable, GError** error)
 {
     auto* priv = WEBKIT_CACHED_RESOLVER(resolver)->priv;
-    auto addressList = priv->cache.lookup(hostname);
+    auto addressList = priv->cache->lookup(hostname);
     if (addressList)
         return addressListVectorToGList(addressList.value());
 
     auto* returnValue = g_resolver_lookup_by_name(priv->wrappedResolver.get(), hostname, cancellable, error);
     if (returnValue)
-        priv->cache.update(hostname, addressListGListToVector(returnValue));
+        priv->cache->update(hostname, addressListGListToVector(returnValue));
     return returnValue;
 }
 
@@ -90,7 +90,7 @@ static void webkitCachedResolverLookupByNameAsync(GResolver* resolver, const cha
 {
     GRefPtr<GTask> task = adoptGRef(g_task_new(resolver, cancellable, callback, userData));
     auto* priv = WEBKIT_CACHED_RESOLVER(resolver)->priv;
-    auto addressList = priv->cache.lookup(hostname);
+    auto addressList = priv->cache->lookup(hostname);
     if (addressList) {
         g_task_return_pointer(task.get(), addressListVectorToGList(addressList.value()), reinterpret_cast<GDestroyNotify>(g_resolver_free_addresses));
         return;
@@ -105,7 +105,7 @@ static void webkitCachedResolverLookupByNameAsync(GResolver* resolver, const cha
         if (auto* addressList = g_resolver_lookup_by_name_finish(G_RESOLVER(resolver), result, &error.outPtr())) {
             auto* priv = WEBKIT_CACHED_RESOLVER(g_task_get_source_object(task.get()))->priv;
             auto* asyncData = static_cast<LookupAsyncData*>(g_task_get_task_data(task.get()));
-            priv->cache.update(asyncData->hostname, addressListGListToVector(addressList));
+            priv->cache->update(asyncData->hostname, addressListGListToVector(addressList));
             g_task_return_pointer(task.get(), addressList, reinterpret_cast<GDestroyNotify>(g_resolver_free_addresses));
         } else
             g_task_return_error(task.get(), error.release());
@@ -136,13 +136,13 @@ static GList* webkitCachedResolverLookupByNameWithFlags(GResolver* resolver, con
 {
     auto* priv = WEBKIT_CACHED_RESOLVER(resolver)->priv;
     auto cacheType = dnsCacheType(flags);
-    auto addressList = priv->cache.lookup(hostname, cacheType);
+    auto addressList = priv->cache->lookup(hostname, cacheType);
     if (addressList)
         return addressListVectorToGList(addressList.value());
 
     auto* returnValue = g_resolver_lookup_by_name_with_flags(priv->wrappedResolver.get(), hostname, flags, cancellable, error);
     if (returnValue)
-        priv->cache.update(hostname, addressListGListToVector(returnValue), cacheType);
+        priv->cache->update(hostname, addressListGListToVector(returnValue), cacheType);
     return returnValue;
 }
 
@@ -151,7 +151,7 @@ static void webkitCachedResolverLookupByNameWithFlagsAsync(GResolver* resolver, 
     GRefPtr<GTask> task = adoptGRef(g_task_new(resolver, cancellable, callback, userData));
     auto* priv = WEBKIT_CACHED_RESOLVER(resolver)->priv;
     auto cacheType = dnsCacheType(flags);
-    auto addressList = priv->cache.lookup(hostname, cacheType);
+    auto addressList = priv->cache->lookup(hostname, cacheType);
     if (addressList) {
         g_task_return_pointer(task.get(), addressListVectorToGList(addressList.value()), reinterpret_cast<GDestroyNotify>(g_resolver_free_addresses));
         return;
@@ -167,7 +167,7 @@ static void webkitCachedResolverLookupByNameWithFlagsAsync(GResolver* resolver, 
         if (auto* addressList = g_resolver_lookup_by_name_with_flags_finish(G_RESOLVER(resolver), result, &error.outPtr())) {
             auto* priv = WEBKIT_CACHED_RESOLVER(g_task_get_source_object(task.get()))->priv;
             auto* asyncData = static_cast<LookupAsyncData*>(g_task_get_task_data(task.get()));
-            priv->cache.update(asyncData->hostname, addressListGListToVector(addressList), asyncData->dnsCacheType);
+            priv->cache->update(asyncData->hostname, addressListGListToVector(addressList), asyncData->dnsCacheType);
             g_task_return_pointer(task.get(), addressList, reinterpret_cast<GDestroyNotify>(g_resolver_free_addresses));
         } else
             g_task_return_error(task.get(), error.release());
@@ -214,7 +214,7 @@ static GList* webkitCachedResolverLookupRecordsFinish(GResolver* resolver, GAsyn
 
 static void webkitCachedResolverReload(GResolver* resolver)
 {
-    WEBKIT_CACHED_RESOLVER(resolver)->priv->cache.clear();
+    WEBKIT_CACHED_RESOLVER(resolver)->priv->cache->clear();
 }
 
 static void webkit_cached_resolver_class_init(WebKitCachedResolverClass* klass)

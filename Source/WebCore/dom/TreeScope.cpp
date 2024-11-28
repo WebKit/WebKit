@@ -32,6 +32,7 @@
 #include "Attr.h"
 #include "CSSStyleSheet.h"
 #include "CSSStyleSheetObservableArray.h"
+#include "CustomElementRegistry.h"
 #include "FocusController.h"
 #include "HTMLAnchorElement.h"
 #include "HTMLFrameOwnerElement.h"
@@ -62,7 +63,7 @@
 namespace WebCore {
 
 struct SameSizeAsTreeScope {
-    void* pointers[12];
+    void* pointers[13];
 };
 
 static_assert(sizeof(TreeScope) == sizeof(SameSizeAsTreeScope), "treescope should stay small");
@@ -79,10 +80,11 @@ struct SVGResourcesMap {
     MemoryCompactRobinHoodHashMap<AtomString, LegacyRenderSVGResourceContainer*> legacyResources;
 };
 
-TreeScope::TreeScope(ShadowRoot& shadowRoot, Document& document)
+TreeScope::TreeScope(ShadowRoot& shadowRoot, Document& document, RefPtr<CustomElementRegistry>&& registry)
     : m_rootNode(shadowRoot)
     , m_documentScope(document)
     , m_parentTreeScope(&document)
+    , m_customElementRegistry(WTFMove(registry))
 {
     shadowRoot.setTreeScope(*this);
 }
@@ -136,6 +138,12 @@ void TreeScope::setParentTreeScope(TreeScope& newParentScope)
 
     m_parentTreeScope = &newParentScope;
     setDocumentScope(newParentScope.documentScope());
+}
+
+void TreeScope::setCustomElementRegistry(Ref<CustomElementRegistry>&& registry)
+{
+    if (!m_customElementRegistry)
+        m_customElementRegistry = WTFMove(registry);
 }
 
 RefPtr<Element> TreeScope::getElementById(const AtomString& elementId) const

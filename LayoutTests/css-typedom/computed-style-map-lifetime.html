@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<body>
+<div id="el" width="500" height="500"></div>
+<script src="../resources/js-test-pre.js"></script>
+<script>
+jsTestIsAsync = true;
+description("Tests that a reference to an elements computed style map will keep the element alive, even if it is disconnected from the document.");
+
+let computedStyleMap = el.computedStyleMap();
+document.body.removeChild(el)
+
+setTimeout(() => {
+    var count = 0;
+    let handle = setInterval(() => {
+        gc();
+        let _ = computedStyleMap.get("width") + computedStyleMap.get("height")
+
+        if (++count > 11) {
+            clearInterval(handle);
+            testPassed("The test didn't crash.");
+            finishJSTest();
+        }
+
+    }, 32);
+}, 10);
+
+</script>
+<script src="../resources/js-test-post.js"></script>
+</body>

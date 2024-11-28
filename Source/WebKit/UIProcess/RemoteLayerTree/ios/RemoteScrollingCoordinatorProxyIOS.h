@@ -28,6 +28,7 @@
 #if PLATFORM(IOS_FAMILY) && ENABLE(ASYNC_SCROLLING)
 
 #include "RemoteScrollingCoordinatorProxy.h"
+#include <wtf/TZoneMalloc.h>
 
 OBJC_CLASS UIScrollView;
 OBJC_CLASS WKBaseScrollView;
@@ -42,11 +43,13 @@ class RemoteLayerTreeDrawingAreaProxyIOS;
 class RemoteLayerTreeNode;
 
 class RemoteScrollingCoordinatorProxyIOS final : public RemoteScrollingCoordinatorProxy {
+    WTF_MAKE_TZONE_ALLOCATED(RemoteScrollingCoordinatorProxyIOS);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RemoteScrollingCoordinatorProxyIOS);
 public:
     explicit RemoteScrollingCoordinatorProxyIOS(WebPageProxy&);
     ~RemoteScrollingCoordinatorProxyIOS() = default;
 
-    UIScrollView *scrollViewForScrollingNodeID(WebCore::ScrollingNodeID) const;
+    UIScrollView *scrollViewForScrollingNodeID(std::optional<WebCore::ScrollingNodeID>) const;
 
     OptionSet<WebCore::TouchAction> activeTouchActionsForTouchIdentifier(unsigned touchIdentifier) const;
     void setTouchActionsForTouchIdentifier(OptionSet<WebCore::TouchAction>, unsigned);
@@ -78,7 +81,6 @@ public:
 
 private:
     RemoteLayerTreeDrawingAreaProxyIOS& drawingAreaIOS() const;
-    bool propagatesMainFrameScrolls() const override { return false; }
 
     void scrollingTreeNodeWillStartPanGesture(WebCore::ScrollingNodeID) override;
     void scrollingTreeNodeWillStartScroll(WebCore::ScrollingNodeID) override;

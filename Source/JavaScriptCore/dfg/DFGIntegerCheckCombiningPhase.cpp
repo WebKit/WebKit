@@ -379,7 +379,7 @@ private:
                 nodeIndex, origin, jsNumber(addend), source.useKind()));
     }
     
-    using RangeMap = HashMap<GenericHashKey<RangeKey, RangeKey::Hash>, Range>;
+    using RangeMap = UncheckedKeyHashMap<GenericHashKey<RangeKey, RangeKey::Hash>, Range>;
     RangeMap m_map;
     
     InsertionSet m_insertionSet;

@@ -47,6 +47,8 @@ public:
 
     static void registerMediaEngine(MediaEngineRegistrar);
 
+    constexpr MediaPlayerType mediaPlayerType() const final { return MediaPlayerType::GStreamerMSE; }
+
     void load(const String&) override;
     void load(const URL&, const ContentType&, MediaSourcePrivateClient&) override;
 
@@ -91,7 +93,7 @@ public:
 #endif
 
     void checkPlayingConsistency() final;
-#ifndef GST_DISABLE_DEBUG
+#ifndef GST_DISABLE_GST_DEBUG
     void setShouldDisableSleep(bool) final;
 #endif
 
@@ -130,5 +132,9 @@ private:
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::MediaPlayerPrivateGStreamerMSE)
+static bool isType(const WebCore::MediaPlayerPrivateInterface& player) { return player.mediaPlayerType() == WebCore::MediaPlayerType::GStreamerMSE; }
+SPECIALIZE_TYPE_TRAITS_END()
 
 #endif // USE(GSTREAMER)

@@ -28,6 +28,7 @@
 
 #include "CSSCalcValue.h"
 #include "CSSPrimitiveValue.h"
+#include "Length.h"
 
 namespace WebCore {
 
@@ -47,7 +48,7 @@ RefPtr<CSSValue> CSSMathValue::toCSSValue() const
         .type = type,
         .category = *category,
         .stage = CSSCalc::Stage::Specified,
-        .range = ValueRange::All
+        .range = CSS::All
     }));
 }
 

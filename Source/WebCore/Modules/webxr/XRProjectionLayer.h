@@ -31,6 +31,8 @@
 #include "WebXRRigidTransform.h"
 #include "XRCompositionLayer.h"
 
+#include <wtf/MachSendRight.h>
+
 namespace WebCore {
 
 namespace WebGPU {
@@ -59,7 +61,7 @@ public:
     [[noreturn]] void setDeltaPose(WebXRRigidTransform*);
 
     // WebXRLayer
-    void startFrame(const PlatformXR::FrameData&) final;
+    void startFrame(PlatformXR::FrameData&) final;
     PlatformXR::Device::Layer endFrame() final;
 
     WebCore::WebGPU::XRProjectionLayer& backing();

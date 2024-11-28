@@ -27,7 +27,7 @@
 
 #include "CSSPrimitiveValue.h"
 #include "CSSPropertyParser.h"
-#include "CSSPropertyParserHelpers.h"
+#include "CSSPropertyParserConsumer+Conditional.h"
 #include "ContainerQueryFeatures.h"
 #include "MediaQueryParserContext.h"
 
@@ -39,7 +39,7 @@ std::optional<ContainerQuery> ContainerQueryParser::consumeContainerQuery(CSSPar
     auto consumeName = [&] {
         if (range.peek().type() == LeftParenthesisToken || range.peek().type() == FunctionToken)
             return nullAtom();
-        auto nameValue = CSSPropertyParserHelpers::consumeSingleContainerName(range);
+        auto nameValue = CSSPropertyParserHelpers::consumeSingleContainerName(range, context.context);
         if (!nameValue)
             return nullAtom();
         return AtomString { nameValue->stringValue() };
@@ -70,7 +70,7 @@ bool ContainerQueryParser::isValidFunctionId(CSSValueID functionId)
 
 const MQ::FeatureSchema* ContainerQueryParser::schemaForFeatureName(const AtomString& name, const MediaQueryParserContext& context, State& state)
 {
-    if (state.inFunctionId == CSSValueStyle && context.cssStyleQueriesEnabled)
+    if (state.inFunctionId == CSSValueStyle && context.context.cssStyleQueriesEnabled)
         return &Features::style();
 
     return GenericMediaQueryParser<ContainerQueryParser>::schemaForFeatureName(name, context, state);

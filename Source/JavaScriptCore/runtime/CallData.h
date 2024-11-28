@@ -48,6 +48,7 @@ struct CallData {
         struct {
             TaggedNativeFunction function;
             bool isBoundFunction;
+            bool isWasm;
         } native;
         struct {
             FunctionExecutable* functionExecutable;

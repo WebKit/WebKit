@@ -36,7 +36,6 @@ struct ProtoCallFrame;
 
 namespace LLInt {
 
-extern "C" void SYSV_ABI logWasmPrologue(uint64_t i, uint64_t* fp, uint64_t* sp)  REFERENCED_FROM_ASM WTF_INTERNAL;
 extern "C" UGPRPair SYSV_ABI llint_trace_operand(CallFrame*, const JSInstruction*, int fromWhere, int operand) REFERENCED_FROM_ASM WTF_INTERNAL;
 extern "C" UGPRPair SYSV_ABI llint_trace_value(CallFrame*, const JSInstruction*, int fromWhere, VirtualRegister operand) REFERENCED_FROM_ASM WTF_INTERNAL;
 extern "C" UGPRPair SYSV_ABI llint_default_call(CallFrame*, CallLinkInfo*) REFERENCED_FROM_ASM WTF_INTERNAL;
@@ -78,6 +77,9 @@ LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_get_by_id_direct);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_get_by_id);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_get_length);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_get_by_id_with_this);
+LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_get_hasInstance_from_instanceof);
+LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_get_prototype_from_instanceof);
+LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_instanceof_from_instanceof);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_put_by_id);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_in_by_id);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_in_by_val);
@@ -138,6 +140,7 @@ LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_call_varargs);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_tail_call_varargs);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_tail_call_forward_arguments);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_construct_varargs);
+LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_super_construct_varargs);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_call_direct_eval);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_call_direct_eval_wide16);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_call_direct_eval_wide32);
@@ -156,6 +159,7 @@ LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_log_shadow_chicken_prologue);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_log_shadow_chicken_tail);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_out_of_line_jump_target);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_arityCheck);
+LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_instanceof);
 extern "C" UGPRPair SYSV_ABI llint_throw_stack_overflow_error(VM*, ProtoCallFrame*) REFERENCED_FROM_ASM WTF_INTERNAL;
 extern "C" UGPRPair SYSV_ABI llint_slow_path_checkpoint_osr_exit(CallFrame* callFrame, EncodedJSValue unused) REFERENCED_FROM_ASM WTF_INTERNAL;
 extern "C" UGPRPair SYSV_ABI llint_slow_path_checkpoint_osr_exit_from_inlined_call(CallFrame* callFrame, EncodedJSValue callResult) REFERENCED_FROM_ASM WTF_INTERNAL;

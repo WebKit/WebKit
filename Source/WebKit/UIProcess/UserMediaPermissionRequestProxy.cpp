@@ -33,14 +33,14 @@ namespace WebKit {
 using namespace WebCore;
 
 #if !PLATFORM(COCOA)
-Ref<UserMediaPermissionRequestProxy> UserMediaPermissionRequestProxy::create(UserMediaPermissionRequestManagerProxy& manager, WebCore::UserMediaRequestIdentifier userMediaID, WebCore::FrameIdentifier mainFrameID, WebCore::FrameIdentifier frameID, Ref<WebCore::SecurityOrigin>&& userMediaDocumentOrigin, Ref<WebCore::SecurityOrigin>&& topLevelDocumentOrigin, Vector<WebCore::CaptureDevice>&& audioDevices, Vector<WebCore::CaptureDevice>&& videoDevices, WebCore::MediaStreamRequest&& request, CompletionHandler<void(bool)>&& decisionCompletionHandler)
+Ref<UserMediaPermissionRequestProxy> UserMediaPermissionRequestProxy::create(UserMediaPermissionRequestManagerProxy& manager, std::optional<WebCore::UserMediaRequestIdentifier> userMediaID, WebCore::FrameIdentifier mainFrameID, WebCore::FrameIdentifier frameID, Ref<WebCore::SecurityOrigin>&& userMediaDocumentOrigin, Ref<WebCore::SecurityOrigin>&& topLevelDocumentOrigin, Vector<WebCore::CaptureDevice>&& audioDevices, Vector<WebCore::CaptureDevice>&& videoDevices, WebCore::MediaStreamRequest&& request, CompletionHandler<void(bool)>&& decisionCompletionHandler)
 {
     return adoptRef(*new UserMediaPermissionRequestProxy(manager, userMediaID, mainFrameID, frameID, WTFMove(userMediaDocumentOrigin), WTFMove(topLevelDocumentOrigin), WTFMove(audioDevices), WTFMove(videoDevices), WTFMove(request), WTFMove(decisionCompletionHandler)));
 }
 #endif
 
-UserMediaPermissionRequestProxy::UserMediaPermissionRequestProxy(UserMediaPermissionRequestManagerProxy& manager, UserMediaRequestIdentifier userMediaID, FrameIdentifier mainFrameID, FrameIdentifier frameID, Ref<WebCore::SecurityOrigin>&& userMediaDocumentOrigin, Ref<WebCore::SecurityOrigin>&& topLevelDocumentOrigin, Vector<WebCore::CaptureDevice>&& audioDevices, Vector<WebCore::CaptureDevice>&& videoDevices, WebCore::MediaStreamRequest&& request, CompletionHandler<void(bool)>&& decisionCompletionHandler)
-    : m_manager(&manager)
+UserMediaPermissionRequestProxy::UserMediaPermissionRequestProxy(UserMediaPermissionRequestManagerProxy& manager, std::optional<UserMediaRequestIdentifier> userMediaID, FrameIdentifier mainFrameID, FrameIdentifier frameID, Ref<WebCore::SecurityOrigin>&& userMediaDocumentOrigin, Ref<WebCore::SecurityOrigin>&& topLevelDocumentOrigin, Vector<WebCore::CaptureDevice>&& audioDevices, Vector<WebCore::CaptureDevice>&& videoDevices, WebCore::MediaStreamRequest&& request, CompletionHandler<void(bool)>&& decisionCompletionHandler)
+    : m_manager(manager)
     , m_userMediaID(userMediaID)
     , m_mainFrameID(mainFrameID)
     , m_frameID(frameID)
@@ -51,6 +51,22 @@ UserMediaPermissionRequestProxy::UserMediaPermissionRequestProxy(UserMediaPermis
     , m_request(WTFMove(request))
     , m_decisionCompletionHandler(WTFMove(decisionCompletionHandler))
 {
+}
+
+UserMediaPermissionRequestProxy::~UserMediaPermissionRequestProxy()
+{
+    if (m_decisionCompletionHandler)
+        m_decisionCompletionHandler(false);
+}
+
+UserMediaPermissionRequestManagerProxy* UserMediaPermissionRequestProxy::manager() const
+{
+    return m_manager.get();
+}
+
+RefPtr<UserMediaPermissionRequestManagerProxy> UserMediaPermissionRequestProxy::protectedManager() const
+{
+    return m_manager.get();
 }
 
 #if ENABLE(MEDIA_STREAM)
@@ -88,20 +104,22 @@ void UserMediaPermissionRequestProxy::allow(const String& audioDeviceUID, const 
 
 void UserMediaPermissionRequestProxy::allow()
 {
-    ASSERT(m_manager);
-    if (!m_manager)
+    RefPtr manager = m_manager.get();
+    ASSERT(manager);
+    if (!manager)
         return;
 
-    m_manager->grantRequest(*this);
+    manager->grantRequest(*this);
     invalidate();
 }
 
 void UserMediaPermissionRequestProxy::deny(UserMediaAccessDenialReason reason)
 {
-    if (!m_manager)
+    RefPtr manager = m_manager.get();
+    if (!manager)
         return;
 
-    m_manager->denyRequest(*this, reason);
+    manager->denyRequest(*this, reason);
     invalidate();
 }
 
@@ -110,6 +128,11 @@ void UserMediaPermissionRequestProxy::invalidate()
     m_manager = nullptr;
     if (m_decisionCompletionHandler)
         m_decisionCompletionHandler(false);
+}
+
+bool UserMediaPermissionRequestProxy::isPending() const
+{
+    return !!m_manager;
 }
 
 Vector<String> UserMediaPermissionRequestProxy::videoDeviceUIDs() const
@@ -128,7 +151,7 @@ Vector<String> UserMediaPermissionRequestProxy::audioDeviceUIDs() const
 
 String convertEnumerationToString(UserMediaPermissionRequestProxy::UserMediaAccessDenialReason enumerationValue)
 {
-    static const NeverDestroyed<String> values[] = {
+    static const std::array<NeverDestroyed<String>, 7> values = {
         MAKE_STATIC_STRING_IMPL("NoConstraints"),
         MAKE_STATIC_STRING_IMPL("UserMediaDisabled"),
         MAKE_STATIC_STRING_IMPL("NoCaptureDevices"),
@@ -144,20 +167,20 @@ String convertEnumerationToString(UserMediaPermissionRequestProxy::UserMediaAcce
     static_assert(static_cast<size_t>(UserMediaPermissionRequestProxy::UserMediaAccessDenialReason::HardwareError) == 4, "UserMediaPermissionRequestProxy::UserMediaAccessDenialReason::HardwareError is not 4 as expected");
     static_assert(static_cast<size_t>(UserMediaPermissionRequestProxy::UserMediaAccessDenialReason::PermissionDenied) == 5, "UserMediaPermissionRequestProxy::UserMediaAccessDenialReason::PermissionDenied is not 5 as expected");
     static_assert(static_cast<size_t>(UserMediaPermissionRequestProxy::UserMediaAccessDenialReason::OtherFailure) == 6, "UserMediaPermissionRequestProxy::UserMediaAccessDenialReason::OtherFailure is not 6 as expected");
-    ASSERT(static_cast<size_t>(enumerationValue) < std::size(values));
     return values[static_cast<size_t>(enumerationValue)];
 }
 
 void UserMediaPermissionRequestProxy::promptForGetDisplayMedia(UserMediaDisplayCapturePromptType promptType)
 {
 #if ENABLE(MEDIA_STREAM) && PLATFORM(COCOA)
-    ASSERT(m_manager && canRequestDisplayCapturePermission() && promptType == UserMediaDisplayCapturePromptType::UserChoose);
-    if (!m_manager || !canRequestDisplayCapturePermission() || promptType != UserMediaDisplayCapturePromptType::UserChoose) {
+    RefPtr manager = m_manager.get();
+    ASSERT(manager && canRequestDisplayCapturePermission() && promptType == UserMediaDisplayCapturePromptType::UserChoose);
+    if (!manager || !manager->page() || !canRequestDisplayCapturePermission() || promptType != UserMediaDisplayCapturePromptType::UserChoose) {
         deny(UserMediaAccessDenialReason::PermissionDenied);
         return;
     }
 
-    alertForPermission(m_manager->page(), MediaPermissionReason::ScreenCapture, topLevelDocumentSecurityOrigin().data(), [this, protectedThis = Ref { *this }](bool granted) {
+    alertForPermission(*manager->protectedPage(), MediaPermissionReason::ScreenCapture, topLevelDocumentSecurityOrigin().data(), [this, protectedThis = Ref { *this }](bool granted) {
         if (!granted)
             deny(UserMediaAccessDenialReason::PermissionDenied);
         else
@@ -169,8 +192,9 @@ void UserMediaPermissionRequestProxy::promptForGetDisplayMedia(UserMediaDisplayC
 void UserMediaPermissionRequestProxy::promptForGetUserMedia()
 {
 #if ENABLE(MEDIA_STREAM) && PLATFORM(COCOA)
-    ASSERT(m_manager);
-    if (!m_manager) {
+    RefPtr manager = m_manager.get();
+    ASSERT(manager);
+    if (!manager || !manager->page()) {
         deny(UserMediaAccessDenialReason::PermissionDenied);
         return;
     }
@@ -179,7 +203,7 @@ void UserMediaPermissionRequestProxy::promptForGetUserMedia()
     if (requiresAudioCapture())
         reason = requiresVideoCapture() ? MediaPermissionReason::CameraAndMicrophone : MediaPermissionReason::Microphone;
 
-    alertForPermission(m_manager->page(), reason, topLevelDocumentSecurityOrigin().data(), [this, protectedThis = Ref { *this }](bool granted) {
+    alertForPermission(*manager->protectedPage(), reason, topLevelDocumentSecurityOrigin().data(), [this, protectedThis = Ref { *this }](bool granted) {
         if (!granted)
             deny(UserMediaAccessDenialReason::PermissionDenied);
         else

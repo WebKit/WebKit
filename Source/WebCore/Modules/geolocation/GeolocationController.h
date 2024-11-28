@@ -60,7 +60,7 @@ public:
 
     std::optional<GeolocationPositionData> lastPosition();
 
-    GeolocationClient& client() { return m_client; }
+    GeolocationClient& client();
 
     WEBCORE_EXPORT static ASCIILiteral supplementName();
     static GeolocationController* from(Page* page) { return static_cast<GeolocationController*>(Supplement<Page>::from(page, supplementName())); }
@@ -70,8 +70,8 @@ public:
     void didNavigatePage();
 
 private:
-    Page& m_page;
-    GeolocationClient& m_client;
+    WeakRef<Page> m_page;
+    CheckedPtr<GeolocationClient> m_client; // Only becomes null in the class destructor
 
     void activityStateDidChange(OptionSet<ActivityState> oldActivityState, OptionSet<ActivityState> newActivityState) override;
 

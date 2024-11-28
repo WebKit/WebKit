@@ -72,10 +72,10 @@ class ReadPixelsPBONVTest : public ReadPixelsTest
         glGenBuffers(1, &mPBO);
         glGenFramebuffers(1, &mFBO);
 
-        Reset(4 * getWindowWidth() * getWindowHeight(), 4, 4);
+        reset(4 * getWindowWidth() * getWindowHeight(), 4, 4);
     }
 
-    virtual void Reset(GLuint bufferSize, GLuint fboWidth, GLuint fboHeight)
+    virtual void reset(GLuint bufferSize, GLuint fboWidth, GLuint fboHeight)
     {
         ANGLE_SKIP_TEST_IF(!hasPBOExts());
 
@@ -301,10 +301,10 @@ class ReadPixelsPBOTest : public ReadPixelsPBONVTest
         glGenBuffers(1, &mPBO);
         glGenFramebuffers(1, &mFBO);
 
-        Reset(4 * getWindowWidth() * getWindowHeight(), 4, 1);
+        reset(4 * getWindowWidth() * getWindowHeight(), 4, 1);
     }
 
-    void Reset(GLuint bufferSize, GLuint fboWidth, GLuint fboHeight) override
+    void reset(GLuint bufferSize, GLuint fboWidth, GLuint fboHeight) override
     {
         glBindBuffer(GL_PIXEL_PACK_BUFFER, mPBO);
         glBufferData(GL_PIXEL_PACK_BUFFER, bufferSize, nullptr, GL_STATIC_DRAW);
@@ -443,10 +443,46 @@ TEST_P(ReadPixelsPBOTest, Snorm)
     }
 }
 
+// Test read pixel to PBO of an sRGB unorm renderbuffer
+TEST_P(ReadPixelsPBOTest, SrgbUnorm)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_ANGLE_pack_reverse_row_order"));
+
+    constexpr GLsizei kSize = 1;
+    constexpr angle::GLColor clearColor(64, 0, 0, 255);
+    constexpr angle::GLColor encodedToSrgbColor(136, 0, 0, 255);
+
+    GLRenderbuffer rbo;
+    glBindRenderbuffer(GL_RENDERBUFFER, rbo);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_SRGB8_ALPHA8, kSize, kSize);
+    ASSERT_GL_NO_ERROR();
+
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, rbo);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+    ASSERT_GL_NO_ERROR();
+
+    glClearColor(clearColor[0] / 255.0f, 0.0f, 0.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    glBindBuffer(GL_PIXEL_PACK_BUFFER, mPBO);
+    glPixelStorei(GL_PACK_REVERSE_ROW_ORDER_ANGLE, GL_TRUE);
+    glReadPixels(0, 0, kSize, kSize, GL_RGBA, GL_UNSIGNED_BYTE, 0);
+
+    GLColor result;
+    void *mappedPtr = glMapBufferRange(GL_PIXEL_PACK_BUFFER, 0, kSize * kSize * 4, GL_MAP_READ_BIT);
+    memcpy(result.data(), mappedPtr, kSize * kSize * 4);
+    glUnmapBuffer(GL_PIXEL_PACK_BUFFER);
+    EXPECT_GL_NO_ERROR();
+
+    EXPECT_NEAR(result[0], encodedToSrgbColor[0], 1);
+}
+
 // Test an error is generated when the PBO is too small.
 TEST_P(ReadPixelsPBOTest, PBOTooSmall)
 {
-    Reset(4 * 16 * 16 - 1, 16, 16);
+    reset(4 * 16 * 16 - 1, 16, 16);
 
     glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
@@ -665,7 +701,7 @@ void main()
 TEST_P(ReadPixelsPBOTest, SmallRowLength)
 {
     constexpr int kSize = 2;
-    Reset(kSize * kSize * 4, kSize, kSize);
+    reset(kSize * kSize * 4, kSize, kSize);
     std::vector<GLColor> texData(kSize * kSize);
     texData[0] = GLColor::red;
     texData[1] = GLColor::green;
@@ -1021,7 +1057,11 @@ TEST_P(ReadPixelsTextureNorm16PBOTest, R16_SNORM_RED)
 class ReadPixelsMultisampleTest : public ReadPixelsTest
 {
   protected:
-    ReadPixelsMultisampleTest() : mFBO(0), mRBO(0), mPBO(0) {}
+    ReadPixelsMultisampleTest() : mFBO(0), mRBO(0), mPBO(0)
+    {
+        setSamples(4);
+        setMultisampleEnabled(true);
+    }
 
     void testSetUp() override
     {
@@ -1083,6 +1123,44 @@ TEST_P(ReadPixelsMultisampleTest, BasicClear)
 
     glReadPixels(0, 0, 1, 1, GL_RGBA8, GL_UNSIGNED_BYTE, nullptr);
     EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+}
+
+// Test ReadPixels from a multisampled swapchain.
+TEST_P(ReadPixelsMultisampleTest, DefaultFramebuffer)
+{
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+    glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    EXPECT_PIXEL_RECT_EQ(0, 0, getWindowWidth(), getWindowHeight(), GLColor::red);
+    EXPECT_GL_NO_ERROR();
+}
+
+// Test ReadPixels from a multisampled swapchain into a PBO.
+TEST_P(ReadPixelsMultisampleTest, DefaultFramebufferPBO)
+{
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+    glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    glBindBuffer(GL_PIXEL_PACK_BUFFER, mPBO);
+
+    const int w = getWindowWidth();
+    const int h = getWindowHeight();
+    glReadPixels(0, 0, w, h, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+    EXPECT_GL_NO_ERROR();
+
+    const std::vector<angle::GLColor> expectedColor(w * h, GLColor::red);
+    std::vector<angle::GLColor> actualColor(w * h);
+    const void *mapPointer =
+        glMapBufferRange(GL_PIXEL_PACK_BUFFER, 0, sizeof(angle::GLColor) * w * h, GL_MAP_READ_BIT);
+    ASSERT_NE(nullptr, mapPointer);
+    memcpy(actualColor.data(), mapPointer, sizeof(angle::GLColor) * w * h);
+    glUnmapBuffer(GL_PIXEL_PACK_BUFFER);
+
+    EXPECT_EQ(expectedColor, actualColor);
 }
 
 class ReadPixelsTextureTest : public ANGLETest<>

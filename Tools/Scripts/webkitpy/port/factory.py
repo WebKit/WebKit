@@ -67,9 +67,6 @@ def platform_options(use_globs=False):
         optparse.make_option('--win', action='store_const', dest='platform',
             const=('win'),
             help=('Alias for --platform=win')),
-        optparse.make_option('--wincairo', action='store_const', dest='platform',
-            const=('win'),
-            help=('Alias for --platform=win')),
         optparse.make_option('--maccatalyst', action='store_const', dest='platform',
             const=('maccatalyst'),
             help=('Alias for --platform=maccatalyst')),
@@ -136,9 +133,6 @@ class PortFactory(object):
         port_name is None, this routine attempts to guess at the most
         appropriate port on this platform."""
         port_name = port_name or self._default_port()
-        if port_name == 'wincairo':
-            port_name = 'win'
-
         classes = []
         for port_class in self.PORT_CLASSES:
             module_name, class_name = port_class.rsplit('.', 1)

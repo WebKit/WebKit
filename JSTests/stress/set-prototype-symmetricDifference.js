@@ -79,5 +79,5 @@ try {
 }
 
 
-assertArrayContent(Array.from(set1.symmetricDifference({ size:1, has(v) { return set1.has(v); }, keys() { return set1.keys() } })), []);
-assertArrayContent(Array.from(set4.symmetricDifference({ size:1, has(v) { return set1.has(v); }, keys() { return set1.keys() } })), [2, 3]);
+assertArrayContent(Array.from(set1.symmetricDifference({ size:1, has(v) { return set1.has(v); }, keys() { assert(arguments.length, 0, "keys() arguments.length"); return set1.keys() } })), []);
+assertArrayContent(Array.from(set4.symmetricDifference({ size:1, has(v) { return set1.has(v); }, keys() { assert(arguments.length, 0, "keys() arguments.length"); return set1.keys() } })), [2, 3]);

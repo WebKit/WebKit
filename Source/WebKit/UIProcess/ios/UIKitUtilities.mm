@@ -219,6 +219,15 @@ static UIAxis axesForDelta(WebCore::FloatSize delta)
 
 @implementation UIView (WebKitInternal)
 
+- (UIScrollView *)_wk_parentScrollView
+{
+    for (RetainPtr parent = [self superview]; parent; parent = [parent superview]) {
+        if (RetainPtr scrollView = dynamic_objc_cast<UIScrollView>(parent.get()))
+            return scrollView.get();
+    }
+    return nil;
+}
+
 - (UIViewController *)_wk_viewControllerForFullScreenPresentation
 {
     auto controller = self.window.rootViewController;

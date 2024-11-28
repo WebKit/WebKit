@@ -30,11 +30,12 @@
 
 #include "JSDOMPromiseDeferredForward.h"
 #include "ReadableStreamDefaultController.h"
+#include <wtf/AbstractRefCounted.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
-class ReadableStreamSource {
+class ReadableStreamSource : public AbstractRefCounted {
 public:
     WEBCORE_EXPORT ReadableStreamSource();
     WEBCORE_EXPORT virtual ~ReadableStreamSource();
@@ -44,9 +45,6 @@ public:
     void cancel(JSC::JSValue);
 
     bool isPulling() const { return !!m_promise; }
-
-    virtual void ref() = 0;
-    virtual void deref() = 0;
 
 protected:
     ReadableStreamDefaultController& controller() { return m_controller.value(); }
@@ -73,8 +71,8 @@ class RefCountedReadableStreamSource
     : public ReadableStreamSource
     , public RefCounted<RefCountedReadableStreamSource> {
 public:
-    void ref() final { RefCounted<RefCountedReadableStreamSource>::ref(); };
-    void deref() final { RefCounted<RefCountedReadableStreamSource>::deref(); };
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
 };
 
 class SimpleReadableStreamSource

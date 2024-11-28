@@ -77,9 +77,9 @@ private:
 };
 
 struct ThreadTimerHeapItem : ThreadSafeRefCounted<ThreadTimerHeapItem> {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(ThreadTimerHeapItem);
-    WTF_ALLOW_STRUCT_COMPACT_POINTERS;
+    WTF_MAKE_COMPACT_TZONE_OR_ISO_ALLOCATED(ThreadTimerHeapItem);
 
+public:
     static RefPtr<ThreadTimerHeapItem> create(TimerBase&, MonotonicTime, unsigned);
 
     bool hasTimer() const { return m_timer; }

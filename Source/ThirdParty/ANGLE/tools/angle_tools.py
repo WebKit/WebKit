@@ -13,6 +13,7 @@ import subprocess
 
 is_windows = platform.system() == 'Windows'
 is_linux = platform.system() == 'Linux'
+is_mac = platform.system() == 'Darwin'
 
 
 def find_file_in_path(filename):

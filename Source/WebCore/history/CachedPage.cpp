@@ -103,6 +103,7 @@ static void firePageShowEvent(Page& page)
         if (!document)
             continue;
 
+        document->clearRevealForReactivation();
         // This takes care of firing the visibilitychange event and making sure the document is reported as visible.
         document->setVisibilityHiddenDueToDismissal(false);
 
@@ -195,7 +196,7 @@ void CachedPage::restore(Page& page)
 
     for (auto& domain : m_loadedSubresourceDomains) {
         if (localMainFrame)
-            localMainFrame->checkedLoader()->client().didLoadFromRegistrableDomain(WTFMove(domain));
+            localMainFrame->protectedLoader()->client().didLoadFromRegistrableDomain(WTFMove(domain));
     }
 
     clear();

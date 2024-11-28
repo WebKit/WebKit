@@ -74,16 +74,21 @@ def make_analyzer_flags(output_dir, args):
             'webkit.NoUncountedMemberChecker',
             'webkit.RefCntblBaseVirtualDtor',
             'webkit.UncountedLambdaCapturesChecker',
+            'alpha.webkit.NoUncheckedPtrMemberChecker',
             'alpha.webkit.UncountedCallArgsChecker',
-            'alpha.webkit.UncountedLocalVarsChecker',
+            'alpha.webkit.UncountedLocalVarsChecker'
         ])
 
     if args.only_smart_pointers:
         additional_checkers.extend([
+            'alpha.webkit.NoUncheckedPtrMemberChecker',
+            'alpha.webkit.UncheckedCallArgsChecker',
+            'alpha.webkit.UncheckedLocalVarsChecker',
             'alpha.webkit.UncountedCallArgsChecker',
             'alpha.webkit.UncountedLocalVarsChecker',
             'webkit.NoUncountedMemberChecker',
             'webkit.RefCntblBaseVirtualDtor',
+            'webkit.UncountedLambdaCapturesChecker',
         ])
 
     if additional_checkers:
@@ -142,6 +147,9 @@ def main(args):
     generate_static_analysis_archive_path = os.path.realpath(
         os.path.join(os.path.dirname(__file__), 'generate-static-analysis-archive'))
 
+    set_webkit_config_path = os.path.realpath(
+        os.path.join(os.path.dirname(__file__), 'set-webkit-configuration'))
+
     make_command = ['make', 'analyze', 'SDKROOT={}'.format(args.sdkroot)]
     if args.analyzer_path:
         make_command.extend(['CC={}'.format(analyzer_path), 'CPLUSPLUS={}'.format(analyzer_path)])
@@ -149,6 +157,7 @@ def main(args):
         make_command.extend(['GCC_PREPROCESSOR_ADDITIONS={}'.format(args.preprocessor_additions)])
 
     commands = [
+        [set_webkit_config_path, '--{}'.format(args.configuration)],
         make_command,
         [generate_static_analysis_archive_path, '--count', '--output-root', output_dir, '--id-string', 'WebKit Build'],
     ]
@@ -195,6 +204,7 @@ def parse_args():
                         help='Additional preprocessor macros.')
     parser.add_argument('--dry-run', default=False,
                         action='store_true', help='Output the command instead of executing it.')
+    parser.add_argument('--configuration', default='debug', choices=['debug', 'release'], dest='configuration', help='Set the build configuration (default: debug).')
 
     args = parser.parse_args()
 

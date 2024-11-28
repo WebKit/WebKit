@@ -89,7 +89,7 @@ namespace TestWebKitAPI {
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101600
 TEST(WebKitLegacy, CrossPartitionFileSchemeAccess)
 {
-    NSURL *url = [[NSBundle mainBundle] URLForResource:@"CrossPartitionFileSchemeAccess" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+    NSURL *url = [NSBundle.test_resourcesBundle URLForResource:@"CrossPartitionFileSchemeAccess" withExtension:@"html"];
     const char *filePath = [url fileSystemRepresentation];
     WTFLogAlways("Cleaning up from previous run...");
     cleanUp();

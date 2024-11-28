@@ -132,7 +132,7 @@ void forAllKilledNodesAtNodeIndex(
 {
     static constexpr unsigned seenInClosureFlag = 1;
     static constexpr unsigned calledFunctorFlag = 2;
-    HashMap<Node*, unsigned> flags;
+    UncheckedKeyHashMap<Node*, unsigned> flags;
 
     ASSERT(nodeIndex);
     Node* node = block->at(nodeIndex);

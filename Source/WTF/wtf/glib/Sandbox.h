@@ -28,6 +28,7 @@ WTF_EXPORT_PRIVATE bool isInsideUnsupportedContainer();
 WTF_EXPORT_PRIVATE bool isInsideSnap();
 WTF_EXPORT_PRIVATE bool shouldUseBubblewrap();
 WTF_EXPORT_PRIVATE bool shouldUsePortal();
+WTF_EXPORT_PRIVATE bool checkFlatpakPortalVersion(int);
 
 WTF_EXPORT_PRIVATE const CString& sandboxedUserRuntimeDirectory();
 
@@ -38,5 +39,6 @@ using WTF::isInsideUnsupportedContainer;
 using WTF::isInsideSnap;
 using WTF::shouldUseBubblewrap;
 using WTF::shouldUsePortal;
+using WTF::checkFlatpakPortalVersion;
 
 using WTF::sandboxedUserRuntimeDirectory;

@@ -35,6 +35,10 @@
 namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(ContentData);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ImageContentData);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(TextContentData);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CounterContentData);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(QuoteContentData);
 
 std::unique_ptr<ContentData> ContentData::clone() const
 {

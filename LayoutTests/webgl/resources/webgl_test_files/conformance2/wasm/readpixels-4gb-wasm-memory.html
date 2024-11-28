@@ -19,30 +19,41 @@ found in the LICENSE.txt file.
 <script>
 "use strict";
 description(document.title);
-debug("Tests that gl.readPixels() can be called on WebAssembly Memory of 4GB in size.");
+debug("Tests that readPixels can be called on the end of a WebAssembly Memory of nearly 4GB in size.");
 debug("");
 let wtu = WebGLTestUtils;
 let gl = wtu.create3DContext("canvas", undefined, 2);
 
 const PAGE = 65536;
 const SIZE = 4*1024*1024*1024 - PAGE; // when uint32_t size is max, we can only reach one page short of full 4GB
-let view = new Uint8Array(new WebAssembly.Memory({ initial: SIZE/PAGE }).buffer);
+(() => {
+  let view;
+  try {
+    view = new Uint8Array(new WebAssembly.Memory({ initial: SIZE / PAGE }).buffer);
+  } catch (e) {
+    testPassed(`Allocating ${SIZE} threw: ${e}`);
+    return;
+  }
 
-// Clear the canvas to a specific color
-const expectedColor = [42, 84, 128, 255];
-gl.clearColor(expectedColor[0]/255.0, expectedColor[1]/255.0, expectedColor[2]/255.0, expectedColor[3]/255.0);
-gl.clear(gl.COLOR_BUFFER_BIT);
+  // Clear the canvas to a specific color
+  const expectedColor = [42, 84, 128, 255];
+  gl.clearColor(expectedColor[0]/255.0, expectedColor[1]/255.0, expectedColor[2]/255.0, expectedColor[3]/255.0);
+  gl.clear(gl.COLOR_BUFFER_BIT);
 
-// Test that gl.readPixels() can be called with a high offset to Memory
-const offset = SIZE - 4;
-view.set([0,0,0,0], offset); // For good measure, clear data at offset before reading
-gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, view, offset);
-wtu.glErrorShouldBe(gl, gl.NO_ERROR);
-let obtainedColor = view.subarray(offset, offset+4);
-shouldBe('obtainedColor[0]', 'expectedColor[0]');
-shouldBe('obtainedColor[1]', 'expectedColor[1]');
-shouldBe('obtainedColor[2]', 'expectedColor[2]');
-shouldBe('obtainedColor[3]', 'expectedColor[3]');
+  // Test that gl.readPixels() can be called with a high offset to Memory
+  const offset = SIZE - 4;
+  view.set([0,0,0,0], offset); // For good measure, clear data at offset before reading
+  try {
+    gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, view, offset);
+  } catch (e) {
+    testFailed(`readPixels from ${view.length} byte view threw: ${e}`);
+    return;
+  }
+  wtu.glErrorShouldBe(gl, gl.NO_ERROR);
+  let obtainedColor = view.subarray(offset, offset+4);
+  expectArray(obtainedColor, expectedColor);
+})();
+
 var successfullyParsed = true;
 </script>
 <script src="../../js/js-test-post.js"></script>

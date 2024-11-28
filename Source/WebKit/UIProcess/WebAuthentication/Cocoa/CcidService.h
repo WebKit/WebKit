@@ -38,21 +38,12 @@ OBJC_CLASS _WKSmartCardSlotObserver;
 OBJC_CLASS _WKSmartCardSlotStateObserver;
 
 namespace WebKit {
-class CcidService;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::CcidService> : std::true_type { };
-}
-
-namespace WebKit {
 
 class CcidConnection;
 
 class CcidService : public FidoService {
 public:
-    explicit CcidService(AuthenticatorTransportServiceObserver&);
+    static Ref<CcidService> create(AuthenticatorTransportServiceObserver&);
     ~CcidService();
 
     static bool isAvailable();
@@ -61,6 +52,9 @@ public:
 
     void updateSlots(NSArray *slots);
     void onValidCard(RetainPtr<TKSmartCard>&&);
+
+protected:
+    explicit CcidService(AuthenticatorTransportServiceObserver&);
 
 private:
     void startDiscoveryInternal() final;

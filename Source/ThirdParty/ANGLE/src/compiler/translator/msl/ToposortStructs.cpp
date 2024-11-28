@@ -148,14 +148,15 @@ std::vector<T> Toposort(const Graph<T> &g)
     return L;
 }
 
-TIntermFunctionDefinition *CreateStructEqualityFunction(TSymbolTable &symbolTable,
-                                                        const TStructure &aStructType)
+TIntermFunctionDefinition *CreateStructEqualityFunction(
+    TSymbolTable &symbolTable,
+    const TStructure &aStructType,
+    const std::unordered_map<const TStructure *, const TFunction *> &equalityFunctions)
 {
-    ////////////////////
-
     auto &funcEquality =
         *new TFunction(&symbolTable, ImmutableString("equal"), SymbolType::AngleInternal,
                        new TType(TBasicType::EbtBool), true);
+
     auto &aStruct = CreateInstanceVariable(symbolTable, aStructType, Name("a"));
     auto &bStruct = CreateInstanceVariable(symbolTable, aStructType, Name("b"));
     funcEquality.addParameter(&aStruct);
@@ -163,7 +164,6 @@ TIntermFunctionDefinition *CreateStructEqualityFunction(TSymbolTable &symbolTabl
 
     auto &bodyEquality = *new TIntermBlock();
     std::vector<TIntermTyped *> andNodes;
-    ////////////////////
 
     const TFieldList &aFields = aStructType.fields();
     const size_t size         = aFields.size();
@@ -171,17 +171,17 @@ TIntermFunctionDefinition *CreateStructEqualityFunction(TSymbolTable &symbolTabl
     auto testEquality = [&](TIntermTyped &a, TIntermTyped &b) -> TIntermTyped * {
         ASSERT(a.getType() == b.getType());
         const TType &type = a.getType();
-        if (type.isVector() || type.isMatrix() || type.getStruct())
+        if (const TStructure *structure = type.getStruct(); structure != nullptr)
         {
-            auto *func =
-                new TFunction(&symbolTable, ImmutableString("equal"), SymbolType::AngleInternal,
-                              new TType(TBasicType::EbtBool), true);
-            return TIntermAggregate::CreateFunctionCall(*func, new TIntermSequence{&a, &b});
+            auto func = equalityFunctions.find(structure);
+            if (func != equalityFunctions.end())
+            {
+                return TIntermAggregate::CreateFunctionCall(*func->second,
+                                                            new TIntermSequence{&a, &b});
+            }
+            UNREACHABLE();
         }
-        else
-        {
-            return new TIntermBinary(TOperator::EOpEqual, &a, &b);
-        }
+        return new TIntermBinary(TOperator::EOpEqual, &a, &b);
     };
 
     for (size_t idx = 0; idx < size; ++idx)
@@ -226,15 +226,10 @@ TIntermFunctionDefinition *CreateStructEqualityFunction(TSymbolTable &symbolTabl
 struct DeclaredStructure
 {
     TIntermDeclaration *declNode;
-    TIntermFunctionDefinition *equalityFunctionDefinition;
     const TStructure *structure;
 };
 
-bool GetAsDeclaredStructure(SymbolEnv &symbolEnv,
-                            TIntermNode &node,
-                            DeclaredStructure &out,
-                            TSymbolTable &symbolTable,
-                            const std::unordered_set<const TStructure *> &usedStructs)
+bool GetAsDeclaredStructure(SymbolEnv &symbolEnv, TIntermNode &node, DeclaredStructure &out)
 {
     if (TIntermDeclaration *declNode = node.getAsDeclarationNode())
     {
@@ -251,10 +246,6 @@ bool GetAsDeclaredStructure(SymbolEnv &symbolEnv,
                 {
                     out.declNode  = declNode;
                     out.structure = structure;
-                    out.equalityFunctionDefinition =
-                        usedStructs.find(structure) == usedStructs.end()
-                            ? nullptr
-                            : CreateStructEqualityFunction(symbolTable, *structure);
                     return true;
                 }
             }
@@ -326,7 +317,7 @@ bool sh::ToposortStructs(TCompiler &compiler,
 {
     FindStructEqualityUse finder(symbolEnv);
     root.traverse(&finder);
-    ppc.hasStructEq = !finder.mUsedStructs.empty();
+    auto &usedStructs = finder.mUsedStructs;
 
     std::vector<DeclaredStructure> declaredStructs;
     std::vector<TIntermNode *> nonStructStmtNodes;
@@ -337,8 +328,7 @@ bool sh::ToposortStructs(TCompiler &compiler,
         for (size_t i = 0; i < stmtCount; ++i)
         {
             TIntermNode &stmtNode = *root.getChildNode(i);
-            if (GetAsDeclaredStructure(symbolEnv, stmtNode, declaredStruct,
-                                       compiler.getSymbolTable(), finder.mUsedStructs))
+            if (GetAsDeclaredStructure(symbolEnv, stmtNode, declaredStruct))
             {
                 declaredStructs.push_back(declaredStruct);
             }
@@ -380,14 +370,16 @@ bool sh::ToposortStructs(TCompiler &compiler,
 
     {
         TIntermSequence newStmtNodes;
-
-        for (DeclaredStructure &declaredStruct : declaredStructs)
+        std::unordered_map<const TStructure *, const TFunction *> equalityFunctions;
+        for (auto &[declNode, structure] : declaredStructs)
         {
-            ASSERT(declaredStruct.declNode);
-            newStmtNodes.push_back(declaredStruct.declNode);
-            if (declaredStruct.equalityFunctionDefinition)
+            newStmtNodes.push_back(declNode);
+            if (usedStructs.find(structure) != usedStructs.end())
             {
-                newStmtNodes.push_back(declaredStruct.equalityFunctionDefinition);
+                TIntermFunctionDefinition *eq = CreateStructEqualityFunction(
+                    compiler.getSymbolTable(), *structure, equalityFunctions);
+                newStmtNodes.push_back(eq);
+                equalityFunctions[structure] = eq->getFunction();
             }
         }
 

@@ -115,6 +115,7 @@ struct decoder_source_mgr {
     JPEGImageReader* decoder;
 };
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 static unsigned readUint16(JOCTET* data, bool isBigEndian)
 {
     if (isBigEndian)
@@ -246,6 +247,7 @@ static RefPtr<SharedBuffer> readICCProfile(jpeg_decompress_struct* info)
     return buffer.takeAsContiguous();
 }
 #endif
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 class JPEGImageReader {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(JPEGImageReader);
@@ -313,10 +315,12 @@ public:
 
     void skipBytes(long numBytes)
     {
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
         decoder_source_mgr* src = (decoder_source_mgr*)m_info.src;
         long bytesToSkip = std::min(numBytes, (long)src->pub.bytes_in_buffer);
         src->pub.bytes_in_buffer -= (size_t)bytesToSkip;
         src->pub.next_input_byte += bytesToSkip;
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
         m_bytesToSkip = std::max(numBytes - bytesToSkip, static_cast<long>(0));
     }
@@ -585,7 +589,9 @@ bool JPEGImageDecoder::setFailed()
 template <J_COLOR_SPACE colorSpace>
 void setPixel(ScalableImageDecoderFrame& buffer, uint32_t* currentAddress, JSAMPARRAY samples, int column)
 {
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     JSAMPLE* jsample = *samples + column * (colorSpace == JCS_RGB ? 3 : 4);
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
     switch (colorSpace) {
     case JCS_RGB:
@@ -623,11 +629,13 @@ bool JPEGImageDecoder::outputScanlines(ScalableImageDecoderFrame& buffer)
             return false;
 
         auto* row = buffer.backingStore()->pixelAt(0, sourceY);
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
         auto* currentAddress = row;
         for (int x = 0; x < width; ++x) {
             setPixel<colorSpace>(buffer, currentAddress, samples, x);
             ++currentAddress;
         }
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #if USE(LCMS)
         if (m_iccTransform)

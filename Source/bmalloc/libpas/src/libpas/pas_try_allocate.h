@@ -76,7 +76,7 @@ pas_try_allocate_impl_inline_only(
     pas_heap_config config,
     pas_try_allocate_common_fast_inline_only try_allocate_common_fast_inline_only)
 {
-    static const bool verbose = false;
+    static const bool verbose = PAS_SHOULD_LOG(PAS_LOG_OTHER);
     
     pas_local_allocator_result allocator;
     unsigned allocator_index;

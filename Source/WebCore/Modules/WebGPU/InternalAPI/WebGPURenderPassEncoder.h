@@ -76,8 +76,7 @@ public:
         std::optional<Vector<BufferDynamicOffset>>&& dynamicOffsets) = 0;
 
     virtual void setBindGroup(Index32, const BindGroup&,
-        const uint32_t* dynamicOffsetsArrayBuffer,
-        size_t dynamicOffsetsArrayBufferLength,
+        std::span<const uint32_t> dynamicOffsetsArrayBuffer,
         Size64 dynamicOffsetsDataStart,
         Size32 dynamicOffsetsDataLength) = 0;
 
@@ -98,7 +97,7 @@ public:
     virtual void beginOcclusionQuery(Size32 queryIndex) = 0;
     virtual void endOcclusionQuery() = 0;
 
-    virtual void executeBundles(Vector<std::reference_wrapper<RenderBundle>>&&) = 0;
+    virtual void executeBundles(Vector<Ref<RenderBundle>>&&) = 0;
     virtual void end() = 0;
 
 protected:

@@ -74,10 +74,22 @@ static bool didEvaluateJavaScript;
     ".viewportUnit { height: 50vh; }"
     "</style>";
 
+    __block bool startedProvisionalNavigation { false };
+    __block bool finishedNavigation { false };
+    RetainPtr delegate = adoptNS([TestNavigationDelegate new]);
+    delegate.get().didStartProvisionalNavigation = ^(WKWebView *, WKNavigation *) {
+        startedProvisionalNavigation = true;
+    };
+    delegate.get().didFinishNavigation = ^(WKWebView *, WKNavigation *) {
+        finishedNavigation = true;
+    };
+    EXPECT_FALSE(self.navigationDelegate);
+    self.navigationDelegate = delegate.get();
+
     [self loadHTMLString:[baseHTML stringByAppendingString:HTMLString] baseURL:nil];
-    [self _test_waitForDidStartProvisionalNavigation];
+    TestWebKitAPI::Util::run(&startedProvisionalNavigation);
     [self beginLayoutAtMinimumWidth:width andExpectContentSizeChange:size];
-    [self _test_waitForDidFinishNavigation];
+    TestWebKitAPI::Util::run(&finishedNavigation);
 
     [self waitForContentSizeChangeResettingWidth:resetAfter];
 }

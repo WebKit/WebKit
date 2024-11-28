@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2003-2019 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2024 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -24,29 +24,29 @@
 
 namespace WTF {
 
-size_t numberToStringAndSize(float number, NumberToStringBuffer& buffer)
+NumberToStringSpan numberToStringAndSize(float number, NumberToStringBuffer& buffer)
 {
     static_assert(sizeof(buffer) >= (dragonbox::max_string_length<dragonbox::ieee754_binary32>() + 1));
     auto* result = dragonbox::detail::to_chars_n<WTF::dragonbox::Mode::ToShortest>(number, buffer.data());
-    return result - buffer.data();
+    return std::span { buffer }.first(result - buffer.data());
 }
 
-size_t numberToStringAndSize(double number, NumberToStringBuffer& buffer)
+NumberToStringSpan numberToStringAndSize(double number, NumberToStringBuffer& buffer)
 {
     static_assert(sizeof(buffer) >= (dragonbox::max_string_length<dragonbox::ieee754_binary64>() + 1));
     auto* result = dragonbox::detail::to_chars_n<WTF::dragonbox::Mode::ToShortest>(number, buffer.data());
-    return result - buffer.data();
+    return std::span { buffer }.first(result - buffer.data());
 }
 
-const char* numberToStringWithTrailingPoint(double d, NumberToStringBuffer& buffer)
+NumberToStringSpan numberToStringWithTrailingPoint(double d, NumberToStringBuffer& buffer)
 {
-    double_conversion::StringBuilder builder(&buffer[0], sizeof(buffer));
+    double_conversion::StringBuilder builder(std::span<char> { buffer });
     auto& converter = double_conversion::DoubleToStringConverter::EcmaScriptConverterWithTrailingPoint();
     converter.ToShortest(d, &builder);
     return builder.Finalize();
 }
 
-static inline void truncateTrailingZeros(const char* buffer, double_conversion::StringBuilder& builder)
+static inline void truncateTrailingZeros(std::span<const char> buffer, double_conversion::StringBuilder& builder)
 {
     size_t length = builder.position();
     size_t decimalPointPosition = 0;
@@ -83,36 +83,36 @@ static inline void truncateTrailingZeros(const char* buffer, double_conversion::
     builder.RemoveCharacters(truncatedLength, pastMantissa);
 }
 
-const char* numberToFixedPrecisionString(float number, unsigned significantFigures, NumberToStringBuffer& buffer, bool shouldTruncateTrailingZeros)
+NumberToStringSpan numberToFixedPrecisionString(float number, unsigned significantFigures, NumberToStringBuffer& buffer, bool shouldTruncateTrailingZeros)
 {
     // For now, just call the double precision version.
     // Do that here instead of at callers to pave the way to add a more efficient code path later.
     return numberToFixedPrecisionString(static_cast<double>(number), significantFigures, buffer, shouldTruncateTrailingZeros);
 }
 
-const char* numberToFixedPrecisionString(double d, unsigned significantFigures, NumberToStringBuffer& buffer, bool shouldTruncateTrailingZeros)
+NumberToStringSpan numberToFixedPrecisionString(double d, unsigned significantFigures, NumberToStringBuffer& buffer, bool shouldTruncateTrailingZeros)
 {
     // Mimic sprintf("%.[precision]g", ...).
     // "g": Signed value printed in f or e format, whichever is more compact for the given value and precision.
     // The e format is used only when the exponent of the value is less than –4 or greater than or equal to the
     // precision argument. Trailing zeros are truncated, and the decimal point appears only if one or more digits follow it.
     // "precision": The precision specifies the maximum number of significant digits printed.
-    double_conversion::StringBuilder builder(&buffer[0], sizeof(buffer));
+    double_conversion::StringBuilder builder(std::span<char> { buffer });
     auto& converter = double_conversion::DoubleToStringConverter::EcmaScriptConverter();
     converter.ToPrecision(d, significantFigures, &builder);
     if (shouldTruncateTrailingZeros)
-        truncateTrailingZeros(buffer.data(), builder);
+        truncateTrailingZeros(std::span<const char> { buffer }, builder);
     return builder.Finalize();
 }
 
-const char* numberToFixedWidthString(float number, unsigned decimalPlaces, NumberToStringBuffer& buffer)
+NumberToStringSpan numberToFixedWidthString(float number, unsigned decimalPlaces, NumberToStringBuffer& buffer)
 {
     // For now, just call the double precision version.
     // Do that here instead of at callers to pave the way to add a more efficient code path later.
     return numberToFixedWidthString(static_cast<double>(number), decimalPlaces, buffer);
 }
 
-const char* numberToFixedWidthString(double d, unsigned decimalPlaces, NumberToStringBuffer& buffer)
+NumberToStringSpan numberToFixedWidthString(double d, unsigned decimalPlaces, NumberToStringBuffer& buffer)
 {
     // Mimic sprintf("%.[precision]f", ...).
     // "f": Signed value having the form [ – ]dddd.dddd, where dddd is one or more decimal digits.
@@ -121,13 +121,13 @@ const char* numberToFixedWidthString(double d, unsigned decimalPlaces, NumberToS
     // "precision": The precision value specifies the number of digits after the decimal point.
     // If a decimal point appears, at least one digit appears before it.
     // The value is rounded to the appropriate number of digits.    
-    double_conversion::StringBuilder builder(&buffer[0], sizeof(buffer));
+    double_conversion::StringBuilder builder(std::span<char> { buffer });
     auto& converter = double_conversion::DoubleToStringConverter::EcmaScriptConverter();
     converter.ToFixed(d, decimalPlaces, &builder);
     return builder.Finalize();
 }
 
-const char* numberToCSSString(double d, NumberToCSSStringBuffer& buffer)
+NumberToStringSpan numberToCSSString(double d, NumberToCSSStringBuffer& buffer)
 {
     // Mimic sprintf("%.[precision]f", ...).
     // "f": Signed value having the form [ – ]dddd.dddd, where dddd is one or more decimal digits.
@@ -136,10 +136,10 @@ const char* numberToCSSString(double d, NumberToCSSStringBuffer& buffer)
     // "precision": The precision value specifies the number of digits after the decimal point.
     // If a decimal point appears, at least one digit appears before it.
     // The value is rounded to the appropriate number of digits.
-    double_conversion::StringBuilder builder(&buffer[0], sizeof(buffer));
+    double_conversion::StringBuilder builder(std::span<char> { buffer });
     auto& converter = double_conversion::DoubleToStringConverter::CSSConverter();
     converter.ToFixedUncapped(d, 6, &builder);
-    truncateTrailingZeros(buffer.data(), builder);
+    truncateTrailingZeros(std::span<const char> { buffer }, builder);
     // If we've truncated the trailing zeros and a trailing decimal, we may have a -0. Remove the negative sign in this case.
     if (builder.position() == 2 && buffer[0] == '-' && buffer[1] == '0')
         builder.RemoveCharacters(0, 1);

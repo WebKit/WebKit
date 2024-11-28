@@ -50,7 +50,8 @@
 #if PLATFORM(COCOA)
 #include <WebCore/GraphicsContextGLCocoa.h>
 #elif USE(GBM)
-#include <WebCore/GraphicsContextGLGBM.h>
+#include <WebCore/DMABufBuffer.h>
+#include <WebCore/GraphicsContextGLTextureMapperGBM.h>
 #else
 #include <WebCore/GraphicsContextGLTextureMapperANGLE.h>
 #endif
@@ -79,7 +80,7 @@ namespace WebKit {
 class RemoteVideoFrameObjectHeap;
 #endif
 
-IPC::StreamConnectionWorkQueue& remoteGraphicsContextGLStreamWorkQueue();
+IPC::StreamConnectionWorkQueue& remoteGraphicsContextGLStreamWorkQueueSingleton();
 
 
 // GPU process side implementation of that receives messages about GraphicsContextGL calls
@@ -92,7 +93,7 @@ public:
     ~RemoteGraphicsContextGL() override;
     void stopListeningForIPC(Ref<RemoteGraphicsContextGL>&& refFromConnection);
 
-    const SharedPreferencesForWebProcess& sharedPreferencesForWebProcess() const { return m_sharedPreferencesForWebProcess; }
+    std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess() const { return m_sharedPreferencesForWebProcess; }
 
     void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;
 
@@ -119,7 +120,7 @@ protected:
 #elif USE(GRAPHICS_LAYER_WC)
     virtual void prepareForDisplay(CompletionHandler<void(std::optional<WCContentBufferIdentifier>)>&&) = 0;
 #elif USE(GBM)
-    virtual void prepareForDisplay(CompletionHandler<void(WebCore::DMABufObject&&)>&&) = 0;
+    virtual void prepareForDisplay(CompletionHandler<void(uint64_t, std::optional<WebCore::DMABufBuffer::Attributes>&&, UnixFileDescriptor&&)>&&) = 0;
 #else
     void prepareForDisplay(CompletionHandler<void()>&&);
 #endif
@@ -145,24 +146,32 @@ protected:
     void multiDrawArraysInstancedBaseInstanceANGLE(uint32_t mode, IPC::ArrayReferenceTuple<int32_t, int32_t, int32_t, uint32_t>&& firstsCountsInstanceCountsAndBaseInstances);
     void multiDrawElementsInstancedBaseVertexBaseInstanceANGLE(uint32_t mode, IPC::ArrayReferenceTuple<int32_t, int32_t, int32_t, int32_t, uint32_t>&& countsOffsetsInstanceCountsBaseVerticesAndBaseInstances, uint32_t type);
 
+#if ENABLE(VIDEO)
+    Ref<RemoteVideoFrameObjectHeap> protectedVideoFrameObjectHeap() const;
+#endif
+
+#if PLATFORM(COCOA)
+    using GCGLContext = WebCore::GraphicsContextGLCocoa;
+#elif USE(GBM)
+    using GCGLContext = WebCore::GraphicsContextGLTextureMapperGBM;
+#else
+    using GCGLContext = WebCore::GraphicsContextGLTextureMapperANGLE;
+#endif
+
 #include "RemoteGraphicsContextGLFunctionsGenerated.h" // NOLINT
 
 private:
     void paintNativeImageToImageBuffer(WebCore::NativeImage&, WebCore::RenderingResourceIdentifier);
     bool webXREnabled() const;
     bool webXRPromptAccepted() const;
+    Ref<IPC::StreamConnectionWorkQueue> protectedWorkQueue() const { return m_workQueue; }
+    RefPtr<GCGLContext> protectedContext();
+    void messageCheck(bool);
 
 protected:
     ThreadSafeWeakPtr<GPUConnectionToWebProcess> m_gpuConnectionToWebProcess;
     Ref<IPC::StreamConnectionWorkQueue> m_workQueue;
     RefPtr<IPC::StreamServerConnection> m_streamConnection;
-#if PLATFORM(COCOA)
-    using GCGLContext = WebCore::GraphicsContextGLCocoa;
-#elif USE(GBM)
-    using GCGLContext = WebCore::GraphicsContextGLGBM;
-#else
-    using GCGLContext = WebCore::GraphicsContextGLTextureMapperANGLE;
-#endif
     RefPtr<GCGLContext> m_context WTF_GUARDED_BY_CAPABILITY(workQueue());
     GraphicsContextGLIdentifier m_graphicsContextGLIdentifier;
     Ref<RemoteRenderingBackend> m_renderingBackend;

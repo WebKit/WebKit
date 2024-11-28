@@ -135,7 +135,6 @@
 #include "TestGlobalObjectBuiltins.h"
 #endif
 
-
 namespace WebCore {
 using namespace JSC;
 
@@ -528,99 +527,98 @@ static const struct CompactHashIndex JSTestGlobalObjectTableIndex[268] = {
 };
 
 
-static const HashTableValue JSTestGlobalObjectTableValues[] =
-{
-    { "regularAttribute"_s, static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_regularAttribute, setJSTestGlobalObject_regularAttribute } },
-    { "publicAndPrivateAttribute"_s, static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_publicAndPrivateAttribute, setJSTestGlobalObject_publicAndPrivateAttribute } },
+static const std::array<HashTableValue, 72> JSTestGlobalObjectTableValues {
+    HashTableValue { "regularAttribute"_s, static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_regularAttribute, setJSTestGlobalObject_regularAttribute } },
+    HashTableValue { "publicAndPrivateAttribute"_s, static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_publicAndPrivateAttribute, setJSTestGlobalObject_publicAndPrivateAttribute } },
 #if ENABLE(TEST_FEATURE)
-    { "publicAndPrivateConditionalAttribute"_s, static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_publicAndPrivateConditionalAttribute, setJSTestGlobalObject_publicAndPrivateConditionalAttribute } },
+    HashTableValue { "publicAndPrivateConditionalAttribute"_s, static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_publicAndPrivateConditionalAttribute, setJSTestGlobalObject_publicAndPrivateConditionalAttribute } },
 #else
-    { { }, 0, NoIntrinsic, { HashTableValue::End } },
+    HashTableValue { { }, 0, NoIntrinsic, { HashTableValue::End } },
 #endif
-    { "TestAsyncIterable"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestAsyncIterableConstructor, 0 } },
-    { "TestAsyncKeyValueIterable"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestAsyncKeyValueIterableConstructor, 0 } },
-    { "TestCEReactions"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestCEReactionsConstructor, 0 } },
-    { "TestCEReactionsStringifier"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestCEReactionsStringifierConstructor, 0 } },
-    { "TestCallTracer"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestCallTracerConstructor, 0 } },
+    HashTableValue { "TestAsyncIterable"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestAsyncIterableConstructor, 0 } },
+    HashTableValue { "TestAsyncKeyValueIterable"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestAsyncKeyValueIterableConstructor, 0 } },
+    HashTableValue { "TestCEReactions"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestCEReactionsConstructor, 0 } },
+    HashTableValue { "TestCEReactionsStringifier"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestCEReactionsStringifierConstructor, 0 } },
+    HashTableValue { "TestCallTracer"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestCallTracerConstructor, 0 } },
 #if ENABLE(TEST_CONDITIONAL)
-    { "TestCallbackInterface"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestCallbackInterfaceConstructor, 0 } },
+    HashTableValue { "TestCallbackInterface"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestCallbackInterfaceConstructor, 0 } },
 #else
-    { { }, 0, NoIntrinsic, { HashTableValue::End } },
+    HashTableValue { { }, 0, NoIntrinsic, { HashTableValue::End } },
 #endif
-    { "TestClassWithJSBuiltinConstructor"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestClassWithJSBuiltinConstructorConstructor, 0 } },
-    { "TestDOMJIT"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestDOMJITConstructor, 0 } },
-    { "TestDefaultToJSONIndirectInheritance"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestDefaultToJSONIndirectInheritanceConstructor, 0 } },
-    { "TestDefaultToJSONInherit"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestDefaultToJSONInheritConstructor, 0 } },
-    { "TestDefaultToJSONInheritFinal"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestDefaultToJSONInheritFinalConstructor, 0 } },
-    { "TestDelegateToSharedSyntheticAttribute"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestDelegateToSharedSyntheticAttributeConstructor, 0 } },
-    { "TestDomainSecurity"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestDomainSecurityConstructor, 0 } },
-    { "TestEventConstructor"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestEventConstructorConstructor, 0 } },
-    { "TestEventTarget"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestEventTargetConstructor, 0 } },
-    { "TestException"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestExceptionConstructor, 0 } },
-    { "TestGenerateAddOpaqueRoot"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestGenerateAddOpaqueRootConstructor, 0 } },
-    { "TestGenerateIsReachable"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestGenerateIsReachableConstructor, 0 } },
-    { "TestGlobalObject"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestGlobalObjectConstructor, 0 } },
-    { "TestIndexedSetterNoIdentifier"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestIndexedSetterNoIdentifierConstructor, 0 } },
-    { "TestIndexedSetterThrowingException"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestIndexedSetterThrowingExceptionConstructor, 0 } },
-    { "TestIndexedSetterWithIdentifier"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestIndexedSetterWithIdentifierConstructor, 0 } },
-    { "TestInterfaceLeadingUnderscore"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestInterfaceLeadingUnderscoreConstructor, 0 } },
-    { "TestIterable"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestIterableConstructor, 0 } },
-    { "TestJSBuiltinConstructor"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestJSBuiltinConstructorConstructor, 0 } },
-    { "TestLegacyFactoryFunction"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestLegacyFactoryFunctionConstructor, 0 } },
-    { "Audio"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_AudioConstructor, 0 } },
-    { "TestLegacyOverrideBuiltIns"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestLegacyOverrideBuiltInsConstructor, 0 } },
-    { "TestMapLike"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestMapLikeConstructor, 0 } },
-    { "TestMapLikeWithOverriddenOperations"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestMapLikeWithOverriddenOperationsConstructor, 0 } },
-    { "TestNamedAndIndexedSetterNoIdentifier"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestNamedAndIndexedSetterNoIdentifierConstructor, 0 } },
-    { "TestNamedAndIndexedSetterThrowingException"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestNamedAndIndexedSetterThrowingExceptionConstructor, 0 } },
-    { "TestNamedAndIndexedSetterWithIdentifier"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestNamedAndIndexedSetterWithIdentifierConstructor, 0 } },
-    { "TestNamedDeleterNoIdentifier"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestNamedDeleterNoIdentifierConstructor, 0 } },
-    { "TestNamedDeleterThrowingException"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestNamedDeleterThrowingExceptionConstructor, 0 } },
-    { "TestNamedDeleterWithIdentifier"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestNamedDeleterWithIdentifierConstructor, 0 } },
-    { "TestNamedDeleterWithIndexedGetter"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestNamedDeleterWithIndexedGetterConstructor, 0 } },
-    { "TestNamedGetterCallWith"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestNamedGetterCallWithConstructor, 0 } },
-    { "TestNamedGetterNoIdentifier"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestNamedGetterNoIdentifierConstructor, 0 } },
-    { "TestNamedGetterWithIdentifier"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestNamedGetterWithIdentifierConstructor, 0 } },
-    { "TestNamedSetterNoIdentifier"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestNamedSetterNoIdentifierConstructor, 0 } },
-    { "TestNamedSetterThrowingException"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestNamedSetterThrowingExceptionConstructor, 0 } },
-    { "TestNamedSetterWithIdentifier"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestNamedSetterWithIdentifierConstructor, 0 } },
-    { "TestNamedSetterWithIndexedGetter"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestNamedSetterWithIndexedGetterConstructor, 0 } },
-    { "TestNamedSetterWithIndexedGetterAndSetter"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestNamedSetterWithIndexedGetterAndSetterConstructor, 0 } },
-    { "TestNamedSetterWithLegacyOverrideBuiltIns"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestNamedSetterWithLegacyOverrideBuiltInsConstructor, 0 } },
-    { "TestNamedSetterWithLegacyUnforgeableProperties"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestNamedSetterWithLegacyUnforgeablePropertiesConstructor, 0 } },
-    { "TestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltIns"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltInsConstructor, 0 } },
-    { "TestNamespaceConst"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestNamespaceConstConstructor, 0 } },
+    HashTableValue { "TestClassWithJSBuiltinConstructor"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestClassWithJSBuiltinConstructorConstructor, 0 } },
+    HashTableValue { "TestDOMJIT"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestDOMJITConstructor, 0 } },
+    HashTableValue { "TestDefaultToJSONIndirectInheritance"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestDefaultToJSONIndirectInheritanceConstructor, 0 } },
+    HashTableValue { "TestDefaultToJSONInherit"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestDefaultToJSONInheritConstructor, 0 } },
+    HashTableValue { "TestDefaultToJSONInheritFinal"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestDefaultToJSONInheritFinalConstructor, 0 } },
+    HashTableValue { "TestDelegateToSharedSyntheticAttribute"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestDelegateToSharedSyntheticAttributeConstructor, 0 } },
+    HashTableValue { "TestDomainSecurity"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestDomainSecurityConstructor, 0 } },
+    HashTableValue { "TestEventConstructor"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestEventConstructorConstructor, 0 } },
+    HashTableValue { "TestEventTarget"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestEventTargetConstructor, 0 } },
+    HashTableValue { "TestException"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestExceptionConstructor, 0 } },
+    HashTableValue { "TestGenerateAddOpaqueRoot"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestGenerateAddOpaqueRootConstructor, 0 } },
+    HashTableValue { "TestGenerateIsReachable"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestGenerateIsReachableConstructor, 0 } },
+    HashTableValue { "TestGlobalObject"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestGlobalObjectConstructor, 0 } },
+    HashTableValue { "TestIndexedSetterNoIdentifier"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestIndexedSetterNoIdentifierConstructor, 0 } },
+    HashTableValue { "TestIndexedSetterThrowingException"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestIndexedSetterThrowingExceptionConstructor, 0 } },
+    HashTableValue { "TestIndexedSetterWithIdentifier"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestIndexedSetterWithIdentifierConstructor, 0 } },
+    HashTableValue { "TestInterfaceLeadingUnderscore"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestInterfaceLeadingUnderscoreConstructor, 0 } },
+    HashTableValue { "TestIterable"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestIterableConstructor, 0 } },
+    HashTableValue { "TestJSBuiltinConstructor"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestJSBuiltinConstructorConstructor, 0 } },
+    HashTableValue { "TestLegacyFactoryFunction"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestLegacyFactoryFunctionConstructor, 0 } },
+    HashTableValue { "Audio"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_AudioConstructor, 0 } },
+    HashTableValue { "TestLegacyOverrideBuiltIns"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestLegacyOverrideBuiltInsConstructor, 0 } },
+    HashTableValue { "TestMapLike"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestMapLikeConstructor, 0 } },
+    HashTableValue { "TestMapLikeWithOverriddenOperations"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestMapLikeWithOverriddenOperationsConstructor, 0 } },
+    HashTableValue { "TestNamedAndIndexedSetterNoIdentifier"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestNamedAndIndexedSetterNoIdentifierConstructor, 0 } },
+    HashTableValue { "TestNamedAndIndexedSetterThrowingException"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestNamedAndIndexedSetterThrowingExceptionConstructor, 0 } },
+    HashTableValue { "TestNamedAndIndexedSetterWithIdentifier"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestNamedAndIndexedSetterWithIdentifierConstructor, 0 } },
+    HashTableValue { "TestNamedDeleterNoIdentifier"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestNamedDeleterNoIdentifierConstructor, 0 } },
+    HashTableValue { "TestNamedDeleterThrowingException"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestNamedDeleterThrowingExceptionConstructor, 0 } },
+    HashTableValue { "TestNamedDeleterWithIdentifier"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestNamedDeleterWithIdentifierConstructor, 0 } },
+    HashTableValue { "TestNamedDeleterWithIndexedGetter"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestNamedDeleterWithIndexedGetterConstructor, 0 } },
+    HashTableValue { "TestNamedGetterCallWith"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestNamedGetterCallWithConstructor, 0 } },
+    HashTableValue { "TestNamedGetterNoIdentifier"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestNamedGetterNoIdentifierConstructor, 0 } },
+    HashTableValue { "TestNamedGetterWithIdentifier"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestNamedGetterWithIdentifierConstructor, 0 } },
+    HashTableValue { "TestNamedSetterNoIdentifier"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestNamedSetterNoIdentifierConstructor, 0 } },
+    HashTableValue { "TestNamedSetterThrowingException"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestNamedSetterThrowingExceptionConstructor, 0 } },
+    HashTableValue { "TestNamedSetterWithIdentifier"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestNamedSetterWithIdentifierConstructor, 0 } },
+    HashTableValue { "TestNamedSetterWithIndexedGetter"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestNamedSetterWithIndexedGetterConstructor, 0 } },
+    HashTableValue { "TestNamedSetterWithIndexedGetterAndSetter"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestNamedSetterWithIndexedGetterAndSetterConstructor, 0 } },
+    HashTableValue { "TestNamedSetterWithLegacyOverrideBuiltIns"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestNamedSetterWithLegacyOverrideBuiltInsConstructor, 0 } },
+    HashTableValue { "TestNamedSetterWithLegacyUnforgeableProperties"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestNamedSetterWithLegacyUnforgeablePropertiesConstructor, 0 } },
+    HashTableValue { "TestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltIns"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltInsConstructor, 0 } },
+    HashTableValue { "TestNamespaceConst"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestNamespaceConstConstructor, 0 } },
 #if ENABLE(ConditionDerived)
-    { "TestOperationConditional"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestOperationConditionalConstructor, 0 } },
+    HashTableValue { "TestOperationConditional"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestOperationConditionalConstructor, 0 } },
 #else
-    { { }, 0, NoIntrinsic, { HashTableValue::End } },
+    HashTableValue { { }, 0, NoIntrinsic, { HashTableValue::End } },
 #endif
-    { "TestOverloadedConstructorsWithSequence"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestOverloadedConstructorsWithSequenceConstructor, 0 } },
-    { "TestPluginInterface"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestPluginInterfaceConstructor, 0 } },
-    { "TestReadOnlyMapLike"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestReadOnlyMapLikeConstructor, 0 } },
-    { "TestReadOnlySetLike"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestReadOnlySetLikeConstructor, 0 } },
-    { "TestReportExtraMemoryCost"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestReportExtraMemoryCostConstructor, 0 } },
-    { "TestScheduledActionReal"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestScheduledActionRealConstructor, 0 } },
+    HashTableValue { "TestOverloadedConstructorsWithSequence"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestOverloadedConstructorsWithSequenceConstructor, 0 } },
+    HashTableValue { "TestPluginInterface"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestPluginInterfaceConstructor, 0 } },
+    HashTableValue { "TestReadOnlyMapLike"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestReadOnlyMapLikeConstructor, 0 } },
+    HashTableValue { "TestReadOnlySetLike"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestReadOnlySetLikeConstructor, 0 } },
+    HashTableValue { "TestReportExtraMemoryCost"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestReportExtraMemoryCostConstructor, 0 } },
+    HashTableValue { "TestScheduledActionReal"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestScheduledActionRealConstructor, 0 } },
 #if ENABLE(Condition1) || ENABLE(Condition2)
-    { "TestSerializedScriptValueInterface"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestSerializedScriptValueInterfaceConstructor, 0 } },
+    HashTableValue { "TestSerializedScriptValueInterface"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestSerializedScriptValueInterfaceConstructor, 0 } },
 #else
-    { { }, 0, NoIntrinsic, { HashTableValue::End } },
+    HashTableValue { { }, 0, NoIntrinsic, { HashTableValue::End } },
 #endif
-    { "TestSetLike"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestSetLikeConstructor, 0 } },
-    { "TestSetLikeWithOverriddenOperations"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestSetLikeWithOverriddenOperationsConstructor, 0 } },
-    { "TestStringifier"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestStringifierConstructor, 0 } },
-    { "TestStringifierAnonymousOperation"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestStringifierAnonymousOperationConstructor, 0 } },
-    { "TestStringifierNamedOperation"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestStringifierNamedOperationConstructor, 0 } },
-    { "TestStringifierOperationImplementedAs"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestStringifierOperationImplementedAsConstructor, 0 } },
-    { "TestStringifierOperationNamedToString"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestStringifierOperationNamedToStringConstructor, 0 } },
-    { "TestStringifierReadOnlyAttribute"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestStringifierReadOnlyAttributeConstructor, 0 } },
-    { "TestStringifierReadWriteAttribute"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestStringifierReadWriteAttributeConstructor, 0 } },
-    { "TestTaggedWrapper"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestTaggedWrapperConstructor, 0 } },
-    { "TestTypedefs"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestTypedefsConstructor, 0 } },
-    { "regularOperation"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestGlobalObjectInstanceFunction_regularOperation, 1 } },
+    HashTableValue { "TestSetLike"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestSetLikeConstructor, 0 } },
+    HashTableValue { "TestSetLikeWithOverriddenOperations"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestSetLikeWithOverriddenOperationsConstructor, 0 } },
+    HashTableValue { "TestStringifier"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestStringifierConstructor, 0 } },
+    HashTableValue { "TestStringifierAnonymousOperation"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestStringifierAnonymousOperationConstructor, 0 } },
+    HashTableValue { "TestStringifierNamedOperation"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestStringifierNamedOperationConstructor, 0 } },
+    HashTableValue { "TestStringifierOperationImplementedAs"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestStringifierOperationImplementedAsConstructor, 0 } },
+    HashTableValue { "TestStringifierOperationNamedToString"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestStringifierOperationNamedToStringConstructor, 0 } },
+    HashTableValue { "TestStringifierReadOnlyAttribute"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestStringifierReadOnlyAttributeConstructor, 0 } },
+    HashTableValue { "TestStringifierReadWriteAttribute"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestStringifierReadWriteAttributeConstructor, 0 } },
+    HashTableValue { "TestTaggedWrapper"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestTaggedWrapperConstructor, 0 } },
+    HashTableValue { "TestTypedefs"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestTypedefsConstructor, 0 } },
+    HashTableValue { "regularOperation"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestGlobalObjectInstanceFunction_regularOperation, 1 } },
 };
 
-static const HashTable JSTestGlobalObjectTable = { 72, 255, static_cast<uint8_t>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::Function), JSTestGlobalObject::info(), JSTestGlobalObjectTableValues, JSTestGlobalObjectTableIndex };
+static const HashTable JSTestGlobalObjectTable = { 72, 255, static_cast<uint8_t>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::Function), JSTestGlobalObject::info(), JSTestGlobalObjectTableValues.data(), JSTestGlobalObjectTableIndex };
 #else
 
 static const struct CompactHashIndex JSTestGlobalObjectTableIndex[268] = {
@@ -895,108 +893,106 @@ static const struct CompactHashIndex JSTestGlobalObjectTableIndex[268] = {
 };
 
 
-static const HashTableValue JSTestGlobalObjectTableValues[] =
-{
-    { "regularAttribute"_s, static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_regularAttribute, setJSTestGlobalObject_regularAttribute } },
-    { "publicAndPrivateAttribute"_s, static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_publicAndPrivateAttribute, setJSTestGlobalObject_publicAndPrivateAttribute } },
+static const std::array<HashTableValue, 72> JSTestGlobalObjectTableValues {
+    HashTableValue { "regularAttribute"_s, static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_regularAttribute, setJSTestGlobalObject_regularAttribute } },
+    HashTableValue { "publicAndPrivateAttribute"_s, static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_publicAndPrivateAttribute, setJSTestGlobalObject_publicAndPrivateAttribute } },
 #if ENABLE(TEST_FEATURE)
-    { "publicAndPrivateConditionalAttribute"_s, static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_publicAndPrivateConditionalAttribute, setJSTestGlobalObject_publicAndPrivateConditionalAttribute } },
+    HashTableValue { "publicAndPrivateConditionalAttribute"_s, static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_publicAndPrivateConditionalAttribute, setJSTestGlobalObject_publicAndPrivateConditionalAttribute } },
 #else
-    { { }, 0, NoIntrinsic, { HashTableValue::End } },
+    HashTableValue { { }, 0, NoIntrinsic, { HashTableValue::End } },
 #endif
-    { "TestAsyncIterable"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestAsyncIterableConstructor, 0 } },
-    { "TestAsyncKeyValueIterable"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestAsyncKeyValueIterableConstructor, 0 } },
-    { "TestCEReactions"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestCEReactionsConstructor, 0 } },
-    { "TestCEReactionsStringifier"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestCEReactionsStringifierConstructor, 0 } },
-    { "TestCallTracer"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestCallTracerConstructor, 0 } },
+    HashTableValue { "TestAsyncIterable"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestAsyncIterableConstructor, 0 } },
+    HashTableValue { "TestAsyncKeyValueIterable"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestAsyncKeyValueIterableConstructor, 0 } },
+    HashTableValue { "TestCEReactions"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestCEReactionsConstructor, 0 } },
+    HashTableValue { "TestCEReactionsStringifier"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestCEReactionsStringifierConstructor, 0 } },
+    HashTableValue { "TestCallTracer"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestCallTracerConstructor, 0 } },
 #if ENABLE(TEST_CONDITIONAL)
-    { "TestCallbackInterface"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestCallbackInterfaceConstructor, 0 } },
+    HashTableValue { "TestCallbackInterface"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestCallbackInterfaceConstructor, 0 } },
 #else
-    { { }, 0, NoIntrinsic, { HashTableValue::End } },
+    HashTableValue { { }, 0, NoIntrinsic, { HashTableValue::End } },
 #endif
-    { "TestClassWithJSBuiltinConstructor"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestClassWithJSBuiltinConstructorConstructor, 0 } },
-    { "TestDOMJIT"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestDOMJITConstructor, 0 } },
-    { "TestDefaultToJSONIndirectInheritance"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestDefaultToJSONIndirectInheritanceConstructor, 0 } },
-    { "TestDefaultToJSONInherit"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestDefaultToJSONInheritConstructor, 0 } },
-    { "TestDefaultToJSONInheritFinal"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestDefaultToJSONInheritFinalConstructor, 0 } },
-    { "TestDelegateToSharedSyntheticAttribute"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestDelegateToSharedSyntheticAttributeConstructor, 0 } },
-    { "TestDomainSecurity"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestDomainSecurityConstructor, 0 } },
-    { "TestEventConstructor"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestEventConstructorConstructor, 0 } },
-    { "TestEventTarget"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestEventTargetConstructor, 0 } },
-    { "TestException"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestExceptionConstructor, 0 } },
-    { "TestGenerateAddOpaqueRoot"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestGenerateAddOpaqueRootConstructor, 0 } },
-    { "TestGenerateIsReachable"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestGenerateIsReachableConstructor, 0 } },
-    { "TestGlobalObject"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestGlobalObjectConstructor, 0 } },
-    { "TestIndexedSetterNoIdentifier"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestIndexedSetterNoIdentifierConstructor, 0 } },
-    { "TestIndexedSetterThrowingException"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestIndexedSetterThrowingExceptionConstructor, 0 } },
-    { "TestIndexedSetterWithIdentifier"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestIndexedSetterWithIdentifierConstructor, 0 } },
-    { "TestInterfaceLeadingUnderscore"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestInterfaceLeadingUnderscoreConstructor, 0 } },
-    { "TestIterable"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestIterableConstructor, 0 } },
-    { "TestJSBuiltinConstructor"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestJSBuiltinConstructorConstructor, 0 } },
-    { "TestLegacyFactoryFunction"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestLegacyFactoryFunctionConstructor, 0 } },
-    { "Audio"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_AudioConstructor, 0 } },
-    { "TestLegacyOverrideBuiltIns"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestLegacyOverrideBuiltInsConstructor, 0 } },
-    { "TestMapLike"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestMapLikeConstructor, 0 } },
-    { "TestMapLikeWithOverriddenOperations"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestMapLikeWithOverriddenOperationsConstructor, 0 } },
-    { "TestNamedAndIndexedSetterNoIdentifier"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestNamedAndIndexedSetterNoIdentifierConstructor, 0 } },
-    { "TestNamedAndIndexedSetterThrowingException"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestNamedAndIndexedSetterThrowingExceptionConstructor, 0 } },
-    { "TestNamedAndIndexedSetterWithIdentifier"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestNamedAndIndexedSetterWithIdentifierConstructor, 0 } },
-    { "TestNamedDeleterNoIdentifier"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestNamedDeleterNoIdentifierConstructor, 0 } },
-    { "TestNamedDeleterThrowingException"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestNamedDeleterThrowingExceptionConstructor, 0 } },
-    { "TestNamedDeleterWithIdentifier"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestNamedDeleterWithIdentifierConstructor, 0 } },
-    { "TestNamedDeleterWithIndexedGetter"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestNamedDeleterWithIndexedGetterConstructor, 0 } },
-    { "TestNamedGetterCallWith"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestNamedGetterCallWithConstructor, 0 } },
-    { "TestNamedGetterNoIdentifier"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestNamedGetterNoIdentifierConstructor, 0 } },
-    { "TestNamedGetterWithIdentifier"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestNamedGetterWithIdentifierConstructor, 0 } },
-    { "TestNamedSetterNoIdentifier"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestNamedSetterNoIdentifierConstructor, 0 } },
-    { "TestNamedSetterThrowingException"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestNamedSetterThrowingExceptionConstructor, 0 } },
-    { "TestNamedSetterWithIdentifier"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestNamedSetterWithIdentifierConstructor, 0 } },
-    { "TestNamedSetterWithIndexedGetter"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestNamedSetterWithIndexedGetterConstructor, 0 } },
-    { "TestNamedSetterWithIndexedGetterAndSetter"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestNamedSetterWithIndexedGetterAndSetterConstructor, 0 } },
-    { "TestNamedSetterWithLegacyOverrideBuiltIns"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestNamedSetterWithLegacyOverrideBuiltInsConstructor, 0 } },
-    { "TestNamedSetterWithLegacyUnforgeableProperties"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestNamedSetterWithLegacyUnforgeablePropertiesConstructor, 0 } },
-    { "TestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltIns"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltInsConstructor, 0 } },
-    { "TestNamespaceConst"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestNamespaceConstConstructor, 0 } },
+    HashTableValue { "TestClassWithJSBuiltinConstructor"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestClassWithJSBuiltinConstructorConstructor, 0 } },
+    HashTableValue { "TestDOMJIT"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestDOMJITConstructor, 0 } },
+    HashTableValue { "TestDefaultToJSONIndirectInheritance"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestDefaultToJSONIndirectInheritanceConstructor, 0 } },
+    HashTableValue { "TestDefaultToJSONInherit"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestDefaultToJSONInheritConstructor, 0 } },
+    HashTableValue { "TestDefaultToJSONInheritFinal"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestDefaultToJSONInheritFinalConstructor, 0 } },
+    HashTableValue { "TestDelegateToSharedSyntheticAttribute"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestDelegateToSharedSyntheticAttributeConstructor, 0 } },
+    HashTableValue { "TestDomainSecurity"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestDomainSecurityConstructor, 0 } },
+    HashTableValue { "TestEventConstructor"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestEventConstructorConstructor, 0 } },
+    HashTableValue { "TestEventTarget"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestEventTargetConstructor, 0 } },
+    HashTableValue { "TestException"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestExceptionConstructor, 0 } },
+    HashTableValue { "TestGenerateAddOpaqueRoot"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestGenerateAddOpaqueRootConstructor, 0 } },
+    HashTableValue { "TestGenerateIsReachable"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestGenerateIsReachableConstructor, 0 } },
+    HashTableValue { "TestGlobalObject"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestGlobalObjectConstructor, 0 } },
+    HashTableValue { "TestIndexedSetterNoIdentifier"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestIndexedSetterNoIdentifierConstructor, 0 } },
+    HashTableValue { "TestIndexedSetterThrowingException"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestIndexedSetterThrowingExceptionConstructor, 0 } },
+    HashTableValue { "TestIndexedSetterWithIdentifier"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestIndexedSetterWithIdentifierConstructor, 0 } },
+    HashTableValue { "TestInterfaceLeadingUnderscore"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestInterfaceLeadingUnderscoreConstructor, 0 } },
+    HashTableValue { "TestIterable"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestIterableConstructor, 0 } },
+    HashTableValue { "TestJSBuiltinConstructor"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestJSBuiltinConstructorConstructor, 0 } },
+    HashTableValue { "TestLegacyFactoryFunction"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestLegacyFactoryFunctionConstructor, 0 } },
+    HashTableValue { "Audio"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_AudioConstructor, 0 } },
+    HashTableValue { "TestLegacyOverrideBuiltIns"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestLegacyOverrideBuiltInsConstructor, 0 } },
+    HashTableValue { "TestMapLike"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestMapLikeConstructor, 0 } },
+    HashTableValue { "TestMapLikeWithOverriddenOperations"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestMapLikeWithOverriddenOperationsConstructor, 0 } },
+    HashTableValue { "TestNamedAndIndexedSetterNoIdentifier"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestNamedAndIndexedSetterNoIdentifierConstructor, 0 } },
+    HashTableValue { "TestNamedAndIndexedSetterThrowingException"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestNamedAndIndexedSetterThrowingExceptionConstructor, 0 } },
+    HashTableValue { "TestNamedAndIndexedSetterWithIdentifier"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestNamedAndIndexedSetterWithIdentifierConstructor, 0 } },
+    HashTableValue { "TestNamedDeleterNoIdentifier"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestNamedDeleterNoIdentifierConstructor, 0 } },
+    HashTableValue { "TestNamedDeleterThrowingException"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestNamedDeleterThrowingExceptionConstructor, 0 } },
+    HashTableValue { "TestNamedDeleterWithIdentifier"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestNamedDeleterWithIdentifierConstructor, 0 } },
+    HashTableValue { "TestNamedDeleterWithIndexedGetter"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestNamedDeleterWithIndexedGetterConstructor, 0 } },
+    HashTableValue { "TestNamedGetterCallWith"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestNamedGetterCallWithConstructor, 0 } },
+    HashTableValue { "TestNamedGetterNoIdentifier"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestNamedGetterNoIdentifierConstructor, 0 } },
+    HashTableValue { "TestNamedGetterWithIdentifier"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestNamedGetterWithIdentifierConstructor, 0 } },
+    HashTableValue { "TestNamedSetterNoIdentifier"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestNamedSetterNoIdentifierConstructor, 0 } },
+    HashTableValue { "TestNamedSetterThrowingException"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestNamedSetterThrowingExceptionConstructor, 0 } },
+    HashTableValue { "TestNamedSetterWithIdentifier"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestNamedSetterWithIdentifierConstructor, 0 } },
+    HashTableValue { "TestNamedSetterWithIndexedGetter"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestNamedSetterWithIndexedGetterConstructor, 0 } },
+    HashTableValue { "TestNamedSetterWithIndexedGetterAndSetter"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestNamedSetterWithIndexedGetterAndSetterConstructor, 0 } },
+    HashTableValue { "TestNamedSetterWithLegacyOverrideBuiltIns"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestNamedSetterWithLegacyOverrideBuiltInsConstructor, 0 } },
+    HashTableValue { "TestNamedSetterWithLegacyUnforgeableProperties"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestNamedSetterWithLegacyUnforgeablePropertiesConstructor, 0 } },
+    HashTableValue { "TestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltIns"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltInsConstructor, 0 } },
+    HashTableValue { "TestNamespaceConst"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestNamespaceConstConstructor, 0 } },
 #if ENABLE(ConditionDerived)
-    { "TestOperationConditional"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestOperationConditionalConstructor, 0 } },
+    HashTableValue { "TestOperationConditional"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestOperationConditionalConstructor, 0 } },
 #else
-    { { }, 0, NoIntrinsic, { HashTableValue::End } },
+    HashTableValue { { }, 0, NoIntrinsic, { HashTableValue::End } },
 #endif
-    { "TestOverloadedConstructorsWithSequence"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestOverloadedConstructorsWithSequenceConstructor, 0 } },
-    { "TestPluginInterface"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestPluginInterfaceConstructor, 0 } },
-    { "TestReadOnlyMapLike"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestReadOnlyMapLikeConstructor, 0 } },
-    { "TestReadOnlySetLike"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestReadOnlySetLikeConstructor, 0 } },
-    { "TestReportExtraMemoryCost"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestReportExtraMemoryCostConstructor, 0 } },
-    { "TestScheduledActionReal"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestScheduledActionRealConstructor, 0 } },
+    HashTableValue { "TestOverloadedConstructorsWithSequence"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestOverloadedConstructorsWithSequenceConstructor, 0 } },
+    HashTableValue { "TestPluginInterface"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestPluginInterfaceConstructor, 0 } },
+    HashTableValue { "TestReadOnlyMapLike"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestReadOnlyMapLikeConstructor, 0 } },
+    HashTableValue { "TestReadOnlySetLike"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestReadOnlySetLikeConstructor, 0 } },
+    HashTableValue { "TestReportExtraMemoryCost"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestReportExtraMemoryCostConstructor, 0 } },
+    HashTableValue { "TestScheduledActionReal"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestScheduledActionRealConstructor, 0 } },
 #if ENABLE(Condition1) || ENABLE(Condition2)
-    { "TestSerializedScriptValueInterface"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestSerializedScriptValueInterfaceConstructor, 0 } },
+    HashTableValue { "TestSerializedScriptValueInterface"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestSerializedScriptValueInterfaceConstructor, 0 } },
 #else
-    { { }, 0, NoIntrinsic, { HashTableValue::End } },
+    HashTableValue { { }, 0, NoIntrinsic, { HashTableValue::End } },
 #endif
-    { "TestSetLike"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestSetLikeConstructor, 0 } },
-    { "TestSetLikeWithOverriddenOperations"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestSetLikeWithOverriddenOperationsConstructor, 0 } },
-    { "TestStringifier"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestStringifierConstructor, 0 } },
-    { "TestStringifierAnonymousOperation"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestStringifierAnonymousOperationConstructor, 0 } },
-    { "TestStringifierNamedOperation"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestStringifierNamedOperationConstructor, 0 } },
-    { "TestStringifierOperationImplementedAs"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestStringifierOperationImplementedAsConstructor, 0 } },
-    { "TestStringifierOperationNamedToString"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestStringifierOperationNamedToStringConstructor, 0 } },
-    { "TestStringifierReadOnlyAttribute"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestStringifierReadOnlyAttributeConstructor, 0 } },
-    { "TestStringifierReadWriteAttribute"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestStringifierReadWriteAttributeConstructor, 0 } },
-    { "TestTaggedWrapper"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestTaggedWrapperConstructor, 0 } },
-    { "TestTypedefs"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestTypedefsConstructor, 0 } },
-    { "regularOperation"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestGlobalObjectInstanceFunction_regularOperation, 1 } },
+    HashTableValue { "TestSetLike"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestSetLikeConstructor, 0 } },
+    HashTableValue { "TestSetLikeWithOverriddenOperations"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestSetLikeWithOverriddenOperationsConstructor, 0 } },
+    HashTableValue { "TestStringifier"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestStringifierConstructor, 0 } },
+    HashTableValue { "TestStringifierAnonymousOperation"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestStringifierAnonymousOperationConstructor, 0 } },
+    HashTableValue { "TestStringifierNamedOperation"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestStringifierNamedOperationConstructor, 0 } },
+    HashTableValue { "TestStringifierOperationImplementedAs"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestStringifierOperationImplementedAsConstructor, 0 } },
+    HashTableValue { "TestStringifierOperationNamedToString"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestStringifierOperationNamedToStringConstructor, 0 } },
+    HashTableValue { "TestStringifierReadOnlyAttribute"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestStringifierReadOnlyAttributeConstructor, 0 } },
+    HashTableValue { "TestStringifierReadWriteAttribute"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestStringifierReadWriteAttributeConstructor, 0 } },
+    HashTableValue { "TestTaggedWrapper"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestTaggedWrapperConstructor, 0 } },
+    HashTableValue { "TestTypedefs"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestTypedefsConstructor, 0 } },
+    HashTableValue { "regularOperation"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestGlobalObjectInstanceFunction_regularOperation, 1 } },
 };
 
-static const HashTable JSTestGlobalObjectTable = { 72, 255, static_cast<uint8_t>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::Function), JSTestGlobalObject::info(), JSTestGlobalObjectTableValues, JSTestGlobalObjectTableIndex };
+static const HashTable JSTestGlobalObjectTable = { 72, 255, static_cast<uint8_t>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::Function), JSTestGlobalObject::info(), JSTestGlobalObjectTableValues.data(), JSTestGlobalObjectTableIndex };
 #endif
 /* Hash table for constructor */
 
-static const HashTableValue JSTestGlobalObjectConstructorTableValues[] =
-{
+static const std::array<HashTableValue, 1> JSTestGlobalObjectConstructorTableValues {
 #if ENABLE(TEST_FEATURE)
-    { "enabledAtRuntimeOperationStatic"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestGlobalObjectConstructorFunction_enabledAtRuntimeOperationStatic, 1 } },
+    HashTableValue { "enabledAtRuntimeOperationStatic"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestGlobalObjectConstructorFunction_enabledAtRuntimeOperationStatic, 1 } },
 #else
-    { { }, 0, NoIntrinsic, { HashTableValue::End } },
+    HashTableValue { { }, 0, NoIntrinsic, { HashTableValue::End } },
 #endif
 };
 
@@ -1026,12 +1022,11 @@ static const struct CompactHashIndex JSTestGlobalObjectPrototypeTableIndex[2] = 
 };
 
 
-static const HashTableValue JSTestGlobalObjectPrototypeTableValues[] =
-{
-    { "constructor"_s, static_cast<unsigned>(PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObjectConstructor, 0 } },
+static const std::array<HashTableValue, 1> JSTestGlobalObjectPrototypeTableValues {
+    HashTableValue { "constructor"_s, static_cast<unsigned>(PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObjectConstructor, 0 } },
 };
 
-static const HashTable JSTestGlobalObjectPrototypeTable = { 1, 1, static_cast<uint8_t>(static_cast<unsigned>(PropertyAttribute::DontEnum)), JSTestGlobalObject::info(), JSTestGlobalObjectPrototypeTableValues, JSTestGlobalObjectPrototypeTableIndex };
+static const HashTable JSTestGlobalObjectPrototypeTable = { 1, 1, static_cast<uint8_t>(static_cast<unsigned>(PropertyAttribute::DontEnum)), JSTestGlobalObject::info(), JSTestGlobalObjectPrototypeTableValues.data(), JSTestGlobalObjectPrototypeTableIndex };
 const ClassInfo JSTestGlobalObjectPrototype::s_info = { "TestGlobalObject"_s, &Base::s_info, &JSTestGlobalObjectPrototypeTable, nullptr, CREATE_METHOD_TABLE(JSTestGlobalObjectPrototype) };
 
 void JSTestGlobalObjectPrototype::finishCreation(VM& vm)
@@ -1109,7 +1104,7 @@ void JSTestGlobalObject::destroy(JSC::JSCell* cell)
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObjectConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
-    auto& vm = JSC::getVM(lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto* prototype = jsDynamicCast<JSTestGlobalObjectPrototype*>(JSValue::decode(thisValue));
     if (UNLIKELY(!prototype))
@@ -1119,9 +1114,9 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObjectConstructor, (JSGlobalObject* lexical
 
 static inline JSValue jsTestGlobalObject_regularAttributeGetter(JSGlobalObject& lexicalGlobalObject, JSTestGlobalObject& thisObject)
 {
-    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto& impl = thisObject.wrapped();
+    SUPPRESS_UNCOUNTED_LOCAL auto& impl = thisObject.wrapped();
     RELEASE_AND_RETURN(throwScope, (toJS<IDLDOMString>(lexicalGlobalObject, throwScope, impl.regularAttribute())));
 }
 
@@ -1132,10 +1127,10 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_regularAttribute, (JSGlobalObject* l
 
 static inline bool setJSTestGlobalObject_regularAttributeSetter(JSGlobalObject& lexicalGlobalObject, JSTestGlobalObject& thisObject, JSValue value)
 {
-    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(&lexicalGlobalObject);
     UNUSED_PARAM(vm);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto& impl = thisObject.wrapped();
+    SUPPRESS_UNCOUNTED_LOCAL auto& impl = thisObject.wrapped();
     auto nativeValueConversionResult = convert<IDLDOMString>(lexicalGlobalObject, value);
     if (UNLIKELY(nativeValueConversionResult.hasException(throwScope)))
         return false;
@@ -1152,9 +1147,9 @@ JSC_DEFINE_CUSTOM_SETTER(setJSTestGlobalObject_regularAttribute, (JSGlobalObject
 
 static inline JSValue jsTestGlobalObject_publicAndPrivateAttributeGetter(JSGlobalObject& lexicalGlobalObject, JSTestGlobalObject& thisObject)
 {
-    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto& impl = thisObject.wrapped();
+    SUPPRESS_UNCOUNTED_LOCAL auto& impl = thisObject.wrapped();
     RELEASE_AND_RETURN(throwScope, (toJS<IDLDOMString>(lexicalGlobalObject, throwScope, impl.publicAndPrivateAttribute())));
 }
 
@@ -1165,10 +1160,10 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_publicAndPrivateAttribute, (JSGlobal
 
 static inline bool setJSTestGlobalObject_publicAndPrivateAttributeSetter(JSGlobalObject& lexicalGlobalObject, JSTestGlobalObject& thisObject, JSValue value)
 {
-    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(&lexicalGlobalObject);
     UNUSED_PARAM(vm);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto& impl = thisObject.wrapped();
+    SUPPRESS_UNCOUNTED_LOCAL auto& impl = thisObject.wrapped();
     auto nativeValueConversionResult = convert<IDLDOMString>(lexicalGlobalObject, value);
     if (UNLIKELY(nativeValueConversionResult.hasException(throwScope)))
         return false;
@@ -1186,9 +1181,9 @@ JSC_DEFINE_CUSTOM_SETTER(setJSTestGlobalObject_publicAndPrivateAttribute, (JSGlo
 #if ENABLE(TEST_FEATURE)
 static inline JSValue jsTestGlobalObject_publicAndPrivateConditionalAttributeGetter(JSGlobalObject& lexicalGlobalObject, JSTestGlobalObject& thisObject)
 {
-    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto& impl = thisObject.wrapped();
+    SUPPRESS_UNCOUNTED_LOCAL auto& impl = thisObject.wrapped();
     RELEASE_AND_RETURN(throwScope, (toJS<IDLDOMString>(lexicalGlobalObject, throwScope, impl.publicAndPrivateConditionalAttribute())));
 }
 
@@ -1202,10 +1197,10 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_publicAndPrivateConditionalAttribute
 #if ENABLE(TEST_FEATURE)
 static inline bool setJSTestGlobalObject_publicAndPrivateConditionalAttributeSetter(JSGlobalObject& lexicalGlobalObject, JSTestGlobalObject& thisObject, JSValue value)
 {
-    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(&lexicalGlobalObject);
     UNUSED_PARAM(vm);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto& impl = thisObject.wrapped();
+    SUPPRESS_UNCOUNTED_LOCAL auto& impl = thisObject.wrapped();
     auto nativeValueConversionResult = convert<IDLDOMString>(lexicalGlobalObject, value);
     if (UNLIKELY(nativeValueConversionResult.hasException(throwScope)))
         return false;
@@ -1225,9 +1220,9 @@ JSC_DEFINE_CUSTOM_SETTER(setJSTestGlobalObject_publicAndPrivateConditionalAttrib
 #if ENABLE(TEST_FEATURE)
 static inline JSValue jsTestGlobalObject_enabledAtRuntimeAttributeGetter(JSGlobalObject& lexicalGlobalObject, JSTestGlobalObject& thisObject)
 {
-    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto& impl = thisObject.wrapped();
+    SUPPRESS_UNCOUNTED_LOCAL auto& impl = thisObject.wrapped();
     RELEASE_AND_RETURN(throwScope, (toJS<IDLDOMString>(lexicalGlobalObject, throwScope, impl.enabledAtRuntimeAttribute())));
 }
 
@@ -1241,10 +1236,10 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_enabledAtRuntimeAttribute, (JSGlobal
 #if ENABLE(TEST_FEATURE)
 static inline bool setJSTestGlobalObject_enabledAtRuntimeAttributeSetter(JSGlobalObject& lexicalGlobalObject, JSTestGlobalObject& thisObject, JSValue value)
 {
-    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(&lexicalGlobalObject);
     UNUSED_PARAM(vm);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto& impl = thisObject.wrapped();
+    SUPPRESS_UNCOUNTED_LOCAL auto& impl = thisObject.wrapped();
     auto nativeValueConversionResult = convert<IDLDOMString>(lexicalGlobalObject, value);
     if (UNLIKELY(nativeValueConversionResult.hasException(throwScope)))
         return false;
@@ -2031,11 +2026,11 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_TestTypedefsConstructor, (JSGlobalOb
 
 static inline JSC::EncodedJSValue jsTestGlobalObjectInstanceFunction_regularOperationBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestGlobalObject>::ClassParameter castedThis)
 {
-    auto& vm = JSC::getVM(lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(callFrame);
-    auto& impl = castedThis->wrapped();
+    SUPPRESS_UNCOUNTED_LOCAL auto& impl = castedThis->wrapped();
     if (UNLIKELY(callFrame->argumentCount() < 1))
         return throwVMError(lexicalGlobalObject, throwScope, createNotEnoughArgumentsError(lexicalGlobalObject));
     EnsureStillAliveScope argument0 = callFrame->uncheckedArgument(0);
@@ -2053,11 +2048,11 @@ JSC_DEFINE_HOST_FUNCTION(jsTestGlobalObjectInstanceFunction_regularOperation, (J
 #if ENABLE(TEST_FEATURE)
 static inline JSC::EncodedJSValue jsTestGlobalObjectInstanceFunction_enabledAtRuntimeOperation1Body(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestGlobalObject>::ClassParameter castedThis)
 {
-    auto& vm = JSC::getVM(lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(callFrame);
-    auto& impl = castedThis->wrapped();
+    SUPPRESS_UNCOUNTED_LOCAL auto& impl = castedThis->wrapped();
     EnsureStillAliveScope argument0 = callFrame->uncheckedArgument(0);
     auto testParamConversionResult = convert<IDLDOMString>(*lexicalGlobalObject, argument0.value());
     if (UNLIKELY(testParamConversionResult.hasException(throwScope)))
@@ -2070,11 +2065,11 @@ static inline JSC::EncodedJSValue jsTestGlobalObjectInstanceFunction_enabledAtRu
 #if ENABLE(TEST_FEATURE)
 static inline JSC::EncodedJSValue jsTestGlobalObjectInstanceFunction_enabledAtRuntimeOperation2Body(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestGlobalObject>::ClassParameter castedThis)
 {
-    auto& vm = JSC::getVM(lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(callFrame);
-    auto& impl = castedThis->wrapped();
+    SUPPRESS_UNCOUNTED_LOCAL auto& impl = castedThis->wrapped();
     EnsureStillAliveScope argument0 = callFrame->uncheckedArgument(0);
     auto testParamConversionResult = convert<IDLLong>(*lexicalGlobalObject, argument0.value());
     if (UNLIKELY(testParamConversionResult.hasException(throwScope)))
@@ -2088,7 +2083,7 @@ static inline JSC::EncodedJSValue jsTestGlobalObjectInstanceFunction_enabledAtRu
 
 static inline JSC::EncodedJSValue jsTestGlobalObjectInstanceFunction_enabledAtRuntimeOperationOverloadDispatcher(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestGlobalObject>::ClassParameter castedThis)
 {
-    auto& vm = JSC::getVM(lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(callFrame);
@@ -2116,7 +2111,7 @@ JSC_DEFINE_HOST_FUNCTION(jsTestGlobalObjectInstanceFunction_enabledAtRuntimeOper
 #if ENABLE(TEST_FEATURE)
 static inline JSC::EncodedJSValue jsTestGlobalObjectConstructorFunction_enabledAtRuntimeOperationStaticBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame)
 {
-    auto& vm = JSC::getVM(lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(callFrame);
@@ -2138,11 +2133,11 @@ JSC_DEFINE_HOST_FUNCTION(jsTestGlobalObjectConstructorFunction_enabledAtRuntimeO
 
 static inline JSC::EncodedJSValue jsTestGlobalObjectInstanceFunction_enabledInSpecificWorldBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestGlobalObject>::ClassParameter castedThis)
 {
-    auto& vm = JSC::getVM(lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(callFrame);
-    auto& impl = castedThis->wrapped();
+    SUPPRESS_UNCOUNTED_LOCAL auto& impl = castedThis->wrapped();
     if (UNLIKELY(callFrame->argumentCount() < 1))
         return throwVMError(lexicalGlobalObject, throwScope, createNotEnoughArgumentsError(lexicalGlobalObject));
     EnsureStillAliveScope argument0 = callFrame->uncheckedArgument(0);
@@ -2159,11 +2154,11 @@ JSC_DEFINE_HOST_FUNCTION(jsTestGlobalObjectInstanceFunction_enabledInSpecificWor
 
 static inline JSC::EncodedJSValue jsTestGlobalObjectInstanceFunction_enabledInSpecificWorldWhenRuntimeFeatureEnabledBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestGlobalObject>::ClassParameter castedThis)
 {
-    auto& vm = JSC::getVM(lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(callFrame);
-    auto& impl = castedThis->wrapped();
+    SUPPRESS_UNCOUNTED_LOCAL auto& impl = castedThis->wrapped();
     if (UNLIKELY(callFrame->argumentCount() < 1))
         return throwVMError(lexicalGlobalObject, throwScope, createNotEnoughArgumentsError(lexicalGlobalObject));
     EnsureStillAliveScope argument0 = callFrame->uncheckedArgument(0);
@@ -2180,11 +2175,11 @@ JSC_DEFINE_HOST_FUNCTION(jsTestGlobalObjectInstanceFunction_enabledInSpecificWor
 
 static inline JSC::EncodedJSValue jsTestGlobalObjectInstanceFunction_enabledInSpecificWorldWhenRuntimeFeaturesEnabledBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestGlobalObject>::ClassParameter castedThis)
 {
-    auto& vm = JSC::getVM(lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(callFrame);
-    auto& impl = castedThis->wrapped();
+    SUPPRESS_UNCOUNTED_LOCAL auto& impl = castedThis->wrapped();
     if (UNLIKELY(callFrame->argumentCount() < 1))
         return throwVMError(lexicalGlobalObject, throwScope, createNotEnoughArgumentsError(lexicalGlobalObject));
     EnsureStillAliveScope argument0 = callFrame->uncheckedArgument(0);
@@ -2202,11 +2197,11 @@ JSC_DEFINE_HOST_FUNCTION(jsTestGlobalObjectInstanceFunction_enabledInSpecificWor
 #if ENABLE(TEST_FEATURE)
 static inline JSC::EncodedJSValue jsTestGlobalObjectInstanceFunction_testPrivateFunctionBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestGlobalObject>::ClassParameter castedThis)
 {
-    auto& vm = JSC::getVM(lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(callFrame);
-    auto& impl = castedThis->wrapped();
+    SUPPRESS_UNCOUNTED_LOCAL auto& impl = castedThis->wrapped();
     RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLUndefined>(*lexicalGlobalObject, throwScope, [&]() -> decltype(auto) { return impl.testPrivateFunction(); })));
 }
 
@@ -2219,11 +2214,11 @@ JSC_DEFINE_HOST_FUNCTION(jsTestGlobalObjectInstanceFunction_testPrivateFunction,
 
 static inline JSC::EncodedJSValue jsTestGlobalObjectInstanceFunction_calculateSecretResultBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperationReturningPromise<JSTestGlobalObject>::ClassParameter castedThis, Ref<DeferredPromise>&& promise)
 {
-    auto& vm = JSC::getVM(lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(callFrame);
-    auto& impl = castedThis->wrapped();
+    SUPPRESS_UNCOUNTED_LOCAL auto& impl = castedThis->wrapped();
     RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLPromise<IDLDouble>>(*lexicalGlobalObject, *castedThis->globalObject(), throwScope, [&]() -> decltype(auto) { return impl.calculateSecretResult(WTFMove(promise)); })));
 }
 
@@ -2234,11 +2229,11 @@ JSC_DEFINE_HOST_FUNCTION(jsTestGlobalObjectInstanceFunction_calculateSecretResul
 
 static inline JSC::EncodedJSValue jsTestGlobalObjectInstanceFunction_getSecretBooleanBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestGlobalObject>::ClassParameter castedThis)
 {
-    auto& vm = JSC::getVM(lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(callFrame);
-    auto& impl = castedThis->wrapped();
+    SUPPRESS_UNCOUNTED_LOCAL auto& impl = castedThis->wrapped();
     RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLBoolean>(*lexicalGlobalObject, throwScope, impl.getSecretBoolean())));
 }
 
@@ -2250,11 +2245,11 @@ JSC_DEFINE_HOST_FUNCTION(jsTestGlobalObjectInstanceFunction_getSecretBoolean, (J
 #if ENABLE(TEST_FEATURE)
 static inline JSC::EncodedJSValue jsTestGlobalObjectInstanceFunction_testFeatureGetSecretBooleanBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestGlobalObject>::ClassParameter castedThis)
 {
-    auto& vm = JSC::getVM(lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(callFrame);
-    auto& impl = castedThis->wrapped();
+    SUPPRESS_UNCOUNTED_LOCAL auto& impl = castedThis->wrapped();
     RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLBoolean>(*lexicalGlobalObject, throwScope, impl.testFeatureGetSecretBoolean())));
 }
 
@@ -2280,8 +2275,8 @@ void JSTestGlobalObject::analyzeHeap(JSCell* cell, HeapAnalyzer& analyzer)
 {
     auto* thisObject = jsCast<JSTestGlobalObject*>(cell);
     analyzer.setWrappedObjectForCell(cell, &thisObject->wrapped());
-    if (thisObject->scriptExecutionContext())
-        analyzer.setLabelForCell(cell, makeString("url "_s, thisObject->scriptExecutionContext()->url().string()));
+    if (RefPtr context = thisObject->scriptExecutionContext())
+        analyzer.setLabelForCell(cell, makeString("url "_s, context->url().string()));
     Base::analyzeHeap(cell, analyzer);
 }
 

@@ -27,6 +27,7 @@
 
 #include "DeferrableTask.h"
 #include "PlatformMediaSession.h"
+#include <wtf/AbstractRefCounted.h>
 
 namespace WebCore {
 
@@ -36,14 +37,11 @@ public:
     virtual void didReceiveRemoteControlCommand(PlatformMediaSession::RemoteControlCommandType, const PlatformMediaSession::RemoteCommandArgument&) = 0;
 };
 
-class WEBCORE_EXPORT RemoteCommandListener {
+class WEBCORE_EXPORT RemoteCommandListener : public AbstractRefCounted {
 public:
     static RefPtr<RemoteCommandListener> create(RemoteCommandListenerClient&);
     RemoteCommandListener(RemoteCommandListenerClient&);
     virtual ~RemoteCommandListener();
-
-    virtual void ref() const = 0;
-    virtual void deref() const = 0;
 
     using CreationFunction = Function<RefPtr<RemoteCommandListener>(RemoteCommandListenerClient&)>;
     static void setCreationFunction(CreationFunction&&);

@@ -78,7 +78,7 @@ std::unique_ptr<WebCore::NowPlayingManager> WebMediaStrategy::createNowPlayingMa
                     connection->connection().send(Messages::GPUConnectionToWebProcess::ClearNowPlayingInfo { }, 0);
             }
 
-            void setNowPlayingInfoPrivate(const WebCore::NowPlayingInfo& nowPlayingInfo) final
+            void setNowPlayingInfoPrivate(const WebCore::NowPlayingInfo& nowPlayingInfo, bool) final
             {
                 Ref connection = WebProcess::singleton().ensureGPUProcessConnection().connection();
                 connection->send(Messages::GPUConnectionToWebProcess::SetNowPlayingInfo { nowPlayingInfo }, 0);

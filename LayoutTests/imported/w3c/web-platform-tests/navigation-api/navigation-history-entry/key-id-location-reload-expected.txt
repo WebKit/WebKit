@@ -1,4 +1,4 @@
 
 
-FAIL NavigationHistoryEntry's key and id after location.reload() assert_equals: expected "dc17d31f-282e-4b1c-bd3d-b76a69dcd382" but got "3bf32a01-b088-40e6-ae3c-5967c1dff230"
+PASS NavigationHistoryEntry's key and id after location.reload()
 

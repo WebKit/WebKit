@@ -18,6 +18,8 @@ assert.sameValue(
   Object.getPrototypeOf(function*() {}.prototype)
 );
 
-verifyNotEnumerable(GeneratorFunctionPrototype, 'prototype');
-verifyNotWritable(GeneratorFunctionPrototype, 'prototype');
-verifyConfigurable(GeneratorFunctionPrototype, 'prototype');
+verifyProperty(GeneratorFunctionPrototype, 'prototype', {
+  writable: false,
+  enumerable: false,
+  configurable: true,
+});

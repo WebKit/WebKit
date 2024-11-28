@@ -25,6 +25,8 @@
 
 #import <WebKit/WKWebExtensionContextPrivate.h>
 
+#define HAVE_WK_WEB_EXTENSION_CONTEXT_ARRAY_BASED_DID_SELECT_TABS 1
+
 WK_EXTERN
 @interface _WKWebExtensionContext : WKWebExtensionContext
 @end

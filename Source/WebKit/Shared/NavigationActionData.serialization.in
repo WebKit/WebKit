@@ -28,7 +28,7 @@ struct WebKit::NavigationActionData {
     OptionSet<WebKit::WebEventModifier> modifiers;
     WebKit::WebMouseEventButton mouseButton;
     WebKit::WebMouseEventSyntheticClickType syntheticClickType;
-    uint64_t userGestureTokenIdentifier;
+    std::optional<WebCore::UserGestureTokenIdentifier> userGestureTokenIdentifier;
     std::optional<WTF::UUID> userGestureAuthorizationToken;
     bool canHandleRequest;
     WebCore::ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy;
@@ -41,6 +41,7 @@ struct WebKit::NavigationActionData {
     bool openedByDOMWithOpener;
     bool hasOpener;
     bool isPerformingHTTPFallback;
+    String openedMainFrameName;
     WebCore::SecurityOriginData requesterOrigin;
     WebCore::SecurityOriginData requesterTopOrigin;
     std::optional<WebCore::BackForwardItemIdentifier> targetBackForwardItemIdentifier;
@@ -52,7 +53,7 @@ struct WebKit::NavigationActionData {
     std::optional<WebCore::OwnerPermissionsPolicyData> ownerPermissionsPolicy;
     std::optional<WebCore::PrivateClickMeasurement> privateClickMeasurement;
     OptionSet<WebCore::AdvancedPrivacyProtections> advancedPrivacyProtections;
-    OptionSet<WebCore::AdvancedPrivacyProtections> originatorAdvancedPrivacyProtections;
+    std::optional<OptionSet<WebCore::AdvancedPrivacyProtections>> originatorAdvancedPrivacyProtections;
 #if PLATFORM(MAC) || HAVE(UIKIT_WITH_MOUSE_SUPPORT)
     std::optional<WebKit::WebHitTestResultData> webHitTestResultData;
 #endif

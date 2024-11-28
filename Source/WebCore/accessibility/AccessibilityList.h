@@ -34,23 +34,28 @@ namespace WebCore {
     
 class AccessibilityList final : public AccessibilityRenderObject {
 public:
-    static Ref<AccessibilityList> create(RenderObject&);
-    static Ref<AccessibilityList> create(Node&);
+    static Ref<AccessibilityList> create(AXID, RenderObject&);
+    static Ref<AccessibilityList> create(AXID, Node&);
     virtual ~AccessibilityList();
 
 private:
-    explicit AccessibilityList(RenderObject&);
-    explicit AccessibilityList(Node&);
-    bool isList() const override { return true; }
-    bool isUnorderedList() const override;
-    bool isOrderedList() const override;
-    bool isDescriptionList() const override;
+    explicit AccessibilityList(AXID, RenderObject&);
+    explicit AccessibilityList(AXID, Node&);
+    bool isListInstance() const final { return true; }
 
-    bool computeIsIgnored() const override;
-    AccessibilityRole determineAccessibilityRole() override;
+    bool isUnorderedList() const final;
+    bool isOrderedList() const final;
+    bool isDescriptionList() const final;
+
+    bool computeIsIgnored() const final;
+    AccessibilityRole determineAccessibilityRole() final;
     bool childHasPseudoVisibleListItemMarkers(Node*);
+    void updateRoleAfterChildrenCreation() final { updateRole(); }
+    AccessibilityRole determineAccessibilityRoleWithCleanChildren();
 };
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_ACCESSIBILITY(AccessibilityList, isList())
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::AccessibilityList) \
+    static bool isType(const WebCore::AccessibilityObject& object) { return object.isListInstance(); } \
+SPECIALIZE_TYPE_TRAITS_END()

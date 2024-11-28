@@ -77,7 +77,7 @@ Ref<WebProcessProxy> AudioSessionRoutingArbitratorProxy::protectedProcess()
 
 Logger& AudioSessionRoutingArbitratorProxy::logger()
 {
-    return m_process->logger();
+    return protectedProcess()->logger();
 }
 
 WTFLogChannel& AudioSessionRoutingArbitratorProxy::logChannel() const
@@ -85,6 +85,21 @@ WTFLogChannel& AudioSessionRoutingArbitratorProxy::logChannel() const
     return WebKit2LogMedia;
 }
 
+void AudioSessionRoutingArbitratorProxy::ref() const
+{
+    return m_process->ref();
 }
+
+void AudioSessionRoutingArbitratorProxy::deref() const
+{
+    return m_process->deref();
+}
+
+std::optional<SharedPreferencesForWebProcess> AudioSessionRoutingArbitratorProxy::sharedPreferencesForWebProcess() const
+{
+    return m_process->sharedPreferencesForWebProcess();
+}
+
+} // namespace WebKit
 
 #endif // ENABLE(ROUTING_ARBITRATION)

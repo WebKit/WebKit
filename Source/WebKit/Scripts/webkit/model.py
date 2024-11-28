@@ -53,16 +53,16 @@ class MessageReceiver(object):
 
 
 class Message(object):
-    def __init__(self, name, parameters, reply_parameters, attributes, condition, enabled_if=None, enabled_by=None, enabled_by_conjunction=None):
+    def __init__(self, name, parameters, reply_parameters, attributes, condition, validator=None, enabled_by=None, enabled_by_conjunction=None, coalescing_key_indices=None):
         self.name = name
         self.parameters = parameters
         self.reply_parameters = reply_parameters
         self.attributes = frozenset(attributes or [])
         self.condition = condition
-        assert(not enabled_if or not enabled_by)
-        self.enabled_if = enabled_if
+        self.validator = validator
         self.enabled_by = enabled_by
         self.enabled_by_conjunction = enabled_by_conjunction
+        self.coalescing_key_indices = coalescing_key_indices
 
     def has_attribute(self, attribute):
         return attribute in self.attributes
@@ -83,6 +83,7 @@ class Parameter(object):
 ipc_receiver = MessageReceiver(name="IPC", superclass=None, attributes=[BUILTIN_ATTRIBUTE], receiver_enabled_by=None, receiver_enabled_by_conjunction=None, shared_preferences_needs_connection=False, messages=[
     Message('WrappedAsyncMessageForTesting', [], [], attributes=[BUILTIN_ATTRIBUTE, SYNCHRONOUS_ATTRIBUTE, ALLOWEDWHENWAITINGFORSYNCREPLY_ATTRIBUTE], condition=None),
     Message('SyncMessageReply', [], [], attributes=[BUILTIN_ATTRIBUTE], condition=None),
+    Message('CancelSyncMessageReply', [], [], attributes=[BUILTIN_ATTRIBUTE], condition=None),
     Message('InitializeConnection', [], [], attributes=[BUILTIN_ATTRIBUTE], condition="PLATFORM(COCOA)"),
     Message('LegacySessionState', [], [], attributes=[BUILTIN_ATTRIBUTE], condition=None),
     Message('SetStreamDestinationID', [], [], attributes=[BUILTIN_ATTRIBUTE], condition=None),

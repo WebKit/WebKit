@@ -371,6 +371,7 @@ bool addKeyToKeychain(const String& privateKeyBase64, const String& rpId, const 
     if (errorRef)
         return false;
 
+    auto credentialID = adoptNS([[NSData alloc] initWithBase64EncodedString:@"SMSXHngF7hEOsElA73C3RY+8bR4=" options:0]);
     auto addQuery = adoptNS([[NSMutableDictionary alloc] init]);
     [addQuery setDictionary:@{
         (id)kSecValueRef: (id)key.get(),
@@ -380,6 +381,7 @@ bool addKeyToKeychain(const String& privateKeyBase64, const String& rpId, const 
         (id)kSecAttrAccessible: (id)kSecAttrAccessibleAfterFirstUnlock,
         (id)kSecUseDataProtectionKeychain: @YES,
         (id)kSecAttrAccessGroup: testWebKitAPIAccessGroup,
+        (id)kSecAttrAlias: credentialID.get(),
     }];
     if (synchronizable)
         [addQuery.get() setObject:@YES forKey:(__bridge id)kSecAttrSynchronizable];
@@ -391,15 +393,19 @@ bool addKeyToKeychain(const String& privateKeyBase64, const String& rpId, const 
     return true;
 }
 
-void cleanUpKeychain(const String& rpId)
+void cleanUpKeychain()
 {
-    NSDictionary* deleteQuery = @{
+    NSMutableDictionary* deleteQuery = [NSMutableDictionary dictionaryWithDictionary:@{
         (id)kSecClass: (id)kSecClassKey,
-        (id)kSecAttrLabel: rpId,
         (id)kSecAttrSynchronizable: (id)kSecAttrSynchronizableAny,
         (id)kSecAttrAccessible: (id)kSecAttrAccessibleAfterFirstUnlock,
-        (id)kSecUseDataProtectionKeychain: @YES
-    };
+        (id)kSecUseDataProtectionKeychain: @YES,
+        (id)kSecAttrAccessGroup: testWebKitAPIAccessGroup,
+    }];
+
+    SecItemDelete((__bridge CFDictionaryRef)deleteQuery);
+
+    deleteQuery[(id)kSecAttrAccessGroup] = testWebKitAPIAlternateAccessGroup;
     SecItemDelete((__bridge CFDictionaryRef)deleteQuery);
 }
 
@@ -410,7 +416,7 @@ void cleanUpKeychain(const String& rpId)
 #if HAVE(NEAR_FIELD)
 TEST(WebAuthenticationPanel, NoPanelNfcSucceed)
 {
-    RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"web-authentication-get-assertion-nfc" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+    RetainPtr<NSURL> testURL = [NSBundle.test_resourcesBundle URLForResource:@"web-authentication-get-assertion-nfc" withExtension:@"html"];
 
     auto *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
 
@@ -424,7 +430,7 @@ TEST(WebAuthenticationPanel, NoPanelNfcSucceed)
 
 TEST(WebAuthenticationPanel, NoPanelHidSuccess)
 {
-    RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"web-authentication-get-assertion-hid" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+    RetainPtr<NSURL> testURL = [NSBundle.test_resourcesBundle URLForResource:@"web-authentication-get-assertion-hid" withExtension:@"html"];
 
     auto *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
 
@@ -438,7 +444,7 @@ TEST(WebAuthenticationPanel, NoPanelHidSuccess)
 TEST(WebAuthenticationPanel, PanelHidSuccess1)
 {
     reset();
-    RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"web-authentication-get-assertion-hid" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+    RetainPtr<NSURL> testURL = [NSBundle.test_resourcesBundle URLForResource:@"web-authentication-get-assertion-hid" withExtension:@"html"];
 
     auto *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
 
@@ -459,7 +465,7 @@ TEST(WebAuthenticationPanel, PanelHidSuccess1)
 TEST(WebAuthenticationPanel, PanelHidSuccess2)
 {
     reset();
-    RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"web-authentication-make-credential-hid" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+    RetainPtr<NSURL> testURL = [NSBundle.test_resourcesBundle URLForResource:@"web-authentication-make-credential-hid" withExtension:@"html"];
 
     auto *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
 
@@ -485,7 +491,7 @@ TEST(WebAuthenticationPanel, PanelHidSuccess2)
 TEST(WebAuthenticationPanel, PanelRacy1)
 {
     reset();
-    RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"web-authentication-get-assertion-nfc" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+    RetainPtr<NSURL> testURL = [NSBundle.test_resourcesBundle URLForResource:@"web-authentication-get-assertion-nfc" withExtension:@"html"];
 
     auto *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
 
@@ -508,7 +514,7 @@ TEST(WebAuthenticationPanel, PanelRacy1)
 TEST(WebAuthenticationPanel, PanelRacy2)
 {
     reset();
-    RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"web-authentication-get-assertion-nfc" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+    RetainPtr<NSURL> testURL = [NSBundle.test_resourcesBundle URLForResource:@"web-authentication-get-assertion-nfc" withExtension:@"html"];
 
     auto *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
 
@@ -531,7 +537,7 @@ TEST(WebAuthenticationPanel, PanelRacy2)
 TEST(WebAuthenticationPanel, PanelTwice)
 {
     reset();
-    RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"web-authentication-get-assertion-hid" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+    RetainPtr<NSURL> testURL = [NSBundle.test_resourcesBundle URLForResource:@"web-authentication-get-assertion-hid" withExtension:@"html"];
 
     auto *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
 
@@ -553,7 +559,7 @@ TEST(WebAuthenticationPanel, PanelTwice)
 TEST(WebAuthenticationPanel, ReloadHidCancel)
 {
     reset();
-    RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"web-authentication-get-assertion-hid-cancel" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+    RetainPtr<NSURL> testURL = [NSBundle.test_resourcesBundle URLForResource:@"web-authentication-get-assertion-hid-cancel" withExtension:@"html"];
 
     auto *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
 
@@ -571,8 +577,8 @@ TEST(WebAuthenticationPanel, ReloadHidCancel)
 TEST(WebAuthenticationPanel, LocationChangeHidCancel)
 {
     reset();
-    RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"web-authentication-get-assertion-hid-cancel" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
-    RetainPtr<NSURL> otherURL = [[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+    RetainPtr<NSURL> testURL = [NSBundle.test_resourcesBundle URLForResource:@"web-authentication-get-assertion-hid-cancel" withExtension:@"html"];
+    RetainPtr<NSURL> otherURL = [NSBundle.test_resourcesBundle URLForResource:@"simple" withExtension:@"html"];
 
     auto *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
 
@@ -590,8 +596,8 @@ TEST(WebAuthenticationPanel, LocationChangeHidCancel)
 TEST(WebAuthenticationPanel, NewLoadHidCancel)
 {
     reset();
-    RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"web-authentication-get-assertion-hid-cancel" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
-    RetainPtr<NSURL> otherURL = [[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+    RetainPtr<NSURL> testURL = [NSBundle.test_resourcesBundle URLForResource:@"web-authentication-get-assertion-hid-cancel" withExtension:@"html"];
+    RetainPtr<NSURL> otherURL = [NSBundle.test_resourcesBundle URLForResource:@"simple" withExtension:@"html"];
 
     auto *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
 
@@ -609,7 +615,7 @@ TEST(WebAuthenticationPanel, NewLoadHidCancel)
 TEST(WebAuthenticationPanel, CloseHidCancel)
 {
     reset();
-    RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"web-authentication-get-assertion-hid-cancel" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+    RetainPtr<NSURL> testURL = [NSBundle.test_resourcesBundle URLForResource:@"web-authentication-get-assertion-hid-cancel" withExtension:@"html"];
 
     auto *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
 
@@ -712,7 +718,7 @@ TEST(WebAuthenticationPanel, SubFrameDestructionHidCancel)
 TEST(WebAuthenticationPanel, PanelHidCancel)
 {
     reset();
-    RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"web-authentication-get-assertion-hid-cancel" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+    RetainPtr<NSURL> testURL = [NSBundle.test_resourcesBundle URLForResource:@"web-authentication-get-assertion-hid-cancel" withExtension:@"html"];
 
     auto *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
 
@@ -735,7 +741,7 @@ TEST(WebAuthenticationPanel, PanelHidCancel)
 TEST(WebAuthenticationPanel, PanelHidCtapNoCredentialsFound)
 {
     reset();
-    RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"web-authentication-get-assertion-hid-no-credentials" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+    RetainPtr<NSURL> testURL = [NSBundle.test_resourcesBundle URLForResource:@"web-authentication-get-assertion-hid-no-credentials" withExtension:@"html"];
 
     auto *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
 
@@ -752,7 +758,7 @@ TEST(WebAuthenticationPanel, PanelHidCtapNoCredentialsFound)
 TEST(WebAuthenticationPanel, PanelU2fCtapNoCredentialsFound)
 {
     reset();
-    RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"web-authentication-get-assertion-u2f-no-credentials" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+    RetainPtr<NSURL> testURL = [NSBundle.test_resourcesBundle URLForResource:@"web-authentication-get-assertion-u2f-no-credentials" withExtension:@"html"];
 
     auto *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
 
@@ -769,7 +775,7 @@ TEST(WebAuthenticationPanel, PanelU2fCtapNoCredentialsFound)
 TEST(WebAuthenticationPanel, FakePanelHidSuccess)
 {
     reset();
-    RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"web-authentication-get-assertion-hid" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+    RetainPtr<NSURL> testURL = [NSBundle.test_resourcesBundle URLForResource:@"web-authentication-get-assertion-hid" withExtension:@"html"];
 
     auto *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
 
@@ -787,7 +793,7 @@ TEST(WebAuthenticationPanel, FakePanelHidSuccess)
 TEST(WebAuthenticationPanel, FakePanelHidCtapNoCredentialsFound)
 {
     reset();
-    RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"web-authentication-get-assertion-hid-no-credentials" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+    RetainPtr<NSURL> testURL = [NSBundle.test_resourcesBundle URLForResource:@"web-authentication-get-assertion-hid-no-credentials" withExtension:@"html"];
 
     auto *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
 
@@ -805,7 +811,7 @@ TEST(WebAuthenticationPanel, FakePanelHidCtapNoCredentialsFound)
 TEST(WebAuthenticationPanel, NullPanelHidSuccess)
 {
     reset();
-    RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"web-authentication-get-assertion-hid" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+    RetainPtr<NSURL> testURL = [NSBundle.test_resourcesBundle URLForResource:@"web-authentication-get-assertion-hid" withExtension:@"html"];
 
     auto *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
 
@@ -823,7 +829,7 @@ TEST(WebAuthenticationPanel, NullPanelHidSuccess)
 TEST(WebAuthenticationPanel, NullPanelHidCtapNoCredentialsFound)
 {
     reset();
-    RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"web-authentication-get-assertion-hid-no-credentials" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+    RetainPtr<NSURL> testURL = [NSBundle.test_resourcesBundle URLForResource:@"web-authentication-get-assertion-hid-no-credentials" withExtension:@"html"];
 
     auto *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
 
@@ -842,7 +848,7 @@ TEST(WebAuthenticationPanel, NullPanelHidCtapNoCredentialsFound)
 TEST(WebAuthenticationPanel, PanelMultipleNFCTagsPresent)
 {
     reset();
-    RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"web-authentication-get-assertion-nfc-multiple-tags" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+    RetainPtr<NSURL> testURL = [NSBundle.test_resourcesBundle URLForResource:@"web-authentication-get-assertion-nfc-multiple-tags" withExtension:@"html"];
 
     auto *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
 
@@ -860,7 +866,7 @@ TEST(WebAuthenticationPanel, PanelMultipleNFCTagsPresent)
 TEST(WebAuthenticationPanel, PanelHidCancelReloadNoCrash)
 {
     reset();
-    RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"web-authentication-get-assertion-hid-cancel" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+    RetainPtr<NSURL> testURL = [NSBundle.test_resourcesBundle URLForResource:@"web-authentication-get-assertion-hid-cancel" withExtension:@"html"];
 
     auto *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
 
@@ -879,7 +885,7 @@ TEST(WebAuthenticationPanel, PanelHidCancelReloadNoCrash)
 TEST(WebAuthenticationPanel, PanelHidSuccessCancelNoCrash)
 {
     reset();
-    RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"web-authentication-get-assertion-hid" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+    RetainPtr<NSURL> testURL = [NSBundle.test_resourcesBundle URLForResource:@"web-authentication-get-assertion-hid" withExtension:@"html"];
 
     auto *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
 
@@ -896,7 +902,7 @@ TEST(WebAuthenticationPanel, PanelHidSuccessCancelNoCrash)
 TEST(WebAuthenticationPanel, PanelHidCtapNoCredentialsFoundCancelNoCrash)
 {
     reset();
-    RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"web-authentication-get-assertion-hid-no-credentials" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+    RetainPtr<NSURL> testURL = [NSBundle.test_resourcesBundle URLForResource:@"web-authentication-get-assertion-hid-no-credentials" withExtension:@"html"];
 
     auto *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
 
@@ -913,7 +919,7 @@ TEST(WebAuthenticationPanel, PanelHidCtapNoCredentialsFoundCancelNoCrash)
 TEST(WebAuthenticationPanel, PinGetRetriesError)
 {
     reset();
-    RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"web-authentication-make-credential-hid-pin-get-retries-error" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+    RetainPtr<NSURL> testURL = [NSBundle.test_resourcesBundle URLForResource:@"web-authentication-make-credential-hid-pin-get-retries-error" withExtension:@"html"];
 
     auto *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
 
@@ -926,7 +932,7 @@ TEST(WebAuthenticationPanel, PinGetRetriesError)
 TEST(WebAuthenticationPanel, PinGetKeyAgreementError)
 {
     reset();
-    RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"web-authentication-make-credential-hid-pin-get-key-agreement-error" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+    RetainPtr<NSURL> testURL = [NSBundle.test_resourcesBundle URLForResource:@"web-authentication-make-credential-hid-pin-get-key-agreement-error" withExtension:@"html"];
 
     auto *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
 
@@ -939,7 +945,7 @@ TEST(WebAuthenticationPanel, PinGetKeyAgreementError)
 TEST(WebAuthenticationPanel, PinRequestPinErrorNoDelegate)
 {
     reset();
-    RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"web-authentication-make-credential-hid-pin" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+    RetainPtr<NSURL> testURL = [NSBundle.test_resourcesBundle URLForResource:@"web-authentication-make-credential-hid-pin" withExtension:@"html"];
 
     auto *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
 
@@ -952,7 +958,7 @@ TEST(WebAuthenticationPanel, PinRequestPinErrorNoDelegate)
 TEST(WebAuthenticationPanel, PinRequestPinErrorNullDelegate)
 {
     reset();
-    RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"web-authentication-make-credential-hid-pin" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+    RetainPtr<NSURL> testURL = [NSBundle.test_resourcesBundle URLForResource:@"web-authentication-make-credential-hid-pin" withExtension:@"html"];
 
     auto *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
 
@@ -969,7 +975,7 @@ TEST(WebAuthenticationPanel, PinRequestPinErrorNullDelegate)
 TEST(WebAuthenticationPanel, PinRequestPinError)
 {
     reset();
-    RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"web-authentication-make-credential-hid-pin-get-pin-token-fake-pin-invalid-error-retry" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+    RetainPtr<NSURL> testURL = [NSBundle.test_resourcesBundle URLForResource:@"web-authentication-make-credential-hid-pin-get-pin-token-fake-pin-invalid-error-retry" withExtension:@"html"];
 
     auto *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
 
@@ -988,7 +994,7 @@ TEST(WebAuthenticationPanel, PinRequestPinError)
 TEST(WebAuthenticationPanel, PinGetPinTokenPinBlockedError)
 {
     reset();
-    RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"web-authentication-make-credential-hid-pin-get-pin-token-pin-blocked-error" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+    RetainPtr<NSURL> testURL = [NSBundle.test_resourcesBundle URLForResource:@"web-authentication-make-credential-hid-pin-get-pin-token-pin-blocked-error" withExtension:@"html"];
 
     auto *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
 
@@ -1007,7 +1013,7 @@ TEST(WebAuthenticationPanel, PinGetPinTokenPinBlockedError)
 TEST(WebAuthenticationPanel, PinGetPinTokenPinAuthBlockedError)
 {
     reset();
-    RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"web-authentication-make-credential-hid-pin-get-pin-token-pin-auth-blocked-error" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+    RetainPtr<NSURL> testURL = [NSBundle.test_resourcesBundle URLForResource:@"web-authentication-make-credential-hid-pin-get-pin-token-pin-auth-blocked-error" withExtension:@"html"];
 
     auto *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
 
@@ -1026,7 +1032,7 @@ TEST(WebAuthenticationPanel, PinGetPinTokenPinAuthBlockedError)
 TEST(WebAuthenticationPanel, PinGetPinTokenPinInvalidErrorAndRetry)
 {
     reset();
-    RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"web-authentication-make-credential-hid-pin-get-pin-token-pin-invalid-error-retry" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+    RetainPtr<NSURL> testURL = [NSBundle.test_resourcesBundle URLForResource:@"web-authentication-make-credential-hid-pin-get-pin-token-pin-invalid-error-retry" withExtension:@"html"];
 
     auto *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
 
@@ -1044,7 +1050,7 @@ TEST(WebAuthenticationPanel, PinGetPinTokenPinInvalidErrorAndRetry)
 TEST(WebAuthenticationPanel, PinGetPinTokenPinAuthInvalidErrorAndRetry)
 {
     reset();
-    RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"web-authentication-make-credential-hid-pin-get-pin-token-pin-auth-invalid-error-retry" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+    RetainPtr<NSURL> testURL = [NSBundle.test_resourcesBundle URLForResource:@"web-authentication-make-credential-hid-pin-get-pin-token-pin-auth-invalid-error-retry" withExtension:@"html"];
 
     auto *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
 
@@ -1062,7 +1068,7 @@ TEST(WebAuthenticationPanel, PinGetPinTokenPinAuthInvalidErrorAndRetry)
 TEST(WebAuthenticationPanel, MakeCredentialInternalUV)
 {
     reset();
-    RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"web-authentication-make-credential-hid-internal-uv" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+    RetainPtr<NSURL> testURL = [NSBundle.test_resourcesBundle URLForResource:@"web-authentication-make-credential-hid-internal-uv" withExtension:@"html"];
 
     auto *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
 
@@ -1078,7 +1084,7 @@ TEST(WebAuthenticationPanel, MakeCredentialInternalUV)
 TEST(WebAuthenticationPanel, MakeCredentialPin)
 {
     reset();
-    RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"web-authentication-make-credential-hid-pin" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+    RetainPtr<NSURL> testURL = [NSBundle.test_resourcesBundle URLForResource:@"web-authentication-make-credential-hid-pin" withExtension:@"html"];
 
     auto *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
 
@@ -1095,7 +1101,7 @@ TEST(WebAuthenticationPanel, MakeCredentialPin)
 TEST(WebAuthenticationPanel, MakeCredentialPinAuthBlockedError)
 {
     reset();
-    RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"web-authentication-make-credential-hid-pin-auth-blocked-error" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+    RetainPtr<NSURL> testURL = [NSBundle.test_resourcesBundle URLForResource:@"web-authentication-make-credential-hid-pin-auth-blocked-error" withExtension:@"html"];
 
     auto *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
 
@@ -1114,7 +1120,7 @@ TEST(WebAuthenticationPanel, MakeCredentialPinAuthBlockedError)
 TEST(WebAuthenticationPanel, MakeCredentialPinInvalidErrorAndRetry)
 {
     reset();
-    RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"web-authentication-make-credential-hid-pin-invalid-error-retry" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+    RetainPtr<NSURL> testURL = [NSBundle.test_resourcesBundle URLForResource:@"web-authentication-make-credential-hid-pin-invalid-error-retry" withExtension:@"html"];
 
     auto *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
 
@@ -1132,7 +1138,7 @@ TEST(WebAuthenticationPanel, MakeCredentialPinInvalidErrorAndRetry)
 TEST(WebAuthenticationPanel, GetAssertionPin)
 {
     reset();
-    RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"web-authentication-get-assertion-hid-pin" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+    RetainPtr<NSURL> testURL = [NSBundle.test_resourcesBundle URLForResource:@"web-authentication-get-assertion-hid-pin" withExtension:@"html"];
 
     auto *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
 
@@ -1149,7 +1155,7 @@ TEST(WebAuthenticationPanel, GetAssertionPin)
 TEST(WebAuthenticationPanel, GetAssertionInternalUV)
 {
     reset();
-    RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"web-authentication-get-assertion-hid-internal-uv" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+    RetainPtr<NSURL> testURL = [NSBundle.test_resourcesBundle URLForResource:@"web-authentication-get-assertion-hid-internal-uv" withExtension:@"html"];
 
     auto *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
 
@@ -1165,7 +1171,7 @@ TEST(WebAuthenticationPanel, GetAssertionInternalUV)
 TEST(WebAuthenticationPanel, GetAssertionInternalUVPinFallback)
 {
     reset();
-    RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"web-authentication-get-assertion-hid-internal-uv-pin-fallback" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+    RetainPtr<NSURL> testURL = [NSBundle.test_resourcesBundle URLForResource:@"web-authentication-get-assertion-hid-internal-uv-pin-fallback" withExtension:@"html"];
 
     auto *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
 
@@ -1182,7 +1188,7 @@ TEST(WebAuthenticationPanel, GetAssertionInternalUVPinFallback)
 TEST(WebAuthenticationPanel, GetAssertionPinAuthBlockedError)
 {
     reset();
-    RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"web-authentication-get-assertion-hid-pin-auth-blocked-error" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+    RetainPtr<NSURL> testURL = [NSBundle.test_resourcesBundle URLForResource:@"web-authentication-get-assertion-hid-pin-auth-blocked-error" withExtension:@"html"];
 
     auto *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
 
@@ -1201,7 +1207,7 @@ TEST(WebAuthenticationPanel, GetAssertionPinAuthBlockedError)
 TEST(WebAuthenticationPanel, GetAssertionPinInvalidErrorAndRetry)
 {
     reset();
-    RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"web-authentication-get-assertion-hid-pin-invalid-error-retry" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+    RetainPtr<NSURL> testURL = [NSBundle.test_resourcesBundle URLForResource:@"web-authentication-get-assertion-hid-pin-invalid-error-retry" withExtension:@"html"];
 
     auto *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
 
@@ -1220,7 +1226,7 @@ TEST(WebAuthenticationPanel, GetAssertionPinInvalidErrorAndRetry)
 TEST(WebAuthenticationPanel, NfcPinCachedDisconnect)
 {
     reset();
-    RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"web-authentication-get-assertion-nfc-pin-disconnect" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+    RetainPtr<NSURL> testURL = [NSBundle.test_resourcesBundle URLForResource:@"web-authentication-get-assertion-nfc-pin-disconnect" withExtension:@"html"];
 
     auto *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
 
@@ -1238,7 +1244,7 @@ TEST(WebAuthenticationPanel, NfcPinCachedDisconnect)
 TEST(WebAuthenticationPanel, MultipleAccountsNullDelegate)
 {
     reset();
-    RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"web-authentication-get-assertion-hid-multiple-accounts" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+    RetainPtr<NSURL> testURL = [NSBundle.test_resourcesBundle URLForResource:@"web-authentication-get-assertion-hid-multiple-accounts" withExtension:@"html"];
 
     auto *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
 
@@ -1255,7 +1261,7 @@ TEST(WebAuthenticationPanel, MultipleAccountsNullDelegate)
 TEST(WebAuthenticationPanel, MultipleAccounts)
 {
     reset();
-    RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"web-authentication-get-assertion-hid-multiple-accounts" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+    RetainPtr<NSURL> testURL = [NSBundle.test_resourcesBundle URLForResource:@"web-authentication-get-assertion-hid-multiple-accounts" withExtension:@"html"];
 
     auto *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
 
@@ -1276,7 +1282,7 @@ TEST(WebAuthenticationPanel, MultipleAccounts)
 TEST(WebAuthenticationPanel, LAError)
 {
     reset();
-    RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"web-authentication-make-credential-la-error" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+    RetainPtr<NSURL> testURL = [NSBundle.test_resourcesBundle URLForResource:@"web-authentication-make-credential-la-error" withExtension:@"html"];
 
     auto *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
 
@@ -1292,7 +1298,7 @@ TEST(WebAuthenticationPanel, LAError)
 TEST(WebAuthenticationPanel, LADuplicateCredential)
 {
     reset();
-    RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"web-authentication-make-credential-la-duplicate-credential" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+    RetainPtr<NSURL> testURL = [NSBundle.test_resourcesBundle URLForResource:@"web-authentication-make-credential-la-duplicate-credential" withExtension:@"html"];
 
     auto *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
 
@@ -1304,13 +1310,13 @@ TEST(WebAuthenticationPanel, LADuplicateCredential)
     ASSERT_TRUE(addKeyToKeychain(testES256PrivateKeyBase64, emptyString(), testUserEntityBundleBase64));
     [webView loadRequest:[NSURLRequest requestWithURL:testURL.get()]];
     Util::run(&webAuthenticationPanelFailed);
-    cleanUpKeychain(emptyString());
+    cleanUpKeychain();
 }
 
 TEST(WebAuthenticationPanel, LADuplicateCredentialWithConsent)
 {
     reset();
-    RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"web-authentication-make-credential-la-duplicate-credential" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+    RetainPtr<NSURL> testURL = [NSBundle.test_resourcesBundle URLForResource:@"web-authentication-make-credential-la-duplicate-credential" withExtension:@"html"];
 
     auto *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
 
@@ -1325,16 +1331,16 @@ TEST(WebAuthenticationPanel, LADuplicateCredentialWithConsent)
 
     [webView loadRequest:[NSURLRequest requestWithURL:testURL.get()]];
     Util::run(&webAuthenticationPanelUpdateLAExcludeCredentialsMatched);
-    cleanUpKeychain(emptyString());
+    cleanUpKeychain();
 }
 
 TEST(WebAuthenticationPanel, LANoCredential)
 {
     reset();
     // In case this wasn't cleaned up by another test.
-    cleanUpKeychain(emptyString());
+    cleanUpKeychain();
 
-    RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"web-authentication-get-assertion-la" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+    RetainPtr<NSURL> testURL = [NSBundle.test_resourcesBundle URLForResource:@"web-authentication-get-assertion-la" withExtension:@"html"];
 
     auto *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
 
@@ -1350,7 +1356,7 @@ TEST(WebAuthenticationPanel, LANoCredential)
 TEST(WebAuthenticationPanel, LAMakeCredentialAllowLocalAuthenticator)
 {
     reset();
-    RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"web-authentication-make-credential-la" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+    RetainPtr<NSURL> testURL = [NSBundle.test_resourcesBundle URLForResource:@"web-authentication-make-credential-la" withExtension:@"html"];
 
     auto *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
 
@@ -1363,7 +1369,7 @@ TEST(WebAuthenticationPanel, LAMakeCredentialAllowLocalAuthenticator)
     [webView loadRequest:[NSURLRequest requestWithURL:testURL.get()]];
     [webView waitForMessage:@"Succeeded!"];
     checkPanel([delegate panel], @"", @[adoptNS([[NSNumber alloc] initWithInt:_WKWebAuthenticationTransportUSB]).get(), adoptNS([[NSNumber alloc] initWithInt:_WKWebAuthenticationTransportInternal]).get()], _WKWebAuthenticationTypeCreate);
-    cleanUpKeychain(emptyString());
+    cleanUpKeychain();
 }
 
 #if PLATFORM(MAC)
@@ -1371,7 +1377,7 @@ TEST(WebAuthenticationPanel, LAMakeCredentialAllowLocalAuthenticator)
 TEST(WebAuthenticationPanel, LAGetAssertion)
 {
     reset();
-    RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"web-authentication-get-assertion-la" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+    RetainPtr<NSURL> testURL = [NSBundle.test_resourcesBundle URLForResource:@"web-authentication-get-assertion-la" withExtension:@"html"];
 
     auto *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
 
@@ -1384,13 +1390,13 @@ TEST(WebAuthenticationPanel, LAGetAssertion)
     [webView loadRequest:[NSURLRequest requestWithURL:testURL.get()]];
     [webView waitForMessage:@"Succeeded!"];
     checkPanel([delegate panel], @"", @[adoptNS([[NSNumber alloc] initWithInt:_WKWebAuthenticationTransportUSB]).get(), adoptNS([[NSNumber alloc] initWithInt:_WKWebAuthenticationTransportInternal]).get()], _WKWebAuthenticationTypeGet);
-    cleanUpKeychain(emptyString());
+    cleanUpKeychain();
 }
 
 TEST(WebAuthenticationPanel, LAGetAssertionMultipleCredentialStore)
 {
     reset();
-    RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"web-authentication-get-assertion-la" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+    RetainPtr<NSURL> testURL = [NSBundle.test_resourcesBundle URLForResource:@"web-authentication-get-assertion-la" withExtension:@"html"];
 
     auto *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
 
@@ -1411,14 +1417,14 @@ TEST(WebAuthenticationPanel, LAGetAssertionMultipleCredentialStore)
     EXPECT_WK_STREQ(webAuthenticationPanelSelectedCredentialName, "Jane");
     EXPECT_WK_STREQ(webAuthenticationPanelSelectedCredentialDisplayName, "Jane Smith");
 
-    cleanUpKeychain(emptyString());
+    cleanUpKeychain();
 }
 
 TEST(WebAuthenticationPanel, LAGetAssertionNoMockNoUserGesture)
 {
     reset();
     webAuthenticationPanelRequestNoGesture = false;
-    RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"web-authentication-get-assertion-la-no-mock" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+    RetainPtr<NSURL> testURL = [NSBundle.test_resourcesBundle URLForResource:@"web-authentication-get-assertion-la-no-mock" withExtension:@"html"];
 
     auto *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
 
@@ -1438,7 +1444,7 @@ TEST(WebAuthenticationPanel, LAGetAssertionNoMockNoUserGesture)
 TEST(WebAuthenticationPanel, LAGetAssertionMultipleOrder)
 {
     reset();
-    RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"web-authentication-get-assertion-la" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+    RetainPtr<NSURL> testURL = [NSBundle.test_resourcesBundle URLForResource:@"web-authentication-get-assertion-la" withExtension:@"html"];
 
     auto *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
 
@@ -1458,7 +1464,7 @@ TEST(WebAuthenticationPanel, LAGetAssertionMultipleOrder)
     [webView waitForMessage:@"Succeeded!"];
     EXPECT_WK_STREQ(webAuthenticationPanelSelectedCredentialName, "Jane");
 
-    cleanUpKeychain(emptyString());
+    cleanUpKeychain();
 }
 
 #endif // PLATFORM(MAC)
@@ -1480,7 +1486,7 @@ TEST(WebAuthenticationPanel, PublicKeyCredentialCreationOptionsMinimum)
 
     EXPECT_WK_STREQ(result.rp.name, "example.com");
     EXPECT_TRUE(result.rp.icon.isNull());
-    EXPECT_TRUE(result.rp.id && result.rp.id->isNull());
+    EXPECT_TRUE(result.rp.id.isNull());
 
     EXPECT_WK_STREQ(result.user.name, "jappleseed@example.com");
     EXPECT_TRUE(result.user.icon.isNull());
@@ -1522,7 +1528,7 @@ TEST(WebAuthenticationPanel, PublicKeyCredentialCreationOptionsMaximumDefault)
 
     EXPECT_WK_STREQ(result.rp.name, "example.com");
     EXPECT_TRUE(result.rp.icon.isNull());
-    EXPECT_TRUE(result.rp.id && result.rp.id->isNull());
+    EXPECT_TRUE(result.rp.id.isNull());
 
     EXPECT_WK_STREQ(result.user.name, "jappleseed@example.com");
     EXPECT_TRUE(result.user.icon.isNull());
@@ -1588,7 +1594,7 @@ TEST(WebAuthenticationPanel, PublicKeyCredentialCreationOptionsMaximum1)
 
     EXPECT_WK_STREQ(result.rp.name, "example.com");
     EXPECT_WK_STREQ(result.rp.icon, @"https//www.example.com/icon.jpg");
-    EXPECT_WK_STREQ(*result.rp.id, "example.com");
+    EXPECT_WK_STREQ(result.rp.id, "example.com");
 
     EXPECT_WK_STREQ(result.user.name, "jappleseed@example.com");
     EXPECT_WK_STREQ(result.user.icon, @"https//www.example.com/icon.jpg");
@@ -1657,7 +1663,7 @@ TEST(WebAuthenticationPanel, PublicKeyCredentialCreationOptionsMaximum2)
 
     EXPECT_WK_STREQ(result.rp.name, "example.com");
     EXPECT_WK_STREQ(result.rp.icon, @"https//www.example.com/icon.jpg");
-    EXPECT_WK_STREQ(*result.rp.id, "example.com");
+    EXPECT_WK_STREQ(result.rp.id, "example.com");
 
     EXPECT_WK_STREQ(result.user.name, "jappleseed@example.com");
     EXPECT_WK_STREQ(result.user.icon, @"https//www.example.com/icon.jpg");
@@ -1740,7 +1746,7 @@ TEST(WebAuthenticationPanel, MakeCredentialLA)
 
     [panel makeCredentialWithChallenge:nsHash.get() origin:@"https://example.com" options:options.get() completionHandler:^(_WKAuthenticatorAttestationResponse *response, NSError *error) {
         webAuthenticationPanelRan = true;
-        cleanUpKeychain("example.com"_s);
+        cleanUpKeychain();
 
         EXPECT_TRUE(laContextRequested);
         EXPECT_NULL(error);
@@ -1777,7 +1783,7 @@ TEST(WebAuthenticationPanel, MakeCredentialLAClientDataHashMediation)
 
     [panel makeCredentialWithMediationRequirement:_WKWebAuthenticationMediationRequirementOptional clientDataHash:nsHash.get() options:options.get() completionHandler:^(_WKAuthenticatorAttestationResponse *response, NSError *error) {
         webAuthenticationPanelRan = true;
-        cleanUpKeychain("example.com"_s);
+        cleanUpKeychain();
 
         EXPECT_TRUE(laContextRequested);
         EXPECT_NULL(error);
@@ -1816,7 +1822,7 @@ TEST(WebAuthenticationPanel, MakeCredentialLAAttestationFalback)
 
     [panel makeCredentialWithClientDataHash:nsHash.get() options:options.get() completionHandler:^(_WKAuthenticatorAttestationResponse *response, NSError *error) {
         webAuthenticationPanelRan = true;
-        cleanUpKeychain("example.com"_s);
+        cleanUpKeychain();
 
         EXPECT_NOT_NULL(response);
         // {"fmt": "none", "attStmt": {}, "authData": ...}
@@ -1956,7 +1962,7 @@ TEST(WebAuthenticationPanel, GetAssertionLA)
         EXPECT_EQ([credentialsAfter count], 1lu);
         EXPECT_NOT_NULL([credentialsAfter firstObject]);
         EXPECT_GE([[credentialsAfter firstObject][_WKLocalAuthenticatorCredentialLastModificationDateKey] compare:[credentialsAfter firstObject][_WKLocalAuthenticatorCredentialCreationDateKey]], 0);
-        cleanUpKeychain("example.com"_s);
+        cleanUpKeychain();
 
         EXPECT_NULL(error);
 
@@ -2005,7 +2011,7 @@ TEST(WebAuthenticationPanel, GetAssertionLAClientDataHashMediation)
 
     [panel getAssertionWithMediationRequirement:_WKWebAuthenticationMediationRequirementOptional clientDataHash:nsHash options:options.get() completionHandler:^(_WKAuthenticatorAssertionResponse *response, NSError *error) {
         webAuthenticationPanelRan = true;
-        cleanUpKeychain("example.com"_s);
+        cleanUpKeychain();
 
         EXPECT_NULL(error);
 
@@ -2055,7 +2061,7 @@ TEST(WebAuthenticationPanel, GetAssertionNullUserHandle)
 
     [panel getAssertionWithClientDataHash:nsHash options:options.get() completionHandler:^(_WKAuthenticatorAssertionResponse *response, NSError *error) {
         webAuthenticationPanelRan = true;
-        cleanUpKeychain("example.com"_s);
+        cleanUpKeychain();
 
         EXPECT_NULL(error);
 
@@ -2085,7 +2091,7 @@ TEST(WebAuthenticationPanel, GetAssertionCrossPlatform)
 
     [panel getAssertionWithChallenge:nsHash origin:@"" options:options.get() completionHandler:^(_WKAuthenticatorAssertionResponse *response, NSError *error) {
         webAuthenticationPanelRan = true;
-        cleanUpKeychain(emptyString());
+        cleanUpKeychain();
 
         EXPECT_NULL(response);
         EXPECT_EQ(error.domain, WKErrorDomain);
@@ -2118,7 +2124,7 @@ TEST(WebAuthenticationPanel, GetAllCredential)
     EXPECT_LE([[credentials firstObject][_WKLocalAuthenticatorCredentialLastModificationDateKey] compare:after.get()], 0);
     EXPECT_EQ([[credentials firstObject][_WKLocalAuthenticatorCredentialLastModificationDateKey] compare:[credentials firstObject][_WKLocalAuthenticatorCredentialCreationDateKey]], 0);
 
-    cleanUpKeychain("example.com"_s);
+    cleanUpKeychain();
 }
 
 TEST(WebAuthenticationPanel, GetAllCredentialNullUserHandle)
@@ -2136,7 +2142,7 @@ TEST(WebAuthenticationPanel, GetAllCredentialNullUserHandle)
     EXPECT_NOT_NULL([credentials firstObject]);
     EXPECT_EQ([credentials firstObject][_WKLocalAuthenticatorCredentialUserHandleKey], [NSNull null]);
 
-    cleanUpKeychain("example.com"_s);
+    cleanUpKeychain();
 }
 
 TEST(WebAuthenticationPanel, GetAllCredentialWithDisplayName)
@@ -2156,7 +2162,7 @@ TEST(WebAuthenticationPanel, GetAllCredentialWithDisplayName)
     EXPECT_WK_STREQ([credentials firstObject][_WKLocalAuthenticatorCredentialNameKey], "John");
     EXPECT_WK_STREQ([credentials firstObject][_WKLocalAuthenticatorCredentialDisplayNameKey], "Johnny");
 
-    cleanUpKeychain("example.com"_s);
+    cleanUpKeychain();
 }
 
 TEST(WebAuthenticationPanel, GetAllCredentialByRPID)
@@ -2186,14 +2192,13 @@ TEST(WebAuthenticationPanel, GetAllCredentialByRPID)
     EXPECT_NOT_NULL(credentials);
     EXPECT_EQ([credentials count], 0lu);
 
-    cleanUpKeychain("example.com"_s);
-    cleanUpKeychain("example2.com"_s);
+    cleanUpKeychain();
 }
 
 TEST(WebAuthenticationPanel, GetAllCredentialByCredentialID)
 {
     reset();
-    cleanUpKeychain("example.com"_s);
+    cleanUpKeychain();
 
     // {"id": h'00010203040506070809', "name": "John", "displayName": "Johnny"}
     ASSERT_TRUE(addKeyToKeychain(testES256PrivateKeyBase64, "example.com"_s, "o2JpZEoAAQIDBAUGBwgJZG5hbWVkSm9obmtkaXNwbGF5TmFtZWZKb2hubnk="_s));
@@ -2210,7 +2215,7 @@ TEST(WebAuthenticationPanel, GetAllCredentialByCredentialID)
     EXPECT_NOT_NULL(credentials);
     EXPECT_EQ([credentials count], 0lu);
 
-    cleanUpKeychain("example.com"_s);
+    cleanUpKeychain();
 }
 
 TEST(WebAuthenticationPanel, EncodeCTAPAssertion)
@@ -2257,7 +2262,7 @@ TEST(WebAuthenticationPanel, EncodeCTAPCreation)
 TEST(WebAuthenticationPanel, UpdateCredentialDisplayName)
 {
     reset();
-    cleanUpKeychain("example.com"_s);
+    cleanUpKeychain();
 
     ASSERT_TRUE(addKeyToKeychain(testES256PrivateKeyBase64, "example.com"_s, testUserEntityBundleBase64));
 
@@ -2288,13 +2293,13 @@ TEST(WebAuthenticationPanel, UpdateCredentialDisplayName)
     EXPECT_NOT_NULL([credentials firstObject]);
     EXPECT_WK_STREQ([credentials firstObject][_WKLocalAuthenticatorCredentialDisplayNameKey], "Something Different");
 
-    cleanUpKeychain("example.com"_s);
+    cleanUpKeychain();
 }
 
 TEST(WebAuthenticationPanel, UpdateCredentialName)
 {
     reset();
-    cleanUpKeychain("example.com"_s);
+    cleanUpKeychain();
 
     ASSERT_TRUE(addKeyToKeychain(testES256PrivateKeyBase64, "example.com"_s, testUserEntityBundleBase64));
 
@@ -2326,13 +2331,13 @@ TEST(WebAuthenticationPanel, UpdateCredentialName)
     EXPECT_WK_STREQ([credentials firstObject][_WKLocalAuthenticatorCredentialNameKey], "Something Different");
     EXPECT_NULL([credentials firstObject][_WKLocalAuthenticatorCredentialDisplayNameKey]);
 
-    cleanUpKeychain("example.com"_s);
+    cleanUpKeychain();
 }
 
 TEST(WebAuthenticationPanel, ExportImportCredential)
 {
     reset();
-    cleanUpKeychain("example.com"_s);
+    cleanUpKeychain();
 
     addKeyToKeychain(testES256PrivateKeyBase64, "example.com"_s, testUserEntityBundleBase64);
 
@@ -2344,8 +2349,8 @@ TEST(WebAuthenticationPanel, ExportImportCredential)
     EXPECT_NOT_NULL([credentials firstObject]);
     NSError *error = nil;
     auto exportedKey = [_WKWebAuthenticationPanel exportLocalAuthenticatorCredentialWithID:[credentials firstObject][_WKLocalAuthenticatorCredentialIDKey] error:&error];
-    
-    cleanUpKeychain("example.com"_s);
+
+    cleanUpKeychain();
 
     EXPECT_EQ([[_WKWebAuthenticationPanel getAllLocalAuthenticatorCredentialsWithAccessGroup:testWebKitAPIAccessGroup] count], 0lu);
 
@@ -2354,13 +2359,13 @@ TEST(WebAuthenticationPanel, ExportImportCredential)
 
     EXPECT_EQ([[_WKWebAuthenticationPanel getAllLocalAuthenticatorCredentialsWithAccessGroup:testWebKitAPIAccessGroup] count], 0lu);
     EXPECT_EQ([[_WKWebAuthenticationPanel getAllLocalAuthenticatorCredentialsWithAccessGroup:testWebKitAPIAlternateAccessGroup] count], 1lu);
-    cleanUpKeychain("example.com"_s);
+    cleanUpKeychain();
 }
 
 TEST(WebAuthenticationPanel, ExportImportDuplicateCredential)
 {
     reset();
-    cleanUpKeychain(emptyString());
+    cleanUpKeychain();
 
     addKeyToKeychain(testES256PrivateKeyBase64, "example.com"_s, testUserEntityBundleBase64);
 
@@ -2371,7 +2376,7 @@ TEST(WebAuthenticationPanel, ExportImportDuplicateCredential)
     EXPECT_NOT_NULL([credentials firstObject]);
     NSError *error = nil;
     auto exportedKey = [_WKWebAuthenticationPanel exportLocalAuthenticatorCredentialWithID:[credentials firstObject][_WKLocalAuthenticatorCredentialIDKey] error:&error];
-    cleanUpKeychain("example.com"_s);
+    cleanUpKeychain();
 
     auto credentialId = [_WKWebAuthenticationPanel importLocalAuthenticatorWithAccessGroup:testWebKitAPIAccessGroup credential:exportedKey error:&error];
 
@@ -2384,7 +2389,7 @@ TEST(WebAuthenticationPanel, ExportImportDuplicateCredential)
     EXPECT_EQ(credentialId, nil);
     EXPECT_EQ(error.code, WKErrorDuplicateCredential);
 
-    cleanUpKeychain("example.com"_s);
+    cleanUpKeychain();
 }
 
 TEST(WebAuthenticationPanel, ImportMalformedCredential)

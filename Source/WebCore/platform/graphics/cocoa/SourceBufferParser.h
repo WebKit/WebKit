@@ -93,7 +93,7 @@ public:
     virtual void invalidate() = 0;
     virtual void setMinimumAudioSampleDuration(float);
 #if !RELEASE_LOG_DISABLED
-    virtual void setLogger(const Logger&, const void* logIdentifier) = 0;
+    virtual void setLogger(const Logger&, uint64_t logIdentifier) = 0;
 #endif
 
     // Will be called on the main thread.

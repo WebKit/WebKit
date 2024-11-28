@@ -53,11 +53,14 @@ static void reportReceived(void* context, IOReturn status, void*, IOHIDReportTyp
     ASSERT(reportID == kHidReportId);
     ASSERT(reportLength == kHidMaxPacketSize);
 
-    connection->receiveReport(std::span { report, static_cast<size_t>(reportLength) });
+    connection->receiveReport(unsafeMakeSpan(report, reportLength));
 }
 #endif // HAVE(SECURITY_KEY_API)
 
-WTF_MAKE_TZONE_ALLOCATED_IMPL(HidConnection);
+Ref<HidConnection> HidConnection::create(IOHIDDeviceRef device)
+{
+    return adoptRef(*new HidConnection(device));
+}
 
 HidConnection::HidConnection(IOHIDDeviceRef device)
     : m_device(device)
@@ -161,4 +164,3 @@ void HidConnection::registerDataReceivedCallbackInternal()
 } // namespace WebKit
 
 #endif // ENABLE(WEB_AUTHN)
-

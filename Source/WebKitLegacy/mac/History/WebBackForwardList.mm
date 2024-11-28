@@ -335,7 +335,10 @@ static bool bumperCarBackForwardHackNeeded()
 
 - (WebHistoryItem *)itemAtIndex:(int)index
 {
-    return retainPtr(kit(core(self)->itemAtIndex(index).get())).autorelease();
+    if (auto* mainFrame = core([core(self)->webView() mainFrame]))
+        return retainPtr(kit(core(self)->itemAtIndex(index, mainFrame->frameID()).get())).autorelease();
+    ASSERT_NOT_REACHED();
+    return nullptr;
 }
 
 @end

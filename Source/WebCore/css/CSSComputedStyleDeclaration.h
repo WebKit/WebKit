@@ -37,15 +37,15 @@ class MutableStyleProperties;
 class CSSComputedStyleDeclaration final : public CSSStyleDeclaration, public RefCounted<CSSComputedStyleDeclaration> {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED_EXPORT(CSSComputedStyleDeclaration, WEBCORE_EXPORT);
 public:
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
+
     enum class AllowVisited : bool { No, Yes };
     WEBCORE_EXPORT static Ref<CSSComputedStyleDeclaration> create(Element&, AllowVisited);
     static Ref<CSSComputedStyleDeclaration> create(Element&, const std::optional<Style::PseudoElementIdentifier>&);
     static Ref<CSSComputedStyleDeclaration> createEmpty(Element&);
 
     WEBCORE_EXPORT virtual ~CSSComputedStyleDeclaration();
-
-    void ref() final { RefCounted::ref(); }
-    void deref() final { RefCounted::deref(); }
 
     String getPropertyValue(CSSPropertyID) const;
 

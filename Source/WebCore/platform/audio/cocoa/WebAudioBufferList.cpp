@@ -28,10 +28,15 @@
 
 #include "CAAudioStreamDescription.h"
 #include <wtf/CheckedArithmetic.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #include <pal/cf/CoreMediaSoftLink.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebAudioBufferList);
 
 WebAudioBufferList::WebAudioBufferList(const CAAudioStreamDescription& format)
     : m_bytesPerFrame(format.bytesPerFrame())
@@ -99,13 +104,58 @@ void WebAudioBufferList::setSampleCount(size_t sampleCount)
     m_sampleCount = sampleCount;
 
     m_flatBuffer.resize(bufferSizes->second);
-    auto* data = m_flatBuffer.data();
-    memset(data, 0, bufferSizes->second);
+    initializeList({ m_flatBuffer.data(), bufferSizes->second }, bufferSizes->first);
+}
 
-    for (uint32_t buffer = 0; buffer < m_canonicalList->mNumberBuffers; ++buffer) {
-        m_canonicalList->mBuffers[buffer].mData = data;
-        m_canonicalList->mBuffers[buffer].mDataByteSize = bufferSizes->first;
-        data += bufferSizes->first;
+std::optional<std::pair<UniqueRef<WebAudioBufferList>, RetainPtr<CMBlockBufferRef>>> WebAudioBufferList::createWebAudioBufferListWithBlockBuffer(const CAAudioStreamDescription& description, size_t sampleCount)
+{
+    ASSERT(sampleCount);
+
+    if (!sampleCount)
+        return { };
+
+    auto instance = makeUniqueRef<WebAudioBufferList>(description);
+    if (RetainPtr block = instance->setSampleCountWithBlockBuffer(sampleCount))
+        return std::make_pair(WTFMove(instance), WTFMove(block));
+
+    return { };
+}
+
+RetainPtr<CMBlockBufferRef> WebAudioBufferList::setSampleCountWithBlockBuffer(size_t sampleCount)
+{
+    auto bufferSizes = computeBufferSizes(m_channelCount, m_bytesPerFrame, m_canonicalList->mNumberBuffers, sampleCount);
+    ASSERT(bufferSizes);
+    if (!bufferSizes) {
+        RELEASE_LOG_ERROR(Media, "WebAudioBufferList::setSampleCountWithBlockBuffer overflow");
+        return { };
+    }
+
+    CMBlockBufferRef blockBuffer = nullptr;
+    if (auto error = PAL::CMBlockBufferCreateWithMemoryBlock(kCFAllocatorDefault, nullptr, bufferSizes->second, kCFAllocatorDefault, nullptr, 0, bufferSizes->second, kCMBlockBufferAssureMemoryNowFlag, &blockBuffer)) {
+        RELEASE_LOG_ERROR(Media, "WebAudioBufferList::setSampleCountWithBlockBuffer CMBlockBufferCreateWithMemoryBlock failed with: %d", static_cast<int>(error));
+        return { };
+    }
+    RetainPtr block = adoptCF(blockBuffer);
+
+    char* data = { };
+    if (auto error = PAL::CMBlockBufferGetDataPointer(blockBuffer, 0, nullptr, nullptr, &data)) {
+        RELEASE_LOG_ERROR(Media, "WebAudioBufferList::setSampleCountWithBlockBuffer CMBlockBufferGetDataPointer failed with: %d", static_cast<int>(error));
+        return { };
+    }
+    m_blockBuffer = WTFMove(block);
+
+    initializeList({ reinterpret_cast<uint8_t*>(data), bufferSizes->second }, bufferSizes->first);
+
+    return m_blockBuffer;
+}
+
+void WebAudioBufferList::initializeList(std::span<uint8_t> buffer, size_t channelLength)
+{
+    memset(buffer.data(), 0, buffer.size());
+
+    for (uint32_t index = 0; index < m_canonicalList->mNumberBuffers; ++index) {
+        m_canonicalList->mBuffers[index].mData = buffer.data() + channelLength * index;
+        m_canonicalList->mBuffers[index].mDataByteSize = channelLength;
     }
 
     reset();
@@ -155,3 +205,5 @@ void WebAudioBufferList::zeroFlatBuffer()
 }
 
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

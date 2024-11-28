@@ -35,6 +35,7 @@
 #include <time.h>
 #include <utility>
 #include <wtf/Forward.h>
+#include <wtf/MallocSpan.h>
 #include <wtf/OptionSet.h>
 #include <wtf/Vector.h>
 #include <wtf/WallTime.h>
@@ -42,6 +43,10 @@
 
 #if USE(CF)
 #include <wtf/RetainPtr.h>
+#endif
+
+#if HAVE(MMAP)
+#include <wtf/Mmap.h>
 #endif
 
 #if USE(CF)
@@ -135,6 +140,7 @@ WTF_EXPORT_PRIVATE std::optional<uint32_t> volumeFileBlockSize(const String&);
 WTF_EXPORT_PRIVATE std::optional<int32_t> getFileDeviceId(const String&);
 WTF_EXPORT_PRIVATE bool createSymbolicLink(const String& targetPath, const String& symbolicLinkPath);
 WTF_EXPORT_PRIVATE String createTemporaryZipArchive(const String& directory);
+WTF_EXPORT_PRIVATE String extractTemporaryZipArchive(const String& filePath);
 
 enum class FileType { Regular, Directory, SymbolicLink };
 WTF_EXPORT_PRIVATE std::optional<FileType> fileType(const String&);
@@ -243,7 +249,7 @@ WTF_EXPORT_PRIVATE WARN_UNUSED_RETURN bool makeSafeToUseMemoryMapForPath(const S
 class MappedFileData {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    MappedFileData() { }
+    MappedFileData() = default;
     MappedFileData(MappedFileData&&);
     static std::optional<MappedFileData> create(const String& filePath, MappedFileMode);
     static std::optional<MappedFileData> create(PlatformFileHandle, MappedFileMode);
@@ -254,24 +260,27 @@ public:
     WTF_EXPORT_PRIVATE ~MappedFileData();
     MappedFileData& operator=(MappedFileData&&);
 
+#if HAVE(MMAP)
+    std::span<uint8_t> leakHandle() { return m_fileData.leakSpan(); }
     explicit operator bool() const { return !!m_fileData; }
-    unsigned size() const { return m_fileSize; }
-    std::span<const uint8_t> span() const { return { static_cast<const uint8_t*>(m_fileData), size() }; }
-    std::span<uint8_t> mutableSpan() { return { static_cast<uint8_t*>(m_fileData), size() }; }
-
-#if PLATFORM(COCOA)
-    void* leakHandle() { return std::exchange(m_fileData, nullptr); }
-#endif
-#if OS(WINDOWS)
+    size_t size() const { return m_fileData.span().size(); }
+    std::span<const uint8_t> span() const { return m_fileData.span(); }
+    std::span<uint8_t> mutableSpan() { return m_fileData.mutableSpan(); }
+#elif OS(WINDOWS)
     const Win32Handle& fileMapping() const { return m_fileMapping; }
+    explicit operator bool() const { return !!m_fileData.data(); }
+    size_t size() const { return m_fileData.size(); }
+    std::span<const uint8_t> span() const { return m_fileData; }
+    std::span<uint8_t> mutableSpan() { return m_fileData; }
 #endif
 
 private:
     WTF_EXPORT_PRIVATE bool mapFileHandle(PlatformFileHandle, FileOpenMode, MappedFileMode);
 
-    void* m_fileData { nullptr };
-    unsigned m_fileSize { 0 };
-#if OS(WINDOWS)
+#if HAVE(MMAP)
+    MallocSpan<uint8_t, Mmap> m_fileData;
+#elif OS(WINDOWS)
+    std::span<uint8_t> m_fileData;
     Win32Handle m_fileMapping;
 #endif
 };
@@ -317,8 +326,7 @@ inline MappedFileData::MappedFileData(PlatformFileHandle handle, FileOpenMode op
 }
 
 inline MappedFileData::MappedFileData(MappedFileData&& other)
-    : m_fileData(std::exchange(other.m_fileData, nullptr))
-    , m_fileSize(std::exchange(other.m_fileSize, 0))
+    : m_fileData(std::exchange(other.m_fileData, { }))
 #if OS(WINDOWS)
     , m_fileMapping(WTFMove(other.m_fileMapping))
 #endif
@@ -327,8 +335,7 @@ inline MappedFileData::MappedFileData(MappedFileData&& other)
 
 inline MappedFileData& MappedFileData::operator=(MappedFileData&& other)
 {
-    m_fileData = std::exchange(other.m_fileData, nullptr);
-    m_fileSize = std::exchange(other.m_fileSize, 0);
+    m_fileData = std::exchange(other.m_fileData, { });
 #if OS(WINDOWS)
     m_fileMapping = WTFMove(other.m_fileMapping);
 #endif

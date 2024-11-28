@@ -84,7 +84,7 @@ public:
 
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const final { return m_logger; }
-    const void* logIdentifier() const { return m_logIdentifier; }
+    uint64_t logIdentifier() const { return m_logIdentifier; }
 #endif
 
 private:
@@ -92,7 +92,7 @@ private:
 
 #if !RELEASE_LOG_DISABLED
     Ref<const Logger> m_logger;
-    const void* m_logIdentifier;
+    const uint64_t m_logIdentifier;
 #endif
     String m_keySystem;
     std::unique_ptr<CDMPrivate> m_private;

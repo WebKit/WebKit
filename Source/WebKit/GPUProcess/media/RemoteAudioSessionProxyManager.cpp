@@ -51,14 +51,16 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteAudioSessionProxyManager);
 RemoteAudioSessionProxyManager::RemoteAudioSessionProxyManager(GPUProcess& gpuProcess)
     : m_gpuProcess(gpuProcess)
 {
-    AudioSession::sharedSession().addInterruptionObserver(*this);
-    AudioSession::sharedSession().addConfigurationChangeObserver(*this);
+    Ref session = AudioSession::sharedSession();
+    session->addInterruptionObserver(*this);
+    session->addConfigurationChangeObserver(*this);
 }
 
 RemoteAudioSessionProxyManager::~RemoteAudioSessionProxyManager()
 {
-    AudioSession::sharedSession().removeInterruptionObserver(*this);
-    AudioSession::sharedSession().removeConfigurationChangeObserver(*this);
+    Ref session = AudioSession::sharedSession();
+    session->removeInterruptionObserver(*this);
+    session->removeConfigurationChangeObserver(*this);
 }
 
 void RemoteAudioSessionProxyManager::addProxy(RemoteAudioSessionProxy& proxy, std::optional<audit_token_t> auditToken)
@@ -68,7 +70,7 @@ void RemoteAudioSessionProxyManager::addProxy(RemoteAudioSessionProxy& proxy, st
     updateCategory();
 
     if (auditToken)
-        AudioSession::sharedSession().setHostProcessAttribution(*auditToken);
+        AudioSession::protectedSharedSession()->setHostProcessAttribution(*auditToken);
 }
 
 void RemoteAudioSessionProxyManager::removeProxy(RemoteAudioSessionProxy& proxy)
@@ -83,10 +85,10 @@ void RemoteAudioSessionProxyManager::updateCategory()
     HashCountedSet<AudioSession::CategoryType, WTF::IntHash<AudioSession::CategoryType>, WTF::StrongEnumHashTraits<AudioSession::CategoryType>> categoryCounts;
     HashCountedSet<AudioSession::Mode, WTF::IntHash<AudioSession::Mode>, WTF::StrongEnumHashTraits<AudioSession::Mode>> modeCounts;
     HashCountedSet<RouteSharingPolicy, WTF::IntHash<RouteSharingPolicy>, WTF::StrongEnumHashTraits<RouteSharingPolicy>> policyCounts;
-    for (auto& otherProxy : m_proxies) {
-        categoryCounts.add(otherProxy.category());
-        modeCounts.add(otherProxy.mode());
-        policyCounts.add(otherProxy.routeSharingPolicy());
+    for (Ref otherProxy : m_proxies) {
+        categoryCounts.add(otherProxy->category());
+        modeCounts.add(otherProxy->mode());
+        policyCounts.add(otherProxy->routeSharingPolicy());
     }
 
     AudioSession::CategoryType category = AudioSession::CategoryType::None;
@@ -117,52 +119,44 @@ void RemoteAudioSessionProxyManager::updateCategory()
     else if (policyCounts.contains(RouteSharingPolicy::Independent))
         ASSERT_NOT_REACHED();
 
-    AudioSession::sharedSession().setCategory(category, mode, policy);
+    AudioSession::protectedSharedSession()->setCategory(category, mode, policy);
 }
 
 void RemoteAudioSessionProxyManager::updatePreferredBufferSizeForProcess()
 {
-#if ENABLE(MEDIA_STREAM)
-    if (CoreAudioCaptureSourceFactory::singleton().isAudioCaptureUnitRunning()) {
-        CoreAudioCaptureSourceFactory::singleton().whenAudioCaptureUnitIsNotRunning([weakThis = WeakPtr { *this }] {
-            if (weakThis)
-                weakThis->updatePreferredBufferSizeForProcess();
-        });
-        return;
-    }
-#endif
     size_t preferredBufferSize = std::numeric_limits<size_t>::max();
-    for (auto& proxy : m_proxies) {
-        if (proxy.preferredBufferSize() && proxy.preferredBufferSize() < preferredBufferSize)
-            preferredBufferSize = proxy.preferredBufferSize();
+    for (Ref proxy : m_proxies) {
+        if (proxy->preferredBufferSize() && proxy->preferredBufferSize() < preferredBufferSize)
+            preferredBufferSize = proxy->preferredBufferSize();
     }
 
     if (preferredBufferSize != std::numeric_limits<size_t>::max())
-        AudioSession::sharedSession().setPreferredBufferSize(preferredBufferSize);
+        AudioSession::protectedSharedSession()->setPreferredBufferSize(preferredBufferSize);
 }
 
 void RemoteAudioSessionProxyManager::updateSpatialExperience()
 {
     String sceneIdentifier;
     std::optional<AudioSession::SoundStageSize> maxSize;
-    for (auto& proxy : m_proxies) {
-        if (!proxy.isActive())
+    for (Ref proxy : m_proxies) {
+        if (!proxy->isActive())
             continue;
 
-        if (!maxSize || proxy.soundStageSize() > *maxSize) {
-            maxSize = proxy.soundStageSize();
-            sceneIdentifier = proxy.sceneIdentifier();
+        if (!maxSize || proxy->soundStageSize() > *maxSize) {
+            maxSize = proxy->soundStageSize();
+            sceneIdentifier = proxy->sceneIdentifier();
         }
     }
 
-    AudioSession::sharedSession().setSceneIdentifier(sceneIdentifier);
-    AudioSession::sharedSession().setSoundStageSize(maxSize.value_or(AudioSession::SoundStageSize::Automatic));
+    Ref session = AudioSession::sharedSession();
+    session->setSceneIdentifier(sceneIdentifier);
+    session->setSoundStageSize(maxSize.value_or(AudioSession::SoundStageSize::Automatic));
 }
 
 bool RemoteAudioSessionProxyManager::hasOtherActiveProxyThan(RemoteAudioSessionProxy& proxyToExclude)
 {
-    for (auto& proxy : m_proxies) {
-        if (proxy.isActive() && &proxy != &proxyToExclude)
+    for (Ref proxy : m_proxies) {
+        if (proxy->isActive() && proxy.ptr() != &proxyToExclude)
             return true;
     }
     return false;
@@ -170,8 +164,8 @@ bool RemoteAudioSessionProxyManager::hasOtherActiveProxyThan(RemoteAudioSessionP
 
 bool RemoteAudioSessionProxyManager::hasActiveNotInterruptedProxy()
 {
-    for (auto& proxy : m_proxies) {
-        if (proxy.isActive() && !proxy.isInterrupted())
+    for (Ref proxy : m_proxies) {
+        if (proxy->isActive() && !proxy->isInterrupted())
             return true;
     }
     return false;
@@ -191,13 +185,13 @@ bool RemoteAudioSessionProxyManager::tryToSetActiveForProcess(RemoteAudioSession
         // This proxy wants to de-activate, and is the last remaining active
         // proxy. Deactivate the session, and return whether that deactivation
         // was sucessful.
-        return AudioSession::sharedSession().tryToSetActive(false);
+        return AudioSession::protectedSharedSession()->tryToSetActive(false);
     }
 
     if (!hasActiveNotInterruptedProxy()) {
         // This proxy and only this proxy wants to become active. Activate
         // the session, and return whether that activation was successful.
-        return AudioSession::sharedSession().tryToSetActive(active);
+        return AudioSession::protectedSharedSession()->tryToSetActive(active);
     }
 
     // If this proxy is Ambient, and the session is already active, this
@@ -235,7 +229,7 @@ void RemoteAudioSessionProxyManager::updatePresentingProcesses()
 
     Vector<audit_token_t> presentingProcesses;
 
-    if (auto token = m_gpuProcess->parentProcessConnection()->getAuditToken())
+    if (auto token = m_gpuProcess->protectedParentProcessConnection()->getAuditToken())
         presentingProcesses.append(*token);
 
     // AVAudioSession will take out an assertion on all the "presenting applications"
@@ -249,25 +243,25 @@ void RemoteAudioSessionProxyManager::updatePresentingProcesses()
         if (auto& token = proxy.gpuConnectionToWebProcess()->presentingApplicationAuditToken())
             presentingProcesses.append(*token);
     });
-    AudioSession::sharedSession().setPresentingProcesses(WTFMove(presentingProcesses));
+    AudioSession::protectedSharedSession()->setPresentingProcesses(WTFMove(presentingProcesses));
 }
 
 void RemoteAudioSessionProxyManager::beginInterruptionRemote()
 {
-    auto& session = this->session();
+    Ref session = this->session();
     // Temporarily remove as an observer to avoid a spurious IPC back to the web process.
-    session.removeInterruptionObserver(*this);
-    session.beginInterruption();
-    session.addInterruptionObserver(*this);
+    session->removeInterruptionObserver(*this);
+    session->beginInterruption();
+    session->addInterruptionObserver(*this);
 }
 
 void RemoteAudioSessionProxyManager::endInterruptionRemote(AudioSession::MayResume mayResume)
 {
-    auto& session = this->session();
+    Ref session = this->session();
     // Temporarily remove as an observer to avoid a spurious IPC back to the web process.
-    session.removeInterruptionObserver(*this);
-    session.endInterruption(mayResume);
-    session.addInterruptionObserver(*this);
+    session->removeInterruptionObserver(*this);
+    session->endInterruption(mayResume);
+    session->addInterruptionObserver(*this);
 }
 
 void RemoteAudioSessionProxyManager::beginAudioSessionInterruption()

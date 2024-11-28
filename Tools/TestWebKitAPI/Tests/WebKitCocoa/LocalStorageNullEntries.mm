@@ -58,8 +58,8 @@ TEST(WKWebView, LocalStorageNullEntries)
     [configuration _setAllowUniversalAccessFromFileURLs:YES];
 
     // Copy the inconsistent database files to the LocalStorage directory
-    NSURL *url1 = [[NSBundle mainBundle] URLForResource:@"LocalStorageNullEntries" withExtension:@"localstorage" subdirectory:@"TestWebKitAPI.resources"];
-    NSURL *url2 = [[NSBundle mainBundle] URLForResource:@"LocalStorageNullEntries" withExtension:@"localstorage-shm" subdirectory:@"TestWebKitAPI.resources"];
+    NSURL *url1 = [NSBundle.test_resourcesBundle URLForResource:@"LocalStorageNullEntries" withExtension:@"localstorage"];
+    NSURL *url2 = [NSBundle.test_resourcesBundle URLForResource:@"LocalStorageNullEntries" withExtension:@"localstorage-shm"];
 
     NSURL *targetURL = [NSURL fileURLWithPath:[@"~/Library/WebKit/com.apple.WebKit.TestWebKitAPI/WebsiteData/LocalStorage/" stringByExpandingTildeInPath]];
     [[NSFileManager defaultManager] createDirectoryAtURL:targetURL withIntermediateDirectories:YES attributes:nil error:nil];
@@ -69,7 +69,7 @@ TEST(WKWebView, LocalStorageNullEntries)
 
     RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
 
-    NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"LocalStorageNullEntries" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"LocalStorageNullEntries" withExtension:@"html"]];
     [webView loadRequest:request];
 
     readyToContinue = false;

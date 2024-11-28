@@ -1,0 +1,50 @@
+<script>
+  globalThis.testRunner?.waitUntilDone();
+  const log = globalThis.$vm?.print ?? console.log;
+
+  const format = 'bgra8unorm';
+
+  onload = async () => {
+    let adapter = await navigator.gpu.requestAdapter();
+    let device = await adapter.requestDevice();
+    let module = device.createShaderModule({
+      code: `
+@vertex fn v() -> @builtin(position) vec4f { return vec4(); }
+@fragment fn f() {}
+`,
+    });
+    let pipeline = device.createRenderPipeline({
+      layout: 'auto', vertex: {module},
+      fragment: {module, targets: [{format, writeMask: 0}]},
+    });
+    let vertexBuffer = device.createBuffer({size: 4, usage: GPUBufferUsage.VERTEX});
+    let renderBundleEncoder = device.createRenderBundleEncoder({colorFormats: [format]});
+    renderBundleEncoder.setVertexBuffer(0, vertexBuffer);
+    renderBundleEncoder.setPipeline(pipeline);
+    for (let i = 0; i < 5_000_000; ++i) {
+      renderBundleEncoder.draw(0);
+    }
+    await 0;
+    // $vm.gc();
+    let pipeline2 = device.createRenderPipeline({
+      layout: 'auto', vertex: {module},
+      fragment: {module, targets: [{format, writeMask: 0}]},
+    });
+    let vertexBuffer2 = device.createBuffer({size: 4, usage: GPUBufferUsage.VERTEX});
+    renderBundleEncoder.setVertexBuffer(0, vertexBuffer);
+    renderBundleEncoder.setVertexBuffer(0, vertexBuffer2);
+    renderBundleEncoder.setPipeline(pipeline2);
+    let renderBundleEncoder2 = device.createRenderBundleEncoder({colorFormats: [format]});
+    renderBundleEncoder2.setVertexBuffer(0, vertexBuffer);
+    renderBundleEncoder2.setVertexBuffer(0, vertexBuffer2);
+    renderBundleEncoder2.setPipeline(pipeline);
+    await device.queue.onSubmittedWorkDone();
+    renderBundleEncoder2.draw(1);
+    await device.queue.onSubmittedWorkDone();
+    renderBundleEncoder2.finish();
+    renderBundleEncoder.finish();
+    await device.queue.onSubmittedWorkDone();
+    await device.queue.onSubmittedWorkDone();
+    globalThis.testRunner?.notifyDone();
+  };
+</script>

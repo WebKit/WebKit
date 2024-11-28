@@ -64,6 +64,7 @@
 #include <memory>
 #include <mutex>
 #include <string>
+#include <wtf/TZoneMalloc.h>
 #endif
 
 #ifdef __OBJC__

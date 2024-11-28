@@ -55,8 +55,8 @@ public:
     static Ref<AXIsolatedObject> create(const Ref<AccessibilityObject>&, AXIsolatedTree*);
     ~AXIsolatedObject();
 
-    AXID treeID() const final { return tree()->treeID(); }
-    String dbg() const final;
+    std::optional<AXID> treeID() const final { return tree()->treeID(); }
+    String dbgInternal(bool, OptionSet<AXDebugStringOption>) const final;
 
     AccessibilityRole roleValue() const final { return static_cast<AccessibilityRole>(intAttributeValue(AXPropertyName::RoleValue)); }
 
@@ -64,12 +64,18 @@ public:
     bool isDetached() const final;
     bool isTable() const final { return boolAttributeValue(AXPropertyName::IsTable); }
     bool isExposable() const final { return boolAttributeValue(AXPropertyName::IsExposable); }
+    bool hasBodyTag() const final { return boolAttributeValue(AXPropertyName::HasBodyTag); }
+    bool hasClickHandler() const final { return boolAttributeValue(AXPropertyName::HasClickHandler); }
 
     const AccessibilityChildrenVector& children(bool updateChildrenIfNeeded = true) final;
-    AXCoreObject* sibling(AXDirection) const;
-    AXCoreObject* siblingOrParent(AXDirection) const;
+#if ENABLE(INCLUDE_IGNORED_IN_CORE_AX_TREE)
+    AXIsolatedObject* parentObject() const final { return tree()->objectForID(parent()).get(); }
+    AXIsolatedObject* parentObjectUnignored() const final { return downcast<AXIsolatedObject>(AXCoreObject::parentObjectUnignored()); }
+#else
     AXIsolatedObject* parentObject() const final { return parentObjectUnignored(); }
-    AXIsolatedObject* parentObjectUnignored() const final;
+    AXIsolatedObject* parentObjectUnignored() const final { return tree()->objectForID(parent()).get(); }
+#endif // ENABLE(INCLUDE_IGNORED_IN_CORE_AX_TREE)
+    AXIsolatedObject* clickableSelfOrAncestor(ClickHandlerFilter filter = ClickHandlerFilter::ExcludeBody) const final { return Accessibility::clickableSelfOrAncestor(*this, filter); };
     AXIsolatedObject* editableAncestor() final { return Accessibility::editableAncestor(*this); };
     bool canSetFocusAttribute() const final { return boolAttributeValue(AXPropertyName::CanSetFocusAttribute); }
 
@@ -83,17 +89,18 @@ public:
     bool shouldEmitNewlinesBeforeAndAfterNode() const final { return boolAttributeValue(AXPropertyName::ShouldEmitNewlinesBeforeAndAfterNode); }
 #endif // ENABLE(AX_THREAD_TEXT_APIS)
 
+    AXTextMarkerRange textMarkerRange() const final;
+
 private:
     constexpr ProcessID processID() const final { return tree()->processID(); }
     void detachRemoteParts(AccessibilityDetachmentType) final;
     void detachPlatformWrapper(AccessibilityDetachmentType) final;
 
-    AXID parent() const { return m_parentID; }
-    void setParent(AXID axID) { m_parentID = axID; }
+    std::optional<AXID> parent() const { return m_parentID; }
+    void setParent(std::optional<AXID> axID) { m_parentID = axID; }
 
     AXIsolatedTree* tree() const { return m_cachedTree.get(); }
 
-    AXIsolatedObject() = default;
     AXIsolatedObject(const Ref<AccessibilityObject>&, AXIsolatedTree*);
     bool isAXIsolatedObjectInstance() const final { return true; }
     AccessibilityObject* associatedAXObject() const;
@@ -137,8 +144,8 @@ private:
     template<typename T> T getOrRetrievePropertyValue(AXPropertyName);
 
     void fillChildrenVectorForProperty(AXPropertyName, AccessibilityChildrenVector&) const;
-    void setMathscripts(AXPropertyName, AXCoreObject&);
-    void insertMathPairs(Vector<std::pair<AXID, AXID>>&, AccessibilityMathMultiscriptPairs&);
+    void setMathscripts(AXPropertyName, AccessibilityObject&);
+    void insertMathPairs(Vector<std::pair<Markable<AXID>, Markable<AXID>>>&, AccessibilityMathMultiscriptPairs&);
     template<typename U> void performFunctionOnMainThreadAndWait(U&& lambda) const
     {
         Accessibility::performFunctionOnMainThreadAndWait([&lambda, this] {
@@ -155,26 +162,21 @@ private:
     }
 
     // Attribute retrieval overrides.
-    bool isLink() const final { return boolAttributeValue(AXPropertyName::IsLink); }
     bool isSecureField() const final { return boolAttributeValue(AXPropertyName::IsSecureField); }
     bool isAttachment() const final { return boolAttributeValue(AXPropertyName::IsAttachment); }
     bool isInputImage() const final { return boolAttributeValue(AXPropertyName::IsInputImage); }
-    bool isControl() const final { return boolAttributeValue(AXPropertyName::IsControl); }
     bool isRadioInput() const final { return boolAttributeValue(AXPropertyName::IsRadioInput); }
 
-    bool isList() const final { return boolAttributeValue(AXPropertyName::IsList); }
     bool isKeyboardFocusable() const final { return boolAttributeValue(AXPropertyName::IsKeyboardFocusable); }
     
     // Table support.
     AXIsolatedObject* exposedTableAncestor(bool includeSelf = false) const final { return Accessibility::exposedTableAncestor(*this, includeSelf); }
-    bool supportsSelectedRows() const final { return boolAttributeValue(AXPropertyName::SupportsSelectedRows); }
     AccessibilityChildrenVector columns() final { return tree()->objectsForIDs(vectorAttributeValue<AXID>(AXPropertyName::Columns)); }
     AccessibilityChildrenVector rows() final { return tree()->objectsForIDs(vectorAttributeValue<AXID>(AXPropertyName::Rows)); }
     unsigned columnCount() final { return static_cast<unsigned>(columns().size()); }
     unsigned rowCount() final { return static_cast<unsigned>(rows().size()); }
     AccessibilityChildrenVector cells() final { return tree()->objectsForIDs(vectorAttributeValue<AXID>(AXPropertyName::Cells)); }
     AXIsolatedObject* cellForColumnAndRow(unsigned, unsigned) final;
-    AccessibilityChildrenVector columnHeaders() final;
     AccessibilityChildrenVector rowHeaders() final;
     AccessibilityChildrenVector visibleRows() final { return tree()->objectsForIDs(vectorAttributeValue<AXID>(AXPropertyName::VisibleRows)); }
     AXIsolatedObject* headerContainer() final { return objectAttributeValue(AXPropertyName::HeaderContainer); }
@@ -193,7 +195,7 @@ private:
     bool isColumnHeader() const final { return boolAttributeValue(AXPropertyName::IsColumnHeader); }
     bool isRowHeader() const final { return boolAttributeValue(AXPropertyName::IsRowHeader); }
     String cellScope() const final { return stringAttributeValue(AXPropertyName::CellScope); }
-    AXID rowGroupAncestorID() const final { return propertyValue<AXID>(AXPropertyName::RowGroupAncestorID); }
+    std::optional<AXID> rowGroupAncestorID() const final { return propertyValue<Markable<AXID>>(AXPropertyName::RowGroupAncestorID); }
 
     // Table column support.
     bool isTableColumn() const final { return boolAttributeValue(AXPropertyName::IsTableColumn); }
@@ -218,10 +220,8 @@ private:
     bool isMultiSelectable() const final { return boolAttributeValue(AXPropertyName::IsMultiSelectable); }
     InsideLink insideLink() const final { return propertyValue<InsideLink>(AXPropertyName::InsideLink); }
     bool isRequired() const final { return boolAttributeValue(AXPropertyName::IsRequired); }
-    bool supportsRequiredAttribute() const final { return boolAttributeValue(AXPropertyName::SupportsRequiredAttribute); }
     bool isExpanded() const final { return boolAttributeValue(AXPropertyName::IsExpanded); }
     bool isFileUploadButton() const final { return boolAttributeValue(AXPropertyName::IsFileUploadButton); }
-    bool isMeter() const final { return boolAttributeValue(AXPropertyName::IsMeter); };
     FloatPoint screenRelativePosition() const final;
     IntPoint remoteFrameOffset() const final;
     FloatRect relativeFrame() const final;
@@ -237,9 +237,13 @@ private:
     String datetimeAttributeValue() const final { return stringAttributeValue(AXPropertyName::DatetimeAttributeValue); }
     bool canSetValueAttribute() const final { return boolAttributeValue(AXPropertyName::CanSetValueAttribute); }
     bool canSetSelectedAttribute() const final { return boolAttributeValue(AXPropertyName::CanSetSelectedAttribute); }
-    bool canSetSelectedChildren() const final { return boolAttributeValue(AXPropertyName::CanSetSelectedChildren); }
-    // We should never create an isolated object from an ignored live object, so we can hardcode this to false.
+#if ENABLE(INCLUDE_IGNORED_IN_CORE_AX_TREE)
+    bool isIgnored() const final { return boolAttributeValue(AXPropertyName::IsIgnored); }
+#else
+    // When not including ignored objects in the core tree, we should never create an isolated object from
+    // an ignored live object, so we can hardcode this to false.
     bool isIgnored() const final { return false; }
+#endif // ENABLE(INCLUDE_IGNORED_IN_CORE_AX_TREE)
     unsigned blockquoteLevel() const final { return unsignedAttributeValue(AXPropertyName::BlockquoteLevel); }
     unsigned headingLevel() const final { return unsignedAttributeValue(AXPropertyName::HeadingLevel); }
     AccessibilityButtonState checkboxOrRadioValue() const final { return propertyValue<AccessibilityButtonState>(AXPropertyName::ButtonState); }
@@ -273,7 +277,7 @@ private:
     Vector<String> determineDropEffects() const final;
     AXIsolatedObject* accessibilityHitTest(const IntPoint&) const final;
     AXIsolatedObject* focusedUIElement() const final;
-    AXCoreObject* internalLinkElement() const final { return objectAttributeValue(AXPropertyName::InternalLinkElement); }
+    AXIsolatedObject* internalLinkElement() const final { return objectAttributeValue(AXPropertyName::InternalLinkElement); }
     AccessibilityChildrenVector radioButtonGroup() const final { return tree()->objectsForIDs(vectorAttributeValue<AXID>(AXPropertyName::RadioButtonGroup)); }
     AXIsolatedObject* scrollBar(AccessibilityOrientation) final;
     const String placeholderValue() const final { return stringAttributeValue(AXPropertyName::PlaceholderValue); }
@@ -386,7 +390,6 @@ private:
 
     std::optional<SimpleRange> simpleRange() const final;
     VisiblePositionRange visiblePositionRange() const final;
-    AXTextMarkerRange textMarkerRange() const final;
 
     String selectedText() const final;
     VisiblePositionRange visiblePositionRangeForLine(unsigned) const final;
@@ -484,7 +487,6 @@ private:
     AccessibilityChildrenVector relatedObjects(AXRelationType) const final;
 
     bool supportsHasPopup() const final;
-    bool supportsPressAction() const final { return boolAttributeValue(AXPropertyName::SupportsPressAction); }
     bool supportsChecked() const final;
     bool isModalNode() const final;
     bool isDescendantOfRole(AccessibilityRole) const final;
@@ -513,7 +515,7 @@ private:
     Widget* widgetForAttachmentView() const final;
     bool isPlugin() const final { return boolAttributeValue(AXPropertyName::IsPlugin); }
 
-    HashMap<String, AXEditingStyleValueVariant> resolvedEditingStyles() const final;
+    UncheckedKeyHashMap<String, AXEditingStyleValueVariant> resolvedEditingStyles() const final;
 #if PLATFORM(COCOA)
     RemoteAXObjectRef remoteParentObject() const final;
     FloatRect convertRectToPlatformSpace(const FloatRect&, AccessibilityConversionSpace) const final;
@@ -550,10 +552,10 @@ private:
 
     // FIXME: Make this a ThreadSafeWeakPtr<AXIsolatedTree>.
     RefPtr<AXIsolatedTree> m_cachedTree;
-    AXID m_parentID;
+    Markable<AXID> m_parentID;
     bool m_childrenDirty { true };
     Vector<AXID> m_childrenIDs;
-    Vector<RefPtr<AXCoreObject>> m_children;
+    Vector<Ref<AXCoreObject>> m_children;
     AXPropertyMap m_propertyMap;
     OptionSet<AXPropertyFlag> m_propertyFlags;
     // Some objects (e.g. display:contents) form their geometry through their children.

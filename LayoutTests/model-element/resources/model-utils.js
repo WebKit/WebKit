@@ -26,6 +26,12 @@ const readyModel = async (test, options) => {
     return model;
 };
 
+function sleepForSeconds(duration) {
+    return new Promise(resolve => {
+        setTimeout(resolve, duration * 1000);
+    });
+}
+
 const epsilon = 0.001;
 
 const assert_cameras_are_equal = (actualCamera, expectedCamera, description) => {

@@ -30,6 +30,8 @@
 #include "WebFakeXRDevice.h"
 #include "XRHandJoint.h"
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 using InputSource = PlatformXR::FrameData::InputSource;
@@ -211,5 +213,7 @@ void WebFakeXRInputController::updateHandJoints(const Vector<FakeXRJointStateIni
 #endif // ENABLE(WEBXR_HANDS)
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ENABLE(WEBXR)

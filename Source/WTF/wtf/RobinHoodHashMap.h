@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,15 +31,15 @@ namespace WTF {
 
 // 95% load-factor.
 template<typename KeyArg, typename MappedArg, typename HashArg = DefaultHash<KeyArg>, typename KeyTraitsArg = HashTraits<KeyArg>, typename MappedTraitsArg = HashTraits<MappedArg>>
-using MemoryCompactLookupOnlyRobinHoodHashMap = HashMap<KeyArg, MappedArg, HashArg, KeyTraitsArg, MappedTraitsArg, MemoryCompactLookupOnlyRobinHoodHashTableTraits>;
+using MemoryCompactLookupOnlyRobinHoodHashMap = UncheckedKeyHashMap<KeyArg, MappedArg, HashArg, KeyTraitsArg, MappedTraitsArg, MemoryCompactLookupOnlyRobinHoodHashTableTraits>;
 
 // 90% load-factor.
 template<typename KeyArg, typename MappedArg, typename HashArg = DefaultHash<KeyArg>, typename KeyTraitsArg = HashTraits<KeyArg>, typename MappedTraitsArg = HashTraits<MappedArg>>
-using MemoryCompactRobinHoodHashMap = HashMap<KeyArg, MappedArg, HashArg, KeyTraitsArg, MappedTraitsArg, MemoryCompactRobinHoodHashTableTraits>;
+using MemoryCompactRobinHoodHashMap = UncheckedKeyHashMap<KeyArg, MappedArg, HashArg, KeyTraitsArg, MappedTraitsArg, MemoryCompactRobinHoodHashTableTraits>;
 
 // 75% load-factor.
 template<typename KeyArg, typename MappedArg, typename HashArg = DefaultHash<KeyArg>, typename KeyTraitsArg = HashTraits<KeyArg>, typename MappedTraitsArg = HashTraits<MappedArg>>
-using FastRobinHoodHashMap = HashMap<KeyArg, MappedArg, HashArg, KeyTraitsArg, MappedTraitsArg, FastRobinHoodHashTableTraits>;
+using FastRobinHoodHashMap = UncheckedKeyHashMap<KeyArg, MappedArg, HashArg, KeyTraitsArg, MappedTraitsArg, FastRobinHoodHashTableTraits>;
 
 } // namespace WTF
 

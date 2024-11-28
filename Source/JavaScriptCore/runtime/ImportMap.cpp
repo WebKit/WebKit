@@ -265,7 +265,7 @@ Expected<void, String> ImportMap::registerImportMap(const SourceCode& sourceCode
 
 String ImportMap::integrityForURL(const URL& url) const
 {
-    return m_integrity.get(url);
+    return url.isNull() ? String() : m_integrity.get(url);
 }
 
 } // namespace JSC

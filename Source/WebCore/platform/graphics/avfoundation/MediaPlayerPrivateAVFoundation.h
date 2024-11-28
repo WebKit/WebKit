@@ -55,8 +55,10 @@ class MediaPlayerPrivateAVFoundation
 public:
     virtual ~MediaPlayerPrivateAVFoundation();
 
-    void ref() final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::ref(); }
-    void deref() final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::deref(); }
+    constexpr MediaPlayerType mediaPlayerType() const final { return MediaPlayerType::AVFObjC; }
+
+    void ref() const final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::ref(); }
+    void deref() const final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::deref(); }
 
     virtual void metadataLoaded();
     virtual void playabilityKnown();
@@ -152,7 +154,7 @@ public:
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const final { return m_logger.get(); }
     ASCIILiteral logClassName() const override { return "MediaPlayerPrivateAVFoundation"_s; }
-    const void* logIdentifier() const final { return reinterpret_cast<const void*>(m_logIdentifier); }
+    uint64_t logIdentifier() const final { return m_logIdentifier; }
     WTFLogChannel& logChannel() const final;
 #endif
 
@@ -351,7 +353,7 @@ protected:
 
 #if !RELEASE_LOG_DISABLED
     Ref<const Logger> m_logger;
-    const void* m_logIdentifier;
+    const uint64_t m_logIdentifier;
 #endif
 
     FloatSize m_cachedNaturalSize;

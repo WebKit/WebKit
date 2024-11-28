@@ -25,6 +25,11 @@
 
 #include "config.h"
 #include "NativeImage.h"
+
+#if USE(SKIA)
+#include "GLFence.h"
+#endif
+
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -93,6 +98,11 @@ bool NativeImage::hasAlpha() const
 DestinationColorSpace NativeImage::colorSpace() const
 {
     return m_backend->colorSpace();
+}
+
+Headroom NativeImage::headroom() const
+{
+    return m_backend->headroom();
 }
 
 void NativeImage::replaceBackend(UniqueRef<NativeImageBackend> backend)

@@ -66,7 +66,7 @@ void RenderModel::update()
     if (renderTreeBeingDestroyed())
         return;
     
-    contentChanged(ModelChanged);
+    contentChanged(ContentChangeType::Model);
 }
 
 }

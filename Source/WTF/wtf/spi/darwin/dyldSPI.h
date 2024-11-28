@@ -293,8 +293,8 @@ WTF_EXTERN_C_BEGIN
 #define dyld_fall_2022_os_versions ({ (dyld_build_version_t) { 0, 0 }; })
 #endif
 
-#ifndef dyld_spring_2023_os_versions
-#define dyld_spring_2023_os_versions ({ (dyld_build_version_t) { 0, 0 }; })
+#ifndef dyld_2022_SU_E_os_versions
+#define dyld_2022_SU_E_os_versions ({ (dyld_build_version_t) { 0, 0 }; })
 #endif
 
 #ifndef dyld_fall_2023_os_versions
@@ -305,8 +305,8 @@ WTF_EXTERN_C_BEGIN
 #define dyld_2023_SU_C_os_versions ({ (dyld_build_version_t) { 0, 0 }; })
 #endif
 
-#ifndef dyld_spring_2024_os_versions
-#define dyld_spring_2024_os_versions ({ (dyld_build_version_t) { 0, 0 }; })
+#ifndef dyld_2023_SU_E_os_versions
+#define dyld_2023_SU_E_os_versions ({ (dyld_build_version_t) { 0, 0 }; })
 #endif
 
 #ifndef dyld_fall_2024_os_versions

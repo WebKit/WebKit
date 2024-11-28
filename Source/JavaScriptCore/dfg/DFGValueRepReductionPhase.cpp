@@ -58,15 +58,45 @@ private:
         HashSet<Node*> candidates;
         for (BasicBlock* block : m_graph.blocksInNaturalOrder()) {
             for (Node* node : *block) {
-                if (node->op() == ValueRep && node->child1().useKind() == DoubleRepUse)
-                    candidates.add(node);
+                switch (node->op()) {
+                case ValueRep: {
+                    if (node->child1().useKind() == DoubleRepUse)
+                        candidates.add(node);
+                    break;
+                }
+
+#if CPU(ARM64)
+                case DoubleRep: {
+                    if (node->child1().useKind() != RealNumberUse)
+                        break;
+
+                    switch (node->child1()->op()) {
+                    case GetClosureVar:
+                    case GetGlobalVar:
+                    case GetGlobalLexicalVariable:
+                    case MultiGetByOffset:
+                    case GetByOffset: {
+                        if (node->child1()->origin.exitOK)
+                            candidates.add(node->child1().node());
+                        break;
+                    }
+                    default:
+                        break;
+                    }
+                    break;
+                }
+#endif
+
+                default:
+                    break;
+                }
             }
         }
 
-        if (!candidates.size())
+        if (candidates.isEmpty())
             return false;
 
-        HashMap<Node*, Vector<Node*>> usersOf;
+        UncheckedKeyHashMap<Node*, Vector<Node*>> usersOf;
         auto getUsersOf = [&] (Node* candidate) {
             auto iter = usersOf.find(candidate);
             RELEASE_ASSERT(iter != usersOf.end());
@@ -75,8 +105,33 @@ private:
 
         for (BasicBlock* block : m_graph.blocksInPreOrder()) {
             for (Node* node : *block) {
-                if (node->op() == Phi || (node->op() == ValueRep && candidates.contains(node)))
+                switch (node->op()) {
+                case Phi: {
                     usersOf.add(node, Vector<Node*>());
+                    break;
+                }
+
+#if CPU(ARM64)
+                case GetClosureVar:
+                case GetGlobalVar:
+                case GetGlobalLexicalVariable:
+                case MultiGetByOffset:
+                case GetByOffset: {
+                    if (candidates.contains(node))
+                        usersOf.add(node, Vector<Node*>());
+                    break;
+                }
+#endif
+
+                case ValueRep: {
+                    if (candidates.contains(node))
+                        usersOf.add(node, Vector<Node*>());
+                    break;
+                }
+
+                default:
+                    break;
+                }
 
                 Vector<Node*, 3> alreadyAdded;
                 m_graph.doToChildren(node, [&] (Edge edge) {
@@ -129,7 +184,8 @@ private:
             };
 
             // Escape rules are as follows:
-            // - Any non-well-known use is an escape. Currently, we allow DoubleRep, Hints, Upsilons (described below).
+            // - Any non-well-known use is an escape. Currently, we allow DoubleRep, Hints,
+            //   Upsilons, PutByOffset, MultiPutByOffset, PutClosureVar, PutGlobalVariable (described below).
             // - Any Upsilon that forwards the candidate into an escaped phi escapes the candidate.
             // - A Phi remains a candidate as long as all values flowing into it can be made a double.
             //   Currently, this means these are valid things we support to forward into the Phi:
@@ -139,8 +195,8 @@ private:
             for (Node* candidate : candidates) {
                 bool ok = true;
 
-                auto dumpEscape = [&] (const char* description, Node* node) {
-                    if (!verbose)
+                auto dumpEscape = [&](const char* description, Node* node) {
+                    if constexpr (!verbose)
                         return;
                     dataLogLn(description);
                     dataLog("   candidate: ");
@@ -152,24 +208,50 @@ private:
 
                 if (candidate->op() == Phi) {
                     phiChildren.forAllIncomingValues(candidate, [&] (Node* node) {
-                        if (node->op() == JSConstant) {
+                        switch (node->op()) {
+                        case JSConstant: {
                             if (!node->asJSValue().isNumber()) {
                                 ok = false;
                                 dumpEscape("Phi Incoming JSConstant not a number: ", node);
                             }
-                        } else if (node->op() == ValueRep) {
+                            break;
+                        }
+
+#if CPU(ARM64)
+                        case GetClosureVar:
+                        case GetGlobalVar:
+                        case GetGlobalLexicalVariable:
+                        case MultiGetByOffset:
+                        case GetByOffset: {
+                            if (isEscaped(node)) {
+                                ok = false;
+                                dumpEscape("Phi Incoming Get is escaped: ", node);
+                            }
+                            break;
+                        }
+#endif
+
+                        case ValueRep: {
                             if (node->child1().useKind() != DoubleRepUse) {
                                 ok = false;
                                 dumpEscape("Phi Incoming ValueRep not DoubleRepUse: ", node);
                             }
-                        } else if (node->op() == Phi) {
+                            break;
+                        }
+
+                        case Phi: {
                             if (isEscaped(node)) {
                                 ok = false;
                                 dumpEscape("An incoming Phi to another Phi is escaped: ", node);
                             }
-                        } else {
+                            break;
+                        }
+
+                        default: {
                             ok = false;
                             dumpEscape("Unsupported incoming value to Phi: ", node);
+                            break;
+                        }
                         }
                     });
 
@@ -191,6 +273,15 @@ private:
                     case PutHint:
                     case MovHint:
                         break;
+
+#if CPU(ARM64)
+                    // We can handle these nodes only when we have FPRReg addition in integer form.
+                    case PutByOffset:
+                    case MultiPutByOffset:
+                    case PutClosureVar:
+                    case PutGlobalVariable:
+                        break;
+#endif
 
                     case Upsilon: {
                         Node* phi = user->phi();
@@ -222,44 +313,83 @@ private:
                 candidates.remove(node);
         } while (true);
 
-        if (!candidates.size())
+        if (candidates.isEmpty())
             return false;
 
         NodeOrigin originForConstant = m_graph.block(0)->at(0)->origin;
         HashSet<Node*> doubleRepRealCheckLocations;
 
         for (Node* candidate : candidates) {
-            if (verbose)
-                dataLogLn("Optimized: ", candidate);
+            dataLogLnIf(verbose, "Optimized: ", candidate);
 
-            Node* resultNode;
-            if (candidate->op() == Phi) {
+            Node* resultNode = nullptr;
+            switch (candidate->op()) {
+            case Phi: {
                 resultNode = candidate;
 
                 for (Node* upsilon : phiChildren.upsilonsOf(candidate)) {
                     Node* incomingValue = upsilon->child1().node();
-                    Node* newChild;
-                    if (incomingValue->op() == JSConstant) {
+                    Node* newChild = nullptr;
+                    switch (incomingValue->op()) {
+                    case JSConstant: {
                         double number = incomingValue->asJSValue().asNumber();
                         newChild = m_insertionSet.insertConstant(0, originForConstant, jsDoubleNumber(number), DoubleConstant);
-                    } else if (incomingValue->op() == ValueRep) {
+                        break;
+                    }
+                    case ValueRep: {
                         // We don't care about the incoming value being an impure NaN because users of
                         // this Phi are either OSR exit or DoubleRep(RealNumberUse:@phi)
                         ASSERT(incomingValue->child1().useKind() == DoubleRepUse);
                         newChild = incomingValue->child1().node();
-                    } else if (incomingValue->op() == Phi)
+                        break;
+                    }
+                    case Phi: {
                         newChild = incomingValue;
-                    else
+                        break;
+                    }
+#if CPU(ARM64)
+                    case GetClosureVar:
+                    case GetGlobalVar:
+                    case GetGlobalLexicalVariable:
+                    case MultiGetByOffset:
+                    case GetByOffset: {
+                        newChild = incomingValue;
+                        break;
+                    }
+#endif
+                    default:
                         RELEASE_ASSERT_NOT_REACHED();
+                        break;
+                    }
 
                     upsilon->child1() = Edge(newChild, DoubleRepUse);
                 }
 
                 candidate->setResult(NodeResultDouble);
-            } else if (candidate->op() == ValueRep)
+                break;
+            }
+
+            case ValueRep: {
                 resultNode = candidate->child1().node();
-            else
+                break;
+            }
+
+#if CPU(ARM64)
+            case GetClosureVar:
+            case GetGlobalVar:
+            case GetGlobalLexicalVariable:
+            case MultiGetByOffset:
+            case GetByOffset: {
+                candidate->setResult(NodeResultDouble);
+                resultNode = candidate;
+                break;
+            }
+#endif
+
+            default:
                 RELEASE_ASSERT_NOT_REACHED();
+                break;
+            }
 
             for (Node* user : getUsersOf(candidate)) {
                 switch (user->op()) {
@@ -278,6 +408,24 @@ private:
                     user->child1() = Edge(resultNode, DoubleRepUse);
                     break;
 
+#if CPU(ARM64)
+                case PutByOffset:
+                    user->child3() = Edge(resultNode, DoubleRepUse);
+                    break;
+
+                case MultiPutByOffset:
+                    user->child2() = Edge(resultNode, DoubleRepUse);
+                    break;
+
+                case PutClosureVar:
+                    user->child2() = Edge(resultNode, DoubleRepUse);
+                    break;
+
+                case PutGlobalVariable:
+                    user->child2() = Edge(resultNode, DoubleRepUse);
+                    break;
+#endif
+
                 case Upsilon: {
                     Node* phi = user->phi();
                     ASSERT_UNUSED(phi, candidates.contains(phi));
@@ -295,7 +443,7 @@ private:
         m_insertionSet.execute(m_graph.block(0));
 
         // Insert checks that are needed when removing DoubleRep(RealNumber:@x)
-        if (doubleRepRealCheckLocations.size()) {
+        if (!doubleRepRealCheckLocations.isEmpty()) {
             for (BasicBlock* block : m_graph.blocksInNaturalOrder()) {
                 for (unsigned i = 0; i < block->size(); ++i) {
                     Node* node = block->at(i);

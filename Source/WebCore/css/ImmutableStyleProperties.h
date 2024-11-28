@@ -26,6 +26,8 @@
 
 #include "StyleProperties.h"
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(ImmutableStyleProperties);
@@ -69,7 +71,7 @@ inline void ImmutableStyleProperties::deref() const
 
 inline PackedPtr<const CSSValue>* ImmutableStyleProperties::valueArray() const
 {
-    return bitwise_cast<PackedPtr<const CSSValue>*>(bitwise_cast<const uint8_t*>(metadataArray()) + (m_arraySize * sizeof(StylePropertyMetadata)));
+    return std::bit_cast<PackedPtr<const CSSValue>*>(std::bit_cast<const uint8_t*>(metadataArray()) + (m_arraySize * sizeof(StylePropertyMetadata)));
 }
 
 inline const StylePropertyMetadata* ImmutableStyleProperties::metadataArray() const
@@ -92,3 +94,5 @@ constexpr size_t ImmutableStyleProperties::objectSize(unsigned count)
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::ImmutableStyleProperties)
     static bool isType(const WebCore::StyleProperties& properties) { return !properties.isMutable(); }
 SPECIALIZE_TYPE_TRAITS_END()
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

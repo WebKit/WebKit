@@ -28,11 +28,13 @@
 #include "MarkedBlockInlines.h"
 #include "MarkedSpace.h"
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 ALWAYS_INLINE JSC::Heap& MarkedSpace::heap() const
 {
-    return *bitwise_cast<Heap*>(bitwise_cast<uintptr_t>(this) - OBJECT_OFFSETOF(Heap, m_objectSpace));
+    return *std::bit_cast<Heap*>(std::bit_cast<uintptr_t>(this) - OBJECT_OFFSETOF(Heap, m_objectSpace));
 }
 
 template<typename Functor> inline void MarkedSpace::forEachLiveCell(HeapIterationScope&, const Functor& functor)
@@ -77,15 +79,16 @@ template<typename Functor> inline void MarkedSpace::forEachDeadCell(HeapIteratio
 }
 
 template<typename Visitor>
-inline Ref<SharedTask<void(Visitor&)>> MarkedSpace::forEachWeakInParallel()
+inline Ref<SharedTask<void(Visitor&)>> MarkedSpace::forEachWeakInParallel(Visitor& visitor)
 {
     constexpr unsigned batchSize = 16;
     class Task final : public SharedTask<void(Visitor&)> {
     public:
-        Task(MarkedSpace& markedSpace)
+        Task(MarkedSpace& markedSpace, Visitor& visitor)
             : m_markedSpace(markedSpace)
             , m_newActiveCursor(markedSpace.m_newActiveWeakSets.begin())
             , m_activeCursor(markedSpace.heap().collectionScope() == CollectionScope::Full ? markedSpace.m_activeWeakSets.begin() : markedSpace.m_activeWeakSets.end())
+            , m_reason(visitor.rootMarkReason())
         {
         }
 
@@ -122,6 +125,7 @@ inline Ref<SharedTask<void(Visitor&)>> MarkedSpace::forEachWeakInParallel()
 
         void run(Visitor& visitor) final
         {
+            SetRootMarkReasonScope rootScope(visitor, m_reason);
             std::array<WeakBlock*, batchSize> resultsStorage;
             while (true) {
                 auto results = drain(resultsStorage);
@@ -138,10 +142,12 @@ inline Ref<SharedTask<void(Visitor&)>> MarkedSpace::forEachWeakInParallel()
         SentinelLinkedList<WeakSet, BasicRawSentinelNode<WeakSet>>::iterator m_newActiveCursor;
         SentinelLinkedList<WeakSet, BasicRawSentinelNode<WeakSet>>::iterator m_activeCursor;
         Lock m_lock;
+        RootMarkReason m_reason;
     };
 
-    return adoptRef(*new Task(*this));
+    return adoptRef(*new Task(*this, visitor));
 }
 
 } // namespace JSC
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

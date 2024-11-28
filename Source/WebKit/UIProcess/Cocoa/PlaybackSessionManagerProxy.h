@@ -51,6 +51,7 @@ namespace WebKit {
 class WebPageProxy;
 class PlaybackSessionManagerProxy;
 class VideoReceiverEndpointMessage;
+struct SharedPreferencesForWebProcess;
 
 class PlaybackSessionModelContext final
     : public RefCounted<PlaybackSessionModelContext>
@@ -66,10 +67,10 @@ public:
     virtual ~PlaybackSessionModelContext();
 
     // CheckedPtr interface
-    uint32_t ptrCount() const final { return CanMakeCheckedPtr::ptrCount(); }
-    uint32_t ptrCountWithoutThreadCheck() const final { return CanMakeCheckedPtr::ptrCountWithoutThreadCheck(); }
-    void incrementPtrCount() const final { CanMakeCheckedPtr::incrementPtrCount(); }
-    void decrementPtrCount() const final { CanMakeCheckedPtr::decrementPtrCount(); }
+    uint32_t checkedPtrCount() const final { return CanMakeCheckedPtr::checkedPtrCount(); }
+    uint32_t checkedPtrCountWithoutThreadCheck() const final { return CanMakeCheckedPtr::checkedPtrCountWithoutThreadCheck(); }
+    void incrementCheckedPtrCount() const final { CanMakeCheckedPtr::incrementCheckedPtrCount(); }
+    void decrementCheckedPtrCount() const final { CanMakeCheckedPtr::decrementCheckedPtrCount(); }
 
     // PlaybackSessionModel
     void addClient(WebCore::PlaybackSessionModelClient&) final;
@@ -174,8 +175,8 @@ private:
     void setSoundStageSize(WebCore::AudioSessionSoundStageSize) final;
 
 #if !RELEASE_LOG_DISABLED
-    void setLogIdentifier(const void* identifier) { m_logIdentifier = identifier; }
-    const void* logIdentifier() const final { return m_logIdentifier; }
+    void setLogIdentifier(uint64_t identifier) { m_logIdentifier = identifier; }
+    uint64_t logIdentifier() const final { return m_logIdentifier; }
     const Logger* loggerPtr() const;
 
     ASCIILiteral logClassName() const { return "PlaybackSessionModelContext"_s; };
@@ -219,7 +220,7 @@ private:
 #endif
 
 #if !RELEASE_LOG_DISABLED
-    const void* m_logIdentifier { nullptr };
+    uint64_t m_logIdentifier { 0 };
 #endif
 };
 
@@ -228,9 +229,7 @@ class PlaybackSessionManagerProxy
     , public CanMakeWeakPtr<PlaybackSessionManagerProxy>
     , private IPC::MessageReceiver {
 public:
-    using CanMakeWeakPtr<PlaybackSessionManagerProxy>::WeakPtrImplType;
-    using CanMakeWeakPtr<PlaybackSessionManagerProxy>::WeakValueType;
-    using CanMakeWeakPtr<PlaybackSessionManagerProxy>::weakPtrFactory;
+    USING_CAN_MAKE_WEAKPTR(CanMakeWeakPtr<PlaybackSessionManagerProxy>);
 
     static Ref<PlaybackSessionManagerProxy> create(WebPageProxy&);
     virtual ~PlaybackSessionManagerProxy();
@@ -242,6 +241,7 @@ public:
     void requestControlledElementID();
 
     bool isPaused(PlaybackSessionContextIdentifier) const;
+    std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess() const;
 
     // For testing.
     bool wirelessVideoPlaybackDisabled();
@@ -261,7 +261,7 @@ private:
     void addClientForContext(PlaybackSessionContextIdentifier);
     void removeClientForContext(PlaybackSessionContextIdentifier);
 
-    PlaybackSessionContextIdentifier controlsManagerContextId() const { return m_controlsManagerContextId; }
+    std::optional<PlaybackSessionContextIdentifier> controlsManagerContextId() const { return m_controlsManagerContextId; }
 
     // Messages from PlaybackSessionManager
     void setUpPlaybackControlsManagerWithID(PlaybackSessionContextIdentifier, bool isVideo);
@@ -329,20 +329,20 @@ private:
     void setLogIdentifier(PlaybackSessionContextIdentifier, uint64_t);
 
     const Logger& logger() const { return m_logger; }
-    const void* logIdentifier() const { return m_logIdentifier; }
+    uint64_t logIdentifier() const { return m_logIdentifier; }
     ASCIILiteral logClassName() const { return "VideoPresentationManagerProxy"_s; }
     WTFLogChannel& logChannel() const;
 #endif
 
     WeakPtr<WebPageProxy> m_page;
     HashMap<PlaybackSessionContextIdentifier, ModelInterfaceTuple> m_contextMap;
-    PlaybackSessionContextIdentifier m_controlsManagerContextId;
+    Markable<PlaybackSessionContextIdentifier> m_controlsManagerContextId;
     bool m_controlsManagerContextIsVideo { false };
     HashCountedSet<PlaybackSessionContextIdentifier> m_clientCounts;
 
 #if !RELEASE_LOG_DISABLED
     Ref<const Logger> m_logger;
-    const void* m_logIdentifier;
+    const uint64_t m_logIdentifier;
 #endif
 };
 

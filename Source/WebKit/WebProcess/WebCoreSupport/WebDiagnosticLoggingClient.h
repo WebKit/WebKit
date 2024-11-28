@@ -28,6 +28,7 @@
 
 #include <WebCore/DiagnosticLoggingClient.h>
 #include <wtf/TZoneMalloc.h>
+#include <wtf/WeakRef.h>
 
 namespace WebKit {
 
@@ -48,7 +49,9 @@ private:
     void logDiagnosticMessageWithValueDictionary(const String& message, const String& description, const ValueDictionary&, WebCore::ShouldSample) override;
     void logDiagnosticMessageWithDomain(const String& message, WebCore::DiagnosticLoggingDomain) override;
 
-    WebPage& m_page;
+    Ref<WebPage> protectedPage() const;
+
+    WeakRef<WebPage> m_page;
 };
 
 }

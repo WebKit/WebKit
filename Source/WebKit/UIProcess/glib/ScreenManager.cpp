@@ -38,31 +38,31 @@ ScreenManager& ScreenManager::singleton()
     return manager;
 }
 
-PlatformDisplayID ScreenManager::displayID(PlatformMonitor* monitor) const
+PlatformDisplayID ScreenManager::displayID(PlatformScreen* screen) const
 {
-    return m_monitorToDisplayIDMap.get(monitor);
+    return m_screenToDisplayIDMap.get(screen);
 }
 
-PlatformMonitor* ScreenManager::monitor(PlatformDisplayID displayID) const
+PlatformScreen* ScreenManager::screen(PlatformDisplayID displayID) const
 {
-    for (const auto& iter : m_monitorToDisplayIDMap) {
+    for (const auto& iter : m_screenToDisplayIDMap) {
         if (iter.value == displayID)
             return iter.key;
     }
     return nullptr;
 }
 
-void ScreenManager::addMonitor(PlatformMonitor* monitor)
+void ScreenManager::addScreen(PlatformScreen* screen)
 {
-    m_monitors.append(monitor);
-    m_monitorToDisplayIDMap.add(monitor, generatePlatformDisplayID(monitor));
+    m_screens.append(screen);
+    m_screenToDisplayIDMap.add(screen, generatePlatformDisplayID(screen));
 }
 
-void ScreenManager::removeMonitor(PlatformMonitor* monitor)
+void ScreenManager::removeScreen(PlatformScreen* screen)
 {
-    m_monitorToDisplayIDMap.remove(monitor);
-    m_monitors.removeFirstMatching([monitor](const auto& item) {
-        return item.get() == monitor;
+    m_screenToDisplayIDMap.remove(screen);
+    m_screens.removeFirstMatching([screen](const auto& item) {
+        return item.get() == screen;
     });
 }
 

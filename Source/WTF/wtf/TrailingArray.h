@@ -30,6 +30,8 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/Vector.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WTF {
 
 // TrailingArray offers the feature trailing array in the derived class.
@@ -92,7 +94,7 @@ protected:
     // should be used as appropriate.
     struct Failable { };
     template<std::invocable<size_t> Generator>
-    explicit TrailingArray(Failable, unsigned size, Generator&& generator)
+    explicit TrailingArray(Failable, unsigned size, NOESCAPE Generator&& generator)
         : m_size(size)
     {
         static_assert(std::is_final_v<Derived>);
@@ -122,8 +124,8 @@ public:
     bool isEmpty() const { return !size(); }
     unsigned byteSize() const { return size() * sizeof(T); }
 
-    pointer data() { return bitwise_cast<T*>(bitwise_cast<uint8_t*>(static_cast<Derived*>(this)) + offsetOfData()); }
-    const_pointer data() const { return bitwise_cast<const T*>(bitwise_cast<const uint8_t*>(static_cast<const Derived*>(this)) + offsetOfData()); }
+    pointer data() { return std::bit_cast<T*>(std::bit_cast<uint8_t*>(static_cast<Derived*>(this)) + offsetOfData()); }
+    const_pointer data() const { return std::bit_cast<const T*>(std::bit_cast<const uint8_t*>(static_cast<const Derived*>(this)) + offsetOfData()); }
     std::span<T> span() { return { data(), size() }; }
     std::span<const T> span() const { return { data(), size() }; }
 
@@ -179,3 +181,5 @@ protected:
 } // namespace WTF
 
 using WTF::TrailingArray;
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

@@ -68,6 +68,8 @@
 #import <pal/mac/DataDetectorsSoftLink.h>
 #import <pal/spi/ios/DataDetectorsUISoftLink.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 #if PLATFORM(MAC)
 template<> struct WTF::CFTypeTrait<DDResultRef> {
     static inline CFTypeID typeID(void) { return DDResultGetCFTypeID(); }
@@ -293,25 +295,31 @@ static void removeResultLinksFromAnchor(Element& element)
 
 static bool searchForLinkRemovingExistingDDLinks(Node& startNode, Node& endNode)
 {
-    for (auto* node = &startNode; node; node = NodeTraversal::next(*node)) {
-        if (RefPtr anchor = dynamicDowncast<HTMLAnchorElement>(*node)) {
-            if (!equalLettersIgnoringASCIICase(anchor->attributeWithoutSynchronization(x_apple_data_detectorsAttr), "true"_s))
-                return true;
-            removeResultLinksFromAnchor(*anchor);
-        }
-        
-        if (node == &endNode) {
-            // If we found the end node and no link, return false unless an ancestor node is a link.
-            // The only ancestors not tested at this point are in the direct line from self's parent to the top.
-            for (auto& anchor : ancestorsOfType<HTMLAnchorElement>(startNode)) {
-                if (!equalLettersIgnoringASCIICase(anchor.attributeWithoutSynchronization(x_apple_data_detectorsAttr), "true"_s))
+    Vector<Ref<HTMLAnchorElement>> elementsToProcess;
+    auto result = ([&] {
+        for (auto* node = &startNode; node; node = NodeTraversal::next(*node)) {
+            if (RefPtr anchor = dynamicDowncast<HTMLAnchorElement>(*node)) {
+                if (!equalLettersIgnoringASCIICase(anchor->attributeWithoutSynchronization(x_apple_data_detectorsAttr), "true"_s))
                     return true;
-                removeResultLinksFromAnchor(anchor);
+                removeResultLinksFromAnchor(*anchor);
             }
-            return false;
+
+            if (node == &endNode) {
+                // If we found the end node and no link, return false unless an ancestor node is a link.
+                // The only ancestors not tested at this point are in the direct line from self's parent to the top.
+                for (auto& anchor : ancestorsOfType<HTMLAnchorElement>(startNode)) {
+                    if (!equalLettersIgnoringASCIICase(anchor.attributeWithoutSynchronization(x_apple_data_detectorsAttr), "true"_s))
+                        return true;
+                    elementsToProcess.append(anchor);
+                }
+                return false;
+            }
         }
-    }
-    return false;
+        return false;
+    })();
+    for (auto& element : elementsToProcess)
+        removeResultLinksFromAnchor(element);
+    return result;
 }
 
 static NSString *dataDetectorTypeForCategory(DDResultCategory category)
@@ -592,7 +600,9 @@ static NSArray * processDataDetectorScannerResults(DDScannerRef scanner, OptionS
     RefPtr<Text> lastTextNodeToUpdate;
     String lastNodeContent;
     unsigned contentOffset = 0;
-    DDQueryOffset lastModifiedQueryOffset = { .queryIndex = -1, .offset = 0 };
+    DDQueryOffset lastModifiedQueryOffset = { };
+    lastModifiedQueryOffset.queryIndex = -1;
+    lastModifiedQueryOffset.offset = 0;
 
     // For each result add the link.
     // Since there could be multiple results in the same text node, the node is only modified when
@@ -851,5 +861,7 @@ Ref<HTMLDivElement> DataDetection::createElementForImageOverlay(Document& docume
 #endif // ENABLE(IMAGE_ANALYSIS)
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif

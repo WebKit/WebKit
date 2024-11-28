@@ -9,10 +9,10 @@
 #include "include/core/SkRefCnt.h"
 #include "include/core/SkTextureCompressionType.h"
 #include "include/gpu/GpuTypes.h"
-#include "include/gpu/GrBackendSurface.h"
-#include "include/gpu/GrTypes.h"
+#include "include/gpu/ganesh/GrBackendSurface.h"
+#include "include/gpu/ganesh/GrTypes.h"
 #include "include/gpu/MutableTextureState.h"
-#include "include/gpu/vk/GrVkTypes.h"
+#include "include/gpu/ganesh/vk/GrVkTypes.h"
 #include "include/gpu/vk/VulkanMutableTextureState.h"
 #include "include/gpu/vk/VulkanTypes.h"
 #include "include/private/base/SkAssert.h"
@@ -80,7 +80,7 @@ private:
     }
 
     std::string toString() const override {
-#if defined(SK_DEBUG) || GR_TEST_UTILS
+#if defined(SK_DEBUG) || defined(GPU_TEST_UTILS)
         return skgpu::VkFormatToStr(fFormat);
 #else
         return "";

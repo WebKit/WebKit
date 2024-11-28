@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -47,7 +47,7 @@ namespace WasmOSREntryPlanInternal {
 static constexpr bool verbose = false;
 }
 
-OSREntryPlan::OSREntryPlan(VM& vm, Ref<Module>&& module, Ref<Callee>&& callee, uint32_t functionIndex, std::optional<bool> hasExceptionHandlers, uint32_t loopIndex, MemoryMode mode, CompletionTask&& task)
+OSREntryPlan::OSREntryPlan(VM& vm, Ref<Module>&& module, Ref<Callee>&& callee, FunctionCodeIndex functionIndex, std::optional<bool> hasExceptionHandlers, uint32_t loopIndex, MemoryMode mode, CompletionTask&& task)
     : Base(vm, const_cast<ModuleInformation&>(module->moduleInformation()), WTFMove(task))
     , m_module(WTFMove(module))
     , m_calleeGroup(*m_module->calleeGroupFor(mode))
@@ -63,9 +63,9 @@ OSREntryPlan::OSREntryPlan(VM& vm, Ref<Module>&& module, Ref<Callee>&& callee, u
     dataLogLnIf(WasmOSREntryPlanInternal::verbose, "Starting OMGForOSREntry plan for ", functionIndex, " of module: ", RawPointer(&m_module.get()));
 }
 
-void OSREntryPlan::dumpDisassembly(CompilationContext& context, LinkBuffer& linkBuffer, unsigned functionIndex, const TypeDefinition& signature, unsigned functionIndexSpace)
+void OSREntryPlan::dumpDisassembly(CompilationContext& context, LinkBuffer& linkBuffer, FunctionCodeIndex functionIndex, const TypeDefinition& signature, FunctionSpaceIndex functionIndexSpace)
 {
-    CompilationMode targetCompilationMode = m_callee->compilationMode() == CompilationMode::LLIntMode ? CompilationMode::BBQForOSREntryMode : CompilationMode::OMGForOSREntryMode;
+    CompilationMode targetCompilationMode = CompilationMode::OMGForOSREntryMode;
     dataLogLnIf(context.procedure->shouldDumpIR() || shouldDumpDisassemblyFor(targetCompilationMode), "Generated OMG code for WebAssembly OMGforOSREntry function[", functionIndex, "] ", signature.toString().ascii().data(), " name ", makeString(IndexOrName(functionIndexSpace, m_moduleInformation->nameSection->get(functionIndexSpace))).ascii().data());
     if (UNLIKELY(shouldDumpDisassemblyFor(targetCompilationMode))) {
         auto* disassembler = context.procedure->code().disassembler();
@@ -78,7 +78,7 @@ void OSREntryPlan::dumpDisassembly(CompilationContext& context, LinkBuffer& link
         auto forEachInst = scopedLambda<void(B3::Air::Inst&)>([&] (B3::Air::Inst& inst) {
             if (inst.origin && inst.origin != prevOrigin && context.procedure->code().shouldPreserveB3Origins()) {
                 if (String string = inst.origin->compilerConstructionSite(); !string.isNull())
-                    dataLogLn("\033[1;37m", string, "\033[0m");
+                    dataLogLn(string);
                 dataLog(b3Prefix);
                 inst.origin->deepDump(context.procedure.get(), WTF::dataFile());
                 dataLogLn();
@@ -97,22 +97,23 @@ void OSREntryPlan::work(CompilationEffort)
     ASSERT(m_calleeGroup.ptr() == m_module->calleeGroupFor(mode()));
     const FunctionData& function = m_moduleInformation->functions[m_functionIndex];
 
-    const uint32_t functionIndexSpace = m_functionIndex + m_module->moduleInformation().importFunctionCount();
+    const FunctionSpaceIndex functionIndexSpace = m_module->moduleInformation().toSpaceIndex(m_functionIndex);
     ASSERT(functionIndexSpace < m_module->moduleInformation().functionIndexSpaceSize());
 
     TypeIndex typeIndex = m_moduleInformation->internalFunctionTypeIndices[m_functionIndex];
     const TypeDefinition& signature = TypeInformation::get(typeIndex).expand();
 
-    CompilationMode targetCompilationMode = m_callee->compilationMode() == CompilationMode::LLIntMode ? CompilationMode::BBQForOSREntryMode : CompilationMode::OMGForOSREntryMode;
-    Ref<OSREntryCallee> callee = OSREntryCallee::create(targetCompilationMode, functionIndexSpace, m_moduleInformation->nameSection->get(functionIndexSpace), m_loopIndex);
+    Ref<OMGOSREntryCallee> callee = OMGOSREntryCallee::create(functionIndexSpace, m_moduleInformation->nameSection->get(functionIndexSpace), m_loopIndex);
 
+    beginCompilerSignpost(callee.get());
     Vector<UnlinkedWasmToWasmCall> unlinkedCalls;
     CompilationContext context;
-    auto parseAndCompileResult = parseAndCompileOMG(context, callee.get(), function, signature, unlinkedCalls, m_calleeGroup.get(), m_moduleInformation.get(), m_mode, targetCompilationMode, m_functionIndex, m_hasExceptionHandlers, m_loopIndex);
+    auto parseAndCompileResult = parseAndCompileOMG(context, callee.get(), function, signature, unlinkedCalls, m_calleeGroup.get(), m_moduleInformation.get(), m_mode, CompilationMode::OMGForOSREntryMode, m_functionIndex, m_hasExceptionHandlers, m_loopIndex);
+    endCompilerSignpost(callee.get());
 
     if (UNLIKELY(!parseAndCompileResult)) {
         Locker locker { m_lock };
-        fail(makeString(parseAndCompileResult.error(), "when trying to tier up "_s, m_functionIndex));
+        fail(makeString(parseAndCompileResult.error(), "when trying to tier up "_s, m_functionIndex.rawIndex()));
         return;
     }
 
@@ -120,7 +121,7 @@ void OSREntryPlan::work(CompilationEffort)
     LinkBuffer linkBuffer(*context.wasmEntrypointJIT, callee.ptr(), LinkBuffer::Profile::WasmOMG, JITCompilationCanFail);
     if (UNLIKELY(linkBuffer.didFailToAllocate())) {
         Locker locker { m_lock };
-        Base::fail(makeString("Out of executable memory while tiering up function at index "_s, m_functionIndex));
+        Base::fail(makeString("Out of executable memory while tiering up function at index "_s, m_functionIndex.rawIndex()));
         return;
     }
 
@@ -139,6 +140,9 @@ void OSREntryPlan::work(CompilationEffort)
     callee->setEntrypoint(WTFMove(omgEntrypoint), internalFunction->osrEntryScratchBufferSize, WTFMove(unlinkedCalls), WTFMove(internalFunction->stackmaps), WTFMove(internalFunction->exceptionHandlers), WTFMove(exceptionHandlerLocations));
     {
         Locker locker { m_calleeGroup->m_lock };
+        m_calleeGroup->recordOMGOSREntryCallee(locker, m_functionIndex, callee.get());
+        m_calleeGroup->reportCallees(locker, callee.ptr(), internalFunction->outgoingJITDirectCallees);
+
         for (auto& call : callee->wasmToWasmCallsites()) {
             CodePtr<WasmEntryPtrTag> entrypoint;
             Wasm::Callee* wasmCallee = nullptr;
@@ -152,33 +156,18 @@ void OSREntryPlan::work(CompilationEffort)
             MacroAssembler::repatchNearCall(call.callLocation, CodeLocationLabel<WasmEntryPtrTag>(entrypoint));
             MacroAssembler::repatchPointer(call.calleeLocation, CalleeBits::boxNativeCalleeIfExists(wasmCallee));
         }
-        m_calleeGroup->callsiteCollection().addCallsites(locker, m_calleeGroup.get(), callee->wasmToWasmCallsites());
 
         resetInstructionCacheOnAllThreads();
         WTF::storeStoreFence();
 
         {
             switch (m_callee->compilationMode()) {
-            case CompilationMode::LLIntMode: {
-                LLIntCallee* llintCallee = static_cast<LLIntCallee*>(m_callee.ptr());
-                Locker locker { llintCallee->tierUpCounter().m_lock };
-                llintCallee->setOSREntryCallee(callee.copyRef(), mode());
-                llintCallee->tierUpCounter().setLoopCompilationStatus(mode(), LLIntTierUpCounter::CompilationStatus::Compiled);
-                break;
-            }
-            case CompilationMode::IPIntMode: {
-                IPIntCallee* ipintCallee = static_cast<IPIntCallee*>(m_callee.ptr());
-                Locker locker { ipintCallee->tierUpCounter().m_lock };
-                ipintCallee->setOSREntryCallee(callee.copyRef(), mode());
-                ipintCallee->tierUpCounter().setLoopCompilationStatus(mode(), IPIntTierUpCounter::CompilationStatus::Compiled);
-                break;
-            }
             case CompilationMode::BBQMode: {
                 BBQCallee* bbqCallee = static_cast<BBQCallee*>(m_callee.ptr());
-                Locker locker { bbqCallee->tierUpCount()->getLock() };
+                Locker locker { bbqCallee->tierUpCounter().getLock() };
                 bbqCallee->setOSREntryCallee(callee.copyRef(), mode());
-                bbqCallee->tierUpCount()->osrEntryTriggers()[m_loopIndex] = TierUpCount::TriggerReason::CompilationDone;
-                bbqCallee->tierUpCount()->setCompilationStatusForOMGForOSREntry(mode(), TierUpCount::CompilationStatus::Compiled);
+                bbqCallee->tierUpCounter().osrEntryTriggers()[m_loopIndex] = TierUpCount::TriggerReason::CompilationDone;
+                bbqCallee->tierUpCounter().setCompilationStatusForOMGForOSREntry(mode(), TierUpCount::CompilationStatus::Compiled);
                 break;
             }
             default:
@@ -186,6 +175,9 @@ void OSREntryPlan::work(CompilationEffort)
             }
         }
     }
+
+    // We don't register our BBQCallee for deletion because this entrypoint isn't a general one and is only used for loop OSR.
+
     dataLogLnIf(WasmOSREntryPlanInternal::verbose, "Finished OMGForOSREntry ", m_functionIndex);
     Locker locker { m_lock };
     complete();

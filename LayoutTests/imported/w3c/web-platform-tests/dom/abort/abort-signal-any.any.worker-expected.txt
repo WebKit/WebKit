@@ -11,4 +11,6 @@ PASS AbortSignal.any() works with intermediate signals (using AbortController)
 PASS Abort events for AbortSignal.any() signals fire in the right order (using AbortController)
 PASS Dependent signals for AbortSignal.any() are marked aborted before abort events fire (using AbortController)
 PASS Dependent signals for AbortSignal.any() are aborted correctly for reentrant aborts (using AbortController)
+PASS Dependent signals for AbortSignal.any() should use the same DOMException instance from the already aborted source signal (using AbortController)
+PASS Dependent signals for AbortSignal.any() should use the same DOMException instance from the source signal being aborted later (using AbortController)
 

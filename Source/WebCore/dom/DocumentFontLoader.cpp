@@ -54,6 +54,16 @@ DocumentFontLoader::~DocumentFontLoader()
     stopLoadingAndClearFonts();
 }
 
+void DocumentFontLoader::ref() const
+{
+    m_document->ref();
+}
+
+void DocumentFontLoader::deref() const
+{
+    m_document->deref();
+}
+
 CachedFont* DocumentFontLoader::cachedFont(URL&& url, bool isSVG, bool isInitiatingElementInUserAgentShadowTree, LoadedFromOpaqueSource loadedFromOpaqueSource)
 {
     ResourceLoaderOptions options = CachedResourceLoader::defaultCachedResourceOptions();
@@ -108,7 +118,7 @@ void DocumentFontLoader::fontLoadingTimerFired()
     // New font loads may be triggered by layout after the document load is complete but before we have dispatched
     // didFinishLoading for the frame. Make sure the delegate is always dispatched by checking explicitly.
     if (RefPtr frame = m_document->frame())
-        frame->checkedLoader()->checkLoadComplete();
+        frame->protectedLoader()->checkLoadComplete();
 }
 
 void DocumentFontLoader::stopLoadingAndClearFonts()

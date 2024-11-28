@@ -11,6 +11,8 @@ info: |
 includes: [propertyHelper.js]
 ---*/
 
-verifyNotEnumerable(Math, "acos");
-verifyWritable(Math, "acos");
-verifyConfigurable(Math, "acos");
+verifyProperty(Math, "acos", {
+  writable: true,
+  enumerable: false,
+  configurable: true
+});

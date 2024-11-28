@@ -57,7 +57,7 @@ public:
 
     WEBCORE_EXPORT size_t storageSize() const;
 
-    WEBCORE_EXPORT RetainPtr<CVPixelBufferRef> createPixelBufferFromMemory(const uint8_t* data, CVPixelBufferPoolRef = nullptr);
+    WEBCORE_EXPORT RetainPtr<CVPixelBufferRef> createPixelBufferFromMemory(std::span<const uint8_t> data, CVPixelBufferPoolRef = nullptr);
 
     WEBCORE_EXPORT bool isReadWriteSupported() const;
     WEBCORE_EXPORT RetainPtr<CVPixelBufferPoolRef> createCompatibleBufferPool() const;

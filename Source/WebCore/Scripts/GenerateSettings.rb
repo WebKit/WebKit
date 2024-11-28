@@ -113,7 +113,7 @@ class Setting
       name[0..1].downcase + name[2..name.length]
     elsif name.start_with?("CSSOM", "HTTPS")
       name
-    elsif name.start_with?("CSS", "XSS", "FTP", "DOM", "DNS", "PDF", "ICE", "HDR")
+    elsif name.start_with?("URL","CSS", "XSS", "FTP", "DOM", "DNS", "PDF", "ICE", "HDR")
       name[0..2].downcase + name[3..name.length]
     elsif name.start_with?("HTTP", "HTML")
       name[0..3].downcase + name[4..name.length]
@@ -160,7 +160,7 @@ class Setting
   def setterFunctionName
     if @name.start_with?("html")
       "set" + @name[0..3].upcase + @name[4..@name.length]
-    elsif @name.start_with?("css", "xss", "ftp", "dom", "dns", "ice", "hdr", "pdf")
+    elsif @name.start_with?("url", "css", "xss", "ftp", "dom", "dns", "ice", "hdr", "pdf")
       "set" + @name[0..2].upcase + @name[3..@name.length]
     elsif @name.start_with?("vp")
       "set" + @name[0..1].upcase + @name[2..@name.length]

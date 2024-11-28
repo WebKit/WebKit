@@ -9,7 +9,7 @@ defines:
   - ctors
   - MyBigInt64Array
   - CreateResizableArrayBuffer
-  - WriteToTypedArray
+  - MayNeedBigInt
   - Convert
   - ToNumbers
   - CreateRabForTest
@@ -74,14 +74,6 @@ function CreateResizableArrayBuffer(byteLength, maxByteLength) {
   return new ArrayBuffer(byteLength, { maxByteLength: maxByteLength });
 }
 
-function WriteToTypedArray(array, index, value) {
-  if (array instanceof BigInt64Array || array instanceof BigUint64Array) {
-    array[index] = BigInt(value);
-  } else {
-    array[index] = value;
-  }
-}
-
 function Convert(item) {
   if (typeof item == 'bigint') {
     return Number(item);
@@ -98,12 +90,21 @@ function ToNumbers(array) {
   return result;
 }
 
+function MayNeedBigInt(ta, n) {
+  assert.sameValue(typeof n, 'number');
+  if ((BigInt64Array !== 'undefined' && ta instanceof BigInt64Array)
+      || (BigUint64Array !== 'undefined' && ta instanceof BigUint64Array)) {
+    return BigInt(n);
+  }
+  return n;
+}
+
 function CreateRabForTest(ctor) {
   const rab = CreateResizableArrayBuffer(4 * ctor.BYTES_PER_ELEMENT, 8 * ctor.BYTES_PER_ELEMENT);
   // Write some data into the array.
   const taWrite = new ctor(rab);
   for (let i = 0; i < 4; ++i) {
-    WriteToTypedArray(taWrite, i, 2 * i);
+    taWrite[i] = MayNeedBigInt(taWrite, 2 * i);
   }
   return rab;
 }

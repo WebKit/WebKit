@@ -51,16 +51,14 @@ public:
     static Ref<RemoteMediaSessionCoordinatorProxy> create(WebPageProxy&, Ref<MediaSessionCoordinatorProxyPrivate>&&);
     ~RemoteMediaSessionCoordinatorProxy();
 
-    const SharedPreferencesForWebProcess& sharedPreferencesForWebProcess() const;
+    std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess() const;
 
     void seekTo(double, CompletionHandler<void(bool)>&&);
     void play(CompletionHandler<void(bool)>&&);
     void pause(CompletionHandler<void(bool)>&&);
     void setTrack(const String&, CompletionHandler<void(bool)>&&);
 
-    using MediaSessionCoordinatorClient::weakPtrFactory;
-    using MediaSessionCoordinatorClient::WeakValueType;
-    using MediaSessionCoordinatorClient::WeakPtrImplType;
+    USING_CAN_MAKE_WEAKPTR(MediaSessionCoordinatorClient);
 
 private:
     explicit RemoteMediaSessionCoordinatorProxy(WebPageProxy&, Ref<MediaSessionCoordinatorProxyPrivate>&&);
@@ -87,9 +85,12 @@ private:
     void setSessionTrack(const String&, CompletionHandler<void(bool)>&&) final;
     void coordinatorStateChanged(WebCore::MediaSessionCoordinatorState) final;
 
+    Ref<MediaSessionCoordinatorProxyPrivate> protectedPrivateCoordinator() { return m_privateCoordinator; }
+    Ref<WebPageProxy> protectedWebPageProxy();
+
 #if !RELEASE_LOG_DISABLED
     const WTF::Logger& logger() const { return m_logger; }
-    const void* logIdentifier() const { return m_logIdentifier; }
+    uint64_t logIdentifier() const { return m_logIdentifier; }
     ASCIILiteral logClassName() const { return "RemoteMediaSessionCoordinatorProxy"_s; }
     WTFLogChannel& logChannel() const;
 #endif
@@ -98,7 +99,7 @@ private:
     Ref<MediaSessionCoordinatorProxyPrivate> m_privateCoordinator;
 #if !RELEASE_LOG_DISABLED
     Ref<const WTF::Logger> m_logger;
-    const void* m_logIdentifier;
+    const uint64_t m_logIdentifier;
 #endif
 };
 

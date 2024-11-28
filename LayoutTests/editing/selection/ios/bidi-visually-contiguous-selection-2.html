@@ -1,0 +1,72 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true VisuallyContiguousBidiTextSelectionEnabled=true ] -->
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="utf-8">
+<script src="../../../resources/ui-helper.js"></script>
+<script src="../../../resources/js-test.js"></script>
+<style>
+body, html {
+    font-size: 20px;
+    font-family: system-ui;
+}
+
+.start {
+    border: 1px solid tomato;
+    padding: 4px;
+}
+
+#paragraph {
+    display: inline-block;
+}
+</style>
+<script>
+jsTestIsAsync = true;
+
+async function distanceBetweenGrabbers() {
+    const startGrabberRect = await UIHelper.getSelectionStartGrabberViewRect();
+    const endGrabberRect = await UIHelper.getSelectionEndGrabberViewRect();
+    return endGrabberRect.width + endGrabberRect.left - startGrabberRect.left;
+}
+
+addEventListener("load", async () => {
+    description("This test verifies that the text selection appears visually contiguous when selecting across bidi text boundaries.");
+
+    const paragraph = document.getElementById("paragraph");
+    const rect = paragraph.getBoundingClientRect();
+
+    await UIHelper.longPressElement(document.querySelector(".start"));
+    await UIHelper.waitForSelectionToAppear();
+
+    const start = UIHelper.midPointOfRect(await UIHelper.getSelectionEndGrabberViewRect());
+    await UIHelper.sendEventStream(new UIHelper.EventStreamBuilder()
+        .begin(start.x, start.y)
+        .move(rect.width + rect.left - 20, start.y, 0.5)
+        .end()
+        .takeResult());
+    await UIHelper.ensurePresentationUpdate();
+
+    selectionRects = await UIHelper.getUISelectionViewRects();
+    isVisuallyContiguous = await UIHelper.isSelectionVisuallyContiguous();
+
+    shouldBeTrue("isVisuallyContiguous");
+    shouldBeEqualToString("getSelection().toString()", paragraph.textContent);
+
+    while (true) {
+        const distance = await distanceBetweenGrabbers();
+        if (distance >= 300) {
+            testPassed("Extended selection grabbers to endpoints");
+            break;
+        }
+    }
+
+    finishJSTest();
+});
+</script>
+</head>
+<body>
+    <p id="paragraph"><span class="start">Arabic</span> is left to right: مث لهذا النص</p>
+    <div id="description"></div>
+    <div id="console"></div>
+</body>
+</html>

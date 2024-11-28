@@ -193,9 +193,9 @@ public:
     unsigned length() const { return m_encodedLength; }
     bool is8Bit() const { return true; }
 
-    template<typename CharacterType> void writeTo(CharacterType* destination) const
+    template<typename CharacterType> void writeTo(std::span<CharacterType> destination) const
     {
-        base64Encode(m_base64.input, std::span(destination, m_encodedLength), m_base64.options);
+        base64Encode(m_base64.input, destination.first(m_encodedLength), m_base64.options);
     }
 
 private:
@@ -205,7 +205,7 @@ private:
 
 enum class Alphabet : uint8_t { Base64, Base64URL };
 enum class LastChunkHandling : uint8_t { Loose, Strict, StopBeforePartial };
-enum class FromBase64ShouldThrowError: bool { Yes, No };
+enum class FromBase64ShouldThrowError: bool { No, Yes };
 WTF_EXPORT_PRIVATE std::tuple<FromBase64ShouldThrowError, size_t, size_t> fromBase64(StringView, std::span<uint8_t>, Alphabet, LastChunkHandling);
 WTF_EXPORT_PRIVATE size_t maxLengthFromBase64(StringView);
 

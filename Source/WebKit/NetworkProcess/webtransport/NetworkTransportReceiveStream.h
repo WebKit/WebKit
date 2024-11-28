@@ -37,7 +37,7 @@
 
 namespace WebKit {
 struct WebTransportStreamIdentifierType;
-using WebTransportStreamIdentifier = LegacyNullableObjectIdentifier<WebTransportStreamIdentifierType>;
+using WebTransportStreamIdentifier = ObjectIdentifier<WebTransportStreamIdentifierType>;
 }
 
 namespace WebKit {
@@ -49,11 +49,15 @@ class NetworkTransportReceiveStream : public RefCounted<NetworkTransportReceiveS
 public:
     template<typename... Args> static Ref<NetworkTransportReceiveStream> create(Args&&... args) { return adoptRef(*new NetworkTransportReceiveStream(std::forward<Args>(args)...)); }
 
+    virtual ~NetworkTransportReceiveStream();
+
     WebTransportStreamIdentifier identifier() const { return m_identifier; }
 
 protected:
 #if PLATFORM(COCOA)
     NetworkTransportReceiveStream(NetworkTransportSession&, nw_connection_t);
+#else
+    NetworkTransportReceiveStream();
 #endif
 
 private:

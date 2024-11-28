@@ -28,9 +28,12 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "RemoteGPUProxy.h"
-#include "RemotePresentationContextProxy.h"
 #include "WebGPUIdentifier.h"
 #include <WebCore/WebGPUXRProjectionLayer.h>
+
+namespace PlatformXR {
+struct FrameData;
+}
 
 namespace WebCore {
 class ImageBuffer;
@@ -45,11 +48,11 @@ namespace WebKit::WebGPU {
 class ConvertToBackingContext;
 
 class RemoteXRProjectionLayerProxy final : public WebCore::WebGPU::XRProjectionLayer {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(RemoteXRProjectionLayerProxy);
 public:
-    static Ref<RemoteXRProjectionLayerProxy> create(RemoteGPUProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier)
+    static Ref<RemoteXRProjectionLayerProxy> create(Ref<RemoteGPUProxy>&& parent, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier)
     {
-        return adoptRef(*new RemoteXRProjectionLayerProxy(parent, convertToBackingContext, identifier));
+        return adoptRef(*new RemoteXRProjectionLayerProxy(WTFMove(parent), convertToBackingContext, identifier));
     }
 
     virtual ~RemoteXRProjectionLayerProxy();
@@ -61,7 +64,7 @@ public:
 private:
     friend class DowncastConvertToBackingContext;
 
-    RemoteXRProjectionLayerProxy(RemoteGPUProxy&, ConvertToBackingContext&, WebGPUIdentifier);
+    RemoteXRProjectionLayerProxy(Ref<RemoteGPUProxy>&&, ConvertToBackingContext&, WebGPUIdentifier);
 
     RemoteXRProjectionLayerProxy(const RemoteXRProjectionLayerProxy&) = delete;
     RemoteXRProjectionLayerProxy(RemoteXRProjectionLayerProxy&&) = delete;
@@ -75,22 +78,24 @@ private:
     bool ignoreDepthValues() const final;
     std::optional<float> fixedFoveation() const final;
     void setFixedFoveation(std::optional<float>) final;
-    WebCore::WebGPU::WebXRRigidTransform* deltaPose() const final;
-    void setDeltaPose(WebCore::WebGPU::WebXRRigidTransform*) final;
+    WebCore::WebXRRigidTransform* deltaPose() const final;
+    void setDeltaPose(WebCore::WebXRRigidTransform*) final;
 
     // WebXRLayer
-    void startFrame() final;
+#if PLATFORM(COCOA)
+    void startFrame(size_t frameIndex, MachSendRight&&, MachSendRight&&, MachSendRight&&, size_t reusableTextureIndex) final;
+#endif
     void endFrame() final;
 
     template<typename T>
     WARN_UNUSED_RETURN IPC::Error send(T&& message)
     {
-        return root().streamClientConnection().send(WTFMove(message), backing());
+        return root().protectedStreamClientConnection()->send(WTFMove(message), backing());
     }
     template<typename T>
     WARN_UNUSED_RETURN IPC::Connection::SendSyncResult<T> sendSync(T&& message)
     {
-        return root().streamClientConnection().sendSync(WTFMove(message), backing());
+        return root().protectedStreamClientConnection()->sendSync(WTFMove(message), backing());
     }
 
     WebGPUIdentifier m_backing;

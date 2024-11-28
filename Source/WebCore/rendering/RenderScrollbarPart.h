@@ -66,7 +66,7 @@ private:
     void computeScrollbarWidth();
     void computeScrollbarHeight();
     
-    RenderScrollbar* m_scrollbar;
+    SingleThreadWeakPtr<RenderScrollbar> m_scrollbar;
     ScrollbarPart m_part;
 };
 

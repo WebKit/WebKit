@@ -37,12 +37,12 @@
 namespace WebCore {
 namespace LayoutIntegration {
 
-InlineContentPainter::InlineContentPainter(PaintInfo& paintInfo, const LayoutPoint& paintOffset, const RenderInline* inlineBoxWithLayer, const InlineContent& inlineContent, const BoxTree& boxTree)
+InlineContentPainter::InlineContentPainter(PaintInfo& paintInfo, const LayoutPoint& paintOffset, const RenderInline* inlineBoxWithLayer, const InlineContent& inlineContent, const RenderBlockFlow& root)
     : m_paintInfo(paintInfo)
     , m_paintOffset(paintOffset)
     , m_inlineBoxWithLayer(inlineBoxWithLayer)
     , m_inlineContent(inlineContent)
-    , m_boxTree(boxTree)
+    , m_root(root)
 {
     m_damageRect = m_paintInfo.rect;
     m_damageRect.moveBy(-m_paintOffset);
@@ -93,7 +93,7 @@ void InlineContentPainter::paintDisplayBox(const InlineDisplay::Box& box)
         if (!hasVisibleDamage)
             return;
 
-        ModernTextBoxPainter { m_inlineContent, box, m_paintInfo, m_paintOffset }.paint();
+        TextBoxPainter { m_inlineContent, box, box.style(), m_paintInfo, m_paintOffset }.paint();
         return;
     }
 
@@ -107,7 +107,7 @@ void InlineContentPainter::paintDisplayBox(const InlineDisplay::Box& box)
 
 void InlineContentPainter::paint()
 {
-    auto layerPaintScope = LayerPaintScope { m_boxTree, m_inlineBoxWithLayer };
+    auto layerPaintScope = LayerPaintScope { m_inlineBoxWithLayer };
     auto lastBoxLineIndex = std::optional<size_t> { };
 
     auto paintLineEndingEllipsisIfApplicable = [&](std::optional<size_t> currentLineIndex) {
@@ -152,14 +152,18 @@ void InlineContentPainter::paint()
 
 LayoutPoint InlineContentPainter::flippedContentOffsetIfNeeded(const RenderBox& childRenderer) const
 {
-    if (root().style().isFlippedBlocksWritingMode())
+    if (root().writingMode().isBlockFlipped())
         return root().flipForWritingModeForChild(childRenderer, m_paintOffset);
     return m_paintOffset;
 }
 
-LayerPaintScope::LayerPaintScope(const BoxTree& boxTree, const RenderInline* inlineBoxWithLayer)
-    : m_boxTree(boxTree)
-    , m_inlineBoxWithLayer(inlineBoxWithLayer ? inlineBoxWithLayer->layoutBox() : nullptr)
+const RenderBlock& InlineContentPainter::root() const
+{
+    return m_root;
+}
+
+LayerPaintScope::LayerPaintScope(const RenderInline* inlineBoxWithLayer)
+    : m_inlineBoxWithLayer(inlineBoxWithLayer ? inlineBoxWithLayer->layoutBox() : nullptr)
 {
 }
 

@@ -1,3 +1,3 @@
-FAIL: Timed out waiting for notifyDone to be called
 
+PASS reload() and intercept() with a fulfilled promise
 

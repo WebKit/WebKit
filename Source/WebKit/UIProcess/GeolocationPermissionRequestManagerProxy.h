@@ -30,6 +30,7 @@
 #include "GeolocationPermissionRequestProxy.h"
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
+#include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebKit {
@@ -37,11 +38,14 @@ namespace WebKit {
 class WebPageProxy;
 class WebProcessProxy;
 
-class GeolocationPermissionRequestManagerProxy {
+class GeolocationPermissionRequestManagerProxy : public CanMakeWeakPtr<GeolocationPermissionRequestManagerProxy> {
 public:
     explicit GeolocationPermissionRequestManagerProxy(WebPageProxy&);
 
     void invalidateRequests();
+
+    void ref() const;
+    void deref() const;
 
     // Create a request to be presented to the user.
     Ref<GeolocationPermissionRequestProxy> createRequest(GeolocationIdentifier, WebProcessProxy&);

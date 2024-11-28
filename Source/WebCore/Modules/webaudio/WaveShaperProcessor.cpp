@@ -30,9 +30,12 @@
 
 #include "WaveShaperDSPKernel.h"
 #include <JavaScriptCore/Float32Array.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
-    
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WaveShaperProcessor);
+
 WaveShaperProcessor::WaveShaperProcessor(float sampleRate, size_t numberOfChannels)
     : AudioDSPKernelProcessor(sampleRate, numberOfChannels)
 {

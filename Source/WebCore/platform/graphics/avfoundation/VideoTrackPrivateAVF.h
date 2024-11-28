@@ -28,10 +28,12 @@
 #if ENABLE(VIDEO)
 
 #include "VideoTrackPrivate.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
 class VideoTrackPrivateAVF : public VideoTrackPrivate {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(VideoTrackPrivateAVF);
     WTF_MAKE_NONCOPYABLE(VideoTrackPrivateAVF)
 public:
     int trackIndex() const override { return m_index; }

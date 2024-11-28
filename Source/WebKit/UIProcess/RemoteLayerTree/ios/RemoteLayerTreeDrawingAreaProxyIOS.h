@@ -51,7 +51,7 @@ private:
 
     std::unique_ptr<RemoteScrollingCoordinatorProxy> createScrollingCoordinatorProxy() const override;
 
-    void setPreferredFramesPerSecond(WebCore::FramesPerSecond) override;
+    void setPreferredFramesPerSecond(IPC::Connection&, WebCore::FramesPerSecond) override;
     void scheduleDisplayRefreshCallbacks() override;
     void pauseDisplayRefreshCallbacks() override;
 

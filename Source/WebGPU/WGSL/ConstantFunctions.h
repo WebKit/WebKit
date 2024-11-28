@@ -278,7 +278,7 @@ struct StaticCast {
 template<typename U>
 struct BitwiseCast {
     template<typename T>
-    static U cast(T t) { return bitwise_cast<U>(t); }
+    static U cast(T t) { return std::bit_cast<U>(t); }
 };
 
 template<typename DestinationType, template <typename U> typename Cast = StaticCast>
@@ -1037,8 +1037,8 @@ CONSTANT_FUNCTION(Dot)
 CONSTANT_FUNCTION(Dot4U8Packed)
 {
     UNUSED_PARAM(resultType);
-    auto lhs = bitwise_cast<std::array<uint8_t, 4>>(std::get<uint32_t>(arguments[0]));
-    auto rhs = bitwise_cast<std::array<uint8_t, 4>>(std::get<uint32_t>(arguments[1]));
+    auto lhs = std::bit_cast<std::array<uint8_t, 4>>(std::get<uint32_t>(arguments[0]));
+    auto rhs = std::bit_cast<std::array<uint8_t, 4>>(std::get<uint32_t>(arguments[1]));
     uint32_t result = lhs[0] * rhs[0] + lhs[1] * rhs[1] + lhs[2] * rhs[2] + lhs[3] * rhs[3];
     return { { result } };
 }
@@ -1046,8 +1046,8 @@ CONSTANT_FUNCTION(Dot4U8Packed)
 CONSTANT_FUNCTION(Dot4I8Packed)
 {
     UNUSED_PARAM(resultType);
-    auto lhs = bitwise_cast<std::array<int8_t, 4>>(std::get<uint32_t>(arguments[0]));
-    auto rhs = bitwise_cast<std::array<int8_t, 4>>(std::get<uint32_t>(arguments[1]));
+    auto lhs = std::bit_cast<std::array<int8_t, 4>>(std::get<uint32_t>(arguments[0]));
+    auto rhs = std::bit_cast<std::array<int8_t, 4>>(std::get<uint32_t>(arguments[1]));
     int32_t result = lhs[0] * rhs[0] + lhs[1] * rhs[1] + lhs[2] * rhs[2] + lhs[3] * rhs[3];
     return { { result } };
 }
@@ -1469,7 +1469,7 @@ CONSTANT_FUNCTION(Pack4x8snorm)
         auto e = std::get<float>(vector.elements[i]);
         packed[i] = static_cast<int8_t>(std::floor(0.5 + 127 * std::min(1.f, std::max(-1.f, e))));
     }
-    return { { bitwise_cast<uint32_t>(packed) } };
+    return { { std::bit_cast<uint32_t>(packed) } };
 }
 
 CONSTANT_FUNCTION(Pack4x8unorm)
@@ -1481,7 +1481,7 @@ CONSTANT_FUNCTION(Pack4x8unorm)
         auto e = std::get<float>(vector.elements[i]);
         packed[i] = static_cast<uint8_t>(std::floor(0.5 + 255 * std::min(1.f, std::max(0.f, e))));
     }
-    return { { bitwise_cast<uint32_t>(packed) } };
+    return { { std::bit_cast<uint32_t>(packed) } };
 }
 
 CONSTANT_FUNCTION(Pack4xI8)
@@ -1493,7 +1493,7 @@ CONSTANT_FUNCTION(Pack4xI8)
         auto e = std::get<int32_t>(vector.elements[i]);
         packed[i] = static_cast<uint8_t>(e);
     }
-    return { { bitwise_cast<uint32_t>(packed) } };
+    return { { std::bit_cast<uint32_t>(packed) } };
 }
 
 CONSTANT_FUNCTION(Pack4xU8)
@@ -1505,7 +1505,7 @@ CONSTANT_FUNCTION(Pack4xU8)
         auto e = std::get<uint32_t>(vector.elements[i]);
         packed[i] = static_cast<uint8_t>(e);
     }
-    return { { bitwise_cast<uint32_t>(packed) } };
+    return { { std::bit_cast<uint32_t>(packed) } };
 }
 
 CONSTANT_FUNCTION(Pack4xI8Clamp)
@@ -1517,7 +1517,7 @@ CONSTANT_FUNCTION(Pack4xI8Clamp)
         auto e = std::get<int32_t>(vector.elements[i]);
         packed[i] = static_cast<uint8_t>(std::min(127, std::max(-128, e)));
     }
-    return { { bitwise_cast<uint32_t>(packed) } };
+    return { { std::bit_cast<uint32_t>(packed) } };
 }
 
 CONSTANT_FUNCTION(Pack4xU8Clamp)
@@ -1529,7 +1529,7 @@ CONSTANT_FUNCTION(Pack4xU8Clamp)
         auto e = std::get<uint32_t>(vector.elements[i]);
         packed[i] = static_cast<uint8_t>(std::min(255u, e));
     }
-    return { { bitwise_cast<uint32_t>(packed) } };
+    return { { std::bit_cast<uint32_t>(packed) } };
 }
 
 CONSTANT_FUNCTION(Pack2x16snorm)
@@ -1541,7 +1541,7 @@ CONSTANT_FUNCTION(Pack2x16snorm)
         auto e = std::get<float>(vector.elements[i]);
         packed[i] = static_cast<int16_t>(std::floor(0.5 + 32767 * std::min(1.f, std::max(-1.f, e))));
     }
-    return { { bitwise_cast<uint32_t>(packed) } };
+    return { { std::bit_cast<uint32_t>(packed) } };
 }
 
 CONSTANT_FUNCTION(Pack2x16unorm)
@@ -1553,7 +1553,7 @@ CONSTANT_FUNCTION(Pack2x16unorm)
         auto e = std::get<float>(vector.elements[i]);
         packed[i] = static_cast<uint16_t>(std::floor(0.5 + 65535 * std::min(1.f, std::max(0.f, e))));
     }
-    return { { bitwise_cast<uint32_t>(packed) } };
+    return { { std::bit_cast<uint32_t>(packed) } };
 }
 
 CONSTANT_FUNCTION(Pack2x16float)
@@ -1568,7 +1568,7 @@ CONSTANT_FUNCTION(Pack2x16float)
             return makeUnexpected(makeString("value "_s, e, " cannot be represented as 'f16'"_s));
         packed[i] = *converted;
     }
-    return { { bitwise_cast<uint32_t>(packed) } };
+    return { { std::bit_cast<uint32_t>(packed) } };
 }
 
 // Data Unpacking
@@ -1576,7 +1576,7 @@ CONSTANT_FUNCTION(Unpack4x8snorm)
 {
     UNUSED_PARAM(resultType);
     auto argument = std::get<uint32_t>(arguments[0]);
-    auto packed = bitwise_cast<std::array<int8_t, 4>>(argument);
+    auto packed = std::bit_cast<std::array<int8_t, 4>>(argument);
     ConstantVector result(4);
     for (unsigned i = 0; i < 4; ++i) {
         auto e = static_cast<float>(packed[i]);
@@ -1589,7 +1589,7 @@ CONSTANT_FUNCTION(Unpack4x8unorm)
 {
     UNUSED_PARAM(resultType);
     auto argument = std::get<uint32_t>(arguments[0]);
-    auto packed = bitwise_cast<std::array<uint8_t, 4>>(argument);
+    auto packed = std::bit_cast<std::array<uint8_t, 4>>(argument);
     ConstantVector result(4);
     for (unsigned i = 0; i < 4; ++i) {
         auto e = static_cast<float>(packed[i]);
@@ -1602,7 +1602,7 @@ CONSTANT_FUNCTION(Unpack4xI8)
 {
     UNUSED_PARAM(resultType);
     auto argument = std::get<uint32_t>(arguments[0]);
-    auto packed = bitwise_cast<std::array<int8_t, 4>>(argument);
+    auto packed = std::bit_cast<std::array<int8_t, 4>>(argument);
     ConstantVector result(4);
     for (unsigned i = 0; i < 4; ++i)
         result.elements[i] = static_cast<int32_t>(packed[i]);
@@ -1613,7 +1613,7 @@ CONSTANT_FUNCTION(Unpack4xU8)
 {
     UNUSED_PARAM(resultType);
     auto argument = std::get<uint32_t>(arguments[0]);
-    auto packed = bitwise_cast<std::array<uint8_t, 4>>(argument);
+    auto packed = std::bit_cast<std::array<uint8_t, 4>>(argument);
     ConstantVector result(4);
     for (unsigned i = 0; i < 4; ++i)
         result.elements[i] = static_cast<uint32_t>(packed[i]);
@@ -1624,7 +1624,7 @@ CONSTANT_FUNCTION(Unpack2x16snorm)
 {
     UNUSED_PARAM(resultType);
     auto argument = std::get<uint32_t>(arguments[0]);
-    auto packed = bitwise_cast<std::array<int16_t, 2>>(argument);
+    auto packed = std::bit_cast<std::array<int16_t, 2>>(argument);
     ConstantVector result(2);
     for (unsigned i = 0; i < 2; ++i) {
         auto e = static_cast<float>(packed[i]);
@@ -1637,7 +1637,7 @@ CONSTANT_FUNCTION(Unpack2x16unorm)
 {
     UNUSED_PARAM(resultType);
     auto argument = std::get<uint32_t>(arguments[0]);
-    auto packed = bitwise_cast<std::array<uint16_t, 2>>(argument);
+    auto packed = std::bit_cast<std::array<uint16_t, 2>>(argument);
     ConstantVector result(2);
     for (unsigned i = 0; i < 2; ++i) {
         auto e = static_cast<float>(packed[i]);
@@ -1650,7 +1650,7 @@ CONSTANT_FUNCTION(Unpack2x16float)
 {
     UNUSED_PARAM(resultType);
     auto argument = std::get<uint32_t>(arguments[0]);
-    auto packed = bitwise_cast<std::array<half, 2>>(argument);
+    auto packed = std::bit_cast<std::array<half, 2>>(argument);
     ConstantVector result(2);
     for (unsigned i = 0; i < 2; ++i)
         result.elements[i] = static_cast<float>(packed[i]);
@@ -1662,27 +1662,27 @@ CONSTANT_FUNCTION(Bitcast)
     const auto& split = [&](ConstantVector& result, const ConstantValue& argument, unsigned offset) -> std::optional<String> {
         uint32_t value;
         if (auto* i32 = std::get_if<int32_t>(&argument))
-            value = bitwise_cast<uint32_t>(*i32);
+            value = std::bit_cast<uint32_t>(*i32);
         else if (auto* u32 = std::get_if<uint32_t>(&argument))
             value = *u32;
         else if (auto* f32 = std::get_if<float>(&argument))
-            value = bitwise_cast<uint32_t>(*f32);
+            value = std::bit_cast<uint32_t>(*f32);
         else if (auto* abstractInt = std::get_if<int64_t>(&argument)) {
             auto i32 = convertInteger<int32_t>(*abstractInt);
             if (!i32)
                 return { makeString("value "_s, String::number(*abstractInt), " cannot be represented as 'i32'"_s) };
-            value = bitwise_cast<uint32_t>(*i32);
+            value = std::bit_cast<uint32_t>(*i32);
         } else if (auto* abstractFloat = std::get_if<double>(&argument)) {
             auto f32 = convertFloat<float>(*abstractFloat);
             if (!f32)
                 return { makeString("value "_s, String::number(*abstractFloat), " cannot be represented as 'f32'"_s) };
-            value = bitwise_cast<uint32_t>(*f32);
+            value = std::bit_cast<uint32_t>(*f32);
         } else {
             RELEASE_ASSERT_NOT_REACHED();
             value = 0;
         }
 
-        auto parts = bitwise_cast<std::array<half, 2>>(value);
+        auto parts = std::bit_cast<std::array<half, 2>>(value);
         result.elements[offset] = parts[0];
         result.elements[offset + 1] = parts[1];
         return std::nullopt;
@@ -1690,8 +1690,8 @@ CONSTANT_FUNCTION(Bitcast)
 
     const auto& join = [&](const Type* type, const ConstantVector& vector, unsigned offset) -> ConstantValue {
         uint32_t value = 0;
-        value |= bitwise_cast<uint16_t>(std::get<half>(vector.elements[offset]));
-        value |= static_cast<uint32_t>(bitwise_cast<uint16_t>(std::get<half>(vector.elements[offset + 1]))) << 16;
+        value |= std::bit_cast<uint16_t>(std::get<half>(vector.elements[offset]));
+        value |= static_cast<uint32_t>(std::bit_cast<uint16_t>(std::get<half>(vector.elements[offset + 1]))) << 16;
         return convertValue<BitwiseCast>(type, value);
     };
 

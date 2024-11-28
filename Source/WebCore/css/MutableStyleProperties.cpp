@@ -34,6 +34,8 @@
 #include "StylePropertiesInlines.h"
 #include "StylePropertyShorthand.h"
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(MutableStyleProperties);
@@ -348,9 +350,11 @@ CSSProperty* MutableStyleProperties::findCustomCSSPropertyWithName(const String&
 CSSStyleDeclaration& MutableStyleProperties::ensureInlineCSSStyleDeclaration(StyledElement& parentElement)
 {
     if (!m_cssomWrapper)
-        m_cssomWrapper = makeUnique<InlineCSSStyleDeclaration>(*this, parentElement);
+        m_cssomWrapper = makeUniqueWithoutRefCountedCheck<InlineCSSStyleDeclaration>(*this, parentElement);
     ASSERT(m_cssomWrapper->parentElement() == &parentElement);
     return *m_cssomWrapper;
 }
 
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

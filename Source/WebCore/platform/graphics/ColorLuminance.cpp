@@ -30,6 +30,13 @@
 
 namespace WebCore {
 
+double relativeLuminance(const Color& color)
+{
+    return color.callOnUnderlyingType([&] (const auto& underlyingColor) {
+        return relativeLuminance(underlyingColor);
+    });
+}
+
 double contrastRatio(const Color& colorA, const Color& colorB)
 {
     return colorA.callOnUnderlyingType([&] (const auto& underlyingColorA) {

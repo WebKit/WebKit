@@ -516,42 +516,42 @@ template<typename CharacterType> auto ContentSecurityPolicyDirectiveList::parseD
     if (buffer.atEnd())
         return std::nullopt;
 
-    auto nameBegin = buffer.position();
+    auto nameBegin = buffer.span();
     skipWhile<isDirectiveNameCharacter>(buffer);
 
     // The directive-name must be non-empty.
-    if (nameBegin == buffer.position()) {
+    if (nameBegin.data() == buffer.position()) {
         skipWhile<isNotASCIISpace>(buffer);
-        m_policy.reportUnsupportedDirective(String({ nameBegin, buffer.position() }));
+        m_policy.reportUnsupportedDirective(nameBegin.first(buffer.position() - nameBegin.data()));
         return std::nullopt;
     }
 
-    auto name = String({ nameBegin, buffer.position() });
+    String name { nameBegin.first(buffer.position() - nameBegin.data()) };
 
     if (buffer.atEnd())
         return ParsedDirective { WTFMove(name), { } };
 
     if (!skipExactly<isUnicodeCompatibleASCIIWhitespace>(buffer)) {
         skipWhile<isNotASCIISpace>(buffer);
-        m_policy.reportUnsupportedDirective(String({ nameBegin, buffer.position() }));
+        m_policy.reportUnsupportedDirective(nameBegin.first(buffer.position() - nameBegin.data()));
         return std::nullopt;
     }
 
     skipWhile<isUnicodeCompatibleASCIIWhitespace>(buffer);
 
-    auto valueBegin = buffer.position();
+    auto valueBegin = buffer.span();
     skipWhile<isDirectiveValueCharacter>(buffer);
 
     if (!buffer.atEnd()) {
-        m_policy.reportInvalidDirectiveValueCharacter(name, String({ valueBegin, buffer.end() }));
+        m_policy.reportInvalidDirectiveValueCharacter(name, valueBegin);
         return std::nullopt;
     }
 
     // The directive-value may be empty.
-    if (valueBegin == buffer.position())
+    if (valueBegin.data() == buffer.position())
         return ParsedDirective { WTFMove(name), { } };
 
-    auto value = String({ valueBegin, buffer.position() });
+    String value { valueBegin.first(buffer.position() - valueBegin.data()) };
     return ParsedDirective { WTFMove(name), WTFMove(value) };
 }
 
@@ -615,8 +615,10 @@ void ContentSecurityPolicyDirectiveList::parseRequireTrustedTypesFor(ParsedDirec
             auto begin = buffer.position();
             if (skipExactlyIgnoringASCIICase(buffer, "'script'"_s))
                 m_requireTrustedTypesForScript = true;
-            else
-                policy().reportInvalidTrustedTypesSinkGroup(String({ begin, buffer.position() }));
+            else {
+                policy().reportInvalidTrustedTypesSinkGroup(std::span { begin, buffer.position() });
+                return;
+            }
 
             ASSERT(buffer.atEnd() || isUnicodeCompatibleASCIIWhitespace(*buffer));
         }

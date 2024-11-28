@@ -44,6 +44,7 @@ messages -> WebPushD::PushClientConnection NotUsingIPCConnection {
     RequestPushPermission(WebCore::SecurityOriginData origin) -> (bool granted)
     SetAppBadge(WebCore::SecurityOriginData origin, std::optional<uint64_t> badge)
     GetAppBadgeForTesting() -> (std::optional<uint64_t> badge)
+    SetProtocolVersionForTesting(unsigned version) -> ()
 }
 
 #endif // ENABLE(WEB_PUSH_NOTIFICATIONS)

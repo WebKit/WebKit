@@ -26,7 +26,7 @@
 
 // Version number for shader translation API.
 // It is incremented every time the API changes.
-#define ANGLE_SH_VERSION 358
+#define ANGLE_SH_VERSION 371
 
 enum ShShaderSpec
 {
@@ -40,43 +40,42 @@ enum ShShaderSpec
     SH_WEBGL3_SPEC,
 
     SH_GLES3_2_SPEC,
-
-    SH_GL_CORE_SPEC,
-    SH_GL_COMPATIBILITY_SPEC,
 };
 
 enum ShShaderOutput
 {
+    // NULL output for testing.
+    SH_NULL_OUTPUT,
+
     // ESSL output only supported in some configurations.
-    SH_ESSL_OUTPUT = 0x8B45,
+    SH_ESSL_OUTPUT,
 
     // GLSL output only supported in some configurations.
-    SH_GLSL_COMPATIBILITY_OUTPUT = 0x8B46,
+    SH_GLSL_COMPATIBILITY_OUTPUT,
     // Note: GL introduced core profiles in 1.5.
-    SH_GLSL_130_OUTPUT      = 0x8B47,
-    SH_GLSL_140_OUTPUT      = 0x8B80,
-    SH_GLSL_150_CORE_OUTPUT = 0x8B81,
-    SH_GLSL_330_CORE_OUTPUT = 0x8B82,
-    SH_GLSL_400_CORE_OUTPUT = 0x8B83,
-    SH_GLSL_410_CORE_OUTPUT = 0x8B84,
-    SH_GLSL_420_CORE_OUTPUT = 0x8B85,
-    SH_GLSL_430_CORE_OUTPUT = 0x8B86,
-    SH_GLSL_440_CORE_OUTPUT = 0x8B87,
-    SH_GLSL_450_CORE_OUTPUT = 0x8B88,
+    SH_GLSL_130_OUTPUT,
+    SH_GLSL_140_OUTPUT,
+    SH_GLSL_150_CORE_OUTPUT,
+    SH_GLSL_330_CORE_OUTPUT,
+    SH_GLSL_400_CORE_OUTPUT,
+    SH_GLSL_410_CORE_OUTPUT,
+    SH_GLSL_420_CORE_OUTPUT,
+    SH_GLSL_430_CORE_OUTPUT,
+    SH_GLSL_440_CORE_OUTPUT,
+    SH_GLSL_450_CORE_OUTPUT,
 
     // Prefer using these to specify HLSL output type:
-    SH_HLSL_3_0_OUTPUT       = 0x8B48,  // D3D 9
-    SH_HLSL_4_1_OUTPUT       = 0x8B49,  // D3D 11
-    SH_HLSL_4_0_FL9_3_OUTPUT = 0x8B4A,  // D3D 11 feature level 9_3
+    SH_HLSL_3_0_OUTPUT,  // D3D 9
+    SH_HLSL_4_1_OUTPUT,  // D3D 11
 
     // Output SPIR-V for the Vulkan backend.
-    SH_SPIRV_VULKAN_OUTPUT = 0x8B4B,
+    SH_SPIRV_VULKAN_OUTPUT,
 
     // Output for MSL
-    SH_MSL_METAL_OUTPUT = 0x8B4D,
+    SH_MSL_METAL_OUTPUT,
 
     // Output for WGSL
-    SH_WGSL_OUTPUT = 0x8B4E,
+    SH_WGSL_OUTPUT,
 };
 
 struct ShCompileOptionsMetal
@@ -104,7 +103,18 @@ enum class ShPixelLocalStorageType : uint8_t
     NotSupported,
     ImageLoadStore,
     FramebufferFetch,
-    PixelLocalStorageEXT,  // GL_EXT_shader_pixel_local_storage.
+};
+
+// For ANGLE_shader_pixel_local_storage.
+// Used to track the PLS format at each binding index in a shader.
+enum class ShPixelLocalStorageFormat : uint8_t
+{
+    NotPLS,  // Indicates that no PLS uniform was declared at the binding index in question.
+    RGBA8,
+    RGBA8I,
+    RGBA8UI,
+    R32F,
+    R32UI,
 };
 
 // For ANGLE_shader_pixel_local_storage_coherent.
@@ -455,6 +465,15 @@ struct ShCompileOptions
     //
     uint64_t rejectWebglShadersWithUndefinedBehavior : 1;
 
+    // Emulate r32f image with an r32ui image
+    uint64_t emulateR32fImageAtomicExchange : 1;
+
+    // Rewrite for and while loops to loop normal form.
+    uint64_t simplifyLoopConditions : 1;
+
+    // Specify struct in one statement, declare instance in other.
+    uint64_t separateCompoundStructDeclarations : 1;
+
     ShCompileOptionsMetal metal;
     ShPixelLocalStorageOptions pls;
 };
@@ -500,6 +519,7 @@ struct ShBuiltInResources
     int NV_shader_framebuffer_fetch;
     int NV_shader_noperspective_interpolation;
     int ARM_shader_framebuffer_fetch;
+    int ARM_shader_framebuffer_fetch_depth_stencil;
     int OVR_multiview;
     int OVR_multiview2;
     int EXT_multisampled_render_to_texture;
@@ -523,6 +543,8 @@ struct ShBuiltInResources
     int APPLE_clip_distance;
     int OES_texture_cube_map_array;
     int EXT_texture_cube_map_array;
+    int EXT_texture_query_lod;
+    int EXT_texture_shadow_lod;
     int EXT_shadow_samplers;
     int OES_shader_multisample_interpolation;
     int OES_shader_image_atomic;
@@ -856,6 +878,9 @@ sh::WorkGroupSize GetComputeShaderLocalGroupSize(const ShHandle handle);
 // Returns the number of views specified through the num_views layout qualifier. If num_views is
 // not set, the function returns -1.
 int GetVertexShaderNumViews(const ShHandle handle);
+// Returns the pixel local storage uniform format at each binding index, or "NotPLS" if there is
+// not one.
+const std::vector<ShPixelLocalStorageFormat> *GetPixelLocalStorageFormats(const ShHandle handle);
 
 // Returns specialization constant usage bits
 uint32_t GetShaderSpecConstUsageBits(const ShHandle handle);
@@ -940,14 +965,6 @@ inline bool IsWebGLBasedSpec(ShShaderSpec spec)
     return (spec == SH_WEBGL_SPEC || spec == SH_WEBGL2_SPEC || spec == SH_WEBGL3_SPEC);
 }
 
-//
-// Helper function to identify DesktopGL specs
-//
-inline bool IsDesktopGLSpec(ShShaderSpec spec)
-{
-    return spec == SH_GL_CORE_SPEC || spec == SH_GL_COMPATIBILITY_SPEC;
-}
-
 // Can't prefix with just _ because then we might introduce a double underscore, which is not safe
 // in GLSL (ESSL 3.00.6 section 3.8: All identifiers containing a double underscore are reserved for
 // use by the underlying implementation). u is short for user-defined.
@@ -964,6 +981,8 @@ enum class MetadataFlags
     HasInputAttachment0,
     // Flag for attachment i is HasInputAttachment0 + i
     HasInputAttachment7 = HasInputAttachment0 + 7,
+    HasDepthInputAttachment,
+    HasStencilInputAttachment,
     // Applicable to geometry shaders
     HasValidGeometryShaderInputPrimitiveType,
     HasValidGeometryShaderOutputPrimitiveType,
@@ -1118,6 +1137,8 @@ enum ReservedIds
     // Input attachments used for framebuffer fetch and advanced blend emulation
     kIdInputAttachment0,
     kIdInputAttachment7 = kIdInputAttachment0 + 7,
+    kIdDepthInputAttachment,
+    kIdStencilInputAttachment,
 
     kIdFirstUnreserved,
 };
@@ -1130,7 +1151,8 @@ enum ReservedIds
 // - 8 bits for enabled clip planes
 // - 1 bit for whether depth should be transformed to Vulkan clip space
 // - 1 bit for whether alpha to coverage is enabled
-// - 10 bits unused
+// - 1 bit for whether the framebuffer is layered
+// - 9 bits unused
 constexpr uint32_t kDriverUniformsMiscSwapXYMask                  = 0x1;
 constexpr uint32_t kDriverUniformsMiscAdvancedBlendEquationOffset = 1;
 constexpr uint32_t kDriverUniformsMiscAdvancedBlendEquationMask   = 0x1F;
@@ -1142,6 +1164,8 @@ constexpr uint32_t kDriverUniformsMiscTransformDepthOffset        = 20;
 constexpr uint32_t kDriverUniformsMiscTransformDepthMask          = 0x1;
 constexpr uint32_t kDriverUniformsMiscAlphaToCoverageOffset       = 21;
 constexpr uint32_t kDriverUniformsMiscAlphaToCoverageMask         = 0x1;
+constexpr uint32_t kDriverUniformsMiscLayeredFramebufferOffset    = 22;
+constexpr uint32_t kDriverUniformsMiscLayeredFramebufferMask      = 0x1;
 }  // namespace vk
 
 namespace mtl

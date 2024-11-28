@@ -107,6 +107,8 @@ private:
 #endif
 };
 
+template<typename T> WeakObjCPtr(T) -> WeakObjCPtr<std::remove_pointer_t<T>>;
+
 #ifdef __OBJC__
 template<typename T>
 RetainPtr<typename WeakObjCPtr<T>::ValueType> WeakObjCPtr<T>::get() const

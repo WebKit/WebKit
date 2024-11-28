@@ -48,13 +48,13 @@ RefPtr<CanvasLayerContextSwitcher> CanvasLayerContextSwitcher::create(CanvasRend
 
 CanvasLayerContextSwitcher::CanvasLayerContextSwitcher(CanvasRenderingContext2DBase& context, const FloatRect& bounds, std::unique_ptr<GraphicsContextSwitcher>&& targetSwitcher)
     : m_context(context)
-    , m_effectiveDrawingContext(m_context.effectiveDrawingContext())
+    , m_effectiveDrawingContext(context.effectiveDrawingContext())
     , m_bounds(bounds)
     , m_targetSwitcher(WTFMove(targetSwitcher))
 {
     ASSERT(m_targetSwitcher);
     ASSERT(m_effectiveDrawingContext);
-    m_targetSwitcher->beginDrawSourceImage(*m_effectiveDrawingContext, m_context.globalAlpha());
+    m_targetSwitcher->beginDrawSourceImage(*m_effectiveDrawingContext, context.globalAlpha());
 }
 
 CanvasLayerContextSwitcher::~CanvasLayerContextSwitcher()
@@ -71,7 +71,7 @@ GraphicsContext* CanvasLayerContextSwitcher::drawingContext() const
 
 FloatBoxExtent CanvasLayerContextSwitcher::outsets() const
 {
-    return m_context.calculateFilterOutsets(m_bounds);
+    return protectedContext()->calculateFilterOutsets(m_bounds);
 }
 
 } // namespace WebCore

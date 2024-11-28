@@ -79,6 +79,7 @@ enum class FontIsOrientationFallback : bool { No, Yes };
 
 #if USE(CORE_TEXT)
 bool fontHasEitherTable(CTFontRef, unsigned tableTag1, unsigned tableTag2);
+bool supportsOpenTypeFeature(CTFontRef, CFStringRef featureTag);
 #endif
 
 struct FontInternalAttributes {
@@ -106,8 +107,8 @@ public:
 
     WEBCORE_EXPORT ~Font();
 
-    static const Font* systemFallback() { return reinterpret_cast<const Font*>(-1); }
-
+    static Ref<Font> createSystemFallbackFontPlaceholder() { return adoptRef(*new Font(IsSystemFallbackFontPlaceholder::Yes)); }
+    bool isSystemFontFallbackPlaceholder() const { return m_isSystemFontFallbackPlaceholder; }
     const FontPlatformData& platformData() const { return m_platformData; }
 #if ENABLE(MATHML)
     const OpenTypeMathData* mathData() const;
@@ -122,6 +123,7 @@ public:
     const Font& noSynthesizableFeaturesFont() const;
     const Font* emphasisMarkFont(const FontDescription&) const;
     const Font& brokenIdeographFont() const;
+    const RefPtr<Font> halfWidthFont() const;
 
     bool isProbablyOnlyUsedToRenderIcons() const;
 
@@ -167,6 +169,12 @@ public:
         Incorporate,
         Exclude
     };
+
+    enum class IsSystemFallbackFontPlaceholder : bool {
+        No,
+        Yes
+    };
+
     float widthForGlyph(Glyph, SyntheticBoldInclusion = SyntheticBoldInclusion::Incorporate) const;
 
     Path pathForGlyph(Glyph) const;
@@ -214,6 +222,7 @@ public:
     bool supportsAllSmallCaps() const;
     bool supportsPetiteCaps() const;
     bool supportsAllPetiteCaps() const;
+    bool supportsOpenTypeAlternateHalfWidths() const;
 #if ENABLE(MULTI_REPRESENTATION_HEIC)
     MultiRepresentationHEICMetrics metricsForMultiRepresentationHEIC() const;
 #endif
@@ -241,6 +250,7 @@ public:
 
 private:
     WEBCORE_EXPORT Font(const FontPlatformData&, Origin, IsInterstitial, Visibility, IsOrientationFallback, std::optional<RenderingResourceIdentifier>);
+    Font(IsSystemFallbackFontPlaceholder);
 
     void platformInit();
     void platformGlyphInit();
@@ -252,6 +262,8 @@ private:
     RefPtr<Font> createFontWithoutSynthesizableFeatures() const;
     RefPtr<Font> createScaledFont(const FontDescription&, float scaleFactor) const;
     RefPtr<Font> platformCreateScaledFont(const FontDescription&, float scaleFactor) const;
+    RefPtr<Font> createHalfWidthFont() const;
+    RefPtr<Font> platformCreateHalfWidthFont() const;
 
     struct DerivedFonts;
     DerivedFonts& ensureDerivedFontData() const;
@@ -298,7 +310,7 @@ private:
 
     const FontPlatformData m_platformData;
 
-    mutable HashMap<unsigned, RefPtr<GlyphPage>, IntHash<unsigned>, WTF::UnsignedWithZeroKeyHashTraits<unsigned>> m_glyphPages;
+    mutable UncheckedKeyHashMap<unsigned, RefPtr<GlyphPage>, IntHash<unsigned>, WTF::UnsignedWithZeroKeyHashTraits<unsigned>> m_glyphPages;
     mutable GlyphMetricsMap<float> m_glyphToWidthMap;
     mutable std::unique_ptr<GlyphMetricsMap<FloatRect>> m_glyphToBoundsMap;
     // FIXME: Find a more efficient way to represent std::optional<Path>.
@@ -325,6 +337,7 @@ private:
         RefPtr<Font> verticalRightOrientationFont;
         RefPtr<Font> uprightOrientationFont;
         RefPtr<Font> invisibleFont;
+        RefPtr<Font> halfWidthFont;
     };
 
     mutable std::unique_ptr<DerivedFonts> m_derivedFontData;
@@ -350,6 +363,7 @@ private:
     mutable SupportsFeature m_supportsAllSmallCaps { SupportsFeature::Unknown };
     mutable SupportsFeature m_supportsPetiteCaps { SupportsFeature::Unknown };
     mutable SupportsFeature m_supportsAllPetiteCaps { SupportsFeature::Unknown };
+    mutable SupportsFeature m_supportsOpenTypeAlternateHalfWidths { SupportsFeature::Unknown };
 #endif
 
 #if PLATFORM(WIN)
@@ -370,6 +384,8 @@ private:
     unsigned m_isUsedInSystemFallbackFontCache : 1;
     
     unsigned m_allowsAntialiasing : 1;
+
+    unsigned m_isSystemFontFallbackPlaceholder : 1 { false };
 
 #if PLATFORM(IOS_FAMILY)
     unsigned m_shouldNotBeUsedForArabic : 1;

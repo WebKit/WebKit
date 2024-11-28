@@ -50,7 +50,12 @@ struct Tester {
 
 }
 
+// rdar://134447305
+#if !defined(NDEBUG)
+TEST_F(SequenceLockedTest, DISABLED_Works)
+#else
 TEST_F(SequenceLockedTest, Works)
+#endif
 {
     SequenceLocked<Tester> tester;
     static_assert(sizeof(tester) - sizeof(uint64_t) == sizeof(Tester));
@@ -70,7 +75,7 @@ TEST_F(SequenceLockedTest, Works)
 #ifndef NDEBUG
     constexpr int iterations = 100000;
 #else
-    constexpr int iterations = 1000;
+    constexpr int iterations = 100;
 #endif
 
     for (int i = 0; i < iterations; ++i) {

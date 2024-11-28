@@ -62,7 +62,7 @@ public:
 
 private:
     CSSFontStyleRangeValue(Ref<CSSPrimitiveValue>&& fontStyleValue, RefPtr<CSSValueList>&& obliqueValues)
-        : CSSValue(FontStyleRangeClass)
+        : CSSValue(ClassType::FontStyleRange)
         , fontStyleValue(WTFMove(fontStyleValue))
         , obliqueValues(WTFMove(obliqueValues))
     {

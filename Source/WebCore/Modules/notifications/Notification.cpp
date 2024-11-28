@@ -143,6 +143,7 @@ Ref<Notification> Notification::create(ScriptExecutionContext& context, const UR
 
     RefPtr<SerializedScriptValue> dataScriptValue;
     if (payload.options && !payload.options->dataJSONString.isEmpty() && context.globalObject()) {
+        JSC::JSLockHolder lock(context.globalObject());
         auto value = JSONParse(context.globalObject(), payload.options->dataJSONString);
         dataScriptValue = SerializedScriptValue::convert(*context.globalObject(), value);
     }
@@ -483,7 +484,8 @@ void Notification::ensureOnNotificationThread(ScriptExecutionContextIdentifier c
 
 void Notification::ensureOnNotificationThread(const NotificationData& notification, Function<void(Notification*)>&& task)
 {
-    ensureOnNotificationThread(notification.contextIdentifier, notification.notificationID, WTFMove(task));
+    RELEASE_ASSERT(notification.contextIdentifier);
+    ensureOnNotificationThread(*notification.contextIdentifier, notification.notificationID, WTFMove(task));
 }
 
 } // namespace WebCore

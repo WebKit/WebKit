@@ -32,15 +32,6 @@
 #include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
-namespace WebKit {
-class WebNavigationState;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::WebNavigationState> : std::true_type { };
-}
-
 namespace API {
 class Navigation;
 struct SubstituteData;
@@ -60,8 +51,11 @@ class WebBackForwardListItem;
 class WebNavigationState : public CanMakeWeakPtr<WebNavigationState> {
     WTF_MAKE_TZONE_ALLOCATED(WebNavigationState);
 public:
-    explicit WebNavigationState();
+    explicit WebNavigationState(WebPageProxy&);
     ~WebNavigationState();
+
+    void ref() const;
+    void deref() const;
 
     Ref<API::Navigation> createBackForwardNavigation(WebCore::ProcessIdentifier, Ref<WebBackForwardListItem>&& targetItem, RefPtr<WebBackForwardListItem>&& currentItem, WebCore::FrameLoadType);
     Ref<API::Navigation> createLoadRequestNavigation(WebCore::ProcessIdentifier, WebCore::ResourceRequest&&, RefPtr<WebBackForwardListItem>&& currentItem);
@@ -80,6 +74,7 @@ public:
     using NavigationMap = HashMap<WebCore::NavigationIdentifier, RefPtr<API::Navigation>>;
 
 private:
+    WeakRef<WebPageProxy> m_page;
     NavigationMap m_navigations;
 };
 

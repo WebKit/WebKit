@@ -99,10 +99,6 @@ void GeoNotifier::timerFired()
 {
     m_timer.stop();
 
-    // Protect this GeoNotifier object, since it
-    // could be deleted by a call to clearWatch in a callback.
-    Ref<GeoNotifier> protectedThis(*this);
-
     // Test for fatal error first. This is required for the case where the Frame is
     // disconnected and requests are cancelled.
     Ref geolocation = m_geolocation;

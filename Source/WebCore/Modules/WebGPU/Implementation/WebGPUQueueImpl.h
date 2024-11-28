@@ -59,7 +59,7 @@ private:
 
     WGPUQueue backing() const { return m_backing.get(); }
 
-    void submit(Vector<std::reference_wrapper<CommandBuffer>>&&) final;
+    void submit(Vector<Ref<WebGPU::CommandBuffer>>&&) final;
 
     void onSubmittedWorkDone(CompletionHandler<void()>&&) final;
 

@@ -45,6 +45,11 @@ using namespace WebCore;
 
 const size_t CtapChannelIdSize = 4;
 
+Ref<VirtualHidConnection> VirtualHidConnection::create(const String& authenticatorId, const VirtualAuthenticatorConfiguration& configuration, const WeakPtr<VirtualAuthenticatorManager>& manager)
+{
+    return adoptRef(*new VirtualHidConnection(authenticatorId, configuration, manager));
+}
+
 VirtualHidConnection::VirtualHidConnection(const String& authenticatorId, const VirtualAuthenticatorConfiguration& configuration, const WeakPtr<VirtualAuthenticatorManager>& manager)
     : HidConnection(nullptr)
     , m_manager(manager)
@@ -127,9 +132,9 @@ void VirtualHidConnection::parseRequest()
 {
     if (!m_requestMessage)
         return;
-    if (!m_manager)
+    RefPtr manager = m_manager.get();
+    if (!manager)
         return;
-    auto* manager = m_manager.get();
     m_currentChannel = m_requestMessage->channelId();
     switch (m_requestMessage->cmd()) {
     case FidoHidDeviceCommand::kInit: {
@@ -293,7 +298,7 @@ void VirtualHidConnection::parseRequest()
                     }
                 }
             }
-            auto matchingCredentials = m_manager->credentialsMatchingList(m_authenticatorId, rpId, allowList);
+            auto matchingCredentials = manager->credentialsMatchingList(m_authenticatorId, rpId, allowList);
             if (matchingCredentials.isEmpty()) {
                 recieveResponseCode(CtapDeviceResponseCode::kCtap2ErrNoCredentials);
                 return;

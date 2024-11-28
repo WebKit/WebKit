@@ -63,13 +63,13 @@ public:
 
     float contentLogicalTopAdjustedForPrecedingLineBox() const
     {
-        if (isFlippedLinesWritingMode(formattingContextRoot().style().writingMode()) || !m_lineIndex)
+        if (formattingContextRoot().style().writingMode().isLineInverted() || !m_lineIndex)
             return contentLogicalTop();
         return LineBoxIteratorModernPath { *m_inlineContent, m_lineIndex - 1 }.contentLogicalBottom();
     }
     float contentLogicalBottomAdjustedForFollowingLineBox() const
     {
-        if (!isFlippedLinesWritingMode(formattingContextRoot().style().writingMode()) || m_lineIndex == lines().size() - 1)
+        if (!formattingContextRoot().style().writingMode().isLineInverted() || m_lineIndex == lines().size() - 1)
             return contentLogicalBottom();
         return LineBoxIteratorModernPath { *m_inlineContent, m_lineIndex + 1 }.contentLogicalTop();
     }
@@ -115,7 +115,7 @@ public:
             return { *m_inlineContent };
         auto runIterator = BoxModernPath { *m_inlineContent, line().firstBoxIndex() };
         if (runIterator.box().isInlineBox())
-            runIterator.traverseNextOnLine();
+            runIterator.traverseNextLeafOnLine();
         return runIterator;
     }
 
@@ -126,7 +126,7 @@ public:
             return { *m_inlineContent };
         auto runIterator = BoxModernPath { *m_inlineContent, line().firstBoxIndex() + boxCount - 1 };
         if (runIterator.box().isInlineBox())
-            runIterator.traversePreviousOnLine();
+            runIterator.traversePreviousLeafOnLine();
         return runIterator;
     }
 

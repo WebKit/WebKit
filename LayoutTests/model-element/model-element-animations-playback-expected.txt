@@ -1,0 +1,7 @@
+
+PASS <model> with empty source should fail play action
+PASS <model> source with no animation should fail play action
+PASS <model> source with animation should be able to play/pause with expected paused states afterwards
+PASS <model> source with autoplay=true should play on load
+PASS Paused <model> should stay paused after changing autoplay=true
+

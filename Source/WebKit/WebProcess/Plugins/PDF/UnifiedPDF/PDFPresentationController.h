@@ -29,6 +29,8 @@
 
 #include "PDFDocumentLayout.h"
 #include "PDFPageCoverage.h"
+#include <WebCore/GraphicsLayer.h>
+#include <WebCore/PlatformLayerIdentifier.h>
 #include <wtf/OptionSet.h>
 #include <wtf/RefPtr.h>
 #include <wtf/RetainPtr.h>
@@ -40,7 +42,6 @@ OBJC_CLASS PDFDocument;
 namespace WebCore {
 enum class TiledBackingScrollability : uint8_t;
 class GraphicsLayerClient;
-class GraphicsLayer;
 };
 
 namespace WebKit {

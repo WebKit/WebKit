@@ -1,4 +1,4 @@
 
 
-FAIL currententrychange does not fire for cross-document navigation.back() and navigation.forward() assert_equals: expected 2 but got 1
+PASS currententrychange does not fire for cross-document navigation.back() and navigation.forward()
 

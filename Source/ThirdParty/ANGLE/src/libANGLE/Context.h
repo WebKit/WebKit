@@ -22,10 +22,6 @@
 #include "common/angleutils.h"
 #include "libANGLE/Caps.h"
 #include "libANGLE/Constants.h"
-#include "libANGLE/Context_gl_1_autogen.h"
-#include "libANGLE/Context_gl_2_autogen.h"
-#include "libANGLE/Context_gl_3_autogen.h"
-#include "libANGLE/Context_gl_4_autogen.h"
 #include "libANGLE/Context_gles_1_0_autogen.h"
 #include "libANGLE/Context_gles_2_0_autogen.h"
 #include "libANGLE/Context_gles_3_0_autogen.h"
@@ -431,7 +427,7 @@ class StateCache final : angle::NonCopyable
     // F = Draw calls "first" vertex index
     // C = Draw calls vertex "count"
     // B = Instanced draw calls "baseinstance"
-    // P = Instanced draw calls "primcount" (or "instancecount" in desktop GL)
+    // P = Instanced draw calls "primcount"
     //
     // Then, for each attribute i:
     //
@@ -516,7 +512,6 @@ class Context final : public egl::LabeledObject, angle::NonCopyable, public angl
             egl::ContextMutex *sharedContextMutex,
             MemoryProgramCache *memoryProgramCache,
             MemoryShaderCache *memoryShaderCache,
-            const EGLenum clientType,
             const egl::AttributeMap &attribs,
             const egl::DisplayExtensions &displayExtensions,
             const egl::ClientExtensions &clientExtensions);
@@ -598,12 +593,6 @@ class Context final : public egl::LabeledObject, angle::NonCopyable, public angl
 
     bool hasActiveTransformFeedback(ShaderProgramID program) const;
 
-    // Desktop GL entry point interface
-    ANGLE_GL_1_CONTEXT_API
-    ANGLE_GL_2_CONTEXT_API
-    ANGLE_GL_3_CONTEXT_API
-    ANGLE_GL_4_CONTEXT_API
-
     // GLES entry point interface
     ANGLE_GLES_1_0_CONTEXT_API
     ANGLE_GLES_2_0_CONTEXT_API
@@ -626,7 +615,6 @@ class Context final : public egl::LabeledObject, angle::NonCopyable, public angl
     bool isRobustnessEnabled() const { return mState.hasRobustAccess(); }
 
     const egl::Config *getConfig() const { return mConfig; }
-    EGLenum getClientType() const { return mState.getClientType(); }
     EGLenum getRenderBuffer() const;
     EGLenum getContextPriority() const;
 
@@ -801,7 +789,9 @@ class Context final : public egl::LabeledObject, angle::NonCopyable, public angl
     bool noopDrawInstanced(PrimitiveMode mode, GLsizei count, GLsizei instanceCount) const;
     bool noopMultiDraw(GLsizei drawcount) const;
 
-    bool isClearBufferMaskedOut(GLenum buffer, GLint drawbuffer) const;
+    bool isClearBufferMaskedOut(GLenum buffer,
+                                GLint drawbuffer,
+                                GLuint framebufferStencilSize) const;
     bool noopClearBuffer(GLenum buffer, GLint drawbuffer) const;
 
     void addRef() const { mRefCount++; }
@@ -832,22 +822,10 @@ class Context final : public egl::LabeledObject, angle::NonCopyable, public angl
 
     const angle::PerfMonitorCounterGroups &getPerfMonitorCounterGroups() const;
 
-    // Enables GL_SHADER_PIXEL_LOCAL_STORAGE_EXT and polyfills load operations for
-    // ANGLE_shader_pixel_local_storage using a fullscreen draw.
-    //
-    // The implementation's ShPixelLocalStorageType must be "PixelLocalStorageEXT".
-    void drawPixelLocalStorageEXTEnable(GLsizei n,
-                                        const PixelLocalStoragePlane[],
-                                        const GLenum loadops[]);
-
-    // Stores texture-backed PLS planes via fullscreen draw and disables
-    // GL_SHADER_PIXEL_LOCAL_STORAGE_EXT.
-    //
-    // The implementation's ShPixelLocalStorageType must be "PixelLocalStorageEXT".
-    void drawPixelLocalStorageEXTDisable(const PixelLocalStoragePlane[], const GLenum storeops[]);
-
     // Ends the currently active pixel local storage session with GL_STORE_OP_STORE on all planes.
     void endPixelLocalStorageWithStoreOpsStore();
+
+    bool areBlobCacheFuncsSet() const;
 
   private:
     void initializeDefaultResources();
@@ -887,6 +865,7 @@ class Context final : public egl::LabeledObject, angle::NonCopyable, public angl
     egl::Error unsetDefaultFramebuffer();
 
     void initRendererString();
+    void initVendorString();
     void initVersionStrings();
     void initExtensionStrings();
 
@@ -950,6 +929,7 @@ class Context final : public egl::LabeledObject, angle::NonCopyable, public angl
     TransformFeedbackMap mTransformFeedbackMap;
     HandleAllocator mTransformFeedbackHandleAllocator;
 
+    const char *mVendorString;
     const char *mVersionString;
     const char *mShadingLanguageString;
     const char *mRendererString;
@@ -985,7 +965,6 @@ class Context final : public egl::LabeledObject, angle::NonCopyable, public angl
     state::DirtyObjects mComputeDirtyObjects;
     state::DirtyBits mCopyImageDirtyBits;
     state::DirtyObjects mCopyImageDirtyObjects;
-    state::DirtyObjects mPixelLocalStorageEXTEnableDisableDirtyObjects;
 
     // Binding to container objects that use dependent state updates.
     angle::ObserverBinding mVertexArrayObserverBinding;

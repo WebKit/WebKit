@@ -29,6 +29,7 @@
 
 #include <WebCore/CredentialRequestCoordinatorClient.h>
 #include <WebCore/FrameIdentifier.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebKit {
@@ -36,6 +37,7 @@ namespace WebKit {
 class WebPage;
 
 class DigitalCredentialsCoordinator final : public WebCore::CredentialRequestCoordinatorClient {
+    WTF_MAKE_TZONE_ALLOCATED(DigitalCredentialsCoordinator);
 public:
     explicit DigitalCredentialsCoordinator(WebPage&);
 

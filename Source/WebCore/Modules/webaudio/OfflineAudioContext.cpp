@@ -47,7 +47,7 @@ WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(OfflineAudioContext);
 
 OfflineAudioContext::OfflineAudioContext(Document& document, const OfflineAudioContextOptions& options)
     : BaseAudioContext(document)
-    , m_destinationNode(makeUniqueRef<OfflineAudioDestinationNode>(*this, options.numberOfChannels, options.sampleRate, AudioBuffer::create(options.numberOfChannels, options.length, options.sampleRate)))
+    , m_destinationNode(makeUniqueRefWithoutRefCountedCheck<OfflineAudioDestinationNode>(*this, options.numberOfChannels, options.sampleRate, AudioBuffer::create(options.numberOfChannels, options.length, options.sampleRate)))
     , m_length(options.length)
 {
     if (!renderTarget())

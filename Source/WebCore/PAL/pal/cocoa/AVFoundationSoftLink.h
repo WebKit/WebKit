@@ -29,6 +29,7 @@
 
 #import <AVFoundation/AVFoundation.h>
 #import <wtf/SoftLinking.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 
 SOFT_LINK_FRAMEWORK_FOR_HEADER(PAL, AVFoundation)
 
@@ -103,7 +104,11 @@ SOFT_LINK_CLASS_FOR_HEADER(PAL, AVCaptureVideoDataOutput)
 SOFT_LINK_CLASS_FOR_HEADER(PAL, AVFrameRateRange)
 SOFT_LINK_CLASS_FOR_HEADER(PAL, AVCaptureDeviceDiscoverySession)
 SOFT_LINK_CLASS_FOR_HEADER(PAL, AVCapturePhotoOutput)
+
+#if HAVE(AVCAPTUREDEVICEROTATIONCOORDINATOR)
+SOFT_LINK_CLASS_FOR_HEADER(PAL, AVCaptureDeviceRotationCoordinator)
 #endif
+#endif // HAVE(AVCAPTUREDEVICE)
 
 SOFT_LINK_CONSTANT_FOR_HEADER(PAL, AVFoundation, AVAudioTimePitchAlgorithmSpectral, NSString *)
 #define AVAudioTimePitchAlgorithmSpectral PAL::get_AVFoundation_AVAudioTimePitchAlgorithmSpectral()
@@ -210,6 +215,10 @@ SOFT_LINK_CONSTANT_FOR_HEADER(PAL, AVFoundation, AVFileTypeMPEG4, NSString *)
 #define AVFileTypeMPEG4 PAL::get_AVFoundation_AVFileTypeMPEG4()
 SOFT_LINK_CONSTANT_FOR_HEADER(PAL, AVFoundation, AVFileTypeQuickTimeMovie, NSString *)
 #define AVFileTypeQuickTimeMovie PAL::get_AVFoundation_AVFileTypeQuickTimeMovie()
+SOFT_LINK_CONSTANT_FOR_HEADER(PAL, AVFoundation, AVFileTypeProfileMPEG4AppleHLS, NSString *)
+#define AVFileTypeProfileMPEG4AppleHLS PAL::get_AVFoundation_AVFileTypeProfileMPEG4AppleHLS()
+SOFT_LINK_CONSTANT_FOR_HEADER(PAL, AVFoundation, AVFileTypeProfileMPEG4CMAFCompliant, NSString *)
+#define AVFileTypeProfileMPEG4CMAFCompliant PAL::get_AVFoundation_AVFileTypeProfileMPEG4CMAFCompliant()
 SOFT_LINK_CONSTANT_FOR_HEADER(PAL, AVFoundation, AVVideoCodecKey, NSString *)
 #define AVVideoCodecKey PAL::get_AVFoundation_AVVideoCodecKey()
 SOFT_LINK_CONSTANT_FOR_HEADER(PAL, AVFoundation, AVVideoCodecTypeJPEG, NSString *)
@@ -412,5 +421,9 @@ SOFT_LINK_CONSTANT_MAY_FAIL_FOR_HEADER(PAL, AVFoundation, AVSampleBufferDisplayL
 
 SOFT_LINK_FUNCTION_FOR_HEADER(PAL, AVFoundation, AVSampleBufferAttachContentKey, BOOL, (CMSampleBufferRef sbuf, AVContentKey *contentKey, NSError **outError), (sbuf, contentKey, outError))
 #define AVSampleBufferAttachContentKey PAL::softLink_AVFoundation_AVSampleBufferAttachContentKey
+
+SPECIALIZE_OBJC_TYPE_TRAITS(AVSampleBufferAudioRenderer, PAL::getAVSampleBufferAudioRendererClass())
+SPECIALIZE_OBJC_TYPE_TRAITS(AVSampleBufferDisplayLayer, PAL::getAVSampleBufferDisplayLayerClass())
+SPECIALIZE_OBJC_TYPE_TRAITS(AVSampleBufferVideoRenderer, PAL::getAVSampleBufferVideoRendererClass())
 
 #endif // USE(AVFOUNDATION)

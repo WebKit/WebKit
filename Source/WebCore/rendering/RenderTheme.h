@@ -403,7 +403,7 @@ public:
 
 protected:
     struct ColorCache {
-        HashMap<int, Color> systemStyleColors;
+        UncheckedKeyHashMap<int, Color> systemStyleColors;
 
         Color systemLinkColor;
         Color systemActiveLinkColor;
@@ -444,7 +444,7 @@ private:
     Color dictationAlternativesMarkerColor(OptionSet<StyleColorOptions>) const;
     Color grammarMarkerColor(OptionSet<StyleColorOptions>) const;
 
-    mutable HashMap<uint8_t, ColorCache, DefaultHash<uint8_t>, WTF::UnsignedWithZeroKeyHashTraits<uint8_t>> m_colorCacheMap;
+    mutable UncheckedKeyHashMap<uint8_t, ColorCache, DefaultHash<uint8_t>, WTF::UnsignedWithZeroKeyHashTraits<uint8_t>> m_colorCacheMap;
 
     bool m_useFormSemanticContext { false };
 };

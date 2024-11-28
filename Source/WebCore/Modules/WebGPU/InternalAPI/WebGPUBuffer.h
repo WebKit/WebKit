@@ -55,7 +55,7 @@ public:
 
     virtual void destroy() = 0;
     virtual std::span<uint8_t> getBufferContents() = 0;
-    virtual void copy(std::span<const uint8_t>, size_t offset) = 0;
+    virtual void copyFrom(std::span<const uint8_t>, size_t offset) = 0;
 protected:
     Buffer() = default;
 

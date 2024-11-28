@@ -222,7 +222,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> catchInWasmThunkGenerator(const AbstractLo
 
 MacroAssemblerCodeRef<JITThunkPtrTag> triggerOMGEntryTierUpThunkGeneratorImpl(const AbstractLocker&, bool isSIMDContext)
 {
-    // We expect that the user has already put the function index into GPRInfo::nonPreservedNonArgumentGPR0
+    // We expect that the user has already put their cfr into GPRInfo::nonPreservedNonArgumentGPR0
     CCallHelpers jit;
     JIT_COMMENT(jit, "triggerOMGEntryTierUpThunkGenerator");
 
@@ -233,8 +233,8 @@ MacroAssemblerCodeRef<JITThunkPtrTag> triggerOMGEntryTierUpThunkGeneratorImpl(co
     unsigned numberOfStackBytesUsedForRegisterPreservation = ScratchRegisterAllocator::preserveRegistersToStackForCall(jit, registersToSpill, extraPaddingBytes);
 
     // We can clobber these argument registers now since we saved them and later we restore them.
-    jit.move(GPRInfo::wasmContextInstancePointer, GPRInfo::argumentGPR0);
-    jit.move(GPRInfo::nonPreservedNonArgumentGPR0, GPRInfo::argumentGPR1);
+    jit.move(GPRInfo::nonPreservedNonArgumentGPR0, GPRInfo::argumentGPR0);
+    jit.move(GPRInfo::wasmContextInstancePointer, GPRInfo::argumentGPR1);
     jit.move(MacroAssembler::TrustedImmPtr(tagCFunction<OperationPtrTag>(operationWasmTriggerTierUpNow)), GPRInfo::argumentGPR2);
     jit.call(GPRInfo::argumentGPR2, OperationPtrTag);
 

@@ -14,6 +14,7 @@
 #include "src/gpu/graphite/Log.h"
 #include "src/gpu/graphite/compute/DispatchGroup.h"
 #include "src/gpu/graphite/dawn/DawnGraphicsPipeline.h"
+#include "src/gpu/graphite/dawn/DawnResourceProvider.h"
 
 #include "webgpu/webgpu_cpp.h"  // NO_G3_REWRITE
 
@@ -24,7 +25,6 @@ class ComputePipeline;
 class DawnBuffer;
 class DawnComputePipeline;
 class DawnQueueManager;
-class DawnResourceProvider;
 class DawnSharedContext;
 class DawnTexture;
 class DispatchGroup;
@@ -37,9 +37,17 @@ public:
 
     wgpu::CommandBuffer finishEncoding();
 
+#if defined(SK_DEBUG)
+    bool hasActivePassEncoder() const {
+        return fActiveRenderPassEncoder || fActiveComputePassEncoder;
+    }
+#endif
+
 private:
     DawnCommandBuffer(const DawnSharedContext* sharedContext,
                       DawnResourceProvider* resourceProvider);
+
+    ResourceProvider* resourceProvider() const override { return fResourceProvider; }
 
     void onResetCommandBuffer() override;
     bool setNewCommandBufferResources() override;
@@ -49,7 +57,7 @@ private:
                          const Texture* colorTexture,
                          const Texture* resolveTexture,
                          const Texture* depthStencilTexture,
-                         SkRect viewport,
+                         SkIRect viewport,
                          const DrawPassList&) override;
     bool onAddComputePass(DispatchGroupSpan) override;
 
@@ -84,9 +92,9 @@ private:
     void bindTextureAndSamplers(const DrawPass& drawPass,
                                 const DrawPassCommands::BindTexturesAndSamplers& command);
 
-    void setScissor(unsigned int left, unsigned int top, unsigned int width, unsigned int height);
-    void preprocessViewport(const SkRect& viewport);
-    void setViewport(const SkRect& viewport);
+    void setScissor(const Scissor&);
+    bool updateIntrinsicUniforms(SkIRect viewport);
+    void setViewport(SkIRect viewport);
 
     void draw(PrimitiveType type, unsigned int baseVertex, unsigned int vertexCount);
     void drawIndexed(PrimitiveType type,
@@ -143,9 +151,7 @@ private:
 
     bool fBoundUniformBuffersDirty = false;
 
-    std::array<const DawnBuffer*, DawnGraphicsPipeline::kNumUniformBuffers> fBoundUniformBuffers;
-    std::array<uint32_t, DawnGraphicsPipeline::kNumUniformBuffers> fBoundUniformBufferOffsets;
-    std::array<uint32_t, DawnGraphicsPipeline::kNumUniformBuffers> fBoundUniformBufferSizes;
+    std::array<BindBufferInfo, DawnGraphicsPipeline::kNumUniformBuffers> fBoundUniforms;
 
     wgpu::CommandEncoder fCommandEncoder;
     wgpu::RenderPassEncoder fActiveRenderPassEncoder;
@@ -153,18 +159,6 @@ private:
 
     wgpu::Buffer fCurrentIndirectBuffer;
     size_t fCurrentIndirectBufferOffset = 0;
-
-    using IntrinsicConstant = std::array<float, 4>;
-
-    static constexpr int kBufferBindingOffsetAlignment = 256;
-    static constexpr int kIntrinsicConstantAlignedSize =
-            SkAlignTo(sizeof(IntrinsicConstant), kBufferBindingOffsetAlignment);
-    static constexpr int kNumSlotsForIntrinsicConstantBuffer = 8;
-
-    std::optional<IntrinsicConstant> fCurrentRTAdjust;
-
-    sk_sp<DawnBuffer> fIntrinsicConstantBuffer;
-    int fIntrinsicConstantBufferSlotsUsed = 0;
 
     const DawnGraphicsPipeline* fActiveGraphicsPipeline = nullptr;
     const DawnComputePipeline* fActiveComputePipeline = nullptr;

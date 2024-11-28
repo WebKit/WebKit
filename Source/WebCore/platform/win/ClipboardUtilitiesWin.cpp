@@ -167,7 +167,7 @@ HGLOBAL createGlobalData(const String& str)
     HGLOBAL vm = ::GlobalAlloc(GPTR, (str.length() + 1) * sizeof(UChar));
     if (!vm)
         return 0;
-    UChar* buffer = static_cast<UChar*>(GlobalLock(vm));
+    auto buffer = unsafeMakeSpan(static_cast<UChar*>(GlobalLock(vm)), str.length() + 1);
     StringView(str).getCharacters(buffer);
     buffer[str.length()] = 0;
     GlobalUnlock(vm);
@@ -614,8 +614,8 @@ Ref<DocumentFragment> fragmentFromCFHTML(Document* doc, const String& cfhtml)
     // obtain baseURL if present
     String srcURLStr("sourceURL:"_s);
     String srcURL;
-    unsigned lineStart = cfhtml.findIgnoringASCIICase(srcURLStr);
-    if (lineStart != -1) {
+    size_t lineStart = cfhtml.findIgnoringASCIICase(srcURLStr);
+    if (lineStart != notFound) {
         unsigned srcEnd = cfhtml.find('\n', lineStart);
         unsigned srcStart = lineStart+srcURLStr.length();
         String rawSrcURL = cfhtml.substring(srcStart, srcEnd-srcStart);
@@ -681,7 +681,7 @@ struct ClipboardDataItem {
     ClipboardDataItem(FORMATETC* format, GetStringFunction getString, SetStringFunction setString): format(format), getString(getString), setString(setString) { }
 };
 
-typedef HashMap<UINT, ClipboardDataItem*> ClipboardFormatMap;
+typedef UncheckedKeyHashMap<UINT, ClipboardDataItem*> ClipboardFormatMap;
 
 // Getter functions.
 

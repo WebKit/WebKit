@@ -100,7 +100,6 @@ class DisplayMtl : public DisplayImpl
                                                          const egl::AttributeMap &attribs) override;
     gl::Version getMaxSupportedESVersion() const override;
     gl::Version getMaxConformantESVersion() const override;
-    Optional<gl::Version> getMaxSupportedDesktopVersion() const override;
 
     EGLSyncImpl *createSync() override;
 
@@ -138,8 +137,6 @@ class DisplayMtl : public DisplayImpl
     bool supportsEitherGPUFamily(uint8_t iOSFamily, uint8_t macFamily) const;
     bool supportsAppleGPUFamily(uint8_t iOSFamily) const;
     bool supportsMacGPUFamily(uint8_t macFamily) const;
-    bool supportsMetal2_1() const;
-    bool supportsMetal2_2() const;
     bool supportsDepth24Stencil8PixelFormat() const;
     bool supports32BitFloatFiltering() const;
     bool supportsBCTextureCompression() const;

@@ -42,6 +42,10 @@ typedef struct __DDResult *DDResultRef;
 
 #else // !USE(APPLE_INTERNAL_SDK)
 
+#import <wtf/Compiler.h>
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 #import <Foundation/Foundation.h>
 
 typedef enum {
@@ -197,5 +201,7 @@ void DDScannerSetQOS(DDScannerRef, DDQOS);
 #endif
 
 WTF_EXTERN_C_END
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif

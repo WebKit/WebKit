@@ -96,6 +96,9 @@
 
     // Non-standard: https://developer.apple.com/reference/webkitjs/element/1629580-onwebkitplaybacktargetavailabili.
     [NotEnumerable, Conditional=WIRELESS_PLAYBACK_TARGET] attribute EventHandler onwebkitplaybacktargetavailabilitychanged;
+
+    // WebKit extension for DOM wrapper worlds.
+    [EnabledForWorld=allowElementUserInfo, CallWith=CurrentGlobalObject] undefined setUserInfo(any userInfo);
 };
 
 Element includes AccessibilityRole;

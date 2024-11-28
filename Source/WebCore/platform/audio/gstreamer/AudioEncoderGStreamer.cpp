@@ -270,6 +270,7 @@ String GStreamerInternalAudioEncoder::initialize(const String& codecName, const 
     else if (codecName == "opus"_s) {
         if (auto parameters = config.opusConfig) {
             GUniquePtr<char> name(gst_element_get_name(m_encoder.get()));
+            WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib port
             if (LIKELY(g_str_has_prefix(name.get(), "opusenc"))) {
                 if (config.bitRate && config.bitRate < std::numeric_limits<int>::max()) {
                     if (config.bitRate >= 4000 && config.bitRate <= 650000)
@@ -288,6 +289,7 @@ String GStreamerInternalAudioEncoder::initialize(const String& codecName, const 
                 auto frameSize = makeString(parameters->frameDuration / 1000);
                 gst_util_set_object_arg(G_OBJECT(m_encoder.get()), "frame-size", frameSize.ascii().data());
             }
+            WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
         }
         int channelMappingFamily = config.numberOfChannels <= 2 ? 0 : 1;
         m_outputCaps = adoptGRef(gst_caps_new_simple("audio/x-opus", "channel-mapping-family", G_TYPE_INT, channelMappingFamily, nullptr));
@@ -299,8 +301,10 @@ String GStreamerInternalAudioEncoder::initialize(const String& codecName, const 
         m_outputCaps = adoptGRef(gst_caps_new_empty_simple("audio/x-flac"));
         if (auto parameters = config.flacConfig) {
             GUniquePtr<char> name(gst_element_get_name(m_encoder.get()));
+            WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib port
             if (LIKELY(g_str_has_prefix(name.get(), "flacenc")))
                 g_object_set(m_encoder.get(), "blocksize", static_cast<unsigned>(parameters->blockSize), "quality", parameters->compressLevel, nullptr);
+            WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
         }
     } else if (codecName == "vorbis"_s) {
         m_outputCaps = adoptGRef(gst_caps_new_empty_simple("audio/x-vorbis"));

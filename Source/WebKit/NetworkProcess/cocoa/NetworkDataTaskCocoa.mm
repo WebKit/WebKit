@@ -214,11 +214,14 @@ NetworkDataTaskCocoa::NetworkDataTaskCocoa(NetworkSession& session, NetworkDataT
         applyBasicAuthorizationHeader(request, m_initialCredential);
     }
 
-    bool shouldBlockCookies = false;
-    shouldBlockCookies = m_storedCredentialsPolicy == WebCore::StoredCredentialsPolicy::EphemeralStateless;
+    const auto shouldBlockCookies = [](WebCore::ThirdPartyCookieBlockingDecision thirdPartyCookieBlockingDecision) {
+        return thirdPartyCookieBlockingDecision == WebCore::ThirdPartyCookieBlockingDecision::All;
+    };
+
+    auto thirdPartyCookieBlockingDecision = m_storedCredentialsPolicy == WebCore::StoredCredentialsPolicy::EphemeralStateless ? WebCore::ThirdPartyCookieBlockingDecision::All : WebCore::ThirdPartyCookieBlockingDecision::None;
     if (auto* networkStorageSession = session.networkStorageSession()) {
-        if (!shouldBlockCookies)
-            shouldBlockCookies = networkStorageSession->shouldBlockCookies(request, frameID(), pageID(), shouldRelaxThirdPartyCookieBlocking());
+        if (!shouldBlockCookies(thirdPartyCookieBlockingDecision))
+            thirdPartyCookieBlockingDecision = networkStorageSession->thirdPartyCookieBlockingDecisionForRequest(request, frameID(), pageID(), shouldRelaxThirdPartyCookieBlocking());
     }
     restrictRequestReferrerToOriginIfNeeded(request);
 
@@ -287,6 +290,8 @@ NetworkDataTaskCocoa::NetworkDataTaskCocoa(NetworkSession& session, NetworkDataT
         m_task.get()._hostOverride = adoptNS(nw_endpoint_create_host_with_numeric_port("localhost", url.port().value_or(0))).get();
 #endif
 
+    updateTaskWithStoragePartitionIdentifier(request);
+
     WTFBeginSignpost(m_task.get(), DataTask, "%" PUBLIC_LOG_STRING " %" PRIVATE_LOG_STRING " pri: %.2f preconnect: %d", request.httpMethod().utf8().data(), url.string().utf8().data(), toNSURLSessionTaskPriority(request.priority()), parameters.shouldPreconnectOnly == PreconnectOnly::Yes);
 
     switch (parameters.storedCredentialsPolicy) {
@@ -317,7 +322,7 @@ NetworkDataTaskCocoa::NetworkDataTaskCocoa(NetworkSession& session, NetworkDataT
 
     if (!isTopLevelNavigation())
         applyCookiePolicyForThirdPartyCloaking(request);
-    if (shouldBlockCookies) {
+    if (shouldBlockCookies(thirdPartyCookieBlockingDecision)) {
 #if !RELEASE_LOG_DISABLED
         if (m_session->shouldLogCookieInformation())
             RELEASE_LOG_IF(isAlwaysOnLoggingAllowed(), Network, "%p - NetworkDataTaskCocoa::logCookieInformation: pageID=%" PRIu64 ", frameID=%" PRIu64 ", taskID=%lu: Blocking cookies for URL %s", this, pageID() ? pageID()->toUInt64() : 0, frameID() ? frameID()->object().toUInt64() : 0, (unsigned long)[m_task taskIdentifier], [nsRequest URL].absoluteString.UTF8String);
@@ -405,7 +410,7 @@ void NetworkDataTaskCocoa::didReceiveResponse(WebCore::ResourceResponse&& respon
 #if ENABLE(NETWORK_ISSUE_REPORTING)
     else if (NetworkIssueReporter::shouldReport([m_task _incompleteTaskMetrics])) {
         if (auto session = networkSession())
-            session->reportNetworkIssue(m_webPageProxyID, firstRequest().url());
+            session->reportNetworkIssue(*m_webPageProxyID, firstRequest().url());
     }
 #endif
     NetworkDataTask::didReceiveResponse(WTFMove(response), negotiatedLegacyTLS, privateRelayed, WebCore::IPAddress::fromString(lastRemoteIPAddress(m_task.get())), WTFMove(completionHandler));
@@ -502,8 +507,8 @@ void NetworkDataTaskCocoa::setPendingDownloadLocation(const WTF::String& filenam
 
     ASSERT(!m_sandboxExtension);
     m_sandboxExtension = SandboxExtension::create(WTFMove(sandboxExtensionHandle));
-    if (m_sandboxExtension)
-        m_sandboxExtension->consume();
+    if (RefPtr extention = m_sandboxExtension)
+        extention->consume();
 
     m_task.get()._pathToDownloadTaskFile = m_pendingDownloadLocation;
 

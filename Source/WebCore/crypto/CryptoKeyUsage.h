@@ -41,7 +41,7 @@ enum {
 typedef int CryptoKeyUsageBitmap;
 
 // Only for binding purpose.
-enum class CryptoKeyUsage {
+enum class CryptoKeyUsage : uint8_t {
     Encrypt,
     Decrypt,
     Sign,

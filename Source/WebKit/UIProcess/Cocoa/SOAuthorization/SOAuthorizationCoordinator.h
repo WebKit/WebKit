@@ -37,6 +37,7 @@ OBJC_CLASS WKSOAuthorizationDelegate;
 
 namespace API {
 class NavigationAction;
+class PageConfiguration;
 }
 
 namespace WebCore {

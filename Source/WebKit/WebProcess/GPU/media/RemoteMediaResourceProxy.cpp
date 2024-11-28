@@ -45,20 +45,23 @@ RemoteMediaResourceProxy::RemoteMediaResourceProxy(Ref<IPC::Connection>&& connec
 {
 }
 
-RemoteMediaResourceProxy::~RemoteMediaResourceProxy()
+RemoteMediaResourceProxy::~RemoteMediaResourceProxy() = default;
+
+Ref<WebCore::PlatformMediaResource> RemoteMediaResourceProxy::protectedMediaResource() const
 {
+    return m_platformMediaResource.get().releaseNonNull();
 }
 
 void RemoteMediaResourceProxy::responseReceived(WebCore::PlatformMediaResource&, const WebCore::ResourceResponse& response, CompletionHandler<void(WebCore::ShouldContinuePolicyCheck)>&& completionHandler)
 {
-    m_connection->sendWithAsyncReply(Messages::RemoteMediaResourceManager::ResponseReceived(m_id, response, m_platformMediaResource.didPassAccessControlCheck()), [completionHandler = WTFMove(completionHandler)](auto shouldContinue) mutable {
+    protectedConnection()->sendWithAsyncReply(Messages::RemoteMediaResourceManager::ResponseReceived(m_id, response, protectedMediaResource()->didPassAccessControlCheck()), [completionHandler = WTFMove(completionHandler)](auto shouldContinue) mutable {
         completionHandler(shouldContinue);
     });
 }
 
 void RemoteMediaResourceProxy::redirectReceived(WebCore::PlatformMediaResource&, WebCore::ResourceRequest&& request, const WebCore::ResourceResponse& response, CompletionHandler<void(WebCore::ResourceRequest&&)>&& completionHandler)
 {
-    m_connection->sendWithAsyncReply(Messages::RemoteMediaResourceManager::RedirectReceived(m_id, request, response), [completionHandler = WTFMove(completionHandler)](WebCore::ResourceRequest&& request) mutable {
+    protectedConnection()->sendWithAsyncReply(Messages::RemoteMediaResourceManager::RedirectReceived(m_id, request, response), [completionHandler = WTFMove(completionHandler)](WebCore::ResourceRequest&& request) mutable {
         completionHandler(WTFMove(request));
     });
 }
@@ -71,12 +74,12 @@ bool RemoteMediaResourceProxy::shouldCacheResponse(WebCore::PlatformMediaResourc
 
 void RemoteMediaResourceProxy::dataSent(WebCore::PlatformMediaResource&, unsigned long long bytesSent, unsigned long long totalBytesToBeSent)
 {
-    m_connection->send(Messages::RemoteMediaResourceManager::DataSent(m_id, bytesSent, totalBytesToBeSent), 0);
+    protectedConnection()->send(Messages::RemoteMediaResourceManager::DataSent(m_id, bytesSent, totalBytesToBeSent), 0);
 }
 
 void RemoteMediaResourceProxy::dataReceived(WebCore::PlatformMediaResource&, const WebCore::SharedBuffer& buffer)
 {
-    m_connection->sendWithAsyncReply(Messages::RemoteMediaResourceManager::DataReceived(m_id, IPC::SharedBufferReference { buffer }), [] (auto&& bufferHandle) {
+    protectedConnection()->sendWithAsyncReply(Messages::RemoteMediaResourceManager::DataReceived(m_id, IPC::SharedBufferReference { buffer }), [] (auto&& bufferHandle) {
         // Take ownership of shared memory and mark it as media-related memory.
         if (bufferHandle)
             bufferHandle->takeOwnershipOfMemory(WebCore::MemoryLedger::Media);
@@ -85,17 +88,17 @@ void RemoteMediaResourceProxy::dataReceived(WebCore::PlatformMediaResource&, con
 
 void RemoteMediaResourceProxy::accessControlCheckFailed(WebCore::PlatformMediaResource&, const WebCore::ResourceError& error)
 {
-    m_connection->send(Messages::RemoteMediaResourceManager::AccessControlCheckFailed(m_id, error), 0);
+    protectedConnection()->send(Messages::RemoteMediaResourceManager::AccessControlCheckFailed(m_id, error), 0);
 }
 
 void RemoteMediaResourceProxy::loadFailed(WebCore::PlatformMediaResource&, const WebCore::ResourceError& error)
 {
-    m_connection->send(Messages::RemoteMediaResourceManager::LoadFailed(m_id, error), 0);
+    protectedConnection()->send(Messages::RemoteMediaResourceManager::LoadFailed(m_id, error), 0);
 }
 
 void RemoteMediaResourceProxy::loadFinished(WebCore::PlatformMediaResource&, const WebCore::NetworkLoadMetrics& metrics)
 {
-    m_connection->send(Messages::RemoteMediaResourceManager::LoadFinished(m_id, metrics), 0);
+    protectedConnection()->send(Messages::RemoteMediaResourceManager::LoadFinished(m_id, metrics), 0);
 }
 
 }

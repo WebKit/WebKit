@@ -1958,6 +1958,106 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, RuleConversionWithRequestDomains)
     EXPECT_NS_EQUAL(convertedRule, correctRuleConversion);
 }
 
+TEST(WKWebExtensionAPIDeclarativeNetRequest, RuleConversionWithInitiatorDomains)
+{
+    NSDictionary *rule = @{
+        @"id": @1,
+        @"action": @{ @"type": @"block" },
+        @"condition": @{
+            @"initiatorDomains": @[ @"apple.com", @"facebook.com", @"google.com" ],
+            @"resourceTypes": @[ @"font" ],
+        },
+    };
+
+    _WKWebExtensionDeclarativeNetRequestRule *validatedRule = [[_WKWebExtensionDeclarativeNetRequestRule alloc] initWithDictionary:rule errorString:nil];
+    NSDictionary *convertedRule = validatedRule.ruleInWebKitFormat.firstObject;
+    EXPECT_NOT_NULL(convertedRule);
+
+    NSDictionary *correctRuleConversion = @{
+        @"action": @{
+            @"type": @"block",
+        },
+        @"trigger": @{
+            @"if-frame-url": @[ @"^[^:]+://+([^:/]+\\.)?apple\\.com/.*", @"^[^:]+://+([^:/]+\\.)?facebook\\.com/.*", @"^[^:]+://+([^:/]+\\.)?google\\.com/.*" ],
+            @"resource-type": @[ @"font" ],
+            @"url-filter": @".*",
+        },
+    };
+
+    EXPECT_NS_EQUAL(convertedRule, correctRuleConversion);
+}
+
+TEST(WKWebExtensionAPIDeclarativeNetRequest, RuleConversionWithExcludedInitiatorDomains)
+{
+    NSDictionary *rule = @{
+        @"id": @1,
+        @"action": @{ @"type": @"block" },
+        @"condition": @{
+            @"excludedInitiatorDomains": @[ @"apple.com", @"facebook.com", @"google.com" ],
+            @"resourceTypes": @[ @"font" ],
+        },
+    };
+
+    _WKWebExtensionDeclarativeNetRequestRule *validatedRule = [[_WKWebExtensionDeclarativeNetRequestRule alloc] initWithDictionary:rule errorString:nil];
+    NSDictionary *convertedRule = validatedRule.ruleInWebKitFormat.firstObject;
+    EXPECT_NOT_NULL(convertedRule);
+
+    NSDictionary *correctRuleConversion = @{
+        @"action": @{
+            @"type": @"block",
+        },
+        @"trigger": @{
+            @"unless-frame-url": @[ @"^[^:]+://+([^:/]+\\.)?apple\\.com/.*", @"^[^:]+://+([^:/]+\\.)?facebook\\.com/.*", @"^[^:]+://+([^:/]+\\.)?google\\.com/.*" ],
+            @"resource-type": @[ @"font" ],
+            @"url-filter": @".*",
+        },
+    };
+
+    EXPECT_NS_EQUAL(convertedRule, correctRuleConversion);
+}
+
+TEST(WKWebExtensionAPIDeclarativeNetRequest, RuleConversionWithExcludedInitiatorDomainsAndInitiatorDomains)
+{
+    NSDictionary *rule = @{
+        @"id": @1,
+        @"action": @{ @"type": @"block" },
+        @"condition": @{
+            @"initiatorDomains": @[ @"example.com" ],
+            @"excludedInitiatorDomains": @[ @"blog.example.com" ],
+            @"resourceTypes": @[ @"font" ],
+        },
+    };
+
+    _WKWebExtensionDeclarativeNetRequestRule *validatedRule = [[_WKWebExtensionDeclarativeNetRequestRule alloc] initWithDictionary:rule errorString:nil];
+    NSArray *convertedRules = validatedRule.ruleInWebKitFormat;
+    EXPECT_NOT_NULL(convertedRules);
+
+    NSArray *correctRuleConversion = @[
+        @{
+            @"action": @{
+                @"type": @"block",
+            },
+            @"trigger": @{
+                @"if-frame-url": @[ @"^[^:]+://+([^:/]+\\.)?example\\.com/.*" ],
+                @"resource-type": @[ @"font" ],
+                @"url-filter": @".*",
+            }
+        },
+        @{
+            @"action": @{
+                @"type": @"ignore-previous-rules",
+            },
+            @"trigger": @{
+                @"if-frame-url": @[ @"^[^:]+://+([^:/]+\\.)?blog\\.example\\.com/.*" ],
+                @"resource-type": @[ @"font" ],
+                @"url-filter": @".*",
+            }
+        }
+    ];
+
+    EXPECT_NS_EQUAL(convertedRules, correctRuleConversion);
+}
+
 TEST(WKWebExtensionAPIDeclarativeNetRequest, RuleConversionWithEmptyExcludedDomains)
 {
     NSDictionary *rule = @{
@@ -2539,6 +2639,59 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, RulesSortByActionType)
     EXPECT_NS_EQUAL(sortedTranslatedRules[5][@"action"][@"type"], @"ignore-previous-rules");
 }
 
+TEST(WKWebExtensionAPIDeclarativeNetRequest, RemoveAllContentRuleListsDoesNotRemoveWebExtensionRuleLists)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, "<iframe src='/frame.html'></iframe>"_s } },
+        { "/frame.html"_s, { { { "Content-Type"_s, "text/html"_s } }, "<body style='background-color: blue'></body>"_s } },
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.test.yield('Remove RuleLists and Load Tab')"
+    ]);
+
+    auto *declarativeNetRequestManifest = @{
+        @"manifest_version": @3,
+        @"permissions": @[ @"declarativeNetRequest" ],
+        @"background": @{ @"scripts": @[ @"background.js" ], @"type": @"module", @"persistent": @NO },
+        @"declarative_net_request": @{
+            @"rule_resources": @[
+                @{
+                    @"id": @"blockFrame",
+                    @"enabled": @YES,
+                    @"path": @"rules.json"
+                }
+            ]
+        }
+    };
+
+    auto *rules = @"[ { \"id\" : 1, \"priority\": 1, \"action\" : { \"type\" : \"block\" }, \"condition\" : { \"urlFilter\" : \"frame\" } } ]";
+
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:declarativeNetRequestManifest resources:@{ @"background.js": backgroundScript, @"rules.json": rules }]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:WKWebExtensionPermissionDeclarativeNetRequest];
+
+    [manager loadAndRun];
+
+    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Remove RuleLists and Load Tab");
+
+    [manager.get().defaultTab.webView.configuration.userContentController removeAllContentRuleLists];
+
+    auto webView = manager.get().defaultTab.webView;
+    auto navigationDelegate = adoptNS([TestNavigationDelegate new]);
+
+    __block bool receivedActionNotification { false };
+    navigationDelegate.get().contentRuleListPerformedAction = ^(WKWebView *, NSString *identifier, _WKContentRuleListAction *action, NSURL *url) {
+        receivedActionNotification = true;
+    };
+
+    webView.navigationDelegate = navigationDelegate.get();
+
+    [webView loadRequest:server.requestWithLocalhost()];
+
+    Util::run(&receivedActionNotification);
+}
 
 } // namespace TestWebKitAPI
 

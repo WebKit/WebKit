@@ -65,7 +65,7 @@ namespace WebCore {
 
 class CDMInstance;
 class CDMInstanceFairPlayStreamingAVFObjC;
-class CDMSessionMediaSourceAVFObjC;
+class CDMSessionAVContentKeySession;
 class MediaPlayerPrivateMediaSourceAVFObjC;
 class MediaSourcePrivateAVFObjC;
 class TimeRanges;
@@ -140,10 +140,10 @@ public:
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const final { return m_logger.get(); }
     ASCIILiteral logClassName() const override { return "SourceBufferPrivateAVFObjC"_s; }
-    const void* logIdentifier() const final { return m_logIdentifier; }
+    uint64_t logIdentifier() const final { return m_logIdentifier; }
     WTFLogChannel& logChannel() const final;
     const Logger& sourceBufferLogger() const final { return m_logger.get(); }
-    const void* sourceBufferLogIdentifier() final { return logIdentifier(); }
+    uint64_t sourceBufferLogIdentifier() final { return logIdentifier(); }
 #endif
 
     void setResourceOwner(const ProcessIdentity& resourceOwner) { m_resourceOwner = resourceOwner; }
@@ -197,7 +197,7 @@ private:
     bool requiresFlush() const;
     void flushVideo();
 ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
-    AVSampleBufferAudioRenderer* audioRendererForTrackID(TrackID) const;
+    RetainPtr<AVSampleBufferAudioRenderer> audioRendererForTrackID(TrackID) const;
     void flushAudio(AVSampleBufferAudioRenderer *);
 ALLOW_NEW_API_WITHOUT_GUARDS_END
 
@@ -239,7 +239,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
     RefPtr<SharedBuffer> m_initData;
-    WeakPtr<CDMSessionMediaSourceAVFObjC> m_session { nullptr };
+    WeakPtr<CDMSessionAVContentKeySession> m_session { nullptr };
 #endif
 #if ENABLE(ENCRYPTED_MEDIA) && HAVE(AVCONTENTKEYSESSION)
     using KeyIDs = Vector<Ref<SharedBuffer>>;
@@ -272,7 +272,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
 
 #if !RELEASE_LOG_DISABLED
     Ref<const Logger> m_logger;
-    const void* m_logIdentifier;
+    const uint64_t m_logIdentifier;
 #endif
 
     ProcessIdentity m_resourceOwner;

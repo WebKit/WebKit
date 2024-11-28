@@ -19,19 +19,18 @@
 
 #pragma once
 
-#if USE(GSTREAMER)
+#if ENABLE(VIDEO) && USE(GSTREAMER)
 
 #include "GRefPtrGStreamer.h"
 #include "VideoDecoder.h"
 
 #include <wtf/TZoneMalloc.h>
-#include <wtf/ThreadSafeRefCounted.h>
 
 namespace WebCore {
 
 class GStreamerInternalVideoDecoder;
 
-class GStreamerVideoDecoder : public ThreadSafeRefCounted<GStreamerVideoDecoder>, public VideoDecoder {
+class GStreamerVideoDecoder final : public VideoDecoder {
     WTF_MAKE_TZONE_ALLOCATED(GStreamerVideoDecoder);
 
 public:
@@ -51,4 +50,4 @@ private:
 
 }
 
-#endif // USE(GSTREAMER)
+#endif // ENABLE(VIDEO) && USE(GSTREAMER)

@@ -26,10 +26,10 @@
         var end;
         var firstRange;
         
-        function testComplete()
+        async function testComplete()
         {
-            eventSender.mouseMoveTo(pageScale * end.x, 0);
-            eventSender.mouseUp();
+            await eventSender.asyncMouseMoveTo(pageScale * end.x, 0);
+            await eventSender.asyncMouseUp();
 
             firstRange = window.getSelection().getRangeAt(0);
             shouldBe('firstRange.startOffset', '51');
@@ -38,24 +38,24 @@
             finishJSTest();
         }
         
-        function waitForScrolledToTop()
+        async function waitForScrolledToTop()
         {
             if (window.scrollY == 0) {
-                testComplete();
+                await testComplete();
                 return;
             }
             
             window.setTimeout(waitForScrolledToTop, 2);
         }
         
-        function doOneScroll()
+        async function doOneScroll()
         {
             if (++scrollCount == eventCount) {
-                waitForScrolledToTop();
+                await waitForScrolledToTop();
                 return;
             }
 
-            eventSender.mouseMoveTo(pageScale * end.x, pageScale * (end.y - scrollCount));
+            await eventSender.asyncMouseMoveTo(pageScale * end.x, pageScale * (end.y - scrollCount));
             window.setTimeout(doOneScroll, 2);
         }
 
@@ -77,10 +77,10 @@
             start = { x: containerRect.left + 10, y: 2 * lineHeight / 3 };
             end = { x: containerRect.right - 10, y: 16 };
             
-            eventSender.mouseMoveTo(pageScale * start.x, pageScale * start.y);
-            eventSender.mouseDown();
+            await eventSender.asyncMouseMoveTo(pageScale * start.x, pageScale * start.y);
+            await eventSender.asyncMouseDown();
 
-            doOneScroll();
+            await doOneScroll();
         }
 
         window.addEventListener('load', doTest, false);

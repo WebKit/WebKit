@@ -13,10 +13,12 @@
 #include "src/gpu/graphite/ComputePipelineDesc.h"
 #include "src/gpu/graphite/ComputeTypes.h"
 #include "src/gpu/graphite/ResourceTypes.h"
-#include "src/gpu/graphite/Sampler.h"
-#include "src/gpu/graphite/TextureProxy.h"
 #include "src/gpu/graphite/compute/ComputeStep.h"
 
+#include <cstddef>
+#include <cstdint>
+#include <memory>
+#include <optional>
 #include <variant>
 
 namespace skgpu::graphite {
@@ -25,6 +27,10 @@ class CommandBuffer;
 class ComputePipeline;
 class Recorder;
 class ResourceProvider;
+class Sampler;
+class Task;
+class Texture;
+class TextureProxy;
 
 using BindingIndex = uint32_t;
 struct TextureIndex { uint32_t fValue; };
@@ -173,7 +179,7 @@ public:
     // method returns.
     std::unique_ptr<DispatchGroup> finalize();
 
-#if defined(GRAPHITE_TEST_UTILS)
+#if defined(GPU_TEST_UTILS)
     // Clear old state and start a new DispatchGroup.
     void reset();
 #endif

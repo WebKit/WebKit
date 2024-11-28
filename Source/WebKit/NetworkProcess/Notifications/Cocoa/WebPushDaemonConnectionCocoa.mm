@@ -72,9 +72,8 @@ bool Connection::performSendWithAsyncReplyWithoutUsingIPCConnection(UniqueRef<IP
         if (xpc_dictionary_get_uint64(reply, WebPushD::protocolVersionKey) != WebPushD::protocolVersionValue)
             return completionHandler(nullptr);
 
-        size_t dataSize { 0 };
-        const uint8_t* data = static_cast<const uint8_t *>(xpc_dictionary_get_data(reply, WebPushD::protocolEncodedMessageKey, &dataSize));
-        auto decoder = IPC::Decoder::create({ data, dataSize }, { });
+        auto data = xpc_dictionary_get_data_span(reply, WebPushD::protocolEncodedMessageKey);
+        auto decoder = IPC::Decoder::create(data, { });
 
         completionHandler(decoder.get());
     });

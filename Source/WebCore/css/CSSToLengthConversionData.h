@@ -44,13 +44,13 @@ class RenderStyle;
 class RenderView;
 
 namespace Style {
-struct BuilderContext;
+class BuilderState;
 };
 
 class CSSToLengthConversionData {
 public:
     // This is used during style building. The 'zoom' property is taken into account.
-    CSSToLengthConversionData(const RenderStyle&, const Style::BuilderContext&);
+    CSSToLengthConversionData(const RenderStyle&, Style::BuilderState&);
     // This constructor ignores the `zoom` property.
     CSSToLengthConversionData(const RenderStyle&, const RenderStyle* rootStyle, const RenderStyle* parentStyle, const RenderView*, const Element* elementForContainerUnitResolution = nullptr);
 
@@ -99,6 +99,8 @@ public:
 
     void setUsesContainerUnits() const;
 
+    Style::BuilderState* styleBuilderState() const { return m_styleBuilderState; }
+
 private:
     const RenderStyle* m_style { nullptr };
     const RenderStyle* m_rootStyle { nullptr };
@@ -109,6 +111,8 @@ private:
     std::optional<CSSPropertyID> m_propertyToCompute;
     // FIXME: Remove this hack.
     RenderStyle* m_viewportDependencyDetectionStyle { nullptr };
+
+    Style::BuilderState* m_styleBuilderState { nullptr };
 };
 
 } // namespace WebCore

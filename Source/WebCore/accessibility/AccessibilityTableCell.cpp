@@ -40,26 +40,26 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-AccessibilityTableCell::AccessibilityTableCell(RenderObject& renderer)
-    : AccessibilityRenderObject(renderer)
+AccessibilityTableCell::AccessibilityTableCell(AXID axID, RenderObject& renderer)
+    : AccessibilityRenderObject(axID, renderer)
 {
 }
 
-AccessibilityTableCell::AccessibilityTableCell(Node& node)
-    : AccessibilityRenderObject(node)
+AccessibilityTableCell::AccessibilityTableCell(AXID axID, Node& node)
+    : AccessibilityRenderObject(axID, node)
 {
 }
 
 AccessibilityTableCell::~AccessibilityTableCell() = default;
 
-Ref<AccessibilityTableCell> AccessibilityTableCell::create(RenderObject& renderer)
+Ref<AccessibilityTableCell> AccessibilityTableCell::create(AXID axID, RenderObject& renderer)
 {
-    return adoptRef(*new AccessibilityTableCell(renderer));
+    return adoptRef(*new AccessibilityTableCell(axID, renderer));
 }
 
-Ref<AccessibilityTableCell> AccessibilityTableCell::create(Node& node)
+Ref<AccessibilityTableCell> AccessibilityTableCell::create(AXID axID, Node& node)
 {
-    return adoptRef(*new AccessibilityTableCell(node));
+    return adoptRef(*new AccessibilityTableCell(axID, node));
 }
 
 bool AccessibilityTableCell::computeIsIgnored() const
@@ -72,7 +72,7 @@ bool AccessibilityTableCell::computeIsIgnored() const
 
     // Ignore anonymous table cells as long as they're not in a table (ie. when display:table is used).
     WeakPtr parentTable = this->parentTable();
-    bool inTable = parentTable && parentTable->element() && (parentTable->element()->hasTagName(tableTag) || nodeHasTableRole(parentTable->element()));
+    bool inTable = parentTable && parentTable->element() && (parentTable->element()->hasTagName(tableTag) || hasTableRole(*parentTable->element()));
     if (!element() && !inTable)
         return true;
 
@@ -147,7 +147,7 @@ AccessibilityRole AccessibilityTableCell::determineAccessibilityRole()
     if (!parentTable || !parentTable->isExposable())
         return defaultRole;
 
-    auto cellRole = parentTable->hasGridAriaRole() ? AccessibilityRole::GridCell : AccessibilityRole::Cell;
+    auto cellRole = parentTable->hasGridRole() ? AccessibilityRole::GridCell : AccessibilityRole::Cell;
     // It's important that we temporarily set our m_role because:
     // 1. isColumnHeader() and isRowHeader() call rowIndexRange() and columnIndexRange(), in turn calling
     //    ensureIndexesUpToDate()
@@ -239,13 +239,13 @@ bool AccessibilityTableCell::isRowHeader() const
     return false;
 }
     
-AXID AccessibilityTableCell::rowGroupAncestorID() const
+std::optional<AXID> AccessibilityTableCell::rowGroupAncestorID() const
 {
     auto* rowGroup = Accessibility::findAncestor<AccessibilityObject>(*this, false, [] (const auto& ancestor) {
         return ancestor.hasTagName(theadTag) || ancestor.hasTagName(tbodyTag) || ancestor.hasTagName(tfootTag);
     });
     if (!rowGroup)
-        return { };
+        return std::nullopt;
 
     return rowGroup->objectID();
 }
@@ -260,36 +260,6 @@ bool AccessibilityTableCell::supportsExpandedTextValue() const
     return isTableHeaderCell() && hasAttribute(abbrAttr);
 }
 
-AXCoreObject::AccessibilityChildrenVector AccessibilityTableCell::columnHeaders()
-{
-    RefPtr parent = parentTable();
-    if (!parent)
-        return { };
-
-    // Choose columnHeaders as the place where the "headers" attribute is reported.
-    auto headers = relatedObjects(AXRelationType::Headers);
-    // If the headers attribute returned valid values, then do not further search for column headers.
-    if (!headers.isEmpty())
-        return headers;
-
-    auto rowRange = rowIndexRange();
-    auto colRange = columnIndexRange();
-
-    for (unsigned row = 0; row < rowRange.first; row++) {
-        RefPtr tableCell = parent->cellForColumnAndRow(colRange.first, row);
-        if (!tableCell || tableCell == this || headers.contains(tableCell))
-            continue;
-
-        ASSERT(is<AccessibilityObject>(tableCell));
-        if (tableCell->cellScope() == "colgroup"_s && isTableCellInSameColGroup(tableCell.get()))
-            headers.append(tableCell);
-        else if (tableCell->isColumnHeader())
-            headers.append(tableCell);
-    }
-
-    return headers;
-}
-
 AXCoreObject::AccessibilityChildrenVector AccessibilityTableCell::rowHeaders()
 {
     AccessibilityChildrenVector headers;
@@ -302,37 +272,20 @@ AXCoreObject::AccessibilityChildrenVector AccessibilityTableCell::rowHeaders()
 
     for (unsigned column = 0; column < colRange.first; column++) {
         RefPtr tableCell = parent->cellForColumnAndRow(column, rowRange.first);
-        if (!tableCell || tableCell == this || headers.contains(tableCell))
+        if (!tableCell || tableCell == this || headers.contains(Ref { *tableCell }))
             continue;
 
-        if (tableCell->cellScope() == "rowgroup"_s && isTableCellInSameRowGroup(tableCell.get()))
-            headers.append(tableCell);
+        if (tableCell->cellScope() == "rowgroup"_s && isTableCellInSameRowGroup(*tableCell))
+            headers.append(tableCell.releaseNonNull());
         else if (tableCell->isRowHeader())
-            headers.append(tableCell);
+            headers.append(tableCell.releaseNonNull());
     }
 
     return headers;
 }
 
-AccessibilityTableRow* AccessibilityTableCell::ariaOwnedByParent() const
-{
-    auto owners = this->owners();
-    if (owners.size() == 1 && owners[0]->isTableRow())
-        return downcast<AccessibilityTableRow>(owners[0].get());
-    return nullptr;
-}
-
-AccessibilityObject* AccessibilityTableCell::parentObjectUnignored() const
-{
-    if (auto ownerParent = ariaOwnedByParent())
-        return ownerParent;
-    return AccessibilityRenderObject::parentObjectUnignored();
-}
-
 AccessibilityTableRow* AccessibilityTableCell::parentRow() const
 {
-    if (auto ownerParent = ariaOwnedByParent())
-        return ownerParent;
     return dynamicDowncast<AccessibilityTableRow>(parentObjectUnignored());
 }
 

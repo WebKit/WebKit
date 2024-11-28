@@ -39,6 +39,8 @@
 #include <gio/gfiledescriptorbased.h>
 #endif
 
+#include <wtf/glib/GSpanExtras.h>
+
 namespace WebKit {
 namespace NetworkCache {
 
@@ -65,7 +67,7 @@ std::span<const uint8_t> Data::span() const
 {
     if (!m_buffer)
         return { };
-    return { reinterpret_cast<const uint8_t*>(g_bytes_get_data(m_buffer.get(), nullptr)), g_bytes_get_size(m_buffer.get()) };
+    return WTF::span(m_buffer);
 }
 
 size_t Data::size() const
@@ -83,9 +85,7 @@ bool Data::apply(const Function<bool(std::span<const uint8_t>)>& applier) const
     if (!size())
         return false;
 
-    gsize length;
-    const auto* data = g_bytes_get_data(m_buffer.get(), &length);
-    return applier({ reinterpret_cast<const uint8_t*>(data), length });
+    return applier(span());
 }
 
 Data Data::subrange(size_t offset, size_t size) const
@@ -104,7 +104,9 @@ Data concatenate(const Data& a, const Data& b)
         return a;
 
     size_t size = a.size() + b.size();
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GTK/WPE port
     uint8_t* data = static_cast<uint8_t*>(fastMalloc(size));
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     gsize aLength;
     const auto* aData = g_bytes_get_data(a.bytes(), &aLength);
     memcpy(data, aData, aLength);

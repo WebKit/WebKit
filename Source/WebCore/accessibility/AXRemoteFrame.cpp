@@ -28,9 +28,14 @@
 
 namespace WebCore {
 
-Ref<AXRemoteFrame> AXRemoteFrame::create()
+AXRemoteFrame::AXRemoteFrame(AXID axID)
+    : AccessibilityMockObject(axID)
 {
-    return adoptRef(*new AXRemoteFrame);
+}
+
+Ref<AXRemoteFrame> AXRemoteFrame::create(AXID axID)
+{
+    return adoptRef(*new AXRemoteFrame(axID));
 }
 
 LayoutRect AXRemoteFrame::elementRect() const

@@ -28,7 +28,7 @@ messages -> RemoteMediaPlayerProxy {
 
     Load(URL url, std::optional<WebKit::SandboxExtensionHandle> sandboxExtension, WebCore::ContentType contentType, String keySystem, bool requiresRemotePlayback) -> (struct WebKit::RemoteMediaPlayerConfiguration playerConfiguration)
 #if ENABLE(MEDIA_SOURCE)
-    LoadMediaSource(URL url, WebCore::ContentType contentType, bool webMParserEnabled, WebKit::RemoteMediaSourceIdentifier mediaSourceIdentifier) -> (struct WebKit::RemoteMediaPlayerConfiguration playerConfiguration)
+    [EnabledBy=MediaSourceEnabled || ManagedMediaSourceEnabled] LoadMediaSource(URL url, WebCore::ContentType contentType, bool webMParserEnabled, WebKit::RemoteMediaSourceIdentifier mediaSourceIdentifier) -> (struct WebKit::RemoteMediaPlayerConfiguration playerConfiguration)
 #endif
     CancelLoad()
 
@@ -76,18 +76,18 @@ messages -> RemoteMediaPlayerProxy {
 #endif
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
-    SetLegacyCDMSession(std::optional<WebKit::RemoteLegacyCDMSessionIdentifier> instanceId)
-    KeyAdded()
+    [EnabledBy=LegacyEncryptedMediaAPIEnabled] SetLegacyCDMSession(std::optional<WebKit::RemoteLegacyCDMSessionIdentifier> instanceId)
+    [EnabledBy=LegacyEncryptedMediaAPIEnabled] KeyAdded()
 #endif
 
 #if ENABLE(ENCRYPTED_MEDIA)
-    CdmInstanceAttached(WebKit::RemoteCDMInstanceIdentifier instanceId)
-    CdmInstanceDetached(WebKit::RemoteCDMInstanceIdentifier instanceId)
-    AttemptToDecryptWithInstance(WebKit::RemoteCDMInstanceIdentifier instanceId)
+    [EnabledBy=EncryptedMediaAPIEnabled] CdmInstanceAttached(WebKit::RemoteCDMInstanceIdentifier instanceId)
+    [EnabledBy=EncryptedMediaAPIEnabled] CdmInstanceDetached(WebKit::RemoteCDMInstanceIdentifier instanceId)
+    [EnabledBy=EncryptedMediaAPIEnabled] AttemptToDecryptWithInstance(WebKit::RemoteCDMInstanceIdentifier instanceId)
 #endif
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA) && ENABLE(ENCRYPTED_MEDIA)
-    SetShouldContinueAfterKeyNeeded(bool should)
+    [EnabledBy=LegacyEncryptedMediaAPIEnabled] SetShouldContinueAfterKeyNeeded(bool should)
 #endif
 
     BeginSimulatedHDCPError()
@@ -118,16 +118,13 @@ messages -> RemoteMediaPlayerProxy {
 #endif
 
 #if ENABLE(WEB_AUDIO)
-    CreateAudioSourceProvider()
-    SetShouldEnableAudioSourceProvider(bool shouldEnable)
+    [EnabledBy=WebAudioEnabled] CreateAudioSourceProvider()
+    [EnabledBy=WebAudioEnabled] SetShouldEnableAudioSourceProvider(bool shouldEnable)
 #endif
 
 #if PLATFORM(COCOA)
     NativeImageForCurrentTime() -> (std::optional<MachSendRight> sendRight, WebCore::DestinationColorSpace colorSpace) Synchronous
     ColorSpace() -> (WebCore::DestinationColorSpace colorSpace) Synchronous
-#if !HAVE(AVSAMPLEBUFFERDISPLAYLAYER_COPYDISPLAYEDPIXELBUFFER)
-    void WillBeAskedToPaintGL()
-#endif
 #endif
     VideoFrameForCurrentTimeIfChanged() -> (std::optional<WebKit::RemoteVideoFrameProxyProperties> videoFrame, bool changed) Synchronous
 
@@ -150,6 +147,7 @@ messages -> RemoteMediaPlayerProxy {
     SetSpatialTrackingLabel(String spatialTrackingLabel);
 #endif
 
+    AudioOutputDeviceChanged(String deviceId)
     IsInFullscreenOrPictureInPictureChanged(bool value)
 }
 

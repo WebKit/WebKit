@@ -98,6 +98,7 @@ sk_sp<SkData> subset_harfbuzz(const SkTypeface& typeface, const SkPDFGlyphUse& g
     if (!subset) {
         return nullptr;
     }
+
     HBBlob result(hb_face_reference_blob(subset.get()));
     return to_data(std::move(result));
 }

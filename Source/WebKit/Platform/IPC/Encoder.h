@@ -30,10 +30,17 @@
 #include <WebCore/PlatformExportMacros.h>
 #include <WebCore/SharedBuffer.h>
 #include <wtf/Forward.h>
+#include <wtf/MallocSpan.h>
 #include <wtf/OptionSet.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
+
+#if OS(DARWIN)
+namespace WTF {
+struct Mmap;
+}
+#endif
 
 namespace IPC {
 
@@ -66,9 +73,6 @@ public:
     void setShouldMaintainOrderingWithAsyncMessages();
     bool isAllowedWhenWaitingForSyncReply() const { return messageAllowedWhenWaitingForSyncReply(messageName()) || isFullySynchronousModeForTesting(); }
     bool isAllowedWhenWaitingForUnboundedSyncReply() const { return messageAllowedWhenWaitingForUnboundedSyncReply(messageName()); }
-#if ENABLE(IPC_TESTING_API)
-    void setSyncMessageDeserializationFailure();
-#endif
 
     void wrapForTesting(UniqueRef<Encoder>&&);
 
@@ -88,7 +92,8 @@ public:
         return *this;
     }
 
-    std::span<const uint8_t> span() const { return m_capacityBuffer.first(m_bufferSize); }
+    std::span<uint8_t> mutableSpan() { return capacityBuffer().first(m_bufferSize); }
+    std::span<const uint8_t> span() const { return capacityBuffer().first(m_bufferSize); }
 
     void addAttachment(Attachment&&);
     Vector<Attachment> releaseAttachments();
@@ -98,6 +103,9 @@ public:
 
 private:
     std::span<uint8_t> grow(size_t alignment, size_t);
+
+    std::span<uint8_t> capacityBuffer();
+    std::span<const uint8_t> capacityBuffer() const;
 
     bool hasAttachments() const;
 
@@ -110,9 +118,13 @@ private:
     MessageName m_messageName;
     uint64_t m_destinationID;
 
+#if OS(DARWIN)
+    MallocSpan<uint8_t, WTF::Mmap> m_outOfLineBuffer;
+#else
+    MallocSpan<uint8_t> m_outOfLineBuffer;
+#endif
     std::array<uint8_t, 512> m_inlineBuffer;
 
-    std::span<uint8_t> m_capacityBuffer { m_inlineBuffer };
     size_t m_bufferSize { 0 };
 
     Vector<Attachment> m_attachments;
@@ -133,7 +145,7 @@ template<typename T>
 inline void Encoder::encodeObject(const T& object)
 {
     static_assert(std::is_trivially_copyable_v<T>);
-    encodeSpan(std::span(std::addressof(object), 1));
+    encodeSpan(unsafeMakeSpan(std::addressof(object), 1));
 }
 
 } // namespace IPC

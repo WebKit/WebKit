@@ -56,12 +56,14 @@ struct MultiRepresentationHEICAttachmentSingleImage {
 struct MultiRepresentationHEICAttachmentData {
     String identifier;
     String description;
+    String credit;
+    String digitalSourceType;
     Vector<MultiRepresentationHEICAttachmentSingleImage> images;
 
     // Not serialized.
     // FIXME: Remove this once same-process AttributedString to NSAttributeedString conversion
     // is removed. See https://bugs.webkit.org/show_bug.cgi?id=269384.
-    RetainPtr<CFDataRef> data;
+    RetainPtr<CFDataRef> data { };
 };
 
 #endif

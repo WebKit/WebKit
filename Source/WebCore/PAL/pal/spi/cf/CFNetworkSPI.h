@@ -234,10 +234,16 @@ typedef enum {
 - (id)_initWithCFHTTPCookieStorage:(CFHTTPCookieStorageRef)cfStorage;
 - (CFHTTPCookieStorageRef)_cookieStorage;
 - (void)_saveCookies:(dispatch_block_t) completionHandler;
-#if HAVE(CFNETWORK_OVERRIDE_SESSION_COOKIE_ACCEPT_POLICY)
 @property (nonatomic, readwrite) BOOL _overrideSessionCookieAcceptPolicy;
-#endif
 @end
+
+typedef CF_ENUM(int, CFURLCredentialPersistence)
+{
+    kCFURLCredentialPersistenceNone = 1,
+    kCFURLCredentialPersistenceForSession = 2,
+    kCFURLCredentialPersistencePermanent = 3,
+    kCFURLCredentialPersistenceSynchronizable = 4
+};
 
 @interface NSURLCredentialStorage ()
 - (id)_initWithIdentifier:(NSString *)identifier private:(bool)isPrivate;
@@ -362,9 +368,7 @@ typedef NS_ENUM(NSInteger, NSURLSessionCompanionProxyPreference) {
 @property (readwrite, assign) NSInteger _connectionCacheNumFastLanes;
 @property (readwrite, assign) NSInteger _connectionCacheMinimumFastLanePriority;
 #endif
-#if HAVE(CFNETWORK_NSURLSESSION_ATTRIBUTED_BUNDLE_IDENTIFIER)
 @property (nullable, copy) NSString *_attributedBundleIdentifier;
-#endif
 @end
 
 @interface NSURLSessionTask ()
@@ -448,6 +452,17 @@ enum : NSUInteger {
 #endif // defined(__OBJC__)
 
 #endif // USE(APPLE_INTERNAL_SDK)
+
+enum URLCredentialType {
+    kURLCredentialInternetPassword = 0,
+    kURLCredentialServerTrust,
+    kURLCredentialKerberosTicket,
+    kURLCredentialClientCertificate,
+    kURLCredentialXMobileMeAuthToken,
+    kURLCredentialUnknown,
+    kURLCredentialOAuth2,
+    kURLCredentialOAuth1
+};
 
 WTF_EXTERN_C_BEGIN
 

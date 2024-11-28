@@ -99,10 +99,10 @@ public:
     // This is the set of registers that Air is allowed to emit code to mutate. It's derived from
     // regsInPriorityOrder. Any registers not in this set are said to be "pinned".
     RegisterSet mutableRegs() const { return m_mutableRegs.toRegisterSet().includeWholeRegisterWidth(); }
-    
+
     bool isPinned(Reg reg) const { return !mutableRegs().contains(reg, IgnoreVectors); }
-    void pinRegister(Reg);
-    
+    JS_EXPORT_PRIVATE void pinRegister(Reg);
+
     void setOptLevel(unsigned optLevel) { m_optLevel = optLevel; }
     unsigned optLevel() const { return m_optLevel; }
     

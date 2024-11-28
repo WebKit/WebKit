@@ -50,7 +50,7 @@ SOFT_LINK_CLASS_OPTIONAL(AVKit, __AVPlayerLayerView)
 
 #if !RELEASE_LOG_DISABLED
 @interface WebAVPlayerLayer (Logging)
-@property (readonly, nonatomic) const void* logIdentifier;
+@property (readonly, nonatomic) uint64_t logIdentifier;
 @property (readonly, nonatomic) const Logger* loggerPtr;
 @property (readonly, nonatomic) WTFLogChannel* logChannel;
 @end
@@ -67,10 +67,10 @@ public:
     }
 private:
     // CheckedPtr interface
-    uint32_t ptrCount() const final { return CanMakeCheckedPtr::ptrCount(); }
-    uint32_t ptrCountWithoutThreadCheck() const final { return CanMakeCheckedPtr::ptrCountWithoutThreadCheck(); }
-    void incrementPtrCount() const final { CanMakeCheckedPtr::incrementPtrCount(); }
-    void decrementPtrCount() const final { CanMakeCheckedPtr::decrementPtrCount(); }
+    uint32_t checkedPtrCount() const final { return CanMakeCheckedPtr::checkedPtrCount(); }
+    uint32_t checkedPtrCountWithoutThreadCheck() const final { return CanMakeCheckedPtr::checkedPtrCountWithoutThreadCheck(); }
+    void incrementCheckedPtrCount() const final { CanMakeCheckedPtr::incrementCheckedPtrCount(); }
+    void decrementCheckedPtrCount() const final { CanMakeCheckedPtr::decrementCheckedPtrCount(); }
 
     void videoDimensionsChanged(const FloatSize& videoDimensions)
     {
@@ -93,7 +93,7 @@ private:
     std::unique_ptr<WebAVPlayerLayerPresentationModelClient> _presentationModelClient;
     NSEdgeInsets _legibleContentInsets;
 #if !RELEASE_LOG_DISABLED
-    const void* _logIdentifier;
+    uint64_t _logIdentifier;
 #endif
 }
 
@@ -136,7 +136,7 @@ private:
 
     _presentationModel = presentationModel;
 #if !RELEASE_LOG_DISABLED
-    _logIdentifier = presentationModel ? presentationModel->nextChildIdentifier() : nullptr;
+    _logIdentifier = presentationModel ? presentationModel->nextChildIdentifier() : 0;
 #endif
 
     if (presentationModel)
@@ -423,7 +423,7 @@ static bool areFramesEssentiallyEqualWithTolerance(const FloatRect& a, const Flo
 
 #if !RELEASE_LOG_DISABLED
 @implementation WebAVPlayerLayer (Logging)
-- (const void*)logIdentifier
+- (uint64_t)logIdentifier
 {
     return _logIdentifier;
 }

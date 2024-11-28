@@ -31,6 +31,7 @@
 #include "RemoteControllableTarget.h"
 #include <wtf/Lock.h>
 #include <wtf/ThreadSafeRefCounted.h>
+#include <wtf/ThreadSafeWeakPtr.h>
 
 #if PLATFORM(COCOA)
 #include <wtf/Function.h>
@@ -66,7 +67,7 @@ public:
     void close();
     void targetClosed();
 
-    std::optional<TargetID> targetIdentifier() const;
+    std::optional<TargetID> targetIdentifier() const WTF_REQUIRES_LOCK(m_targetMutex);
 #if PLATFORM(COCOA)
     NSString *connectionIdentifier() const;
     NSString *destination() const;
@@ -92,7 +93,7 @@ private:
     // This connection from the RemoteInspector singleton to the InspectionTarget
     // can be used on multiple threads. So any access to the target
     // itself must take this mutex to ensure m_target is valid.
-    Lock m_targetMutex;
+    mutable Lock m_targetMutex;
 
 #if PLATFORM(COCOA)
     // If a target has a specific run loop it wants to evaluate on
@@ -103,7 +104,7 @@ private:
     Lock m_queueMutex;
 #endif
 
-    RemoteControllableTarget* m_target { nullptr };
+    ThreadSafeWeakPtr<RemoteControllableTarget> m_target WTF_GUARDED_BY_LOCK(m_targetMutex);
     bool m_connected { false };
 
 #if PLATFORM(COCOA)

@@ -39,7 +39,19 @@ class LayoutState;
 namespace LayoutIntegration {
 
 void layoutWithFormattingContextForBox(const Layout::ElementBox&, std::optional<LayoutUnit> widthConstraint, Layout::LayoutState&);
-std::pair<LayoutUnit, LayoutUnit> preferredLogicalWidths(const Layout::ElementBox&);
+
+enum class LogicalWidthType : uint8_t  {
+    PreferredMaximum,
+    PreferredMinimum,
+    MaxContent,
+    MinContent
+};
+LayoutUnit formattingContextRootLogicalWidthForType(const Layout::ElementBox&, LogicalWidthType);
+
+enum class LogicalHeightType : uint8_t  {
+    MinContent
+};
+LayoutUnit formattingContextRootLogicalHeightForType(const Layout::ElementBox&, LogicalHeightType);
 
 }
 }

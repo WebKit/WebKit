@@ -60,6 +60,9 @@ struct NotificationData;
 class Notification final : public RefCounted<Notification>, public ActiveDOMObject, public EventTarget {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED_EXPORT(Notification, WEBCORE_EXPORT);
 public:
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
+
     using Permission = NotificationPermission;
     using Direction = NotificationDirection;
 
@@ -118,10 +121,6 @@ public:
 
     WEBCORE_EXPORT NotificationData data() const;
     RefPtr<NotificationResources> resources() const { return m_resources; }
-
-    // ActiveDOMObject.
-    void ref() const final { RefCounted::ref(); }
-    void deref() const final { RefCounted::deref(); }
 
     void markAsShown();
     void showSoon();

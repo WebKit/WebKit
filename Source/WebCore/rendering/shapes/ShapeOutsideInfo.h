@@ -29,8 +29,8 @@
 
 #pragma once
 
+#include "LayoutShape.h"
 #include "LayoutSize.h"
-#include "Shape.h"
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/TZoneMalloc.h>
@@ -42,7 +42,7 @@ class RenderBox;
 class StyleImage;
 class FloatingObject;
 
-Ref<const Shape> makeShapeForShapeOutside(const RenderBox&);
+Ref<const LayoutShape> makeShapeForShapeOutside(const RenderBox&);
 
 class ShapeOutsideDeltas final {
     WTF_MAKE_TZONE_ALLOCATED(ShapeOutsideDeltas);
@@ -104,7 +104,7 @@ public:
     LayoutRect computedShapePhysicalBoundingBox() const;
     FloatPoint shapeToRendererPoint(const FloatPoint&) const;
 
-    const Shape& computedShape() const;
+    const LayoutShape& computedShape() const;
 
 private:
     LayoutUnit logicalTopOffset() const;
@@ -112,7 +112,7 @@ private:
 
     const RenderBox& m_renderer;
 
-    mutable RefPtr<const Shape> m_shape;
+    mutable RefPtr<const LayoutShape> m_shape;
     LayoutSize m_cachedShapeLogicalSize;
 
     ShapeOutsideDeltas m_shapeOutsideDeltas;

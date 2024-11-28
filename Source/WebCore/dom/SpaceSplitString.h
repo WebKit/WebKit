@@ -24,6 +24,8 @@
 #include <wtf/TZoneMalloc.h>
 #include <wtf/text/AtomString.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 class SpaceSplitStringData {
@@ -151,3 +153,5 @@ inline SpaceSplitString::SpaceSplitString(const AtomString& string, ShouldFoldCa
 }
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

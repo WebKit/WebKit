@@ -57,7 +57,7 @@ private:
 
     bool hasValidPosition() const;
 
-    MemoryObjectStore& m_objectStore;
+    WeakRef<MemoryObjectStore> m_objectStore;
 
     IDBKeyRangeData m_remainingRange;
 

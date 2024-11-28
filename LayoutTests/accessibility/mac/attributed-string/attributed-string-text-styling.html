@@ -15,22 +15,58 @@
     if (window.accessibilityController) {
         var textPlain = accessibilityController.accessibleElementById("text-plain");
         var textPlainRange = textPlain.textMarkerRangeForElement(textPlain);
-        var textPlainAttributes = "AXFont - {\n    AXFontFamily = Times;\n    AXFontName = \"Times-Roman\";\n    AXFontSize = 16;\n}, The";
+        var textPlainAttributes = `Attributes in range {0, 3}:
+AXFont: {
+    AXFontFamily = Times;
+    AXFontName = "Times-Roman";
+    AXFontSize = 16;
+}
+AXForegroundColor: (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; sRGB IEC61966-2.1) ( 0 0 0 1 )
+AXBackgroundColor: (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; sRGB IEC61966-2.1) ( 0 0 0 0 )
+The`;
         shouldBe("textPlain.attributedStringForTextMarkerRange(textPlainRange)", "textPlainAttributes");
 
         var textBold = accessibilityController.accessibleElementById("text-bold");
         var textBoldRange = textBold.textMarkerRangeForElement(textBold);
-        var textBoldAttributes = "AXFont - {\n    AXFontBold = 1;\n    AXFontFamily = Times;\n    AXFontName = \"Times-Bold\";\n    AXFontSize = 16;\n}, Fox";
+        var textBoldAttributes = `Attributes in range {0, 3}:
+AXFont: {
+    AXFontBold = 1;
+    AXFontFamily = Times;
+    AXFontName = "Times-Bold";
+    AXFontSize = 16;
+}
+AXForegroundColor: (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; sRGB IEC61966-2.1) ( 0 0 0 1 )
+AXBackgroundColor: (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; sRGB IEC61966-2.1) ( 0 0 0 0 )
+Fox`;
         shouldBe("textBold.attributedStringForTextMarkerRange(textBoldRange)", "textBoldAttributes");
 
         var textItalic = accessibilityController.accessibleElementById("text-italic");
         var textItalicRange = textItalic.textMarkerRangeForElement(textItalic);
-        var textItalicAttributes = "AXFont - {\n    AXFontFamily = Times;\n    AXFontItalic = 1;\n    AXFontName = \"Times-Italic\";\n    AXFontSize = 16;\n}, Jumped";
+        var textItalicAttributes = `Attributes in range {0, 6}:
+AXFont: {
+    AXFontFamily = Times;
+    AXFontItalic = 1;
+    AXFontName = "Times-Italic";
+    AXFontSize = 16;
+}
+AXForegroundColor: (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; sRGB IEC61966-2.1) ( 0 0 0 1 )
+AXBackgroundColor: (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; sRGB IEC61966-2.1) ( 0 0 0 0 )
+Jumped`;
         shouldBe("textItalic.attributedStringForTextMarkerRange(textItalicRange)", "textItalicAttributes");
 
         var textBoldItalic = accessibilityController.accessibleElementById("text-bold-italic");
         var textBoldItalicRange = textBoldItalic.textMarkerRangeForElement(textBoldItalic);
-        var textBoldItalicAttributes = "AXFont - {\n    AXFontBold = 1;\n    AXFontFamily = Times;\n    AXFontItalic = 1;\n    AXFontName = \"Times-BoldItalic\";\n    AXFontSize = 16;\n}, Over";
+        var textBoldItalicAttributes = `Attributes in range {0, 4}:
+AXFont: {
+    AXFontBold = 1;
+    AXFontFamily = Times;
+    AXFontItalic = 1;
+    AXFontName = "Times-BoldItalic";
+    AXFontSize = 16;
+}
+AXForegroundColor: (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; sRGB IEC61966-2.1) ( 0 0 0 1 )
+AXBackgroundColor: (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; sRGB IEC61966-2.1) ( 0 0 0 0 )
+Over`;
         shouldBe("textBoldItalic.attributedStringForTextMarkerRange(textBoldItalicRange)", "textBoldItalicAttributes");
     }
 </script>

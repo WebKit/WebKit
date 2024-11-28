@@ -1,4 +1,4 @@
-<!DOCTYPE html><!-- webkit-test-runner [ ModelElementEnabled=true ] -->
+<!DOCTYPE html><!-- webkit-test-runner [ ModelElementEnabled=true ModelProcessEnabled=true ] -->
 <html>
 <body>
 <model id="model" style="border-radius: 5px">
@@ -13,32 +13,26 @@
     const source = document.querySelector("source");
     const model = document.getElementById("model");
 
-    const modelDidLoadFirstSource = () => {
+    source.src = "resources/heart.usdz";
+
+    model.ready.then((resolve) => {
         layers.textContent = "Before Changing Source:\n";
         layers.textContent += window.internals?.platformLayerTreeAsText(model, window.internals.PLATFORM_LAYER_TREE_INCLUDE_MODELS) ?? "This test requires testRunner.";
 
-        model.addEventListener("load", event => {
+        source.src = "resources/cube.usdz";
+
+        model.ready.then((resolve) => {
             layers.textContent += "After Changing Source:\n";
             layers.textContent += window.internals?.platformLayerTreeAsText(model, window.internals.PLATFORM_LAYER_TREE_INCLUDE_MODELS) ?? "This test requires testRunner.";
             window.testRunner?.notifyDone();
-        }, { once: true });
-
-        model.addEventListener("error", event => {
-            layers.textContent = `Failed. Second model did not load.`;
+        }, (reason) => {
+            layers.textContent = "Failed. Second model did not load: " + reason;
             window.testRunner?.notifyDone();
-        }, { once: true });
-
-        source.src = "resources/cube.usdz";
-    };
-
-    model.addEventListener("load", modelDidLoadFirstSource, { once: true });
-    model.addEventListener("error", event => {
-        layers.textContent = `Failed. First model did not load.`;
+        });
+    }, (reason) => {
+        layers.textContent = "Failed. First model did not load: " + reason;
         window.testRunner?.notifyDone();
-    }, { once: true });
-
-    source.src = "resources/heart.usdz";
-
+    });
 </script>
 </body>
 </html>

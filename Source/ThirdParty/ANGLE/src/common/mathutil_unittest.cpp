@@ -405,6 +405,39 @@ TEST(MathUtilTest, RangMerge)
     EXPECT_EQ(3, range11.length());
 }
 
+// Test that Range::intersectsOrContinuous works as expected.
+TEST(MathUtilTest, RangIntersectsOrContinuous)
+{
+    // Two non-overlapping ranges
+    RangeI range1(1, 2);
+    RangeI range2(3, 4);
+    EXPECT_EQ(false, range1.intersectsOrContinuous(range2));
+    EXPECT_EQ(false, range2.intersectsOrContinuous(range1));
+
+    // Two overlapping ranges
+    RangeI range3(1, 3);
+    RangeI range4(2, 4);
+    EXPECT_EQ(true, range3.intersectsOrContinuous(range4));
+    EXPECT_EQ(true, range4.intersectsOrContinuous(range3));
+
+    // Two overlapping ranges
+    RangeI range5(1, 4);
+    RangeI range6(2, 3);
+    EXPECT_EQ(true, range5.intersectsOrContinuous(range6));
+    EXPECT_EQ(true, range6.intersectsOrContinuous(range5));
+
+    // Two continuous ranges
+    RangeI range7(1, 3);
+    RangeI range8(3, 4);
+    EXPECT_EQ(true, range7.intersectsOrContinuous(range8));
+    EXPECT_EQ(true, range8.intersectsOrContinuous(range7));
+
+    // Two identical ranges
+    RangeI range9(1, 3);
+    RangeI range10(1, 3);
+    EXPECT_EQ(true, range9.intersectsOrContinuous(range10));
+}
+
 // Test that Range iteration works as expected.
 TEST(MathUtilTest, RangeIteration)
 {

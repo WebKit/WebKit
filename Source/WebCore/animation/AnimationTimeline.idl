@@ -23,10 +23,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+typedef (double or CSSNumericValue) CSSNumberish;
+
 [
     ExportMacro=WEBCORE_EXPORT,
     CustomToJSObject,
     Exposed=Window
 ] interface AnimationTimeline {
-    [ImplementedAs=bindingsCurrentTime] readonly attribute double? currentTime;
+    readonly attribute CSSNumberish? currentTime;
+    [EnabledBySetting=ScrollDrivenAnimationsEnabled] readonly attribute CSSNumberish? duration;
 };

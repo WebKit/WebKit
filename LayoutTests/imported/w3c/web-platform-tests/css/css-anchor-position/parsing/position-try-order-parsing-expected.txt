@@ -1,13 +1,13 @@
 
-FAIL e.style['position-try-order'] = "initial" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['position-try-order'] = "inherit" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['position-try-order'] = "unset" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['position-try-order'] = "revert" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['position-try-order'] = "normal" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['position-try-order'] = "most-width" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['position-try-order'] = "most-height" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['position-try-order'] = "most-block-size" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['position-try-order'] = "most-inline-size" should set the property value assert_not_equals: property should be set got disallowed value ""
+PASS e.style['position-try-order'] = "initial" should set the property value
+PASS e.style['position-try-order'] = "inherit" should set the property value
+PASS e.style['position-try-order'] = "unset" should set the property value
+PASS e.style['position-try-order'] = "revert" should set the property value
+PASS e.style['position-try-order'] = "normal" should set the property value
+PASS e.style['position-try-order'] = "most-width" should set the property value
+PASS e.style['position-try-order'] = "most-height" should set the property value
+PASS e.style['position-try-order'] = "most-block-size" should set the property value
+PASS e.style['position-try-order'] = "most-inline-size" should set the property value
 PASS e.style['position-try-order'] = "normal most-inline-size" should not set the property value
 PASS e.style['position-try-order'] = "most-block-size most-inline-size" should not set the property value
 PASS e.style['position-try-order'] = "most-block-size, most-inline-size" should not set the property value

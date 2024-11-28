@@ -32,11 +32,30 @@ namespace WebCore {
 
 using namespace TextSpacing;
 
+bool TextSpacingTrim::shouldTrimSpacing(const CharactersData& charactersData) const
+{
+    switch (m_trim) {
+    case TrimType::SpaceAll:
+        return false;
+    case TrimType::Auto:
+        return false;
+    case TrimType::TrimAll:
+        return charactersData.currentCharacterClass == CharacterClass::FullWidthOpeningPunctuation || charactersData.currentCharacterClass == CharacterClass::FullWidthClosingPunctuation || charactersData.currentCharacterClass == CharacterClass::FullWidthMiddleDotPunctuation;
+    default:
+        return false;
+    }
+}
+
 bool TextAutospace::shouldApplySpacing(CharacterClass firstCharacterClass, CharacterClass secondCharacterClass) const
 {
     constexpr uint8_t ideographAlphaMask = static_cast<uint8_t>(CharacterClass::Ideograph) | static_cast<uint8_t>(CharacterClass::NonIdeographLetter);
-    if (hasIdeographAlpha())
-        return (static_cast<uint8_t>(firstCharacterClass) | static_cast<uint8_t>(secondCharacterClass)) == ideographAlphaMask;
+    constexpr uint8_t ideographNumericMask = static_cast<uint8_t>(CharacterClass::Ideograph) | static_cast<uint8_t>(CharacterClass::NonIdeographNumeral);
+
+    uint8_t characterClassesMask = (static_cast<uint8_t>(firstCharacterClass) | static_cast<uint8_t>(secondCharacterClass));
+    if (hasIdeographAlpha() && characterClassesMask == ideographAlphaMask)
+        return true;
+    if (hasIdeographNumeric() && characterClassesMask == ideographNumericMask)
+        return true;
     return false;
 }
 
@@ -112,8 +131,16 @@ CharacterClass characterClass(char32_t character)
         if (character == rightSingleQuotationMark || character == rightDoubleQuotationMark)
             return CharacterClass::FullWidthClosingPunctuation;
     }
+
+    if (isFullwidthMiddleDotPunctuation(character))
+        return CharacterClass::FullWidthMiddleDotPunctuation;
     // FIXME: implement remaining classes for text-autospace: punctuation
     return CharacterClass::Undefined;
+}
+
+RefPtr<Font> getHalfWidthFontIfNeeded(const Font& font, const TextSpacingTrim& textSpacingTrim, CharactersData& charactersData)
+{
+    return textSpacingTrim.shouldTrimSpacing(charactersData) ? font.halfWidthFont() : nullptr;
 }
 
 } // namespace TextSpacing

@@ -186,27 +186,36 @@ constexpr size_t kArrayLen = 0x00000030;
 
 namespace ImageCopy_frag
 {
-enum SrcType
+enum DstFormat
 {
-    kSrcIs2D      = 0x00000000,
-    kSrcIs2DArray = 0x00000001,
-    kSrcIs3D      = 0x00000002,
-    kSrcIsYUV     = 0x00000003,
-};
-enum DestFormat
-{
-    kDestIsFloat = 0x00000000,
-    kDestIsSint  = 0x00000004,
-    kDestIsUint  = 0x00000008,
+    kDstIsFloat = 0x00000000,
+    kDstIsSint  = 0x00000001,
+    kDstIsUint  = 0x00000002,
 };
 enum SrcFormat
 {
     kSrcIsFloat = 0x00000000,
-    kSrcIsSint  = 0x00000010,
-    kSrcIsUint  = 0x00000020,
+    kSrcIsSint  = 0x00000004,
+    kSrcIsUint  = 0x00000008,
 };
-constexpr size_t kArrayLen = 0x0000002C;
+enum SrcType
+{
+    kSrcIs2D      = 0x00000000,
+    kSrcIs2DArray = 0x00000010,
+    kSrcIs3D      = 0x00000020,
+};
+constexpr size_t kArrayLen = 0x0000002B;
 }  // namespace ImageCopy_frag
+
+namespace ImageCopyFloat_frag
+{
+enum SrcType
+{
+    kSrcIsYUV  = 0x00000000,
+    kSrcIs2DMS = 0x00000001,
+};
+constexpr size_t kArrayLen = 0x00000002;
+}  // namespace ImageCopyFloat_frag
 
 namespace OverlayDraw_frag
 {
@@ -273,6 +282,9 @@ class ShaderLibrary final : angle::NonCopyable
     angle::Result getImageCopy_frag(Context *context,
                                     uint32_t shaderFlags,
                                     RefCounted<ShaderModule> **shaderOut);
+    angle::Result getImageCopyFloat_frag(Context *context,
+                                         uint32_t shaderFlags,
+                                         RefCounted<ShaderModule> **shaderOut);
     angle::Result getOverlayDraw_frag(Context *context,
                                       uint32_t shaderFlags,
                                       RefCounted<ShaderModule> **shaderOut);
@@ -306,6 +318,8 @@ class ShaderLibrary final : angle::NonCopyable
         mGenerateMipmap_comp_shaders[InternalShader::GenerateMipmap_comp::kArrayLen];
     RefCounted<ShaderModule> mImageClear_frag_shaders[InternalShader::ImageClear_frag::kArrayLen];
     RefCounted<ShaderModule> mImageCopy_frag_shaders[InternalShader::ImageCopy_frag::kArrayLen];
+    RefCounted<ShaderModule>
+        mImageCopyFloat_frag_shaders[InternalShader::ImageCopyFloat_frag::kArrayLen];
     RefCounted<ShaderModule> mOverlayDraw_frag_shaders[InternalShader::OverlayDraw_frag::kArrayLen];
     RefCounted<ShaderModule> mOverlayDraw_vert_shaders[InternalShader::OverlayDraw_vert::kArrayLen];
 };

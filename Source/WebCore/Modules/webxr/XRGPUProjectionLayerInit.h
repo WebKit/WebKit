@@ -49,7 +49,7 @@ struct XRGPUProjectionLayerInit {
         };
     }
 
-    GPUTextureFormat colorFormat { GPUTextureFormat::Bgra8unorm };
+    GPUTextureFormat colorFormat { GPUTextureFormat::Bgra8unormSRGB };
     std::optional<GPUTextureFormat> depthStencilFormat;
     GPUTextureUsageFlags textureUsage { GPUTextureUsage::RENDER_ATTACHMENT };
     double scaleFactor { 1.0 };

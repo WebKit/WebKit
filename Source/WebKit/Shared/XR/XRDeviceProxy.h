@@ -55,6 +55,7 @@ private:
     XRDeviceProxy(XRDeviceInfo&&, PlatformXRSystemProxy&);
 
     WebCore::IntSize recommendedResolution(PlatformXR::SessionMode) final { return m_recommendedResolution; }
+    double minimumNearClipPlane() const final { return m_minimumNearClipPlane; }
     void initializeTrackingAndRendering(const WebCore::SecurityOriginData&, PlatformXR::SessionMode, const PlatformXR::Device::FeatureList&) final;
     void shutDownTrackingAndRendering() final;
     void didCompleteShutdownTriggeredBySystem() final;
@@ -70,6 +71,7 @@ private:
     WeakPtr<PlatformXRSystemProxy> m_xrSystem;
     bool m_supportsStereoRendering { false };
     WebCore::IntSize m_recommendedResolution { 0, 0 };
+    double m_minimumNearClipPlane { 0.1 };
 };
 
 } // namespace WebKit

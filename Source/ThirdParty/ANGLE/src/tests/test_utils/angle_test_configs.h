@@ -26,16 +26,10 @@ namespace angle
 struct PlatformParameters
 {
     PlatformParameters();
-    PlatformParameters(EGLenum clientType,
-                       EGLint majorVersion,
+    PlatformParameters(EGLint majorVersion,
                        EGLint minorVersion,
-                       EGLint profileMask,
                        const EGLPlatformParameters &eglPlatformParameters);
-    PlatformParameters(EGLenum clientType,
-                       EGLint majorVersion,
-                       EGLint minorVersion,
-                       EGLint profileMask,
-                       GLESDriverType driver);
+    PlatformParameters(EGLint majorVersion, EGLint minorVersion, GLESDriverType driver);
 
     EGLint getRenderer() const;
     EGLint getDeviceType() const;
@@ -44,14 +38,12 @@ struct PlatformParameters
     bool isANGLE() const;
     bool isMetal() const;
     bool isWebGPU() const;
-    bool isDesktopOpenGLFrontend() const;
 
     void initDefaultParameters();
 
     auto tie() const
     {
-        return std::tie(driver, noFixture, eglParameters, clientType, majorVersion, minorVersion,
-                        profileMask);
+        return std::tie(driver, noFixture, eglParameters, majorVersion, minorVersion);
     }
 
     // Helpers to enable and disable ANGLE features.  Expects a Feature::* value from
@@ -72,10 +64,8 @@ struct PlatformParameters
     GLESDriverType driver;
     bool noFixture;
     EGLPlatformParameters eglParameters;
-    EGLenum clientType;
     EGLint majorVersion;
     EGLint minorVersion;
-    EGLint profileMask;
 };
 
 const char *GetRendererName(EGLint renderer);
@@ -208,8 +198,6 @@ PlatformParameters ES31_VULKAN_SWIFTSHADER();
 PlatformParameters ES32_VULKAN();
 PlatformParameters ES32_VULKAN_NULL();
 PlatformParameters ES32_VULKAN_SWIFTSHADER();
-PlatformParameters GL32_CORE_VULKAN();
-PlatformParameters GL32_CORE_VULKAN_SWIFTSHADER();
 
 PlatformParameters ES1_METAL();
 PlatformParameters ES2_METAL();

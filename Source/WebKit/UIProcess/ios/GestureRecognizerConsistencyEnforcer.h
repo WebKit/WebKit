@@ -46,6 +46,9 @@ public:
     GestureRecognizerConsistencyEnforcer(WKContentView *);
     ~GestureRecognizerConsistencyEnforcer();
 
+    void ref() const;
+    void deref() const;
+
     void beginTracking(WKDeferringGestureRecognizer *);
     void endTracking(WKDeferringGestureRecognizer *);
 
@@ -54,7 +57,7 @@ public:
 private:
     void timerFired();
 
-    WeakObjCPtr<WKContentView> m_view;
+    WeakObjCPtr<WKContentView> m_view; // Cannot be null.
     RunLoop::Timer m_timer;
     HashSet<RetainPtr<WKDeferringGestureRecognizer>> m_deferringGestureRecognizersWithTouches;
 };

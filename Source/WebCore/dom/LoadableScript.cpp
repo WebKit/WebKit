@@ -35,7 +35,7 @@
 
 namespace WebCore {
 
-LoadableScript::LoadableScript(const AtomString& nonce, ReferrerPolicy policy, RequestPriority fetchPriority, const AtomString& crossOriginMode, const String& charset, const AtomString& initiatorType, bool isInUserAgentShadowTree)
+LoadableScript::LoadableScript(const AtomString& nonce, ReferrerPolicy policy, RequestPriority fetchPriority, const AtomString& crossOriginMode, const AtomString& charset, const AtomString& initiatorType, bool isInUserAgentShadowTree)
     : ScriptElementCachedScriptFetcher(nonce, policy, fetchPriority, crossOriginMode, charset, initiatorType, isInUserAgentShadowTree)
 {
 }

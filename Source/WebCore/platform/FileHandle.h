@@ -49,7 +49,7 @@ public:
 
     bool open(const String& path, FileSystem::FileOpenMode);
     bool open();
-    int read(void* data, int length); // FIXME: Should use a std::span.
+    int read(std::span<uint8_t> data);
     int write(std::span<const uint8_t> data);
     bool printf(const char* format, ...) WTF_ATTRIBUTE_PRINTF(2, 3);
     void close();

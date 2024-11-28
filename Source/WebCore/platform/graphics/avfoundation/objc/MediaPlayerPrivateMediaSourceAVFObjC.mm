@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,7 +31,7 @@
 #import "AVAssetMIMETypeCache.h"
 #import "AVAssetTrackUtilities.h"
 #import "AVStreamDataParserMIMETypeCache.h"
-#import "CDMSessionMediaSourceAVFObjC.h"
+#import "CDMSessionAVContentKeySession.h"
 #import "ContentTypeUtilities.h"
 #import "GraphicsContext.h"
 #import "IOSurface.h"
@@ -53,6 +53,7 @@
 #import <QuartzCore/CALayer.h>
 #import <objc_runtime.h>
 #import <pal/avfoundation/MediaTimeAVFoundation.h>
+#import <pal/spi/cf/CFNotificationCenterSPI.h>
 #import <pal/spi/cocoa/AVFoundationSPI.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <wtf/Deque.h>
@@ -60,12 +61,16 @@
 #import <wtf/MainThread.h>
 #import <wtf/NativePromise.h>
 #import <wtf/NeverDestroyed.h>
+#import <wtf/TZoneMallocInlines.h>
 #import <wtf/WeakPtr.h>
+#import <wtf/spi/cocoa/NSObjCRuntimeSPI.h>
 
 #import "CoreVideoSoftLink.h"
 #import <pal/cf/CoreMediaSoftLink.h>
 #import <pal/cocoa/AVFoundationSoftLink.h>
 #import <pal/cocoa/MediaToolboxSoftLink.h>
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 @interface AVSampleBufferDisplayLayer (Staging_100128644)
 @property (assign, nonatomic) BOOL preventsAutomaticBackgroundingDuringVideoPlayback;
@@ -76,6 +81,30 @@
 - (void)removeAllVideoTargets;
 @end
 #endif
+
+@interface WebEffectiveRateChangedListenerObjCAdapter : NSObject
+@property (atomic, readonly, direct) RefPtr<WebCore::EffectiveRateChangedListener> protectedListener;
+- (instancetype)init NS_UNAVAILABLE;
+- (instancetype)initWithEffectiveRateChangedListener:(const WebCore::EffectiveRateChangedListener&)listener;
+@end
+
+NS_DIRECT_MEMBERS
+@implementation WebEffectiveRateChangedListenerObjCAdapter {
+    ThreadSafeWeakPtr<WebCore::EffectiveRateChangedListener> _listener;
+}
+
+- (instancetype)initWithEffectiveRateChangedListener:(const WebCore::EffectiveRateChangedListener&)listener
+{
+    if ((self = [super init]))
+        _listener = listener;
+    return self;
+}
+
+- (RefPtr<WebCore::EffectiveRateChangedListener>)protectedListener
+{
+    return _listener.get();
+}
+@end
 
 namespace WebCore {
 
@@ -93,27 +122,16 @@ String convertEnumerationToString(MediaPlayerPrivateMediaSourceAVFObjC::SeekStat
     return values[static_cast<size_t>(enumerationValue)];
 }
 
-#if HAVE(AVSAMPLEBUFFERDISPLAYLAYER_COPYDISPLAYEDPIXELBUFFER)
-
-static bool isCopyDisplayedPixelBufferAvailable()
-{
-    static auto result = [] {
-        return [PAL::getAVSampleBufferDisplayLayerClass() instancesRespondToSelector:@selector(copyDisplayedPixelBuffer)];
-    }();
-    return MediaSessionManagerCocoa::mediaSourceInlinePaintingEnabled() && result;
-}
-
-#endif // HAVE(AVSAMPLEBUFFERDISPLAYLAYER_COPYDISPLAYEDPIXELBUFFER)
-
 #pragma mark -
 #pragma mark MediaPlayerPrivateMediaSourceAVFObjC
 
-class EffectiveRateChangedListener : public ThreadSafeRefCounted<EffectiveRateChangedListener> {
+class EffectiveRateChangedListener : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<EffectiveRateChangedListener> {
 public:
     static Ref<EffectiveRateChangedListener> create(MediaPlayerPrivateMediaSourceAVFObjC& client, CMTimebaseRef timebase)
     {
         return adoptRef(*new EffectiveRateChangedListener(client, timebase));
     }
+    ~EffectiveRateChangedListener() = default;
 
     void effectiveRateChanged()
     {
@@ -129,22 +147,27 @@ private:
     EffectiveRateChangedListener(MediaPlayerPrivateMediaSourceAVFObjC&, CMTimebaseRef);
 
     WeakPtr<MediaPlayerPrivateMediaSourceAVFObjC> m_client;
+    RetainPtr<WebEffectiveRateChangedListenerObjCAdapter> m_objcAdapter;
 };
 
 static void timebaseEffectiveRateChangedCallback(CFNotificationCenterRef, void* observer, CFNotificationName, const void*, CFDictionaryRef)
 {
-    static_cast<EffectiveRateChangedListener*>(observer)->effectiveRateChanged();
+    RetainPtr adapter { dynamic_objc_cast<WebEffectiveRateChangedListenerObjCAdapter>(reinterpret_cast<id>(observer)) };
+    if (auto protectedListener = [adapter protectedListener])
+        protectedListener->effectiveRateChanged();
 }
 
 void EffectiveRateChangedListener::stop(CMTimebaseRef timebase)
 {
-    CFNotificationCenterRemoveObserver(CFNotificationCenterGetLocalCenter(), this, kCMTimebaseNotification_EffectiveRateChanged, timebase);
+    CFNotificationCenterRemoveObserver(CFNotificationCenterGetLocalCenter(), m_objcAdapter.get(), kCMTimebaseNotification_EffectiveRateChanged, timebase);
 }
 
 EffectiveRateChangedListener::EffectiveRateChangedListener(MediaPlayerPrivateMediaSourceAVFObjC& client, CMTimebaseRef timebase)
     : m_client(client)
+    , m_objcAdapter(adoptNS([[WebEffectiveRateChangedListenerObjCAdapter alloc] initWithEffectiveRateChangedListener:*this]))
 {
-    CFNotificationCenterAddObserver(CFNotificationCenterGetLocalCenter(), this, timebaseEffectiveRateChangedCallback, kCMTimebaseNotification_EffectiveRateChanged, timebase, static_cast<CFNotificationSuspensionBehavior>(0));
+    // Observer removed MediaPlayerPrivateMediaSourceAVFObjC destructor.
+    CFNotificationCenterAddObserver(CFNotificationCenterGetLocalCenter(), m_objcAdapter.get(), timebaseEffectiveRateChangedCallback, kCMTimebaseNotification_EffectiveRateChanged, timebase, static_cast<CFNotificationSuspensionBehavior>(_CFNotificationObserverIsObjC));
 }
 
 MediaPlayerPrivateMediaSourceAVFObjC::MediaPlayerPrivateMediaSourceAVFObjC(MediaPlayer* player)
@@ -223,6 +246,7 @@ MediaPlayerPrivateMediaSourceAVFObjC::~MediaPlayerPrivateMediaSourceAVFObjC()
 #pragma mark MediaPlayer Factory Methods
 
 class MediaPlayerFactoryMediaSourceAVFObjC final : public MediaPlayerFactory {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(MediaPlayerFactoryMediaSourceAVFObjC);
 public:
     MediaPlayerFactoryMediaSourceAVFObjC()
     {
@@ -308,7 +332,12 @@ void MediaPlayerPrivateMediaSourceAVFObjC::load(const URL&, const ContentType&, 
 {
     ALWAYS_LOG(LOGIDENTIFIER);
 
-    m_mediaSourcePrivate = MediaSourcePrivateAVFObjC::create(*this, client);
+    if (RefPtr mediaSourcePrivate = downcast<MediaSourcePrivateAVFObjC>(client.mediaSourcePrivate())) {
+        mediaSourcePrivate->setPlayer(this);
+        m_mediaSourcePrivate = WTFMove(mediaSourcePrivate);
+        client.reOpen();
+    } else
+        m_mediaSourcePrivate = MediaSourcePrivateAVFObjC::create(*this, client);
     m_mediaSourcePrivate->setResourceOwner(m_resourceOwner);
     m_mediaSourcePrivate->setVideoRenderer(layerOrVideoRenderer());
     m_mediaSourcePrivate->setDecompressionSession(m_decompressionSession.get());
@@ -552,7 +581,8 @@ void MediaPlayerPrivateMediaSourceAVFObjC::seekInternal()
         ALWAYS_LOG(LOGIDENTIFIER);
         MediaTime synchronizerTime = PAL::toMediaTime([m_synchronizer currentTime]);
 
-        m_isSynchronizerSeeking = synchronizerTime != seekedTime;
+        m_isSynchronizerSeeking = m_isSynchronizerSeeking = std::abs((synchronizerTime - seekedTime).toMicroseconds()) > 1000;
+
         ALWAYS_LOG(LOGIDENTIFIER, "seekedTime = ", seekedTime, ", synchronizerTime = ", synchronizerTime, "synchronizer seeking = ", m_isSynchronizerSeeking);
 
         if (!m_isSynchronizerSeeking) {
@@ -719,18 +749,14 @@ RefPtr<NativeImage> MediaPlayerPrivateMediaSourceAVFObjC::nativeImageForCurrentT
 
 bool MediaPlayerPrivateMediaSourceAVFObjC::updateLastPixelBuffer()
 {
-#if HAVE(AVSAMPLEBUFFERDISPLAYLAYER_COPYDISPLAYEDPIXELBUFFER)
-    if (isCopyDisplayedPixelBufferAvailable()) {
+    if (!m_decompressionSession) {
         if (auto pixelBuffer = adoptCF([layerOrVideoRenderer() copyDisplayedPixelBuffer])) {
             INFO_LOG(LOGIDENTIFIER, "displayed pixelbuffer copied for time ", currentTime());
             m_lastPixelBuffer = WTFMove(pixelBuffer);
             return true;
         }
-    }
-#endif
-
-    if (layerOrVideoRenderer() || !m_decompressionSession)
         return false;
+    }
 
     auto flags = !m_lastPixelBuffer ? WebCoreDecompressionSession::AllowLater : WebCoreDecompressionSession::ExactTime;
     auto newPixelBuffer = m_decompressionSession->imageForTime(currentTime(), flags);
@@ -798,20 +824,6 @@ void MediaPlayerPrivateMediaSourceAVFObjC::paintCurrentFrameInContext(GraphicsCo
     context.drawNativeImage(*image, outputRect, imageRect);
 }
 
-#if !HAVE(AVSAMPLEBUFFERDISPLAYLAYER_COPYDISPLAYEDPIXELBUFFER)
-void MediaPlayerPrivateMediaSourceAVFObjC::willBeAskedToPaintGL()
-{
-    // We have been asked to paint into a WebGL canvas, so take that as a signal to create
-    // a decompression session, even if that means the native video can't also be displayed
-    // in page.
-    if (m_hasBeenAskedToPaintGL)
-        return;
-
-    m_hasBeenAskedToPaintGL = true;
-    acceleratedRenderingStateChanged();
-}
-#endif
-
 RefPtr<VideoFrame> MediaPlayerPrivateMediaSourceAVFObjC::videoFrameForCurrentTime()
 {
     if (!m_isGatheringVideoFrameMetadata)
@@ -841,18 +853,10 @@ bool MediaPlayerPrivateMediaSourceAVFObjC::shouldEnsureLayerOrVideoRenderer() co
 {
     // Decompression sessions do not support encrypted content; force layer
     // creation.
-    if (m_mediaSourcePrivate && m_mediaSourcePrivate->cdmInstance())
+    if (m_mediaSourcePrivate && (m_mediaSourcePrivate->cdmInstance() || m_mediaSourcePrivate->needsVideoLayer()))
         return true;
-#if HAVE(AVSAMPLEBUFFERDISPLAYLAYER_COPYDISPLAYEDPIXELBUFFER)
-    return isCopyDisplayedPixelBufferAvailable() && [&] {
-        if (m_mediaSourcePrivate && m_mediaSourcePrivate->needsVideoLayer())
-            return true;
-        auto player = m_player.get();
-        return player && player->renderingCanBeAccelerated();
-    }();
-#else
-    return !m_hasBeenAskedToPaintGL;
-#endif
+    auto player = m_player.get();
+    return player && player->renderingCanBeAccelerated();
 }
 
 void MediaPlayerPrivateMediaSourceAVFObjC::setPresentationSize(const IntSize& newSize)
@@ -1036,6 +1040,10 @@ void MediaPlayerPrivateMediaSourceAVFObjC::ensureDecompressionSession()
     m_decompressionSession = WebCoreDecompressionSession::createOpenGL();
     m_decompressionSession->setTimebase([m_synchronizer timebase]);
     m_decompressionSession->setResourceOwner(m_resourceOwner);
+    m_decompressionSession->setErrorListener([weakThis = WeakPtr { *this }](OSStatus) {
+        if (RefPtr protectedThis = weakThis.get())
+            protectedThis->setNetworkState(MediaPlayer::NetworkState::DecodeError);
+    });
 
     if (m_mediaSourcePrivate)
         m_mediaSourcePrivate->setDecompressionSession(m_decompressionSession.get());
@@ -1339,7 +1347,7 @@ void MediaPlayerPrivateMediaSourceAVFObjC::flushPendingSizeChanges()
 }
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
-CDMSessionMediaSourceAVFObjC* MediaPlayerPrivateMediaSourceAVFObjC::cdmSession() const
+CDMSessionAVContentKeySession* MediaPlayerPrivateMediaSourceAVFObjC::cdmSession() const
 {
     return m_session.get();
 }
@@ -1351,13 +1359,20 @@ void MediaPlayerPrivateMediaSourceAVFObjC::setCDMSession(LegacyCDMSession* sessi
 
     ALWAYS_LOG(LOGIDENTIFIER);
 
-    m_session = toCDMSessionMediaSourceAVFObjC(session);
+    m_session = toCDMSessionAVContentKeySession(session);
 
     if (!m_mediaSourcePrivate)
         return;
 
     m_mediaSourcePrivate->setCDMSession(session);
 }
+
+void MediaPlayerPrivateMediaSourceAVFObjC::keyAdded()
+{
+    if (m_mediaSourcePrivate)
+        m_mediaSourcePrivate->keyAdded();
+}
+
 #endif // ENABLE(LEGACY_ENCRYPTED_MEDIA)
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA) || ENABLE(ENCRYPTED_MEDIA)
@@ -1852,5 +1867,7 @@ void MediaPlayerPrivateMediaSourceAVFObjC::isInFullscreenOrPictureInPictureChang
 }
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif

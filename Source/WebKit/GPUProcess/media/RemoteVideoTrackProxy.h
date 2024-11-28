@@ -33,6 +33,7 @@
 #include <WebCore/TrackBase.h>
 #include <WebCore/VideoTrackPrivate.h>
 #include <wtf/Ref.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeWeakPtr.h>
 #include <wtf/WeakPtr.h>
 
@@ -49,6 +50,7 @@ struct VideoTrackPrivateRemoteConfiguration;
 class RemoteVideoTrackProxy final
     : public ThreadSafeRefCounted<RemoteVideoTrackProxy, WTF::DestructionThread::Main>
     , private WebCore::VideoTrackPrivateClient {
+    WTF_MAKE_TZONE_ALLOCATED(RemoteVideoTrackProxy);
 public:
     static Ref<RemoteVideoTrackProxy> create(GPUConnectionToWebProcess& connectionToWebProcess, WebCore::VideoTrackPrivate& trackPrivate, WebCore::MediaPlayerIdentifier mediaPlayerIdentifier)
     {
@@ -61,7 +63,7 @@ public:
     void setSelected(bool selected)
     {
         m_selected = selected;
-        m_trackPrivate->setSelected(selected);
+        Ref { m_trackPrivate }->setSelected(selected);
     }
     bool operator==(const WebCore::VideoTrackPrivate& track) const { return track == m_trackPrivate.get(); }
 

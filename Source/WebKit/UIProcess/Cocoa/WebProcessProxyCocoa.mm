@@ -39,10 +39,10 @@
 #import "WebProcessMessages.h"
 #import "WebProcessPool.h"
 #import <WebCore/ActivityState.h>
-#import <WebCore/RuntimeApplicationChecks.h>
 #import <pal/spi/ios/MobileGestaltSPI.h>
 #import <sys/sysctl.h>
 #import <wtf/NeverDestroyed.h>
+#import <wtf/RuntimeApplicationChecks.h>
 #import <wtf/Scope.h>
 #import <wtf/cocoa/Entitlements.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
@@ -195,7 +195,7 @@ void WebProcessProxy::sendAudioComponentRegistrations()
         if (!registrations)
             return;
         
-        RunLoop::main().dispatch([weakThis = WTFMove(weakThis), registrations = WTFMove(registrations)] () mutable {
+        RunLoop::protectedMain()->dispatch([weakThis = WTFMove(weakThis), registrations = WTFMove(registrations)] () mutable {
             if (!weakThis)
                 return;
 
@@ -220,7 +220,7 @@ bool WebProcessProxy::messageSourceIsValidWebContentProcess()
 #endif
 
     // WebKitTestRunner does not pass the isPlatformBinary check, we should return early in this case.
-    if (isRunningTest(WebCore::applicationBundleIdentifier()))
+    if (isRunningTest(applicationBundleIdentifier()))
         return true;
 
     // Confirm that the connection is from a WebContent process:
@@ -240,7 +240,7 @@ std::optional<audit_token_t> WebProcessProxy::auditToken() const
     if (!hasConnection())
         return std::nullopt;
     
-    return connection().getAuditToken();
+    return protectedConnection()->getAuditToken();
 }
 
 std::optional<Vector<SandboxExtension::Handle>> WebProcessProxy::fontdMachExtensionHandles()
@@ -258,6 +258,13 @@ bool WebProcessProxy::shouldDisableJITCage() const
     return false;
 }
 #endif
+
+#if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
+void WebProcessProxy::setupLogStream(uint32_t pid, IPC::StreamServerConnectionHandle&& serverConnection, LogStreamIdentifier logStreamIdentifier, CompletionHandler<void(IPC::Semaphore& streamWakeUpSemaphore, IPC::Semaphore& streamClientWaitSemaphore)>&& completionHandler)
+{
+    m_logStream.setup(pid, WTFMove(serverConnection), logStreamIdentifier, WTFMove(completionHandler));
+}
+#endif // ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
 
 }
 

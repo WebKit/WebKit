@@ -27,6 +27,8 @@
 #include "SourceImage.h"
 
 #include "GraphicsContext.h"
+#include "ImageBuffer.h"
+#include "NativeImage.h"
 
 namespace WebCore {
 
@@ -34,6 +36,12 @@ SourceImage::SourceImage(ImageVariant&& imageVariant)
     : m_imageVariant(WTFMove(imageVariant))
 {
 }
+
+SourceImage::SourceImage(const SourceImage&) = default;
+SourceImage::SourceImage(SourceImage&&) = default;
+SourceImage& SourceImage::operator=(const SourceImage&) = default;
+SourceImage& SourceImage::operator=(SourceImage&&) = default;
+SourceImage::~SourceImage() = default;
 
 bool SourceImage::operator==(const SourceImage& other) const
 {

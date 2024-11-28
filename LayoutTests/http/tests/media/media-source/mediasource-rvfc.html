@@ -12,10 +12,6 @@
 
             mediasource_testafterdataloaded(function(test, mediaElement, mediaSource, segmentInfo, sourceBuffer, mediaData)
             {
-                if (window.internals && !internals.settings.mediaSourceInlinePaintingEnabled) {
-                    test.done();
-                    return;
-                }
                 mediaElement.play();
                 // Append all the segments
                 test.expectEvent(sourceBuffer, 'updateend', 'sourceBuffer');

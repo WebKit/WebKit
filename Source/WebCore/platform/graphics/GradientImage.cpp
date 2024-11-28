@@ -86,7 +86,7 @@ void GradientImage::drawPattern(GraphicsContext& destContext, const FloatRect& d
         if (destContext.drawLuminanceMask())
             imageBuffer->convertToLuminanceMask();
 
-        m_cachedImage = ImageBuffer::sinkIntoNativeImage(WTFMove(imageBuffer));
+        m_cachedImage = WTFMove(imageBuffer);
         if (!m_cachedImage)
             return;
     }

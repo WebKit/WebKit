@@ -30,6 +30,7 @@
 #import "APIFullscreenClient.h"
 #import "WKWebView.h"
 #import <wtf/RetainPtr.h>
+#import <wtf/TZoneMalloc.h>
 #import <wtf/WeakObjCPtr.h>
 
 @protocol _WKFullscreenDelegate;
@@ -37,6 +38,7 @@
 namespace WebKit {
 
 class FullscreenClient final : public API::FullscreenClient {
+    WTF_MAKE_TZONE_ALLOCATED(FullscreenClient);
 public:
     explicit FullscreenClient(WKWebView *);
     ~FullscreenClient() { };

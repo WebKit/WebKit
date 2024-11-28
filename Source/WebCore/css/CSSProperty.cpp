@@ -44,4 +44,22 @@ CSSPropertyID StylePropertyMetadata::shorthandID() const
     return shorthands[m_indexInShorthandsVector].id();
 }
 
+// FIXME: Generate from logical property groups.
+bool CSSProperty::isInsetProperty(CSSPropertyID propertyID)
+{
+    switch (propertyID) {
+    case CSSPropertyLeft:
+    case CSSPropertyRight:
+    case CSSPropertyTop:
+    case CSSPropertyBottom:
+    case CSSPropertyInsetInlineStart:
+    case CSSPropertyInsetInlineEnd:
+    case CSSPropertyInsetBlockStart:
+    case CSSPropertyInsetBlockEnd:
+        return true;
+    default:
+        return false;
+    }
+};
+
 } // namespace WebCore

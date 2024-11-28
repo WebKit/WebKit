@@ -247,6 +247,7 @@ inline CapabilityLevel canCompile(Node* node)
     case NewArrayWithSize:
     case NewArrayWithConstantSize:
     case NewArrayWithSpecies:
+    case NewArrayWithSizeAndStructure:
     case TryGetById:
     case GetById:
     case GetByIdFlush:
@@ -415,7 +416,7 @@ inline CapabilityLevel canCompile(Node* node)
     case CallDOM:
     case CallDOMGetter:
     case ArraySlice:
-    case ArraySpliceExtract:
+    case ArraySplice:
     case ArrayIndexOf:
     case ArrayPop:
     case ArrayPush:

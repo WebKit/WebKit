@@ -61,7 +61,7 @@ public:
 private:
     JS_EXPORT_PRIVATE StreamingCompiler(VM&, CompilerMode, JSGlobalObject*, JSPromise*, JSObject*);
 
-    bool didReceiveFunctionData(unsigned, const FunctionData&) final;
+    bool didReceiveFunctionData(FunctionCodeIndex, const FunctionData&) final;
     void didFinishParsing() final;
     void didComplete() WTF_REQUIRES_LOCK(m_lock);
     void completeIfNecessary() WTF_REQUIRES_LOCK(m_lock);

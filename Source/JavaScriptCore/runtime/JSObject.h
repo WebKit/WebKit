@@ -48,6 +48,8 @@
 #include "SparseArrayValueMap.h"
 #include <wtf/StdLibExtras.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 namespace DOMJIT {
 class Signature;
@@ -818,11 +820,11 @@ public:
     bool hasInlineStorage() const { return structure()->hasInlineStorage(); }
     ConstPropertyStorage inlineStorageUnsafe() const
     {
-        return bitwise_cast<ConstPropertyStorage>(this + 1);
+        return std::bit_cast<ConstPropertyStorage>(this + 1);
     }
     PropertyStorage inlineStorageUnsafe()
     {
-        return bitwise_cast<PropertyStorage>(this + 1);
+        return std::bit_cast<PropertyStorage>(this + 1);
     }
     ConstPropertyStorage inlineStorage() const
     {
@@ -1750,6 +1752,8 @@ bool validateAndApplyPropertyDescriptor(JSGlobalObject*, JSObject*, PropertyName
 JS_EXPORT_PRIVATE NEVER_INLINE bool ordinarySetSlow(JSGlobalObject*, JSObject*, PropertyName, JSValue, JSValue receiver, bool shouldThrow);
 JS_EXPORT_PRIVATE NEVER_INLINE bool ordinarySetWithOwnDescriptor(JSGlobalObject*, JSObject*, PropertyName, JSValue, JSValue receiver, PropertyDescriptor&& ownDescriptor, bool shouldThrow);
 
+bool setterThatIgnoresPrototypeProperties(JSGlobalObject*, JSValue thisValue, JSObject* homeObject, PropertyName, JSValue, bool shouldThrow);
+
 // Helper for defining native functions, if you're not using a static hash table.
 // Use this macro from within finishCreation() methods in prototypes. This assumes
 // you've defined variables called globalObject, globalObject, and vm, and they
@@ -1809,3 +1813,5 @@ JS_EXPORT_PRIVATE NEVER_INLINE bool ordinarySetWithOwnDescriptor(JSGlobalObject*
     static_assert(DerivedClass::destroy == BaseClass::destroy);
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

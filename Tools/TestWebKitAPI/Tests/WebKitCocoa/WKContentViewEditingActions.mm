@@ -90,7 +90,7 @@ TEST(WebKit, CopyInAutoFilledAndViewablePasswordField)
 
     [webView objectByEvaluatingJavaScript:@(R"script(
         let field = document.getElementById('autofill');
-        internals.setAutoFilledAndViewable(field, true);
+        internals.setAutofilledAndViewable(field, true);
         field.select())script")];
     [webView waitForNextPresentationUpdate];
     EXPECT_TRUE([contentView canPerformAction:@selector(copy:) withSender:nil]);

@@ -480,9 +480,11 @@ void RenderTreeBuilder::attachToRenderElementInternal(RenderElement& parent, Ren
                 // in order to compute static position for out of flow boxes, the parent has to run normal flow layout as well (as opposed to simplified)
                 if (newChild->containingBlock() != &parent)
                     return false;
+#if ENABLE(VIDEO)
                 // FIXME: RenderVideo's setNeedsLayout pattern does not play well with this optimization: see webkit.org/b/276253
                 if (is<RenderVideo>(*newChild))
                     return false;
+#endif
                 // Since we can't actually run static position only layout for a block container (RenderBlockFlow::layoutBlock() does not have such fine grained layout flow)
                 // floats get rebuilt which assumes (see intruding floats) parent block containers do the same.
                 if (auto* renderBlock = dynamicDowncast<RenderBlock>(parent))

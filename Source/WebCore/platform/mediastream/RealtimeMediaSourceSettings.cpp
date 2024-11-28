@@ -36,6 +36,8 @@
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/StringBuilder.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 RealtimeMediaSourceSettings RealtimeMediaSourceSettings::isolatedCopy() const
@@ -210,5 +212,7 @@ String RealtimeMediaSourceSettings::displaySurface(DisplaySurfaceType surface)
 }
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ENABLE(MEDIA_STREAM)

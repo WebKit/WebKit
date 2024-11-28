@@ -69,6 +69,11 @@ void AsyncRevalidation::staleWhileRevalidateEnding()
         m_completionHandler(Result::Timeout);
 }
 
+Ref<AsyncRevalidation> AsyncRevalidation::create(Cache& cache, const GlobalFrameID& frameID, const WebCore::ResourceRequest& request, std::unique_ptr<NetworkCache::Entry>&& entry, std::optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain, bool allowPrivacyProxy, OptionSet<WebCore::AdvancedPrivacyProtections> advancedPrivacyProtections, CompletionHandler<void(Result)>&& handler)
+{
+    return adoptRef(*new AsyncRevalidation(cache, frameID, request, WTFMove(entry), isNavigatingToAppBoundDomain, allowPrivacyProxy, advancedPrivacyProtections, WTFMove(handler)));
+}
+
 AsyncRevalidation::AsyncRevalidation(Cache& cache, const GlobalFrameID& frameID, const WebCore::ResourceRequest& request, std::unique_ptr<NetworkCache::Entry>&& entry, std::optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain, bool allowPrivacyProxy, OptionSet<WebCore::AdvancedPrivacyProtections> advancedPrivacyProtections, CompletionHandler<void(Result)>&& handler)
     : m_timer(*this, &AsyncRevalidation::staleWhileRevalidateEnding)
     , m_completionHandler(WTFMove(handler))

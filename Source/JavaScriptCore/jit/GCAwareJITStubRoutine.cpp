@@ -219,7 +219,7 @@ GCAwareJITStubRoutineWithExceptionHandler::~GCAwareJITStubRoutineWithExceptionHa
     // We delay deallocation of m_exceptionHandlerCallSiteIndex until GCAwareJITStubRoutineWithExceptionHandler gets destroyed.
     // This means that CallSiteIndex can be reserved correctly so long as the code owned by GCAwareJITStubRoutineWithExceptionHandler is on the stack.
     // This is important since CallSite can be queried so long as this code is on the stack: StackVisitor can retreive CallSiteIndex from the stack.
-    ASSERT(!isCompilationThread() && !Thread::mayBeGCThread());
+    ASSERT((!isCompilationThread() && !Thread::mayBeGCThread()) || vm().heap.isInPhase(CollectorPhase::End));
     if (m_codeOriginPool)
         m_codeOriginPool->removeDisposableCallSiteIndex(m_exceptionHandlerCallSiteIndex);
 #endif

@@ -27,11 +27,13 @@
 
 #if USE(LIBWEBRTC)
 
+#include <wtf/Compiler.h>
+
 #include <WebCore/LibWebRTCMacros.h>
 
-ALLOW_COMMA_BEGIN
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
 #include <webrtc/api/async_dns_resolver.h>
-ALLOW_COMMA_END
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 
 #include <wtf/Function.h>
 #include <wtf/TZoneMalloc.h>

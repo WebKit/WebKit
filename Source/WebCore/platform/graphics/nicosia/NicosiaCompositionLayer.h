@@ -29,18 +29,18 @@
 #pragma once
 
 #include "Color.h"
+#include "CoordinatedAnimatedBackingStoreClient.h"
+#include "CoordinatedBackingStoreProxy.h"
+#include "CoordinatedImageBackingStore.h"
 #include "Damage.h"
 #include "FilterOperations.h"
 #include "FloatPoint.h"
 #include "FloatPoint3D.h"
 #include "FloatRect.h"
 #include "FloatSize.h"
-#include "NicosiaAnimatedBackingStoreClient.h"
-#include "NicosiaAnimation.h"
-#include "NicosiaBackingStore.h"
-#include "NicosiaImageBacking.h"
 #include "NicosiaPlatformLayer.h"
 #include "ScrollTypes.h"
+#include "TextureMapperAnimation.h"
 #include "TextureMapperLayer.h"
 #include "TextureMapperPlatformLayerProxy.h"
 #include "TransformationMatrix.h"
@@ -88,7 +88,9 @@ public:
                     bool debugBorderChanged : 1;
                     bool scrollingNodeChanged : 1;
                     bool eventRegionChanged : 1;
+#if ENABLE(WPE_PLATFORM) || PLATFORM(GTK)
                     bool damageChanged : 1;
+#endif
                 };
                 uint32_t value { 0 };
             };
@@ -126,15 +128,15 @@ public:
         WebCore::FloatSize contentsTilePhase;
         WebCore::FloatSize contentsTileSize;
         WebCore::FloatRoundedRect contentsClippingRect;
+#if ENABLE(WPE_PLATFORM) || PLATFORM(GTK)
         WebCore::Damage damage;
+#endif
 
         float opacity { 0 };
         WebCore::Color solidColor;
 
         WebCore::FilterOperations filters;
-        // FIXME: Despite the name, this implementation is not
-        // TextureMapper-specific. Should be renamed when necessary.
-        Animations animations;
+        WebCore::TextureMapperAnimations animations;
 
         Vector<RefPtr<CompositionLayer>> children;
         RefPtr<CompositionLayer> replica;
@@ -143,9 +145,12 @@ public:
         WebCore::FloatRoundedRect backdropFiltersRect;
 
         RefPtr<WebCore::TextureMapperPlatformLayerProxy> contentLayer;
-        RefPtr<BackingStore> backingStore;
-        RefPtr<ImageBacking> imageBacking;
-        RefPtr<AnimatedBackingStoreClient> animatedBackingStoreClient;
+        RefPtr<WebCore::CoordinatedBackingStoreProxy> backingStore;
+        RefPtr<WebCore::CoordinatedAnimatedBackingStoreClient> animatedBackingStoreClient;
+        struct {
+            RefPtr<WebCore::CoordinatedImageBackingStore> store;
+            bool isVisible { false };
+        } imageBacking;
 
         struct RepaintCounter {
             unsigned count { 0 };
@@ -157,12 +162,11 @@ public:
             bool visible { false };
         } debugBorder;
 
-        WebCore::ScrollingNodeID scrollingNodeID;
+        Markable<WebCore::ScrollingNodeID> scrollingNodeID;
         WebCore::EventRegion eventRegion;
     };
 
-    template<typename T>
-    void flushState(const T& functor)
+    void flushState()
     {
         Locker locker { PlatformLayer::m_state.lock };
         auto& pending = m_state.pending;
@@ -236,12 +240,12 @@ public:
             staging.imageBacking = pending.imageBacking;
         if (pending.delta.animatedBackingStoreClientChanged)
             staging.animatedBackingStoreClient = pending.animatedBackingStoreClient;
+#if ENABLE(WPE_PLATFORM) || PLATFORM(GTK)
         if (pending.delta.damageChanged)
             staging.damage = pending.damage;
+#endif
 
         pending.delta = { };
-
-        functor(staging);
     }
 
     template<typename T>

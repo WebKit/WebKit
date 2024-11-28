@@ -29,6 +29,7 @@
 #include "ImageTypes.h"
 #include "Timer.h"
 #include <wtf/TZoneMalloc.h>
+#include <wtf/ThreadSafeWeakPtr.h>
 
 namespace WebCore {
 
@@ -38,9 +39,11 @@ class ImageFrame;
 class ImageFrameAnimator {
     WTF_MAKE_TZONE_ALLOCATED(ImageFrameAnimator);
 public:
-    static std::unique_ptr<ImageFrameAnimator> create(BitmapImageSource&);
+    explicit ImageFrameAnimator(BitmapImageSource&);
 
-    ImageFrameAnimator(BitmapImageSource&);
+    void ref() const;
+    void deref() const;
+
     ~ImageFrameAnimator();
 
     bool imageFrameDecodeAtIndexHasFinished(unsigned index, ImageAnimatingState, DecodingStatus);
@@ -68,7 +71,7 @@ private:
 
     const char* sourceUTF8() const;
 
-    BitmapImageSource& m_source;
+    ThreadSafeWeakPtr<BitmapImageSource> m_source; // Cannot be null.
     unsigned m_frameCount { 0 };
     RepetitionCount m_repetitionCount { RepetitionCountNone };
 

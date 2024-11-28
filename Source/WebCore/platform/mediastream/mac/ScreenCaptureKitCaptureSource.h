@@ -49,15 +49,6 @@ OBJC_CLASS WebCoreScreenCaptureKitHelper;
 using CMSampleBufferRef = struct opaqueCMSampleBuffer*;
 
 namespace WebCore {
-class ScreenCaptureKitCaptureSource;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::ScreenCaptureKitCaptureSource> : std::true_type { };
-}
-
-namespace WebCore {
 
 class ImageTransferSessionVT;
 
@@ -65,9 +56,9 @@ class ScreenCaptureKitCaptureSource final
     : public DisplayCaptureSourceCocoa::Capturer
     , public ScreenCaptureSessionSourceObserver {
 public:
-    static Expected<UniqueRef<DisplayCaptureSourceCocoa::Capturer>, CaptureSourceError> create(const CaptureDevice&, const MediaConstraints*);
+    static Expected<uint32_t, CaptureSourceError> computeDeviceID(const CaptureDevice&);
 
-    explicit ScreenCaptureKitCaptureSource(const CaptureDevice&, uint32_t);
+    ScreenCaptureKitCaptureSource(CapturerObserver&, const CaptureDevice&, uint32_t);
     virtual ~ScreenCaptureKitCaptureSource();
 
     WEBCORE_EXPORT static bool isAvailable();
@@ -82,16 +73,16 @@ public:
     void outputVideoEffectDidStopForStream() { m_isVideoEffectEnabled = false; }
 
 private:
-
     // DisplayCaptureSourceCocoa::Capturer
     bool start() final;
-    void stop() final;
+    void stop() final { stopInternal([] { }); }
     void end() final;
     DisplayCaptureSourceCocoa::DisplayFrameType generateFrame() final;
     CaptureDevice::DeviceType deviceType() const final;
     DisplaySurfaceType surfaceType() const final;
     void commitConfiguration(const RealtimeMediaSourceSettings&) final;
     IntSize intrinsicSize() const final;
+    void whenReady(CompletionHandler<void(CaptureSourceError&&)>&&) final;
 
     // LoggerHelper
     ASCIILiteral logClassName() const final { return "ScreenCaptureKitCaptureSource"_s; }
@@ -100,6 +91,7 @@ private:
     void sessionFilterDidChange(SCContentFilter*) final;
     void sessionStreamDidEnd(SCStream*) final;
 
+    void stopInternal(CompletionHandler<void()>&&);
     void startContentStream();
     void findShareableContent();
     RetainPtr<SCStreamConfiguration> streamConfiguration();
@@ -131,6 +123,8 @@ private:
     float m_frameRate { 0 };
     bool m_isRunning { false };
     bool m_isVideoEffectEnabled { false };
+    bool m_didReceiveVideoFrame { false };
+    CompletionHandler<void(CaptureSourceError&&)> m_whenReadyCallback;
 };
 
 } // namespace WebCore

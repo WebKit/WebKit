@@ -18,7 +18,7 @@
         var axTextField = accessibilityController.accessibleElementById("textfield");
         var domTextField = document.getElementById("textfield");
 
-        window.internals.setShowAutoFillButton(domTextField, "Contacts");
+        window.internals.setAutofillButtonType(domTextField, "Contacts");
         var expectedChildrenCount = platformName == "atspi" ? "1" : "2";
         setTimeout(async function() {
             await expectAsyncExpression("axTextField.childrenCount", expectedChildrenCount);
@@ -26,7 +26,7 @@
             await expectAsyncExpression("axTextField.childAtIndex(expectedChildrenCount - 1).description", "'AXDescription: contact info AutoFill'");
 
             // Don't crash!
-            window.internals.setShowAutoFillButton(domTextField, "None");
+            window.internals.setAutofillButtonType(domTextField, "None");
             await expectAsyncExpression("axTextField.childrenCount", platformName == "atspi" ? "0" : "1");
 
             finishJSTest();

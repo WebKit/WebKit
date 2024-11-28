@@ -225,7 +225,7 @@ CaptureSourceOrError UserMediaCaptureManager::VideoFactory::createVideoCaptureSo
         return CaptureSourceOrError { "Video capture in GPUProcess is not implemented"_s };
 #endif
     if (m_shouldCaptureInGPUProcess)
-        m_manager.m_remoteCaptureSampleManager.setVideoFrameObjectHeapProxy(&WebProcess::singleton().ensureGPUProcessConnection().videoFrameObjectHeapProxy());
+        m_manager->m_remoteCaptureSampleManager.setVideoFrameObjectHeapProxy(&WebProcess::singleton().ensureGPUProcessConnection().videoFrameObjectHeapProxy());
 
     return RemoteRealtimeVideoSource::create(device, constraints, WTFMove(hashSalts), m_manager, m_shouldCaptureInGPUProcess, pageIdentifier);
 }
@@ -238,7 +238,7 @@ CaptureSourceOrError UserMediaCaptureManager::DisplayFactory::createDisplayCaptu
 #endif
     if (m_shouldCaptureInGPUProcess) {
         Ref videoFrameObjectHeapProxy = WebProcess::singleton().ensureGPUProcessConnection().videoFrameObjectHeapProxy();
-        m_manager.m_remoteCaptureSampleManager.setVideoFrameObjectHeapProxy(WTFMove(videoFrameObjectHeapProxy));
+        m_manager->m_remoteCaptureSampleManager.setVideoFrameObjectHeapProxy(WTFMove(videoFrameObjectHeapProxy));
     }
 
     return RemoteRealtimeVideoSource::create(device, constraints, WTFMove(hashSalts), m_manager, m_shouldCaptureInGPUProcess, pageIdentifier);

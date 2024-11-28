@@ -32,6 +32,13 @@
 
 namespace WTF {
 
+#define USING_CAN_MAKE_WEAKPTR(BASE) \
+    using BASE::weakImpl; \
+    using BASE::weakImplIfExists; \
+    using BASE::weakCount; \
+    using BASE::WeakValueType; \
+    using BASE::WeakPtrImplType;
+
 // Note: you probably want to inherit from CanMakeWeakPtr rather than use this directly.
 template<typename T, typename WeakPtrImpl = DefaultWeakPtrImpl>
 class WeakPtrFactory {

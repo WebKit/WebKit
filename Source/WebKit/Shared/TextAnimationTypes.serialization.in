@@ -41,6 +41,8 @@ header: <WebCore/TextAnimationTypes.h>
     WebCore::TextAnimationType style;
     WebCore::TextAnimationRunMode runMode;
     WTF::UUID unanimatedRangeUUID;
+    WTF::UUID sourceAnimationUUID;
+    WTF::UUID destinationAnimationUUID;
 };
 
 #endif

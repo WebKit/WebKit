@@ -16,15 +16,18 @@ enum class Coverage;
 class Context;
 class KeyContext;
 class PaintOptions;
+struct RenderPassDesc;
 
-// Create the Pipelines specified by 'options' by combining the shading portion w/ the specified
-// 'drawTypes' and a stock set of RenderPass descriptors (e.g., kDepth+msaa, kDepthStencil+msaa)
-void PrecompileCombinations(Context* context,
-                            const PaintOptions& options,
-                            const KeyContext& keyContext,
-                            DrawTypeFlags drawTypes,
+// Create the Pipelines specified by the paint options by combining the shading portion w/ the
+// specified 'drawTypes' and RenderPassDesc.
+void PrecompileCombinations(const RendererProvider*,
+                            ResourceProvider*,
+                            const PaintOptions&,
+                            const KeyContext&,
+                            DrawTypeFlags,
                             bool withPrimitiveBlender,
-                            Coverage coverage);
+                            Coverage,
+                            const RenderPassDesc&);
 
 } // namespace skgpu::graphite
 

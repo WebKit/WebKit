@@ -70,7 +70,7 @@ inline bool WeakGCMap<KeyArg, ValueArg, HashArg, KeyTraitsArg>::contains(const K
 template<typename KeyArg, typename ValueArg, typename HashArg, typename KeyTraitsArg>
 NEVER_INLINE void WeakGCMap<KeyArg, ValueArg, HashArg, KeyTraitsArg>::pruneStaleEntries()
 {
-    m_map.removeIf([](typename HashMapType::KeyValuePairType& entry) {
+    m_map.removeIf([](const typename HashMapType::KeyValuePairType& entry) {
         return !entry.value;
     });
 }

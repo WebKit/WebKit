@@ -68,7 +68,6 @@ typedef NS_ENUM(NSUInteger, _WKContentSecurityPolicyModeForExtension) {
 @property (nonatomic, strong, readonly) WKWebExtensionController *_strongWebExtensionController;
 @property (nonatomic, weak, setter=_setWeakWebExtensionController:) WKWebExtensionController *_weakWebExtensionController;
 @property (nonatomic, strong, setter=_setWebExtensionController:) _WKWebExtensionController *_webExtensionController;
-@property (nonatomic, strong) WKWebExtensionController *webExtensionController;
 
 @property (nonatomic, weak, setter=_setAlternateWebViewForNavigationGestures:) WKWebView *_alternateWebViewForNavigationGestures;
 
@@ -179,6 +178,7 @@ typedef NS_ENUM(NSUInteger, _WKContentSecurityPolicyModeForExtension) {
 #if defined(TARGET_OS_VISION) && TARGET_OS_VISION
 @property (nonatomic, setter=_setGamepadAccessRequiresExplicitConsent:) BOOL _gamepadAccessRequiresExplicitConsent WK_API_AVAILABLE(visionos(2.0));
 @property (nonatomic, setter=_setOverlayRegionsEnabled:) BOOL _overlayRegionsEnabled WK_API_AVAILABLE(visionos(WK_XROS_TBA));
+@property (nonatomic, setter=_setCSSTransformStyleSeparatedEnabled:) BOOL _cssTransformStyleSeparatedEnabled WK_API_AVAILABLE(visionos(WK_XROS_TBA));
 #endif
 
 @end

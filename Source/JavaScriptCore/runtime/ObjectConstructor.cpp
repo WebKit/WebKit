@@ -30,6 +30,8 @@
 #include "PropertyNameArray.h"
 #include "Symbol.h"
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 static JSC_DECLARE_HOST_FUNCTION(objectConstructorAssign);
@@ -338,7 +340,7 @@ JSC_DEFINE_HOST_FUNCTION(objectConstructorAssign, (JSGlobalObject* globalObject,
                 break;
             }
             JSObject* source = asObject(sourceValue);
-            if (!source->staticPropertiesReified() || !source->structure()->canPerformFastPropertyEnumerationCommon() || source->canHaveExistingOwnIndexedProperties()) {
+            if (!source->staticPropertiesReified() || !source->structure()->canPerformFastPropertyEnumerationCommon() || source->canHaveExistingOwnIndexedProperties() || source == target) {
                 willBatch = false;
                 break;
             }
@@ -1375,3 +1377,5 @@ JSC_DEFINE_HOST_FUNCTION(objectConstructorHasOwn, (JSGlobalObject* globalObject,
 }
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

@@ -44,6 +44,9 @@ class WebKitMediaKeys;
 class WebKitMediaKeySession final : public RefCounted<WebKitMediaKeySession>, public EventTarget, public ActiveDOMObject, private LegacyCDMSessionClient {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(WebKitMediaKeySession);
 public:
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
+
     static Ref<WebKitMediaKeySession> create(Document&, WebKitMediaKeys&, const String& keySystem);
     ~WebKitMediaKeySession();
 
@@ -59,10 +62,6 @@ public:
 
     void generateKeyRequest(const String& mimeType, Ref<Uint8Array>&& initData);
     RefPtr<ArrayBuffer> cachedKeyForKeyId(const String& keyId) const;
-
-    // ActiveDOMObject.
-    void ref() const final { RefCounted::ref(); }
-    void deref() const final { RefCounted::deref(); }
 
 private:
     WebKitMediaKeySession(Document&, WebKitMediaKeys&, const String& keySystem);
@@ -85,19 +84,19 @@ private:
 
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const final { return m_logger; }
-    const void* logIdentifier() const final { return m_logIdentifier; }
+    uint64_t logIdentifier() const final { return m_logIdentifier; }
     ASCIILiteral logClassName() const { return "WebKitMediaKeySession"_s; }
     WTFLogChannel& logChannel() const;
 
     Ref<Logger> m_logger;
-    const void* m_logIdentifier;
+    const uint64_t m_logIdentifier;
 #endif
 
     WebKitMediaKeys* m_keys;
     String m_keySystem;
     String m_sessionId;
     RefPtr<WebKitMediaKeyError> m_error;
-    std::unique_ptr<LegacyCDMSession> m_session;
+    RefPtr<LegacyCDMSession> m_session;
 
     struct PendingKeyRequest {
         String mimeType;

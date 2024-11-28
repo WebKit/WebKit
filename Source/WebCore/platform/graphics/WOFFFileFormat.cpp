@@ -47,7 +47,9 @@ static bool readUInt32(SharedBuffer& buffer, size_t& offset, uint32_t& value)
     if (buffer.size() - offset < sizeof(value))
         return false;
 
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib port
     value = ntohl(*reinterpret_cast_ptr<const uint32_t*>(buffer.span().subspan(offset).data()));
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     offset += sizeof(value);
 
     return true;
@@ -59,7 +61,9 @@ static bool readUInt16(SharedBuffer& buffer, size_t& offset, uint16_t& value)
     if (buffer.size() - offset < sizeof(value))
         return false;
 
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib port
     value = ntohs(*reinterpret_cast_ptr<const uint16_t*>(buffer.span().subspan(offset).data()));
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     offset += sizeof(value);
 
     return true;
@@ -255,7 +259,9 @@ bool convertWOFFToSfnt(SharedBuffer& woff, Vector<uint8_t>& sfnt)
             return false;
 
         // Write an sfnt table directory entry.
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib port
         uint32_t* sfntTableDirectoryPtr = reinterpret_cast_ptr<uint32_t*>(sfnt.data() + sfntTableDirectoryCursor);
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
         *sfntTableDirectoryPtr++ = htonl(tableTag);
         *sfntTableDirectoryPtr++ = htonl(tableOrigChecksum);
         *sfntTableDirectoryPtr++ = htonl(sfnt.size());

@@ -145,10 +145,6 @@ void PageClientImpl::setCursorHiddenUntilMouseMoves(bool)
 {
 }
 
-void PageClientImpl::didChangeViewportProperties(const WebCore::ViewportAttributes& attributes)
-{
-}
-
 void PageClientImpl::registerEditCommand(Ref<WebEditCommandProxy>&&, UndoOrRedo)
 {
 }

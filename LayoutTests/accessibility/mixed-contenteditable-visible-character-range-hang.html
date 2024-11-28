@@ -93,9 +93,14 @@ if (window.accessibilityController) {
     // startingElementRect in AccessibilityObject::visibleCharacterRangeInternal).
     document.body.scrollTop = 29;
 
+    let visibleCharacterRangeOutput;
     setTimeout(async function() {
         const body = accessibilityController.accessibleElementById("body");
-        output += `#body AXVisibleCharacterRange: ${body.stringDescriptionOfAttributeValue("AXVisibleCharacterRange")}\n`;
+        await waitFor(() => {
+            visibleCharacterRangeOutput = body.stringDescriptionOfAttributeValue("AXVisibleCharacterRange");
+            return visibleCharacterRangeOutput && visibleCharacterRangeOutput.includes("558, 558");
+        });
+        output += `#body AXVisibleCharacterRange: ${visibleCharacterRangeOutput}\n`;
 
         debug(output);
         document.getElementById("content-wrapper").style.display = "none";

@@ -153,6 +153,7 @@ template<typename T> struct SimpleClassHashTraits : GenericHashTraits<T> {
 template<typename T, typename Deleter> struct HashTraits<std::unique_ptr<T, Deleter>> : SimpleClassHashTraits<std::unique_ptr<T, Deleter>> {
     typedef std::nullptr_t EmptyValueType;
     static EmptyValueType emptyValue() { return nullptr; }
+    static bool isEmptyValue(const std::unique_ptr<T, Deleter>& value) { return !value; }
 
     static void constructDeletedValue(std::unique_ptr<T, Deleter>& slot) { new (NotNull, std::addressof(slot)) std::unique_ptr<T, Deleter> { reinterpret_cast<T*>(-1) }; }
     static bool isDeletedValue(const std::unique_ptr<T, Deleter>& value) { return value.get() == reinterpret_cast<T*>(-1); }
@@ -196,6 +197,8 @@ template<typename T> struct HashTraits<UniqueRef<T>> : SimpleClassHashTraits<Uni
         new (NotNull, std::addressof(slot)) UniqueRef<T>(HashTableEmptyValue);
     }
 
+    static bool isEmptyValue(const UniqueRef<T>& value) { return value.isHashTableEmptyValue(); }
+
     static void constructDeletedValue(UniqueRef<T>& slot) { new (NotNull, std::addressof(slot)) UniqueRef<T> { reinterpret_cast<T*>(-1) }; }
     static bool isDeletedValue(const UniqueRef<T>& value) { return value.get() == reinterpret_cast<T*>(-1); }
 
@@ -211,6 +214,7 @@ template<typename T> struct HashTraits<UniqueRef<T>> : SimpleClassHashTraits<Uni
 
 template<> struct HashTraits<ASCIILiteral> : SimpleClassHashTraits<ASCIILiteral> {
     static ASCIILiteral emptyValue() { return { }; }
+    static bool isEmptyValue(const ASCIILiteral& value) { return value.isNull(); }
 
     static void constructDeletedValue(ASCIILiteral& slot) { slot = ASCIILiteral::deletedValue(); }
     static bool isDeletedValue(const ASCIILiteral& value) { return value.isDeletedValue(); }
@@ -218,6 +222,7 @@ template<> struct HashTraits<ASCIILiteral> : SimpleClassHashTraits<ASCIILiteral>
 
 template<typename P, typename Q, typename R> struct HashTraits<RefPtr<P, Q, R>> : SimpleClassHashTraits<RefPtr<P, Q, R>> {
     static P* emptyValue() { return nullptr; }
+    static bool isEmptyValue(const RefPtr<P, Q, R>& value) { return !value; }
 
     using PeekType = P*;
     static PeekType peek(const RefPtr<P, Q, R>& value) { return value.get(); }
@@ -343,6 +348,7 @@ struct PairHashTraits : GenericHashTraits<std::pair<typename FirstTraitsArg::Tra
 
     static constexpr bool emptyValueIsZero = FirstTraits::emptyValueIsZero && SecondTraits::emptyValueIsZero;
     static EmptyValueType emptyValue() { return std::make_pair(FirstTraits::emptyValue(), SecondTraits::emptyValue()); }
+    static bool isEmptyValue(const TraitType& value) { return isHashTraitsEmptyValue<FirstTraits>(value.first) && isHashTraitsEmptyValue<SecondTraits>(value.second); }
 
     static constexpr unsigned minimumTableSize = FirstTraits::minimumTableSize;
 
@@ -370,6 +376,17 @@ struct TupleHashTraits : GenericHashTraits<std::tuple<typename FirstTrait::Trait
 template<typename... Traits>
 struct HashTraits<std::tuple<Traits...>> : public TupleHashTraits<HashTraits<Traits>...> { };
 
+
+template<typename FirstTrait, typename... Traits>
+struct VariantHashTraits : GenericHashTraits<std::variant<typename FirstTrait::TraitType, typename Traits::TraitType...>> {
+    typedef std::variant<typename FirstTrait::TraitType, typename Traits::TraitType...> TraitType;
+
+    static TraitType emptyValue() { return FirstTrait::emptyValue(); }
+};
+
+template<typename... Traits>
+struct HashTraits<std::variant<Traits...>> : public VariantHashTraits<HashTraits<Traits>...> { };
+
 template<typename KeyTraitsArg, typename ValueTraitsArg>
 struct KeyValuePairHashTraits : GenericHashTraits<KeyValuePair<typename KeyTraitsArg::TraitType, typename ValueTraitsArg::TraitType>> {
     typedef KeyTraitsArg KeyTraits;
@@ -380,6 +397,8 @@ struct KeyValuePairHashTraits : GenericHashTraits<KeyValuePair<typename KeyTrait
 
     static constexpr bool emptyValueIsZero = KeyTraits::emptyValueIsZero && ValueTraits::emptyValueIsZero;
     static EmptyValueType emptyValue() { return KeyValuePair<typename KeyTraits::EmptyValueType, typename ValueTraits::EmptyValueType>(KeyTraits::emptyValue(), ValueTraits::emptyValue()); }
+
+    static bool isEmptyValue(const TraitType& value) { return isHashTraitsEmptyValue<KeyTraits>(value.key) && isHashTraitsEmptyValue<ValueTraits>(value.value); }
 
     template <typename>
     static void constructEmptyValue(TraitType& slot)

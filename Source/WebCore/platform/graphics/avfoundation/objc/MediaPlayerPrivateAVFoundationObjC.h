@@ -278,7 +278,7 @@ private:
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
     void keyAdded() final;
-    std::unique_ptr<LegacyCDMSession> createSession(const String& keySystem, LegacyCDMSessionClient&) final;
+    RefPtr<LegacyCDMSession> createSession(const String& keySystem, LegacyCDMSessionClient&) final;
 #endif
 
     String languageOfPrimaryAudioTrack() const final;
@@ -418,7 +418,7 @@ private:
     std::unique_ptr<PixelBufferConformerCV> m_pixelBufferConformer;
 
     friend class WebCoreAVFResourceLoader;
-    HashMap<RetainPtr<CFTypeRef>, RefPtr<WebCoreAVFResourceLoader>> m_resourceLoaderMap;
+    UncheckedKeyHashMap<RetainPtr<CFTypeRef>, RefPtr<WebCoreAVFResourceLoader>> m_resourceLoaderMap;
     RetainPtr<WebCoreAVFLoaderDelegate> m_loaderDelegate;
     MemoryCompactRobinHoodHashMap<String, RetainPtr<AVAssetResourceLoadingRequest>> m_keyURIToRequestMap;
     MemoryCompactRobinHoodHashMap<String, RetainPtr<AVAssetResourceLoadingRequest>> m_sessionIDToRequestMap;
@@ -516,7 +516,7 @@ private:
     ProcessIdentity m_resourceOwner;
     PlatformTimeRanges m_buffered;
     TrackID m_currentTextTrackID { 0 };
-    Ref<RefCountedSerialFunctionDispatcher> m_targetDispatcher { MainThreadDispatcher::singleton() };
+    Ref<GuaranteedSerialFunctionDispatcher> m_targetDispatcher { MainThreadDispatcher::singleton() };
 #if HAVE(SPATIAL_TRACKING_LABEL)
     String m_defaultSpatialTrackingLabel;
     String m_spatialTrackingLabel;

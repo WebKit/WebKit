@@ -53,6 +53,8 @@
 #include <wtf/WorkQueue.h>
 #include <wtf/text/MakeString.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(BlobRegistryImpl);
@@ -372,7 +374,7 @@ static bool writeFilePathsOrDataBuffersToFile(const Vector<std::pair<String, Ref
 
     for (auto& part : filePathsOrDataBuffers) {
         if (part.second) {
-            int length = part.second->size();
+            int64_t length = part.second->size();
             if (FileSystem::writeToFile(file, part.second->span()) != length) {
                 LOG_ERROR("Failed writing a Blob to temporary file");
                 return false;
@@ -468,3 +470,5 @@ void BlobRegistryImpl::unregisterBlobURLHandle(const URL& url, const std::option
 }
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

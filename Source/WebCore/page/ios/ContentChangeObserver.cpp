@@ -33,6 +33,7 @@
 #include "DOMTimer.h"
 #include "Document.h"
 #include "DocumentInlines.h"
+#include "EventNames.h"
 #include "FullscreenManager.h"
 #include "HTMLIFrameElement.h"
 #include "HTMLImageElement.h"
@@ -76,7 +77,7 @@ static bool isHiddenBehindFullscreenElement(const Node& descendantCandidate)
 
 bool ContentChangeObserver::isContentChangeObserverEnabled()
 {
-    return m_document.settings().contentChangeObserverEnabled();
+    return m_document->settings().contentChangeObserverEnabled();
 }
 
 bool ContentChangeObserver::isVisuallyHidden(const Node& node)
@@ -185,17 +186,17 @@ bool ContentChangeObserver::isConsideredActionableContent(const Element& candida
 
 ContentChangeObserver::ContentChangeObserver(Document& document)
     : m_document(document)
-    , m_contentObservationTimer([this] { completeDurationBasedContentObservation(); })
+    , m_contentObservationTimer([this] { Ref { *this }->completeDurationBasedContentObservation(); })
 {
 }
 
 static void willNotProceedWithClick(LocalFrame& mainFrame)
 {
-    for (Frame* frame = &mainFrame; frame; frame = frame->tree().traverseNext()) {
-        auto* localFrame = dynamicDowncast<LocalFrame>(frame);
+    for (RefPtr<Frame> frame = &mainFrame; frame; frame = frame->tree().traverseNext()) {
+        RefPtr localFrame = dynamicDowncast<LocalFrame>(frame);
         if (!localFrame)
             continue;
-        if (auto* document = localFrame->document())
+        if (RefPtr document = localFrame->document())
             document->contentChangeObserver().willNotProceedWithClick();
     }
 }
@@ -260,7 +261,7 @@ void ContentChangeObserver::didAddTransition(const Element& element, const Anima
         return;
     if (!isObservedPropertyForTransition(transition.property().animatableProperty))
         return;
-    auto transitionEnd = Seconds { transition.duration() + std::max<double>(0, transition.isDelaySet() ? transition.delay() : 0) };
+    auto transitionEnd = Seconds { transition.duration().value_or(0) + std::max<double>(0, transition.isDelaySet() ? transition.delay() : 0) };
     if (transitionEnd > maximumDelayForTransitions)
         return;
     if (!isVisuallyHidden(element))
@@ -317,7 +318,7 @@ void ContentChangeObserver::didInstallDOMTimer(const DOMTimer& timer, Seconds ti
         return;
     if (hasVisibleChangeState())
         return;
-    if (m_document.activeDOMObjectsAreSuspended())
+    if (m_document->activeDOMObjectsAreSuspended())
         return;
     if (timeout > maximumDelayForTimers || !singleShot)
         return;
@@ -438,6 +439,7 @@ void ContentChangeObserver::reset()
 
     m_contentObservationTimer.stop();
     m_elementsWithDestroyedVisibleRenderer.clear();
+    m_clickTarget = { };
     resetHiddenTouchTarget();
 }
 
@@ -464,6 +466,20 @@ void ContentChangeObserver::rendererWillBeDestroyed(const Element& element)
     if (!isVisuallyHidden(element))
         m_elementsWithDestroyedVisibleRenderer.add(element);
     elementDidBecomeHidden(element);
+}
+
+void ContentChangeObserver::didAddMouseMoveRelatedEventListener(const AtomString& eventType, const Node& node)
+{
+    if (!isObservingContentChanges())
+        return;
+
+    if (eventType != eventNames().mouseoutEvent)
+        return;
+
+    if (!m_clickTarget || !node.contains(m_clickTarget.get()))
+        return;
+
+    adjustObservedState(Event::DidAddMouseoutListenerAboveClickTarget);
 }
 
 void ContentChangeObserver::elementDidBecomeVisible(const Element& element)
@@ -585,9 +601,9 @@ void ContentChangeObserver::adjustObservedState(Event event)
             setHasNoChangeState();
 
         LOG_WITH_STREAM(ContentObservation, stream << "notifyClientIfNeeded: sending observedContentChange ->" << observedContentChange());
-        ASSERT(m_document.page());
-        ASSERT(m_document.frame());
-        m_document.page()->chrome().client().didFinishContentChangeObserving(*m_document.frame(), observedContentChange());
+        ASSERT(m_document->page());
+        ASSERT(m_document->frame());
+        m_document->page()->chrome().client().didFinishContentChangeObserving(*m_document->protectedFrame(), observedContentChange());
         stopContentObservation();
     };
 
@@ -604,7 +620,7 @@ void ContentChangeObserver::adjustObservedState(Event event)
             return;
         }
         if (event == Event::StartedMouseMovedEventDispatching) {
-            ASSERT(!m_document.hasPendingStyleRecalc());
+            ASSERT(!m_document->hasPendingStyleRecalc());
             if (!isBetweenTouchEndAndMouseMoved())
                 resetToStartObserving();
             setIsBetweenTouchEndAndMouseMoved(false);
@@ -648,7 +664,7 @@ void ContentChangeObserver::adjustObservedState(Event event)
             return;
         }
         if (event == Event::EndedDOMTimerExecution) {
-            if (m_document.hasPendingStyleRecalc()) {
+            if (m_document->hasPendingStyleRecalc()) {
                 setShouldObserveNextStyleRecalc(true);
                 return;
             }
@@ -658,7 +674,7 @@ void ContentChangeObserver::adjustObservedState(Event event)
         if (event == Event::EndedTransitionButFinalStyleIsNotDefiniteYet) {
             // onAnimationEnd can be called while in the middle of resolving the document (synchronously) or
             // asynchronously right before the style update is issued. It also means we don't know whether this animation ends up producing visible content yet. 
-            if (m_document.inStyleRecalc()) {
+            if (m_document->inStyleRecalc()) {
                 // We need to start observing this style change synchronously.
                 m_isInObservedStyleRecalc = true;
                 return;
@@ -667,7 +683,7 @@ void ContentChangeObserver::adjustObservedState(Event event)
             return;
         }
         if (event == Event::CompletedTransition) {
-            if (m_document.inStyleRecalc()) {
+            if (m_document->inStyleRecalc()) {
                 m_isInObservedStyleRecalc = true;
                 return;
             }
@@ -694,6 +710,14 @@ void ContentChangeObserver::adjustObservedState(Event event)
         setHasVisibleChangeState();
         // Stop pending activities. We don't need to observe them anymore.
         stopObservingPendingActivities();
+        return;
+    }
+    if (event == Event::DidAddMouseoutListenerAboveClickTarget) {
+        // While not technically a visual state change, the addition of a mouseout event listener on the targeted node
+        // during content observation is a strong signal that the page wants to know when the mouse is no longer over
+        // the clicked target node.
+        setHasVisibleChangeState();
+        notifyClientIfNeeded();
         return;
     }
 }

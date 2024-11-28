@@ -74,8 +74,8 @@ public:
     CSSValue* value() const { return m_value.get(); }
     RefPtr<CSSValue> protectedValue() const { return m_value; }
 
-    static CSSPropertyID resolveDirectionAwareProperty(CSSPropertyID, TextDirection, WritingMode);
-    static CSSPropertyID unresolvePhysicalProperty(CSSPropertyID, TextDirection, WritingMode);
+    static CSSPropertyID resolveDirectionAwareProperty(CSSPropertyID, WritingMode);
+    static CSSPropertyID unresolvePhysicalProperty(CSSPropertyID, WritingMode);
     static bool isInheritedProperty(CSSPropertyID);
     static Vector<String> aliasesForProperty(CSSPropertyID);
     static bool isDirectionAwareProperty(CSSPropertyID);
@@ -85,6 +85,7 @@ public:
     static UChar listValuedPropertySeparator(CSSPropertyID);
     static bool isListValuedProperty(CSSPropertyID propertyID) { return !!listValuedPropertySeparator(propertyID); }
     static bool allowsNumberOrIntegerInput(CSSPropertyID);
+    static bool isInsetProperty(CSSPropertyID);
 
     const StylePropertyMetadata& metadata() const { return m_metadata; }
     static bool isColorProperty(CSSPropertyID propertyId)

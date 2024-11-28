@@ -27,23 +27,24 @@
 
 #include "CSSCalcSymbolsAllowed.h"
 #include "CSSParserTokenRange.h"
+#include "CSSPropertyParserOptions.h"
 
 namespace WebCore {
 namespace CSSPropertyParserHelpers {
 
-std::optional<SymbolRaw> validatedRange(SymbolRaw value, CSSPropertyParserOptions)
+std::optional<CSS::SymbolRaw> validatedRange(CSS::SymbolRaw value, CSSPropertyParserOptions)
 {
     return value;
 }
 
-std::optional<SymbolRaw> SymbolKnownTokenTypeIdentConsumer::consume(CSSParserTokenRange& range, CSSCalcSymbolsAllowed symbolsAllowed, CSSPropertyParserOptions)
+std::optional<CSS::SymbolRaw> SymbolKnownTokenTypeIdentConsumer::consume(CSSParserTokenRange& range, const CSSParserContext&, CSSCalcSymbolsAllowed symbolsAllowed, CSSPropertyParserOptions)
 {
     ASSERT(range.peek().type() == IdentToken);
 
     auto symbol = range.peek().id();
     if (symbolsAllowed.contains(symbol)) {
         range.consumeIncludingWhitespace();
-        return SymbolRaw { symbol };
+        return CSS::SymbolRaw { symbol };
     }
 
     return std::nullopt;

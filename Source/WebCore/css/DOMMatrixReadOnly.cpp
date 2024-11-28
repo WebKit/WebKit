@@ -34,6 +34,7 @@
 #include "MutableStyleProperties.h"
 #include "ScriptExecutionContext.h"
 #include "StyleProperties.h"
+#include "TransformOperations.h"
 #include "TransformOperationsBuilder.h"
 #include <JavaScriptCore/GenericTypedArrayViewInlines.h>
 #include <JavaScriptCore/HeapInlines.h>

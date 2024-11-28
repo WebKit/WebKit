@@ -70,7 +70,7 @@ public:
     // CONSUMER FUNCTIONS: Everything below here is only safe to call from the consumer thread.
 
     // This function is actually safe to call from more than one thread, but ONLY if no thread can call consumeAll.
-    void iterate(const Invocable<void(const T&)> auto& func)
+    void iterate(NOESCAPE const Invocable<void(const T&)> auto& func)
     {
         Node* node = m_head.load();
         while (node) {
@@ -79,7 +79,7 @@ public:
         }
     }
 
-    void consumeAll(const Invocable<void(T&&)> auto& func)
+    void consumeAll(NOESCAPE const Invocable<void(T&&)> auto& func)
     {
         consumeAllWithNode([&] (T&& data, Node* node) {
             func(WTFMove(data));
@@ -87,7 +87,7 @@ public:
         });
     }
 
-    void consumeAllWithNode(const Invocable<void(T&&, Node*)> auto& func)
+    void consumeAllWithNode(NOESCAPE const Invocable<void(T&&, Node*)> auto& func)
     {
         Node* node = m_head.exchange(nullptr);
         while (node) {

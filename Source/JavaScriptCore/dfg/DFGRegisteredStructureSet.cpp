@@ -86,7 +86,7 @@ ArrayModes RegisteredStructureSet::arrayModesFromStructures() const
 
 void RegisteredStructureSet::validateReferences(const TrackedReferences& trackedReferences) const
 {
-    // The type system should help us here, but protect people from getting that wrong using bitwise_cast or something crazy.
+    // The type system should help us here, but protect people from getting that wrong using std::bit_cast or something crazy.
     forEach(
         [&] (RegisteredStructure structure) {
             trackedReferences.check(structure.get());

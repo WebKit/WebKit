@@ -27,13 +27,15 @@
 #include "AudioArray.h"
 #include "AudioDSPKernel.h"
 #include "DelayProcessor.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class DelayProcessor;
     
 class DelayDSPKernel final : public AudioDSPKernel {
-public:  
+    WTF_MAKE_TZONE_ALLOCATED(DelayDSPKernel);
+public:
     explicit DelayDSPKernel(DelayProcessor*);
     DelayDSPKernel(double maxDelayTime, float sampleRate);
     

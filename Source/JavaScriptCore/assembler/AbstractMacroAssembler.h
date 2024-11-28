@@ -408,8 +408,7 @@ public:
         int64_t m_value;
     };
 
-    struct Imm64 : private TrustedImm64
-    {
+    struct Imm64 : private TrustedImm64 {
         explicit constexpr Imm64(int64_t value)
             : TrustedImm64(value)
         {

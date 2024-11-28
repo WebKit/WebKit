@@ -71,7 +71,7 @@ private:
     void postTask(Function<void()>&&) const;
     void postTaskReply(Function<void()>&&) const;
 
-    std::unique_ptr<Database> m_database;
+    RefPtr<Database> m_database;
     Ref<SuspendableWorkQueue> m_queue;
 };
 

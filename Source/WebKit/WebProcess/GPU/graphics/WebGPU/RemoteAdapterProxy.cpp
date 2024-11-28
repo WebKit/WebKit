@@ -54,7 +54,8 @@ RemoteAdapterProxy::~RemoteAdapterProxy()
 
 void RemoteAdapterProxy::requestDevice(const WebCore::WebGPU::DeviceDescriptor& descriptor, CompletionHandler<void(RefPtr<WebCore::WebGPU::Device>&&)>&& callback)
 {
-    auto convertedDescriptor = m_convertToBackingContext->convertToBacking(descriptor);
+    Ref convertToBackingContext = m_convertToBackingContext;
+    auto convertedDescriptor = convertToBackingContext->convertToBacking(descriptor);
     ASSERT(convertedDescriptor);
     if (!convertedDescriptor)
         return callback(nullptr);
@@ -106,7 +107,7 @@ void RemoteAdapterProxy::requestDevice(const WebCore::WebGPU::DeviceDescriptor& 
         supportedLimits.maxComputeWorkgroupSizeZ,
         supportedLimits.maxComputeWorkgroupsPerDimension
     );
-    auto result = RemoteDeviceProxy::create(WTFMove(resultSupportedFeatures), WTFMove(resultSupportedLimits), *this, m_convertToBackingContext, identifier, queueIdentifier);
+    auto result = RemoteDeviceProxy::create(WTFMove(resultSupportedFeatures), WTFMove(resultSupportedLimits), *this, convertToBackingContext, identifier, queueIdentifier);
     result->setLabel(WTFMove(convertedDescriptor->label));
     callback(WTFMove(result));
 }

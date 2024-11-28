@@ -28,11 +28,13 @@
 #include "SVGPropertyAnimator.h"
 #include "SVGPropertyTraits.h"
 #include "SVGValueProperty.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
 template<typename PropertyType, typename AnimationFunction>
 class SVGPrimitivePropertyAnimator : public SVGPropertyAnimator<AnimationFunction> {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(SVGPrimitivePropertyAnimator);
     using Base = SVGPropertyAnimator<AnimationFunction>;
     using ValuePropertyType = SVGValueProperty<PropertyType>;
     using Base::Base;

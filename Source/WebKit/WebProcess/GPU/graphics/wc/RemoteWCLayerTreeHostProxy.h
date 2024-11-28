@@ -33,6 +33,7 @@
 #include "UpdateInfo.h"
 #include "WCLayerTreeHostIdentifier.h"
 #include <wtf/TZoneMalloc.h>
+#include <wtf/WeakRef.h>
 
 namespace WebKit {
 
@@ -67,7 +68,7 @@ private:
 
     ThreadSafeWeakPtr<GPUProcessConnection> m_gpuProcessConnection;
     WCLayerTreeHostIdentifier m_wcLayerTreeHostIdentifier { WCLayerTreeHostIdentifier::generate() };
-    WebPage& m_page;
+    WeakRef<WebPage> m_page;
     bool m_usesOffscreenRendering { false };
 };
 

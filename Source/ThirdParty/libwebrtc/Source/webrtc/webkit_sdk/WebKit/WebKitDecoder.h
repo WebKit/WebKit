@@ -62,7 +62,7 @@ void videoDecoderTaskComplete(void* callback, uint32_t timeStamp, uint32_t timeS
 void videoDecoderTaskComplete(void* callback, uint32_t timeStamp, uint32_t timeStampRTP, void*, GetBufferCallback, ReleaseBufferCallback, int width, int height);
 
 using LocalDecoder = void*;
-using LocalDecoderCallback = void (^)(CVPixelBufferRef, int64_t timeStamp, int64_t timeStampNs);
+using LocalDecoderCallback = void (^)(CVPixelBufferRef, int64_t timeStamp, int64_t timeStampNs, bool isReordered);
 void* createLocalH264Decoder(LocalDecoderCallback);
 void* createLocalH265Decoder(LocalDecoderCallback);
 void* createLocalVP9Decoder(LocalDecoderCallback);

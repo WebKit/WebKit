@@ -76,15 +76,15 @@ class XRSubImage;
 class GPUImpl final : public GPU, public RefCounted<GPUImpl> {
     WTF_MAKE_TZONE_ALLOCATED(GPUImpl);
 public:
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
+
     static Ref<GPUImpl> create(WebGPUPtr<WGPUInstance>&& instance, ConvertToBackingContext& convertToBackingContext)
     {
         return adoptRef(*new GPUImpl(WTFMove(instance), convertToBackingContext));
     }
 
     virtual ~GPUImpl();
-
-    void ref() const final { RefCounted<GPUImpl>::ref(); }
-    void deref() const final { RefCounted<GPUImpl>::deref(); }
 
     void paintToCanvas(WebCore::NativeImage&, const WebCore::IntSize&, WebCore::GraphicsContext&) final;
 

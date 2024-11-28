@@ -195,6 +195,24 @@ async function waitForElementById(id) {
     return element;
 }
 
+// Executes the operation and waits until an accessibility notification of the provided
+// `notificationName` is received. A notification listener is added to the AccessibilityUIElement
+// passed in; before the operation is executed. The `operation` is expected to be a function,
+// which can optionally be async.
+async function waitForNotification(accessibilityElement, notificationName, operation) {
+    var reached = false;
+    function listener(receivedNotification) {
+        if (receivedNotification == notificationName) {
+            reached = true;
+            accessibilityElement.removeNotificationListener(listener);
+        }
+    }
+
+    accessibilityElement.addNotificationListener(listener);
+    await operation();
+    await waitFor(() => { return reached; });
+}
+
 // Expect an expression to equal a value and return the result as a string.
 // This is essentially the more ubiquitous `shouldBe` function from js-test,
 // but returns the result as a string rather than `debug`ing to a console DOM element.
@@ -264,6 +282,67 @@ async function waitForFocus(id) {
         return focusedElement && focusedElement.domIdentifier === id;
     });
     return focusedElement;
+}
+
+// Selects text within the element with the given ID, and returns the global selected `TextMarkerRange` after doing so.
+// Optionally takes the AccessibilityUIElement associated with the web area as an argument. If not passed, we'll
+// retrieve it in the function.
+// NOTE: Only available for WK2.
+async function selectElementTextById(id, axWebArea) {
+    const webArea = axWebArea ? axWebArea : accessibilityController.rootElement.childAtIndex(0);
+    const selection = window.getSelection();
+    selection.removeAllRanges();
+
+    await waitFor(() => {
+        const selectedRange = webArea.selectedTextMarkerRange();
+        return !webArea.isTextMarkerRangeValid(selectedRange);
+    });
+
+    const range = document.createRange();
+    range.selectNodeContents(document.getElementById(id));
+    selection.addRange(range);
+
+    let selectedRange;
+    await waitFor(() => {
+        selectedRange = webArea.selectedTextMarkerRange();
+        return webArea.isTextMarkerRangeValid(selectedRange);
+    });
+    return selectedRange;
+}
+
+// Selects a range of text delimited by the `startIndex` and `endIndex` within the element with the given ID,
+// and returns the global selected `TextMarkerRange` after doing so. Optionally takes the AccessibilityUIElement
+// associated with the web area as an argument. If not passed, we'll retrieve it in the function.
+// NOTE: Only available for WK2.
+async function selectPartialElementTextById(id, startIndex, endIndex, axWebArea) {
+    const webArea = axWebArea ? axWebArea : accessibilityController.rootElement.childAtIndex(0);
+    const selection = window.getSelection();
+    selection.removeAllRanges();
+
+    await waitFor(() => {
+        const selectedRange = webArea.selectedTextMarkerRange();
+        return !webArea.isTextMarkerRangeValid(selectedRange);
+    });
+
+    const element = document.getElementById(id);
+    if (element.setSelectionRange) {
+        // For textarea and input elements.
+        element.setSelectionRange(startIndex, endIndex);
+    } else {
+        // For contenteditable elements.
+        const range = document.createRange();
+        range.setStart(element.firstChild, startIndex);
+        range.setEnd(element.firstChild, endIndex);
+        selection.addRange(range);
+    }
+
+    let selectedRange;
+    await waitFor(() => {
+        selectedRange = webArea.selectedTextMarkerRange();
+        return webArea.isTextMarkerRangeValid(selectedRange);
+    });
+
+    return selectedRange;
 }
 
 function evalAndReturn(expression) {

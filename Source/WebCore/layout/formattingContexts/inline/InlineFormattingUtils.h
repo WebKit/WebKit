@@ -66,7 +66,7 @@ public:
 
     static std::pair<InlineLayoutUnit, InlineLayoutUnit> textEmphasisForInlineBox(const Box&, const ElementBox& rootBox);
 
-    static LineEndingTruncationPolicy lineEndingTruncationPolicy(const RenderStyle& rootStyle, size_t numberOfLinesWithInlineContent, std::optional<size_t> numberOfVisibleLinesAllowed);
+    static LineEndingTruncationPolicy lineEndingTruncationPolicy(const RenderStyle& rootStyle, size_t numberOfLinesWithInlineContent, std::optional<size_t> numberOfVisibleLinesAllowed, bool currentLineHasInlineContent);
 
     bool shouldDiscardRemainingContentInBlockDirection(size_t numberOfLinesWithInlineContent) const;
 

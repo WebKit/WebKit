@@ -62,10 +62,10 @@ public:
     void excludeLogicalEdges(bool isHorizontal, bool excludeLogicalLeftEdge, bool excludeLogicalRightEdge);
 
     void scale(float factor);
-    void expand(const LayoutUnit& topWidth, const LayoutUnit& bottomWidth, const LayoutUnit& leftWidth, const LayoutUnit& rightWidth);
-    void expand(const LayoutUnit& size) { expand(size, size, size, size); }
-    void shrink(const LayoutUnit& topWidth, const LayoutUnit& bottomWidth, const LayoutUnit& leftWidth, const LayoutUnit& rightWidth) { expand(-topWidth, -bottomWidth, -leftWidth, -rightWidth); }
-    void shrink(const LayoutUnit& size) { shrink(size, size, size, size); }
+    void expand(LayoutUnit topWidth, LayoutUnit bottomWidth, LayoutUnit leftWidth, LayoutUnit rightWidth);
+    void expand(LayoutUnit size) { expand(size, size, size, size); }
+    void shrink(LayoutUnit topWidth, LayoutUnit bottomWidth, LayoutUnit leftWidth, LayoutUnit rightWidth) { expand(-topWidth, -bottomWidth, -leftWidth, -rightWidth); }
+    void shrink(LayoutUnit size) { shrink(size, size, size, size); }
 
     RoundedRectRadii transposedRadii() const { return { m_topLeft.transposedSize(), m_topRight.transposedSize(), m_bottomLeft.transposedSize(), m_bottomRight.transposedSize() }; }
 
@@ -86,7 +86,7 @@ public:
     using Radii = RoundedRectRadii;
 
     WEBCORE_EXPORT explicit RoundedRect(const LayoutRect&, const Radii& = Radii());
-    RoundedRect(const LayoutUnit&, const LayoutUnit&, const LayoutUnit& width, const LayoutUnit& height);
+    RoundedRect(LayoutUnit, LayoutUnit, LayoutUnit width, LayoutUnit height);
     WEBCORE_EXPORT RoundedRect(const LayoutRect&, const LayoutSize& topLeft, const LayoutSize& topRight, const LayoutSize& bottomLeft, const LayoutSize& bottomRight);
 
     const LayoutRect& rect() const { return m_rect; }
@@ -99,10 +99,10 @@ public:
 
     void move(const LayoutSize& size) { m_rect.move(size); }
     void moveBy(const LayoutPoint& offset) { m_rect.moveBy(offset); }
-    void inflate(const LayoutUnit& size) { m_rect.inflate(size);  }
-    void inflateWithRadii(const LayoutUnit& size);
-    void expandRadii(const LayoutUnit& size) { m_radii.expand(size); }
-    void shrinkRadii(const LayoutUnit& size) { m_radii.shrink(size); }
+    void inflate(LayoutUnit size) { m_rect.inflate(size);  }
+    void inflateWithRadii(LayoutUnit size);
+    void expandRadii(LayoutUnit size) { m_radii.expand(size); }
+    void shrinkRadii(LayoutUnit size) { m_radii.shrink(size); }
 
     void includeLogicalEdges(const Radii& edges, bool isHorizontal, bool includeLogicalLeftEdge, bool includeLogicalRightEdge);
     void excludeLogicalEdges(bool isHorizontal, bool excludeLogicalLeftEdge, bool excludeLogicalRightEdge);

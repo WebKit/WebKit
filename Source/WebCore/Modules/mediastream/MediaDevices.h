@@ -60,6 +60,9 @@ template<typename IDLType> class DOMPromiseDeferred;
 class MediaDevices final : public RefCounted<MediaDevices>, public ActiveDOMObject, public EventTarget {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(MediaDevices);
 public:
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
+
     static Ref<MediaDevices> create(Document&);
 
     ~MediaDevices();
@@ -94,10 +97,6 @@ public:
     String deviceIdToPersistentId(const String& deviceId) const { return m_audioOutputDeviceIdToPersistentId.get(deviceId); }
     String hashedGroupId(const String& groupId);
 
-    // ActiveDOMObject.
-    void ref() const final { RefCounted::ref(); }
-    void deref() const final { RefCounted::deref(); }
-
 private:
     explicit MediaDevices(Document&);
 
@@ -127,7 +126,7 @@ private:
     bool computeUserGesturePriviledge(GestureAllowedRequest);
 
     RunLoop::Timer m_scheduledEventTimer;
-    UserMediaClient::DeviceChangeObserverToken m_deviceChangeToken;
+    Markable<UserMediaClient::DeviceChangeObserverToken> m_deviceChangeToken;
     const EventNames& m_eventNames; // Need to cache this so we can use it from GC threads.
     bool m_listeningForDeviceChanges { false };
 

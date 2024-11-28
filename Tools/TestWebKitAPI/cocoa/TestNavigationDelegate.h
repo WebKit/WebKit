@@ -56,6 +56,7 @@
 - (void)waitForDidFinishNavigation;
 - (void)waitForDidFinishNavigationWithPreferences:(WKWebpagePreferences *)preferences;
 - (void)waitForDidSameDocumentNavigation;
+- (_WKProcessTerminationReason)waitForWebContentProcessDidTerminate;
 - (NSError *)waitForDidFailProvisionalNavigation;
 
 @end

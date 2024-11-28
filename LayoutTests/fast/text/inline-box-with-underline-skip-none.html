@@ -1,0 +1,15 @@
+<style>
+div {
+  font-family: Monospace;
+  font-size: 20px;
+  text-decoration: underline;
+  text-decoration-skip-ink: auto;
+}
+span {
+  text-decoration-skip-ink: none;
+}
+</style>
+<!-- PASS if underline crosses the descender -->
+<div style="text-decoration-skip-ink: none">XXyXX</div>
+<div><span>XXyXX</span></div>
+<div><span style="text-decoration-skip-ink: auto"><span>XXyXX</span></span></div>

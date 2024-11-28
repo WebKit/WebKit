@@ -32,8 +32,11 @@
 #include <WebCore/ScrollbarThemeMac.h>
 #include <WebCore/ScrollingCoordinator.h>
 #include <pal/spi/mac/NSScrollerImpSPI.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteScrollbarsController);
 
 RemoteScrollbarsController::RemoteScrollbarsController(WebCore::ScrollableArea& scrollableArea, WebCore::ScrollingCoordinator* coordinator)
     : ScrollbarsController(scrollableArea)

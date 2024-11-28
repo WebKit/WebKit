@@ -149,7 +149,7 @@ void RenderLayoutState::computePaginationInformation(const LocalFrameViewLayoutC
     // We can compare this later on to figure out what part of the page we're actually on.
     if (pageLogicalHeight || renderer.isRenderFragmentedFlow()) {
         m_pageLogicalHeight = pageLogicalHeight;
-        bool isFlipped = renderer.style().isFlippedBlocksWritingMode();
+        bool isFlipped = renderer.writingMode().isBlockFlipped();
         m_pageOffset = LayoutSize(m_layoutOffset.width() + (!isFlipped ? renderer.borderLeft() + renderer.paddingLeft() : renderer.borderRight() + renderer.paddingRight()), m_layoutOffset.height() + (!isFlipped ? renderer.borderTop() + renderer.paddingTop() : renderer.borderBottom() + renderer.paddingBottom()));
         m_pageLogicalHeightChanged = pageLogicalHeightChanged;
         m_isPaginated = true;
@@ -171,7 +171,7 @@ void RenderLayoutState::computePaginationInformation(const LocalFrameViewLayoutC
     if (ancestor)
         propagateLineGridInfo(*ancestor, renderer);
 
-    if (lineGrid() && (lineGrid()->style().writingMode() == renderer.style().writingMode())) {
+    if (lineGrid() && (lineGrid()->writingMode().computedWritingMode() == renderer.writingMode().computedWritingMode())) {
         if (CheckedPtr columnFlow = dynamicDowncast<RenderMultiColumnFlow>(renderer))
             computeLineGridPaginationOrigin(*columnFlow);
     }

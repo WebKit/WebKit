@@ -52,6 +52,12 @@
 
 namespace WebCore {
 
+SharedMemoryHandle::SharedMemoryHandle(const SharedMemoryHandle& handle)
+{
+    m_handle = handle.m_handle.duplicate();
+    m_size = handle.m_size;
+}
+
 UnixFileDescriptor SharedMemoryHandle::releaseHandle()
 {
     return WTFMove(m_handle);

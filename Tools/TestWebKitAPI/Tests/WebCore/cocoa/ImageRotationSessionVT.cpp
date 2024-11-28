@@ -44,13 +44,13 @@ TEST(ImageRotationSessionVT, ChangeOfRotationAngle)
 
     rotation.angle = 90;
     auto videoFrame90 = VideoFrameCV::create({ }, false, VideoFrame::Rotation::None, session->rotate(videoFrame, rotation, ImageRotationSessionVT::IsCGImageCompatible::No));
-    EXPECT_EQ(480U, videoFrame90->presentationSize().width());
-    EXPECT_EQ(640U, videoFrame90->presentationSize().height());
+    EXPECT_EQ(480, videoFrame90->presentationSize().width());
+    EXPECT_EQ(640, videoFrame90->presentationSize().height());
 
     rotation.angle = 180;
     auto videoFrame180 = VideoFrameCV::create({ }, false, VideoFrame::Rotation::None, session->rotate(videoFrame, rotation, ImageRotationSessionVT::IsCGImageCompatible::No));
-    EXPECT_EQ(640U, videoFrame180->presentationSize().width());
-    EXPECT_EQ(480U, videoFrame180->presentationSize().height());
+    EXPECT_EQ(640, videoFrame180->presentationSize().width());
+    EXPECT_EQ(480, videoFrame180->presentationSize().height());
 }
 
 #endif

@@ -58,14 +58,14 @@ bool WebProcessProxy::shouldAllowNonValidInjectedCode() const
 void WebProcessProxy::platformSuspendProcess()
 {
     m_platformSuspendDidReleaseNearSuspendedAssertion = throttler().isHoldingNearSuspendedAssertion();
-    throttler().setShouldTakeNearSuspendedAssertion(false);
+    protectedThrottler()->setShouldTakeNearSuspendedAssertion(false);
 }
 
 void WebProcessProxy::platformResumeProcess()
 {
     if (m_platformSuspendDidReleaseNearSuspendedAssertion) {
         m_platformSuspendDidReleaseNearSuspendedAssertion = false;
-        throttler().setShouldTakeNearSuspendedAssertion(true);
+        protectedThrottler()->setShouldTakeNearSuspendedAssertion(true);
     }
 }
 

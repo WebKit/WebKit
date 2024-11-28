@@ -10,12 +10,12 @@
  */
 
 #include "include/core/SkRefCnt.h"
-#include "include/gpu/gl/GrGLAssembleHelpers.h"
-#include "include/gpu/gl/GrGLAssembleInterface.h"
-#include "include/gpu/gl/GrGLExtensions.h"
-#include "include/gpu/gl/GrGLFunctions.h"
-#include "include/gpu/gl/GrGLInterface.h"
-#include "include/gpu/gl/GrGLTypes.h"
+#include "include/gpu/ganesh/gl/GrGLAssembleHelpers.h"
+#include "include/gpu/ganesh/gl/GrGLAssembleInterface.h"
+#include "include/gpu/ganesh/gl/GrGLExtensions.h"
+#include "include/gpu/ganesh/gl/GrGLFunctions.h"
+#include "include/gpu/ganesh/gl/GrGLInterface.h"
+#include "include/gpu/ganesh/gl/GrGLTypes.h"
 #include "src/gpu/ganesh/gl/GrGLDefines.h"
 #include "src/gpu/ganesh/gl/GrGLUtil.h"
 
@@ -438,23 +438,28 @@ sk_sp<const GrGLInterface> GrGLMakeAssembledGLESInterface(void *ctx, GrGLGetProc
     }
 
     if (glVer >= GR_GL_VER(3,0)) {
-#if defined(GR_TEST_UTILS)
         GET_PROC(BeginQuery);
         GET_PROC(DeleteQueries);
         GET_PROC(EndQuery);
         GET_PROC(GenQueries);
         GET_PROC(GetQueryObjectuiv);
         GET_PROC(GetQueryiv);
-#endif
-    } else if (extensions.has("GL_EXT_occlusion_query_boolean")) {
-#if defined(GR_TEST_UTILS)
+    } else if (extensions.has("GL_EXT_disjoint_timer_query")) {
         GET_PROC_SUFFIX(BeginQuery, EXT);
         GET_PROC_SUFFIX(DeleteQueries, EXT);
         GET_PROC_SUFFIX(EndQuery, EXT);
         GET_PROC_SUFFIX(GenQueries, EXT);
         GET_PROC_SUFFIX(GetQueryObjectuiv, EXT);
         GET_PROC_SUFFIX(GetQueryiv, EXT);
-#endif
+    }
+
+    if (extensions.has("GL_EXT_disjoint_timer_query")) {
+        GET_PROC_SUFFIX(QueryCounter, EXT);
+    }
+
+    if (extensions.has("GL_EXT_disjoint_timer_query")) {
+        GET_PROC_SUFFIX(GetQueryObjecti64v, EXT);
+        GET_PROC_SUFFIX(GetQueryObjectui64v, EXT);
     }
 
     if (extensions.has("GL_ARB_invalidate_subdata")) {

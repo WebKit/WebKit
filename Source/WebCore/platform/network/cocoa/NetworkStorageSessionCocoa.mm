@@ -100,8 +100,10 @@ static Vector<Cookie> nsCookiesToCookieVector(NSArray<NSHTTPCookie *> *nsCookies
     Vector<Cookie> cookies;
     cookies.reserveInitialCapacity(nsCookies.count);
     for (NSHTTPCookie *nsCookie in nsCookies) {
-        if (!filter || filter(nsCookie))
-            cookies.append(nsCookie);
+        @autoreleasepool {
+            if (!filter || filter(nsCookie))
+                cookies.append(nsCookie);
+        }
     }
     if (filter)
         cookies.shrinkToFit();
@@ -603,8 +605,10 @@ void NetworkStorageSession::deleteCookiesMatching(const Function<bool(NSHTTPCook
         return;
 
     for (NSHTTPCookie *cookie in cookies.get()) {
-        if (matches(cookie))
-            deleteHTTPCookie(cookieStorage.get(), cookie, [aggregator] { });
+        @autoreleasepool {
+            if (matches(cookie))
+                deleteHTTPCookie(cookieStorage.get(), cookie, [aggregator] { });
+        }
     }
 
     END_BLOCK_OBJC_EXCEPTIONS

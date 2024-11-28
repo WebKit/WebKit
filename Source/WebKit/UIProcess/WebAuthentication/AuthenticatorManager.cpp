@@ -40,6 +40,7 @@
 #include "WebProcessProxy.h"
 #include <WebCore/AuthenticatorAssertionResponse.h>
 #include <WebCore/AuthenticatorAttachment.h>
+#include <WebCore/AuthenticatorSelectionCriteria.h>
 #include <WebCore/AuthenticatorTransport.h>
 #include <WebCore/EventRegion.h>
 #include <WebCore/ExceptionCode.h>
@@ -58,7 +59,7 @@ namespace {
 const unsigned maxTimeOutValue = 120000;
 
 // FIXME(188625): Support BLE authenticators.
-static AuthenticatorManager::TransportSet collectTransports(const std::optional<PublicKeyCredentialCreationOptions::AuthenticatorSelectionCriteria>& authenticatorSelection)
+static AuthenticatorManager::TransportSet collectTransports(const std::optional<AuthenticatorSelectionCriteria>& authenticatorSelection)
 {
     AuthenticatorManager::TransportSet result;
     if (!authenticatorSelection || !authenticatorSelection->authenticatorAttachment) {
@@ -160,7 +161,7 @@ static String getRpId(const std::variant<PublicKeyCredentialCreationOptions, Pub
     if (std::holds_alternative<PublicKeyCredentialCreationOptions>(options)) {
         auto& creationOptions = std::get<PublicKeyCredentialCreationOptions>(options);
         ASSERT(creationOptions.rp.id);
-        return *creationOptions.rp.id;
+        return creationOptions.rp.id;
     }
     return std::get<PublicKeyCredentialRequestOptions>(options).rpId;
 }
@@ -177,6 +178,11 @@ static String getUserName(const std::variant<PublicKeyCredentialCreationOptions,
 const size_t AuthenticatorManager::maxTransportNumber = 5;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(AuthenticatorManager);
+
+Ref<AuthenticatorManager> AuthenticatorManager::create()
+{
+    return adoptRef(*new AuthenticatorManager);
+}
 
 AuthenticatorManager::AuthenticatorManager()
     : m_requestTimeOutTimer(RunLoop::main(), this, &AuthenticatorManager::timeOutTimerFired)
@@ -275,8 +281,8 @@ void AuthenticatorManager::authenticatorAdded(Ref<Authenticator>&& authenticator
 void AuthenticatorManager::serviceStatusUpdated(WebAuthenticationStatus status)
 {
     // This is for the new UI.
-    if (m_presenter) {
-        m_presenter->updatePresenter(status);
+    if (RefPtr presenter = m_presenter) {
+        presenter->updatePresenter(status);
         return;
     }
 
@@ -325,8 +331,8 @@ void AuthenticatorManager::authenticatorStatusUpdated(WebAuthenticationStatus st
     m_pendingRequestData.cachedPin = String();
 
     // This is for the new UI.
-    if (m_presenter) {
-        m_presenter->updatePresenter(status);
+    if (RefPtr presenter = m_presenter) {
+        presenter->updatePresenter(status);
         return;
     }
 
@@ -355,8 +361,8 @@ void AuthenticatorManager::requestPin(uint64_t retries, CompletionHandler<void(c
     };
 
     // This is for the new UI.
-    if (m_presenter) {
-        m_presenter->requestPin(retries, WTFMove(callback));
+    if (RefPtr presenter = m_presenter) {
+        presenter->requestPin(retries, WTFMove(callback));
         return;
     }
 
@@ -368,8 +374,8 @@ void AuthenticatorManager::requestPin(uint64_t retries, CompletionHandler<void(c
 void AuthenticatorManager::selectAssertionResponse(Vector<Ref<WebCore::AuthenticatorAssertionResponse>>&& responses, WebAuthenticationSource source, CompletionHandler<void(AuthenticatorAssertionResponse*)>&& completionHandler)
 {
     // This is for the new UI.
-    if (m_presenter) {
-        m_presenter->selectAssertionResponse(WTFMove(responses), source, WTFMove(completionHandler));
+    if (RefPtr presenter = m_presenter) {
+        presenter->selectAssertionResponse(WTFMove(responses), source, WTFMove(completionHandler));
         return;
     }
 
@@ -387,8 +393,8 @@ void AuthenticatorManager::decidePolicyForLocalAuthenticator(CompletionHandler<v
 
 void AuthenticatorManager::requestLAContextForUserVerification(CompletionHandler<void(LAContext *)>&& completionHandler)
 {
-    if (m_presenter) {
-        m_presenter->requestLAContextForUserVerification(WTFMove(completionHandler));
+    if (RefPtr presenter = m_presenter) {
+        presenter->requestLAContextForUserVerification(WTFMove(completionHandler));
         return;
     }
 
@@ -405,7 +411,7 @@ void AuthenticatorManager::cancelRequest()
     m_requestTimeOutTimer.stop();
 }
 
-UniqueRef<AuthenticatorTransportService> AuthenticatorManager::createService(AuthenticatorTransport transport, AuthenticatorTransportServiceObserver& observer) const
+Ref<AuthenticatorTransportService> AuthenticatorManager::createService(AuthenticatorTransport transport, AuthenticatorTransportServiceObserver& observer) const
 {
     return AuthenticatorTransportService::create(transport, observer);
 }
@@ -424,7 +430,7 @@ void AuthenticatorManager::startDiscovery(const TransportSet& transports)
     ASSERT(RunLoop::isMain());
     ASSERT(m_services.isEmpty() && transports.size() <= maxTransportNumber);
     m_services = WTF::map(transports, [this](auto& transport) {
-        auto service = createService(transport, *this);
+        Ref service = createService(transport, *this);
         service->startDiscovery();
         return service;
     });
@@ -502,7 +508,7 @@ void AuthenticatorManager::runPresenter()
 void AuthenticatorManager::runPresenterInternal(const TransportSet& transports)
 {
     auto& options = m_pendingRequestData.options;
-    m_presenter = makeUnique<AuthenticatorPresenterCoordinator>(*this, getRpId(options), transports, getClientDataType(options), getUserName(options));
+    m_presenter = AuthenticatorPresenterCoordinator::create(*this, getRpId(options), transports, getClientDataType(options), getUserName(options));
 }
 
 void AuthenticatorManager::invokePendingCompletionHandler(Respond&& respond)
@@ -510,8 +516,8 @@ void AuthenticatorManager::invokePendingCompletionHandler(Respond&& respond)
     auto result = std::holds_alternative<Ref<AuthenticatorResponse>>(respond) ? WebAuthenticationResult::Succeeded : WebAuthenticationResult::Failed;
 
     // This is for the new UI.
-    if (m_presenter)
-        m_presenter->dimissPresenter(result);
+    if (RefPtr presenter = m_presenter)
+        presenter->dimissPresenter(result);
     else {
         dispatchPanelClientCall([result] (const API::WebAuthenticationPanel& panel) {
             panel.client().dismissPanel(result);

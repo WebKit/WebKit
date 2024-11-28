@@ -126,6 +126,8 @@ void HTMLFrameElementBase::attributeChanged(const QualifiedName& name, const Ato
             setLocation("about:srcdoc"_s);
     } else if (name == srcAttr && !hasAttributeWithoutSynchronization(srcdocAttr))
         setLocation(newValue.string().trim(isASCIIWhitespace));
+    else if (name == scrollingAttr && contentFrame())
+        protectedContentFrame()->updateScrollingMode();
     else
         HTMLFrameOwnerElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 }
@@ -179,6 +181,9 @@ void HTMLFrameElementBase::didAttachRenderers()
 void HTMLFrameElementBase::setLocation(const String& str)
 {
     if (document().settings().needsAcrobatFrameReloadingQuirk() && m_frameURL == str)
+        return;
+
+    if (!SubframeLoadingDisabler::canLoadFrame(*this))
         return;
 
     m_frameURL = AtomString(str);

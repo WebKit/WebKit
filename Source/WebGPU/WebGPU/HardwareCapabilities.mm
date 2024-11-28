@@ -67,6 +67,13 @@ static constexpr auto workaroundCTSBindGroupLimit(auto valueToClamp)
     return valueToClamp > 1000 ? 1000 : valueToClamp;
 }
 
+#if CPU(X86_64)
+static bool isIntel(id<MTLDevice> device)
+{
+    return [device.name localizedCaseInsensitiveContainsString:@"intel"];
+}
+#endif
+
 // https://developer.apple.com/metal/Metal-Feature-Set-Tables.pdf
 
 static HardwareCapabilities::BaseCapabilities baseCapabilities(id<MTLDevice> device)
@@ -74,14 +81,20 @@ static HardwareCapabilities::BaseCapabilities baseCapabilities(id<MTLDevice> dev
     id<MTLCounterSet> timestampCounterSet = nil;
     id<MTLCounterSet> statisticCounterSet = nil;
 
-    for (id<MTLCounterSet> counterSet in device.counterSets) {
-        if ([counterSet.name isEqualToString:MTLCommonCounterSetTimestamp])
-            timestampCounterSet = counterSet;
-        else if ([counterSet.name isEqualToString:MTLCommonCounterSetStatistic])
-            statisticCounterSet = counterSet;
+#if CPU(X86_64)
+    if (!isIntel(device)) {
+#endif
+        if ([device supportsCounterSampling:MTLCounterSamplingPointAtStageBoundary]) {
+            for (id<MTLCounterSet> counterSet in device.counterSets) {
+                if ([counterSet.name isEqualToString:MTLCommonCounterSetTimestamp])
+                    timestampCounterSet = counterSet;
+                else if ([counterSet.name isEqualToString:MTLCommonCounterSetStatistic])
+                    statisticCounterSet = counterSet;
+            }
+        }
+#if CPU(X86_64)
     }
-
-    timestampCounterSet = nil;
+#endif
 
     return {
         .argumentBuffersTier = [device argumentBuffersSupport],
@@ -119,6 +132,9 @@ static Vector<WGPUFeatureName> baseFeatures(id<MTLDevice> device, const Hardware
     if (device.supports32BitFloatFiltering)
         features.append(WGPUFeatureName_Float32Filterable);
 #endif
+
+    if (baseCapabilities.timestampCounterSet)
+        features.append(WGPUFeatureName_TimestampQuery);
 
     return features;
 }
@@ -380,8 +396,8 @@ static WGPULimits mergeLimits(const WGPULimits& previous, const WGPULimits& next
 
 static Vector<WGPUFeatureName> mergeFeatures(const Vector<WGPUFeatureName>& previous, const Vector<WGPUFeatureName>& next)
 {
-    ASSERT(WTF::isSortedConstExpr(previous.begin(), previous.end()));
-    ASSERT(WTF::isSortedConstExpr(next.begin(), next.end()));
+    ASSERT(std::is_sorted(previous.begin(), previous.end()));
+    ASSERT(std::is_sorted(next.begin(), next.end()));
 
     Vector<WGPUFeatureName> result(previous.size() + next.size());
     auto end = mergeDeduplicatedSorted(previous.begin(), previous.end(), next.begin(), next.end(), result.begin());
@@ -511,7 +527,7 @@ bool anyLimitIsBetterThan(const WGPULimits& target, const WGPULimits& reference)
 
 bool includesUnsupportedFeatures(const Vector<WGPUFeatureName>& target, const Vector<WGPUFeatureName>& reference)
 {
-    ASSERT(WTF::isSortedConstExpr(reference.begin(), reference.end()));
+    ASSERT(std::is_sorted(reference.begin(), reference.end()));
     for (auto feature : target) {
         if (!std::binary_search(reference.begin(), reference.end(), feature))
             return true;

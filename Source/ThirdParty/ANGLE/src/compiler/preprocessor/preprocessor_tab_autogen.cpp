@@ -505,7 +505,7 @@ void *malloc(YYSIZE_T); /* INFRINGES ON USER NAME SPACE */
 #        ifndef YYFREE
 #            define YYFREE free
 #            if !defined free && !defined EXIT_SUCCESS
-void free(void *);      /* INFRINGES ON USER NAME SPACE */
+void free(void *); /* INFRINGES ON USER NAME SPACE */
 #            endif
 #        endif
 #    endif

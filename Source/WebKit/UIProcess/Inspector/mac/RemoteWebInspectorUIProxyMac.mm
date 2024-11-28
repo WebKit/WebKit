@@ -49,12 +49,17 @@
 #import <wtf/text/Base64.h>
 
 @interface WKRemoteWebInspectorUIProxyObjCAdapter : NSObject <NSWindowDelegate, WKInspectorViewControllerDelegate> {
-    WebKit::RemoteWebInspectorUIProxy* _inspectorProxy;
+    WeakPtr<WebKit::RemoteWebInspectorUIProxy> _inspectorProxy;
 }
 - (instancetype)initWithRemoteWebInspectorUIProxy:(WebKit::RemoteWebInspectorUIProxy*)inspectorProxy;
 @end
 
 @implementation WKRemoteWebInspectorUIProxyObjCAdapter
+
+- (RefPtr<WebKit::RemoteWebInspectorUIProxy>)protectedInspectorProxy
+{
+    return _inspectorProxy.get();
+}
 
 - (NSRect)window:(NSWindow *)window willPositionSheet:(NSWindow *)sheet usingRect:(NSRect)rect
 {
@@ -75,17 +80,17 @@
 
 - (void)inspectorWKWebViewDidBecomeActive:(WKInspectorViewController *)inspectorViewController
 {
-    _inspectorProxy->didBecomeActive();
+    self.protectedInspectorProxy->didBecomeActive();
 }
 
 - (void)inspectorViewControllerInspectorDidCrash:(WKInspectorViewController *)inspectorViewController
 {
-    _inspectorProxy->closeFromCrash();
+    self.protectedInspectorProxy->closeFromCrash();
 }
 
 - (BOOL)inspectorViewControllerInspectorIsUnderTest:(WKInspectorViewController *)inspectorViewController
 {
-    return _inspectorProxy->isUnderTest();
+    return self.protectedInspectorProxy->isUnderTest();
 }
 
 @end
@@ -100,7 +105,7 @@ WKWebView *RemoteWebInspectorUIProxy::webView() const
 
 void RemoteWebInspectorUIProxy::didBecomeActive()
 {
-    m_inspectorPage->legacyMainFrameProcess().send(Messages::RemoteWebInspectorUI::UpdateFindString(WebKit::stringForFind()), m_inspectorPage->webPageIDInMainFrameProcess());
+    protectedInspectorPage()->protectedLegacyMainFrameProcess()->send(Messages::RemoteWebInspectorUI::UpdateFindString(WebKit::stringForFind()), m_inspectorPage->webPageIDInMainFrameProcess());
 }
 
 WebPageProxy* RemoteWebInspectorUIProxy::platformCreateFrontendPageAndWindow()
@@ -226,7 +231,7 @@ void RemoteWebInspectorUIProxy::platformSetForcedAppearance(InspectorFrontendCli
 
 void RemoteWebInspectorUIProxy::platformStartWindowDrag()
 {
-    webView()->_page->startWindowDrag();
+    webView()._protectedPage->startWindowDrag();
 }
 
 void RemoteWebInspectorUIProxy::platformOpenURLExternally(const String& url)

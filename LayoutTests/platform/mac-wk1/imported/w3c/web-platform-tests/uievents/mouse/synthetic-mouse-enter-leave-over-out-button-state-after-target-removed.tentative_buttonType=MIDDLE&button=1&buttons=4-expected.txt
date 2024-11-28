@@ -3,7 +3,7 @@ PASS Setup event listeners and wait for load
 FAIL Removing an element at mousedown assert_equals: All events should've been checked expected "[]" but got "[{ 'mousemove' on 'parent': button=0, buttons=0 }]"
 FAIL Removing an element at mouseup assert_equals: All events should've been checked expected "[]" but got "[{ 'mousemove' on 'parent': button=0, buttons=0 }]"
 FAIL Removing an element at mousedown: mousedown should've been fired assert_equals: expected "{ 'mousedown' on 'child': button=1, buttons=4 }" but got "{ 'mousedown' on 'child': button=1, buttons=2 }"
-FAIL Removing an element at mousedown: mouseout and mouseleave should've been fired on the removed child assert_equals: expected "[{ 'mouseout' on 'child': button=0, buttons=4 }, { 'mouseleave' on 'child': button=0, buttons=4 }]" but got "[{ 'mouseout' on 'child': button=0, buttons=0 }, { 'mouseleave' on 'child': button=0, buttons=0 }]"
+FAIL Removing an element at mousedown: mouseout and mouseleave should've been fired on the removed child assert_equals: expected "[{ 'mouseout' on 'child': button=0, buttons=4 }, { 'mouseleave' on 'child': button=0, buttons=4 }]" but got "[]"
 FAIL Removing an element at mousedown: mouseover should've been fired on the parent assert_equals: expected "[{ 'mouseover' on 'parent': button=0, buttons=4 }]" but got "[{ 'mouseover' on 'parent': button=0, buttons=0 }]"
 FAIL Removing an element at mousedown: mouseenter should not have been fired on the parent assert_equals: expected "[]" but got "[{ 'mouseenter' on 'parent': button=0, buttons=0 }]"
 FAIL Removing an element at mouseup: mousedown should've been fired assert_equals: expected "{ 'mousedown' on 'child': button=1, buttons=4 }" but got "{ 'mousedown' on 'parent': button=1, buttons=2 }"

@@ -137,7 +137,7 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(WKWebExtensionControllerConfiguration, Web
 
 - (id)copyWithZone:(NSZone *)zone
 {
-    return _webExtensionControllerConfiguration->copy()->wrapper();
+    return self._protectedWebExtensionControllerConfiguration->copy()->wrapper();
 }
 
 - (BOOL)isEqual:(id)object
@@ -159,7 +159,7 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(WKWebExtensionControllerConfiguration, Web
 
 - (NSUUID *)identifier
 {
-    if (auto identifier = _webExtensionControllerConfiguration->identifier())
+    if (auto identifier = self._protectedWebExtensionControllerConfiguration->identifier())
         return identifier.value();
     return nil;
 }
@@ -171,22 +171,23 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(WKWebExtensionControllerConfiguration, Web
 
 - (WKWebViewConfiguration *)webViewConfiguration
 {
-    return _webExtensionControllerConfiguration->webViewConfiguration();
+    return self._protectedWebExtensionControllerConfiguration->webViewConfiguration();
 }
 
 - (void)setWebViewConfiguration:(WKWebViewConfiguration *)configuration
 {
-    _webExtensionControllerConfiguration->setWebViewConfiguration(configuration);
+    self._protectedWebExtensionControllerConfiguration->setWebViewConfiguration(configuration);
 }
 
 - (WKWebsiteDataStore *)defaultWebsiteDataStore
 {
-    return wrapper(_webExtensionControllerConfiguration->defaultWebsiteDataStore());
+    return wrapper(self._protectedWebExtensionControllerConfiguration->protectedDefaultWebsiteDataStore().get());
 }
 
 - (void)setDefaultWebsiteDataStore:(WKWebsiteDataStore *)dataStore
 {
-    _webExtensionControllerConfiguration->setDefaultWebsiteDataStore(dataStore ? dataStore->_websiteDataStore.get() : nullptr);
+    RefPtr websiteDataStore = dataStore ? dataStore->_websiteDataStore.get() : nullptr;
+    self._protectedWebExtensionControllerConfiguration->setDefaultWebsiteDataStore(websiteDataStore.get());
 }
 
 - (BOOL)_isTemporary
@@ -214,6 +215,11 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(WKWebExtensionControllerConfiguration, Web
 }
 
 - (WebKit::WebExtensionControllerConfiguration&)_webExtensionControllerConfiguration
+{
+    return *_webExtensionControllerConfiguration;
+}
+
+- (Ref<WebKit::WebExtensionControllerConfiguration>)_protectedWebExtensionControllerConfiguration
 {
     return *_webExtensionControllerConfiguration;
 }

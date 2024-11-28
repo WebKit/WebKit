@@ -43,7 +43,7 @@ enum class AddTimeRangeOption : uint8_t {
 };
 
 class WEBCORE_EXPORT PlatformTimeRanges final {
-    WTF_MAKE_TZONE_ALLOCATED(PlatformTimeRanges);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(PlatformTimeRanges, WEBCORE_EXPORT);
 public:
     PlatformTimeRanges();
     PlatformTimeRanges(const MediaTime& start, const MediaTime& end);

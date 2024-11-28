@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: Error: error while filtering
 
 PASS filter(): Returned Observable filters out results based on predicate
 PASS filter(): Errors thrown in filter predicate are emitted to Observer error() handler

@@ -84,10 +84,11 @@ public:
     BackForwardListState backForwardListState(WTF::Function<bool (WebBackForwardListItem&)>&&) const;
     void restoreFromState(BackForwardListState);
 
-    Vector<BackForwardListItemState> itemStates() const;
-    Vector<BackForwardListItemState> filteredItemStates(Function<bool(WebBackForwardListItem&)>&&) const;
+    void setItemsAsRestoredFromSession();
+    void setItemsAsRestoredFromSessionIf(Function<bool(WebBackForwardListItem&)>&&);
 
-    void addRootChildFrameItem(Ref<WebBackForwardListItem>&&) const;
+    void goToProvisionalItem(WebBackForwardListItem&);
+    void clearProvisionalItem(WebBackForwardListFrameItem&);
 
 #if !LOG_DISABLED
     String loggingString();
@@ -98,11 +99,17 @@ private:
 
     void didRemoveItem(WebBackForwardListItem&);
 
+    void goToItemInternal(WebBackForwardListItem&, std::optional<size_t>& indexToUpdate);
+
+    std::optional<size_t> provisionalOrCurrentIndex() const { return m_provisionalIndex ? m_provisionalIndex : m_currentIndex; }
+    void setProvisionalOrCurrentIndex(size_t);
+
     RefPtr<WebPageProxy> protectedPage();
 
     WeakPtr<WebPageProxy> m_page;
     BackForwardListItemVector m_entries;
     std::optional<size_t> m_currentIndex;
+    std::optional<size_t> m_provisionalIndex;
 };
 
 } // namespace WebKit

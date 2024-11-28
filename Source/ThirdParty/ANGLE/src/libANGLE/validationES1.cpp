@@ -16,14 +16,14 @@
 #include "libANGLE/queryutils.h"
 #include "libANGLE/validationES.h"
 
-#define ANGLE_VALIDATE_IS_GLES1(state, errors, entryPoint)                                \
-    do                                                                                    \
-    {                                                                                     \
-        if (state.getClientType() != EGL_OPENGL_API && state.getClientMajorVersion() > 1) \
-        {                                                                                 \
-            errors->validationError(entryPoint, GL_INVALID_OPERATION, kGLES1Only);        \
-            return false;                                                                 \
-        }                                                                                 \
+#define ANGLE_VALIDATE_IS_GLES1(state, errors, entryPoint)                         \
+    do                                                                             \
+    {                                                                              \
+        if (state.getClientMajorVersion() > 1)                                     \
+        {                                                                          \
+            errors->validationError(entryPoint, GL_INVALID_OPERATION, kGLES1Only); \
+            return false;                                                          \
+        }                                                                          \
     } while (0)
 
 #define ANGLE_VALIDATE_IS_GLES1_CONTEXT(context, entryPoint) \

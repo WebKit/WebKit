@@ -210,8 +210,8 @@ Ref<RemoteVideoDecoder::DecodePromise> RemoteVideoDecoder::decode(EncodedFrame&&
     if (frame.duration)
         m_callbacks->addDuration(frame.timestamp, *frame.duration);
 
-    auto& codecs = WebProcess::singleton().libWebRTCCodecs();
-    return codecs.decodeFrame(m_internalDecoder, frame.timestamp, frame.data, m_width, m_height);
+    Ref codecs = WebProcess::singleton().libWebRTCCodecs();
+    return codecs->decodeFrame(m_internalDecoder, frame.timestamp, frame.data, m_width, m_height);
 }
 
 Ref<GenericPromise> RemoteVideoDecoder::flush()
@@ -273,8 +273,8 @@ RemoteVideoEncoder::~RemoteVideoEncoder()
 
 Ref<RemoteVideoEncoder::EncodePromise> RemoteVideoEncoder::encode(RawFrame&& rawFrame, bool shouldGenerateKeyFrame)
 {
-    auto& codecs = WebProcess::singleton().libWebRTCCodecs();
-    return codecs.encodeFrame(m_internalEncoder, rawFrame.frame.get(), rawFrame.timestamp, rawFrame.duration, shouldGenerateKeyFrame);
+    Ref codecs = WebProcess::singleton().libWebRTCCodecs();
+    return codecs->encodeFrame(m_internalEncoder, rawFrame.frame.get(), rawFrame.timestamp, rawFrame.duration, shouldGenerateKeyFrame);
 }
 
 Ref<GenericPromise> RemoteVideoEncoder::setRates(uint64_t bitRate, double frameRate)

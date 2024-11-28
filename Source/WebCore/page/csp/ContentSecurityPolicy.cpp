@@ -893,7 +893,7 @@ void ContentSecurityPolicy::reportViolation(const String& effectiveViolatedDirec
     info.sample = violatedDirectiveList.shouldReportSample(effectiveViolatedDirective) ? sourceContent.toString() : emptyString();
 
     if (!m_client) {
-        RefPtrAllowingPartiallyDestroyed<Document> document = dynamicDowncast<Document>(m_scriptExecutionContext.get());
+        RefPtr<Document> document = dynamicDowncast<Document>(m_scriptExecutionContext.get());
         if (!document || !document->frame())
             return;
 

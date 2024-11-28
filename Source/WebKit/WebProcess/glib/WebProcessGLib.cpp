@@ -28,13 +28,14 @@
 #include "WebProcess.h"
 
 #include "Logging.h"
+#include "SystemSettingsManager.h"
 #include "WebKitWebProcessExtensionPrivate.h"
 #include "WebPage.h"
 #include "WebProcessCreationParameters.h"
 #include "WebProcessExtensionManager.h"
 
-#include <WebCore/FontRenderOptions.h>
 #include <WebCore/PlatformScreen.h>
+#include <WebCore/RenderTheme.h>
 #include <WebCore/ScreenProperties.h>
 
 #if ENABLE(REMOTE_INSPECTOR)
@@ -86,11 +87,6 @@
 #include <WebCore/AccessibilityAtspi.h>
 #endif
 
-#if PLATFORM(GTK)
-#include "GtkSettingsManagerProxy.h"
-#include <gtk/gtk.h>
-#endif
-
 #if USE(CAIRO)
 #include <WebCore/CairoUtilities.h>
 #endif
@@ -132,6 +128,8 @@ void WebProcess::platformInitializeProcess(const AuxiliaryProcessInitializationP
     // Disable RealTimeThreads in WebProcess initially, since it depends on having a visible web page.
     RealTimeThreads::singleton().setEnabled(false);
 #endif
+
+    addSupplement<SystemSettingsManager>();
 }
 
 void WebProcess::initializePlatformDisplayIfNeeded() const
@@ -223,15 +221,11 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
 #endif
 
 #if USE(ATSPI)
-    AccessibilityAtspi::singleton().connect(parameters.accessibilityBusAddress);
+    AccessibilityAtspi::singleton().connect(parameters.accessibilityBusAddress, parameters.accessibilityBusName);
 #endif
 
     if (parameters.disableFontHintingForTesting)
         FontRenderOptions::singleton().disableHintingForTesting();
-
-#if PLATFORM(GTK)
-    GtkSettingsManagerProxy::singleton().applySettings(WTFMove(parameters.gtkSettings));
-#endif
 
 #if PLATFORM(GTK)
     WebCore::setScreenProperties(parameters.screenProperties);

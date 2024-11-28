@@ -96,25 +96,7 @@ class ProgramInfo final : angle::NonCopyable
     gl::ShaderMap<vk::RefCounted<vk::ShaderModule>> mShaders;
 };
 
-// State for the default uniform blocks.
-struct DefaultUniformBlockVk final : private angle::NonCopyable
-{
-    DefaultUniformBlockVk();
-    ~DefaultUniformBlockVk();
-
-    // Shadow copies of the shader uniform data.
-    angle::MemoryBuffer uniformData;
-
-    // Since the default blocks are laid out in std140, this tells us where to write on a call
-    // to a setUniform method. They are arranged in uniform location order.
-    std::vector<sh::BlockMemberInfo> uniformLayout;
-};
-
-// Performance and resource counters.
-using DescriptorSetCountList   = angle::PackedEnumMap<DescriptorSetIndex, uint32_t>;
 using ImmutableSamplerIndexMap = angle::HashMap<vk::YcbcrConversionDesc, uint32_t>;
-
-using DefaultUniformBlockMap = gl::ShaderMap<std::shared_ptr<DefaultUniformBlockVk>>;
 
 class ProgramExecutableVk : public ProgramExecutableImpl
 {
@@ -236,15 +218,12 @@ class ProgramExecutableVk : public ProgramExecutableImpl
                                               const gl::ActiveTextureArray<TextureVk *> &textures,
                                               const gl::SamplerBindingVector &samplers,
                                               PipelineType pipelineType,
-                                              UpdateDescriptorSetsBuilder *updateBuilder,
-                                              vk::CommandBufferHelperCommon *commandBufferHelper,
-                                              const vk::DescriptorSetDesc &texturesDesc);
+                                              UpdateDescriptorSetsBuilder *updateBuilder);
 
     angle::Result updateShaderResourcesDescriptorSet(
         vk::Context *context,
         UpdateDescriptorSetsBuilder *updateBuilder,
         const vk::WriteDescriptorDescs &writeDescriptorDescs,
-        vk::CommandBufferHelperCommon *commandBufferHelper,
         const vk::DescriptorSetDescBuilder &shaderResourcesDesc,
         vk::SharedDescriptorSetCacheKey *newSharedCacheKeyOut);
 
@@ -252,7 +231,6 @@ class ProgramExecutableVk : public ProgramExecutableImpl
         vk::Context *context,
         UpdateDescriptorSetsBuilder *updateBuilder,
         const vk::WriteDescriptorDescs &writeDescriptorDescs,
-        vk::CommandBufferHelperCommon *commandBufferHelper,
         vk::BufferHelper *defaultUniformBuffer,
         vk::DescriptorSetDescBuilder *uniformsAndXfbDesc,
         vk::SharedDescriptorSetCacheKey *sharedCacheKeyOut);
@@ -293,7 +271,7 @@ class ProgramExecutableVk : public ProgramExecutableImpl
         return roundUp(mDefaultUniformBlocks[shaderType]->uniformData.size(), alignment);
     }
 
-    std::shared_ptr<DefaultUniformBlockVk> &getSharedDefaultUniformBlock(gl::ShaderType shaderType)
+    std::shared_ptr<BufferAndLayout> &getSharedDefaultUniformBlock(gl::ShaderType shaderType)
     {
         return mDefaultUniformBlocks[shaderType];
     }
@@ -323,7 +301,6 @@ class ProgramExecutableVk : public ProgramExecutableImpl
     void setAllDefaultUniformsDirty();
     angle::Result updateUniforms(vk::Context *context,
                                  UpdateDescriptorSetsBuilder *updateBuilder,
-                                 vk::CommandBufferHelperCommon *commandBufferHelper,
                                  vk::BufferHelper *emptyBuffer,
                                  vk::DynamicBuffer *defaultUniformStorage,
                                  bool isTransformFeedbackActiveUnpaused,
@@ -391,7 +368,8 @@ class ProgramExecutableVk : public ProgramExecutableImpl
                                const gl::ProgramState &programState,
                                const gl::ProgramLinkedResources &resources)
     {
-        SpvSourceOptions options = SpvCreateSourceOptions(context->getFeatures());
+        SpvSourceOptions options = SpvCreateSourceOptions(
+            context->getFeatures(), context->getRenderer()->getMaxColorInputAttachmentCount());
         SpvAssignAllLocations(options, programState, resources, &mVariableInfoMap);
     }
 
@@ -405,9 +383,6 @@ class ProgramExecutableVk : public ProgramExecutableImpl
 
     void reset(ContextVk *contextVk);
 
-    template <class T>
-    void getUniformImpl(GLint location, T *v, GLenum entryPointType) const;
-
     void addInterfaceBlockDescriptorSetDesc(const std::vector<gl::InterfaceBlock> &blocks,
                                             gl::ShaderBitSet shaderTypes,
                                             VkDescriptorType descType,
@@ -416,7 +391,8 @@ class ProgramExecutableVk : public ProgramExecutableImpl
         const std::vector<gl::AtomicCounterBuffer> &atomicCounterBuffers,
         vk::DescriptorSetLayoutDesc *descOut);
     void addImageDescriptorSetDesc(vk::DescriptorSetLayoutDesc *descOut);
-    void addInputAttachmentDescriptorSetDesc(vk::DescriptorSetLayoutDesc *descOut);
+    void addInputAttachmentDescriptorSetDesc(vk::Context *context,
+                                             vk::DescriptorSetLayoutDesc *descOut);
     angle::Result addTextureDescriptorSetDesc(
         vk::Context *context,
         const gl::ActiveTextureArray<TextureVk *> *activeTextures,
@@ -520,7 +496,6 @@ class ProgramExecutableVk : public ProgramExecutableImpl
 
     angle::Result getOrAllocateDescriptorSet(vk::Context *context,
                                              UpdateDescriptorSetsBuilder *updateBuilder,
-                                             vk::CommandBufferHelperCommon *commandBufferHelper,
                                              const vk::DescriptorSetDescBuilder &descriptorSetDesc,
                                              const vk::WriteDescriptorDescs &writeDescriptorDescs,
                                              DescriptorSetIndex setIndex,
@@ -536,9 +511,9 @@ class ProgramExecutableVk : public ProgramExecutableImpl
     void initializeWriteDescriptorDesc(vk::Context *context);
 
     // Descriptor sets and pools for shader resources for this program.
-    vk::DescriptorSetArray<VkDescriptorSet> mDescriptorSets;
+    vk::DescriptorSetArray<vk::DescriptorSetPointer> mDescriptorSets;
+    vk::DescriptorSetArray<vk::DynamicDescriptorPoolPointer> mDynamicDescriptorPools;
     vk::DescriptorSetArray<vk::DescriptorPoolPointer> mDescriptorPools;
-    vk::DescriptorSetArray<vk::RefCountedDescriptorPoolBinding> mDescriptorPoolBindings;
     vk::BufferSerial mCurrentDefaultUniformBufferSerial;
 
     // We keep a reference to the pipeline and descriptor set layouts. This ensures they don't get

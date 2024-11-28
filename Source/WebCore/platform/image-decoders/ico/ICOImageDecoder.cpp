@@ -60,10 +60,12 @@ void ICOImageDecoder::setData(const FragmentedSharedBuffer& data, bool allDataRe
 
     ScalableImageDecoder::setData(data, allDataReceived);
 
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     for (BMPReaders::iterator i(m_bmpReaders.begin()); i != m_bmpReaders.end(); ++i) {
         if (*i)
             (*i)->setData(*m_data);
     }
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     for (size_t i = 0; i < m_pngDecoders.size(); ++i)
         setDataForPNGDecoderAtIndex(i);
 }
@@ -248,6 +250,7 @@ bool ICOImageDecoder::processDirectoryEntries()
     ASSERT(m_decodedOffset == sizeOfDirectory);
     if ((m_decodedOffset > m_data->size()) || ((m_data->size() - m_decodedOffset) < (m_dirEntries.size() * sizeOfDirEntry)))
         return false;
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     for (IconDirectoryEntries::iterator i(m_dirEntries.begin()); i != m_dirEntries.end(); ++i)
         *i = readDirectoryEntry();  // Updates m_decodedOffset.
 
@@ -257,6 +260,7 @@ bool ICOImageDecoder::processDirectoryEntries()
         if (i->m_imageOffset < m_decodedOffset)
             return setFailed();
     }
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
     // Arrange frames in decreasing quality order.
     std::sort(m_dirEntries.begin(), m_dirEntries.end(), compareEntries);

@@ -103,7 +103,7 @@ private:
 
     bool m_filledPrimaryPage { false };
     GlyphMetricsPage m_primaryPage; // We optimize for the page that contains glyph indices 0-255.
-    HashMap<int, std::unique_ptr<GlyphMetricsPage>> m_pages;
+    UncheckedKeyHashMap<int, std::unique_ptr<GlyphMetricsPage>> m_pages;
 };
 
 template<> inline float GlyphMetricsMap<float>::unknownMetrics()

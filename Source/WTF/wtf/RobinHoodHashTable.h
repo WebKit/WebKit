@@ -54,6 +54,8 @@
 #include <wtf/HashTable.h>
 #include <wtf/text/StringHash.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WTF {
 
 template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits, typename SizePolicy>
@@ -181,8 +183,8 @@ public:
     // A special version of add() that finds the object by hashing and comparing
     // with some other type, to avoid the cost of type conversion if the object is already
     // in the table.
-    template<typename HashTranslator> AddResult add(auto&& key, const std::invocable<> auto& functor);
-    template<typename HashTranslator> AddResult addPassingHashCode(auto&& key, const std::invocable<> auto& functor);
+    template<typename HashTranslator> AddResult add(auto&& key, NOESCAPE const std::invocable<> auto& functor);
+    template<typename HashTranslator> AddResult addPassingHashCode(auto&& key, NOESCAPE const std::invocable<> auto& functor);
 
     iterator find(const KeyType& key) { return find<IdentityTranslatorType>(key); }
     const_iterator find(const KeyType& key) const { return find<IdentityTranslatorType>(key); }
@@ -386,7 +388,7 @@ inline void RobinHoodHashTable<Key, Value, Extractor, HashFunctions, Traits, Key
 
 template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits, typename SizePolicy>
 template<typename HashTranslator, typename T>
-ALWAYS_INLINE auto RobinHoodHashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits, SizePolicy>::add(T&& key, const std::invocable<> auto& functor) -> AddResult
+ALWAYS_INLINE auto RobinHoodHashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits, SizePolicy>::add(T&& key, NOESCAPE const std::invocable<> auto& functor) -> AddResult
 {
     checkKey<HashTranslator>(key);
 
@@ -476,7 +478,7 @@ ALWAYS_INLINE void RobinHoodHashTable<Key, Value, Extractor, HashFunctions, Trai
 
 template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits, typename SizePolicy>
 template<typename HashTranslator, typename T>
-inline auto RobinHoodHashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits, SizePolicy>::addPassingHashCode(T&& key, const std::invocable<> auto& functor) -> AddResult
+inline auto RobinHoodHashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits, SizePolicy>::addPassingHashCode(T&& key, NOESCAPE const std::invocable<> auto& functor) -> AddResult
 {
     checkKey<HashTranslator>(key);
 
@@ -716,7 +718,7 @@ void RobinHoodHashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits,
 {
     for (unsigned i = 0; i < size; ++i)
         table[i].~ValueType();
-    HashTableMalloc::free(reinterpret_cast<char*>(table));
+    HashTableMalloc::free(table);
 }
 
 template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits, typename SizePolicy>
@@ -789,7 +791,7 @@ void RobinHoodHashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits,
     }
 
     if (oldTable)
-        HashTableMalloc::free(reinterpret_cast<char*>(oldTable));
+        HashTableMalloc::free(oldTable);
 
     internalCheckTableConsistency();
 }
@@ -934,3 +936,5 @@ struct FastRobinHoodHashTableTraits {
 };
 
 } // namespace WTF
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

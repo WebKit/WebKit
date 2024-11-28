@@ -38,6 +38,8 @@
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringToIntegerConversion.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore::ContentExtensions {
 
 static void append(Vector<uint8_t>& vector, size_t length)
@@ -161,13 +163,13 @@ size_t ModifyHeadersAction::serializedLength(std::span<const uint8_t> span)
     return deserializeLength(span, 0);
 }
 
-void ModifyHeadersAction::applyToRequest(ResourceRequest& request, HashMap<String, ModifyHeadersAction::ModifyHeadersOperationType>& headerNameToFirstOperationApplied)
+void ModifyHeadersAction::applyToRequest(ResourceRequest& request, UncheckedKeyHashMap<String, ModifyHeadersAction::ModifyHeadersOperationType>& headerNameToFirstOperationApplied)
 {
     for (auto& info : requestHeaders)
         info.applyToRequest(request, headerNameToFirstOperationApplied);
 }
 
-void ModifyHeadersAction::ModifyHeaderInfo::applyToRequest(ResourceRequest& request, HashMap<String, ModifyHeadersAction::ModifyHeadersOperationType>& headerNameToFirstOperationApplied)
+void ModifyHeadersAction::ModifyHeaderInfo::applyToRequest(ResourceRequest& request, UncheckedKeyHashMap<String, ModifyHeadersAction::ModifyHeadersOperationType>& headerNameToFirstOperationApplied)
 {
     std::visit(WTF::makeVisitor([&] (const AppendOperation& operation) {
         ModifyHeadersOperationType previouslyAppliedHeaderOperation = headerNameToFirstOperationApplied.get(operation.header);
@@ -746,7 +748,7 @@ void RedirectAction::URLTransformAction::QueryTransform::applyToURL(URL& url) co
         keysToRemove.add(key);
 
     Vector<KeyValuePair<String, String>> keysToAdd;
-    HashMap<String, String> keysToReplace;
+    UncheckedKeyHashMap<String, String> keysToReplace;
     for (auto& [key, replaceOnly, value] : addOrReplaceParams) {
         if (replaceOnly)
             keysToReplace.add(key, value);
@@ -911,5 +913,7 @@ size_t RedirectAction::URLTransformAction::QueryTransform::QueryKeyValue::serial
 }
 
 } // namespace WebCore::ContentExtensions
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ENABLE(CONTENT_EXTENSIONS)

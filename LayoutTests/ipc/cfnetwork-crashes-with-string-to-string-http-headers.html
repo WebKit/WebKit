@@ -1,0 +1,122 @@
+<!-- webkit-test-runner [ IPCTestingAPIEnabled=true ] -->
+<script>
+    window.testRunner?.dumpAsText();
+    window.testRunner?.waitUntilDone();
+    import('./coreipc.js').then(({
+        CoreIPC
+    }) => {
+        CoreIPC.GPU.RemoteMediaResourceManager.RedirectReceived(0, {
+            identifier: 262147,
+            request: {
+                getRequestDataToSerialize: {
+                    variantType: 'WebCore::ResourceRequestPlatformData',
+                    variant: {
+                        m_urlRequest: {
+                            optionalValue: {
+                                wrapper: {
+                                    m_data: {
+                                        protocolProperties: {},
+                                        isMutable: false,
+                                        url: {
+                                            m_url: {
+                                                string: ''
+                                            }
+                                        },
+                                        timeout: 48,
+                                        cachePolicy: 2,
+                                        mainDocumentURL: {
+                                            optionalValue: {
+                                                m_url: {
+                                                    string: location.href
+                                                }
+                                            }
+                                        },
+                                        shouldHandleHTTPCookies: true,
+                                        explicitFlags: 4096,
+                                        allowCellular: true,
+                                        preventsIdleSystemSleep: false,
+                                        timeWindowDelay: 118,
+                                        timeWindowDuration: 15,
+                                        networkServiceType: 0,
+                                        requestPriority: 89,
+                                        isHTTP: {
+                                            optionalValue: true
+                                        },
+                                        httpMethod: {},
+                                        // This crashes CFNetwork
+                                        headerFields: {
+                                            optionalValue: [{
+                                                alias: ['A', {
+                                                    variantType: 'String',
+                                                    variant: location.href
+                                                }]
+                                            }]
+                                        },
+                                        body: {
+                                            optionalValue: {
+                                                dataReference: {}
+                                            }
+                                        },
+                                        bodyParts: {},
+                                        startTimeoutTime: 58,
+                                        requiresShortConnectionTimeout: true,
+                                        payloadTransmissionTimeout: 63,
+                                        allowedProtocolTypes: 60,
+                                        boundInterfaceIdentifier: {},
+                                        allowsExpensiveNetworkAccess: {
+                                            optionalValue: false
+                                        },
+                                        allowsConstrainedNetworkAccess: {
+                                            optionalValue: false
+                                        },
+                                        allowsUCA: {},
+                                        assumesHTTP3Capable: false,
+                                        attribution: 0,
+                                        knownTracker: false,
+                                        trackerContext: {},
+                                        privacyProxyFailClosed: true,
+                                        privacyProxyFailClosedForUnreachableNonMainHosts: true,
+                                        privacyProxyFailClosedForUnreachableHosts: false,
+                                        requiresDNSSECValidation: {
+                                            optionalValue: false
+                                        },
+                                        allowsPersistentDNS: true,
+                                        prohibitPrivacyProxy: true,
+                                        allowPrivateAccessTokensForThirdParty: false,
+                                        useEnhancedPrivacyMode: false,
+                                        blockTrackers: false,
+                                        failInsecureLoadWithHTTPSDNSRecord: false,
+                                        isWebSearchContent: false,
+                                        contentDispositionEncodingFallbackArray: {}
+                                    }
+                                }
+                            }
+                        },
+                        m_isAppInitiated: {
+                            optionalValue: true
+                        },
+                        m_requester: {
+                            optionalValue: 6
+                        },
+                        m_privacyProxyFailClosedForUnreachableNonMainHosts: false,
+                        m_useAdvancedPrivacyProtections: true,
+                        m_didFilterLinkDecoration: false,
+                        m_isPrivateTokenUsageByThirdPartyAllowed: true,
+                        m_wasSchemeOptimisticallyUpgraded: true
+                    }
+                },
+                cachePartition: '',
+                hiddenFromInspector: false
+            },
+            response: {
+                getResponseData: {}
+            }
+        });
+    });
+    function callDone() {
+        window.testRunner?.notifyDone();
+    }
+</script>
+<body onload="callDone()">
+    <p>This test passes if WebKit did not crash.</p>
+</body>

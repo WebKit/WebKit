@@ -30,6 +30,7 @@
 
 #import <pal/system/ios/UserInterfaceIdiom.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 
 namespace WebKit {
 

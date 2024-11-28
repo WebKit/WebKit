@@ -52,11 +52,11 @@ find_path(THUNDER_INCLUDE_DIR
     NAMES open_cdm.h
     HINTS ${PC_THUNDER_INCLUDEDIR}
           ${PC_THUNDER_INCLUDE_DIRS}
-    PATH_SUFFIXES "WPEFramework/ocdm/"
+    PATH_SUFFIXES "WPEFramework/ocdm/" "Thunder/ocdm/"
 )
 
 find_library(THUNDER_LIBRARY
-    NAMES ocdm
+    NAMES ocdm ClientOCDM
     HINTS ${PC_THUNDER_LIBDIR}
           ${PC_THUNDER_LIBRARY_DIRS}
 )

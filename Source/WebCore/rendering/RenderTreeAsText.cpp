@@ -51,7 +51,6 @@
 #include "RenderBlockFlow.h"
 #include "RenderBoxModelObjectInlines.h"
 #include "RenderCounter.h"
-#include "RenderDetailsMarker.h"
 #include "RenderElementInlines.h"
 #include "RenderFileUploadControl.h"
 #include "RenderFragmentContainer.h"
@@ -286,15 +285,19 @@ void RenderTreeAsText::writeRenderObject(TextStream& ts, const RenderObject& o, 
         bool overridden = o.style().borderImage().overridesBorderWidths();
         if (box->isFieldset()) {
             const auto& block = downcast<RenderBlock>(*box);
-            if (o.style().blockFlowDirection() == BlockFlowDirection::TopToBottom)
+            switch (o.writingMode().blockDirection()) {
+            case FlowDirection::TopToBottom:
                 borderTop -= block.intrinsicBorderForFieldset();
-            else if (o.style().blockFlowDirection() == BlockFlowDirection::BottomToTop)
+                break;
+            case FlowDirection::BottomToTop:
                 borderBottom -= block.intrinsicBorderForFieldset();
-            else if (o.style().blockFlowDirection() == BlockFlowDirection::LeftToRight)
+                break;
+            case FlowDirection::LeftToRight:
                 borderLeft -= block.intrinsicBorderForFieldset();
-            else if (o.style().blockFlowDirection() == BlockFlowDirection::RightToLeft)
+                break;
+            case FlowDirection::RightToLeft:
                 borderRight -= block.intrinsicBorderForFieldset();
-            
+            }
         }
         if (borderTop || borderRight || borderBottom || borderLeft) {
             ts << " [border:";
@@ -352,26 +355,8 @@ void RenderTreeAsText::writeRenderObject(TextStream& ts, const RenderObject& o, 
     if (auto* cell = dynamicDowncast<RenderTableCell>(o))
         ts << " [r=" << cell->rowIndex() << " c=" << cell->col() << " rs=" << cell->rowSpan() << " cs=" << cell->colSpan() << "]";
 
-    if (auto* detailsMarker = dynamicDowncast<RenderDetailsMarker>(o)) {
-        ts << ": ";
-        switch (detailsMarker->orientation()) {
-        case RenderDetailsMarker::Left:
-            ts << "left";
-            break;
-        case RenderDetailsMarker::Right:
-            ts << "right";
-            break;
-        case RenderDetailsMarker::Up:
-            ts << "up";
-            break;
-        case RenderDetailsMarker::Down:
-            ts << "down";
-            break;
-        }
-    }
-
     if (auto* listMarker = dynamicDowncast<RenderListMarker>(o)) {
-        String text = listMarker->textWithoutSuffix().toString();
+        auto text = listMarker->textWithoutSuffix();
         if (!text.isEmpty()) {
             if (text.length() != 1)
                 text = quoteAndEscapeNonPrintables(text);
@@ -664,6 +649,7 @@ static void writeLayers(TextStream& ts, const RenderLayer& rootLayer, RenderLaye
         paintDirtyRect.setWidth(std::max<LayoutUnit>(paintDirtyRect.width(), rootLayer.renderBox()->layoutOverflowRect().maxX()));
         paintDirtyRect.setHeight(std::max<LayoutUnit>(paintDirtyRect.height(), rootLayer.renderBox()->layoutOverflowRect().maxY()));
         layer.setSize(layer.size().expandedTo(snappedIntSize(maxLayoutOverflow(layer.renderBox()), LayoutPoint(0, 0))));
+        layer.setNeedsPositionUpdate();
     }
     
     // Calculate the clip rects we should use.
@@ -911,7 +897,7 @@ String markerTextForListItem(Element* element)
     auto* renderer = dynamicDowncast<RenderListItem>(element->renderer());
     if (!renderer)
         return String();
-    return renderer->markerTextWithoutSuffix().toString();
+    return renderer->markerTextWithoutSuffix();
 }
 
 } // namespace WebCore

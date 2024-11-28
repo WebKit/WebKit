@@ -79,8 +79,8 @@ void UIGamepadProvider::gamepadSyncTimerFired()
 bool UIGamepadProvider::isAnyGamepadConnected() const
 {
     bool anyGamepadConnected = false;
-    for (auto it = m_gamepads.begin(); it != m_gamepads.end(); ++it) {
-        if (*it) {
+    for (auto& gamepad : m_gamepads) {
+        if (gamepad) {
             anyGamepadConnected = true;
             break;
         }

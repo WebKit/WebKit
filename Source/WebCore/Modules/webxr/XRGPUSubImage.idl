@@ -27,11 +27,13 @@
 [
     Conditional=WEBXR_LAYERS,
     EnabledBySetting=WebXRWebGPUBindingsEnabled,
-    Exposed=Window
+    Exposed=Window,
+    JSGenerateToJSObject,
+    JSGenerateToNativeObject,
 ] interface XRGPUSubImage : XRSubImage {
     [SameObject] readonly attribute GPUTexture colorTexture;
     [SameObject] readonly attribute GPUTexture? depthStencilTexture;
     [SameObject] readonly attribute GPUTexture? motionVectorTexture;
-    // FIXME: unclear how to place dictionary here
-    // readonly attribute GPUTextureViewDescriptor viewDescriptor;
+
+    GPUTextureViewDescriptor getViewDescriptor();
 };

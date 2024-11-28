@@ -33,8 +33,6 @@ gl_backend_sources = [
   "ImageGL.h",
   "MemoryObjectGL.cpp",
   "MemoryObjectGL.h",
-  "PLSProgramCache.cpp",
-  "PLSProgramCache.h",
   "ProgramExecutableGL.cpp",
   "ProgramExecutableGL.h",
   "ProgramGL.cpp",
@@ -176,25 +174,6 @@ if (angle_enable_cgl) {
     "cgl/PbufferSurfaceCGL.h",
     "cgl/WindowSurfaceCGL.h",
     "cgl/WindowSurfaceCGL.mm",
-  ]
-}
-
-if (angle_enable_eagl) {
-  gl_backend_sources += [
-    "eagl/ContextEAGL.cpp",
-    "eagl/ContextEAGL.h",
-    "eagl/DeviceEAGL.cpp",
-    "eagl/DeviceEAGL.h",
-    "eagl/DisplayEAGL.h",
-    "eagl/DisplayEAGL.mm",
-    "eagl/FunctionsEAGL.h",
-    "eagl/FunctionsEAGL.mm",
-    "eagl/IOSurfaceSurfaceEAGL.h",
-    "eagl/IOSurfaceSurfaceEAGL.mm",
-    "eagl/PbufferSurfaceEAGL.cpp",
-    "eagl/PbufferSurfaceEAGL.h",
-    "eagl/WindowSurfaceEAGL.h",
-    "eagl/WindowSurfaceEAGL.mm",
   ]
 }
 

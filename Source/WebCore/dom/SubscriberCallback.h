@@ -37,7 +37,7 @@ class SubscriberCallback : public RefCounted<SubscriberCallback>, public ActiveD
 public:
     using ActiveDOMCallback::ActiveDOMCallback;
 
-    virtual CallbackResult<void> handleEvent(Subscriber&) = 0;
+    virtual CallbackResult<void> handleEventRethrowingException(Subscriber&) = 0;
 
 private:
     virtual bool hasCallback() const = 0;

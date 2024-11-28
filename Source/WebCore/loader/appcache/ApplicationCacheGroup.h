@@ -190,7 +190,7 @@ private:
     
     RefPtr<ApplicationCacheResource> m_currentResource;
     RefPtr<ApplicationCacheResourceLoader> m_entryLoader;
-    ResourceLoaderIdentifier m_currentResourceIdentifier;
+    Markable<ResourceLoaderIdentifier> m_currentResourceIdentifier;
 
     RefPtr<ApplicationCacheResource> m_manifestResource;
     RefPtr<ApplicationCacheResourceLoader> m_manifestLoader;

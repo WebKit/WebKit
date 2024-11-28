@@ -40,8 +40,11 @@
 #include "HTMLInputElement.h"
 #include "InputTypeNames.h"
 #include "LocalizedStrings.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SubmitInputType);
 
 using namespace HTMLNames;
 

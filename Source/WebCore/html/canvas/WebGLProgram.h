@@ -53,7 +53,7 @@ public:
     static RefPtr<WebGLProgram> create(WebGLRenderingContextBase&);
     virtual ~WebGLProgram();
 
-    static HashMap<WebGLProgram*, WebGLRenderingContextBase*>& instances() WTF_REQUIRES_LOCK(instancesLock());
+    static UncheckedKeyHashMap<WebGLProgram*, WebGLRenderingContextBase*>& instances() WTF_REQUIRES_LOCK(instancesLock());
     static Lock& instancesLock() WTF_RETURNS_LOCK(s_instancesLock);
 
     void contextDestroyed() final;

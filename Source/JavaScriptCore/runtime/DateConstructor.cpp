@@ -28,6 +28,8 @@
 #include "JSCInlines.h"
 #include "JSDateMath.h"
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 static JSC_DECLARE_HOST_FUNCTION(dateParse);
@@ -219,3 +221,5 @@ JSC_DEFINE_HOST_FUNCTION(dateUTC, (JSGlobalObject* globalObject, CallFrame* call
 }
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

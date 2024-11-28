@@ -49,8 +49,9 @@ private:
     CanvasLayerContextSwitcher(CanvasRenderingContext2DBase&, const FloatRect& bounds, std::unique_ptr<GraphicsContextSwitcher>&&);
 
     FloatBoxExtent outsets() const;
+    Ref<CanvasRenderingContext2DBase> protectedContext() const { return m_context.get(); }
 
-    CanvasRenderingContext2DBase& m_context;
+    WeakRef<CanvasRenderingContext2DBase> m_context;
     GraphicsContext* m_effectiveDrawingContext;
     FloatRect m_bounds;
     std::unique_ptr<GraphicsContextSwitcher> m_targetSwitcher;

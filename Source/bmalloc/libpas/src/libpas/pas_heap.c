@@ -46,7 +46,8 @@ pas_heap* pas_heap_create(pas_heap_ref* heap_ref,
                           const pas_heap_config* config,
                           pas_heap_runtime_config* runtime_config)
 {
-    static const bool verbose = false;
+    static const bool verbose = PAS_SHOULD_LOG(PAS_LOG_HEAP_INFRASTRUCTURE);
+
     pas_heap* heap;
     uintptr_t begin;
 

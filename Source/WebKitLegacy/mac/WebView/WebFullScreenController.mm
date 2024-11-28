@@ -206,7 +206,7 @@ static NSRect convertRectToScreen(NSWindow *window, NSRect rect)
     
     CGWindowID windowID = [[_webView window] windowNumber];
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    RetainPtr<CGImageRef> webViewContents = adoptCF(WebCore::cgWindowListCreateImage(NSRectToCGRect(webViewFrame), kCGWindowListOptionIncludingWindow, windowID, kCGWindowImageShouldBeOpaque));
+    RetainPtr webViewContents = WebCore::cgWindowListCreateImage(NSRectToCGRect(webViewFrame), kCGWindowListOptionIncludingWindow, windowID, kCGWindowImageShouldBeOpaque);
 ALLOW_DEPRECATED_DECLARATIONS_END
 
     // Screen updates to be re-enabled in beganEnterFullScreenWithInitialFrame:finalFrame:

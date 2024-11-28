@@ -37,24 +37,43 @@
 #include "WebGPUObjectHeap.h"
 #include <WebCore/WebGPUXRBinding.h>
 #include <WebCore/WebGPUXRProjectionLayer.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
 
-RemoteXRBinding::RemoteXRBinding(WebCore::WebGPU::XRBinding& xrBinding, WebGPU::ObjectHeap& objectHeap, RemoteGPU& gpu, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier)
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteXRBinding);
+
+RemoteXRBinding::RemoteXRBinding(GPUConnectionToWebProcess& gpuConnectionToWebProcess, WebCore::WebGPU::XRBinding& xrBinding, WebGPU::ObjectHeap& objectHeap, RemoteGPU& gpu, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier)
     : m_backing(xrBinding)
     , m_objectHeap(objectHeap)
     , m_streamConnection(WTFMove(streamConnection))
+    , m_gpuConnectionToWebProcess(gpuConnectionToWebProcess)
     , m_identifier(identifier)
     , m_gpu(gpu)
 {
-    m_streamConnection->startReceivingMessages(*this, Messages::RemoteXRBinding::messageReceiverName(), m_identifier.toUInt64());
+    protectedStreamConnection()->startReceivingMessages(*this, Messages::RemoteXRBinding::messageReceiverName(), m_identifier.toUInt64());
 }
 
 RemoteXRBinding::~RemoteXRBinding() = default;
 
+Ref<IPC::StreamServerConnection> RemoteXRBinding::protectedStreamConnection()
+{
+    return m_streamConnection;
+}
+
+Ref<WebCore::WebGPU::XRBinding> RemoteXRBinding::protectedBacking()
+{
+    return m_backing;
+}
+
+Ref<RemoteGPU> RemoteXRBinding::protectedGPU()
+{
+    return m_gpu.get();
+}
+
 void RemoteXRBinding::destruct()
 {
-    m_objectHeap->removeObject(m_identifier);
+    Ref { m_objectHeap.get() }->removeObject(m_identifier);
 }
 
 void RemoteXRBinding::createProjectionLayer(WebCore::WebGPU::TextureFormat colorFormat, std::optional<WebCore::WebGPU::TextureFormat> depthStencilFormat, WebCore::WebGPU::TextureUsageFlags textureUsage, double scaleFactor, WebGPUIdentifier identifier)
@@ -65,37 +84,39 @@ void RemoteXRBinding::createProjectionLayer(WebCore::WebGPU::TextureFormat color
         .textureUsage = textureUsage,
         .scaleFactor = scaleFactor
     };
-    auto projectionLayer = m_backing->createProjectionLayer(WTFMove(init));
+    RefPtr projectionLayer = protectedBacking()->createProjectionLayer(WTFMove(init));
     if (!projectionLayer) {
         // FIXME: Add MESSAGE_CHECK call
         return;
     }
 
-    auto remoteProjectionLayer = RemoteXRProjectionLayer::create(*projectionLayer, m_objectHeap, m_streamConnection.copyRef(), m_gpu, identifier);
-    m_objectHeap->addObject(identifier, remoteProjectionLayer);
+    Ref objectHeap = m_objectHeap.get();
+    Ref remoteProjectionLayer = RemoteXRProjectionLayer::create(*projectionLayer, objectHeap, protectedStreamConnection(), protectedGPU(), identifier);
+    objectHeap->addObject(identifier, remoteProjectionLayer);
 }
 
-void RemoteXRBinding::getViewSubImage(WebGPUIdentifier projectionLayerIdentifier, WebCore::WebGPU::XREye eye, WebGPUIdentifier identifier)
+void RemoteXRBinding::getViewSubImage(WebGPUIdentifier projectionLayerIdentifier, WebGPUIdentifier identifier)
 {
-    auto projectionLayer = m_objectHeap->convertXRProjectionLayerFromBacking(projectionLayerIdentifier);
+    Ref objectHeap = m_objectHeap.get();
+    auto projectionLayer = objectHeap->convertXRProjectionLayerFromBacking(projectionLayerIdentifier);
     if (!projectionLayer) {
         // FIXME: Add MESSAGE_CHECK call
         return;
     }
 
-    auto subImage = m_backing->getViewSubImage(*projectionLayer, eye);
+    RefPtr subImage = protectedBacking()->getViewSubImage(*projectionLayer);
     if (!subImage) {
         // FIXME: Add MESSAGE_CHECK call
         return;
     }
 
-    auto remoteSubImage = RemoteXRSubImage::create(*subImage, m_objectHeap, m_streamConnection.copyRef(), m_gpu, identifier);
-    m_objectHeap->addObject(identifier, remoteSubImage);
+    Ref remoteSubImage = RemoteXRSubImage::create(*m_gpuConnectionToWebProcess.get(), *subImage, objectHeap, protectedStreamConnection(), protectedGPU(), identifier);
+    objectHeap->addObject(identifier, remoteSubImage);
 }
 
 void RemoteXRBinding::stopListeningForIPC()
 {
-    m_streamConnection->stopReceivingMessages(Messages::RemoteXRBinding::messageReceiverName(), m_identifier.toUInt64());
+    protectedStreamConnection()->stopReceivingMessages(Messages::RemoteXRBinding::messageReceiverName(), m_identifier.toUInt64());
 }
 
 } // namespace WebKit

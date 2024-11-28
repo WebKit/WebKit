@@ -515,13 +515,9 @@ static TBasicType GetTextureBasicType(TBasicType basicType)
         case EbtSampler2DShadow:
         case EbtSamplerCubeShadow:
         case EbtSampler2DArrayShadow:
-        case EbtSampler1D:
-        case EbtSampler1DArray:
-        case EbtSampler1DArrayShadow:
         case EbtSamplerBuffer:
         case EbtSamplerCubeArray:
         case EbtSamplerCubeArrayShadow:
-        case EbtSampler1DShadow:
         case EbtSampler2DRectShadow:
             return TBasicType::EbtFloat;
 
@@ -531,8 +527,6 @@ static TBasicType GetTextureBasicType(TBasicType basicType)
         case EbtISampler2DArray:
         case EbtISampler2DMS:
         case EbtISampler2DMSArray:
-        case EbtISampler1D:
-        case EbtISampler1DArray:
         case EbtISampler2DRect:
         case EbtISamplerBuffer:
         case EbtISamplerCubeArray:
@@ -544,8 +538,6 @@ static TBasicType GetTextureBasicType(TBasicType basicType)
         case EbtUSampler2DArray:
         case EbtUSampler2DMS:
         case EbtUSampler2DMSArray:
-        case EbtUSampler1D:
-        case EbtUSampler1DArray:
         case EbtUSampler2DRect:
         case EbtUSamplerBuffer:
         case EbtUSamplerCubeArray:
@@ -587,20 +579,6 @@ Name sh::GetTextureTypeName(TBasicType samplerType)
 
     switch (samplerType)
     {
-        // 1d
-        case EbtSampler1D:  // Desktop GLSL sampler type:
-        case EbtISampler1D:
-        case EbtUSampler1D:
-            HANDLE_TEXTURE_NAME("texture1d");
-            break;
-
-        // 1d array
-        case EbtSampler1DArray:
-        case EbtISampler1DArray:
-        case EbtUSampler1DArray:
-            HANDLE_TEXTURE_NAME("texture1d_array");
-            break;
-
         // Buffer textures
         case EbtSamplerBuffer:
         case EbtISamplerBuffer:
@@ -659,12 +637,6 @@ Name sh::GetTextureTypeName(TBasicType samplerType)
             break;
 
         // Shadow
-        case EbtSampler1DShadow:
-        case EbtSampler1DArrayShadow:
-            UNIMPLEMENTED();
-            HANDLE_TEXTURE_NAME("TODO");
-            break;
-
         case EbtSampler2DRectShadow:
         case EbtSampler2DShadow:
             HANDLE_TEXTURE_NAME("depth2d");

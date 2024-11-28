@@ -29,6 +29,7 @@
 #if ENABLE(WEBASSEMBLY)
 
 #include "WasmNameSection.h"
+#include "WasmTypeDefinitionInlines.h"
 
 namespace JSC { namespace Wasm {
 

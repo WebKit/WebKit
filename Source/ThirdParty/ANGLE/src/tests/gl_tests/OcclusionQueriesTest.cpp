@@ -898,6 +898,59 @@ TEST_P(OcclusionQueriesTest, MultiContext)
     }
 }
 
+// Test multiple occlusion queries in flight. This test provoked a bug in the Metal backend that
+// resulted in an infinite loop when trying to flush the command buffer when the maximum number of
+// inflight render passes was reached.
+TEST_P(OcclusionQueriesTest, ManyQueriesInFlight)
+{
+    constexpr int kManyQueryCount = 100;
+
+    ANGLE_SKIP_TEST_IF(getClientMajorVersion() < 3 &&
+                       !IsGLExtensionEnabled("GL_EXT_occlusion_query_boolean"));
+
+    // http://anglebug.com/42263499
+    ANGLE_SKIP_TEST_IF(IsOpenGL() || IsD3D11());
+
+    GLQueryEXT query;
+
+    glEnable(GL_DEPTH_TEST);
+    glDepthMask(GL_TRUE);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
+    GLRenderbuffer rbo[2];
+    glBindRenderbuffer(GL_RENDERBUFFER, rbo[0]);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8, 32, 32);
+    glBindRenderbuffer(GL_RENDERBUFFER, rbo[1]);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, 32, 32);
+
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, rbo[0]);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, rbo[1]);
+
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    EXPECT_GL_NO_ERROR();
+
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+    for (int i = 0; i < kManyQueryCount; i++)
+    {
+        glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+        glBeginQueryEXT(GL_ANY_SAMPLES_PASSED_EXT, query);
+        drawQuad(mProgram, essl1_shaders::PositionAttrib(), 1.0f - 2.0f * i / kManyQueryCount);
+        glEndQueryEXT(GL_ANY_SAMPLES_PASSED_EXT);
+
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+        drawQuad(mProgram, essl1_shaders::PositionAttrib(), 0.8f);
+    }
+
+    glFinish();
+
+    EXPECT_GL_NO_ERROR();
+}
+
 class OcclusionQueriesNoSurfaceTestES3 : public ANGLETestBase,
                                          public ::testing::TestWithParam<angle::PlatformParameters>
 {

@@ -32,8 +32,10 @@
 
 #import "CocoaHelpers.h"
 #import "CocoaImage.h"
+#import "WKNSError.h"
 #import "WKWebExtensionMatchPatternInternal.h"
 #import "WebExtension.h"
+#import <wtf/cocoa/VectorCocoa.h>
 
 NSErrorDomain const WKWebExtensionErrorDomain = @"WKWebExtensionErrorDomain";
 
@@ -51,11 +53,11 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(WKWebExtension, WebExtension, _webExtensio
     // Use an async dispatch in the meantime to prevent clients from expecting synchronous results.
 
     dispatch_async(dispatch_get_main_queue(), ^{
-        NSError * __autoreleasing error;
-        Ref result = WebKit::WebExtension::create(appExtensionBundle, &error);
+        RefPtr<API::Error> error;
+        Ref result = WebKit::WebExtension::create(appExtensionBundle, nil, error);
 
         if (error) {
-            completionHandler(nil, error);
+            completionHandler(nil, wrapper(error));
             return;
         }
 
@@ -66,18 +68,17 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(WKWebExtension, WebExtension, _webExtensio
 + (void)extensionWithResourceBaseURL:(NSURL *)resourceBaseURL completionHandler:(void (^)(WKWebExtension *extension, NSError *error))completionHandler
 {
     NSParameterAssert([resourceBaseURL isKindOfClass:NSURL.class]);
-    NSParameterAssert([resourceBaseURL isFileURL]);
-    NSParameterAssert([resourceBaseURL hasDirectoryPath]);
+    NSParameterAssert(resourceBaseURL.isFileURL);
 
     // FIXME: <https://webkit.org/b/276194> Make the WebExtension class load data on a background thread.
     // Use an async dispatch in the meantime to prevent clients from expecting synchronous results.
 
     dispatch_async(dispatch_get_main_queue(), ^{
-        NSError * __autoreleasing error;
-        Ref result = WebKit::WebExtension::create(resourceBaseURL, &error);
+        RefPtr<API::Error> error;
+        Ref result = WebKit::WebExtension::create(nil, resourceBaseURL, error);
 
         if (error) {
-            completionHandler(nil, error);
+            completionHandler(nil, wrapper(error));
             return;
         }
 
@@ -93,24 +94,7 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(WKWebExtension, WebExtension, _webExtensio
 
 - (instancetype)_initWithAppExtensionBundle:(NSBundle *)appExtensionBundle error:(NSError **)error
 {
-    NSParameterAssert([appExtensionBundle isKindOfClass:NSBundle.class]);
-
-    if (error)
-        *error = nil;
-
-    if (!(self = [super init]))
-        return nil;
-
-    NSError * __autoreleasing internalError;
-    API::Object::constructInWrapper<WebKit::WebExtension>(self, appExtensionBundle, &internalError);
-
-    if (internalError) {
-        if (error)
-            *error = internalError;
-        return nil;
-    }
-
-    return self;
+    return [self _initWithAppExtensionBundle:appExtensionBundle resourceBaseURL:nil error:error];
 }
 
 // FIXME: Remove after Safari has adopted new methods.
@@ -121,9 +105,20 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(WKWebExtension, WebExtension, _webExtensio
 
 - (instancetype)_initWithResourceBaseURL:(NSURL *)resourceBaseURL error:(NSError **)error
 {
-    NSParameterAssert([resourceBaseURL isKindOfClass:NSURL.class]);
-    NSParameterAssert([resourceBaseURL isFileURL]);
-    NSParameterAssert([resourceBaseURL hasDirectoryPath]);
+    return [self _initWithAppExtensionBundle:nil resourceBaseURL:resourceBaseURL error:error];
+}
+
+- (instancetype)_initWithAppExtensionBundle:(nullable NSBundle *)appExtensionBundle resourceBaseURL:(nullable NSURL *)resourceBaseURL error:(NSError **)error
+{
+    NSParameterAssert(appExtensionBundle || resourceBaseURL);
+
+    if (appExtensionBundle)
+        NSParameterAssert([appExtensionBundle isKindOfClass:NSBundle.class]);
+
+    if (resourceBaseURL) {
+        NSParameterAssert([resourceBaseURL isKindOfClass:NSURL.class]);
+        NSParameterAssert(resourceBaseURL.isFileURL);
+    }
 
     if (error)
         *error = nil;
@@ -131,12 +126,12 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(WKWebExtension, WebExtension, _webExtensio
     if (!(self = [super init]))
         return nil;
 
-    NSError * __autoreleasing internalError;
-    API::Object::constructInWrapper<WebKit::WebExtension>(self, resourceBaseURL, &internalError);
+    RefPtr<API::Error> internalError;
+    API::Object::constructInWrapper<WebKit::WebExtension>(self, appExtensionBundle, resourceBaseURL, internalError);
 
     if (internalError) {
         if (error)
-            *error = internalError;
+            *error = wrapper(internalError);
         return nil;
     }
 
@@ -157,7 +152,7 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(WKWebExtension, WebExtension, _webExtensio
     if (!(self = [super init]))
         return nil;
 
-    API::Object::constructInWrapper<WebKit::WebExtension>(self, manifest, resources);
+    API::Object::constructInWrapper<WebKit::WebExtension>(self, manifest, WebKit::toDataMap(resources));
 
     return self;
 }
@@ -169,150 +164,154 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(WKWebExtension, WebExtension, _webExtensio
     if (!(self = [super init]))
         return nil;
 
-    API::Object::constructInWrapper<WebKit::WebExtension>(self, resources);
+    API::Object::constructInWrapper<WebKit::WebExtension>(self, WebKit::toDataMap(resources));
 
     return self;
 }
 
 - (NSDictionary<NSString *, id> *)manifest
 {
-    return _webExtension->manifest();
+    return self._protectedWebExtension->manifest();
 }
 
 - (double)manifestVersion
 {
-    return _webExtension->manifestVersion();
+    return self._protectedWebExtension->manifestVersion();
 }
 
 - (BOOL)supportsManifestVersion:(double)version
 {
-    return _webExtension->supportsManifestVersion(version);
+    return self._protectedWebExtension->supportsManifestVersion(version);
 }
 
 - (NSLocale *)defaultLocale
 {
-    return _webExtension->defaultLocale();
+    if (auto *defaultLocale = nsStringNilIfEmpty(self._protectedWebExtension->defaultLocale()))
+        return [NSLocale localeWithLocaleIdentifier:defaultLocale];
+    return nil;
 }
 
 - (NSString *)displayName
 {
-    return _webExtension->displayName();
+    return nsStringNilIfEmpty(self._protectedWebExtension->displayName());
 }
 
 - (NSString *)displayShortName
 {
-    return _webExtension->displayShortName();
+    return nsStringNilIfEmpty(self._protectedWebExtension->displayShortName());
 }
 
 - (NSString *)displayVersion
 {
-    return _webExtension->displayVersion();
+    return nsStringNilIfEmpty(self._protectedWebExtension->displayVersion());
 }
 
 - (NSString *)displayDescription
 {
-    return _webExtension->displayDescription();
+    return nsStringNilIfEmpty(self._protectedWebExtension->displayDescription());
 }
 
 - (NSString *)displayActionLabel
 {
-    return _webExtension->displayActionLabel();
+    return nsStringNilIfEmpty(self._protectedWebExtension->displayActionLabel());
 }
 
 - (NSString *)version
 {
-    return _webExtension->version();
+    return nsStringNilIfEmpty(self._protectedWebExtension->version());
 }
 
 - (CocoaImage *)iconForSize:(CGSize)size
 {
-    return _webExtension->icon(size);
+    return WebKit::toCocoaImage(self._protectedWebExtension->icon(WebCore::FloatSize(size)));
 }
 
 - (CocoaImage *)actionIconForSize:(CGSize)size
 {
-    return _webExtension->actionIcon(size);
+    return WebKit::toCocoaImage(self._protectedWebExtension->actionIcon(WebCore::FloatSize(size)));
 }
 
 - (NSSet<WKWebExtensionPermission> *)requestedPermissions
 {
-    return WebKit::toAPI(_webExtension->requestedPermissions());
+    return WebKit::toAPI(self._protectedWebExtension->requestedPermissions());
 }
 
 - (NSSet<WKWebExtensionPermission> *)optionalPermissions
 {
-    return WebKit::toAPI(_webExtension->optionalPermissions());
+    return WebKit::toAPI(self._protectedWebExtension->optionalPermissions());
 }
 
 - (NSSet<WKWebExtensionMatchPattern *> *)requestedPermissionMatchPatterns
 {
-    return toAPI(_webExtension->requestedPermissionMatchPatterns());
+    return toAPI(self._protectedWebExtension->requestedPermissionMatchPatterns());
 }
 
 - (NSSet<WKWebExtensionMatchPattern *> *)optionalPermissionMatchPatterns
 {
-    return toAPI(_webExtension->optionalPermissionMatchPatterns());
+    return toAPI(self._protectedWebExtension->optionalPermissionMatchPatterns());
 }
 
 - (NSSet<WKWebExtensionMatchPattern *> *)allRequestedMatchPatterns
 {
-    return toAPI(_webExtension->allRequestedMatchPatterns());
+    return toAPI(self._protectedWebExtension->allRequestedMatchPatterns());
 }
 
 - (NSArray<NSError *> *)errors
 {
-    return _webExtension->errors();
+    return createNSArray(self._protectedWebExtension->errors(), [](auto&& child) -> id {
+        return wrapper(child);
+    }).autorelease();
 }
 
 - (BOOL)hasBackgroundContent
 {
-    return _webExtension->hasBackgroundContent();
+    return self._protectedWebExtension->hasBackgroundContent();
 }
 
 - (BOOL)hasPersistentBackgroundContent
 {
-    return _webExtension->backgroundContentIsPersistent();
+    return self._protectedWebExtension->backgroundContentIsPersistent();
 }
 
 - (BOOL)hasInjectedContent
 {
-    return _webExtension->hasStaticInjectedContent();
+    return self._protectedWebExtension->hasStaticInjectedContent();
 }
 
 - (BOOL)hasOptionsPage
 {
-    return _webExtension->hasOptionsPage();
+    return self._protectedWebExtension->hasOptionsPage();
 }
 
 - (BOOL)hasOverrideNewTabPage
 {
-    return _webExtension->hasOverrideNewTabPage();
+    return self._protectedWebExtension->hasOverrideNewTabPage();
 }
 
 - (BOOL)hasCommands
 {
-    return _webExtension->hasCommands();
+    return self._protectedWebExtension->hasCommands();
 }
 
 - (BOOL)hasContentModificationRules
 {
-    return _webExtension->hasContentModificationRules();
+    return self._protectedWebExtension->hasContentModificationRules();
 }
 
 - (BOOL)_hasServiceWorkerBackgroundContent
 {
-    return _webExtension->backgroundContentIsServiceWorker();
+    return self._protectedWebExtension->backgroundContentIsServiceWorker();
 }
 
 - (BOOL)_hasModularBackgroundContent
 {
-    return _webExtension->backgroundContentUsesModules();
+    return self._protectedWebExtension->backgroundContentUsesModules();
 }
 
 #if ENABLE(WK_WEB_EXTENSIONS_SIDEBAR)
 - (BOOL)_hasSidebar
 {
-    return _webExtension->hasSidebar();
+    return _webExtension->hasAnySidebar();
 }
 #else // ENABLE(WK_WEB_EXTENSIONS_SIDEBAR)
 - (BOOL)_hasSidebar
@@ -329,6 +328,11 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(WKWebExtension, WebExtension, _webExtensio
 }
 
 - (WebKit::WebExtension&)_webExtension
+{
+    return *_webExtension;
+}
+
+- (Ref<WebKit::WebExtension>)_protectedWebExtension
 {
     return *_webExtension;
 }
@@ -352,9 +356,7 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(WKWebExtension, WebExtension, _webExtensio
 
 - (instancetype)_initWithAppExtensionBundle:(NSBundle *)bundle error:(NSError **)error
 {
-    if (error)
-        *error = [NSError errorWithDomain:NSCocoaErrorDomain code:NSFeatureUnsupportedError userInfo:nil];
-    return nil;
+    return [self _initWithAppExtensionBundle:bundle resourceBaseURL:nil error:error];
 }
 
 - (instancetype)initWithResourceBaseURL:(NSURL *)resourceBaseURL error:(NSError **)error
@@ -363,6 +365,11 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(WKWebExtension, WebExtension, _webExtensio
 }
 
 - (instancetype)_initWithResourceBaseURL:(NSURL *)resourceBaseURL error:(NSError **)error
+{
+    return [self _initWithAppExtensionBundle:nil resourceBaseURL:resourceBaseURL error:error];
+}
+
+- (instancetype)_initWithAppExtensionBundle:(nullable NSBundle *)bundle resourceBaseURL:(nullable NSURL *)resourceBaseURL error:(NSError **)error
 {
     if (error)
         *error = [NSError errorWithDomain:NSCocoaErrorDomain code:NSFeatureUnsupportedError userInfo:nil];

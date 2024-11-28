@@ -32,21 +32,12 @@
 #include <wtf/Forward.h>
 #include <wtf/Function.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/TZoneMallocInlines.h>
-#include <wtf/WeakPtr.h>
-
-namespace WebKit {
-class CtapDriver;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::CtapDriver> : std::true_type { };
-}
 
 namespace WebKit {
 
-class CtapDriver : public CanMakeWeakPtr<CtapDriver> {
+class CtapDriver : public RefCountedAndCanMakeWeakPtr<CtapDriver> {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(CtapDriver);
     WTF_MAKE_NONCOPYABLE(CtapDriver);
 public:
@@ -58,17 +49,20 @@ public:
 
     WebCore::AuthenticatorTransport transport() const { return m_transport; }
     fido::ProtocolVersion protocol() const { return m_protocol; }
+    void setMaxMsgSize(std::optional<uint32_t> maxMsgSize) { m_maxMsgSize = maxMsgSize; }
+    bool isValidSize(size_t msgSize) { return !m_maxMsgSize || msgSize <= static_cast<size_t>(*m_maxMsgSize); }
 
     virtual void transact(Vector<uint8_t>&& data, ResponseCallback&&) = 0;
     virtual void cancel() { };
-
 protected:
-    CtapDriver(WebCore::AuthenticatorTransport transport)
-        : m_transport(transport) { }
+    explicit CtapDriver(WebCore::AuthenticatorTransport transport)
+        : m_transport(transport)
+    { }
 
 private:
     fido::ProtocolVersion m_protocol { fido::ProtocolVersion::kCtap };
     WebCore::AuthenticatorTransport m_transport;
+    std::optional<uint32_t> m_maxMsgSize;
 };
 
 } // namespace WebKit

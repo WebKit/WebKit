@@ -146,7 +146,7 @@ public:
     void setCustomUserAgent(JSStringRef);
 
     // Special DOM functions.
-    void clearBackForwardList();
+    void clearBackForwardList(JSContextRef, JSValueRef callback);
     void execCommand(JSStringRef name, JSStringRef showUI, JSStringRef value);
     bool isCommandEnabled(JSStringRef name);
     unsigned windowCount();
@@ -155,7 +155,7 @@ public:
     void testRepaint() { m_testRepaint = true; }
     void repaintSweepHorizontally() { m_testRepaintSweepHorizontally = true; }
     void display();
-    void displayAndTrackRepaints();
+    void displayAndTrackRepaints(JSContextRef, JSValueRef callback);
     void displayOnLoadFinish() { m_displayOnLoadFinish = true; }
     bool shouldDisplayOnLoadFinish() { return m_displayOnLoadFinish; }
     void dontForceRepaint() { m_forceRepaint = false; }
@@ -370,6 +370,7 @@ public:
     void setShouldDecideResponsePolicyAfterDelay(bool);
     void setNavigationGesturesEnabled(bool);
     void setIgnoresViewportScaleLimits(bool);
+    void setUseDarkAppearanceForTesting(bool);
     void setShouldDownloadUndisplayableMIMETypes(bool);
     void setShouldAllowDeviceOrientationAndMotionAccess(bool);
     void stopLoading();

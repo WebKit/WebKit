@@ -20,9 +20,26 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-header: <WebCore/FontPlatformData.h>
+#if USE(CORE_TEXT) || USE(SKIA)
+using WebCore::FontPlatformData::IPCData = std::variant<WebCore::FontPlatformSerializedData, WebCore::FontPlatformSerializedCreationData>;
+#endif
 
-#if USE(CORE_TEXT)
+[RefCounted] class WebCore::Font {
+    WebCore::FontInternalAttributes attributes();
+    WebCore::FontPlatformData platformData();
+}
+
+[CreateUsing=fromIPCData] class WebCore::FontPlatformData {
+    float size();
+    WebCore::FontOrientation orientation();
+    WebCore::FontWidthVariant widthVariant();
+    WebCore::TextRenderingMode textRenderingMode();
+    bool syntheticBold();
+    bool syntheticOblique();
+    WebCore::FontPlatformData::IPCData toIPCData();
+}
+
+header: <WebCore/FontPlatformData.h>
 [CustomHeader] struct WebCore::FontPlatformDataAttributes {
     float m_size;
     WebCore::FontOrientation m_orientation;
@@ -30,10 +47,15 @@ header: <WebCore/FontPlatformData.h>
     WebCore::TextRenderingMode m_textRenderingMode;
     bool m_syntheticBold;
     bool m_syntheticOblique;
+#if USE(CORE_TEXT)
     RetainPtr<CFDictionaryRef> m_attributes;
     CTFontDescriptorOptions m_options;
     RetainPtr<CFStringRef> m_url;
     RetainPtr<CFStringRef> m_psName;
-};
 #endif
-
+#if USE(SKIA)
+    SkString m_familyName;
+    SkFontStyle m_style;
+    Vector<hb_feature_t> m_features;
+#endif
+};

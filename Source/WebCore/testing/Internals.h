@@ -31,7 +31,6 @@
 #include "CSSComputedStyleDeclaration.h"
 #include "ContextDestructionObserver.h"
 #include "Cookie.h"
-#include "DocumentMarker.h"
 #include "EpochTimeStamp.h"
 #include "EventTrackingRegions.h"
 #include "ExceptionOr.h"
@@ -146,6 +145,8 @@ class WebGLRenderingContext;
 class WindowProxy;
 class XMLHttpRequest;
 
+enum class DocumentMarkerType : uint32_t;
+
 #if ENABLE(ENCRYPTED_MEDIA)
 class MediaKeys;
 class MediaKeySession;
@@ -179,6 +180,10 @@ class HTMLModelElement;
 
 #if ENABLE(SPEECH_SYNTHESIS)
 class PlatformSpeechSynthesizerMock;
+#endif
+
+#if ENABLE(WEB_CODECS)
+class WebCodecsVideoDecoder;
 #endif
 
 template<typename IDLType> class DOMPromiseDeferred;
@@ -261,6 +266,10 @@ public:
     unsigned remoteImagesCountForTesting() const;
     void setAsyncDecodingEnabledForTesting(HTMLImageElement&, bool enabled);
     void setForceUpdateImageDataEnabledForTesting(HTMLImageElement&, bool enabled);
+
+#if ENABLE(WEB_CODECS)
+    bool hasPendingActivity(const WebCodecsVideoDecoder&) const;
+#endif
 
     void setGridMaxTracksLimit(unsigned);
 
@@ -369,8 +378,18 @@ public:
 
     ExceptionOr<String> viewBaseBackgroundColor();
     ExceptionOr<void> setViewBaseBackgroundColor(const String& colorValue);
+    ExceptionOr<void> setUnderPageBackgroundColorOverride(const String& colorValue);
 
     ExceptionOr<String> documentBackgroundColor();
+
+    ExceptionOr<bool> displayP3Available()
+    {
+#if ENABLE(PREDEFINED_COLOR_SPACE_DISPLAY_P3)
+        return true;
+#else
+        return false;
+#endif
+    }
 
     ExceptionOr<void> setPagination(const String& mode, int gap, int pageLength);
     ExceptionOr<uint64_t> lineIndexAfterPageBreak(Element&);
@@ -379,12 +398,12 @@ public:
     ExceptionOr<bool> wasLastChangeUserEdit(Element& textField);
     bool elementShouldAutoComplete(HTMLInputElement&);
     void setAutofilled(HTMLInputElement&, bool enabled);
-    void setAutoFilledAndViewable(HTMLInputElement&, bool enabled);
-    void setAutoFilledAndObscured(HTMLInputElement&, bool enabled);
+    void setAutofilledAndViewable(HTMLInputElement&, bool enabled);
+    void setAutofilledAndObscured(HTMLInputElement&, bool enabled);
     enum class AutoFillButtonType { None, Contacts, Credentials, StrongPassword, CreditCard, Loading };
-    void setShowAutoFillButton(HTMLInputElement&, AutoFillButtonType);
-    AutoFillButtonType autoFillButtonType(const HTMLInputElement&);
-    AutoFillButtonType lastAutoFillButtonType(const HTMLInputElement&);
+    void setAutofillButtonType(HTMLInputElement&, AutoFillButtonType);
+    AutoFillButtonType autofillButtonType(const HTMLInputElement&);
+    AutoFillButtonType lastAutofillButtonType(const HTMLInputElement&);
     Vector<String> recentSearches(const HTMLInputElement&);
     ExceptionOr<void> scrollElementToRect(Element&, int x, int y, int w, int h);
 
@@ -463,6 +482,8 @@ public:
 
     bool isSpellcheckDisabledExceptTextReplacement(const HTMLInputElement&) const;
 
+    ExceptionOr<void> setMarkerFor(const String& markerTypeString, int from, int length, const String&);
+
     void handleAcceptedCandidate(const String& candidate, unsigned location, unsigned length);
     void changeSelectionListType();
     void changeBackToReplacedString(const String& replacedString);
@@ -501,7 +522,7 @@ public:
         LAYER_TREE_INCLUDES_BACKING_STORE_ATTACHED = 128,
         LAYER_TREE_INCLUDES_ROOT_LAYER_PROPERTIES = 256,
         LAYER_TREE_INCLUDES_EVENT_REGION = 512,
-        LAYER_TREE_INCLUDES_DEEP_COLOR = 1024,
+        LAYER_TREE_INCLUDES_EXTENDED_COLOR = 1024,
         LAYER_TREE_INCLUDES_DEVICE_SCALE = 2048,
     };
     ExceptionOr<String> layerTreeAsText(Document&, unsigned short flags) const;
@@ -669,6 +690,12 @@ public:
     ExceptionOr<unsigned> styleRecalcCount();
     unsigned lastStyleUpdateSize() const;
 
+    ExceptionOr<void> startTrackingLayoutUpdates();
+    ExceptionOr<unsigned> layoutUpdateCount();
+
+    ExceptionOr<void> startTrackingRenderLayerPositionUpdates();
+    ExceptionOr<unsigned> renderLayerPositionUpdateCount();
+
     ExceptionOr<void> startTrackingCompositingUpdates();
     ExceptionOr<unsigned> compositingUpdateCount();
 
@@ -683,7 +710,6 @@ public:
 
     void updateLayoutAndStyleForAllFrames() const;
     ExceptionOr<void> updateLayoutIgnorePendingStylesheetsAndRunPostLayoutTasks(Node*);
-    unsigned layoutCount() const;
 
     Ref<ArrayBuffer> serializeObject(const RefPtr<SerializedScriptValue>&) const;
     Ref<SerializedScriptValue> deserializeBuffer(ArrayBuffer&) const;
@@ -1201,6 +1227,8 @@ public:
     ExceptionOr<RefPtr<VTTCue>> mediaElementCurrentlySpokenCue(HTMLMediaElement&);
 #endif
 
+    bool elementIsActiveNowPlayingSession(HTMLMediaElement&) const;
+
 #endif // ENABLE(VIDEO)
 
     void setCaptureExtraNetworkLoadMetricsEnabled(bool);
@@ -1372,7 +1400,9 @@ public:
 
     ExceptionOr<unsigned> createSleepDisabler(const String& reason, bool display);
     bool destroySleepDisabler(unsigned identifier);
-        
+
+    void setTopDocumentURLForQuirks(const String&);
+
 #if ENABLE(APP_HIGHLIGHTS)
     Vector<String> appHighlightContextMenuItemTitles() const;
     unsigned numberOfAppHighlights();
@@ -1478,13 +1508,17 @@ public:
     };
 
     Vector<PDFAnnotationRect> pdfAnnotationRectsForTesting(Element& pluginElement) const;
+    void setPDFTextAnnotationValueForTesting(Element& pluginElement, unsigned pageIndex, unsigned annotationIndex, const String& value);
     void setPDFDisplayModeForTesting(Element&, const String&) const;
+    void unlockPDFDocumentForTesting(Element&, const String&) const;
     bool sendEditingCommandToPDFForTesting(Element&, const String& commandName, const String& argument) const;
     void registerPDFTest(Ref<VoidCallback>&&, Element&);
 
     const String& defaultSpatialTrackingLabel() const;
 
+#if ENABLE(VIDEO)
     bool isEffectivelyMuted(const HTMLMediaElement&);
+#endif
 
     using RenderingMode = WebCore::RenderingMode;
     std::optional<RenderingMode> getEffectiveRenderingModeOfNewlyCreatedAcceleratedImageBuffer();
@@ -1500,10 +1534,10 @@ private:
 
 #if ENABLE(MEDIA_STREAM)
     // CheckedPtr interface
-    uint32_t ptrCount() const final { return CanMakeCheckedPtr::ptrCount(); }
-    uint32_t ptrCountWithoutThreadCheck() const final { return CanMakeCheckedPtr::ptrCountWithoutThreadCheck(); }
-    void incrementPtrCount() const final { CanMakeCheckedPtr::incrementPtrCount(); }
-    void decrementPtrCount() const final { CanMakeCheckedPtr::decrementPtrCount(); }
+    uint32_t checkedPtrCount() const final { return CanMakeCheckedPtr::checkedPtrCount(); }
+    uint32_t checkedPtrCountWithoutThreadCheck() const final { return CanMakeCheckedPtr::checkedPtrCountWithoutThreadCheck(); }
+    void incrementCheckedPtrCount() const final { CanMakeCheckedPtr::incrementCheckedPtrCount(); }
+    void decrementCheckedPtrCount() const final { CanMakeCheckedPtr::decrementCheckedPtrCount(); }
 #endif // ENABLE(MEDIA_STREAM)
 
     Document* contextDocument() const;
@@ -1528,7 +1562,7 @@ private:
 
     CachedResource* resourceFromMemoryCache(const String& url);
 
-    bool hasMarkerFor(DocumentMarker::Type, int from, int length);
+    bool hasMarkerFor(DocumentMarkerType, int from, int length);
 
 #if ENABLE(MEDIA_STREAM)
     // RealtimeMediaSourceObserver API

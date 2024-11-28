@@ -27,7 +27,14 @@
 
 <div id="console"></div>
 <script>
-if (window.eventSender) {
+onload = async () => {
+    if (!window.testRunner || !window.eventSender) {
+        debug("Test manually if options are getting selected by dragging on the select element.");
+        return;
+    }
+
+    testRunner.waitUntilDone();
+
     debug("Test for select element with multiple attribute");
     var selectObject = document.getElementById("selectId");
 
@@ -36,38 +43,38 @@ if (window.eventSender) {
     var y = selectObject.offsetTop + optionHeight / 2;
 
     eventSender.dragMode = false;
-    eventSender.mouseMoveTo(x, y);
-    eventSender.mouseDown();
+    await eventSender.asyncMouseMoveTo(x, y);
+    await eventSender.asyncMouseDown();
 
     debug("Dragging down");
-    eventSender.mouseDown();
-    eventSender.mouseMoveTo(x, y + (optionHeight * 3));
-    eventSender.mouseUp();
+    await eventSender.asyncMouseDown();
+    await eventSender.asyncMouseMoveTo(x, y + (optionHeight * 3));
+    await eventSender.asyncMouseUp();
     testOptionSelection(0, 4, "true", "selectId");
 
     debug("Dragging up");
-    eventSender.mouseDown();
-    eventSender.mouseMoveTo(x, y);
-    eventSender.mouseUp();
+    await eventSender.asyncMouseDown();
+    await eventSender.asyncMouseMoveTo(x, y);
+    await eventSender.asyncMouseUp();
     testOptionSelection(0, 4, "true", "selectId");
 
     debug("Dragging with addSelectionKey")
-    eventSender.mouseDown();
-    eventSender.mouseUp();
-    eventSender.mouseMoveTo(x, y + (optionHeight * 2));
-    eventSender.mouseDown(0, ["addSelectionKey"]);
-    eventSender.mouseMoveTo(x, y + (optionHeight * 4));
-    eventSender.mouseUp(0, ["addSelectionKey"]);
+    await eventSender.asyncMouseDown();
+    await eventSender.asyncMouseUp();
+    await eventSender.asyncMouseMoveTo(x, y + (optionHeight * 2));
+    await eventSender.asyncMouseDown(0, ["addSelectionKey"]);
+    await eventSender.asyncMouseMoveTo(x, y + (optionHeight * 4));
+    await eventSender.asyncMouseUp(0, ["addSelectionKey"]);
     testOptionSelection(0, 1, "true", "selectId");
     testOptionSelection(2, 5, "true", "selectId");
 
     debug("Dragging with rangeSelectionKey");
-    eventSender.mouseDown();
-    eventSender.mouseUp();
-    eventSender.mouseMoveTo(x, y + (optionHeight * 2));
-    eventSender.mouseDown(0, ["rangeSelectionKey"]);
-    eventSender.mouseMoveTo(x, y);
-    eventSender.mouseUp(0, ["rangeSelectionKey"]);
+    await eventSender.asyncMouseDown();
+    await eventSender.asyncMouseUp();
+    await eventSender.asyncMouseMoveTo(x, y + (optionHeight * 2));
+    await eventSender.asyncMouseDown(0, ["rangeSelectionKey"]);
+    await eventSender.asyncMouseMoveTo(x, y);
+    await eventSender.asyncMouseUp(0, ["rangeSelectionKey"]);
     testOptionSelection(0, 4, "true", "selectId");
 
     debug("Test for select element without multiple attribute");
@@ -77,41 +84,40 @@ if (window.eventSender) {
     y = nonMultipleObject.offsetTop + optionHeight / 2;
 
     eventSender.dragMode = false;
-    eventSender.mouseMoveTo(x, y);
-    eventSender.mouseDown();
+    await eventSender.asyncMouseMoveTo(x, y);
+    await eventSender.asyncMouseDown();
 
     debug("Dragging down");
-    eventSender.mouseDown();
-    eventSender.mouseMoveTo(x, y + (optionHeight * 3));
-    eventSender.mouseUp();
+    await eventSender.asyncMouseDown();
+    await eventSender.asyncMouseMoveTo(x, y + (optionHeight * 3));
+    await eventSender.asyncMouseUp();
     testOptionSelection(0, 3, "false", "nonmultiple");
     testOptionSelection(3, 4, "true", "nonmultiple");
 
     debug("Dragging up");
-    eventSender.mouseDown();
-    eventSender.mouseMoveTo(x, y);
-    eventSender.mouseUp();
+    await eventSender.asyncMouseDown();
+    await eventSender.asyncMouseMoveTo(x, y);
+    await eventSender.asyncMouseUp();
     testOptionSelection(0, 1, "true", "nonmultiple");
     testOptionSelection(1, 4, "false", "nonmultiple");
 
     debug("Dragging with addSelectionKey")
-    eventSender.mouseDown();
-    eventSender.mouseDown(0, "addSelectionKey");
-    eventSender.mouseMoveTo(x, y + (optionHeight * 3));
-    eventSender.mouseUp(0, "addSelectionKey");
+    await eventSender.asyncMouseDown();
+    await eventSender.asyncMouseDown(0, "addSelectionKey");
+    await eventSender.asyncMouseMoveTo(x, y + (optionHeight * 3));
+    await eventSender.asyncMouseUp(0, "addSelectionKey");
     testOptionSelection(0, 3, "false", "nonmultiple");
     testOptionSelection(3, 4, "true", "nonmultiple");
 
     debug("Dragging with rangeSelectionKey");
-    eventSender.mouseDown();
-    eventSender.mouseDown(0, "rangeSelectionKey");
-    eventSender.mouseMoveTo(x, y);
-    eventSender.mouseUp(0, "rangeSelectionKey");
+    await eventSender.asyncMouseDown();
+    await eventSender.asyncMouseDown(0, "rangeSelectionKey");
+    await eventSender.asyncMouseMoveTo(x, y);
+    await eventSender.asyncMouseUp(0, "rangeSelectionKey");
     testOptionSelection(0, 1, "true", "nonmultiple");
     testOptionSelection(1, 4, "false", "nonmultiple");
 
-} else {
-    debug("Test manually if options are getting selected by dragging on the select element.");
+    testRunner.notifyDone();
 }
 
 function testOptionSelection(start, end, criteria, element) {

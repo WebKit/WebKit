@@ -48,8 +48,13 @@ RemoteObjectRegistry::~RemoteObjectRegistry() = default;
 
 template<typename M> void RemoteObjectRegistry::send(M&& message)
 {
-    WTF::switchOn(messageSender(), [&] (auto sender) {
-        sender.get().send(WTFMove(message), messageDestinationID());
+    auto messageSender = this->messageSender();
+    auto messageDestinationID = this->messageDestinationID();
+    if (!messageSender || !messageDestinationID)
+        return;
+
+    WTF::switchOn(*messageSender, [&] (auto sender) {
+        sender.get().send(WTFMove(message), *messageDestinationID);
     });
 }
 

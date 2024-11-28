@@ -1,0 +1,246 @@
+Tests for the CSS.setStyleText command.
+
+
+== Running test suite: CSS.setStyleText
+-- Running test case: CSS.setStyleText with @import rule and nested styles
+Fetching author CSS rules for body and target element (div#x)...
+
+Modifying style text for color "red"...
+Modifying style text for color "yellow"...
+Modifying style text for color "lime"...
+Modifying style text for color "blue"...
+Modifying style text for color "magenta"...
+
+Author CSS rules after modifications:
+[
+  {
+    "selectorList": {
+      "selectors": [
+        {
+          "text": "body",
+          "specificity": [
+            0,
+            0,
+            1
+          ]
+        }
+      ],
+      "text": "body",
+      "range": "<filtered>"
+    },
+    "sourceLine": "<filtered>",
+    "origin": "author",
+    "style": {
+      "cssProperties": [
+        {
+          "name": "background-color",
+          "value": "red",
+          "text": "background-color: red;",
+          "range": "<filtered>",
+          "implicit": false,
+          "status": "active"
+        }
+      ],
+      "shorthandEntries": [],
+      "styleId": "<filtered>",
+      "width": "",
+      "height": "",
+      "range": "<filtered>",
+      "cssText": "background-color: red;"
+    },
+    "sourceURL": "<filtered>",
+    "ruleId": "<filtered>",
+    "isImplicitlyNested": false
+  },
+  {
+    "selectorList": {
+      "selectors": [
+        {
+          "text": "body",
+          "specificity": [
+            0,
+            0,
+            1
+          ]
+        }
+      ],
+      "text": "body",
+      "range": "<filtered>"
+    },
+    "sourceLine": "<filtered>",
+    "origin": "author",
+    "style": {
+      "cssProperties": [
+        {
+          "name": "background-color",
+          "value": "lime",
+          "text": "background-color: lime;",
+          "range": "<filtered>",
+          "implicit": false,
+          "status": "active"
+        }
+      ],
+      "shorthandEntries": [],
+      "styleId": "<filtered>",
+      "width": "",
+      "height": "",
+      "range": "<filtered>",
+      "cssText": "background-color: lime;\n#x {background-color: yellow;}\n"
+    },
+    "sourceURL": "<filtered>",
+    "ruleId": "<filtered>",
+    "isImplicitlyNested": false
+  },
+  {
+    "selectorList": {
+      "selectors": [
+        {
+          "text": "body",
+          "specificity": [
+            0,
+            0,
+            1
+          ]
+        }
+      ],
+      "text": "body",
+      "range": "<filtered>"
+    },
+    "sourceLine": "<filtered>",
+    "origin": "author",
+    "style": {
+      "cssProperties": [
+        {
+          "name": "background-color",
+          "value": "blue",
+          "text": "background-color: blue;",
+          "range": "<filtered>",
+          "implicit": false,
+          "status": "active"
+        }
+      ],
+      "shorthandEntries": [],
+      "styleId": "<filtered>",
+      "width": "",
+      "height": "",
+      "range": "<filtered>",
+      "cssText": "background-color: blue;\n#x {background-color: magenta;}\n"
+    },
+    "sourceURL": "<filtered>",
+    "ruleId": "<filtered>",
+    "groupings": [
+      {
+        "type": "media-rule",
+        "ruleId": "<filtered>",
+        "text": "(width >= 0)",
+        "range": "<filtered>",
+        "sourceURL": "<filtered>"
+      }
+    ],
+    "isImplicitlyNested": false
+  },
+  {
+    "selectorList": {
+      "selectors": [
+        {
+          "text": "#x",
+          "specificity": [
+            1,
+            0,
+            1
+          ]
+        }
+      ],
+      "text": "& #x",
+      "range": "<filtered>"
+    },
+    "sourceLine": "<filtered>",
+    "origin": "author",
+    "style": {
+      "cssProperties": [
+        {
+          "name": "background-color",
+          "value": "yellow",
+          "text": "background-color: yellow;",
+          "range": "<filtered>",
+          "implicit": false,
+          "status": "active"
+        }
+      ],
+      "shorthandEntries": [],
+      "styleId": "<filtered>",
+      "width": "",
+      "height": "",
+      "range": "<filtered>",
+      "cssText": "background-color: yellow;"
+    },
+    "sourceURL": "<filtered>",
+    "ruleId": "<filtered>",
+    "groupings": [
+      {
+        "type": "style-rule",
+        "ruleId": "<filtered>",
+        "text": "body",
+        "range": "<filtered>",
+        "sourceURL": "<filtered>"
+      }
+    ],
+    "isImplicitlyNested": false
+  },
+  {
+    "selectorList": {
+      "selectors": [
+        {
+          "text": "#x",
+          "specificity": [
+            1,
+            0,
+            1
+          ]
+        }
+      ],
+      "text": "& #x",
+      "range": "<filtered>"
+    },
+    "sourceLine": "<filtered>",
+    "origin": "author",
+    "style": {
+      "cssProperties": [
+        {
+          "name": "background-color",
+          "value": "magenta",
+          "text": "background-color: magenta;",
+          "range": "<filtered>",
+          "implicit": false,
+          "status": "active"
+        }
+      ],
+      "shorthandEntries": [],
+      "styleId": "<filtered>",
+      "width": "",
+      "height": "",
+      "range": "<filtered>",
+      "cssText": "background-color: magenta;"
+    },
+    "sourceURL": "<filtered>",
+    "ruleId": "<filtered>",
+    "groupings": [
+      {
+        "type": "style-rule",
+        "ruleId": "<filtered>",
+        "text": "body",
+        "range": "<filtered>",
+        "sourceURL": "<filtered>"
+      },
+      {
+        "type": "media-rule",
+        "ruleId": "<filtered>",
+        "text": "(width >= 0)",
+        "range": "<filtered>",
+        "sourceURL": "<filtered>"
+      }
+    ],
+    "isImplicitlyNested": false
+  }
+]
+

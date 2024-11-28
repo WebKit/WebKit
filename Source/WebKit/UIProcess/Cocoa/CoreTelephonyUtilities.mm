@@ -33,6 +33,7 @@
 #import <WebCore/RegistrableDomain.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/cf/TypeCastsCF.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/spi/cocoa/SecuritySPI.h>
 
 #import <pal/cocoa/CoreTelephonySoftLink.h>

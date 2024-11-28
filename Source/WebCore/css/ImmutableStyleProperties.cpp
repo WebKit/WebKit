@@ -29,6 +29,9 @@
 #include "StylePropertiesInlines.h"
 #include <wtf/HashMap.h>
 #include <wtf/Hasher.h>
+#include <wtf/NeverDestroyed.h>
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace WebCore {
 
@@ -38,7 +41,7 @@ ImmutableStyleProperties::ImmutableStyleProperties(const CSSProperty* properties
     : StyleProperties(mode, length)
 {
     auto* metadataArray = const_cast<StylePropertyMetadata*>(this->metadataArray());
-    auto* valueArray = bitwise_cast<PackedPtr<CSSValue>*>(this->valueArray());
+    auto* valueArray = std::bit_cast<PackedPtr<CSSValue>*>(this->valueArray());
     for (unsigned i = 0; i < length; ++i) {
         metadataArray[i] = properties[i].metadata();
         RefPtr value = properties[i].value();
@@ -49,7 +52,7 @@ ImmutableStyleProperties::ImmutableStyleProperties(const CSSProperty* properties
 
 ImmutableStyleProperties::~ImmutableStyleProperties()
 {
-    auto* valueArray = bitwise_cast<PackedPtr<CSSValue>*>(this->valueArray());
+    auto* valueArray = std::bit_cast<PackedPtr<CSSValue>*>(this->valueArray());
     for (unsigned i = 0; i < m_arraySize; ++i)
         valueArray[i]->deref();
 }
@@ -62,7 +65,7 @@ Ref<ImmutableStyleProperties> ImmutableStyleProperties::create(const CSSProperty
 
 static auto& deduplicationMap()
 {
-    static NeverDestroyed<HashMap<unsigned, Ref<ImmutableStyleProperties>, AlreadyHashed>> map;
+    static NeverDestroyed<UncheckedKeyHashMap<unsigned, Ref<ImmutableStyleProperties>, AlreadyHashed>> map;
     return map.get();
 }
 
@@ -142,3 +145,5 @@ int ImmutableStyleProperties::findCustomPropertyIndex(StringView propertyName) c
 }
 
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

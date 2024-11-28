@@ -41,6 +41,7 @@
 #import <mach/mach_time.h>
 #import <pal/spi/mac/NSTextInputContextSPI.h>
 #import <wtf/WorkQueue.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 
 namespace WTR {
 

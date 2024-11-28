@@ -57,12 +57,9 @@ FlexLayout::FlexLayout(FlexFormattingContext& flexFormattingContext)
 {
 }
 
-FlexLayout::LogicalFlexItemRects FlexLayout::layout(const LogicalConstraints& logicalConstraints, const LogicalFlexItems& flexItems)
+FlexLayout::LogicalFlexItemRects FlexLayout::layout(const ConstraintsForFlexContent& flexContainerConstraints, const LogicalFlexItems& flexItems)
 {
     // This follows https://www.w3.org/TR/css-flexbox-1/#layout-algorithm
-    // 9.2. (#2) Determine the available main and cross space for the flex items
-    computeAvailableMainAndCrossSpace(logicalConstraints);
-
     SizeList flexItemsMainSizeList(flexItems.size());
     SizeList flexItemsCrossSizeList(flexItems.size());
     LinesCrossSizeList flexLinesCrossSizeList;
@@ -74,13 +71,13 @@ FlexLayout::LogicalFlexItemRects FlexLayout::layout(const LogicalConstraints& lo
         while (needsMainAxisLayout) {
             auto performMainAxisSizing = [&] {
                 // 9.2. (#3) Determine the flex base size and hypothetical main size of each item
-                auto flexBaseAndHypotheticalMainSizeList = flexBaseAndHypotheticalMainSizeForFlexItems(logicalConstraints.mainAxis, flexItems);
+                auto flexBaseAndHypotheticalMainSizeList = flexBaseAndHypotheticalMainSizeForFlexItems(flexItems, flexContainerConstraints.isSizedUnderMinMax());
                 // 9.2. (#4) Determine the main size of the flex container
-                auto flexContainerMainSize = this->flexContainerMainSize(logicalConstraints.mainAxis);
+                auto flexContainerInnerMainSize = this->flexContainerInnerMainSize(flexContainerConstraints.mainAxis());
                 // 9.3. (#5) Collect flex items into flex lines
-                lineRanges = computeFlexLines(flexItems, flexContainerMainSize, flexBaseAndHypotheticalMainSizeList);
+                lineRanges = computeFlexLines(flexItems, flexContainerInnerMainSize, flexBaseAndHypotheticalMainSizeList);
                 // 9.3. (#6) Resolve the flexible lengths of all the flex items to find their used main size
-                flexItemsMainSizeList = computeMainSizeForFlexItems(flexItems, lineRanges, flexContainerMainSize, flexBaseAndHypotheticalMainSizeList);
+                flexItemsMainSizeList = computeMainSizeForFlexItems(flexItems, lineRanges, flexContainerInnerMainSize, flexBaseAndHypotheticalMainSizeList);
             };
             performMainAxisSizing();
 
@@ -88,9 +85,9 @@ FlexLayout::LogicalFlexItemRects FlexLayout::layout(const LogicalConstraints& lo
                 // 9.4. (#7) Determine the hypothetical cross size of each item
                 auto hypotheticalCrossSizeList = hypotheticalCrossSizeForFlexItems(flexItems, flexItemsMainSizeList);
                 // 9.4. (#8) Calculate the cross size of each flex line
-                flexLinesCrossSizeList = crossSizeForFlexLines(lineRanges, logicalConstraints.crossAxis, flexItems, hypotheticalCrossSizeList);
+                flexLinesCrossSizeList = crossSizeForFlexLines(lineRanges, flexContainerConstraints.crossAxis(), flexItems, hypotheticalCrossSizeList);
                 // 9.4. (#9) Handle 'align-content: stretch
-                stretchFlexLines(flexLinesCrossSizeList, lineRanges.size(), logicalConstraints.crossAxis);
+                stretchFlexLines(flexLinesCrossSizeList, lineRanges.size(), flexContainerConstraints.crossAxis().availableSize);
                 // 9.4. (#10) Collapse visibility:collapse items
                 auto collapsedContentNeedsSecondLayout = collapseNonVisibleFlexItems();
                 if (collapsedContentNeedsSecondLayout)
@@ -110,20 +107,23 @@ FlexLayout::LogicalFlexItemRects FlexLayout::layout(const LogicalConstraints& lo
 
     auto performContentAlignment = [&] {
         // 9.5. (#12) Main-Axis Alignment
-        mainPositionAndMargins = handleMainAxisAlignment(m_availableMainSpace, lineRanges, flexItems, flexItemsMainSizeList);
+        mainPositionAndMargins = handleMainAxisAlignment(flexContainerInnerMainSize(flexContainerConstraints.mainAxis()), lineRanges, flexItems, flexItemsMainSizeList);
         // 9.6. (#13 - #16) Cross-Axis Alignment
         crossPositionAndMargins = handleCrossAxisAlignmentForFlexItems(flexItems, lineRanges, flexItemsCrossSizeList, flexLinesCrossSizeList);
-        linesCrossPositionList = handleCrossAxisAlignmentForFlexLines(logicalConstraints.crossAxis, lineRanges, flexLinesCrossSizeList);
+        linesCrossPositionList = handleCrossAxisAlignmentForFlexLines(flexContainerConstraints.crossAxis().availableSize, lineRanges, flexLinesCrossSizeList);
     };
     performContentAlignment();
 
     auto computeFlexItemRects = [&] {
         auto flexRects = LogicalFlexItemRects { flexItems.size() };
+        auto mainAxisGapValue = FlexFormattingUtils::mainAxisGapValue(flexContainer(), flexContainerConstraints.mainAxis().availableSize.value_or(0_lu));
+        auto crossAxisGapValue = FlexFormattingUtils::crossAxisGapValue(flexContainer(), flexContainerConstraints.crossAxis().availableSize.value_or(0_lu));
         for (size_t lineIndex = 0; lineIndex < lineRanges.size(); ++lineIndex) {
             auto lineRange = lineRanges[lineIndex];
             for (auto flexItemIndex = lineRange.begin(); flexItemIndex < lineRange.end(); ++flexItemIndex) {
-                auto flexItemMainPosition = mainPositionAndMargins[flexItemIndex].position;
-                auto flexItemCrossPosition = linesCrossPositionList[lineIndex] + crossPositionAndMargins[lineIndex].position;
+                auto flexItemMainPosition = mainPositionAndMargins[flexItemIndex].position + (flexItemIndex - lineRange.begin()) * mainAxisGapValue;
+                auto flexItemCrossPosition = linesCrossPositionList[lineIndex] + crossPositionAndMargins[flexItemIndex].position + lineIndex * crossAxisGapValue;
+
                 flexRects[flexItemIndex] = {
                     { flexItemMainPosition, flexItemCrossPosition, flexItemsMainSizeList[flexItemIndex], flexItemsCrossSizeList[flexItemIndex] },
                     { mainPositionAndMargins[flexItemIndex].marginStart, mainPositionAndMargins[flexItemIndex].marginEnd }, { crossPositionAndMargins[flexItemIndex].marginStart, crossPositionAndMargins[flexItemIndex].marginEnd }
@@ -135,45 +135,7 @@ FlexLayout::LogicalFlexItemRects FlexLayout::layout(const LogicalConstraints& lo
     return computeFlexItemRects();
 }
 
-void FlexLayout::computeAvailableMainAndCrossSpace(const LogicalConstraints& logicalConstraints)
-{
-    auto computedFinalSize = [&](auto& candidateSizes) {
-        // For each dimension, if that dimension of the flex container's content box is a definite size, use that;
-        // if that dimension of the flex container is being sized under a min or max-content constraint, the available space in that dimension is that constraint;
-        // otherwise, subtract the flex container's margin, border, and padding from the space available to the flex container in that dimension and use that value.
-        if (candidateSizes.definiteSize)
-            return *candidateSizes.definiteSize;
-        if (candidateSizes.minimumContentSize)
-            return *candidateSizes.minimumContentSize;
-        if (candidateSizes.maximumContentSize)
-            return *candidateSizes.maximumContentSize;
-        return candidateSizes.availableSize;
-    };
-    m_availableMainSpace = computedFinalSize(logicalConstraints.mainAxis);
-    m_availableCrossSpace = computedFinalSize(logicalConstraints.crossAxis);
-}
-
-LayoutUnit FlexLayout::maxContentForFlexItem(const LogicalFlexItem& flexItem)
-{
-    // 9.2.3 E Otherwise, size the item into the available space using its used flex basis in place of its main size,
-    // treating a value of content as max-content. If a cross size is needed to determine the main size (e.g. when the flex item’s main size
-    // is in its block axis) and the flex item’s cross size is auto and not definite, in this calculation use fit-content as the flex item’s cross size.
-    // The flex base size is the item’s resulting main size.
-    auto& flexItemBox = flexItem.layoutBox();
-    if (!flexItemBox.establishesInlineFormattingContext()) {
-        ASSERT_NOT_IMPLEMENTED_YET();
-        return { };
-    }
-
-    if (flexItem.isOrhogonal() && !flexItem.crossAxis().definiteSize) {
-        ASSERT_NOT_IMPLEMENTED_YET();
-        return { };
-    }
-
-    return formattingContext().integrationUtils().preferredWidthWithFormattingContextForBox(downcast<ElementBox>(flexItemBox)).second;
-}
-
-FlexLayout::FlexBaseAndHypotheticalMainSizeList FlexLayout::flexBaseAndHypotheticalMainSizeForFlexItems(const LogicalConstraints::AxisGeometry& mainAxis, const LogicalFlexItems& flexItems)
+FlexLayout::FlexBaseAndHypotheticalMainSizeList FlexLayout::flexBaseAndHypotheticalMainSizeForFlexItems(const LogicalFlexItems& flexItems, bool isSizedUnderMinMaxConstraints) const
 {
     auto flexBaseAndHypotheticalMainSizeList = FlexBaseAndHypotheticalMainSizeList { };
     for (auto& flexItem : flexItems) {
@@ -191,8 +153,7 @@ FlexLayout::FlexBaseAndHypotheticalMainSizeList FlexLayout::flexBaseAndHypotheti
             // C. If the used flex basis is content or depends on its available space, and the flex container is being sized under
             //    a min-content or max-content constraint, size the item under that constraint
             auto flexBasisContentOrAvailableSpaceDependent = flexItem.hasContentFlexBasis() || flexItem.hasAvailableSpaceDependentFlexBasis();
-            auto flexContainerHasMinMaxConstraints = mainAxis.minimumContentSize || mainAxis.maximumContentSize;
-            if (flexBasisContentOrAvailableSpaceDependent && flexContainerHasMinMaxConstraints) {
+            if (flexBasisContentOrAvailableSpaceDependent && isSizedUnderMinMaxConstraints) {
                 // Compute flex item's main size.
                 ASSERT_NOT_IMPLEMENTED_YET();
                 return { };
@@ -205,27 +166,31 @@ FlexLayout::FlexBaseAndHypotheticalMainSizeList FlexLayout::flexBaseAndHypotheti
                 ASSERT_NOT_IMPLEMENTED_YET();
                 return { };
             }
-            // E. Otherwise, size the item into the available space using its used flex basis in place of its main size, treating a value of content as max-content.
-            auto usedMainSize = maxContentForFlexItem(flexItem);
-            if (!flexItem.isContentBoxBased())
-                usedMainSize += flexItem.mainAxis().borderAndPadding;
-            return usedMainSize;
+            // E Otherwise, size the item into the available space using its used flex basis in place of its main size,
+            // treating a value of content as max-content. If a cross size is needed to determine the main size (e.g. when the flex item’s main size
+            // is in its block axis) and the flex item’s cross size is auto and not definite, in this calculation use fit-content as the flex item’s cross size.
+            // The flex base size is the item’s resulting main size.
+            if (flexItem.isOrhogonal() && !flexItem.crossAxis().definiteSize) {
+                ASSERT_NOT_IMPLEMENTED_YET();
+                return { };
+            }
+            return formattingUtils().usedMaxContentSizeInMainAxis(flexItem);
         };
         auto flexBaseSize = computedFlexBase();
         // The hypothetical main size is the item's flex base size clamped according to its used min and max main sizes (and flooring the content box size at zero).
-        auto hypotheticalMainSize = std::min(flexItem.mainAxis().maximumUsedSize, std::max(flexItem.mainAxis().minimumUsedSize, flexBaseSize));
+        auto hypotheticalMainSize = std::max(formattingUtils().usedMinimumSizeInMainAxis(flexItem), flexBaseSize);
+        if (auto usedMaximumMainSize = formattingUtils().usedMaximumSizeInMainAxis(flexItem))
+            hypotheticalMainSize = std::min(*usedMaximumMainSize, hypotheticalMainSize);
         flexBaseAndHypotheticalMainSizeList.append({ flexBaseSize, hypotheticalMainSize });
     }
     return flexBaseAndHypotheticalMainSizeList;
 }
 
-LayoutUnit FlexLayout::flexContainerMainSize(const LogicalConstraints::AxisGeometry& mainAxis) const
+LayoutUnit FlexLayout::flexContainerInnerMainSize(const ConstraintsForFlexContent::AxisGeometry& mainAxisGeometry) const
 {
     // 4. Determine the main size of the flex container using the rules of the formatting context in which it participates.
-    //    For this computation, auto margins on flex items are treated as 0.
     // FIXME: above.
-    UNUSED_PARAM(mainAxis);
-    return m_availableMainSpace;
+    return mainAxisGeometry.availableSize.value_or(LayoutUnit::max());
 }
 
 static LayoutUnit outerMainSize(const LogicalFlexItem& flexItem, LayoutUnit mainSize, std::optional<LayoutUnit> usedMargin = { })
@@ -246,7 +211,7 @@ static LayoutUnit outerCrossSize(const LogicalFlexItem& flexItem, LayoutUnit cro
     return outerCrossSize;
 }
 
-FlexLayout::LineRanges FlexLayout::computeFlexLines(const LogicalFlexItems& flexItems, LayoutUnit flexContainerMainSize, const FlexBaseAndHypotheticalMainSizeList& flexBaseAndHypotheticalMainSizeList) const
+FlexLayout::LineRanges FlexLayout::computeFlexLines(const LogicalFlexItems& flexItems, LayoutUnit flexContainerInnerMainSize, const FlexBaseAndHypotheticalMainSizeList& flexBaseAndHypotheticalMainSizeList) const
 {
     // Collect flex items into flex lines:
     // If the flex container is single-line, collect all the flex items into a single flex line.
@@ -257,13 +222,15 @@ FlexLayout::LineRanges FlexLayout::computeFlexLines(const LogicalFlexItems& flex
     if (isSingleLineFlexContainer())
         return { { 0, flexBaseAndHypotheticalMainSizeList.size() } };
 
+    auto mainAxisGapValue = FlexFormattingUtils::mainAxisGapValue(flexContainer(), flexContainerInnerMainSize);
     auto lineRanges = LineRanges { };
     size_t lastWrapIndex = 0;
     auto flexItemsMainSize = LayoutUnit { };
     for (size_t flexItemIndex = 0; flexItemIndex < flexBaseAndHypotheticalMainSizeList.size(); ++flexItemIndex) {
         auto flexItemHypotheticalOuterMainSize = outerMainSize(flexItems[flexItemIndex], flexBaseAndHypotheticalMainSizeList[flexItemIndex].hypotheticalMainSize);
-        auto isFlexLineEmpty = flexItemIndex == lastWrapIndex;
-        if (isFlexLineEmpty || flexItemsMainSize + flexItemHypotheticalOuterMainSize <= flexContainerMainSize) {
+        auto numberOfFlexItemsOnLine = flexItemIndex - lastWrapIndex;
+        auto mainAxisGapSize = mainAxisGapValue * numberOfFlexItemsOnLine;
+        if (!numberOfFlexItemsOnLine || flexItemsMainSize + flexItemHypotheticalOuterMainSize + mainAxisGapSize <= flexContainerInnerMainSize) {
             flexItemsMainSize += flexItemHypotheticalOuterMainSize;
             continue;
         }
@@ -275,7 +242,7 @@ FlexLayout::LineRanges FlexLayout::computeFlexLines(const LogicalFlexItems& flex
     return lineRanges;
 }
 
-FlexLayout::SizeList FlexLayout::computeMainSizeForFlexItems(const LogicalFlexItems& flexItems, const LineRanges& lineRanges, LayoutUnit flexContainerMainSize, const FlexBaseAndHypotheticalMainSizeList& flexBaseAndHypotheticalMainSizeList) const
+FlexLayout::SizeList FlexLayout::computeMainSizeForFlexItems(const LogicalFlexItems& flexItems, const LineRanges& lineRanges, LayoutUnit flexContainerInnerMainSize, const FlexBaseAndHypotheticalMainSizeList& flexBaseAndHypotheticalMainSizeList) const
 {
     SizeList mainSizeList(flexItems.size());
     Vector<bool> isInflexibleItemList(flexItems.size(), false);
@@ -283,6 +250,7 @@ FlexLayout::SizeList FlexLayout::computeMainSizeForFlexItems(const LogicalFlexIt
     for (size_t lineIndex = 0; lineIndex < lineRanges.size(); ++lineIndex) {
         auto lineRange = lineRanges[lineIndex];
         auto nonFrozenSet = ListHashSet<size_t> { };
+        auto availableMainSpaceForLineContent = mainAxisAvailableSpaceForItemAlignment(flexContainerInnerMainSize, lineRange.distance());
 
         // 1. Determine the used flex factor. Sum the outer hypothetical main sizes of all items on the line.
         //    If the sum is less than the flex container's inner main size, use the flex grow factor for the rest of this algorithm;
@@ -293,7 +261,7 @@ FlexLayout::SizeList FlexLayout::computeMainSizeForFlexItems(const LogicalFlexIt
                 auto flexItemHypotheticalOuterMainSize = outerMainSize(flexItems[flexItemIndex], flexBaseAndHypotheticalMainSizeList[flexItemIndex].hypotheticalMainSize);
                 hypotheticalOuterMainSizes += flexItemHypotheticalOuterMainSize;
             }
-            return hypotheticalOuterMainSizes < flexContainerMainSize;
+            return hypotheticalOuterMainSizes < availableMainSpaceForLineContent;
         }();
 
         // 2. Size inflexible items. Freeze, setting its target main size to its hypothetical main size.
@@ -327,8 +295,9 @@ FlexLayout::SizeList FlexLayout::computeMainSizeForFlexItems(const LogicalFlexIt
                 auto flexItemOuterMainSize = outerMainSize(flexItems[flexItemIndex], nonFrozenSet.contains(flexItemIndex) ? flexBaseAndHypotheticalMainSizeList[flexItemIndex].flexBase : mainSizeList[flexItemIndex]);
                 lineContentMainSize += flexItemOuterMainSize;
             }
-            return flexContainerMainSize - lineContentMainSize;
+            return availableMainSpaceForLineContent - lineContentMainSize;
         };
+        auto initialFreeSpace = computedFreeSpace();
 
         auto minimumViolationList = Vector<size_t> { };
         auto maximumViolationList = Vector<size_t> { };
@@ -347,9 +316,12 @@ FlexLayout::SizeList FlexLayout::computeMainSizeForFlexItems(const LogicalFlexIt
             auto adjustFreeSpaceWithFlexFactors = [&] {
                 auto totalFlexFactor = 0.f;
                 for (auto nonFrozenIndex : nonFrozenSet)
-                    totalFlexFactor += flexItems[nonFrozenIndex].growFactor() + flexItems[nonFrozenIndex].shrinkFactor();
-                if (totalFlexFactor < 1)
-                    freeSpace *= totalFlexFactor;
+                    totalFlexFactor += shouldUseFlexGrowFactor ? flexItems[nonFrozenIndex].growFactor() : flexItems[nonFrozenIndex].shrinkFactor();
+                if (totalFlexFactor < 1) {
+                    auto freeSpaceCandidate = LayoutUnit { initialFreeSpace * totalFlexFactor };
+                    if (freeSpaceCandidate.abs() < freeSpace.abs())
+                        freeSpace = freeSpaceCandidate;
+                }
             };
             adjustFreeSpaceWithFlexFactors();
 
@@ -359,7 +331,7 @@ FlexLayout::SizeList FlexLayout::computeMainSizeForFlexItems(const LogicalFlexIt
                 usedTotalFactor += shouldUseFlexGrowFactor ? flexItems[nonFrozenIndex].growFactor() : flexItems[nonFrozenIndex].shrinkFactor() * flexBaseAndHypotheticalMainSizeList[nonFrozenIndex].flexBase;
 
             for (auto nonFrozenIndex : nonFrozenSet) {
-                if (!usedTotalFactor) {
+                if (!usedTotalFactor || std::isinf(usedTotalFactor)) {
                     mainSizeList[nonFrozenIndex] = flexBaseAndHypotheticalMainSizeList[nonFrozenIndex].flexBase;
                     continue;
                 }
@@ -391,7 +363,9 @@ FlexLayout::SizeList FlexLayout::computeMainSizeForFlexItems(const LogicalFlexIt
             for (auto nonFrozenIndex : nonFrozenSet) {
                 auto unclampedMainSize = mainSizeList[nonFrozenIndex];
                 auto& flexItem = flexItems[nonFrozenIndex];
-                auto clampedMainSize = std::min(flexItem.mainAxis().maximumUsedSize, std::max(flexItem.mainAxis().minimumUsedSize, unclampedMainSize));
+                auto clampedMainSize = std::max(formattingUtils().usedMinimumSizeInMainAxis(flexItem), unclampedMainSize);
+                if (auto usedMaximumMainSize = formattingUtils().usedMaximumSizeInMainAxis(flexItem))
+                    clampedMainSize = std::min(*usedMaximumMainSize, clampedMainSize);
                 // FIXME: ...and floor its content-box size at zero
                 totalViolation += (clampedMainSize - unclampedMainSize);
                 if (clampedMainSize < unclampedMainSize)
@@ -422,40 +396,19 @@ FlexLayout::SizeList FlexLayout::computeMainSizeForFlexItems(const LogicalFlexIt
 
 FlexLayout::SizeList FlexLayout::hypotheticalCrossSizeForFlexItems(const LogicalFlexItems& flexItems, const SizeList& flexItemsMainSizeList)
 {
-    UNUSED_PARAM(flexItemsMainSizeList);
-    // FIXME: This is where layout is called on flex items.
     SizeList hypotheticalCrossSizeList(flexItems.size());
-    for (size_t flexItemIndex = 0; flexItemIndex < flexItems.size(); ++flexItemIndex) {
-        auto& flexItem = flexItems[flexItemIndex];
-
-        if (auto definiteSize = flexItems[flexItemIndex].crossAxis().definiteSize) {
-            hypotheticalCrossSizeList[flexItemIndex] = *definiteSize;
-            continue;
-        }
-        auto& flexItemBox = flexItem.layoutBox();
-        auto crossSizeAfterPerformingLayout = [&]() -> LayoutUnit {
-            if (!flexItemBox.establishesInlineFormattingContext()) {
-                ASSERT_NOT_IMPLEMENTED_YET();
-                return { };
-            }
-            formattingContext().integrationUtils().layoutWithFormattingContextForBox(downcast<ElementBox>(flexItemBox), flexItemsMainSizeList[flexItemIndex]);
-            return BoxGeometry::marginBoxRect(formattingContext().geometryForFlexItem(flexItemBox)).height();
-        };
-        auto usedCrossSize = crossSizeAfterPerformingLayout();
-        if (!flexItem.isContentBoxBased())
-            usedCrossSize += flexItem.crossAxis().borderAndPadding;
-        hypotheticalCrossSizeList[flexItemIndex] = usedCrossSize;
-    }
+    for (size_t flexItemIndex = 0; flexItemIndex < flexItems.size(); ++flexItemIndex)
+        hypotheticalCrossSizeList[flexItemIndex] = formattingUtils().usedSizeInCrossAxis(flexItems[flexItemIndex], flexItemsMainSizeList[flexItemIndex]);
     return hypotheticalCrossSizeList;
 }
 
-FlexLayout::LinesCrossSizeList FlexLayout::crossSizeForFlexLines(const LineRanges& lineRanges, const LogicalConstraints::AxisGeometry& crossAxis, const LogicalFlexItems& flexItems, const SizeList& flexItemsHypotheticalCrossSizeList) const
+FlexLayout::LinesCrossSizeList FlexLayout::crossSizeForFlexLines(const LineRanges& lineRanges, const ConstraintsForFlexContent::AxisGeometry& crossAxis, const LogicalFlexItems& flexItems, const SizeList& flexItemsHypotheticalCrossSizeList) const
 {
     LinesCrossSizeList flexLinesCrossSizeList(lineRanges.size());
     // If the flex container is single-line and has a definite cross size, the cross size of the flex line is the flex container's inner cross size.
-    if (isSingleLineFlexContainer() && crossAxis.definiteSize) {
+    if (isSingleLineFlexContainer() && crossAxis.availableSize) {
         ASSERT(flexLinesCrossSizeList.size() == 1);
-        flexLinesCrossSizeList[0] = *crossAxis.definiteSize;
+        flexLinesCrossSizeList[0] = *crossAxis.availableSize;
         return flexLinesCrossSizeList;
     }
 
@@ -482,14 +435,14 @@ FlexLayout::LinesCrossSizeList FlexLayout::crossSizeForFlexLines(const LineRange
         flexLinesCrossSizeList[lineIndex] = std::max(maximumHypotheticalOuterCrossSize, maximumAscent + maximumDescent);
         if (isSingleLineFlexContainer()) {
             auto minimumCrossSize = crossAxis.minimumSize.value_or(flexLinesCrossSizeList[lineIndex]);
-            auto maximumCrossSize = crossAxis.maximumSize.value_or(flexLinesCrossSizeList[lineIndex]);
+            auto maximumCrossSize = crossAxis.maximumSize.value_or(LayoutUnit::max());
             flexLinesCrossSizeList[lineIndex] = std::min(maximumCrossSize, std::max(minimumCrossSize, flexLinesCrossSizeList[lineIndex]));
         }
     }
     return flexLinesCrossSizeList;
 }
 
-void FlexLayout::stretchFlexLines(LinesCrossSizeList& flexLinesCrossSizeList, size_t numberOfLines, const LogicalConstraints::AxisGeometry& crossAxis) const
+void FlexLayout::stretchFlexLines(LinesCrossSizeList& flexLinesCrossSizeList, size_t numberOfLines, std::optional<LayoutUnit> crossAxisAvailableSpace) const
 {
     // Handle 'align-content: stretch'.
     // If the flex container has a definite cross size, align-content is stretch, and the sum of the flex lines' cross sizes is less than the flex container's inner cross size,
@@ -500,7 +453,7 @@ void FlexLayout::stretchFlexLines(LinesCrossSizeList& flexLinesCrossSizeList, si
             return true;
         return alignContent.distribution() == ContentDistribution::Default && alignContent.position() == ContentPosition::Normal;
     };
-    if (!linesMayStretch() || !crossAxis.definiteSize)
+    if (!linesMayStretch() || !crossAxisAvailableSpace)
         return;
 
     auto linesCrossSize = [&] {
@@ -509,10 +462,11 @@ void FlexLayout::stretchFlexLines(LinesCrossSizeList& flexLinesCrossSizeList, si
             size += flexLinesCrossSizeList[lineIndex];
         return size;
     }();
-    if (*crossAxis.definiteSize <= linesCrossSize)
+    auto flexContainerUsedCrossSize = crossAxisAvailableSpaceForLineSizingAndAlignment(*crossAxisAvailableSpace, numberOfLines);
+    if (flexContainerUsedCrossSize <= linesCrossSize)
         return;
 
-    auto extraSpace = (*crossAxis.definiteSize - linesCrossSize) / numberOfLines;
+    auto extraSpace = (flexContainerUsedCrossSize - linesCrossSize) / numberOfLines;
     for (size_t lineIndex = 0; lineIndex < flexLinesCrossSizeList.size(); ++lineIndex)
         flexLinesCrossSizeList[lineIndex] += extraSpace;
 }
@@ -561,6 +515,7 @@ FlexLayout::PositionAndMarginsList FlexLayout::handleMainAxisAlignment(LayoutUni
 
     for (auto lineRange : lineRanges) {
         auto lineContentOuterMainSize = LayoutUnit { };
+        auto availableMainSpaceForLineContent = mainAxisAvailableSpaceForItemAlignment(availableMainSpace, lineRange.distance());
 
         auto resolveMarginAuto = [&] {
             // 1. If the remaining free space is positive and at least one main-axis margin on this line is auto, distribute the free space equally among these margins.
@@ -585,11 +540,11 @@ FlexLayout::PositionAndMarginsList FlexLayout::handleMainAxisAlignment(LayoutUni
                 lineContentOuterMainSize += outerMainSize(flexItem, flexItemsMainSizeList[flexItemIndex], mainPositionAndMargins[flexItemIndex].margin());
             }
 
-            auto spaceToDistrubute = availableMainSpace - lineContentOuterMainSize;
+            auto spaceToDistrubute = availableMainSpaceForLineContent - lineContentOuterMainSize;
             if (!autoMarginCount || spaceToDistrubute <= 0)
                 return;
 
-            lineContentOuterMainSize = availableMainSpace;
+            lineContentOuterMainSize = availableMainSpaceForLineContent;
             auto extraMarginSpace = spaceToDistrubute / autoMarginCount;
 
             for (auto flexItemIndex : flexItemsWithMarginAuto) {
@@ -603,56 +558,66 @@ FlexLayout::PositionAndMarginsList FlexLayout::handleMainAxisAlignment(LayoutUni
         };
         resolveMarginAuto();
 
+        auto& justifyContentValue = flexContainerStyle().justifyContent();
+        auto justifyContentDistribution = justifyContentValue.distribution();
+        auto justifyContentPosition = justifyContentValue.position();
+
+        auto setFallbackValuesIfApplicable = [&] {
+            auto itemCount = lineRange.distance();
+            auto hasOverflow = lineContentOuterMainSize > availableMainSpaceForLineContent;
+            if (!hasOverflow && itemCount > 1)
+                return;
+
+            switch (justifyContentDistribution) {
+            case ContentDistribution::SpaceBetween:
+                justifyContentPosition = hasOverflow ? ContentPosition::Start : ContentPosition::FlexStart;
+                break;
+            case ContentDistribution::SpaceEvenly:
+            case ContentDistribution::SpaceAround:
+                justifyContentPosition = hasOverflow ? ContentPosition::Start : ContentPosition::Center;
+                break;
+            default:
+                break;
+            }
+            justifyContentPosition = justifyContentValue.overflow() == OverflowAlignment::Safe && hasOverflow ? ContentPosition::Start : justifyContentPosition;
+            justifyContentDistribution = ContentDistribution::Default;
+        };
+        setFallbackValuesIfApplicable();
+
         auto justifyContent = [&] {
             // 2. Align the items along the main-axis per justify-content.
-            auto justifyContentValue = flexContainerStyle().justifyContent();
             auto initialOffset = [&] {
-                switch (justifyContentValue.distribution()) {
-                case ContentDistribution::Default:
-                    // Fall back to justifyContentValue.position()
-                    break;
-                case ContentDistribution::SpaceBetween:
-                    return LayoutUnit { };
-                case ContentDistribution::SpaceAround: {
-                    auto itemCount = availableMainSpace > lineContentOuterMainSize ? lineRange.distance() : 1;
-                    return (availableMainSpace - lineContentOuterMainSize) / itemCount / 2;
-                }
-                case ContentDistribution::SpaceEvenly: {
-                    auto gapCount = availableMainSpace > lineContentOuterMainSize ? lineRange.distance() + 1 : 2;
-                    return (availableMainSpace - lineContentOuterMainSize) / gapCount;
-                }
-                default:
-                    ASSERT_NOT_IMPLEMENTED_YET();
-                    break;
+                // ContentDistribution::Default handles fallback to justifyContentPosition
+                if (justifyContentDistribution != ContentDistribution::Default) {
+                    switch (justifyContentDistribution) {
+                    case ContentDistribution::SpaceBetween:
+                        return LayoutUnit { };
+                    case ContentDistribution::SpaceAround:
+                        return (availableMainSpaceForLineContent - lineContentOuterMainSize) / lineRange.distance() / 2;
+                    case ContentDistribution::SpaceEvenly:
+                        return (availableMainSpaceForLineContent - lineContentOuterMainSize) / (lineRange.distance() + 1);
+                    default:
+                        ASSERT_NOT_IMPLEMENTED_YET();
+                        break;
+                    }
                 }
 
-                auto positionalAlignment = [&] {
-                    auto positionalAlignmentValue = justifyContentValue.position();
-                    if (!FlexFormattingUtils::isMainAxisParallelWithInlineAxis(flexContainer()) && (positionalAlignmentValue == ContentPosition::Left || positionalAlignmentValue == ContentPosition::Right))
-                        positionalAlignmentValue = ContentPosition::Start;
-                    return positionalAlignmentValue;
-                };
-
-                switch (positionalAlignment()) {
-                // logical alignments
+                switch (FlexFormattingUtils::logicalJustifyContentPosition(flexContainer(), justifyContentPosition)) {
                 case ContentPosition::Normal:
                 case ContentPosition::FlexStart:
                     return LayoutUnit { };
                 case ContentPosition::FlexEnd:
-                    return availableMainSpace - lineContentOuterMainSize;
+                    return availableMainSpaceForLineContent - lineContentOuterMainSize;
                 case ContentPosition::Center:
-                    return availableMainSpace / 2 - lineContentOuterMainSize / 2;
-                // non-logical alignments
-                case ContentPosition::Left:
+                    return availableMainSpaceForLineContent / 2 - lineContentOuterMainSize / 2;
                 case ContentPosition::Start:
-                    if (FlexFormattingUtils::isReversedToContentDirection(flexContainer()))
-                        return availableMainSpace - lineContentOuterMainSize;
+                    if (FlexFormattingUtils::isMainReversedToContentDirection(flexContainer()))
+                        return availableMainSpaceForLineContent - lineContentOuterMainSize;
                     return LayoutUnit { };
-                case ContentPosition::Right:
                 case ContentPosition::End:
-                    if (FlexFormattingUtils::isReversedToContentDirection(flexContainer()))
+                    if (FlexFormattingUtils::isMainReversedToContentDirection(flexContainer()))
                         return LayoutUnit { };
-                    return availableMainSpace - lineContentOuterMainSize;
+                    return availableMainSpaceForLineContent - lineContentOuterMainSize;
                 default:
                     ASSERT_NOT_IMPLEMENTED_YET();
                     break;
@@ -662,17 +627,15 @@ FlexLayout::PositionAndMarginsList FlexLayout::handleMainAxisAlignment(LayoutUni
             };
 
             auto gapBetweenItems = [&] {
-                switch (justifyContentValue.distribution()) {
+                switch (justifyContentDistribution) {
                 case ContentDistribution::Default:
                     return LayoutUnit { };
                 case ContentDistribution::SpaceBetween:
-                    if (lineRange.distance() == 1)
-                        return LayoutUnit { };
-                    return std::max(0_lu, availableMainSpace - lineContentOuterMainSize) / (lineRange.distance() - 1);
+                    return std::max(0_lu, availableMainSpaceForLineContent - lineContentOuterMainSize) / (lineRange.distance() - 1);
                 case ContentDistribution::SpaceAround:
-                    return std::max(0_lu, availableMainSpace - lineContentOuterMainSize) / lineRange.distance();
+                    return std::max(0_lu, availableMainSpaceForLineContent - lineContentOuterMainSize) / lineRange.distance();
                 case ContentDistribution::SpaceEvenly:
-                    return std::max(0_lu, availableMainSpace - lineContentOuterMainSize) / (lineRange.distance() + 1);
+                    return std::max(0_lu, availableMainSpaceForLineContent - lineContentOuterMainSize) / (lineRange.distance() + 1);
                 default:
                     ASSERT_NOT_IMPLEMENTED_YET();
                     break;
@@ -732,12 +695,12 @@ FlexLayout::PositionAndMarginsList FlexLayout::handleCrossAxisAlignmentForFlexIt
                         else
                             marginEnd = extraCrossSpace;
                     } else {
-                        auto marginCrossSpace = flexLinesCrossSizeList[lineIndex] - flexItemsCrossSizeList[flexItemIndex];
+                        auto marginCrossSpace = flexLinesCrossSizeList[lineIndex] - flexItemOuterCrossSize;
                         auto setMargins = [&](auto startValue, auto endValue) {
                             marginStart = startValue;
                             marginEnd = endValue;
                         };
-                        marginStart ? setMargins(marginCrossSpace, 0_lu) : setMargins(0_lu, marginCrossSpace);
+                        !marginStart ? setMargins(0_lu, marginCrossSpace) : setMargins(marginCrossSpace, 0_lu);
                     }
                 }
                 crossPositionAndMargins[flexItemIndex].marginStart = *marginStart;
@@ -753,9 +716,15 @@ FlexLayout::PositionAndMarginsList FlexLayout::handleCrossAxisAlignmentForFlexIt
                 auto flexItemOuterCrossSize = outerCrossSize(flexItem, flexItemsCrossSizeList[flexItemIndex], crossPositionAndMargins[flexItemIndex].margin());
                 auto flexItemOuterCrossPosition = LayoutUnit { };
 
-                auto& flexItemAlignSelf = flexItem.style().alignSelf();
-                auto alignValue = flexItemAlignSelf.position() != ItemPosition::Auto ? flexItemAlignSelf : flexContainerStyle().alignItems();
-                switch (alignValue.position()) {
+                auto& flexItemAlign = flexItem.style().alignSelf().position() != ItemPosition::Auto ? flexItem.style().alignSelf() : flexContainerStyle().alignItems();
+                auto alignSelfPosition = flexItemAlign.position();
+                auto setFallbackValuesIfApplicable = [&] {
+                    if (flexItemOuterCrossSize > flexLinesCrossSizeList[lineIndex] && flexItemAlign.overflow() == OverflowAlignment::Safe)
+                        alignSelfPosition = ItemPosition::FlexStart;
+                };
+                setFallbackValuesIfApplicable();
+
+                switch (alignSelfPosition) {
                 case ItemPosition::Stretch:
                 case ItemPosition::Normal:
                     // This is taken care of at 9.4.11 see computeCrossSizeForFlexItems.
@@ -765,10 +734,12 @@ FlexLayout::PositionAndMarginsList FlexLayout::handleCrossAxisAlignmentForFlexIt
                     flexItemOuterCrossPosition = flexLinesCrossSizeList[lineIndex] / 2 - flexItemOuterCrossSize  / 2;
                     break;
                 case ItemPosition::Start:
+                case ItemPosition::SelfStart:
                 case ItemPosition::FlexStart:
                     flexItemOuterCrossPosition = { };
                     break;
                 case ItemPosition::End:
+                case ItemPosition::SelfEnd:
                 case ItemPosition::FlexEnd:
                     flexItemOuterCrossPosition = flexLinesCrossSizeList[lineIndex] - flexItemOuterCrossSize;
                     break;
@@ -784,41 +755,76 @@ FlexLayout::PositionAndMarginsList FlexLayout::handleCrossAxisAlignmentForFlexIt
     return crossPositionAndMargins;
 }
 
-FlexLayout::LinesCrossPositionList FlexLayout::handleCrossAxisAlignmentForFlexLines(const LogicalConstraints::AxisGeometry& crossAxis, const LineRanges& lineRanges, LinesCrossSizeList& flexLinesCrossSizeList) const
+FlexLayout::LinesCrossPositionList FlexLayout::handleCrossAxisAlignmentForFlexLines(std::optional<LayoutUnit> crossAxisAvailableSpace, const LineRanges& lineRanges, LinesCrossSizeList& flexLinesCrossSizeList) const
 {
     // If the cross size property is a definite size, use that, clamped by the used min and max cross sizes of the flex container.
     // Otherwise, use the sum of the flex lines' cross sizes, clamped by the used min and max cross sizes of the flex container.
-    if (isSingleLineFlexContainer())
-        return { { } };
-
     auto flexLinesCrossSize = [&] {
         auto linesCrossSize = LayoutUnit { };
         for (auto crossSize : flexLinesCrossSizeList)
             linesCrossSize += crossSize;
         return linesCrossSize;
     }();
-    auto flexContainerUsedCrossSize = crossAxis.definiteSize.value_or(flexLinesCrossSize);
+    auto isSingleLineFlexContainer = this->isSingleLineFlexContainer() || lineRanges.size() == 1;
+    auto flexContainerUsedCrossSize = crossAxisAvailableSpaceForLineSizingAndAlignment(crossAxisAvailableSpace.value_or(0_lu), lineRanges.size());
+
     // Align all flex lines per align-content.
+    auto distributableCrossSpace = flexContainerUsedCrossSize - flexLinesCrossSize;
     auto initialOffset = [&]() -> LayoutUnit {
-        switch (flexContainerStyle().alignContent().position()) {
-        case ContentPosition::Start:
-        case ContentPosition::Normal:
+        auto& alignContentValue = flexContainerStyle().alignContent();
+        auto alignContentPosition = alignContentValue.position();
+        auto alignContentDistribution = alignContentValue.distribution();
+
+        auto setFallbackValuesIfApplicable = [&] {
+            auto hasOverflow = distributableCrossSpace < 0;
+            if (!hasOverflow && !isSingleLineFlexContainer)
+                return;
+            switch (alignContentDistribution) {
+            case ContentDistribution::SpaceBetween:
+                alignContentPosition = hasOverflow ? ContentPosition::Start : ContentPosition::FlexStart;
+                break;
+            case ContentDistribution::SpaceEvenly:
+            case ContentDistribution::SpaceAround:
+                alignContentPosition = hasOverflow ? ContentPosition::Start : ContentPosition::Center;
+                break;
+            case ContentDistribution::Stretch:
+                alignContentPosition = ContentPosition::FlexStart;
+                break;
+            default:
+                break;
+            }
+            alignContentPosition = alignContentValue.overflow() == OverflowAlignment::Safe && hasOverflow ? ContentPosition::Start : alignContentPosition;
+            alignContentDistribution = ContentDistribution::Default;
+        };
+        setFallbackValuesIfApplicable();
+
+        auto flipStartEndContentPositionIfApplicable = [&] {
+            auto isWrapReversed = FlexFormattingUtils::areFlexLinesReversedInCrossAxis(flexContainer());
+            if (alignContentPosition == ContentPosition::Start)
+                alignContentPosition = isWrapReversed ? ContentPosition::FlexEnd : ContentPosition::FlexStart;
+            else if (alignContentPosition == ContentPosition::End)
+                alignContentPosition = isWrapReversed ? ContentPosition::FlexStart : ContentPosition::FlexEnd;
+        };
+        flipStartEndContentPositionIfApplicable();
+
+        switch (alignContentPosition) {
+        case ContentPosition::FlexStart:
             return { };
         case ContentPosition::Center:
             return flexContainerUsedCrossSize / 2 - flexLinesCrossSize / 2;
-        case ContentPosition::End:
+        case ContentPosition::FlexEnd:
             return flexContainerUsedCrossSize - flexLinesCrossSize;
         default:
-            switch (flexContainerStyle().alignContent().distribution()) {
+            switch (alignContentDistribution) {
+            case ContentDistribution::Default:
+                return { };
             case ContentDistribution::SpaceBetween:
             case ContentDistribution::Stretch:
                 return { };
-            case ContentDistribution::SpaceAround: {
-                auto extraCrossSpace = flexContainerUsedCrossSize - flexLinesCrossSize;
-                if (extraCrossSpace <= 0)
-                    return { };
-                return extraCrossSpace / lineRanges.size() / 2;
-            }
+            case ContentDistribution::SpaceAround:
+                return distributableCrossSpace / lineRanges.size() / 2;
+            case ContentDistribution::SpaceEvenly:
+                return distributableCrossSpace / (lineRanges.size() + 1);
             default:
                 ASSERT_NOT_REACHED();
                 return { };
@@ -826,35 +832,51 @@ FlexLayout::LinesCrossPositionList FlexLayout::handleCrossAxisAlignmentForFlexLi
         }
     };
 
+    LinesCrossPositionList linesCrossPositionList(lineRanges.size());
+    linesCrossPositionList[0] = initialOffset();
+    if (isSingleLineFlexContainer)
+        return linesCrossPositionList;
+
     auto gap = [&]() -> LayoutUnit {
-        auto extraCrossSpace = flexContainerUsedCrossSize - flexLinesCrossSize;
-        if (extraCrossSpace <= 0)
+        if (distributableCrossSpace <= 0)
             return { };
         switch (flexContainerStyle().alignContent().distribution()) {
         case ContentDistribution::SpaceBetween:
-            return extraCrossSpace / (lineRanges.size() - 1);
+            return distributableCrossSpace / (lineRanges.size() - 1);
         case ContentDistribution::SpaceAround:
-            return extraCrossSpace / lineRanges.size();
-        case ContentDistribution::Stretch:
-        case ContentDistribution::Default: {
+            return distributableCrossSpace / lineRanges.size();
+        case ContentDistribution::Stretch: {
             // Lines stretch to take up the remaining space. If the leftover free-space is negative,
             // this value is identical to flex-start. Otherwise, the free-space is split equally between all of the lines,
             // increasing their cross size.
-            auto extraCrossSpaceForEachLine = extraCrossSpace / flexLinesCrossSizeList.size();
+            auto extraCrossSpaceForEachLine = distributableCrossSpace / flexLinesCrossSizeList.size();
             for (size_t lineIndex = 0; lineIndex < flexLinesCrossSizeList.size(); ++lineIndex)
                 flexLinesCrossSizeList[lineIndex] += extraCrossSpaceForEachLine;
             return { };
         }
+        case ContentDistribution::SpaceEvenly:
+            return distributableCrossSpace / (lineRanges.size() + 1);
         default:
             return { };
         }
     }();
-
-    LinesCrossPositionList linesCrossPositionList(lineRanges.size());
-    linesCrossPositionList[0] = initialOffset();
     for (size_t lineIndex = 1; lineIndex < lineRanges.size(); ++lineIndex)
         linesCrossPositionList[lineIndex] = (linesCrossPositionList[lineIndex - 1] + flexLinesCrossSizeList[lineIndex - 1]) + gap;
     return linesCrossPositionList;
+}
+
+LayoutUnit FlexLayout::mainAxisAvailableSpaceForItemAlignment(LayoutUnit mainAxisAvailableSpace, size_t numberOfFlexItems) const
+{
+    if (numberOfFlexItems == 1)
+        return mainAxisAvailableSpace;
+    return mainAxisAvailableSpace - (FlexFormattingUtils::mainAxisGapValue(flexContainer(), mainAxisAvailableSpace) * (numberOfFlexItems - 1));
+}
+
+LayoutUnit FlexLayout::crossAxisAvailableSpaceForLineSizingAndAlignment(LayoutUnit crossAxisAvailableSpace, size_t numberOfFlexLines) const
+{
+    if (numberOfFlexLines == 1)
+        return crossAxisAvailableSpace;
+    return crossAxisAvailableSpace - (FlexFormattingUtils::crossAxisGapValue(flexContainer(), crossAxisAvailableSpace) * (numberOfFlexLines - 1));
 }
 
 const ElementBox& FlexLayout::flexContainer() const
@@ -862,9 +884,14 @@ const ElementBox& FlexLayout::flexContainer() const
     return m_flexFormattingContext.root();
 }
 
-FlexFormattingContext& FlexLayout::formattingContext()
+const FlexFormattingContext& FlexLayout::formattingContext() const
 {
     return m_flexFormattingContext;
+}
+
+const FlexFormattingUtils& FlexLayout::formattingUtils() const
+{
+    return formattingContext().formattingUtils();
 }
 
 }

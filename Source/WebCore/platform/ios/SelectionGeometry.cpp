@@ -138,13 +138,22 @@ void SelectionGeometry::setRect(const IntRect& rect)
     m_cachedEnclosingRect = rect;
 }
 
+void SelectionGeometry::move(float x, float y)
+{
+    m_quad.move(x, y);
+    m_minX += x;
+    m_maxX += x;
+    m_maxY += y;
+    m_cachedEnclosingRect.reset();
+}
+
 TextStream& operator<<(TextStream& stream, const SelectionGeometry& rect)
 {
     TextStream::GroupScope group(stream);
     stream << "selection geometry";
 
     stream.dumpProperty("quad", rect.quad());
-    stream.dumpProperty("direction", isLeftToRightDirection(rect.direction()) ? "ltr" : "rtl");
+    stream.dumpProperty("direction", (rect.direction() == TextDirection::LTR) ? "ltr" : "rtl");
 
     stream.dumpProperty("min-x", rect.minX());
     stream.dumpProperty("max-x", rect.maxX());

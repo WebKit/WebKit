@@ -31,9 +31,15 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/navigation/at-rule-opt-in-none-in-old-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/navigation/at-rule-opt-in-none-in-old.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/navigation/at-rule-opt-in-none-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/navigation/auto-name-from-id-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/navigation/auto-name-from-id-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/navigation/auto-name-from-id.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/navigation/chromium-paint-holding-timeout-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/navigation/chromium-paint-holding-timeout-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/navigation/chromium-paint-holding-timeout.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/navigation/custom-scrollbar-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/navigation/custom-scrollbar-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/navigation/custom-scrollbar.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/navigation/hide-before-reveal.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/navigation/mismatched-snapshot-containing-block-size-skips.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/navigation/navigation-auto-excludes-reload-expected.html

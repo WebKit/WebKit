@@ -8,10 +8,10 @@ The test will run automatically with popup blocking disabled, or you can click t
 
 
 ============== Back Forward List ==============
-curr->  http://127.0.0.1:8000/navigation/new-window-redirect-history.html  **nav target**
+curr->  http://127.0.0.1:8000/navigation/new-window-redirect-history.html
 ===============================================
 
 ============== Back Forward List ==============
-        http://127.0.0.1:8000/navigation/resources/redirect-1.html  **nav target**
-curr->  http://127.0.0.1:8000/navigation/resources/redirect-2.html  **nav target**
+        http://127.0.0.1:8000/navigation/resources/redirect-1.html
+curr->  http://127.0.0.1:8000/navigation/resources/redirect-2.html
 ===============================================

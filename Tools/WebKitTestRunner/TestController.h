@@ -212,6 +212,7 @@ public:
 
     void setNavigationGesturesEnabled(bool value);
     void setIgnoresViewportScaleLimits(bool);
+    void setUseDarkAppearanceForTesting(bool);
 
     void setShouldDownloadUndisplayableMIMETypes(bool value) { m_shouldDownloadUndisplayableMIMETypes = value; }
     void setShouldAllowDeviceOrientationAndMotionAccess(bool);
@@ -363,6 +364,8 @@ public:
 #if PLATFORM(IOS_FAMILY)
     void setKeyboardInputModeIdentifier(const String&);
     UIKeyboardInputMode *overriddenKeyboardInputMode() const { return m_overriddenKeyboardInputMode.get(); }
+    void setIsInHardwareKeyboardMode(bool value) { m_isInHardwareKeyboardMode = value; }
+    bool isInHardwareKeyboardMode() const { return m_isInHardwareKeyboardMode; }
 #endif
 
     void setAllowedMenuActions(const Vector<String>&);
@@ -459,6 +462,7 @@ private:
     void platformDestroy();
     WKContextRef platformAdjustContext(WKContextRef, WKContextConfigurationRef);
     void platformInitializeContext();
+    void platformEnsureGPUProcessConfiguredForOptions(const TestOptions&);
     void platformCreateWebView(WKPageConfigurationRef, const TestOptions&);
     static UniqueRef<PlatformWebView> platformCreateOtherPage(PlatformWebView* parentView, WKPageConfigurationRef, const TestOptions&);
 
@@ -624,6 +628,8 @@ private:
     static const char* libraryPathForTesting();
     static const char* platformLibraryPathForTesting();
 
+    void setTracksRepaints(bool);
+
     WKRetainPtr<WKURLRef> m_mainResourceURL;
     std::unique_ptr<TestInvocation> m_currentInvocation;
 #if PLATFORM(COCOA)
@@ -670,6 +676,8 @@ private:
     RetainPtr<UIPasteboardConsistencyEnforcer> m_pasteboardConsistencyEnforcer;
     RetainPtr<UIKeyboardInputMode> m_overriddenKeyboardInputMode;
     Vector<std::unique_ptr<InstanceMethodSwizzler>> m_presentPopoverSwizzlers;
+    std::unique_ptr<ClassMethodSwizzler> m_hardwareKeyboardModeSwizzler;
+    bool m_isInHardwareKeyboardMode { false };
 #endif
 
 #if ENABLE(IMAGE_ANALYSIS)

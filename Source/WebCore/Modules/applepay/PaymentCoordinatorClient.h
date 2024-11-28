@@ -36,6 +36,7 @@
 namespace WebCore {
 
 class Document;
+class PaymentCoordinator;
 class PaymentMerchantSession;
 struct ApplePayCouponCodeUpdate;
 struct ApplePayPaymentAuthorizationResult;
@@ -73,6 +74,8 @@ public:
     virtual void endApplePaySetup() { }
 
     virtual ~PaymentCoordinatorClient() = default;
+
+    virtual void setPaymentCoordinator(PaymentCoordinator&) { }
 };
 
 }

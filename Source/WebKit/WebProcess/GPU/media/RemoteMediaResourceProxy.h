@@ -53,8 +53,11 @@ private:
     void loadFailed(WebCore::PlatformMediaResource&, const WebCore::ResourceError&) final;
     void loadFinished(WebCore::PlatformMediaResource&, const WebCore::NetworkLoadMetrics&) final;
 
+    Ref<WebCore::PlatformMediaResource> protectedMediaResource() const;
+    Ref<IPC::Connection> protectedConnection() const { return m_connection; }
+
     Ref<IPC::Connection> m_connection;
-    WebCore::PlatformMediaResource& m_platformMediaResource;
+    ThreadSafeWeakPtr<WebCore::PlatformMediaResource> m_platformMediaResource; // Cannot be null.
     RemoteMediaResourceIdentifier m_id;
 };
 

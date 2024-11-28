@@ -83,7 +83,7 @@ class ScriptController final : public CanMakeWeakPtr<ScriptController>, public C
     WTF_MAKE_TZONE_ALLOCATED(ScriptController);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(ScriptController);
 
-    using RootObjectMap = HashMap<void*, Ref<JSC::Bindings::RootObject>>;
+    using RootObjectMap = UncheckedKeyHashMap<void*, Ref<JSC::Bindings::RootObject>>;
 
 public:
     explicit ScriptController(LocalFrame&);

@@ -29,7 +29,6 @@
 
 #include "WebGPUPtr.h"
 #include "WebGPUXRProjectionLayer.h"
-
 #include <WebGPU/WebGPU.h>
 
 namespace WebCore {
@@ -50,6 +49,7 @@ public:
     }
 
     virtual ~XRProjectionLayerImpl();
+    WGPUXRProjectionLayer backing() const { return m_backing.get(); }
 
 private:
     friend class DowncastConvertToBackingContext;
@@ -60,8 +60,6 @@ private:
     XRProjectionLayerImpl(XRProjectionLayerImpl&&) = delete;
     XRProjectionLayerImpl& operator=(const XRProjectionLayerImpl&) = delete;
     XRProjectionLayerImpl& operator=(XRProjectionLayerImpl&&) = delete;
-
-    WGPUXRProjectionLayer backing() const { return m_backing.get(); }
 
     uint32_t textureWidth() const final;
     uint32_t textureHeight() const final;
@@ -74,11 +72,16 @@ private:
     void setDeltaPose(WebXRRigidTransform*) final;
 
     // WebXRLayer
-    void startFrame() final;
+#if PLATFORM(COCOA)
+    void startFrame(size_t frameIndex, MachSendRight&& colorBuffer, MachSendRight&& depthBuffer, MachSendRight&& completionSyncEvent, size_t reusableTextureIndex) final;
+#endif
     void endFrame() final;
 
     WebGPUPtr<WGPUXRProjectionLayer> m_backing;
     Ref<ConvertToBackingContext> m_convertToBackingContext;
+#if ENABLE(WEBXR)
+    RefPtr<WebXRRigidTransform> m_webXRRigidTransform;
+#endif
 };
 
 } // namespace WebCore::WebGPU

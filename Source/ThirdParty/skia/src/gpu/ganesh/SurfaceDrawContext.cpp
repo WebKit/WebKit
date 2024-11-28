@@ -21,10 +21,10 @@
 #include "include/core/SkSize.h"
 #include "include/core/SkTypes.h"
 #include "include/core/SkVertices.h"
-#include "include/gpu/GrBackendSemaphore.h"
-#include "include/gpu/GrBackendSurface.h"
-#include "include/gpu/GrDirectContext.h"
-#include "include/gpu/GrRecordingContext.h"
+#include "include/gpu/ganesh/GrBackendSemaphore.h"
+#include "include/gpu/ganesh/GrBackendSurface.h"
+#include "include/gpu/ganesh/GrDirectContext.h"
+#include "include/gpu/ganesh/GrRecordingContext.h"
 #include "include/private/base/SingleOwner.h"
 #include "include/private/base/SkDebug.h"
 #include "include/private/base/SkFloatingPoint.h"
@@ -345,7 +345,7 @@ void SurfaceDrawContext::willReplaceOpsTask(OpsTask* prevTask, OpsTask* nextTask
         // values?
         nextTask->setInitialStencilContent(OpsTask::StencilContent::kPreserved);
     }
-#if GR_GPU_STATS && defined(GR_TEST_UTILS)
+#if GR_GPU_STATS && defined(GPU_TEST_UTILS)
     if (fCanUseDynamicMSAA) {
         fContext->priv().dmsaaStats().fNumRenderPasses++;
     }
@@ -825,7 +825,7 @@ int SurfaceDrawContext::maxWindowRectangles() const {
 }
 
 OpsTask::CanDiscardPreviousOps SurfaceDrawContext::canDiscardPreviousOpsOnFullClear() const {
-#if defined(GR_TEST_UTILS)
+#if defined(GPU_TEST_UTILS)
     if (fPreserveOpsOnFullClear_TestingOnly) {
         return OpsTask::CanDiscardPreviousOps::kNo;
     }
@@ -2041,7 +2041,7 @@ void SurfaceDrawContext::addDrawOp(const GrClip* clip,
         this->setNeedsStencil();
     }
 
-#if GR_GPU_STATS && defined(GR_TEST_UTILS)
+#if GR_GPU_STATS && defined(GPU_TEST_UTILS)
     if (fCanUseDynamicMSAA && drawNeedsMSAA) {
         if (!opsTask->usesMSAASurface()) {
             fContext->priv().dmsaaStats().fNumMultisampleRenderPasses++;

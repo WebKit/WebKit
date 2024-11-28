@@ -142,8 +142,8 @@ private:
     Position m_positionForLastDeletedAutocorrection;
 #endif
 #if USE(DICTATION_ALTERNATIVES) || USE(AUTOCORRECTION_PANEL)
-    String markerDescriptionForAppliedAlternativeText(AlternativeTextType, DocumentMarker::Type);
-    void applyAlternativeTextToRange(const SimpleRange&, const String&, AlternativeTextType, OptionSet<DocumentMarker::Type>);
+    String markerDescriptionForAppliedAlternativeText(AlternativeTextType, DocumentMarkerType);
+    void applyAlternativeTextToRange(const SimpleRange&, const String&, AlternativeTextType, OptionSet<DocumentMarkerType>);
     AlternativeTextClient* alternativeTextClient();
 #endif
     Ref<Document> protectedDocument() const { return m_document.get(); }

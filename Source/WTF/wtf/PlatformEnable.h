@@ -168,10 +168,6 @@
 #define ENABLE_CONTEXT_MENU_EVENT 1
 #endif
 
-#if !defined(ENABLE_CSS_TRANSFORM_STYLE_OPTIMIZED_3D)
-#define ENABLE_CSS_TRANSFORM_STYLE_OPTIMIZED_3D 0
-#endif
-
 #if !defined(ENABLE_CUSTOM_CURSOR_SUPPORT)
 #define ENABLE_CUSTOM_CURSOR_SUPPORT 1
 #endif
@@ -345,6 +341,10 @@
 
 #if !defined(ENABLE_MEDIA_RECORDER)
 #define ENABLE_MEDIA_RECORDER 0
+#endif
+
+#if !defined(ENABLE_MEDIA_RECORDER_WEBM)
+#define ENABLE_MEDIA_RECORDER_WEBM 0
 #endif
 
 #if !defined(ENABLE_MEDIA_SOURCE)
@@ -561,8 +561,12 @@
 #define ENABLE_WEBXR_HANDS 0
 #endif
 
+#if !defined(ENABLE_WEBXR_WEBGPU_BY_DEFAULT)
+#define ENABLE_WEBXR_WEBGPU_BY_DEFAULT 0
+#endif
+
 #if !defined(ENABLE_WEBXR_LAYERS)
-#define ENABLE_WEBXR_LAYERS (PLATFORM(COCOA) && ENABLE_WEBXR)
+#define ENABLE_WEBXR_LAYERS (PLATFORM(VISION) && __VISION_OS_VERSION_MAX_ALLOWED >= 20200)
 #endif
 
 #if !defined(ENABLE_WHEEL_EVENT_LATCHING)
@@ -595,6 +599,16 @@
  */
 #if !defined(ENABLE_MALLOC_HEAP_BREAKDOWN)
 #define ENABLE_MALLOC_HEAP_BREAKDOWN 0
+#endif
+
+// See RefTrackerMixin.h
+#if ASSERT_ENABLED
+#undef ENABLE_REFTRACKER
+#define ENABLE_REFTRACKER 1
+#endif
+
+#if !defined(ENABLE_REFTRACKER)
+#define ENABLE_REFTRACKER 0
 #endif
 
 #if !defined(ENABLE_CFPREFS_DIRECT_MODE)
@@ -690,7 +704,7 @@
 #if !defined(ENABLE_DFG_JIT) && ENABLE(JIT)
 
 /* Enable the DFG JIT on X86 and X86_64. */
-#if CPU(X86_64) && (OS(DARWIN) || OS(LINUX) || OS(FREEBSD) || OS(HURD) || OS(WINDOWS))
+#if CPU(X86_64) && (OS(DARWIN) || OS(LINUX) || OS(FREEBSD) || OS(HAIKU) || OS(HURD) || OS(WINDOWS))
 #define ENABLE_DFG_JIT 1
 #endif
 
@@ -720,20 +734,14 @@
 #define ENABLE_FAST_TLS_JIT 1
 #endif
 
-/* FIXME: This should be turned into an #error invariant */
-/* If the baseline jit is not available, then disable upper tiers as well. */
-#if !ENABLE(JIT)
-#undef ENABLE_DFG_JIT
-#undef ENABLE_FTL_JIT
-#define ENABLE_DFG_JIT 0
-#define ENABLE_FTL_JIT 0
+/* Ensure that upper tiers are disabled if baseline JIT is not available */
+#if !ENABLE(JIT) && (ENABLE(DFG_JIT) || ENABLE(FTL_JIT))
+#error "DFG and FTL JIT require baseline JIT to be enabled"
 #endif
 
-/* FIXME: This should be turned into an #error invariant */
-/* If the DFG jit is not available, then disable upper tiers as well: */
-#if !ENABLE(DFG_JIT)
-#undef ENABLE_FTL_JIT
-#define ENABLE_FTL_JIT 0
+/* Ensure that FTL JIT is disabled if DFG JIT is not available */
+#if !ENABLE(DFG_JIT) && ENABLE(FTL_JIT)
+#error "FTL JIT requires DFG JIT to be enabled"
 #endif
 
 /* This controls whether B3 is built. B3 is needed for FTL JIT and WebAssembly */

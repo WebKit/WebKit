@@ -42,8 +42,6 @@
 #include "WebPageProxy.h"
 #include "WebProcessPool.h"
 #include <Commctrl.h>
-#include <WebCore/BitmapInfo.h>
-#include <WebCore/CairoUtilities.h>
 #include <WebCore/Cursor.h>
 #include <WebCore/Editor.h>
 #include <WebCore/FloatRect.h>
@@ -64,6 +62,7 @@
 #endif
 
 #if USE(CAIRO)
+#include <WebCore/CairoUtilities.h>
 #include <cairo-win32.h>
 #include <cairo.h>
 #endif
@@ -112,7 +111,7 @@ LRESULT WebView::wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         break;
     case WM_DESTROY:
         m_isBeingDestroyed = true;
-        close();
+        closeInternal();
         break;
     case WM_ERASEBKGND:
         lResult = 1;
@@ -233,13 +232,13 @@ WebView::WebView(RECT rect, const API::PageConfiguration& configuration, HWND pa
     // status into account. <http://webkit.org/b/54104>
     ASSERT(m_isVisible == static_cast<bool>(::GetWindowLong(m_window, GWL_STYLE) & WS_VISIBLE));
 
-    auto pageConfiguration = configuration.copy();
+    Ref pageConfiguration = configuration.copy();
     pageConfiguration->preferences().setAllowTestOnlyIPC(pageConfiguration->allowTestOnlyIPC());
     WebProcessPool& processPool = pageConfiguration->processPool();
     m_page = processPool.createWebPage(*m_pageClient, WTFMove(pageConfiguration));
 
-    auto& openerInfo = m_page->configuration().openerInfo();
-    m_page->initializeWebPage(openerInfo ? openerInfo->site : Site(aboutBlankURL()));
+    auto& configurationFromPage = m_page->configuration();
+    m_page->initializeWebPage(configurationFromPage.openedSite(), configurationFromPage.initialSandboxFlags());
 
     m_page->setIntrinsicDeviceScaleFactor(deviceScaleFactorForWindow(m_window));
 
@@ -500,6 +499,8 @@ void WebView::paint(HDC hdc, const IntRect& dirtyRect)
     
             cairo_destroy(context);
             cairo_surface_destroy(surface);
+#elif USE(SKIA)
+            drawingArea->paint(hdc, dirtyRect, unpaintedRegion);
 #endif
     
             auto unpaintedRects = unpaintedRegion.rects();
@@ -777,15 +778,13 @@ bool WebView::shouldInitializeTrackPointHack()
 
 void WebView::close()
 {
-    if (m_window) {
-        // We can't check IsWindow(m_window) here, because that will return true even while
-        // we're already handling WM_DESTROY. So we check !m_isBeingDestroyed instead.
-        if (!m_isBeingDestroyed)
-            DestroyWindow(m_window);
-        // Either we just destroyed m_window, or it's in the process of being destroyed. Either
-        // way, we clear it out to make sure we don't try to use it later.
-        m_window = 0;
-    }
+    if (m_window && !m_isBeingDestroyed)
+        DestroyWindow(m_window);
+}
+
+void WebView::closeInternal()
+{
+    m_window = 0;
     setParentWindow(0);
     m_page->close();
 }
@@ -917,7 +916,7 @@ void WebView::windowReceivedMessage(HWND, UINT message, WPARAM wParam, LPARAM)
 static Vector<wchar_t> truncatedString(const String& string)
 {
     // Truncate tooltip texts because multiline mode of tooltip control does word-wrapping very slowly
-    auto maxLength = 1024;
+    size_t maxLength = 1024;
     auto buffer = string.wideCharacters();
     if (buffer.size() > maxLength) {
         buffer[maxLength - 4] = L'.';

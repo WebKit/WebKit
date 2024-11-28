@@ -35,6 +35,8 @@
 #include "StylePropertiesInlines.h"
 #include "XMLNames.h"
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(ElementData);
@@ -153,9 +155,9 @@ UniqueElementData::UniqueElementData(const ShareableElementData& other)
 
 Ref<UniqueElementData> ElementData::makeUniqueCopy() const
 {
-    if (isUnique())
-        return adoptRef(*new UniqueElementData(static_cast<const UniqueElementData&>(*this)));
-    return adoptRef(*new UniqueElementData(static_cast<const ShareableElementData&>(*this)));
+    if (auto* uniqueData = dynamicDowncast<const UniqueElementData>(*this))
+        return adoptRef(*new UniqueElementData(*uniqueData));
+    return adoptRef(*new UniqueElementData(downcast<const ShareableElementData>(*this)));
 }
 
 Ref<ShareableElementData> UniqueElementData::makeShareableCopy() const
@@ -191,3 +193,5 @@ Attribute* UniqueElementData::findAttributeByName(const QualifiedName& name)
 }
 
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

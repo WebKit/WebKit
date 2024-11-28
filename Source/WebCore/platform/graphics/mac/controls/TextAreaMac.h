@@ -28,12 +28,14 @@
 #if PLATFORM(MAC)
 
 #import "PlatformControl.h"
+#import <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class TextAreaPart;
 
 class TextAreaMac final : public PlatformControl {
+    WTF_MAKE_TZONE_ALLOCATED(TextAreaMac);
 public:
     TextAreaMac(TextAreaPart&);
 

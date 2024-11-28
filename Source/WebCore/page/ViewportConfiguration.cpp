@@ -415,6 +415,22 @@ ViewportConfiguration::Parameters ViewportConfiguration::nativeWebpageParameters
     return parameters;
 }
 
+#if ENABLE(PDF_PLUGIN)
+ViewportConfiguration::Parameters ViewportConfiguration::pluginDocumentParameters()
+{
+    Parameters parameters;
+    parameters.width = ViewportArguments::ValueDeviceWidth;
+    parameters.widthIsSet = true;
+    parameters.allowsShrinkToFit = false;
+    parameters.minimumScale = 1;
+    parameters.maximumScale = 1;
+    parameters.initialScale = 1;
+    parameters.initialScaleIgnoringLayoutScaleFactor = 1;
+    parameters.initialScaleIsSet = true;
+    return parameters;
+}
+#endif
+
 ViewportConfiguration::Parameters ViewportConfiguration::webpageParameters()
 {
     Parameters parameters;
@@ -532,8 +548,12 @@ void ViewportConfiguration::updateConfiguration()
     else if (booleanViewportArgumentIsSet(m_viewportArguments.shrinkToFit))
         m_configuration.allowsShrinkToFit = m_viewportArguments.shrinkToFit != 0.;
 
-    if (canOverrideConfigurationParameters() && !viewportArgumentsOverridesWidth)
-        m_configuration.width = m_minimumLayoutSize.width();
+    if (canOverrideConfigurationParameters()) {
+        if (!viewportArgumentsOverridesWidth)
+            m_configuration.width = m_minimumLayoutSize.width();
+        else if (layoutSizeIsExplicitlyScaled())
+            m_configuration.width /= effectiveLayoutScale;
+    }
 
     m_configuration.avoidsUnsafeArea = m_viewportArguments.viewportFit != ViewportFit::Cover;
     m_configuration.initialScaleIgnoringLayoutScaleFactor = m_configuration.initialScale;

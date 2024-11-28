@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -74,7 +74,7 @@ IconLoadingDelegate::IconLoadingClient::~IconLoadingClient()
 
 typedef void (^IconLoadCompletionHandler)(NSData*);
 
-WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(IconLoadingDelegateIconLoadingClient, IconLoadingDelegate::IconLoadingClient);
+WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(IconLoadingDelegate, IconLoadingClient);
 
 void IconLoadingDelegate::IconLoadingClient::getLoadDecisionForIcon(const WebCore::LinkIcon& linkIcon, CompletionHandler<void(CompletionHandler<void(API::Data*)>&&)>&& completionHandler)
 {

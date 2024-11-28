@@ -79,4 +79,11 @@ HDC GraphicsContext::getWindowsContext(const IntRect& dstRect, bool supportAlpha
     return bitmapDC.leak();
 }
 
+#if USE(SKIA)
+void GraphicsContext::releaseWindowsContext(HDC, const IntRect&, bool)
+{
+    notImplemented();
+}
+#endif
+
 } // namespace WebCore

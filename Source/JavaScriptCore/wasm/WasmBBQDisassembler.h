@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(WEBASSEMBLY_OMGJIT) || ENABLE(WEBASSEMBLY_BBQJIT)
+#if ENABLE(WEBASSEMBLY_BBQJIT)
 
 #include "BytecodeIndex.h"
 #include "MacroAssembler.h"
@@ -129,4 +129,4 @@ private:
 } // namespace Wasm
 } // namespace JSC
 
-#endif // ENABLE(WEBASSEMBLY_OMGJIT)
+#endif // ENABLE(WEBASSEMBLY_BBQJIT)

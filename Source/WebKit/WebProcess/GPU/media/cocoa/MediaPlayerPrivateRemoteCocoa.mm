@@ -63,7 +63,7 @@ RefPtr<NativeImage> MediaPlayerPrivateRemote::nativeImageForCurrentTime()
     if (readyState() < MediaPlayer::ReadyState::HaveCurrentData)
         return { };
 
-    auto videoFrame = m_videoFrameGatheredWithVideoFrameMetadata ? RefPtr<WebCore::VideoFrame>(m_videoFrameGatheredWithVideoFrameMetadata) : videoFrameForCurrentTime();
+    RefPtr videoFrame = videoFrameForCurrentTime();
     if (!videoFrame)
         return nullptr;
 

@@ -32,8 +32,10 @@
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
+#import "APIError.h"
 #import "CocoaHelpers.h"
 #import "WKFrameInfoPrivate.h"
+#import "WKNSError.h"
 #import "WKWebViewInternal.h"
 #import "WKWebViewPrivate.h"
 #import "WebExtensionAPIScripting.h"
@@ -117,7 +119,7 @@ void WebExtensionContext::scriptingInsertCSS(const WebExtensionScriptInjectionPa
         auto injectedFrames = parameters.frameIDs ? WebCore::UserContentInjectedFrames::InjectInTopFrameOnly : WebCore::UserContentInjectedFrames::InjectInAllFrames;
 
         auto styleSheetPairs = getSourcePairsForParameters(parameters, *this);
-        injectStyleSheets(styleSheetPairs, webView, *m_contentScriptWorld, parameters.styleLevel, injectedFrames, *this);
+        injectStyleSheets(styleSheetPairs, webView, Ref { *m_contentScriptWorld }, parameters.styleLevel, injectedFrames, *this);
 
         completionHandler({ });
     });
@@ -306,7 +308,10 @@ void WebExtensionContext::loadRegisteredContentScripts()
         }
 
         Vector<WebExtensionRegisteredScriptParameters> parametersVector;
-        WebExtensionAPIScripting::parseRegisteredContentScripts(scripts, FirstTimeRegistration::Yes, parametersVector);
+        if (!WebExtensionAPIScripting::parseRegisteredContentScripts(scripts, FirstTimeRegistration::Yes, parametersVector, &errorMessage)) {
+            RELEASE_LOG_ERROR(Extensions, "Failed to parse injected content data for extension %{private}@. Error: %{public}@", (NSString *)m_uniqueIdentifier, errorMessage);
+            return;
+        }
 
         DynamicInjectedContentsMap injectedContentsMap;
         createInjectedContentForScripts(parametersVector, FirstTimeRegistration::Yes, injectedContentsMap, nil, &errorMessage);
@@ -359,10 +364,11 @@ bool WebExtensionContext::createInjectedContentForScripts(const Vector<WebExtens
             return !!string.length;
         });
 
+        RefPtr extension = m_extension;
         for (NSString *scriptPath in scriptPaths) {
-            NSError *error;
-            if (!extension().resourceStringForPath(scriptPath, &error, WebExtension::CacheResult::No, WebExtension::SuppressNotFoundErrors::Yes)) {
-                recordError(error);
+            RefPtr<API::Error> error;
+            if (!extension->resourceStringForPath(scriptPath, error)) {
+                recordError(::WebKit::wrapper(*error));
                 *errorMessage = toErrorString(callingAPIName, nil, @"invalid resource '%@'", scriptPath);
                 return false;
             }
@@ -375,9 +381,9 @@ bool WebExtensionContext::createInjectedContentForScripts(const Vector<WebExtens
         });
 
         for (NSString *styleSheetPath in styleSheetPaths) {
-            NSError *error;
-            if (!extension().resourceStringForPath(styleSheetPath, &error, WebExtension::CacheResult::No, WebExtension::SuppressNotFoundErrors::Yes)) {
-                recordError(error);
+            RefPtr<API::Error> error;
+            if (!extension->resourceStringForPath(styleSheetPath, error)) {
+                recordError(::WebKit::wrapper(*error));
                 *errorMessage = toErrorString(callingAPIName, nil, @"invalid resource '%@'", styleSheetPath);
                 return false;
             }
@@ -423,8 +429,8 @@ bool WebExtensionContext::createInjectedContentForScripts(const Vector<WebExtens
         injectedContentData.injectsIntoAllFrames = parameters.allFrames.value_or(false);
         injectedContentData.contentWorldType = parameters.world.value_or(WebExtensionContentWorldType::ContentScript);
         injectedContentData.styleLevel = parameters.styleLevel.value_or(WebCore::UserStyleLevel::Author);
-        injectedContentData.scriptPaths = scriptPaths;
-        injectedContentData.styleSheetPaths = styleSheetPaths;
+        injectedContentData.scriptPaths = makeVector<String>(scriptPaths);
+        injectedContentData.styleSheetPaths = makeVector<String>(styleSheetPaths);
 
         injectedContentsMap.add(scriptID, WTFMove(injectedContentData));
     }

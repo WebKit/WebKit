@@ -607,7 +607,7 @@ String serializationForHTML(SRGBA<uint8_t> color, bool useColorFunctionSerializa
     auto [red, green, blue, alpha] = color.resolved();
     if (alpha == 0xFF)
         return makeString('#', hex(red, 2, Lowercase), hex(green, 2, Lowercase), hex(blue, 2, Lowercase));
-    return serializationForCSS(color);
+    return serializationForCSS(Color { color } );
 }
 
 String serializationForRenderTreeAsText(SRGBA<uint8_t> color, bool useColorFunctionSerialization)

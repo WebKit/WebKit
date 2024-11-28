@@ -70,6 +70,7 @@ public:
 
 private:
     void element() const = delete;
+    void computeIntrinsicLogicalWidths(LayoutUnit&, LayoutUnit&) const override { }
 
     static const int noSplit = -1;
 
@@ -97,7 +98,7 @@ private:
 
     void setIsResizing(bool);
 
-    void layOutAxis(GridAxis&, const Length*, int availableSpace);
+    void layOutAxis(GridAxis&, std::span<const Length>, int availableSpace);
     void computeEdgeInfo();
     void fillFromEdgeInfo(const FrameEdgeInfo& edgeInfo, int r, int c);
     void positionFrames();

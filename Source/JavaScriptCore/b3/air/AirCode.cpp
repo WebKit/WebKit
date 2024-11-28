@@ -93,6 +93,11 @@ Code::Code(Procedure& proc)
             }
 #endif
             all.remove(MacroAssembler::fpTempRegister);
+            // FIXME We should allow this to be used. See the note
+            // in https://commits.webkit.org/257808@main for more
+            // info about why masm is using scratch registers on
+            // ARM-only.
+            all.remove(MacroAssembler::addressTempRegister);
 #endif // CPU(ARM)
             auto calleeSave = RegisterSetBuilder::calleeSaveRegisters();
             all.buildAndValidate().forEach(

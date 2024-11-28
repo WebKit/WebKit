@@ -1,7 +1,7 @@
 import re
-from mod_pywebsocket import common
-from mod_pywebsocket import stream
-from mod_pywebsocket.extensions import PerMessageDeflateExtensionProcessor
+from pywebsocket3 import common
+from pywebsocket3 import stream
+from pywebsocket3.extensions import PerMessageDeflateExtensionProcessor
 
 bit = 0
 

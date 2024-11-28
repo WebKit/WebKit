@@ -1,5 +1,3 @@
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT Getting and setting the animation range Test timed out
+FAIL Getting and setting the animation range assert_equals: Opacity with range set to [normal, normal] expected "0.5" but got "1"
 

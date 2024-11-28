@@ -69,10 +69,12 @@ private:
     void connectionClosedForLocalStorageArea(IPC::Connection::UniqueID);
     void connectionClosedForTransientStorageArea(IPC::Connection::UniqueID);
 
+    RefPtr<StorageAreaBase> protectedLocalStorageArea() const;
+
     String m_path;
     CheckedRef<StorageAreaRegistry> m_registry;
-    std::unique_ptr<MemoryStorageArea> m_transientStorageArea;
-    std::unique_ptr<StorageAreaBase> m_localStorageArea;
+    RefPtr<MemoryStorageArea> m_transientStorageArea;
+    RefPtr<StorageAreaBase> m_localStorageArea;
 };
 
 } // namespace WebKit

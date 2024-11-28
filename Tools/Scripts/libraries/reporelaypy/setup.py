@@ -33,6 +33,7 @@ setup(
     version='0.8.5',
     description='Library for visualizing, processing and storing test results.',
     long_description=readme(),
+    long_description_content_type='text/markdown',
     classifiers=[
         'Development Status :: 4 - Beta',
         'Framework :: Flask',
@@ -51,7 +52,7 @@ setup(
     license='Modified BSD',
     packages=[
         'reporelaypy',
-        'reporelaypy.test',
+        'reporelaypy.tests',
     ],
     install_requires=[
         'xmltodict',

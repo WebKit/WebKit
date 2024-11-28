@@ -1,7 +1,7 @@
 
 PASS Computed value for background-image after setting background shorthand
 PASS background_specified_position
-FAIL background_specified_size assert_equals: background specified value for background-size expected "160px" but got "160px auto"
+PASS background_specified_size
 PASS background_specified_repeat
 PASS background_specified_attachment
 PASS background_specified_origin

@@ -54,14 +54,14 @@ struct MangledName {
 
     String toString() const
     {
-        static const ASCIILiteral prefixes[] = {
+        static const auto prefixes = std::to_array<ASCIILiteral>({
             "type"_s,
             "local"_s,
             "global"_s,
             "parameter"_s,
             "function"_s,
             "field"_s,
-        };
+        });
         return makeString(prefixes[WTF::enumToUnderlyingType(kind)], String::number(index));
     }
 };
@@ -98,7 +98,7 @@ private:
 
     ShaderModule& m_shaderModule;
     HashMap<AST::Structure*, NameMap> m_structFieldMapping;
-    uint32_t m_indexPerType[MangledName::numberOfKinds] { 0 };
+    std::array<uint32_t, MangledName::numberOfKinds> m_indexPerType { 0 };
 };
 
 void NameManglerVisitor::run()

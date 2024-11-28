@@ -26,7 +26,7 @@ messages -> EventDispatcher NotRefCounted {
     TouchEvent(WebCore::PageIdentifier pageID, WebCore::FrameIdentifier frameID, WebKit::WebTouchEvent event) -> (bool handled, struct std::optional<WebCore::RemoteUserInputEventData> remoteTouchEventData) MainThreadCallback
 #endif
 #if ENABLE(MAC_GESTURE_EVENTS)
-    GestureEvent(WebCore::FrameIdentifier frameID, WebCore::PageIdentifier pageID, WebKit::WebGestureEvent event) -> (std::optional<WebKit::WebEventType> eventType, bool handled, struct std::optional<WebCore::RemoteUserInputEventData> remoteUserInputEventData) MainThreadCallback
+    GestureEvent(WebCore::FrameIdentifier frameID, WebCore::PageIdentifier pageID, WebKit::WebGestureEvent event)
 #endif
 #if HAVE(DISPLAY_LINK)
     DisplayDidRefresh(uint32_t displayID, struct WebCore::DisplayUpdate update, bool sendToMainThread)

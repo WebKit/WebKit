@@ -46,7 +46,7 @@ IDBRequestData::IDBRequestData(IDBClient::TransactionOperation& operation)
         m_cursorIdentifier = *operation.cursorIdentifier();
 }
 
-IDBRequestData::IDBRequestData(IDBConnectionIdentifier serverConnectionIdentifier, IDBResourceIdentifier requestIdentifier, IDBResourceIdentifier transactionIdentifier, std::optional<IDBResourceIdentifier>&& cursorIdentifier, std::optional<IDBObjectStoreIdentifier> objectStoreIdentifier, uint64_t indexIdentifier, IndexedDB::IndexRecordType indexRecordType, uint64_t requestedVersion, IndexedDB::RequestType requestType)
+IDBRequestData::IDBRequestData(IDBConnectionIdentifier serverConnectionIdentifier, IDBResourceIdentifier requestIdentifier, IDBResourceIdentifier transactionIdentifier, std::optional<IDBResourceIdentifier>&& cursorIdentifier, std::optional<IDBObjectStoreIdentifier> objectStoreIdentifier, std::optional<IDBIndexIdentifier> indexIdentifier, IndexedDB::IndexRecordType indexRecordType, uint64_t requestedVersion, IndexedDB::RequestType requestType)
     : m_serverConnectionIdentifier(serverConnectionIdentifier)
     , m_requestIdentifier(requestIdentifier)
     , m_transactionIdentifier(transactionIdentifier)
@@ -73,6 +73,7 @@ IDBRequestData::IDBRequestData(const IDBRequestData& other)
 }
 
 IDBRequestData::IDBRequestData(const IDBRequestData& that, IsolatedCopyTag)
+    : m_serverConnectionIdentifier(that.m_serverConnectionIdentifier)
 {
     isolatedCopy(that, *this);
 }
@@ -98,7 +99,6 @@ void IDBRequestData::isolatedCopy(const IDBRequestData& source, IDBRequestData& 
 
 IDBConnectionIdentifier IDBRequestData::serverConnectionIdentifier() const
 {
-    ASSERT(m_serverConnectionIdentifier);
     return m_serverConnectionIdentifier;
 }
 
@@ -124,7 +124,7 @@ IDBObjectStoreIdentifier IDBRequestData::objectStoreIdentifier() const
     return *m_objectStoreIdentifier;
 }
 
-uint64_t IDBRequestData::indexIdentifier() const
+std::optional<IDBIndexIdentifier> IDBRequestData::indexIdentifier() const
 {
     ASSERT(m_objectStoreIdentifier || m_indexIdentifier);
     return m_indexIdentifier;

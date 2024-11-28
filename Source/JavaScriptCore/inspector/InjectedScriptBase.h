@@ -51,9 +51,12 @@ using AsyncCallCallback = WTF::Function<void(Protocol::ErrorString&, RefPtr<Prot
 
 JS_EXPORT_PRIVATE RefPtr<JSON::Value> toInspectorValue(JSC::JSGlobalObject*, JSC::JSValue);
 
-class JS_EXPORT_PRIVATE InjectedScriptBase {
+class InjectedScriptBase {
 public:
-    virtual ~InjectedScriptBase();
+    JS_EXPORT_PRIVATE InjectedScriptBase(const InjectedScriptBase&);
+    JS_EXPORT_PRIVATE virtual ~InjectedScriptBase();
+
+    JS_EXPORT_PRIVATE InjectedScriptBase& operator=(const InjectedScriptBase&);
 
     const String& name() const { return m_name; }
     bool hasNoValue() const { return !m_injectedScriptObject.get(); }

@@ -383,6 +383,14 @@ WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA)) WK_S
  */
 - (BOOL)shouldGrantPermissionsOnUserGestureForWebExtensionContext:(WKWebExtensionContext *)context NS_SWIFT_NAME(shouldGrantPermissionsOnUserGesture(for:));
 
+/*!
+ @abstract Called to determine if the tab should bypass host permission checks.
+ @param context The context in which the web extension is running.
+ @return `YES` to bypass host permission checks, `NO` to enforce them.
+ @discussion This method allows the app to dynamically control whether a tab can bypass standard host permission checks.
+ */
+- (BOOL)shouldBypassPermissionsForWebExtensionContext:(WKWebExtensionContext *)context NS_SWIFT_NAME(shouldBypassPermissions(for:));
+
 @end
 
 WK_HEADER_AUDIT_END(nullability, sendability)

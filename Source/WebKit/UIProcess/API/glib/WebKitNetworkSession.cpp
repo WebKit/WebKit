@@ -65,7 +65,7 @@ enum {
     N_PROPERTIES
 };
 
-static GParamSpec* sObjProperties[N_PROPERTIES] = { nullptr, };
+static std::array<GParamSpec*, N_PROPERTIES> sObjProperties;
 
 enum {
     DOWNLOAD_STARTED,
@@ -73,7 +73,7 @@ enum {
     LAST_SIGNAL
 };
 
-static guint signals[LAST_SIGNAL] = { 0, };
+static std::array<unsigned, LAST_SIGNAL> signals;
 
 struct _WebKitNetworkSessionPrivate {
     _WebKitNetworkSessionPrivate()
@@ -197,7 +197,7 @@ static void webkit_network_session_class_init(WebKitNetworkSessionClass* session
             FALSE,
             static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
 
-    g_object_class_install_properties(gObjectClass, N_PROPERTIES, sObjProperties);
+    g_object_class_install_properties(gObjectClass, N_PROPERTIES, sObjProperties.data());
 
     /**
      * WebKitNetworkSession::download-started:

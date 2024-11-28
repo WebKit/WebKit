@@ -107,7 +107,7 @@ ALWAYS_INLINE void auditStructureID(StructureID structureID)
     Structure* structure = structureID.tryDecode();
     IA_ASSERT(structure, "structureID.bits 0x%x", structureID.bits());
     // structure should be pointing to readable memory. Force a read.
-    WTF::opaque(*bitwise_cast<uintptr_t*>(structure));
+    WTF::opaque(*std::bit_cast<uintptr_t*>(structure));
 #endif
 }
 

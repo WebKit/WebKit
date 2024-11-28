@@ -38,6 +38,10 @@ class ServiceWorkerNotificationHandler final : public NotificationManagerMessage
 public:
     static ServiceWorkerNotificationHandler& singleton();
 
+    // Do nothing since this is a singleton.
+    void ref() const final { }
+    void deref() const final { }
+
     void showNotification(IPC::Connection&, const WebCore::NotificationData&, RefPtr<WebCore::NotificationResources>&&, CompletionHandler<void()>&&) final;
 
     void cancelNotification(WebCore::SecurityOriginData&&, const WTF::UUID& notificationID) final;

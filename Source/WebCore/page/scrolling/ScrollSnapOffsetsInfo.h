@@ -103,7 +103,7 @@ WEBCORE_EXPORT std::pair<LayoutUnit, std::optional<unsigned>> LayoutScrollSnapOf
 // Update the snap offsets for this scrollable area, given the RenderBox of the scroll container, the RenderStyle
 // which defines the scroll-snap properties, and the viewport rectangle with the origin at the top left of
 // the scrolling container's border box.
-void updateSnapOffsetsForScrollableArea(ScrollableArea&, const RenderBox& scrollingElementBox, const RenderStyle& scrollingElementStyle, LayoutRect viewportRectInBorderBoxCoordinates, WritingMode, TextDirection, Element*);
+void updateSnapOffsetsForScrollableArea(ScrollableArea&, const RenderBox& scrollingElementBox, const RenderStyle& scrollingElementStyle, LayoutRect viewportRectInBorderBoxCoordinates, WritingMode, Element*);
 
 template <typename T> WTF::TextStream& operator<<(WTF::TextStream& ts, SnapOffset<T> offset)
 {

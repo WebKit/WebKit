@@ -1,9 +1,7 @@
 This test ensures that scrolling a PDF with accessibility enabled does not cause a crash.
 
-PASS: pdfLayerController.stringAttributeValue('AXRole') === 'AXGroup'
-PASS: pdfLayerController.stringAttributeValue('AXDescription') === 'document'
-PASS: pdfLayerController.childAtIndex(0).role === 'AXRole: AXPage'
-PASS: pdfLayerController.childAtIndex(1).role === 'AXRole: AXPage'
+PASS: pageOne.role === 'AXRole: AXPage'
+PASS: pageTwo.role === 'AXRole: AXPage'
 PASS: Scrolling to the second page of the PDF didn't cause a crash.
 
 PASS successfullyParsed is true

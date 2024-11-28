@@ -1,0 +1,7 @@
+
+PASS Text directive allowed in text/html
+PASS Text directive blocked in text/css assert_equals
+PASS Text directive blocked in text/javascript
+PASS Text directive allowed in text/plain
+PASS Text directive blocked in application/xml
+

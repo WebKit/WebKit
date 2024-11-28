@@ -1,0 +1,8 @@
+main frame - didStartProvisionalLoadForFrame
+main frame - didCommitLoadForFrame
+main frame - didFinishDocumentLoadForFrame
+main frame - didHandleOnloadEventsForFrame
+main frame - didFinishLoadForFrame
+
+FAIL Imported inline CSS with no semicolon is not blocked on pending CSS assert_true: The second resource start time should not be blocked on the first resource response expected true got false
+

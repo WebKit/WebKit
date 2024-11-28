@@ -25,9 +25,12 @@
 #include "config.h"
 #include "CSSCalcTree+Serialization.h"
 
+#include "AnchorPositionEvaluator.h"
 #include "CSSCalcSymbolTable.h"
 #include "CSSCalcTree+Traversal.h"
 #include "CSSCalcTree.h"
+#include "CSSMarkup.h"
+#include "CSSPrimitiveNumericTypes+Serialization.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSUnits.h"
 #include <wtf/text/StringBuilder.h>
@@ -46,7 +49,7 @@ struct SerializationState {
 
     GroupingParenthesis groupingParenthesis = GroupingParenthesis::Include;
     Stage stage = Stage::Specified;
-    ValueRange range = ValueRange::All;
+    CSS::Range range = CSS::All;
 };
 
 struct ParenthesisSaver {
@@ -83,12 +86,17 @@ template<typename Op> static void serializeMathFunctionPrefix(StringBuilder&, co
 
 static void serializeMathFunctionArguments(StringBuilder&, const IndirectNode<Sum>&, SerializationState&);
 static void serializeMathFunctionArguments(StringBuilder&, const IndirectNode<Product>&, SerializationState&);
+static void serializeMathFunctionArguments(StringBuilder&, const IndirectNode<Progress>&, SerializationState&);
+static void serializeMathFunctionArguments(StringBuilder&, const IndirectNode<Anchor>&, SerializationState&);
+static void serializeMathFunctionArguments(StringBuilder&, const IndirectNode<AnchorSize>&, SerializationState&);
 template<typename Op> static void serializeMathFunctionArguments(StringBuilder&, const IndirectNode<Op>&, SerializationState&);
+
+void serializeWithoutOmittingPrefix(StringBuilder&, const Child&, SerializationState&);
 
 // https://drafts.csswg.org/css-values-4/#serialize-a-calculation-tree
 static void serializeCalculationTree(StringBuilder&, const Child&, SerializationState&);
 static void serializeCalculationTree(StringBuilder&, const ChildOrNone&, SerializationState&);
-static void serializeCalculationTree(StringBuilder&, const NoneRaw&, SerializationState&);
+static void serializeCalculationTree(StringBuilder&, const CSS::NoneRaw&, SerializationState&);
 static void serializeCalculationTree(StringBuilder&, const Symbol&, SerializationState&);
 static void serializeCalculationTree(StringBuilder&, const IndirectNode<Sum>&, SerializationState&);
 static void serializeCalculationTree(StringBuilder&, const IndirectNode<Product>&, SerializationState&);
@@ -175,11 +183,10 @@ static unsigned sortPriority(CSSUnitType unit)
     case CSSUnitType::CSS_X:            return 63;
 
     // Non-numeric types are not supported.
-    case CSSUnitType::CSS_ANCHOR:
     case CSSUnitType::CSS_ATTR:
     case CSSUnitType::CSS_CALC:
+    case CSSUnitType::CSS_CALC_PERCENTAGE_WITH_ANGLE:
     case CSSUnitType::CSS_CALC_PERCENTAGE_WITH_LENGTH:
-    case CSSUnitType::CSS_CALC_PERCENTAGE_WITH_NUMBER:
     case CSSUnitType::CSS_DIMENSION:
     case CSSUnitType::CSS_FONT_FAMILY:
     case CSSUnitType::CSS_IDENT:
@@ -239,10 +246,10 @@ static Vector<ChildRepresentation, 16> generateSortedChildrenMap(const Children&
 // MARK: Math Function
 // https://drafts.csswg.org/css-values-4/#serialize-a-math-function
 
-static double clampValue(double value, ValueRange range)
+static double clampValue(double value, CSS::Range range)
 {
     value = std::isnan(value) ? 0 : value;
-    return range == ValueRange::NonNegative && value < 0 ? 0 : value;
+    return std::clamp(value, range.min, range.max);
 }
 
 void serializeMathFunction(StringBuilder& builder, const Child& fn, SerializationState& state)
@@ -363,6 +370,83 @@ void serializeMathFunctionArguments(StringBuilder& builder, const IndirectNode<P
     serializeCalculationTree(builder, fn, state);
 }
 
+void serializeMathFunctionArguments(StringBuilder& builder, const IndirectNode<Progress>& fn, SerializationState& state)
+{
+    serializeCalculationTree(builder, fn->progress, state);
+    builder.append(" from "_s);
+    serializeCalculationTree(builder, fn->from, state);
+    builder.append(" to "_s);
+    serializeCalculationTree(builder, fn->to, state);
+}
+
+void serializeMathFunctionArguments(StringBuilder& builder, const IndirectNode<Anchor>& anchor, SerializationState& state)
+{
+    if (!anchor->elementName.isNull()) {
+        serializeIdentifier(anchor->elementName, builder);
+        builder.append(' ');
+    }
+
+    WTF::switchOn(anchor->side,
+        [&](CSSValueID valueID) {
+            builder.append(nameLiteralForSerialization(valueID));
+        }, [&](const Child& percentage) {
+            // As anchor() is not actually a "math function", calc() can't be omitted in arguments.
+            serializeWithoutOmittingPrefix(builder, percentage, state);
+        }
+    );
+
+    if (anchor->fallback) {
+        builder.append(", "_s);
+        serializeWithoutOmittingPrefix(builder, *anchor->fallback, state);
+    }
+}
+
+static void serializeAnchorSizeDimension(StringBuilder& builder, Style::AnchorSizeDimension dimension)
+{
+    switch (dimension) {
+    case Style::AnchorSizeDimension::Width:
+        builder.append("width"_s);
+        break;
+    case Style::AnchorSizeDimension::Height:
+        builder.append("height"_s);
+        break;
+    case Style::AnchorSizeDimension::Block:
+        builder.append("block"_s);
+        break;
+    case Style::AnchorSizeDimension::Inline:
+        builder.append("inline"_s);
+        break;
+    case Style::AnchorSizeDimension::SelfBlock:
+        builder.append("self-block"_s);
+        break;
+    case Style::AnchorSizeDimension::SelfInline:
+        builder.append("self-inline"_s);
+        break;
+    }
+}
+
+void serializeMathFunctionArguments(StringBuilder& builder, const IndirectNode<AnchorSize>& anchorSize, SerializationState& state)
+{
+    bool hasElementName = !anchorSize->elementName.isNull();
+
+    if (hasElementName)
+        serializeIdentifier(anchorSize->elementName, builder);
+
+    if (anchorSize->dimension) {
+        if (hasElementName)
+            builder.append(' ');
+
+        serializeAnchorSizeDimension(builder, *anchorSize->dimension);
+    }
+
+    if (anchorSize->fallback) {
+        if (hasElementName || anchorSize->dimension)
+            builder.append(", "_s);
+
+        serializeWithoutOmittingPrefix(builder, *anchorSize->fallback, state);
+    }
+}
+
 template<typename Op> void serializeMathFunctionArguments(StringBuilder& builder, const IndirectNode<Op>& fn, SerializationState& state)
 {
     auto separator = ""_s;
@@ -380,6 +464,17 @@ template<typename Op> void serializeMathFunctionArguments(StringBuilder& builder
     ));
 }
 
+void serializeWithoutOmittingPrefix(StringBuilder& builder, const Child& child, SerializationState& state)
+{
+    WTF::switchOn(child,
+        [&](Leaf auto& op) {
+            serializeCalculationTree(builder, op, state);
+        }, [&](auto& op) {
+            serializeMathFunction(builder, op, state);
+        }
+    );
+}
+
 // MARK: Calculation Tree
 // https://drafts.csswg.org/css-values-4/#serialize-a-calculation-tree
 
@@ -393,7 +488,7 @@ void serializeCalculationTree(StringBuilder& builder, const ChildOrNone& root, S
     WTF::switchOn(root, [&builder, &state](const auto& root) { serializeCalculationTree(builder, root, state); });
 }
 
-void serializeCalculationTree(StringBuilder& builder, const NoneRaw& root, SerializationState&)
+void serializeCalculationTree(StringBuilder& builder, const CSS::NoneRaw& root, SerializationState&)
 {
     serializationForCSS(builder, root);
 }

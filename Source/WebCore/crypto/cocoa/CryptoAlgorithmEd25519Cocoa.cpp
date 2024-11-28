@@ -41,7 +41,8 @@ static ExceptionOr<Vector<uint8_t>> signEd25519(const Vector<uint8_t>& sk, const
         return Exception { ExceptionCode::OperationError };
     ccec25519pubkey pk;
     const struct ccdigest_info* di = ccsha512_di();
-    cced25519_make_pub(di, pk, sk.data());
+    if (cced25519_make_pub(di, pk, sk.data()))
+        return Exception { ExceptionCode::OperationError };
     ccec25519signature newSignature;
 
 #if HAVE(CORE_CRYPTO_SIGNATURES_INT_RETURN_VALUE)
@@ -50,7 +51,7 @@ static ExceptionOr<Vector<uint8_t>> signEd25519(const Vector<uint8_t>& sk, const
 #else
     cced25519_sign(di, newSignature, data.size(), data.data(), pk, sk.data());
 #endif
-    return Vector<uint8_t>(std::span { newSignature, ed25519SignatureSize });
+    return Vector<uint8_t> { std::span { newSignature } };
 }
 
 static ExceptionOr<bool> verifyEd25519(const Vector<uint8_t>& key, const Vector<uint8_t>& signature, const Vector<uint8_t> data)

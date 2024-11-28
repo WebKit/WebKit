@@ -48,7 +48,9 @@ DRMDeviceManager::~DRMDeviceManager() = default;
 
 static void drmForeachDevice(Function<bool(drmDevice*)>&& functor)
 {
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib port
     drmDevicePtr devices[64];
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     memset(devices, 0, sizeof(devices));
 
     int numDevices = drmGetDevices2(0, devices, std::size(devices));
@@ -75,6 +77,7 @@ void DRMDeviceManager::initializeMainDevice(const String& deviceFile)
             if (!(device->available_nodes & (1 << i)))
                 continue;
 
+            WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib port
             if (String::fromUTF8(device->nodes[i]) == deviceFile) {
                 RELEASE_ASSERT(device->available_nodes & (1 << DRM_NODE_PRIMARY));
                 if (device->available_nodes & (1 << DRM_NODE_RENDER)) {
@@ -84,6 +87,7 @@ void DRMDeviceManager::initializeMainDevice(const String& deviceFile)
                     m_mainDevice.primaryNode = DRMDeviceNode::create(CString { device->nodes[DRM_NODE_PRIMARY] });
                 return false;
             }
+            WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
         }
         return true;
     });

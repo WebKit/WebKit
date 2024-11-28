@@ -27,6 +27,10 @@
 #include <wtf/RefCounted.h>
 #include <wtf/Ref.h>
 
+namespace WTF {
+class TextStream;
+}
+
 namespace WebCore {
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StyleDeprecatedFlexibleBoxData);
@@ -37,6 +41,10 @@ public:
     Ref<StyleDeprecatedFlexibleBoxData> copy() const;
 
     bool operator==(const StyleDeprecatedFlexibleBoxData&) const;
+
+#if !LOG_DISABLED
+    void dumpDifferences(TextStream&, const StyleDeprecatedFlexibleBoxData&) const;
+#endif
 
     float flex;
     unsigned flexGroup;

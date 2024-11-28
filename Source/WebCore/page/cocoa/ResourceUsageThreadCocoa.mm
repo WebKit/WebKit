@@ -39,6 +39,8 @@
 #import <wtf/ResourceUsage.h>
 #import <wtf/spi/cocoa/MachVMSPI.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 static unsigned categoryForVMTag(unsigned tag)
@@ -168,7 +170,7 @@ void ResourceUsageThread::platformCollectCPUData(JSC::VM*, ResourceUsageData& da
         }
     }
 
-    HashMap<mach_port_t, String> knownWorkerThreads;
+    UncheckedKeyHashMap<mach_port_t, String> knownWorkerThreads;
     {
         for (auto& thread : WorkerOrWorkletThread::workerOrWorkletThreads()) {
             // Ignore worker threads that have not been fully started yet.
@@ -275,5 +277,7 @@ void ResourceUsageThread::platformCollectMemoryData(JSC::VM* vm, ResourceUsageDa
 }
 
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif

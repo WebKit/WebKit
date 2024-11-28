@@ -45,6 +45,9 @@ struct CacheQueryOptions;
 class BackgroundFetchRegistration final : public RefCounted<BackgroundFetchRegistration>, public EventTarget, public ActiveDOMObject {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(BackgroundFetchRegistration);
 public:
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
+
     static Ref<BackgroundFetchRegistration> create(ScriptExecutionContext&, BackgroundFetchInformation&&);
     ~BackgroundFetchRegistration();
 
@@ -66,10 +69,6 @@ public:
     void matchAll(ScriptExecutionContext&, std::optional<RequestInfo>&&, const CacheQueryOptions&, DOMPromiseDeferred<IDLSequence<IDLInterface<BackgroundFetchRecord>>>&&);
 
     void updateInformation(const BackgroundFetchInformation&);
-
-    // ActiveDOMObject.
-    void ref() const final { RefCounted::ref(); }
-    void deref() const final { RefCounted::deref(); }
 
 private:
     BackgroundFetchRegistration(ScriptExecutionContext&, BackgroundFetchInformation&&);

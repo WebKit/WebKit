@@ -108,7 +108,7 @@ NEVER_INLINE void WordLock::lockSlow()
 
         // We own the queue. Nobody can enqueue or dequeue until we're done. Also, it's not possible
         // to release the WordLock while we hold the queue lock.
-        ThreadData* queueHead = bitwise_cast<ThreadData*>(currentWordValue & ~queueHeadMask);
+        ThreadData* queueHead = std::bit_cast<ThreadData*>(currentWordValue & ~queueHeadMask);
         if (queueHead) {
             // Put this thread at the end of the queue.
             queueHead->queueTail->nextInQueue = &me;
@@ -132,7 +132,7 @@ NEVER_INLINE void WordLock::lockSlow()
             ASSERT(currentWordValue & isQueueLockedBit);
             ASSERT(currentWordValue & isLockedBit);
             uintptr_t newWordValue = currentWordValue;
-            newWordValue |= bitwise_cast<uintptr_t>(queueHead);
+            newWordValue |= std::bit_cast<uintptr_t>(queueHead);
             newWordValue &= ~isQueueLockedBit;
             m_word.store(newWordValue);
         }
@@ -201,7 +201,7 @@ NEVER_INLINE void WordLock::unlockSlow()
     // queue lock and if it did then it only releases it after putting something on the queue.
     ASSERT(currentWordValue & isLockedBit);
     ASSERT(currentWordValue & isQueueLockedBit);
-    ThreadData* queueHead = bitwise_cast<ThreadData*>(currentWordValue & ~queueHeadMask);
+    ThreadData* queueHead = std::bit_cast<ThreadData*>(currentWordValue & ~queueHeadMask);
     ASSERT(queueHead);
 
     ThreadData* newQueueHead = queueHead->nextInQueue;
@@ -216,12 +216,12 @@ NEVER_INLINE void WordLock::unlockSlow()
     currentWordValue = m_word.load();
     ASSERT(currentWordValue & isLockedBit);
     ASSERT(currentWordValue & isQueueLockedBit);
-    ASSERT((currentWordValue & ~queueHeadMask) == bitwise_cast<uintptr_t>(queueHead));
+    ASSERT((currentWordValue & ~queueHeadMask) == std::bit_cast<uintptr_t>(queueHead));
     uintptr_t newWordValue = currentWordValue;
     newWordValue &= ~isLockedBit; // Release the WordLock.
     newWordValue &= ~isQueueLockedBit; // Release the queue lock.
     newWordValue &= queueHeadMask; // Clear out the old queue head.
-    newWordValue |= bitwise_cast<uintptr_t>(newQueueHead); // Install new queue head.
+    newWordValue |= std::bit_cast<uintptr_t>(newQueueHead); // Install new queue head.
     m_word.store(newWordValue);
 
     // Now the lock is available for acquisition. But we just have to wake up the old queue head.

@@ -33,6 +33,7 @@
 namespace WebCore {
 
 class CryptoAlgorithmRsaHashedImportParams final : public CryptoAlgorithmParameters {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(CryptoAlgorithmRsaHashedImportParams);
 public:
     // FIXME: Consider merging hash and hashIdentifier.
     std::variant<JSC::Strong<JSC::JSObject>, String> hash;

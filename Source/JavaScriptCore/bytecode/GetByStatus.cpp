@@ -134,6 +134,30 @@ GetByStatus GetByStatus::computeFromLLInt(CodeBlock* profiledBlock, BytecodeInde
         break;
     }
 
+    case op_instanceof: {
+        auto& metadata = instruction->as<OpInstanceof>().metadata(profiledBlock);
+        switch (bytecodeIndex.checkpoint()) {
+        case OpInstanceof::getHasInstance:
+            if (metadata.m_hasInstanceModeMetadata.mode != GetByIdMode::Default)
+                return GetByStatus(NoInformation, false);
+            structureID = metadata.m_hasInstanceModeMetadata.defaultMode.structureID;
+            identifier = &vm.propertyNames->done;
+            break;
+        case OpInstanceof::getPrototype:
+            if (metadata.m_prototypeModeMetadata.mode != GetByIdMode::Default)
+                return GetByStatus(NoInformation, false);
+            structureID = metadata.m_prototypeModeMetadata.defaultMode.structureID;
+            identifier = &vm.propertyNames->value;
+            break;
+        case OpInstanceof::instanceof:
+            break;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+            break;
+        }
+        break;
+    }
+
     case op_get_private_name:
         // FIXME: Consider using LLInt caches or IC information to populate GetByStatus
         // https://bugs.webkit.org/show_bug.cgi?id=217245

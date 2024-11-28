@@ -39,6 +39,8 @@
 #include <JavaScriptCore/JSGenericTypedArrayViewInlines.h>
 #include <wtf/TZoneMallocInlines.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(AudioBufferSourceNode);
@@ -299,6 +301,10 @@ bool AudioBufferSourceNode::renderFromBuffer(AudioBus* bus, unsigned destination
     } else if (pitchRate == -1 && !needsInterpolation) {
         int readIndex = static_cast<int>(virtualReadIndex);
         int deltaFrames = static_cast<int>(virtualDeltaFrames);
+        int maxFrame = static_cast<int>(virtualMaxFrame);
+        if (readIndex > maxFrame)
+            readIndex = maxFrame;
+
         int minFrame = static_cast<int>(virtualMinFrame) - 1;
         while (framesToProcess > 0) {
             int framesToEnd = readIndex - minFrame;
@@ -635,5 +641,7 @@ float AudioBufferSourceNode::noiseInjectionMultiplier() const
 }
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ENABLE(WEB_AUDIO)

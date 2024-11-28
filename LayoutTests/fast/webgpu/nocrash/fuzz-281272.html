@@ -1,0 +1,42 @@
+<script>
+async function run() {
+    let adapter = await navigator.gpu.requestAdapter();
+    let device = await adapter.requestDevice();
+    let pipelineLayout = device.createPipelineLayout({ bindGroupLayouts: [] });
+    let texture = device.createTexture({ size: { width: 80 }, dimension: '3d', format: 'r8unorm', usage: GPUTextureUsage.RENDER_ATTACHMENT });
+    let texture2 = device.createTexture({ size: { width: 80 }, format: 'rgba32uint', usage: GPUTextureUsage.RENDER_ATTACHMENT });
+    let buffer = device.createBuffer({ size: 215, usage: GPUBufferUsage.INDIRECT });
+    let shaderModule = device.createShaderModule({ code: ` 
+        struct f {
+            @location(0) h: vec4u,
+            @location(1) g: f32,
+        }
+        @vertex fn j() -> @builtin(position) vec4f {
+            return vec4f();
+        }
+        @fragment fn l() -> f {
+            var k: f;
+            return k;
+        }
+    `});
+    let renderPipeline = await device.createRenderPipelineAsync({
+        layout: pipelineLayout,
+        fragment: { module: shaderModule, targets: [{ format: 'rgba32uint' }, { format: 'r8unorm' }] },
+        vertex: { module: shaderModule }
+    });
+    let renderBundleEncoder = device.createRenderBundleEncoder({colorFormats: [ 'rgba32uint', 'r8unorm' ]});
+    renderBundleEncoder.setPipeline(renderPipeline);
+    renderBundleEncoder.drawIndirect(buffer, 4);
+    renderBundleEncoder.draw(9, 7, 4_294_967_295);
+    let renderPassEncoder = device.createCommandEncoder().beginRenderPass({
+        colorAttachments: [
+            { view: texture2.createView(), loadOp: 'load', storeOp: 'discard' },
+            { view: texture.createView(), depthSlice: 0, loadOp: 'load', storeOp: 'store' },
+        ]
+    });
+    renderPassEncoder.executeBundles([renderBundleEncoder.finish()])
+}
+
+globalThis.testRunner?.waitUntilDone();
+run().finally(() => globalThis.testRunner?.notifyDone());
+</script>

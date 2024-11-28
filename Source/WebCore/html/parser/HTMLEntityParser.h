@@ -60,7 +60,7 @@ public:
     constexpr bool failed() const { return !m_length; }
     constexpr bool notEnoughCharacters() const { return m_notEnoughCharacters; }
 
-    constexpr std::span<const UChar> span() const { return { m_characters.data(), m_length }; }
+    constexpr std::span<const UChar> span() const { return std::span { m_characters }.first(m_length); }
 
 private:
     uint8_t m_length { 0 };

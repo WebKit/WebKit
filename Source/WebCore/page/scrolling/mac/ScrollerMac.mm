@@ -350,6 +350,20 @@ void ScrollerMac::setHostLayer(CALayer *layer)
     updatePairScrollerImps();
 }
 
+void ScrollerMac::setHiddenByStyle(NativeScrollbarVisibility visibility)
+{
+    m_isHiddenByStyle = visibility != NativeScrollbarVisibility::Visible;
+    if (m_isHiddenByStyle) {
+        detach();
+        setScrollerImp(nullptr);
+    } else {
+        attach();
+        [m_scrollerImp setLayer:m_hostLayer.get()];
+        updateValues();
+    }
+    updatePairScrollerImps();
+}
+
 void ScrollerMac::updateValues()
 {
     auto values = m_pair.valuesForOrientation(m_orientation);
@@ -366,13 +380,18 @@ void ScrollerMac::updateValues()
 
 void ScrollerMac::updateScrollbarStyle()
 {
-    setScrollerImp([NSScrollerImp scrollerImpWithStyle:nsScrollerStyle(m_pair.scrollbarStyle()) controlSize:nsControlSizeFromScrollbarWidth(m_pair.scrollbarWidthStyle()) horizontal:m_orientation == ScrollbarOrientation::Horizontal replacingScrollerImp:takeScrollerImp().get()]);
+    setScrollerImp([NSScrollerImp scrollerImpWithStyle:nsScrollerStyle(m_pair.scrollbarStyle()) controlSize:nsControlSizeFromScrollbarWidth(m_pair.scrollbarWidthStyle()) horizontal:m_orientation == ScrollbarOrientation::Horizontal replacingScrollerImp:nil]);
+    [m_scrollerImp setDelegate:m_scrollerImpDelegate.get()];
+
+    [m_scrollerImp setLayer:m_hostLayer.get()];
+
     updatePairScrollerImps();
+    updateValues();
 }
 
 void ScrollerMac::updatePairScrollerImps()
 {
-    NSScrollerImp *scrollerImp = m_hostLayer ? m_scrollerImp.get() : nil;
+    NSScrollerImp *scrollerImp = m_scrollerImp.get();
     if (m_orientation == ScrollbarOrientation::Vertical)
         m_pair.setVerticalScrollerImp(scrollerImp);
     else
@@ -438,6 +457,8 @@ void ScrollerMac::updateMinimumKnobLength(int minimumKnobLength)
 
 void ScrollerMac::setScrollerImp(NSScrollerImp *imp)
 {
+    if (m_isHiddenByStyle && imp)
+        return;
     m_scrollerImp = imp;
     updateMinimumKnobLength([m_scrollerImp knobMinLength]);
 }
@@ -445,6 +466,11 @@ void ScrollerMac::setScrollerImp(NSScrollerImp *imp)
 void ScrollerMac::setScrollbarLayoutDirection(UserInterfaceLayoutDirection scrollbarLayoutDirection)
 {
     [m_scrollerImp setUserInterfaceLayoutDirection: scrollbarLayoutDirection == UserInterfaceLayoutDirection::RTL ? NSUserInterfaceLayoutDirectionRightToLeft : NSUserInterfaceLayoutDirectionLeftToRight];
+}
+
+void ScrollerMac::setNeedsDisplay()
+{
+    [m_scrollerImp setNeedsDisplay:YES];
 }
 
 String ScrollerMac::scrollbarState() const

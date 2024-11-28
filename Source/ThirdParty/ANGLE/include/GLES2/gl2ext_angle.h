@@ -736,6 +736,21 @@ GL_APICALL void GL_APIENTRY glLogicOpANGLE (GLenum);
 #define GL_PROGRAM_BINARY_READY_ANGLE    0x96BE
 #endif /* GL_ANGLE_program_binary_readiness_query */
 
+#ifndef GL_ANGLE_blob_cache
+#define GL_ANGLE_blob_cache
+typedef GLsizeiptr (GL_APIENTRY *GLGETBLOBPROCANGLE)(const void *key, GLsizeiptr keySize, void *value, GLsizeiptr valueSize, const void *userParam);
+typedef void (GL_APIENTRY *GLSETBLOBPROCANGLE)(const void *key, GLsizeiptr keySize, const void *value, GLsizeiptr valueSize, const void *userParam);
+#define GL_BLOB_CACHE_GET_FUNCTION_ANGLE 0x96BF
+#define GL_BLOB_CACHE_SET_FUNCTION_ANGLE 0x96EF
+#define GL_BLOB_CACHE_USER_PARAM_ANGLE   0x972D
+typedef void (GL_APIENTRYP PFNGLBLOBCACHECALLBACKSANGLEPROC) (GLSETBLOBPROCANGLE, GLGETBLOBPROCANGLE, const void*);
+typedef void (GL_APIENTRYP PFNGLGETPOINTERVANGLEPROC) (GLenum pname, void **params);
+#ifdef GL_GLEXT_PROTOTYPES
+GL_APICALL void GL_APIENTRY glBlobCacheCallbacksANGLE (GLSETBLOBPROCANGLE, GLGETBLOBPROCANGLE, const void*);
+GL_APICALL void GL_APIENTRY glGetPointervANGLE (GLenum pname, void **params);
+#endif
+#endif /* GL_ANGLE_blob_cache */
+
 #ifndef GL_WEBKIT_explicit_resolve_target
 typedef void (GL_APIENTRYP PFNGLFRAMEBUFFERRESOLVERENDERBUFFERWEBKITPROC) (GLenum, GLenum, GLenum, GLuint);
 #ifdef GL_GLEXT_PROTOTYPES

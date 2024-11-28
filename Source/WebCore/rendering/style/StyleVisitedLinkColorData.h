@@ -39,6 +39,10 @@ public:
 
     bool operator==(const StyleVisitedLinkColorData&) const;
 
+#if !LOG_DISABLED
+    void dumpDifferences(TextStream&, const StyleVisitedLinkColorData&) const;
+#endif
+
     StyleColor background;
     StyleColor borderLeft;
     StyleColor borderRight;

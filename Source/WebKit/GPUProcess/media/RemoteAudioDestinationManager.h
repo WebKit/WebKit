@@ -42,7 +42,6 @@
 #include "SharedCARingBuffer.h"
 #endif
 
-
 namespace WebCore {
 #if PLATFORM(COCOA)
 class CAAudioStreamDescription;
@@ -50,11 +49,11 @@ class CAAudioStreamDescription;
 class SharedMemoryHandle;
 }
 
-
 namespace WebKit {
 
 class GPUConnectionToWebProcess;
 class RemoteAudioDestination;
+struct SharedPreferencesForWebProcess;
 
 class RemoteAudioDestinationManager : private IPC::MessageReceiver {
     WTF_MAKE_TZONE_ALLOCATED(RemoteAudioDestinationManager);
@@ -63,9 +62,13 @@ public:
     RemoteAudioDestinationManager(GPUConnectionToWebProcess&);
     ~RemoteAudioDestinationManager();
 
+    void ref() const;
+    void deref() const;
+
     void didReceiveMessageFromWebProcess(IPC::Connection& connection, IPC::Decoder& decoder) { didReceiveMessage(connection, decoder); }
 
     bool allowsExitUnderMemoryPressure() const;
+    std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess() const;
 
 private:
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&);

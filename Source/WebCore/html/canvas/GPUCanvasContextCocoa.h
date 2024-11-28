@@ -71,13 +71,12 @@ public:
     CanvasType canvas() override;
     ExceptionOr<void> configure(GPUCanvasConfiguration&&) override;
     void unconfigure() override;
+    std::optional<GPUCanvasConfiguration> getConfiguration() const override;
     ExceptionOr<RefPtr<GPUTexture>> getCurrentTexture() override;
     RefPtr<ImageBuffer> transferToImageBuffer() override;
 
-    bool isWebGPU() const override { return true; }
-
 private:
-    explicit GPUCanvasContextCocoa(CanvasBase&, GPU&);
+    explicit GPUCanvasContextCocoa(CanvasBase&, Ref<GPUCompositorIntegration>&&, Ref<GPUPresentationContext>&&);
 
     void markContextChangedAndNotifyCanvasObservers();
 
@@ -88,7 +87,7 @@ private:
 
     CanvasType htmlOrOffscreenCanvas() const;
     ExceptionOr<void> configure(GPUCanvasConfiguration&&, bool);
-    void present();
+    void present(uint32_t frameIndex);
 
     struct Configuration {
         Ref<GPUDevice> device;
@@ -96,15 +95,16 @@ private:
         GPUTextureUsageFlags usage { GPUTextureUsage::RENDER_ATTACHMENT };
         Vector<GPUTextureFormat> viewFormats;
         GPUPredefinedColorSpace colorSpace { GPUPredefinedColorSpace::SRGB };
+        GPUCanvasToneMapping toneMapping;
         GPUCanvasAlphaMode compositingAlphaMode { GPUCanvasAlphaMode::Opaque };
         Vector<MachSendRight> renderBuffers;
         unsigned frameCount { 0 };
     };
     std::optional<Configuration> m_configuration;
 
-    Ref<GPUDisplayBufferDisplayDelegate> m_layerContentsDisplayDelegate;
-    RefPtr<GPUCompositorIntegration> m_compositorIntegration;
-    RefPtr<GPUPresentationContext> m_presentationContext;
+    const Ref<GPUDisplayBufferDisplayDelegate> m_layerContentsDisplayDelegate;
+    const Ref<GPUCompositorIntegration> m_compositorIntegration;
+    const Ref<GPUPresentationContext> m_presentationContext;
     RefPtr<GPUTexture> m_currentTexture;
 
     GPUIntegerCoordinate m_width { 0 };

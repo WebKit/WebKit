@@ -25,12 +25,14 @@
 #include "JSTestCallbackInterface.h"
 
 #include "ContextDestructionObserverInlines.h"
+#include "DOMPromiseProxy.h"
 #include "JSDOMConstructorNotConstructable.h"
 #include "JSDOMConvertBase.h"
 #include "JSDOMConvertBoolean.h"
 #include "JSDOMConvertBufferSource.h"
 #include "JSDOMConvertInterface.h"
 #include "JSDOMConvertNumbers.h"
+#include "JSDOMConvertPromise.h"
 #include "JSDOMConvertSerializedScriptValue.h"
 #include "JSDOMConvertStrings.h"
 #include "JSDOMConvertUnion.h"
@@ -54,7 +56,7 @@ using namespace JSC;
 
 String convertEnumerationToString(TestCallbackInterface::Enum enumerationValue)
 {
-    static const NeverDestroyed<String> values[] = {
+    static const std::array<NeverDestroyed<String>, 2> values {
         MAKE_STATIC_STRING_IMPL("value1"),
         MAKE_STATIC_STRING_IMPL("value2"),
     };
@@ -71,9 +73,9 @@ template<> JSString* convertEnumerationToJS(VM& vm, TestCallbackInterface::Enum 
 
 template<> std::optional<TestCallbackInterface::Enum> parseEnumerationFromString<TestCallbackInterface::Enum>(const String& stringValue)
 {
-    static constexpr std::pair<ComparableASCIILiteral, TestCallbackInterface::Enum> mappings[] = {
-        { "value1", TestCallbackInterface::Enum::Value1 },
-        { "value2", TestCallbackInterface::Enum::Value2 },
+    static constexpr std::array<std::pair<ComparableASCIILiteral, TestCallbackInterface::Enum>, 2> mappings {
+        std::pair<ComparableASCIILiteral, TestCallbackInterface::Enum> { "value1"_s, TestCallbackInterface::Enum::Value1 },
+        std::pair<ComparableASCIILiteral, TestCallbackInterface::Enum> { "value2"_s, TestCallbackInterface::Enum::Value2 },
     };
     static constexpr SortedArrayMap enumerationMapping { mappings };
     if (auto* enumerationValue = enumerationMapping.tryGet(stringValue); LIKELY(enumerationValue))
@@ -93,7 +95,7 @@ template<> ASCIILiteral expectedEnumerationValues<TestCallbackInterface::Enum>()
 
 template<> ConversionResult<IDLDictionary<TestCallbackInterface::Dictionary>> convertDictionary<TestCallbackInterface::Dictionary>(JSGlobalObject& lexicalGlobalObject, JSValue value)
 {
-    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     bool isNullOrUndefined = value.isUndefinedOrNull();
     auto* object = isNullOrUndefined ? nullptr : value.getObject();
@@ -141,9 +143,10 @@ JSTestCallbackInterface::JSTestCallbackInterface(JSObject* callback, JSDOMGlobal
 
 JSTestCallbackInterface::~JSTestCallbackInterface()
 {
-    ScriptExecutionContext* context = scriptExecutionContext();
+    SUPPRESS_UNCOUNTED_LOCAL ScriptExecutionContext* context = scriptExecutionContext();
     // When the context is destroyed, all tasks with a reference to a callback
     // should be deleted. So if the context is 0, we are on the context thread.
+    // We can't use RefPtr here since ScriptExecutionContext is not thread safe ref counted.
     if (!context || context->isContextThread())
         delete m_data;
     else
@@ -157,10 +160,9 @@ using JSTestCallbackInterfaceDOMConstructor = JSDOMConstructorNotConstructable<J
 
 /* Hash table for constructor */
 
-static const HashTableValue JSTestCallbackInterfaceConstructorTableValues[] =
-{
-    { "CONSTANT1"_s, PropertyAttribute::ReadOnly | PropertyAttribute::DontDelete | PropertyAttribute::ConstantInteger, NoIntrinsic, { HashTableValue::ConstantType, 1 } },
-    { "CONSTANT2"_s, PropertyAttribute::ReadOnly | PropertyAttribute::DontDelete | PropertyAttribute::ConstantInteger, NoIntrinsic, { HashTableValue::ConstantType, 2 } },
+static const std::array<HashTableValue, 2> JSTestCallbackInterfaceConstructorTableValues {
+    HashTableValue { "CONSTANT1"_s, PropertyAttribute::ReadOnly | PropertyAttribute::DontDelete | PropertyAttribute::ConstantInteger, NoIntrinsic, { HashTableValue::ConstantType, 1 } },
+    HashTableValue { "CONSTANT2"_s, PropertyAttribute::ReadOnly | PropertyAttribute::DontDelete | PropertyAttribute::ConstantInteger, NoIntrinsic, { HashTableValue::ConstantType, 2 } },
 };
 
 static_assert(TestCallbackInterface::CONSTANT1 == 1, "CONSTANT1 in TestCallbackInterface does not match value from IDL");
@@ -197,7 +199,7 @@ CallbackResult<typename IDLUndefined::CallbackReturnType> JSTestCallbackInterfac
     Ref<JSTestCallbackInterface> protectedThis(*this);
 
     auto& globalObject = *m_data->globalObject();
-    auto& vm = globalObject.vm();
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = globalObject.vm();
 
     JSLockHolder lock(vm);
     auto& lexicalGlobalObject = globalObject;
@@ -224,7 +226,7 @@ CallbackResult<typename IDLUndefined::CallbackReturnType> JSTestCallbackInterfac
     Ref<JSTestCallbackInterface> protectedThis(*this);
 
     auto& globalObject = *m_data->globalObject();
-    auto& vm = globalObject.vm();
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = globalObject.vm();
 
     JSLockHolder lock(vm);
     auto& lexicalGlobalObject = globalObject;
@@ -252,7 +254,7 @@ CallbackResult<typename IDLUndefined::CallbackReturnType> JSTestCallbackInterfac
     Ref<JSTestCallbackInterface> protectedThis(*this);
 
     auto& globalObject = *m_data->globalObject();
-    auto& vm = globalObject.vm();
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = globalObject.vm();
 
     JSLockHolder lock(vm);
     auto& lexicalGlobalObject = globalObject;
@@ -281,7 +283,7 @@ CallbackResult<typename IDLUndefined::CallbackReturnType> JSTestCallbackInterfac
     Ref<JSTestCallbackInterface> protectedThis(*this);
 
     auto& globalObject = *m_data->globalObject();
-    auto& vm = globalObject.vm();
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = globalObject.vm();
 
     JSLockHolder lock(vm);
     auto& lexicalGlobalObject = globalObject;
@@ -309,7 +311,7 @@ CallbackResult<typename IDLUndefined::CallbackReturnType> JSTestCallbackInterfac
     Ref<JSTestCallbackInterface> protectedThis(*this);
 
     auto& globalObject = *m_data->globalObject();
-    auto& vm = globalObject.vm();
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = globalObject.vm();
 
     JSLockHolder lock(vm);
     auto& lexicalGlobalObject = globalObject;
@@ -337,7 +339,7 @@ CallbackResult<typename IDLUndefined::CallbackReturnType> JSTestCallbackInterfac
     Ref<JSTestCallbackInterface> protectedThis(*this);
 
     auto& globalObject = *m_data->globalObject();
-    auto& vm = globalObject.vm();
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = globalObject.vm();
 
     JSLockHolder lock(vm);
     auto& lexicalGlobalObject = globalObject;
@@ -366,7 +368,7 @@ CallbackResult<typename IDLDOMString::CallbackReturnType> JSTestCallbackInterfac
     Ref<JSTestCallbackInterface> protectedThis(*this);
 
     auto& globalObject = *m_data->globalObject();
-    auto& vm = globalObject.vm();
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = globalObject.vm();
 
     JSLockHolder lock(vm);
     auto& lexicalGlobalObject = globalObject;
@@ -389,7 +391,7 @@ CallbackResult<typename IDLDOMString::CallbackReturnType> JSTestCallbackInterfac
     return { returnValue.releaseReturnValue() };
 }
 
-CallbackResult<typename IDLDOMString::CallbackReturnType> JSTestCallbackInterface::callbackThatRethrowsExceptions(typename IDLEnumeration<TestCallbackInterface::Enum>::ParameterType enumParam)
+CallbackResult<typename IDLDOMString::CallbackReturnType> JSTestCallbackInterface::callbackThatRethrowsExceptionsRethrowingException(typename IDLEnumeration<TestCallbackInterface::Enum>::ParameterType enumParam)
 {
     if (!canInvokeCallback())
         return CallbackResultType::UnableToExecute;
@@ -397,7 +399,7 @@ CallbackResult<typename IDLDOMString::CallbackReturnType> JSTestCallbackInterfac
     Ref<JSTestCallbackInterface> protectedThis(*this);
 
     auto& globalObject = *m_data->globalObject();
-    auto& vm = globalObject.vm();
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = globalObject.vm();
 
     JSLockHolder lock(vm);
     auto& lexicalGlobalObject = globalObject;
@@ -421,6 +423,38 @@ CallbackResult<typename IDLDOMString::CallbackReturnType> JSTestCallbackInterfac
     return { returnValue.releaseReturnValue() };
 }
 
+CallbackResult<typename IDLPromise<IDLUndefined>::CallbackReturnType> JSTestCallbackInterface::callbackThatTreatsExceptionAsRejectedPromise(typename IDLEnumeration<TestCallbackInterface::Enum>::ParameterType enumParam)
+{
+    if (!canInvokeCallback())
+        return CallbackResultType::UnableToExecute;
+
+    Ref<JSTestCallbackInterface> protectedThis(*this);
+
+    auto& globalObject = *m_data->globalObject();
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = globalObject.vm();
+
+    JSLockHolder lock(vm);
+    auto& lexicalGlobalObject = globalObject;
+    JSValue thisValue = jsUndefined();
+    MarkedArgumentBuffer args;
+    args.append(toJS<IDLEnumeration<TestCallbackInterface::Enum>>(lexicalGlobalObject, enumParam));
+    ASSERT(!args.hasOverflowed());
+
+    NakedPtr<JSC::Exception> returnedException;
+    auto jsResult = m_data->invokeCallback(thisValue, args, JSCallbackData::CallbackType::Object, Identifier::fromString(vm, "callbackThatTreatsExceptionAsRejectedPromise"_s), returnedException);
+    if (returnedException) {
+        auto* jsPromise = JSC::JSPromise::create(vm, globalObject.promiseStructure());
+        jsPromise->reject(&globalObject, returnedException->value());
+        return { DOMPromise::create(globalObject, *jsPromise) };
+     }
+
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    auto returnValue = convert<IDLPromise<IDLUndefined>>(lexicalGlobalObject, jsResult);
+    if (UNLIKELY(returnValue.hasException(throwScope)))
+        return CallbackResultType::ExceptionThrown;
+    return { returnValue.releaseReturnValue() };
+}
+
 CallbackResult<typename IDLDOMString::CallbackReturnType> JSTestCallbackInterface::callbackWithThisObject(typename IDLInterface<TestNode>::ParameterType thisObject, typename IDLInterface<TestObj>::ParameterType testObjParam)
 {
     if (!canInvokeCallback())
@@ -429,7 +463,7 @@ CallbackResult<typename IDLDOMString::CallbackReturnType> JSTestCallbackInterfac
     Ref<JSTestCallbackInterface> protectedThis(*this);
 
     auto& globalObject = *m_data->globalObject();
-    auto& vm = globalObject.vm();
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = globalObject.vm();
 
     JSLockHolder lock(vm);
     auto& lexicalGlobalObject = globalObject;

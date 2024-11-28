@@ -61,7 +61,7 @@ WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(HTMLFormControlElement);
 using namespace HTMLNames;
 
 HTMLFormControlElement::HTMLFormControlElement(const QualifiedName& tagName, Document& document, HTMLFormElement* form)
-    : HTMLElement(tagName, document, { TypeFlag::HasCustomStyleResolveCallbacks, TypeFlag::HasDidMoveToNewDocument } )
+    : HTMLElement(tagName, document, { TypeFlag::IsFormControlElement, TypeFlag::HasCustomStyleResolveCallbacks, TypeFlag::HasDidMoveToNewDocument } )
     , ValidatedFormListedElement(form)
     , m_isRequired(false)
     , m_valueMatchesRenderer(false)

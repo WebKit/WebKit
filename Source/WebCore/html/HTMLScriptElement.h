@@ -95,7 +95,7 @@ private:
     void addSubresourceAttributeURLs(ListHashSet<URL>&) const final;
 
     String sourceAttributeValue() const final;
-    String charsetAttributeValue() const final;
+    AtomString charsetAttributeValue() const final;
     String typeAttributeValue() const final;
     String languageAttributeValue() const final;
     bool hasAsyncAttribute() const final;

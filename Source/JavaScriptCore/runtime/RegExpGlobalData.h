@@ -26,6 +26,7 @@
 #pragma once
 
 #include "RegExpCachedResult.h"
+#include "RegExpSubstringGlobalAtomCache.h"
 
 namespace JSC {
 
@@ -59,8 +60,11 @@ public:
     inline MatchResult matchResult() const;
     void resetResultFromCache(JSGlobalObject* owner, RegExp*, JSString*, MatchResult, Vector<int>&&);
 
+    RegExpSubstringGlobalAtomCache& substringGlobalAtomCache() { return m_substringGlobalAtomCache; }
+
 private:
     RegExpCachedResult m_cachedResult;
+    RegExpSubstringGlobalAtomCache m_substringGlobalAtomCache;
     bool m_multiline { false };
     Vector<int> m_ovector;
 };

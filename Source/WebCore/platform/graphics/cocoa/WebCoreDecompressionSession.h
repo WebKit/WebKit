@@ -55,6 +55,7 @@ typedef struct OpaqueVTDecompressionSession*  VTDecompressionSessionRef;
 namespace WebCore {
 
 class VideoDecoder;
+struct PlatformVideoColorSpace;
 
 class WEBCORE_EXPORT WebCoreDecompressionSession : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<WebCoreDecompressionSession> {
 public:
@@ -70,9 +71,11 @@ public:
     void requestMediaDataWhenReady(Function<void()>&&);
     void stopRequestingMediaData();
     void notifyWhenHasAvailableVideoFrame(Function<void()>&&);
-    void decodedFrameWhenAvailable(Function<void(RetainPtr<CMSampleBufferRef>&&)>&&);
 
     RetainPtr<CVPixelBufferRef> decodeSampleSync(CMSampleBufferRef);
+
+    using DecodingPromise = NativePromise<RetainPtr<CMSampleBufferRef>, OSStatus>;
+    Ref<DecodingPromise> decodeSample(CMSampleBufferRef, bool displaying);
 
     void setTimebase(CMTimebaseRef);
     RetainPtr<CMTimebaseRef> timebase() const;
@@ -94,6 +97,8 @@ public:
 
     void setResourceOwner(const ProcessIdentity& resourceOwner) { m_resourceOwner = resourceOwner; }
 
+    static RetainPtr<CMBufferQueueRef> createBufferQueue();
+
 private:
     enum Mode {
         OpenGL,
@@ -105,8 +110,7 @@ private:
 
     void setTimebaseWithLockHeld(CMTimebaseRef);
     void enqueueCompressedSample(CMSampleBufferRef, bool displaying, uint32_t flushId);
-    using DecodingPromise = NativePromise<RetainPtr<CMSampleBufferRef>, OSStatus>;
-    Ref<DecodingPromise> decodeSample(CMSampleBufferRef, bool displaying);
+    Ref<DecodingPromise> decodeSampleInternal(CMSampleBufferRef, bool displaying);
     void enqueueDecodedSample(CMSampleBufferRef);
     void maybeDecodeNextSample();
     void handleDecompressionOutput(bool displaying, OSStatus, VTDecodeInfoFlags, CVImageBufferRef, CMTime presentationTimeStamp, CMTime presentationDuration);
@@ -128,7 +132,7 @@ private:
     void updateQosWithDecodeTimeStatistics(double ratio);
 
     bool isUsingVideoDecoder(CMSampleBufferRef) const;
-    Ref<MediaPromise> initializeVideoDecoder(FourCharCode);
+    Ref<MediaPromise> initializeVideoDecoder(FourCharCode, std::span<const uint8_t>, const std::optional<PlatformVideoColorSpace>&);
 
     static const CMItemCount kMaximumCapacity = 120;
     static const CMItemCount kHighWaterMark = 60;
@@ -150,7 +154,7 @@ private:
     std::atomic<unsigned> m_framesSinceLastQosCheck { 0 };
     double m_decodeRatioMovingAverage { 0 };
 
-    uint32_t m_flushId { 0 };
+    std::atomic<uint32_t> m_flushId { 0 };
     std::atomic<bool> m_isUsingVideoDecoder { true };
     std::unique_ptr<VideoDecoder> m_videoDecoder WTF_GUARDED_BY_LOCK(m_lock);
     bool m_videoDecoderCreationFailed { false };

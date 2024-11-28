@@ -125,4 +125,6 @@ typedef NS_OPTIONS(NSUInteger, _WKWebsiteNetworkConnectionIntegrityPolicy) {
 
 - (void)_setContentRuleListsEnabled:(BOOL)enabled exceptions:(NSSet<NSString *> *)exceptions WK_API_AVAILABLE(macos(14.0), ios(17.0));
 
+@property (nonatomic, setter=_setPushAndNotificationAPIEnabled:) BOOL _pushAndNotificationAPIEnabled;
+
 @end

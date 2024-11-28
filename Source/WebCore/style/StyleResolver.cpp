@@ -104,6 +104,8 @@ public:
         : m_element(&element)
         , m_parentStyle(parentStyle)
     {
+        ASSERT(element.isConnected());
+
         auto& document = element.document();
         auto* documentElement = document.documentElement();
         if (!documentElement || documentElement == &element)
@@ -347,7 +349,7 @@ std::unique_ptr<RenderStyle> Resolver::styleForKeyframe(Element& element, const 
         if (CSSProperty::isDirectionAwareProperty(unresolvedProperty))
             blendingKeyframe.setContainsDirectionAwareProperty(true);
         if (auto* value = propertyReference.value()) {
-            auto resolvedProperty = CSSProperty::resolveDirectionAwareProperty(unresolvedProperty, elementStyle.direction(), elementStyle.writingMode());
+            auto resolvedProperty = CSSProperty::resolveDirectionAwareProperty(unresolvedProperty, elementStyle.writingMode());
             if (resolvedProperty != CSSPropertyAnimationTimingFunction && resolvedProperty != CSSPropertyAnimationComposition) {
                 if (auto customValue = dynamicDowncast<CSSCustomPropertyValue>(*value))
                     blendingKeyframe.addProperty(customValue->name());
@@ -456,10 +458,10 @@ Vector<Ref<StyleRuleKeyframe>> Resolver::keyframeRulesForName(const AtomString& 
         return *keyframes;
 
     // FIXME: If HashMaps could have Ref<> as value types, we wouldn't need
-    // to copy the HashMap into a Vector.
+    // to copy the UncheckedKeyHashMap into a Vector.
     // Merge keyframes with a similar offset and timing function.
     Vector<Ref<StyleRuleKeyframe>> deduplicatedKeyframes;
-    HashMap<KeyframeUniqueKey, RefPtr<StyleRuleKeyframe>> keyframesMap;
+    UncheckedKeyHashMap<KeyframeUniqueKey, RefPtr<StyleRuleKeyframe>> keyframesMap;
     for (auto& originalKeyframe : *keyframes) {
         auto compositeOperation = compositeOperationForKeyframe(originalKeyframe);
         auto timingFunction = uniqueTimingFunctionForKeyframe(originalKeyframe);
@@ -563,7 +565,7 @@ std::unique_ptr<RenderStyle> Resolver::styleForPage(int pageIndex)
     state.setStyle(RenderStyle::createPtr());
     state.style()->inheritFrom(*state.rootElementStyle());
 
-    PageRuleCollector collector(m_ruleSets, documentElement->renderStyle()->direction());
+    PageRuleCollector collector(m_ruleSets, documentElement->renderStyle()->writingMode());
     collector.matchAllPageRules(pageIndex);
 
     auto& result = collector.matchResult();

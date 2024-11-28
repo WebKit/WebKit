@@ -9,9 +9,9 @@
 #ifndef GrGLCaps_DEFINED
 #define GrGLCaps_DEFINED
 
-#include "include/gpu/GrBackendSurface.h"
+#include "include/gpu/ganesh/GrBackendSurface.h"
 #include "include/gpu/ganesh/gl/GrGLBackendSurface.h"
-#include "include/gpu/gl/GrGLTypes.h"
+#include "include/gpu/ganesh/gl/GrGLTypes.h"
 #include "include/private/base/SkAssert.h"
 #include "include/private/base/SkTArray.h"
 #include "include/private/base/SkTDArray.h"
@@ -361,6 +361,9 @@ public:
     /// Is there support for ES2 compatability?
     bool ES2CompatibilitySupport() const { return fES2CompatibilitySupport; }
 
+    // Should OpenGL Protectedness handling be Vulkan-like
+    bool strictProtectedness() const { return fStrictProtectedness; }
+
     /// Is there support for glDrawRangeElements?
     bool drawRangeElementsSupport() const { return fDrawRangeElementsSupport; }
 
@@ -525,7 +528,7 @@ public:
                            const GrProgramInfo&,
                            ProgramDescOverrideFlags) const override;
 
-#if defined(GR_TEST_UTILS)
+#if defined(GPU_TEST_UTILS)
     GrGLStandard standard() const { return fStandard; }
 
     std::vector<GrTest::TestFormatColorTypeCombination> getTestingCombinations() const override;
@@ -610,6 +613,7 @@ private:
     bool fVertexArrayObjectSupport : 1;
     bool fDebugSupport : 1;
     bool fES2CompatibilitySupport : 1;
+    bool fStrictProtectedness     : 1;
     bool fDrawRangeElementsSupport : 1;
     bool fBaseVertexBaseInstanceSupport : 1;
     bool fIsCoreProfile : 1;

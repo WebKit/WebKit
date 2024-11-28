@@ -57,9 +57,11 @@ IDBConnectionToServer::IDBConnectionToServer(IDBConnectionToServerDelegate& dele
 {
 }
 
+IDBConnectionToServer::~IDBConnectionToServer() = default;
+
 IDBConnectionIdentifier IDBConnectionToServer::identifier() const
 {
-    return m_delegate->identifier();
+    return *m_delegate->identifier();
 }
 
 IDBConnectionProxy& IDBConnectionToServer::proxy()
@@ -209,7 +211,7 @@ void IDBConnectionToServer::didDeleteIndex(const IDBResultData& resultData)
     m_proxy->completeOperation(resultData);
 }
 
-void IDBConnectionToServer::renameIndex(const IDBRequestData& requestData, IDBObjectStoreIdentifier objectStoreIdentifier, uint64_t indexIdentifier, const String& newName)
+void IDBConnectionToServer::renameIndex(const IDBRequestData& requestData, IDBObjectStoreIdentifier objectStoreIdentifier, IDBIndexIdentifier indexIdentifier, const String& newName)
 {
     LOG(IndexedDB, "IDBConnectionToServer::renameIndex");
     ASSERT(isMainThread());

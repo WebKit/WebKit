@@ -32,15 +32,16 @@
 #import <pal/spi/cocoa/AVFoundationSPI.h>
 #import <wtf/Ref.h>
 #import <wtf/Vector.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 
 namespace WebCore {
 
 Vector<Ref<SharedBuffer>> CDMPrivateFairPlayStreaming::keyIDsForRequest(AVContentKeyRequest *request)
 {
-    if ([request.identifier isKindOfClass:NSString.class])
-        return { SharedBuffer::create([(NSString *)request.identifier dataUsingEncoding:NSUTF8StringEncoding]) };
-    if ([request.identifier isKindOfClass:NSData.class])
-        return { SharedBuffer::create((NSData *)request.identifier) };
+    if (auto *identiferStr = dynamic_objc_cast<NSString>(request.identifier))
+        return { SharedBuffer::create([identiferStr dataUsingEncoding:NSUTF8StringEncoding]) };
+    if (auto *identifierData = dynamic_objc_cast<NSData>(request.identifier))
+        return { SharedBuffer::create(identifierData) };
     if (request.initializationData) {
         if (auto sinfKeyIDs = CDMPrivateFairPlayStreaming::extractKeyIDsSinf(SharedBuffer::create(request.initializationData)))
             return WTFMove(sinfKeyIDs.value());

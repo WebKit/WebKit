@@ -37,6 +37,7 @@ enum class PolicyAction : uint8_t;
 enum class PolicyDecisionMode;
 enum class IsPerformingHTTPFallback : bool;
 class FormState;
+class Frame;
 class HitTestResult;
 class NavigationAction;
 class ResourceRequest;
@@ -66,6 +67,8 @@ protected:
     WebFrameLoaderClient(Ref<WebFrame>&&, ScopeExit<Function<void()>>&& frameInvalidator);
 
     void dispatchDecidePolicyForNavigationAction(const WebCore::NavigationAction&, const WebCore::ResourceRequest&, const WebCore::ResourceResponse& redirectResponse, WebCore::FormState*, const String&, std::optional<WebCore::NavigationIdentifier>, std::optional<WebCore::HitTestResult>&&, bool, WebCore::IsPerformingHTTPFallback, WebCore::SandboxFlags, WebCore::PolicyDecisionMode, WebCore::FramePolicyFunction&&);
+    void updateSandboxFlags(WebCore::SandboxFlags);
+    void updateOpener(const WebCore::Frame&);
 
     Ref<WebFrame> m_frame;
     ScopeExit<Function<void()>> m_frameInvalidator;

@@ -101,6 +101,7 @@
 #include <wtf/MathExtras.h>
 #include <wtf/StackStats.h>
 #include <wtf/TZoneMallocInlines.h>
+#include <wtf/text/TextStream.h>
 
 #if ENABLE(CONTENT_CHANGE_OBSERVER)
 #include "ContentChangeObserver.h"
@@ -178,7 +179,6 @@ bool RenderElement::isContentDataSupported(const ContentData& contentData)
 
 RenderPtr<RenderElement> RenderElement::createFor(Element& element, RenderStyle&& style, OptionSet<ConstructBlockLevelRendererFor> rendererTypeOverride)
 {
-
     const ContentData* contentData = style.contentData();
     if (!rendererTypeOverride && contentData && isContentDataSupported(*contentData) && !element.isPseudoElement()) {
         Style::loadPendingResources(style, element.document(), &element);
@@ -472,6 +472,12 @@ bool RenderElement::repaintBeforeStyleChange(StyleDifference diff, const RenderS
             }
         }
 
+        if (diff == StyleDifference::Layout && parent()->writingMode().isBlockFlipped()) {
+            // FIXME: Repaint during (after) layout is currently broken for flipped writing modes in block direction (mostly affecting vertical-rl) (see webkit.org/b/70762)
+            // This repaint call here ensures we invalidate at least the current rect which should cover the non-moving type of cases.
+            return RequiredRepaint::RendererOnly;
+        }
+
         return RequiredRepaint::None;
     }();
 
@@ -522,8 +528,19 @@ void RenderElement::setStyle(RenderStyle&& style, StyleDifference minimalStyleDi
 
     StyleDifference diff = StyleDifference::Equal;
     OptionSet<StyleDifferenceContextSensitiveProperty> contextSensitiveProperties;
-    if (m_hasInitializedStyle)
+    if (m_hasInitializedStyle) {
         diff = m_style.diff(style, contextSensitiveProperties);
+
+#if !LOG_DISABLED
+        if (LogStyle.state == WTFLogChannelState::On) {
+            TextStream diffStream(TextStream::LineMode::MultipleLine, TextStream::Formatting::NumberRespectingIntegers);
+            diffStream.increaseIndent(2);
+            m_style.dumpDifferences(diffStream, style);
+            if (!diffStream.isEmpty())
+                LOG_WITH_STREAM(Style, stream << *this << " style diff " << diff << " (context sensitive changes " << contextSensitiveProperties << "):\n" << diffStream.release());
+        }
+#endif
+    }
 
     diff = std::max(diff, minimalStyleDifference);
 
@@ -591,7 +608,7 @@ void RenderElement::didAttachChild(RenderObject& child, RenderObject*)
     // To avoid the problem alltogether, detect early if we're inside a hidden SVG subtree
     // and stop creating layers at all for these cases - they're not used anyways.
     if (child.hasLayer() && !layerCreationAllowedForSubtree())
-        downcast<RenderLayerModelObject>(child).checkedLayer()->removeOnlyThisLayer(RenderLayer::LayerChangeTiming::RenderTreeConstruction);
+        downcast<RenderLayerModelObject>(child).checkedLayer()->removeOnlyThisLayer();
 }
 
 RenderObject* RenderElement::attachRendererInternal(RenderPtr<RenderObject> child, RenderObject* beforeChild)
@@ -869,10 +886,12 @@ void RenderElement::styleWillChange(StyleDifference diff, const RenderStyle& new
         if (visibilityChanged)
             protectedDocument()->invalidateRenderingDependentRegions();
 
-        if (visibilityChanged) {
+        bool inertChanged = m_style.effectiveInert() != newStyle.effectiveInert();
+
+        if (visibilityChanged || inertChanged) {
             Ref document = this->document();
             if (CheckedPtr cache = document->existingAXObjectCache())
-                cache->childrenChanged(checkedParent().get(), this);
+                cache->onInertOrVisibilityChange(*this);
         }
 
         // Keep layer hierarchy visibility bits up to date if visibility or skipped content state changes.
@@ -881,7 +900,7 @@ void RenderElement::styleWillChange(StyleDifference diff, const RenderStyle& new
         if (wasVisible != willBeVisible) {
             if (CheckedPtr layer = enclosingLayer()) {
                 if (willBeVisible) {
-                    if (m_style.hasSkippedContent() && isSkippedContentRoot())
+                    if (m_style.hasSkippedContent() && isSkippedContentRoot(*this))
                         layer->dirtyVisibleContentStatus();
                     else
                         layer->setHasVisibleContent();
@@ -1099,9 +1118,9 @@ void RenderElement::willBeRemovedFromTree()
     RenderObject::willBeRemovedFromTree();
 }
 
-bool RenderElement::didVisitDuringLastLayout() const
+bool RenderElement::didVisitSinceLayout(LayoutIdentifier identifier) const
 {
-    return layoutIdentifier() == view().frameView().layoutContext().layoutIdentifier();
+    return layoutIdentifier() >= identifier;
 }
 
 inline void RenderElement::clearSubtreeLayoutRootIfNeeded() const
@@ -1666,7 +1685,7 @@ bool RenderElement::repaintForPausedImageAnimationsIfNeeded(const IntRect& visib
 
     // For directly-composited animated GIFs it does not suffice to call repaint() to resume animation. We need to mark the image as changed.
     if (CheckedPtr modelObject = dynamicDowncast<RenderBoxModelObject>(*this))
-        modelObject->contentChanged(ImageChanged);
+        modelObject->contentChanged(ContentChangeType::Image);
 
     return true;
 }
@@ -2032,8 +2051,7 @@ void RenderElement::paintFocusRing(const PaintInfo& paintInfo, const RenderStyle
     styleOptions.add(StyleColorOptions::UseSystemAppearance);
     auto focusRingColor = usePlatformFocusRingColorForOutlineStyleAuto() ? RenderTheme::singleton().focusRingColor(styleOptions) : style.visitedDependentColorWithColorFilter(CSSPropertyOutlineColor);
     if (useShrinkWrappedFocusRingForOutlineStyleAuto() && style.hasBorderRadius()) {
-        Path path = PathUtilities::pathWithShrinkWrappedRectsForOutline(pixelSnappedFocusRingRects, style.border(), outlineOffset, style.direction(), style.writingMode(),
-            document().deviceScaleFactor());
+        Path path = PathUtilities::pathWithShrinkWrappedRectsForOutline(pixelSnappedFocusRingRects, style.border(), outlineOffset, style.writingMode(), document().deviceScaleFactor());
         if (path.isEmpty()) {
             for (auto rect : pixelSnappedFocusRingRects)
                 path.addRect(rect);
@@ -2105,7 +2123,7 @@ bool RenderElement::hasSelfPaintingLayer() const
 
 bool RenderElement::hasViewTransitionName() const
 {
-    return !!style().viewTransitionName();
+    return !style().viewTransitionName().isNone();
 }
 
 bool RenderElement::requiresRenderingConsolidationForViewTransition() const
@@ -2287,6 +2305,7 @@ void RenderElement::repaintOldAndNewPositionsForSVGRenderer() const
     // LBSE: Instead of repainting the current boundaries, utilize RenderLayer::updateLayerPositionsAfterStyleChange() to repaint
     // the old and the new repaint boundaries, if they differ -- instead of just the new boundaries.
     if (auto layer = useUpdateLayerPositionsLogic()) {
+        (*layer.value()).setSelfAndDescendantsNeedPositionUpdate();
         (*layer.value()).updateLayerPositionsAfterStyleChange();
         return;
     }
@@ -2423,7 +2442,13 @@ bool RenderElement::createsNewFormattingContext() const
 
 bool RenderElement::establishesIndependentFormattingContext() const
 {
-    return isFloatingOrOutOfFlowPositioned() || (isBlockBox() && hasPotentiallyScrollableOverflow()) || style().containsLayout() || paintContainmentApplies() || (style().isDisplayBlockLevel() && style().blockStepSize());
+    auto& style = this->style();
+    return isFloatingOrOutOfFlowPositioned()
+        || (isBlockBox() && hasPotentiallyScrollableOverflow())
+        || style.containsLayout()
+        || style.containerType() != ContainerType::Normal
+        || paintContainmentApplies()
+        || (style.isDisplayBlockLevel() && style.blockStepSize());
 }
 
 FloatRect RenderElement::referenceBoxRect(CSSBoxType boxType) const
@@ -2513,16 +2538,8 @@ void RenderElement::markRendererDirtyAfterTopLayerChange(RenderElement* renderer
     renderBox->setNeedsLayout();
 }
 
-bool RenderElement::isSkippedContentRoot() const
-{
-    return WebCore::isSkippedContentRoot(style(), element()) && !view().frameView().layoutContext().needsSkippedContentLayout();
-}
-
 bool RenderElement::hasEligibleContainmentForSizeQuery() const
 {
-    if (!shouldApplyLayoutContainment())
-        return false;
-
     switch (style().containerType()) {
     case ContainerType::InlineSize:
         return shouldApplyInlineSizeContainment();
@@ -2546,7 +2563,7 @@ void RenderElement::layoutIfNeeded()
 {
     if (!needsLayout())
         return;
-    if (isSkippedContentForLayout()) {
+    if (layoutContext().isSkippedContentForLayout(*this)) {
         clearNeedsLayoutForSkippedContent();
         return;
     }

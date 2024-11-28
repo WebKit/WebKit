@@ -128,7 +128,7 @@ public:
     }
 
     template<std::invocable<size_t> Generator>
-    static FixedVector createWithSizeFromGenerator(size_t size, Generator&& generator)
+    static FixedVector createWithSizeFromGenerator(size_t size, NOESCAPE Generator&& generator)
     {
         return FixedVector<T> { Storage::createWithSizeFromGenerator(size, std::forward<Generator>(generator)) };
     }
@@ -194,8 +194,8 @@ public:
 
     Storage* storage() { return m_storage.get(); }
 
-    std::span<const T> span() const { return { m_storage ? m_storage->data() : nullptr, size() }; }
-    std::span<T> mutableSpan() { return { m_storage ? m_storage->data() : nullptr, size() }; }
+    std::span<const T> span() const { return m_storage ? m_storage->span() : std::span<const T> { }; }
+    std::span<T> mutableSpan() { return m_storage ? m_storage->span() : std::span<T> { }; }
 
     Vector<T> subvector(size_t offset, size_t length = std::dynamic_extent) const
     {

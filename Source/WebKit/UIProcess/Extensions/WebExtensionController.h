@@ -95,7 +95,7 @@ public:
     using WebExtensionContextBaseURLMap = HashMap<String, Ref<WebExtensionContext>>;
     using WebExtensionURLSchemeHandlerMap = HashMap<String, Ref<WebExtensionURLSchemeHandler>>;
 
-    using WebProcessProxySet = WeakHashSet<WebProcessProxy>;
+    using WebProcessProxySet = HashSet<Ref<WebProcessProxy>>;
     using WebProcessPoolSet = WeakHashSet<WebProcessPool>;
     using WebPageProxySet = WeakHashSet<WebPageProxy>;
     using UserContentControllerProxySet = WeakHashSet<WebUserContentControllerProxy>;
@@ -104,6 +104,7 @@ public:
     enum class ForPrivateBrowsing { No, Yes };
 
     WebExtensionControllerConfiguration& configuration() const { return m_configuration.get(); }
+    Ref<WebExtensionControllerConfiguration> protectedConfiguration() const { return m_configuration; }
     WebExtensionControllerParameters parameters() const;
 
     bool operator==(const WebExtensionController& other) const { return (this == &other); }
@@ -224,12 +225,17 @@ private:
         WTF_MAKE_TZONE_ALLOCATED_INLINE(HTTPCookieStoreObserver);
 
     public:
+        static RefPtr<HTTPCookieStoreObserver> create(WebExtensionController& extensionController)
+        {
+            return adoptRef(new HTTPCookieStoreObserver(extensionController));
+        }
+
+    private:
         explicit HTTPCookieStoreObserver(WebExtensionController& extensionController)
             : m_extensionController(extensionController)
         {
         }
 
-    private:
         void cookiesDidChange(API::HTTPCookieStore& cookieStore) final
         {
             // FIXME: <https://webkit.org/b/267514> Add support for changeInfo.
@@ -263,15 +269,15 @@ private:
     bool m_showingActionPopup { false };
 
     std::unique_ptr<RunLoop::Timer> m_purgeOldMatchedRulesTimer;
-    std::unique_ptr<HTTPCookieStoreObserver> m_cookieStoreObserver;
+    RefPtr<HTTPCookieStoreObserver> m_cookieStoreObserver;
 };
 
 template<typename T, typename RawValue>
 void WebExtensionController::sendToAllProcesses(const T& message, const ObjectIdentifierGenericBase<RawValue>& destinationID)
 {
-    for (auto& process : allProcesses()) {
-        if (process.canSendMessage())
-            process.send(T(message), destinationID);
+    for (Ref process : allProcesses()) {
+        if (process->canSendMessage())
+            process->send(T(message), destinationID);
     }
 }
 

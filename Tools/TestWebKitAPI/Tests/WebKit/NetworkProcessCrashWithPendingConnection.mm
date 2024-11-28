@@ -94,7 +94,7 @@ TEST(WebKit, NetworkProcessCrashWithPendingConnection)
     Util::run(&networkProcessCrashed);
     networkProcessCrashed = false;
 
-    [webView1.get() loadRequest:[NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]]];
+    [webView1.get() loadRequest:[NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"simple" withExtension:@"html"]]];
     [webView1.get() _test_waitForDidFinishNavigation];
 
     pid_t relaunchedNetworkProcessIdentifier = [configuration.get().websiteDataStore _networkProcessIdentifier];
@@ -103,7 +103,7 @@ TEST(WebKit, NetworkProcessCrashWithPendingConnection)
 
     kill(relaunchedNetworkProcessIdentifier, SIGSTOP);
 
-    [webView2.get() loadRequest:[NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]]];
+    [webView2.get() loadRequest:[NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"simple" withExtension:@"html"]]];
     Util::runFor(0.5_s); // Wait for the WebContent process to send CreateNetworkConnectionToWebProcess
     kill(relaunchedNetworkProcessIdentifier, SIGKILL);
     Util::run(&networkProcessCrashed);
@@ -153,7 +153,7 @@ TEST(WebKit, NetworkProcessRelaunchOnLaunchFailure)
     auto delegate = adoptNS([[MonitorWebContentCrashNavigationDelegate alloc] init]);
     [webView setNavigationDelegate:delegate.get()];
 
-    [webView loadRequest:[NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]]];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"simple" withExtension:@"html"]]];
     TestWebKitAPI::Util::run(&loaded);
 
     EXPECT_TRUE(networkProcessCrashed);

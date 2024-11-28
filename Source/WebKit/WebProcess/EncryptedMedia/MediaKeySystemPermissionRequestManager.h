@@ -35,6 +35,7 @@
 #include <wtf/Ref.h>
 #include <wtf/RefPtr.h>
 #include <wtf/TZoneMalloc.h>
+#include <wtf/WeakRef.h>
 
 namespace WebKit {
 
@@ -45,6 +46,9 @@ class MediaKeySystemPermissionRequestManager : private WebCore::MediaCanStartLis
 public:
     explicit MediaKeySystemPermissionRequestManager(WebPage&);
     ~MediaKeySystemPermissionRequestManager() = default;
+
+    void ref() const final;
+    void deref() const final;
 
     void startMediaKeySystemRequest(WebCore::MediaKeySystemRequest&);
     void cancelMediaKeySystemRequest(WebCore::MediaKeySystemRequest&);
@@ -57,7 +61,7 @@ private:
     // WebCore::MediaCanStartListener
     void mediaCanStart(WebCore::Document&) final;
 
-    WebPage& m_page;
+    WeakRef<WebPage> m_page;
 
     HashMap<WebCore::MediaKeySystemRequestIdentifier, Ref<WebCore::MediaKeySystemRequest>> m_ongoingMediaKeySystemRequests;
     HashMap<RefPtr<WebCore::Document>, Vector<Ref<WebCore::MediaKeySystemRequest>>> m_pendingMediaKeySystemRequests;

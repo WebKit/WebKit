@@ -71,6 +71,7 @@ static int backtraceFullCallback(void* data, uintptr_t, const char*, int, const 
     return 0;
 }
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 char** symbolize(void* const* addresses, int size)
 {
     struct backtrace_state* state = backtraceState();
@@ -98,6 +99,7 @@ char** symbolize(void* const* addresses, int size)
     }
     return symbols;
 }
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 #endif
 
 std::unique_ptr<StackTrace> StackTrace::captureStackTrace(size_t maxFrames, size_t framesToSkip)

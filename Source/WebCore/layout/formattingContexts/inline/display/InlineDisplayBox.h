@@ -148,6 +148,7 @@ struct Box {
 
     const Layout::Box& layoutBox() const { return m_layoutBox; }
     const RenderStyle& style() const { return !lineIndex() ? layoutBox().firstLineStyle() : layoutBox().style(); }
+    WritingMode writingMode() const { return style().writingMode(); }
 
     void moveToLine(unsigned lineIndex) { m_lineIndex = lineIndex; }
     size_t lineIndex() const { return m_lineIndex; }

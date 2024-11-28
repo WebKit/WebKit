@@ -27,12 +27,15 @@
 
 #include "ThreadTimers.h"
 #include <functional>
+#include <wtf/CheckedRef.h>
 #include <wtf/Function.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/RunLoop.h>
 #include <wtf/Seconds.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/Threading.h>
+#include <wtf/TypeTraits.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
 
@@ -100,8 +103,8 @@ protected:
         uint8_t shouldRestartWhenTimerFires : 1 { false }; // DeferrableOneShotTimer
     };
 
-    TimerBitfields bitfields() const { return bitwise_cast<TimerBitfields>(m_heapItemWithBitfields.type()); }
-    void setBitfields(const TimerBitfields& bitfields) { return m_heapItemWithBitfields.setType(bitwise_cast<uint8_t>(bitfields)); }
+    TimerBitfields bitfields() const { return std::bit_cast<TimerBitfields>(m_heapItemWithBitfields.type()); }
+    void setBitfields(const TimerBitfields& bitfields) { return m_heapItemWithBitfields.setType(std::bit_cast<uint8_t>(bitfields)); }
 
 private:
     virtual void fired() = 0;
@@ -152,10 +155,36 @@ public:
         timer->startOneShot(delay);
     }
 
+    template<typename TimerFiredClass, typename TimerFiredBaseClass>
+    requires (WTF::HasRefPtrMemberFunctions<TimerFiredClass>::value)
+    Timer(TimerFiredClass& object, void (TimerFiredBaseClass::*function)())
+        : m_function([objectPtr = &object, function] {
+            Ref protectedObject { *objectPtr };
+            (objectPtr->*function)();
+        })
+    {
+    }
+
+
+    template<typename TimerFiredClass, typename TimerFiredBaseClass>
+    requires (WTF::HasCheckedPtrMemberFunctions<TimerFiredClass>::value && !WTF::HasRefPtrMemberFunctions<TimerFiredClass>::value)
+    Timer(TimerFiredClass& object, void (TimerFiredBaseClass::*function)())
+        : m_function([objectPtr = &object, function] {
+            CheckedRef checkedObject { *objectPtr };
+            (objectPtr->*function)();
+        })
+    {
+    }
+
+    // FIXME: This constructor isn't as safe as the other ones and should ideally be removed.
     template <typename TimerFiredClass, typename TimerFiredBaseClass>
+    requires (!WTF::HasRefPtrMemberFunctions<TimerFiredClass>::value && !WTF::HasCheckedPtrMemberFunctions<TimerFiredClass>::value)
     Timer(TimerFiredClass& object, void (TimerFiredBaseClass::*function)())
         : m_function(std::bind(function, &object))
     {
+        static_assert(WTF::IsDeprecatedTimerSmartPointerException<std::remove_cv_t<TimerFiredClass>>::value,
+            "Classes that use Timer should be ref-counted or CanMakeCheckedPtr. Please do not add new exceptions."
+        );
     }
 
     Timer(Function<void()>&& function)

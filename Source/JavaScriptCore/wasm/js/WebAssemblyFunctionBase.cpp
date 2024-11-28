@@ -33,6 +33,7 @@
 #include "JSCellInlines.h"
 #include "JSWebAssemblyInstance.h"
 #include "SlotVisitorInlines.h"
+#include "WasmTypeDefinitionInlines.h"
 
 namespace JSC {
 
@@ -40,8 +41,8 @@ const ClassInfo WebAssemblyFunctionBase::s_info = { "WebAssemblyFunctionBase"_s,
 
 WebAssemblyFunctionBase::WebAssemblyFunctionBase(VM& vm, NativeExecutable* executable, JSGlobalObject* globalObject, Structure* structure, JSWebAssemblyInstance* instance, WasmToWasmImportableFunction importableFunction)
     : Base(vm, executable, globalObject, structure)
-    , m_instance(instance, WriteBarrierEarlyInit)
     , m_importableFunction(importableFunction)
+    , m_instance(instance, WriteBarrierEarlyInit)
 { }
 
 template<typename Visitor>
@@ -59,6 +60,11 @@ void WebAssemblyFunctionBase::finishCreation(VM& vm, NativeExecutable* executabl
 {
     Base::finishCreation(vm, executable, length, name);
     ASSERT(inherits(info()));
+}
+
+const Wasm::FunctionSignature& WebAssemblyFunctionBase::signature() const
+{
+    return Wasm::TypeInformation::getFunctionSignature(typeIndex());
 }
 
 } // namespace JSC

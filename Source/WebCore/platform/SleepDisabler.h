@@ -42,7 +42,7 @@ public:
 
 private:
     std::unique_ptr<PAL::SleepDisabler> m_platformSleepDisabler;
-    SleepDisablerIdentifier m_identifier;
+    Markable<SleepDisablerIdentifier> m_identifier;
     PAL::SleepDisabler::Type m_type;
     std::optional<PageIdentifier> m_pageID;
 };

@@ -1,6 +1,6 @@
 {
   "src/compiler/generate_parser_tools.py":
-    "6a34ad911710a45e5644e9f79dfd2ce5",
+    "bb5b9d7e3b890ad55fe9dba470cd86fe",
   "src/compiler/preprocessor/generate_parser.py":
     "9a4588fdf009298fe49c52b9252789c7",
   "src/compiler/preprocessor/preprocessor.l":
@@ -8,13 +8,17 @@
   "src/compiler/preprocessor/preprocessor.y":
     "770be78579281bd332f2277dcd3be7d3",
   "src/compiler/preprocessor/preprocessor_lex_autogen.cpp":
-    "85aaf946bef9254abba2ca200a7a4006",
+    "39caf992f2baeb3de0198a216ac71951",
   "src/compiler/preprocessor/preprocessor_tab_autogen.cpp":
-    "3f15f3cc604a1ac5668711728ddd8430",
+    "3f39a629435b363bb4b9d24cecf2b13d",
   "tools/flex-bison/linux/bison.sha1":
     "dfc9209e0c76eddd9bed0601c6c189e5",
   "tools/flex-bison/linux/flex.sha1":
     "621fc8947f2114812fb7a2c9df71bdcf",
+  "tools/flex-bison/mac/bison.sha1":
+    "5bc38d2bf76ed35f1b9b83a59230da4d",
+  "tools/flex-bison/mac/flex.sha1":
+    "f2af0409983fbb4306a1175ea8b50049",
   "tools/flex-bison/windows/bison.exe.sha1":
     "fd6d2461a2c256179faca7f5f142e689",
   "tools/flex-bison/windows/flex.exe.sha1":

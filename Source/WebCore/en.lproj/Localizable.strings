@@ -394,8 +394,8 @@
 /* Title for Copy Link button */
 "Copy Link (ActionSheet)" = "Copy Link";
 
-/* Copy link to highlight context menu item */
-"Copy Link to Highlight" = "Copy Link to Highlight";
+/* Copy link with highlight context menu item */
+"Copy Link with Highlight" = "Copy Link with Highlight";
 
 /* Title for Copy Subject */
 "Copy Subject" = "Copy Subject";
@@ -525,6 +525,9 @@
 
 /* WKWebExtensionErrorInvalidManifestEntry description for default_icon in browser_action or page_action */
 "Empty or invalid `default_icon` for the `browser_action` or `page_action` manifest entry." = "Empty or invalid `default_icon` for the `browser_action` or `page_action` manifest entry.";
+
+/* WKWebExtensionErrorInvalidManifestEntry description for default_locale */
+"Empty or invalid `default_locale` manifest entry." = "Empty or invalid `default_locale` manifest entry.";
 
 /* WKWebExtensionErrorInvalidManifestEntry description for invalid command description */
 "Empty or invalid `description` in the `commands` manifest entry." = "Empty or invalid `description` in the `commands` manifest entry.";
@@ -727,6 +730,9 @@
 /* Codec Strings */
 "High Tier (HEVC Codec Tier" = "High Tier";
 
+/* WKWebExtensionMatchPatternErrorInvalidHost description for invalid or missing host */
+"Host \"%s\" is invalid." = "Host \"%s\" is invalid.";
+
 /* Phishing warning description */
 "If you believe this website is safe, you can %report-an-error%. Or, if you understand the risks involved, you can %bypass-link%." = "If you believe this website is safe, you can %report-an-error%. Or, if you understand the risks involved, you can %bypass-link%.";
 
@@ -777,6 +783,9 @@
 
 /* WKWebExtensionErrorInvalidManifestEntry description for web_accessible_resources */
 "Invalid `web_accessible_resources` manifest entry." = "Invalid `web_accessible_resources` manifest entry.";
+
+/* WKWebExtensionErrorInvalidArchive description */
+"Invalid or corrupt extension archive." = "Invalid or corrupt extension archive.";
 
 /* Validation message for input form controls with a value not matching type */
 "Invalid value" = "Invalid value";
@@ -1168,6 +1177,9 @@
 /* Undo action name */
 "Paste Ruler (Undo action name)" = "Paste Ruler";
 
+/* WKWebExtensionMatchPatternErrorInvalidPath description for missing path */
+"Path \"%s\" is invalid." = "Path \"%s\" is invalid.";
+
 /* Media Pause context menu item */
 "Pause" = "Pause";
 
@@ -1278,6 +1290,9 @@
 
 /* Title for Save to Photos action button */
 "Save to Photos" = "Save to Photos";
+
+/* WKWebExtensionMatchPatternErrorInvalidScheme description for invalid scheme */
+"Scheme \"%s\" is invalid." = "Scheme \"%s\" is invalid.";
 
 /* Title of the Search button for zoomed form controls. */
 "Search" = "Search";
@@ -1529,7 +1544,7 @@
 "This is a searchable index. Enter search keywords: " = "This is a searchable index. Enter search keywords: ";
 
 /* Not Secure Connection warning text */
-"This website does not support connecting securely. The information you see and enter on this website, including credit cards, phone numbers, and passwords, can be read and altered by other people." = "This website does not support connecting securely. The information you see and enter on this website, including credit cards, phone numbers, and passwords, can be read and altered by other people.";
+"This website does not support connecting securely over HTTPS. The information you see and enter on this website, including credit cards, phone numbers, and passwords, can be read and altered by other people." = "This website does not support connecting securely over HTTPS. The information you see and enter on this website, including credit cards, phone numbers, and passwords, can be read and altered by other people.";
 
 /* Malware warning */
 "This website may attempt to install dangerous software, which could harm your computer or steal your personal or financial information, like passwords, photos, or credit cards." = "This website may attempt to install dangerous software, which could harm your computer or steal your personal or financial information, like passwords, photos, or credit cards.";
@@ -1612,17 +1627,20 @@
 /* WKWebExtensionErrorResourceNotFound description with invalid file path */
 "Unable to find \"%@\" in the extension’s resources. It is an invalid path." = "Unable to find \"%@\" in the extension’s resources. It is an invalid path.";
 
+/* WKWebExtensionErrorInvalidManifestEntry description for missing default_locale */
+"Unable to find `default_locale` in “_locales” folder." = "Unable to find `default_locale` in “_locales” folder.";
+
 /* WKWebExtensionErrorInvalidDeclarativeNetRequest description */
 "Unable to parse `declarativeNetRequest` rules because of an unexpected error." = "Unable to parse `declarativeNetRequest` rules because of an unexpected error.";
 
 /* WKWebExtensionErrorInvalidDeclarativeNetRequest description, because of a JSON error */
-"Unable to parse `declarativeNetRequest` rules: %@" = "Unable to parse `declarativeNetRequest` rules: %@";
+"Unable to parse `declarativeNetRequest` rules: %s" = "Unable to parse `declarativeNetRequest` rules: %s";
 
 /* WKWebExtensionErrorInvalidManifest description */
 "Unable to parse manifest because of an unexpected format." = "Unable to parse manifest because of an unexpected format.";
 
 /* WKWebExtensionErrorInvalidManifest description, because of a JSON error */
-"Unable to parse manifest: %@" = "Unable to parse manifest: %@";
+"Unable to parse manifest: %s" = "Unable to parse manifest: %s";
 
 /* WKWebExtensionErrorInvalidResourceCodeSignature description with file name */
 "Unable to validate \"%@\" with the extension’s code signature. It likely has been modified since the extension was built." = "Unable to validate \"%@\" with the extension’s code signature. It likely has been modified since the extension was built.";
@@ -1699,6 +1717,9 @@
 /* Validation message for input form controls with value higher than allowed maximum */
 "Value must be less than or equal to %s" = "Value must be less than or equal to %s";
 
+/* Title for View Spatial action button while in fullscreen */
+"View Spatial" = "View Spatial";
+
 /* Title for View Spatial Photo action button */
 "View Spatial Photo" = "View Spatial Photo";
 
@@ -1726,8 +1747,8 @@
 /* Unwanted software warning title */
 "Website With Harmful Software Warning" = "Website With Harmful Software Warning";
 
-/* Week label for week of year input type */
-"Week" = "Week";
+/* Week of year input type label with week number and year */
+"Week %1$d, %2$d" = "Week %1$d, %2$d";
 
 /* Writing Tools context menu item */
 "Writing Tools" = "Writing Tools";
@@ -1746,6 +1767,21 @@
 
 /* Zoom Out context menu item */
 "Zoom Out" = "Zoom Out";
+
+/* WKWebExtensionMatchPatternErrorInvalidHost description for missing host in the pattern */
+"\"%s\" cannot be parsed because it doesn't have a host." = "\"%s\" cannot be parsed because it doesn't have a host.";
+
+/* WKWebExtensionMatchPatternErrorInvalidPath description for missing path in the pattern */
+"\"%s\" cannot be parsed because it doesn't have a path." = "\"%s\" cannot be parsed because it doesn't have a path.";
+
+/* WKWebExtensionMatchPatternErrorInvalidScheme description for missing scheme in the pattern */
+"\"%s\" cannot be parsed because it doesn't have a scheme." = "\"%s\" cannot be parsed because it doesn't have a scheme.";
+
+/* WKWebExtensionMatchPatternErrorInvalidHost description for invalid host in the pattern */
+"\"%s\" cannot be parsed because the host \"%s\" is invalid." = "\"%s\" cannot be parsed because the host \"%s\" is invalid.";
+
+/* WKWebExtensionMatchPatternErrorInvalidScheme description for invalid scheme in the pattern */
+"\"%s\" cannot be parsed because the scheme \"%s\" is invalid." = "\"%s\" cannot be parsed because the scheme \"%s\" is invalid.";
 
 /* WKWebExtensionErrorInvalidDeclarativeNetRequestEntry description for duplicate ruleset id */
 "`declarative_net_request` ruleset with id \"%@\" is invalid. Ruleset id must be unique." = "`declarative_net_request` ruleset with id \"%@\" is invalid. Ruleset id must be unique.";

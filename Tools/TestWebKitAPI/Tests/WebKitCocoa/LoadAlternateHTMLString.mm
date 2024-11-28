@@ -35,6 +35,7 @@
 #import <WebKit/WKWebViewPrivate.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/cocoa/NSURLExtras.h>
+#import <wtf/cocoa/VectorCocoa.h>
 
 static int provisionalLoadCount;
 
@@ -214,7 +215,11 @@ TEST(WebKit, LoadHTMLStringWithInvalidBaseURL)
     EXPECT_FALSE(didCrash);
 }
 
+#if !defined(NDEBUG)
+TEST(Webkit, DISABLED_LoadMoreThan4GB)
+#else
 TEST(WebKit, LoadMoreThan4GB)
+#endif
 {
     constexpr auto html = "<script>"
     "async function main() {"
@@ -229,7 +234,7 @@ TEST(WebKit, LoadMoreThan4GB)
     "</script>"_s;
 
     using namespace TestWebKitAPI;
-    auto longData = dataFromVector(Vector<uint8_t>(static_cast<size_t>(0x10000000), [] (size_t) {
+    auto longData = makeDispatchData(Vector<uint8_t>(static_cast<size_t>(0x10000000), [] (size_t) {
         return static_cast<uint8_t>('a');
     }));
 

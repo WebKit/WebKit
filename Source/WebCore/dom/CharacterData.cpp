@@ -45,7 +45,7 @@ WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(CharacterData);
 
 CharacterData::~CharacterData()
 {
-    willBeDeletedFrom(RefAllowingPartiallyDestroyed<Document> { document() });
+    willBeDeletedFrom(Ref<Document> { document() });
 }
 
 static bool canUseSetDataOptimization(const CharacterData& node)

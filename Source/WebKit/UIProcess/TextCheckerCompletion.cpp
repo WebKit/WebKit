@@ -31,16 +31,21 @@
 namespace WebKit {
 using namespace WebCore;
 
-Ref<TextCheckerCompletion> TextCheckerCompletion::create(TextCheckerRequestID requestID, const TextCheckingRequestData& requestData, WebPageProxy* page)
+Ref<TextCheckerCompletion> TextCheckerCompletion::create(TextCheckerRequestID requestID, const TextCheckingRequestData& requestData, WebPageProxy& page)
 {
     return adoptRef(*new TextCheckerCompletion(requestID, requestData, page));
 }
 
-TextCheckerCompletion::TextCheckerCompletion(TextCheckerRequestID requestID, const TextCheckingRequestData& requestData, WebPageProxy* page)
+TextCheckerCompletion::TextCheckerCompletion(TextCheckerRequestID requestID, const TextCheckingRequestData& requestData, WebPageProxy& page)
     : m_requestID(requestID)
     , m_requestData(requestData)
     , m_page(page)
 {
+}
+
+Ref<WebPageProxy> TextCheckerCompletion::protectedPage() const
+{
+    return m_page.get();
 }
 
 const TextCheckingRequestData& TextCheckerCompletion::textCheckingRequestData() const
@@ -50,7 +55,7 @@ const TextCheckingRequestData& TextCheckerCompletion::textCheckingRequestData() 
 
 int64_t TextCheckerCompletion::spellDocumentTag()
 {
-    return m_page->spellDocumentTag();
+    return protectedPage()->spellDocumentTag();
 }
 
 void TextCheckerCompletion::didFinishCheckingText(const Vector<TextCheckingResult>& result) const
@@ -58,12 +63,12 @@ void TextCheckerCompletion::didFinishCheckingText(const Vector<TextCheckingResul
     if (result.isEmpty())
         didCancelCheckingText();
 
-    m_page->didFinishCheckingText(m_requestID, result);
+    protectedPage()->didFinishCheckingText(m_requestID, result);
 }
 
 void TextCheckerCompletion::didCancelCheckingText() const
 {
-    m_page->didCancelCheckingText(m_requestID);
+    protectedPage()->didCancelCheckingText(m_requestID);
 }
 
 } // namespace WebKit

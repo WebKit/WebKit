@@ -65,6 +65,9 @@ public:
 
     WEBCORE_EXPORT ~MediaKeys();
 
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
+
     ExceptionOr<Ref<MediaKeySession>> createSession(Document&, MediaKeySessionType);
     void setServerCertificate(const BufferSource&, Ref<DeferredPromise>&&);
 
@@ -78,7 +81,7 @@ public:
     Ref<CDMInstance> protectedCDMInstance() const;
 
 #if !RELEASE_LOG_DISABLED
-    const void* nextChildIdentifier() const;
+    uint64_t nextChildIdentifier() const;
 #endif
 
     unsigned internalInstanceObjectRefCount() const { return m_instance->refCount(); }
@@ -91,7 +94,7 @@ protected:
 
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const final { return m_logger; }
-    const void* logIdentifier() const final { return m_logIdentifier; }
+    uint64_t logIdentifier() const final { return m_logIdentifier; }
 #endif
 
     bool m_useDistinctiveIdentifier;
@@ -105,7 +108,7 @@ protected:
 
 #if !RELEASE_LOG_DISABLED
     Ref<Logger> m_logger;
-    const void* m_logIdentifier;
+    const uint64_t m_logIdentifier;
     mutable uint64_t m_childIdentifierSeed { 0 };
 #endif
 };

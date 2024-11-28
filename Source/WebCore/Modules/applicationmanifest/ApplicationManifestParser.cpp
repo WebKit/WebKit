@@ -189,9 +189,9 @@ ApplicationManifest::Direction ApplicationManifestParser::parseDir(const JSON::O
     }
 
     static constexpr std::pair<ComparableLettersLiteral, ApplicationManifest::Direction> directionMappings[] = {
-        { "auto", Auto },
-        { "ltr", LTR },
-        { "rtl", RTL },
+        { "auto"_s, Auto },
+        { "ltr"_s, LTR },
+        { "rtl"_s, RTL },
     };
     static constexpr SortedArrayMap directions { directionMappings };
 
@@ -215,10 +215,10 @@ ApplicationManifest::Display ApplicationManifestParser::parseDisplay(const JSON:
     }
 
     static constexpr std::pair<ComparableLettersLiteral, ApplicationManifest::Display> displayValueMappings[] = {
-        { "browser", ApplicationManifest::Display::Browser },
-        { "fullscreen", ApplicationManifest::Display::Fullscreen },
-        { "minimal-ui", ApplicationManifest::Display::MinimalUI },
-        { "standalone", ApplicationManifest::Display::Standalone },
+        { "browser"_s, ApplicationManifest::Display::Browser },
+        { "fullscreen"_s, ApplicationManifest::Display::Fullscreen },
+        { "minimal-ui"_s, ApplicationManifest::Display::MinimalUI },
+        { "standalone"_s, ApplicationManifest::Display::Standalone },
     };
     static constexpr SortedArrayMap displayValues { displayValueMappings };
 
@@ -242,14 +242,14 @@ const std::optional<ScreenOrientationLockType> ApplicationManifestParser::parseO
     }
 
     static constexpr std::pair<ComparableLettersLiteral, WebCore::ScreenOrientationLockType> orientationValueMappings[] = {
-        { "any", WebCore::ScreenOrientationLockType::Any },
-        { "landscape", WebCore::ScreenOrientationLockType::Landscape },
-        { "landscape-primary", WebCore::ScreenOrientationLockType::LandscapePrimary },
-        { "landscape-secondary", WebCore::ScreenOrientationLockType::LandscapeSecondary },
-        { "natural", WebCore::ScreenOrientationLockType::Natural },
-        { "portrait", WebCore::ScreenOrientationLockType::Portrait },
-        { "portrait-primary", WebCore::ScreenOrientationLockType::PortraitPrimary },
-        { "portrait-secondary", WebCore::ScreenOrientationLockType::PortraitSecondary },
+        { "any"_s, WebCore::ScreenOrientationLockType::Any },
+        { "landscape"_s, WebCore::ScreenOrientationLockType::Landscape },
+        { "landscape-primary"_s, WebCore::ScreenOrientationLockType::LandscapePrimary },
+        { "landscape-secondary"_s, WebCore::ScreenOrientationLockType::LandscapeSecondary },
+        { "natural"_s, WebCore::ScreenOrientationLockType::Natural },
+        { "portrait"_s, WebCore::ScreenOrientationLockType::Portrait },
+        { "portrait-primary"_s, WebCore::ScreenOrientationLockType::PortraitPrimary },
+        { "portrait-secondary"_s, WebCore::ScreenOrientationLockType::PortraitSecondary },
     };
 
     static SortedArrayMap orientationValues { orientationValueMappings };

@@ -460,7 +460,7 @@ TEST_F(WKContentRuleListStoreTest, AddRemove)
     auto delegate = adoptNS([[ContentRuleListDelegate alloc] init]);
     [webView setUIDelegate:delegate.get()];
 
-    NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"contentBlockerCheck" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"contentBlockerCheck" withExtension:@"html"]];
     alertCount = 0;
     receivedAlert = false;
     [webView loadRequest:request];

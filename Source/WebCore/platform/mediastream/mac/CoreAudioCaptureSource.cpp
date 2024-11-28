@@ -81,68 +81,49 @@ static CaptureSourceOrError initializeCoreAudioCaptureSource(Ref<CoreAudioCaptur
 
 CaptureSourceOrError CoreAudioCaptureSource::create(String&& deviceID, MediaDeviceHashSalts&& hashSalts, const MediaConstraints* constraints, std::optional<PageIdentifier> pageIdentifier)
 {
-    CoreAudioCaptureSourceFactory::singleton().setOverrideUnit(nullptr);
-
 #if PLATFORM(MAC)
     auto device = CoreAudioCaptureDeviceManager::singleton().coreAudioDeviceWithUID(deviceID);
     if (!device)
         return CaptureSourceOrError({ "No CoreAudioCaptureSource device"_s, MediaAccessDenialReason::PermissionDenied });
 
-    auto source = adoptRef(*new CoreAudioCaptureSource(device.value(), device->deviceID(), WTFMove(hashSalts), nullptr, pageIdentifier));
+    auto source = adoptRef(*new CoreAudioCaptureSource(device.value(), device->deviceID(), WTFMove(hashSalts), pageIdentifier));
 #elif PLATFORM(IOS_FAMILY)
     auto device = AVAudioSessionCaptureDeviceManager::singleton().audioSessionDeviceWithUID(WTFMove(deviceID));
     if (!device)
         return CaptureSourceOrError({ "No AVAudioSessionCaptureDevice device"_s, MediaAccessDenialReason::PermissionDenied });
 
-    auto source = adoptRef(*new CoreAudioCaptureSource(device.value(), 0, WTFMove(hashSalts), nullptr, pageIdentifier));
+    auto source = adoptRef(*new CoreAudioCaptureSource(device.value(), 0, WTFMove(hashSalts), pageIdentifier));
 #endif
     return initializeCoreAudioCaptureSource(WTFMove(source), constraints);
 }
 
-CaptureSourceOrError CoreAudioCaptureSource::createForTesting(String&& deviceID, AtomString&& label, MediaDeviceHashSalts&& hashSalts, const MediaConstraints* constraints, BaseAudioSharedUnit& overrideUnit, std::optional<PageIdentifier> pageIdentifier)
+CaptureSourceOrError CoreAudioCaptureSource::createForTesting(String&& deviceID, AtomString&& label, MediaDeviceHashSalts&& hashSalts, const MediaConstraints* constraints, std::optional<PageIdentifier> pageIdentifier)
 {
-    CoreAudioCaptureSourceFactory::singleton().setOverrideUnit(&overrideUnit);
-
-    auto source = adoptRef(*new CoreAudioCaptureSource(CaptureDevice { WTFMove(deviceID), CaptureDevice::DeviceType::Microphone, WTFMove(label) }, 0, WTFMove(hashSalts), &overrideUnit, pageIdentifier));
+    auto source = adoptRef(*new CoreAudioCaptureSource(CaptureDevice { WTFMove(deviceID), CaptureDevice::DeviceType::Microphone, WTFMove(label) }, 0, WTFMove(hashSalts), pageIdentifier));
     return initializeCoreAudioCaptureSource(WTFMove(source), constraints);
-}
-
-BaseAudioSharedUnit& CoreAudioCaptureSource::unit()
-{
-    return m_overrideUnit ? *m_overrideUnit : CoreAudioSharedUnit::singleton();
-}
-
-const BaseAudioSharedUnit& CoreAudioCaptureSource::unit() const
-{
-    return m_overrideUnit ? *m_overrideUnit : CoreAudioSharedUnit::singleton();
 }
 
 CoreAudioCaptureSourceFactory::CoreAudioCaptureSourceFactory()
 {
-    AudioSession::sharedSession().addInterruptionObserver(*this);
+    AudioSession::protectedSharedSession()->addInterruptionObserver(*this);
 }
 
 CoreAudioCaptureSourceFactory::~CoreAudioCaptureSourceFactory()
 {
-    AudioSession::sharedSession().removeInterruptionObserver(*this);
-}
-
-BaseAudioSharedUnit& CoreAudioCaptureSourceFactory::unit()
-{
-    return m_overrideUnit ? *m_overrideUnit : CoreAudioSharedUnit::singleton();
+    AudioSession::protectedSharedSession()->removeInterruptionObserver(*this);
 }
 
 void CoreAudioCaptureSourceFactory::beginInterruption()
 {
     ensureOnMainThread([] {
-        CoreAudioCaptureSourceFactory::singleton().unit().suspend();
+        CoreAudioSharedUnit::singleton().suspend();
     });
 }
 
 void CoreAudioCaptureSourceFactory::endInterruption()
 {
     ensureOnMainThread([] {
-        CoreAudioCaptureSourceFactory::singleton().unit().resume();
+        CoreAudioSharedUnit::singleton().resume();
     });
 }
 
@@ -176,51 +157,52 @@ const Vector<CaptureDevice>& CoreAudioCaptureSourceFactory::speakerDevices() con
 #endif
 }
 
+void CoreAudioCaptureSourceFactory::enableMutedSpeechActivityEventListener(Function<void()>&& callback)
+{
+    CoreAudioSharedUnit::singleton().enableMutedSpeechActivityEventListener(WTFMove(callback));
+}
+
+void CoreAudioCaptureSourceFactory::disableMutedSpeechActivityEventListener()
+{
+    CoreAudioSharedUnit::singleton().disableMutedSpeechActivityEventListener();
+}
+
 void CoreAudioCaptureSourceFactory::registerSpeakerSamplesProducer(CoreAudioSpeakerSamplesProducer& producer)
 {
-    CoreAudioSharedUnit::unit().registerSpeakerSamplesProducer(producer);
+    CoreAudioSharedUnit::singleton().registerSpeakerSamplesProducer(producer);
 }
 
 void CoreAudioCaptureSourceFactory::unregisterSpeakerSamplesProducer(CoreAudioSpeakerSamplesProducer& producer)
 {
-    CoreAudioSharedUnit::unit().unregisterSpeakerSamplesProducer(producer);
+    CoreAudioSharedUnit::singleton().unregisterSpeakerSamplesProducer(producer);
 }
 
 bool CoreAudioCaptureSourceFactory::isAudioCaptureUnitRunning()
 {
-    return CoreAudioSharedUnit::unit().isRunning();
-}
-
-void CoreAudioCaptureSourceFactory::whenAudioCaptureUnitIsNotRunning(Function<void()>&& callback)
-{
-    return CoreAudioSharedUnit::unit().whenAudioCaptureUnitIsNotRunning(WTFMove(callback));
+    return CoreAudioSharedUnit::singleton().isRunning();
 }
 
 bool CoreAudioCaptureSourceFactory::shouldAudioCaptureUnitRenderAudio()
 {
-    auto& unit = CoreAudioSharedUnit::unit();
 #if PLATFORM(IOS_FAMILY)
-    return unit.isRunning();
+    return CoreAudioSharedUnit::singleton().isRunning();
 #else
-    return unit.isRunning() && unit.isUsingVPIO();
+    return CoreAudioSharedUnit::singleton().isRunning() && CoreAudioSharedUnit::singleton().canRenderAudio();
 #endif // PLATFORM(IOS_FAMILY)
 }
 
-CoreAudioCaptureSource::CoreAudioCaptureSource(const CaptureDevice& device, uint32_t captureDeviceID, MediaDeviceHashSalts&& hashSalts, BaseAudioSharedUnit* overrideUnit, std::optional<PageIdentifier> pageIdentifier)
+CoreAudioCaptureSource::CoreAudioCaptureSource(const CaptureDevice& device, uint32_t captureDeviceID, MediaDeviceHashSalts&& hashSalts, std::optional<PageIdentifier> pageIdentifier)
     : RealtimeMediaSource(device, WTFMove(hashSalts), pageIdentifier)
     , m_captureDeviceID(captureDeviceID)
-    , m_overrideUnit(overrideUnit)
 {
-    auto& unit = this->unit();
-
     // We ensure that we unsuspend ourselves on the constructor as a capture source
     // is created when getUserMedia grants access which only happens when the process is foregrounded.
     // We also reset unit capture values to default.
-    unit.prepareForNewCapture();
+    CoreAudioSharedUnit::singleton().prepareForNewCapture();
 
-    initializeEchoCancellation(unit.enableEchoCancellation());
-    initializeSampleRate(unit.sampleRate());
-    initializeVolume(unit.volume());
+    initializeEchoCancellation(CoreAudioSharedUnit::singleton().enableEchoCancellation());
+    initializeSampleRate(CoreAudioSharedUnit::singleton().sampleRate());
+    initializeVolume(CoreAudioSharedUnit::singleton().volume());
 }
 
 void CoreAudioCaptureSource::initializeToStartProducingData()
@@ -231,49 +213,50 @@ void CoreAudioCaptureSource::initializeToStartProducingData()
     ALWAYS_LOG_IF(loggerPtr(), LOGIDENTIFIER);
     m_isReadyToStart = true;
 
-    auto& unit = this->unit();
-    unit.setCaptureDevice(String { persistentID() }, m_captureDeviceID);
+    CoreAudioSharedUnit::singleton().setCaptureDevice(String { persistentID() }, m_captureDeviceID);
 
-    bool shouldReconfigure = echoCancellation() != unit.enableEchoCancellation() || sampleRate() != unit.sampleRate() || volume() != unit.volume();
-    unit.setEnableEchoCancellation(echoCancellation());
-    unit.setSampleRate(sampleRate());
-    unit.setVolume(volume());
+    bool shouldReconfigure = echoCancellation() != CoreAudioSharedUnit::singleton().enableEchoCancellation() || sampleRate() != CoreAudioSharedUnit::singleton().sampleRate() || volume() != CoreAudioSharedUnit::singleton().volume();
+    CoreAudioSharedUnit::singleton().setEnableEchoCancellation(echoCancellation());
+    CoreAudioSharedUnit::singleton().setSampleRate(sampleRate());
+    CoreAudioSharedUnit::singleton().setVolume(volume());
 
-    unit.addClient(*this);
+    CoreAudioSharedUnit::singleton().addClient(*this);
 
     if (shouldReconfigure)
-        unit.reconfigure();
+        CoreAudioSharedUnit::singleton().reconfigure();
 
     m_currentSettings = std::nullopt;
 }
 
 CoreAudioCaptureSource::~CoreAudioCaptureSource()
 {
-    unit().removeClient(*this);
+    CoreAudioSharedUnit::singleton().removeClient(*this);
 }
 
 void CoreAudioCaptureSource::startProducingData()
 {
     m_canResumeAfterInterruption = true;
     initializeToStartProducingData();
-    unit().startProducingData();
+    CoreAudioSharedUnit::singleton().startProducingData();
     m_currentSettings = { };
 }
 
 void CoreAudioCaptureSource::stopProducingData()
 {
     ALWAYS_LOG_IF(loggerPtr(), LOGIDENTIFIER);
-    unit().stopProducingData();
+    CoreAudioSharedUnit::singleton().stopProducingData();
 }
 
 const RealtimeMediaSourceCapabilities& CoreAudioCaptureSource::capabilities()
 {
     if (!m_capabilities) {
+        BaseAudioSharedUnit& unit = CoreAudioSharedUnit::singleton();
+
         RealtimeMediaSourceCapabilities capabilities(settings().supportedConstraints());
         capabilities.setDeviceId(hashedId());
         capabilities.setEchoCancellation(RealtimeMediaSourceCapabilities::EchoCancellation::ReadWrite);
         capabilities.setVolume({ 0.0, 1.0 });
-        capabilities.setSampleRate(unit().sampleRateCapacities());
+        capabilities.setSampleRate(unit.sampleRateCapacities());
         m_capabilities = WTFMove(capabilities);
     }
     return m_capabilities.value();
@@ -282,9 +265,11 @@ const RealtimeMediaSourceCapabilities& CoreAudioCaptureSource::capabilities()
 const RealtimeMediaSourceSettings& CoreAudioCaptureSource::settings()
 {
     if (!m_currentSettings) {
+        BaseAudioSharedUnit& unit = CoreAudioSharedUnit::singleton();
+
         RealtimeMediaSourceSettings settings;
         settings.setVolume(volume());
-        settings.setSampleRate(unit().isRenderingAudio() ? unit().actualSampleRate() : sampleRate());
+        settings.setSampleRate(unit.isRenderingAudio() ? unit.actualSampleRate() : sampleRate());
         settings.setDeviceId(hashedId());
         settings.setGroupId(captureDevice().groupId());
         settings.setLabel(name());
@@ -312,34 +297,35 @@ void CoreAudioCaptureSource::settingsDidChange(OptionSet<RealtimeMediaSourceSett
 
     bool shouldReconfigure = false;
     if (settings.contains(RealtimeMediaSourceSettings::Flag::EchoCancellation)) {
-        unit().setEnableEchoCancellation(echoCancellation());
+        CoreAudioSharedUnit::singleton().setEnableEchoCancellation(echoCancellation());
         shouldReconfigure = true;
     }
     if (settings.contains(RealtimeMediaSourceSettings::Flag::SampleRate)) {
-        unit().setSampleRate(sampleRate());
+        CoreAudioSharedUnit::singleton().setSampleRate(sampleRate());
         shouldReconfigure = true;
     }
     if (shouldReconfigure)
-        unit().reconfigure();
+        CoreAudioSharedUnit::singleton().reconfigure();
 
     m_currentSettings = std::nullopt;
 }
 
 bool CoreAudioCaptureSource::interrupted() const
 {
-    return unit().isSuspended() ? true : RealtimeMediaSource::interrupted();
+    return CoreAudioSharedUnit::singleton().isSuspended() || RealtimeMediaSource::interrupted();
 }
 
 void CoreAudioCaptureSource::delaySamples(Seconds seconds)
 {
-    unit().delaySamples(seconds);
+    BaseAudioSharedUnit& unit = CoreAudioSharedUnit::singleton();
+    unit.delaySamples(seconds);
 }
 
 #if PLATFORM(IOS_FAMILY)
 void CoreAudioCaptureSource::setIsInBackground(bool value)
 {
     if (isProducingData())
-        CoreAudioSharedUnit::unit().setIsInBackground(value);
+        CoreAudioSharedUnit::singleton().setIsInBackground(value);
 }
 #endif
 

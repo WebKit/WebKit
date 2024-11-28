@@ -41,6 +41,8 @@
 #import "VideoToolboxSoftLink.h"
 #import <pal/cf/CoreMediaSoftLink.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 using namespace WebCore;
 
 typedef struct OpaqueVTDecompressionSession*  VTDecompressionSessionRef;
@@ -298,7 +300,7 @@ static RetainPtr<CMVideoFormatDescriptionRef> computeAV1InputFormat(std::span<co
 struct RTCFrameDecodeParams {
     WTF_MAKE_STRUCT_FAST_ALLOCATED;
 
-    BlockPtr<void(CVPixelBufferRef, long long, long long)> callback;
+    BlockPtr<void(CVPixelBufferRef, long long, long long, bool)> callback;
     int64_t timestamp { 0 };
 };
 
@@ -336,18 +338,18 @@ static void av1DecompressionOutputCallback(void* decoderRef, void* params, OSSta
         RTCVideoDecoderVTBAV1 *decoder = (__bridge RTCVideoDecoderVTBAV1 *)decoderRef;
         [decoder setError:status != noErr ? status : 1];
         RELEASE_LOG_ERROR(WebRTC, "RTCVideoDecoderVTBAV1 failed to decode with status: %d", status);
-        decodeParams->callback.get()(nil, 0, 0);
+        decodeParams->callback.get()(nil, 0, 0, false);
         return;
     }
 
     static const int64_t kNumNanosecsPerSec = 1000000000;
-    decodeParams->callback.get()(imageBuffer, decodeParams->timestamp, PAL::CMTimeGetSeconds(timestamp) * kNumNanosecsPerSec);
+    decodeParams->callback.get()(imageBuffer, decodeParams->timestamp, PAL::CMTimeGetSeconds(timestamp) * kNumNanosecsPerSec, false);
 }
 
 @implementation RTCVideoDecoderVTBAV1 {
     RetainPtr<CMVideoFormatDescriptionRef> _videoFormat;
     RetainPtr<VTDecompressionSessionRef> _decompressionSession;
-    BlockPtr<void(CVPixelBufferRef, long long, long long)> _callback;
+    BlockPtr<void(CVPixelBufferRef, long long, long long, bool)> _callback;
     OSStatus _error;
     int32_t _width;
     int32_t _height;
@@ -498,5 +500,7 @@ static void av1DecompressionOutputCallback(void* decoderRef, void* params, OSSta
 }
 
 @end
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // USE(LIBWEBRTC)

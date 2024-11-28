@@ -100,7 +100,7 @@ TEST(NSAttributedStringWebKitAdditions, DirectoriesNotCreated)
 
 TEST(NSAttributedStringWebKitAdditions, FontDataURL)
 {
-    NSURL *fontURL = [[NSBundle mainBundle] URLForResource:@"Ahem" withExtension:@"ttf" subdirectory:@"TestWebKitAPI.resources"];
+    NSURL *fontURL = [NSBundle.test_resourcesBundle URLForResource:@"Ahem" withExtension:@"ttf"];
     NSData *fontData = [NSData dataWithContentsOfURL:fontURL];
     NSString *fontBase64 = [fontData base64EncodedStringWithOptions:0];
 

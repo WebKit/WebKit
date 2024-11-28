@@ -37,6 +37,7 @@
 #include <fcntl.h>
 #include <poll.h>
 #include <wtf/Assertions.h>
+#include <wtf/MallocSpan.h>
 #include <wtf/SafeStrerror.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -61,6 +62,8 @@
 #define SOCKET_TYPE SOCK_DGRAM
 #endif
 #endif // SOCK_SEQPACKET
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // Unix port
 
 namespace IPC {
 
@@ -96,11 +99,27 @@ private:
 
 static_assert(sizeof(MessageInfo) + sizeof(AttachmentInfo) * attachmentMaxAmount <= messageMaxSize, "messageMaxSize is too small.");
 
+int Connection::socketDescriptor() const
+{
+#if USE(GLIB)
+    return g_socket_get_fd(m_socket.get());
+#else
+    return m_socketDescriptor;
+#endif
+}
+
 void Connection::platformInitialize(Identifier identifier)
 {
-    m_socketDescriptor = identifier.handle;
 #if USE(GLIB)
-    m_socket = adoptGRef(g_socket_new_from_fd(m_socketDescriptor, nullptr));
+    GUniqueOutPtr<GError> error;
+    m_socket = adoptGRef(g_socket_new_from_fd(identifier.handle, &error.outPtr()));
+    if (!m_socket) {
+        // Note: g_socket_new_from_fd() takes ownership of the fd only on success, so if this error
+        // were not fatal, we would need to close it here.
+        g_error("Failed to adopt IPC::Connection socket: %s", error->message);
+    }
+#else
+    m_socketDescriptor = identifier.handle;
 #endif
     m_readBuffer.reserveInitialCapacity(messageMaxSize);
     m_fileDescriptors.reserveInitialCapacity(attachmentMaxAmount);
@@ -114,6 +133,7 @@ void Connection::platformInvalidate()
 #else
     if (m_socketDescriptor != -1)
         closeWithRetry(m_socketDescriptor);
+    m_socketDescriptor = -1;
 #endif
 
     if (!m_isConnected)
@@ -131,7 +151,6 @@ void Connection::platformInvalidate()
     }
 #endif
 
-    m_socketDescriptor = -1;
     m_isConnected = false;
 }
 
@@ -241,10 +260,10 @@ static ssize_t readBytesFromSocket(int socketDescriptor, Vector<uint8_t>& buffer
     struct iovec iov[1];
     memset(&iov, 0, sizeof(iov));
 
-    message.msg_controllen = CMSG_SPACE(sizeof(int) * attachmentMaxAmount);
-    MallocPtr<char> attachmentDescriptorBuffer = MallocPtr<char>::malloc(sizeof(char) * message.msg_controllen);
-    memset(attachmentDescriptorBuffer.get(), 0, sizeof(char) * message.msg_controllen);
-    message.msg_control = attachmentDescriptorBuffer.get();
+    auto attachmentDescriptorBuffer = MallocSpan<char>::zeroedMalloc(CMSG_SPACE(sizeof(int) * attachmentMaxAmount));
+    auto attachmentDescriptorSpan = attachmentDescriptorBuffer.mutableSpan();
+    message.msg_control = attachmentDescriptorSpan.data();
+    message.msg_controllen = attachmentDescriptorSpan.size();
 
     size_t previousBufferSize = buffer.size();
     buffer.grow(buffer.capacity());
@@ -303,7 +322,7 @@ static ssize_t readBytesFromSocket(int socketDescriptor, Vector<uint8_t>& buffer
 void Connection::readyReadHandler()
 {
     while (true) {
-        ssize_t bytesRead = readBytesFromSocket(m_socketDescriptor, m_readBuffer, m_fileDescriptors);
+        ssize_t bytesRead = readBytesFromSocket(socketDescriptor(), m_readBuffer, m_fileDescriptors);
 
         if (bytesRead < 0) {
             // EINTR was already handled by readBytesFromSocket.
@@ -316,7 +335,7 @@ void Connection::readyReadHandler()
             }
 
             if (m_isConnected) {
-                WTFLogAlways("Error receiving IPC message on socket %d in process %d: %s", m_socketDescriptor, getpid(), safeStrerror(errno).data());
+                WTFLogAlways("Error receiving IPC message on socket %d in process %d: %s", socketDescriptor(), getpid(), safeStrerror(errno).data());
                 connectionDidClose();
             }
             return;
@@ -337,7 +356,7 @@ void Connection::readyReadHandler()
 
 bool Connection::platformPrepareForOpen()
 {
-    if (setNonBlock(m_socketDescriptor))
+    if (setNonBlock(socketDescriptor()))
         return true;
     ASSERT_NOT_REACHED();
     return false;
@@ -368,7 +387,7 @@ void Connection::platformOpen()
     m_socketMonitor = Thread::create("SocketMonitor"_s, [protectedThis] {
         {
             int fd;
-            while ((fd = protectedThis->m_socketDescriptor) != -1) {
+            while ((fd = protectedThis->socketDescriptor()) != -1) {
                 int maxFd = fd;
                 fd_set fdSet;
                 FD_ZERO(&fdSet);
@@ -444,7 +463,7 @@ bool Connection::sendOutputMessage(UnixMessage& outputMessage)
     iov[0].iov_len = sizeof(messageInfo);
 
     Vector<AttachmentInfo> attachmentInfo;
-    MallocPtr<char> attachmentFDBuffer;
+    MallocSpan<char> attachmentFDBuffer;
 
     auto& attachments = outputMessage.attachments();
     if (!attachments.isEmpty()) {
@@ -456,11 +475,10 @@ bool Connection::sendOutputMessage(UnixMessage& outputMessage)
             });
 
         if (attachmentFDBufferLength) {
-            attachmentFDBuffer = MallocPtr<char>::malloc(sizeof(char) * CMSG_SPACE(sizeof(int) * attachmentFDBufferLength));
-
-            message.msg_control = attachmentFDBuffer.get();
-            message.msg_controllen = CMSG_SPACE(sizeof(int) * attachmentFDBufferLength);
-            memset(message.msg_control, 0, message.msg_controllen);
+            attachmentFDBuffer = MallocSpan<char>::zeroedMalloc(CMSG_SPACE(sizeof(int) * attachmentFDBufferLength));
+            auto span = attachmentFDBuffer.mutableSpan();
+            message.msg_control = span.data();
+            message.msg_controllen = span.size();
 
             struct cmsghdr* cmsg = CMSG_FIRSTHDR(&message);
             cmsg->cmsg_level = SOL_SOCKET;
@@ -493,7 +511,7 @@ bool Connection::sendOutputMessage(UnixMessage& outputMessage)
 
     message.msg_iovlen = iovLength;
 
-    while (sendmsg(m_socketDescriptor, &message, MSG_NOSIGNAL) == -1) {
+    while (sendmsg(socketDescriptor(), &message, MSG_NOSIGNAL) == -1) {
         if (errno == EINTR)
             continue;
         if (errno == EAGAIN || errno == EWOULDBLOCK) {
@@ -518,7 +536,7 @@ bool Connection::sendOutputMessage(UnixMessage& outputMessage)
 #else
             struct pollfd pollfd;
 
-            pollfd.fd = m_socketDescriptor;
+            pollfd.fd = socketDescriptor();
             pollfd.events = POLLOUT;
             pollfd.revents = 0;
             poll(&pollfd, 1, -1);
@@ -549,14 +567,16 @@ SocketPair createPlatformConnection(unsigned options)
 {
     int sockets[2];
 
-    auto setPasscredIfNeeded = [options, &sockets] {
 #if USE(GLIB) && OS(LINUX)
+    auto setPasscredIfNeeded = [options, &sockets] {
         if (options & SetPasscredOnServer) {
             int enable = 1;
             RELEASE_ASSERT(!setsockopt(sockets[1], SOL_SOCKET, SO_PASSCRED, &enable, sizeof(enable)));
         }
-#endif
     };
+#else
+    auto setPasscredIfNeeded = [] { };
+#endif
 
 #if OS(LINUX)
     if ((options & SetCloexecOnServer) || (options & SetCloexecOnClient)) {
@@ -602,8 +622,18 @@ void sendPIDToPeer(int socket)
     message.msg_iov = &iov;
     message.msg_iovlen = 1;
 
-    if (sendmsg(socket, &message, 0) == -1)
+    int ret;
+    do {
+        ret = sendmsg(socket, &message, 0);
+    } while (ret == -1 && errno == EINTR);
+
+    if (ret == -1) {
+        // Don't crash if the parent process merely closed its pid socket.
+        // That's equivalent to canceling the process launch.
+        if (errno == EPIPE)
+            exit(1);
         g_error("sendPIDToPeer: Failed to send pid: %s", g_strerror(errno));
+    }
 }
 
 // The goal here is to receive the pid of the sandboxed child in the parent process's pid namespace.
@@ -627,7 +657,12 @@ pid_t readPIDFromPeer(int socket)
     message.msg_control = controlMessage.buffer;
     message.msg_controllen = controlLength;
 
-    if (recvmsg(socket, &message, 0) == -1)
+    int ret;
+    do {
+        ret = recvmsg(socket, &message, 0);
+    } while (ret == -1 && errno == EINTR);
+
+    if (ret == -1)
         g_error("readPIDFromPeer: Failed to read pid from PID socket: %s", g_strerror(errno));
 
     if (message.msg_controllen <= 0)
@@ -647,3 +682,5 @@ pid_t readPIDFromPeer(int socket)
 #endif
 
 } // namespace IPC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

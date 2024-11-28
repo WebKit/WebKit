@@ -59,7 +59,6 @@ class GraphicsLayerFactory;
 class LocalFrame;
 class LocalFrameView;
 class TiledBacking;
-struct ViewportAttributes;
 enum class DelegatedScrollingMode : uint8_t;
 }
 
@@ -71,12 +70,12 @@ class LayerTreeHost;
 struct WebPageCreationParameters;
 struct WebPreferencesStore;
 
-class DrawingArea : public IPC::MessageReceiver, public WebCore::DisplayRefreshMonitorFactory {
+class DrawingArea : public RefCounted<DrawingArea>, public IPC::MessageReceiver, public WebCore::DisplayRefreshMonitorFactory {
     WTF_MAKE_TZONE_ALLOCATED(DrawingArea);
     WTF_MAKE_NONCOPYABLE(DrawingArea);
 
 public:
-    static std::unique_ptr<DrawingArea> create(WebPage&, const WebPageCreationParameters&);
+    static RefPtr<DrawingArea> create(WebPage&, const WebPageCreationParameters&);
     virtual ~DrawingArea();
     
     DrawingAreaType type() const { return m_type; }
@@ -160,7 +159,6 @@ public:
 
 #if USE(COORDINATED_GRAPHICS) || USE(TEXTURE_MAPPER)
     virtual void updateGeometry(const WebCore::IntSize&, CompletionHandler<void()>&&) = 0;
-    virtual void didChangeViewportAttributes(WebCore::ViewportAttributes&&) = 0;
     virtual void deviceOrPageScaleFactorChanged() = 0;
     virtual bool enterAcceleratedCompositingModeIfNeeded() = 0;
     virtual void backgroundColorDidChange() { };
@@ -220,7 +218,7 @@ private:
     RefPtr<WebCore::DisplayRefreshMonitor> createDisplayRefreshMonitor(WebCore::PlatformDisplayID) override;
 
 #if PLATFORM(COCOA)
-    virtual void setDeviceScaleFactor(float) { }
+    virtual void setDeviceScaleFactor(float, CompletionHandler<void()>&&) { }
     virtual void setColorSpace(std::optional<WebCore::DestinationColorSpace>) { }
 
     virtual void dispatchAfterEnsuringDrawing(IPC::AsyncReplyID) = 0;

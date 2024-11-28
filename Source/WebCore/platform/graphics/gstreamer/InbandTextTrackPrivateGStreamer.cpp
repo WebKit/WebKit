@@ -54,6 +54,15 @@ InbandTextTrackPrivateGStreamer::InbandTextTrackPrivateGStreamer(unsigned index,
     installUpdateConfigurationHandlers();
 }
 
+InbandTextTrackPrivateGStreamer::InbandTextTrackPrivateGStreamer(unsigned index, GRefPtr<GstPad>&& pad, TrackID trackId)
+    : InbandTextTrackPrivate(CueFormat::WebVTT)
+    , TrackPrivateBaseGStreamer(TrackPrivateBaseGStreamer::TrackType::Text, this, index, WTFMove(pad), trackId)
+    , m_kind(Kind::Subtitles)
+{
+    ensureTextTrackDebugCategoryInitialized();
+    installUpdateConfigurationHandlers();
+}
+
 InbandTextTrackPrivateGStreamer::InbandTextTrackPrivateGStreamer(unsigned index, GstStream* stream)
     : InbandTextTrackPrivate(CueFormat::WebVTT)
     , TrackPrivateBaseGStreamer(TrackPrivateBaseGStreamer::TrackType::Text, this, index, stream)
@@ -61,7 +70,7 @@ InbandTextTrackPrivateGStreamer::InbandTextTrackPrivateGStreamer(unsigned index,
     ensureTextTrackDebugCategoryInitialized();
     installUpdateConfigurationHandlers();
 
-    GST_INFO("Track %d got stream start for stream %s.", m_index, m_stringId.string().utf8().data());
+    GST_INFO("Track %d got stream start for stream %" PRIu64 ". GStreamer stream-id: %s", m_index, m_id, m_gstStreamId.string().utf8().data());
 
     GST_DEBUG("Stream %" GST_PTR_FORMAT, m_stream.get());
     auto caps = adoptGRef(gst_stream_get_caps(m_stream.get()));
@@ -70,6 +79,7 @@ InbandTextTrackPrivateGStreamer::InbandTextTrackPrivateGStreamer(unsigned index,
 
 void InbandTextTrackPrivateGStreamer::tagsChanged(GRefPtr<GstTagList>&& tags)
 {
+    ASSERT(isMainThread());
     if (!tags)
         return;
 

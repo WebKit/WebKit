@@ -1,0 +1,35 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <script src="../../resources/testharness.js"></script>
+        <script src="../../resources/testharnessreport.js"></script>
+        <script src="resources/getDisplayMedia-utils.js"></script>
+    </head>
+    <body>
+        <script>
+promise_test(async () => {
+    let isOK = false;
+    for (let i = 0; i < 100 && !isOK; i++) {
+        let promise1;
+        window.internals.withUserGesture(() => {
+            promise1 = navigator.mediaDevices.getDisplayMedia({ video: true });
+        });
+        let promise2;
+        window.internals.withUserGesture(() => {
+            promise2 = navigator.mediaDevices.getDisplayMedia({ video: true });
+        });
+
+        const results = await Promise.all([promise2, promise1.then(() => {
+            return true;
+        }, e => {
+            assert_equals(e.name, 'AbortError');
+            return true;
+        })]);
+        isOK = results[1];
+    }
+    assert_true(isOK);
+}, "Validate that a pending getDisplayMedia is cancelled when a new getDisplayMedia call is made");
+        </script>
+    </body>
+</html>

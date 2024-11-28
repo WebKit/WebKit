@@ -40,9 +40,9 @@ using namespace WebCore;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(NetworkSocketChannel);
 
-std::unique_ptr<NetworkSocketChannel> NetworkSocketChannel::create(NetworkConnectionToWebProcess& connection, PAL::SessionID sessionID, const ResourceRequest& request, const String& protocol, WebSocketIdentifier identifier, WebPageProxyIdentifier webPageProxyID, std::optional<FrameIdentifier> frameID, std::optional<PageIdentifier> pageID, const WebCore::ClientOrigin& clientOrigin, bool hadMainFrameMainResourcePrivateRelayed, bool allowPrivacyProxy, OptionSet<AdvancedPrivacyProtections> advancedPrivacyProtections, ShouldRelaxThirdPartyCookieBlocking shouldRelaxThirdPartyCookieBlocking, WebCore::StoredCredentialsPolicy storedCredentialsPolicy)
+RefPtr<NetworkSocketChannel> NetworkSocketChannel::create(NetworkConnectionToWebProcess& connection, PAL::SessionID sessionID, const ResourceRequest& request, const String& protocol, WebSocketIdentifier identifier, WebPageProxyIdentifier webPageProxyID, std::optional<FrameIdentifier> frameID, std::optional<PageIdentifier> pageID, const WebCore::ClientOrigin& clientOrigin, bool hadMainFrameMainResourcePrivateRelayed, bool allowPrivacyProxy, OptionSet<AdvancedPrivacyProtections> advancedPrivacyProtections, ShouldRelaxThirdPartyCookieBlocking shouldRelaxThirdPartyCookieBlocking, WebCore::StoredCredentialsPolicy storedCredentialsPolicy)
 {
-    auto result = makeUnique<NetworkSocketChannel>(connection, connection.protectedNetworkProcess()->networkSession(sessionID), request, protocol, identifier, webPageProxyID, frameID, pageID, clientOrigin, hadMainFrameMainResourcePrivateRelayed, allowPrivacyProxy, advancedPrivacyProtections, shouldRelaxThirdPartyCookieBlocking, storedCredentialsPolicy);
+    Ref result = adoptRef(*new NetworkSocketChannel(connection, connection.protectedNetworkProcess()->networkSession(sessionID), request, protocol, identifier, webPageProxyID, frameID, pageID, clientOrigin, hadMainFrameMainResourcePrivateRelayed, allowPrivacyProxy, advancedPrivacyProtections, shouldRelaxThirdPartyCookieBlocking, storedCredentialsPolicy));
     if (!result->m_socket) {
         result->didClose(0, "Cannot create a web socket task"_s);
         return nullptr;
@@ -57,26 +57,27 @@ NetworkSocketChannel::NetworkSocketChannel(NetworkConnectionToWebProcess& connec
     , m_errorTimer(*this, &NetworkSocketChannel::sendDelayedError)
     , m_webPageProxyID(webPageProxyID)
 {
+    relaxAdoptionRequirement();
     if (!m_session)
         return;
 
     m_socket = m_session->createWebSocketTask(webPageProxyID, frameID, pageID, *this, request, protocol, clientOrigin, hadMainFrameMainResourcePrivateRelayed, allowPrivacyProxy, advancedPrivacyProtections, shouldRelaxThirdPartyCookieBlocking, storedCredentialsPolicy);
-    if (m_socket) {
+    if (CheckedPtr socket = m_socket.get()) {
 #if PLATFORM(COCOA)
-        m_session->addWebSocketTask(webPageProxyID, *m_socket);
+        m_session->addWebSocketTask(webPageProxyID, *socket);
 #endif
-        m_socket->resume();
+        socket->resume();
     }
 }
 
 NetworkSocketChannel::~NetworkSocketChannel()
 {
-    if (m_socket) {
+    if (CheckedPtr socket = m_socket.get()) {
 #if PLATFORM(COCOA)
-        if (RefPtr sessionSet = m_session ? m_socket->sessionSet() : nullptr)
-            m_session->removeWebSocketTask(*sessionSet, *m_socket);
+        if (RefPtr sessionSet = m_session ? socket->sessionSet() : nullptr)
+            m_session->removeWebSocketTask(*sessionSet, *socket);
 #endif
-        m_socket->cancel();
+        socket->cancel();
     }
 }
 
@@ -87,12 +88,12 @@ Ref<NetworkConnectionToWebProcess> NetworkSocketChannel::protectedConnectionToWe
 
 void NetworkSocketChannel::sendString(std::span<const uint8_t> message, CompletionHandler<void()>&& callback)
 {
-    m_socket->sendString(message, WTFMove(callback));
+    checkedSocket()->sendString(message, WTFMove(callback));
 }
 
 void NetworkSocketChannel::sendData(std::span<const uint8_t> data, CompletionHandler<void()>&& callback)
 {
-    m_socket->sendData(data, WTFMove(callback));
+    checkedSocket()->sendData(data, WTFMove(callback));
 }
 
 void NetworkSocketChannel::finishClosingIfPossible()
@@ -108,7 +109,7 @@ void NetworkSocketChannel::finishClosingIfPossible()
 
 void NetworkSocketChannel::close(int32_t code, const String& reason)
 {
-    m_socket->close(code, reason);
+    checkedSocket()->close(code, reason);
     finishClosingIfPossible();
 }
 
@@ -171,6 +172,11 @@ IPC::Connection* NetworkSocketChannel::messageSenderConnection() const
 NetworkSession* NetworkSocketChannel::session() const
 {
     return m_session.get();
+}
+
+CheckedPtr<WebSocketTask> NetworkSocketChannel::checkedSocket()
+{
+    return m_socket.get();
 }
 
 } // namespace WebKit

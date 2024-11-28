@@ -165,38 +165,33 @@ NSURL *URLWithData(NSData *data, NSURL *baseURL)
     return [NSURL URLWithString:@""];
 }
 
-static NSData *dataWithUserTypedString(NSString *string)
+static RetainPtr<NSData> dataWithUserTypedString(NSString *string)
 {
-    NSData *userTypedData = [string dataUsingEncoding:NSUTF8StringEncoding];
+    RetainPtr userTypedData = [string dataUsingEncoding:NSUTF8StringEncoding];
     ASSERT(userTypedData);
     
-    const UInt8* inBytes = static_cast<const UInt8 *>([userTypedData bytes]);
-    int inLength = [userTypedData length];
-    if (!inLength)
+    auto inBytes = span(userTypedData.get());
+    if (inBytes.empty())
         return nil;
 
-    CheckedInt32 mallocLength = inLength;
-    mallocLength *= 3; // large enough to %-escape every character
-    if (mallocLength.hasOverflowed())
+    CheckedInt32 outBytesCapacity = inBytes.size();
+    outBytesCapacity *= 3; // large enough to %-escape every character
+    if (outBytesCapacity.hasOverflowed())
         return nil;
     
-    char* outBytes = static_cast<char *>(malloc(mallocLength));
-    char* p = outBytes;
-    int outLength = 0;
-    for (int i = 0; i < inLength; i++) {
-        UInt8 c = inBytes[i];
-        if (c <= 0x20 || c >= 0x7f) {
-            *p++ = '%';
-            *p++ = upperNibbleToASCIIHexDigit(c);
-            *p++ = lowerNibbleToASCIIHexDigit(c);
-            outLength += 3;
-        } else {
-            *p++ = c;
-            outLength++;
-        }
+    Vector<char> outBytes;
+    outBytes.reserveInitialCapacity(outBytesCapacity);
+    for (auto c : inBytes) {
+        if (c <= 0x20 || c >= 0x7f)
+            outBytes.appendList({ '%', upperNibbleToASCIIHexDigit(c), lowerNibbleToASCIIHexDigit(c) });
+        else
+            outBytes.append(c);
     }
     
-    return [NSData dataWithBytesNoCopy:outBytes length:outLength]; // adopts outBytes
+    auto outBytesSpan = outBytes.releaseBuffer().leakSpan();
+    return adoptNS([[NSData alloc] initWithBytesNoCopy:outBytesSpan.data() length:outBytesSpan.size() deallocator:^(void* bytes, NSUInteger) {
+        FastMalloc::free(bytes);
+    }]); // adopts outBytes
 }
 
 NSURL *URLWithUserTypedString(NSString *string, NSURL *)
@@ -215,11 +210,11 @@ NSURL *URLWithUserTypedString(NSString *string, NSURL *)
 
     // FIXME: https://bugs.webkit.org/show_bug.cgi?id=186057
     // We should be able to use url.createCFURL instead of using directly CFURL parsing routines.
-    NSData *data = dataWithUserTypedString(mappedString);
+    RetainPtr data = dataWithUserTypedString(mappedString);
     if (!data)
         return [NSURL URLWithString:@""];
 
-    return URLWithData(data, nil);
+    return URLWithData(data.get(), nil);
 }
 
 NSURL *URLWithUserTypedStringDeprecated(NSString *string)
@@ -229,10 +224,10 @@ NSURL *URLWithUserTypedStringDeprecated(NSString *string)
 
     NSURL *result = URLWithUserTypedString(string);
     if (!result) {
-        NSData *resultData = dataWithUserTypedString(string);
+        RetainPtr resultData = dataWithUserTypedString(string);
         if (!resultData)
             return [NSURL URLWithString:@""];
-        result = URLWithData(resultData, nil);
+        result = URLWithData(resultData.get(), nil);
     }
 
     return result;
@@ -252,7 +247,7 @@ NSData *dataForURLComponentType(NSURL *URL, CFURLComponentType componentType)
         return nil;
 
     auto bytesBuffer = bytesAsVector(bridge_cast(URL));
-    auto bytes = bytesBuffer.data() + range.location;
+    auto bytes = bytesBuffer.subspan(range.location);
 
     NSMutableData *result = [NSMutableData data];
 
@@ -285,7 +280,7 @@ static NSURL *URLByRemovingComponentAndSubsequentCharacter(NSURL *URL, CFURLComp
     range.length++;
 
     auto bytes = bytesAsVector(bridge_cast(URL));
-    auto urlBytes = bytes.data();
+    auto urlBytes = bytes.mutableSpan();
     CFIndex numBytes = bytes.size();
 
     if (numBytes < range.location)
@@ -293,11 +288,11 @@ static NSURL *URLByRemovingComponentAndSubsequentCharacter(NSURL *URL, CFURLComp
     if (numBytes < range.location + range.length)
         range.length = numBytes - range.location;
 
-    memmove(urlBytes + range.location, urlBytes + range.location + range.length, numBytes - range.location + range.length);
+    memmove(urlBytes.subspan(range.location).data(), urlBytes.subspan(range.location + range.length).data(), numBytes - range.location + range.length);
 
-    auto result = adoptCF(CFURLCreateWithBytes(nullptr, urlBytes, numBytes - range.length, kCFStringEncodingUTF8, nullptr));
+    auto result = adoptCF(CFURLCreateWithBytes(nullptr, urlBytes.data(), numBytes - range.length, kCFStringEncodingUTF8, nullptr));
     if (!result)
-        result = adoptCF(CFURLCreateWithBytes(nullptr, urlBytes, numBytes - range.length, kCFStringEncodingISOLatin1, nullptr));
+        result = adoptCF(CFURLCreateWithBytes(nullptr, urlBytes.data(), numBytes - range.length, kCFStringEncodingISOLatin1, nullptr));
 
     return result ? result.bridgingAutorelease() : URL;
 }
@@ -325,13 +320,13 @@ BOOL isUserVisibleURL(NSString *string)
     // Return true if the userVisibleString function is guaranteed to not change the passed-in URL.
     // This function is used to optimize all the most common cases where we don't need the userVisibleString algorithm.
 
-    char buffer[1024];
-    auto success = CFStringGetCString(bridge_cast(string), reinterpret_cast<char*>(buffer), sizeof(buffer) - 1, kCFStringEncodingUTF8);
-    auto characters = success ? buffer : [string UTF8String];
+    std::array<char, 1024> buffer;
+    auto success = CFStringGetCString(bridge_cast(string), buffer.data(), buffer.size() - 1, kCFStringEncodingUTF8);
+    auto characters = success ? span(buffer.data()) : span([string UTF8String]);
 
     // Check for control characters, %-escape sequences that are non-ASCII, and xn--: these
     // are the things that might lead the userVisibleString function to actually change the string.
-    while (auto character = *characters++) {
+    for (auto character : characters) {
         // Control characters, including space, will be escaped by userVisibleString.
         if (character <= 0x20 || character == 0x7F)
             return NO;

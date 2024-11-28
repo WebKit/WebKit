@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,6 +29,7 @@
 
 #include "B3Type.h"
 #include "B3ValueRep.h"
+#include "WasmFormat.h"
 #include <wtf/FixedVector.h>
 #include <wtf/TZoneMalloc.h>
 
@@ -49,26 +50,23 @@ private:
     B3::Type m_type { };
 };
 
-using StackMap = FixedVector<OSREntryValue>;
-using StackMaps = HashMap<CallSiteIndex, StackMap>;
-
 class OSREntryData {
     WTF_MAKE_NONCOPYABLE(OSREntryData);
     WTF_MAKE_TZONE_ALLOCATED(OSREntryData);
 public:
-    OSREntryData(uint32_t functionIndex, uint32_t loopIndex, StackMap&& stackMap)
+    OSREntryData(FunctionCodeIndex functionIndex, uint32_t loopIndex, StackMap&& stackMap)
         : m_functionIndex(functionIndex)
         , m_loopIndex(loopIndex)
         , m_values(WTFMove(stackMap))
     {
     }
 
-    uint32_t functionIndex() const { return m_functionIndex; }
+    FunctionCodeIndex functionIndex() const { return m_functionIndex; }
     uint32_t loopIndex() const { return m_loopIndex; }
     const StackMap& values() { return m_values; }
 
 private:
-    uint32_t m_functionIndex;
+    FunctionCodeIndex m_functionIndex;
     uint32_t m_loopIndex;
     StackMap m_values;
 };

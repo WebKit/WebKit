@@ -31,11 +31,13 @@
 #pragma once
 
 #include "BaseClickableWithKeyInputType.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 // Base of button, file, image, reset, and submit types.
 class BaseButtonInputType : public BaseClickableWithKeyInputType {
+    WTF_MAKE_TZONE_ALLOCATED(BaseButtonInputType);
 protected:
     explicit BaseButtonInputType(Type type, HTMLInputElement& element)
         : BaseClickableWithKeyInputType(type, element)

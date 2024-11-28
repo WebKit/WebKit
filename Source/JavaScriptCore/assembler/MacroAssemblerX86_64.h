@@ -30,6 +30,7 @@
 #include "X86Assembler.h"
 #include "AbstractMacroAssembler.h"
 #include <array>
+#include <wtf/TZoneMalloc.h>
 
 #define REPATCH_OFFSET_CALL_R11 3
 
@@ -40,6 +41,7 @@ namespace JSC {
 using Assembler = TARGET_ASSEMBLER;
 
 class MacroAssemblerX86_64 : public AbstractMacroAssembler<Assembler> {
+    WTF_MAKE_TZONE_ALLOCATED(MacroAssemblerX86_64);
 public:
     static constexpr size_t nearJumpRange = 2 * GB;
 
@@ -1213,8 +1215,7 @@ public:
     void absDouble(FPRegisterID src, FPRegisterID dst)
     {
         ASSERT(src != dst);
-        static constexpr double negativeZeroConstant = -0.0;
-        loadDouble(TrustedImmPtr(&negativeZeroConstant), dst);
+        move64ToDouble(TrustedImm64(std::bit_cast<int64_t>(-0.0)), dst);
         if (supportsAVX())
             m_assembler.vandnpd_rrr(src, dst, dst);
         else
@@ -4990,7 +4991,7 @@ public:
     void and64(TrustedImmPtr imm, RegisterID srcDest)
     {
         static_assert(sizeof(void*) == sizeof(int64_t));
-        and64(TrustedImm64(bitwise_cast<int64_t>(imm.m_value)), srcDest);
+        and64(TrustedImm64(std::bit_cast<int64_t>(imm.m_value)), srcDest);
     }
 
     void and64(TrustedImm64 imm, RegisterID srcDest)
@@ -5953,6 +5954,10 @@ public:
 
     void move32ToFloat(TrustedImm32 imm, FPRegisterID dest)
     {
+        if (!imm.m_value) {
+            moveZeroToFloat(dest);
+            return;
+        }
         move(imm, scratchRegister());
         if (supportsAVX())
             m_assembler.vmovd_rr(scratchRegister(), dest);
@@ -5970,6 +5975,10 @@ public:
 
     void move64ToDouble(TrustedImm64 imm, FPRegisterID dest)
     {
+        if (!imm.m_value) {
+            moveZeroToDouble(dest);
+            return;
+        }
         move(imm, scratchRegister());
         if (supportsAVX())
             m_assembler.vmovq_rr(scratchRegister(), dest);
@@ -7540,6 +7549,20 @@ public:
         m_assembler.vptest_rr(vector, vector);
         m_assembler.setCC_r(x86Condition(cond), scratch);
         vectorSplatInt8(scratch, dest);
+    }
+
+    void add64(FPRegisterID left, FPRegisterID right, FPRegisterID dest)
+    {
+        UNUSED_PARAM(left);
+        UNUSED_PARAM(right);
+        UNUSED_PARAM(dest);
+    }
+
+    void sub64(FPRegisterID left, FPRegisterID right, FPRegisterID dest)
+    {
+        UNUSED_PARAM(left);
+        UNUSED_PARAM(right);
+        UNUSED_PARAM(dest);
     }
 
     void vectorAdd(SIMDInfo simdInfo, FPRegisterID left, FPRegisterID right, FPRegisterID dest)

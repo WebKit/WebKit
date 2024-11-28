@@ -37,6 +37,8 @@
 #import <wtf/TZoneMallocInlines.h>
 #import <pal/cocoa/VisionSoftLink.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore::ShapeDetection {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(FaceDetectorImpl);
@@ -112,5 +114,7 @@ void FaceDetectorImpl::detect(Ref<ImageBuffer>&& imageBuffer, CompletionHandler<
 }
 
 } // namespace WebCore::ShapeDetection
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // HAVE(SHAPE_DETECTION_API_IMPLEMENTATION) && HAVE(VISION)

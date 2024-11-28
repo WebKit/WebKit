@@ -34,6 +34,8 @@
 #include "JSArrayBuffer.h"
 #include "ObjectConstructor.h"
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 const ClassInfo JSWebAssemblyMemory::s_info = { "WebAssembly.Memory"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSWebAssemblyMemory) };
@@ -203,5 +205,7 @@ void JSWebAssemblyMemory::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 DEFINE_VISIT_CHILDREN(JSWebAssemblyMemory);
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ENABLE(WEBASSEMBLY)

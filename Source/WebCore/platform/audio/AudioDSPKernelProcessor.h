@@ -33,6 +33,7 @@
 
 #include "AudioBus.h"
 #include "AudioProcessor.h"
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -46,6 +47,7 @@ class AudioProcessor;
 // Despite this limitation it turns out to be a very common and useful type of processor.
 
 class AudioDSPKernelProcessor : public AudioProcessor {
+    WTF_MAKE_TZONE_ALLOCATED(AudioDSPKernelProcessor);
 public:
     // numberOfChannels may be later changed if object is not yet in an "initialized" state
     AudioDSPKernelProcessor(float sampleRate, unsigned numberOfChannels);

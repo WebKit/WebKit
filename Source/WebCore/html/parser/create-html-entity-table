@@ -96,6 +96,8 @@ output_file.write("""/*
 #include "config.h"
 #include "HTMLEntityTable.h"
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 static constexpr char staticEntityStringStorage[] = """)
@@ -221,4 +223,7 @@ const HTMLEntityTableEntry* HTMLEntityTable::lastEntry()
 }
 
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+
 """ % entity_count)

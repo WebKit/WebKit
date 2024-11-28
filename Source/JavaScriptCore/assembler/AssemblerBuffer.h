@@ -81,7 +81,7 @@ namespace JSC {
         inline uint32_t offset() const
         {
 #if ENABLE(JIT_SIGN_ASSEMBLER_BUFFER)
-            return static_cast<uint32_t>(untagInt(m_offset, bitwise_cast<PtrTag>(this)));
+            return static_cast<uint32_t>(untagInt(m_offset, std::bit_cast<PtrTag>(this)));
 #else
             return m_offset;
 #endif
@@ -91,7 +91,7 @@ namespace JSC {
         inline void setOffset(uint32_t offset)
         {
 #if ENABLE(JIT_SIGN_ASSEMBLER_BUFFER)
-            m_offset = tagInt(static_cast<uint64_t>(offset), bitwise_cast<PtrTag>(this));
+            m_offset = tagInt(static_cast<uint64_t>(offset), std::bit_cast<PtrTag>(this));
 #else
             m_offset = offset;
 #endif
@@ -113,6 +113,12 @@ namespace JSC {
             : m_buffer(m_inlineBuffer)
             , m_capacity(InlineCapacity)
         {
+#if ENABLE(JIT_SCAN_ASSEMBLER_BUFFER_FOR_ZEROES)
+            // This makes it easier to know (at zero-scan time) that zeroes we
+            // see were indeed written there, rather than just being 'leftover'
+            // from initialization
+            poisonInlineBuffer();
+#endif
             if constexpr (type == AssemblerDataType::Code)
                 takeBufferIfLarger(*threadSpecificAssemblerData());
 #if ENABLE(JIT_SIGN_ASSEMBLER_BUFFER)
@@ -210,6 +216,17 @@ namespace JSC {
         }
 
     private:
+        void poisonInlineBuffer()
+        {
+            // On x86 this is the HLT instruction, which will raise SIGSEGV
+            // when executed in userspace. This is preferable to INT3 (0xCC) as
+            // we use 0xCC for alignment padding.
+            // On ARM64 this results in the illegal instrucion 0xF4F4F4F4 and
+            // will thus raise SIGILL.
+            constexpr const uint8_t poisonByte = 0xF4;
+            memset(m_inlineBuffer, poisonByte, InlineCapacity);
+        }
+
         bool isInlineBuffer() const { return m_buffer == m_inlineBuffer; }
         char* m_buffer;
         char m_inlineBuffer[InlineCapacity];

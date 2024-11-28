@@ -21,8 +21,10 @@
 #include "include/docs/SkPDFDocument.h"
 #include "include/private/base/SkMutex.h"
 #include "include/private/base/SkSemaphore.h"
+#include "src/base/SkUTF.h"
 #include "src/core/SkTHash.h"
 #include "src/pdf/SkPDFBitmap.h"
+#include "src/pdf/SkPDFFont.h"
 #include "src/pdf/SkPDFGraphicState.h"
 #include "src/pdf/SkPDFShader.h"
 #include "src/pdf/SkPDFTag.h"
@@ -35,9 +37,9 @@
 #include <vector>
 #include <memory>
 
+class SkDescriptor;
 class SkExecutor;
 class SkPDFDevice;
-class SkPDFFont;
 struct SkAdvancedTypefaceMetrics;
 struct SkBitmapKey;
 class SkMatrix;
@@ -47,7 +49,7 @@ struct Key;
 struct KeyHash;
 }  // namespace SkPDFGradientShader
 
-const char* SkPDFGetNodeIdKey();
+const char* SkPDFGetElemIdKey();
 
 // Logically part of SkPDFDocument, but separate to keep similar functionality together.
 class SkPDFOffsetMap {
@@ -76,16 +78,16 @@ struct SkPDFLink {
         kNamedDestination,
     };
 
-    SkPDFLink(Type type, SkData* data, const SkRect& rect, int nodeId)
+    SkPDFLink(Type type, SkData* data, const SkRect& rect, int elemId)
         : fType(type)
         , fData(sk_ref_sp(data))
         , fRect(rect)
-        , fNodeId(nodeId) {}
+        , fElemId(elemId) {}
     const Type fType;
     // The url or named destination, depending on |fType|.
     const sk_sp<SkData> fData;
     const SkRect fRect;
-    const int fNodeId;
+    const int fElemId;
 };
 
 
@@ -131,16 +133,18 @@ public:
     SkPDFIndirectReference currentPage() const {
         return SkASSERT(this->hasCurrentPage() && !fPageRefs.empty()), fPageRefs.back();
     }
-    // Used to allow marked content to refer to its corresponding structure
-    // tree node, via a page entry in the parent tree. Returns -1 if no
-    // mark ID.
-    SkPDFTagTree::Mark createMarkIdForNodeId(int nodeId, SkPoint);
-    // Used to allow annotations to refer to their corresponding structure
-    // tree node, via the struct parent tree. Returns -1 if no struct parent
-    // key.
-    int createStructParentKeyForNodeId(int nodeId);
 
-    void addNodeTitle(int nodeId, SkSpan<const char>);
+    // Create a new marked-content identifier (MCID) to be used with a marked-content sequence
+    // parented by the structure element (StructElem) with the given element identifier (elemId).
+    // Returns a false Mark if if elemId does not refer to a StructElem.
+    SkPDFStructTree::Mark createMarkForElemId(int elemId);
+
+    // Create a key to use with /StructParent in a content item (usually an annotation) which refers
+    // to the structure element (StructElem) with the given element identifier (elemId).
+    // Returns -1 if elemId does not refer to a StructElem.
+    int createStructParentKeyForElemId(int elemId, SkPDFIndirectReference contentItemRef);
+
+    void addStructElemTitle(int elemId, SkSpan<const char>);
 
     std::unique_ptr<SkPDFArray> getAnnotations();
 
@@ -171,9 +175,10 @@ public:
     skia_private::THashMap<uint32_t, std::unique_ptr<SkAdvancedTypefaceMetrics>> fTypefaceMetrics;
     skia_private::THashMap<uint32_t, std::vector<SkString>> fType1GlyphNames;
     skia_private::THashMap<uint32_t, std::vector<SkUnichar>> fToUnicodeMap;
+    skia_private::THashMap<uint32_t, skia_private::THashMap<SkGlyphID, SkString>> fToUnicodeMapEx;
     skia_private::THashMap<uint32_t, SkPDFIndirectReference> fFontDescriptors;
     skia_private::THashMap<uint32_t, SkPDFIndirectReference> fType3FontDescriptors;
-    skia_private::THashMap<uint64_t, SkPDFFont> fFontMap;
+    skia_private::THashTable<sk_sp<SkPDFStrike>, const SkDescriptor&, SkPDFStrike::Traits> fStrikes;
     skia_private::THashMap<SkPDFStrokeGraphicState,
                            SkPDFIndirectReference,
                            SkPDFStrokeGraphicState::Hash> fStrokeGSMap;
@@ -198,13 +203,13 @@ private:
     SkUUID fUUID;
     SkPDFIndirectReference fInfoDict;
     SkPDFIndirectReference fXMP;
-    SkPDF::Metadata fMetadata;
-    SkScalar fRasterScale = 1;
-    SkScalar fInverseRasterScale = 1;
-    SkExecutor* fExecutor = nullptr;
+    const SkPDF::Metadata fMetadata;
+    const SkScalar fRasterScale;
+    const SkScalar fInverseRasterScale;
+    SkExecutor *const fExecutor;
 
     // For tagged PDFs.
-    SkPDFTagTree fTagTree;
+    SkPDFStructTree fStructTree;
 
     SkMutex fMutex;
     SkSemaphore fSemaphore;

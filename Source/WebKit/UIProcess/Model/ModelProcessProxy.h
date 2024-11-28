@@ -47,6 +47,7 @@ class WebProcessProxy;
 class WebsiteDataStore;
 struct ModelProcessConnectionParameters;
 struct ModelProcessCreationParameters;
+struct SharedPreferencesForWebProcess;
 
 class ModelProcessProxy final : public AuxiliaryProcessProxy {
     WTF_MAKE_TZONE_ALLOCATED(ModelProcessProxy);
@@ -58,6 +59,7 @@ public:
     ~ModelProcessProxy();
 
     void createModelProcessConnection(WebProcessProxy&, IPC::Connection::Handle&& connectionIdentifier, ModelProcessConnectionParameters&&);
+    void sharedPreferencesForWebProcessDidChange(WebProcessProxy&, SharedPreferencesForWebProcess&&, CompletionHandler<void()>&&);
 
     void updateProcessAssertion();
 
@@ -108,7 +110,7 @@ private:
 
     ModelProcessCreationParameters processCreationParameters();
 
-    ProcessThrottler::ActivityVariant m_activityFromWebProcesses;
+    RefPtr<ProcessThrottler::Activity> m_activityFromWebProcesses;
 
     HashSet<PAL::SessionID> m_sessionIDs;
 };

@@ -39,7 +39,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteTextureViewProxy);
 RemoteTextureViewProxy::RemoteTextureViewProxy(RemoteTextureProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier)
     : m_backing(identifier)
     , m_convertToBackingContext(convertToBackingContext)
-    , m_parent(parent)
+    , m_root(parent.root())
 {
 }
 

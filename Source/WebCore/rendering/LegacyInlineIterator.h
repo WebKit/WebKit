@@ -129,11 +129,11 @@ inline bool operator==(const LegacyInlineIterator& it1, const LegacyInlineIterat
     return it1.offset() == it2.offset() && it1.renderer() == it2.renderer();
 }
 
-static inline UCharDirection embedCharFromDirection(TextDirection direction, UnicodeBidi unicodeBidi)
+static inline UCharDirection embedCharFromDirection(WritingMode writingMode, UnicodeBidi unicodeBidi)
 {
     if (unicodeBidi == UnicodeBidi::Embed)
-        return direction == TextDirection::RTL ? U_RIGHT_TO_LEFT_EMBEDDING : U_LEFT_TO_RIGHT_EMBEDDING;
-    return direction == TextDirection::RTL ? U_RIGHT_TO_LEFT_OVERRIDE : U_LEFT_TO_RIGHT_OVERRIDE;
+        return writingMode.isBidiRTL() ? U_RIGHT_TO_LEFT_EMBEDDING : U_LEFT_TO_RIGHT_EMBEDDING;
+    return writingMode.isBidiRTL() ? U_RIGHT_TO_LEFT_OVERRIDE : U_LEFT_TO_RIGHT_OVERRIDE;
 }
 
 template <class Observer>
@@ -160,7 +160,7 @@ static inline void notifyObserverEnteredObject(Observer* observer, RenderObject*
     }
 
     if (!observer->inIsolate())
-        observer->embed(embedCharFromDirection(style.direction(), unicodeBidi), FromStyleOrDOM);
+        observer->embed(embedCharFromDirection(style.writingMode(), unicodeBidi), FromStyleOrDOM);
 }
 
 template <class Observer>
@@ -361,7 +361,7 @@ ALWAYS_INLINE UCharDirection LegacyInlineIterator::direction() const
     }
 
     if (m_renderer->isRenderListMarker())
-        return m_renderer->style().isLeftToRightDirection() ? U_LEFT_TO_RIGHT : U_RIGHT_TO_LEFT;
+        return m_renderer->writingMode().isBidiLTR() ? U_LEFT_TO_RIGHT : U_RIGHT_TO_LEFT;
 
     return U_OTHER_NEUTRAL;
 }

@@ -165,21 +165,21 @@ void Line::handleOverflowingNonBreakingSpace(TrailingContentAction trailingConte
 
 const Box* Line::removeOverflowingOutOfFlowContent()
 {
-    auto lastTrailingOpaqueItemIndex = std::optional<size_t> { };
+    auto lastTrailingOutOfFlowItemIndex = std::optional<size_t> { };
     for (size_t index = m_runs.size(); index--;) {
         auto& run = m_runs[index];
-        if (run.isOpaque()) {
-            lastTrailingOpaqueItemIndex = index;
+        if (run.isOpaque() && run.layoutBox().isOutOfFlowPositioned()) {
+            lastTrailingOutOfFlowItemIndex = index;
             continue;
         }
         if (!run.logicalWidth() && (run.isInlineBoxStart() || run.isInlineBoxEnd()))
             continue;
         break;
     }
-    if (!lastTrailingOpaqueItemIndex)
+    if (!lastTrailingOutOfFlowItemIndex)
         return { };
-    auto* lastTrailingOpaqueBox = &m_runs[*lastTrailingOpaqueItemIndex].layoutBox();
-    m_runs.remove(*lastTrailingOpaqueItemIndex, m_runs.size() - *lastTrailingOpaqueItemIndex);
+    auto* lastTrailingOpaqueBox = &m_runs[*lastTrailingOutOfFlowItemIndex].layoutBox();
+    m_runs.remove(*lastTrailingOutOfFlowItemIndex, m_runs.size() - *lastTrailingOutOfFlowItemIndex);
     ASSERT(!m_runs.isEmpty());
     return lastTrailingOpaqueBox;
 }
@@ -267,7 +267,7 @@ void Line::resetBidiLevelForTrailingWhitespace(UBiDiLevel rootBidiLevel)
     detachTrailingWhitespaceIfNeeded();
 }
 
-void Line::append(const InlineItem& inlineItem, const RenderStyle& style, InlineLayoutUnit logicalWidth)
+void Line::append(const InlineItem& inlineItem, const RenderStyle& style, InlineLayoutUnit logicalWidth, InlineLayoutUnit textSpacingAdjustment)
 {
     if (auto* inlineTextItem = dynamicDowncast<InlineTextItem>(inlineItem))
         appendTextContent(*inlineTextItem, style, logicalWidth);
@@ -276,7 +276,7 @@ void Line::append(const InlineItem& inlineItem, const RenderStyle& style, Inline
     else if (inlineItem.isWordBreakOpportunity())
         appendWordBreakOpportunity(inlineItem, style);
     else if (inlineItem.isInlineBoxStart())
-        appendInlineBoxStart(inlineItem, style, logicalWidth);
+        appendInlineBoxStart(inlineItem, style, logicalWidth, textSpacingAdjustment);
     else if (inlineItem.isInlineBoxEnd())
         appendInlineBoxEnd(inlineItem, style, logicalWidth);
     else if (inlineItem.isAtomicInlineBox())
@@ -289,7 +289,7 @@ void Line::append(const InlineItem& inlineItem, const RenderStyle& style, Inline
     m_hasNonDefaultBidiLevelRun = m_hasNonDefaultBidiLevelRun || inlineItem.bidiLevel() != UBIDI_DEFAULT_LTR;
 }
 
-void Line::appendInlineBoxStart(const InlineItem& inlineItem, const RenderStyle& style, InlineLayoutUnit logicalWidth)
+void Line::appendInlineBoxStart(const InlineItem& inlineItem, const RenderStyle& style, InlineLayoutUnit logicalWidth, InlineLayoutUnit textSpacingAdjustment)
 {
     auto& inlineBoxGeometry = formattingContext().geometryForBox(inlineItem.layoutBox());
     if (inlineBoxGeometry.marginBorderAndPaddingStart())
@@ -315,7 +315,7 @@ void Line::appendInlineBoxStart(const InlineItem& inlineItem, const RenderStyle&
         m_inlineBoxLogicalLeftStack.append(logicalLeft);
 
     m_hasRubyContent = m_hasRubyContent || inlineItem.layoutBox().isRubyBase();
-    m_runs.append({ inlineItem, style, logicalLeft, logicalWidth });
+    m_runs.append({ inlineItem, style, logicalLeft, logicalWidth, textSpacingAdjustment });
 }
 
 void Line::appendInlineBoxEnd(const InlineItem& inlineItem, const RenderStyle& style, InlineLayoutUnit logicalWidth)
@@ -392,7 +392,7 @@ void Line::appendTextContent(const InlineTextItem& inlineTextItem, const RenderS
             return true;
         if (inlineTextItem.isQuirkNonBreakingSpace() || lastRun.isNonBreakingSpace())
             return true;
-        if (!inlineTextItem.style().isLeftToRightDirection() && TextUtil::shouldPreserveSpacesAndTabs(inlineTextItem.layoutBox()) && inlineTextItem.isWhitespace() != lastRun.isWhitespaceOnly()) {
+        if (!inlineTextItem.style().writingMode().isBidiLTR() && TextUtil::shouldPreserveSpacesAndTabs(inlineTextItem.layoutBox()) && inlineTextItem.isWhitespace() != lastRun.isWhitespaceOnly()) {
             // Whitespace content with position dependent width (e.g. tab character) does not work well when included with non-whitespace content.
             // We may end up with mismatching computed widths and misplaced glyphs at paint time -unless we keep dedicated runs with explicit positions.
             return true;
@@ -476,7 +476,7 @@ void Line::appendTextContent(const InlineTextItem& inlineTextItem, const RenderS
     updateHangingStatus();
 
     if (inlineTextItem.hasTrailingSoftHyphen())
-        m_trailingSoftHyphenWidth = style.fontCascade().width(TextRun { StringView { style.hyphenString() } });
+        m_trailingSoftHyphenWidth = TextUtil::hyphenWidth(style);
 }
 
 void Line::appendTextFast(const InlineTextItem& inlineTextItem, const RenderStyle& style, InlineLayoutUnit logicalWidth)
@@ -551,7 +551,7 @@ void Line::appendTextFast(const InlineTextItem& inlineTextItem, const RenderStyl
     updateHangingStatus();
 
     if (inlineTextItem.hasTrailingSoftHyphen())
-        m_trailingSoftHyphenWidth = style.fontCascade().width(TextRun { StringView { style.hyphenString() } });
+        m_trailingSoftHyphenWidth = TextUtil::hyphenWidth(style);
 }
 
 void Line::appendAtomicInlineBox(const InlineItem& inlineItem, const RenderStyle& style, InlineLayoutUnit marginBoxLogicalWidth)
@@ -779,13 +779,14 @@ std::optional<Line::Run::TrailingWhitespace::Type> Line::Run::trailingWhitespace
     return { TrailingWhitespace::Type::Collapsed };
 }
 
-Line::Run::Run(const InlineItem& inlineItem, const RenderStyle& style, InlineLayoutUnit logicalLeft, InlineLayoutUnit logicalWidth)
+Line::Run::Run(const InlineItem& inlineItem, const RenderStyle& style, InlineLayoutUnit logicalLeft, InlineLayoutUnit logicalWidth, InlineLayoutUnit textSpacingAdjustment)
     : m_type(toLineRunType(inlineItem))
     , m_layoutBox(&inlineItem.layoutBox())
     , m_style(style)
     , m_logicalLeft(logicalLeft)
     , m_logicalWidth(logicalWidth)
     , m_bidiLevel(inlineItem.bidiLevel())
+    , m_textSpacingAdjustment(textSpacingAdjustment)
 {
 }
 
@@ -798,13 +799,14 @@ Line::Run::Run(const InlineItem& zeroWidhtInlineItem, const RenderStyle& style, 
 {
 }
 
-Line::Run::Run(const InlineItem& lineSpanningInlineBoxItem, InlineLayoutUnit logicalLeft, InlineLayoutUnit logicalWidth)
+Line::Run::Run(const InlineItem& lineSpanningInlineBoxItem, InlineLayoutUnit logicalLeft, InlineLayoutUnit logicalWidth, InlineLayoutUnit textSpacingAdjustment)
     : m_type(Type::LineSpanningInlineBoxStart)
     , m_layoutBox(&lineSpanningInlineBoxItem.layoutBox())
     , m_style(lineSpanningInlineBoxItem.style())
     , m_logicalLeft(logicalLeft)
     , m_logicalWidth(logicalWidth)
     , m_bidiLevel(lineSpanningInlineBoxItem.bidiLevel())
+    , m_textSpacingAdjustment(textSpacingAdjustment)
 {
     ASSERT(lineSpanningInlineBoxItem.isInlineBoxStart());
 }
@@ -819,13 +821,14 @@ Line::Run::Run(const InlineSoftLineBreakItem& softLineBreakItem, const RenderSty
 {
 }
 
-Line::Run::Run(const InlineTextItem& inlineTextItem, const RenderStyle& style, InlineLayoutUnit logicalLeft, InlineLayoutUnit logicalWidth)
+Line::Run::Run(const InlineTextItem& inlineTextItem, const RenderStyle& style, InlineLayoutUnit logicalLeft, InlineLayoutUnit logicalWidth, InlineLayoutUnit textSpacingAdjustment)
     : m_type(inlineTextItem.isWordSeparator() ? Type::WordSeparator : inlineTextItem.isQuirkNonBreakingSpace() ? Type::NonBreakingSpace : Type::Text)
     , m_layoutBox(&inlineTextItem.layoutBox())
     , m_style(style)
     , m_logicalLeft(logicalLeft)
     , m_logicalWidth(logicalWidth)
     , m_bidiLevel(inlineTextItem.bidiLevel())
+    , m_textSpacingAdjustment(textSpacingAdjustment)
 {
     auto length = inlineTextItem.length();
     auto whitespaceType = trailingWhitespaceType(inlineTextItem);

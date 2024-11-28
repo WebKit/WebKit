@@ -38,6 +38,7 @@
 #include "WorkerBadgeProxy.h"
 #include "WorkerDebuggerProxy.h"
 #include "WorkerLoaderProxy.h"
+#include <wtf/CheckedPtr.h>
 #include <wtf/HashMap.h>
 #include <wtf/URLHash.h>
 
@@ -53,7 +54,9 @@ struct NotificationPayload;
 struct ServiceWorkerContextData;
 enum class WorkerThreadMode : bool;
 
-class ServiceWorkerThreadProxy final : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<ServiceWorkerThreadProxy, WTF::DestructionThread::Main>, public WorkerLoaderProxy, public WorkerDebuggerProxy, public WorkerBadgeProxy {
+class ServiceWorkerThreadProxy final : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<ServiceWorkerThreadProxy, WTF::DestructionThread::Main>, public WorkerLoaderProxy, public WorkerDebuggerProxy, public WorkerBadgeProxy, public CanMakeThreadSafeCheckedPtr<ServiceWorkerThreadProxy> {
+    WTF_MAKE_FAST_ALLOCATED;
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(ServiceWorkerThreadProxy);
 public:
     template<typename... Args> static Ref<ServiceWorkerThreadProxy> create(Args&&... args)
     {
@@ -97,6 +100,11 @@ public:
 
     WEBCORE_EXPORT void setInspectable(bool);
 
+    uint32_t checkedPtrCount() const { return CanMakeThreadSafeCheckedPtr<ServiceWorkerThreadProxy>::checkedPtrCount(); }
+    uint32_t checkedPtrCountWithoutThreadCheck() const { return CanMakeThreadSafeCheckedPtr<ServiceWorkerThreadProxy>::checkedPtrCountWithoutThreadCheck(); }
+    void incrementCheckedPtrCount() const { CanMakeThreadSafeCheckedPtr<ServiceWorkerThreadProxy>::incrementCheckedPtrCount(); }
+    void decrementCheckedPtrCount() const { CanMakeThreadSafeCheckedPtr<ServiceWorkerThreadProxy>::decrementCheckedPtrCount(); }
+
 private:
     WEBCORE_EXPORT ServiceWorkerThreadProxy(Ref<Page>&&, ServiceWorkerContextData&&, ServiceWorkerData&&, String&& userAgent, WorkerThreadMode, CacheStorageProvider&, std::unique_ptr<NotificationClient>&&);
 
@@ -119,7 +127,7 @@ private:
     Ref<Page> m_page;
     Ref<Document> m_document;
 #if ENABLE(REMOTE_INSPECTOR)
-    std::unique_ptr<ServiceWorkerDebuggable> m_remoteDebuggable;
+    Ref<ServiceWorkerDebuggable> m_remoteDebuggable;
 #endif
     Ref<ServiceWorkerThread> m_serviceWorkerThread;
     CacheStorageProvider& m_cacheStorageProvider;

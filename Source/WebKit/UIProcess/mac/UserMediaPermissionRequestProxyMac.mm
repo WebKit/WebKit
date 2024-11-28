@@ -33,12 +33,12 @@
 namespace WebKit {
 using namespace WebCore;
 
-Ref<UserMediaPermissionRequestProxy> UserMediaPermissionRequestProxy::create(UserMediaPermissionRequestManagerProxy& manager, UserMediaRequestIdentifier userMediaID, FrameIdentifier mainFrameID, FrameIdentifier frameID, Ref<SecurityOrigin>&& userMediaDocumentOrigin, Ref<SecurityOrigin>&& topLevelDocumentOrigin, Vector<CaptureDevice>&& audioDevices, Vector<CaptureDevice>&& videoDevices, MediaStreamRequest&& request, CompletionHandler<void(bool)>&& decisionCompletionHandler)
+Ref<UserMediaPermissionRequestProxy> UserMediaPermissionRequestProxy::create(UserMediaPermissionRequestManagerProxy& manager, std::optional<UserMediaRequestIdentifier> userMediaID, FrameIdentifier mainFrameID, FrameIdentifier frameID, Ref<SecurityOrigin>&& userMediaDocumentOrigin, Ref<SecurityOrigin>&& topLevelDocumentOrigin, Vector<CaptureDevice>&& audioDevices, Vector<CaptureDevice>&& videoDevices, MediaStreamRequest&& request, CompletionHandler<void(bool)>&& decisionCompletionHandler)
 {
     return adoptRef(*new UserMediaPermissionRequestProxyMac(manager, userMediaID, mainFrameID, frameID, WTFMove(userMediaDocumentOrigin), WTFMove(topLevelDocumentOrigin), WTFMove(audioDevices), WTFMove(videoDevices), WTFMove(request), WTFMove(decisionCompletionHandler)));
 }
 
-UserMediaPermissionRequestProxyMac::UserMediaPermissionRequestProxyMac(UserMediaPermissionRequestManagerProxy& manager, UserMediaRequestIdentifier userMediaID, FrameIdentifier mainFrameID, FrameIdentifier frameID, Ref<SecurityOrigin>&& userMediaDocumentOrigin, Ref<SecurityOrigin>&& topLevelDocumentOrigin, Vector<CaptureDevice>&& audioDevices, Vector<CaptureDevice>&& videoDevices, MediaStreamRequest&& request, CompletionHandler<void(bool)>&& decisionCompletionHandler)
+UserMediaPermissionRequestProxyMac::UserMediaPermissionRequestProxyMac(UserMediaPermissionRequestManagerProxy& manager, std::optional<UserMediaRequestIdentifier> userMediaID, FrameIdentifier mainFrameID, FrameIdentifier frameID, Ref<SecurityOrigin>&& userMediaDocumentOrigin, Ref<SecurityOrigin>&& topLevelDocumentOrigin, Vector<CaptureDevice>&& audioDevices, Vector<CaptureDevice>&& videoDevices, MediaStreamRequest&& request, CompletionHandler<void(bool)>&& decisionCompletionHandler)
     : UserMediaPermissionRequestProxy(manager, userMediaID, mainFrameID, frameID, WTFMove(userMediaDocumentOrigin), WTFMove(topLevelDocumentOrigin), WTFMove(audioDevices), WTFMove(videoDevices), WTFMove(request), WTFMove(decisionCompletionHandler))
 {
 }
@@ -51,7 +51,8 @@ void UserMediaPermissionRequestProxyMac::invalidate()
 {
 #if ENABLE(MEDIA_STREAM)
     if (m_hasPendingGetDispayMediaPrompt) {
-        DisplayCaptureSessionManager::singleton().cancelGetDisplayMediaPrompt(Ref { manager()->page() });
+        if (RefPtr page = protectedManager()->page())
+            DisplayCaptureSessionManager::singleton().cancelGetDisplayMediaPrompt(*page);
         m_hasPendingGetDispayMediaPrompt = false;
     }
 #endif
@@ -64,8 +65,12 @@ void UserMediaPermissionRequestProxyMac::promptForGetDisplayMedia(UserMediaDispl
     if (!manager())
         return;
 
+    RefPtr page = protectedManager()->page();
+    if (!page)
+        return;
+
     m_hasPendingGetDispayMediaPrompt = true;
-    DisplayCaptureSessionManager::singleton().promptForGetDisplayMedia(promptType, Ref { manager()->page() }, topLevelDocumentSecurityOrigin().data(), [protectedThis = Ref { *this }](std::optional<CaptureDevice> device) mutable {
+    DisplayCaptureSessionManager::singleton().promptForGetDisplayMedia(promptType, *page, topLevelDocumentSecurityOrigin().data(), [protectedThis = Ref { *this }](std::optional<CaptureDevice> device) mutable {
 
         protectedThis->m_hasPendingGetDispayMediaPrompt = false;
 
@@ -86,7 +91,8 @@ bool UserMediaPermissionRequestProxyMac::canRequestDisplayCapturePermission()
 {
 #if ENABLE(MEDIA_STREAM)
     auto overridePreference = DisplayCaptureSessionManager::singleton().overrideCanRequestDisplayCapturePermissionForTesting();
-    if (!manager() || (!overridePreference && manager()->page().preferences().requireUAGetDisplayMediaPrompt()))
+    RefPtr manager = this->manager();
+    if (!manager || !manager->page() || (!overridePreference && manager->page()->preferences().requireUAGetDisplayMediaPrompt()))
         return false;
 
     return DisplayCaptureSessionManager::singleton().canRequestDisplayCapturePermission();

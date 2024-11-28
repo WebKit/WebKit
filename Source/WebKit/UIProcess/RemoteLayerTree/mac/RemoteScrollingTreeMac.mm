@@ -43,9 +43,13 @@
 #import <WebCore/ScrollingTreePositionedNode.h>
 #import <WebCore/WebCoreCALayerExtras.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
+#import <wtf/TZoneMallocInlines.h>
 #import <wtf/text/TextStream.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteScrollingTreeMac);
+
 using namespace WebCore;
 
 Ref<RemoteScrollingTree> RemoteScrollingTree::create(RemoteScrollingCoordinatorProxy& scrollingCoordinator)
@@ -224,19 +228,22 @@ void RemoteScrollingTreeMac::scrollingTreeNodeDidScroll(ScrollingTreeScrollingNo
     if (auto* scrollingNode = dynamicDowncast<ScrollingTreeFrameScrollingNode>(node))
         layoutViewportOrigin = scrollingNode->layoutViewport().location();
 
-    auto nodeID = node.scrollingNodeID();
-    auto scrollPosition = node.currentScrollPosition();
+    if (isHandlingProgrammaticScroll())
+        return;
+
+    auto scrollUpdate = ScrollUpdate { node.scrollingNodeID(), node.currentScrollPosition(), layoutViewportOrigin, ScrollUpdateType::PositionUpdate, action };
+    addPendingScrollUpdate(WTFMove(scrollUpdate));
 
     // Happens when the this is called as a result of the scrolling tree commmit.
     if (RunLoop::isMain()) {
         if (auto* scrollingCoordinatorProxy = this->scrollingCoordinatorProxy())
-            scrollingCoordinatorProxy->scrollingTreeNodeDidScroll(nodeID, scrollPosition, layoutViewportOrigin, action);
+            scrollingCoordinatorProxy->scrollingThreadAddedPendingUpdate();
         return;
     }
 
-    RunLoop::main().dispatch([protectedThis = Ref { *this }, nodeID, scrollPosition, layoutViewportOrigin, action] {
+    RunLoop::main().dispatch([protectedThis = Ref { *this }] {
         if (auto* scrollingCoordinatorProxy = protectedThis->scrollingCoordinatorProxy())
-            scrollingCoordinatorProxy->scrollingTreeNodeDidScroll(nodeID, scrollPosition, layoutViewportOrigin, action);
+            scrollingCoordinatorProxy->scrollingThreadAddedPendingUpdate();
     });
 }
 
@@ -414,11 +421,11 @@ void RemoteScrollingTreeMac::unlockLayersForHitTesting()
     m_layerHitTestMutex.unlock();
 }
 
-static ScrollingNodeID scrollingNodeIDForLayer(CALayer *layer)
+static std::optional<ScrollingNodeID> scrollingNodeIDForLayer(CALayer *layer)
 {
     auto* layerTreeNode = RemoteLayerTreeNode::forCALayer(layer);
     if (!layerTreeNode)
-        return { };
+        return std::nullopt;
 
     return layerTreeNode->scrollingNodeID();
 }
@@ -508,7 +515,7 @@ RefPtr<ScrollingTreeNode> RemoteScrollingTreeMac::scrollingNodeForPoint(FloatPoi
                 if (!is<ScrollingTreeScrollingNode>(scrollingNode))
                     return nullptr;
                 ASSERT(frontmostInteractiveLayer);
-                if (isScrolledBy(*this, nodeID, frontmostInteractiveLayer.get())) {
+                if (isScrolledBy(*this, *nodeID, frontmostInteractiveLayer.get())) {
                     LOG_WITH_STREAM(UIHitTesting, stream << "RemoteScrollingTreeMac " << this << " scrollingNodeForPoint " << point << " found scrolling node " << nodeID);
                     return scrollingNode;
                 }

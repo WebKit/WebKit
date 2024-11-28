@@ -34,9 +34,11 @@
 #import "WKInspectorWKWebView.h"
 #import "WKOpenPanelParameters.h"
 #import "WKProcessPoolInternal.h"
+#import "WKWebsiteDataStoreInternal.h"
 #import "WebInspectorUIProxy.h"
 #import "WebInspectorUtilities.h"
 #import "WebPageProxy.h"
+#import "WebsiteDataStore.h"
 #import "_WKInspectorConfigurationInternal.h"
 #import <WebKit/WKFrameInfo.h>
 #import <WebKit/WKNavigationAction.h>
@@ -176,7 +178,18 @@ static NSString * const WKInspectorResourceScheme = @"inspector-resource";
     // Ensure that a page group identifier is set. This is for computing inspection levels.
     if (!configuration.get()._groupIdentifier)
         [configuration _setGroupIdentifier:WebKit::defaultInspectorPageGroupIdentifierForPage(_inspectedPage.get())];
-    
+
+    // Prefer using a custom persistent data store if one exists.
+    RetainPtr<WKWebsiteDataStore> targetDataStore;
+    WebKit::WebsiteDataStore::forEachWebsiteDataStore([&targetDataStore](WebKit::WebsiteDataStore& dataStore) {
+        if (dataStore.sessionID() != PAL::SessionID::defaultSessionID() && dataStore.resolvedDirectories().resourceLoadStatisticsDirectory == WebKit::WebsiteDataStore::defaultResourceLoadStatisticsDirectory()) {
+            ASSERT(!targetDataStore);
+            targetDataStore = WebKit::wrapper(dataStore);
+        }
+    });
+    if (targetDataStore)
+        [configuration setWebsiteDataStore:targetDataStore.get()];
+
     return configuration.autorelease();
 }
 

@@ -183,7 +183,7 @@ public:
         if (!m_stubRoutine)
             return false;
 
-        uintptr_t pcAsInt = bitwise_cast<uintptr_t>(pc);
+        uintptr_t pcAsInt = std::bit_cast<uintptr_t>(pc);
         return m_stubRoutine->startAddress() <= pcAsInt && pcAsInt <= m_stubRoutine->endAddress();
     }
 

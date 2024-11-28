@@ -68,7 +68,8 @@ struct MessagePortIdentifierHash {
 };
 
 template<> struct HashTraits<WebCore::MessagePortIdentifier> : GenericHashTraits<WebCore::MessagePortIdentifier> {
-    static WebCore::MessagePortIdentifier emptyValue() { return { }; }
+    static WebCore::MessagePortIdentifier emptyValue() { return { HashTraits<WebCore::ProcessIdentifier>::emptyValue(), HashTraits<WebCore::PortIdentifier>::emptyValue() }; }
+    static bool isEmptyValue(const WebCore::MessagePortIdentifier& value) { return value.portIdentifier.isHashTableEmptyValue(); }
 
     static void constructDeletedValue(WebCore::MessagePortIdentifier& slot) { new (NotNull, &slot.processIdentifier) WebCore::ProcessIdentifier(WTF::HashTableDeletedValue); }
 

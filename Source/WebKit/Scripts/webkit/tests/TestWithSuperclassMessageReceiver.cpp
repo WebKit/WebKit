@@ -67,15 +67,7 @@ bool TestWithSuperclass::didReceiveSyncMessage(IPC::Connection& connection, IPC:
         return IPC::handleMessageSynchronous<Messages::TestWithSuperclass::TestSyncMessage>(connection, decoder, replyEncoder, this, &TestWithSuperclass::testSyncMessage);
     if (decoder.messageName() == Messages::TestWithSuperclass::TestSynchronousMessage::name())
         return IPC::handleMessageSynchronous<Messages::TestWithSuperclass::TestSynchronousMessage>(connection, decoder, replyEncoder, this, &TestWithSuperclass::testSynchronousMessage);
-    UNUSED_PARAM(connection);
-    UNUSED_PARAM(decoder);
-    UNUSED_PARAM(replyEncoder);
-#if ENABLE(IPC_TESTING_API)
-    if (connection.ignoreInvalidMessageForTesting())
-        return false;
-#endif // ENABLE(IPC_TESTING_API)
-    ASSERT_NOT_REACHED_WITH_MESSAGE("Unhandled synchronous message %s to %" PRIu64, description(decoder.messageName()).characters(), decoder.destinationID());
-    return false;
+    return WebPageBase::didReceiveSyncMessage(connection, decoder, replyEncoder);
 }
 
 } // namespace WebKit

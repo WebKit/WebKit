@@ -10,7 +10,7 @@
 
 #include "include/core/SkTypes.h"
 
-#if defined(GR_TEST_UTILS)
+#if defined(GPU_TEST_UTILS)
 
 #include "include/core/SkPathEffect.h"
 #include "include/core/SkRefCnt.h"
@@ -88,7 +88,7 @@ public:
 protected:
     bool onFilterPath(SkPath* dst, const SkPath&, SkStrokeRec* , const SkRect*,
                       const SkMatrix&) const override;
-    DashType onAsADash(DashInfo* info) const override;
+    DashType asADash(DashInfo* info) const override;
 
 private:
     TestDashPathEffect(const SkScalar* intervals, int count, SkScalar phase);

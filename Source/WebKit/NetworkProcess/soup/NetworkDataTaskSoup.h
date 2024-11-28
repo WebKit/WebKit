@@ -181,7 +181,7 @@ private:
 
     WebCore::AdditionalNetworkLoadMetricsForWebInspector& additionalNetworkLoadMetricsForWebInspector();
 
-    WebCore::FrameIdentifier m_frameID;
+    Markable<WebCore::FrameIdentifier> m_frameID;
     Markable<WebCore::PageIdentifier> m_pageID;
     State m_state { State::Suspended };
     WebCore::ContentSniffingPolicy m_shouldContentSniff;

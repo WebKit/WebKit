@@ -33,17 +33,19 @@
 #endif
 #include <wtf/text/Base64.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 static const unsigned char InitialOctetEC = 0x04; // Per Section 2.3.3 of http://www.secg.org/sec1-v2.pdf
 // OID id-ecPublicKey 1.2.840.10045.2.1.
-static const unsigned char IdEcPublicKey[] = {0x06, 0x07, 0x2a, 0x86, 0x48, 0xce, 0x3d, 0x02, 0x01};
+static constexpr auto IdEcPublicKey = std::to_array<unsigned char>({ 0x06, 0x07, 0x2a, 0x86, 0x48, 0xce, 0x3d, 0x02, 0x01 });
 // OID secp256r1 1.2.840.10045.3.1.7.
-static constexpr unsigned char Secp256r1[] = {0x06, 0x08, 0x2a, 0x86, 0x48, 0xce, 0x3d, 0x03, 0x01, 0x07};
+static constexpr auto Secp256r1 = std::to_array<unsigned char>({ 0x06, 0x08, 0x2a, 0x86, 0x48, 0xce, 0x3d, 0x03, 0x01, 0x07 });
 // OID secp384r1 1.3.132.0.34
-static constexpr unsigned char Secp384r1[] = {0x06, 0x05, 0x2b, 0x81, 0x04, 0x00, 0x22};
+static constexpr auto Secp384r1 = std::to_array<unsigned char>({ 0x06, 0x05, 0x2b, 0x81, 0x04, 0x00, 0x22 });
 // OID secp521r1 1.3.132.0.35
-static constexpr unsigned char Secp521r1[] = {0x06, 0x05, 0x2b, 0x81, 0x04, 0x00, 0x23};
+static constexpr auto Secp521r1 = std::to_array<unsigned char>({ 0x06, 0x05, 0x2b, 0x81, 0x04, 0x00, 0x23 });
 
 // Version 1. Per https://tools.ietf.org/html/rfc5915#section-3
 static const unsigned char PrivateKeyVersion[] = {0x02, 0x01, 0x01};
@@ -268,24 +270,16 @@ bool CryptoKeyEC::platformAddFieldElements(JsonWebKey& jwk) const
 #endif
 }
 
-static size_t getOID(CryptoKeyEC::NamedCurve curve, const uint8_t*& oid)
+static std::span<const uint8_t> getOID(CryptoKeyEC::NamedCurve curve)
 {
-    size_t oidSize;
     switch (curve) {
     case CryptoKeyEC::NamedCurve::P256:
-        oid = Secp256r1;
-        oidSize = sizeof(Secp256r1);
-        break;
+        return Secp256r1;
     case CryptoKeyEC::NamedCurve::P384:
-        oid = Secp384r1;
-        oidSize = sizeof(Secp384r1);
-        break;
+        return Secp384r1;
     case CryptoKeyEC::NamedCurve::P521:
-        oid = Secp521r1;
-        oidSize = sizeof(Secp521r1);
-        break;
+        return Secp521r1;
     }
-    return oidSize;
 }
 
 // Per https://www.ietf.org/rfc/rfc5280.txt
@@ -310,16 +304,15 @@ RefPtr<CryptoKeyEC> CryptoKeyEC::platformImportSpki(CryptoAlgorithmIdentifier id
     index += bytesUsedToEncodedLength(keyData[index]); // Read length
     if (keyData.size() < index + sizeof(IdEcPublicKey))
         return nullptr;
-    if (memcmp(keyData.data() + index, IdEcPublicKey, sizeof(IdEcPublicKey)))
+    if (!equalSpans(keyData.subspan(index, sizeof(IdEcPublicKey)), std::span { IdEcPublicKey }))
         return nullptr;
-    index += sizeof(IdEcPublicKey); // Read id-ecPublicKey
-    const uint8_t* oid;
-    size_t oidSize = getOID(curve, oid);
-    if (keyData.size() < index + oidSize)
+    index += std::size(IdEcPublicKey); // Read id-ecPublicKey
+    auto oid = getOID(curve);
+    if (keyData.size() < index + oid.size())
         return nullptr;
-    if (memcmp(keyData.data() + index, oid, oidSize))
+    if (!equalSpans(keyData.subspan(index, oid.size()), oid))
         return nullptr;
-    index += oidSize + 1; // Read named curve OID, BIT STRING
+    index += oid.size() + 1; // Read named curve OID, BIT STRING
     if (keyData.size() < index + 1)
         return nullptr;
     index += bytesUsedToEncodedLength(keyData[index]) + 1; // Read length
@@ -360,20 +353,19 @@ Vector<uint8_t> CryptoKeyEC::platformExportSpki() const
     // The following adds SPKI header to a raw EC public key.
     // Once the underlying crypto library is updated to output SPKI EC Key, we should remove this hack.
     // <rdar://problem/30987628>
-    const uint8_t* oid;
-    size_t oidSize = getOID(namedCurve(), oid);
+    auto oid = getOID(namedCurve());
 
     // SEQUENCE + length(1) + OID id-ecPublicKey + OID secp256r1/OID secp384r1/OID secp521r1 + BIT STRING + length(?) + InitialOctet + Key size
-    size_t totalSize = sizeof(IdEcPublicKey) + oidSize + bytesNeededForEncodedLength(keySize + 1) + keySize + 4;
+    size_t totalSize = sizeof(IdEcPublicKey) + oid.size() + bytesNeededForEncodedLength(keySize + 1) + keySize + 4;
 
     Vector<uint8_t> result;
     result.reserveInitialCapacity(totalSize + bytesNeededForEncodedLength(totalSize) + 1);
     result.append(SequenceMark);
     addEncodedASN1Length(result, totalSize);
     result.append(SequenceMark);
-    addEncodedASN1Length(result, sizeof(IdEcPublicKey) + oidSize);
+    addEncodedASN1Length(result, sizeof(IdEcPublicKey) + oid.size());
     result.append(std::span { IdEcPublicKey });
-    result.append(std::span { oid, oidSize });
+    result.append(oid);
     result.append(BitStringMark);
     addEncodedASN1Length(result, keySize + 1);
     result.append(InitialOctet);
@@ -401,16 +393,15 @@ RefPtr<CryptoKeyEC> CryptoKeyEC::platformImportPkcs8(CryptoAlgorithmIdentifier i
     index += bytesUsedToEncodedLength(keyData[index]); // Read length
     if (keyData.size() < index + sizeof(IdEcPublicKey))
         return nullptr;
-    if (memcmp(keyData.data() + index, IdEcPublicKey, sizeof(IdEcPublicKey)))
+    if (!equalSpans(keyData.subspan(index, sizeof(IdEcPublicKey)), std::span { IdEcPublicKey }))
         return nullptr;
-    index += sizeof(IdEcPublicKey); // Read id-ecPublicKey
-    const uint8_t* oid;
-    size_t oidSize = getOID(curve, oid);
-    if (keyData.size() < index + oidSize)
+    index += std::size(IdEcPublicKey); // Read id-ecPublicKey
+    auto oid = getOID(curve);
+    if (keyData.size() < index + oid.size())
         return nullptr;
-    if (memcmp(keyData.data() + index, oid, oidSize))
+    if (!equalSpans(keyData.subspan(index, oid.size()), oid))
         return nullptr;
-    index += oidSize + 1; // Read named curve OID, OCTET STRING
+    index += oid.size() + 1; // Read named curve OID, OCTET STRING
     if (keyData.size() < index + 1)
         return nullptr;
     index += bytesUsedToEncodedLength(keyData[index]) + 1; // Read length, SEQUENCE
@@ -471,8 +462,7 @@ Vector<uint8_t> CryptoKeyEC::platformExportPkcs8() const
     // The following addes PKCS8 header to a raw EC private key.
     // Once the underlying crypto library is updated to output PKCS8 EC Key, we should remove this hack.
     // <rdar://problem/30987628>
-    const uint8_t* oid;
-    size_t oidSize = getOID(namedCurve(), oid);
+    auto oid = getOID(namedCurve());
 
     // InitialOctet + 04 + X + Y
     size_t publicKeySize = keySizeInBytes * 2 + 2;
@@ -483,7 +473,7 @@ Vector<uint8_t> CryptoKeyEC::platformExportPkcs8() const
     // SEQUENCE + length(?) + ecPrivateKeySize
     size_t privateKeySize = bytesNeededForEncodedLength(ecPrivateKeySize) + ecPrivateKeySize + 1;
     // VERSION + SEQUENCE + length(1) + OID id-ecPublicKey + OID secp256r1/OID secp384r1/OID secp521r1 + OCTET STRING + length(?) + privateKeySize
-    size_t totalSize = sizeof(Version) + sizeof(IdEcPublicKey) + oidSize + bytesNeededForEncodedLength(privateKeySize) + privateKeySize + 3;
+    size_t totalSize = sizeof(Version) + sizeof(IdEcPublicKey) + oid.size() + bytesNeededForEncodedLength(privateKeySize) + privateKeySize + 3;
 
     Vector<uint8_t> result;
     result.reserveInitialCapacity(totalSize + bytesNeededForEncodedLength(totalSize) + 1);
@@ -491,9 +481,9 @@ Vector<uint8_t> CryptoKeyEC::platformExportPkcs8() const
     addEncodedASN1Length(result, totalSize);
     result.append(std::span { Version });
     result.append(SequenceMark);
-    addEncodedASN1Length(result, sizeof(IdEcPublicKey) + oidSize);
+    addEncodedASN1Length(result, sizeof(IdEcPublicKey) + oid.size());
     result.append(std::span { IdEcPublicKey });
-    result.append(std::span { oid, oidSize });
+    result.append(oid);
     result.append(OctetStringMark);
     addEncodedASN1Length(result, privateKeySize);
     result.append(SequenceMark);
@@ -513,3 +503,5 @@ Vector<uint8_t> CryptoKeyEC::platformExportPkcs8() const
 }
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

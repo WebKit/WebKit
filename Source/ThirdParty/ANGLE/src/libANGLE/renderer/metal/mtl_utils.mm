@@ -188,51 +188,34 @@ void StartFrameCapture(id<MTLDevice> metalDevice, id<MTLCommandQueue> metalCmdQu
         return;
     }
 
-#    ifdef __MAC_10_15
-    if (ANGLE_APPLE_AVAILABLE_XCI(10.15, 13.1, 13))
+    auto captureDescriptor                = mtl::adoptObjCObj([[MTLCaptureDescriptor alloc] init]);
+    captureDescriptor.get().captureObject = metalDevice;
+    const std::string filePath            = GetMetalCaptureFile();
+    NSString *frameCapturePath            = nil;
+    if (filePath != "")
     {
-        auto captureDescriptor = mtl::adoptObjCObj([[MTLCaptureDescriptor alloc] init]);
-        captureDescriptor.get().captureObject = metalDevice;
-        const std::string filePath            = GetMetalCaptureFile();
-        NSString *frameCapturePath            = nil;
-        if (filePath != "")
-        {
-            frameCapturePath =
-                [NSString stringWithFormat:@"%s%zu.gputrace", filePath.c_str(), gFrameCaptured - 1];
-            captureDescriptor.get().destination = MTLCaptureDestinationGPUTraceDocument;
-            captureDescriptor.get().outputURL   = [NSURL fileURLWithPath:frameCapturePath
-                                                           isDirectory:false];
-        }
-        else
-        {
-            // This will pause execution only if application is being debugged inside Xcode
-            captureDescriptor.get().destination = MTLCaptureDestinationDeveloperTools;
-        }
-
-        NSError *error;
-        if ([captureManager startCaptureWithDescriptor:captureDescriptor.get() error:&error])
-        {
-            ASSERT(!gFrameCapturePath);
-            gFrameCapturePath = frameCapturePath;
-        }
-        else
-        {
-            NSLog(@"Failed to start capture, error %@", error);
-        }
+        frameCapturePath =
+            [NSString stringWithFormat:@"%s%zu.gputrace", filePath.c_str(), gFrameCaptured - 1];
+        captureDescriptor.get().destination = MTLCaptureDestinationGPUTraceDocument;
+        captureDescriptor.get().outputURL   = [NSURL fileURLWithPath:frameCapturePath
+                                                       isDirectory:false];
     }
     else
-#    endif  // __MAC_10_15
-        if (ANGLE_APPLE_AVAILABLE_XCI(10.15, 13.1, 13))
-        {
-            auto captureDescriptor = mtl::adoptObjCObj([[MTLCaptureDescriptor alloc] init]);
-            captureDescriptor.get().captureObject = metalDevice;
+    {
+        // This will pause execution only if application is being debugged inside Xcode
+        captureDescriptor.get().destination = MTLCaptureDestinationDeveloperTools;
+    }
 
-            NSError *error;
-            if (![captureManager startCaptureWithDescriptor:captureDescriptor.get() error:&error])
-            {
-                NSLog(@"Failed to start capture, error %@", error);
-            }
-        }
+    NSError *error;
+    if ([captureManager startCaptureWithDescriptor:captureDescriptor.get() error:&error])
+    {
+        ASSERT(!gFrameCapturePath);
+        gFrameCapturePath = frameCapturePath;
+    }
+    else
+    {
+        NSLog(@"Failed to start capture, error %@", error);
+    }
 #endif  // ANGLE_METAL_FRAME_CAPTURE_ENABLED
 }
 
@@ -676,7 +659,6 @@ angle::Result InitializeDepthStencilTextureContentsGPU(const gl::Context *contex
     {
         rtMTL.toRenderPassAttachmentDesc(&rpDesc.depthAttachment);
         rpDesc.depthAttachment.loadAction = MTLLoadActionClear;
-        rpDesc.depthAttachment.clearDepth = 1.0;
     }
     if (angleFormat.stencilBits)
     {
@@ -824,10 +806,7 @@ uint32_t GetDeviceVendorId(id<MTLDevice> metalDevice)
 {
     uint32_t vendorId = 0;
 #if TARGET_OS_OSX || TARGET_OS_MACCATALYST
-    if (ANGLE_APPLE_AVAILABLE_XC(10.13, 13.1))
-    {
-        vendorId = GetDeviceVendorIdFromIOKit(metalDevice);
-    }
+    vendorId = GetDeviceVendorIdFromIOKit(metalDevice);
 #endif
     if (!vendorId)
     {
@@ -876,12 +855,7 @@ static MTLLanguageVersion GetUserSetOrHighestMSLVersion(const MTLLanguageVersion
                     case 2:
                         return MTLLanguageVersion2_2;
                     case 3:
-                        if (@available(macOS 11.0, *))
-                        {
-                            return MTLLanguageVersion2_3;
-                        }
-                        assert(0 && "MSL 2.3 requires macOS 11.");
-                        break;
+                        return MTLLanguageVersion2_3;
                     case 4:
                         if (@available(macOS 12.0, *))
                         {
@@ -902,69 +876,33 @@ static MTLLanguageVersion GetUserSetOrHighestMSLVersion(const MTLLanguageVersion
 
 AutoObjCPtr<id<MTLLibrary>> CreateShaderLibrary(
     id<MTLDevice> metalDevice,
-    const std::string &source,
-    const std::map<std::string, std::string> &substitutionMacros,
-    bool disableFastMath,
-    bool usesInvariance,
-    AutoObjCPtr<NSError *> *error)
-{
-    return CreateShaderLibrary(metalDevice, source.c_str(), source.size(), substitutionMacros,
-                               disableFastMath, usesInvariance, error);
-}
-
-AutoObjCPtr<id<MTLLibrary>> CreateShaderLibrary(id<MTLDevice> metalDevice,
-                                                const std::string &source,
-                                                AutoObjCPtr<NSError *> *error)
-{
-    // Use fast math, but conservatively assume the shader uses invariance.
-    return CreateShaderLibrary(metalDevice, source.c_str(), source.size(), {}, false, true, error);
-}
-
-AutoObjCPtr<id<MTLLibrary>> CreateShaderLibrary(
-    id<MTLDevice> metalDevice,
-    const char *source,
-    size_t sourceLen,
+    std::string_view source,
     const std::map<std::string, std::string> &substitutionMacros,
     bool disableFastMath,
     bool usesInvariance,
     AutoObjCPtr<NSError *> *errorOut)
 {
+    AutoObjCPtr<id<MTLLibrary>> result;
     ANGLE_MTL_OBJC_SCOPE
     {
         NSError *nsError = nil;
-        auto nsSource    = [[NSString alloc] initWithBytesNoCopy:const_cast<char *>(source)
-                                                       length:sourceLen
-                                                     encoding:NSUTF8StringEncoding
-                                                 freeWhenDone:NO];
-        auto options     = [[[MTLCompileOptions alloc] init] ANGLE_MTL_AUTORELEASE];
+        AutoObjCPtr nsSource =
+            adoptObjCObj([[NSString alloc] initWithBytesNoCopy:const_cast<char *>(source.data())
+                                                        length:source.length()
+                                                      encoding:NSUTF8StringEncoding
+                                                  freeWhenDone:NO]);
+        AutoObjCPtr options = adoptObjCObj([[MTLCompileOptions alloc] init]);
 
         // Mark all positions in VS with attribute invariant as non-optimizable
-        bool canPreserveInvariance = false;
-        if (@available(macOS 11.0, *))
-        {
-            canPreserveInvariance      = true;
-            options.preserveInvariance = usesInvariance;
-        }
+        options.get().preserveInvariance = usesInvariance;
 
-        // If either:
-        //   - fastmath is force-disabled
-        // or:
-        //   - preserveInvariance is not available when compiling from
-        //     source, and the sources use invariance
-        // Disable fastmath.
-        //
-        // Write this logic out as if-tests rather than a nested
-        // logical expression to make it clearer.
         if (disableFastMath)
         {
-            options.fastMathEnabled = false;
-        }
-        else if (usesInvariance && !canPreserveInvariance)
-        {
-            options.fastMathEnabled = false;
+            options.get().fastMathEnabled = false;
         }
 
-        options.languageVersion = GetUserSetOrHighestMSLVersion(options.languageVersion);
+        options.get().languageVersion =
+            GetUserSetOrHighestMSLVersion(options.get().languageVersion);
 
         if (!substitutionMacros.empty())
         {
@@ -973,26 +911,25 @@ AutoObjCPtr<id<MTLLibrary>> CreateShaderLibrary(
             {
                 [macroDict setObject:@(macro.second.c_str()) forKey:@(macro.first.c_str())];
             }
-            options.preprocessorMacros = macroDict;
+            options.get().preprocessorMacros = macroDict;
         }
 
         auto *platform   = ANGLEPlatformCurrent();
         double startTime = platform->currentTime(platform);
 
-        auto library = [metalDevice newLibraryWithSource:nsSource options:options error:&nsError];
-        if (angle::GetEnvironmentVar(kANGLEPrintMSLEnv)[0] == '1')
+        result = adoptObjCObj([metalDevice newLibraryWithSource:nsSource.get()
+                                                        options:options.get()
+                                                          error:&nsError]);
+        if (angle::GetBoolEnvironmentVar(kANGLEPrintMSLEnv))
         {
-            NSLog(@"%@\n", nsSource);
+            NSLog(@"%@\n", nsSource.get());
         }
-        [nsSource ANGLE_MTL_AUTORELEASE];
         *errorOut = std::move(nsError);
 
-        double endTime = platform->currentTime(platform);
-        int us         = static_cast<int>((endTime - startTime) * 1000'000.0);
+        int us = static_cast<int>((platform->currentTime(platform) - startTime) * 1e6);
         ANGLE_HISTOGRAM_COUNTS("GPU.ANGLE.MetalShaderCompilationTimeUs", us);
-
-        return library;
     }
+    return result;
 }
 
 std::string CompileShaderLibraryToFile(const std::string &source,
@@ -1073,53 +1010,41 @@ std::string CompileShaderLibraryToFile(const std::string &source,
     return metallibFileName.value();
 }
 
-AutoObjCPtr<id<MTLLibrary>> CreateShaderLibrary(id<MTLDevice> metalDevice,
-                                                const char *source,
-                                                size_t sourceLen,
-                                                AutoObjCPtr<NSError *> *errorOut)
-{
-    ANGLE_MTL_OBJC_SCOPE
-    {
-        auto nsSource = [[NSString alloc] initWithBytesNoCopy:const_cast<char *>(source)
-                                                       length:sourceLen
-                                                     encoding:NSUTF8StringEncoding
-                                                 freeWhenDone:NO];
-        auto options  = [[[MTLCompileOptions alloc] init] ANGLE_MTL_AUTORELEASE];
-
-        NSError *nsError = nil;
-        auto library = [metalDevice newLibraryWithSource:nsSource options:options error:&nsError];
-
-        [nsSource ANGLE_MTL_AUTORELEASE];
-
-        *errorOut = std::move(nsError);
-
-        return [library ANGLE_MTL_AUTORELEASE];
-    }
-}
-
 AutoObjCPtr<id<MTLLibrary>> CreateShaderLibraryFromBinary(id<MTLDevice> metalDevice,
-                                                          const uint8_t *binarySource,
-                                                          size_t binarySourceLen,
+                                                          const uint8_t *data,
+                                                          size_t length,
                                                           AutoObjCPtr<NSError *> *errorOut)
 {
+    AutoObjCPtr<id<MTLLibrary>> result;
     ANGLE_MTL_OBJC_SCOPE
     {
         NSError *nsError = nil;
-        auto shaderSourceData =
-            dispatch_data_create(binarySource, binarySourceLen, dispatch_get_main_queue(),
-                                 ^{
-                                 });
-
-        auto library = [metalDevice newLibraryWithData:shaderSourceData error:&nsError];
-
-        dispatch_release(shaderSourceData);
-
+        AutoObjCPtr binaryData = adoptObjCObj(
+            dispatch_data_create(data, length, nullptr, DISPATCH_DATA_DESTRUCTOR_DEFAULT));
+        result    = adoptObjCObj([metalDevice newLibraryWithData:binaryData.get() error:&nsError]);
         *errorOut = std::move(nsError);
-
-        return [library ANGLE_MTL_AUTORELEASE];
     }
+    return result;
 }
 
+AutoObjCPtr<id<MTLLibrary>> CreateShaderLibraryFromStaticBinary(id<MTLDevice> metalDevice,
+                                                                const uint8_t *data,
+                                                                size_t length,
+                                                                AutoObjCPtr<NSError *> *errorOut)
+{
+    AutoObjCPtr<id<MTLLibrary>> result;
+    ANGLE_MTL_OBJC_SCOPE
+    {
+        NSError *nsError = nil;
+        dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0);
+        AutoObjCPtr binaryData = adoptObjCObj(dispatch_data_create(data, length, queue,
+                                                                   ^{
+                                                                   }));
+        result    = adoptObjCObj([metalDevice newLibraryWithData:binaryData.get() error:&nsError]);
+        *errorOut = std::move(nsError);
+    }
+    return result;
+}
 MTLTextureType GetTextureType(gl::TextureType glType)
 {
     switch (glType)

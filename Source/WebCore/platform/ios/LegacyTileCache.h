@@ -42,6 +42,15 @@ OBJC_CLASS LegacyTileLayer;
 OBJC_CLASS WAKWindow;
 
 namespace WebCore {
+class LegacyTileCache;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedTimerSmartPointerException;
+template<> struct IsDeprecatedTimerSmartPointerException<WebCore::LegacyTileCache> : std::true_type { };
+}
+
+namespace WebCore {
 
 class Color;
 class LegacyTileGrid;

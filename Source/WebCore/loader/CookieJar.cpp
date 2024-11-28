@@ -179,7 +179,7 @@ String CookieJar::cookieRequestHeaderFieldValue(Document& document, const URL& u
     return result.first;
 }
 
-bool CookieJar::getRawCookies(const Document& document, const URL& url, Vector<Cookie>& cookies) const
+bool CookieJar::getRawCookies(Document& document, const URL& url, Vector<Cookie>& cookies) const
 {
     auto pageID = document.pageID();
     std::optional<FrameIdentifier> frameID;

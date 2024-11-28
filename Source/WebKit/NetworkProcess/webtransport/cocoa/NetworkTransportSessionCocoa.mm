@@ -34,6 +34,8 @@
 #import <wtf/BlockPtr.h>
 #import <wtf/CompletionHandler.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/StdLibExtras.h>
+#import <wtf/cocoa/VectorCocoa.h>
 
 namespace WebKit {
 
@@ -52,9 +54,9 @@ NetworkTransportSession::NetworkTransportSession(NetworkConnectionToWebProcess& 
         // FIXME: Not only is this an unnecessary string copy, but it's also something that should probably be in WTF or FragmentedSharedBuffer.
         auto vectorFromData = [](dispatch_data_t content) {
             ASSERT(content);
-            __block Vector<uint8_t> request;
-            dispatch_data_apply(content, ^bool(dispatch_data_t, size_t, const void* buffer, size_t size) {
-                request.append(std::span { static_cast<const uint8_t*>(buffer), size });
+            Vector<uint8_t> request;
+            dispatch_data_apply_span(content, [&](std::span<const uint8_t> data) {
+                request.append(data);
                 return true;
             });
             return request;
@@ -143,16 +145,7 @@ void NetworkTransportSession::initialize(NetworkConnectionToWebProcess& connecti
 
 void NetworkTransportSession::sendDatagram(std::span<const uint8_t> data, CompletionHandler<void()>&& completionHandler)
 {
-    // FIXME: This exists in several places. Make a common place in WTF for it.
-    auto dataFromVector = [] (Vector<uint8_t>&& v) {
-        auto bufferSize = v.size();
-        auto rawPointer = v.releaseBuffer().leakPtr();
-        return adoptNS(dispatch_data_create(rawPointer, bufferSize, dispatch_get_main_queue(), ^{
-            fastFree(rawPointer);
-        }));
-    };
-
-    nw_connection_group_send_message(m_connectionGroup.get(), dataFromVector(Vector(data)).get(),  m_endpoint.get(), NW_CONNECTION_DEFAULT_MESSAGE_CONTEXT, makeBlockPtr([completionHandler = WTFMove(completionHandler)] (nw_error_t error) mutable {
+    nw_connection_group_send_message(m_connectionGroup.get(), makeDispatchData(Vector(data)).get(), m_endpoint.get(), NW_CONNECTION_DEFAULT_MESSAGE_CONTEXT, makeBlockPtr([completionHandler = WTFMove(completionHandler)] (nw_error_t error) mutable {
         // FIXME: Pass any error through to JS.
         completionHandler();
     }).get());

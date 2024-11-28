@@ -46,8 +46,7 @@ public:
 
     virtual ~RemoteTextureViewProxy();
 
-    RemoteTextureProxy& parent() { return m_parent; }
-    RemoteGPUProxy& root() { return m_parent->root(); }
+    RemoteGPUProxy& root() { return m_root; }
 
 private:
     friend class DowncastConvertToBackingContext;
@@ -64,14 +63,14 @@ private:
     template<typename T>
     WARN_UNUSED_RETURN IPC::Error send(T&& message)
     {
-        return root().streamClientConnection().send(WTFMove(message), backing());
+        return root().protectedStreamClientConnection()->send(WTFMove(message), backing());
     }
 
     void setLabelInternal(const String&) final;
 
     WebGPUIdentifier m_backing;
     Ref<ConvertToBackingContext> m_convertToBackingContext;
-    Ref<RemoteTextureProxy> m_parent;
+    Ref<RemoteGPUProxy> m_root;
 };
 
 } // namespace WebKit::WebGPU

@@ -99,19 +99,22 @@ WorkerGlobalScopeProxy& WorkerGlobalScopeProxy::create(Worker& worker)
     return *new WorkerMessagingProxy(worker);
 }
 
+static ScriptExecutionContextIdentifier loaderContextIdentifierFromContext(const ScriptExecutionContext& context)
+{
+    if (is<Document>(context))
+        return context.identifier();
+    return downcast<WorkerGlobalScope>(context).thread().workerLoaderProxy()->loaderContextIdentifier();
+}
+
 WorkerMessagingProxy::WorkerMessagingProxy(Worker& workerObject)
     : m_scriptExecutionContext(workerObject.scriptExecutionContext())
+    , m_loaderContextIdentifier(loaderContextIdentifierFromContext(*m_scriptExecutionContext))
     , m_inspectorProxy(WorkerInspectorProxy::create(workerObject.identifier()))
     , m_workerObject(&workerObject)
 {
     ASSERT((is<Document>(*m_scriptExecutionContext) && isMainThread())
         || (is<WorkerGlobalScope>(*m_scriptExecutionContext) && downcast<WorkerGlobalScope>(*m_scriptExecutionContext).thread().thread() == &Thread::current()));
 
-    if (is<Document>(*m_scriptExecutionContext))
-        m_loaderContextIdentifier = m_scriptExecutionContext->identifier();
-    else if (auto* workerLoaderProxy = downcast<WorkerGlobalScope>(*m_scriptExecutionContext).thread().workerLoaderProxy())
-        m_loaderContextIdentifier = workerLoaderProxy->loaderContextIdentifier();
-    ASSERT(m_loaderContextIdentifier);
     // Nobody outside this class ref counts this object. The original ref
     // is balanced by the deref in workerGlobalScopeDestroyedInternal.
 }
@@ -151,7 +154,7 @@ void WorkerMessagingProxy::startWorkerGlobalScope(const URL& scriptURL, PAL::Ses
 
     WorkerParameters params { scriptURL, m_scriptExecutionContext->url(), name, identifier, WTFMove(initializationData.userAgent), isOnline, contentSecurityPolicyResponseHeaders, shouldBypassMainWorldContentSecurityPolicy, crossOriginEmbedderPolicy, timeOrigin, referrerPolicy, workerType, credentials, m_scriptExecutionContext->settingsValues(), WorkerThreadMode::CreateNewThread, sessionID,
         WTFMove(initializationData.serviceWorkerData),
-        initializationData.clientIdentifier.value_or(ScriptExecutionContextIdentifier { }),
+        initializationData.clientIdentifier,
         m_scriptExecutionContext->advancedPrivacyProtections(),
         m_scriptExecutionContext->noiseInjectionHashSalt()
     };

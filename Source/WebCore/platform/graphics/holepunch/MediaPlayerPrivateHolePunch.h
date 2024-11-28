@@ -40,11 +40,13 @@ class MediaPlayerPrivateHolePunch
 {
     WTF_MAKE_TZONE_ALLOCATED(MediaPlayerPrivateHolePunch);
 public:
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
+
     MediaPlayerPrivateHolePunch(MediaPlayer*);
     ~MediaPlayerPrivateHolePunch();
 
-    void ref() final { RefCounted::ref(); }
-    void deref() final { RefCounted::deref(); }
+    constexpr MediaPlayerType mediaPlayerType() const final { return MediaPlayerType::HolePunch; }
 
     static void registerMediaEngine(MediaEngineRegistrar);
 

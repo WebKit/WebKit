@@ -34,6 +34,7 @@
 
 #include <cstddef>
 #include <wtf/Assertions.h>
+#include <wtf/HexNumber.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 
@@ -158,7 +159,7 @@ void SHA1::processBlock()
 {
     ASSERT(m_cursor == 64);
 
-    uint32_t w[80] = { 0 };
+    std::array <uint32_t, 80> w { };
     for (int t = 0; t < 16; ++t)
         w[t] = (m_buffer[t * 4] << 24) | (m_buffer[t * 4 + 1] << 16) | (m_buffer[t * 4 + 2] << 8) | m_buffer[t * 4 + 3];
     for (int t = 16; t < 80; ++t)
@@ -199,7 +200,7 @@ void SHA1::reset()
     m_hash[4] = 0xc3d2e1f0;
 
     // Clear the buffer after use in case it's sensitive.
-    memset(m_buffer, 0, sizeof(m_buffer));
+    m_buffer.fill(0);
 }
 
 #endif
@@ -219,7 +220,7 @@ void SHA1::addUTF8Bytes(StringView string)
 void SHA1::addUTF8Bytes(CFStringRef string)
 {
     if (auto* characters = CFStringGetCStringPtr(string, kCFStringEncodingASCII)) {
-        addBytes(std::span { byteCast<uint8_t>(characters), static_cast<size_t>(CFStringGetLength(string)) });
+        addBytes(unsafeMakeSpan(byteCast<uint8_t>(characters), CFStringGetLength(string)));
         return;
     }
 
@@ -240,14 +241,7 @@ void SHA1::addUTF8Bytes(CFStringRef string)
 
 CString SHA1::hexDigest(const Digest& digest)
 {
-    char* start = nullptr;
-    CString result = CString::newUninitialized(40, start);
-    char* buffer = start;
-    for (size_t i = 0; i < hashSize; ++i) {
-        snprintf(buffer, 3, "%02X", digest.at(i));
-        buffer += 2;
-    }
-    return result;
+    return toHexCString(digest);
 }
 
 CString SHA1::computeHexDigest()

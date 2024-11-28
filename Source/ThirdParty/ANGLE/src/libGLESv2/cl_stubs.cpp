@@ -236,11 +236,12 @@ cl_int RetainCommandQueue(cl_command_queue command_queue)
 cl_int ReleaseCommandQueue(cl_command_queue command_queue)
 {
     CommandQueue &queue = command_queue->cast<CommandQueue>();
+    const cl_int err    = queue.onRelease();
     if (queue.release())
     {
         delete &queue;
     }
-    return CL_SUCCESS;
+    return err;
 }
 
 cl_int GetCommandQueueInfo(cl_command_queue command_queue,
@@ -562,8 +563,7 @@ cl_int CreateKernelsInProgram(cl_program program,
 
 cl_kernel CloneKernel(cl_kernel source_kernel)
 {
-    WARN_NOT_SUPPORTED(CloneKernel);
-    return 0;
+    CL_RETURN_OBJ(source_kernel->cast<Kernel>().clone(););
 }
 
 cl_int RetainKernel(cl_kernel kernel)

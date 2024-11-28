@@ -36,7 +36,7 @@ namespace WTF {
 namespace double_conversion {
 
 Bignum::Bignum()
-    : bigits_buffer_(), bigits_(bigits_buffer_, kBigitCapacity), used_digits_(0), exponent_(0) {
+    : bigits_buffer_(), bigits_(std::span<Chunk> { bigits_buffer_ }), used_digits_(0), exponent_(0) {
   for (int i = 0; i < kBigitCapacity; ++i) {
     bigits_[i] = 0;
   }
@@ -295,23 +295,24 @@ void Bignum::MultiplyByUInt64(uint64_t factor) {
 
 
 void Bignum::MultiplyByPowerOfTen(int exponent) {
-  const uint64_t kFive27 = UINT64_2PART_C(0x6765c793, fa10079d);
-  const uint16_t kFive1 = 5;
-  const uint16_t kFive2 = kFive1 * 5;
-  const uint16_t kFive3 = kFive2 * 5;
-  const uint16_t kFive4 = kFive3 * 5;
-  const uint16_t kFive5 = kFive4 * 5;
-  const uint16_t kFive6 = kFive5 * 5;
-  const uint32_t kFive7 = kFive6 * 5;
-  const uint32_t kFive8 = kFive7 * 5;
-  const uint32_t kFive9 = kFive8 * 5;
-  const uint32_t kFive10 = kFive9 * 5;
-  const uint32_t kFive11 = kFive10 * 5;
-  const uint32_t kFive12 = kFive11 * 5;
-  const uint32_t kFive13 = kFive12 * 5;
-  const uint32_t kFive1_to_12[] =
-      { kFive1, kFive2, kFive3, kFive4, kFive5, kFive6,
-        kFive7, kFive8, kFive9, kFive10, kFive11, kFive12 };
+  constexpr uint64_t kFive27 = UINT64_2PART_C(0x6765c793, fa10079d);
+  constexpr uint16_t kFive1 = 5;
+  constexpr uint16_t kFive2 = kFive1 * 5;
+  constexpr uint16_t kFive3 = kFive2 * 5;
+  constexpr uint16_t kFive4 = kFive3 * 5;
+  constexpr uint16_t kFive5 = kFive4 * 5;
+  constexpr uint16_t kFive6 = kFive5 * 5;
+  constexpr uint32_t kFive7 = kFive6 * 5;
+  constexpr uint32_t kFive8 = kFive7 * 5;
+  constexpr uint32_t kFive9 = kFive8 * 5;
+  constexpr uint32_t kFive10 = kFive9 * 5;
+  constexpr uint32_t kFive11 = kFive10 * 5;
+  constexpr uint32_t kFive12 = kFive11 * 5;
+  constexpr uint32_t kFive13 = kFive12 * 5;
+  constexpr std::array<uint32_t, 12> kFive1_to_12 {
+      kFive1, kFive2, kFive3, kFive4, kFive5, kFive6,
+      kFive7, kFive8, kFive9, kFive10, kFive11, kFive12
+  };
 
   ASSERT(exponent >= 0);
   if (exponent == 0) return;
@@ -566,14 +567,15 @@ static char HexCharOfValue(int value) {
 }
 
 
-bool Bignum::ToHexString(char* buffer, int buffer_size) const {
+bool Bignum::ToHexString(std::span<char> buffer) const {
   ASSERT(IsClamped());
   // Each bigit must be printable as separate hex-character.
   ASSERT(kBigitSize % 4 == 0);
   const int kHexCharsPerBigit = kBigitSize / 4;
 
   if (used_digits_ == 0) {
-    if (buffer_size < 2) return false;
+    if (buffer.size() < 2)
+        return false;
     buffer[0] = '0';
     buffer[1] = '\0';
     return true;
@@ -581,7 +583,8 @@ bool Bignum::ToHexString(char* buffer, int buffer_size) const {
   // We add 1 for the terminating '\0' character.
   int needed_chars = (BigitLength() - 1) * kHexCharsPerBigit +
       SizeInHexChars(bigits_[used_digits_ - 1]) + 1;
-  if (needed_chars > buffer_size) return false;
+  if (needed_chars > static_cast<int>(buffer.size()))
+      return false;
   int string_index = needed_chars - 1;
   buffer[string_index--] = '\0';
   for (int i = 0; i < exponent_; ++i) {

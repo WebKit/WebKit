@@ -40,6 +40,8 @@
 
 #include "KeywordLookup.h"
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 template <typename CharType>
@@ -1216,14 +1218,14 @@ JSValue LiteralParser<CharType>::parseRecursivelyEntry(VM& vm)
         return parse(vm, StartParseExpression);
     TokenType type = m_lexer.currentToken()->type;
     if (type == TokLBrace || type == TokLBracket)
-        return parseRecursively(vm, bitwise_cast<uint8_t*>(vm.softStackLimit()));
+        return parseRecursively(vm, std::bit_cast<uint8_t*>(vm.softStackLimit()));
     return parsePrimitiveValue(vm);
 }
 
 template <typename CharType>
 JSValue LiteralParser<CharType>::parseRecursively(VM& vm, uint8_t* stackLimit)
 {
-    if (UNLIKELY(bitwise_cast<uint8_t*>(currentStackPointer()) < stackLimit))
+    if (UNLIKELY(std::bit_cast<uint8_t*>(currentStackPointer()) < stackLimit))
         return parse(vm, StartParseExpression);
 
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -1627,3 +1629,5 @@ template class LiteralParser<LChar>;
 template class LiteralParser<UChar>;
 
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

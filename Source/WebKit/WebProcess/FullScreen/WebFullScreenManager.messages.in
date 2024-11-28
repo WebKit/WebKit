@@ -21,7 +21,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #if ENABLE(FULLSCREEN_API)
-messages -> WebFullScreenManager LegacyReceiver {
+messages -> WebFullScreenManager {
     RequestRestoreFullScreen() -> (bool succeeded) Async
     RequestExitFullScreen()
     WillEnterFullScreen(WebCore::MediaPlayerEnums::VideoFullscreenMode mode);

@@ -393,7 +393,7 @@ TEST(WKInspectorExtension, EvaluateScriptOnPage)
     auto uiDelegate = adoptNS([UIDelegateForTestingInspectorExtension new]);
     auto navigationDelegate = adoptNS([[TestNavigationDelegate alloc] init]);
 
-    auto *testPageFileURL = [NSBundle.mainBundle URLForResource:@"WKInspectorExtensionEvaluateScriptOnPage" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+    auto *testPageFileURL = [NSBundle.test_resourcesBundle URLForResource:@"WKInspectorExtensionEvaluateScriptOnPage" withExtension:@"html"];
 
     [webView setUIDelegate:uiDelegate.get()];
     [webView setNavigationDelegate:navigationDelegate.get()];

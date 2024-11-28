@@ -1,4 +1,4 @@
 
 
-FAIL NavigationHistoryEntry's key and id after location.replace() assert_not_equals: got disallowed value "e669243f-8e2e-4ce9-8e98-37fcebc9196c"
+PASS NavigationHistoryEntry's key and id after location.replace()
 

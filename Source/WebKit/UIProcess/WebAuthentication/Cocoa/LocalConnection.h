@@ -29,6 +29,7 @@
 
 #include <wtf/CompletionHandler.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/RefCounted.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
@@ -48,10 +49,12 @@ namespace WebKit {
 // However, such abstraction is still provided to isolate operations
 // that are not allowed in auto test environment such that some mocking
 // mechnism can override them.
-class LocalConnection {
+class LocalConnection : public RefCounted<LocalConnection> {
     WTF_MAKE_TZONE_ALLOCATED(LocalConnection);
     WTF_MAKE_NONCOPYABLE(LocalConnection);
 public:
+    static Ref<LocalConnection> create();
+
     enum class UserVerification : uint8_t {
         No,
         Yes,
@@ -62,7 +65,6 @@ public:
     using AttestationCallback = CompletionHandler<void(NSArray *, NSError *)>;
     using UserVerificationCallback = CompletionHandler<void(UserVerification, LAContext *)>;
 
-    LocalConnection() = default;
     virtual ~LocalConnection();
 
     // Overrided by MockLocalConnection.
@@ -71,6 +73,9 @@ public:
     virtual void verifyUser(SecAccessControlRef, LAContext *, CompletionHandler<void(UserVerification)>&&);
     virtual RetainPtr<SecKeyRef> createCredentialPrivateKey(LAContext *, SecAccessControlRef, const String& secAttrLabel, NSData *secAttrApplicationTag) const;
     virtual void filterResponses(Vector<Ref<WebCore::AuthenticatorAssertionResponse>>&) const { };
+
+protected:
+    LocalConnection() = default;
 
 private:
     RetainPtr<LAContext> m_context;

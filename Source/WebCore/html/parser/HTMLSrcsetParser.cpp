@@ -39,6 +39,8 @@
 #include <wtf/URL.h>
 #include <wtf/text/StringBuilder.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 static inline bool compareByDensity(const ImageCandidate& first, const ImageCandidate& second)
@@ -229,7 +231,7 @@ void getURLsFromSrcsetAttribute(const Element& element, StringView attribute, Li
     }
 }
 
-String replaceURLsInSrcsetAttribute(const Element& element, StringView attribute, const HashMap<String, String>& replacementURLStrings)
+String replaceURLsInSrcsetAttribute(const Element& element, StringView attribute, const UncheckedKeyHashMap<String, String>& replacementURLStrings)
 {
     if (replacementURLStrings.isEmpty())
         return attribute.toString();
@@ -313,3 +315,5 @@ ImageCandidate bestFitSourceForImageAttributes(float deviceScaleFactor, const At
 }
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

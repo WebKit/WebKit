@@ -51,6 +51,8 @@
 #include <wtf/spi/cocoa/MachVMSPI.h>
 #endif
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WTF {
 
 void* OSAllocator::tryReserveAndCommit(size_t bytes, Usage usage, bool writable, bool executable, bool jitCageEnabled, bool includesGuardPages)
@@ -81,28 +83,7 @@ void* OSAllocator::tryReserveAndCommit(size_t bytes, Usage usage, bool writable,
     int fd = -1;
 #endif
 
-    void* result = nullptr;
-#if (OS(DARWIN) && CPU(X86_64))
-    if (executable) {
-        ASSERT(includesGuardPages);
-        // Cook up an address to allocate at, using the following recipe:
-        //   17 bits of zero, stay in userspace kids.
-        //   26 bits of randomness for ASLR.
-        //   21 bits of zero, at least stay aligned within one level of the pagetables.
-        //
-        // But! - as a temporary workaround for some plugin problems (rdar://problem/6812854),
-        // for now instead of 2^26 bits of ASLR lets stick with 25 bits of randomization plus
-        // 2^24, which should put up somewhere in the middle of userspace (in the address range
-        // 0x200000000000 .. 0x5fffffffffff).
-        intptr_t randomLocation = 0;
-        randomLocation = arc4random() & ((1 << 25) - 1);
-        randomLocation += (1 << 24);
-        randomLocation <<= 21;
-        result = reinterpret_cast<void*>(randomLocation);
-    }
-#endif
-
-    result = mmap(result, bytes, protection, flags, fd, 0);
+    void* result = mmap(nullptr, bytes, protection, flags, fd, 0);
     if (result == MAP_FAILED)
         result = nullptr;
     if (result && includesGuardPages) {
@@ -110,24 +91,15 @@ void* OSAllocator::tryReserveAndCommit(size_t bytes, Usage usage, bool writable,
         // mprotect results in multiple references to the code region. This
         // breaks the madvise based mechanism we use to return physical memory
         // to the OS.
-        const auto guardPageSize = pageSize();
-        auto foreGuardResult = mmap(result, guardPageSize, PROT_NONE, MAP_FIXED | MAP_PRIVATE | MAP_ANON, fd, 0);
-        if (UNLIKELY(foreGuardResult == MAP_FAILED)) {
-            munmap(result, bytes);
-            return nullptr;
-        }
-        auto aftGuardResult = mmap(static_cast<char*>(result) + bytes - guardPageSize, guardPageSize, PROT_NONE, MAP_FIXED | MAP_PRIVATE | MAP_ANON, fd, 0);
-        if (UNLIKELY(aftGuardResult == MAP_FAILED)) {
-            munmap(result, bytes);
-            return nullptr;
-        }
+        mmap(result, pageSize(), PROT_NONE, MAP_FIXED | MAP_PRIVATE | MAP_ANON, fd, 0);
+        mmap(static_cast<char*>(result) + bytes - pageSize(), pageSize(), PROT_NONE, MAP_FIXED | MAP_PRIVATE | MAP_ANON, fd, 0);
     }
     return result;
 }
 
 void* OSAllocator::tryReserveUncommitted(size_t bytes, Usage usage, bool writable, bool executable, bool jitCageEnabled, bool includesGuardPages)
 {
-#if OS(LINUX)
+#if OS(LINUX) || OS(HAIKU)
     UNUSED_PARAM(usage);
     UNUSED_PARAM(jitCageEnabled);
     UNUSED_PARAM(includesGuardPages);
@@ -246,7 +218,7 @@ void* OSAllocator::reserveAndCommit(size_t bytes, Usage usage, bool writable, bo
 
 void OSAllocator::commit(void* address, size_t bytes, bool writable, bool executable)
 {
-#if OS(LINUX)
+#if OS(LINUX) || OS(HAIKU)
     UNUSED_PARAM(writable);
     UNUSED_PARAM(executable);
     while (madvise(address, bytes, MADV_WILLNEED) == -1 && errno == EAGAIN) { }
@@ -265,7 +237,7 @@ void OSAllocator::commit(void* address, size_t bytes, bool writable, bool execut
 
 void OSAllocator::decommit(void* address, size_t bytes)
 {
-#if OS(LINUX)
+#if OS(LINUX) || OS(HAIKU)
     while (madvise(address, bytes, MADV_DONTNEED) == -1 && errno == EAGAIN) { }
 #elif HAVE(MADV_FREE_REUSE)
     while (madvise(address, bytes, MADV_FREE_REUSABLE) == -1 && errno == EAGAIN) { }
@@ -320,3 +292,5 @@ void OSAllocator::protect(void* address, size_t bytes, bool readable, bool writa
 }
 
 } // namespace WTF
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

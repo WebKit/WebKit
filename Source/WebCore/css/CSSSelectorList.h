@@ -31,6 +31,8 @@
 #include <wtf/TZoneMalloc.h>
 #include <wtf/UniqueArray.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 class MutableCSSSelector;
@@ -109,3 +111,5 @@ inline const CSSSelector* CSSSelectorList::next(const CSSSelector* current)
 }
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

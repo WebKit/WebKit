@@ -54,6 +54,8 @@
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 static double sNumTotalStackTraces = 0;
@@ -138,9 +140,18 @@ protected:
                     // At this point, Wasm::Callee would be dying (ref count is 0), but its fields are still live.
                     // And we can safely copy Wasm::IndexOrName even when any lock is held by suspended threads.
                     auto* wasmCallee = static_cast<Wasm::Callee*>(nativeCallee);
-                    stackTrace[m_depth].wasmIndexOrName = wasmCallee->indexOrName();
                     stackTrace[m_depth].wasmCompilationMode = wasmCallee->compilationMode();
+                    stackTrace[m_depth].wasmIndexOrName = wasmCallee->indexOrName();
+                    stackTrace[m_depth].callSiteIndex = m_callFrame->unsafeCallSiteIndex();
 #if ENABLE(JIT)
+                    // FIXME: We should be able to add all stack traces including inlined ones in SamplingProfiler.
+                    if (wasmCallee->compilationMode() == Wasm::CompilationMode::OMGMode) {
+                        auto* omgCallee = static_cast<const Wasm::OptimizingJITCallee*>(wasmCallee);
+                        bool isInlined = false;
+                        auto origin = omgCallee->getOrigin(stackTrace[m_depth].callSiteIndex.bits(), 0, isInlined);
+                        if (isInlined)
+                            stackTrace[m_depth].wasmIndexOrName = origin;
+                    }
                     stackTrace[m_depth].wasmPCMap = NativeCalleeRegistry::singleton().codeOriginMap(wasmCallee);
 #endif
 #endif
@@ -194,7 +205,7 @@ protected:
 
     bool isValidFramePointer(void* callFrame)
     {
-        uint8_t* fpCast = bitwise_cast<uint8_t*>(callFrame);
+        uint8_t* fpCast = std::bit_cast<uint8_t*>(callFrame);
         for (auto& thread : m_vm.heap.machineThreads().threads(m_machineThreadsLocker)) {
             uint8_t* stackBase = static_cast<uint8_t*>(thread->stack().origin());
             uint8_t* stackLimit = static_cast<uint8_t*>(thread->stack().end());
@@ -650,7 +661,7 @@ void SamplingProfiler::processUnverifiedStackTraces()
                 // by ignoring it.
                 BytecodeIndex bytecodeIndex = BytecodeIndex(0);
                 if (topCodeBlock->jitType() == JITType::InterpreterThunk || topCodeBlock->jitType() == JITType::BaselineJIT) {
-                    unsigned bits = static_cast<unsigned>(bitwise_cast<uintptr_t>(unprocessedStackTrace.llintPC));
+                    unsigned bits = static_cast<unsigned>(std::bit_cast<uintptr_t>(unprocessedStackTrace.llintPC));
                     bytecodeIndex = tryGetBytecodeIndex(bits, topCodeBlock);
 
                     UNUSED_PARAM(bytecodeIndex); // FIXME: do something with this info for the web inspector: https://bugs.webkit.org/show_bug.cgi?id=153455
@@ -973,7 +984,7 @@ static String descriptionForLocation(SamplingProfiler::StackFrame::CodeLocation 
     if (wasmCompilationMode) {
         StringPrintStream description;
         description.print(":");
-        description.print(Wasm::makeString(wasmCompilationMode.value()));
+        description.print(wasmCompilationMode.value());
         description.print(":");
         if (wasmOffset) {
             uintptr_t offset = wasmOffset.offset();
@@ -1050,14 +1061,12 @@ static String tierName(SamplingProfiler::StackFrame& frame)
                 return Tiers::wasmllint;
             case Wasm::CompilationMode::IPIntMode:
                 return Tiers::ipint;
-            case Wasm::CompilationMode::JSEntrypointJITMode:
-            case Wasm::CompilationMode::JITLessJSEntrypointMode:
+            case Wasm::CompilationMode::JSToWasmEntrypointMode:
             case Wasm::CompilationMode::JSToWasmICMode:
             case Wasm::CompilationMode::WasmToJSMode:
                 // Just say "Wasm" for now.
                 break;
             case Wasm::CompilationMode::BBQMode:
-            case Wasm::CompilationMode::BBQForOSREntryMode:
                 return Tiers::bbq;
             case Wasm::CompilationMode::OMGMode:
             case Wasm::CompilationMode::OMGForOSREntryMode:
@@ -1087,7 +1096,7 @@ Ref<JSON::Value> SamplingProfiler::stackTracesAsJSON()
         processUnverifiedStackTraces();
     }
 
-    HashMap<SourceID, Ref<SourceProvider>> sources;
+    UncheckedKeyHashMap<SourceID, Ref<SourceProvider>> sources;
 
     auto stackFrameAsJSON = [&](StackFrame& stackFrame) {
         auto [provider, sourceID] = stackFrame.sourceProviderAndID();
@@ -1211,7 +1220,7 @@ void SamplingProfiler::reportTopFunctions(PrintStream& out)
     }
 
     size_t totalSamples = 0;
-    HashMap<String, size_t> functionCounts;
+    UncheckedKeyHashMap<String, size_t> functionCounts;
     for (StackTrace& stackTrace : m_stackTraces) {
         if (!stackTrace.frames.size())
             continue;
@@ -1277,8 +1286,8 @@ void SamplingProfiler::reportTopBytecodes(PrintStream& out)
     }
 
     size_t totalSamples = 0;
-    HashMap<String, size_t> bytecodeCounts;
-    HashMap<String, size_t> tierCounts;
+    UncheckedKeyHashMap<String, size_t> bytecodeCounts;
+    UncheckedKeyHashMap<String, size_t> tierCounts;
 
     auto forEachTier = [&] (auto func) {
         func(Tiers::llint);
@@ -1402,5 +1411,7 @@ void printInternal(PrintStream& out, SamplingProfiler::FrameType frameType)
 }
 
 } // namespace WTF
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ENABLE(SAMPLING_PROFILER)

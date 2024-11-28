@@ -24,35 +24,35 @@
 
 namespace WebCore {
 
-inline const BorderValue& RenderTableSection::borderAdjoiningTableEnd() const { return isDirectionSame(this, table()) ? style().borderEnd() : style().borderStart(); }
-inline const BorderValue& RenderTableSection::borderAdjoiningTableStart() const { return isDirectionSame(this, table()) ? style().borderStart() : style().borderEnd(); }
+inline const BorderValue& RenderTableSection::borderAdjoiningTableEnd() const { return style().borderEnd(table()->writingMode()); }
+inline const BorderValue& RenderTableSection::borderAdjoiningTableStart() const { return style().borderStart(table()->writingMode()); }
 
-inline LayoutUnit RenderTableSection::outerBorderBottom(const RenderStyle* styleForCellFlow) const
+inline LayoutUnit RenderTableSection::outerBorderBottom(const WritingMode writingMode) const
 {
-    if (styleForCellFlow->isHorizontalWritingMode())
-        return styleForCellFlow->isFlippedBlocksWritingMode() ? outerBorderBefore() : outerBorderAfter();
-    return styleForCellFlow->isLeftToRightDirection() ? outerBorderEnd() : outerBorderStart();
+    if (writingMode.isHorizontal())
+        return writingMode.isBlockTopToBottom() ? outerBorderAfter() : outerBorderBefore();
+    return writingMode.isInlineTopToBottom() ? outerBorderEnd() : outerBorderStart();
 }
 
-inline LayoutUnit RenderTableSection::outerBorderLeft(const RenderStyle* styleForCellFlow) const
+inline LayoutUnit RenderTableSection::outerBorderLeft(const WritingMode writingMode) const
 {
-    if (styleForCellFlow->isHorizontalWritingMode())
-        return styleForCellFlow->isLeftToRightDirection() ? outerBorderStart() : outerBorderEnd();
-    return styleForCellFlow->isFlippedBlocksWritingMode() ? outerBorderAfter() : outerBorderBefore();
+    if (writingMode.isHorizontal())
+        return writingMode.isInlineLeftToRight() ? outerBorderStart() : outerBorderEnd();
+    return writingMode.isBlockLeftToRight() ? outerBorderBefore() : outerBorderAfter();
 }
 
-inline LayoutUnit RenderTableSection::outerBorderRight(const RenderStyle* styleForCellFlow) const
+inline LayoutUnit RenderTableSection::outerBorderRight(const WritingMode writingMode) const
 {
-    if (styleForCellFlow->isHorizontalWritingMode())
-        return styleForCellFlow->isLeftToRightDirection() ? outerBorderEnd() : outerBorderStart();
-    return styleForCellFlow->isFlippedBlocksWritingMode() ? outerBorderBefore() : outerBorderAfter();
+    if (writingMode.isHorizontal())
+        return writingMode.isInlineLeftToRight() ? outerBorderEnd() : outerBorderStart();
+    return writingMode.isBlockLeftToRight() ? outerBorderAfter() : outerBorderBefore();
 }
 
-inline LayoutUnit RenderTableSection::outerBorderTop(const RenderStyle* styleForCellFlow) const
+inline LayoutUnit RenderTableSection::outerBorderTop(const WritingMode writingMode) const
 {
-    if (styleForCellFlow->isHorizontalWritingMode())
-        return styleForCellFlow->isFlippedBlocksWritingMode() ? outerBorderAfter() : outerBorderBefore();
-    return styleForCellFlow->isLeftToRightDirection() ? outerBorderStart() : outerBorderEnd();
+    if (writingMode.isHorizontal())
+        return writingMode.isBlockTopToBottom() ? outerBorderBefore() : outerBorderAfter();
+    return writingMode.isInlineTopToBottom() ? outerBorderStart() : outerBorderEnd();
 }
 
 } // namespace WebCore

@@ -59,6 +59,7 @@
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringToIntegerConversion.h>
 
+#ifndef GST_DISABLE_GST_DEBUG
 static const char* dumpReadyState(WebCore::MediaPlayer::ReadyState readyState)
 {
     switch (readyState) {
@@ -70,6 +71,7 @@ static const char* dumpReadyState(WebCore::MediaPlayer::ReadyState readyState)
     default: return "(unknown)";
     }
 }
+#endif // GST_DISABLE_GST_DEBUG
 
 GST_DEBUG_CATEGORY(webkit_mse_debug);
 #define GST_CAT_DEFAULT webkit_mse_debug
@@ -107,7 +109,7 @@ static Vector<RefPtr<MediaSourceTrackGStreamer>> filterOutRepeatingTracks(const 
     uniqueTracks.reserveInitialCapacity(tracks.size());
 
     for (const auto& track : tracks) {
-        if (!uniqueTracks.containsIf([&track](const auto& current) { return track->stringId() == current->stringId(); }))
+        if (!uniqueTracks.containsIf([&track](const auto& current) { return track->id() == current->id(); }))
             uniqueTracks.append(track);
     }
 
@@ -146,7 +148,12 @@ void MediaPlayerPrivateGStreamerMSE::load(const URL& url, const ContentType&, Me
 {
     auto mseBlobURI = makeString("mediasource"_s, url.string().isEmpty() ? "blob://"_s : url.string());
     GST_DEBUG("Loading %s", mseBlobURI.ascii().data());
-    m_mediaSourcePrivate = MediaSourcePrivateGStreamer::open(mediaSource, *this);
+    if (RefPtr mediaSourcePrivate = downcast<MediaSourcePrivateGStreamer>(mediaSource.mediaSourcePrivate())) {
+        mediaSourcePrivate->setPlayer(this);
+        m_mediaSourcePrivate = WTFMove(mediaSourcePrivate);
+        mediaSource.reOpen();
+    } else
+        m_mediaSourcePrivate = MediaSourcePrivateGStreamer::open(mediaSource, *this);
 
     MediaPlayerPrivateGStreamer::load(mseBlobURI);
 }
@@ -163,6 +170,11 @@ void MediaPlayerPrivateGStreamerMSE::play()
 void MediaPlayerPrivateGStreamerMSE::pause()
 {
     GST_DEBUG_OBJECT(pipeline(), "Pause requested");
+    if (m_playbackRatePausedState == PlaybackRatePausedState::ManuallyPaused) {
+        GST_DEBUG_OBJECT(pipeline(), "Player is paused already.");
+        return;
+    }
+
     m_isPaused = true;
     m_playbackRatePausedState = PlaybackRatePausedState::ManuallyPaused;
     updateStates();
@@ -199,7 +211,7 @@ void MediaPlayerPrivateGStreamerMSE::checkPlayingConsistency()
     }
 }
 
-#ifndef GST_DISABLE_DEBUG
+#ifndef GST_DISABLE_GST_DEBUG
 void MediaPlayerPrivateGStreamerMSE::setShouldDisableSleep(bool shouldDisableSleep)
 {
     // This method is useful only for logging purpose. The actual sleep disabler is managed by HTMLMediaElement.
@@ -212,7 +224,7 @@ MediaTime MediaPlayerPrivateGStreamerMSE::duration() const
     if (UNLIKELY(!m_pipeline || m_didErrorOccur))
         return MediaTime();
 
-    return m_mediaTimeDuration;
+    return m_mediaTimeDuration.isValid() ? m_mediaTimeDuration : MediaTime::zeroTime();
 }
 
 void MediaPlayerPrivateGStreamerMSE::seekToTarget(const SeekTarget& target)

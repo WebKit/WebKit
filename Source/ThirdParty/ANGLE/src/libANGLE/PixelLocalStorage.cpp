@@ -14,7 +14,7 @@
 #include "common/FixedVector.h"
 #include "libANGLE/Context.h"
 #include "libANGLE/Framebuffer.h"
-#include "libANGLE/context_private_call_gles_autogen.h"
+#include "libANGLE/context_private_call_autogen.h"
 #include "libANGLE/renderer/ContextImpl.h"
 #include "libANGLE/renderer/TextureImpl.h"
 
@@ -1065,75 +1065,6 @@ class PixelLocalStorageFramebufferFetch : public PixelLocalStorage
     DrawBuffersArray<std::array<bool, 4>> mSavedColorMasks;
 };
 
-// Implements ANGLE_shader_pixel_local_storage directly via EXT_shader_pixel_local_storage.
-class PixelLocalStorageEXT : public PixelLocalStorage
-{
-  public:
-    PixelLocalStorageEXT(const ShPixelLocalStorageOptions &plsOptions, const Caps &caps)
-        : PixelLocalStorage(plsOptions, caps)
-    {
-        ASSERT(mPLSOptions.type == ShPixelLocalStorageType::PixelLocalStorageEXT);
-    }
-
-  private:
-    void onContextObjectsLost() override {}
-
-    void onDeleteContextObjects(Context *) override {}
-
-    void onBegin(Context *context, GLsizei n, const GLenum loadops[], Extents plsExtents) override
-    {
-        const State &state       = context->getState();
-        Framebuffer *framebuffer = state.getDrawFramebuffer();
-
-        // Remember the current draw buffer state so we can restore it during onEnd().
-        const DrawBuffersVector<GLenum> &appDrawBuffers = framebuffer->getDrawBufferStates();
-        mSavedDrawBuffers.resize(appDrawBuffers.size());
-        std::copy(appDrawBuffers.begin(), appDrawBuffers.end(), mSavedDrawBuffers.begin());
-
-        // Turn off draw buffers.
-        context->drawBuffers(0, nullptr);
-
-        // Save the default framebuffer width/height so we can restore it during onEnd().
-        mSavedFramebufferDefaultWidth  = framebuffer->getDefaultWidth();
-        mSavedFramebufferDefaultHeight = framebuffer->getDefaultHeight();
-
-        // Specify the framebuffer width/height explicitly since we don't use color attachments in
-        // this mode.
-        context->framebufferParameteri(GL_DRAW_FRAMEBUFFER, GL_FRAMEBUFFER_DEFAULT_WIDTH,
-                                       plsExtents.width);
-        context->framebufferParameteri(GL_DRAW_FRAMEBUFFER, GL_FRAMEBUFFER_DEFAULT_HEIGHT,
-                                       plsExtents.height);
-
-        context->drawPixelLocalStorageEXTEnable(n, getPlanes(), loadops);
-
-        memcpy(mActiveLoadOps.data(), loadops, sizeof(GLenum) * n);
-    }
-
-    void onEnd(Context *context, const GLenum storeops[]) override
-    {
-        context->drawPixelLocalStorageEXTDisable(getPlanes(), storeops);
-
-        // Restore the default framebuffer width/height.
-        context->framebufferParameteri(GL_DRAW_FRAMEBUFFER, GL_FRAMEBUFFER_DEFAULT_WIDTH,
-                                       mSavedFramebufferDefaultWidth);
-        context->framebufferParameteri(GL_DRAW_FRAMEBUFFER, GL_FRAMEBUFFER_DEFAULT_HEIGHT,
-                                       mSavedFramebufferDefaultHeight);
-
-        // Restore the draw buffer state from before PLS was enabled.
-        context->drawBuffers(static_cast<GLsizei>(mSavedDrawBuffers.size()),
-                             mSavedDrawBuffers.data());
-        mSavedDrawBuffers.clear();
-    }
-
-    void onBarrier(Context *context) override { UNREACHABLE(); }
-
-    // Saved values to restore during onEnd().
-    GLint mSavedFramebufferDefaultWidth;
-    GLint mSavedFramebufferDefaultHeight;
-    DrawBuffersVector<GLenum> mSavedDrawBuffers;
-
-    std::array<GLenum, IMPLEMENTATION_MAX_PIXEL_LOCAL_STORAGE_PLANES> mActiveLoadOps;
-};
 }  // namespace
 
 std::unique_ptr<PixelLocalStorage> PixelLocalStorage::Make(const Context *context)
@@ -1147,8 +1078,6 @@ std::unique_ptr<PixelLocalStorage> PixelLocalStorage::Make(const Context *contex
             return std::make_unique<PixelLocalStorageImageLoadStore>(plsOptions, caps);
         case ShPixelLocalStorageType::FramebufferFetch:
             return std::make_unique<PixelLocalStorageFramebufferFetch>(plsOptions, caps);
-        case ShPixelLocalStorageType::PixelLocalStorageEXT:
-            return std::make_unique<PixelLocalStorageEXT>(plsOptions, caps);
         default:
             UNREACHABLE();
             return nullptr;

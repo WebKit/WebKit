@@ -29,6 +29,8 @@
 #include <JavaScriptCore/TypedArrayInlines.h>
 #include <wtf/text/TextStream.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 bool PixelBuffer::supportedPixelFormat(PixelFormat pixelFormat)
@@ -41,6 +43,9 @@ bool PixelBuffer::supportedPixelFormat(PixelFormat pixelFormat)
     case PixelFormat::BGRX8:
     case PixelFormat::RGB10:
     case PixelFormat::RGB10A8:
+#if HAVE(HDR_SUPPORT)
+    case PixelFormat::RGBA16F:
+#endif
         return false;
     }
 
@@ -100,3 +105,5 @@ void PixelBuffer::set(size_t index, double value)
 }
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

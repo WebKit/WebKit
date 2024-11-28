@@ -52,8 +52,8 @@ public:
     void setBackingAnimation(const Animation&);
     void cancelFromStyle(WebAnimation::Silently = WebAnimation::Silently::No);
 
-    std::optional<double> bindingsStartTime() const final;
-    std::optional<double> bindingsCurrentTime() const final;
+    std::optional<WebAnimationTime> bindingsStartTime() const final;
+    std::optional<WebAnimationTime> bindingsCurrentTime() const final;
     WebAnimation::PlayState bindingsPlayState() const final;
     WebAnimation::ReplaceState bindingsReplaceState() const final;
     bool bindingsPending() const final;
@@ -78,18 +78,17 @@ protected:
     virtual void syncPropertiesWithBackingAnimation();
     virtual Ref<StyleOriginatedAnimationEvent> createEvent(const AtomString& eventType, std::optional<Seconds> scheduledTime, double elapsedTime, const std::optional<Style::PseudoElementIdentifier>&) = 0;
 
-    enum class ShouldFireEvents : uint8_t { No, YesForCSSAnimation, YesForCSSTransition };
-    ShouldFireEvents shouldFireDOMEvents() const;
-    void invalidateDOMEvents(ShouldFireEvents, Seconds elapsedTime = 0_s);
-
 private:
     void disassociateFromOwningElement();
     AnimationEffectPhase phaseWithoutEffect() const;
-    void enqueueDOMEvent(const AtomString&, Seconds elapsedTime, Seconds scheduledEffectTime);
+    enum class ShouldFireEvents : uint8_t { No, YesForCSSAnimation, YesForCSSTransition };
+    ShouldFireEvents shouldFireDOMEvents() const;
+    void invalidateDOMEvents(ShouldFireEvents, WebAnimationTime elapsedTime = 0_s);
+    void enqueueDOMEvent(const AtomString&, WebAnimationTime elapsedTime, WebAnimationTime scheduledEffectTime);
 
-    Seconds effectTimeAtStart() const;
-    Seconds effectTimeAtIteration(double) const;
-    Seconds effectTimeAtEnd() const;
+    WebAnimationTime effectTimeAtStart() const;
+    WebAnimationTime effectTimeAtIteration(double) const;
+    WebAnimationTime effectTimeAtEnd() const;
 
     bool m_wasPending { false };
     AnimationEffectPhase m_previousPhase { AnimationEffectPhase::Idle };

@@ -43,6 +43,8 @@
 #include <wtf/TZoneMalloc.h>
 #include <wtf/text/MakeString.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 class FunctionMetadataNode;
@@ -996,7 +998,7 @@ private:
     VariableEnvironment m_lexicalVariables;
     Vector<UniquedStringImplPtrSet, 6> m_usedVariables;
     UniquedStringImplPtrSet m_variablesBeingHoisted;
-    HashMap<FunctionMetadataNode*, NeedsDuplicateDeclarationCheck> m_sloppyModeFunctionHoistingCandidates;
+    UncheckedKeyHashMap<FunctionMetadataNode*, NeedsDuplicateDeclarationCheck> m_sloppyModeFunctionHoistingCandidates;
     HashSet<UniquedStringImpl*> m_closedVariableCandidates;
     DeclarationStacks::FunctionStack m_functionDeclarations;
 };
@@ -2392,3 +2394,5 @@ inline std::unique_ptr<ProgramNode> parseFunctionForFunctionConstructor(VM& vm, 
 
 
 } // namespace
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

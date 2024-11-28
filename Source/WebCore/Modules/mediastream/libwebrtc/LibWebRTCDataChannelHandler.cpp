@@ -34,6 +34,8 @@
 #include <wtf/MainThread.h>
 #include <wtf/TZoneMallocInlines.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(LibWebRTCDataChannelHandler);
@@ -92,7 +94,7 @@ String LibWebRTCDataChannelHandler::label() const
     return fromStdString(m_channel->label());
 }
 
-void LibWebRTCDataChannelHandler::setClient(RTCDataChannelHandlerClient& client, ScriptExecutionContextIdentifier contextIdentifier)
+void LibWebRTCDataChannelHandler::setClient(RTCDataChannelHandlerClient& client, std::optional<ScriptExecutionContextIdentifier> contextIdentifier)
 {
     Locker locker { m_clientLock };
     ASSERT(!m_client);
@@ -227,9 +229,11 @@ void LibWebRTCDataChannelHandler::postTask(Function<void()>&& function)
         callOnMainThread(WTFMove(function));
         return;
     }
-    ScriptExecutionContext::postTaskTo(m_contextIdentifier, WTFMove(function));
+    ScriptExecutionContext::postTaskTo(*m_contextIdentifier, WTFMove(function));
 }
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ENABLE(WEB_RTC) && USE(LIBWEBRTC)

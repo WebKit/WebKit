@@ -32,6 +32,8 @@
 
 namespace Inspector {
 
+RemoteControllableTarget::RemoteControllableTarget() = default;
+
 RemoteControllableTarget::~RemoteControllableTarget()
 {
     RemoteInspector::singleton().unregisterTarget(this);

@@ -1,13 +1,15 @@
 <head>
 <script>
-function test()
+async function test()
 {
-    if (window.testRunner)
+    if (window.testRunner) {
         testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
     if (window.eventSender) {
-        eventSender.mouseMoveTo(20, 70);
-        eventSender.mouseDown();
-        eventSender.mouseUp();
+        await eventSender.asyncMouseMoveTo(20, 70);
+        await eventSender.asyncMouseDown();
+        await eventSender.asyncMouseUp();
     }
 }
 
@@ -16,6 +18,7 @@ function selectClicked() {
     var paragraph = document.createElement('p');
     paragraph.appendChild(document.createTextNode(message));
     document.getElementById('console').appendChild(paragraph);
+    testRunner?.notifyDone();
 }
 </script>
 </head>

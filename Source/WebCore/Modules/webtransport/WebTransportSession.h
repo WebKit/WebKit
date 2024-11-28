@@ -26,6 +26,7 @@
 #pragma once
 
 #include <span>
+#include <wtf/AbstractRefCounted.h>
 #include <wtf/ThreadSafeWeakPtr.h>
 
 namespace WebCore {
@@ -38,11 +39,9 @@ class WritableStreamSink;
 
 struct WebTransportBidirectionalStreamConstructionParameters;
 
-class WEBCORE_EXPORT WebTransportSession {
+class WEBCORE_EXPORT WebTransportSession : public AbstractRefCounted {
 public:
     virtual ~WebTransportSession();
-    virtual void ref() const = 0;
-    virtual void deref() const = 0;
 
     virtual void sendDatagram(std::span<const uint8_t>, CompletionHandler<void()>&&) = 0;
     virtual void createOutgoingUnidirectionalStream(CompletionHandler<void(RefPtr<WritableStreamSink>&&)>&&) = 0;

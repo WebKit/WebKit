@@ -36,6 +36,7 @@
 #include "ProfilerOriginStack.h"
 #include "ProfilerProfiledBytecodes.h"
 #include "ProfilerUID.h"
+#include <wtf/ObjectIdentifier.h>
 #include <wtf/RefCounted.h>
 #include <wtf/SegmentedVector.h>
 
@@ -86,7 +87,7 @@ private:
     Bytecodes* m_bytecodes;
     Vector<ProfiledBytecodes> m_profiledBytecodes;
     Vector<CompiledBytecode> m_descriptions;
-    HashMap<OriginStack, std::unique_ptr<ExecutionCounter>> m_counters;
+    UncheckedKeyHashMap<OriginStack, std::unique_ptr<ExecutionCounter>> m_counters;
     Vector<OSRExitSite> m_osrExitSites;
     SegmentedVector<OSRExit> m_osrExits;
     unsigned m_numInlinedGetByIds;

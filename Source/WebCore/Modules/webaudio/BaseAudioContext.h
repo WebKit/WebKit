@@ -147,8 +147,8 @@ public:
     ExceptionOr<Ref<AudioBuffer>> createBuffer(unsigned numberOfChannels, unsigned length, float sampleRate);
 
     // ActiveDOMObject.
-    void ref() const final { ThreadSafeRefCounted::ref(); }
-    void deref() const final { ThreadSafeRefCounted::deref(); }
+    void ref() const override { ThreadSafeRefCounted::ref(); }
+    void deref() const override { ThreadSafeRefCounted::deref(); }
 
     // Called at the start of each render quantum.
     void handlePreRenderTasks(const AudioIOPosition& outputPosition);
@@ -215,10 +215,10 @@ public:
 
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const override { return m_logger.get(); }
-    const void* logIdentifier() const override { return m_logIdentifier; }
+    uint64_t logIdentifier() const override { return m_logIdentifier; }
     WTFLogChannel& logChannel() const final;
-    const void* nextAudioNodeLogIdentifier() { return childLogIdentifier(m_logIdentifier, ++m_nextAudioNodeIdentifier); }
-    const void* nextAudioParameterLogIdentifier() { return childLogIdentifier(m_logIdentifier, ++m_nextAudioParameterIdentifier); }
+    uint64_t nextAudioNodeLogIdentifier() { return childLogIdentifier(m_logIdentifier, ++m_nextAudioNodeIdentifier); }
+    uint64_t nextAudioParameterLogIdentifier() { return childLogIdentifier(m_logIdentifier, ++m_nextAudioParameterIdentifier); }
 #endif
 
     void postTask(Function<void()>&&);
@@ -287,7 +287,7 @@ private:
 
 #if !RELEASE_LOG_DISABLED
     Ref<Logger> m_logger;
-    const void* m_logIdentifier;
+    const uint64_t m_logIdentifier;
     uint64_t m_nextAudioNodeIdentifier { 0 };
     uint64_t m_nextAudioParameterIdentifier { 0 };
 #endif

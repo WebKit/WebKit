@@ -14,16 +14,16 @@
 <pre id="console"></pre>
 
 <script>
-function doubleClickOn(element)
+async function doubleClickOn(element)
 {
     var x = element.offsetLeft + element.offsetWidth / 2;
     var y = element.offsetTop + element.offsetHeight / 2;
 
-    eventSender.mouseMoveTo(x, y);
-    eventSender.mouseDown();
-    eventSender.mouseUp();
-    eventSender.mouseDown();
-    eventSender.mouseUp();
+    await eventSender.asyncMouseMoveTo(x, y);
+    await eventSender.asyncMouseDown();
+    await eventSender.asyncMouseUp();
+    await eventSender.asyncMouseDown();
+    await eventSender.asyncMouseUp();
 }
 
 var selectEventFiredOnInput = false;
@@ -53,37 +53,46 @@ disabledTextarea.addEventListener('select', function() {
     selectEventFiredOnDisabledTextarea = true;
 });
 
-debug('double clicking on normal input');
-doubleClickOn(input);
-shouldBeTrue('selectEventFiredOnInput');
-debug('');
+onload = async () => {
+    if (!window.testRunner)
+        return;
 
-debug('double clicking on readonly input');
-doubleClickOn(readonlyInput);
-shouldBeTrue('selectEventFiredOnReadonlyInput');
-debug('');
+    testRunner.waitUntilDone();
 
-debug('double clicking on disabled input');
-doubleClickOn(disabledInput);
-shouldBeTrue('selectEventFiredOnDisabledInput');
-debug('');
+    debug('double clicking on normal input');
+    await doubleClickOn(input);
+    shouldBeTrue('selectEventFiredOnInput');
+    debug('');
 
-debug('double clicking on normal textarea');
-doubleClickOn(textarea);
-shouldBeTrue('selectEventFiredOnTextarea');
-debug('');
+    debug('double clicking on readonly input');
+    await doubleClickOn(readonlyInput);
+    shouldBeTrue('selectEventFiredOnReadonlyInput');
+    debug('');
 
-debug('double clicking on readonly textarea');
-doubleClickOn(readonlyTextarea);
-shouldBeTrue('selectEventFiredOnReadonlyTextarea');
-debug('');
+    debug('double clicking on disabled input');
+    await doubleClickOn(disabledInput);
+    shouldBeTrue('selectEventFiredOnDisabledInput');
+    debug('');
 
-debug('double clicking on disabled textarea');
-doubleClickOn(disabledTextarea);
-shouldBeTrue('selectEventFiredOnDisabledTextarea');
-debug('');
+    debug('double clicking on normal textarea');
+    await doubleClickOn(textarea);
+    shouldBeTrue('selectEventFiredOnTextarea');
+    debug('');
 
-container.innerHTML = "";
+    debug('double clicking on readonly textarea');
+    await doubleClickOn(readonlyTextarea);
+    shouldBeTrue('selectEventFiredOnReadonlyTextarea');
+    debug('');
+
+    debug('double clicking on disabled textarea');
+    await doubleClickOn(disabledTextarea);
+    shouldBeTrue('selectEventFiredOnDisabledTextarea');
+    debug('');
+
+    container.innerHTML = "";
+
+    testRunner.notifyDone();
+}
 </script>
 
 <script src="../../resources/js-test-post.js"></script>

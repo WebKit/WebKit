@@ -164,6 +164,11 @@ public:
     void setMemoryFootprintNotificationThresholds(Vector<size_t>&& thresholds) { m_memoryFootprintNotificationThresholds = WTFMove(thresholds); }
     const Vector<size_t>& memoryFootprintNotificationThresholds() const { return m_memoryFootprintNotificationThresholds; }
 
+#if ENABLE(WEB_PROCESS_SUSPENSION_DELAY)
+    void setSuspendsWebProcessesAggressivelyOnCriticalMemoryPressure(bool enabled) { m_suspendsWebProcessesAggressivelyOnCriticalMemoryPressure = enabled; }
+    bool suspendsWebProcessesAggressivelyOnCriticalMemoryPressure() { return m_suspendsWebProcessesAggressivelyOnCriticalMemoryPressure; }
+#endif
+
 private:
     WTF::String m_injectedBundlePath;
     Vector<WTF::String> m_cachePartitionedURLSchemes;
@@ -206,6 +211,9 @@ private:
     WTF::String m_timeZoneOverride;
     Seconds m_memoryFootprintPollIntervalForTesting;
     Vector<size_t> m_memoryFootprintNotificationThresholds;
+#if ENABLE(WEB_PROCESS_SUSPENSION_DELAY)
+    bool m_suspendsWebProcessesAggressivelyOnCriticalMemoryPressure { false };
+#endif
 };
 
 } // namespace API

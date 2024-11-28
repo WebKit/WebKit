@@ -62,10 +62,10 @@ Ref<ReportingObserver> ReportingObserver::create(ScriptExecutionContext& scriptE
 
 static WeakPtr<ReportingScope> reportingScopeForContext(ScriptExecutionContext& scriptExecutionContext)
 {
-    if (RefPtr document = dynamicDowncast<Document>(&scriptExecutionContext))
+    if (RefPtr document = dynamicDowncast<Document>(scriptExecutionContext))
         return document->reportingScope();
 
-    if (RefPtr workerGlobalScope = dynamicDowncast<WorkerGlobalScope>(&scriptExecutionContext))
+    if (RefPtr workerGlobalScope = dynamicDowncast<WorkerGlobalScope>(scriptExecutionContext))
         return workerGlobalScope->reportingScope();
 
     RELEASE_ASSERT_NOT_REACHED();

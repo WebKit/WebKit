@@ -91,8 +91,6 @@ GPUProcess/media/RemoteRemoteCommandListenerProxy.cpp
 GPUProcess/media/RemoteSourceBufferProxy.cpp
 GPUProcess/media/RemoteTextTrackProxy.cpp
 GPUProcess/media/RemoteVideoTrackProxy.cpp
-GPUProcess/webrtc/RemoteMediaRecorder.cpp
-GPUProcess/webrtc/RemoteMediaRecorderManager.cpp
 GPUProcess/webrtc/RemoteSampleBufferDisplayLayer.cpp
 GPUProcess/webrtc/RemoteSampleBufferDisplayLayerManager.cpp
 
@@ -133,7 +131,6 @@ NetworkProcess/Cookies/WebCookieManager.cpp
 
 NetworkProcess/Downloads/Download.cpp
 NetworkProcess/Downloads/DownloadManager.cpp
-NetworkProcess/Downloads/DownloadMap.cpp
 NetworkProcess/Downloads/DownloadMonitor.cpp
 NetworkProcess/Downloads/PendingDownload.cpp
 
@@ -172,6 +169,7 @@ NetworkProcess/storage/CacheStorageCache.cpp
 NetworkProcess/storage/CacheStorageMemoryStore.cpp
 NetworkProcess/storage/CacheStorageManager.cpp
 NetworkProcess/storage/CacheStorageDiskStore.cpp
+NetworkProcess/storage/CacheStorageRecord.cpp
 NetworkProcess/storage/CacheStorageRegistry.cpp
 NetworkProcess/storage/FileSystemStorageManager.cpp
 NetworkProcess/storage/FileSystemStorageHandle.cpp
@@ -232,13 +230,14 @@ Shared/PrintInfo.cpp
 Shared/ProcessTerminationReason.cpp
 Shared/RTCNetwork.cpp
 Shared/RTCPacketOptions.cpp
+Shared/ScriptTelemetry.cpp
 Shared/ScrollingAccelerationCurve.cpp
 Shared/SessionState.cpp
 Shared/SharedStringHashStore.cpp
 Shared/SharedStringHashTableReadOnly.cpp
 Shared/SharedStringHashTable.cpp
-Shared/Site.cpp
 Shared/UserData.cpp
+Shared/WebBackForwardListFrameItem.cpp
 Shared/WebBackForwardListItem.cpp
 Shared/WebCompiledContentRuleList.cpp
 Shared/WebCompiledContentRuleListData.cpp
@@ -305,7 +304,13 @@ Shared/Authentication/AuthenticationManager.cpp
 
 Shared/Databases/IndexedDB/IDBUtilities.cpp
 
+Shared/Extensions/WebExtensionFrameIdentifier.cpp
+Shared/Extensions/WebExtensionPermission.cpp
+Shared/Extensions/WebExtensionUtilities.cpp
+
 Shared/Gamepad/GamepadData.cpp
+
+Shared/graphics/ImageBufferSet.cpp
 
 Shared/WebGPU/WebGPUBindGroupDescriptor.cpp
 Shared/WebGPU/WebGPUBindGroupEntry.cpp
@@ -447,6 +452,7 @@ UIProcess/WebPageProxyTesting.cpp
 UIProcess/WebPasteboardProxy.cpp
 UIProcess/WebPermissionControllerProxy.cpp
 UIProcess/WebPreferences.cpp
+UIProcess/WebProcessActivityState.cpp
 UIProcess/WebProcessCache.cpp
 UIProcess/WebProcessPool.cpp
 UIProcess/WebProcessProxy.cpp
@@ -477,11 +483,13 @@ UIProcess/API/APIOpenPanelParameters.cpp
 UIProcess/API/APISessionState.cpp
 UIProcess/API/APITargetedElementInfo.cpp
 UIProcess/API/APITargetedElementRequest.cpp
+UIProcess/API/APITextRun.cpp
 UIProcess/API/APIUIClient.cpp
 UIProcess/API/APIUserScript.cpp
 UIProcess/API/APIUserStyleSheet.cpp
 UIProcess/API/APIWebAuthenticationAssertionResponse.cpp
 UIProcess/API/APIWebAuthenticationPanel.cpp
+UIProcess/API/APIWebPushDaemonConnection.cpp
 UIProcess/API/APIWebsitePolicies.cpp
 UIProcess/API/APIWindowFeatures.cpp
 
@@ -554,11 +562,13 @@ UIProcess/Downloads/DownloadProxyMap.cpp
 
 UIProcess/DigitalCredentials/DigitalCredentialsCoordinatorProxy.cpp
 
+UIProcess/Extensions/WebExtension.cpp
 UIProcess/Extensions/WebExtensionAlarm.cpp
 UIProcess/Extensions/WebExtensionContext.cpp
 UIProcess/Extensions/WebExtensionController.cpp
 UIProcess/Extensions/WebExtensionControllerConfiguration.cpp
 UIProcess/Extensions/WebExtensionDataRecord.cpp
+UIProcess/Extensions/WebExtensionMatchPattern.cpp
 
 UIProcess/Gamepad/UIGamepad.cpp
 UIProcess/Gamepad/UIGamepadProvider.cpp
@@ -679,8 +689,8 @@ WebProcess/InjectedBundle/DOM/InjectedBundleNodeHandle.cpp @no-unify
 WebProcess/InjectedBundle/DOM/InjectedBundleRangeHandle.cpp @no-unify
 
 WebProcess/Inspector/RemoteWebInspectorUI.cpp
-WebProcess/Inspector/WebInspector.cpp
 WebProcess/Inspector/WebInspectorClient.cpp
+WebProcess/Inspector/WebInspectorInternal.cpp
 WebProcess/Inspector/WebInspectorInterruptDispatcher.cpp
 WebProcess/Inspector/WebInspectorUI.cpp
 WebProcess/Inspector/WebInspectorUIExtensionController.cpp
@@ -767,8 +777,6 @@ WebProcess/GPU/media/TextTrackPrivateRemote.cpp
 WebProcess/GPU/media/VideoTrackPrivateRemote.cpp
 WebProcess/GPU/media/WebMediaStrategy.cpp
 WebProcess/GPU/webrtc/LibWebRTCCodecs.cpp
-WebProcess/GPU/webrtc/MediaRecorderPrivate.cpp
-WebProcess/GPU/webrtc/MediaRecorderProvider.cpp
 WebProcess/GPU/webrtc/RemoteVideoFrameObjectHeapProxyProcessor.cpp
 WebProcess/GPU/webrtc/SampleBufferDisplayLayer.cpp
 WebProcess/GPU/webrtc/SampleBufferDisplayLayerManager.cpp
@@ -845,6 +853,7 @@ WebProcess/WebCoreSupport/WebPerformanceLoggingClient.cpp
 WebProcess/WebCoreSupport/WebPermissionController.cpp
 WebProcess/WebCoreSupport/WebPlatformStrategies.cpp
 WebProcess/WebCoreSupport/WebPopupMenu.cpp
+WebProcess/WebCoreSupport/WebProcessSyncClient.cpp
 WebProcess/WebCoreSupport/WebProgressTrackerClient.cpp
 WebProcess/WebCoreSupport/WebRemoteFrameClient.cpp
 WebProcess/WebCoreSupport/WebResourceLoadObserver.cpp
@@ -872,7 +881,7 @@ WebProcess/WebPage/WebFoundTextRangeController.cpp
 WebProcess/WebPage/WebFrame.cpp
 WebProcess/WebPage/WebHistoryItemClient.cpp
 WebProcess/WebPage/WebOpenPanelResultListener.cpp
-WebProcess/WebPage/WebPage.cpp @no-unify
+WebProcess/WebPage/WebPage.cpp
 WebProcess/WebPage/WebPageGroupProxy.cpp
 WebProcess/WebPage/WebPageOverlay.cpp
 WebProcess/WebPage/WebPageTesting.cpp

@@ -428,11 +428,6 @@ gl::Version DisplayD3D::getMaxConformantESVersion() const
     return mRenderer->getMaxConformantESVersion();
 }
 
-Optional<gl::Version> DisplayD3D::getMaxSupportedDesktopVersion() const
-{
-    return Optional<gl::Version>::Invalid();
-}
-
 void DisplayD3D::handleResult(HRESULT hr,
                               const char *message,
                               const char *file,

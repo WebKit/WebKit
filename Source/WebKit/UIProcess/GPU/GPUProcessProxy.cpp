@@ -49,7 +49,6 @@
 #include <WebCore/DisplayCapturePromptType.h>
 #include <WebCore/LogInitialization.h>
 #include <WebCore/MockRealtimeMediaSourceCenter.h>
-#include <WebCore/RuntimeApplicationChecks.h>
 #include <WebCore/ScreenProperties.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/LogInitialization.h>
@@ -69,6 +68,7 @@
 
 #if PLATFORM(COCOA)
 #include <wtf/BlockPtr.h>
+#include <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #endif
 
 #if PLATFORM(GTK) || PLATFORM(WPE)
@@ -171,7 +171,7 @@ GPUProcessProxy::GPUProcessProxy()
     parameters.useMockCaptureDevices = m_useMockCaptureDevices;
 #if PLATFORM(MAC)
     // FIXME: Remove this and related parameter when <rdar://problem/29448368> is fixed.
-    if (MacApplication::isSafari()) {
+    if (WTF::MacApplication::isSafari()) {
         if (auto handle = SandboxExtension::createHandleForGenericExtension("com.apple.webkit.microphone"_s))
             parameters.microphoneSandboxExtensionHandle = WTFMove(*handle);
         m_hasSentMicrophoneSandboxExtension = true;
@@ -204,6 +204,11 @@ GPUProcessProxy::GPUProcessProxy()
 
 #if USE(GBM)
     parameters.renderDeviceFile = drmRenderNodeDevice();
+#endif
+
+#if PLATFORM(COCOA)
+    m_isMetalDebugDeviceEnabledForTesting = s_enableMetalDebugDeviceInNewGPUProcessesForTesting;
+    m_isMetalShaderValidationEnabledForTesting = s_enableMetalShaderValidationInNewGPUProcessesForTesting;
 #endif
 
     platformInitializeGPUProcessParameters(parameters);
@@ -245,6 +250,14 @@ void GPUProcessProxy::setUseSCContentSharingPicker(bool use)
 #else
     UNUSED_PARAM(use);
 #endif
+}
+
+void GPUProcessProxy::enableMicrophoneMuteStatusAPI()
+{
+    if (m_isMicrophoneMuteStatusAPIEnabled)
+        return;
+    m_isMicrophoneMuteStatusAPIEnabled = true;
+    send(Messages::GPUProcess::EnableMicrophoneMuteStatusAPI { }, 0);
 }
 
 void GPUProcessProxy::setOrientationForMediaCapture(WebCore::IntDegrees orientation)
@@ -386,7 +399,7 @@ void GPUProcessProxy::updateSandboxAccess(bool allowAudioCapture, bool allowVide
         m_hasSentMicrophoneSandboxExtension = true;
 
 #if HAVE(SCREEN_CAPTURE_KIT)
-    if (allowDisplayCapture && !m_hasSentDisplayCaptureSandboxExtension && addDisplayCaptureSandboxExtension(connection().getAuditToken(), extensions))
+    if (allowDisplayCapture && !m_hasSentDisplayCaptureSandboxExtension && addDisplayCaptureSandboxExtension(protectedConnection()->getAuditToken(), extensions))
         m_hasSentDisplayCaptureSandboxExtension = true;
 #endif
 
@@ -400,8 +413,11 @@ void GPUProcessProxy::updateSandboxAccess(bool allowAudioCapture, bool allowVide
 #endif // PLATFORM(COCOA)
 }
 
-void GPUProcessProxy::updateCaptureAccess(bool allowAudioCapture, bool allowVideoCapture, bool allowDisplayCapture, WebCore::ProcessIdentifier processID, CompletionHandler<void()>&& completionHandler)
+void GPUProcessProxy::updateCaptureAccess(bool allowAudioCapture, bool allowVideoCapture, bool allowDisplayCapture, WebCore::ProcessIdentifier processID, WebPageProxyIdentifier pageIdentifier, CompletionHandler<void()>&& completionHandler)
 {
+    if (allowAudioCapture)
+        m_lastPageUsingMicrophone = pageIdentifier;
+
     updateSandboxAccess(allowAudioCapture, allowVideoCapture, allowDisplayCapture);
     sendWithAsyncReply(Messages::GPUProcess::UpdateCaptureAccess { allowAudioCapture, allowVideoCapture, allowDisplayCapture, processID }, WTFMove(completionHandler));
 }
@@ -444,6 +460,28 @@ void GPUProcessProxy::setMockCaptureDevicesInterrupted(bool isCameraInterrupted,
 void GPUProcessProxy::triggerMockCaptureConfigurationChange(bool forMicrophone, bool forDisplay)
 {
     send(Messages::GPUProcess::TriggerMockCaptureConfigurationChange { forMicrophone, forDisplay }, 0);
+}
+
+void GPUProcessProxy::setShouldListenToVoiceActivity(const WebPageProxy& proxy, bool shouldListen)
+{
+    if (shouldListen) {
+        m_pagesListeningToVoiceActivity.add(proxy);
+        if (m_shouldListenToVoiceActivity)
+            return;
+    } else {
+        m_pagesListeningToVoiceActivity.remove(proxy);
+        if (!m_shouldListenToVoiceActivity)
+            return;
+    }
+
+    bool shouldListenToVoiceActivity = anyOf(m_pagesListeningToVoiceActivity, [] (auto& page) {
+        return page.shouldListenToVoiceActivity();
+    });
+    if (m_shouldListenToVoiceActivity == shouldListenToVoiceActivity)
+        return;
+
+    m_shouldListenToVoiceActivity = shouldListenToVoiceActivity;
+    send(Messages::GPUProcess::SetShouldListenToVoiceActivity { shouldListenToVoiceActivity }, 0);
 }
 #endif // ENABLE(MEDIA_STREAM)
 
@@ -494,7 +532,7 @@ void GPUProcessProxy::createGPUProcessConnection(WebProcessProxy& webProcessProx
     parameters.hasAV1HardwareDecoder = s_hasAV1HardwareDecoder;
 #endif
 
-    if (auto* store = webProcessProxy.websiteDataStore())
+    if (RefPtr store = webProcessProxy.websiteDataStore())
         addSession(*store);
 
     RELEASE_LOG(ProcessSuspension, "%p - GPUProcessProxy is taking a background assertion because a web process is requesting a connection", this);
@@ -621,7 +659,7 @@ void GPUProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Connect
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), makeBlockPtr([weakThis = WeakPtr { *this }] () mutable {
         if (!isPowerLoggingInTaskMode())
             return;
-        RunLoop::main().dispatch([weakThis = WTFMove(weakThis)] () {
+        RunLoop::protectedMain()->dispatch([weakThis = WTFMove(weakThis)] () {
             if (!weakThis)
                 return;
             weakThis->enablePowerLogging();
@@ -653,14 +691,14 @@ void GPUProcessProxy::updateProcessAssertion()
     }
 
     if (hasAnyForegroundWebProcesses) {
-        if (!ProcessThrottler::isValidForegroundActivity(m_activityFromWebProcesses)) {
-            m_activityFromWebProcesses = throttler().foregroundActivity("GPU for foreground view(s)"_s);
+        if (!ProcessThrottler::isValidForegroundActivity(m_activityFromWebProcesses.get())) {
+            m_activityFromWebProcesses = protectedThrottler()->foregroundActivity("GPU for foreground view(s)"_s);
         }
         return;
     }
     if (hasAnyBackgroundWebProcesses) {
-        if (!ProcessThrottler::isValidBackgroundActivity(m_activityFromWebProcesses)) {
-            m_activityFromWebProcesses = throttler().backgroundActivity("GPU for background view(s)"_s);
+        if (!ProcessThrottler::isValidBackgroundActivity(m_activityFromWebProcesses.get())) {
+            m_activityFromWebProcesses = protectedThrottler()->backgroundActivity("GPU for background view(s)"_s);
         }
         return;
     }
@@ -817,7 +855,41 @@ void GPUProcessProxy::requestBitmapImageForCurrentTime(ProcessIdentifier process
 }
 #endif
 
-#if ENABLE(MEDIA_STREAM) && PLATFORM(IOS_FAMILY)
+#if ENABLE(MEDIA_STREAM)
+void GPUProcessProxy::voiceActivityDetected()
+{
+    for (Ref page : m_pagesListeningToVoiceActivity)
+        page->voiceActivityDetected();
+}
+
+void GPUProcessProxy::startMonitoringCaptureDeviceRotation(PageIdentifier pageID, const String& persistentId)
+{
+    if (auto page = WebProcessProxy::webPage(pageID))
+        page->startMonitoringCaptureDeviceRotation(persistentId);
+}
+
+void GPUProcessProxy::stopMonitoringCaptureDeviceRotation(PageIdentifier pageID, const String& persistentId)
+{
+    if (auto page = WebProcessProxy::webPage(pageID))
+        page->stopMonitoringCaptureDeviceRotation(persistentId);
+}
+
+void GPUProcessProxy::rotationAngleForCaptureDeviceChanged(const String& persistentId, WebCore::VideoFrameRotation rotation)
+{
+    send(Messages::GPUProcess::RotationAngleForCaptureDeviceChanged(persistentId, rotation), 0);
+}
+
+void GPUProcessProxy::microphoneMuteStatusChanged(bool isMuting)
+{
+    // FIXME: We are currently muting/unmuting the last capturing page. If all pages are muted, maybe we should favor the currently focused page if it has muted microphone capture.
+    ASSERT(m_lastPageUsingMicrophone);
+    if (!m_lastPageUsingMicrophone)
+        return;
+    if (RefPtr page = WebProcessProxy::webPage(*m_lastPageUsingMicrophone))
+        page->microphoneMuteStatusChanged(isMuting);
+}
+
+#if PLATFORM(IOS_FAMILY)
 void GPUProcessProxy::statusBarWasTapped(CompletionHandler<void()>&& completionHandler)
 {
     if (auto page = WebProcessProxy::audioCapturingWebPage())
@@ -826,6 +898,7 @@ void GPUProcessProxy::statusBarWasTapped(CompletionHandler<void()>&& completionH
     completionHandler();
 }
 #endif
+#endif // ENABLE(MEDIA_STREAM)
 
 } // namespace WebKit
 

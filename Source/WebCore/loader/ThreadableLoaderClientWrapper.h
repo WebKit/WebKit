@@ -60,7 +60,7 @@ public:
             m_client->didSendData(bytesSent, totalBytesToBeSent);
     }
 
-    void didReceiveResponse(ScriptExecutionContextIdentifier mainContext, ResourceLoaderIdentifier identifier, const ResourceResponse& response)
+    void didReceiveResponse(ScriptExecutionContextIdentifier mainContext, std::optional<ResourceLoaderIdentifier> identifier, const ResourceResponse& response)
     {
         if (m_client)
             m_client->didReceiveResponse(mainContext, identifier, response);
@@ -72,7 +72,7 @@ public:
             m_client->didReceiveData(buffer);
     }
 
-    void didFinishLoading(ScriptExecutionContextIdentifier mainContext, ResourceLoaderIdentifier identifier, const NetworkLoadMetrics& metrics)
+    void didFinishLoading(ScriptExecutionContextIdentifier mainContext, std::optional<ResourceLoaderIdentifier> identifier, const NetworkLoadMetrics& metrics)
     {
         m_done = true;
         if (m_client)
@@ -85,7 +85,7 @@ public:
             m_client->notifyIsDone(isDone);
     }
 
-    void didFail(ScriptExecutionContextIdentifier mainContext, const ResourceError& error)
+    void didFail(std::optional<ScriptExecutionContextIdentifier> mainContext, const ResourceError& error)
     {
         m_done = true;
         if (m_client)

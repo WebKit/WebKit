@@ -1,4 +1,4 @@
 
 
-FAIL navigate() to the current URL with history: 'push' and allow it to go cross document assert_equals: expected 2 but got 1
+PASS navigate() to the current URL with history: 'push' and allow it to go cross document
 

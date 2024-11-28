@@ -26,17 +26,20 @@
 #pragma once
 
 #include "ModelPlayerProvider.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class WEBCORE_EXPORT DummyModelPlayerProvider final : public ModelPlayerProvider {
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(DummyModelPlayerProvider, WEBCORE_EXPORT);
 public:
     DummyModelPlayerProvider();
     virtual ~DummyModelPlayerProvider();
 
 private:
     // ModelPlayerProvider overrides.
-    virtual RefPtr<ModelPlayer> createModelPlayer(ModelPlayerClient&) override;
+    RefPtr<ModelPlayer> createModelPlayer(ModelPlayerClient&) final;
+    void deleteModelPlayer(ModelPlayer&) final;
 };
 
 }

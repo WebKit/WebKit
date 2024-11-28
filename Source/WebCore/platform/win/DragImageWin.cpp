@@ -31,7 +31,6 @@
 #include "FontCascade.h"
 #include "FontDescription.h"
 #include "FontSelector.h"
-#include "GraphicsContextCairo.h"
 #include "HWndDC.h"
 #include "Image.h"
 #include "StringTruncator.h"
@@ -44,10 +43,20 @@
 
 #include <windows.h>
 
+#if USE(CAIRO)
+#include "GraphicsContextCairo.h"
+#endif
+
+#if USE(SKIA)
+#include "GraphicsContextSkia.h"
+#endif
+
 namespace WebCore {
 
+#if USE(CAIRO)
 GDIObject<HBITMAP> allocImage(HDC, IntSize, PlatformGraphicsContext** targetRef);
 void deallocContext(PlatformGraphicsContext* target);
+#endif
 
 IntSize dragImageSize(DragImageRef image)
 {
@@ -89,6 +98,7 @@ DragImageRef createDragImageIconForCachedImageFilename(const String& filename)
     return iconInfo.hbmColor;
 }
 
+#if USE(CAIRO)
 const float DragLabelBorderX = 4;
 // Keep border_y in synch with DragController::LinkDragBorderInset.
 const float DragLabelBorderY = 2;
@@ -198,10 +208,28 @@ DragImageRef createDragImageForLink(Element&, URL& url, const String& inLabel, T
     deallocContext(contextRef);
     return image.leak();
 }
+#else
+DragImageRef createDragImageForLink(Element&, URL&, const String&, TextIndicatorData&, float)
+{
+    return nullptr;
+}
+#endif
 
 DragImageRef createDragImageForColor(const Color&, const FloatRect&, float, Path&)
 {
     return nullptr;
 }
+
+#if USE(SKIA)
+DragImageRef createDragImageFromImage(Image*, ImageOrientation)
+{
+    return nullptr;
+}
+
+DragImageRef scaleDragImage(DragImageRef, FloatSize)
+{
+    return nullptr;
+}
+#endif
 
 }

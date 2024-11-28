@@ -153,8 +153,8 @@ public:
     bool acceleratesDrawing() const override;
     void setAcceleratesDrawing(bool) override;
 
-    bool wantsDeepColorBackingStore() const override;
-    void setWantsDeepColorBackingStore(bool) override;
+    WebCore::ContentsFormat contentsFormat() const override;
+    void setContentsFormat(WebCore::ContentsFormat) override;
 
     bool hasContents() const override;
     CFTypeRef contents() const override;
@@ -214,8 +214,8 @@ public:
     void setEventRegion(const WebCore::EventRegion&) override;
 
 #if ENABLE(SCROLLING_THREAD)
-    WebCore::ScrollingNodeID scrollingNodeID() const override;
-    void setScrollingNodeID(WebCore::ScrollingNodeID) override;
+    std::optional<WebCore::ScrollingNodeID> scrollingNodeID() const override;
+    void setScrollingNodeID(std::optional<WebCore::ScrollingNodeID>) override;
 #endif
 
 #if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
@@ -273,6 +273,8 @@ private:
     void updateBackingStore();
     void removeSublayer(PlatformCALayerRemote*);
 
+    WebCore::DestinationColorSpace displayColorSpace() const;
+
 #if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
     RemoteLayerBackingStore::IncludeDisplayList shouldIncludeDisplayListInBackingStore() const;
 #endif
@@ -287,8 +289,6 @@ private:
     HashMap<String, RefPtr<WebCore::PlatformCAAnimation>> m_animations;
 
     bool m_acceleratesDrawing { false };
-    bool m_wantsDeepColorBackingStore { false };
-
     WeakPtr<RemoteLayerTreeContext> m_context;
 };
 

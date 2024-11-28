@@ -56,6 +56,8 @@
 #include <wtf/ParallelHelperPool.h>
 #include <wtf/Threading.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 class CodeBlock;
@@ -106,6 +108,10 @@ class JSCGLibWrapperObject;
 
 namespace DFG {
 class SpeculativeJIT;
+}
+
+namespace Wasm {
+class Callee;
 }
 
 namespace GCClient {
@@ -233,6 +239,7 @@ class Heap;
     v(intlSegmentIteratorSpace, intlSegmentIteratorHeapCellType, IntlSegmentIterator) \
     v(intlSegmenterSpace, intlSegmenterHeapCellType, IntlSegmenter) \
     v(intlSegmentsSpace, intlSegmentsHeapCellType, IntlSegments) \
+    v(iteratorHelperSpace, cellHeapCellType, JSIteratorHelper) \
     v(javaScriptCallFrameSpace, javaScriptCallFrameHeapCellType, Inspector::JSJavaScriptCallFrame) \
     v(jsModuleRecordSpace, jsModuleRecordHeapCellType, JSModuleRecord) \
     v(syntheticModuleRecordSpace, syntheticModuleRecordHeapCellType, SyntheticModuleRecord) \
@@ -275,6 +282,8 @@ class Heap;
     v(weakSetSpace, weakSetHeapCellType, JSWeakSet) \
     v(withScopeSpace, cellHeapCellType, JSWithScope) \
     v(wrapForValidIteratorSpace, cellHeapCellType, JSWrapForValidIterator) \
+    v(asyncFromSyncIteratorSpace, cellHeapCellType, JSAsyncFromSyncIterator) \
+    v(regExpStringIteratorSpace, cellHeapCellType, JSRegExpStringIterator) \
     \
     FOR_EACH_JSC_WEBASSEMBLY_DYNAMIC_ISO_SUBSPACE(v)
 
@@ -569,9 +578,12 @@ public:
     
     Seconds totalGCTime() const { return m_totalGCTime; }
 
-    HashMap<JSImmutableButterfly*, JSString*> immutableButterflyToStringCache;
+    UncheckedKeyHashMap<JSImmutableButterfly*, JSString*> immutableButterflyToStringCache;
 
     bool isMarkingForGCVerifier() const { return m_isMarkingForGCVerifier; }
+
+    void setKeepVerifierSlotVisitor();
+    void clearVerifierSlotVisitor();
 
     void appendPossiblyAccessedStringFromConcurrentThreads(String&& string)
     {
@@ -580,10 +592,20 @@ public:
 
     bool isInPhase(CollectorPhase phase) const { return m_currentPhase == phase; }
 
+#if ENABLE(WEBASSEMBLY)
+    // FIXME: We should have a way to clear Wasm::Callees pending destruction when the Module dies.
+    void reportWasmCalleePendingDestruction(Ref<Wasm::Callee>&&);
+    bool isWasmCalleePendingDestruction(Wasm::Callee&);
+#endif
+
+    // This is a debug function for checking who marked the target cell.
+    void dumpVerifierMarkerData(HeapCell*);
+
 private:
     friend class AllocatingScope;
     friend class CodeBlock;
     friend class CollectingScope;
+    friend class ConservativeRoots;
     friend class DeferGC;
     friend class DeferGCForAWhile;
     friend class GCAwareJITStubRoutine;
@@ -702,6 +724,7 @@ private:
     void updateObjectCounts();
     void endMarking();
 
+    void cancelDeferredWorkIfNeeded();
     void reapWeakHandles();
     void pruneStaleEntriesFromWeakGCHashTables();
     void sweepArrayBuffers();
@@ -766,8 +789,9 @@ private:
 
     static bool useGenerationalGC();
     static bool shouldSweepSynchronously();
-    
+
     void verifyGC();
+    void verifierMark();
 
     Lock m_lock;
     const HeapType m_heapType;
@@ -837,6 +861,8 @@ private:
     bool m_isShuttingDown { false };
     bool m_mutatorShouldBeFenced { Options::forceFencedBarrier() };
     bool m_isMarkingForGCVerifier { false };
+    bool m_keepVerifierSlotVisitor { false };
+    Lock m_wasmCalleesPendingDestructionLock;
 
     unsigned m_barrierThreshold { Options::forceFencedBarrier() ? tautologicalThreshold : blackThreshold };
 
@@ -871,6 +897,10 @@ private:
 
     HashSet<WeakGCHashTable*> m_weakGCHashTables;
     
+#if ENABLE(WEBASSEMBLY)
+    HashSet<Ref<Wasm::Callee>> m_wasmCalleesPendingDestruction WTF_GUARDED_BY_LOCK(m_wasmCalleesPendingDestructionLock);
+#endif
+
     std::unique_ptr<MarkStackArray> m_sharedCollectorMarkStack;
     std::unique_ptr<MarkStackArray> m_sharedMutatorMarkStack;
     unsigned m_numberOfActiveParallelMarkers { 0 };
@@ -1088,8 +1118,8 @@ public:
         
         static IsoCellSet& setFor(Subspace& space)
         {
-            return *bitwise_cast<IsoCellSet*>(
-                bitwise_cast<char*>(&space) -
+            return *std::bit_cast<IsoCellSet*>(
+                std::bit_cast<char*>(&space) -
                 OBJECT_OFFSETOF(SpaceAndSet, space) +
                 OBJECT_OFFSETOF(SpaceAndSet, set));
         }
@@ -1123,8 +1153,8 @@ public:
 
         static ScriptExecutableSpaceAndSets& setAndSpaceFor(Subspace& space)
         {
-            return *bitwise_cast<ScriptExecutableSpaceAndSets*>(
-                bitwise_cast<char*>(&space) -
+            return *std::bit_cast<ScriptExecutableSpaceAndSets*>(
+                std::bit_cast<char*>(&space) -
                 OBJECT_OFFSETOF(ScriptExecutableSpaceAndSets, space));
         }
 
@@ -1216,3 +1246,5 @@ private:
 } // namespace GCClient
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

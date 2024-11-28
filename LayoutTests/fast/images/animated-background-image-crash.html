@@ -16,10 +16,9 @@
                 testRunner.notifyDone();
         }
 
-        function step1()
+        async function step1()
         {
-            if (window.testRunner)
-                testRunner.displayAndTrackRepaints();
+            await testRunner?.displayAndTrackRepaints();
             document.getElementById("target").style.display="none";
             document.body.offsetTop;
             setTimeout("step2()", 200);

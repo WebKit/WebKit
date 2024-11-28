@@ -36,13 +36,15 @@
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/Threading.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 namespace Disassembler {
 
 Lock labelMapLock;
 
-using LabelMap = HashMap<void*, std::variant<CString, const char*>>;
+using LabelMap = UncheckedKeyHashMap<void*, std::variant<CString, const char*>>;
 LazyNeverDestroyed<LabelMap> labelMap;
 
 static LabelMap& ensureLabelMap() WTF_REQUIRES_LOCK(labelMapLock)
@@ -202,3 +204,4 @@ const char* labelFor(void* thunkAddress)
 
 } // namespace JSC
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

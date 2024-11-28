@@ -44,6 +44,8 @@
 #include "VirtualRegister.h"
 #include <wtf/TZoneMalloc.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC { namespace DFG {
 
 class GPRTemporary;
@@ -139,7 +141,7 @@ public:
         }
 
         explicit TrustedImmPtr(size_t value)
-            : m_value(bitwise_cast<void*>(value))
+            : m_value(std::bit_cast<void*>(value))
         {
         }
 
@@ -761,6 +763,7 @@ public:
 
     void emitAllocateButterfly(GPRReg storageGPR, GPRReg sizeGPR, GPRReg scratch1, GPRReg scratch2, GPRReg scratch3, JumpList& slowCases);
     void emitInitializeButterfly(GPRReg storageGPR, GPRReg sizeGPR, JSValueRegs emptyValueRegs, GPRReg scratchGPR);
+    void compileAllocateNewArrayWithSize(Node*, GPRReg resultGPR, GPRReg sizeGPR, RegisteredStructure, bool shouldConvertLargeSizeToArrayStorage = true);
     void compileAllocateNewArrayWithSize(Node*, GPRReg resultGPR, GPRReg sizeGPR, IndexingType, bool shouldConvertLargeSizeToArrayStorage = true);
     
     // Called once a node has completed code generation but prior to setting
@@ -1065,8 +1068,8 @@ public:
     // 1) nullopt the exception was handled
     // 2) valid GPRReg containing the exception that won't interfere with silentFill.
     // 3) InvalidGPRReg meaning the exception needs to be loaded from VM.
-    template<typename OperationType, typename ResultRegType>
-    std::optional<GPRReg> tryHandleOrGetExceptionUnderSilentSpill(const auto& plans, ResultRegType result)
+    template<typename OperationType, typename ResultRegType, typename... OtherSpilledRegTypes>
+    std::optional<GPRReg> tryHandleOrGetExceptionUnderSilentSpill(const auto& plans, ResultRegType result, OtherSpilledRegTypes... otherSpilledRegs)
     {
         ASSERT(m_underSilentSpill);
         using ResultType = typename FunctionTraits<OperationType>::ResultType;
@@ -1086,6 +1089,14 @@ public:
             if constexpr (std::is_same_v<GPRReg, ResultRegType> || std::is_same_v<JSValueRegs, ResultRegType>) {
                 spilledRegs.add(GPRInfo::returnValueGPR, IgnoreVectors);
                 spilledRegs.add(result, IgnoreVectors);
+            }
+
+            if constexpr (sizeof...(OtherSpilledRegTypes) > 0) {
+                constexpr auto addRegIfNeeded = [](auto& spilledRegs, auto& reg) ALWAYS_INLINE_LAMBDA {
+                    static_assert(std::is_same_v<GPRReg, std::decay_t<decltype(reg)>> || std::is_same_v<JSValueRegs, std::decay_t<decltype(reg)>>);
+                    spilledRegs.add(reg, IgnoreVectors);
+                };
+                (addRegIfNeeded(spilledRegs, otherSpilledRegs), ...);
             }
 
             if (spilledRegs.buildAndValidate().contains(exceptionReg, IgnoreVectors)) {
@@ -1670,7 +1681,7 @@ public:
     void compileNewArrayWithSpread(Node*);
     void compileGetRestLength(Node*);
     void compileArraySlice(Node*);
-    void compileArraySpliceExtract(Node*);
+    void compileArraySplice(Node*);
     void compileArrayIndexOf(Node*);
     void compileArrayPush(Node*);
     void compileNotifyWrite(Node*);
@@ -1746,6 +1757,7 @@ public:
     void compileNewArrayWithSize(Node*);
     void compileNewArrayWithConstantSize(Node*);
     void compileNewArrayWithSpecies(Node*);
+    void compileNewArrayWithSizeAndStructure(Node*);
     void compileNewTypedArray(Node*);
     void compileToThis(Node*);
     void compileOwnPropertyKeysVariant(Node*);
@@ -1767,7 +1779,7 @@ public:
     void compileCallNumberConstructor(Node*);
     void compileLogShadowChickenPrologue(Node*);
     void compileLogShadowChickenTail(Node*);
-    void compileHasIndexedProperty(Node*, S_JITOperation_GCZ, const ScopedLambda<std::tuple<GPRReg, GPRReg>()>& prefix);
+    void compileHasIndexedProperty(Node*, S_JITOperation_GCZ, const ScopedLambda<std::tuple<GPRReg, GPRReg>()>& prefix, bool = false);
     void compileExtractCatchLocal(Node*);
     void compileClearCatchLocals(Node*);
     void compileProfileType(Node*);
@@ -3030,5 +3042,7 @@ private:
     DFG_TYPE_CHECK_WITH_EXIT_KIND(BadType, source, edge, typesPassedThrough, jumpToFail)
 
 } } // namespace JSC::DFG
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif

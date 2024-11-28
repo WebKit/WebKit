@@ -31,6 +31,7 @@
 #import <JavaScriptCore/JSCConfig.h>
 #import <WebCore/ProcessIdentifier.h>
 #import <signal.h>
+#import <wtf/StdLibExtras.h>
 #import <wtf/WTFProcess.h>
 #import <wtf/cocoa/Entitlements.h>
 #import <wtf/spi/darwin/SandboxSPI.h>
@@ -38,9 +39,7 @@
 
 namespace WebKit {
 
-XPCServiceInitializerDelegate::~XPCServiceInitializerDelegate()
-{
-}
+XPCServiceInitializerDelegate::~XPCServiceInitializerDelegate() = default;
 
 bool XPCServiceInitializerDelegate::checkEntitlements()
 {
@@ -86,23 +85,22 @@ bool XPCServiceInitializerDelegate::getClientBundleIdentifier(String& clientBund
 
 bool XPCServiceInitializerDelegate::getClientSDKAlignedBehaviors(SDKAlignedBehaviors& behaviors)
 {
-    size_t length = 0;
-    auto behaviorData = xpc_dictionary_get_data(m_initializerMessage, "client-sdk-aligned-behaviors", &length);
-    if (!length || !behaviorData)
+    auto behaviorData = xpc_dictionary_get_data_span(m_initializerMessage, "client-sdk-aligned-behaviors");
+    if (behaviorData.empty())
         return false;
-    RELEASE_ASSERT(length == behaviors.storageLengthInBytes());
-    memcpy(behaviors.storage(), behaviorData, length);
-
+    memcpySpan(behaviors.storageBytes(), behaviorData);
     return true;
 }
 
-bool XPCServiceInitializerDelegate::getProcessIdentifier(WebCore::ProcessIdentifier& identifier)
+bool XPCServiceInitializerDelegate::getProcessIdentifier(std::optional<WebCore::ProcessIdentifier>& identifier)
 {
     auto parsedIdentifier = parseInteger<uint64_t>(StringView::fromLatin1(xpc_dictionary_get_string(m_initializerMessage, "process-identifier")));
     if (!parsedIdentifier)
         return false;
+    if (!ObjectIdentifier<WebCore::ProcessIdentifierType>::isValidIdentifier(*parsedIdentifier))
+        return false;
 
-    identifier = LegacyNullableObjectIdentifier<WebCore::ProcessIdentifierType>(*parsedIdentifier);
+    identifier = ObjectIdentifier<WebCore::ProcessIdentifierType>(*parsedIdentifier);
     return true;
 }
 

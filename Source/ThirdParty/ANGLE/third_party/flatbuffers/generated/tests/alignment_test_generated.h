@@ -23,7 +23,9 @@ struct BadAlignmentRoot;
 struct BadAlignmentRootBuilder;
 struct BadAlignmentRootT;
 
-struct JustSmallStruct;
+struct EvenSmallStruct;
+
+struct OddSmallStruct;
 
 struct SmallStructs;
 struct SmallStructsBuilder;
@@ -37,8 +39,10 @@ bool operator==(const OuterLargeT &lhs, const OuterLargeT &rhs);
 bool operator!=(const OuterLargeT &lhs, const OuterLargeT &rhs);
 bool operator==(const BadAlignmentRootT &lhs, const BadAlignmentRootT &rhs);
 bool operator!=(const BadAlignmentRootT &lhs, const BadAlignmentRootT &rhs);
-bool operator==(const JustSmallStruct &lhs, const JustSmallStruct &rhs);
-bool operator!=(const JustSmallStruct &lhs, const JustSmallStruct &rhs);
+bool operator==(const EvenSmallStruct &lhs, const EvenSmallStruct &rhs);
+bool operator!=(const EvenSmallStruct &lhs, const EvenSmallStruct &rhs);
+bool operator==(const OddSmallStruct &lhs, const OddSmallStruct &rhs);
+bool operator!=(const OddSmallStruct &lhs, const OddSmallStruct &rhs);
 bool operator==(const SmallStructsT &lhs, const SmallStructsT &rhs);
 bool operator!=(const SmallStructsT &lhs, const SmallStructsT &rhs);
 
@@ -50,7 +54,9 @@ inline const ::flatbuffers::TypeTable *OuterLargeTypeTable();
 
 inline const ::flatbuffers::TypeTable *BadAlignmentRootTypeTable();
 
-inline const ::flatbuffers::TypeTable *JustSmallStructTypeTable();
+inline const ::flatbuffers::TypeTable *EvenSmallStructTypeTable();
+
+inline const ::flatbuffers::TypeTable *OddSmallStructTypeTable();
 
 inline const ::flatbuffers::TypeTable *SmallStructsTypeTable();
 
@@ -63,7 +69,6 @@ BadAlignmentSmall FLATBUFFERS_FINAL_CLASS
     uint32_t var_2_;
 
   public:
-    struct Traits;
     static const ::flatbuffers::TypeTable *MiniReflectTypeTable()
     {
         return BadAlignmentSmallTypeTable();
@@ -112,11 +117,6 @@ inline bool operator!=(const BadAlignmentSmall &lhs, const BadAlignmentSmall &rh
     return !(lhs == rhs);
 }
 
-struct BadAlignmentSmall::Traits
-{
-    using type = BadAlignmentSmall;
-};
-
 FLATBUFFERS_MANUALLY_ALIGNED_STRUCT(8)
 BadAlignmentLarge FLATBUFFERS_FINAL_CLASS
 {
@@ -124,7 +124,6 @@ BadAlignmentLarge FLATBUFFERS_FINAL_CLASS
     uint64_t var_0_;
 
   public:
-    struct Traits;
     static const ::flatbuffers::TypeTable *MiniReflectTypeTable()
     {
         return BadAlignmentLargeTypeTable();
@@ -152,25 +151,19 @@ inline bool operator!=(const BadAlignmentLarge &lhs, const BadAlignmentLarge &rh
     return !(lhs == rhs);
 }
 
-struct BadAlignmentLarge::Traits
-{
-    using type = BadAlignmentLarge;
-};
-
-FLATBUFFERS_MANUALLY_ALIGNED_STRUCT(1) JustSmallStruct FLATBUFFERS_FINAL_CLASS
+FLATBUFFERS_MANUALLY_ALIGNED_STRUCT(1) EvenSmallStruct FLATBUFFERS_FINAL_CLASS
 {
   private:
     uint8_t var_0_;
     uint8_t var_1_;
 
   public:
-    struct Traits;
     static const ::flatbuffers::TypeTable *MiniReflectTypeTable()
     {
-        return JustSmallStructTypeTable();
+        return EvenSmallStructTypeTable();
     }
-    JustSmallStruct() : var_0_(0), var_1_(0) {}
-    JustSmallStruct(uint8_t _var_0, uint8_t _var_1)
+    EvenSmallStruct() : var_0_(0), var_1_(0) {}
+    EvenSmallStruct(uint8_t _var_0, uint8_t _var_1)
         : var_0_(::flatbuffers::EndianScalar(_var_0)), var_1_(::flatbuffers::EndianScalar(_var_1))
     {}
     uint8_t var_0() const
@@ -190,22 +183,73 @@ FLATBUFFERS_MANUALLY_ALIGNED_STRUCT(1) JustSmallStruct FLATBUFFERS_FINAL_CLASS
         ::flatbuffers::WriteScalar(&var_1_, _var_1);
     }
 };
-FLATBUFFERS_STRUCT_END(JustSmallStruct, 2);
+FLATBUFFERS_STRUCT_END(EvenSmallStruct, 2);
 
-inline bool operator==(const JustSmallStruct &lhs, const JustSmallStruct &rhs)
+inline bool operator==(const EvenSmallStruct &lhs, const EvenSmallStruct &rhs)
 {
     return (lhs.var_0() == rhs.var_0()) && (lhs.var_1() == rhs.var_1());
 }
 
-inline bool operator!=(const JustSmallStruct &lhs, const JustSmallStruct &rhs)
+inline bool operator!=(const EvenSmallStruct &lhs, const EvenSmallStruct &rhs)
 {
     return !(lhs == rhs);
 }
 
-struct JustSmallStruct::Traits
+FLATBUFFERS_MANUALLY_ALIGNED_STRUCT(1) OddSmallStruct FLATBUFFERS_FINAL_CLASS
 {
-    using type = JustSmallStruct;
+  private:
+    uint8_t var_0_;
+    uint8_t var_1_;
+    uint8_t var_2_;
+
+  public:
+    static const ::flatbuffers::TypeTable *MiniReflectTypeTable()
+    {
+        return OddSmallStructTypeTable();
+    }
+    OddSmallStruct() : var_0_(0), var_1_(0), var_2_(0) {}
+    OddSmallStruct(uint8_t _var_0, uint8_t _var_1, uint8_t _var_2)
+        : var_0_(::flatbuffers::EndianScalar(_var_0)),
+          var_1_(::flatbuffers::EndianScalar(_var_1)),
+          var_2_(::flatbuffers::EndianScalar(_var_2))
+    {}
+    uint8_t var_0() const
+    {
+        return ::flatbuffers::EndianScalar(var_0_);
+    }
+    void mutate_var_0(uint8_t _var_0)
+    {
+        ::flatbuffers::WriteScalar(&var_0_, _var_0);
+    }
+    uint8_t var_1() const
+    {
+        return ::flatbuffers::EndianScalar(var_1_);
+    }
+    void mutate_var_1(uint8_t _var_1)
+    {
+        ::flatbuffers::WriteScalar(&var_1_, _var_1);
+    }
+    uint8_t var_2() const
+    {
+        return ::flatbuffers::EndianScalar(var_2_);
+    }
+    void mutate_var_2(uint8_t _var_2)
+    {
+        ::flatbuffers::WriteScalar(&var_2_, _var_2);
+    }
 };
+FLATBUFFERS_STRUCT_END(OddSmallStruct, 3);
+
+inline bool operator==(const OddSmallStruct &lhs, const OddSmallStruct &rhs)
+{
+    return (lhs.var_0() == rhs.var_0()) && (lhs.var_1() == rhs.var_1()) &&
+           (lhs.var_2() == rhs.var_2());
+}
+
+inline bool operator!=(const OddSmallStruct &lhs, const OddSmallStruct &rhs)
+{
+    return !(lhs == rhs);
+}
 
 struct OuterLargeT : public ::flatbuffers::NativeTable
 {
@@ -221,7 +265,6 @@ struct OuterLarge FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table
 {
     typedef OuterLargeT NativeTableType;
     typedef OuterLargeBuilder Builder;
-    struct Traits;
     static const ::flatbuffers::TypeTable *MiniReflectTypeTable() { return OuterLargeTypeTable(); }
     enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE
     {
@@ -272,12 +315,6 @@ inline ::flatbuffers::Offset<OuterLarge> CreateOuterLarge(::flatbuffers::FlatBuf
     return builder_.Finish();
 }
 
-struct OuterLarge::Traits
-{
-    using type                   = OuterLarge;
-    static auto constexpr Create = CreateOuterLarge;
-};
-
 ::flatbuffers::Offset<OuterLarge> CreateOuterLarge(
     ::flatbuffers::FlatBufferBuilder &_fbb,
     const OuterLargeT *_o,
@@ -298,7 +335,6 @@ struct BadAlignmentRoot FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table
 {
     typedef BadAlignmentRootT NativeTableType;
     typedef BadAlignmentRootBuilder Builder;
-    struct Traits;
     static const ::flatbuffers::TypeTable *MiniReflectTypeTable()
     {
         return BadAlignmentRootTypeTable();
@@ -369,12 +405,6 @@ inline ::flatbuffers::Offset<BadAlignmentRoot> CreateBadAlignmentRoot(
     return builder_.Finish();
 }
 
-struct BadAlignmentRoot::Traits
-{
-    using type                   = BadAlignmentRoot;
-    static auto constexpr Create = CreateBadAlignmentRoot;
-};
-
 inline ::flatbuffers::Offset<BadAlignmentRoot> CreateBadAlignmentRootDirect(
     ::flatbuffers::FlatBufferBuilder &_fbb,
     ::flatbuffers::Offset<OuterLarge> large     = 0,
@@ -392,34 +422,44 @@ inline ::flatbuffers::Offset<BadAlignmentRoot> CreateBadAlignmentRootDirect(
 struct SmallStructsT : public ::flatbuffers::NativeTable
 {
     typedef SmallStructs TableType;
-    std::vector<JustSmallStruct> small_structs{};
+    std::vector<EvenSmallStruct> even_structs{};
+    std::vector<OddSmallStruct> odd_structs{};
 };
 
 struct SmallStructs FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table
 {
     typedef SmallStructsT NativeTableType;
     typedef SmallStructsBuilder Builder;
-    struct Traits;
     static const ::flatbuffers::TypeTable *MiniReflectTypeTable()
     {
         return SmallStructsTypeTable();
     }
     enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE
     {
-        VT_SMALL_STRUCTS = 4
+        VT_EVEN_STRUCTS = 4,
+        VT_ODD_STRUCTS  = 6
     };
-    const ::flatbuffers::Vector<const JustSmallStruct *> *small_structs() const
+    const ::flatbuffers::Vector<const EvenSmallStruct *> *even_structs() const
     {
-        return GetPointer<const ::flatbuffers::Vector<const JustSmallStruct *> *>(VT_SMALL_STRUCTS);
+        return GetPointer<const ::flatbuffers::Vector<const EvenSmallStruct *> *>(VT_EVEN_STRUCTS);
     }
-    ::flatbuffers::Vector<const JustSmallStruct *> *mutable_small_structs()
+    ::flatbuffers::Vector<const EvenSmallStruct *> *mutable_even_structs()
     {
-        return GetPointer<::flatbuffers::Vector<const JustSmallStruct *> *>(VT_SMALL_STRUCTS);
+        return GetPointer<::flatbuffers::Vector<const EvenSmallStruct *> *>(VT_EVEN_STRUCTS);
+    }
+    const ::flatbuffers::Vector<const OddSmallStruct *> *odd_structs() const
+    {
+        return GetPointer<const ::flatbuffers::Vector<const OddSmallStruct *> *>(VT_ODD_STRUCTS);
+    }
+    ::flatbuffers::Vector<const OddSmallStruct *> *mutable_odd_structs()
+    {
+        return GetPointer<::flatbuffers::Vector<const OddSmallStruct *> *>(VT_ODD_STRUCTS);
     }
     bool Verify(::flatbuffers::Verifier &verifier) const
     {
-        return VerifyTableStart(verifier) && VerifyOffset(verifier, VT_SMALL_STRUCTS) &&
-               verifier.VerifyVector(small_structs()) && verifier.EndTable();
+        return VerifyTableStart(verifier) && VerifyOffset(verifier, VT_EVEN_STRUCTS) &&
+               verifier.VerifyVector(even_structs()) && VerifyOffset(verifier, VT_ODD_STRUCTS) &&
+               verifier.VerifyVector(odd_structs()) && verifier.EndTable();
     }
     SmallStructsT *UnPack(const ::flatbuffers::resolver_function_t *_resolver = nullptr) const;
     void UnPackTo(SmallStructsT *_o,
@@ -435,10 +475,15 @@ struct SmallStructsBuilder
     typedef SmallStructs Table;
     ::flatbuffers::FlatBufferBuilder &fbb_;
     ::flatbuffers::uoffset_t start_;
-    void add_small_structs(
-        ::flatbuffers::Offset<::flatbuffers::Vector<const JustSmallStruct *>> small_structs)
+    void add_even_structs(
+        ::flatbuffers::Offset<::flatbuffers::Vector<const EvenSmallStruct *>> even_structs)
     {
-        fbb_.AddOffset(SmallStructs::VT_SMALL_STRUCTS, small_structs);
+        fbb_.AddOffset(SmallStructs::VT_EVEN_STRUCTS, even_structs);
+    }
+    void add_odd_structs(
+        ::flatbuffers::Offset<::flatbuffers::Vector<const OddSmallStruct *>> odd_structs)
+    {
+        fbb_.AddOffset(SmallStructs::VT_ODD_STRUCTS, odd_structs);
     }
     explicit SmallStructsBuilder(::flatbuffers::FlatBufferBuilder &_fbb) : fbb_(_fbb)
     {
@@ -454,26 +499,24 @@ struct SmallStructsBuilder
 
 inline ::flatbuffers::Offset<SmallStructs> CreateSmallStructs(
     ::flatbuffers::FlatBufferBuilder &_fbb,
-    ::flatbuffers::Offset<::flatbuffers::Vector<const JustSmallStruct *>> small_structs = 0)
+    ::flatbuffers::Offset<::flatbuffers::Vector<const EvenSmallStruct *>> even_structs = 0,
+    ::flatbuffers::Offset<::flatbuffers::Vector<const OddSmallStruct *>> odd_structs   = 0)
 {
     SmallStructsBuilder builder_(_fbb);
-    builder_.add_small_structs(small_structs);
+    builder_.add_odd_structs(odd_structs);
+    builder_.add_even_structs(even_structs);
     return builder_.Finish();
 }
 
-struct SmallStructs::Traits
-{
-    using type                   = SmallStructs;
-    static auto constexpr Create = CreateSmallStructs;
-};
-
 inline ::flatbuffers::Offset<SmallStructs> CreateSmallStructsDirect(
     ::flatbuffers::FlatBufferBuilder &_fbb,
-    const std::vector<JustSmallStruct> *small_structs = nullptr)
+    const std::vector<EvenSmallStruct> *even_structs = nullptr,
+    const std::vector<OddSmallStruct> *odd_structs   = nullptr)
 {
-    auto small_structs__ =
-        small_structs ? _fbb.CreateVectorOfStructs<JustSmallStruct>(*small_structs) : 0;
-    return CreateSmallStructs(_fbb, small_structs__);
+    auto even_structs__ =
+        even_structs ? _fbb.CreateVectorOfStructs<EvenSmallStruct>(*even_structs) : 0;
+    auto odd_structs__ = odd_structs ? _fbb.CreateVectorOfStructs<OddSmallStruct>(*odd_structs) : 0;
+    return CreateSmallStructs(_fbb, even_structs__, odd_structs__);
 }
 
 ::flatbuffers::Offset<SmallStructs> CreateSmallStructs(
@@ -503,7 +546,7 @@ inline OuterLargeT &OuterLargeT::operator=(OuterLargeT o) FLATBUFFERS_NOEXCEPT
 
 inline OuterLargeT *OuterLarge::UnPack(const ::flatbuffers::resolver_function_t *_resolver) const
 {
-    auto _o = std::make_unique<OuterLargeT>();
+    auto _o = std::unique_ptr<OuterLargeT>(new OuterLargeT());
     UnPackTo(_o.get(), _resolver);
     return _o.release();
 }
@@ -573,7 +616,7 @@ inline BadAlignmentRootT &BadAlignmentRootT::operator=(BadAlignmentRootT o) FLAT
 inline BadAlignmentRootT *BadAlignmentRoot::UnPack(
     const ::flatbuffers::resolver_function_t *_resolver) const
 {
-    auto _o = std::make_unique<BadAlignmentRootT>();
+    auto _o = std::unique_ptr<BadAlignmentRootT>(new BadAlignmentRootT());
     UnPackTo(_o.get(), _resolver);
     return _o.release();
 }
@@ -647,7 +690,7 @@ inline ::flatbuffers::Offset<BadAlignmentRoot> CreateBadAlignmentRoot(
 
 inline bool operator==(const SmallStructsT &lhs, const SmallStructsT &rhs)
 {
-    return (lhs.small_structs == rhs.small_structs);
+    return (lhs.even_structs == rhs.even_structs) && (lhs.odd_structs == rhs.odd_structs);
 }
 
 inline bool operator!=(const SmallStructsT &lhs, const SmallStructsT &rhs)
@@ -658,7 +701,7 @@ inline bool operator!=(const SmallStructsT &lhs, const SmallStructsT &rhs)
 inline SmallStructsT *SmallStructs::UnPack(
     const ::flatbuffers::resolver_function_t *_resolver) const
 {
-    auto _o = std::make_unique<SmallStructsT>();
+    auto _o = std::unique_ptr<SmallStructsT>(new SmallStructsT());
     UnPackTo(_o.get(), _resolver);
     return _o.release();
 }
@@ -669,18 +712,33 @@ inline void SmallStructs::UnPackTo(SmallStructsT *_o,
     (void)_o;
     (void)_resolver;
     {
-        auto _e = small_structs();
+        auto _e = even_structs();
         if (_e)
         {
-            _o->small_structs.resize(_e->size());
+            _o->even_structs.resize(_e->size());
             for (::flatbuffers::uoffset_t _i = 0; _i < _e->size(); _i++)
             {
-                _o->small_structs[_i] = *_e->Get(_i);
+                _o->even_structs[_i] = *_e->Get(_i);
             }
         }
         else
         {
-            _o->small_structs.resize(0);
+            _o->even_structs.resize(0);
+        }
+    }
+    {
+        auto _e = odd_structs();
+        if (_e)
+        {
+            _o->odd_structs.resize(_e->size());
+            for (::flatbuffers::uoffset_t _i = 0; _i < _e->size(); _i++)
+            {
+                _o->odd_structs[_i] = *_e->Get(_i);
+            }
+        }
+        else
+        {
+            _o->odd_structs.resize(0);
         }
     }
 }
@@ -707,9 +765,9 @@ inline ::flatbuffers::Offset<SmallStructs> CreateSmallStructs(
         const ::flatbuffers::rehasher_function_t *__rehasher;
     } _va = {&_fbb, _o, _rehasher};
     (void)_va;
-    auto _small_structs =
-        _o->small_structs.size() ? _fbb.CreateVectorOfStructs(_o->small_structs) : 0;
-    return CreateSmallStructs(_fbb, _small_structs);
+    auto _even_structs = _o->even_structs.size() ? _fbb.CreateVectorOfStructs(_o->even_structs) : 0;
+    auto _odd_structs  = _o->odd_structs.size() ? _fbb.CreateVectorOfStructs(_o->odd_structs) : 0;
+    return CreateSmallStructs(_fbb, _even_structs, _odd_structs);
 }
 
 inline const ::flatbuffers::TypeTable *BadAlignmentSmallTypeTable()
@@ -756,7 +814,7 @@ inline const ::flatbuffers::TypeTable *BadAlignmentRootTypeTable()
     return &tt;
 }
 
-inline const ::flatbuffers::TypeTable *JustSmallStructTypeTable()
+inline const ::flatbuffers::TypeTable *EvenSmallStructTypeTable()
 {
     static const ::flatbuffers::TypeCode type_codes[] = {{::flatbuffers::ET_UCHAR, 0, -1},
                                                          {::flatbuffers::ET_UCHAR, 0, -1}};
@@ -767,13 +825,27 @@ inline const ::flatbuffers::TypeTable *JustSmallStructTypeTable()
     return &tt;
 }
 
+inline const ::flatbuffers::TypeTable *OddSmallStructTypeTable()
+{
+    static const ::flatbuffers::TypeCode type_codes[] = {{::flatbuffers::ET_UCHAR, 0, -1},
+                                                         {::flatbuffers::ET_UCHAR, 0, -1},
+                                                         {::flatbuffers::ET_UCHAR, 0, -1}};
+    static const int64_t values[]                     = {0, 1, 2, 3};
+    static const char *const names[]                  = {"var_0", "var_1", "var_2"};
+    static const ::flatbuffers::TypeTable tt          = {
+        ::flatbuffers::ST_STRUCT, 3, type_codes, nullptr, nullptr, values, names};
+    return &tt;
+}
+
 inline const ::flatbuffers::TypeTable *SmallStructsTypeTable()
 {
-    static const ::flatbuffers::TypeCode type_codes[]    = {{::flatbuffers::ET_SEQUENCE, 1, 0}};
-    static const ::flatbuffers::TypeFunction type_refs[] = {JustSmallStructTypeTable};
-    static const char *const names[]                     = {"small_structs"};
+    static const ::flatbuffers::TypeCode type_codes[]    = {{::flatbuffers::ET_SEQUENCE, 1, 0},
+                                                            {::flatbuffers::ET_SEQUENCE, 1, 1}};
+    static const ::flatbuffers::TypeFunction type_refs[] = {EvenSmallStructTypeTable,
+                                                            OddSmallStructTypeTable};
+    static const char *const names[]                     = {"even_structs", "odd_structs"};
     static const ::flatbuffers::TypeTable tt             = {
-        ::flatbuffers::ST_TABLE, 1, type_codes, type_refs, nullptr, nullptr, names};
+        ::flatbuffers::ST_TABLE, 2, type_codes, type_refs, nullptr, nullptr, names};
     return &tt;
 }
 

@@ -633,6 +633,7 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node, bool igno
     case NewArrayWithSize:
     case NewArrayWithConstantSize:
     case NewArrayWithSpecies:
+    case NewArrayWithSizeAndStructure:
     case NewArrayBuffer:
     case NewArrayWithSpread:
     case NewInternalFieldObject:
@@ -762,7 +763,7 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node, bool igno
     case StringLocaleCompare:
     case FunctionBind:
     case DateSetTime:
-    case ArraySpliceExtract:
+    case ArraySplice:
         return false;
 
     case StringReplaceString:

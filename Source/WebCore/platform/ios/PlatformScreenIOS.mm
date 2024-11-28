@@ -28,6 +28,7 @@
 
 #if PLATFORM(IOS_FAMILY)
 
+#import "ContentsFormat.h"
 #import "DeprecatedGlobalSettings.h"
 #import "FloatRect.h"
 #import "FloatSize.h"
@@ -35,6 +36,7 @@
 #import "HostWindow.h"
 #import "IntRect.h"
 #import "LocalFrameView.h"
+#import "PlatformCALayerClient.h"
 #import "ScreenProperties.h"
 #import "WAKWindow.h"
 #import "Widget.h"
@@ -71,12 +73,25 @@ bool screenHasInvertedColors()
     return PAL::softLinkUIKitUIAccessibilityIsInvertColorsEnabled();
 }
 
-bool screenSupportsExtendedColor(Widget*)
+ContentsFormat screenContentsFormat(Widget* widget, PlatformCALayerClient* client)
 {
-    if (auto data = screenData(primaryScreenDisplayID()))
-        return data->screenSupportsExtendedColor;
+#if HAVE(HDR_SUPPORT)
+    if (client && client->hdrForImagesEnabled() && screenSupportsHighDynamicRange(widget))
+        return ContentsFormat::RGBA16F;
+#else
+    UNUSED_PARAM(widget);
+    UNUSED_PARAM(client);
+#endif
 
-    return MGGetBoolAnswer(kMGQHasExtendedColorDisplay);
+    if (auto data = screenData(primaryScreenDisplayID()))
+        return data->screenContentsFormat;
+
+#if HAVE(IOSURFACE_RGB10)
+    if (MGGetBoolAnswer(kMGQHasExtendedColorDisplay))
+        return ContentsFormat::RGBA10;
+#endif
+
+    return ContentsFormat::RGBA8;
 }
 
 bool screenSupportsHighDynamicRange(Widget*)
@@ -93,7 +108,13 @@ bool screenSupportsHighDynamicRange(Widget*)
 
 DestinationColorSpace screenColorSpace(Widget* widget)
 {
-    return screenSupportsExtendedColor(widget) ? DestinationColorSpace { extendedSRGBColorSpaceRef() } : DestinationColorSpace::SRGB();
+#if HAVE(IOSURFACE_RGB10)
+    if (screenContentsFormat(widget) == ContentsFormat::RGBA10)
+        return DestinationColorSpace { extendedSRGBColorSpaceRef() };
+#else
+    UNUSED_PARAM(widget);
+#endif
+    return DestinationColorSpace::SRGB();
 }
 
 // These functions scale between screen and page coordinates because JavaScript/DOM operations
@@ -211,7 +232,7 @@ ScreenProperties collectScreenProperties()
         screenData.colorSpace = { screenColorSpace(nullptr) };
         screenData.screenDepth = WebCore::screenDepth(nullptr);
         screenData.screenDepthPerComponent = WebCore::screenDepthPerComponent(nullptr);
-        screenData.screenSupportsExtendedColor = WebCore::screenSupportsExtendedColor(nullptr);
+        screenData.screenContentsFormat = screenContentsFormat(nullptr);
         screenData.screenHasInvertedColors = WebCore::screenHasInvertedColors();
         screenData.screenSupportsHighDynamicRange = WebCore::screenSupportsHighDynamicRange(nullptr);
         screenData.scaleFactor = WebCore::screenPPIFactor();

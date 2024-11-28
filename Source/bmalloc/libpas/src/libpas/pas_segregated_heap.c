@@ -89,7 +89,7 @@ static size_t min_object_size_for_heap(pas_segregated_heap* heap,
 static size_t max_object_size_for_page_config(pas_heap* parent_heap,
                                               const pas_page_base_config* page_config)
 {
-    static const bool verbose = false;
+    static const bool verbose = PAS_SHOULD_LOG(PAS_LOG_SEGREGATED_HEAPS);
     
     size_t result;
 
@@ -109,7 +109,7 @@ static size_t max_segregated_object_size_for_heap(pas_heap* parent_heap,
                                                   pas_segregated_heap* heap,
                                                   const pas_heap_config* config)
 {
-    static const bool verbose = false;
+    static const bool verbose = PAS_SHOULD_LOG(PAS_LOG_SEGREGATED_HEAPS);
     
     pas_segregated_page_config_variant variant;
     for (PAS_EACH_SEGREGATED_PAGE_CONFIG_VARIANT_DESCENDING(variant)) {
@@ -136,7 +136,7 @@ static size_t max_bitfit_object_size_for_heap(pas_heap* parent_heap,
                                               pas_segregated_heap* heap,
                                               const pas_heap_config* config)
 {
-    static const bool verbose = false;
+    static const bool verbose = PAS_SHOULD_LOG(PAS_LOG_SEGREGATED_HEAPS);
     
     pas_bitfit_page_config_variant variant;
     
@@ -356,7 +356,7 @@ medium_directory_tuple_for_index_impl(
     size_t index,
     pas_segregated_heap_medium_size_directory_search_mode search_mode)
 {
-    static const bool verbose = false;
+    static const bool verbose = PAS_SHOULD_LOG(PAS_LOG_SEGREGATED_HEAPS);
     
     unsigned begin;
     unsigned end;
@@ -469,7 +469,7 @@ pas_segregated_heap_medium_directory_tuple_for_index(
     pas_segregated_heap_medium_size_directory_search_mode search_mode,
     pas_lock_hold_mode heap_lock_hold_mode)
 {
-    static const bool verbose = false;
+    static const bool verbose = PAS_SHOULD_LOG(PAS_LOG_SEGREGATED_HEAPS);
     
     pas_segregated_heap_rare_data* rare_data;
     pas_mutation_count saved_count;
@@ -517,7 +517,7 @@ unsigned pas_segregated_heap_medium_allocator_index_for_index(
     pas_segregated_heap_medium_size_directory_search_mode search_mode,
     pas_lock_hold_mode heap_lock_hold_mode)
 {
-    static const bool verbose = false;
+    static const bool verbose = PAS_SHOULD_LOG(PAS_LOG_SEGREGATED_HEAPS);
     
     pas_segregated_heap_medium_directory_tuple* medium_directory;
     
@@ -567,7 +567,7 @@ static size_t compute_small_index_upper_bound(pas_segregated_heap* heap,
 static void ensure_size_lookup(pas_segregated_heap* heap,
                                const pas_heap_config* config)
 {
-    static const bool verbose = false;
+    static const bool verbose = PAS_SHOULD_LOG(PAS_LOG_SEGREGATED_HEAPS);
     
     size_t index_upper_bound;
     pas_compact_atomic_segregated_size_directory_ptr* index_to_size_directory;
@@ -850,7 +850,7 @@ pas_segregated_heap_ensure_allocator_index(
     const pas_heap_config* config,
     unsigned* cached_index)
 {
-    static const bool verbose = false;
+    static const bool verbose = PAS_SHOULD_LOG(PAS_LOG_SEGREGATED_HEAPS);
 
     size_t index;
     unsigned allocator_index;
@@ -940,7 +940,7 @@ static size_t compute_ideal_object_size(pas_segregated_heap* heap,
                                         size_t alignment,
                                         const pas_segregated_page_config* page_config_ptr)
 {
-    static const bool verbose = false;
+    static const bool verbose = PAS_SHOULD_LOG(PAS_LOG_SEGREGATED_HEAPS);
     
     unsigned num_objects;
     pas_segregated_page_config page_config;
@@ -1021,7 +1021,7 @@ typedef struct {
 
 static bool check_part_of_all_heaps_callback(pas_heap* heap, void* arg)
 {
-    static const bool verbose = false;
+    static const bool verbose = PAS_SHOULD_LOG(PAS_LOG_SEGREGATED_HEAPS);
     
     check_part_of_all_heaps_data* data;
 
@@ -1331,7 +1331,7 @@ pas_segregated_heap_ensure_size_directory_for_size(
     unsigned* cached_index,
     pas_segregated_size_directory_creation_mode creation_mode)
 {
-    static const bool verbose = false;
+    static const bool verbose = PAS_SHOULD_LOG(PAS_LOG_SEGREGATED_HEAPS);
 
     pas_heap* parent_heap;
     pas_segregated_size_directory* result;

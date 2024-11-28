@@ -89,9 +89,11 @@ WorkerSWClientConnection::~WorkerSWClientConnection()
     for (auto& callback : navigationPreloadStateCallbacks.values())
         callback(Exception { ExceptionCode::AbortError, "context stopped"_s });
 
+#if ENABLE(NOTIFICATION_EVENT)
     auto getNotificationsCallbacks = WTFMove(m_getNotificationsCallbacks);
     for (auto& callback : getNotificationsCallbacks.values())
         callback(Exception { ExceptionCode::AbortError, "context stopped"_s });
+#endif
 
     auto backgroundFetchInformationCallbacks = std::exchange(m_backgroundFetchInformationCallbacks, { });
     for (auto& callback : backgroundFetchInformationCallbacks.values())
@@ -204,12 +206,12 @@ void WorkerSWClientConnection::postMessageToServiceWorker(ServiceWorkerIdentifie
 
 SWServerConnectionIdentifier WorkerSWClientConnection::serverConnectionIdentifier() const
 {
-    SWServerConnectionIdentifier identifier;
+    std::optional<SWServerConnectionIdentifier> identifier;
     callOnMainThreadAndWait([&] {
         auto& connection = ServiceWorkerProvider::singleton().serviceWorkerConnection();
         identifier = connection.serverConnectionIdentifier();
     });
-    return identifier;
+    return *identifier;
 }
 
 bool WorkerSWClientConnection::mayHaveServiceWorkerRegisteredForOrigin(const SecurityOriginData&) const
@@ -335,6 +337,7 @@ void WorkerSWClientConnection::getPushPermissionState(ServiceWorkerRegistrationI
     });
 }
 
+#if ENABLE(NOTIFICATION_EVENT)
 void WorkerSWClientConnection::getNotifications(const URL& serviceWorkerRegistrationURL, const String& tag, GetNotificationsCallback&& callback)
 {
     auto requestIdentifier = SWClientRequestIdentifier::generate();
@@ -350,6 +353,7 @@ void WorkerSWClientConnection::getNotifications(const URL& serviceWorkerRegistra
         });
     });
 }
+#endif
 
 void WorkerSWClientConnection::enableNavigationPreload(ServiceWorkerRegistrationIdentifier registrationIdentifier, ExceptionOrVoidCallback&& callback)
 {

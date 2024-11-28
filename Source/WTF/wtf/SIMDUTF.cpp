@@ -31,6 +31,7 @@ IGNORE_WARNINGS_BEGIN("missing-prototypes")
 IGNORE_WARNINGS_BEGIN("cast-qual")
 IGNORE_WARNINGS_BEGIN("cast-align")
 IGNORE_WARNINGS_BEGIN("documentation")
+IGNORE_WARNINGS_BEGIN("unsafe-buffer-usage")
 
 #include <wtf/simdutf/simdutf_impl.cpp.h>
 

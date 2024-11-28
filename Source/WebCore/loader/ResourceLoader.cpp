@@ -78,8 +78,8 @@
 
 #undef RESOURCELOADER_RELEASE_LOG
 #define PAGE_ID (frame() && frame()->pageID() ? frame()->pageID()->toUInt64() : 0)
-#define FRAME_ID ((frame() ? frame()->frameID() : FrameIdentifier()).object().toUInt64())
-#define RESOURCELOADER_RELEASE_LOG(fmt, ...) RELEASE_LOG(Network, "%p - [pageID=%" PRIu64 ", frameID=%" PRIu64 ", frameLoader=%p, resourceID=%" PRIu64 "] ResourceLoader::" fmt, this, PAGE_ID, FRAME_ID, frameLoader(), identifier().toUInt64(), ##__VA_ARGS__)
+#define FRAME_ID (frame() ? frame()->frameID().object().toUInt64() : 0)
+#define RESOURCELOADER_RELEASE_LOG(fmt, ...) RELEASE_LOG(Network, "%p - [pageID=%" PRIu64 ", frameID=%" PRIu64 ", frameLoader=%p, resourceID=%" PRIu64 "] ResourceLoader::" fmt, this, PAGE_ID, FRAME_ID, frameLoader(), identifier() ? identifier()->toUInt64() : 0, ##__VA_ARGS__)
 
 namespace WebCore {
 
@@ -128,7 +128,7 @@ void ResourceLoader::releaseResources()
 
     finishNetworkLoad();
 
-    m_identifier = { };
+    m_identifier = std::nullopt;
 
     m_resourceData.reset();
     m_deferredRequest = ResourceRequest();
@@ -400,7 +400,7 @@ bool ResourceLoader::isSubresourceLoader() const
     return false;
 }
 
-CheckedPtr<FrameLoader> ResourceLoader::checkedFrameLoader() const
+RefPtr<FrameLoader> ResourceLoader::protectedFrameLoader() const
 {
     return frameLoader();
 }
@@ -459,7 +459,7 @@ void ResourceLoader::willSendRequestInternal(ResourceRequest&& request, const Re
 
     if (m_options.sendLoadCallbacks == SendCallbackPolicy::SendCallbacks) {
         if (createdResourceIdentifier)
-            checkedFrameLoader()->notifier().assignIdentifierToInitialRequest(m_identifier, protectedDocumentLoader().get(), request);
+            protectedFrameLoader()->notifier().assignIdentifierToInitialRequest(*m_identifier, options().mode == FetchOptions::Mode::Navigate ? IsMainResourceLoad::Yes : IsMainResourceLoad::No, protectedDocumentLoader().get(), request);
 
 #if PLATFORM(IOS_FAMILY)
         // If this ResourceLoader was stopped as a result of assignIdentifierToInitialRequest, bail out
@@ -470,10 +470,10 @@ void ResourceLoader::willSendRequestInternal(ResourceRequest&& request, const Re
         }
 #endif
 
-        checkedFrameLoader()->notifier().willSendRequest(this, request, redirectResponse);
+        protectedFrameLoader()->notifier().willSendRequest(this, request, redirectResponse);
     }
     else
-        InspectorInstrumentation::willSendRequest(protectedFrame().get(), m_identifier, m_frame->loader().protectedDocumentLoader().get(), request, redirectResponse, protectedCachedResource().get(), this);
+        InspectorInstrumentation::willSendRequest(protectedFrame().get(), *m_identifier, m_frame->loader().protectedDocumentLoader().get(), request, redirectResponse, protectedCachedResource().get(), this);
 
 #if USE(QUICK_LOOK)
     if (m_documentLoader) {
@@ -486,14 +486,14 @@ void ResourceLoader::willSendRequestInternal(ResourceRequest&& request, const Re
     if (isRedirect) {
         RESOURCELOADER_RELEASE_LOG("willSendRequestInternal: Processing cross-origin redirect");
         platformStrategies()->loaderStrategy()->crossOriginRedirectReceived(this, request.url());
-        checkedFrameLoader()->client().didLoadFromRegistrableDomain(RegistrableDomain(request.url()));
+        protectedFrameLoader()->protectedClient()->didLoadFromRegistrableDomain(RegistrableDomain(request.url()));
     }
     m_request = request;
 
     if (isRedirect) {
         auto& redirectURL = request.url();
         if (m_documentLoader && !m_documentLoader->isCommitted())
-            checkedFrameLoader()->client().dispatchDidReceiveServerRedirectForProvisionalLoad();
+            protectedFrameLoader()->protectedClient()->dispatchDidReceiveServerRedirectForProvisionalLoad();
 
         if (redirectURL.protocolIsData()) {
             // Handle data URL decoding locally.
@@ -600,7 +600,7 @@ void ResourceLoader::didReceiveResponse(const ResourceResponse& r, CompletionHan
     m_response = r;
 
     if (m_options.sendLoadCallbacks == SendCallbackPolicy::SendCallbacks)
-        checkedFrameLoader()->notifier().didReceiveResponse(this, m_response);
+        protectedFrameLoader()->notifier().didReceiveResponse(this, m_response);
 }
 
 void ResourceLoader::didReceiveData(const SharedBuffer& buffer, long long encodedDataLength, DataPayloadType dataPayloadType)
@@ -626,7 +626,7 @@ void ResourceLoader::didReceiveBuffer(const FragmentedSharedBuffer& buffer, long
     // However, with today's computers and networking speeds, this won't happen in practice.
     // Could be an issue with a giant local file.
     if (m_options.sendLoadCallbacks == SendCallbackPolicy::SendCallbacks && m_frame)
-        checkedFrameLoader()->notifier().didReceiveData(this, buffer.makeContiguous(), static_cast<int>(encodedDataLength));
+        protectedFrameLoader()->notifier().didReceiveData(this, buffer.makeContiguous(), static_cast<int>(encodedDataLength));
 }
 
 void ResourceLoader::didFinishLoading(const NetworkLoadMetrics& networkLoadMetrics)
@@ -656,7 +656,7 @@ void ResourceLoader::didFinishLoadingOnePart(const NetworkLoadMetrics& networkLo
         return;
     m_notifiedLoadComplete = true;
     if (m_options.sendLoadCallbacks == SendCallbackPolicy::SendCallbacks)
-        checkedFrameLoader()->notifier().didFinishLoad(this, networkLoadMetrics);
+        protectedFrameLoader()->notifier().didFinishLoad(this, networkLoadMetrics);
 }
 
 void ResourceLoader::didFail(const ResourceError& error)
@@ -681,7 +681,7 @@ void ResourceLoader::cleanupForError(const ResourceError& error)
         return;
     m_notifiedLoadComplete = true;
     if (m_options.sendLoadCallbacks == SendCallbackPolicy::SendCallbacks && m_identifier)
-        checkedFrameLoader()->notifier().didFailToLoad(this, error);
+        protectedFrameLoader()->notifier().didFailToLoad(this, error);
 }
 
 void ResourceLoader::cancel()
@@ -743,27 +743,27 @@ void ResourceLoader::cancel(const ResourceError& error, LoadWillContinueInAnothe
 
 ResourceError ResourceLoader::cancelledError()
 {
-    return checkedFrameLoader()->cancelledError(m_request);
+    return protectedFrameLoader()->cancelledError(m_request);
 }
 
 ResourceError ResourceLoader::blockedError()
 {
-    return checkedFrameLoader()->client().blockedError(m_request);
+    return protectedFrameLoader()->protectedClient()->blockedError(m_request);
 }
 
 ResourceError ResourceLoader::blockedByContentBlockerError()
 {
-    return checkedFrameLoader()->client().blockedByContentBlockerError(m_request);
+    return protectedFrameLoader()->protectedClient()->blockedByContentBlockerError(m_request);
 }
 
 ResourceError ResourceLoader::cannotShowURLError()
 {
-    return checkedFrameLoader()->client().cannotShowURLError(m_request);
+    return protectedFrameLoader()->protectedClient()->cannotShowURLError(m_request);
 }
 
 ResourceError ResourceLoader::httpsUpgradeRedirectLoopError()
 {
-    return checkedFrameLoader()->client().httpsUpgradeRedirectLoopError(m_request);
+    return protectedFrameLoader()->protectedClient()->httpsUpgradeRedirectLoopError(m_request);
 }
 
 void ResourceLoader::willSendRequestAsync(ResourceHandle* handle, ResourceRequest&& request, ResourceResponse&& redirectResponse, CompletionHandler<void(ResourceRequest&&)>&& completionHandler)
@@ -836,7 +836,7 @@ bool ResourceLoader::shouldUseCredentialStorage()
     }
 
     Ref protectedThis { *this };
-    return checkedFrameLoader()->client().shouldUseCredentialStorage(protectedDocumentLoader().get(), identifier());
+    return protectedFrameLoader()->protectedClient()->shouldUseCredentialStorage(protectedDocumentLoader().get(), *identifier());
 }
 
 bool ResourceLoader::isAllowedToAskUserForCredentials() const
@@ -868,7 +868,7 @@ void ResourceLoader::didReceiveAuthenticationChallenge(ResourceHandle* handle, c
 
     if (m_options.storedCredentialsPolicy == StoredCredentialsPolicy::Use) {
         if (isAllowedToAskUserForCredentials()) {
-            checkedFrameLoader()->notifier().didReceiveAuthenticationChallenge(this, challenge);
+            protectedFrameLoader()->notifier().didReceiveAuthenticationChallenge(this, challenge);
             return;
         }
         didBlockAuthenticationChallenge();
@@ -886,7 +886,7 @@ void ResourceLoader::canAuthenticateAgainstProtectionSpaceAsync(ResourceHandle*,
 bool ResourceLoader::canAuthenticateAgainstProtectionSpace(const ProtectionSpace& protectionSpace)
 {
     Ref protectedThis { *this };
-    return checkedFrameLoader()->client().canAuthenticateAgainstProtectionSpace(protectedDocumentLoader().get(), identifier(), protectionSpace);
+    return protectedFrameLoader()->client().canAuthenticateAgainstProtectionSpace(protectedDocumentLoader().get(), *identifier(), protectionSpace);
 }
 
 #endif
@@ -895,7 +895,7 @@ bool ResourceLoader::canAuthenticateAgainstProtectionSpace(const ProtectionSpace
 
 RetainPtr<CFDictionaryRef> ResourceLoader::connectionProperties(ResourceHandle*)
 {
-    return checkedFrameLoader()->connectionProperties(this);
+    return protectedFrameLoader()->connectionProperties(this);
 }
 
 #endif

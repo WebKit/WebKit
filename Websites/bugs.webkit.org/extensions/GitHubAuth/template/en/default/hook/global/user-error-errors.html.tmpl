@@ -1,0 +1,25 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[% IF error == "github_no_emails" %]
+  Your GitHub account cannot be used because [% terms.Bugzilla %] cannot see any useable email addresses. Your GitHub account
+  may have no verified email addresses, [% terms.Bugzilla %] is not authorized to see them, or you have a non-reply-able email addresses.
+  GitHub's noreply email addresses are not acceptable for [% terms.Bugzilla %] accounts because they cannot recieve email.
+
+[% ELSIF error == "github_invalid_email" %]
+  Your GitHub account email '[% email FILTER html %]' is not valid.
+
+[% ELSIF error == "github_auth_account_too_powerful" %]
+  [% title = "Account Too Powerful" %]
+  Your account is a member of a group which is not permitted to use GitHub to
+  log in. Please log in with your [% terms.Bugzilla %] username and password.
+  <br><br>
+  (GitHub logins are disabled for accounts which are members of certain
+  particularly sensitive groups, while we gain experience with the technology.)
+
+[% END %]

@@ -33,6 +33,7 @@ class CSSCalcSymbolTable;
 
 namespace CSSCalc {
 
+struct Anchor;
 struct Tree;
 
 struct EvaluationOptions {
@@ -50,6 +51,7 @@ struct EvaluationOptions {
 };
 
 std::optional<double> evaluateDouble(const Tree&, const EvaluationOptions&);
+std::optional<double> evaluateWithoutFallback(const Anchor&, const EvaluationOptions&);
 
 } // namespace CSSCalc
 } // namespace WebCore

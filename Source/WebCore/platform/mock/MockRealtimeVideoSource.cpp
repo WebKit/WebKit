@@ -138,7 +138,7 @@ const FontCascade& MockRealtimeVideoSource::DrawingState::statsFont()
 MockRealtimeVideoSource::MockRealtimeVideoSource(String&& deviceID, AtomString&& name, MediaDeviceHashSalts&& hashSalts, std::optional<PageIdentifier> pageIdentifier)
     : RealtimeVideoCaptureSource(CaptureDevice { WTFMove(deviceID), CaptureDevice::DeviceType::Camera, WTFMove(name) }, WTFMove(hashSalts), pageIdentifier)
     , m_runLoop(RunLoop::create("WebKit::MockRealtimeVideoSource generateFrame runloop"_s))
-    , m_emitFrameTimer(m_runLoop, [protectedThis = Ref { *this }] { protectedThis->generateFrame(); })
+    , m_emitFrameTimer(m_runLoop.get(), [protectedThis = Ref { *this }] { protectedThis->generateFrame(); })
     , m_deviceOrientation { VideoFrameRotation::None }
 {
 
@@ -542,8 +542,9 @@ void MockRealtimeVideoSource::drawText(GraphicsContext& context)
 
     unsigned milliseconds = lround(elapsedTime().milliseconds());
     unsigned seconds = milliseconds / 1000 % 60;
-    unsigned minutes = seconds / 60 % 60;
-    unsigned hours = minutes / 60 % 60;
+    unsigned minutes = (milliseconds / (1000 * 60)) % 60;
+    // There is no field for days, so pad the hours on 2 digits and let it wrap around at the 100th hour.
+    unsigned hours = (milliseconds / (1000 * 60 * 60)) % 100;
 
     auto drawingState = this->drawingState();
     IntSize captureSize = this->captureSize();

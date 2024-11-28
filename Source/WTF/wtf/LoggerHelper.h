@@ -37,27 +37,27 @@ public:
     virtual const Logger& logger() const = 0;
     virtual ASCIILiteral logClassName() const = 0;
     virtual WTFLogChannel& logChannel() const = 0;
-    virtual const void* logIdentifier() const = 0;
+    virtual uint64_t logIdentifier() const = 0;
 
 #if !RELEASE_LOG_DISABLED
 
 #define LOGIDENTIFIER WTF::Logger::LogSiteIdentifier(logClassName(), __func__, logIdentifier())
 
 #if VERBOSE_RELEASE_LOG
-#define ALWAYS_LOG(...)     logger().logAlwaysVerbose(logChannel(), __FILE__, __func__, __LINE__, __VA_ARGS__)
-#define ERROR_LOG(...)      logger().errorVerbose(logChannel(), __FILE__, __func__, __LINE__, __VA_ARGS__)
-#define WARNING_LOG(...)    logger().warningVerbose(logChannel(), __FILE__, __func__, __LINE__, __VA_ARGS__)
-#define INFO_LOG(...)       logger().infoVerbose(logChannel(), __FILE__, __func__, __LINE__, __VA_ARGS__)
-#define DEBUG_LOG(...)      logger().debugVerbose(logChannel(), __FILE__, __func__, __LINE__, __VA_ARGS__)
+#define ALWAYS_LOG(...)     Ref { logger() }->logAlwaysVerbose(logChannel(), __FILE__, __func__, __LINE__, __VA_ARGS__)
+#define ERROR_LOG(...)      Ref { logger() }->errorVerbose(logChannel(), __FILE__, __func__, __LINE__, __VA_ARGS__)
+#define WARNING_LOG(...)    Ref { logger() }->warningVerbose(logChannel(), __FILE__, __func__, __LINE__, __VA_ARGS__)
+#define INFO_LOG(...)       Ref { logger() }->infoVerbose(logChannel(), __FILE__, __func__, __LINE__, __VA_ARGS__)
+#define DEBUG_LOG(...)      Ref { logger() }->debugVerbose(logChannel(), __FILE__, __func__, __LINE__, __VA_ARGS__)
 #else
-#define ALWAYS_LOG(...)     logger().logAlways(logChannel(), __VA_ARGS__)
-#define ERROR_LOG(...)      logger().error(logChannel(), __VA_ARGS__)
-#define WARNING_LOG(...)    logger().warning(logChannel(), __VA_ARGS__)
-#define INFO_LOG(...)       logger().info(logChannel(), __VA_ARGS__)
-#define DEBUG_LOG(...)      logger().debug(logChannel(), __VA_ARGS__)
+#define ALWAYS_LOG(...)     Ref { logger() }->logAlways(logChannel(), __VA_ARGS__)
+#define ERROR_LOG(...)      Ref { logger() }->error(logChannel(), __VA_ARGS__)
+#define WARNING_LOG(...)    Ref { logger() }->warning(logChannel(), __VA_ARGS__)
+#define INFO_LOG(...)       Ref { logger() }->info(logChannel(), __VA_ARGS__)
+#define DEBUG_LOG(...)      Ref { logger() }->debug(logChannel(), __VA_ARGS__)
 #endif
 
-#define WILL_LOG(_level_)   logger().willLog(logChannel(), _level_)
+#define WILL_LOG(_level_)   Ref { logger() }->willLog(logChannel(), _level_)
 
 #define ALWAYS_LOG_IF(condition, ...)     if (condition) ALWAYS_LOG(__VA_ARGS__)
 #define ERROR_LOG_IF(condition, ...)      if (condition) ERROR_LOG(__VA_ARGS__)
@@ -65,12 +65,12 @@ public:
 #define INFO_LOG_IF(condition, ...)       if (condition) INFO_LOG(__VA_ARGS__)
 #define DEBUG_LOG_IF(condition, ...)      if (condition) DEBUG_LOG(__VA_ARGS__)
 
-#define ALWAYS_LOG_IF_POSSIBLE(...)     if (loggerPtr()) loggerPtr()->logAlways(logChannel(), __VA_ARGS__)
-#define ERROR_LOG_IF_POSSIBLE(...)      if (loggerPtr()) loggerPtr()->error(logChannel(), __VA_ARGS__)
-#define WARNING_LOG_IF_POSSIBLE(...)    if (loggerPtr()) loggerPtr()->warning(logChannel(), __VA_ARGS__)
-#define INFO_LOG_IF_POSSIBLE(...)       if (loggerPtr()) loggerPtr()->info(logChannel(), __VA_ARGS__)
-#define DEBUG_LOG_IF_POSSIBLE(...)      if (loggerPtr()) loggerPtr()->debug(logChannel(), __VA_ARGS__)
-#define WILL_LOG_IF_POSSIBLE(_level_)   if (loggerPtr()) loggerPtr()->willLog(logChannel(), _level_)
+#define ALWAYS_LOG_IF_POSSIBLE(...)     if (RefPtr logger = loggerPtr()) logger->logAlways(logChannel(), __VA_ARGS__)
+#define ERROR_LOG_IF_POSSIBLE(...)      if (RefPtr logger = loggerPtr()) logger->error(logChannel(), __VA_ARGS__)
+#define WARNING_LOG_IF_POSSIBLE(...)    if (RefPtr logger = loggerPtr()) logger->warning(logChannel(), __VA_ARGS__)
+#define INFO_LOG_IF_POSSIBLE(...)       if (RefPtr logger = loggerPtr()) logger->info(logChannel(), __VA_ARGS__)
+#define DEBUG_LOG_IF_POSSIBLE(...)      if (RefPtr logger = loggerPtr()) logger->debug(logChannel(), __VA_ARGS__)
+#define WILL_LOG_IF_POSSIBLE(_level_)   if (RefPtr logger = loggerPtr()) logger->willLog(logChannel(), _level_)
 
 #if defined(__OBJC__)
 #define OBJC_LOGIDENTIFIER WTF::Logger::LogSiteIdentifier(__PRETTY_FUNCTION__, self.logIdentifier)
@@ -81,16 +81,16 @@ public:
 #define OBJC_DEBUG_LOG(...)      if (self.loggerPtr && self.logChannel) self.loggerPtr->debug(*self.logChannel, __VA_ARGS__)
 #endif
 
-    static const void* childLogIdentifier(const void* parentIdentifier, uint64_t childIdentifier)
+    static uint64_t childLogIdentifier(uint64_t parentIdentifier, uint64_t childIdentifier)
     {
         static constexpr uint64_t parentMask = 0xffffffffffff0000ull;
         static constexpr uint64_t maskLowerWord = 0xffffull;
-        return reinterpret_cast<const void*>((bitwise_cast<uintptr_t>(parentIdentifier) & parentMask) | (childIdentifier & maskLowerWord));
+        return reinterpret_cast<uint64_t>((parentIdentifier & parentMask) | (childIdentifier & maskLowerWord));
     }
 
-    static const void* uniqueLogIdentifier()
+    static uint64_t uniqueLogIdentifier()
     {
-        return reinterpret_cast<const void*>(cryptographicallyRandomNumber<uint64_t>());
+        return cryptographicallyRandomNumber<uint64_t>();
     }
 
 #else // RELEASE_LOG_DISABLED

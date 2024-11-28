@@ -56,6 +56,14 @@ static NSString * const popupKey = @"popup";
 static NSString * const textKey = @"text";
 static NSString * const titleKey = @"title";
 
+#if ENABLE(WK_WEB_EXTENSIONS_ICON_VARIANTS)
+static NSString * const variantsKey = @"variants";
+static NSString * const colorSchemesKey = @"color_schemes";
+static NSString * const lightKey = @"light";
+static NSString * const darkKey = @"dark";
+static NSString * const anyKey = @"any";
+#endif
+
 namespace WebKit {
 
 bool WebExtensionAPIAction::parseActionDetails(NSDictionary *details, std::optional<WebExtensionWindowIdentifier>& windowIdentifier, std::optional<WebExtensionTabIdentifier>& tabIdentifier, NSString **outExceptionString)
@@ -363,6 +371,11 @@ static NSString *dataURLFromImageData(JSValue *imageData, size_t *outWidth, NSSt
 
 bool WebExtensionAPIAction::isValidDimensionKey(NSString *dimension)
 {
+#if ENABLE(WK_WEB_EXTENSIONS_ICON_VARIANTS)
+    if ([dimension isEqualToString:anyKey])
+        return true;
+#endif
+
     double value = dimension.doubleValue;
     if (!value)
         return false;
@@ -379,9 +392,129 @@ bool WebExtensionAPIAction::isValidDimensionKey(NSString *dimension)
     return true;
 }
 
+NSString *WebExtensionAPIAction::parseIconPath(NSString *path, const URL& baseURL)
+{
+    // Resolve paths as relative against the base URL, unless it is a data URL.
+    if ([path hasPrefix:@"data:"])
+        return path;
+    return URL { baseURL, path }.path().toString();
+}
+
+NSMutableDictionary *WebExtensionAPIAction::parseIconPathsDictionary(NSDictionary *input, const URL& baseURL, bool forVariants, NSString *inputKey, NSString **outExceptionString)
+{
+    auto *result = [NSMutableDictionary dictionaryWithCapacity:input.count];
+
+    for (NSString *key in input) {
+#if ENABLE(WK_WEB_EXTENSIONS_ICON_VARIANTS)
+        if (forVariants && [key isEqualToString:colorSchemesKey])
+            continue;
+#endif
+
+        if (!isValidDimensionKey(key)) {
+            if (outExceptionString)
+                *outExceptionString = toErrorString(nullptr, inputKey, @"'%@' is not a valid dimension", key);
+            return nil;
+        }
+
+        NSString *path = input[key];
+        if (!validateObject(path, [NSString stringWithFormat:@"%@[%@]", inputKey, key], NSString.class, outExceptionString))
+            return nil;
+
+        result[key] = parseIconPath(path, baseURL);
+    }
+
+    return result;
+}
+
+NSMutableDictionary *WebExtensionAPIAction::parseIconImageDataDictionary(NSDictionary *input, bool forVariants, NSString *inputKey, NSString **outExceptionString)
+{
+    auto *result = [NSMutableDictionary dictionaryWithCapacity:input.count];
+
+    for (NSString *key in input) {
+#if ENABLE(WK_WEB_EXTENSIONS_ICON_VARIANTS)
+        if (forVariants && [key isEqualToString:colorSchemesKey])
+            continue;
+#endif
+
+        if (!isValidDimensionKey(key)) {
+            if (outExceptionString)
+                *outExceptionString = toErrorString(nullptr, inputKey, @"'%@' is not a valid dimension", key);
+            return nil;
+        }
+
+        id value = input[key];
+        if (!validateObject(value, [NSString stringWithFormat:@"%@[%@]", inputKey, key], JSValue.class, outExceptionString))
+            return nil;
+
+        auto *dataURLString = dataURLFromImageData(value, nullptr, key, outExceptionString);
+        if (!dataURLString)
+            return nil;
+
+        result[key] = dataURLString;
+    }
+
+    return result;
+}
+
+#if ENABLE(WK_WEB_EXTENSIONS_ICON_VARIANTS)
+NSArray *WebExtensionAPIAction::parseIconVariants(NSArray *input, const URL& baseURL, NSString *inputKey, NSString **outExceptionString)
+{
+    auto *result = [NSMutableArray arrayWithCapacity:input.count];
+
+    NSString *firstExceptionString;
+    for (NSUInteger index = 0; index < input.count; ++index) {
+        NSDictionary *dictionary = input[index];
+        auto *compositeKey = [NSString stringWithFormat:@"%@[%lu]", inputKey, index];
+
+        // Try parsing the variant as image data first.
+        auto *parsedDictionary = parseIconImageDataDictionary(dictionary, true, compositeKey, !firstExceptionString ? &firstExceptionString : nullptr);
+
+        // If image data failed, try parsing as paths.
+        if (!parsedDictionary)
+            parsedDictionary = parseIconPathsDictionary(dictionary, baseURL, true, compositeKey, !firstExceptionString ? &firstExceptionString : nullptr);
+
+        // If all types failed, continue.
+        if (!parsedDictionary) {
+            ASSERT(firstExceptionString);
+            continue;
+        }
+
+        if (NSArray *colorSchemes = dictionary[colorSchemesKey]) {
+            auto *colorSchemesCompositeKey = [NSString stringWithFormat:@"%@['%@']", compositeKey, colorSchemesKey];
+            if (!validateObject(colorSchemes, colorSchemesCompositeKey, @[ NSString.class ], !firstExceptionString ? &firstExceptionString : nullptr))
+                continue;
+
+            if (![colorSchemes containsObject:lightKey] && ![colorSchemes containsObject:darkKey]) {
+                if (!firstExceptionString)
+                    firstExceptionString = toErrorString(nil, colorSchemesCompositeKey, @"it must specify either 'light' or 'dark'");
+                continue;
+            }
+
+            parsedDictionary[colorSchemesKey] = colorSchemes;
+        }
+
+        ASSERT(parsedDictionary);
+        [result addObject:parsedDictionary];
+    }
+
+    if (input.count && !result.count) {
+        // An exception is only set if no valid icon variants were found,
+        // maintaining flexibility for future support of different inputs.
+        if (!firstExceptionString)
+            firstExceptionString = toErrorString(nil, inputKey, @"it didn't contain any valid icon variants");
+        if (outExceptionString)
+            *outExceptionString = firstExceptionString;
+        return nil;
+    }
+
+    return [result copy];
+}
+#endif // ENABLE(WK_WEB_EXTENSIONS_ICON_VARIANTS)
+
 void WebExtensionAPIAction::setIcon(WebFrame& frame, NSDictionary *details, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/action/setIcon
+    // Icon Variants: https://github.com/w3c/webextensions/blob/main/proposals/dark_mode_extension_icons.md
 
     std::optional<WebExtensionWindowIdentifier> windowIdentifier;
     std::optional<WebExtensionTabIdentifier> tabIdentifier;
@@ -391,6 +524,9 @@ void WebExtensionAPIAction::setIcon(WebFrame& frame, NSDictionary *details, Ref<
     static NSDictionary<NSString *, id> *types = @{
         pathKey: [NSOrderedSet orderedSetWithObjects:NSString.class, NSDictionary.class, NSNull.class, nil],
         imageDataKey: [NSOrderedSet orderedSetWithObjects:JSValue.class, NSDictionary.class, NSNull.class, nil],
+#if ENABLE(WK_WEB_EXTENSIONS_ICON_VARIANTS)
+        variantsKey: [NSOrderedSet orderedSetWithObjects:@[ NSDictionary.class ], NSNull.class, nil],
+#endif
     };
 
     if (!validateDictionary(details, @"details", nil, types, outExceptionString))
@@ -413,59 +549,37 @@ void WebExtensionAPIAction::setIcon(WebFrame& frame, NSDictionary *details, Ref<
     }
 
     if (auto *images = objectForKey<NSDictionary>(details, imageDataKey)) {
-        auto *mutableIconDictionary = [NSMutableDictionary dictionaryWithCapacity:images.count];
-
-        for (NSString *key in images) {
-            if (!isValidDimensionKey(key)) {
-                *outExceptionString = toErrorString(nil, imageDataKey, @"'%@' in not a valid dimension", key);
-                return;
-            }
-
-            if (!validateObject(images[key], [NSString stringWithFormat:@"%@[%@]", imageDataKey, key], JSValue.class, outExceptionString))
-                return;
-
-            JSValue *imageData = images[key];
-            auto *dataURLString = dataURLFromImageData(imageData, nullptr, key, outExceptionString);
-            if (!dataURLString)
-                return;
-
-            mutableIconDictionary[key] = dataURLString;
-        }
-
-        iconDictionary = [mutableIconDictionary copy];
+        iconDictionary = parseIconImageDataDictionary(images, false, imageDataKey, outExceptionString);
+        if (!iconDictionary)
+            return;
     }
 
     if (auto *path = objectForKey<NSString>(details, pathKey)) {
         // Chrome documentation states that 'details.path = foo' is equivalent to 'details.path = { '16': foo }'.
         // Documentation: https://developer.chrome.com/docs/extensions/reference/action/#method-setIcon
-        iconDictionary = @{ @"16": path };
+        iconDictionary = @{ @"16": parseIconPath(path, frame.url()) };
     }
 
     if (auto *paths = objectForKey<NSDictionary>(details, pathKey)) {
-        for (NSString *key in paths) {
-            if (!isValidDimensionKey(key)) {
-                *outExceptionString = toErrorString(nil, pathKey, @"'%@' in not a valid dimension", key);
-                return;
-            }
-
-            if (!validateObject(paths[key], [NSString stringWithFormat:@"%@[%@]", pathKey, key], NSString.class, outExceptionString))
-                return;
-        }
-
-        iconDictionary = paths;
+        iconDictionary = parseIconPathsDictionary(paths, frame.url(), false, pathKey, outExceptionString);
+        if (!iconDictionary)
+            return;
     }
 
-    // Resolve paths as relative against the frame's URL, unless it is a data URL.
-    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/action/setIcon#path
-    iconDictionary = mapObjects(iconDictionary, ^(id key, NSString *path) {
-        if (![path hasPrefix:@"data:"])
-            path = URL { frame.url(), path }.path().toString();
-        return path;
-    });
+#if ENABLE(WK_WEB_EXTENSIONS_ICON_VARIANTS)
+    NSArray *iconVariants;
+    if (auto *variants = objectForKey<NSArray>(details, variantsKey)) {
+        iconVariants = parseIconVariants(variants, frame.url(), variantsKey, outExceptionString);
+        if (!iconVariants)
+            return;
+    }
 
-    auto *iconDictionaryJSON = encodeJSONString(iconDictionary);
+    auto *iconsJSON = encodeJSONString(iconVariants ?: iconDictionary, JSONOptions::FragmentsAllowed);
+#else
+    auto *iconsJSON = encodeJSONString(iconDictionary);
+#endif
 
-    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::ActionSetIcon(windowIdentifier, tabIdentifier, iconDictionaryJSON), [protectedThis = Ref { *this }, callback = WTFMove(callback)](Expected<void, WebExtensionError>&& result) {
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::ActionSetIcon(windowIdentifier, tabIdentifier, iconsJSON), [protectedThis = Ref { *this }, callback = WTFMove(callback)](Expected<void, WebExtensionError>&& result) {
         if (!result) {
             callback->reportError(result.error());
             return;

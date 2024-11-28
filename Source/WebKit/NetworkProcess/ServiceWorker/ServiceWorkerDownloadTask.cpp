@@ -41,7 +41,7 @@ namespace WebKit {
 
 using namespace WebCore;
 
-static WorkQueue& sharedServiceWorkerDownloadTaskQueue()
+static WorkQueue& serviceWorkerDownloadTaskQueueSingleton()
 {
     static NeverDestroyed<Ref<WorkQueue>> queue(WorkQueue::create("Shared ServiceWorkerDownloadTask Queue"_s));
     return queue.get();
@@ -56,7 +56,7 @@ ServiceWorkerDownloadTask::ServiceWorkerDownloadTask(NetworkSession& session, Ne
     , m_serverConnectionIdentifier(serverConnectionIdentifier)
     , m_fetchIdentifier(fetchIdentifier)
     , m_downloadID(downloadID)
-    , m_networkProcess(serviceWorkerConnection.networkProcess())
+    , m_networkProcess(*serviceWorkerConnection.networkProcess())
 {
     auto expectedContentLength = response.expectedContentLength();
     if (expectedContentLength != -1)
@@ -71,14 +71,19 @@ ServiceWorkerDownloadTask::~ServiceWorkerDownloadTask()
 
 void ServiceWorkerDownloadTask::startListeningForIPC()
 {
-    m_serviceWorkerConnection->protectedIPCConnection()->addMessageReceiver(*this, *this, Messages::ServiceWorkerDownloadTask::messageReceiverName(), fetchIdentifier().toUInt64());
+    RefPtr { m_serviceWorkerConnection.get() }->protectedIPCConnection()->addMessageReceiver(*this, *this, Messages::ServiceWorkerDownloadTask::messageReceiverName(), fetchIdentifier().toUInt64());
+}
+
+Ref<NetworkProcess> ServiceWorkerDownloadTask::protectedNetworkProcess() const
+{
+    return m_networkProcess;
 }
 
 void ServiceWorkerDownloadTask::close()
 {
     ASSERT(isMainRunLoop());
 
-    if (CheckedPtr serviceWorkerConnection = m_serviceWorkerConnection.get()) {
+    if (RefPtr serviceWorkerConnection = m_serviceWorkerConnection.get()) {
         serviceWorkerConnection->protectedIPCConnection()->removeMessageReceiver(Messages::ServiceWorkerDownloadTask::messageReceiverName(), fetchIdentifier().toUInt64());
         serviceWorkerConnection->unregisterDownload(*this);
         m_serviceWorkerConnection = nullptr;
@@ -87,15 +92,16 @@ void ServiceWorkerDownloadTask::close()
 
 template<typename Message> bool ServiceWorkerDownloadTask::sendToServiceWorker(Message&& message)
 {
-    if (!m_serviceWorkerConnection)
+    RefPtr serviceWorkerConnection = m_serviceWorkerConnection.get();
+    if (!serviceWorkerConnection)
         return false;
 
-    return m_serviceWorkerConnection->protectedIPCConnection()->send(std::forward<Message>(message), 0) == IPC::Error::NoError;
+    return serviceWorkerConnection->protectedIPCConnection()->send(std::forward<Message>(message), 0) == IPC::Error::NoError;
 }
 
 void ServiceWorkerDownloadTask::dispatch(Function<void()>&& function)
 {
-    sharedServiceWorkerDownloadTaskQueue().dispatch([protectedThis = Ref { *this }, function = WTFMove(function)] {
+    serviceWorkerDownloadTaskQueueSingleton().dispatch([protectedThis = Ref { *this }, function = WTFMove(function)] {
         function();
     });
 }
@@ -104,7 +110,7 @@ void ServiceWorkerDownloadTask::cancel()
 {
     ASSERT(isMainRunLoop());
 
-    sharedServiceWorkerDownloadTaskQueue().dispatch([this, protectedThis = Ref { *this }] {
+    serviceWorkerDownloadTaskQueueSingleton().dispatch([this, protectedThis = Ref { *this }] {
         if (m_downloadFile != FileSystem::invalidPlatformFileHandle) {
             FileSystem::closeFile(m_downloadFile);
             m_downloadFile = FileSystem::invalidPlatformFileHandle;
@@ -139,7 +145,7 @@ void ServiceWorkerDownloadTask::setPendingDownloadLocation(const WTF::String& fi
     ASSERT(isMainRunLoop());
 
     if (!networkSession()) {
-        sharedServiceWorkerDownloadTaskQueue().dispatch([this, protectedThis = Ref { *this }]() mutable {
+        serviceWorkerDownloadTaskQueueSingleton().dispatch([this, protectedThis = Ref { *this }]() mutable {
             didFailDownload();
         });
         return;
@@ -152,7 +158,7 @@ void ServiceWorkerDownloadTask::setPendingDownloadLocation(const WTF::String& fi
     if (RefPtr sandboxExtension = m_sandboxExtension)
         sandboxExtension->consume();
 
-    sharedServiceWorkerDownloadTaskQueue().dispatch([this, protectedThis = Ref { *this }, allowOverwrite , filename = filename.isolatedCopy()]() mutable {
+    serviceWorkerDownloadTaskQueueSingleton().dispatch([this, protectedThis = Ref { *this }, allowOverwrite, filename = filename.isolatedCopy()]() mutable {
         if (allowOverwrite && FileSystem::fileExists(filename)) {
             if (!FileSystem::deleteFile(filename)) {
                 didFailDownload();
@@ -171,7 +177,7 @@ void ServiceWorkerDownloadTask::start()
     ASSERT(m_state != State::Completed);
 
     if (!sendToServiceWorker(Messages::WebSWContextManagerConnection::ConvertFetchToDownload { m_serverConnectionIdentifier, m_serviceWorkerIdentifier, m_fetchIdentifier })) {
-        sharedServiceWorkerDownloadTaskQueue().dispatch([this, protectedThis = Ref { *this }]() mutable {
+        serviceWorkerDownloadTaskQueueSingleton().dispatch([this, protectedThis = Ref { *this }]() mutable {
             didFailDownload();
         });
         return;
@@ -179,11 +185,10 @@ void ServiceWorkerDownloadTask::start()
 
     m_state = State::Running;
 
-    auto& manager = m_networkProcess->downloadManager();
-    auto download = makeUnique<Download>(manager, m_downloadID, *this, *networkSession());
-    auto* downloadPtr = download.get();
-    manager.dataTaskBecameDownloadTask(m_downloadID, WTFMove(download));
-    downloadPtr->didCreateDestination(m_pendingDownloadLocation);
+    auto& manager = protectedNetworkProcess()->downloadManager();
+    Ref download = Download::create(manager, m_downloadID, *this, *networkSession());
+    manager.dataTaskBecameDownloadTask(m_downloadID, download.copyRef());
+    download->didCreateDestination(m_pendingDownloadLocation);
 }
 
 void ServiceWorkerDownloadTask::didReceiveData(const IPC::SharedBufferReference& data, uint64_t encodedDataLength)
@@ -202,7 +207,7 @@ void ServiceWorkerDownloadTask::didReceiveData(const IPC::SharedBufferReference&
 
     callOnMainRunLoop([this, protectedThis = Ref { *this }, bytesWritten] {
         m_downloadBytesWritten += bytesWritten;
-        if (auto* download = m_networkProcess->downloadManager().download(*m_pendingDownloadID))
+        if (RefPtr download = protectedNetworkProcess()->downloadManager().download(*m_pendingDownloadID))
             download->didReceiveData(bytesWritten, m_downloadBytesWritten, std::max(m_expectedContentLength.value_or(0), m_downloadBytesWritten));
     });
 }
@@ -230,11 +235,11 @@ void ServiceWorkerDownloadTask::didFinish()
         if (RefPtr sandboxExtension = std::exchange(m_sandboxExtension, nullptr))
             sandboxExtension->revoke();
 
-        if (auto download = m_networkProcess->downloadManager().download(*m_pendingDownloadID))
+        if (RefPtr download = protectedNetworkProcess()->downloadManager().download(*m_pendingDownloadID))
             download->didFinish();
 
-        if (m_client)
-            m_client->didCompleteWithError({ });
+        if (RefPtr client = m_client.get())
+            client->didCompleteWithError({ });
     });
 }
 
@@ -265,11 +270,11 @@ void ServiceWorkerDownloadTask::didFailDownload(std::optional<ResourceError>&& e
             sandboxExtension->revoke();
 
         auto resourceError = error.value_or(cancelledError(firstRequest()));
-        if (auto download = m_networkProcess->downloadManager().download(*m_pendingDownloadID))
+        if (RefPtr download = protectedNetworkProcess()->downloadManager().download(*m_pendingDownloadID))
             download->didFail(resourceError, { });
 
-        if (m_client)
-            m_client->didCompleteWithError(resourceError);
+        if (RefPtr client = m_client.get())
+            client->didCompleteWithError(resourceError);
     });
 }
 

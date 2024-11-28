@@ -142,6 +142,7 @@ list(APPEND WebCore_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/platform/spi/cg"
     "${WEBCORE_DIR}/platform/spi/cocoa"
     "${WEBCORE_DIR}/platform/spi/mac"
+    "${WEBCORE_DIR}/platform/video-codecs"
     "${WEBCORE_DIR}/plugins/mac"
     "${WebCore_PRIVATE_FRAMEWORK_HEADERS_DIR}"
 )
@@ -340,7 +341,7 @@ list(APPEND WebCore_SOURCES
     platform/graphics/coretext/SimpleFontDataCoreText.cpp
 
     platform/graphics/cv/CVUtilities.mm
-    platform/graphics/cv/GraphicsContextGLCVCocoa.cpp
+    platform/graphics/cv/GraphicsContextGLCVCocoa.mm
     platform/graphics/cv/ImageRotationSessionVT.mm
     platform/graphics/cv/PixelBufferConformerCV.cpp
 
@@ -718,9 +719,11 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/mac/WebNSAttributedStringExtras.h
     platform/mac/WebPlaybackControlsManager.h
 
+    platform/mediarecorder/MediaRecorderPrivateEncoder.h
     platform/mediarecorder/MediaRecorderPrivateOptions.h
 
-    platform/mediarecorder/cocoa/MediaRecorderPrivateWriterCocoa.h
+    platform/mediarecorder/cocoa/MediaRecorderPrivateWriterAVFObjC.h
+    platform/mediarecorder/cocoa/MediaRecorderPrivateWriterWebM.h
 
     platform/mediastream/AudioMediaStreamTrackRenderer.h
     platform/mediastream/RealtimeIncomingVideoSource.h

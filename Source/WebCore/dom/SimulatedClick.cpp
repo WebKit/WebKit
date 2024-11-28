@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -41,7 +41,7 @@
 namespace WebCore {
 
 class SimulatedMouseEvent : public MouseEvent {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED_INLINE(SimulatedMouseEvent);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(SimulatedMouseEvent);
 public:
     static Ref<SimulatedMouseEvent> create(const AtomString& eventType, RefPtr<WindowProxy>&& view, RefPtr<Event>&& underlyingEvent, Element& target, SimulatedClickSource source)
     {
@@ -79,9 +79,11 @@ private:
     }
 };
 
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(SimulatedMouseEvent);
+
 // https://www.w3.org/TR/pointerevents3/#pointerevent-interface
 class SimulatedPointerEvent final : public PointerEvent {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED_INLINE(SimulatedPointerEvent);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(SimulatedPointerEvent);
 public:
     static Ref<SimulatedPointerEvent> create(const AtomString& type, const SimulatedMouseEvent& event, RefPtr<Event>&& underlyingEvent, Element& target, SimulatedClickSource source)
     {
@@ -113,6 +115,8 @@ private:
         }
     }
 };
+
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(SimulatedPointerEvent);
 
 static void simulateMouseEvent(const AtomString& eventType, Element& element, Event* underlyingEvent, SimulatedClickSource source)
 {

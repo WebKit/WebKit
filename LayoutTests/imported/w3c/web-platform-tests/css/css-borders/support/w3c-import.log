@@ -1,0 +1,31 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/support/corner-shape-angle-all.svg
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/support/corner-shape-angle-bottom-left.svg
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/support/corner-shape-angle-bottom-right.svg
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/support/corner-shape-angle-bottom.svg
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/support/corner-shape-angle-left.svg
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/support/corner-shape-angle-right.svg
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/support/corner-shape-angle-top-left-bottom-right.svg
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/support/corner-shape-angle-top-left.svg
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/support/corner-shape-angle-top-right-bottom-left.svg
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/support/corner-shape-angle-top-right.svg
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/support/corner-shape-angle-top.svg
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/support/corner-shape-round-bottom-left.svg
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/support/corner-shape-round-bottom-right.svg
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/support/corner-shape-round-top-left.svg
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/support/corner-shape-round-top-right.svg

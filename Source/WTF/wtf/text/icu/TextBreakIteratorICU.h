@@ -26,6 +26,8 @@
 #include <wtf/text/icu/UTextProviderUTF16.h>
 #include <wtf/unicode/icu/ICUHelpers.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WTF {
 
 class TextBreakIteratorICU {
@@ -196,3 +198,5 @@ private:
 };
 
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

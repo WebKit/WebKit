@@ -743,7 +743,6 @@ profiler/ProfilerOSRExitSite.cpp
 profiler/ProfilerOrigin.cpp
 profiler/ProfilerOriginStack.cpp
 profiler/ProfilerProfiledBytecodes.cpp
-profiler/ProfilerUID.cpp
 profiler/ProfilerTZoneImpls.cpp
 
 runtime/AbstractModuleRecord.cpp
@@ -895,6 +894,7 @@ runtime/JSArrayBufferConstructor.cpp
 runtime/JSArrayBufferPrototype.cpp
 runtime/JSArrayBufferView.cpp
 runtime/JSAsyncFunction.cpp
+runtime/JSAsyncFromSyncIterator.cpp
 runtime/JSAsyncGenerator.cpp
 runtime/JSAsyncGeneratorFunction.cpp
 runtime/JSArrayIterator.cpp
@@ -929,6 +929,8 @@ runtime/JSInternalPromiseConstructor.cpp
 runtime/JSInternalPromisePrototype.cpp
 runtime/JSIterator.cpp
 runtime/JSIteratorConstructor.cpp
+runtime/JSIteratorHelper.cpp
+runtime/JSIteratorHelperPrototype.cpp
 runtime/JSIteratorPrototype.cpp
 runtime/JSLexicalEnvironment.cpp
 runtime/JSLock.cpp
@@ -946,6 +948,7 @@ runtime/JSPromise.cpp
 runtime/JSPromiseConstructor.cpp
 runtime/JSPromisePrototype.cpp
 runtime/JSPropertyNameEnumerator.cpp
+runtime/JSRegExpStringIterator.cpp
 runtime/JSRemoteFunction.cpp
 runtime/JSRunLoopTimer.cpp
 runtime/JSScope.cpp
@@ -1029,6 +1032,7 @@ runtime/RegExpMatchesArray.cpp
 runtime/RegExpObject.cpp
 runtime/RegExpPrototype.cpp
 runtime/RegExpStringIteratorPrototype.cpp
+runtime/RegExpSubstringGlobalAtomCache.cpp
 runtime/ResourceExhaustion.cpp
 runtime/RuntimeTZoneImpls.cpp
 runtime/RuntimeType.cpp
@@ -1162,7 +1166,6 @@ wasm/WasmOSREntryPlan.cpp
 wasm/WasmOpcodeOrigin.cpp
 wasm/WasmOperations.cpp
 wasm/WasmPlan.cpp
-wasm/WasmCallsiteCollection.cpp
 wasm/WasmSectionParser.cpp
 wasm/WasmTypeDefinition.cpp
 wasm/WasmOpcodeCounter.cpp

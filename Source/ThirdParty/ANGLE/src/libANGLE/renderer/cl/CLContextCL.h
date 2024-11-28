@@ -39,9 +39,6 @@ class CLContextCL : public CLContextImpl
                                CLMemoryImpl::Ptr *bufferOut) override;
 
     angle::Result createImage(const cl::Image &image,
-                              cl::MemFlags flags,
-                              const cl_image_format &format,
-                              const cl::ImageDescriptor &desc,
                               void *hostPtr,
                               CLMemoryImpl::Ptr *imageOut) override;
 

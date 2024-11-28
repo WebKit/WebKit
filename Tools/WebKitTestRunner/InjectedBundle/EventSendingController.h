@@ -82,7 +82,6 @@ public:
     void textZoomOut();
     void zoomPageIn();
     void zoomPageOut();
-    void scalePageBy(double scale, double x, double y);
 
 #if ENABLE(TOUCH_EVENTS)
     void addTouchPoint(int x, int y);

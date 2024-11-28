@@ -72,6 +72,7 @@ public:
     using API::Object::deref;
 
     void webProcessIsGoingAway(WebProcessProxy&);
+    std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess(IPC::Connection&) const;
 
 private:
     explicit WebGeolocationManagerProxy(WebProcessPool*);

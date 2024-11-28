@@ -44,7 +44,7 @@ struct WebExtensionMenuItemParameters {
     String title;
     String command;
 
-    String iconDictionaryJSON;
+    String iconsJSON;
 
     std::optional<bool> checked;
     std::optional<bool> enabled;

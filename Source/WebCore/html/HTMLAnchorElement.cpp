@@ -51,7 +51,6 @@
 #include "RegistrableDomain.h"
 #include "RenderImage.h"
 #include "ResourceRequest.h"
-#include "RuntimeApplicationChecks.h"
 #include "SVGImage.h"
 #include "ScriptController.h"
 #include "SecurityOrigin.h"
@@ -59,6 +58,7 @@
 #include "Settings.h"
 #include "URLKeepingBlobAlive.h"
 #include "UserGestureIndicator.h"
+#include <wtf/RuntimeApplicationChecks.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/WeakHashMap.h>
 #include <wtf/text/MakeString.h>
@@ -115,43 +115,22 @@ bool HTMLAnchorElement::isInteractiveContent() const
     return isLink();
 }
 
-static bool hasNonEmptyBox(RenderBoxModelObject* renderer)
-{
-    if (!renderer)
-        return false;
-
-    // Before calling absoluteRects, check for the common case where borderBoundingBox
-    // is non-empty, since this is a faster check and almost always returns true.
-    // FIXME: Why do we need to call absoluteRects at all?
-    if (!renderer->borderBoundingBox().isEmpty())
-        return true;
-
-    // FIXME: Since all we are checking is whether the rects are empty, could we just
-    // pass in 0,0 for the layout point instead of calling localToAbsolute?
-    Vector<LayoutRect> rects;
-    renderer->boundingRects(rects, flooredLayoutPoint(renderer->localToAbsolute()));
-    for (auto& rect : rects) {
-        if (!rect.isEmpty())
-            return true;
-    }
-
-    return false;
-}
-
 bool HTMLAnchorElement::isKeyboardFocusable(KeyboardEvent* event) const
 {
     if (!isFocusable())
         return false;
-    
+
     // Anchor is focusable if the base element supports focus and is focusable.
     if (isFocusable() && Element::supportsFocus())
         return HTMLElement::isKeyboardFocusable(event);
 
-    if (isLink() && !document().frame()->eventHandler().tabsToLinks(event))
+    RefPtr frame = document().frame();
+    if (!frame)
+        return false;
+
+    if (isLink() && !frame->eventHandler().tabsToLinks(event))
         return false;
     return HTMLElement::isKeyboardFocusable(event);
-
-    return hasNonEmptyBox(renderBoxModelObject());
 }
 
 static void appendServerMapMousePosition(StringBuilder& url, Event& event)
@@ -261,7 +240,7 @@ void HTMLAnchorElement::attributeChanged(const QualifiedName& name, const AtomSt
         if (m_relList)
             m_relList->associatedAttributeValueChanged();
     } else if (name == nameAttr)
-        document().processInternalResourceLinks(*this);
+        document().processInternalResourceLinks(this);
 }
 
 bool HTMLAnchorElement::isURLAttribute(const Attribute& attribute) const
@@ -629,7 +608,7 @@ void HTMLAnchorElement::handleClick(Event& event)
     // Thus, URLs should be empty for now.
     ASSERT(!privateClickMeasurement || (privateClickMeasurement->attributionReportClickSourceURL().isNull() && privateClickMeasurement->attributionReportClickDestinationURL().isNull()));
     
-    frame->checkedLoader()->changeLocation(completedURL, effectiveTarget, &event, referrerPolicy, document->shouldOpenExternalURLsPolicyToPropagate(), newFrameOpenerPolicy, downloadAttribute, WTFMove(privateClickMeasurement));
+    frame->protectedLoader()->changeLocation(completedURL, effectiveTarget, &event, referrerPolicy, document->shouldOpenExternalURLsPolicyToPropagate(), newFrameOpenerPolicy, downloadAttribute, WTFMove(privateClickMeasurement));
 
     sendPings(completedURL);
 
@@ -750,7 +729,7 @@ ReferrerPolicy HTMLAnchorElement::referrerPolicy() const
 Node::InsertedIntoAncestorResult HTMLAnchorElement::insertedIntoAncestor(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
 {
     auto result = HTMLElement::insertedIntoAncestor(insertionType, parentOfInsertedTree);
-    document().processInternalResourceLinks(*this);
+    document().processInternalResourceLinks(this);
     return result;
 }
 

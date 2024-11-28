@@ -26,6 +26,8 @@
 #include "JSCell.h"
 #include "JSObject.h"
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 class JSArray;
@@ -269,6 +271,113 @@ inline JSArray* JSArray::createWithButterfly(VM& vm, GCDeferralContext* deferral
     return array;
 }
 
+ALWAYS_INLINE JSValue getProperty(JSGlobalObject*, JSObject*, uint64_t index);
+
+enum class ArrayFillMode {
+    Undefined,
+    Empty,
+};
+
+template<ArrayFillMode fillMode>
+bool moveArrayElements(JSGlobalObject* globalObject, VM& vm, JSArray* target, unsigned targetOffset, JSArray* source, unsigned sourceLength)
+{
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    if (LIKELY(!hasAnyArrayStorage(source->indexingType()) && !source->holesMustForwardToPrototype())) {
+        for (unsigned i = 0; i < sourceLength; ++i) {
+            JSValue value = source->tryGetIndexQuickly(i);
+            if constexpr (fillMode == ArrayFillMode::Empty) {
+                if (!value)
+                    continue;
+            } else {
+                if (!value)
+                    value = jsUndefined();
+            }
+            target->putDirectIndex(globalObject, targetOffset + i, value, 0, PutDirectIndexShouldThrow);
+            RETURN_IF_EXCEPTION(scope, false);
+        }
+    } else {
+        for (unsigned i = 0; i < sourceLength; ++i) {
+            JSValue value = getProperty(globalObject, source, i);
+            RETURN_IF_EXCEPTION(scope, false);
+            if constexpr (fillMode == ArrayFillMode::Empty) {
+                if (!value)
+                    continue;
+            } else {
+                if (!value)
+                    value = jsUndefined();
+            }
+            target->putDirectIndex(globalObject, targetOffset + i, value, 0, PutDirectIndexShouldThrow);
+            RETURN_IF_EXCEPTION(scope, false);
+        }
+    }
+    return true;
+}
+
+template<typename T>
+void clearElement(T& element)
+{
+    element.clear();
+}
+
+template<>
+void clearElement(double& element);
+
+template<ArrayFillMode fillMode, typename T, typename U>
+ALWAYS_INLINE void copyArrayElements(T* buffer, unsigned offset, U* source, unsigned sourceSize, IndexingType sourceType)
+{
+    if (sourceType == ArrayWithUndecided) {
+        if constexpr (fillMode == ArrayFillMode::Empty) {
+            for (unsigned i = 0; i < sourceSize; ++i)
+                clearElement<T>(buffer[i + offset]);
+        } else {
+            for (unsigned i = 0; i < sourceSize; ++i)
+                buffer[i + offset].setWithoutWriteBarrier(jsUndefined());
+        }
+        return;
+    }
+
+    if constexpr (std::is_same_v<T, U>) {
+        if constexpr (fillMode == ArrayFillMode::Empty) {
+            if constexpr (std::is_same_v<T, double>)
+                memcpy(buffer + offset, source, sizeof(double) * sourceSize);
+            else
+                gcSafeMemcpy(buffer + offset, source, sizeof(JSValue) * sourceSize);
+            return;
+        } else {
+            for (unsigned i = 0; i < sourceSize; ++i) {
+                JSValue value = source[i].get();
+                if (!value)
+                    value = jsUndefined();
+                buffer[i + offset].setWithoutWriteBarrier(value);
+            }
+        }
+    } else if constexpr (std::is_same_v<T, double>) {
+        ASSERT(sourceType == ArrayWithInt32);
+        static_assert(fillMode == ArrayFillMode::Empty);
+        for (unsigned i = 0; i < sourceSize; ++i) {
+            JSValue value = source[i].get();
+            if (value)
+                buffer[i + offset] = value.asInt32();
+            else
+                buffer[i + offset] = PNaN;
+        }
+    } else {
+        static_assert(std::is_same_v<U, double>);
+        for (unsigned i = 0; i < sourceSize; ++i) {
+            double value = source[i];
+            if (value == value)
+                buffer[i + offset].setWithoutWriteBarrier(JSValue(JSValue::EncodeAsDouble, value));
+            else {
+                if constexpr (fillMode == ArrayFillMode::Undefined)
+                    buffer[i + offset].setWithoutWriteBarrier(jsUndefined());
+                else
+                    buffer[i + offset].clear();
+            }
+        }
+    }
+}
+
 JSArray* asArray(JSValue);
 
 inline JSArray* asArray(JSCell* cell)
@@ -296,4 +405,9 @@ JS_EXPORT_PRIVATE JSArray* constructArrayNegativeIndexed(JSGlobalObject*, Struct
 
 ALWAYS_INLINE uint64_t toLength(JSGlobalObject*, JSObject*);
 
+template<ArrayFillMode fillMode>
+JSArray* tryCloneArrayFromFast(JSGlobalObject*, JSValue arrayValue);
+
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

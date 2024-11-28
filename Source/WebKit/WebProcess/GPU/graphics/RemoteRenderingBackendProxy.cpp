@@ -107,10 +107,10 @@ void RemoteRenderingBackendProxy::ensureGPUProcessConnection()
     if (!connectionPair)
         CRASH();
     auto [streamConnection, serverHandle] = WTFMove(*connectionPair);
-    m_connection = WTFMove(streamConnection);
+    m_connection = streamConnection.ptr();
     // RemoteRenderingBackendProxy behaves as the dispatcher for the connection to obtain isolated state for its
     // connection. This prevents waits on RemoteRenderingBackendProxy to process messages from other connections.
-    m_connection->open(*this, *this);
+    streamConnection->open(*this, *this);
     m_isResponsive = true;
     callOnMainRunLoopAndWait([&, serverHandle = WTFMove(serverHandle)]() mutable {
         auto& gpuProcessConnection = WebProcess::singleton().ensureGPUProcessConnection();
@@ -119,8 +119,9 @@ void RemoteRenderingBackendProxy::ensureGPUProcessConnection()
         m_sharedResourceCache = gpuProcessConnection.sharedResourceCache();
     });
 }
-template<typename T, typename U, typename V, typename W, SupportsObjectIdentifierNullState supportsNullState>
-auto RemoteRenderingBackendProxy::send(T&& message, ObjectIdentifierGeneric<U, V, W, supportsNullState> destination)
+
+template<typename T, typename U, typename V, typename W>
+auto RemoteRenderingBackendProxy::send(T&& message, ObjectIdentifierGeneric<U, V, W> destination)
 {
     RefPtr connection = this->connection();
     if (UNLIKELY(!connection))
@@ -133,8 +134,8 @@ auto RemoteRenderingBackendProxy::send(T&& message, ObjectIdentifierGeneric<U, V
     return result;
 }
 
-template<typename T, typename U, typename V, typename W, SupportsObjectIdentifierNullState supportsNullState>
-auto RemoteRenderingBackendProxy::sendSync(T&& message, ObjectIdentifierGeneric<U, V, W, supportsNullState> destination)
+template<typename T, typename U, typename V, typename W>
+auto RemoteRenderingBackendProxy::sendSync(T&& message, ObjectIdentifierGeneric<U, V, W> destination)
 {
     RefPtr connection = this->connection();
     if (!connection)
@@ -147,8 +148,8 @@ auto RemoteRenderingBackendProxy::sendSync(T&& message, ObjectIdentifierGeneric<
     return result;
 }
 
-template<typename T, typename C, typename U, typename V, typename W, SupportsObjectIdentifierNullState supportsNullState>
-auto RemoteRenderingBackendProxy::sendWithAsyncReply(T&& message, C&& callback, ObjectIdentifierGeneric<U, V, W, supportsNullState> destination)
+template<typename T, typename C, typename U, typename V, typename W>
+auto RemoteRenderingBackendProxy::sendWithAsyncReply(T&& message, C&& callback, ObjectIdentifierGeneric<U, V, W> destination)
 {
     RefPtr connection = this->connection();
     if (UNLIKELY(!connection))
@@ -160,6 +161,18 @@ auto RemoteRenderingBackendProxy::sendWithAsyncReply(T&& message, C&& callback, 
         return IPC::Error::Unspecified;
     }
     return IPC::Error::NoError;
+}
+
+void RemoteRenderingBackendProxy::dispatch(Function<void()>&& function)
+{
+    if (RefPtr dispatcher = m_dispatcher.get())
+        dispatcher->dispatch(WTFMove(function));
+}
+
+bool RemoteRenderingBackendProxy::isCurrent() const
+{
+    RefPtr dispatcher = m_dispatcher.get();
+    return dispatcher && dispatcher->isCurrent();
 }
 
 void RemoteRenderingBackendProxy::didClose(IPC::Connection&)
@@ -197,7 +210,7 @@ void RemoteRenderingBackendProxy::disconnectGPUProcess()
     m_getPixelBufferSharedMemory = nullptr;
     m_renderingUpdateID = { };
     m_didRenderingUpdateID = { };
-    m_connection->invalidate();
+    protectedConnection()->invalidate();
     m_connection = nullptr;
     m_isResponsive = false;
     m_gpuProcessConnection = nullptr;
@@ -365,7 +378,7 @@ void RemoteRenderingBackendProxy::cacheFont(const WebCore::Font::Attributes& fon
 void RemoteRenderingBackendProxy::cacheFontCustomPlatformData(Ref<const FontCustomPlatformData>&& customPlatformData)
 {
     Ref<FontCustomPlatformData> data = adoptRef(const_cast<FontCustomPlatformData&>(customPlatformData.leakRef()));
-#if PLATFORM(COCOA)
+#if PLATFORM(COCOA) || USE(SKIA)
     send(Messages::RemoteRenderingBackend::CacheFontCustomPlatformData(data->serializedData()));
 #else
     send(Messages::RemoteRenderingBackend::CacheFontCustomPlatformData(WTFMove(data)));
@@ -541,8 +554,10 @@ RefPtr<IPC::StreamClientConnection> RemoteRenderingBackendProxy::connection()
     ensureGPUProcessConnection();
     if (!m_isResponsive)
         return nullptr;
-    if (UNLIKELY(!m_connection->hasSemaphores())) {
-        auto error = m_connection->waitForAndDispatchImmediately<Messages::RemoteRenderingBackendProxy::DidInitialize>(renderingBackendIdentifier());
+
+    RefPtr connection = m_connection;
+    if (UNLIKELY(!connection->hasSemaphores())) {
+        auto error = connection->waitForAndDispatchImmediately<Messages::RemoteRenderingBackendProxy::DidInitialize>(renderingBackendIdentifier());
         if (error != IPC::Error::NoError) {
             RELEASE_LOG(RemoteLayerBuffers, "[renderingBackend=%" PRIu64 "] RemoteRenderingBackendProxy::connection() - waitForAndDispatchImmediately returned error: %" PUBLIC_LOG_STRING, renderingBackendIdentifier().toUInt64(), IPC::errorAsString(error).characters());
             didBecomeUnresponsive();
@@ -550,16 +565,17 @@ RefPtr<IPC::StreamClientConnection> RemoteRenderingBackendProxy::connection()
     }
     if (!m_isResponsive)
         return nullptr;
-    return m_connection;
+    return connection;
 }
 
 void RemoteRenderingBackendProxy::didInitialize(IPC::Semaphore&& wakeUp, IPC::Semaphore&& clientWait)
 {
-    if (!m_connection) {
+    RefPtr connection = m_connection;
+    if (!connection) {
         ASSERT_NOT_REACHED();
         return;
     }
-    m_connection->setSemaphores(WTFMove(wakeUp), WTFMove(clientWait));
+    connection->setSemaphores(WTFMove(wakeUp), WTFMove(clientWait));
 }
 
 bool RemoteRenderingBackendProxy::isCached(const ImageBuffer& imageBuffer) const

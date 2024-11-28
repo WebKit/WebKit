@@ -62,7 +62,7 @@ TEST(WebKit, ResponsivenessTimerShouldNotFireAfterTearDown)
     [configuration setProcessPool:processPool.get()];
     auto webView1 = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
     [webView1 setNavigationDelegate:delegate.get()];
-    NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"simple" withExtension:@"html"]];
     [webView1 loadRequest:request];
     Util::run(&didFinishLoad);
 

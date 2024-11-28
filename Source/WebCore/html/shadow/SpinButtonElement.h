@@ -70,9 +70,7 @@ public:
     void releaseCapture();
     void removeSpinButtonOwner() { m_spinButtonOwner = nullptr; }
 
-    using HTMLDivElement::weakPtrFactory;
-    using HTMLDivElement::WeakValueType;
-    using HTMLDivElement::WeakPtrImplType;
+    USING_CAN_MAKE_WEAKPTR(HTMLDivElement);
 
     void step(int amount);
     

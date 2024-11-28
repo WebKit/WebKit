@@ -30,6 +30,7 @@
 #include "MessageSenderInlines.h"
 #include "NetworkProcessMessages.h"
 #include "NetworkProcessProxy.h"
+#include "WebBackForwardList.h"
 #include "WebFrameProxy.h"
 #include "WebPageMessages.h"
 #include "WebPageProxy.h"
@@ -65,12 +66,12 @@ bool WebPageProxyTesting::sendMessageWithAsyncReply(UniqueRef<IPC::Encoder>&& en
 
 IPC::Connection* WebPageProxyTesting::messageSenderConnection() const
 {
-    return &m_page->legacyMainFrameProcess().connection();
+    return &protectedPage()->legacyMainFrameProcess().connection();
 }
 
 uint64_t WebPageProxyTesting::messageSenderDestinationID() const
 {
-    return m_page->webPageIDInMainFrameProcess().toUInt64();
+    return protectedPage()->webPageIDInMainFrameProcess().toUInt64();
 }
 
 void WebPageProxyTesting::setDefersLoading(bool defersLoading)
@@ -80,7 +81,7 @@ void WebPageProxyTesting::setDefersLoading(bool defersLoading)
 
 void WebPageProxyTesting::dispatchActivityStateUpdate()
 {
-    RunLoop::current().dispatch([protectedPage = Ref { m_page.get() }] {
+    RunLoop::protectedCurrent()->dispatch([protectedPage = protectedPage()] {
         protectedPage->updateActivityState();
         protectedPage->dispatchActivityStateChange();
     });
@@ -93,7 +94,7 @@ void WebPageProxyTesting::isLayerTreeFrozen(CompletionHandler<void(bool)>&& comp
 
 void WebPageProxyTesting::setCrossSiteLoadWithLinkDecorationForTesting(const URL& fromURL, const URL& toURL, bool wasFiltered, CompletionHandler<void()>&& completionHandler)
 {
-    protectedPage()->protectedWebsiteDataStore()->protectedNetworkProcess()->setCrossSiteLoadWithLinkDecorationForTesting(m_page->sessionID(), WebCore::RegistrableDomain { fromURL }, WebCore::RegistrableDomain { toURL }, wasFiltered, WTFMove(completionHandler));
+    protectedPage()->protectedWebsiteDataStore()->protectedNetworkProcess()->setCrossSiteLoadWithLinkDecorationForTesting(protectedPage()->sessionID(), WebCore::RegistrableDomain { fromURL }, WebCore::RegistrableDomain { toURL }, wasFiltered, WTFMove(completionHandler));
 }
 
 void WebPageProxyTesting::setPermissionLevel(const String& origin, bool allowed)
@@ -183,7 +184,7 @@ void WebPageProxyTesting::clearNotificationPermissionState()
 
 void WebPageProxyTesting::clearWheelEventTestMonitor()
 {
-    if (!m_page->hasRunningProcess())
+    if (!protectedPage()->hasRunningProcess())
         return;
     send(Messages::WebPageTesting::ClearWheelEventTestMonitor());
 }
@@ -210,11 +211,42 @@ Ref<WebPageProxy> WebPageProxyTesting::protectedPage() const
     return m_page.get();
 }
 
-void WebPageProxyTesting::setPageScaleFactor(float scaleFactor, IntPoint point, CompletionHandler<void()>&& completionHandler)
+void WebPageProxyTesting::resetStateBetweenTests()
 {
-    Ref callback = CallbackAggregator::create(WTFMove(completionHandler));
-    protectedPage()->forEachWebContentProcess([&](auto& process, auto pageID) {
-        process.sendWithAsyncReply(Messages::WebPageTesting::SetPageScaleFactor(scaleFactor, point), [callback] { }, pageID);
+    protectedPage()->protectedLegacyMainFrameProcess()->resetState();
+
+    if (RefPtr mainFrame = m_page->mainFrame())
+        mainFrame->disownOpener();
+
+    protectedPage()->forEachWebContentProcess([&](auto& webProcess, auto pageID) {
+        webProcess.send(Messages::WebPageTesting::ResetStateBetweenTests(), pageID);
+    });
+}
+
+void WebPageProxyTesting::clearBackForwardList(CompletionHandler<void()>&& completionHandler)
+{
+    Ref page = m_page.get();
+    page->protectedBackForwardList()->clear();
+
+    Ref callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
+    page->forEachWebContentProcess([&](auto& webProcess, auto pageID) {
+        webProcess.sendWithAsyncReply(Messages::WebPageTesting::ClearCachedBackForwardListCounts(), [callbackAggregator] { }, pageID);
+    });
+}
+
+void WebPageProxyTesting::setTracksRepaints(bool trackRepaints, CompletionHandler<void()>&& completionHandler)
+{
+    Ref callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
+    protectedPage()->forEachWebContentProcess([&](auto& webProcess, auto pageID) {
+        webProcess.sendWithAsyncReply(Messages::WebPageTesting::SetTracksRepaints(trackRepaints), [callbackAggregator] { }, pageID);
+    });
+}
+
+void WebPageProxyTesting::displayAndTrackRepaints(CompletionHandler<void()>&& completionHandler)
+{
+    Ref callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
+    protectedPage()->forEachWebContentProcess([&](auto& webProcess, auto pageID) {
+        webProcess.sendWithAsyncReply(Messages::WebPageTesting::DisplayAndTrackRepaints(), [callbackAggregator] { }, pageID);
     });
 }
 

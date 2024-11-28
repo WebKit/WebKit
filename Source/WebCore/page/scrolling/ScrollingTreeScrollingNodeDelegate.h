@@ -65,7 +65,7 @@ public:
     virtual String scrollbarStateForOrientation(ScrollbarOrientation) const { return ""_s; }
 
 protected:
-    WEBCORE_EXPORT ScrollingTree& scrollingTree() const;
+    WEBCORE_EXPORT RefPtr<ScrollingTree> scrollingTree() const;
 
     WEBCORE_EXPORT FloatPoint lastCommittedScrollPosition() const;
     WEBCORE_EXPORT FloatSize totalContentsSize();

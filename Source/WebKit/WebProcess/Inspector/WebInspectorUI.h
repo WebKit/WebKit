@@ -188,15 +188,15 @@ private:
 
     // Keep a pointer to the frontend's inspector controller rather than going through
     // corePage(), since we may need it after the frontend's page has started destruction.
-    CheckedPtr<WebCore::InspectorController> m_frontendController;
+    WeakPtr<WebCore::InspectorController> m_frontendController;
 
 #if ENABLE(INSPECTOR_EXTENSIONS)
-    std::unique_ptr<WebInspectorUIExtensionController> m_extensionController;
+    RefPtr<WebInspectorUIExtensionController> m_extensionController;
 #endif
 
     RefPtr<IPC::Connection> m_backendConnection;
 
-    WebPageProxyIdentifier m_inspectedPageIdentifier;
+    Markable<WebPageProxyIdentifier> m_inspectedPageIdentifier;
     bool m_underTest { false };
     DebuggableInfoData m_debuggableInfo;
     bool m_dockingUnavailable { false };

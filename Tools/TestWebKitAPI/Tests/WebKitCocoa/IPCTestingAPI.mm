@@ -227,7 +227,7 @@ TEST(IPCTestingAPI, CanSendInvalidSyncMessageToUIProcessWithoutTermination)
         "</script>"];
     TestWebKitAPI::Util::run(&done);
 
-    EXPECT_STREQ([alertMessage UTF8String], "Failed to successfully deserialize the message");
+    EXPECT_STREQ([alertMessage UTF8String], "Receiver cancelled the reply due to invalid destination or deserialization error");
 }
 
 #if ENABLE(GPU_PROCESS)
@@ -679,6 +679,8 @@ TEST(IPCTestingAPI, SerializedTypeInfo)
     [typesNeedingDescriptions minusSet:typesHavingDescriptions];
     [typesNeedingDescriptions minusSet:fundamentalTypes];
 
+    // Note: This set should only be shrinking. If you need to add to this set to fix the test,
+    // add IPC metadata in a *.serialization.in file instead.
     NSSet<NSString *> *expectedTypesNeedingDescriptions = [NSSet setWithArray:@[
         @"CTFontDescriptorOptions",
         @"NSObject<NSSecureCoding>",
@@ -687,7 +689,6 @@ TEST(IPCTestingAPI, SerializedTypeInfo)
         @"NSURLRequest",
 #endif
         @"MachSendRight",
-        @"NSParagraphStyle",
 #if ENABLE(DATA_DETECTION) && !HAVE(WK_SECURE_CODING_DATA_DETECTORS)
         @"DDScannerResult",
 #endif
@@ -695,7 +696,7 @@ TEST(IPCTestingAPI, SerializedTypeInfo)
 #if !HAVE(WK_SECURE_CODING_DATA_DETECTORS)
         @"WKDDActionContext",
 #endif
-        @"WebCore::ContextMenuAction"
+        @"WebCore::ContextMenuAction",
 #endif
     ]];
     if (![expectedTypesNeedingDescriptions isEqual:typesNeedingDescriptions]) {

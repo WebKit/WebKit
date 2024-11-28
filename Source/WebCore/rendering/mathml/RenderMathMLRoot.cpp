@@ -75,25 +75,25 @@ bool RenderMathMLRoot::isValid() const
         return true;
 
     ASSERT(rootType() == RootType::RootWithIndex);
-    auto* child = firstChildBox();
+    auto* child = firstInFlowChildBox();
     if (!child)
         return false;
-    child = child->nextSiblingBox();
-    return child && !child->nextSiblingBox();
+    child = child->nextInFlowSiblingBox();
+    return child && !child->nextInFlowSiblingBox();
 }
 
 RenderBox& RenderMathMLRoot::getBase() const
 {
     ASSERT(isValid());
     ASSERT(rootType() == RootType::RootWithIndex);
-    return *firstChildBox();
+    return *firstInFlowChildBox();
 }
 
 RenderBox& RenderMathMLRoot::getIndex() const
 {
     ASSERT(isValid());
     ASSERT(rootType() == RootType::RootWithIndex);
-    return *firstChildBox()->nextSiblingBox();
+    return *firstInFlowChildBox()->nextInFlowSiblingBox();
 }
 
 void RenderMathMLRoot::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
@@ -179,15 +179,21 @@ void RenderMathMLRoot::computePreferredLogicalWidths()
         preferredWidth += m_radicalOperator.maxPreferredWidth();
         preferredWidth += getBase().maxPreferredLogicalWidth() + marginIntrinsicLogicalWidthForChild(getBase());
     }
-    preferredWidth += borderAndPaddingLogicalWidth();
-
     m_minPreferredLogicalWidth = m_maxPreferredLogicalWidth = preferredWidth;
+
+    auto sizes = sizeAppliedToMathContent(LayoutPhase::CalculatePreferredLogicalWidth);
+    applySizeToMathContent(LayoutPhase::CalculatePreferredLogicalWidth, sizes);
+
+    adjustPreferredLogicalWidthsForBorderAndPadding();
+
     setPreferredLogicalWidthsDirty(false);
 }
 
 void RenderMathMLRoot::layoutBlock(bool relayoutChildren, LayoutUnit)
 {
     ASSERT(needsLayout());
+
+    insertPositionedChildrenIntoContainingBlock();
 
     if (!relayoutChildren && simplifiedLayout())
         return;
@@ -199,6 +205,8 @@ void RenderMathMLRoot::layoutBlock(bool relayoutChildren, LayoutUnit)
         RenderMathMLRow::layoutBlock(relayoutChildren);
         return;
     }
+
+    layoutFloatingChildren();
 
     // We layout the children, determine the vertical metrics of the base and set the logical width.
     // Note: Per the MathML specification, the children of <msqrt> are wrapped in an inferred <mrow>, which is the desired base.
@@ -232,12 +240,12 @@ void RenderMathMLRoot::layoutBlock(bool relayoutChildren, LayoutUnit)
 
     // We set the logical width.
     if (rootType() == RootType::SquareRoot)
-        setLogicalWidth(m_radicalOperator.width() + m_baseWidth + borderAndPaddingLogicalWidth());
+        setLogicalWidth(m_radicalOperator.width() + m_baseWidth);
     else {
         ASSERT(rootType() == RootType::RootWithIndex);
         LayoutUnit indexWidth = getIndex().logicalWidth() + getIndex().marginLogicalWidth();
         horizontal = horizontalParameters(indexWidth);
-        setLogicalWidth(horizontal.kernBeforeDegree + indexWidth + horizontal.kernAfterDegree + m_radicalOperator.width() + m_baseWidth + borderAndPaddingLogicalWidth());
+        setLogicalWidth(horizontal.kernBeforeDegree + indexWidth + horizontal.kernAfterDegree + m_radicalOperator.width() + m_baseWidth);
     }
 
     // For <mroot>, we update the metrics to take into account the index.
@@ -247,27 +255,31 @@ void RenderMathMLRoot::layoutBlock(bool relayoutChildren, LayoutUnit)
         indexDescent = getIndex().logicalHeight() + getIndex().marginLogicalHeight() - indexAscent;
         ascent = std::max<LayoutUnit>(radicalAscent, indexBottomRaise + indexDescent + indexAscent - descent);
     }
-    ascent += borderAndPaddingBefore();
-    descent += borderAndPaddingAfter();
 
     // We set the final position of children.
     m_radicalOperatorTop = ascent - radicalAscent + vertical.extraAscender;
-    LayoutUnit horizontalOffset = borderAndPaddingStart() + m_radicalOperator.width();
+    LayoutUnit horizontalOffset = m_radicalOperator.width();
     if (rootType() == RootType::RootWithIndex)
         horizontalOffset += horizontal.kernBeforeDegree + getIndex().logicalWidth() + getIndex().marginLogicalWidth() + horizontal.kernAfterDegree;
     if (rootType() == RootType::SquareRoot) {
         LayoutPoint baseLocation(mirrorIfNeeded(horizontalOffset, m_baseWidth), ascent - baseAscent);
-        for (auto* child = firstChildBox(); child; child = child->nextSiblingBox())
+        for (auto* child = firstInFlowChildBox(); child; child = child->nextInFlowSiblingBox())
             child->setLocation(child->location() + baseLocation);
     } else {
         ASSERT(rootType() == RootType::RootWithIndex);
         LayoutPoint baseLocation(mirrorIfNeeded(horizontalOffset + getBase().marginStart(), getBase()), ascent - baseAscent + getBase().marginBefore());
         getBase().setLocation(baseLocation);
-        LayoutPoint indexLocation(mirrorIfNeeded(borderAndPaddingStart() + horizontal.kernBeforeDegree + getIndex().marginStart(), getIndex()), ascent + descent - indexBottomRaise - indexDescent - indexAscent + getIndex().marginBefore());
+        LayoutPoint indexLocation(mirrorIfNeeded(horizontal.kernBeforeDegree + getIndex().marginStart(), getIndex()), ascent + descent - indexBottomRaise - indexDescent - indexAscent + getIndex().marginBefore());
         getIndex().setLocation(indexLocation);
     }
 
     setLogicalHeight(ascent + descent);
+
+    auto sizes = sizeAppliedToMathContent(LayoutPhase::Layout);
+    auto shift = applySizeToMathContent(LayoutPhase::Layout, sizes);
+    shiftInFlowChildren(shift, 0);
+
+    adjustLayoutForBorderAndPadding();
 
     layoutPositionedObjects(relayoutChildren);
 

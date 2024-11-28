@@ -37,7 +37,7 @@
 #include <wtf/CompletionHandler.h>
 #include <wtf/FileSystem.h>
 #include <wtf/RefPtr.h>
-#include <wtf/glib/GRefPtr.h>
+#include <wtf/glib/GSpanExtras.h>
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/glib/WTFGType.h>
 
@@ -188,15 +188,14 @@ const char* webkit_user_content_filter_store_get_path(WebKitUserContentFilterSto
 #if ENABLE(CONTENT_EXTENSIONS)
 static void webkitUserContentFilterStoreSaveBytes(GRefPtr<GTask>&& task, String&& identifier, GRefPtr<GBytes>&& source)
 {
-    size_t sourceSize;
-    const char* sourceData = static_cast<const char*>(g_bytes_get_data(source.get(), &sourceSize));
-    if (!sourceSize) {
+    auto sourceData = span(source);
+    if (!sourceData.size()) {
         g_task_return_error(task.get(), g_error_new_literal(WEBKIT_USER_CONTENT_FILTER_ERROR, WEBKIT_USER_CONTENT_FILTER_ERROR_INVALID_SOURCE, "Source JSON rule set cannot be empty"));
         return;
     }
 
     auto* store = WEBKIT_USER_CONTENT_FILTER_STORE(g_task_get_source_object(task.get()));
-    store->priv->store->compileContentRuleList(WTFMove(identifier), String::fromUTF8({ sourceData, sourceSize }), [task = WTFMove(task)](RefPtr<API::ContentRuleList> contentRuleList, std::error_code error) {
+    store->priv->store->compileContentRuleList(WTFMove(identifier), String::fromUTF8(sourceData), [task = WTFMove(task)](RefPtr<API::ContentRuleList> contentRuleList, std::error_code error) {
         if (g_task_return_error_if_cancelled(task.get()))
             return;
 
@@ -507,8 +506,11 @@ void webkit_user_content_filter_store_fetch_identifiers(WebKitUserContentFilterS
             return;
 
         GStrv result = static_cast<GStrv>(g_new0(gchar*, identifiers.size() + 1));
-        for (size_t i = 0; i < identifiers.size(); ++i)
+        for (size_t i = 0; i < identifiers.size(); ++i) {
+            WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GTK/WPE port
             result[i] = g_strdup(identifiers[i].utf8().data());
+            WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+        }
         g_task_return_pointer(task.get(), result, reinterpret_cast<GDestroyNotify>(g_strfreev));
     });
 #else

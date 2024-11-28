@@ -11,6 +11,7 @@ CompileFlags:
     ]
     Add: [
         "-ferror-limit=0",  # https://github.com/WebKit/WebKit/pull/30784#issuecomment-2257495415
+        "-Wno-unknown-warning-option",
     ]
 ---
 If:

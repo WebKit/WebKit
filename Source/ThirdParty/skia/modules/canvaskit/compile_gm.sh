@@ -26,7 +26,7 @@ EMCXX=`which em++`
 if [[ $@ == *debug* ]]; then
   echo "Building a Debug build"
   DEBUG=true
-  EXTRA_CFLAGS="\"-DSK_DEBUG\", \"-DGR_TEST_UTILS\", "
+  EXTRA_CFLAGS="\"-DSK_DEBUG\", \"-DGPU_TEST_UTILS\", "
   RELEASE_CONF="-O1 --js-opts 0 -sDEMANGLE_SUPPORT=1 -frtti -sASSERTIONS=1 -sGL_ASSERTIONS=1 -g \
                 -DSK_DEBUG --pre-js $BASE_DIR/debug.js"
   BUILD_DIR=${BUILD_DIR:="out/wasm_gm_tests_debug"}
@@ -35,8 +35,8 @@ else
   DEBUG=false
   BUILD_DIR=${BUILD_DIR:="out/wasm_gm_tests"}
   RELEASE_CONF="-O3 -DSK_RELEASE --pre-js $BASE_DIR/release.js \
-              -DGR_TEST_UTILS"
-  EXTRA_CFLAGS="\"-DSK_RELEASE\", \"-DGR_TEST_UTILS\", "
+              -DGPU_TEST_UTILS"
+  EXTRA_CFLAGS="\"-DSK_RELEASE\", \"-DGPU_TEST_UTILS\", "
 fi
 
 IS_OFFICIAL_BUILD="false"
@@ -178,8 +178,11 @@ GLOBIGNORE+="tests/CodecTest.cpp:"\
 "tests/FontMgrFontConfigTest.cpp:"\
 "tests/FontationsTest.cpp:"\
 "tests/FontationsFtCompTest.cpp:"\
+"tests/FontScanner_FontationsTest.cpp:"\
+"tests/FontScanner_FreeTypeTest.cpp:"\
 "tests/FCITest.cpp:"\
 "tests/JpegGainmapTest.cpp:"\
+"tests/SkPngRustDecoderTest.cpp:"\
 "tests/TypefaceMacTest.cpp:"
 
 # These tests do complex things with TestContexts, which is not easily supported for the WASM
@@ -203,7 +206,7 @@ GLOBIGNORE+="gm/png_codec.cpp"
 EMCC_DEBUG=1 ${EMCXX} \
     $RELEASE_CONF \
     -I. \
-    -DGR_TEST_UTILS \
+    -DGPU_TEST_UTILS \
     $SKIA_DEFINES \
     $WASM_GPU \
     -std=c++17 \

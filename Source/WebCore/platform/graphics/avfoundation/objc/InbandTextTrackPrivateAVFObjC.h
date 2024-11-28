@@ -29,6 +29,7 @@
 
 #include "InbandTextTrackPrivateAVF.h"
 #include <wtf/RetainPtr.h>
+#include <wtf/TZoneMalloc.h>
 
 OBJC_CLASS AVAsset;
 OBJC_CLASS AVMediaSelectionGroup;
@@ -37,6 +38,7 @@ OBJC_CLASS AVMediaSelectionOption;
 namespace WebCore {
 
 class InbandTextTrackPrivateAVFObjC : public InbandTextTrackPrivateAVF {
+    WTF_MAKE_TZONE_ALLOCATED(InbandTextTrackPrivateAVFObjC);
 public:
     static Ref<InbandTextTrackPrivateAVFObjC> create(AVFInbandTrackParent* player,  AVMediaSelectionGroup *group, AVMediaSelectionOption *selection, TrackID trackID, InbandTextTrackPrivate::CueFormat format)
     {

@@ -72,25 +72,25 @@ void AXObjectCache::postPlatformNotification(AccessibilityObject& coreObject, AX
         return;
 
     switch (notification) {
-    case AXCheckedStateChanged:
+    case AXNotification::AXCheckedStateChanged:
         if (coreObject.isCheckboxOrRadio() || coreObject.isSwitch())
             wrapper->stateChanged("checked", coreObject.isChecked());
         break;
-    case AXSelectedStateChanged:
+    case AXNotification::AXSelectedStateChanged:
         wrapper->stateChanged("selected", coreObject.isSelected());
         break;
-    case AXMenuListItemSelected: {
+    case AXNotification::AXMenuListItemSelected: {
         // Menu list popup items are handled by AXSelectedStateChanged.
         auto* parent = coreObject.parentObjectUnignored();
         if (parent && !parent->isMenuListPopup())
             wrapper->stateChanged("selected", coreObject.isSelected());
         break;
     }
-    case AXSelectedCellsChanged:
-    case AXSelectedChildrenChanged:
+    case AXNotification::AXSelectedCellsChanged:
+    case AXNotification::AXSelectedChildrenChanged:
         wrapper->selectionChanged();
         break;
-    case AXMenuListValueChanged: {
+    case AXNotification::AXMenuListValueChanged: {
         const auto& children = coreObject.children();
         if (children.size() == 1) {
             if (auto* childWrapper = children[0]->wrapper())
@@ -98,47 +98,47 @@ void AXObjectCache::postPlatformNotification(AccessibilityObject& coreObject, AX
         }
         break;
     }
-    case AXValueChanged:
+    case AXNotification::AXValueChanged:
         if (wrapper->interfaces().contains(AccessibilityObjectAtspi::Interface::Value))
             wrapper->valueChanged(coreObject.valueForRange());
         break;
-    case AXInvalidStatusChanged:
+    case AXNotification::AXInvalidStatusChanged:
         wrapper->stateChanged("invalid-entry", coreObject.invalidStatus() != "false"_s);
         break;
-    case AXElementBusyChanged:
+    case AXNotification::AXElementBusyChanged:
         wrapper->stateChanged("busy", coreObject.isBusy());
         break;
-    case AXCurrentStateChanged:
+    case AXNotification::AXCurrentStateChanged:
         wrapper->stateChanged("active", coreObject.currentState() != AccessibilityCurrentState::False);
         break;
-    case AXRowExpanded:
+    case AXNotification::AXRowExpanded:
         wrapper->stateChanged("expanded", true);
         break;
-    case AXRowCollapsed:
+    case AXNotification::AXRowCollapsed:
         wrapper->stateChanged("expanded", false);
         break;
-    case AXExpandedChanged:
+    case AXNotification::AXExpandedChanged:
         wrapper->stateChanged("expanded", coreObject.isExpanded());
         break;
-    case AXDisabledStateChanged: {
+    case AXNotification::AXDisabledStateChanged: {
         bool enabledState = coreObject.isEnabled();
         wrapper->stateChanged("enabled", enabledState);
         wrapper->stateChanged("sensitive", enabledState);
         break;
     }
-    case AXPressedStateChanged:
+    case AXNotification::AXPressedStateChanged:
         wrapper->stateChanged("pressed", coreObject.isPressed());
         break;
-    case AXReadOnlyStatusChanged:
+    case AXNotification::AXReadOnlyStatusChanged:
         wrapper->stateChanged("read-only", !coreObject.canSetValueAttribute());
         break;
-    case AXRequiredStatusChanged:
+    case AXNotification::AXRequiredStatusChanged:
         wrapper->stateChanged("required", coreObject.isRequired());
         break;
-    case AXActiveDescendantChanged:
+    case AXNotification::AXActiveDescendantChanged:
         wrapper->activeDescendantChanged();
         break;
-    case AXChildrenChanged:
+    case AXNotification::AXChildrenChanged:
         coreObject.updateChildrenIfNecessary();
         break;
     default:
@@ -262,13 +262,13 @@ void AXObjectCache::frameLoadingEventPlatformNotification(AccessibilityObject* c
     }
 }
 
-void AXObjectCache::platformHandleFocusedUIElementChanged(Node* oldFocusedNode, Node* newFocusedNode)
+void AXObjectCache::platformHandleFocusedUIElementChanged(Element* oldFocus, Element* newFocus)
 {
-    if (auto* axObject = get(oldFocusedNode)) {
+    if (auto* axObject = get(oldFocus)) {
         if (auto* wrapper = axObject->wrapper())
             wrapper->stateChanged("focused", false);
     }
-    if (auto* axObject = getOrCreate(newFocusedNode)) {
+    if (auto* axObject = getOrCreate(newFocus)) {
         if (auto* wrapper = axObject->wrapper())
             wrapper->stateChanged("focused", true);
     }

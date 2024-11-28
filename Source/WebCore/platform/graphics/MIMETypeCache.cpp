@@ -91,7 +91,7 @@ MediaPlayerEnums::SupportsType MIMETypeCache::canDecodeType(const String& mimeTy
     } while (0);
 
     if (!m_cachedResults)
-        m_cachedResults = HashMap<String, MediaPlayerEnums::SupportsType>();
+        m_cachedResults = UncheckedKeyHashMap<String, MediaPlayerEnums::SupportsType>();
     m_cachedResults->add(mimeType, result);
 
     return result;

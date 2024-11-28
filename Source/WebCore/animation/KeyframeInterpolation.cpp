@@ -121,7 +121,14 @@ const KeyframeInterpolation::KeyframeInterval KeyframeInterpolation::interpolati
     return { intervalEndpoints, hasImplicitZeroKeyframe, hasImplicitOneKeyframe };
 }
 
-void KeyframeInterpolation::interpolateKeyframes(Property property, const KeyframeInterval& interval, double iterationProgress, double currentIteration, Seconds iterationDuration, TimingFunction::Before before, const CompositionCallback& compositionCallback, const AccumulationCallback& accumulationCallback, const InterpolationCallback& interpolationCallback, const RequiresBlendingForAccumulativeIterationCallback& requiresBlendingForAccumulativeIterationCallback) const
+static double transformProgressDuration(const WebAnimationTime& duration)
+{
+    if (auto time = duration.time())
+        return time->seconds();
+    return 1.0;
+}
+
+void KeyframeInterpolation::interpolateKeyframes(Property property, const KeyframeInterval& interval, double iterationProgress, double currentIteration, const WebAnimationTime& iterationDuration, TimingFunction::Before before, const CompositionCallback& compositionCallback, const AccumulationCallback& accumulationCallback, const InterpolationCallback& interpolationCallback, const RequiresBlendingForAccumulativeIterationCallback& requiresBlendingForAccumulativeIterationCallback) const
 {
     auto& intervalEndpoints = interval.endpoints;
     if (intervalEndpoints.isEmpty())
@@ -194,8 +201,8 @@ void KeyframeInterpolation::interpolateKeyframes(Property property, const Keyfra
     // 17. Let transformed distance be the result of evaluating the timing function associated with the first keyframe in interval endpoints
     //     passing interval distance as the input progress.
     auto transformedDistance = intervalDistance;
-    if (iterationDuration) {
-        auto rangeDuration = (endOffset - startOffset) * iterationDuration.seconds();
+    if (!iterationDuration.isZero()) {
+        auto rangeDuration = (endOffset - startOffset) * transformProgressDuration(iterationDuration);
         if (auto* timingFunction = timingFunctionForKeyframe(startKeyframe))
             transformedDistance = timingFunction->transformProgress(intervalDistance, rangeDuration, before);
     }

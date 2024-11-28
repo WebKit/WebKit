@@ -34,7 +34,6 @@
 #import "WKWebViewConfigurationExtras.h"
 #import <Foundation/NSURLRequest.h>
 #import <WebCore/RegistrableDomain.h>
-#import <WebCore/RuntimeApplicationChecks.h>
 #import <WebKit/WKHTTPCookieStorePrivate.h>
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKURLSchemeTaskPrivate.h>
@@ -45,6 +44,7 @@
 #import <WebKit/_WKUserStyleSheet.h>
 #import <WebKit/_WKWebsiteDataStoreConfiguration.h>
 #import <wtf/RunLoop.h>
+#import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #import <wtf/text/WTFString.h>
 
 #if ENABLE(APP_BOUND_DOMAINS)
@@ -131,15 +131,15 @@ static bool subFrameReceivedScriptSource = false;
 
 static void cleanUpInAppBrowserPrivacyTestSettings()
 {
-    WebCore::clearApplicationBundleIdentifierTestingOverride();
-    WebCore::setApplicationBundleIdentifier("com.apple.WebKit.TestWebKitAPI"_s);
+    clearApplicationBundleIdentifierTestingOverride();
+    setApplicationBundleIdentifier("com.apple.WebKit.TestWebKitAPI"_s);
 }
 
 static void initializeInAppBrowserPrivacyTestSettings()
 {
     WTF::initializeMainThread();
-    WebCore::clearApplicationBundleIdentifierTestingOverride();
-    WebCore::setApplicationBundleIdentifier("inAppBrowserPrivacyTestIdentifier"_s);
+    clearApplicationBundleIdentifierTestingOverride();
+    setApplicationBundleIdentifier("inAppBrowserPrivacyTestIdentifier"_s);
 }
 
 TEST(InAppBrowserPrivacy, NonAppBoundDomainFailedUserScriptAtStart)
@@ -312,7 +312,7 @@ TEST(InAppBrowserPrivacy, LocalFilesAreAppBound)
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
 
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectZero configuration:configuration.get()]);
-    NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"in-app-browser-privacy-local-file" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"in-app-browser-privacy-local-file" withExtension:@"html"]];
     [webView loadRequest:request];
     [webView _test_waitForDidFinishNavigation];
 
@@ -550,7 +550,7 @@ TEST(InAppBrowserPrivacy, AppBoundDomainCanAccessMessageHandlers)
     }];
 
     // Navigate to an app-bound domain and wait for the 'pass' message to test the handler is working fine.
-    NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"in-app-browser-privacy-local-file" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"in-app-browser-privacy-local-file" withExtension:@"html"]];
     [webView loadRequest:request];
     [webView _test_waitForDidFinishNavigation];
 

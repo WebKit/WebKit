@@ -111,7 +111,7 @@ void WebInspectorUIProxy::showSavePanelForSingleFile(HWND parentWindow, Vector<W
         auto content = saveDatas[0].content.utf8();
         auto contentSize = content.length();
         auto bytesWritten = FileSystem::writeToFile(fd, content.span());
-        if (bytesWritten == -1 || bytesWritten != contentSize) {
+        if (bytesWritten == -1 || static_cast<size_t>(bytesWritten) != contentSize) {
             auto message = systemErrorMessage(GetLastError());
             if (message.isEmpty())
                 message = makeString("Error: writeToFile returns "_s, bytesWritten, ", contentLength = "_s, content.length());
@@ -244,7 +244,7 @@ static void decidePolicyForNavigationAction(WKPageRef pageRef, WKNavigationActio
     toImpl(listenerRef)->ignore();
 
     // And instead load it in the inspected page.
-    inspector->inspectedPage()->loadRequest(WTFMove(request));
+    inspector->protectedInspectedPage()->loadRequest(WTFMove(request));
 }
 
 static void webProcessDidCrash(WKPageRef, const void* clientInfo)
@@ -254,9 +254,9 @@ static void webProcessDidCrash(WKPageRef, const void* clientInfo)
     inspector->closeForCrash();
 }
 
-WebPageProxy* WebInspectorUIProxy::platformCreateFrontendPage()
+RefPtr<WebPageProxy> WebInspectorUIProxy::platformCreateFrontendPage()
 {
-    ASSERT(inspectedPage());
+    ASSERT(m_inspectedPage);
 
     auto preferences = WebPreferences::create(String(), "WebKit2."_s, "WebKit2."_s);
 #if ENABLE(DEVELOPER_MODE)
@@ -265,7 +265,7 @@ WebPageProxy* WebInspectorUIProxy::platformCreateFrontendPage()
     preferences->setLogsPageMessagesToSystemConsoleEnabled(true);
 #endif
     preferences->setJavaScriptRuntimeFlags({ });
-    auto pageGroup = WebPageGroup::create(WebKit::defaultInspectorPageGroupIdentifierForPage(inspectedPage().get()));
+    auto pageGroup = WebPageGroup::create(WebKit::defaultInspectorPageGroupIdentifierForPage(protectedInspectedPage().get()));
     auto pageConfiguration = API::PageConfiguration::create();
     pageConfiguration->setProcessPool(&WebKit::defaultInspectorProcessPool(inspectionLevel()));
     pageConfiguration->setPreferences(preferences.ptr());
@@ -298,14 +298,14 @@ WebPageProxy* WebInspectorUIProxy::platformCreateFrontendPage()
     };
 
     RECT r = { 0, 0, static_cast<LONG>(initialWindowWidth), static_cast<LONG>(initialWindowHeight) };
-    auto page = inspectedPage();
+    auto page = protectedInspectedPage();
     m_inspectedViewWindow = reinterpret_cast<HWND>(page->viewWidget());
     m_inspectedViewParentWindow = ::GetParent(m_inspectedViewWindow);
     auto view = WebView::create(r, pageConfiguration, m_inspectedViewParentWindow);
     m_inspectorView = &view.leakRef();
-    auto inspectorPage = m_inspectorView->page();
+    RefPtr inspectorPage = m_inspectorView->page();
     m_inspectorViewWindow = reinterpret_cast<HWND>(inspectorPage->viewWidget());
-    WKPageSetPageNavigationClient(toAPI(inspectorPage), &navigationClient.base);
+    WKPageSetPageNavigationClient(toAPI(inspectorPage.get()), &navigationClient.base);
 
     inspectorPage->setURLSchemeHandlerForScheme(InspectorResourceURLSchemeHandler::create(), "inspector-resource"_s);
 
@@ -351,7 +351,7 @@ void WebInspectorUIProxy::platformAttach()
     static const unsigned defaultAttachedSize = 300;
     static const unsigned minimumAttachedWidth = 750;
     static const unsigned minimumAttachedHeight = 250;
-    auto deviceScaleFactor = inspectorPage()->deviceScaleFactor();
+    auto deviceScaleFactor = protectedInspectorPage()->deviceScaleFactor();
 
     if (m_inspectorDetachWindow && ::GetParent(m_inspectorViewWindow) == m_inspectorDetachWindow) {
         ::SetParent(m_inspectorViewWindow, m_inspectedViewParentWindow);
@@ -377,7 +377,7 @@ void WebInspectorUIProxy::platformAttach()
 
 void WebInspectorUIProxy::platformDetach()
 {
-    if (!inspectedPage()->hasRunningProcess())
+    if (!protectedInspectedPage()->hasRunningProcess())
         return;
 
     if (!m_inspectorDetachWindow) {
@@ -403,7 +403,7 @@ void WebInspectorUIProxy::platformDetach()
 
 void WebInspectorUIProxy::platformSetAttachedWindowHeight(unsigned height)
 {
-    auto deviceScaleFactor = inspectorPage()->deviceScaleFactor();
+    auto deviceScaleFactor = protectedInspectorPage()->deviceScaleFactor();
     height *= deviceScaleFactor;
     auto windowInfo = getInspectedWindowInfo(m_inspectedViewWindow, m_inspectedViewParentWindow);
     ::SetWindowPos(m_inspectorViewWindow, 0, windowInfo.left, windowInfo.parentHeight - height, windowInfo.parentWidth - windowInfo.left, height, SWP_NOZORDER);
@@ -412,7 +412,7 @@ void WebInspectorUIProxy::platformSetAttachedWindowHeight(unsigned height)
 
 void WebInspectorUIProxy::platformSetAttachedWindowWidth(unsigned width)
 {
-    auto deviceScaleFactor = inspectorPage()->deviceScaleFactor();
+    auto deviceScaleFactor = protectedInspectorPage()->deviceScaleFactor();
     width *= deviceScaleFactor;
     auto windowInfo = getInspectedWindowInfo(m_inspectedViewWindow, m_inspectedViewParentWindow);
     ::SetWindowPos(m_inspectorViewWindow, 0, windowInfo.parentWidth - width, windowInfo.top, width, windowInfo.parentHeight - windowInfo.top, SWP_NOZORDER);

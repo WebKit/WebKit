@@ -1,18 +1,20 @@
 <html>
 <head>
 <script>
-function runTest() {
+async function runTest() {
   if (!window.testRunner)
     return;
 
   window.testRunner.dumpAsText();
+  testRunner.waitUntilDone();
 
   var span = document.getElementById("root");
-  eventSender.mouseMoveTo(span.offsetLeft + 10, span.offsetTop + span.offsetHeight / 2);
+  eventSender.asyncMouseMoveTo(span.offsetLeft + 10, span.offsetTop + span.offsetHeight / 2);
   for (var i = 0; i < 20; ++i) {
-    eventSender.mouseDown();
-    eventSender.mouseUp();
+    await eventSender.asyncMouseDown();
+    await eventSender.asyncMouseUp();
   }
+  testRunner.notifyDone();
 }
 window.addEventListener("DOMNodeRemoved", function(e) {
   document.body.setAttribute("onclick", "|");

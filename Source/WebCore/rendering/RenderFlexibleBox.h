@@ -50,7 +50,7 @@ public:
     RenderFlexibleBox(Type, Document&, RenderStyle&&);
     virtual ~RenderFlexibleBox();
 
-    using Direction = BlockFlowDirection;
+    using Direction = FlowDirection;
 
     ASCIILiteral renderName() const override;
 
@@ -70,20 +70,20 @@ public:
     bool isHorizontalFlow() const;
     inline Direction crossAxisDirection() const
     {
-        switch (writingModeToBlockFlowDirection(style().writingMode())) {
-        case BlockFlowDirection::TopToBottom:
+        switch (writingMode().blockDirection()) {
+        case FlowDirection::TopToBottom:
             if (style().isRowFlexDirection())
                 return (style().flexWrap() == FlexWrap::Reverse) ? Direction::BottomToTop : Direction::TopToBottom;
             return (style().flexWrap() == FlexWrap::Reverse) ? Direction::RightToLeft : Direction::LeftToRight;
-        case BlockFlowDirection::BottomToTop:
+        case FlowDirection::BottomToTop:
             if (style().isRowFlexDirection())
                 return (style().flexWrap() == FlexWrap::Reverse) ? Direction::TopToBottom : Direction::BottomToTop;
             return (style().flexWrap() == FlexWrap::Reverse) ? Direction::RightToLeft : Direction::LeftToRight;
-        case BlockFlowDirection::LeftToRight:
+        case FlowDirection::LeftToRight:
             if (style().isRowFlexDirection())
                 return (style().flexWrap() == FlexWrap::Reverse) ? Direction::RightToLeft : Direction::LeftToRight;
             return (style().flexWrap() == FlexWrap::Reverse) ? Direction::BottomToTop : Direction::TopToBottom;
-        case BlockFlowDirection::RightToLeft:
+        case FlowDirection::RightToLeft:
             if (style().isRowFlexDirection())
                 return (style().flexWrap() == FlexWrap::Reverse) ? Direction::LeftToRight : Direction::RightToLeft;
             return (style().flexWrap() == FlexWrap::Reverse) ? Direction::BottomToTop : Direction::TopToBottom;
@@ -126,6 +126,8 @@ public:
 
     static std::optional<TextDirection> leftRightAxisDirectionFromStyle(const RenderStyle&);
 
+    bool hasModernLayout() const { return m_hasFlexFormattingContextLayout; }
+
 protected:
     void computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const override;
 
@@ -154,8 +156,8 @@ private:
     bool isLeftToRightFlow() const;
     bool isMultiline() const;
     Length flexBasisForFlexItem(const RenderBox& flexItem) const;
-    Length mainSizeLengthForFlexItem(SizeType, const RenderBox&) const;
-    Length crossSizeLengthForFlexItem(SizeType, const RenderBox&) const;
+    Length mainSizeLengthForFlexItem(RenderBox::SizeType, const RenderBox&) const;
+    Length crossSizeLengthForFlexItem(RenderBox::SizeType, const RenderBox&) const;
     bool shouldApplyMinSizeAutoForFlexItem(const RenderBox&) const;
     LayoutUnit crossAxisExtentForFlexItem(const RenderBox& flexItem) const;
     LayoutUnit crossAxisIntrinsicExtentForFlexItem(RenderBox& flexItem);
@@ -167,8 +169,8 @@ private:
     LayoutUnit mainAxisExtent() const;
     LayoutUnit crossAxisContentExtent() const;
     LayoutUnit mainAxisContentExtent(LayoutUnit contentLogicalHeight);
-    std::optional<LayoutUnit> computeMainAxisExtentForFlexItem(RenderBox& flexItem, SizeType, const Length& size);
-    BlockFlowDirection transformedBlockFlowDirection() const;
+    std::optional<LayoutUnit> computeMainAxisExtentForFlexItem(RenderBox& flexItem, RenderBox::SizeType, const Length& size);
+    FlowDirection transformedBlockFlowDirection() const;
     LayoutUnit flowAwareBorderStart() const;
     LayoutUnit flowAwareBorderEnd() const;
     LayoutUnit flowAwareBorderBefore() const;
@@ -265,15 +267,15 @@ private:
     const RenderBox* firstBaselineCandidateOnLine(OrderIterator, ItemPosition baselinePosition, size_t numberOfItemsOnLine) const;
     const RenderBox* lastBaselineCandidateOnLine(OrderIterator, ItemPosition baselinePosition, size_t numberOfItemsOnLine) const;
 
-    void layoutUsingFlexFormattingContext();
+    bool layoutUsingFlexFormattingContext();
 
     // This is used to cache the preferred size for orthogonal flow children so we
     // don't have to relayout to get it
-    HashMap<SingleThreadWeakRef<const RenderBox>, LayoutUnit> m_intrinsicSizeAlongMainAxis;
+    UncheckedKeyHashMap<SingleThreadWeakRef<const RenderBox>, LayoutUnit> m_intrinsicSizeAlongMainAxis;
     
     // This is used to cache the intrinsic size on the cross axis to avoid
     // relayouts when stretching.
-    HashMap<SingleThreadWeakRef<const RenderBox>, LayoutUnit> m_intrinsicContentLogicalHeights;
+    UncheckedKeyHashMap<SingleThreadWeakRef<const RenderBox>, LayoutUnit> m_intrinsicContentLogicalHeights;
 
     // This set is used to keep track of which children we laid out in this
     // current layout iteration. We need it because the ones in this set may
@@ -301,8 +303,7 @@ private:
     bool m_inLayout { false };
     bool m_shouldResetFlexItemLogicalHeightBeforeLayout { false };
     bool m_isComputingFlexBaseSizes { false };
-
-    std::unique_ptr<LayoutIntegration::FlexLayout> m_modernFlexLayout;
+    bool m_hasFlexFormattingContextLayout { false };
 };
 
 } // namespace WebCore

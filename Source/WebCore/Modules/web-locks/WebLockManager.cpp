@@ -58,7 +58,7 @@ static std::optional<ClientOrigin> clientOriginFromContext(ScriptExecutionContex
 }
 
 struct WebLockManager::LockRequest {
-    WebLockIdentifier lockIdentifier;
+    Markable<WebLockIdentifier> lockIdentifier;
     String name;
     WebLockMode mode { WebLockMode::Exclusive };
     RefPtr<WebLockGrantedCallback> grantedCallback;
@@ -256,33 +256,33 @@ void WebLockManager::didCompleteLockRequest(WebLockIdentifier lockIdentifier, bo
 
         if (success) {
             if (request.signal && request.signal->aborted()) {
-                m_mainThreadBridge->releaseLock(request.lockIdentifier, request.name);
+                m_mainThreadBridge->releaseLock(*request.lockIdentifier, request.name);
                 return;
             }
 
-            auto lock = WebLock::create(request.lockIdentifier, request.name, request.mode);
-            auto result = request.grantedCallback->handleEvent(lock.ptr());
+            auto lock = WebLock::create(*request.lockIdentifier, request.name, request.mode);
+            auto result = request.grantedCallback->handleEventRethrowingException(lock.ptr());
             RefPtr<DOMPromise> waitingPromise = result.type() == CallbackResultType::Success ? result.releaseReturnValue() : nullptr;
             if (!waitingPromise || waitingPromise->isSuspended()) {
-                m_mainThreadBridge->releaseLock(request.lockIdentifier, request.name);
-                settleReleasePromise(request.lockIdentifier, Exception { ExceptionCode::ExistingExceptionError });
+                m_mainThreadBridge->releaseLock(*request.lockIdentifier, request.name);
+                settleReleasePromise(*request.lockIdentifier, Exception { ExceptionCode::ExistingExceptionError });
                 return;
             }
 
-            DOMPromise::whenPromiseIsSettled(waitingPromise->globalObject(), waitingPromise->promise(), [this, weakThis = WTFMove(weakThis), lockIdentifier = request.lockIdentifier, name = request.name, waitingPromise] {
+            DOMPromise::whenPromiseIsSettled(waitingPromise->globalObject(), waitingPromise->promise(), [this, weakThis = WTFMove(weakThis), lockIdentifier = *request.lockIdentifier, name = request.name, waitingPromise] {
                 if (!weakThis)
                     return;
                 m_mainThreadBridge->releaseLock(lockIdentifier, name);
                 settleReleasePromise(lockIdentifier, static_cast<JSC::JSValue>(waitingPromise->promise()));
             });
         } else {
-            auto result = request.grantedCallback->handleEvent(nullptr);
+            auto result = request.grantedCallback->handleEventRethrowingException(nullptr);
             RefPtr<DOMPromise> waitingPromise = result.type() == CallbackResultType::Success ? result.releaseReturnValue() : nullptr;
             if (!waitingPromise || waitingPromise->isSuspended()) {
-                settleReleasePromise(request.lockIdentifier, Exception { ExceptionCode::ExistingExceptionError });
+                settleReleasePromise(*request.lockIdentifier, Exception { ExceptionCode::ExistingExceptionError });
                 return;
             }
-            settleReleasePromise(request.lockIdentifier, static_cast<JSC::JSValue>(waitingPromise->promise()));
+            settleReleasePromise(*request.lockIdentifier, static_cast<JSC::JSValue>(waitingPromise->promise()));
         }
     });
 }
@@ -326,7 +326,7 @@ void WebLockManager::signalToAbortTheRequest(WebLockIdentifier lockIdentifier, J
         return;
     auto& request = requestsIterator->value;
 
-    m_mainThreadBridge->abortLockRequest(request.lockIdentifier, request.name, [weakThis = WeakPtr { *this }, lockIdentifier](bool wasAborted) {
+    m_mainThreadBridge->abortLockRequest(*request.lockIdentifier, request.name, [weakThis = WeakPtr { *this }, lockIdentifier](bool wasAborted) {
         if (wasAborted && weakThis)
             weakThis->m_pendingRequests.remove(lockIdentifier);
     });

@@ -27,12 +27,15 @@
 
 #include <WebCore/PerformanceLoggingClient.h>
 #include <wtf/Forward.h>
+#include <wtf/TZoneMalloc.h>
+#include <wtf/WeakRef.h>
 
 namespace WebKit {
 
 class WebPage;
 
 class WebPerformanceLoggingClient : public WebCore::PerformanceLoggingClient {
+    WTF_MAKE_TZONE_ALLOCATED(WebPerformanceLoggingClient);
 public:
     WebPerformanceLoggingClient(WebPage&);
     virtual ~WebPerformanceLoggingClient() = default;
@@ -40,7 +43,7 @@ public:
 private:
     void logScrollingEvent(ScrollingEvent, MonotonicTime, uint64_t) override;
 
-    WebPage& m_page;
+    WeakRef<WebPage> m_page;
 };
 
 }

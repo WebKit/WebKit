@@ -57,7 +57,7 @@ static PAS_ALWAYS_INLINE bool pas_bitfit_page_allocation_satisfies_alignment(
     uintptr_t alignment,
     pas_bitfit_page_config page_config)
 {
-    static const bool verbose = false;
+    static const bool verbose = PAS_SHOULD_LOG(PAS_LOG_BITFIT_HEAPS);
     
     uintptr_t begin_offset;
     uintptr_t end_offset;
@@ -74,7 +74,7 @@ static PAS_ALWAYS_INLINE bool pas_bitfit_page_allocation_satisfies_alignment(
     aligned_offset = PAS_ROUND_UP_TO_POWER_OF_2(begin_offset, alignment);
 
     if (verbose) {
-        pas_log("begin_offset = %lu, end_offset = %lu, size = %lu\n",
+        pas_log("begin_offset = %zu, end_offset = %zu, size = %zu\n",
                 begin_offset, end_offset, size);
     }
 
@@ -207,7 +207,7 @@ static PAS_ALWAYS_INLINE pas_bitfit_allocation_result pas_bitfit_page_finish_all
     pas_allocation_mode allocation_mode,
     pas_bitfit_page_config page_config)
 {
-    static const bool verbose = false;
+    static const bool verbose = PAS_SHOULD_LOG(PAS_LOG_BITFIT_HEAPS);
     
     bool did_overflow;
     uintptr_t offset_in_page;
@@ -234,19 +234,19 @@ static PAS_ALWAYS_INLINE pas_bitfit_allocation_result pas_bitfit_page_finish_all
     begin = (uintptr_t)pas_bitfit_page_boundary(page, page_config) + offset_in_page;
 
     if (verbose) {
-        pas_log("%p: bitfit allocated %p of size %lu in %p\n",
+        pas_log("%p: bitfit allocated %p of size %zu in %p\n",
                 (void*)pthread_self(), (void*)begin, size, page);
     }
 
     if (verbose) {
-        pas_log("Bits after allocating %p (size %lu, offset %lu in %p):\n",
+        pas_log("Bits after allocating %p (size %zu, offset %zu in %p):\n",
                 (void*)begin, size, offset_in_page, page);
         pas_bitfit_page_log_bits(page, offset_in_page, offset_in_page + size);
     }
     
     pas_bitfit_page_testing_verify(page);
 
-    PAS_PROFILE(BITFIT_ALLOCATION, begin, size, allocation_mode);
+    PAS_PROFILE(BITFIT_ALLOCATION, &page_config, begin, size, allocation_mode);
 
     return pas_bitfit_allocation_result_create_success(begin);
 }
@@ -262,7 +262,7 @@ static PAS_ALWAYS_INLINE pas_bitfit_allocation_result pas_bitfit_page_allocate(
     pas_lock_hold_mode commit_lock_hold_mode,
     size_t* bytes_committed)
 {
-    static const bool verbose = false;
+    static const bool verbose = PAS_SHOULD_LOG(PAS_LOG_BITFIT_HEAPS);
     
     uintptr_t word_index;
     uint64_t* free_words;
@@ -271,7 +271,7 @@ static PAS_ALWAYS_INLINE pas_bitfit_allocation_result pas_bitfit_page_allocate(
     uintptr_t largest_available_bits;
 
     if (verbose)
-        pas_log("In page %p allocating size = %lu, alignment = %lu.\n", page, size, alignment);
+        pas_log("In page %p allocating size = %zu, alignment = %zu.\n", page, size, alignment);
 
     PAS_ASSERT(page_config.base.is_enabled);
     PAS_TESTING_ASSERT(pas_is_aligned(size, pas_page_base_config_min_align(page_config.base)));
@@ -542,7 +542,7 @@ static PAS_ALWAYS_INLINE uintptr_t pas_bitfit_page_deallocate_with_page_impl(
     pas_bitfit_page_deallocate_with_page_impl_mode mode,
     size_t new_size)
 {
-    static const bool verbose = false;
+    static const bool verbose = PAS_SHOULD_LOG(PAS_LOG_BITFIT_HEAPS);
     
     uintptr_t offset;
     uintptr_t bit_index;
@@ -565,7 +565,7 @@ static PAS_ALWAYS_INLINE uintptr_t pas_bitfit_page_deallocate_with_page_impl(
     owner = pas_compact_atomic_bitfit_view_ptr_load(&page->owner);
 
     if (verbose) {
-        pas_log("Bits before deallocate_impl (mode = %s) of %p (offset = %lu in %p), "
+        pas_log("Bits before deallocate_impl (mode = %s) of %p (offset = %zu in %p), "
                 "num_live_bits = %u\n",
                 pas_bitfit_page_deallocate_with_page_impl_mode_get_string(mode), (void*)begin, offset,
                 page, page->num_live_bits);
@@ -592,7 +592,7 @@ static PAS_ALWAYS_INLINE uintptr_t pas_bitfit_page_deallocate_with_page_impl(
         }
 
         if (verbose)
-            pas_log("Shrinking to new_size = %lu, new_num_bits = %lu\n", new_size, new_num_bits);
+            pas_log("Shrinking to new_size = %zu, new_num_bits = %zu\n", new_size, new_num_bits);
         
         break;
     }
@@ -751,7 +751,7 @@ static PAS_ALWAYS_INLINE uintptr_t pas_bitfit_page_deallocate_with_page_impl(
                             bit_index_in_word + new_num_bits;
 
                         if (verbose)
-                            pas_log("start_of_free = %lu\n", start_of_free);
+                            pas_log("start_of_free = %zu\n", start_of_free);
 
                         modified_word_index = PAS_BITVECTOR_WORD64_INDEX(start_of_free);
                         modified_bit_index_in_word = PAS_BITVECTOR_BIT_SHIFT64(start_of_free);
@@ -815,7 +815,7 @@ static PAS_ALWAYS_INLINE uintptr_t pas_bitfit_page_deallocate_with_page_impl(
                 }
 
                 if (verbose)
-                    pas_log("num_bits = %lu\n", num_bits);
+                    pas_log("num_bits = %zu\n", num_bits);
                 break;
             }
         }
@@ -836,7 +836,7 @@ static PAS_ALWAYS_INLINE uintptr_t pas_bitfit_page_deallocate_with_page_impl(
         modified_offset = offset + (new_num_bits << page_config.base.min_align_shift);
 
         if (verbose) {
-            pas_log("%p: bitfit deallocated %p of size %lu in %p with modified_offset = %lu\n",
+            pas_log("%p: bitfit deallocated %p of size %zu in %p with modified_offset = %zu\n",
                     (void*)pthread_self(), (void*)begin, size, page, modified_offset);
         }
         
@@ -882,8 +882,8 @@ static PAS_ALWAYS_INLINE uintptr_t pas_bitfit_page_deallocate_with_page_impl(
             pas_bitfit_view_note_partial_emptiness(owner, page);
         
         if (verbose) {
-            pas_log("Bits afer deallocate_impl (mode = %s) with size %lu, offset = %lu, "
-                    "modified_offset = %lu in %p\n",
+            pas_log("Bits afer deallocate_impl (mode = %s) with size %zu, offset = %zu, "
+                    "modified_offset = %zu in %p\n",
                     pas_bitfit_page_deallocate_with_page_impl_mode_get_string(mode), size, offset,
                     modified_offset, page);
             pas_bitfit_page_log_bits(

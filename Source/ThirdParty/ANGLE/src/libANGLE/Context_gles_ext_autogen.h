@@ -76,6 +76,7 @@
     /* GL_APPLE_clip_distance */                                                                   \
     /* GL_ARB_sync */                                                                              \
     /* GL_ARM_shader_framebuffer_fetch */                                                          \
+    /* GL_ARM_shader_framebuffer_fetch_depth_stencil */                                            \
     /* GL_EXT_EGL_image_array */                                                                   \
     /* GL_EXT_EGL_image_external_wrap_modes */                                                     \
     /* GL_EXT_EGL_image_storage */                                                                 \
@@ -215,6 +216,7 @@
                        const TextureID *texturesPacked, const GLenum *srcLayouts);                 \
     /* GL_EXT_semaphore_fd */                                                                      \
     void importSemaphoreFd(SemaphoreID semaphorePacked, HandleType handleTypePacked, GLint fd);    \
+    /* GL_EXT_separate_depth_stencil */                                                            \
     /* GL_EXT_separate_shader_objects */                                                           \
     /* GL_EXT_shader_framebuffer_fetch */                                                          \
     /* GL_EXT_shader_framebuffer_fetch_non_coherent */                                             \
@@ -240,10 +242,12 @@
     /* GL_EXT_texture_format_sRGB_override */                                                      \
     /* GL_EXT_texture_mirror_clamp_to_edge */                                                      \
     /* GL_EXT_texture_norm16 */                                                                    \
+    /* GL_EXT_texture_query_lod */                                                                 \
     /* GL_EXT_texture_rg */                                                                        \
     /* GL_EXT_texture_sRGB_R8 */                                                                   \
     /* GL_EXT_texture_sRGB_RG8 */                                                                  \
     /* GL_EXT_texture_sRGB_decode */                                                               \
+    /* GL_EXT_texture_shadow_lod */                                                                \
     /* GL_EXT_texture_storage */                                                                   \
     void texStorage1D(GLenum target, GLsizei levels, GLenum internalformat, GLsizei width);        \
     /* GL_EXT_texture_type_2_10_10_10_REV */                                                       \
@@ -384,6 +388,9 @@
         const void *const *indices, const GLsizei *instanceCounts, const GLint *baseVertices,      \
         const GLuint *baseInstances, GLsizei drawcount);                                           \
     /* GL_ANGLE_base_vertex_base_instance_shader_builtin */                                        \
+    /* GL_ANGLE_blob_cache */                                                                      \
+    void blobCacheCallbacks(GLSETBLOBPROCANGLE set, GLGETBLOBPROCANGLE get,                        \
+                            const void *userParam);                                                \
     /* GL_ANGLE_client_arrays */                                                                   \
     /* GL_ANGLE_clip_cull_distance */                                                              \
     /* GL_ANGLE_compressed_texture_etc */                                                          \

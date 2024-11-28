@@ -72,7 +72,11 @@ WI.HeapSnapshotContentView = class HeapSnapshotContentView extends WI.ContentVie
     dataGridMatchNodeAgainstCustomFilters(node)
     {
         console.assert(node);
-        if (node instanceof WI.HeapSnapshotInstanceFetchMoreDataGridNode)
+
+        if (!this._dataGrid.filterText)
+            return true;
+
+        if (node instanceof WI.HeapSnapshotInstanceFetchMoreDataGridNode && !node.hasVisibleSiblingNodes())
             return false;
         return true;
     }

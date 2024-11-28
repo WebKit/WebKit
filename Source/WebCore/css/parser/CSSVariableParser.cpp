@@ -35,6 +35,7 @@
 #include "CSSParserIdioms.h"
 #include "CSSParserTokenRange.h"
 #include "CSSPropertyParser.h"
+#include "CSSPropertyParserConsumer+Primitives.h"
 #include "CSSTokenizer.h"
 
 namespace WebCore {

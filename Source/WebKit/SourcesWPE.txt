@@ -24,7 +24,7 @@
 GPUProcess/glib/GPUProcessGLib.cpp
 GPUProcess/glib/GPUProcessMainGLib.cpp
 
-GPUProcess/graphics/RemoteGraphicsContextGLGBM.cpp
+GPUProcess/graphics/RemoteGraphicsContextGLGBM.cpp @no-unify
 
 GPUProcess/media/RemoteAudioDestinationManager.cpp
 
@@ -71,12 +71,6 @@ Shared/API/glib/WebKitHitTestResult.cpp @no-unify
 Shared/API/glib/WebKitURIRequest.cpp @no-unify
 Shared/API/glib/WebKitURIResponse.cpp @no-unify
 Shared/API/glib/WebKitUserMessage.cpp @no-unify
-
-Shared/CoordinatedGraphics/CoordinatedGraphicsScene.cpp
-Shared/CoordinatedGraphics/SimpleViewportController.cpp
-
-Shared/CoordinatedGraphics/threadedcompositor/CompositingRunLoop.cpp
-Shared/CoordinatedGraphics/threadedcompositor/ThreadedCompositor.cpp
 
 Shared/freetype/WebCoreArgumentCodersFreeType.cpp
 
@@ -230,6 +224,7 @@ UIProcess/glib/DisplayVBlankMonitorDRM.cpp
 UIProcess/glib/DisplayVBlankMonitorTimer.cpp
 UIProcess/glib/FenceMonitor.cpp
 UIProcess/glib/ScreenManager.cpp
+UIProcess/glib/SystemSettingsManagerProxy.cpp
 UIProcess/glib/WebPageProxyGLib.cpp
 UIProcess/glib/WebProcessPoolGLib.cpp
 UIProcess/glib/WebProcessProxyGLib.cpp
@@ -262,6 +257,7 @@ UIProcess/soup/WebProcessPoolSoup.cpp
 
 UIProcess/wpe/AcceleratedBackingStoreDMABuf.cpp
 UIProcess/wpe/ScreenManagerWPE.cpp
+UIProcess/wpe/SystemSettingsManagerProxyWPE.cpp
 UIProcess/wpe/WebPageProxyWPE.cpp
 UIProcess/wpe/WebPreferencesWPE.cpp
 
@@ -292,9 +288,11 @@ WebProcess/WebCoreSupport/wpe/WebEditorClientWPE.cpp
 
 WebProcess/WebPage/AcceleratedSurface.cpp
 
-WebProcess/WebPage/CoordinatedGraphics/CompositingCoordinator.cpp
+WebProcess/WebPage/CoordinatedGraphics/CoordinatedGraphicsScene.cpp
+WebProcess/WebPage/CoordinatedGraphics/CompositingRunLoop.cpp
 WebProcess/WebPage/CoordinatedGraphics/DrawingAreaCoordinatedGraphics.cpp
 WebProcess/WebPage/CoordinatedGraphics/LayerTreeHost.cpp
+WebProcess/WebPage/CoordinatedGraphics/ThreadedCompositor.cpp
 
 WebProcess/WebPage/dmabuf/AcceleratedSurfaceDMABuf.cpp @no-unify
 
@@ -304,6 +302,7 @@ WebProcess/WebPage/libwpe/AcceleratedSurfaceLibWPE.cpp @no-unify
 
 WebProcess/WebPage/wpe/WebPageWPE.cpp
 
+WebProcess/glib/SystemSettingsManager.cpp
 WebProcess/glib/WebProcessGLib.cpp
 
 WebProcess/wpe/WebProcessMainWPE.cpp

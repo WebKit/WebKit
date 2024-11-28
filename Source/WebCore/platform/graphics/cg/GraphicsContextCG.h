@@ -29,10 +29,12 @@
 
 #include "ColorSpaceCG.h"
 #include "GraphicsContext.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class WEBCORE_EXPORT GraphicsContextCG : public GraphicsContext {
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(GraphicsContextCG, WEBCORE_EXPORT);
 public:
     enum CGContextSource {
         Unknown,
@@ -145,7 +147,6 @@ protected:
     void setCGStyle(const std::optional<GraphicsStyle>&, bool shadowsIgnoreTransforms);
 
 private:
-    void convertToDestinationColorSpaceIfNeeded(RetainPtr<CGImageRef>&);
     void drawNativeImageInternal(NativeImage&, const FloatRect& destRect, const FloatRect& srcRect, ImagePaintingOptions = { }) final;
 
     void clearCGShadow();

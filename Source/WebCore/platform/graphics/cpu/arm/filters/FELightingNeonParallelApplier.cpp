@@ -523,8 +523,9 @@ void FELightingNeonParallelApplier::applyPlatformWorker(ApplyParameters* paramet
 void FELightingNeonParallelApplier::applyPlatformParallel(const LightingData& data, const LightSource::PaintingData& paintingData) const
 {
     alignas(16) FloatArguments floatArguments;
+    auto bytes = data.pixels->bytes();
     ApplyParameters neonData = {
-        data.pixels->bytes(),
+        bytes.data(),
         1,
         data.width - 2,
         data.height - 2,

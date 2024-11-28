@@ -39,6 +39,7 @@
 #import <WebCore/LogInitialization.h>
 #import <getopt.h>
 #import <pal/spi/cf/CFUtilitiesSPI.h>
+#import <pal/spi/cocoa/CoreServicesSPI.h>
 #import <wtf/LogInitialization.h>
 #import <wtf/MainThread.h>
 #import <wtf/OSObjectPtr.h>
@@ -127,6 +128,16 @@ int WebPushDaemonMain(int argc, char** argv)
 #endif
         applySandbox();
 
+#if PLATFORM(IOS) && !PLATFORM(IOS_SIMULATOR)
+        if (!_set_user_dir_suffix("com.apple.webkit.webpushd")) {
+            auto error = errno;
+            auto errorMessage = strerror(error);
+            os_log_error(OS_LOG_DEFAULT, "Failed to set temp dir: %{public}s (%d)", errorMessage, error);
+            exit(1);
+        }
+        (void)NSTemporaryDirectory();
+#endif
+
 #if !LOG_DISABLED || !RELEASE_LOG_DISABLED
         WTF::logChannels().initializeLogChannelsIfNecessary();
         WebCore::logChannels().initializeLogChannelsIfNecessary();
@@ -177,7 +188,9 @@ int WebPushDaemonMain(int argc, char** argv)
             String pushDatabasePath = FileSystem::pathByAppendingComponents(libraryPath, { "WebKit"_s, "WebPush"_s, "PushDatabase.db"_s });
 #endif
 
-            ::WebPushD::WebPushDaemon::singleton().startPushService(String::fromLatin1(incomingPushServiceName), pushDatabasePath);
+            String webClipCachePath = FileSystem::pathByAppendingComponents(libraryPath, { "WebKit"_s, "WebPush"_s, "WebClipCache.plist"_s });
+
+            ::WebPushD::WebPushDaemon::singleton().startPushService(String::fromLatin1(incomingPushServiceName), pushDatabasePath, webClipCachePath);
         }
     }
     CFRunLoopRun();

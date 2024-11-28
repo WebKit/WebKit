@@ -23,7 +23,7 @@
  */
 
 #if !__has_feature(objc_arc)
-#error This tests HashMap.h+HashSet.h+RetainPtr.h with ARC enabled.
+#error This tests UncheckedKeyHashMap.h+HashSet.h+RetainPtr.h with ARC enabled.
 #endif
 
 #define RetainPtrHashingCocoa RetainPtrHashingCocoaARC

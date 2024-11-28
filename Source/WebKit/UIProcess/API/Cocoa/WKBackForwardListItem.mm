@@ -77,7 +77,7 @@ WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
 
 - (CGPoint)_scrollPosition
 {
-    return CGPointMake(_item->pageState().mainFrameState.scrollPosition.x(), _item->pageState().mainFrameState.scrollPosition.y());
+    return CGPointMake(_item->rootFrameState().scrollPosition.x(), _item->rootFrameState().scrollPosition.y());
 }
 
 - (BOOL)_wasCreatedByJSWithoutUserInteraction

@@ -27,8 +27,13 @@
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
-#import "WebExtensionError.h"
-#import <JavaScriptCore/JSBase.h>
+#include "WebExtensionError.h"
+#include <JavaScriptCore/JSBase.h>
+#include <wtf/Function.h>
+#include <wtf/JSONValues.h>
+#include <wtf/Markable.h>
+#include <wtf/UUID.h>
+#include <wtf/Vector.h>
 
 #ifdef __OBJC__
 #import <wtf/RetainPtr.h>
@@ -36,6 +41,15 @@
 #endif
 
 namespace WebKit {
+
+class WebFrame;
+
+Ref<JSON::Array> filterObjects(const JSON::Array&, WTF::Function<bool(const JSON::Value&)>&& lambda);
+
+Vector<String> makeStringVector(const JSON::Array&);
+
+Vector<double> availableScreenScales();
+double largestDisplayScale();
 
 #ifdef __OBJC__
 
@@ -110,6 +124,8 @@ Unexpected<WebExtensionError> toWebExtensionError(NSString *callingAPIName, NSSt
 }
 
 #endif // __OBJC__
+
+Markable<WTF::UUID> toDocumentIdentifier(WebFrame&);
 
 } // namespace WebKit
 

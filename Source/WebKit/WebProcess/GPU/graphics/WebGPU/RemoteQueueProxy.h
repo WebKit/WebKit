@@ -48,6 +48,7 @@ public:
 
     RemoteAdapterProxy& parent() { return m_parent; }
     RemoteGPUProxy& root() { return m_parent->root(); }
+    void submit(Vector<Ref<WebCore::WebGPU::CommandBuffer>>&&) final;
 
 private:
     friend class DowncastConvertToBackingContext;
@@ -60,19 +61,19 @@ private:
     RemoteQueueProxy& operator=(RemoteQueueProxy&&) = delete;
 
     WebGPUIdentifier backing() const { return m_backing; }
+
+    Ref<ConvertToBackingContext> protectedConvertToBackingContext() const;
     
     template<typename T>
     WARN_UNUSED_RETURN IPC::Error send(T&& message)
     {
-        return root().streamClientConnection().send(WTFMove(message), backing());
+        return root().protectedStreamClientConnection()->send(WTFMove(message), backing());
     }
     template<typename T, typename C>
-    WARN_UNUSED_RETURN IPC::StreamClientConnection::AsyncReplyID sendWithAsyncReply(T&& message, C&& completionHandler)
+    WARN_UNUSED_RETURN std::optional<IPC::StreamClientConnection::AsyncReplyID> sendWithAsyncReply(T&& message, C&& completionHandler)
     {
-        return root().streamClientConnection().sendWithAsyncReply(WTFMove(message), completionHandler, backing());
+        return root().protectedStreamClientConnection()->sendWithAsyncReply(WTFMove(message), completionHandler, backing());
     }
-
-    void submit(Vector<std::reference_wrapper<WebCore::WebGPU::CommandBuffer>>&&) final;
 
     void onSubmittedWorkDone(CompletionHandler<void()>&&) final;
 

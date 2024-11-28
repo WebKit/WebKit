@@ -40,24 +40,35 @@ namespace WebKit {
 
 void TestWithEnabledBy::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
-    auto& sharedPreferences = sharedPreferencesForWebProcess(connection);
+    auto sharedPreferences = sharedPreferencesForWebProcess(connection);
     UNUSED_VARIABLE(sharedPreferences);
     Ref protectedThis { *this };
     if (decoder.messageName() == Messages::TestWithEnabledBy::AlwaysEnabled::name())
         return IPC::handleMessage<Messages::TestWithEnabledBy::AlwaysEnabled>(connection, decoder, this, &TestWithEnabledBy::alwaysEnabled);
-    if (decoder.messageName() == Messages::TestWithEnabledBy::ConditionallyEnabled::name() && sharedPreferences.someFeature)
+    if (decoder.messageName() == Messages::TestWithEnabledBy::ConditionallyEnabled::name()) {
+        if (!(sharedPreferences && sharedPreferences->someFeature)) {
+            RELEASE_LOG_ERROR(IPC, "Message %s received by a disabled message endpoint", IPC::description(decoder.messageName()).characters());
+            return decoder.markInvalid();
+        }
         return IPC::handleMessage<Messages::TestWithEnabledBy::ConditionallyEnabled>(connection, decoder, this, &TestWithEnabledBy::conditionallyEnabled);
-    if (decoder.messageName() == Messages::TestWithEnabledBy::ConditionallyEnabledAnd::name() && (sharedPreferences.someFeature && sharedPreferences.otherFeature))
+    }
+    if (decoder.messageName() == Messages::TestWithEnabledBy::ConditionallyEnabledAnd::name()) {
+        if (!(sharedPreferences && (sharedPreferences->someFeature && sharedPreferences->otherFeature))) {
+            RELEASE_LOG_ERROR(IPC, "Message %s received by a disabled message endpoint", IPC::description(decoder.messageName()).characters());
+            return decoder.markInvalid();
+        }
         return IPC::handleMessage<Messages::TestWithEnabledBy::ConditionallyEnabledAnd>(connection, decoder, this, &TestWithEnabledBy::conditionallyEnabledAnd);
-    if (decoder.messageName() == Messages::TestWithEnabledBy::ConditionallyEnabledOr::name() && (sharedPreferences.someFeature || sharedPreferences.otherFeature))
+    }
+    if (decoder.messageName() == Messages::TestWithEnabledBy::ConditionallyEnabledOr::name()) {
+        if (!(sharedPreferences && (sharedPreferences->someFeature || sharedPreferences->otherFeature))) {
+            RELEASE_LOG_ERROR(IPC, "Message %s received by a disabled message endpoint", IPC::description(decoder.messageName()).characters());
+            return decoder.markInvalid();
+        }
         return IPC::handleMessage<Messages::TestWithEnabledBy::ConditionallyEnabledOr>(connection, decoder, this, &TestWithEnabledBy::conditionallyEnabledOr);
+    }
     UNUSED_PARAM(connection);
-    UNUSED_PARAM(decoder);
-#if ENABLE(IPC_TESTING_API)
-    if (connection.ignoreInvalidMessageForTesting())
-        return;
-#endif // ENABLE(IPC_TESTING_API)
-    ASSERT_NOT_REACHED_WITH_MESSAGE("Unhandled message %s to %" PRIu64, IPC::description(decoder.messageName()).characters(), decoder.destinationID());
+    RELEASE_LOG_ERROR(IPC, "Unhandled message %s to %" PRIu64, IPC::description(decoder.messageName()).characters(), decoder.destinationID());
+    decoder.markInvalid();
 }
 
 } // namespace WebKit

@@ -27,7 +27,7 @@ docs_url = "https://docs.gtk.org/gtk@GTK_API_VERSION@/"
 [dependencies."Soup-@SOUP_API_VERSION@"]
 name = "Soup"
 description = "HTTP client/server library"
-docs_url = "https://libsoup.org/libsoup-@SOUP_API_VERSION@"
+docs_url = "https://gnome.pages.gitlab.gnome.org/libsoup/libsoup-@SOUP_API_VERSION@"
 
 [theme]
 name = "basic"
@@ -39,6 +39,8 @@ base_url = "https://github.com/WebKit/WebKit/tree/main/"
 
 [extra]
 content_files = [
+    "overview.md",
+    "environment-variables.md",
     "migrating-to-webkitgtk-6.0.md"
 ]
 

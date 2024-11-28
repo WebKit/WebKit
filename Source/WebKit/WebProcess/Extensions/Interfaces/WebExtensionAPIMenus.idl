@@ -28,8 +28,8 @@
     MainWorldOnly,
 ] interface WebExtensionAPIMenus {
 
-    [RaisesException, ImplementedAs=createMenu, NeedsPage] any create([NSDictionary] any properties, [Optional, CallbackHandler] function callback);
-    [RaisesException, ReturnsPromiseWhenCallbackIsOmitted, NeedsPage] void update([NSObject] any identifier, [NSDictionary] any properties, [Optional, CallbackHandler] function callback);
+    [RaisesException, ImplementedAs=createMenu, NeedsPage, NeedsFrame] any create([NSDictionary=NullAllowed] any properties, [Optional, CallbackHandler] function callback);
+    [RaisesException, ReturnsPromiseWhenCallbackIsOmitted, NeedsPage, NeedsFrame] void update([NSObject] any identifier, [NSDictionary=NullAllowed] any properties, [Optional, CallbackHandler] function callback);
 
     [RaisesException, ReturnsPromiseWhenCallbackIsOmitted] void remove([NSObject] any identifier, [Optional, CallbackHandler] function callback);
     [ReturnsPromiseWhenCallbackIsOmitted] void removeAll([Optional, CallbackHandler] function callback);

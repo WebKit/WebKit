@@ -118,6 +118,8 @@ Modules/applepay/paymentrequest/ApplePayPaymentHandler.cpp
 Modules/applepay-ams-ui/ApplePayAMSUIPaymentHandler.cpp
 Modules/async-clipboard/ios/ClipboardImageReaderIOS.mm
 Modules/async-clipboard/mac/ClipboardImageReaderMac.mm
+Modules/compression/cocoa/CompressionStreamEncoderCocoa.mm
+Modules/compression/cocoa/DecompressionStreamDecoderCocoa.mm
 Modules/mediastream/RTCRtpSFrameTransformerCocoa.cpp
 Modules/model-element/scenekit/SceneKitModel.mm
 Modules/model-element/scenekit/SceneKitModelLoader.mm
@@ -164,7 +166,6 @@ crypto/cocoa/CryptoAlgorithmEd25519Cocoa.cpp
 crypto/cocoa/CryptoAlgorithmHKDFMac.cpp
 crypto/cocoa/CryptoAlgorithmHMACMac.cpp
 crypto/cocoa/CryptoAlgorithmPBKDF2Mac.cpp
-crypto/cocoa/CryptoAlgorithmRSAES_PKCS1_v1_5Mac.cpp
 crypto/cocoa/CryptoAlgorithmRSASSA_PKCS1_v1_5Mac.cpp
 crypto/cocoa/CryptoAlgorithmRSA_OAEPMac.cpp
 crypto/cocoa/CryptoAlgorithmRSA_PSSMac.cpp
@@ -312,7 +313,6 @@ platform/cocoa/PlaybackSessionModelMediaElement.mm
 platform/cocoa/PowerSourceNotifier.mm
 platform/cocoa/PublicSuffixStoreCocoa.mm
 platform/cocoa/RemoteCommandListenerCocoa.mm
-platform/cocoa/RuntimeApplicationChecksCocoa.mm
 platform/cocoa/SearchPopupMenuCocoa.mm
 platform/cocoa/SerializedPlatformDataCueValue.mm @no-unify
 platform/cocoa/SharedBufferCocoa.mm
@@ -627,9 +627,10 @@ platform/mac/WebCoreObjCExtras.mm
 platform/mac/WebPlaybackControlsManager.mm
 platform/mac/WidgetMac.mm
 platform/mediarecorder/MediaRecorderPrivateAVFImpl.cpp
+platform/mediarecorder/MediaRecorderPrivateEncoder.cpp
 platform/mediarecorder/cocoa/AudioSampleBufferCompressor.mm
-platform/mediarecorder/cocoa/MediaRecorderPrivateWriterCocoa.mm
-platform/mediarecorder/cocoa/VideoSampleBufferCompressor.mm
+platform/mediarecorder/cocoa/MediaRecorderPrivateWriterAVFObjC.mm
+platform/mediarecorder/cocoa/MediaRecorderPrivateWriterWebM.cpp
 platform/mediastream/cocoa/AudioMediaStreamTrackRendererCocoa.cpp
 platform/mediastream/cocoa/AudioMediaStreamTrackRendererInternalUnit.cpp
 platform/mediastream/cocoa/AudioMediaStreamTrackRendererUnit.cpp
@@ -715,4 +716,4 @@ testing/cocoa/WebViewVisualIdentificationOverlay.mm
 
 platform/graphics/angle/GraphicsContextGLANGLE.cpp @no-unify
 platform/graphics/cocoa/GraphicsContextGLCocoa.mm @no-unify
-platform/graphics/cv/GraphicsContextGLCVCocoa.cpp @no-unify
+platform/graphics/cv/GraphicsContextGLCVCocoa.mm @no-unify

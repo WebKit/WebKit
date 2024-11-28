@@ -36,6 +36,8 @@
 #import <wtf/RetainPtr.h>
 #import <wtf/TinyLRUCache.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WTF {
 
 template<> RetainPtr<NSColor> TinyLRUCachePolicy<WebCore::Color, RetainPtr<NSColor>>::createValueForKey(const WebCore::Color& color)
@@ -150,5 +152,7 @@ RetainPtr<NSColor> cocoaColor(const Color& color)
 }
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // USE(APPKIT)

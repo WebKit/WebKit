@@ -28,6 +28,7 @@
 #if PLATFORM(MAC) && ENABLE(SERVICE_CONTROLS)
 
 #import "ControlMac.h"
+#import <wtf/TZoneMalloc.h>
 
 OBJC_CLASS NSServicesRolloverButtonCell;
 
@@ -36,6 +37,7 @@ namespace WebCore {
 class ImageControlsButtonPart;
 
 class ImageControlsButtonMac final : public ControlMac {
+    WTF_MAKE_TZONE_ALLOCATED(ImageControlsButtonMac);
 public:
     ImageControlsButtonMac(ImageControlsButtonPart&, ControlFactoryMac&, NSServicesRolloverButtonCell *);
 

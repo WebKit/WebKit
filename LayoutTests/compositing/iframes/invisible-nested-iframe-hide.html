@@ -32,11 +32,11 @@
 
     function doTest()
     {
-      window.setTimeout(function() {
+      window.setTimeout(async function() {
         var div = document.getElementById('invisible');
         div.style.cssText = "display:none;";
         if (window.testRunner) {
-          testRunner.displayAndTrackRepaints();
+          await testRunner.displayAndTrackRepaints();
           document.getElementById('layers').innerHTML = window.internals.layerTreeAsText(document);
           testRunner.notifyDone();
         }

@@ -1,6 +1,6 @@
 
-PASS Getting a custom property not in the inline style returns null
-PASS Getting a valid property not in the inline style returns null
+PASS Getting a custom property not in the inline style returns undefined
+PASS Getting a valid property not in the inline style returns undefined
 PASS Getting a valid property from inline style returns the correct entry
 PASS Getting a valid custom property from inline style returns the correct entry
 PASS Getting a list-valued property from inline style returns only the first value

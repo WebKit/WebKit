@@ -1,0 +1,6 @@
+
+PASS TextDecoderStream: write in detached realm should succeed
+PASS TextEncoderStream: write in detached realm should succeed
+PASS TextEncoderStream: close in detached realm should succeed
+PASS TextDecoderStream: close in detached realm should succeed
+

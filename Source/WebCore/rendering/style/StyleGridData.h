@@ -39,13 +39,13 @@
 namespace WebCore {
 
 struct NamedGridLinesMap {
-    HashMap<String, Vector<unsigned>> map;
+    UncheckedKeyHashMap<String, Vector<unsigned>> map;
 
     friend bool operator==(const NamedGridLinesMap&, const NamedGridLinesMap&) = default;
 };
 
 struct OrderedNamedGridLinesMap {
-    HashMap<unsigned, Vector<String>, IntHash<unsigned>, WTF::UnsignedWithZeroKeyHashTraits<unsigned>> map;
+    UncheckedKeyHashMap<unsigned, Vector<String>, IntHash<unsigned>, WTF::UnsignedWithZeroKeyHashTraits<unsigned>> map;
 };
 
 typedef std::variant<GridTrackSize, Vector<String>> RepeatEntry;
@@ -80,7 +80,7 @@ struct MasonryAutoFlow {
     MasonryAutoFlowPlacementOrder placementOrder;
 };
 
-typedef std::variant<GridTrackSize, Vector<String>, GridTrackEntryRepeat, GridTrackEntryAutoRepeat, GridTrackEntrySubgrid, GridTrackEntryMasonry> GridTrackEntry;
+using GridTrackEntry = std::variant<GridTrackSize, Vector<String>, GridTrackEntryRepeat, GridTrackEntryAutoRepeat, GridTrackEntrySubgrid, GridTrackEntryMasonry>;
 struct GridTrackList {
     Vector<GridTrackEntry> list;
     friend bool operator==(const GridTrackList&, const GridTrackList&) = default;
@@ -97,10 +97,11 @@ public:
     static Ref<StyleGridData> create() { return adoptRef(*new StyleGridData); }
     Ref<StyleGridData> copy() const;
 
-    bool operator==(const StyleGridData& o) const
-    {
-        return m_columns == o.m_columns && m_rows == o.m_rows && implicitNamedGridColumnLines == o.implicitNamedGridColumnLines && implicitNamedGridRowLines == o.implicitNamedGridRowLines && gridAutoFlow == o.gridAutoFlow && gridAutoRows == o.gridAutoRows && gridAutoColumns == o.gridAutoColumns && namedGridArea == o.namedGridArea && namedGridAreaRowCount == o.namedGridAreaRowCount && namedGridAreaColumnCount == o.namedGridAreaColumnCount && m_masonryRows == o.m_masonryRows && m_masonryColumns == o.m_masonryColumns && masonryAutoFlow == o.masonryAutoFlow;
-    }
+    bool operator==(const StyleGridData&) const;
+
+#if !LOG_DISABLED
+    void dumpDifferences(TextStream&, const StyleGridData&) const;
+#endif
 
     void setRows(const GridTrackList&);
     void setColumns(const GridTrackList&);

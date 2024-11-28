@@ -38,14 +38,16 @@
 #include "WasmMemoryInformation.h"
 #include "WasmName.h"
 #include "WasmNameSection.h"
-#include "WasmOSREntryData.h"
 #include "WasmOps.h"
 #include "WasmTypeDefinition.h"
 #include <cstdint>
 #include <limits>
 #include <memory>
+#include <wtf/FixedBitVector.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace JSC {
 
@@ -57,7 +59,10 @@ struct CompilationContext;
 struct ModuleInformation;
 struct UnlinkedHandlerInfo;
 
-using BlockSignature = const FunctionSignature*;
+struct BlockSignature {
+    const FunctionSignature* m_signature;
+    RefPtr<TypeDefinition> m_generatedUnderlyingType;
+};
 
 enum class TableElementType : uint8_t {
     Externref,
@@ -75,6 +80,7 @@ inline bool isValueType(Type type)
     case TypeKind::F32:
     case TypeKind::F64:
         return true;
+    case TypeKind::Exn:
     case TypeKind::Externref:
     case TypeKind::Funcref:
         return false;
@@ -248,6 +254,11 @@ inline Type arrayrefType(bool isNullable = true)
     return Wasm::Type { isNullable ? Wasm::TypeKind::RefNull : Wasm::TypeKind::Ref, static_cast<Wasm::TypeIndex>(Wasm::TypeKind::Arrayref) };
 }
 
+inline Type exnrefType()
+{
+    return Wasm::Type { Wasm::TypeKind::RefNull, static_cast<Wasm::TypeIndex>(Wasm::TypeKind::Exn) };
+}
+
 inline bool isRefWithTypeIndex(Type type)
 {
     return isRefType(type) && !typeIndexIsType(type.index);
@@ -356,6 +367,7 @@ inline bool isValidHeapTypeKind(intptr_t kind)
     switch (kind) {
     case static_cast<intptr_t>(TypeKind::Funcref):
     case static_cast<intptr_t>(TypeKind::Externref):
+    case static_cast<intptr_t>(TypeKind::Exn):
         return true;
     case static_cast<intptr_t>(TypeKind::I31ref):
     case static_cast<intptr_t>(TypeKind::Arrayref):
@@ -397,6 +409,8 @@ inline const char* heapTypeKindAsString(TypeKind kind)
         return "nofunc";
     case TypeKind::Nullexternref:
         return "noextern";
+    case TypeKind::Exn:
+        return "exn";
     default:
         RELEASE_ASSERT_NOT_REACHED();
         return "";
@@ -708,10 +722,47 @@ inline bool isValidNameType(Int val)
     return false;
 }
 
+// A code index is an index in the code section of the module, thus does not include imports. This is also sometimes called an internal function.
+// A space index is an index into the total function space of a module and includes imports. It's broken down into [ imports..., code section... ].
+// These are **NOT** convertable without knowing how many imports there are e.g. via ModuleInformation/CalleeGroup's toCodeIndex/toSpaceIndex
+
+class FunctionSpaceIndex;
+class TRIVIAL_ABI FunctionCodeIndex {
+public:
+    FunctionCodeIndex() = default;
+    FunctionCodeIndex(FunctionSpaceIndex) = delete;
+    explicit constexpr FunctionCodeIndex(uint32_t index)
+        : m_index(index)
+    { }
+
+    size_t rawIndex() const { return m_index; }
+    operator size_t() const { return m_index; }
+    void dump(PrintStream& out) const { out.print(m_index); }
+
+private:
+    uint32_t m_index { UINT_MAX };
+};
+
+class TRIVIAL_ABI FunctionSpaceIndex {
+public:
+    FunctionSpaceIndex() = default;
+    FunctionSpaceIndex(FunctionCodeIndex) = delete;
+    explicit constexpr FunctionSpaceIndex(uint32_t index)
+        : m_index(index)
+    { }
+
+    size_t rawIndex() const { return m_index; }
+    operator size_t() const { return m_index; }
+    void dump(PrintStream& out) const { out.print(m_index); }
+
+private:
+    uint32_t m_index { UINT_MAX };
+};
+
 struct UnlinkedWasmToWasmCall {
     WTF_MAKE_STRUCT_FAST_ALLOCATED;
     CodeLocationNearCall<WasmEntryPtrTag> callLocation;
-    size_t functionIndexSpace;
+    FunctionSpaceIndex functionIndexSpace;
     CodeLocationDataLabelPtr<WasmEntryPtrTag> calleeLocation;
 
 };
@@ -724,6 +775,10 @@ struct Entrypoint {
 };
 #endif
 
+class OSREntryValue;
+using StackMap = FixedVector<OSREntryValue>;
+using StackMaps = UncheckedKeyHashMap<CallSiteIndex, StackMap>;
+
 struct InternalFunction {
     WTF_MAKE_STRUCT_FAST_ALLOCATED;
 #if ENABLE(WEBASSEMBLY_OMGJIT) || ENABLE(WEBASSEMBLY_BBQJIT)
@@ -734,6 +789,7 @@ struct InternalFunction {
     Vector<CCallHelpers::Label> bbqLoopEntrypoints;
     std::optional<CCallHelpers::Label> bbqSharedLoopEntrypoint;
     Entrypoint entrypoint;
+    FixedBitVector outgoingJITDirectCallees;
 #endif
     unsigned osrEntryScratchBufferSize { 0 };
 };
@@ -761,6 +817,8 @@ struct WasmToWasmImportableFunction {
 using FunctionIndexSpace = Vector<WasmToWasmImportableFunction>;
 
 } } // namespace JSC::Wasm
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 namespace WTF {
 

@@ -444,7 +444,7 @@ If the data is written to a file the resulting file is a valid PDF document.
 It can be used to represent web content on a pasteboard, loaded into a WKWebView directly, and saved to a file for later use.
 The uniform type identifier kUTTypeWebArchive can be used get the related pasteboard type and MIME type.
 */
-- (void)createWebArchiveDataWithCompletionHandler:(WK_SWIFT_UI_ACTOR void (^)(NSData *, NSError *))completionHandler NS_REFINED_FOR_SWIFT WK_API_AVAILABLE(macos(11.0), ios(14.0));
+- (void)createWebArchiveDataWithCompletionHandler:(WK_SWIFT_UI_ACTOR void (^)(NSData * _Nullable, NSError * _Nullable))completionHandler NS_REFINED_FOR_SWIFT WK_API_AVAILABLE(macos(11.0), ios(14.0));
 
 /*! @abstract A Boolean value indicating whether horizontal swipe gestures
  will trigger back-forward list navigations.

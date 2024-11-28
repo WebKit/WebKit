@@ -18,30 +18,34 @@
 namespace WTF {
 
 template<typename OutputCharacterType, typename InputCharacterType>
-ALWAYS_INLINE static void appendEscapedJSONStringContent(OutputCharacterType*& output, std::span<const InputCharacterType> input)
+ALWAYS_INLINE static void appendEscapedJSONStringContent(std::span<OutputCharacterType>& output, std::span<const InputCharacterType> input)
 {
     for (; !input.empty(); input = input.subspan(1)) {
         auto character = input.front();
         if (LIKELY(character <= 0xFF)) {
             auto escaped = escapedFormsForJSON[character];
             if (LIKELY(!escaped)) {
-                *output++ = character;
+                output[0] = character;
+                output = output.subspan(1);
                 continue;
             }
 
-            *output++ = '\\';
-            *output++ = escaped;
+            output[0] = '\\';
+            output[1] = escaped;
+            output = output.subspan(2);
             if (UNLIKELY(escaped == 'u')) {
-                *output++ = '0';
-                *output++ = '0';
-                *output++ = upperNibbleToLowercaseASCIIHexDigit(character);
-                *output++ = lowerNibbleToLowercaseASCIIHexDigit(character);
+                output[0] = '0';
+                output[1] = '0';
+                output[2] = upperNibbleToLowercaseASCIIHexDigit(character);
+                output[3] = lowerNibbleToLowercaseASCIIHexDigit(character);
+                output = output.subspan(4);
             }
             continue;
         }
 
         if (LIKELY(!U16_IS_SURROGATE(character))) {
-            *output++ = character;
+            output[0] = character;
+            output = output.subspan(1);
             continue;
         }
 
@@ -49,8 +53,9 @@ ALWAYS_INLINE static void appendEscapedJSONStringContent(OutputCharacterType*& o
             auto next = input[1];
             bool isValidSurrogatePair = U16_IS_SURROGATE_LEAD(character) && U16_IS_TRAIL(next);
             if (isValidSurrogatePair) {
-                *output++ = character;
-                *output++ = next;
+                output[0] = character;
+                output[1] = next;
+                output = output.subspan(2);
                 input = input.subspan(1);
                 continue;
             }
@@ -58,12 +63,13 @@ ALWAYS_INLINE static void appendEscapedJSONStringContent(OutputCharacterType*& o
 
         uint8_t upper = static_cast<uint32_t>(character) >> 8;
         uint8_t lower = static_cast<uint8_t>(character);
-        *output++ = '\\';
-        *output++ = 'u';
-        *output++ = upperNibbleToLowercaseASCIIHexDigit(upper);
-        *output++ = lowerNibbleToLowercaseASCIIHexDigit(upper);
-        *output++ = upperNibbleToLowercaseASCIIHexDigit(lower);
-        *output++ = lowerNibbleToLowercaseASCIIHexDigit(lower);
+        output[0] = '\\';
+        output[1] = 'u';
+        output[2] = upperNibbleToLowercaseASCIIHexDigit(upper);
+        output[3] = lowerNibbleToLowercaseASCIIHexDigit(upper);
+        output[4] = upperNibbleToLowercaseASCIIHexDigit(lower);
+        output[5] = lowerNibbleToLowercaseASCIIHexDigit(lower);
+        output = output.subspan(6);
     }
 }
 

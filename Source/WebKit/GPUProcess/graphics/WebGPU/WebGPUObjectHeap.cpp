@@ -55,6 +55,7 @@
 #include "RemoteXRBinding.h"
 #include "RemoteXRProjectionLayer.h"
 #include "RemoteXRSubImage.h"
+#include "RemoteXRView.h"
 #include <wtf/TZoneMallocInlines.h>
 
 #if HAVE(WEBGPU_IMPLEMENTATION)

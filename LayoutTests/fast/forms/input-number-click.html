@@ -12,58 +12,62 @@
 <script>
 description('Test for the spin control behavior in a type=numnber input.');
 
-if (window.eventSender) {
-    debug('Initial value is 3.14, click the up button once');
-    // The spin control is at (130,-1) in the input element on Mac.
-    // The size is 15x22.
-    var i = document.getElementById('i1');
-    eventSender.mouseMoveTo(i.offsetLeft + i.offsetWidth - 4, i.offsetTop + 4);
-    eventSender.mouseDown();
-    eventSender.mouseUp();
-    // The up button has been clicked.
-    shouldBe('i.value', '"4.14"');
+var i = document.getElementById('i1');
+onload = async () => {
+    if (window.eventSender && window.testRunner) {
+        testRunner.waitUntilDone();
+        debug('Initial value is 3.14, click the up button once');
+        // The spin control is at (130,-1) in the input element on Mac.
+        // The size is 15x22.
+        await eventSender.asyncMouseMoveTo(i.offsetLeft + i.offsetWidth - 4, i.offsetTop + 4);
+        await eventSender.asyncMouseDown();
+        await eventSender.asyncMouseUp();
+        // The up button has been clicked.
+        shouldBe('i.value', '"4.14"');
 
-    debug('Click the up button again.  The maximum value is 5.');
-    eventSender.mouseDown();
-    eventSender.mouseUp();
-    // The maximum value is 5.  So the value is not changed.
-    shouldBe('i.value', '"4.14"');
+        debug('Click the up button again.  The maximum value is 5.');
+        await eventSender.asyncMouseDown();
+        await eventSender.asyncMouseUp();
+        // The maximum value is 5.  So the value is not changed.
+        shouldBe('i.value', '"4.14"');
 
-    debug('Click the down button four times');
-    eventSender.mouseMoveTo(i.offsetLeft + i.offsetWidth - 4, i.offsetTop + 15);
-    eventSender.mouseDown();
-    eventSender.mouseUp();
-    eventSender.mouseDown();
-    eventSender.mouseUp();
-    eventSender.mouseDown();
-    eventSender.mouseUp();
-    eventSender.mouseDown();
-    eventSender.mouseUp();
-    shouldBe('i.value', '"0.14"');
+        debug('Click the down button four times');
+        await eventSender.asyncMouseMoveTo(i.offsetLeft + i.offsetWidth - 4, i.offsetTop + 15);
+        await eventSender.asyncMouseDown();
+        await eventSender.asyncMouseUp();
+        await eventSender.asyncMouseDown();
+        await eventSender.asyncMouseUp();
+        await eventSender.asyncMouseDown();
+        await eventSender.asyncMouseUp();
+        await eventSender.asyncMouseDown();
+        await eventSender.asyncMouseUp();
+        shouldBe('i.value', '"0.14"');
 
-    debug('Click the down button again. The minimum value is 0.');
-    // The minimum value is 0.  So the value is not changed.
-    eventSender.mouseDown();
-    eventSender.mouseUp();
-    shouldBe('i.value', '"0.14"');
+        debug('Click the down button again. The minimum value is 0.');
+        // The minimum value is 0.  So the value is not changed.
+        await eventSender.asyncMouseDown();
+        await eventSender.asyncMouseUp();
+        shouldBe('i.value', '"0.14"');
 
-    debug('Make the control "disabled" and click the up button');
-    i.disabled = true;
-    eventSender.mouseMoveTo(i.offsetLeft + i.offsetWidth - 4, i.offsetTop + 4);
-    eventSender.mouseDown();
-    eventSender.mouseUp();
-    shouldBe('i.value', '"0.14"');
-    i.disabled = false;
+        debug('Make the control "disabled" and click the up button');
+        i.disabled = true;
+        await eventSender.asyncMouseMoveTo(i.offsetLeft + i.offsetWidth - 4, i.offsetTop + 4);
+        await eventSender.asyncMouseDown();
+        await eventSender.asyncMouseUp();
+        shouldBe('i.value', '"0.14"');
+        i.disabled = false;
 
-    debug('Make the control "readOnly" and click the up button');
-    i.readOnly = true;
-    eventSender.mouseMoveTo(i.offsetLeft + i.offsetWidth - 4, i.offsetTop + 4);
-    eventSender.mouseDown();
-    eventSender.mouseUp();
-    shouldBe('i.value', '"0.14"');
-    i.readOnly = false;
-} else {
-  document.getElementById('console').innerHTML = 'No eventSender';
+        debug('Make the control "readOnly" and click the up button');
+        i.readOnly = true;
+        await eventSender.asyncMouseMoveTo(i.offsetLeft + i.offsetWidth - 4, i.offsetTop + 4);
+        await eventSender.asyncMouseDown();
+        await eventSender.asyncMouseUp();
+        shouldBe('i.value', '"0.14"');
+        i.readOnly = false;
+        testRunner.notifyDone();
+    } else {
+        document.getElementById('console').innerHTML = 'No eventSender or testRunner';
+    }
 }
 
 </script>

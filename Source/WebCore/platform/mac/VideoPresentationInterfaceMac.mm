@@ -628,7 +628,7 @@ bool VideoPresentationInterfaceMac::isPlayingVideoInEnhancedFullscreen() const
 }
 
 #if !RELEASE_LOG_DISABLED
-const void* VideoPresentationInterfaceMac::logIdentifier() const
+uint64_t VideoPresentationInterfaceMac::logIdentifier() const
 {
     return m_playbackSessionInterface->logIdentifier();
 }

@@ -45,6 +45,7 @@
 #include "CSSUnitValue.h"
 #include "CSSUnparsedValue.h"
 #include "CSSValueList.h"
+#include "CSSValuePool.h"
 #include "CSSVariableData.h"
 #include "CSSVariableReferenceValue.h"
 #include "StylePropertiesInlines.h"

@@ -24,6 +24,7 @@
 
 #include "CSSGroupingRule.h"
 #include "CSSParser.h"
+#include "CSSParserEnum.h"
 #include "CSSParserImpl.h"
 #include "CSSRuleList.h"
 #include "CSSStyleSheet.h"
@@ -38,7 +39,7 @@
 
 namespace WebCore {
 
-typedef HashMap<const CSSStyleRule*, String> SelectorTextCache;
+typedef UncheckedKeyHashMap<const CSSStyleRule*, String> SelectorTextCache;
 static SelectorTextCache& selectorTextCache()
 {
     static NeverDestroyed<SelectorTextCache> cache;
@@ -114,9 +115,8 @@ void CSSStyleRule::setSelectorText(const String& selectorText)
         return;
 
     CSSParser p(parserContext());
-    auto isNestedContext = hasStyleRuleAncestor() ? CSSParserEnum::IsNestedContext::Yes : CSSParserEnum::IsNestedContext::No;
     RefPtr sheet = parentStyleSheet();
-    auto selectorList = p.parseSelectorList(selectorText, sheet ? &sheet->contents() : nullptr, isNestedContext);
+    auto selectorList = p.parseSelectorList(selectorText, sheet ? &sheet->contents() : nullptr, nestedContext());
     if (!selectorList)
         return;
 
@@ -163,7 +163,7 @@ void CSSStyleRule::cssTextForRules(StringBuilder& rules) const
         rules.append("\n  "_s, item(index)->cssText());
 }
 
-String CSSStyleRule::cssTextWithReplacementURLs(const HashMap<String, String>& replacementURLStrings, const HashMap<RefPtr<CSSStyleSheet>, String>& replacementURLStringsForCSSStyleSheet) const
+String CSSStyleRule::cssTextWithReplacementURLs(const UncheckedKeyHashMap<String, String>& replacementURLStrings, const UncheckedKeyHashMap<RefPtr<CSSStyleSheet>, String>& replacementURLStringsForCSSStyleSheet) const
 {
     StringBuilder declarations;
     StringBuilder rules;
@@ -179,7 +179,7 @@ String CSSStyleRule::cssTextWithReplacementURLs(const HashMap<String, String>& r
     return cssTextInternal(declarations, rules);
 }
 
-void CSSStyleRule::cssTextForRulesWithReplacementURLs(StringBuilder& rules, const HashMap<String, String>& replacementURLStrings, const HashMap<RefPtr<CSSStyleSheet>, String>& replacementURLStringsForCSSStyleSheet) const
+void CSSStyleRule::cssTextForRulesWithReplacementURLs(StringBuilder& rules, const UncheckedKeyHashMap<String, String>& replacementURLStrings, const UncheckedKeyHashMap<RefPtr<CSSStyleSheet>, String>& replacementURLStringsForCSSStyleSheet) const
 {
     for (unsigned index = 0; index < length(); index++)
         rules.append("\n  "_s, item(index)->cssTextWithReplacementURLs(replacementURLStrings, replacementURLStringsForCSSStyleSheet));
@@ -236,7 +236,7 @@ ExceptionOr<unsigned> CSSStyleRule::insertRule(const String& ruleString, unsigne
         return Exception { ExceptionCode::IndexSizeError };
 
     RefPtr styleSheet = parentStyleSheet();
-    RefPtr<StyleRuleBase> newRule = CSSParser::parseRule(parserContext(), styleSheet ? &styleSheet->contents() : nullptr, ruleString, CSSParserEnum::IsNestedContext::Yes);
+    RefPtr newRule = CSSParser::parseRule(parserContext(), styleSheet ? &styleSheet->contents() : nullptr, ruleString, CSSParserEnum::NestedContextType::Style);
     if (!newRule) {
         newRule = CSSParserImpl::parseNestedDeclarations(parserContext(), ruleString);
         if (!newRule)

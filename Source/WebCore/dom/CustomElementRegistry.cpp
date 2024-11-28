@@ -44,14 +44,24 @@
 
 namespace WebCore {
 
-Ref<CustomElementRegistry> CustomElementRegistry::create(LocalDOMWindow& window, ScriptExecutionContext* scriptExecutionContext)
+Ref<CustomElementRegistry> CustomElementRegistry::create(ScriptExecutionContext& scriptExecutionContext, LocalDOMWindow& window)
 {
-    return adoptRef(*new CustomElementRegistry(window, scriptExecutionContext));
+    return adoptRef(*new CustomElementRegistry(scriptExecutionContext, window));
 }
 
-CustomElementRegistry::CustomElementRegistry(LocalDOMWindow& window, ScriptExecutionContext* scriptExecutionContext)
-    : ContextDestructionObserver(scriptExecutionContext)
+Ref<CustomElementRegistry> CustomElementRegistry::create(ScriptExecutionContext& scriptExecutionContext)
+{
+    return adoptRef(*new CustomElementRegistry(scriptExecutionContext));
+}
+
+CustomElementRegistry::CustomElementRegistry(ScriptExecutionContext& scriptExecutionContext, LocalDOMWindow& window)
+    : ContextDestructionObserver(&scriptExecutionContext)
     , m_window(window)
+{
+}
+
+CustomElementRegistry::CustomElementRegistry(ScriptExecutionContext& scriptExecutionContext)
+    : ContextDestructionObserver(&scriptExecutionContext)
 {
 }
 
@@ -62,15 +72,20 @@ Document* CustomElementRegistry::document() const
     return m_window ? m_window->document() : nullptr;
 }
 
+void CustomElementRegistry::didAssociateWithDocument(Document& document)
+{
+    m_associatedDocuments.add(document);
+}
+
 // https://dom.spec.whatwg.org/#concept-shadow-including-tree-order
-static void enqueueUpgradeInShadowIncludingTreeOrder(ContainerNode& node, JSCustomElementInterface& elementInterface)
+static void enqueueUpgradeInShadowIncludingTreeOrder(ContainerNode& node, JSCustomElementInterface& elementInterface, CustomElementRegistry& registry)
 {
     for (RefPtr element = ElementTraversal::firstWithin(node); element; element = ElementTraversal::next(*element)) {
-        if (element->isCustomElementUpgradeCandidate() && element->tagQName().matches(elementInterface.name()))
+        if (element->isCustomElementUpgradeCandidate() && element->treeScope().customElementRegistry() == &registry && element->tagQName().matches(elementInterface.name()))
             element->enqueueToUpgrade(elementInterface);
         if (RefPtr shadowRoot = element->shadowRoot()) {
             if (shadowRoot->mode() != ShadowRootMode::UserAgent)
-                enqueueUpgradeInShadowIncludingTreeOrder(*shadowRoot, elementInterface);
+                enqueueUpgradeInShadowIncludingTreeOrder(*shadowRoot, elementInterface, registry);
         }
     }
 }
@@ -90,11 +105,16 @@ RefPtr<DeferredPromise> CustomElementRegistry::addElementDefinition(Ref<JSCustom
     if (elementInterface->isShadowDisabled())
         m_disabledShadowSet.add(localName);
 
-    if (RefPtr document = this->document()) {
+    if (RefPtr document = this->document()) { // Global custom element registry
         // ungap/@custom-elements detection for quirk (rdar://problem/111008826).
         if (localName == extendsLi.get())
             document->quirks().setNeedsConfigurableIndexedPropertiesQuirk();
-        enqueueUpgradeInShadowIncludingTreeOrder(*document, elementInterface.get());
+        enqueueUpgradeInShadowIncludingTreeOrder(*document, elementInterface.get(), *this);
+    }
+
+    for (Ref document : m_associatedDocuments) {
+        if (document->hasBrowsingContext())
+            enqueueUpgradeInShadowIncludingTreeOrder(document, elementInterface.get(), *this);
     }
 
     return m_promiseMap.take(localName);
