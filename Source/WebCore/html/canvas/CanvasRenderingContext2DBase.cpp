@@ -34,6 +34,7 @@
 #include "CanvasRenderingContext2DBase.h"
 
 #include "BitmapImage.h"
+#include "ByteArrayPixelBuffer.h"
 #include "CSSFontSelector.h"
 #include "CSSMarkup.h"
 #include "CSSParser.h"
@@ -231,11 +232,24 @@ static TextBaseline fromCanvasTextBaseline(CanvasTextBaseline canvasTextBaseline
     return TopTextBaseline;
 }
 
+static CanvasRenderingContext2DSettings&& tweakSettings(CanvasRenderingContext2DSettings&& settings)
+{
+#if !HAVE(HDR_SUPPORT)
+    // On platforms with no HDR_SUPPORT, the output bitmap ImageBufferPixelFormat::RGBA16F is not available so we cannot store these pixel values.
+    // Fallback to uint8 ~ BGRA8, and change the settings accordingly; webdevs can notice by reading back getContextAttributes().pixelFormat.
+    // FIXME: Should the getContext() call throw an exception instead? Could be done by simply removing "float16" from CanvasPixelFormat
+    //        in CanvasRenderingContext2DSettings.idl (and related changes, includind removing this tweak here).
+    if (settings.pixelFormat == CanvasRenderingContext2DSettings::PixelFormat::Float16)
+        settings.pixelFormat = CanvasRenderingContext2DSettings::PixelFormat::Uint8;
+#endif
+    return settings;
+}
+
 CanvasRenderingContext2DBase::CanvasRenderingContext2DBase(CanvasBase& canvas, CanvasRenderingContext::Type type, CanvasRenderingContext2DSettings&& settings, bool usesCSSCompatibilityParseMode)
     : CanvasRenderingContext(canvas, type)
     , m_stateStack(1)
     , m_usesCSSCompatibilityParseMode(usesCSSCompatibilityParseMode)
-    , m_settings(WTFMove(settings))
+    , m_settings(tweakSettings(WTFMove(settings)))
 {
     ASSERT(is2dBase());
 }
@@ -2487,6 +2501,9 @@ RefPtr<ByteArrayPixelBuffer> CanvasRenderingContext2DBase::cacheImageDataIfPossi
     if (imageData.colorSpace() != m_settings.colorSpace)
         return nullptr;
 
+    if (imageData.storageFormat() != ImageDataStorageFormat::Uint8)
+        return nullptr;
+
     // Consider:
     //   * Real putImageData needs premultiply step.
     //   * Retrieve from cache needs to ensure premultiply + unpremultiply was made to simulate the real putImageData.
@@ -2537,20 +2554,19 @@ RefPtr<ImageData> CanvasRenderingContext2DBase::makeImageDataIfContentsCached(co
         return nullptr;
 
     auto size = pixelBuffer->size();
-    auto data = pixelBuffer->takeData();
     unsigned bytesPerRow = static_cast<unsigned>(size.width()) * 4u;
     ConstPixelBufferConversionView source {
         .format = pixelBuffer->format(),
         .bytesPerRow = bytesPerRow,
-        .rows = data->span(),
+        .rows = pixelBuffer->bytes(),
     };
     PixelBufferConversionView destination {
-        .format = { AlphaPremultiplication::Unpremultiplied, PixelFormat::RGBA8, pixelBuffer->format().colorSpace },
+        .format = { AlphaPremultiplication::Unpremultiplied, pixelBuffer->format().pixelFormat, pixelBuffer->format().colorSpace },
         .bytesPerRow = bytesPerRow,
-        .rows = data->mutableSpan(),
+        .rows = pixelBuffer->bytes(),
     };
     convertImagePixels(source, destination, size);
-    return ImageData::create(size, WTFMove(data), m_settings.colorSpace);
+    return ImageData::create(WTFMove(pixelBuffer));
 }
 
 ExceptionOr<Ref<ImageData>> CanvasRenderingContext2DBase::getImageData(int sx, int sy, int sw, int sh, std::optional<ImageDataSettings> settings) const
@@ -2583,7 +2599,7 @@ ExceptionOr<Ref<ImageData>> CanvasRenderingContext2DBase::getImageData(int sx, i
             return Exception { ExceptionCode::InvalidStateError };
 
         auto format = PixelBufferFormat { AlphaPremultiplication::Unpremultiplied, PixelFormat::RGBA8, buffer->colorSpace() };
-        RefPtr pixelBuffer = dynamicDowncast<ByteArrayPixelBuffer>(buffer->getPixelBuffer(format, imageDataRect));
+        RefPtr pixelBuffer = buffer->getPixelBuffer(format, imageDataRect);
         if (!pixelBuffer)
             return Exception { ExceptionCode::InvalidStateError };
 
@@ -2602,7 +2618,7 @@ ExceptionOr<Ref<ImageData>> CanvasRenderingContext2DBase::getImageData(int sx, i
         return ImageData::create(imageDataRect.width(), imageDataRect.height(), m_settings.colorSpace, settings);
 
     PixelBufferFormat format { AlphaPremultiplication::Unpremultiplied, PixelFormat::RGBA8, toDestinationColorSpace(computedColorSpace) };
-    RefPtr pixelBuffer = dynamicDowncast<ByteArrayPixelBuffer>(buffer->getPixelBuffer(format, imageDataRect));
+    RefPtr pixelBuffer = buffer->getPixelBuffer(format, imageDataRect);
     if (!pixelBuffer) {
         scriptContext->addConsoleMessage(MessageSource::Rendering, MessageLevel::Error,
             makeString("Unable to get image data from canvas. Requested size was "_s, imageDataRect.width(), " x "_s, imageDataRect.height()));
@@ -3021,6 +3037,18 @@ FloatPoint CanvasRenderingContext2DBase::textOffset(float width, TextDirection d
 
 ImageBufferPixelFormat CanvasRenderingContext2DBase::pixelFormat() const
 {
+    switch (m_settings.pixelFormat) {
+    case CanvasRenderingContext2DSettings::PixelFormat::Uint8:
+        break;
+    case CanvasRenderingContext2DSettings::PixelFormat::Float16:
+#if HAVE(HDR_SUPPORT)
+        return ImageBufferPixelFormat::RGBA16F;
+#else
+        break;
+#endif
+    default:
+        RELEASE_ASSERT_NOT_REACHED("Unexpected ImageDataStorageFormat value");
+    }
     // FIXME: Take m_settings.alpha into account here and add PixelFormat::BGRX8.
     return ImageBufferPixelFormat::BGRA8;
 }

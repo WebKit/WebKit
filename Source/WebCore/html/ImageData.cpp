@@ -30,6 +30,8 @@
 #include "config.h"
 #include "ImageData.h"
 
+#include "ByteArrayPixelBuffer.h"
+#include "Float16ArrayPixelBuffer.h"
 #include <JavaScriptCore/GenericTypedArrayViewInlines.h>
 #include <JavaScriptCore/JSCInlines.h>
 #include <wtf/text/TextStream.h>
@@ -53,13 +55,24 @@ static ImageDataStorageFormat computeStorageFormat(std::optional<ImageDataSettin
     return settings ? settings->storageFormat : defaultStorageFormat;
 }
 
-Ref<ImageData> ImageData::create(Ref<ByteArrayPixelBuffer>&& pixelBuffer, std::optional<ImageDataStorageFormat> overridingStorageFormat)
+static ImageDataArray takeArrayBufferView(Ref<PixelBuffer>&& pixelBuffer)
 {
-    auto colorSpace = toPredefinedColorSpace(pixelBuffer->format().colorSpace);
-    return adoptRef(*new ImageData(pixelBuffer->size(), pixelBuffer->takeData(), *colorSpace, overridingStorageFormat));
+    if (auto* buffer = WTF::dynamicDowncast<ByteArrayPixelBuffer>(pixelBuffer.get()))
+        return buffer->takeData();
+    if (auto* buffer = WTF::dynamicDowncast<Float16ArrayPixelBuffer>(pixelBuffer.get()))
+        return buffer->takeData();
+    ASSERT(!PixelBuffer::supportedPixelFormat(pixelBuffer->format().pixelFormat));
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
-RefPtr<ImageData> ImageData::create(RefPtr<ByteArrayPixelBuffer>&& pixelBuffer, std::optional<ImageDataStorageFormat> overridingStorageFormat)
+Ref<ImageData> ImageData::create(Ref<PixelBuffer>&& pixelBuffer, std::optional<ImageDataStorageFormat> overridingStorageFormat)
+{
+    auto size = pixelBuffer->size();
+    auto colorSpace = toPredefinedColorSpace(pixelBuffer->format().colorSpace);
+    return adoptRef(*new ImageData(size, takeArrayBufferView(WTFMove(pixelBuffer)), *colorSpace, overridingStorageFormat));
+}
+
+RefPtr<ImageData> ImageData::create(RefPtr<PixelBuffer>&& pixelBuffer, std::optional<ImageDataStorageFormat> overridingStorageFormat)
 {
     if (!pixelBuffer)
         return nullptr;
@@ -154,11 +167,24 @@ ImageData::ImageData(const IntSize& size, ImageDataArray&& data, PredefinedColor
 
 ImageData::~ImageData() = default;
 
-Ref<ByteArrayPixelBuffer> ImageData::pixelBuffer() const
+Ref<PixelBuffer> ImageData::pixelBuffer() const
 {
-    Ref uint8Data = m_data.asUint8ClampedArray();
+    Ref arrayBufferView = m_data.arrayBufferView();
+    if (auto* array = dynamicDowncast<JSC::Uint8ClampedArray>(arrayBufferView.get())) {
+        PixelBufferFormat format { AlphaPremultiplication::Unpremultiplied, PixelFormat::RGBA8, toDestinationColorSpace(m_colorSpace) };
+        return ByteArrayPixelBuffer::create(format, m_size, *array);
+    }
+
+#if HAVE(HDR_SUPPORT)
+    if (auto* array = dynamicDowncast<JSC::Float16Array>(arrayBufferView.get())) {
+        PixelBufferFormat format { AlphaPremultiplication::Unpremultiplied, PixelFormat::RGBA16F, toDestinationColorSpace(m_colorSpace) };
+        return Float16ArrayPixelBuffer::create(format, m_size, *array);
+    }
+#endif
+
     PixelBufferFormat format { AlphaPremultiplication::Unpremultiplied, PixelFormat::RGBA8, toDestinationColorSpace(m_colorSpace) };
-    return ByteArrayPixelBuffer::create(format, m_size, uint8Data.get());
+    Ref uint8Array = m_data.asUint8ClampedArray();
+    return ByteArrayPixelBuffer::create(format, m_size, uint8Array.get());
 }
 
 TextStream& operator<<(TextStream& ts, const ImageData& imageData)

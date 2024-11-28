@@ -44,6 +44,8 @@ public:
 
     WEBCORE_EXPORT static bool supportedPixelFormat(PixelFormat);
 
+    static RefPtr<PixelBuffer> tryCreate(const PixelBufferFormat&, const IntSize&);
+
     WEBCORE_EXPORT virtual ~PixelBuffer();
 
     const PixelBufferFormat& format() const { return m_format; }

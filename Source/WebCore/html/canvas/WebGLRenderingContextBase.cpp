@@ -30,6 +30,7 @@
 
 #include "ANGLEInstancedArrays.h"
 #include "BitmapImage.h"
+#include "ByteArrayPixelBuffer.h"
 #include "CachedImage.h"
 #include "Chrome.h"
 #include "DiagnosticLoggingClient.h"
