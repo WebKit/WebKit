@@ -395,7 +395,8 @@ TemporalPlainTime* TemporalPlainTime::from(JSGlobalObject* globalObject, JSValue
             return jsCast<TemporalPlainTime*>(itemValue);
 
         if (itemValue.inherits<TemporalPlainDateTime>()) {
-            if (options) // Fail if given bad option value
+            // Validate overflow -- see step 2(a)(ii) of ToTemporalTime
+            if (options)
                 toTemporalOverflow(globalObject, options.value());
             return TemporalPlainTime::create(vm, globalObject->plainTimeStructure(), jsCast<TemporalPlainDateTime*>(itemValue)->plainTime());
         }
@@ -426,9 +427,9 @@ TemporalPlainTime* TemporalPlainTime::from(JSGlobalObject* globalObject, JSValue
 
     auto string = itemValue.toWTFString(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
-    // Validate overflow
+    // Validate overflow -- see step 3(g) of ToTemporalTime
     if (options)
-        toTemporalOverflow(globalObject, options.value()); // Fail if bad value given
+        toTemporalOverflow(globalObject, options.value());
 
     auto time = ISO8601::parseCalendarTime(string);
     if (time) {

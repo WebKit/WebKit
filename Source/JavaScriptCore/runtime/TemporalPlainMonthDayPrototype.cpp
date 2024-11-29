@@ -96,7 +96,7 @@ void TemporalPlainMonthDayPrototype::finishCreation(VM& vm, JSGlobalObject*)
     JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
 }
 
-// https://tc39.es/proposal-temporal/#sec-temporal.plainyearmonth.prototype.with
+// https://tc39.es/proposal-temporal/#sec-temporal.plainmonthday.prototype.with
 JSC_DEFINE_HOST_FUNCTION(temporalPlainMonthDayPrototypeFuncWith, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
@@ -118,7 +118,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalPlainMonthDayPrototypeFuncWith, (JSGlobalObject
             globalObject, globalObject->plainMonthDayStructure(), WTFMove(result)));
 }
 
-// https://tc39.es/proposal-temporal/#sec-temporal.plaindate.prototype.equals
+// https://tc39.es/proposal-temporal/#sec-temporal.plainmonthday.prototype.equals
 JSC_DEFINE_HOST_FUNCTION(temporalPlainMonthDayPrototypeFuncEquals, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
@@ -137,7 +137,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalPlainMonthDayPrototypeFuncEquals, (JSGlobalObje
     RELEASE_AND_RETURN(scope, JSValue::encode(jsBoolean(true)));
 }
 
-// https://tc39.es/proposal-temporal/#sec-temporal.plaindate.prototype.toplaindatetime
+// https://tc39.es/proposal-temporal/#sec-temporal.plainmonthday.prototype.toplaindate
 JSC_DEFINE_HOST_FUNCTION(temporalPlainMonthDayPrototypeFuncToPlainDate, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
@@ -171,7 +171,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalPlainMonthDayPrototypeFuncToPlainDate, (JSGloba
     RELEASE_AND_RETURN(scope, JSValue::encode(TemporalPlainDate::tryCreateIfValid(globalObject, globalObject->plainDateStructure(), WTFMove(plainDateOptional.value()))));
 }
 
-// https://tc39.es/proposal-temporal/#sec-temporal.plainyearmonth.prototype.tostring
+// https://tc39.es/proposal-temporal/#sec-temporal.plainmonthday.prototype.tostring
 JSC_DEFINE_HOST_FUNCTION(temporalPlainMonthDayPrototypeFuncToString, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
@@ -184,7 +184,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalPlainMonthDayPrototypeFuncToString, (JSGlobalOb
     RELEASE_AND_RETURN(scope, JSValue::encode(jsString(vm, monthDay->toString(globalObject, callFrame->argument(0)))));
 }
 
-// https://tc39.es/proposal-temporal/#sec-temporal.plainyearmonth.prototype.tojson
+// https://tc39.es/proposal-temporal/#sec-temporal.plainmonthday.prototype.tojson
 JSC_DEFINE_HOST_FUNCTION(temporalPlainMonthDayPrototypeFuncToJSON, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
@@ -197,7 +197,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalPlainMonthDayPrototypeFuncToJSON, (JSGlobalObje
     return JSValue::encode(jsString(vm, monthDay->toString()));
 }
 
-// https://tc39.es/proposal-temporal/#sec-temporal.plainyearmonth.prototype.tolocalestring
+// https://tc39.es/proposal-temporal/#sec-temporal.plainmonthday.prototype.tolocalestring
 JSC_DEFINE_HOST_FUNCTION(temporalPlainMonthDayPrototypeFuncToLocaleString, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
@@ -210,7 +210,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalPlainMonthDayPrototypeFuncToLocaleString, (JSGl
     return JSValue::encode(jsString(vm, monthDay->toString()));
 }
 
-// https://tc39.es/proposal-temporal/#sec-temporal.plainyearmonth.prototype.valueof
+// https://tc39.es/proposal-temporal/#sec-temporal.plainmonthday.prototype.valueof
 JSC_DEFINE_HOST_FUNCTION(temporalPlainMonthDayPrototypeFuncValueOf, (JSGlobalObject* globalObject, CallFrame*))
 {
     VM& vm = globalObject->vm();
@@ -219,6 +219,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalPlainMonthDayPrototypeFuncValueOf, (JSGlobalObj
     return throwVMTypeError(globalObject, scope, "Temporal.PlainMonthDay.prototype.valueOf must not be called. To compare PlainMonthDay values, use Temporal.PlainDate.compare on the corresponding PlainDate objects."_s);
 }
 
+// https://tc39.es/proposal-temporal/#sec-get-temporal.plainmonthday.prototype.calendarid
 JSC_DEFINE_CUSTOM_GETTER(temporalPlainMonthDayPrototypeGetterCalendarId, (JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName))
 {
     VM& vm = globalObject->vm();
@@ -232,6 +233,7 @@ JSC_DEFINE_CUSTOM_GETTER(temporalPlainMonthDayPrototypeGetterCalendarId, (JSGlob
     return JSValue::encode(jsString(vm, String::fromLatin1("iso8601")));
 }
 
+// https://tc39.es/proposal-temporal/#sec-get-temporal.plainmonthday.prototype.day
 JSC_DEFINE_CUSTOM_GETTER(temporalPlainMonthDayPrototypeGetterDay, (JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName))
 {
     VM& vm = globalObject->vm();
@@ -244,6 +246,7 @@ JSC_DEFINE_CUSTOM_GETTER(temporalPlainMonthDayPrototypeGetterDay, (JSGlobalObjec
     return JSValue::encode(jsNumber(monthDay->day()));
 }
 
+// https://tc39.es/proposal-temporal/#sec-get-temporal.plainmonthday.prototype.monthcode
 JSC_DEFINE_CUSTOM_GETTER(temporalPlainMonthDayPrototypeGetterMonthCode, (JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName))
 {
     VM& vm = globalObject->vm();

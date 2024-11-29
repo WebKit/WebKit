@@ -1467,8 +1467,7 @@ String monthCode(uint32_t month)
 // returns 0 for any invalid string
 uint8_t monthFromCode(StringView monthCode)
 {
-    // Allow leap month marker (e.g. "M05L"), even though it doesn't apply to ISO8601 calendar
-    if (monthCode.length() < 3 || monthCode.length() > 4 || !monthCode.startsWith('M') || !isASCIIDigit(monthCode[2]))
+    if (!validMonthCode(monthCode))
         return 0;
 
     uint8_t result = monthCode[2] - '0';

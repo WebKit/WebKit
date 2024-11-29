@@ -81,45 +81,6 @@ void TemporalPlainYearMonth::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 
 DEFINE_VISIT_CHILDREN(TemporalPlainYearMonth);
 
-#if false
-
-ISO8601::PlainYearMonth TemporalPlainYearMonth::toPlainYearMonth(JSGlobalObject* globalObject, const ISO8601::Duration& duration)
-{
-    VM& vm = globalObject->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    double yearDouble = duration.years();
-    double monthDouble = duration.months();
-    double dayDouble = duration.days();
-
-    if (!ISO8601::isYearWithinLimits(yearDouble)) {
-        throwRangeError(globalObject, scope, "year is out of range"_s);
-        return { };
-    }
-    int32_t year = static_cast<int32_t>(yearDouble);
-
-    if (!(monthDouble >= 1 && monthDouble <= 12)) {
-        throwRangeError(globalObject, scope, "month is out of range"_s);
-        return { };
-    }
-    unsigned month = static_cast<unsigned>(monthDouble);
-
-    double daysInMonth = ISO8601::daysInMonth(year, month);
-    if (!(dayDouble >= 1 && dayDouble <= daysInMonth)) {
-        throwRangeError(globalObject, scope, "day is out of range"_s);
-        return { };
-    }
-    unsigned day = static_cast<unsigned>(dayDouble);
-
-    return ISO8601::PlainYearMonth {
-        year,
-        month,
-        day
-    };
-}
-
-#endif
-
 // CreateTemporalYearMonth ( isoDate, calendar [, newTarget ] )
 // https://tc39.es/proposal-temporal/#sec-temporal-createtemporalyearmonth
 TemporalPlainYearMonth* TemporalPlainYearMonth::tryCreateIfValid(JSGlobalObject* globalObject, Structure* structure, ISO8601::PlainDate&& plainDate)
@@ -179,8 +140,7 @@ TemporalPlainYearMonth* TemporalPlainYearMonth::from(JSGlobalObject* globalObjec
 
 
     if (isString) {
-        // Overflow has to be validated even though it's not used,
-        // so that an error can be thrown for a bad overflow option)
+        // See step 11 of ToTemporalYearMonth
         if (options)
             toTemporalOverflow(globalObject, options.value());
         RELEASE_AND_RETURN(scope, result);
@@ -263,10 +223,7 @@ ISO8601::PlainDate TemporalPlainYearMonth::with(JSGlobalObject* globalObject, JS
         return { };
     }
 
-    JSObject* options = intlGetOptionsObject(globalObject, optionsValue);
-    RETURN_IF_EXCEPTION(scope, { });
-
-    TemporalOverflow overflow = toTemporalOverflow(globalObject, options);
+    TemporalOverflow overflow = toTemporalOverflow(globalObject, optionsValue);
     RETURN_IF_EXCEPTION(scope, { });
 
     double y = optionalYear.value_or(year());
@@ -334,51 +291,6 @@ String TemporalPlainYearMonth::monthCode() const
     return ISO8601::monthCode(m_plainYearMonth.month());
 }
 
-static int32_t durationSign(const ISO8601::Duration& d)
-{
-    if (d.years() > 0)
-        return 1;
-    if (d.years() < 0)
-        return -1;
-    if (d.months() > 0)
-        return 1;
-    if (d.months() < 0)
-        return -1;
-    if (d.weeks() > 0)
-        return 1;
-    if (d.weeks() < 0)
-        return -1;
-    if (d.days() > 0)
-        return 1;
-    if (d.days() < 0)
-        return -1;
-    if (d.hours() > 0)
-        return 1;
-    if (d.hours() < 0)
-        return -1;
-    if (d.minutes() > 0)
-        return 1;
-    if (d.minutes() < 0)
-        return -1;
-    if (d.seconds() > 0)
-        return 1;
-    if (d.seconds() < 0)
-        return -1;
-    if (d.milliseconds() > 0)
-        return 1;
-    if (d.milliseconds() < 0)
-        return -1;
-    if (d.microseconds() > 0)
-        return 1;
-    if (d.microseconds() < 0)
-        return -1;
-    if (d.nanoseconds() > 0)
-        return 1;
-    if (d.nanoseconds() < 0)
-        return -1;
-    return 0;
-}
-
 // https://tc39.es/proposal-temporal/#sec-temporal-adddurationtoyearmonth
 ISO8601::PlainYearMonth TemporalPlainYearMonth::addDurationToYearMonth(JSGlobalObject* globalObject,
     bool isAdd, ISO8601::PlainYearMonth yearMonth, ISO8601::Duration duration, TemporalOverflow overflow)
@@ -388,7 +300,7 @@ ISO8601::PlainYearMonth TemporalPlainYearMonth::addDurationToYearMonth(JSGlobalO
 
     if (!isAdd)
         duration = -duration;
-    auto sign = durationSign(duration);
+    auto sign = TemporalDuration::sign(duration);
     auto year = yearMonth.year();
     auto month = yearMonth.month();
     auto day = 1;

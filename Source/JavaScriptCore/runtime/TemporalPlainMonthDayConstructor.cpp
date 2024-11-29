@@ -132,7 +132,7 @@ JSC_DEFINE_HOST_FUNCTION(callTemporalPlainMonthDay, (JSGlobalObject* globalObjec
     return JSValue::encode(throwConstructorCannotBeCalledAsFunctionTypeError(globalObject, scope, "PlainMonthDay"_s));
 }
 
-// https://tc39.es/proposal-temporal/#sec-temporal.plainyearmonth.from
+// https://tc39.es/proposal-temporal/#sec-temporal.plainmonthday.from
 JSC_DEFINE_HOST_FUNCTION(temporalPlainMonthDayConstructorFuncFrom, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();

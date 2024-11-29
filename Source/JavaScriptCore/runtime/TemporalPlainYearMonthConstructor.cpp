@@ -143,10 +143,9 @@ JSC_DEFINE_HOST_FUNCTION(temporalPlainYearMonthConstructorFuncFrom, (JSGlobalObj
     JSValue itemValue = callFrame->argument(0);
 
     if (itemValue.inherits<TemporalPlainYearMonth>()) {
-        // TODO: the number of these checks is getting out of hand
-        JSObject* options = intlGetOptionsObject(globalObject, callFrame->argument(1));
+        // See step 2(a)(ii) of ToTemporalYearMonth
+        toTemporalOverflow(globalObject, callFrame->argument(1));
         RETURN_IF_EXCEPTION(scope, { });
-        toTemporalOverflow(globalObject, options);
 
         RELEASE_AND_RETURN(scope, JSValue::encode(TemporalPlainYearMonth::create(vm, globalObject->plainYearMonthStructure(), jsCast<TemporalPlainYearMonth*>(itemValue)->plainYearMonth())));
     }

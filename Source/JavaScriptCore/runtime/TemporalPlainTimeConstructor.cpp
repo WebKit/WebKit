@@ -121,7 +121,8 @@ JSC_DEFINE_HOST_FUNCTION(temporalPlainTimeConstructorFuncFrom, (JSGlobalObject* 
     JSValue itemValue = callFrame->argument(0);
 
     if (itemValue.inherits<TemporalPlainTime>()) {
-        toTemporalOverflow(globalObject, options); // Fail if bad option given for overflow
+        // Validate overflow -- see step 2(a)(ii) of ToTemporalTime
+        toTemporalOverflow(globalObject, options);
         RELEASE_AND_RETURN(scope, JSValue::encode(TemporalPlainTime::create(vm, globalObject->plainTimeStructure(), jsCast<TemporalPlainTime*>(itemValue)->plainTime())));
     }
 

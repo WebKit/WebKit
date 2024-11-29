@@ -183,7 +183,7 @@ TemporalPlainMonthDay* TemporalPlainMonthDay::from(JSGlobalObject* globalObject,
     return { };
 }
 
-// https://tc39.es/proposal-temporal/#sec-temporal.plainyearmonth.from
+// https://tc39.es/proposal-temporal/#sec-temporal.plainmonthday.from
 TemporalPlainMonthDay* TemporalPlainMonthDay::from(JSGlobalObject* globalObject, WTF::String string)
 {
     VM& vm = globalObject->vm();
@@ -210,6 +210,7 @@ TemporalPlainMonthDay* TemporalPlainMonthDay::from(JSGlobalObject* globalObject,
     return { };
 }
 
+// https://tc39.es/proposal-temporal/#sec-temporal.plainmonthday.prototype.with
 ISO8601::PlainDate TemporalPlainMonthDay::with(JSGlobalObject* globalObject, JSObject* temporalMonthDayLike, JSValue optionsValue)
 {
     VM& vm = globalObject->vm();

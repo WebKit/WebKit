@@ -676,7 +676,6 @@ static ISO8601::Duration adjustDateDurationRecord(JSGlobalObject* globalObject, 
     return result;
 }
 
-// TODO: Use PlainDateTime instead of a tuple, once that's added
 std::tuple<ISO8601::PlainDate, ISO8601::PlainTime> TemporalDuration::combineISODateAndTimeRecord(ISO8601::PlainDate isoDate, ISO8601::PlainTime isoTime)
 {
     return std::tuple<ISO8601::PlainDate, ISO8601::PlainTime>(isoDate, isoTime);
