@@ -437,7 +437,7 @@ TemporalPlainTime* TemporalPlainTime::from(JSGlobalObject* globalObject, JSValue
             return TemporalPlainTime::create(vm, globalObject->plainTimeStructure(), WTFMove(plainTime));
     }
 
-    auto dateTime = ISO8601::parseCalendarDateTime(string, false);
+    auto dateTime = ISO8601::parseCalendarDateTime(string, TemporalDateFormat::Date);
     if (dateTime) {
         auto [plainDate, plainTimeOptional, timeZoneOptional, calendarOptional] = WTFMove(dateTime.value());
         if (plainTimeOptional) {

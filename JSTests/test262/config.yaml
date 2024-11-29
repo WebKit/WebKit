@@ -31,7 +31,6 @@ skip:
     - test/built-ins/Temporal/PlainDateTime/prototype/toZonedDateTime
     - test/built-ins/Temporal/PlainDateTime/prototype/until
     - test/built-ins/Temporal/PlainDateTime/prototype/withCalendar
-    - test/built-ins/Temporal/PlainMonthDay
     - test/built-ins/Temporal/ZonedDateTime
     - test/intl402/Temporal/Instant/prototype/toZonedDateTimeISO
     - test/intl402/Temporal/Now
@@ -246,6 +245,30 @@ skip:
     - test/built-ins/Temporal/PlainDateTime/prototype/toString/calendarname-wrong-type.js
     - test/built-ins/Temporal/PlainDateTime/prototype/with/calendar-temporal-object-throws.js
     - test/built-ins/Temporal/PlainDateTime/prototype/withPlainTime/argument-string-time-designator-required-for-disambiguation.js
+    - test/built-ins/Temporal/PlainMonthDay/calendar-case-insensitive.js
+    - test/built-ins/Temporal/PlainMonthDay/calendar-invalid.js
+    - test/built-ins/Temporal/PlainMonthDay/calendar-iso-string.js
+    - test/built-ins/Temporal/PlainMonthDay/calendar-number.js
+    - test/built-ins/Temporal/PlainMonthDay/calendar-wrong-type.js
+    - test/built-ins/Temporal/PlainMonthDay/from/argument-propertybag-calendar-case-insensitive.js
+    - test/built-ins/Temporal/PlainMonthDay/from/argument-propertybag-calendar-iso-string.js
+    - test/built-ins/Temporal/PlainMonthDay/from/argument-propertybag-calendar-leap-second.js
+    - test/built-ins/Temporal/PlainMonthDay/from/argument-propertybag-calendar-number.js
+    - test/built-ins/Temporal/PlainMonthDay/from/argument-propertybag-calendar-wrong-type.js
+    - test/built-ins/Temporal/PlainMonthDay/from/argument-string-calendar-annotation.js
+    - test/built-ins/Temporal/PlainMonthDay/from/argument-string-unknown-annotation.js
+    - test/built-ins/Temporal/PlainMonthDay/prototype/equals/argument-propertybag-calendar-case-insensitive.js
+    - test/built-ins/Temporal/PlainMonthDay/prototype/equals/argument-propertybag-calendar-iso-string.js
+    - test/built-ins/Temporal/PlainMonthDay/prototype/equals/argument-propertybag-calendar-leap-second.js
+    - test/built-ins/Temporal/PlainMonthDay/prototype/equals/argument-propertybag-calendar-number.js
+    - test/built-ins/Temporal/PlainMonthDay/prototype/equals/argument-propertybag-calendar-wrong-type.js
+    - test/built-ins/Temporal/PlainMonthDay/prototype/equals/argument-string-unknown-annotation.js
+    - test/built-ins/Temporal/PlainMonthDay/prototype/toString/calendarname-auto.js
+    - test/built-ins/Temporal/PlainMonthDay/prototype/toString/calendarname-critical.js
+    - test/built-ins/Temporal/PlainMonthDay/prototype/toString/calendarname-never.js
+    - test/built-ins/Temporal/PlainMonthDay/prototype/toString/calendarname-wrong-type.js
+    - test/built-ins/Temporal/PlainMonthDay/prototype/toString/order-of-operations.js
+    - test/built-ins/Temporal/PlainMonthDay/refisoyear-undefined.js
     - test/built-ins/Temporal/PlainTime/compare/argument-string-time-designator-required-for-disambiguation.js
     - test/built-ins/Temporal/PlainTime/from/argument-string-time-designator-required-for-disambiguation.js
     - test/built-ins/Temporal/PlainTime/prototype/equals/argument-string-time-designator-required-for-disambiguation.js
@@ -365,6 +388,9 @@ skip:
     - test/built-ins/Temporal/PlainDateTime/prototype/withPlainTime/argument-string-calendar-annotation.js
     - test/built-ins/Temporal/PlainDateTime/prototype/withPlainTime/argument-string-time-zone-annotation.js
     - test/built-ins/Temporal/PlainDateTime/prototype/withPlainTime/argument-string-unknown-annotation.js
+    - test/built-ins/Temporal/PlainMonthDay/prototype/equals/argument-string-calendar-annotation.js
+    - test/built-ins/Temporal/PlainMonthDay/prototype/equals/argument-string-date-with-utc-offset.js
+    - test/built-ins/Temporal/PlainMonthDay/from/argument-string-date-with-utc-offset.js
     - test/built-ins/Temporal/PlainTime/compare/argument-string-calendar-annotation.js
     - test/built-ins/Temporal/PlainTime/compare/argument-string-time-zone-annotation.js
     - test/built-ins/Temporal/PlainTime/compare/argument-string-unknown-annotation.js
@@ -419,6 +445,8 @@ skip:
     - test/built-ins/Temporal/PlainDateTime/prototype/equals/argument-zoneddatetime-negative-epochnanoseconds.js
     - test/built-ins/Temporal/PlainDateTime/prototype/withPlainTime/argument-zoneddatetime-balance-negative-time-units.js
     - test/built-ins/Temporal/PlainDateTime/prototype/withPlainTime/argument-zoneddatetime-negative-epochnanoseconds.js
+    - test/built-ins/Temporal/PlainMonthDay/from/calendar-temporal-object.js
+    - test/built-ins/Temporal/PlainMonthDay/prototype/equals/calendar-temporal-object.js
     - test/built-ins/Temporal/PlainTime/compare/argument-zoneddatetime-negative-epochnanoseconds.js
     - test/built-ins/Temporal/PlainTime/from/argument-zoneddatetime-balance-negative-time-units.js
     - test/built-ins/Temporal/PlainTime/from/argument-zoneddatetime-negative-epochnanoseconds.js

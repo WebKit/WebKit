@@ -337,6 +337,35 @@ private:
 };
 static_assert(sizeof(PlainYearMonth) == sizeof(int32_t));
 
+class PlainMonthDay {
+    WTF_MAKE_TZONE_ALLOCATED(PlainMonthDay);
+public:
+    constexpr PlainMonthDay()
+        : m_isoPlainDate(0, 1, 1)
+    {
+    }
+
+    constexpr PlainMonthDay(unsigned month, int32_t day)
+        : m_isoPlainDate(0, month, day)
+    {
+    }
+
+    constexpr PlainMonthDay(PlainDate&& d)
+        : m_isoPlainDate(d)
+    {
+    }
+
+    friend bool operator==(const PlainMonthDay&, const PlainMonthDay&) = default;
+
+    uint8_t month() const { return m_isoPlainDate.month(); }
+    uint32_t day() const { return m_isoPlainDate.day(); }
+
+    const PlainDate& isoPlainDate() const { return m_isoPlainDate; }
+private:
+    PlainDate m_isoPlainDate;
+};
+static_assert(sizeof(PlainYearMonth) == sizeof(int32_t));
+
 using TimeZone = std::variant<TimeZoneID, int64_t>;
 
 // https://tc39.es/proposal-temporal/#sec-temporal-parsetemporaltimezonestring
@@ -361,8 +390,8 @@ std::optional<int64_t> parseUTCOffsetInMinutes(StringView);
 enum class ValidateTimeZoneID : bool { No, Yes };
 std::optional<std::tuple<PlainTime, std::optional<TimeZoneRecord>>> parseTime(StringView);
 std::optional<std::tuple<PlainTime, std::optional<TimeZoneRecord>, std::optional<CalendarRecord>>> parseCalendarTime(StringView);
-std::optional<std::tuple<PlainDate, std::optional<PlainTime>, std::optional<TimeZoneRecord>>> parseDateTime(StringView, bool);
-std::optional<std::tuple<PlainDate, std::optional<PlainTime>, std::optional<TimeZoneRecord>, std::optional<CalendarRecord>>> parseCalendarDateTime(StringView, bool);
+std::optional<std::tuple<PlainDate, std::optional<PlainTime>, std::optional<TimeZoneRecord>>> parseDateTime(StringView, TemporalDateFormat);
+std::optional<std::tuple<PlainDate, std::optional<PlainTime>, std::optional<TimeZoneRecord>, std::optional<CalendarRecord>>> parseCalendarDateTime(StringView, TemporalDateFormat);
 uint8_t dayOfWeek(PlainDate);
 uint16_t dayOfYear(PlainDate);
 uint8_t weeksInYear(int32_t year);
@@ -374,10 +403,10 @@ String temporalTimeToString(PlainTime, std::tuple<Precision, unsigned>);
 String temporalDateToString(PlainDate);
 String temporalDateTimeToString(PlainDate, PlainTime, std::tuple<Precision, unsigned>);
 String temporalYearMonthToString(PlainYearMonth, StringView);
+String temporalMonthDayToString(PlainMonthDay, StringView);
 String monthCode(uint32_t);
 bool validMonthCode(StringView);
 uint8_t monthFromCode(StringView);
-std::optional<PlainDate> regulateISODate(double, double, double, TemporalOverflow);
 
 bool isValidDuration(const Duration&);
 bool isValidISODate(double, double, double);

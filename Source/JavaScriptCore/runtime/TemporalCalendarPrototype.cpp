@@ -119,7 +119,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalCalendarPrototypeFuncDateFromFields, (JSGlobalO
     RETURN_IF_EXCEPTION(scope, { });
 
     auto overflow = TemporalOverflow::Constrain;
-    ISO8601::PlainDate plainDate = calendar->isoDateFromFields(globalObject, asObject(value), false, options, overflow);
+    ISO8601::PlainDate plainDate = calendar->isoDateFromFields(globalObject, asObject(value), TemporalDateFormat::Date, options, overflow);
     RETURN_IF_EXCEPTION(scope, { });
 
     RELEASE_AND_RETURN(scope, JSValue::encode(TemporalPlainDate::create(vm, globalObject->plainDateStructure(), WTFMove(plainDate))));

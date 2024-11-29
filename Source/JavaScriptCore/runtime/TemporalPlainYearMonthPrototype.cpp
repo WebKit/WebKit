@@ -64,10 +64,10 @@ static JSC_DECLARE_CUSTOM_GETTER(temporalPlainYearMonthPrototypeGetterInLeapYear
 
 namespace JSC {
 
-const ClassInfo TemporalPlainYearMonthPrototype::s_info = { "Temporal.PlainYearMonth"_s, &Base::s_info, &plainDatePrototypeTable, nullptr, CREATE_METHOD_TABLE(TemporalPlainYearMonthPrototype) };
+const ClassInfo TemporalPlainYearMonthPrototype::s_info = { "Temporal.PlainYearMonth"_s, &Base::s_info, &plainYearMonthPrototypeTable, nullptr, CREATE_METHOD_TABLE(TemporalPlainYearMonthPrototype) };
 
 /* Source for TemporalPlainYearMonthPrototype.lut.h
-@begin plainDatePrototypeTable
+@begin plainYearMonthPrototypeTable
   add              temporalPlainYearMonthPrototypeFuncAdd                DontEnum|Function 1
   subtract         temporalPlainYearMonthPrototypeFuncSubtract           DontEnum|Function 1
   with             temporalPlainYearMonthPrototypeFuncWith               DontEnum|Function 1

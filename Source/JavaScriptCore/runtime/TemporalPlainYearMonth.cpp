@@ -207,7 +207,7 @@ TemporalPlainYearMonth* TemporalPlainYearMonth::from(JSGlobalObject* globalObjec
         if (options)
             optionsOrOverflow = options.value();
         auto overflow = TemporalOverflow::Constrain;
-        auto plainYearMonth = TemporalCalendar::isoDateFromFields(globalObject, asObject(itemValue), true, optionsOrOverflow, overflow);
+        auto plainYearMonth = TemporalCalendar::isoDateFromFields(globalObject, asObject(itemValue), TemporalDateFormat::YearMonth, optionsOrOverflow, overflow);
         RETURN_IF_EXCEPTION(scope, { });
 
         return TemporalPlainYearMonth::create(vm, globalObject->plainYearMonthStructure(), WTFMove(plainYearMonth));
@@ -226,7 +226,7 @@ TemporalPlainYearMonth* TemporalPlainYearMonth::from(JSGlobalObject* globalObjec
     // https://tc39.es/proposal-temporal/#sec-temporal-parsetemporaldatestring
     // TemporalDateString :
     //     CalendarDateTime
-    auto dateTime = ISO8601::parseCalendarDateTime(string, true);
+    auto dateTime = ISO8601::parseCalendarDateTime(string, TemporalDateFormat::YearMonth);
     if (dateTime) {
         auto [plainDate, plainTimeOptional, timeZoneOptional, calendarOptional] = WTFMove(dateTime.value());
         if (calendarOptional && StringView(calendarOptional->m_name) != String::fromLatin1("iso8601")) {
