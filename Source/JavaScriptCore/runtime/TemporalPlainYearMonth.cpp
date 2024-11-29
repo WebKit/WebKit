@@ -143,8 +143,7 @@ TemporalPlainYearMonth* TemporalPlainYearMonth::from(JSGlobalObject* globalObjec
     }
 
     if (isString) {
-        // Overflow has to be validated even though it's not used,
-        // so that an error can be thrown for a bad overflow option)
+        // See step 11 of ToTemporalYearMonth
         if (options)
             toTemporalOverflow(globalObject, options.value());
         RELEASE_AND_RETURN(scope, result);
