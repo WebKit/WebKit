@@ -142,6 +142,14 @@ TemporalPlainYearMonth* TemporalPlainYearMonth::from(JSGlobalObject* globalObjec
         RETURN_IF_EXCEPTION(scope, { });
     }
 
+    if (isString) {
+        // Overflow has to be validated even though it's not used,
+        // so that an error can be thrown for a bad overflow option)
+        if (options)
+            toTemporalOverflow(globalObject, options.value());
+        RELEASE_AND_RETURN(scope, result);
+    }
+
     if (itemValue.isObject()) {
 
         if (itemValue.inherits<TemporalPlainYearMonth>())
