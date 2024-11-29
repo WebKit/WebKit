@@ -87,8 +87,8 @@ JSC_DEFINE_HOST_FUNCTION(constructTemporalPlainMonthDay, (JSGlobalObject* global
     Structure* structure = JSC_GET_DERIVED_STRUCTURE(vm, plainMonthDayStructure, newTarget, callFrame->jsCallee());
     RETURN_IF_EXCEPTION(scope, { });
 
-    double isoMonth;
-    double isoDay;
+    double isoMonth = 1;
+    double isoDay = 1;
     auto argumentCount = callFrame->argumentCount();
 
     if (argumentCount > 0) {

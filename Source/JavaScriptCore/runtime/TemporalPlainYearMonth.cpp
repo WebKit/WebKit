@@ -123,27 +123,23 @@ TemporalPlainYearMonth* TemporalPlainYearMonth::from(JSGlobalObject* globalObjec
     // Handle string case first so that string parsing errors (RangeError)
     // can be thrown before options-related errors (TypeError);
     // see step 4 of ToTemporalYearMonth
-    bool isString = false;
     TemporalPlainYearMonth* result;
     if (itemValue.isString()) {
-        isString = true;
         auto string = itemValue.toWTFString(globalObject);
         RETURN_IF_EXCEPTION(scope, { });
         result = TemporalPlainYearMonth::from(globalObject, string);
         RETURN_IF_EXCEPTION(scope, { });
+        // See step 11 of ToTemporalYearMonth
+        if (optionsValue)
+            toTemporalOverflow(globalObject, optionsValue.value());
+        RETURN_IF_EXCEPTION(scope, { });
+        RELEASE_AND_RETURN(scope, result);
     }
+
     std::optional<JSObject*> options;
     if (optionsValue) {
         options = intlGetOptionsObject(globalObject, optionsValue.value());
         RETURN_IF_EXCEPTION(scope, { });
-    }
-
-
-    if (isString) {
-        // See step 11 of ToTemporalYearMonth
-        if (options)
-            toTemporalOverflow(globalObject, options.value());
-        RELEASE_AND_RETURN(scope, result);
     }
 
     if (itemValue.isObject()) {

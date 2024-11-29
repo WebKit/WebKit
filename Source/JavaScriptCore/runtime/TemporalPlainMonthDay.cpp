@@ -128,29 +128,26 @@ TemporalPlainMonthDay* TemporalPlainMonthDay::from(JSGlobalObject* globalObject,
     // Handle string case first so that string parsing errors (RangeError)
     // can be thrown before options-related errors (TypeError);
     // see step 4 of ToTemporalMonthDay
-    bool isString = false;
     TemporalPlainMonthDay* result;
     if (itemValue.isString()) {
-        isString = true;
         auto string = itemValue.toWTFString(globalObject);
         RETURN_IF_EXCEPTION(scope, { });
         result = TemporalPlainMonthDay::from(globalObject, string);
         RETURN_IF_EXCEPTION(scope, { });
+        // Overflow has to be validated even though it's not used;
+        // see step 9 of ToTemporalMonthDay
+        if (optionsValue)
+            toTemporalOverflow(globalObject, optionsValue.value());
+        RETURN_IF_EXCEPTION(scope, { });
+        RELEASE_AND_RETURN(scope, result);
     }
+
     std::optional<JSObject*> options;
     if (optionsValue) {
         options = intlGetOptionsObject(globalObject, optionsValue.value());
         RETURN_IF_EXCEPTION(scope, { });
     }
 
-    if (isString) {
-        // Overflow has to be validated even though it's not used;
-        // see step 9 of ToTemporalMonthDay
-        if (options)
-            toTemporalOverflow(globalObject, options.value());
-        RETURN_IF_EXCEPTION(scope, { });
-        RELEASE_AND_RETURN(scope, result);
-    }
     if (itemValue.isObject()) {
 
         if (itemValue.inherits<TemporalPlainMonthDay>())
