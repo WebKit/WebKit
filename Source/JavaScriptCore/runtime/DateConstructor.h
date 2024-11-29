@@ -72,7 +72,7 @@ inline // https://tc39.es/ecma262/#sec-makedate
 double makeDate(double day, double time)
 {
 #if COMPILER(CLANG)
-    #pragma STDC FP_CONTRACT OFF
+#pragma STDC FP_CONTRACT OFF
 #endif
     return (day * msPerDay) + time;
 }
@@ -81,7 +81,7 @@ double makeDate(double day, double time)
 inline double makeTime(double hour, double min, double sec, double ms)
 {
 #if COMPILER(CLANG)
-    #pragma STDC FP_CONTRACT OFF
+#pragma STDC FP_CONTRACT OFF
 #endif
     return (((hour * msPerHour) + min * msPerMinute) + sec * msPerSecond) + ms;
 }
