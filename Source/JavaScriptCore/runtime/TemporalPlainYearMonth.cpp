@@ -243,61 +243,6 @@ TemporalPlainYearMonth* TemporalPlainYearMonth::from(JSGlobalObject* globalObjec
     return { };
 }
 
-
-std::array<std::optional<double>, 2> TemporalPlainYearMonth::toPartialDate(JSGlobalObject* globalObject, JSObject* temporalDateLike)
-{
-    VM& vm = globalObject->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    std::optional<double> month;
-    JSValue monthProperty = temporalDateLike->get(globalObject, vm.propertyNames->month);
-    RETURN_IF_EXCEPTION(scope, { });
-    if (!monthProperty.isUndefined()) {
-        month = monthProperty.toIntegerOrInfinity(globalObject);
-        RETURN_IF_EXCEPTION(scope, { });
-
-        if (month.value() <= 0 || !std::isfinite(month.value())) {
-            throwRangeError(globalObject, scope, "month property must be positive and finite"_s);
-            return { };
-        }
-    }
-
-    JSValue monthCodeProperty = temporalDateLike->get(globalObject, vm.propertyNames->monthCode);
-    RETURN_IF_EXCEPTION(scope, { });
-    if (!monthCodeProperty.isUndefined()) {
-        auto monthCode = monthCodeProperty.toWTFString(globalObject);
-        RETURN_IF_EXCEPTION(scope, { });
-
-        auto otherMonth = ISO8601::monthFromCode(monthCode);
-        if (!otherMonth) {
-            throwRangeError(globalObject, scope, "Invalid monthCode property"_s);
-            return { };
-        }
-
-        if (!month)
-            month = otherMonth;
-        else if (month.value() != otherMonth) {
-            throwRangeError(globalObject, scope, "month and monthCode properties must match if both are provided"_s);
-            return { };
-        }
-    }
-
-    std::optional<double> year;
-    JSValue yearProperty = temporalDateLike->get(globalObject, vm.propertyNames->year);
-    RETURN_IF_EXCEPTION(scope, { });
-    if (!yearProperty.isUndefined()) {
-        year = yearProperty.toIntegerOrInfinity(globalObject);
-        RETURN_IF_EXCEPTION(scope, { });
-
-        if (!std::isfinite(year.value())) {
-            throwRangeError(globalObject, scope, "year property must be finite"_s);
-            return { };
-        }
-    }
-
-    return { year, month };
-}
-
 ISO8601::PlainDate TemporalPlainYearMonth::with(JSGlobalObject* globalObject, JSObject* temporalYearMonthLike, JSValue optionsValue)
 {
     VM& vm = globalObject->vm();
@@ -311,7 +256,7 @@ ISO8601::PlainDate TemporalPlainYearMonth::with(JSGlobalObject* globalObject, JS
         return { };
     }
 
-    auto [optionalYear, optionalMonth] = toPartialDate(globalObject, temporalYearMonthLike);
+    auto [optionalYear, optionalMonth] = TemporalPlainDate::toYearMonth(globalObject, temporalYearMonthLike);
     RETURN_IF_EXCEPTION(scope, { });
     if (!optionalYear && !optionalMonth) {
         throwTypeError(globalObject, scope, "Object must contain at least one Temporal date property"_s);

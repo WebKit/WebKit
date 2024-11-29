@@ -207,23 +207,10 @@ TemporalPlainDate* TemporalPlainDate::from(JSGlobalObject* globalObject, JSValue
     return { };
 }
 
-std::array<std::optional<double>, numberOfTemporalPlainDateUnits> TemporalPlainDate::toPartialDate(JSGlobalObject* globalObject, JSObject* temporalDateLike)
+std::array<std::optional<double>, numberOfTemporalPlainYearMonthUnits> TemporalPlainDate::toYearMonth(JSGlobalObject* globalObject, JSObject* temporalDateLike)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-
-    std::optional<double> day;
-    JSValue dayProperty = temporalDateLike->get(globalObject, vm.propertyNames->day);
-    RETURN_IF_EXCEPTION(scope, { });
-    if (!dayProperty.isUndefined()) {
-        day = dayProperty.toIntegerOrInfinity(globalObject);
-        RETURN_IF_EXCEPTION(scope, { });
-
-        if (day.value() <= 0 || !std::isfinite(day.value())) {
-            throwRangeError(globalObject, scope, "day property must be positive and finite"_s);
-            return { };
-        }
-    }
 
     std::optional<double> month;
     JSValue monthProperty = temporalDateLike->get(globalObject, vm.propertyNames->month);
@@ -270,6 +257,29 @@ std::array<std::optional<double>, numberOfTemporalPlainDateUnits> TemporalPlainD
             return { };
         }
     }
+
+    return { year, month };
+}
+
+std::array<std::optional<double>, numberOfTemporalPlainDateUnits> TemporalPlainDate::toPartialDate(JSGlobalObject* globalObject, JSObject* temporalDateLike)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    std::optional<double> day;
+    JSValue dayProperty = temporalDateLike->get(globalObject, vm.propertyNames->day);
+    RETURN_IF_EXCEPTION(scope, { });
+    if (!dayProperty.isUndefined()) {
+        day = dayProperty.toIntegerOrInfinity(globalObject);
+        RETURN_IF_EXCEPTION(scope, { });
+
+        if (day.value() <= 0 || !std::isfinite(day.value())) {
+            throwRangeError(globalObject, scope, "day property must be positive and finite"_s);
+            return { };
+        }
+    }
+
+    auto [year, month] = toYearMonth(globalObject, temporalDateLike);
 
     return { year, month, day };
 }
