@@ -223,7 +223,7 @@ void RenderMenuList::updateOptionsWidth()
             continue;
 
         String text = option->textIndentedToRespectGroupLabel();
-        text = applyTextTransform(style(), text, ' ');
+        text = applyTextTransform(style(), text);
         if (theme().popupOptionSupportsTextIndent()) {
             // Add in the option's text indent.  We can't calculate percentage values for now.
             float optionWidth = 0;
@@ -470,7 +470,7 @@ String RenderMenuList::itemText(unsigned listIndex) const
     else if (auto* option = dynamicDowncast<HTMLOptionElement>(element))
         itemString = option->textIndentedToRespectGroupLabel();
 
-    return applyTextTransform(style(), itemString, ' ');
+    return applyTextTransform(style(), itemString);
 }
 
 String RenderMenuList::itemLabel(unsigned) const

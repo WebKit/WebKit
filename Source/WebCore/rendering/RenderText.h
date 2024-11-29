@@ -211,7 +211,7 @@ protected:
     void willBeDestroyed() override;
 
     virtual void setRenderedText(const String&);
-    virtual UChar previousCharacter() const;
+    virtual Vector<UChar> previousCharacter() const;
 
     virtual void setTextInternal(const String&, bool force);
 
@@ -287,8 +287,10 @@ private:
     unsigned m_hasSecureTextTimer : 1 { false };
 };
 
-String applyTextTransform(const RenderStyle&, const String&, UChar previousCharacter);
-String capitalize(const String&, UChar previousCharacter);
+String applyTextTransform(const RenderStyle&, const String&, Vector<UChar> previousCharacter);
+String applyTextTransform(const RenderStyle&, const String&);
+String capitalize(const String&, Vector<UChar> previousCharacter);
+String capitalize(const String&);
 TextBreakIterator::LineMode::Behavior mapLineBreakToIteratorMode(LineBreak);
 TextBreakIterator::ContentAnalysis mapWordBreakToContentAnalysis(WordBreak);
 

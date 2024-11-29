@@ -2152,7 +2152,7 @@ void HTMLConverter::_processText(Text& text)
     if (outputString.length()) {
         String textTransform = _caches->propertyValueForNode(text, CSSPropertyTextTransform);
         if (textTransform == "capitalize"_s)
-            outputString = capitalize(outputString, ' '); // FIXME: Needs to take locale into account to work correctly.
+            outputString = capitalize(outputString); // FIXME: Needs to take locale into account to work correctly.
         else if (textTransform == "uppercase"_s)
             outputString = outputString.convertToUppercaseWithoutLocale(); // FIXME: Needs locale to work correctly.
         else if (textTransform == "lowercase"_s)

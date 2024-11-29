@@ -1112,7 +1112,7 @@ Vector<String> AccessibilityObject::performTextOperation(const AccessibilityText
         bool replaceSelection = false;
         switch (operation.type) {
         case AccessibilityTextOperationType::Capitalize:
-            replacementString = capitalize(text, ' '); // FIXME: Needs to take locale into account to work correctly.
+            replacementString = capitalize(text); // FIXME: Needs to take locale into account to work correctly.
             replaceSelection = true;
             break;
         case AccessibilityTextOperationType::Uppercase:
@@ -1131,7 +1131,7 @@ Vector<String> AccessibilityObject::performTextOperation(const AccessibilityText
                 && replacementString.length() > 2
                 && replacementString != replacementString.convertToUppercaseWithoutLocale()) {
                 if (text[0] == u_toupper(text[0]))
-                    replacementString = capitalize(replacementString, ' '); // FIXME: Needs to take locale into account to work correctly.
+                    replacementString = capitalize(replacementString); // FIXME: Needs to take locale into account to work correctly.
                 else
                     replacementString = replacementString.convertToLowercaseWithoutLocale(); // FIXME: Needs locale to work correctly.
             }

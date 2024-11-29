@@ -142,7 +142,7 @@ void RenderListBox::updateFromElement()
             }
             if (text.isEmpty())
                 continue;
-            text = applyTextTransform(style(), text, ' ');
+            text = applyTextTransform(style(), text);
             auto textRun = constructTextRun(text, style(), ExpansionBehavior::allowRightOnly());
             logicalWidth = std::max(logicalWidth, selectFont().width(textRun));
         }
@@ -508,7 +508,7 @@ void RenderListBox::paintItemForeground(PaintInfo& paintInfo, const LayoutPoint&
         itemText = optionElement->textIndentedToRespectGroupLabel();
     else if (optGroupElement)
         itemText = optGroupElement->groupLabelText();
-    itemText = applyTextTransform(style(), itemText, ' ');
+    itemText = applyTextTransform(style(), itemText);
 
     if (itemText.isNull())
         return;
