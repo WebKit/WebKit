@@ -158,7 +158,7 @@ ISO8601::PlainDate TemporalCalendar::isoDateFromFields(JSGlobalObject* globalObj
     if (format != TemporalDateFormat::YearMonth) {
         JSValue dayProperty = temporalDateLike->get(globalObject, vm.propertyNames->day);
         RETURN_IF_EXCEPTION(scope, { });
-    
+
         if (dayProperty.isUndefined()) {
             throwTypeError(globalObject, scope, "day property must be present"_s);
             return { };
@@ -461,9 +461,9 @@ ISO8601::Duration TemporalCalendar::calendarDateUntil(const ISO8601::PlainDate& 
 
 // https://tc39.es/proposal-temporal/#sec-temporal-differencetemporalplainyearmonth
 ISO8601::Duration TemporalCalendar::differenceTemporalPlainYearMonth(JSGlobalObject* globalObject,
-     bool isSince, const ISO8601::PlainYearMonth& yearMonth, const ISO8601::PlainYearMonth& other,
-     unsigned increment, TemporalUnit smallestUnit, TemporalUnit largestUnit,
-     RoundingMode roundingMode)
+    bool isSince, const ISO8601::PlainYearMonth& yearMonth, const ISO8601::PlainYearMonth& other,
+    unsigned increment, TemporalUnit smallestUnit, TemporalUnit largestUnit,
+    RoundingMode roundingMode)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -484,10 +484,12 @@ ISO8601::Duration TemporalCalendar::differenceTemporalPlainYearMonth(JSGlobalObj
 
     auto thisDate = yearMonth.isoPlainDate();
     auto otherDate = other.isoPlainDate();
-    if (!ISO8601::isDateTimeWithinLimits(thisDate.year(), thisDate.month(), thisDate.day(), 12,
-        0, 0, 0, 0, 0)
-        || !ISO8601::isDateTimeWithinLimits(otherDate.year(), otherDate.month(), otherDate.day(), 12,
-            0, 0, 0, 0, 0)) {
+
+    auto thisWithinLimits = ISO8601::isDateTimeWithinLimits(
+        thisDate.year(), thisDate.month(), thisDate.day(), 12, 0, 0, 0, 0, 0);
+    auto otherWithinLimits = ISO8601::isDateTimeWithinLimits(
+        otherDate.year(), otherDate.month(), otherDate.day(), 12, 0, 0, 0, 0, 0);
+    if (!thisWithinLimits || !otherWithinLimits) {
         throwRangeError(globalObject, scope, "date/time value is outside of supported range"_s);
         return { };
     }

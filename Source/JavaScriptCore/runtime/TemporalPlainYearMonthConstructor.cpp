@@ -109,9 +109,8 @@ JSC_DEFINE_HOST_FUNCTION(constructTemporalPlainYearMonth, (JSGlobalObject* globa
         RETURN_IF_EXCEPTION(scope, { });
     }
 
-    if (argumentCount < 2) {
+    if (argumentCount < 2)
         return throwVMRangeError(globalObject, scope, "Temporal.PlainYearMonth requires at least two arguments"_s);
-    }
 
     // Argument 2 is calendar -- ignored for now. TODO
 

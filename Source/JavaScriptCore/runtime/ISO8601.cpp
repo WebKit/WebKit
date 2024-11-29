@@ -871,16 +871,16 @@ template<typename CharacterType>
 static bool canBeYear(StringParsingBuffer<CharacterType>& buffer)
 {
     // 4 characters for year, plus 2 more for month
-    if (buffer.lengthRemaining() < 6) {
+    if (buffer.lengthRemaining() < 6)
         return false;
-    }
     bool hasPrefix = buffer[0] == '+' || buffer[0] == '-';
     if (!isASCIIDigit(buffer[0]) && !hasPrefix)
         return false;
     size_t start = hasPrefix ? 1 : 0;
-    for (size_t i = start; i < 4 + start; i++)
+    for (size_t i = start; i < 4 + start; i++) {
         if (!isASCIIDigit(buffer[i]))
             return false;
+    }
     return true;
 }
 
@@ -932,11 +932,13 @@ static std::optional<PlainDate> parseDate(StringParsingBuffer<CharacterType>& bu
     if (*buffer == '-') {
         if (buffer.lengthRemaining() > 2
             && buffer[1] == '-'
-            && format == TemporalDateFormat::MonthDay)
+            && format == TemporalDateFormat::MonthDay) {
             buffer.advanceBy(2);
+        }
     }
 
-    if (canBeYear(buffer)) { // Look ahead to distinguish month from year
+    // Look ahead to distinguish month from year
+    if (canBeYear(buffer)) {
         bool sixDigitsYear = false;
         int yearFactor = 1;
         if (*buffer == '+') {
@@ -970,7 +972,7 @@ static std::optional<PlainDate> parseDate(StringParsingBuffer<CharacterType>& bu
             year = parseDecimalInt32(std::span { buffer.position(), 4 });
             buffer.advanceBy(4);
         }
-        
+
         if (buffer.atEnd())
             return std::nullopt;
 
@@ -1000,9 +1002,8 @@ static std::optional<PlainDate> parseDate(StringParsingBuffer<CharacterType>& bu
     } else
         return std::nullopt;
 
-    if (format == TemporalDateFormat::YearMonth && buffer.atEnd()) {
+    if (format == TemporalDateFormat::YearMonth && buffer.atEnd())
         return PlainDate(year, month, 1);
-    }
 
     if (*buffer == '-') {
         if (splitByHyphen || format != TemporalDateFormat::Date)
@@ -1455,7 +1456,7 @@ String temporalMonthDayToString(PlainMonthDay plainMonthDay, StringView calendar
         return makeString(first, "[u-ca=iso8601]"_s);
     }
 
-    return makeString(pad('0', 2, plainMonthDay.month()), '-', pad('0', 2, plainMonthDay.day())); 
+    return makeString(pad('0', 2, plainMonthDay.month()), '-', pad('0', 2, plainMonthDay.day()));
 }
 
 String monthCode(uint32_t month)
@@ -1699,7 +1700,7 @@ std::optional<Int128> ExactTime::round(Int128 quantity, unsigned increment, Temp
     case TemporalUnit::Microsecond: maximum = (Int128) msPerDay * 1000; break;
     case TemporalUnit::Nanosecond: maximum = nsPerDay; break;
     default:
-        ASSERT_NOT_REACHED();
+        RELEASE_ASSERT_NOT_REACHED();
     }
     if (!validateTemporalRoundingIncrement(increment, maximum, true))
         return std::nullopt;

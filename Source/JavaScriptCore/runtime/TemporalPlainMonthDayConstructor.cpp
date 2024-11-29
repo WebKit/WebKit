@@ -107,9 +107,8 @@ JSC_DEFINE_HOST_FUNCTION(constructTemporalPlainMonthDay, (JSGlobalObject* global
         RETURN_IF_EXCEPTION(scope, { });
     }
 
-    if (argumentCount < 2) {
+    if (argumentCount < 2)
         return throwVMRangeError(globalObject, scope, "Temporal.PlainMonthDay requires at least two arguments"_s);
-    }
 
     // Argument 2 is calendar -- ignored for now. TODO
 
@@ -122,7 +121,7 @@ JSC_DEFINE_HOST_FUNCTION(constructTemporalPlainMonthDay, (JSGlobalObject* global
         RETURN_IF_EXCEPTION(scope, { });
     }
 
-     RELEASE_AND_RETURN(scope, JSValue::encode(TemporalPlainMonthDay::tryCreateIfValid(globalObject, structure, ISO8601::PlainDate(referenceYear, isoMonth, isoDay))));
+    RELEASE_AND_RETURN(scope, JSValue::encode(TemporalPlainMonthDay::tryCreateIfValid(globalObject, structure, ISO8601::PlainDate(referenceYear, isoMonth, isoDay))));
 }
 
 JSC_DEFINE_HOST_FUNCTION(callTemporalPlainMonthDay, (JSGlobalObject* globalObject, CallFrame*))

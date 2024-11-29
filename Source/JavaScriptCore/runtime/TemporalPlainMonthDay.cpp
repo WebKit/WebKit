@@ -81,7 +81,7 @@ void TemporalPlainMonthDay::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 
 DEFINE_VISIT_CHILDREN(TemporalPlainMonthDay);
 
-// CreateTemporalMonthDay ( isoDate, calendar [, newTarget ] 
+// CreateTemporalMonthDay ( isoDate, calendar [, newTarget ]
 // https://tc39.es/proposal-temporal/#sec-temporal-createtemporalmonthday
 TemporalPlainMonthDay* TemporalPlainMonthDay::tryCreateIfValid(JSGlobalObject* globalObject, Structure* structure, ISO8601::PlainDate&& plainDate)
 {

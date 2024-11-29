@@ -106,12 +106,12 @@ public:
     static ISO8601::Duration toDateDurationRecordWithoutTime(JSGlobalObject*, const ISO8601::Duration&);
     static std::optional<double> balance(ISO8601::Duration&, TemporalUnit largestUnit);
     static ISO8601::Duration toDateDurationWithoutTime(ISO8601::Duration);
-    static Nudged nudgeToCalendarUnit(JSGlobalObject* globalObject,
-        int32_t sign, const ISO8601::InternalDuration& duration, Int128 destEpochNs,
-        ISO8601::PlainDate isoDate, double increment, TemporalUnit unit, RoundingMode roundingMode);
-    static ISO8601::InternalDuration bubbleRelativeDuration(JSGlobalObject* globalObject,
-        int32_t sign, ISO8601::InternalDuration duration, Int128 nudgedEpochNs,
-        ISO8601::PlainDate isoDate, TemporalUnit largestUnit, TemporalUnit smallestUnit);
+    static Nudged nudgeToCalendarUnit(JSGlobalObject*,
+        int32_t, const ISO8601::InternalDuration&, Int128,
+        ISO8601::PlainDate, double, TemporalUnit, RoundingMode);
+    static ISO8601::InternalDuration bubbleRelativeDuration(JSGlobalObject*,
+        int32_t, ISO8601::InternalDuration, Int128,
+        ISO8601::PlainDate, TemporalUnit, TemporalUnit);
 private:
     TemporalDuration(VM&, Structure*, ISO8601::Duration&&);
     DECLARE_DEFAULT_FINISH_CREATION;
