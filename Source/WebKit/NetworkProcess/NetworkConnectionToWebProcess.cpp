@@ -981,10 +981,11 @@ void NetworkConnectionToWebProcess::domCookiesForHost(const URL& url, Completion
 
 void NetworkConnectionToWebProcess::subscribeToCookieChangeNotifications(const URL& url, const URL& firstParty, WebCore::FrameIdentifier frameID, WebCore::PageIdentifier pageID, WebCore::ShouldRelaxThirdPartyCookieBlocking shouldRelaxThirdPartyCookieBlocking, CompletionHandler<void(bool)>&& completionHandler)
 {
-    auto allowCookieAccess = protectedNetworkProcess()->allowsFirstPartyForCookies(m_webProcessIdentifier, firstParty);
-    MESSAGE_CHECK_COMPLETION(allowCookieAccess != NetworkProcess::AllowCookieAccess::Terminate, completionHandler(false));
-    if (allowCookieAccess != NetworkProcess::AllowCookieAccess::Allow)
-        return completionHandler({ });
+    MESSAGE_CHECK(HashSet<String>::isValidValue(host));
+    MESSAGE_CHECK(protectedNetworkProcess()->allowsFirstPartyForCookies(m_webProcessIdentifier, URL { host }) != NetworkProcess::AllowCookieAccess::Terminate);
+
+    ASSERT(!m_hostsWithCookieListeners.contains(host));
+    m_hostsWithCookieListeners.add(host);
 
     bool startedListening = false;
     if (CheckedPtr networkStorageSession = storageSession())
@@ -997,6 +998,9 @@ void NetworkConnectionToWebProcess::subscribeToCookieChangeNotifications(const U
 
 void NetworkConnectionToWebProcess::unsubscribeFromCookieChangeNotifications(const String& host)
 {
+    MESSAGE_CHECK(HashSet<String>::isValidValue(host));
+    MESSAGE_CHECK(protectedNetworkProcess()->allowsFirstPartyForCookies(m_webProcessIdentifier, URL { host }) != NetworkProcess::AllowCookieAccess::Terminate);
+
     bool removed = m_hostsWithCookieListeners.remove(host);
     ASSERT_UNUSED(removed, removed);
 
