@@ -51,6 +51,9 @@
 #include "TemporalPlainYearMonthPrototype.h"
 #include "TemporalTimeZoneConstructor.h"
 #include "TemporalTimeZonePrototype.h"
+#include "TemporalZonedDateTime.h"
+#include "TemporalZonedDateTimeConstructor.h"
+#include "TemporalZonedDateTimePrototype.h"
 #include <wtf/Int128.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/unicode/CharacterNames.h>
@@ -131,6 +134,13 @@ static JSValue createTimeZoneConstructor(VM& vm, JSObject* object)
     return TemporalTimeZoneConstructor::create(vm, TemporalTimeZoneConstructor::createStructure(vm, globalObject, globalObject->functionPrototype()), jsCast<TemporalTimeZonePrototype*>(globalObject->timeZoneStructure()->storedPrototypeObject()));
 }
 
+static JSValue createZonedDateTimeConstructor(VM& vm, JSObject* object)
+{
+    TemporalObject* temporalObject = jsCast<TemporalObject*>(object);
+    JSGlobalObject* globalObject = temporalObject->globalObject();
+    return TemporalZonedDateTimeConstructor::create(vm, TemporalZonedDateTimeConstructor::createStructure(vm, globalObject, globalObject->functionPrototype()), jsCast<TemporalZonedDateTimePrototype*>(globalObject->timeZoneStructure()->storedPrototypeObject()));
+}
+
 } // namespace JSC
 
 #include "TemporalObject.lut.h"
@@ -149,6 +159,7 @@ namespace JSC {
   PlainMonthDay  createPlainMonthDayConstructor  DontEnum|PropertyCallback
   PlainYearMonth createPlainYearMonthConstructor DontEnum|PropertyCallback
   TimeZone       createTimeZoneConstructor       DontEnum|PropertyCallback
+  ZonedDateTime  createZonedDateTimeConstructor  DontEnum|PropertyCallback
 @end
 */
 

@@ -29,7 +29,6 @@ skip:
     - test/built-ins/Temporal/PlainDateTime/prototype/toZonedDateTime
     - test/built-ins/Temporal/PlainDateTime/prototype/until
     - test/built-ins/Temporal/PlainDateTime/prototype/withCalendar
-    - test/built-ins/Temporal/ZonedDateTime
     - test/intl402/Temporal/Instant/prototype/toZonedDateTimeISO
     - test/intl402/Temporal/Now
     - test/intl402/Temporal/PlainDate
