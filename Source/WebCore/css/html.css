@@ -1423,11 +1423,18 @@ iframe {
     border: 2px inset;
 }
 
+/* https://html.spec.whatwg.org/multipage/rendering.html#bidi-rendering */
 bdi, output {
     unicode-bidi: isolate;
 }
 
-input[type=tel i]:dir(ltr) { direction: ltr; }
+[dir]:dir(ltr), bdi:dir(ltr), input[type=tel i]:dir(ltr) {
+    direction: ltr;
+}
+
+[dir]:dir(rtl), bdi:dir(rtl) {
+    direction: rtl;
+}
 
 bdo, bdo[dir] {
     unicode-bidi: isolate-override;
