@@ -323,6 +323,7 @@ tr {
 td, th {
     display: table-cell;
     vertical-align: inherit;
+    padding: 1px;
 }
 
 th {
