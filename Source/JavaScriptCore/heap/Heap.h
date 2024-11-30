@@ -275,6 +275,7 @@ class Heap;
     v(temporalPlainDateTimeSpace, cellHeapCellType, TemporalPlainDateTime) \
     v(temporalPlainTimeSpace, cellHeapCellType, TemporalPlainTime) \
     v(temporalTimeZoneSpace, cellHeapCellType, TemporalTimeZone) \
+    v(temporalZonedDateTimeSpace, cellHeapCellType, TemporalZonedDateTime) \
     v(uint8ArraySpace, cellHeapCellType, JSUint8Array) \
     v(uint8ClampedArraySpace, cellHeapCellType, JSUint8ClampedArray) \
     v(uint16ArraySpace, cellHeapCellType, JSUint16Array) \
