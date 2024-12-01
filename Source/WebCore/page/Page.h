@@ -798,7 +798,7 @@ public:
 #endif
 
     void setDebugger(JSC::Debugger*);
-    JSC::Debugger* debugger() const { return m_debugger; }
+    JSC::Debugger* debugger() const { return m_debugger.get(); }
 
     WEBCORE_EXPORT void invalidateStylesForAllLinks();
     WEBCORE_EXPORT void invalidateStylesForLink(SharedStringHash);
@@ -1423,8 +1423,7 @@ private:
     std::unique_ptr<PageGroup> m_singlePageGroup;
     WeakPtr<PageGroup> m_group;
 
-    JSC::Debugger* m_debugger { nullptr }; // FIXME: Use a smart pointer.
-
+    RefPtr<JSC::Debugger> m_debugger;
     bool m_canStartMedia { true };
     bool m_imageAnimationEnabled { true };
     // Elements containing animations that are individually playing (potentially overriding the page-wide m_imageAnimationEnabled state).
