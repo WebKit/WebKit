@@ -4489,7 +4489,8 @@ void RenderLayer::setSnapshottedScrollOffsetForAnchorPositioning(LayoutSize offs
 
     // FIXME: Scroll offset should be adjusted in the scrolling tree so layers stay exactly in sync.
     m_snapshottedScrollOffsetForAnchorPositioning = offset;
-    updateTransform();
+    if (renderer().containingBlock())
+        updateTransform();
 }
 
 void RenderLayer::clearSnapshottedScrollOffsetForAnchorPositioning()
@@ -4498,7 +4499,8 @@ void RenderLayer::clearSnapshottedScrollOffsetForAnchorPositioning()
         return;
 
     m_snapshottedScrollOffsetForAnchorPositioning = { };
-    updateTransform();
+    if (renderer().containingBlock())
+        updateTransform();
 }
 
 // hitTestLocation and hitTestRect are relative to rootLayer.
@@ -5940,7 +5942,14 @@ void RenderLayer::styleChanged(StyleDifference diff, const RenderStyle* oldStyle
         m_scrollableArea->updateAllScrollbarRelatedStyle();
 
     updateDescendantDependentFlags();
+    // FIXME: We shouldn't really call updateTransform() if not knowing the box size,
+    // but we do so because sometimes transform changes avoid doing layout.
+#if !OS(MACOS)
+    if (renderer().containingBlock())
+        updateTransform();
+#else
     updateTransform();
+#endif
     updateBlendMode();
     updateFiltersAfterStyleChange(diff, oldStyle);
     clearClipRects();
