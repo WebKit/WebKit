@@ -166,6 +166,8 @@ void HTMLDetailsElement::attributeChanged(const QualifiedName& name, const AtomS
                 }
             } else {
                 m_defaultSlot->setInlineStyleProperty(CSSPropertyContentVisibility, CSSValueHidden);
+                if (document().settings().detailsAutoExpandEnabled())
+                    document().updateLayoutIgnorePendingStylesheets({ LayoutOptions::ContentVisibilityForceLayout }, this);
                 queueDetailsToggleEventTask(ToggleState::Open, ToggleState::Closed);
             }
         }

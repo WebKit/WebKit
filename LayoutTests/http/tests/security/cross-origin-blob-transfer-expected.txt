@@ -14,4 +14,3 @@ Details
 Result	Test Name	Message
 Pass	Test for creating blob in iframe and then transferring it cross-origin.	
 Asserts run
-
