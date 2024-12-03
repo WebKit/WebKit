@@ -918,11 +918,21 @@ static LayoutUnit computeExtraSpaceForBlockStepSizing(LayoutUnit stepSize, Layou
     return { };
 }
 
-void RenderBlockFlow::distributeExtraBlockStepSizingSpaceToChild(RenderBox& child, LayoutUnit extraSpace) const
+void RenderBlockFlow::distributeExtraBlockStepSizingSpaceToChild(RenderBox& child, LayoutUnit extraSpace, ItemPosition alignSelfForChild) const
 {
-    auto halfExtraSpace = extraSpace / 2;
-    setMarginBeforeForChild(child, marginBeforeForChild(child) + halfExtraSpace);
-    setMarginAfterForChild(child, marginAfterForChild(child) + halfExtraSpace);
+    switch (alignSelfForChild) {
+    case ItemPosition::Start:
+        setMarginBeforeForChild(child, marginBeforeForChild(child) + extraSpace);
+        break;
+    case ItemPosition::End:
+        setMarginAfterForChild(child, marginAfterForChild(child) + extraSpace);
+        break;
+    default: {
+        auto halfExtraSpace = extraSpace / 2;
+        setMarginBeforeForChild(child, marginBeforeForChild(child) + halfExtraSpace);
+        setMarginAfterForChild(child, marginAfterForChild(child) + halfExtraSpace);
+    }
+    }
 }
 
 void RenderBlockFlow::layoutBlockChild(RenderBox& child, MarginInfo& marginInfo, LayoutUnit& previousFloatLogicalBottom, LayoutUnit& maxFloatLogicalBottom)
@@ -984,8 +994,10 @@ void RenderBlockFlow::layoutBlockChild(RenderBox& child, MarginInfo& marginInfo,
 
     if (auto blockStepSizeForChild = child.style().blockStepSize()) {
         auto extraSpace = computeExtraSpaceForBlockStepSizing(LayoutUnit(blockStepSizeForChild->value()), logicalMarginBoxHeightForChild(child));
-        if (extraSpace)
-            distributeExtraBlockStepSizingSpaceToChild(child, extraSpace);
+        if (extraSpace) {
+            auto alignSelfForChild = child.style().resolvedAlignSelf(&style(), selfAlignmentNormalBehavior());
+            distributeExtraBlockStepSizingSpaceToChild(child, extraSpace, alignSelfForChild.position());
+        }
     }
 
     // Cache if we are at the top of the block right now.

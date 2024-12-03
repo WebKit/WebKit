@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="author" title="Sammy Gill" href="mailto:sammy.gill@apple.com">
+<link rel="help" href="https://drafts.csswg.org/css-rhythm/#block-step-align">
+<link rel="stylesheet" type="text/css" href="/fonts/ahem.css" />
+<meta name="assert" content="Extra space is distributed according to the box's align-self when block-step-align is auto">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/resources/check-layout-th.js"></script>
+<style>
+.block-step {
+  font: 25px Ahem;
+  width: min-content;
+  block-step-size: 100px;
+}
+.fixed-height {
+  height: 50px;
+}
+.start-alignment {
+  align-self: start;
+}
+.end-alignment {
+  align-self: end;
+}
+.additional-margin {
+  margin-block: 10px;
+}
+</style>
+</head>
+<body onload="checkLayout('div')">
+  <div class="block-step fixed-height" data-expected-margin-top="25", data-expected-margin-bottom="25"></div>
+  <div class="block-step fixed-height start-alignment" data-expected-margin-top="50" data-expected-margin-bottom="0"></div>
+  <div class="block-step fixed-height end-alignment" data-expected-margin-top="0" data-expected-margin-bottom="50"></div>
+
+  <div class="block-step" data-expected-margin-top="12.5" data-expected-margin-bottom="12.5">x x x </div>
+  <div class="block-step start-alignment" data-expected-margin-top="25" data-expected-margin-bottom="0">x x x</div>
+  <div class="block-step end-alignment" data-expected-margin-top="0" data-expected-margin-bottom="25"> x x x</div>
+
+  <!-- Extra space is added on top of any specified margins -->
+  <div class="block-step fixed-height additional-margin" data-expected-margin-top="25" data-expected-margin-bottom="25"></div>
+  <div class="block-step fixed-height start-alignment additional-margin" data-expected-margin-top="40" data-expected-margin-bottom="10"></div>
+  <div class="block-step fixed-height end-alignment additional-margin" data-expected-margin-top="10" data-expected-margin-bottom="40"></div>
+</body>
+</html>
