@@ -24,6 +24,7 @@
 
 import os
 import sys
+from typing import IO
 
 from webkitscmpy.local import Git
 from webkitscmpy import Commit
@@ -49,12 +50,16 @@ def main(inputfile, identifier_template):
         sys.stderr.write("Failed to compute the identifier for '{}'".format(GIT_COMMIT))
         return -1
 
+    rewrite_message(inputfile, sys.stdout, commit, identifier_template)
+
+
+def rewrite_message(inputfile: IO[str], outputfile: IO[str], commit: Commit, identifier_template: str) -> None:
     lines = []
     for line in inputfile.readlines():
         lines.append(line.rstrip())
 
     identifier_index = len(lines)
-    if identifier_index and repository.GIT_SVN_REVISION.match(lines[-1]):
+    if identifier_index and Git.GIT_SVN_REVISION.match(lines[-1]):
         identifier_index -= 1
 
     # We're trying to cover cases where there is a space between link and git-svn-id:
@@ -98,7 +103,7 @@ def main(inputfile, identifier_template):
         index -= 1
 
     for line in lines:
-        print(line)
+        print(line, file=outputfile)
 
 
 if __name__ == '__main__':
