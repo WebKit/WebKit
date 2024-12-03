@@ -20,12 +20,15 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import io
 import logging
 import sys
+import typing
 import unittest
 
 from mock import patch
-from webkitcorepy import mocks, OutputCapture, Terminal
+
+from webkitcorepy import OutputCapture, Terminal, mocks
 
 
 class TerminalTests(unittest.TestCase):
@@ -95,8 +98,6 @@ class TerminalTests(unittest.TestCase):
         self.assertEqual(captured.stdout.getvalue(), 'Pick:\n    1) Alpha\n    2) Beta\n    3) Charlie\n    4) Delta\n: \n')
 
     def test_interrupt(self):
-        from mock import patch
-
         def do_interrupt(output):
             print(output)
             raise KeyboardInterrupt
@@ -123,3 +124,40 @@ class TerminalTests(unittest.TestCase):
         with self.assertRaises(KeyboardInterrupt):
             with Terminal.disable_keyboard_interrupt_stacktracktrace(logging.root.level):
                 raise KeyboardInterrupt
+
+    def test_assert_writeable_stream(self):
+        for file_like in (
+            io.BytesIO(),
+            io.StringIO(),
+            sys.stdout,
+            sys.stderr,
+        ):
+            Terminal.assert_writeable_stream(file_like)
+
+        for file_like in (
+            sys.stdin,
+            typing.IO(),
+        ):
+            with self.assertRaises(ValueError):
+                Terminal.assert_writeable_stream(file_like)
+
+    def test_override_atty(self):
+        for file_like in (
+            io.BytesIO(),
+            io.StringIO(),
+            sys.stdin,
+            sys.stdout,
+            sys.stderr,
+            typing.IO(),
+        ):
+            original = Terminal.isatty(file_like)
+
+            with Terminal.override_atty(file_like, isatty=False):
+                self.assertFalse(Terminal.isatty(file_like))
+
+            self.assertEqual(original, Terminal.isatty(file_like))
+
+            with Terminal.override_atty(file_like, isatty=True):
+                self.assertTrue(Terminal.isatty(file_like))
+
+            self.assertEqual(original, Terminal.isatty(file_like))
