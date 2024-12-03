@@ -144,7 +144,7 @@ TemporalPlainTime* TemporalPlainTime::tryCreateIfValid(JSGlobalObject* globalObj
 }
 
 // https://tc39.es/proposal-temporal/#sec-temporal-balancetime
-static ISO8601::Duration balanceTime(double hour, double minute, double second, double millisecond, double microsecond, double nanosecond)
+ISO8601::Duration TemporalPlainTime::balanceTime(double hour, double minute, double second, double millisecond, double microsecond, double nanosecond)
 {
     // https://github.com/tc39/proposal-temporal/issues/1804
     // Use non-negative modulo operation.

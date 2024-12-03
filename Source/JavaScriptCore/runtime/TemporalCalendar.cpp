@@ -311,21 +311,6 @@ ISO8601::PlainDate TemporalCalendar::monthDayFromFields(JSGlobalObject* globalOb
     return isoDateFromFields(globalObject, TemporalDateFormat::MonthDay, plainDate.year(), plainDate.month(), plainDate.day(), overflow);
 }
 
-static int epochTimeToEpochYear(double t)
-{
-    return msToYear(t);
-}
-
-static int32_t epochTimeToMonthInYear(double t)
-{
-    return std::get<1>(WTF::yearMonthDayFromDays(msToDays(t)));
-}
-
-static int32_t epochTimeToDate(double t)
-{
-    return std::get<2>(WTF::yearMonthDayFromDays(msToDays(t)));
-}
-
 // https://tc39.es/proposal-temporal/#sec-temporal-balanceisodate
 static ISO8601::PlainDate balanceISODate(double year, double month, double day)
 {
@@ -501,7 +486,7 @@ ISO8601::Duration TemporalCalendar::differenceTemporalPlainYearMonth(JSGlobalObj
 
     if (smallestUnit != TemporalUnit::Month || increment != 1) {
         auto isoDateTimeOther = TemporalDuration::combineISODateAndTimeRecord(otherDate, ISO8601::PlainTime());
-        auto destEpochNs = getUTCEpochNanoseconds(isoDateTimeOther);
+        auto destEpochNs = TemporalDuration::getUTCEpochNanoseconds(isoDateTimeOther);
         TemporalDuration::roundRelativeDuration(globalObject,
             duration, destEpochNs, thisDate, largestUnit, increment, smallestUnit, roundingMode);
         RETURN_IF_EXCEPTION(scope, { });

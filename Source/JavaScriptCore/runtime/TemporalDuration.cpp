@@ -681,7 +681,7 @@ std::tuple<ISO8601::PlainDate, ISO8601::PlainTime> TemporalDuration::combineISOD
     return std::tuple<ISO8601::PlainDate, ISO8601::PlainTime>(isoDate, isoTime);
 }
 
-Int128 getUTCEpochNanoseconds(std::tuple<ISO8601::PlainDate, ISO8601::PlainTime> isoDateTime)
+Int128 TemporalDuration::getUTCEpochNanoseconds(std::tuple<ISO8601::PlainDate, ISO8601::PlainTime> isoDateTime)
 {
     auto isoDate = std::get<0>(isoDateTime);
     auto isoTime = std::get<1>(isoDateTime);
@@ -694,11 +694,10 @@ Int128 getUTCEpochNanoseconds(std::tuple<ISO8601::PlainDate, ISO8601::PlainTime>
         + ((Int128) isoTime.nanosecond()));
 }
 
-static Int128 getEpochNanosecondsFor(std::tuple<ISO8601::PlainDate, ISO8601::PlainTime> isoDateTime, TemporalDisambiguation disambiguation)
+Int128 TemporalDuration::getEpochNanosecondsFor(ISO8601::TimeZone timeZone, std::tuple<ISO8601::PlainDate, ISO8601::PlainTime> isoDateTime, TemporalDisambiguation disambiguation)
 {
-    // TODO time zones
-    (void) disambiguation;
-    return getUTCEpochNanoseconds(isoDateTime);
+    auto possibleEpochNs = getPossibleEpochNanoseconds(timeZone, isoDateTime);
+    return disambiguatePossibleEpochNanoseconds(possibleEpochNs, timeZone, isoDateTime, disambiguation);
 }
 
 // https://tc39.es/proposal-temporal/#sec-temporal-nudgetocalendarunit
