@@ -316,7 +316,7 @@ ISO8601::PlainDate TemporalPlainDate::with(JSGlobalObject* globalObject, JSObjec
 // https://tc39.es/proposal-temporal/#sec-getutcepochnanoseconds
 static Int128 getUTCEpochNanoseconds(ISO8601::PlainDate isoDate)
 {
-    return getUTCEpochNanoseconds(
+    return TemporalDuration::getUTCEpochNanoseconds(
         std::tuple<ISO8601::PlainDate, ISO8601::PlainTime>(
             isoDate, ISO8601::PlainTime()));
 }

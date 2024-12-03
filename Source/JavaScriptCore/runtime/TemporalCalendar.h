@@ -83,6 +83,22 @@ public:
 
     bool equals(JSGlobalObject*, TemporalCalendar*);
 
+
+    static inline int epochTimeToEpochYear(double t)
+    {
+        return msToYear(t);
+    }
+
+    static inline int32_t epochTimeToMonthInYear(double t)
+    {
+        return std::get<1>(WTF::yearMonthDayFromDays(msToDays(t)));
+    }
+
+    static inline int32_t epochTimeToDate(double t)
+    {
+        return std::get<2>(WTF::yearMonthDayFromDays(msToDays(t)));
+    }
+
 private:
     TemporalCalendar(VM&, Structure*, CalendarID);
 

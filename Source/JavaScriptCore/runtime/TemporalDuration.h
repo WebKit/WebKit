@@ -26,6 +26,7 @@
 
 #pragma once
 
+#include "DateConstructor.h"
 #include "ISO8601.h"
 
 namespace JSC {
@@ -112,6 +113,9 @@ public:
     static ISO8601::InternalDuration bubbleRelativeDuration(JSGlobalObject*,
         int32_t, ISO8601::InternalDuration, Int128,
         ISO8601::PlainDate, TemporalUnit, TemporalUnit);
+    static Int128 getUTCEpochNanoseconds(std::tuple<ISO8601::PlainDate, ISO8601::PlainTime>);
+    static Int128 getEpochNanosecondsFor(ISO8601::TimeZone, std::tuple<ISO8601::PlainDate, ISO8601::PlainTime>, TemporalDisambiguation);
+
 private:
     TemporalDuration(VM&, Structure*, ISO8601::Duration&&);
     DECLARE_DEFAULT_FINISH_CREATION;
@@ -124,7 +128,5 @@ private:
     ISO8601::Duration m_duration;
 };
 
-// TODO: Move to TemporalPlainDateTime once that's created
-Int128 getUTCEpochNanoseconds(std::tuple<ISO8601::PlainDate, ISO8601::PlainTime>);
 
 } // namespace JSC

@@ -58,6 +58,28 @@ TemporalTimeZone::TemporalTimeZone(VM& vm, Structure* structure, TimeZone timeZo
 {
 }
 
+/*
+// https://tc39.es/proposal-temporal/#sec-parsetimezoneidentifier
+static std::optional<TimeZoneRecord> parseTimeZoneIdentifier(StringView identifier)
+{
+    auto parseResult = parseUTCOffset(identifier);
+    bool isIANAName = false;
+    if (!parseResult) {
+        isIANAName = true;
+        parseResult = parseTimeZoneIANAName(identifier);
+    }
+    if (!parseResult)
+        return std::nullopt;
+       
+    if (isIANAName)
+        return TimeZoneRecord { parseResult, 0 };
+    Int128 offsetNanoseconds = parseDateTimeUTCOffset(identifier);
+    Int128 offsetMinutes = offsetNanoseconds / (60 * 1000000000);
+    ASSERT(offsetNanoseconds % (60 * 1000000000) == 0);
+    return TimeZoneRecord { "", offsetMinutes };
+}
+*/
+
 // https://tc39.es/proposal-temporal/#sec-temporal-parsetemporaltimeZonestring
 static std::optional<int64_t> parseTemporalTimeZoneString(StringView)
 {

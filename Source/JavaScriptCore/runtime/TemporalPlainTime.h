@@ -53,6 +53,7 @@ public:
     static std::array<std::optional<double>, numberOfTemporalPlainTimeUnits> toPartialTime(JSGlobalObject*, JSObject*, bool skipRelevantPropertyCheck = false);
     static ISO8601::PlainTime regulateTime(JSGlobalObject*, ISO8601::Duration&&, TemporalOverflow);
     static ISO8601::Duration addTime(const ISO8601::PlainTime&, const ISO8601::Duration&);
+    static ISO8601::Duration balanceTime(double hour, double minute, double second, double millisecond, double microsecond, double nanosecond);
 
     static TemporalPlainTime* from(JSGlobalObject*, JSValue, std::optional<JSObject*>);
     static int32_t compare(const ISO8601::PlainTime&, const ISO8601::PlainTime&);
