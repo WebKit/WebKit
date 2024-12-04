@@ -2104,6 +2104,7 @@
 		51D7EFEA1BDE8F8C00E93E10 /* ThreadSafeDataBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 511FAEA91BDC989A00B4AFE4 /* ThreadSafeDataBuffer.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51DB8C402B7B23AA000AD1BA /* MediaSourceInterfaceProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 51DB8C3C2B7B1A34000AD1BA /* MediaSourceInterfaceProxy.h */; };
 		51DB8C412B7B23B9000AD1BA /* MediaSourceInterfaceMainThread.h in Headers */ = {isa = PBXBuildFile; fileRef = 51DB8C3E2B7B2217000AD1BA /* MediaSourceInterfaceMainThread.h */; };
+		51DCE1AB2CF5800D00BE7E84 /* AudioDecoderCocoa.h in Headers */ = {isa = PBXBuildFile; fileRef = 51DCE1A92CF5800D00BE7E84 /* AudioDecoderCocoa.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51DF24C02993227F003A2FB9 /* ManagedSourceBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 51DF24BF29931971003A2FB9 /* ManagedSourceBuffer.h */; };
 		51DF24C129932284003A2FB9 /* ManagedMediaSource.h in Headers */ = {isa = PBXBuildFile; fileRef = 51DF24BA299310E7003A2FB9 /* ManagedMediaSource.h */; };
 		51DF6D7E0B92A16D00C2DC85 /* ThreadCheck.h in Headers */ = {isa = PBXBuildFile; fileRef = 51DF6D7D0B92A16D00C2DC85 /* ThreadCheck.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -11734,6 +11735,8 @@
 		51DB8C3C2B7B1A34000AD1BA /* MediaSourceInterfaceProxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MediaSourceInterfaceProxy.h; sourceTree = "<group>"; };
 		51DB8C3E2B7B2217000AD1BA /* MediaSourceInterfaceMainThread.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MediaSourceInterfaceMainThread.h; sourceTree = "<group>"; };
 		51DB8C3F2B7B2217000AD1BA /* MediaSourceInterfaceMainThread.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = MediaSourceInterfaceMainThread.cpp; sourceTree = "<group>"; };
+		51DCE1A92CF5800D00BE7E84 /* AudioDecoderCocoa.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AudioDecoderCocoa.h; sourceTree = "<group>"; };
+		51DCE1AA2CF5800D00BE7E84 /* AudioDecoderCocoa.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = AudioDecoderCocoa.cpp; sourceTree = "<group>"; };
 		51DF24902990E96C003A2FB9 /* ManagedMediaSource.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ManagedMediaSource.idl; sourceTree = "<group>"; };
 		51DF24912990E96C003A2FB9 /* ManagedSourceBuffer.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ManagedSourceBuffer.idl; sourceTree = "<group>"; };
 		51DF24A12991D918003A2FB9 /* JSManagedSourceBuffer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JSManagedSourceBuffer.h; sourceTree = "<group>"; };
@@ -35559,6 +35562,8 @@
 		CD669D651D232DF4004D1866 /* cocoa */ = {
 			isa = PBXGroup;
 			children = (
+				51DCE1AA2CF5800D00BE7E84 /* AudioDecoderCocoa.cpp */,
+				51DCE1A92CF5800D00BE7E84 /* AudioDecoderCocoa.h */,
 				413151842357745E00115E6E /* AudioDestinationCocoa.cpp */,
 				413151862357745E00115E6E /* AudioDestinationCocoa.h */,
 				46AAAA3C25D3631400BAF42F /* AudioFileReaderCocoa.cpp */,
@@ -39322,6 +39327,7 @@
 				E785D96124B7F7350014DB21 /* AudioContextOptions.h in Headers */,
 				83BD3CEE24998E0100BA3E67 /* AudioContextState.h in Headers */,
 				9A87D9E42A8293E100EE7A8A /* AudioDecoder.h in Headers */,
+				51DCE1AB2CF5800D00BE7E84 /* AudioDecoderCocoa.h in Headers */,
 				FD31607F12B026F700C1A359 /* AudioDestination.h in Headers */,
 				9B1229C423FE4BD2008CA751 /* AudioDestinationCocoa.h in Headers */,
 				FD31600812B0267600C1A359 /* AudioDestinationNode.h in Headers */,

@@ -264,6 +264,7 @@ page/writing-tools/WritingToolsController.mm
 platform/VideoFrame.mm
 platform/animation/AcceleratedEffectStack.mm @no-unify
 platform/audio/AudioSession.cpp
+platform/audio/cocoa/AudioDecoderCocoa.cpp
 platform/audio/cocoa/AudioDestinationCocoa.cpp
 platform/audio/cocoa/AudioFileReaderCocoa.cpp
 platform/audio/cocoa/AudioOutputUnitAdaptor.cpp

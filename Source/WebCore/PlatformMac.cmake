@@ -196,6 +196,7 @@ list(APPEND WebCore_SOURCES
 
     platform/audio/AudioSession.cpp
 
+    platform/audio/cocoa/AudioDecoderCocoa.cpp
     platform/audio/cocoa/WebAudioBufferList.cpp
 
     platform/audio/mac/AudioBusMac.mm
@@ -580,6 +581,7 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/SystemSoundManager.h
     platform/TextRecognitionResult.h
 
+    platform/audio/cocoa/AudioDecoderCocoa.h
     platform/audio/cocoa/AudioDestinationCocoa.h
     platform/audio/cocoa/AudioOutputUnitAdaptor.h
     platform/audio/cocoa/AudioSampleBufferList.h

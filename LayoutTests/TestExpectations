@@ -6834,23 +6834,7 @@ imported/w3c/web-platform-tests/html/dom/render-blocking/element-render-blocking
 
 webkit.org/b/278192 imported/w3c/web-platform-tests/html/dom/render-blocking/element-render-blocking-033.html [ Failure ]
 
-# AudioDecoder, AudioEncoder and AudioData implementations missing.
-imported/w3c/web-platform-tests/webcodecs/audio-decoder.crossOriginIsolated.https.any.html [ Failure ]
-imported/w3c/web-platform-tests/webcodecs/audio-decoder.crossOriginIsolated.https.any.worker.html [ Failure ]
-imported/w3c/web-platform-tests/webcodecs/audioDecoder-codec-specific.https.any.html?adts_aac [ Failure ]
-imported/w3c/web-platform-tests/webcodecs/audioDecoder-codec-specific.https.any.html?mp4_aac [ Failure ]
-imported/w3c/web-platform-tests/webcodecs/audioDecoder-codec-specific.https.any.html?mp3 [ Failure ]
-imported/w3c/web-platform-tests/webcodecs/audioDecoder-codec-specific.https.any.html?opus [ Failure ]
-imported/w3c/web-platform-tests/webcodecs/audioDecoder-codec-specific.https.any.html?pcm_alaw [ Failure ]
-imported/w3c/web-platform-tests/webcodecs/audioDecoder-codec-specific.https.any.html?pcm_mulaw [ Failure ]
-imported/w3c/web-platform-tests/webcodecs/audioDecoder-codec-specific.https.any.worker.html?adts_aac [ Failure ]
-imported/w3c/web-platform-tests/webcodecs/audioDecoder-codec-specific.https.any.worker.html?mp4_aac [ Failure ]
-imported/w3c/web-platform-tests/webcodecs/audioDecoder-codec-specific.https.any.worker.html?mp3 [ Failure ]
-imported/w3c/web-platform-tests/webcodecs/audioDecoder-codec-specific.https.any.worker.html?opus [ Failure ]
-imported/w3c/web-platform-tests/webcodecs/audioDecoder-codec-specific.https.any.worker.html?pcm_alaw [ Failure ]
-imported/w3c/web-platform-tests/webcodecs/audioDecoder-codec-specific.https.any.worker.html?pcm_mulaw [ Failure ]
-imported/w3c/web-platform-tests/webcodecs/audio-decoder.https.any.html [ Failure ]
-imported/w3c/web-platform-tests/webcodecs/audio-decoder.https.any.worker.html [ Failure ]
+# AudioEncoder implementation missing.
 imported/w3c/web-platform-tests/webcodecs/audio-encoder-codec-specific.https.any.html [ Failure ]
 imported/w3c/web-platform-tests/webcodecs/audio-encoder.https.any.html [ Failure ]
 

@@ -3,14 +3,14 @@ PASS Test that AudioDecoder.isConfigSupported() rejects invalid config: Missing 
 PASS Test that AudioDecoder.isConfigSupported() rejects invalid config: Empty codec
 PASS Test that AudioDecoder.isConfigSupported() rejects invalid config: Missing sampleRate
 PASS Test that AudioDecoder.isConfigSupported() rejects invalid config: Missing numberOfChannels
-FAIL Test that AudioDecoder.isConfigSupported() rejects invalid config: Zero sampleRate assert_unreached: Should have rejected: undefined Reached unreachable code
-FAIL Test that AudioDecoder.isConfigSupported() rejects invalid config: Zero channels assert_unreached: Should have rejected: undefined Reached unreachable code
+PASS Test that AudioDecoder.isConfigSupported() rejects invalid config: Zero sampleRate
+PASS Test that AudioDecoder.isConfigSupported() rejects invalid config: Zero channels
 PASS Test that AudioDecoder.configure() rejects invalid config: Missing codec
 PASS Test that AudioDecoder.configure() rejects invalid config: Empty codec
 PASS Test that AudioDecoder.configure() rejects invalid config: Missing sampleRate
 PASS Test that AudioDecoder.configure() rejects invalid config: Missing numberOfChannels
-FAIL Test that AudioDecoder.configure() rejects invalid config: Zero sampleRate assert_unreached: unexpected error Reached unreachable code
-FAIL Test that AudioDecoder.configure() rejects invalid config: Zero channels assert_unreached: unexpected error Reached unreachable code
+PASS Test that AudioDecoder.configure() rejects invalid config: Zero sampleRate
+PASS Test that AudioDecoder.configure() rejects invalid config: Zero channels
 PASS Test that AudioDecoder.isConfigSupported() doesn't support config: Unrecognized codec
 PASS Test that AudioDecoder.isConfigSupported() doesn't support config: Video codec
 PASS Test that AudioDecoder.isConfigSupported() doesn't support config: Ambiguous codec

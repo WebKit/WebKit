@@ -70,8 +70,16 @@ static bool isValidDecoderConfig(const WebCodecsAudioDecoderConfig& config)
     if (StringView(config.codec).trim(isASCIIWhitespace<UChar>).isEmpty())
         return false;
 
-    // FIXME: We might need to check numberOfChannels and sampleRate here. See
-    // https://github.com/w3c/webcodecs/issues/714.
+    if (!config.numberOfChannels || !config.sampleRate)
+        return false;
+
+#if USE(AVFOUNDATION)
+    if (config.codec == "optus"_s && config.numberOfChannels > 2)
+        return false;
+#endif
+
+    if (config.codec == "optus"_s && config.numberOfChannels > 2 && !config.description)
+        return false;
 
     return true;
 }
