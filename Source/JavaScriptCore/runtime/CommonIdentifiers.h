@@ -116,6 +116,7 @@
     macro(descriptions) \
     macro(detached) \
     macro(detail) \
+    macro(disambiguation) \
     macro(displayName) \
     macro(done) \
     macro(dotAll) \
@@ -230,6 +231,7 @@
     macro(numberingSystem) \
     macro(numeric) \
     macro(of) \
+    macro(offset) \
     macro(omitPadding) \
     macro(opcode) \
     macro(origin) \

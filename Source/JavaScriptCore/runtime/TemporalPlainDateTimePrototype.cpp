@@ -180,18 +180,10 @@ JSC_DEFINE_HOST_FUNCTION(temporalPlainDateTimePrototypeFuncAdd, (JSGlobalObject*
     JSObject* options = intlGetOptionsObject(globalObject, callFrame->argument(1));
     RETURN_IF_EXCEPTION(scope, { });
 
-    auto balancedTimeDuration = TemporalPlainTime::addTime(plainDateTime->plainTime(), duration);
-    auto plainTime = TemporalPlainTime::toPlainTime(globalObject, balancedTimeDuration);
+    auto result = plainDateTime->addDurationToDateTime(globalObject, true, duration, options);
     RETURN_IF_EXCEPTION(scope, { });
 
-    TemporalOverflow overflow = toTemporalOverflow(globalObject, options);
-    RETURN_IF_EXCEPTION(scope, { });
-
-    ISO8601::Duration dateDuration { duration.years(), duration.months(), duration.weeks(), duration.days() + balancedTimeDuration.days(), 0, 0, 0, 0, 0, 0 };
-    ISO8601::PlainDate plainDate = TemporalCalendar::isoDateAdd(globalObject, plainDateTime->plainDate(), dateDuration, overflow);
-    RETURN_IF_EXCEPTION(scope, { });
-
-    RELEASE_AND_RETURN(scope, JSValue::encode(TemporalPlainDateTime::tryCreateIfValid(globalObject, globalObject->plainDateTimeStructure(), WTFMove(plainDate), WTFMove(plainTime))));
+    RELEASE_AND_RETURN(scope, JSValue::encode(result));
 }
 
 // https://tc39.es/proposal-temporal/#sec-temporal.plaindatetime.prototype.subtract
@@ -207,23 +199,14 @@ JSC_DEFINE_HOST_FUNCTION(temporalPlainDateTimePrototypeFuncSubtract, (JSGlobalOb
 
     auto duration = TemporalDuration::toISO8601Duration(globalObject, callFrame->argument(0));
     RETURN_IF_EXCEPTION(scope, { });
-    duration = -duration;
 
     JSObject* options = intlGetOptionsObject(globalObject, callFrame->argument(1));
     RETURN_IF_EXCEPTION(scope, { });
 
-    auto balancedTimeDuration = TemporalPlainTime::addTime(plainDateTime->plainTime(), duration);
-    auto plainTime = TemporalPlainTime::toPlainTime(globalObject, balancedTimeDuration);
+    auto result = plainDateTime->addDurationToDateTime(globalObject, false, duration, options);
     RETURN_IF_EXCEPTION(scope, { });
 
-    TemporalOverflow overflow = toTemporalOverflow(globalObject, options);
-    RETURN_IF_EXCEPTION(scope, { });
-
-    ISO8601::Duration dateDuration { duration.years(), duration.months(), duration.weeks(), duration.days() + balancedTimeDuration.days(), 0, 0, 0, 0, 0, 0 };
-    ISO8601::PlainDate plainDate = TemporalCalendar::isoDateAdd(globalObject, plainDateTime->plainDate(), dateDuration, overflow);
-    RETURN_IF_EXCEPTION(scope, { });
-
-    RELEASE_AND_RETURN(scope, JSValue::encode(TemporalPlainDateTime::tryCreateIfValid(globalObject, globalObject->plainDateTimeStructure(), WTFMove(plainDate), WTFMove(plainTime))));
+    RELEASE_AND_RETURN(scope, JSValue::encode(result));
 }
 
 // https://tc39.es/proposal-temporal/#sec-temporal.plaindatetime.prototype.with

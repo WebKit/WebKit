@@ -105,16 +105,19 @@ public:
         combineISODateAndTimeRecord(ISO8601::PlainDate, ISO8601::PlainTime);
     static std::optional<ISO8601::PlainDate> regulateISODate(double, double, double, TemporalOverflow);
     static ISO8601::Duration toDateDurationRecordWithoutTime(JSGlobalObject*, const ISO8601::Duration&);
+    static ISO8601::Duration adjustDateDurationRecord(JSGlobalObject*,
+        const ISO8601::Duration&, double, std::optional<double>, std::optional<double>);
     static std::optional<double> balance(ISO8601::Duration&, TemporalUnit largestUnit);
     static ISO8601::Duration toDateDurationWithoutTime(ISO8601::Duration);
     static Nudged nudgeToCalendarUnit(JSGlobalObject*,
         int32_t, const ISO8601::InternalDuration&, Int128,
-        ISO8601::PlainDate, double, TemporalUnit, RoundingMode);
+        ISO8601::PlainDate, std::optional<ISO8601::TimeZone>, double, TemporalUnit, RoundingMode);
     static ISO8601::InternalDuration bubbleRelativeDuration(JSGlobalObject*,
         int32_t, ISO8601::InternalDuration, Int128,
         ISO8601::PlainDate, TemporalUnit, TemporalUnit);
     static Int128 getUTCEpochNanoseconds(std::tuple<ISO8601::PlainDate, ISO8601::PlainTime>);
-    static Int128 getEpochNanosecondsFor(ISO8601::TimeZone, std::tuple<ISO8601::PlainDate, ISO8601::PlainTime>, TemporalDisambiguation);
+    static ISO8601::ExactTime getEpochNanosecondsFor(JSGlobalObject*,
+        ISO8601::TimeZone, std::tuple<ISO8601::PlainDate, ISO8601::PlainTime>, TemporalDisambiguation);
 
 private:
     TemporalDuration(VM&, Structure*, ISO8601::Duration&&);

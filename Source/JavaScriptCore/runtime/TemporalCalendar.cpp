@@ -334,7 +334,7 @@ ISO8601::PlainDate TemporalCalendar::addDurationToDate(JSGlobalObject* globalObj
     return isoDateAdd(globalObject, plainDate, dateDuration, overflow);
 }
 
-// https://tc39.es/proposal-temporal/#sec-temporal-addisodate
+// https://tc39.es/proposal-temporal/#sec-temporal-calendardateadd
 ISO8601::PlainDate TemporalCalendar::isoDateAdd(JSGlobalObject* globalObject, const ISO8601::PlainDate& plainDate, const ISO8601::Duration& duration, TemporalOverflow overflow)
 {
     VM& vm = globalObject->vm();

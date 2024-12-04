@@ -263,6 +263,30 @@ uint8_t TemporalPlainDateTime::weekOfYear() const
     return ISO8601::weekOfYear(m_plainDate);
 }
 
+TemporalPlainDateTime* TemporalPlainDateTime::addDurationToDateTime(JSGlobalObject* globalObject,
+    bool isAdd, ISO8601::Duration duration, JSObject* options) {
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    if (!isAdd)
+        duration = -duration;
+    TemporalOverflow overflow = toTemporalOverflow(globalObject, options);
+    RETURN_IF_EXCEPTION(scope, { });
+    auto internalDuration = TemporalDuration::toInternalDurationRecordWith24HourDays(globalObject, duration);
+    RETURN_IF_EXCEPTION(scope, { });
+    auto timeResult = TemporalPlainTime::addTime(m_plainTime, internalDuration.time());
+    auto dateDuration = TemporalDuration::adjustDateDurationRecord(globalObject, internalDuration.dateDuration(),
+        timeResult.days(), std::nullopt, std::nullopt);
+    RETURN_IF_EXCEPTION(scope, { });
+    auto addedDate = TemporalCalendar::isoDateAdd(globalObject, m_plainDate, dateDuration, overflow);
+    RETURN_IF_EXCEPTION(scope, { });
+    auto result = TemporalDuration::combineISODateAndTimeRecord(addedDate,
+        ISO8601::PlainTime(timeResult.hours(), timeResult.minutes(), timeResult.seconds(),
+            timeResult.milliseconds(), timeResult.microseconds(), timeResult.nanoseconds()));
+    return TemporalPlainDateTime::tryCreateIfValid(globalObject, globalObject->plainDateTimeStructure(),
+        WTFMove(std::get<0>(result)), WTFMove(std::get<1>(result)));
+}
+
 TemporalPlainDateTime* TemporalPlainDateTime::with(JSGlobalObject* globalObject, JSObject* temporalDateTimeLike, JSValue optionsValue)
 {
     VM& vm = globalObject->vm();

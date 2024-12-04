@@ -258,6 +258,8 @@
 #include "TemporalPlainYearMonthPrototype.h"
 #include "TemporalTimeZone.h"
 #include "TemporalTimeZonePrototype.h"
+#include "TemporalZonedDateTime.h"
+#include "TemporalZonedDateTimePrototype.h"
 #include "VMTrapsInlines.h"
 #include "WaiterListManager.h"
 #include "WasmCapabilities.h"
@@ -1502,6 +1504,13 @@ capitalName ## Constructor* lowerName ## Constructor = featureFlag ? capitalName
                 JSGlobalObject* globalObject = jsCast<JSGlobalObject*>(init.owner);
                 TemporalTimeZonePrototype* timeZonePrototype = TemporalTimeZonePrototype::create(init.vm, globalObject, TemporalTimeZonePrototype::createStructure(init.vm, globalObject, globalObject->objectPrototype()));
                 init.set(TemporalTimeZone::createStructure(init.vm, globalObject, timeZonePrototype));
+            });
+
+        m_zonedDateTimeStructure.initLater(
+            [] (const Initializer<Structure>& init) {
+                auto* globalObject = jsCast<JSGlobalObject*>(init.owner);
+                auto* zonedDateTimePrototype = TemporalZonedDateTimePrototype::create(init.vm, globalObject, TemporalZonedDateTimePrototype::createStructure(init.vm, globalObject, globalObject->objectPrototype()));
+                init.set(TemporalZonedDateTime::createStructure(init.vm, globalObject, zonedDateTimePrototype));
             });
 
         TemporalObject* temporal = TemporalObject::create(vm, TemporalObject::createStructure(vm, this));

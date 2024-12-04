@@ -57,18 +57,34 @@ public:
     TemporalZonedDateTime* with(JSGlobalObject*, JSObject* temporalDateLike, JSValue options);
     TemporalZonedDateTime* round(JSGlobalObject*, JSValue options);
 
+    static Vector<ISO8601::ExactTime> getPossibleEpochNanoseconds(JSGlobalObject*,
+        ISO8601::TimeZone, std::tuple<ISO8601::PlainDate, ISO8601::PlainTime>);
+    static ISO8601::ExactTime disambiguatePossibleEpochNanoseconds(JSGlobalObject*,
+        Vector<ISO8601::ExactTime>, ISO8601::TimeZone,
+        std::tuple<ISO8601::PlainDate, ISO8601::PlainTime>, TemporalDisambiguation disambiguation);
+
     String monthCode() const;
     uint8_t dayOfWeek() const;
     uint16_t dayOfYear() const;
     uint8_t weekOfYear() const;
 
     String toString(JSGlobalObject*, JSValue options) const;
+    String toString() const
+    {
+        return ISO8601::temporalZonedDateTimeToString(m_exactTime.get(), m_timeZone,
+            PrecisionData { { Precision::Auto, 0 }, TemporalUnit::Nanosecond, 1 },
+            TemporalShowCalendar::Auto,
+            TemporalShowTimeZone::Auto, TemporalShowOffset::Auto, 1, TemporalUnit::Nanosecond, RoundingMode::Trunc);
+    }
+
 
     DECLARE_VISIT_CHILDREN;
 
 private:
     TemporalZonedDateTime(VM&, Structure*, ExactTime&&, TimeZone&&);
     void finishCreation(VM&);
+
+    static TimeZoneID toTemporalTimeZoneIdentifier(JSValue);
 
     Packed<ExactTime> m_exactTime;
     TimeZone m_timeZone;

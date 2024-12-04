@@ -132,6 +132,31 @@ enum class UnitGroup : uint8_t {
     Time,
 };
 
+enum class TemporalShowCalendar : uint8_t {
+    Auto,
+    Never,
+    Critical,
+    Always,
+};
+
+enum class TemporalShowOffset : bool {
+    Auto,
+    Never,
+};
+
+enum class TemporalShowTimeZone : uint8_t {
+    Auto,
+    Never,
+    Critical,
+};
+
+enum class TemporalDisambiguation : uint8_t {
+    Compatible,
+    Earlier,
+    Later,
+    Reject,
+};
+
 double nonNegativeModulo(double x, double y);
 WTF::String ellipsizeAt(unsigned maxLength, const WTF::String&);
 PropertyName temporalUnitPluralPropertyName(VM&, TemporalUnit);
@@ -140,6 +165,10 @@ std::optional<TemporalUnit> temporalUnitType(StringView);
 std::optional<TemporalUnit> temporalLargestUnit(JSGlobalObject*, JSObject* options, std::initializer_list<TemporalUnit> disallowedUnits, TemporalUnit autoValue);
 std::optional<TemporalUnit> temporalSmallestUnit(JSGlobalObject*, JSObject* options, std::initializer_list<TemporalUnit> disallowedUnits);
 std::tuple<TemporalUnit, TemporalUnit, RoundingMode, double> extractDifferenceOptions(JSGlobalObject*, JSValue, UnitGroup, TemporalUnit defaultSmallestUnit, TemporalUnit defaultLargestUnit);
+TemporalShowCalendar getTemporalShowCalendarNameOption(JSGlobalObject*, JSObject*);
+TemporalShowOffset getTemporalShowOffsetOption(JSGlobalObject*, JSObject*);
+TemporalShowTimeZone getTemporalShowTimeZoneNameOption(JSGlobalObject*, JSObject*);
+TemporalDisambiguation getTemporalDisambiguationOption(JSGlobalObject*, JSObject*);
 std::optional<unsigned> temporalFractionalSecondDigits(JSGlobalObject*, JSObject* options);
 PrecisionData secondsStringPrecision(JSGlobalObject*, JSObject* options);
 RoundingMode temporalRoundingMode(JSGlobalObject*, JSObject*, RoundingMode);
@@ -210,13 +239,6 @@ enum class TemporalOverflow : bool {
 TemporalOverflow toTemporalOverflow(JSGlobalObject*, JSObject*);
 TemporalOverflow toTemporalOverflow(JSGlobalObject*, JSValue);
 String toTemporalCalendarName(JSGlobalObject*, JSObject*);
-
-enum class TemporalDisambiguation : uint8_t {
-    Compatible,
-    Earlier,
-    Later,
-    Reject,
-};
 
 static constexpr Int128 absInt128(const Int128& value)
 {

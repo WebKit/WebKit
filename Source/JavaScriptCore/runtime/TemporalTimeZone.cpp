@@ -80,6 +80,65 @@ static std::optional<TimeZoneRecord> parseTimeZoneIdentifier(StringView identifi
 }
 */
 
+template<typename CharacterType>
+std::optional<int64_t> parseDateTimeUTCOffset(StringParsingBuffer<CharacterType>& buffer)
+{
+    //  UTCOffset[SubMinutePrecision] :::
+    //      ASCIISign Hour
+    //      ASCIISign Hour TimeSeparator[+Extended] MinuteSecond
+    //      ASCIISign Hour TimeSeparator[~Extended] MinuteSecond
+    //      [+SubMinutePrecision] ASCIISign Hour TimeSeparator[+Extended] MinuteSecond TimeSeparator[+Extended] MinuteSecond TemporalDecimalFractionopt
+    //      [+SubMinutePrecision] ASCIISign Hour TimeSeparator[~Extended] MinuteSecond TimeSeparator[~Extended] MinuteSecond TemporalDecimalFractionopt
+
+    int sign = 1;
+    if (*buffer == '+')
+        buffer.advance();
+    else if (*buffer == '-') {
+        sign = -1;
+        buffer.advance();
+    }
+
+    int hour;
+    unsigned digits = 1;
+    while (digits < buffer.lengthRemaining && isASCIIDigit(buffer[digits]))
+        digits++;
+
+    double hours = parseInt(buffer.span().first(digits), 10);
+    if (hours > 23)
+        return std::nullopt;
+    buffer.advanceBy(digits);
+
+    if (*buffer != ':') 
+        return std::nullopt;
+    buffer.advance();
+
+    digits = 1;
+    while (digits < buffer.lengthRemaining && isASCIIDigit(buffer[digits]))
+        digits++;
+    
+    double minutes = parseInt(buffer.span().first(digits), 10);
+    if (minutes > 59)
+        return std::nullopt;
+    buffer.advanceBy(digits);
+    
+    return sign * (((hours * 60 + minutes)));
+} 
+
+std::optional<int64_t> TemporalTimeZone::parseDateTimeUTCOffset(StringView string)
+{
+    return readCharactersForParsing(string, [](auto buffer) -> std::optional<int64_t> {
+            return parseDateTimeUTCOffset(buffer);
+    });
+}
+
+auto parseResult = parseUTCOffset(offsetString);
+    if (!parseResult) {
+        throwRangeError(globalObject, scope, makeString("Couldn't parse offset string: "_s, offsetString));
+        return { };
+    }
+    
+}
+
 // https://tc39.es/proposal-temporal/#sec-temporal-parsetemporaltimeZonestring
 static std::optional<int64_t> parseTemporalTimeZoneString(StringView)
 {
