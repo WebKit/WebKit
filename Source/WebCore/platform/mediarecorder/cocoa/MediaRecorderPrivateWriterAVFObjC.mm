@@ -36,6 +36,7 @@
 #import <pal/spi/cocoa/AVAssetWriterSPI.h>
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/BlockPtr.h>
+#import <wtf/NativePromise.h>
 #import <wtf/TZoneMallocInlines.h>
 #import <wtf/cocoa/SpanCocoa.h>
 

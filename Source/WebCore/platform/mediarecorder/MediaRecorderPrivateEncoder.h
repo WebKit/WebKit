@@ -45,7 +45,7 @@ typedef struct opaqueCMBufferQueueTriggerToken *CMBufferQueueTriggerToken;
 
 namespace WebCore {
 
-class AudioSampleBufferCompressor;
+class AudioSampleBufferConverter;
 class InProcessCARingBuffer;
 class FragmentedSharedBuffer;
 struct MediaRecorderPrivateOptions;
@@ -104,7 +104,7 @@ private:
 
     void audioSamplesDescriptionChanged(const AudioStreamBasicDescription&);
     void audioSamplesAvailable(const MediaTime&, size_t, size_t);
-    RefPtr<AudioSampleBufferCompressor> audioCompressor() const;
+    RefPtr<AudioSampleBufferConverter> audioConverter() const;
     void enqueueCompressedAudioSampleBuffers();
 
     void appendVideoFrame(const MediaTime&, Ref<VideoFrame>&&);
@@ -145,7 +145,7 @@ private:
     std::optional<uint8_t> m_audioTrackIndex WTF_GUARDED_BY_CAPABILITY(queueSingleton());
     RetainPtr<CMFormatDescriptionRef> m_audioFormatDescription WTF_GUARDED_BY_CAPABILITY(queueSingleton());
     RetainPtr<CMFormatDescriptionRef> m_audioCompressedFormatDescription WTF_GUARDED_BY_CAPABILITY(queueSingleton());
-    RefPtr<AudioSampleBufferCompressor> m_audioCompressor WTF_GUARDED_BY_CAPABILITY(queueSingleton());
+    RefPtr<AudioSampleBufferConverter> m_audioConverter WTF_GUARDED_BY_CAPABILITY(queueSingleton());
     bool m_formatChangedOccurred WTF_GUARDED_BY_CAPABILITY(queueSingleton()) { false };
     std::optional<AudioStreamBasicDescription> m_originalOutputDescription WTF_GUARDED_BY_CAPABILITY(queueSingleton());
     Deque<Ref<MediaSample>> m_encodedAudioFrames WTF_GUARDED_BY_CAPABILITY(queueSingleton());

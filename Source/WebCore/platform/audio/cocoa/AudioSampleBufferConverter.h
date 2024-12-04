@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -39,7 +39,7 @@ namespace WebCore {
 
 class WebAudioBufferList;
 
-class AudioSampleBufferCompressor : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<AudioSampleBufferCompressor> {
+class AudioSampleBufferConverter : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<AudioSampleBufferConverter> {
 public:
     struct Options {
         AudioFormatID format { kAudioFormatMPEG4AAC };
@@ -47,8 +47,8 @@ public:
         std::optional<unsigned> outputBitRate;
         bool generateTimestamp { true };
     };
-    static RefPtr<AudioSampleBufferCompressor> create(CMBufferQueueTriggerCallback, void* callbackObject, const Options&);
-    ~AudioSampleBufferCompressor();
+    static RefPtr<AudioSampleBufferConverter> create(CMBufferQueueTriggerCallback, void* callbackObject, const Options&);
+    ~AudioSampleBufferConverter();
 
     bool isEmpty() const;
     Ref<GenericPromise> finish() { return flushInternal(true); }
@@ -61,7 +61,7 @@ public:
     unsigned bitRate() const;
 
 private:
-    AudioSampleBufferCompressor(const Options&);
+    AudioSampleBufferConverter(const Options&);
     bool initialize(CMBufferQueueTriggerCallback, void* callbackObject);
     UInt32 defaultOutputBitRate(const AudioStreamBasicDescription&) const;
 

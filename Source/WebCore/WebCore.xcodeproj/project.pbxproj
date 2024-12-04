@@ -10430,8 +10430,8 @@
 		41E1B1CA0FF5986900576B3B /* AbstractWorker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AbstractWorker.cpp; sourceTree = "<group>"; };
 		41E1B1CB0FF5986900576B3B /* AbstractWorker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AbstractWorker.h; sourceTree = "<group>"; };
 		41E1B1CC0FF5986900576B3B /* AbstractWorker.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = AbstractWorker.idl; sourceTree = "<group>"; };
-		41E1F33D248A62B60022D5DE /* AudioSampleBufferCompressor.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AudioSampleBufferCompressor.mm; sourceTree = "<group>"; };
-		41E1F33F248A62B60022D5DE /* AudioSampleBufferCompressor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioSampleBufferCompressor.h; sourceTree = "<group>"; };
+		41E1F33D248A62B60022D5DE /* AudioSampleBufferConverter.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AudioSampleBufferConverter.mm; sourceTree = "<group>"; };
+		41E1F33F248A62B60022D5DE /* AudioSampleBufferConverter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioSampleBufferConverter.h; sourceTree = "<group>"; };
 		41E2F195274FAECA00A089EE /* NavigationPreloadManager.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = NavigationPreloadManager.idl; sourceTree = "<group>"; };
 		41E2F197274FAECB00A089EE /* NavigationPreloadManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NavigationPreloadManager.h; sourceTree = "<group>"; };
 		41E2F198274FAECB00A089EE /* NavigationPreloadManager.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = NavigationPreloadManager.cpp; sourceTree = "<group>"; };
@@ -25993,8 +25993,6 @@
 		4D3C05D421AF480900F2890A /* cocoa */ = {
 			isa = PBXGroup;
 			children = (
-				41E1F33F248A62B60022D5DE /* AudioSampleBufferCompressor.h */,
-				41E1F33D248A62B60022D5DE /* AudioSampleBufferCompressor.mm */,
 				4D73F94C218C4A87003A3ED6 /* MediaRecorderPrivateWriterAVFObjC.h */,
 				4D73F94D218C4A87003A3ED6 /* MediaRecorderPrivateWriterAVFObjC.mm */,
 				514C7EFC2CACA59800808ADE /* MediaRecorderPrivateWriterWebM.cpp */,
@@ -35567,6 +35565,8 @@
 				46AAAA3A25D3631400BAF42F /* AudioFileReaderCocoa.h */,
 				1DB66D38253678EA00B671B9 /* AudioOutputUnitAdaptor.cpp */,
 				1DB66D37253678EA00B671B9 /* AudioOutputUnitAdaptor.h */,
+				41E1F33F248A62B60022D5DE /* AudioSampleBufferConverter.h */,
+				41E1F33D248A62B60022D5DE /* AudioSampleBufferConverter.mm */,
 				073B87621E43859D0071C0EC /* AudioSampleBufferList.cpp */,
 				073B87631E43859D0071C0EC /* AudioSampleBufferList.h */,
 				41FFD2C027563DFF00501BBF /* AudioSampleDataConverter.h */,

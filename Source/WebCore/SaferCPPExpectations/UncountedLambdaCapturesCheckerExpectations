@@ -352,6 +352,7 @@ page/scrolling/ThreadedScrollingTree.cpp
 page/scrolling/mac/ScrollingTreeMac.mm
 platform/ScrollView.cpp
 platform/animation/AcceleratedEffect.cpp
+platform/audio/cocoa/AudioSampleBufferConverter.mm
 platform/encryptedmedia/CDMProxy.cpp
 platform/graphics/FontCascadeFonts.cpp
 platform/graphics/avfoundation/objc/CDMInstanceFairPlayStreamingAVFObjC.mm
@@ -361,7 +362,6 @@ platform/graphics/ca/GraphicsLayerCA.cpp
 platform/graphics/cg/GradientCG.cpp
 platform/graphics/cocoa/WebCoreDecompressionSession.mm
 platform/graphics/filters/FilterOperation.cpp
-platform/mediarecorder/cocoa/AudioSampleBufferCompressor.mm
 platform/mediastream/RealtimeVideoCaptureSource.cpp
 platform/mediastream/mac/AVVideoCaptureSource.mm
 platform/mediastream/mac/RealtimeIncomingVideoSourceCocoa.mm

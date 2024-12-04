@@ -268,6 +268,7 @@ platform/audio/cocoa/AudioDestinationCocoa.cpp
 platform/audio/cocoa/AudioFileReaderCocoa.cpp
 platform/audio/cocoa/AudioOutputUnitAdaptor.cpp
 platform/audio/cocoa/AudioSampleBufferList.cpp
+platform/audio/cocoa/AudioSampleBufferConverter.mm
 platform/audio/cocoa/AudioSampleDataConverter.mm
 platform/audio/cocoa/AudioSampleDataSource.mm
 platform/audio/cocoa/AudioUtilitiesCocoa.cpp
@@ -630,7 +631,6 @@ platform/mac/WebPlaybackControlsManager.mm
 platform/mac/WidgetMac.mm
 platform/mediarecorder/MediaRecorderPrivateAVFImpl.cpp
 platform/mediarecorder/MediaRecorderPrivateEncoder.cpp
-platform/mediarecorder/cocoa/AudioSampleBufferCompressor.mm
 platform/mediarecorder/cocoa/MediaRecorderPrivateWriterAVFObjC.mm
 platform/mediarecorder/cocoa/MediaRecorderPrivateWriterWebM.cpp
 platform/mediastream/cocoa/AudioMediaStreamTrackRendererCocoa.cpp
