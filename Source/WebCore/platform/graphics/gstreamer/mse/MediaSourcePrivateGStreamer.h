@@ -101,6 +101,7 @@ private:
 #endif
 
     uint64_t m_nextSourceBufferID { 0 };
+#endif
 
     // Stores known track IDs, so we can work around ID collisions between multiple source buffers.
     // The registry is placed here to enforce ID uniqueness specifically by player, not by process,
