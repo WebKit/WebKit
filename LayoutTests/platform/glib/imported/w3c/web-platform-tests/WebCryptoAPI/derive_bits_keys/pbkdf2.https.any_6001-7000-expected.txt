@@ -52,7 +52,7 @@ PASS empty password, short salt, SHA-512, with 1 iterations with bad hash name S
 PASS empty password, short salt, SHA-512, with 1 iterations with missing deriveBits usage
 PASS empty password, short salt, SHA-512, with 1 iterations with wrong (ECDH) key
 FAIL empty password, short salt, SHA-512, with 1000 iterations assert_unreached: deriveBits failed with error OperationError: The operation failed for an operation-specific reason Reached unreachable code
-FAIL empty password, short salt, SHA-512, with 1000 iterations with 0 length assert_unreached: deriveBits failed with error OperationError: The operation failed for an operation-specific reason Reached unreachable code
+PASS empty password, short salt, SHA-512, with 1000 iterations with 0 length
 FAIL Derived key of type name: AES-CBC length: 128  using empty password, short salt, SHA-512, with 1000 iterations assert_unreached: deriveKey failed with error OperationError: The operation failed for an operation-specific reason Reached unreachable code
 PASS Derived key of type name: AES-CBC length: 128  using empty password, short salt, SHA-512, with 1000 iterations with bad hash name SHA512
 PASS Derived key of type name: AES-CBC length: 128  using empty password, short salt, SHA-512, with 1000 iterations with missing deriveKey usage
@@ -122,7 +122,7 @@ PASS empty password, short salt, SHA-512, with 1000 iterations with bad hash nam
 PASS empty password, short salt, SHA-512, with 1000 iterations with missing deriveBits usage
 PASS empty password, short salt, SHA-512, with 1000 iterations with wrong (ECDH) key
 FAIL empty password, short salt, SHA-512, with 100000 iterations assert_unreached: deriveBits failed with error OperationError: The operation failed for an operation-specific reason Reached unreachable code
-FAIL empty password, short salt, SHA-512, with 100000 iterations with 0 length assert_unreached: deriveBits failed with error OperationError: The operation failed for an operation-specific reason Reached unreachable code
+PASS empty password, short salt, SHA-512, with 100000 iterations with 0 length
 FAIL Derived key of type name: AES-CBC length: 128  using empty password, short salt, SHA-512, with 100000 iterations assert_unreached: deriveKey failed with error OperationError: The operation failed for an operation-specific reason Reached unreachable code
 PASS Derived key of type name: AES-CBC length: 128  using empty password, short salt, SHA-512, with 100000 iterations with bad hash name SHA512
 PASS Derived key of type name: AES-CBC length: 128  using empty password, short salt, SHA-512, with 100000 iterations with missing deriveKey usage
@@ -209,7 +209,7 @@ PASS Derived key of type name: HMAC hash: SHA-256 length: 256  using empty passw
 PASS Derived key of type name: HMAC hash: SHA-384 length: 256  using empty password, short salt, SHA-512, with 0 iterations
 PASS Derived key of type name: HMAC hash: SHA-512 length: 256  using empty password, short salt, SHA-512, with 0 iterations
 FAIL empty password, short salt, SHA-1, with 1 iterations assert_unreached: deriveBits failed with error OperationError: The operation failed for an operation-specific reason Reached unreachable code
-FAIL empty password, short salt, SHA-1, with 1 iterations with 0 length assert_unreached: deriveBits failed with error OperationError: The operation failed for an operation-specific reason Reached unreachable code
+PASS empty password, short salt, SHA-1, with 1 iterations with 0 length
 FAIL Derived key of type name: AES-CBC length: 128  using empty password, short salt, SHA-1, with 1 iterations assert_unreached: deriveKey failed with error OperationError: The operation failed for an operation-specific reason Reached unreachable code
 PASS Derived key of type name: AES-CBC length: 128  using empty password, short salt, SHA-1, with 1 iterations with bad hash name SHA1
 PASS Derived key of type name: AES-CBC length: 128  using empty password, short salt, SHA-1, with 1 iterations with missing deriveKey usage
@@ -279,7 +279,7 @@ PASS empty password, short salt, SHA-1, with 1 iterations with bad hash name SHA
 PASS empty password, short salt, SHA-1, with 1 iterations with missing deriveBits usage
 PASS empty password, short salt, SHA-1, with 1 iterations with wrong (ECDH) key
 FAIL empty password, short salt, SHA-1, with 1000 iterations assert_unreached: deriveBits failed with error OperationError: The operation failed for an operation-specific reason Reached unreachable code
-FAIL empty password, short salt, SHA-1, with 1000 iterations with 0 length assert_unreached: deriveBits failed with error OperationError: The operation failed for an operation-specific reason Reached unreachable code
+PASS empty password, short salt, SHA-1, with 1000 iterations with 0 length
 FAIL Derived key of type name: AES-CBC length: 128  using empty password, short salt, SHA-1, with 1000 iterations assert_unreached: deriveKey failed with error OperationError: The operation failed for an operation-specific reason Reached unreachable code
 PASS Derived key of type name: AES-CBC length: 128  using empty password, short salt, SHA-1, with 1000 iterations with bad hash name SHA1
 PASS Derived key of type name: AES-CBC length: 128  using empty password, short salt, SHA-1, with 1000 iterations with missing deriveKey usage
@@ -349,7 +349,7 @@ PASS empty password, short salt, SHA-1, with 1000 iterations with bad hash name 
 PASS empty password, short salt, SHA-1, with 1000 iterations with missing deriveBits usage
 PASS empty password, short salt, SHA-1, with 1000 iterations with wrong (ECDH) key
 FAIL empty password, short salt, SHA-1, with 100000 iterations assert_unreached: deriveBits failed with error OperationError: The operation failed for an operation-specific reason Reached unreachable code
-FAIL empty password, short salt, SHA-1, with 100000 iterations with 0 length assert_unreached: deriveBits failed with error OperationError: The operation failed for an operation-specific reason Reached unreachable code
+PASS empty password, short salt, SHA-1, with 100000 iterations with 0 length
 FAIL Derived key of type name: AES-CBC length: 128  using empty password, short salt, SHA-1, with 100000 iterations assert_unreached: deriveKey failed with error OperationError: The operation failed for an operation-specific reason Reached unreachable code
 PASS Derived key of type name: AES-CBC length: 128  using empty password, short salt, SHA-1, with 100000 iterations with bad hash name SHA1
 PASS Derived key of type name: AES-CBC length: 128  using empty password, short salt, SHA-1, with 100000 iterations with missing deriveKey usage
@@ -436,7 +436,7 @@ PASS Derived key of type name: HMAC hash: SHA-256 length: 256  using empty passw
 PASS Derived key of type name: HMAC hash: SHA-384 length: 256  using empty password, short salt, SHA-1, with 0 iterations
 PASS Derived key of type name: HMAC hash: SHA-512 length: 256  using empty password, short salt, SHA-1, with 0 iterations
 FAIL empty password, short salt, SHA-256, with 1 iterations assert_unreached: deriveBits failed with error OperationError: The operation failed for an operation-specific reason Reached unreachable code
-FAIL empty password, short salt, SHA-256, with 1 iterations with 0 length assert_unreached: deriveBits failed with error OperationError: The operation failed for an operation-specific reason Reached unreachable code
+PASS empty password, short salt, SHA-256, with 1 iterations with 0 length
 FAIL Derived key of type name: AES-CBC length: 128  using empty password, short salt, SHA-256, with 1 iterations assert_unreached: deriveKey failed with error OperationError: The operation failed for an operation-specific reason Reached unreachable code
 PASS Derived key of type name: AES-CBC length: 128  using empty password, short salt, SHA-256, with 1 iterations with bad hash name SHA256
 PASS Derived key of type name: AES-CBC length: 128  using empty password, short salt, SHA-256, with 1 iterations with missing deriveKey usage
@@ -506,7 +506,7 @@ PASS empty password, short salt, SHA-256, with 1 iterations with bad hash name S
 PASS empty password, short salt, SHA-256, with 1 iterations with missing deriveBits usage
 PASS empty password, short salt, SHA-256, with 1 iterations with wrong (ECDH) key
 FAIL empty password, short salt, SHA-256, with 1000 iterations assert_unreached: deriveBits failed with error OperationError: The operation failed for an operation-specific reason Reached unreachable code
-FAIL empty password, short salt, SHA-256, with 1000 iterations with 0 length assert_unreached: deriveBits failed with error OperationError: The operation failed for an operation-specific reason Reached unreachable code
+PASS empty password, short salt, SHA-256, with 1000 iterations with 0 length
 FAIL Derived key of type name: AES-CBC length: 128  using empty password, short salt, SHA-256, with 1000 iterations assert_unreached: deriveKey failed with error OperationError: The operation failed for an operation-specific reason Reached unreachable code
 PASS Derived key of type name: AES-CBC length: 128  using empty password, short salt, SHA-256, with 1000 iterations with bad hash name SHA256
 PASS Derived key of type name: AES-CBC length: 128  using empty password, short salt, SHA-256, with 1000 iterations with missing deriveKey usage
@@ -576,7 +576,7 @@ PASS empty password, short salt, SHA-256, with 1000 iterations with bad hash nam
 PASS empty password, short salt, SHA-256, with 1000 iterations with missing deriveBits usage
 PASS empty password, short salt, SHA-256, with 1000 iterations with wrong (ECDH) key
 FAIL empty password, short salt, SHA-256, with 100000 iterations assert_unreached: deriveBits failed with error OperationError: The operation failed for an operation-specific reason Reached unreachable code
-FAIL empty password, short salt, SHA-256, with 100000 iterations with 0 length assert_unreached: deriveBits failed with error OperationError: The operation failed for an operation-specific reason Reached unreachable code
+PASS empty password, short salt, SHA-256, with 100000 iterations with 0 length
 FAIL Derived key of type name: AES-CBC length: 128  using empty password, short salt, SHA-256, with 100000 iterations assert_unreached: deriveKey failed with error OperationError: The operation failed for an operation-specific reason Reached unreachable code
 PASS Derived key of type name: AES-CBC length: 128  using empty password, short salt, SHA-256, with 100000 iterations with bad hash name SHA256
 PASS Derived key of type name: AES-CBC length: 128  using empty password, short salt, SHA-256, with 100000 iterations with missing deriveKey usage
@@ -714,7 +714,7 @@ PASS Derived key of type name: HMAC hash: SHA-256 length: 256  using empty passw
 PASS Derived key of type name: HMAC hash: SHA-384 length: 256  using empty password, short salt, PBKDF2, with 100000 iterations
 PASS Derived key of type name: HMAC hash: SHA-512 length: 256  using empty password, short salt, PBKDF2, with 100000 iterations
 FAIL empty password, long salt, SHA-384, with 1 iterations assert_unreached: deriveBits failed with error OperationError: The operation failed for an operation-specific reason Reached unreachable code
-FAIL empty password, long salt, SHA-384, with 1 iterations with 0 length assert_unreached: deriveBits failed with error OperationError: The operation failed for an operation-specific reason Reached unreachable code
+PASS empty password, long salt, SHA-384, with 1 iterations with 0 length
 FAIL Derived key of type name: AES-CBC length: 128  using empty password, long salt, SHA-384, with 1 iterations assert_unreached: deriveKey failed with error OperationError: The operation failed for an operation-specific reason Reached unreachable code
 PASS Derived key of type name: AES-CBC length: 128  using empty password, long salt, SHA-384, with 1 iterations with bad hash name SHA384
 PASS Derived key of type name: AES-CBC length: 128  using empty password, long salt, SHA-384, with 1 iterations with missing deriveKey usage
@@ -784,7 +784,7 @@ PASS empty password, long salt, SHA-384, with 1 iterations with bad hash name SH
 PASS empty password, long salt, SHA-384, with 1 iterations with missing deriveBits usage
 PASS empty password, long salt, SHA-384, with 1 iterations with wrong (ECDH) key
 FAIL empty password, long salt, SHA-384, with 1000 iterations assert_unreached: deriveBits failed with error OperationError: The operation failed for an operation-specific reason Reached unreachable code
-FAIL empty password, long salt, SHA-384, with 1000 iterations with 0 length assert_unreached: deriveBits failed with error OperationError: The operation failed for an operation-specific reason Reached unreachable code
+PASS empty password, long salt, SHA-384, with 1000 iterations with 0 length
 FAIL Derived key of type name: AES-CBC length: 128  using empty password, long salt, SHA-384, with 1000 iterations assert_unreached: deriveKey failed with error OperationError: The operation failed for an operation-specific reason Reached unreachable code
 PASS Derived key of type name: AES-CBC length: 128  using empty password, long salt, SHA-384, with 1000 iterations with bad hash name SHA384
 PASS Derived key of type name: AES-CBC length: 128  using empty password, long salt, SHA-384, with 1000 iterations with missing deriveKey usage
@@ -854,7 +854,7 @@ PASS empty password, long salt, SHA-384, with 1000 iterations with bad hash name
 PASS empty password, long salt, SHA-384, with 1000 iterations with missing deriveBits usage
 PASS empty password, long salt, SHA-384, with 1000 iterations with wrong (ECDH) key
 FAIL empty password, long salt, SHA-384, with 100000 iterations assert_unreached: deriveBits failed with error OperationError: The operation failed for an operation-specific reason Reached unreachable code
-FAIL empty password, long salt, SHA-384, with 100000 iterations with 0 length assert_unreached: deriveBits failed with error OperationError: The operation failed for an operation-specific reason Reached unreachable code
+PASS empty password, long salt, SHA-384, with 100000 iterations with 0 length
 FAIL Derived key of type name: AES-CBC length: 128  using empty password, long salt, SHA-384, with 100000 iterations assert_unreached: deriveKey failed with error OperationError: The operation failed for an operation-specific reason Reached unreachable code
 PASS Derived key of type name: AES-CBC length: 128  using empty password, long salt, SHA-384, with 100000 iterations with bad hash name SHA384
 PASS Derived key of type name: AES-CBC length: 128  using empty password, long salt, SHA-384, with 100000 iterations with missing deriveKey usage
@@ -941,7 +941,7 @@ PASS Derived key of type name: HMAC hash: SHA-256 length: 256  using empty passw
 PASS Derived key of type name: HMAC hash: SHA-384 length: 256  using empty password, long salt, SHA-384, with 0 iterations
 PASS Derived key of type name: HMAC hash: SHA-512 length: 256  using empty password, long salt, SHA-384, with 0 iterations
 FAIL empty password, long salt, SHA-512, with 1 iterations assert_unreached: deriveBits failed with error OperationError: The operation failed for an operation-specific reason Reached unreachable code
-FAIL empty password, long salt, SHA-512, with 1 iterations with 0 length assert_unreached: deriveBits failed with error OperationError: The operation failed for an operation-specific reason Reached unreachable code
+PASS empty password, long salt, SHA-512, with 1 iterations with 0 length
 FAIL Derived key of type name: AES-CBC length: 128  using empty password, long salt, SHA-512, with 1 iterations assert_unreached: deriveKey failed with error OperationError: The operation failed for an operation-specific reason Reached unreachable code
 PASS Derived key of type name: AES-CBC length: 128  using empty password, long salt, SHA-512, with 1 iterations with bad hash name SHA512
 PASS Derived key of type name: AES-CBC length: 128  using empty password, long salt, SHA-512, with 1 iterations with missing deriveKey usage

@@ -32,7 +32,9 @@ crypto.subtle.importKey("raw", rawKey, "HKDF", nonExtractable, ["deriveBits"]).t
 
     return Promise.resolve().then(function(result) {
         // SHA-1, hash output length is 20 bytes
-        return shouldReject('deriveBits("sha-1", 0)').then(function(result) {
+        return deriveBits("sha-1", 0).then(function(result) {
+            if (result.byteLength == 0)
+                testPassed("Bit derivations with zero length returned an empty string");
             return Promise.all([
                 deriveBits("sha-1", 8),
                 deriveBits("sha-1", 20 * 8),
@@ -44,7 +46,9 @@ crypto.subtle.importKey("raw", rawKey, "HKDF", nonExtractable, ["deriveBits"]).t
         });
     }).then(function(result) {
         // SHA-256, hash output length is 32 bytes
-        return shouldReject('deriveBits("sha-256", 0)').then(function(result) {
+        return deriveBits("sha-256", 0).then(function(result) {
+            if (result.byteLength == 0)
+                testPassed("Bit derivations with zero length returned an empty string");
             return Promise.all([
                 deriveBits("sha-256", 8),
                 deriveBits("sha-256", 32 * 8),
@@ -56,7 +60,9 @@ crypto.subtle.importKey("raw", rawKey, "HKDF", nonExtractable, ["deriveBits"]).t
         });
     }).then(function(result) {
         // SHA-384, hash output length is 48 bytes
-        return shouldReject('deriveBits("sha-384", 0)').then(function(result) {
+        return deriveBits("sha-384", 0).then(function(result) {
+            if (result.byteLength == 0)
+                testPassed("Bit derivations with zero length returned an empty string");
             return Promise.all([
                 deriveBits("sha-384", 8),
                 deriveBits("sha-384", 48 * 8),
@@ -68,7 +74,9 @@ crypto.subtle.importKey("raw", rawKey, "HKDF", nonExtractable, ["deriveBits"]).t
         });
     }).then(function(result) {
         // SHA-512, hash output length is 64 bytes
-        return shouldReject('deriveBits("sha-512", 0)').then(function(result) {
+        return deriveBits("sha-512", 0).then(function(result) {
+            if (result.byteLength == 0)
+                testPassed("Bit derivations with zero length returned an empty string");
             return Promise.all([
                 deriveBits("sha-512", 8),
                 deriveBits("sha-512", 64 * 8),

@@ -38,7 +38,6 @@ crypto.subtle.importKey("raw", rawKey, "HKDF", nonExtractable, ["deriveBits"]).t
     shouldReject('crypto.subtle.deriveBits({name: "HKDF", info: 1, salt: salt, hash: "sha-1"}, baseKey, 128)');
     // Wrong length
     shouldReject('crypto.subtle.deriveBits({name: "HKDF", salt: salt, info: info, hash: "sha-1"}, baseKey, null)');
-    shouldReject('crypto.subtle.deriveBits({name: "HKDF", salt: salt, info: info, hash: "sha-1"}, baseKey, 0)');
     shouldReject('crypto.subtle.deriveBits({name: "HKDF", salt: salt, info: info, hash: "sha-1"}, baseKey, 5)');
     // Large length
     return shouldReject('crypto.subtle.deriveBits({name: "HKDF", salt: salt, info: info, hash: "sha-1"}, baseKey, 100000)');

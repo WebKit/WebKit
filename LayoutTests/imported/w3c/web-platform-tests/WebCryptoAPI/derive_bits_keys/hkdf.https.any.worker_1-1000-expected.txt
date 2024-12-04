@@ -1,7 +1,7 @@
 
 PASS setup - define tests
 PASS short derivedKey, normal salt, SHA-384, with normal info
-FAIL short derivedKey, normal salt, SHA-384, with normal info with 0 length assert_unreached: deriveBits failed with error OperationError: The operation failed for an operation-specific reason Reached unreachable code
+PASS short derivedKey, normal salt, SHA-384, with normal info with 0 length
 PASS Derived key of type name: AES-CBC length: 128  using short derivedKey, normal salt, SHA-384, with normal info
 PASS Derived key of type name: AES-CBC length: 128  using short derivedKey, normal salt, SHA-384, with normal info with bad hash name SHA384
 PASS Derived key of type name: AES-CBC length: 128  using short derivedKey, normal salt, SHA-384, with normal info with missing deriveKey usage
@@ -73,7 +73,7 @@ PASS short derivedKey, normal salt, SHA-384, with normal info with bad hash name
 PASS short derivedKey, normal salt, SHA-384, with normal info with missing deriveBits usage
 PASS short derivedKey, normal salt, SHA-384, with normal info with wrong (ECDH) key
 PASS short derivedKey, normal salt, SHA-384, with empty info
-FAIL short derivedKey, normal salt, SHA-384, with empty info with 0 length assert_unreached: deriveBits failed with error OperationError: The operation failed for an operation-specific reason Reached unreachable code
+PASS short derivedKey, normal salt, SHA-384, with empty info with 0 length
 PASS Derived key of type name: AES-CBC length: 128  using short derivedKey, normal salt, SHA-384, with empty info
 PASS Derived key of type name: AES-CBC length: 128  using short derivedKey, normal salt, SHA-384, with empty info with bad hash name SHA384
 PASS Derived key of type name: AES-CBC length: 128  using short derivedKey, normal salt, SHA-384, with empty info with missing deriveKey usage
@@ -145,7 +145,7 @@ PASS short derivedKey, normal salt, SHA-384, with empty info with bad hash name 
 PASS short derivedKey, normal salt, SHA-384, with empty info with missing deriveBits usage
 PASS short derivedKey, normal salt, SHA-384, with empty info with wrong (ECDH) key
 PASS short derivedKey, normal salt, SHA-512, with normal info
-FAIL short derivedKey, normal salt, SHA-512, with normal info with 0 length assert_unreached: deriveBits failed with error OperationError: The operation failed for an operation-specific reason Reached unreachable code
+PASS short derivedKey, normal salt, SHA-512, with normal info with 0 length
 PASS Derived key of type name: AES-CBC length: 128  using short derivedKey, normal salt, SHA-512, with normal info
 PASS Derived key of type name: AES-CBC length: 128  using short derivedKey, normal salt, SHA-512, with normal info with bad hash name SHA512
 PASS Derived key of type name: AES-CBC length: 128  using short derivedKey, normal salt, SHA-512, with normal info with missing deriveKey usage
@@ -217,7 +217,7 @@ PASS short derivedKey, normal salt, SHA-512, with normal info with bad hash name
 PASS short derivedKey, normal salt, SHA-512, with normal info with missing deriveBits usage
 PASS short derivedKey, normal salt, SHA-512, with normal info with wrong (ECDH) key
 PASS short derivedKey, normal salt, SHA-512, with empty info
-FAIL short derivedKey, normal salt, SHA-512, with empty info with 0 length assert_unreached: deriveBits failed with error OperationError: The operation failed for an operation-specific reason Reached unreachable code
+PASS short derivedKey, normal salt, SHA-512, with empty info with 0 length
 PASS Derived key of type name: AES-CBC length: 128  using short derivedKey, normal salt, SHA-512, with empty info
 PASS Derived key of type name: AES-CBC length: 128  using short derivedKey, normal salt, SHA-512, with empty info with bad hash name SHA512
 PASS Derived key of type name: AES-CBC length: 128  using short derivedKey, normal salt, SHA-512, with empty info with missing deriveKey usage
@@ -289,7 +289,7 @@ PASS short derivedKey, normal salt, SHA-512, with empty info with bad hash name 
 PASS short derivedKey, normal salt, SHA-512, with empty info with missing deriveBits usage
 PASS short derivedKey, normal salt, SHA-512, with empty info with wrong (ECDH) key
 PASS short derivedKey, normal salt, SHA-1, with normal info
-FAIL short derivedKey, normal salt, SHA-1, with normal info with 0 length assert_unreached: deriveBits failed with error OperationError: The operation failed for an operation-specific reason Reached unreachable code
+PASS short derivedKey, normal salt, SHA-1, with normal info with 0 length
 PASS Derived key of type name: AES-CBC length: 128  using short derivedKey, normal salt, SHA-1, with normal info
 PASS Derived key of type name: AES-CBC length: 128  using short derivedKey, normal salt, SHA-1, with normal info with bad hash name SHA1
 PASS Derived key of type name: AES-CBC length: 128  using short derivedKey, normal salt, SHA-1, with normal info with missing deriveKey usage
@@ -361,7 +361,7 @@ PASS short derivedKey, normal salt, SHA-1, with normal info with bad hash name S
 PASS short derivedKey, normal salt, SHA-1, with normal info with missing deriveBits usage
 PASS short derivedKey, normal salt, SHA-1, with normal info with wrong (ECDH) key
 PASS short derivedKey, normal salt, SHA-1, with empty info
-FAIL short derivedKey, normal salt, SHA-1, with empty info with 0 length assert_unreached: deriveBits failed with error OperationError: The operation failed for an operation-specific reason Reached unreachable code
+PASS short derivedKey, normal salt, SHA-1, with empty info with 0 length
 PASS Derived key of type name: AES-CBC length: 128  using short derivedKey, normal salt, SHA-1, with empty info
 PASS Derived key of type name: AES-CBC length: 128  using short derivedKey, normal salt, SHA-1, with empty info with bad hash name SHA1
 PASS Derived key of type name: AES-CBC length: 128  using short derivedKey, normal salt, SHA-1, with empty info with missing deriveKey usage
@@ -433,7 +433,7 @@ PASS short derivedKey, normal salt, SHA-1, with empty info with bad hash name SH
 PASS short derivedKey, normal salt, SHA-1, with empty info with missing deriveBits usage
 PASS short derivedKey, normal salt, SHA-1, with empty info with wrong (ECDH) key
 PASS short derivedKey, normal salt, SHA-256, with normal info
-FAIL short derivedKey, normal salt, SHA-256, with normal info with 0 length assert_unreached: deriveBits failed with error OperationError: The operation failed for an operation-specific reason Reached unreachable code
+PASS short derivedKey, normal salt, SHA-256, with normal info with 0 length
 PASS Derived key of type name: AES-CBC length: 128  using short derivedKey, normal salt, SHA-256, with normal info
 PASS Derived key of type name: AES-CBC length: 128  using short derivedKey, normal salt, SHA-256, with normal info with bad hash name SHA256
 PASS Derived key of type name: AES-CBC length: 128  using short derivedKey, normal salt, SHA-256, with normal info with missing deriveKey usage
@@ -505,7 +505,7 @@ PASS short derivedKey, normal salt, SHA-256, with normal info with bad hash name
 PASS short derivedKey, normal salt, SHA-256, with normal info with missing deriveBits usage
 PASS short derivedKey, normal salt, SHA-256, with normal info with wrong (ECDH) key
 PASS short derivedKey, normal salt, SHA-256, with empty info
-FAIL short derivedKey, normal salt, SHA-256, with empty info with 0 length assert_unreached: deriveBits failed with error OperationError: The operation failed for an operation-specific reason Reached unreachable code
+PASS short derivedKey, normal salt, SHA-256, with empty info with 0 length
 PASS Derived key of type name: AES-CBC length: 128  using short derivedKey, normal salt, SHA-256, with empty info
 PASS Derived key of type name: AES-CBC length: 128  using short derivedKey, normal salt, SHA-256, with empty info with bad hash name SHA256
 PASS Derived key of type name: AES-CBC length: 128  using short derivedKey, normal salt, SHA-256, with empty info with missing deriveKey usage
@@ -611,7 +611,7 @@ PASS Derived key of type name: HMAC hash: SHA-256 length: 256  using short deriv
 PASS Derived key of type name: HMAC hash: SHA-384 length: 256  using short derivedKey, normal salt, PBKDF2, with empty info
 PASS Derived key of type name: HMAC hash: SHA-512 length: 256  using short derivedKey, normal salt, PBKDF2, with empty info
 PASS short derivedKey, empty salt, SHA-384, with normal info
-FAIL short derivedKey, empty salt, SHA-384, with normal info with 0 length assert_unreached: deriveBits failed with error OperationError: The operation failed for an operation-specific reason Reached unreachable code
+PASS short derivedKey, empty salt, SHA-384, with normal info with 0 length
 PASS Derived key of type name: AES-CBC length: 128  using short derivedKey, empty salt, SHA-384, with normal info
 PASS Derived key of type name: AES-CBC length: 128  using short derivedKey, empty salt, SHA-384, with normal info with bad hash name SHA384
 PASS Derived key of type name: AES-CBC length: 128  using short derivedKey, empty salt, SHA-384, with normal info with missing deriveKey usage
@@ -683,7 +683,7 @@ PASS short derivedKey, empty salt, SHA-384, with normal info with bad hash name 
 PASS short derivedKey, empty salt, SHA-384, with normal info with missing deriveBits usage
 PASS short derivedKey, empty salt, SHA-384, with normal info with wrong (ECDH) key
 PASS short derivedKey, empty salt, SHA-384, with empty info
-FAIL short derivedKey, empty salt, SHA-384, with empty info with 0 length assert_unreached: deriveBits failed with error OperationError: The operation failed for an operation-specific reason Reached unreachable code
+PASS short derivedKey, empty salt, SHA-384, with empty info with 0 length
 PASS Derived key of type name: AES-CBC length: 128  using short derivedKey, empty salt, SHA-384, with empty info
 PASS Derived key of type name: AES-CBC length: 128  using short derivedKey, empty salt, SHA-384, with empty info with bad hash name SHA384
 PASS Derived key of type name: AES-CBC length: 128  using short derivedKey, empty salt, SHA-384, with empty info with missing deriveKey usage
@@ -755,7 +755,7 @@ PASS short derivedKey, empty salt, SHA-384, with empty info with bad hash name S
 PASS short derivedKey, empty salt, SHA-384, with empty info with missing deriveBits usage
 PASS short derivedKey, empty salt, SHA-384, with empty info with wrong (ECDH) key
 PASS short derivedKey, empty salt, SHA-512, with normal info
-FAIL short derivedKey, empty salt, SHA-512, with normal info with 0 length assert_unreached: deriveBits failed with error OperationError: The operation failed for an operation-specific reason Reached unreachable code
+PASS short derivedKey, empty salt, SHA-512, with normal info with 0 length
 PASS Derived key of type name: AES-CBC length: 128  using short derivedKey, empty salt, SHA-512, with normal info
 PASS Derived key of type name: AES-CBC length: 128  using short derivedKey, empty salt, SHA-512, with normal info with bad hash name SHA512
 PASS Derived key of type name: AES-CBC length: 128  using short derivedKey, empty salt, SHA-512, with normal info with missing deriveKey usage
@@ -827,7 +827,7 @@ PASS short derivedKey, empty salt, SHA-512, with normal info with bad hash name 
 PASS short derivedKey, empty salt, SHA-512, with normal info with missing deriveBits usage
 PASS short derivedKey, empty salt, SHA-512, with normal info with wrong (ECDH) key
 PASS short derivedKey, empty salt, SHA-512, with empty info
-FAIL short derivedKey, empty salt, SHA-512, with empty info with 0 length assert_unreached: deriveBits failed with error OperationError: The operation failed for an operation-specific reason Reached unreachable code
+PASS short derivedKey, empty salt, SHA-512, with empty info with 0 length
 PASS Derived key of type name: AES-CBC length: 128  using short derivedKey, empty salt, SHA-512, with empty info
 PASS Derived key of type name: AES-CBC length: 128  using short derivedKey, empty salt, SHA-512, with empty info with bad hash name SHA512
 PASS Derived key of type name: AES-CBC length: 128  using short derivedKey, empty salt, SHA-512, with empty info with missing deriveKey usage
@@ -899,7 +899,7 @@ PASS short derivedKey, empty salt, SHA-512, with empty info with bad hash name S
 PASS short derivedKey, empty salt, SHA-512, with empty info with missing deriveBits usage
 PASS short derivedKey, empty salt, SHA-512, with empty info with wrong (ECDH) key
 PASS short derivedKey, empty salt, SHA-1, with normal info
-FAIL short derivedKey, empty salt, SHA-1, with normal info with 0 length assert_unreached: deriveBits failed with error OperationError: The operation failed for an operation-specific reason Reached unreachable code
+PASS short derivedKey, empty salt, SHA-1, with normal info with 0 length
 PASS Derived key of type name: AES-CBC length: 128  using short derivedKey, empty salt, SHA-1, with normal info
 PASS Derived key of type name: AES-CBC length: 128  using short derivedKey, empty salt, SHA-1, with normal info with bad hash name SHA1
 PASS Derived key of type name: AES-CBC length: 128  using short derivedKey, empty salt, SHA-1, with normal info with missing deriveKey usage
@@ -971,7 +971,7 @@ PASS short derivedKey, empty salt, SHA-1, with normal info with bad hash name SH
 PASS short derivedKey, empty salt, SHA-1, with normal info with missing deriveBits usage
 PASS short derivedKey, empty salt, SHA-1, with normal info with wrong (ECDH) key
 PASS short derivedKey, empty salt, SHA-1, with empty info
-FAIL short derivedKey, empty salt, SHA-1, with empty info with 0 length assert_unreached: deriveBits failed with error OperationError: The operation failed for an operation-specific reason Reached unreachable code
+PASS short derivedKey, empty salt, SHA-1, with empty info with 0 length
 PASS Derived key of type name: AES-CBC length: 128  using short derivedKey, empty salt, SHA-1, with empty info
 PASS Derived key of type name: AES-CBC length: 128  using short derivedKey, empty salt, SHA-1, with empty info with bad hash name SHA1
 PASS Derived key of type name: AES-CBC length: 128  using short derivedKey, empty salt, SHA-1, with empty info with missing deriveKey usage

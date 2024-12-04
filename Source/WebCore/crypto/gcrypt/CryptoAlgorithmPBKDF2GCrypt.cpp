@@ -44,6 +44,15 @@ static std::optional<Vector<uint8_t>> gcryptDeriveBits(const Vector<uint8_t>& ke
     // Length, in bits, is a multiple of 8, as guaranteed by CryptoAlgorithmPBKDF2::deriveBits().
     ASSERT(!(length % 8));
 
+    // Even though the RFC8018 states that length must be a "positive integer"
+    // the spec considers that it's better to avoid discontinuity in the allowed
+    // values of this parameter.
+    // https://github.com/w3c/webcrypto/issues/370
+    if (!length) {
+        // We can't pass a 0-size vector as the 'keybuffer' argument of the  gcry_kdf_derive function, so we must early return here.
+        return Vector<uint8_t>();
+    }
+
     // Derive bits using PBKDF2, the specified hash algorithm, salt data and iteration count.
     Vector<uint8_t> result(length / 8);
     gcry_error_t error = gcry_kdf_derive(keyData.data(), keyData.size(), GCRY_KDF_PBKDF2, *hashAlgorithm, saltData.data(), saltData.size(), iterations, result.size(), result.data());

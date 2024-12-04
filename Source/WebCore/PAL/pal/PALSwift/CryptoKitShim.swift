@@ -690,7 +690,7 @@ public class HKDF {
         hashFunction: HashFunction
     ) -> CryptoOperationReturnValue {
         var returnValue = CryptoOperationReturnValue()
-        if outputBitCount <= 0 || outputBitCount % 8 != 0 {
+        if outputBitCount < 0 || outputBitCount % 8 != 0 {
              returnValue.errorCode = .InvalidArgument
             return returnValue
         } else {

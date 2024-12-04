@@ -3,16 +3,16 @@ Test HKDF deriveBits operation for corner-case length values
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS deriveBits("sha-1", 0) rejected promise  with OperationError: The operation failed for an operation-specific reason.
+PASS Bit derivations with zero length returned an empty string
 PASS Bit derivations for SHA-1 with minimum, maximum and HashLen lengths all passed
 PASS deriveBits("sha-1", 256 * 20 * 8) rejected promise  with OperationError: The operation failed for an operation-specific reason.
-PASS deriveBits("sha-256", 0) rejected promise  with OperationError: The operation failed for an operation-specific reason.
+PASS Bit derivations with zero length returned an empty string
 PASS Bit derivations for SHA-256 with minimum, maximum and HashLen lengths all passed
 PASS deriveBits("sha-256", 256 * 32 * 8) rejected promise  with OperationError: The operation failed for an operation-specific reason.
-PASS deriveBits("sha-384", 0) rejected promise  with OperationError: The operation failed for an operation-specific reason.
+PASS Bit derivations with zero length returned an empty string
 PASS Bit derivations for SHA-384 with minimum, maximum and HashLen lengths all passed
 PASS deriveBits("sha-384", 256 * 48 * 8) rejected promise  with OperationError: The operation failed for an operation-specific reason.
-PASS deriveBits("sha-512", 0) rejected promise  with OperationError: The operation failed for an operation-specific reason.
+PASS Bit derivations with zero length returned an empty string
 PASS Bit derivations for SHA-512 with minimum, maximum and HashLen lengths all passed
 PASS deriveBits("sha-512", 256 * 64 * 8) rejected promise  with OperationError: The operation failed for an operation-specific reason.
 PASS successfullyParsed is true
