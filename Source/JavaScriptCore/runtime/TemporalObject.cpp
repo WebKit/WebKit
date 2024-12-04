@@ -499,6 +499,42 @@ RoundingMode temporalRoundingMode(JSGlobalObject* globalObject, JSObject* option
         }, "roundingMode must be \"ceil\", \"floor\", \"expand\", \"trunc\", \"halfCeil\", \"halfFloor\", \"halfExpand\", \"halfTrunc\", or \"halfEven\""_s, fallback);
 }
 
+// https://tc39.es/proposal-temporal/#sec-temporal-gettemporalshowcalendarnameoption
+TemporalShowCalendar getTemporalShowCalendarNameOption(JSGlobalObject* globalObject, JSObject* options)
+{
+    return intlOption<TemporalShowCalendar>(globalObject, options, globalObject->vm().propertyNames->calendarName, {
+        { "auto"_s, TemporalShowCalendar::Auto }, { "always"_s, TemporalShowCalendar::Always },
+        { "never"_s, TemporalShowCalendar::Never }, { "critical"_s, TemporalShowCalendar::Critical }
+        }, "calendarName must be \"auto\", \"always\", \"never\", or \"critical\""_s, TemporalShowCalendar::Auto);
+}
+
+// https://tc39.es/proposal-temporal/#sec-temporal-gettemporalshowoffsetoption
+TemporalShowOffset getTemporalShowOffsetOption(JSGlobalObject* globalObject, JSObject* options)
+{
+    return intlOption<TemporalShowOffset>(globalObject, options, globalObject->vm().propertyNames->offset, {
+        { "auto"_s, TemporalShowOffset::Auto },
+        { "never"_s, TemporalShowOffset::Never },
+        }, "offset must be \"auto\" or \"never\""_s, TemporalShowOffset::Auto);
+}
+
+// https://tc39.es/proposal-temporal/#sec-temporal-gettemporalshowtimezonenameoption
+TemporalShowTimeZone getTemporalShowTimeZoneNameOption(JSGlobalObject* globalObject, JSObject* options)
+{
+    return intlOption<TemporalShowTimeZone>(globalObject, options, globalObject->vm().propertyNames->timeZoneName, {
+        { "auto"_s, TemporalShowTimeZone::Auto }, {"critical"_s, TemporalShowTimeZone::Critical },
+        { "never"_s, TemporalShowTimeZone::Never },
+        }, "timeZoneName must be \"auto\", \"never\", or \"critical\""_s, TemporalShowTimeZone::Auto);
+}
+
+// https://tc39.es/proposal-temporal/#sec-temporal-gettemporaldisambiguationoption
+TemporalDisambiguation getTemporalDisambiguationOption(JSGlobalObject* globalObject, JSObject* options)
+{
+    return intlOption<TemporalDisambiguation>(globalObject, options, globalObject->vm().propertyNames->disambiguation, {
+        { "compatible"_s, TemporalDisambiguation::Compatible }, { "earlier"_s, TemporalDisambiguation::Earlier },
+        { "later"_s, TemporalDisambiguation::Later }, { "reject"_s, TemporalDisambiguation::Reject },
+        }, "disambiguation must be \"compatible\", \"earlier\", \"later\", or \"reject\""_s, TemporalDisambiguation::Reject);
+}
+
 // https://tc39.es/proposal-temporal/#sec-temporal-negatetemporalroundingmode
 RoundingMode negateTemporalRoundingMode(RoundingMode roundingMode)
 {

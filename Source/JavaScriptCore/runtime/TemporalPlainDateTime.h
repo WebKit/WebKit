@@ -67,6 +67,7 @@ public:
 
     TemporalPlainDateTime* with(JSGlobalObject*, JSObject* temporalDateLike, JSValue options);
     TemporalPlainDateTime* round(JSGlobalObject*, JSValue options);
+    TemporalPlainDateTime* addDurationToDateTime(JSGlobalObject*, bool, ISO8601::Duration, JSObject*);
 
     String monthCode() const;
     uint8_t dayOfWeek() const;
