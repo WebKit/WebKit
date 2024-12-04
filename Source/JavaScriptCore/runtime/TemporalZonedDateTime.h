@@ -45,12 +45,13 @@ public:
 
     static TemporalZonedDateTime* create(VM&, Structure*, ExactTime&&, TimeZone&&);
     static TemporalZonedDateTime* tryCreateIfValid(JSGlobalObject*, Structure*, ExactTime&&, TimeZone&&);
+    static TemporalZonedDateTime* tryCreateIfValid(JSGlobalObject*, Structure*, JSValue, JSValue);
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
     DECLARE_INFO;
 
     static TemporalZonedDateTime* from(JSGlobalObject*, JSValue, std::optional<JSObject*>);
-    static int32_t compare(TemporalZonedDateTime*, TemporalZonedDateTime*);
+    static int32_t compare(const TemporalZonedDateTime*, const TemporalZonedDateTime*);
 
     TemporalCalendar* calendar() { return m_calendar.get(this); }
 
@@ -62,6 +63,8 @@ public:
     static ISO8601::ExactTime disambiguatePossibleEpochNanoseconds(JSGlobalObject*,
         Vector<ISO8601::ExactTime>, ISO8601::TimeZone,
         std::tuple<ISO8601::PlainDate, ISO8601::PlainTime>, TemporalDisambiguation disambiguation);
+
+    static TimeZone toTemporalTimeZoneIdentifier(JSGlobalObject*, JSValue);
 
     String monthCode() const;
     uint8_t dayOfWeek() const;
@@ -83,8 +86,6 @@ public:
 private:
     TemporalZonedDateTime(VM&, Structure*, ExactTime&&, TimeZone&&);
     void finishCreation(VM&);
-
-    static TimeZoneID toTemporalTimeZoneIdentifier(JSValue);
 
     Packed<ExactTime> m_exactTime;
     TimeZone m_timeZone;

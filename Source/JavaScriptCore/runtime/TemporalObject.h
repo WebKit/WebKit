@@ -156,6 +156,13 @@ enum class TemporalDisambiguation : uint8_t {
     Reject,
 };
 
+enum class TemporalOffset : uint8_t {
+    Prefer,
+    Use,
+    Ignore,
+    Reject,
+};
+
 double nonNegativeModulo(double x, double y);
 WTF::String ellipsizeAt(unsigned maxLength, const WTF::String&);
 PropertyName temporalUnitPluralPropertyName(VM&, TemporalUnit);
@@ -166,6 +173,7 @@ std::optional<TemporalUnit> temporalSmallestUnit(JSGlobalObject*, JSObject* opti
 std::tuple<TemporalUnit, TemporalUnit, RoundingMode, double> extractDifferenceOptions(JSGlobalObject*, JSValue, UnitGroup, TemporalUnit defaultSmallestUnit, TemporalUnit defaultLargestUnit);
 TemporalShowCalendar getTemporalShowCalendarNameOption(JSGlobalObject*, JSObject*);
 TemporalShowOffset getTemporalShowOffsetOption(JSGlobalObject*, JSObject*);
+TemporalOffset getTemporalOffsetOption(JSGlobalObject*, JSObject*, TemporalOffset);
 TemporalShowTimeZone getTemporalShowTimeZoneNameOption(JSGlobalObject*, JSObject*);
 TemporalDisambiguation getTemporalDisambiguationOption(JSGlobalObject*, JSObject*);
 std::optional<unsigned> temporalFractionalSecondDigits(JSGlobalObject*, JSObject* options);

@@ -73,11 +73,11 @@ TemporalZonedDateTimeConstructor::TemporalZonedDateTimeConstructor(VM& vm, Struc
 {
 }
 
-void TemporalZonedDateTimeConstructor::finishCreation(VM& vm, TemporalZonedDateTimePrototype* plainDateTimePrototype)
+void TemporalZonedDateTimeConstructor::finishCreation(VM& vm, TemporalZonedDateTimePrototype* zonedDateTimePrototype)
 {
     Base::finishCreation(vm, 3, "ZonedDateTime"_s, PropertyAdditionMode::WithoutStructureTransition);
     putDirectWithoutTransition(vm, vm.propertyNames->prototype, zonedDateTimePrototype, PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly);
-    plainDateTimePrototype->putDirectWithoutTransition(vm, vm.propertyNames->constructor, this, static_cast<unsigned>(PropertyAttribute::DontEnum));
+    zonedDateTimePrototype->putDirectWithoutTransition(vm, vm.propertyNames->constructor, this, static_cast<unsigned>(PropertyAttribute::DontEnum));
 }
 
 JSC_DEFINE_HOST_FUNCTION(constructTemporalZonedDateTime, (JSGlobalObject* globalObject, CallFrame* callFrame))
@@ -92,7 +92,7 @@ JSC_DEFINE_HOST_FUNCTION(constructTemporalZonedDateTime, (JSGlobalObject* global
     if (callFrame->argumentCount() < 2)
         return throwVMTypeError(globalObject, scope, "Temporal.ZonedDateTime requires epochNanoseconds and timeZone arguments"_s);
 
-    RELEASE_AND_RETURN(scope, JSValue::encode(TemporalZonedDateTime::tryCreateIfValid(globalObject, callFrame->uncheckedArgument(0), callFrame->uncheckedArgument(1), structure)));
+    RELEASE_AND_RETURN(scope, JSValue::encode(TemporalZonedDateTime::tryCreateIfValid(globalObject, structure, callFrame->uncheckedArgument(0), callFrame->uncheckedArgument(1))));
 }
 
 JSC_DEFINE_HOST_FUNCTION(callTemporalZonedDateTime, (JSGlobalObject* globalObject, CallFrame*))

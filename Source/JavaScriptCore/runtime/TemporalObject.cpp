@@ -517,6 +517,17 @@ TemporalShowOffset getTemporalShowOffsetOption(JSGlobalObject* globalObject, JSO
         }, "offset must be \"auto\" or \"never\""_s, TemporalShowOffset::Auto);
 }
 
+// https://tc39.es/proposal-temporal/#sec-temporal-gettemporaloffsetoption
+TemporalOffset getTemporalOffsetOption(JSGlobalObject* globalObject, JSObject* options, TemporalOffset fallback)
+{
+    return intlOption<TemporalOffset>(globalObject, options, globalObject->vm().propertyNames->offset, {
+        { "prefer"_s, TemporalOffset::Prefer },
+        { "use"_s, TemporalOffset::Use },
+        { "ignore"_s, TemporalOffset::Ignore },
+        { "reject"_s, TemporalOffset::Reject },
+        }, "offset must be \"prefer\", \"use\", \"ignore\", or \"reject\""_s, fallback);
+}
+
 // https://tc39.es/proposal-temporal/#sec-temporal-gettemporalshowtimezonenameoption
 TemporalShowTimeZone getTemporalShowTimeZoneNameOption(JSGlobalObject* globalObject, JSObject* options)
 {

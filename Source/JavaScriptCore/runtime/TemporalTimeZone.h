@@ -54,6 +54,7 @@ public:
     static JSObject* from(JSGlobalObject*, JSValue);
 
     static std::optional<int64_t> parseDateTimeUTCOffset(StringView string);
+    static std::optional<TimeZone> parseTemporalTimeZoneString(StringView);
 
 private:
     TemporalTimeZone(VM&, Structure*, TimeZone);
