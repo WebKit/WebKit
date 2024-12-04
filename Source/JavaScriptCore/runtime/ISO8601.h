@@ -171,6 +171,11 @@ public:
         return m_epochNanoseconds > other.m_epochNanoseconds;
     }
 
+    static constexpr int32_t compare(ExactTime one, ExactTime two)
+    {
+        return (one < two ? 1 : one == two ? 0 : -1);
+    }
+
     std::optional<ExactTime> add(Duration) const;
     InternalDuration difference(JSGlobalObject*, ExactTime other, unsigned increment, TemporalUnit, RoundingMode) const;
     std::optional<ExactTime> round(unsigned increment, TemporalUnit, RoundingMode) const;
@@ -360,12 +365,12 @@ static_assert(sizeof(PlainYearMonth) == sizeof(PlainDate));
 
 using TimeZone = std::variant<TimeZoneID, int64_t>;
 
-// https://tc39.es/proposal-temporal/#sec-temporal-parsetemporaltimezonestring
-// Record { [[Z]], [[OffsetString]], [[Name]] }
+// https://tc39.es/proposal-temporal/#sec-temporal-iso-string-time-zone-parse-records
+// Record { [[Z]], [[OffsetString]], [[TimeZoneAnnotation]] }
 struct TimeZoneRecord {
     bool m_z { false };
     std::optional<int64_t> m_offset;
-    std::variant<Vector<LChar>, int64_t> m_nameOrOffset;
+    std::optional<Vector<LChar>> m_annotation;
 };
 
 static constexpr unsigned minCalendarLength = 3;

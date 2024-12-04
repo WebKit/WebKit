@@ -451,7 +451,7 @@ ISO8601::ExactTime TemporalZonedDateTime::disambiguatePossibleEpochNanoseconds(J
 static ISO8601::ExactTime interpretISODateTimeOffset(JSGlobalObject* globalObject,
     ISO8601::PlainDate isoDate, ISO8601::PlainTime time,
     TemporalOffsetBehavior offsetBehavior, unsigned offsetNanoseconds, ISO8601::TimeZone timeZone,
-    TemporalDisambiguation disambiguation, TemporalOffsetOption offsetOption,
+    TemporalDisambiguation disambiguation, TemporalOffset offsetOption,
     TemporalMatchBehavior matchBehavior)
 {
     VM& vm = globalObject->vm();
@@ -460,12 +460,12 @@ static ISO8601::ExactTime interpretISODateTimeOffset(JSGlobalObject* globalObjec
     auto isoDateTime = TemporalDuration::combineISODateAndTimeRecord(isoDate, time);
 
     if (offsetBehavior == TemporalOffsetBehavior::Wall
-        || (offsetBehavior == TemporalOffsetBehavior::Option && offsetOption == TemporalOffsetOption::Ignore))
+        || (offsetBehavior == TemporalOffsetBehavior::Option && offsetOption == TemporalOffset::Ignore))
         return ISO8601::ExactTime(TemporalDuration::getEpochNanosecondsFor(
             globalObject, timeZone, isoDateTime, disambiguation));
 
     if (offsetBehavior == TemporalOffsetBehavior::Exact
-        || (offsetBehavior == TemporalOffsetBehavior::Option && offsetOption == TemporalOffsetOption::Use)) {
+        || (offsetBehavior == TemporalOffsetBehavior::Option && offsetOption == TemporalOffset::Use)) {
         auto balanced = balanceISODateTime(isoDate.year(), isoDate.month(), isoDate.day(),
             time.hour(), time.minute(), time.second(), time.millisecond(), time.microsecond(),
             time.nanosecond() - offsetNanoseconds);
@@ -480,8 +480,8 @@ static ISO8601::ExactTime interpretISODateTimeOffset(JSGlobalObject* globalObjec
     }
 
     ASSERT(offsetBehavior == TemporalOffsetBehavior::Option);
-    ASSERT(offsetOption == TemporalOffsetOption::Prefer
-           || offsetOption == TemporalOffsetOption::Reject);
+    ASSERT(offsetOption == TemporalOffset::Prefer
+           || offsetOption == TemporalOffset::Reject);
 
     checkISODaysRange(globalObject, isoDate);
     RETURN_IF_EXCEPTION(scope, { });
@@ -501,7 +501,7 @@ static ISO8601::ExactTime interpretISODateTimeOffset(JSGlobalObject* globalObjec
         }
     }
 
-    if (offsetOption == TemporalOffsetOption::Reject) {
+    if (offsetOption == TemporalOffset::Reject) {
         throwRangeError(globalObject, scope, "no matching offset and offsetOption is reject in interpretISODateTimeOffset"_s);
         return { };
     }
@@ -595,7 +595,7 @@ TemporalZonedDateTime* TemporalZonedDateTime::round(JSGlobalObject* globalObject
         epochNanoseconds = interpretISODateTimeOffset(globalObject,
             std::get<0>(roundResult), std::get<1>(roundResult),
             TemporalOffsetBehavior::Option, offsetNanoseconds, timeZone,
-            TemporalDisambiguation::Compatible, TemporalOffsetOption::Prefer, TemporalMatchBehavior::Exactly);
+            TemporalDisambiguation::Compatible, TemporalOffset::Prefer, TemporalMatchBehavior::Exactly);
         RETURN_IF_EXCEPTION(scope, { });
     }
     return TemporalZonedDateTime::tryCreateIfValid(globalObject, globalObject->zonedDateTimeStructure(),
@@ -766,8 +766,25 @@ static String toMonthCode(JSGlobalObject* globalObject, JSValue argument)
     return monthCode;
 }
 
-TemporalTimeZone TemporalZonedDateTime::toTemporalTimeZoneIdentifier(JSValue temporalTimeZoneLike)
+// TODO
+// https://tc39.es/proposal-temporal/#sec-getavailablenamedtimezoneidentifier
+static std::optional<ISO8601::TimeZone> getAvailableNamedTimeZoneIdentifier(JSGlobalObject* globalObject,
+    TimeZoneID timeZoneIdentifier)
 {
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    (void) timeZoneIdentifier;
+    throwRangeError(globalObject, scope, "getAvailableNamedTimeZoneIdentifier() not yet implemented"_s);
+    return { };
+}
+
+ISO8601::TimeZone TemporalZonedDateTime::toTemporalTimeZoneIdentifier(JSGlobalObject* globalObject,
+    JSValue temporalTimeZoneLike)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     if (temporalTimeZoneLike.isObject()) {
         if (temporalTimeZoneLike.inherits<TemporalZonedDateTime>()) {
             return jsCast<TemporalZonedDateTime*>(temporalTimeZoneLike)->m_timeZone;
@@ -777,27 +794,36 @@ TemporalTimeZone TemporalZonedDateTime::toTemporalTimeZoneIdentifier(JSValue tem
         throwTypeError(globalObject, scope, "time zone must be ZonedDateTime or string"_s);
         return { };
     }
-    auto parseResult = parseTemporalTimeZoneString(temporalTimeZoneLike.toWTFString(globalObject));
-    auto offsetMinutes = parseResult.offsetMinutes;
-    if (offsetMinutes)
-        return formatOffsetTimeZoneIdentifier(offsetMinutes);
-    auto name = parseResult.name;
-    auto timeZoneIdentifierRecord = getAvailableNamedTimeZoneIdentifier(name);
+    auto parseResultOptional = TemporalTimeZone::parseTemporalTimeZoneString(
+        temporalTimeZoneLike.toWTFString(globalObject));
+    if (!parseResultOptional) {
+        throwRangeError(globalObject, scope, "error parsing time zone"_s);
+        return { };
+    }
+    auto parseResult = parseResultOptional.value();
+    if (std::holds_alternative<int64_t>(parseResult)) {
+        return parseResult;
+    }
+    auto name = std::get<TimeZoneID>(parseResult);
+    auto timeZoneIdentifierRecord = getAvailableNamedTimeZoneIdentifier(globalObject, name);
+    RETURN_IF_EXCEPTION(scope, { });
     if (!timeZoneIdentifierRecord) {
         throwRangeError(globalObject, scope, "time zone is invalid"_s);
         return { };
     }
-    return timeZoneIdentifierRecord.identifier;
+    return timeZoneIdentifierRecord.value();
 }
 
 static
 std::tuple<std::optional<double>, std::optional<double>, std::optional<String>, std::optional<double>,
-std::optional<double>, std::optional<double>, std::optional<double>, std::optional<double>,
-std::optional<String>, std::optional<String>>
+double, double, double, double, double, double,
+std::optional<String>, std::optional<ISO8601::TimeZone>>
 prepareCalendarFields(JSGlobalObject* globalObject, TemporalCalendar* calendar, JSObject* fields, Vector<FieldName> calendarFieldNames, Vector<FieldName> nonCalendarFieldNames, std::optional<Vector<FieldName>> requiredFieldNames)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
+
+    (void) calendar; // TODO
 
     auto fieldNames = calendarFieldNames;
     fieldNames.append(nonCalendarFieldNames);
@@ -815,7 +841,7 @@ prepareCalendarFields(JSGlobalObject* globalObject, TemporalCalendar* calendar, 
     unsigned microsecond = 0;
     unsigned nanosecond = 0;
     std::optional<String> offsetOptional;
-    std::optional<String> timeZoneOptional;
+    std::optional<ISO8601::TimeZone> timeZoneOptional;
     auto any = false;
     for (auto property : fieldNames) {
         auto value = fields->get(globalObject, propertyName(vm, property));
@@ -890,7 +916,7 @@ prepareCalendarFields(JSGlobalObject* globalObject, TemporalCalendar* calendar, 
                 break;
             }
             case FieldName::TimeZone: {
-                TimeZoneID val = toTemporalTimeZoneIdentifier(value);
+                ISO8601::TimeZone val = TemporalZonedDateTime::toTemporalTimeZoneIdentifier(globalObject, value);
                 RETURN_IF_EXCEPTION(scope, { });
                 timeZoneOptional = val;
                 break;
@@ -898,7 +924,7 @@ prepareCalendarFields(JSGlobalObject* globalObject, TemporalCalendar* calendar, 
             }
         } else {
             if (requiredFieldNames && requiredFieldNames->contains(property)) {
-                throwTypeError(globalObject, scope, "prepareCalendarNames: missing required property name"_s);
+                throwTypeError(globalObject, scope, "prepareCalendarFields: missing required property name"_s);
                 return { };
             }
         }
@@ -911,6 +937,69 @@ prepareCalendarFields(JSGlobalObject* globalObject, TemporalCalendar* calendar, 
         hour, minute, second, millisecond, microsecond, nanosecond, offsetOptional, timeZoneOptional };
 }
 
+static void calendarResolveFields(JSGlobalObject* globalObject, TemporalCalendar* calendar, std::optional<double> optionalYear,
+    std::optional<double> optionalMonth, std::optional<String> optionalMonthCode, std::optional<double> optionalDay,
+    double& month, TemporalDateFormat format)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    if (calendar->isISO8601())
+    {
+        if ((format == TemporalDateFormat::Date || format == TemporalDateFormat::YearMonth) && !optionalYear) {
+            throwTypeError(globalObject, scope, "year property missing in Temporal.ZonedDateTime.from"_s);
+            return;
+        }
+        if ((format == TemporalDateFormat::Date || format == TemporalDateFormat::MonthDay) && !optionalDay) {
+            throwTypeError(globalObject, scope, "day property missing in Temporal.ZonedDateTime.from"_s);
+            return;
+        }
+        if (!optionalMonthCode && !optionalMonth) {
+            throwTypeError(globalObject, scope, "month and monthCode properties missing in Temporal.ZonedDateTime.from"_s);
+            return;
+        }
+        if (!optionalMonthCode) {
+            month = optionalMonth.value();
+            return;
+        }
+        auto monthCode = optionalMonthCode.value();
+        if (monthCode.length() != 3) {
+            throwRangeError(globalObject, scope, "invalid month code in Temporal.ZonedDateTime.from"_s);
+            return;
+        }
+        if (monthCode[0] != 'M') {
+            throwRangeError(globalObject, scope, "invalid month code in Temporal.ZonedDateTime.from (must begin with 'M')"_s);
+            return;
+        }
+        auto monthCodeInteger = parseInt(monthCode.substring(1, 3).span8(), 10);
+        if (optionalMonth && optionalMonth.value() != monthCodeInteger) {
+            throwRangeError(globalObject, scope, "month and monthCode properties disagree in Temporal.ZonedDateTime.from"_s);
+            return;
+        }
+        month = monthCodeInteger;
+        return;
+    }
+    throwRangeError(globalObject, scope, "non-ISO8601 calendars not supported yet"_s);
+    return;
+}
+
+static std::tuple<ISO8601::PlainDate, ISO8601::PlainTime>
+interpretTemporalDateTimeFields(JSGlobalObject* globalObject, TemporalCalendar* calendar, std::optional<double> optionalYear,
+    std::optional<double> optionalMonth, std::optional<String> optionalMonthCode, std::optional<double> optionalDay,
+    double hour, double minute, double second, double millisecond, double microsecond, double nanosecond,
+    TemporalOverflow overflow)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    double month = 0;
+    calendarResolveFields(globalObject, calendar, optionalYear, optionalMonth, optionalMonthCode, optionalDay, month, TemporalDateFormat::Date);
+    RETURN_IF_EXCEPTION(scope, { });
+    auto isoDate = ISO8601::PlainDate(optionalYear.value(), month, optionalDay.value());
+    auto time = TemporalPlainTime::regulateTime(globalObject, ISO8601::Duration { 0, 0, 0, 0, hour, minute, second, millisecond, microsecond, nanosecond }, overflow);
+    RETURN_IF_EXCEPTION(scope, { });
+    return TemporalDuration::combineISODateAndTimeRecord(isoDate, time);
+}
 
 // https://tc39.es/proposal-temporal/#sec-temporal-totemporalzoneddatetime
 TemporalZonedDateTime* TemporalZonedDateTime::from(JSGlobalObject* globalObject, JSValue itemValue, std::optional<JSObject*> options)
@@ -920,13 +1009,21 @@ TemporalZonedDateTime* TemporalZonedDateTime::from(JSGlobalObject* globalObject,
 
     auto offsetBehavior = TemporalOffsetBehavior::Option;
     auto matchBehavior = TemporalMatchBehavior::Exactly;
+    auto disambiguation = TemporalDisambiguation::Compatible;
+    TemporalOffset offsetOption = TemporalOffset::Reject;
+    auto overflow = TemporalOverflow::Constrain;
+    std::optional<std::variant<int64_t, String>> offsetString;
+    TimeZone timeZone;
+
+    ISO8601::PlainDate isoDate;
+    ISO8601::PlainTime time;
 
     if (itemValue.isObject()) {
         if (itemValue.inherits<TemporalZonedDateTime>()) {
             if (options) {
                 getTemporalDisambiguationOption(globalObject, options.value());
                 RETURN_IF_EXCEPTION(scope, { });
-                getTemporalShowOffsetOption(globalObject, options.value());
+                getTemporalOffsetOption(globalObject, options.value(), TemporalOffset::Reject);
                 RETURN_IF_EXCEPTION(scope, { });
                 toTemporalOverflow(globalObject, options.value());
                 RETURN_IF_EXCEPTION(scope, { });
@@ -934,24 +1031,36 @@ TemporalZonedDateTime* TemporalZonedDateTime::from(JSGlobalObject* globalObject,
             return jsCast<TemporalZonedDateTime*>(itemValue);
         }
 
-        auto [optionalYear, optionalMonth, optionalMonthCode, optionalDay, optionalHour, optionalMinute,
-         optionalSecond, optionalMillisecond, optionalMicrosecond, optionalNanosecond, optionalOffset,
-         optionalTimeZone] = prepareCalendarFields(jsCast<JSObject*>(itemValue));
+        // TODO
+        TemporalCalendar* calendar = TemporalCalendar::create(vm, globalObject->calendarStructure(), iso8601CalendarID());
+        auto [optionalYear, optionalMonth, optionalMonthCode, optionalDay, hour, minute,
+            second, millisecond, microsecond, nanosecond, optionalOffset,
+            timeZoneOptional] = prepareCalendarFields(globalObject, calendar, jsCast<JSObject*>(itemValue),
+            Vector { FieldName::Day, FieldName::Month, FieldName::MonthCode, FieldName::Year },
+            Vector { FieldName::Hour, FieldName::Microsecond, FieldName::Millisecond,
+              FieldName::Minute, FieldName::Month, FieldName::MonthCode, FieldName::Nanosecond,
+              FieldName::Offset, FieldName::TimeZone }, Vector { FieldName::TimeZone });
+        RETURN_IF_EXCEPTION(scope, { });
+        ASSERT(timeZoneOptional);
+        timeZone = timeZoneOptional.value();
+        offsetString = optionalOffset;
         if (!optionalOffset)
             offsetBehavior = TemporalOffsetBehavior::Wall;
         if (options) {
-            auto disambiguation = getTemporalDisambiguation(options);
-            auto offsetOption = getTemporalOffset(options, TemporalOffset::Reject);
-            auto overflow = getTemporalOverflow(options);
+            disambiguation = getTemporalDisambiguationOption(globalObject, options.value());
+            RETURN_IF_EXCEPTION(scope, { });
+            offsetOption = getTemporalOffsetOption(globalObject, options.value(), TemporalOffset::Reject);
+            RETURN_IF_EXCEPTION(scope, { });
+            overflow = toTemporalOverflow(globalObject, options.value());
+            RETURN_IF_EXCEPTION(scope, { });
         }
-        auto result = interpretTemporalDateTimeFields(optionalYear,
-            optionalMonth, optionalMonthCode, optionalDay, optionalHour, optionalMinute,
-            optionalSecond, optionalMillisecond, optionalMicrosecond, optionalNanosecond,
-            overflow);
-        auto isoDate = result.plainDate();
-        auto time = result.time();
+        auto result = interpretTemporalDateTimeFields(globalObject, calendar, optionalYear,
+            optionalMonth, optionalMonthCode, optionalDay, hour, minute,
+            second, millisecond, microsecond, nanosecond, overflow);
+        RETURN_IF_EXCEPTION(scope, { });
+        isoDate = std::get<0>(result);
+        time = std::get<1>(result);
     }
-
 
     if (!itemValue.isString()) {
         throwTypeError(globalObject, scope, "can only convert to ZonedDateTime from object or string values"_s);
@@ -962,42 +1071,65 @@ TemporalZonedDateTime* TemporalZonedDateTime::from(JSGlobalObject* globalObject,
     RETURN_IF_EXCEPTION(scope, { });
     // Validate overflow -- see step 3(g) of ToTemporalTime
     if (options)
-        toTemporalOverflow(globalObject, options.value());
+        overflow = toTemporalOverflow(globalObject, options.value());
 
-    auto dateTime = ISO8601::parseDateTime(string);
+    auto dateTime = ISO8601::parseDateTime(string, TemporalDateFormat::Date);
     if (dateTime) {
-        auto [plainDate, plainTime, timeZoneOptional, calendarOptional] = WTFMove(time.value());
+        auto [plainDate, plainTimeOptional, timeZoneOptional] = WTFMove(dateTime.value());
         if (!timeZoneOptional) {
             throwRangeError(globalObject, scope, "string must have a time zone annotation to convert to ZonedDateTime"_s);
             return { };
         }
-        auto annotation = timeZoneOptional->timeZoneAnnotation();
-        ASSERT(annotation != Empty);
-        auto timeZone = toTemporalTimeZoneIdentifier(annotation);
-        auto offsetString = timeZoneOptional->offsetString();
-        if (timeZoneOptional->z())
+        auto annotation = timeZoneOptional->m_annotation;
+        ASSERT(annotation);
+        auto timeZone = annotation.value();
+        offsetString = timeZoneOptional->m_offset;
+        if (timeZoneOptional->m_z)
             offsetBehavior = TemporalOffsetBehavior::Exact;
-        else if (offsetString.length() == 0)
+        else if (offsetString)
             offsetBehavior = TemporalOffsetBehavior::Wall;
         matchBehavior = TemporalMatchBehavior::Minutes;
-        auto disambiguation = getTemporalDisambiguation(options);
-        auto offsetOption = getTemporalOffsetOption(options, Reject);
-        getTemporalOverflowOption(options);
-        auto isoDate = plainDate;
-        auto time = plainTime;
+        if (options) {
+            disambiguation = getTemporalDisambiguationOption(globalObject, options.value());
+            RETURN_IF_EXCEPTION(scope, { });
+            offsetOption = getTemporalOffsetOption(globalObject, options.value(), TemporalOffset::Reject);
+            RETURN_IF_EXCEPTION(scope, { });
+            toTemporalOverflow(globalObject, options.value());
+            RETURN_IF_EXCEPTION(scope, { });
+        }
+        isoDate = plainDate;
+        if (!plainTimeOptional) {
+            throwRangeError(globalObject, scope, "string must include time in ZonedDateTime.from"_s);
+            return { };
+        }
+        time = plainTimeOptional.value();
     }
     auto offsetNanoseconds = 0;
     if (offsetBehavior == TemporalOffsetBehavior::Option) {
-        offsetNanoseconds = parseDateTimeUTCOffset(offsetString);
+        if (!offsetString) {
+            throwRangeError(globalObject, scope, "missing offset in ZonedDateTime.from"_s);
+            return { };
+        }
+        if (std::holds_alternative<String>(offsetString.value())) {
+            auto offsetNanosecondsOptional = TemporalTimeZone::parseDateTimeUTCOffset(std::get<String>(offsetString.value()));
+            if (!offsetNanosecondsOptional) {
+                throwRangeError(globalObject, scope, "error parsing offset in ZonedDateTime.from"_s);
+                return { };
+            }
+            offsetNanoseconds = offsetNanosecondsOptional.value();
+        } else
+            offsetNanoseconds = std::get<int64_t>(offsetString.value());
     }
-    auto epochNanoseconds = interpretISODateTimeOffset(isoDate, time, offsetBehavior, offsetNanoseconds, timeZone, disambiguation, offsetOption, matchBehavior);
-    return TemporalZonedDateTime::tryCreateIfValid(globalObject, globalObject->zonedDateTimeStructure, epochNanoseconds, timeZone);
+    auto epochNanoseconds = interpretISODateTimeOffset(globalObject, isoDate, time, offsetBehavior, offsetNanoseconds, timeZone, disambiguation, offsetOption, matchBehavior);
+    RETURN_IF_EXCEPTION(scope, { });
+    return TemporalZonedDateTime::tryCreateIfValid(globalObject, globalObject->zonedDateTimeStructure(),
+        WTFMove(epochNanoseconds), WTFMove(timeZone));
 }
 
 // https://tc39.es/proposal-temporal/#sec-temporal.zoneddatetime.compare
-int32_t TemporalZonedDateTime::compare(const ISO8601::ZonedDateTime& t1, const ISO8601::ZonedDateTime& t2)
+int32_t TemporalZonedDateTime::compare(const TemporalZonedDateTime* t1, const TemporalZonedDateTime* t2)
 {
-    return ISO8601::ExactTime::compare(t1.exactTime(), t2.exactTime());
+    return ISO8601::ExactTime::compare(t1->m_exactTime.get(), t2->m_exactTime.get());
 }
 
 } // namespace JSC

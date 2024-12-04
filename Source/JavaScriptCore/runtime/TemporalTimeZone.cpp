@@ -28,6 +28,8 @@
 
 #include "ISO8601.h"
 #include "JSObjectInlines.h"
+#include "ParseInt.h"
+#include <wtf/text/StringParsingBuffer.h>
 
 namespace JSC {
 
@@ -81,7 +83,7 @@ static std::optional<TimeZoneRecord> parseTimeZoneIdentifier(StringView identifi
 */
 
 template<typename CharacterType>
-std::optional<int64_t> parseDateTimeUTCOffset(StringParsingBuffer<CharacterType>& buffer)
+std::optional<int64_t> parseDateTimeUTCOffset_(StringParsingBuffer<CharacterType>& buffer)
 {
     //  UTCOffset[SubMinutePrecision] :::
     //      ASCIISign Hour
@@ -98,9 +100,8 @@ std::optional<int64_t> parseDateTimeUTCOffset(StringParsingBuffer<CharacterType>
         buffer.advance();
     }
 
-    int hour;
     unsigned digits = 1;
-    while (digits < buffer.lengthRemaining && isASCIIDigit(buffer[digits]))
+    while (digits < buffer.lengthRemaining() && isASCIIDigit(buffer[digits]))
         digits++;
 
     double hours = parseInt(buffer.span().first(digits), 10);
@@ -113,7 +114,7 @@ std::optional<int64_t> parseDateTimeUTCOffset(StringParsingBuffer<CharacterType>
     buffer.advance();
 
     digits = 1;
-    while (digits < buffer.lengthRemaining && isASCIIDigit(buffer[digits]))
+    while (digits < buffer.lengthRemaining() && isASCIIDigit(buffer[digits]))
         digits++;
     
     double minutes = parseInt(buffer.span().first(digits), 10);
@@ -127,20 +128,12 @@ std::optional<int64_t> parseDateTimeUTCOffset(StringParsingBuffer<CharacterType>
 std::optional<int64_t> TemporalTimeZone::parseDateTimeUTCOffset(StringView string)
 {
     return readCharactersForParsing(string, [](auto buffer) -> std::optional<int64_t> {
-            return parseDateTimeUTCOffset(buffer);
+            return parseDateTimeUTCOffset_(buffer);
     });
 }
 
-auto parseResult = parseUTCOffset(offsetString);
-    if (!parseResult) {
-        throwRangeError(globalObject, scope, makeString("Couldn't parse offset string: "_s, offsetString));
-        return { };
-    }
-    
-}
-
 // https://tc39.es/proposal-temporal/#sec-temporal-parsetemporaltimeZonestring
-static std::optional<int64_t> parseTemporalTimeZoneString(StringView)
+std::optional<ISO8601::TimeZone> TemporalTimeZone::parseTemporalTimeZoneString(StringView)
 {
     // FIXME: Implement parsing temporal timeZone string, which requires full ISO 8601 parser.
     return std::nullopt;
@@ -177,6 +170,7 @@ JSObject* TemporalTimeZone::from(JSGlobalObject* globalObject, JSValue timeZoneL
     auto timeZoneString = timeZoneLike.toWTFString(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
 
+/*
     std::optional<int64_t> utcOffset = ISO8601::parseUTCOffset(timeZoneString);
     if (utcOffset)
         return TemporalTimeZone::createFromUTCOffset(vm, globalObject->timeZoneStructure(), utcOffset.value());
@@ -184,10 +178,15 @@ JSObject* TemporalTimeZone::from(JSGlobalObject* globalObject, JSValue timeZoneL
     std::optional<TimeZoneID> identifier = ISO8601::parseTimeZoneName(timeZoneString);
     if (identifier)
         return TemporalTimeZone::createFromID(vm, globalObject->timeZoneStructure(), identifier.value());
+*/
+    std::optional<ISO8601::TimeZone> utcOffsetFromInstant = parseTemporalTimeZoneString(timeZoneString);
+    if (utcOffsetFromInstant) {
+        if (std::holds_alternative<int64_t>(utcOffsetFromInstant.value()))
+            return TemporalTimeZone::createFromUTCOffset(vm, globalObject->timeZoneStructure(), std::get<int64_t>(utcOffsetFromInstant.value()));
+        else
+            return TemporalTimeZone::createFromID(vm, globalObject->timeZoneStructure(), std::get<TimeZoneID>(utcOffsetFromInstant.value()));
+    }
 
-    std::optional<int64_t> utcOffsetFromInstant = parseTemporalTimeZoneString(timeZoneString);
-    if (utcOffsetFromInstant)
-        return TemporalTimeZone::createFromUTCOffset(vm, globalObject->timeZoneStructure(), utcOffsetFromInstant.value());
 
     throwRangeError(globalObject, scope, "argument needs to be UTC offset string, TimeZone identifier, or temporal Instant string"_s);
     return { };
