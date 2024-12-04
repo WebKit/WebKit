@@ -317,15 +317,18 @@ void MediaRecorderPrivateEncoder::audioSamplesDescriptionChanged(const AudioStre
         m_formatChangedOccurred = true;
     }
 
-    m_audioCompressor = AudioSampleBufferCompressor::create(compressedAudioOutputBufferCallback, this, m_audioCodec, *m_originalOutputDescription);
+    AudioSampleBufferCompressor::Options options = {
+        .format = m_audioCodec,
+        .description = m_originalOutputDescription,
+        .outputBitRate = m_audioBitsPerSecond ? std::optional { m_audioBitsPerSecond } : std::nullopt,
+        .generateTimestamp = true
+    };
+    m_audioCompressor = AudioSampleBufferCompressor::create(compressedAudioOutputBufferCallback, this, options);
     if (!m_audioCompressor) {
         RELEASE_LOG_ERROR(MediaStream, "MediaRecorderPrivateEncoder::audioSamplesDescriptionChanged: creation of compressor failed");
         m_hadError = true;
         return;
     }
-
-    if (m_audioBitsPerSecond)
-        audioCompressor()->setBitsPerSecond(m_audioBitsPerSecond);
 
     updateCurrentRingBufferIfNeeded();
 }

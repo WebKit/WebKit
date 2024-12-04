@@ -24,7 +24,7 @@
 
 #pragma once
 
-#if ENABLE(MEDIA_RECORDER) && USE(AVFOUNDATION)
+#if USE(AVFOUNDATION)
 
 #include <CoreMedia/CoreMedia.h>
 #include <wtf/Forward.h>
@@ -37,24 +37,31 @@ OBJC_CLASS NSNumber;
 
 namespace WebCore {
 
-class AudioSampleBufferCompressor : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<AudioSampleBufferCompressor, WTF::DestructionThread::Main> {
+class WebAudioBufferList;
+
+class AudioSampleBufferCompressor : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<AudioSampleBufferCompressor> {
 public:
-    static RefPtr<AudioSampleBufferCompressor> create(CMBufferQueueTriggerCallback, void* callbackObject, AudioFormatID, std::optional<AudioStreamBasicDescription>);
+    struct Options {
+        AudioFormatID format { kAudioFormatMPEG4AAC };
+        std::optional<AudioStreamBasicDescription> description;
+        std::optional<unsigned> outputBitRate;
+        bool generateTimestamp { true };
+    };
+    static RefPtr<AudioSampleBufferCompressor> create(CMBufferQueueTriggerCallback, void* callbackObject, const Options&);
     ~AudioSampleBufferCompressor();
 
     bool isEmpty() const;
-    void setBitsPerSecond(unsigned);
     Ref<GenericPromise> finish() { return flushInternal(true); }
     Ref<GenericPromise> flush() { return flushInternal(false); }
     Ref<GenericPromise> drain();
-    void addSampleBuffer(CMSampleBufferRef);
+    Ref<GenericPromise> addSampleBuffer(CMSampleBufferRef);
     CMSampleBufferRef getOutputSampleBuffer() const;
     RetainPtr<CMSampleBufferRef> takeOutputSampleBuffer();
 
     unsigned bitRate() const;
 
 private:
-    AudioSampleBufferCompressor(AudioFormatID, std::optional<AudioStreamBasicDescription>&&);
+    AudioSampleBufferCompressor(const Options&);
     bool initialize(CMBufferQueueTriggerCallback, void* callbackObject);
     UInt32 defaultOutputBitRate(const AudioStreamBasicDescription&) const;
 
@@ -64,40 +71,43 @@ private:
     bool initAudioConverterForSourceFormatDescription(CMFormatDescriptionRef, AudioFormatID);
     void attachPrimingTrimsIfNeeded(CMSampleBufferRef);
     RetainPtr<NSNumber> gradualDecoderRefreshCount();
-    RetainPtr<CMSampleBufferRef> sampleBuffer(AudioBufferList);
+    Expected<RetainPtr<CMSampleBufferRef>, int> sampleBuffer(const WebAudioBufferList&, uint32_t numSamples);
     void processSampleBuffers();
     OSStatus provideSourceDataNumOutputPackets(UInt32*, AudioBufferList*, AudioStreamPacketDescription**);
     Ref<GenericPromise> flushInternal(bool isFinished);
 
-    Ref<WorkQueue> m_serialDispatchQueue;
-    CMTime m_lowWaterTime;
+    bool isPCM() const;
+    void setTimeFromSample(CMSampleBufferRef);
 
-    RetainPtr<CMBufferQueueRef> m_outputBufferQueue;
-    RetainPtr<CMBufferQueueRef> m_inputBufferQueue;
-    bool m_isEncoding { false };
-    bool m_isDraining { false };
+    Ref<WorkQueue> queue() const { return m_serialDispatchQueue; }
+    const Ref<WorkQueue> m_serialDispatchQueue;
 
-    AudioConverterRef m_converter { nullptr };
-    AudioStreamBasicDescription m_sourceFormat;
-    AudioStreamBasicDescription m_destinationFormat;
-    RetainPtr<CMFormatDescriptionRef> m_destinationFormatDescription;
-    RetainPtr<NSNumber> m_gdrCountNum;
-    UInt32 m_maxOutputPacketSize { 0 };
-    AudioStreamPacketDescription m_destinationPacketDescriptions;
+    RetainPtr<CMBufferQueueRef> m_outputBufferQueue; // initialized on the caller's thread once, never modified after that.
+    RetainPtr<CMBufferQueueRef> m_inputBufferQueue; // initialized on the caller's thread once, never modified after that.
+    bool m_isEncoding WTF_GUARDED_BY_CAPABILITY(queue().get()) { false };
+    bool m_isDraining WTF_GUARDED_BY_CAPABILITY(queue().get()) { false };
 
-    CMTime m_currentNativePresentationTimeStamp;
-    CMTime m_currentOutputPresentationTimeStamp;
-    CMTime m_remainingPrimeDuration;
+    AudioConverterRef m_converter WTF_GUARDED_BY_CAPABILITY(queue().get()) { nullptr };
+    AudioStreamBasicDescription m_sourceFormat WTF_GUARDED_BY_CAPABILITY(queue().get());
+    AudioStreamBasicDescription m_destinationFormat WTF_GUARDED_BY_CAPABILITY(queue().get());
+    RetainPtr<CMFormatDescriptionRef> m_destinationFormatDescription WTF_GUARDED_BY_CAPABILITY(queue().get());
+    RetainPtr<NSNumber> m_gdrCountNum WTF_GUARDED_BY_CAPABILITY(queue().get());
+    UInt32 m_maxOutputPacketSize WTF_GUARDED_BY_CAPABILITY(queue().get()) { 0 };
+    Vector<AudioStreamPacketDescription> m_destinationPacketDescriptions WTF_GUARDED_BY_CAPABILITY(queue().get());
 
-    Vector<uint8_t> m_sourceBuffer;
-    Vector<uint8_t> m_destinationBuffer;
+    CMTime m_currentNativePresentationTimeStamp WTF_GUARDED_BY_CAPABILITY(queue().get());
+    CMTime m_currentOutputPresentationTimeStamp WTF_GUARDED_BY_CAPABILITY(queue().get());
+    CMTime m_remainingPrimeDuration WTF_GUARDED_BY_CAPABILITY(queue().get());
+
+    Vector<uint8_t> m_destinationBuffer WTF_GUARDED_BY_CAPABILITY(queue().get());
 
     CMBufferQueueTriggerToken m_triggerToken;
-    RetainPtr<CMBlockBufferRef> m_sampleBlockBuffer;
-    size_t m_sampleBlockBufferSize { 0 };
-    size_t m_currentOffsetInSampleBlockBuffer { 0 };
+    RetainPtr<CMBlockBufferRef> m_blockBuffer WTF_GUARDED_BY_CAPABILITY(queue().get());
+    Vector<AudioStreamPacketDescription> m_packetDescriptions WTF_GUARDED_BY_CAPABILITY(queue().get());
+    int m_lastError WTF_GUARDED_BY_CAPABILITY(queue().get()) { 0 };
     const AudioFormatID m_outputCodecType;
-    std::optional<unsigned> m_outputBitRate;
+    const std::optional<unsigned> m_outputBitRate;
+    const bool m_generateTimestamp { true };
 };
 
 }

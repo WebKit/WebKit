@@ -73,7 +73,6 @@ private:
 #if ENABLE(MEDIA_SOURCE)
     bool isMaybeWebM(std::span<const uint8_t>) const;
     std::unique_ptr<AudioFileReaderWebMData> demuxWebMData(std::span<const uint8_t>) const;
-    Vector<AudioStreamPacketDescription> getPacketDescriptions(CMSampleBufferRef) const;
     std::optional<size_t> decodeWebMData(AudioBufferList&, size_t numberOfFrames, const AudioStreamBasicDescription& inFormat, const AudioStreamBasicDescription& outFormat) const;
 #endif
     static OSStatus readProc(void* clientData, SInt64 position, UInt32 requestCount, void* buffer, UInt32* actualCount);

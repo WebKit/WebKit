@@ -36,6 +36,7 @@
 #include "AudioFileReader.h"
 #include "AudioSampleDataSource.h"
 #include "AudioTrackPrivateWebM.h"
+#include "CMUtilities.h"
 #include "FloatConversion.h"
 #include "InbandTextTrackPrivate.h"
 #include "Logging.h"
@@ -275,31 +276,6 @@ static OSStatus passthroughInputDataCallback(AudioConverterRef, UInt32* numDataP
     userData->m_index++;
 
     return noErr;
-}
-
-Vector<AudioStreamPacketDescription> AudioFileReader::getPacketDescriptions(CMSampleBufferRef sampleBuffer) const
-{
-    size_t packetDescriptionsSize;
-    if (PAL::CMSampleBufferGetAudioStreamPacketDescriptions(sampleBuffer, 0, nullptr, &packetDescriptionsSize) != noErr) {
-        RELEASE_LOG_FAULT(WebAudio, "Unable to get packet description list size");
-        return { };
-    }
-    size_t numDescriptions = packetDescriptionsSize / sizeof(AudioStreamPacketDescription);
-    if (!numDescriptions) {
-        RELEASE_LOG_FAULT(WebAudio, "No packet description found.");
-        return { };
-    }
-    Vector<AudioStreamPacketDescription> descriptions(numDescriptions);
-    if (PAL::CMSampleBufferGetAudioStreamPacketDescriptions(sampleBuffer, packetDescriptionsSize, descriptions.data(), nullptr) != noErr) {
-        RELEASE_LOG_FAULT(WebAudio, "Unable to get packet description list");
-        return { };
-    }
-    auto numPackets = PAL::CMSampleBufferGetNumSamples(sampleBuffer);
-    if (numDescriptions != size_t(numPackets)) {
-        RELEASE_LOG_FAULT(WebAudio, "Unhandled CMSampleBuffer structure");
-        return { };
-    }
-    return descriptions;
 }
 
 std::optional<size_t> AudioFileReader::decodeWebMData(AudioBufferList& bufferList, size_t numberOfFrames, const AudioStreamBasicDescription& inFormat, const AudioStreamBasicDescription& outFormat) const

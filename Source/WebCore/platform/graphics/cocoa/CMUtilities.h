@@ -27,6 +27,7 @@
 
 #if PLATFORM(COCOA)
 
+#include <CoreAudio/CoreAudioTypes.h>
 #include <memory>
 #include <wtf/Expected.h>
 #include <wtf/RetainPtr.h>
@@ -74,6 +75,8 @@ private:
     uint32_t m_lastVorbisBlockSize { 0 };
     bool m_isValid { false };
 };
+
+Vector<AudioStreamPacketDescription> getPacketDescriptions(CMSampleBufferRef);
 
 }
 
