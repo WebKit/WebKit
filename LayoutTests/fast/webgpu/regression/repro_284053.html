@@ -1,0 +1,18 @@
+<script>
+async function run() {
+    let adapter1 = await navigator.gpu.requestAdapter();
+    let device0 = await adapter1.requestDevice({ requiredLimits: { maxTextureDimension1D: 10000 } });
+    let texture0 = device0.createTexture({ size: [10000], dimension: '1d', format: 'rg11b10ufloat', usage: GPUTextureUsage.COPY_DST | GPUTextureUsage.COPY_SRC });
+    let buffer1 = device0.createBuffer({ size: 39589, usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.INDEX | GPUBufferUsage.INDIRECT | GPUBufferUsage.QUERY_RESOLVE | GPUBufferUsage.STORAGE | GPUBufferUsage.UNIFORM | GPUBufferUsage.VERTEX, });
+    let commandEncoder3 = device0.createCommandEncoder();
+    commandEncoder3.copyTextureToBuffer(
+        { texture: texture0 },
+        { buffer: buffer1 },
+        { width: 2146, height: 1 },
+    )
+    await device0.queue.onSubmittedWorkDone();
+    globalThis.testRunner?.notifyDone();
+}
+globalThis.testRunner?.waitUntilDone();
+run();
+</script>

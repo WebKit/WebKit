@@ -181,7 +181,7 @@ void Queue::onSubmittedWorkDone(CompletionHandler<void(WGPUQueueWorkDoneStatus)>
 
     finalizeBlitCommandEncoder();
 
-    if (isIdle()) {
+    if (isIdle() || m_submittedCommandBufferCount == m_completedCommandBufferCount) {
         scheduleWork([callback = WTFMove(callback)]() mutable {
             callback(WGPUQueueWorkDoneStatus_Success);
         });
