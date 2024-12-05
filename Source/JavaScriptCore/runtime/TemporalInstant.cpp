@@ -79,13 +79,13 @@ TemporalInstant* TemporalInstant::tryCreateIfValid(JSGlobalObject* globalObject,
     return create(vm, structure ? structure : globalObject->instantStructure(), exactTime);
 }
 
-TemporalInstant* TemporalInstant::tryCreateIfValid(JSGlobalObject* globalObject, JSValue value, Structure* structure)
+ISO8601::ExactTime TemporalInstant::exactTimeFromJSValue(JSGlobalObject* globalObject, JSValue value)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     JSValue epochNanoseconds = value.toBigInt(globalObject);
-    RETURN_IF_EXCEPTION(scope, nullptr);
+    RETURN_IF_EXCEPTION(scope, { });
 
 #if USE(BIGINT32)
     if (epochNanoseconds.isBigInt32()) {
@@ -129,8 +129,19 @@ TemporalInstant* TemporalInstant::tryCreateIfValid(JSGlobalObject* globalObject,
         }
 
         throwRangeError(globalObject, scope, makeString(ellipsizeAt(100, argAsString), " epoch nanoseconds is outside of the supported range for Temporal.Instant"_s));
-        return nullptr;
+        return { };
     }
+
+    return exactTime;
+}
+
+TemporalInstant* TemporalInstant::tryCreateIfValid(JSGlobalObject* globalObject, JSValue value, Structure* structure)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    ISO8601::ExactTime exactTime = exactTimeFromJSValue(globalObject, value);
+    RETURN_IF_EXCEPTION(scope, nullptr);
 
     return create(vm, structure ? structure : globalObject->instantStructure(), exactTime);
 }
@@ -285,6 +296,21 @@ static double maximumIncrement(TemporalUnit smallestUnit)
         { }
     }
     RELEASE_ASSERT_NOT_REACHED();
+}
+
+// https://tc39.es/proposal-temporal/#sec-temporal-addinstant
+ISO8601::ExactTime TemporalInstant::addInstant(JSGlobalObject* globalObject,
+    ISO8601::ExactTime epochNanoseconds, Int128 timeDuration)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    auto result = ISO8601::ExactTime(timeDuration + epochNanoseconds.epochNanoseconds());
+    if (!result.isValid()) {
+        throwRangeError(globalObject, scope, "result out of range in addInstant"_s);
+        return { };
+    }
+    return result;
 }
 
 ISO8601::ExactTime TemporalInstant::round(JSGlobalObject* globalObject, JSValue optionsValue) const

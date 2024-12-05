@@ -45,7 +45,6 @@ public:
 
     static TemporalZonedDateTime* create(VM&, Structure*, ExactTime&&, TimeZone&&);
     static TemporalZonedDateTime* tryCreateIfValid(JSGlobalObject*, Structure*, ExactTime&&, TimeZone&&);
-    static TemporalZonedDateTime* tryCreateIfValid(JSGlobalObject*, Structure*, JSValue, JSValue);
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
     DECLARE_INFO;
@@ -70,6 +69,9 @@ public:
     uint8_t dayOfWeek() const;
     uint16_t dayOfYear() const;
     uint8_t weekOfYear() const;
+
+    ExactTime exactTime() const { return m_exactTime.get(); }
+    TimeZone timeZone() const { return m_timeZone; }
 
     String toString(JSGlobalObject*, JSValue options) const;
     String toString() const

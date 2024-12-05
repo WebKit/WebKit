@@ -30,12 +30,14 @@
 #include "JSCInlines.h"
 #include "ObjectConstructor.h"
 #include "TemporalDuration.h"
+#include "TemporalInstant.h"
 #include "TemporalPlainDate.h"
 #include "TemporalPlainDateTime.h"
 #include "TemporalPlainTime.h"
 
 namespace JSC {
 
+// TODO: implement the rest
 static JSC_DECLARE_HOST_FUNCTION(temporalZonedDateTimePrototypeFuncWith);
 static JSC_DECLARE_HOST_FUNCTION(temporalZonedDateTimePrototypeFuncWithPlainTime);
 static JSC_DECLARE_HOST_FUNCTION(temporalZonedDateTimePrototypeFuncWithTimeZone);
@@ -89,6 +91,7 @@ const ClassInfo TemporalZonedDateTimePrototype::s_info = { "Temporal.ZonedDateTi
 @begin plainDateTimePrototypeTable
   with                  temporalZonedDateTimePrototypeFuncWith                  DontEnum|Function 1
   withPlainTime         temporalZonedDateTimePrototypeFuncWithPlainTime         DontEnum|Function 0
+  withTimeZone          temporalZonedDateTimePrototypeFuncWithTimeZone          DontEnum|Function 1
   add                   temporalZonedDateTimePrototypeFuncAdd                   DontEnum|Function 1
   subtract              temporalZonedDateTimePrototypeFuncSubtract              DontEnum|Function 1
   until                 temporalZonedDateTimePrototypeFuncUntil                 DontEnum|Function 1
@@ -104,6 +107,7 @@ const ClassInfo TemporalZonedDateTimePrototype::s_info = { "Temporal.ZonedDateTi
   toInstant             temporalZonedDateTimePrototypeFuncToInstant             DontEnum|Function 0
   toPlainDate           temporalZonedDateTimePrototypeFuncToPlainDate           DontEnum|Function 0
   toPlainTime           temporalZonedDateTimePrototypeFuncToPlainTime           DontEnum|Function 0
+  toPlainDateTime       temporalZonedDateTimePrototypeFuncToPlainDateTime       DontEnum|Function 0
   calendarId            temporalZonedDateTimePrototypeGetterCalendarId          DontEnum|ReadOnly|CustomAccessor
   year                  temporalZonedDateTimePrototypeGetterYear                DontEnum|ReadOnly|CustomAccessor
   month                 temporalZonedDateTimePrototypeGetterMonth               DontEnum|ReadOnly|CustomAccessor
@@ -151,8 +155,78 @@ void TemporalZonedDateTimePrototype::finishCreation(VM& vm, JSGlobalObject*)
     JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
 }
 
-static addOrSubtract(JSGlobalObject* globalObject, bool isAdd, CallFrame* callFrame)
+// https://tc39.es/proposal-temporal/#sec-temporal-isodatetimewithinlimits
+static bool isoDateTimeWithinLimits(std::tuple<ISO8601::PlainDate, ISO8601::PlainTime> isoDateTime)
 {
+    auto isoDate = std::get<0>(isoDateTime);
+
+    if (absInt128(makeDay(isoDate.year(), isoDate.month() - 1, isoDate.day()))
+        > 100000001)
+        return false;
+    auto ns = TemporalDuration::getUTCEpochNanoseconds(isoDateTime);
+    if (ns <= ISO8601::ExactTime::minValue - ISO8601::ExactTime::nsPerDay)
+        return false;
+    if (ns >= ISO8601::ExactTime::maxValue + ISO8601::ExactTime::nsPerDay)
+        return false;
+    return true;
+}
+
+static ISO8601::ExactTime addZonedDateTime(JSGlobalObject* globalObject, ISO8601::ExactTime epochNanoseconds,
+    ISO8601::TimeZone timeZone, TemporalCalendar* calendar, ISO8601::InternalDuration duration,
+    TemporalOverflow overflow)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    // TODO: support non-ISO8601 calendars
+    (void) calendar;
+
+    if (!duration.sign())
+        return TemporalInstant::addInstant(globalObject, epochNanoseconds, duration.time());
+    auto isoDateTime = getISODateTimeFor(timeZone, epochNanoseconds);
+    auto addedDate = TemporalCalendar::isoDateAdd(globalObject,
+        std::get<0>(isoDateTime), duration.dateDuration(), overflow);
+    RETURN_IF_EXCEPTION(scope, { });
+    auto intermediateDateTime =
+        TemporalDuration::combineISODateAndTimeRecord(addedDate, std::get<1>(isoDateTime));
+    if (!isoDateTimeWithinLimits(intermediateDateTime)) {
+        throwRangeError(globalObject, scope, "result of adding duration to ZonedDateTime is out of range"_s);
+        return { };
+    }
+    auto intermediateNs = TemporalDuration::getEpochNanosecondsFor(globalObject, timeZone,
+        intermediateDateTime, TemporalDisambiguation::Compatible);
+    RETURN_IF_EXCEPTION(scope, { });
+    return TemporalInstant::addInstant(globalObject, intermediateNs, duration.time());
+}
+
+static TemporalZonedDateTime* addDurationToZonedDateTime(JSGlobalObject* globalObject,
+    bool isAdd, TemporalZonedDateTime* zonedDateTime,
+    ISO8601::Duration duration, JSObject* options)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    if (!isAdd)
+        duration = -duration;
+    auto overflow = toTemporalOverflow(globalObject, options);
+    RETURN_IF_EXCEPTION(scope, { });
+    auto timeZone = zonedDateTime->timeZone();
+    auto internalDuration = TemporalDuration::toInternalDuration(globalObject, duration);
+    RETURN_IF_EXCEPTION(scope, { });
+    // TODO: handle other calendars
+    TemporalCalendar* calendar = TemporalCalendar::create(vm, globalObject->calendarStructure(), iso8601CalendarID());
+    RETURN_IF_EXCEPTION(scope, { });
+    auto epochNanoseconds = addZonedDateTime(globalObject, zonedDateTime->exactTime(), timeZone,
+        calendar, internalDuration, overflow);
+    RETURN_IF_EXCEPTION(scope, { });
+    return TemporalZonedDateTime::tryCreateIfValid(globalObject, globalObject->zonedDateTimeStructure(), WTFMove(epochNanoseconds), WTFMove(timeZone));
+}
+
+static EncodedJSValue addOrSubtract(JSGlobalObject* globalObject, bool isAdd, CallFrame* callFrame)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     auto* zonedDateTime = jsDynamicCast<TemporalZonedDateTime*>(callFrame->thisValue());
     if (!zonedDateTime)
         return throwVMTypeError(globalObject, scope, "Temporal.ZonedDateTime.prototype.add called on value that's not a ZonedDateTime"_s);
@@ -163,9 +237,10 @@ static addOrSubtract(JSGlobalObject* globalObject, bool isAdd, CallFrame* callFr
     JSObject* options = intlGetOptionsObject(globalObject, callFrame->argument(1));
     RETURN_IF_EXCEPTION(scope, { });
 
-    ISO8601::ExactTime time = addDurationToZonedDateTime(isAdd, zonedDateTime, duration, options);
+    TemporalZonedDateTime* result = addDurationToZonedDateTime(globalObject, isAdd, zonedDateTime, duration, options);
+    RETURN_IF_EXCEPTION(scope, { });
 
-    RELEASE_AND_RETURN(scope, JSValue::encode(TemporalZonedDateTime::tryCreateIfValid(globalObject, globalObject->zonedDateTimeStructure(), WTFMove(time), zonedDateTime->timeZone())));
+    RELEASE_AND_RETURN(scope, JSValue::encode(result));
 }
 
 // https://tc39.es/proposal-temporal/#sec-temporal.zoneddatetime.prototype.add
@@ -213,17 +288,48 @@ JSC_DEFINE_HOST_FUNCTION(temporalZonedDateTimePrototypeFuncWithPlainTime, (JSGlo
     JSValue plainTimeLike = callFrame->argument(0);
     ISO8601::ExactTime epochNs;
     if (plainTimeLike.isUndefined()) {
-        epochNs = getStartOfDay(timeZone, isoDateTime);
+        epochNs = getStartOfDay(globalObject, timeZone, std::get<0>(isoDateTime));
         RETURN_IF_EXCEPTION(scope, { });
     } else {
-        plainTime = TemporalZonedTime::from(globalObject, plainTimeLike, std::nullopt);
+        auto plainTime = TemporalPlainTime::from(globalObject, plainTimeLike, std::nullopt);
         RETURN_IF_EXCEPTION(scope, { });
-        auto resultISODateTime = combineISODateAndTimeRecord(isoDateTime.plainDate(), plainTime.time());
-        epochNs = getEpochNanosecondsFor(timeZone, resultISODateTime, Compatible);
+        auto resultISODateTime = TemporalDuration::combineISODateAndTimeRecord(std::get<0>(isoDateTime), plainTime->plainTime());
+        epochNs = TemporalDuration::getEpochNanosecondsFor(globalObject, timeZone, resultISODateTime, TemporalDisambiguation::Compatible);
         RETURN_IF_EXCEPTION(scope, { });
     }
 
-    RELEASE_AND_RETURN(scope, JSValue::encode(TemporalZonedDateTime::tryCreateIfValid(globalObject, globalObject->plainDateTimeStructure(), epochNs, timeZone)))
+    RELEASE_AND_RETURN(scope, JSValue::encode(TemporalZonedDateTime::tryCreateIfValid(globalObject, globalObject->zonedDateTimeStructure(), WTFMove(epochNs), WTFMove(timeZone))));
+}
+
+// https://tc39.es/proposal-temporal/#sec-temporal.zoneddatetime.prototype.withtimezone
+JSC_DEFINE_HOST_FUNCTION(temporalZonedDateTimePrototypeFuncWithTimeZone, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    (void) callFrame;
+
+    return throwVMTypeError(globalObject, scope, "withTimeZone not implemented yet"_s);
+}
+
+// https://tc39.es/proposal-temporal/#sec-temporal.zoneddatetime.prototype.until
+JSC_DEFINE_HOST_FUNCTION(temporalZonedDateTimePrototypeFuncUntil, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    (void) callFrame;
+    return throwVMTypeError(globalObject, scope, "until not implemented yet"_s);
+}
+
+// https://tc39.es/proposal-temporal/#sec-temporal.zoneddatetime.prototype.since
+JSC_DEFINE_HOST_FUNCTION(temporalZonedDateTimePrototypeFuncSince, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    (void) callFrame;
+    return throwVMTypeError(globalObject, scope, "since not implemented yet"_s);
 }
 
 // https://tc39.es/proposal-temporal/#sec-temporal.zoneddatetime.prototype.round
@@ -262,19 +368,6 @@ JSC_DEFINE_HOST_FUNCTION(temporalZonedDateTimePrototypeFuncEquals, (JSGlobalObje
     RELEASE_AND_RETURN(scope, JSValue::encode(jsBoolean(zonedDateTime->calendar()->equals(globalObject, other->calendar()))));
 }
 
-// https://tc39.es/proposal-temporal/#sec-temporal.plaindatetime.prototype.toplaindate
-JSC_DEFINE_HOST_FUNCTION(temporalZonedDateTimePrototypeFuncToZonedDate, (JSGlobalObject* globalObject, CallFrame* callFrame))
-{
-    VM& vm = globalObject->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    auto* zonedDateTime = jsDynamicCast<TemporalZonedDateTime*>(callFrame->thisValue());
-    if (!zonedDateTime)
-        return throwVMTypeError(globalObject, scope, "Temporal.ZonedDateTime.prototype.toZonedDate called on value that's not a ZonedDateTime"_s);
-
-    return JSValue::encode(TemporalZonedDate::create(vm, globalObject->plainDateStructure(), zonedDateTime->plainDate()));
-}
-
 // https://tc39.es/proposal-temporal/#sec-temporal.zoneddatetime.prototype.toplaindate
 JSC_DEFINE_HOST_FUNCTION(temporalZonedDateTimePrototypeFuncToPlainDate, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
@@ -285,9 +378,39 @@ JSC_DEFINE_HOST_FUNCTION(temporalZonedDateTimePrototypeFuncToPlainDate, (JSGloba
     if (!zonedDateTime)
         return throwVMTypeError(globalObject, scope, "Temporal.ZonedDateTime.prototype.toPlainDate called on value that's not a ZonedDateTime"_s);
 
-    auto isoDateTime = getISODateTimeFor(zonedDateTime.timeZone(), zonedDateTime.exactTime());
+    auto isoDateTime = getISODateTimeFor(zonedDateTime->timeZone(), zonedDateTime->exactTime());
 
-    return JSValue::encode(TemporalPlainDate::create(vm, globalObject->plainDateStructure(), isoDateTime.plainDate(), zonedDateTime->calendar()));
+    return JSValue::encode(TemporalPlainDate::create(vm, globalObject->plainDateStructure(), WTFMove(std::get<0>(isoDateTime))));
+}
+
+// https://tc39.es/proposal-temporal/#sec-temporal.zoneddatetime.prototype.toplaintime
+JSC_DEFINE_HOST_FUNCTION(temporalZonedDateTimePrototypeFuncToPlainTime, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    auto* zonedDateTime = jsDynamicCast<TemporalZonedDateTime*>(callFrame->thisValue());
+    if (!zonedDateTime)
+        return throwVMTypeError(globalObject, scope, "Temporal.ZonedDateTime.prototype.toPlainTime called on value that's not a ZonedDateTime"_s);
+
+    auto isoDateTime = getISODateTimeFor(zonedDateTime->timeZone(), zonedDateTime->exactTime());
+
+    return JSValue::encode(TemporalPlainTime::create(vm, globalObject->plainTimeStructure(), WTFMove(std::get<1>(isoDateTime))));
+}
+
+// https://tc39.es/proposal-temporal/#sec-temporal.zoneddatetime.prototype.toplaindatetime
+JSC_DEFINE_HOST_FUNCTION(temporalZonedDateTimePrototypeFuncToPlainDateTime, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    auto* zonedDateTime = jsDynamicCast<TemporalZonedDateTime*>(callFrame->thisValue());
+    if (!zonedDateTime)
+        return throwVMTypeError(globalObject, scope, "Temporal.ZonedDateTime.prototype.toPlainDateTime called on value that's not a ZonedDateTime"_s);
+
+    auto isoDateTime = getISODateTimeFor(zonedDateTime->timeZone(), zonedDateTime->exactTime());
+
+    return JSValue::encode(TemporalPlainDateTime::create(vm, globalObject->plainDateTimeStructure(), WTFMove(std::get<0>(isoDateTime)), WTFMove(std::get<1>(isoDateTime))));
 }
 
 // https://tc39.es/proposal-temporal/#sec-temporal.zoneddatetime.prototype.tostring
@@ -338,6 +461,34 @@ JSC_DEFINE_HOST_FUNCTION(temporalZonedDateTimePrototypeFuncValueOf, (JSGlobalObj
     return throwVMTypeError(globalObject, scope, "Temporal.ZonedDateTime.prototype.valueOf must not be called. To compare ZonedDateTime values, use Temporal.ZonedDateTime.compare"_s);
 }
 
+// https://tc39.es/proposal-temporal/#sec-temporal.zoneddatetime.prototype.startofday
+JSC_DEFINE_HOST_FUNCTION(temporalZonedDateTimePrototypeFuncStartOfDay, (JSGlobalObject* globalObject, CallFrame*))
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    return throwVMTypeError(globalObject, scope, "startOfDay not yet implemented"_s);
+}
+
+// https://tc39.es/proposal-temporal/#sec-temporal.zoneddatetime.prototype.gettimezonetransition
+JSC_DEFINE_HOST_FUNCTION(temporalZonedDateTimePrototypeFuncGetTimeZoneTransition, (JSGlobalObject* globalObject, CallFrame*))
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    return throwVMTypeError(globalObject, scope, "getTimeZoneTransition not yet implemented"_s);
+}
+
+// https://tc39.es/proposal-temporal/#sec-temporal.zoneddatetime.prototype.toinstant
+JSC_DEFINE_HOST_FUNCTION(temporalZonedDateTimePrototypeFuncToInstant, (JSGlobalObject* globalObject, CallFrame*))
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    return throwVMTypeError(globalObject, scope, "toInstant not yet implemented"_s);
+}
+
+
 JSC_DEFINE_CUSTOM_GETTER(temporalZonedDateTimePrototypeGetterCalendarId, (JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName))
 {
     VM& vm = globalObject->vm();
@@ -351,6 +502,16 @@ JSC_DEFINE_CUSTOM_GETTER(temporalZonedDateTimePrototypeGetterCalendarId, (JSGlob
     return JSValue::encode(jsString(vm, String::fromLatin1("iso8601")));
 }
 
+JSC_DEFINE_CUSTOM_GETTER(temporalZonedDateTimePrototypeGetterTimeZoneId, (JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName))
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    (void) thisValue;
+
+    return throwVMTypeError(globalObject, scope, "Temporal.ZonedDateTime.prototype.timeZoneId not yet implemented"_s);
+}
+
 JSC_DEFINE_CUSTOM_GETTER(temporalZonedDateTimePrototypeGetterYear, (JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName))
 {
     VM& vm = globalObject->vm();
@@ -360,8 +521,8 @@ JSC_DEFINE_CUSTOM_GETTER(temporalZonedDateTimePrototypeGetterYear, (JSGlobalObje
     if (!zonedDateTime)
         return throwVMTypeError(globalObject, scope, "Temporal.ZonedDateTime.prototype.year called on value that's not a ZonedDateTime"_s);
 
-    auto isoDateTime = getISODateTimeFor(zonedDateTime.timeZone(), zonedDateTime.exactTime());
-    return JSValue::encode(jsNumber(isoDateTime->year()));
+    auto isoDateTime = getISODateTimeFor(zonedDateTime->timeZone(), zonedDateTime->exactTime());
+    return JSValue::encode(jsNumber(std::get<0>(isoDateTime).year()));
 }
 
 JSC_DEFINE_CUSTOM_GETTER(temporalZonedDateTimePrototypeGetterMonth, (JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName))
@@ -373,8 +534,8 @@ JSC_DEFINE_CUSTOM_GETTER(temporalZonedDateTimePrototypeGetterMonth, (JSGlobalObj
     if (!zonedDateTime)
         return throwVMTypeError(globalObject, scope, "Temporal.ZonedDateTime.prototype.month called on value that's not a ZonedDateTime"_s);
 
-    auto isoDateTime = getISODateTimeFor(zonedDateTime.timeZone(), zonedDateTime.exactTime());
-    return JSValue::encode(jsNumber(isoDateTime->month()));
+    auto isoDateTime = getISODateTimeFor(zonedDateTime->timeZone(), zonedDateTime->exactTime());
+    return JSValue::encode(jsNumber(std::get<0>(isoDateTime).month()));
 }
 
 JSC_DEFINE_CUSTOM_GETTER(temporalZonedDateTimePrototypeGetterMonthCode, (JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName))
@@ -386,8 +547,8 @@ JSC_DEFINE_CUSTOM_GETTER(temporalZonedDateTimePrototypeGetterMonthCode, (JSGloba
     if (!zonedDateTime)
         return throwVMTypeError(globalObject, scope, "Temporal.ZonedDateTime.prototype.monthCode called on value that's not a ZonedDateTime"_s);
 
-    auto isoDateTime = getISODateTimeFor(zonedDateTime.timeZone(), zonedDateTime.exactTime());
-    return JSValue::encode(jsNontrivialString(vm, isoDateTime->monthCode()));
+    auto isoDateTime = getISODateTimeFor(zonedDateTime->timeZone(), zonedDateTime->exactTime());
+    return JSValue::encode(jsNontrivialString(vm, ISO8601::monthCode(std::get<0>(isoDateTime).month())));
 }
 
 JSC_DEFINE_CUSTOM_GETTER(temporalZonedDateTimePrototypeGetterDay, (JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName))
@@ -399,8 +560,8 @@ JSC_DEFINE_CUSTOM_GETTER(temporalZonedDateTimePrototypeGetterDay, (JSGlobalObjec
     if (!zonedDateTime)
         return throwVMTypeError(globalObject, scope, "Temporal.ZonedDateTime.prototype.day called on value that's not a ZonedDateTime"_s);
 
-    auto isoDateTime = getISODateTimeFor(zonedDateTime.timeZone(), zonedDateTime.exactTime());
-    return JSValue::encode(jsNumber(isoDateTime->day()));
+    auto isoDateTime = getISODateTimeFor(zonedDateTime->timeZone(), zonedDateTime->exactTime());
+    return JSValue::encode(jsNumber(std::get<0>(isoDateTime).day()));
 }
 
 JSC_DEFINE_CUSTOM_GETTER(temporalZonedDateTimePrototypeGetterHour, (JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName))
@@ -412,8 +573,8 @@ JSC_DEFINE_CUSTOM_GETTER(temporalZonedDateTimePrototypeGetterHour, (JSGlobalObje
     if (!zonedDateTime)
         return throwVMTypeError(globalObject, scope, "Temporal.ZonedDateTime.prototype.hour called on value that's not a ZonedDateTime"_s);
 
-    auto isoDateTime = getISODateTimeFor(zonedDateTime.timeZone(), zonedDateTime.exactTime());
-    return JSValue::encode(jsNumber(isoDateTime->hour()));
+    auto isoDateTime = getISODateTimeFor(zonedDateTime->timeZone(), zonedDateTime->exactTime());
+    return JSValue::encode(jsNumber(std::get<1>(isoDateTime).hour()));
 }
 
 JSC_DEFINE_CUSTOM_GETTER(temporalZonedDateTimePrototypeGetterMinute, (JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName))
@@ -425,8 +586,8 @@ JSC_DEFINE_CUSTOM_GETTER(temporalZonedDateTimePrototypeGetterMinute, (JSGlobalOb
     if (!zonedDateTime)
         return throwVMTypeError(globalObject, scope, "Temporal.ZonedDateTime.prototype.minute called on value that's not a ZonedDateTime"_s);
 
-    auto isoDateTime = getISODateTimeFor(zonedDateTime.timeZone(), zonedDateTime.exactTime());
-    return JSValue::encode(jsNumber(isoDateTime->minute()));
+    auto isoDateTime = getISODateTimeFor(zonedDateTime->timeZone(), zonedDateTime->exactTime());
+    return JSValue::encode(jsNumber(std::get<1>(isoDateTime).minute()));
 }
 
 JSC_DEFINE_CUSTOM_GETTER(temporalZonedDateTimePrototypeGetterSecond, (JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName))
@@ -438,8 +599,8 @@ JSC_DEFINE_CUSTOM_GETTER(temporalZonedDateTimePrototypeGetterSecond, (JSGlobalOb
     if (!zonedDateTime)
         return throwVMTypeError(globalObject, scope, "Temporal.ZonedDateTime.prototype.second called on value that's not a ZonedDateTime"_s);
 
-    auto isoDateTime = getISODateTimeFor(zonedDateTime.timeZone(), zonedDateTime.exactTime());
-    return JSValue::encode(jsNumber(isoDateTime->second()));
+    auto isoDateTime = getISODateTimeFor(zonedDateTime->timeZone(), zonedDateTime->exactTime());
+    return JSValue::encode(jsNumber(std::get<1>(isoDateTime).second()));
 }
 
 JSC_DEFINE_CUSTOM_GETTER(temporalZonedDateTimePrototypeGetterMillisecond, (JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName))
@@ -451,8 +612,8 @@ JSC_DEFINE_CUSTOM_GETTER(temporalZonedDateTimePrototypeGetterMillisecond, (JSGlo
     if (!zonedDateTime)
         return throwVMTypeError(globalObject, scope, "Temporal.ZonedDateTime.prototype.millisecond called on value that's not a ZonedDateTime"_s);
 
-    auto isoDateTime = getISODateTimeFor(zonedDateTime.timeZone(), zonedDateTime.exactTime());
-    return JSValue::encode(jsNumber(isoDateTime->millisecond()));
+    auto isoDateTime = getISODateTimeFor(zonedDateTime->timeZone(), zonedDateTime->exactTime());
+    return JSValue::encode(jsNumber(std::get<1>(isoDateTime).millisecond()));
 }
 
 JSC_DEFINE_CUSTOM_GETTER(temporalZonedDateTimePrototypeGetterMicrosecond, (JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName))
@@ -464,8 +625,8 @@ JSC_DEFINE_CUSTOM_GETTER(temporalZonedDateTimePrototypeGetterMicrosecond, (JSGlo
     if (!zonedDateTime)
         return throwVMTypeError(globalObject, scope, "Temporal.ZonedDateTime.prototype.microsecond called on value that's not a ZonedDateTime"_s);
 
-    auto isoDateTime = getISODateTimeFor(zonedDateTime.timeZone(), zonedDateTime.exactTime());
-    return JSValue::encode(jsNumber(isoDateTime->microsecond()));
+    auto isoDateTime = getISODateTimeFor(zonedDateTime->timeZone(), zonedDateTime->exactTime());
+    return JSValue::encode(jsNumber(std::get<1>(isoDateTime).microsecond()));
 }
 
 JSC_DEFINE_CUSTOM_GETTER(temporalZonedDateTimePrototypeGetterNanosecond, (JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName))
@@ -477,8 +638,8 @@ JSC_DEFINE_CUSTOM_GETTER(temporalZonedDateTimePrototypeGetterNanosecond, (JSGlob
     if (!zonedDateTime)
         return throwVMTypeError(globalObject, scope, "Temporal.ZonedDateTime.prototype.nanosecond called on value that's not a ZonedDateTime"_s);
 
-    auto isoDateTime = getISODateTimeFor(zonedDateTime.timeZone(), zonedDateTime.exactTime());
-    return JSValue::encode(jsNumber(isoDateTime->nanosecond()));
+    auto isoDateTime = getISODateTimeFor(zonedDateTime->timeZone(), zonedDateTime->exactTime());
+    return JSValue::encode(jsNumber(std::get<1>(isoDateTime).nanosecond()));
 }
 
 JSC_DEFINE_CUSTOM_GETTER(temporalZonedDateTimePrototypeGetterDayOfWeek, (JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName))
@@ -490,8 +651,8 @@ JSC_DEFINE_CUSTOM_GETTER(temporalZonedDateTimePrototypeGetterDayOfWeek, (JSGloba
     if (!zonedDateTime)
         return throwVMTypeError(globalObject, scope, "Temporal.ZonedDateTime.prototype.dayOfWeek called on value that's not a ZonedDateTime"_s);
 
-    auto isoDateTime = getISODateTimeFor(zonedDateTime.timeZone(), zonedDateTime.exactTime());
-    return JSValue::encode(jsNumber(isoDateTime->dayOfWeek()));
+    auto isoDateTime = getISODateTimeFor(zonedDateTime->timeZone(), zonedDateTime->exactTime());
+    return JSValue::encode(jsNumber(ISO8601::dayOfWeek(std::get<0>(isoDateTime))));
 }
 
 JSC_DEFINE_CUSTOM_GETTER(temporalZonedDateTimePrototypeGetterDayOfYear, (JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName))
@@ -503,8 +664,8 @@ JSC_DEFINE_CUSTOM_GETTER(temporalZonedDateTimePrototypeGetterDayOfYear, (JSGloba
     if (!zonedDateTime)
         return throwVMTypeError(globalObject, scope, "Temporal.ZonedDateTime.prototype.dayOfYear called on value that's not a ZonedDateTime"_s);
 
-    auto isoDateTime = getISODateTimeFor(zonedDateTime.timeZone(), zonedDateTime.exactTime());
-    return JSValue::encode(jsNumber(isoDateTime->dayOfYear()));
+    auto isoDateTime = getISODateTimeFor(zonedDateTime->timeZone(), zonedDateTime->exactTime());
+    return JSValue::encode(jsNumber(ISO8601::dayOfYear(std::get<0>(isoDateTime))));
 }
 
 JSC_DEFINE_CUSTOM_GETTER(temporalZonedDateTimePrototypeGetterWeekOfYear, (JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName))
@@ -516,8 +677,21 @@ JSC_DEFINE_CUSTOM_GETTER(temporalZonedDateTimePrototypeGetterWeekOfYear, (JSGlob
     if (!zonedDateTime)
         return throwVMTypeError(globalObject, scope, "Temporal.ZonedDateTime.prototype.weekOfYear called on value that's not a ZonedDateTime"_s);
 
-    auto isoDateTime = getISODateTimeFor(zonedDateTime.timeZone(), zonedDateTime.exactTime());
-    return JSValue::encode(jsNumber(isoDateTime->weekOfYear()));
+    auto isoDateTime = getISODateTimeFor(zonedDateTime->timeZone(), zonedDateTime->exactTime());
+    return JSValue::encode(jsNumber(ISO8601::weekOfYear(std::get<0>(isoDateTime))));
+}
+
+JSC_DEFINE_CUSTOM_GETTER(temporalZonedDateTimePrototypeGetterYearOfWeek, (JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName))
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    auto* zonedDateTime = jsDynamicCast<TemporalZonedDateTime*>(JSValue::decode(thisValue));
+    if (!zonedDateTime)
+        return throwVMTypeError(globalObject, scope, "Temporal.ZonedDateTime.prototype.weekOfYear called on value that's not a ZonedDateTime"_s);
+
+    auto isoDateTime = getISODateTimeFor(zonedDateTime->timeZone(), zonedDateTime->exactTime());
+    return JSValue::encode(jsNumber(ISO8601::weekOfYear(std::get<0>(isoDateTime))));
 }
 
 JSC_DEFINE_CUSTOM_GETTER(temporalZonedDateTimePrototypeGetterDaysInWeek, (JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName))
@@ -541,9 +715,10 @@ JSC_DEFINE_CUSTOM_GETTER(temporalZonedDateTimePrototypeGetterDaysInMonth, (JSGlo
     if (!zonedDateTime)
         return throwVMTypeError(globalObject, scope, "Temporal.ZonedDateTime.prototype.daysInMonth called on value that's not a ZonedDateTime"_s);
 
-    auto isoDateTime = getISODateTimeFor(zonedDateTime.timeZone(), zonedDateTime.exactTime());
+    auto isoDateTime = getISODateTimeFor(zonedDateTime->timeZone(), zonedDateTime->exactTime());
+    auto isoDate = std::get<0>(isoDateTime);
 
-    return JSValue::encode(jsNumber(ISO8601::daysInMonth(isoDateTime->year(), isoDateTime->month())));
+    return JSValue::encode(jsNumber(ISO8601::daysInMonth(isoDate.year(), isoDate.month())));
 }
 
 JSC_DEFINE_CUSTOM_GETTER(temporalZonedDateTimePrototypeGetterDaysInYear, (JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName))
@@ -555,8 +730,8 @@ JSC_DEFINE_CUSTOM_GETTER(temporalZonedDateTimePrototypeGetterDaysInYear, (JSGlob
     if (!zonedDateTime)
         return throwVMTypeError(globalObject, scope, "Temporal.ZonedDateTime.prototype.daysInYear called on value that's not a ZonedDateTime"_s);
 
-    auto isoDateTime = getISODateTimeFor(zonedDateTime.timeZone(), zonedDateTime.exactTime());
-    return JSValue::encode(jsNumber(isLeapYear(isoDateTime->year()) ? 366 : 365));
+    auto isoDateTime = getISODateTimeFor(zonedDateTime->timeZone(), zonedDateTime->exactTime());
+    return JSValue::encode(jsNumber(isLeapYear(std::get<0>(isoDateTime).year()) ? 366 : 365));
 }
 
 JSC_DEFINE_CUSTOM_GETTER(temporalZonedDateTimePrototypeGetterMonthsInYear, (JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName))
@@ -580,9 +755,9 @@ JSC_DEFINE_CUSTOM_GETTER(temporalZonedDateTimePrototypeGetterInLeapYear, (JSGlob
     if (!zonedDateTime)
         return throwVMTypeError(globalObject, scope, "Temporal.ZonedDateTime.prototype.inLeapYear called on value that's not a ZonedDateTime"_s);
 
-    auto isoDateTime = getISODateTimeFor(zonedDateTime.timeZone(), zonedDateTime.exactTime());
+    auto isoDateTime = getISODateTimeFor(zonedDateTime->timeZone(), zonedDateTime->exactTime());
 
-    return JSValue::encode(jsBoolean(isLeapYear(isoDateTime->year())));
+    return JSValue::encode(jsBoolean(isLeapYear(std::get<0>(isoDateTime).year())));
 }
 
 } // namespace JSC
