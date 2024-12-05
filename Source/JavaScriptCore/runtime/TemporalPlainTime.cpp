@@ -396,8 +396,10 @@ TemporalPlainTime* TemporalPlainTime::from(JSGlobalObject* globalObject, JSValue
 
         if (itemValue.inherits<TemporalPlainDateTime>()) {
             // Validate overflow -- see step 2(a)(ii) of ToTemporalTime
-            if (options)
+            if (options) {
                 toTemporalOverflow(globalObject, options.value());
+                RETURN_IF_EXCEPTION(scope, { });
+            }
             return TemporalPlainTime::create(vm, globalObject->plainTimeStructure(), jsCast<TemporalPlainDateTime*>(itemValue)->plainTime());
         }
 
@@ -428,8 +430,10 @@ TemporalPlainTime* TemporalPlainTime::from(JSGlobalObject* globalObject, JSValue
     auto string = itemValue.toWTFString(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
     // Validate overflow -- see step 3(g) of ToTemporalTime
-    if (options)
+    if (options) {
         toTemporalOverflow(globalObject, options.value());
+        RETURN_IF_EXCEPTION(scope, { });
+    }
 
     auto time = ISO8601::parseCalendarTime(string);
     if (time) {
@@ -502,6 +506,7 @@ ISO8601::PlainTime TemporalPlainTime::addDurationToTime(JSGlobalObject* globalOb
     if (!isAdd)
         duration = -duration;
     auto internalDuration = TemporalDuration::toInternalDuration(globalObject, duration);
+    RETURN_IF_EXCEPTION(scope, { });
     auto d = addTime(temporalTime->plainTime(), internalDuration.time());
     return ISO8601::PlainTime(d.hours(), d.minutes(), d.seconds(), d.milliseconds(),
         d.microseconds(), d.nanoseconds());

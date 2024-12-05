@@ -463,7 +463,7 @@ ISO8601::Duration TemporalDuration::add(JSGlobalObject* globalObject, JSValue ot
         return { };
     }
 
-    return addDurations(globalObject, true, other, largestUnit);
+    RELEASE_AND_RETURN(scope, addDurations(globalObject, true, other, largestUnit));
 }
 
 // https://tc39.es/proposal-temporal/#sec-temporal-adddurations
@@ -478,6 +478,7 @@ ISO8601::Duration TemporalDuration::add(JSGlobalObject* globalObject, JSValue ot
 
     auto d1 = toInternalDurationRecordWith24HourDays(globalObject, m_duration);
     auto d2 = toInternalDurationRecordWith24HourDays(globalObject, other);
+    RETURN_IF_EXCEPTION(scope, { });
     auto timeResult = d1.time() + d2.time();
     if (absInt128(timeResult) > ISO8601::InternalDuration::maxTimeDuration) {
         throwRangeError(globalObject, scope, "Sum of durations exceeds maximum time duration"_s);
@@ -490,7 +491,33 @@ ISO8601::Duration TemporalDuration::add(JSGlobalObject* globalObject, JSValue ot
     return temporalDurationFromInternal(result, largestUnit);
 }
 
-// https://tc39.es/proposal-temporal/#sec-temporal-tointernaldurationrecord
+Int128 TemporalDuration::timeDurationFromComponents(double hours, double minutes, double seconds, double milliseconds, double microseconds, double nanoseconds)
+{
+    Int128 min = ((Int128) minutes) + ((Int128) hours) * 60;
+    Int128 sec = ((Int128) seconds) + min * 60;
+    Int128 millis = ((Int128) milliseconds) + sec * 1000;
+    Int128 micros = ((Int128) microseconds) + millis * 1000;
+    Int128 nanos = ((Int128) nanoseconds) + micros * 1000;
+    ASSERT(absInt128(nanos) <= ISO8601::InternalDuration::maxTimeDuration);
+    return nanos;
+}
+
+ISO8601::InternalDuration TemporalDuration::toInternalDurationRecordWith24HourDays(JSGlobalObject* globalObject, ISO8601::Duration d)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    // 1. Let timeDuration be TimeDurationFromComponents(duration.[[Hours]], duration.[[Minutes]], duration.[[Seconds]], duration.[[Milliseconds]], duration.[[Microseconds]], duration.[[Nanoseconds]]).
+    Int128 timeDuration = timeDurationFromComponents(d.hours(), d.minutes(), d.seconds(), d.milliseconds(), d.microseconds(), d.nanoseconds());
+    // 2. Set timeDuration to ! Add24HourDaysToTimeDuration(timeDuration, duration.[[Days]]).
+    timeDuration = add24HourDaysToTimeDuration(globalObject, timeDuration, d.days());
+    RETURN_IF_EXCEPTION(scope, { });
+    // 3. Let dateDuration be ! CreateDateDurationRecord(duration.[[Years]], duration.[[Months]], duration.[[Weeks]], 0).
+    ISO8601::Duration dateDuration = ISO8601::Duration { d.years(), d.months(), d.weeks(), 0, 0, 0, 0, 0, 0, 0 };
+    // 4. Return ! CombineDateAndTimeDuration(dateDuration, timeDuration).
+    RELEASE_AND_RETURN(scope, ISO8601::InternalDuration::combineDateAndTimeDuration(globalObject, dateDuration, timeDuration));
+}
+
 ISO8601::InternalDuration TemporalDuration::toInternalDuration(JSGlobalObject* globalObject, ISO8601::Duration d)
 {
     auto timeDuration = timeDurationFromComponents(d.hours(), d.minutes(), d.seconds(), d.milliseconds(), d.microseconds(), d.nanoseconds());
@@ -599,7 +626,7 @@ ISO8601::Duration TemporalDuration::subtract(JSGlobalObject* globalObject, JSVal
         return { };
     }
 
-    return addDurations(globalObject, false, other, largestUnit);
+    RELEASE_AND_RETURN(scope, addDurations(globalObject, false, other, largestUnit));
 }
 
 static void appendInteger(JSGlobalObject* globalObject, StringBuilder& builder, double value)
@@ -626,6 +653,9 @@ static void appendInteger(JSGlobalObject* globalObject, StringBuilder& builder, 
 
 static double totalTimeDuration(JSGlobalObject* globalObject, Int128 timeDuration, TemporalUnit unit)
 {
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     Int128 divisor = lengthInNanoseconds(unit);
     Int128 quotient = timeDuration / divisor;
     Int128 remainder = timeDuration % divisor;
@@ -641,10 +671,12 @@ static double totalTimeDuration(JSGlobalObject* globalObject, Int128 timeDuratio
         digit = (int32_t) (remainder / divisor);
         remainder = remainder % divisor;
         appendInteger(globalObject, decimalDigits, std::abs(digit));
+        RETURN_IF_EXCEPTION(scope, { });
         size++;
     }
     StringBuilder result;
     appendInteger(globalObject, result, (double) absInt128(quotient));
+    RETURN_IF_EXCEPTION(scope, { });
     result.append('.');
     result.append(decimalDigits.toString());
     // NOTE: if result.toString() == 9007199254740992.999,
@@ -816,7 +848,9 @@ static NudgeResult nudgeToDayOrTime(JSGlobalObject* globalObject, ISO8601::Inter
         unitLength * (Int128) std::trunc(increment), roundingMode);
     Int128 diffTime = roundedTime - timeDuration;
     double wholeDays = totalTimeDuration(globalObject, timeDuration, TemporalUnit::Day);
+    RETURN_IF_EXCEPTION(scope, { });
     double roundedWholeDays = totalTimeDuration(globalObject, roundedTime, TemporalUnit::Day);
+    RETURN_IF_EXCEPTION(scope, { });
     auto dayDelta = roundedWholeDays - wholeDays;
     auto dayDeltaSign = dayDelta < 0 ? -1 : dayDelta > 0 ? 1 : 0;
     bool didExpandDays = dayDeltaSign == (timeDuration < 0 ? -1 : timeDuration > 0 ? 1 : 0);
@@ -828,6 +862,7 @@ static NudgeResult nudgeToDayOrTime(JSGlobalObject* globalObject, ISO8601::Inter
         remainder = roundedTime + TemporalDuration::timeDurationFromComponents(-roundedWholeDays * WTF::hoursPerDay, 0, 0, 0, 0, 0);
     }
     auto dateDuration = TemporalDuration::adjustDateDurationRecord(globalObject, duration.dateDuration(), days, std::nullopt, std::nullopt);
+    RETURN_IF_EXCEPTION(scope, { });
     auto resultDuration = ISO8601::InternalDuration::combineDateAndTimeDuration(globalObject, dateDuration, remainder);
     RETURN_IF_EXCEPTION(scope, { });
     return NudgeResult(resultDuration, nudgedEpochNs, didExpandDays);
@@ -976,14 +1011,15 @@ ISO8601::InternalDuration TemporalDuration::round(JSGlobalObject* globalObject, 
     if (unit == TemporalUnit::Day) {
         // 31a.
         double fractionalDays = totalTimeDuration(globalObject, internalDuration.time(), TemporalUnit::Day);
+        RETURN_IF_EXCEPTION(scope, { });
         // 31b.
         double days = roundNumberToIncrementDouble(fractionalDays, increment, mode);
         // 31c.
         // 31d.
-        return ISO8601::InternalDuration::combineDateAndTimeDuration(
+        RELEASE_AND_RETURN(scope, ISO8601::InternalDuration::combineDateAndTimeDuration(
             globalObject,
             ISO8601::Duration { 0, 0, 0, (double) days, 0, 0, 0, 0, 0, 0 },
-            0);
+            0));
     } else  {
         // 32a.
         std::optional<Int128> timeDuration =
@@ -993,7 +1029,8 @@ ISO8601::InternalDuration TemporalDuration::round(JSGlobalObject* globalObject, 
             return { };
         }
         // 32b.
-        return ISO8601::InternalDuration::combineDateAndTimeDuration(globalObject, ISO8601::Duration(), timeDuration.value());
+        RELEASE_AND_RETURN(scope, ISO8601::InternalDuration::combineDateAndTimeDuration(globalObject,
+            ISO8601::Duration(), timeDuration.value()));
     }
 }
 
@@ -1099,7 +1136,7 @@ double TemporalDuration::total(JSGlobalObject* globalObject, JSValue optionsValu
 
     auto internalDuration = toInternalDurationRecordWith24HourDays(globalObject, m_duration);
     RETURN_IF_EXCEPTION(scope, { });
-    return totalTimeDuration(globalObject, internalDuration.time(), unit);
+    RELEASE_AND_RETURN(scope, totalTimeDuration(globalObject, internalDuration.time(), unit));
 }
 
 String TemporalDuration::toString(JSGlobalObject* globalObject, JSValue optionsValue) const
@@ -1136,6 +1173,7 @@ String TemporalDuration::toString(JSGlobalObject* globalObject, JSValue optionsV
         return { };
     }
     internalDuration = ISO8601::InternalDuration::combineDateAndTimeDuration(globalObject, internalDuration.dateDuration(), timeDuration.value());
+    RETURN_IF_EXCEPTION(scope, { });
     auto roundedLargestUnit = std::min(largestSubduration(m_duration), TemporalUnit::Second);
     auto roundedDuration = temporalDurationFromInternal(internalDuration, roundedLargestUnit);
     RELEASE_AND_RETURN(scope, toString(globalObject, roundedDuration, data.precision));
@@ -1223,6 +1261,7 @@ String TemporalDuration::toString(JSGlobalObject* globalObject, const ISO8601::D
         double secondsPart = std::abs(std::trunc((double) (secondsDuration / 1000000000)));
         double subSecondsPart = std::abs((double) (secondsDuration % 1000000000));
         appendInteger(globalObject, builder, secondsPart);
+        RETURN_IF_EXCEPTION(scope, { });
         formatSecondsStringFraction(builder, subSecondsPart, precision);
         builder.append('S');
     }

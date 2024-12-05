@@ -786,8 +786,12 @@ TemporalOverflow toTemporalOverflow(JSGlobalObject* globalObject, JSObject* opti
 
 TemporalOverflow toTemporalOverflow(JSGlobalObject* globalObject, JSValue val)
 {
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     JSObject* options = intlGetOptionsObject(globalObject, val);
-    return toTemporalOverflow(globalObject, options);
+    RETURN_IF_EXCEPTION(scope, { });
+    RELEASE_AND_RETURN(scope, toTemporalOverflow(globalObject, options));
 }
 
 String toTemporalCalendarName(JSGlobalObject* globalObject, JSObject* options)
