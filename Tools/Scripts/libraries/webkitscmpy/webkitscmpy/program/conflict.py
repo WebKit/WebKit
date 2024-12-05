@@ -83,7 +83,6 @@ class Conflict(Command):
         # This is to remove any extra inputs like rdar://problem/
         radar_id = ''.join(i for i in args.radar if i.isdigit())
         radar_obj = Tracker.from_string(f'rdar://{radar_id}')
-        expected_branch = 'integration/conflict/{}'.format(radar_obj.id)
         conflict_pr = None
         source_remote = None
         for source_remote in repository.source_remotes():
@@ -93,7 +92,7 @@ class Conflict(Command):
                 break
 
         if not conflict_pr:
-            sys.stderr.write('No conflict pull request found with branch {}\n'.format(expected_branch))
+            sys.stderr.write(f'No conflict pull requests found for {radar_obj.link}')
             return 1
 
         full_branch = '{}:{}'.format(conflict_pr._metadata['full_name'], conflict_pr.head)
