@@ -516,43 +516,6 @@ Total errors found: 8 in 48 files''')
         return self.runStep()
 
 
-class TestApplyWatchList(BuildStepMixinAdditions, unittest.TestCase):
-    def setUp(self):
-        self.longMessage = True
-        return self.setUpBuildStep()
-
-    def tearDown(self):
-        return self.tearDownBuildStep()
-
-    def test_success(self):
-        self.setupStep(ApplyWatchList())
-        self.setProperty('bug_id', '1234')
-        self.expectRemoteCommands(
-            ExpectShell(workdir='wkdir',
-                        timeout=120,
-                        logEnviron=False,
-                        command=['python3', 'Tools/Scripts/webkit-patch', 'apply-watchlist-local', '1234'])
-            + ExpectShell.log('stdio', stdout='Result of watchlist: cc "" messages ""')
-            + 0,
-        )
-        self.expectOutcome(result=SUCCESS, state_string='Applied WatchList')
-        return self.runStep()
-
-    def test_failure(self):
-        self.setupStep(ApplyWatchList())
-        self.setProperty('bug_id', '1234')
-        self.expectRemoteCommands(
-            ExpectShell(workdir='wkdir',
-                        timeout=120,
-                        logEnviron=False,
-                        command=['python3', 'Tools/Scripts/webkit-patch', 'apply-watchlist-local', '1234'])
-            + ExpectShell.log('stdio', stdout='Unexpected failure')
-            + 2,
-        )
-        self.expectOutcome(result=FAILURE, state_string='Failed to apply watchlist')
-        return self.runStep()
-
-
 class TestRunBindingsTests(BuildStepMixinAdditions, unittest.TestCase):
     def setUp(self):
         self.longMessage = True

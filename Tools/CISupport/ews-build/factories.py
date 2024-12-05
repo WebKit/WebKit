@@ -72,22 +72,6 @@ class StyleFactory(factory.BuildFactory):
         self.addStep(CheckStyle())
 
 
-class WatchListFactory(factory.BuildFactory):
-    def __init__(self, platform, configuration=None, architectures=None, triggers=None, remotes=None, additionalArguments=None, **kwargs):
-        factory.BuildFactory.__init__(self)
-        self.addStep(ConfigureBuild(platform=platform, configuration=configuration, architectures=architectures, buildOnly=False, triggers=triggers, remotes=remotes, additionalArguments=additionalArguments))
-        self.addStep(ValidateChange())
-        self.addStep(PrintConfiguration())
-        self.addStep(CleanGitRepo())
-        self.addStep(CheckOutSource())
-        self.addStep(FetchBranches())
-        self.addStep(UpdateWorkingDirectory())
-        self.addStep(ShowIdentifier())
-        self.addStep(ApplyPatch())
-        self.addStep(CheckOutPullRequest())
-        self.addStep(ApplyWatchList())
-
-
 class SaferCPPStaticAnalyzerFactory(factory.BuildFactory):
     findModifiedLayoutTests = False
 

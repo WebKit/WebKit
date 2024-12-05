@@ -200,11 +200,6 @@
       "workernames": ["ews151", "ews253", "webkit-misc"]
     },
     {
-      "name": "Apply-WatchList-EWS", "shortname": "watchlist",
-      "factory": "WatchListFactory", "platform": "*",
-      "workernames": ["webkit-misc"]
-    },
-    {
       "name": "GTK-Build-EWS", "shortname": "gtk", "icon": "buildOnly",
       "factory": "GTKBuildFactory", "platform": "gtk",
       "configuration": "release", "architectures": ["x86_64"],
@@ -481,7 +476,7 @@
     {
       "type": "Try_Userpass", "name": "try", "port": 5555,
       "builderNames": [
-            "Apply-WatchList-EWS", "Bindings-Tests-EWS", "GTK-Build-EWS", "iOS-17-Build-EWS", "iOS-17-Simulator-Build-EWS",
+            "Bindings-Tests-EWS", "GTK-Build-EWS", "iOS-17-Build-EWS", "iOS-17-Simulator-Build-EWS",
             "JSC-ARMv7-32bits-Build-EWS", "JSC-Tests-EWS", "JSC-Tests-arm64-EWS",
             "macOS-Sequoia-Debug-Build-EWS", "macOS-Ventura-Release-Build-EWS", "macOS-Safer-CPP-Checks-EWS",
             "Services-EWS", "Style-EWS", "tvOS-18-Build-EWS", "tvOS-18-Simulator-Build-EWS", "visionOS-2-Build-EWS", "visionOS-2-Simulator-Build-EWS",
