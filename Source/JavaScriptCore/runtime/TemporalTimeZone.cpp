@@ -170,7 +170,7 @@ JSObject* TemporalTimeZone::from(JSGlobalObject* globalObject, JSValue timeZoneL
     auto timeZoneString = timeZoneLike.toWTFString(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
 
-/*
+
     std::optional<int64_t> utcOffset = ISO8601::parseUTCOffset(timeZoneString);
     if (utcOffset)
         return TemporalTimeZone::createFromUTCOffset(vm, globalObject->timeZoneStructure(), utcOffset.value());
@@ -178,7 +178,7 @@ JSObject* TemporalTimeZone::from(JSGlobalObject* globalObject, JSValue timeZoneL
     std::optional<TimeZoneID> identifier = ISO8601::parseTimeZoneName(timeZoneString);
     if (identifier)
         return TemporalTimeZone::createFromID(vm, globalObject->timeZoneStructure(), identifier.value());
-*/
+
     std::optional<ISO8601::TimeZone> utcOffsetFromInstant = parseTemporalTimeZoneString(timeZoneString);
     if (utcOffsetFromInstant) {
         if (std::holds_alternative<int64_t>(utcOffsetFromInstant.value()))
