@@ -86,6 +86,17 @@ void TemporalZonedDateTime::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 
 DEFINE_VISIT_CHILDREN(TemporalZonedDateTime);
 
+// https://tc39.es/proposal-temporal/#sec-temporal-createtemporalzoneddatetime
+TemporalZonedDateTime* TemporalZonedDateTime::tryCreateIfValid(JSGlobalObject* globalObject, Structure* structure, ISO8601::ExactTime&& epochNanoseconds, ISO8601::TimeZone&& timeZone)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    ASSERT(epochNanoseconds.isValid());
+
+    return TemporalZonedDateTime::create(vm, structure, WTFMove(epochNanoseconds), WTFMove(timeZone));
+}
+
 // https://tc39.es/proposal-temporal/#sec-validatetemporalroundingincrement
 static bool validateTemporalRoundingIncrement(unsigned increment, unsigned dividend, bool inclusive)
 {
@@ -602,6 +613,15 @@ TemporalZonedDateTime* TemporalZonedDateTime::round(JSGlobalObject* globalObject
         WTFMove(epochNanoseconds), WTFMove(timeZone));
 }
 
+TemporalZonedDateTime* TemporalZonedDateTime::with(JSGlobalObject* globalObject, JSObject*, JSValue)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    throwRangeError(globalObject, scope, "Temporal.ZonedDateTime.with not yet implemented"_s);
+    return nullptr;
+}
+
 // https://tc39.es/proposal-temporal/#sec-temporal.zoneddatetime.prototype.tostring
 String TemporalZonedDateTime::toString(JSGlobalObject* globalObject, JSValue optionsValue) const
 {
@@ -679,6 +699,8 @@ static PropertyName propertyName(VM& vm, FieldName property)
         return vm.propertyNames->offset;
     case FieldName:: TimeZone:
         return vm.propertyNames->timeZone;
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
     }
 }
 
@@ -826,7 +848,7 @@ prepareCalendarFields(JSGlobalObject* globalObject, TemporalCalendar* calendar, 
     (void) calendar; // TODO
 
     auto fieldNames = calendarFieldNames;
-    fieldNames.append(nonCalendarFieldNames);
+    fieldNames.appendVector(nonCalendarFieldNames);
 // TODO: non-iso8601 calendars
 //    auto extraFieldNames = calendarExtraFields(calendar, calendarFieldNames);
 //    fieldNames.append(extraFieldNames);

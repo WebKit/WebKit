@@ -571,7 +571,7 @@ static std::optional<std::variant<Vector<LChar>, int64_t>> parseTimeZoneAnnotati
 {
     // https://tc39.es/proposal-temporal/#prod-TimeZoneAnnotation
     // TimeZoneAnnotation :
-    //     [ AnnotationCriticalFlag_opt TimeZoneIdentifier ]
+    //     [ AnnotationCriticalFlag[opt] TimeZoneIdentifier ]
     // TimeZoneIdentifier :
     //     UTCOffset_[~SubMinutePrecision]
     //     TimeZoneIANAName
@@ -728,7 +728,9 @@ static std::optional<TimeZoneRecord> parseTimeZone(StringParsingBuffer<Character
             auto timeZone = parseTimeZoneAnnotation(buffer);
             if (!timeZone)
                 return std::nullopt;
-            return TimeZoneRecord { true, std::nullopt, WTFMove(timeZone.value()) };
+            if (std::holds_alternative<int64_t>(timeZone.value()))
+                return TimeZoneRecord { true, std::get<int64_t>(timeZone.value()), std::nullopt };
+            return TimeZoneRecord { true, std::nullopt, WTFMove(std::get<Vector<LChar>>(timeZone.value())) };
         }
         return TimeZoneRecord { true, std::nullopt, { } };
     }
@@ -743,7 +745,8 @@ static std::optional<TimeZoneRecord> parseTimeZone(StringParsingBuffer<Character
             auto timeZone = parseTimeZoneAnnotation(buffer);
             if (!timeZone)
                 return std::nullopt;
-            return TimeZoneRecord { false, offset.value(), WTFMove(timeZone.value()) };
+            ASSERT(std::holds_alternative<Vector<LChar>>(timeZone.value()));
+            return TimeZoneRecord { false, offset.value(), WTFMove(std::get<Vector<LChar>>(timeZone.value())) };
         }
         return TimeZoneRecord { false, offset.value(), { } };
     }
@@ -753,7 +756,9 @@ static std::optional<TimeZoneRecord> parseTimeZone(StringParsingBuffer<Character
         auto timeZone = parseTimeZoneAnnotation(buffer);
         if (!timeZone)
             return std::nullopt;
-        return TimeZoneRecord { false, std::nullopt, WTFMove(timeZone.value()) };
+        if (std::holds_alternative<int64_t>(timeZone.value()))
+            return TimeZoneRecord { false, std::get<int64_t>(timeZone.value()), std::nullopt };
+        return TimeZoneRecord { false, std::nullopt, WTFMove(std::get<Vector<LChar>>(timeZone.value())) };
     }
     default:
         return std::nullopt;
@@ -1457,6 +1462,13 @@ String temporalMonthDayToString(PlainMonthDay plainMonthDay, StringView calendar
     }
 
     return makeString(pad('0', 2, plainMonthDay.month()), '-', pad('0', 2, plainMonthDay.day()));
+}
+
+String temporalZonedDateTimeToString(ExactTime, TimeZone,
+  PrecisionData, TemporalShowCalendar, TemporalShowTimeZone, TemporalShowOffset,
+  unsigned, TemporalUnit, RoundingMode) {
+    // TODO
+    return ""_s;
 }
 
 String monthCode(uint32_t month)

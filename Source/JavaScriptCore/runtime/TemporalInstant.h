@@ -49,6 +49,7 @@ public:
     static TemporalInstant* tryCreateIfValid(JSGlobalObject*, ISO8601::ExactTime, Structure* = nullptr);
     static TemporalInstant* tryCreateIfValid(JSGlobalObject*, JSValue, Structure* = nullptr);
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
+    static ISO8601::ExactTime exactTimeFromJSValue(JSGlobalObject*, JSValue);
 
     DECLARE_INFO;
 
@@ -57,7 +58,8 @@ public:
     static TemporalInstant* fromEpochMilliseconds(JSGlobalObject*, JSValue);
     static TemporalInstant* fromEpochNanoseconds(JSGlobalObject*, JSValue);
     static JSValue compare(JSGlobalObject*, JSValue, JSValue);
-
+    static ISO8601::ExactTime addInstant(JSGlobalObject*, ISO8601::ExactTime, Int128);
+    
     ISO8601::ExactTime exactTime() const { return m_exactTime.get(); }
 
     ISO8601::Duration difference(JSGlobalObject*, TemporalInstant*, JSValue options) const;

@@ -28,6 +28,7 @@
 
 #include "IntlObjectInlines.h"
 #include "JSCInlines.h"
+#include "TemporalInstant.h"
 #include "TemporalZonedDateTime.h"
 #include "TemporalZonedDateTimePrototype.h"
 
@@ -92,7 +93,14 @@ JSC_DEFINE_HOST_FUNCTION(constructTemporalZonedDateTime, (JSGlobalObject* global
     if (callFrame->argumentCount() < 2)
         return throwVMTypeError(globalObject, scope, "Temporal.ZonedDateTime requires epochNanoseconds and timeZone arguments"_s);
 
-    RELEASE_AND_RETURN(scope, JSValue::encode(TemporalZonedDateTime::tryCreateIfValid(globalObject, structure, callFrame->uncheckedArgument(0), callFrame->uncheckedArgument(1))));
+    ISO8601::ExactTime exactTime = TemporalInstant::exactTimeFromJSValue(
+        globalObject, callFrame->uncheckedArgument(0));
+
+    auto timeZoneValue = callFrame->argument(1);
+    if (timeZoneValue.inherits<TemporalTimeZone>()) {
+        RELEASE_AND_RETURN(scope, JSValue::encode(TemporalZonedDateTime::tryCreateIfValid(globalObject, structure, WTFMove(exactTime), jsCast<TemporalTimeZone*>(timeZoneValue)->timeZone())));
+    }
+    return throwVMRangeError(globalObject, scope, "Second argument to Temporal.ZonedDateTime constructor must be a TimeZone"_s);
 }
 
 JSC_DEFINE_HOST_FUNCTION(callTemporalZonedDateTime, (JSGlobalObject* globalObject, CallFrame*))
