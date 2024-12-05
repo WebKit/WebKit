@@ -280,6 +280,7 @@ std::array<std::optional<double>, numberOfTemporalPlainDateUnits> TemporalPlainD
     }
 
     auto [year, month] = toYearMonth(globalObject, temporalDateLike);
+    RETURN_IF_EXCEPTION(scope, { });
 
     return { year, month, day };
 }
@@ -348,6 +349,7 @@ ISO8601::Duration TemporalPlainDate::differenceTemporalPlainDate(JSGlobalObject*
         TemporalDuration::roundRelativeDuration(
             globalObject, duration, destEpochNs, isoDate, largestUnit,
             increment, smallestUnit, roundingMode);
+        RETURN_IF_EXCEPTION(scope, { });
     }
     // Step 9.
     auto result = TemporalDuration::temporalDurationFromInternal(duration, TemporalUnit::Day);
@@ -419,7 +421,7 @@ ISO8601::Duration TemporalPlainDate::until(JSGlobalObject* globalObject, Tempora
     auto [smallestUnit, largestUnit, roundingMode, increment] = extractDifferenceOptions(globalObject, optionsValue, UnitGroup::Date, TemporalUnit::Day, TemporalUnit::Day);
     RETURN_IF_EXCEPTION(scope, { });
 
-    return differenceTemporalPlainDate(globalObject, false, other, smallestUnit, largestUnit, roundingMode, increment);
+    RELEASE_AND_RETURN(scope, differenceTemporalPlainDate(globalObject, false, other, smallestUnit, largestUnit, roundingMode, increment));
 }
 
 ISO8601::Duration TemporalPlainDate::since(JSGlobalObject* globalObject, TemporalPlainDate* other, JSValue optionsValue)
@@ -443,7 +445,7 @@ ISO8601::Duration TemporalPlainDate::since(JSGlobalObject* globalObject, Tempora
     RETURN_IF_EXCEPTION(scope, { });
     roundingMode = negateTemporalRoundingMode(roundingMode);
 
-    return differenceTemporalPlainDate(globalObject, true, other, smallestUnit, largestUnit, roundingMode, increment);
+    RELEASE_AND_RETURN(scope, differenceTemporalPlainDate(globalObject, true, other, smallestUnit, largestUnit, roundingMode, increment));
 }
 
 String TemporalPlainDate::monthCode() const

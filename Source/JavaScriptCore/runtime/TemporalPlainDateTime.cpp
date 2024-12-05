@@ -155,8 +155,10 @@ TemporalPlainDateTime* TemporalPlainDateTime::from(JSGlobalObject* globalObject,
     auto string = itemValue.toWTFString(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
 
-    if (optionsValue)
+    if (optionsValue) {
         toTemporalOverflow(globalObject, optionsValue.value()); // Validate overflow
+        RETURN_IF_EXCEPTION(scope, { });
+    }
 
     // https://tc39.es/proposal-temporal/#sec-temporal-parsetemporaldatetimestring
     // TemporalDateString :
@@ -283,8 +285,9 @@ TemporalPlainDateTime* TemporalPlainDateTime::addDurationToDateTime(JSGlobalObje
     auto result = TemporalDuration::combineISODateAndTimeRecord(addedDate,
         ISO8601::PlainTime(timeResult.hours(), timeResult.minutes(), timeResult.seconds(),
             timeResult.milliseconds(), timeResult.microseconds(), timeResult.nanoseconds()));
-    return TemporalPlainDateTime::tryCreateIfValid(globalObject, globalObject->plainDateTimeStructure(),
-        WTFMove(std::get<0>(result)), WTFMove(std::get<1>(result)));
+    RELEASE_AND_RETURN(scope, TemporalPlainDateTime::tryCreateIfValid(globalObject,
+        globalObject->plainDateTimeStructure(),
+        WTFMove(std::get<0>(result)), WTFMove(std::get<1>(result))));
 }
 
 TemporalPlainDateTime* TemporalPlainDateTime::with(JSGlobalObject* globalObject, JSObject* temporalDateTimeLike, JSValue optionsValue)

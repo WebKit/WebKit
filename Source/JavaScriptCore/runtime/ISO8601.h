@@ -370,7 +370,8 @@ using TimeZone = std::variant<TimeZoneID, int64_t>;
 struct TimeZoneRecord {
     bool m_z { false };
     std::optional<int64_t> m_offset;
-    std::optional<Vector<LChar>> m_annotation;
+    // TODO: in the spec, this is "a String or EMPTY"
+    std::optional<std::variant<Vector<LChar>, int64_t>> m_annotation;
 };
 
 static constexpr unsigned minCalendarLength = 3;

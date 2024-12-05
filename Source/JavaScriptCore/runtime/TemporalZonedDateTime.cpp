@@ -90,7 +90,6 @@ DEFINE_VISIT_CHILDREN(TemporalZonedDateTime);
 TemporalZonedDateTime* TemporalZonedDateTime::tryCreateIfValid(JSGlobalObject* globalObject, Structure* structure, ISO8601::ExactTime&& epochNanoseconds, ISO8601::TimeZone&& timeZone)
 {
     VM& vm = globalObject->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
 
     ASSERT(epochNanoseconds.isValid());
 
@@ -114,22 +113,18 @@ static bool validateTemporalRoundingIncrement(unsigned increment, unsigned divid
     return true;
 }
 
-static Int128 getNamedTimeZoneOffsetNanosecondsImpl(TimeZoneID timeZoneIdentifier, Int128 epochMilliseconds)
+static Int128 getNamedTimeZoneOffsetNanosecondsImpl(TimeZoneID timeZoneIdentifier, Int128)
 {
-    (void) epochMilliseconds;
 
-    // FIXME: handle other named time zones
-    ASSERT(timeZoneIdentifier == utcTimeZoneID());
+    RELEASE_ASSERT(timeZoneIdentifier == utcTimeZoneID());
     return 0;
 }
 
 // https://tc39.es/ecma262/#sec-getnamedtimezoneoffsetnanoseconds
-static Int128 getNamedTimeZoneOffsetNanoseconds(TimeZoneID timeZoneIdentifier, Int128 epochNanoseconds)
+static Int128 getNamedTimeZoneOffsetNanoseconds(TimeZoneID timeZoneIdentifier, Int128)
 {
-    (void) epochNanoseconds;
 
-    // FIXME: handle other named time zones
-    ASSERT(timeZoneIdentifier == utcTimeZoneID());
+    RELEASE_ASSERT(timeZoneIdentifier == utcTimeZoneID());
     return 0;
 }
 
@@ -137,7 +132,7 @@ static Int128 getNamedTimeZoneOffsetNanoseconds(TimeZoneID timeZoneIdentifier, I
 static Vector<ISO8601::ExactTime> getNamedTimeZoneEpochNanoseconds(TimeZoneID timeZoneIdentifier, std::tuple<ISO8601::PlainDate, ISO8601::PlainTime> isoDateTime)
 {
     // FIXME: handle other named time zones
-    ASSERT(timeZoneIdentifier == utcTimeZoneID());
+    RELEASE_ASSERT(timeZoneIdentifier == utcTimeZoneID());
     auto epochNanoseconds = TemporalDuration::getUTCEpochNanoseconds(isoDateTime);
     return Vector<ISO8601::ExactTime>(epochNanoseconds);
 }

@@ -246,8 +246,10 @@ ISO8601::PlainDate TemporalCalendar::isoDateFromFields(JSGlobalObject* globalObj
 
     if (std::holds_alternative<TemporalOverflow>(optionsOrOverflow))
         overflow = std::get<TemporalOverflow>(optionsOrOverflow);
-    else
+    else {
         overflow = toTemporalOverflow(globalObject, std::get<JSObject*>(optionsOrOverflow));
+        RETURN_IF_EXCEPTION(scope, { });
+    }
     RELEASE_AND_RETURN(scope, isoDateFromFields(globalObject, format, year, month, day, overflow));
 }
 
@@ -331,7 +333,7 @@ ISO8601::PlainDate TemporalCalendar::addDurationToDate(JSGlobalObject* globalObj
 
     auto dateDuration = TemporalDuration::toDateDurationRecordWithoutTime(globalObject, duration);
     RETURN_IF_EXCEPTION(scope, { });
-    return isoDateAdd(globalObject, plainDate, dateDuration, overflow);
+    RELEASE_AND_RETURN(scope, isoDateAdd(globalObject, plainDate, dateDuration, overflow));
 }
 
 // https://tc39.es/proposal-temporal/#sec-temporal-calendardateadd

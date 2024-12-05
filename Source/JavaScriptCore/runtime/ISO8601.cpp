@@ -745,8 +745,7 @@ static std::optional<TimeZoneRecord> parseTimeZone(StringParsingBuffer<Character
             auto timeZone = parseTimeZoneAnnotation(buffer);
             if (!timeZone)
                 return std::nullopt;
-            ASSERT(std::holds_alternative<Vector<LChar>>(timeZone.value()));
-            return TimeZoneRecord { false, offset.value(), WTFMove(std::get<Vector<LChar>>(timeZone.value())) };
+            return TimeZoneRecord { false, offset.value(), WTFMove(timeZone) };
         }
         return TimeZoneRecord { false, offset.value(), { } };
     }
@@ -1786,7 +1785,9 @@ InternalDuration ExactTime::difference(JSGlobalObject* globalObject, ExactTime o
         return { };
     }
     timeDuration = maybeTimeDuration.value();
-    return InternalDuration::combineDateAndTimeDuration(globalObject, ISO8601::Duration(), timeDuration);
+    RELEASE_AND_RETURN(scope,
+        InternalDuration::combineDateAndTimeDuration(globalObject,
+            ISO8601::Duration(), timeDuration));
 }
 
 std::optional<ExactTime> ExactTime::round(unsigned increment, TemporalUnit unit, RoundingMode roundingMode) const
