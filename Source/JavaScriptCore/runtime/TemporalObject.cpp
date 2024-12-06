@@ -138,7 +138,7 @@ static JSValue createZonedDateTimeConstructor(VM& vm, JSObject* object)
 {
     TemporalObject* temporalObject = jsCast<TemporalObject*>(object);
     JSGlobalObject* globalObject = temporalObject->globalObject();
-    return TemporalZonedDateTimeConstructor::create(vm, TemporalZonedDateTimeConstructor::createStructure(vm, globalObject, globalObject->functionPrototype()), jsCast<TemporalZonedDateTimePrototype*>(globalObject->timeZoneStructure()->storedPrototypeObject()));
+    return TemporalZonedDateTimeConstructor::create(vm, TemporalZonedDateTimeConstructor::createStructure(vm, globalObject, globalObject->functionPrototype()), jsCast<TemporalZonedDateTimePrototype*>(globalObject->zonedDateTimeStructure()->storedPrototypeObject()));
 }
 
 } // namespace JSC
@@ -195,9 +195,9 @@ static StringView singularUnit(StringView unit)
     return unit.endsWith('s') ? unit.left(unit.length() - 1) : unit;
 }
 
-double nonNegativeModulo(double x, double y)
+Int128 nonNegativeModulo(Int128 x, Int128 y)
 {
-    double result = std::fmod(x, y);
+    Int128 result = x % y;
     if (!result)
         return 0;
     if (result < 0)
