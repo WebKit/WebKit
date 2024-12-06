@@ -138,6 +138,8 @@ public:
     WEBCORE_EXPORT bool isAudioCaptureUnitRunning();
     WEBCORE_EXPORT bool shouldAudioCaptureUnitRenderAudio();
 
+    void movingOutOfPlayAndRecord() { beginInterruption(); }
+
 private:
     // AudioSessionInterruptionObserver
     void beginAudioSessionInterruption() final { beginInterruption(); }
@@ -150,7 +152,7 @@ private:
     void enableMutedSpeechActivityEventListener(Function<void()>&&) final;
     void disableMutedSpeechActivityEventListener() final;
 
-    void beginInterruption();
+    WEBCORE_EXPORT void beginInterruption();
     void endInterruption();
 };
 

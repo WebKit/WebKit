@@ -36,6 +36,7 @@
 
 #include "AudioSession.h"
 #include "CaptureDeviceWithCapabilities.h"
+#include "DOMAudioSession.h"
 #include "Document.h"
 #include "Event.h"
 #include "EventNames.h"
@@ -122,6 +123,14 @@ bool MediaDevices::computeUserGesturePriviledge(GestureAllowedRequest requestTyp
     return isUserGesturePriviledged;
 }
 
+#if ENABLE(DOM_AUDIO_SESSION)
+static bool canDocumentCaptureAudio(Document& document)
+{
+    RefPtr domAudioSession = document.domAudioSession();
+    return !domAudioSession || domAudioSession->type() == DOMAudioSession::Type::PlayAndRecord || domAudioSession->type() == DOMAudioSession::Type::Auto;
+}
+#endif
+
 void MediaDevices::getUserMedia(StreamConstraints&& constraints, Promise&& promise)
 {
     auto audioConstraints = createMediaConstraints(constraints.audio);
@@ -138,13 +147,10 @@ void MediaDevices::getUserMedia(StreamConstraints&& constraints, Promise&& promi
         return;
     }
 
-#if USE(AUDIO_SESSION)
-    if (audioConstraints.isValid) {
-        auto categoryOverride = AudioSession::sharedSession().categoryOverride();
-        if (categoryOverride != AudioSessionCategory::None && categoryOverride != AudioSessionCategory::PlayAndRecord)  {
-            promise.reject(Exception { ExceptionCode::InvalidStateError, "AudioSession category is not compatible with audio capture."_s });
-            return;
-        }
+#if ENABLE(DOM_AUDIO_SESSION)
+    if (audioConstraints.isValid && !canDocumentCaptureAudio(*document)) {
+        promise.reject(Exception { ExceptionCode::InvalidStateError, "AudioSession category is not compatible with audio capture."_s });
+        return;
     }
 #endif
 

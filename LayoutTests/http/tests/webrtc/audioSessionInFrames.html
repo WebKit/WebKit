@@ -25,11 +25,14 @@ promise_test(async () => {
     const result2 = await new Promise(resolve => window.onmessage = (event) => resolve(event.data));
     frame2.remove();
 
-    assert_equals(result1.type, "auto");
-    assert_equals(result1.state, "inactive");
+    assert_equals(result1.type, "auto", "result1 type");
+    assert_equals(result1.state, "inactive", "result1 state");
 
-    assert_equals(result2.type, "play-and-record");
-    assert_equals(result2.state, "active");
+    assert_equals(result2.type, "auto", "result2 type");
+    assert_equals(result2.state, "inactive", "result2 state");
+
+    assert_equals(navigator.audioSession.type, "play-and-record", "navigator.audioSession type");
+    assert_equals(navigator.audioSession.state, "active", "navigator.audioSession state");
 }, "Allow audioSession in iframes where microphone is allowed");
 </script>
 </body>

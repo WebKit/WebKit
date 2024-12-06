@@ -40,21 +40,27 @@ promise_test(async (test) => {
     assert_equals(await ensureCategory("MediaPlayback"), "", "initial MediaPlayback");
 
     navigator.audioSession.type = "ambient";
+    await new Promise(resolve => setTimeout(resolve, 50));
     assert_equals(internals.audioSessionCategory(), "AmbientSound");
 
     navigator.audioSession.type = "playback";
+    await new Promise(resolve => setTimeout(resolve, 50));
     assert_equals(internals.audioSessionCategory(), "MediaPlayback");
 
     navigator.audioSession.type = "transient";
+    await new Promise(resolve => setTimeout(resolve, 50));
     assert_equals(internals.audioSessionCategory(), "AmbientSound");
 
     navigator.audioSession.type = "play-and-record";
+    await new Promise(resolve => setTimeout(resolve, 50));
     assert_equals(internals.audioSessionCategory(), "PlayAndRecord");
 
     navigator.audioSession.type = "transient-solo";
+    await new Promise(resolve => setTimeout(resolve, 50));
     assert_equals(internals.audioSessionCategory(), "SoloAmbientSound");
 
     navigator.audioSession.type = "auto";
+    await new Promise(resolve => setTimeout(resolve, 50));
     assert_equals(await ensureCategory("MediaPlayback"), "", "final MediaPlayback");
 }, "AudioSession type");
         </script>

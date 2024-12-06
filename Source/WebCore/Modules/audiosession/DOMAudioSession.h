@@ -31,6 +31,7 @@
 #include "AudioSession.h"
 #include "EventTarget.h"
 #include "ExceptionOr.h"
+#include "Timer.h"
 #include <wtf/RefCounted.h>
 #include <wtf/TZoneMallocInlines.h>
 
@@ -55,6 +56,10 @@ public:
     Type type() const;
     State state() const;
 
+    void update();
+
+    USING_CAN_MAKE_WEAKPTR(AudioSessionInterruptionObserver);
+
 private:
     explicit DOMAudioSession(ScriptExecutionContext*);
 
@@ -74,7 +79,11 @@ private:
     void audioSessionActiveStateChanged() final;
 
     void scheduleStateChangeEvent();
+    bool isTypeBeingApplied() const { return m_applyTypeTimer.isActive(); }
+    void applyType();
 
+    Timer m_applyTypeTimer;
+    DOMAudioSessionType m_typeToApply { DOMAudioSessionType::Auto };
     bool m_hasScheduleStateChangeEvent { false };
     mutable std::optional<State> m_state;
 };

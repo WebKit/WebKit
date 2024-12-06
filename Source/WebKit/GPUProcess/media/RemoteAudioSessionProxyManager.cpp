@@ -119,7 +119,12 @@ void RemoteAudioSessionProxyManager::updateCategory()
     else if (policyCounts.contains(RouteSharingPolicy::Independent))
         ASSERT_NOT_REACHED();
 
-    AudioSession::protectedSharedSession()->setCategory(category, mode, policy);
+    Ref sharedSession = AudioSession::protectedSharedSession();
+#if ENABLE(MEDIA_STREAM)
+    if (sharedSession->category() == AudioSession::CategoryType::PlayAndRecord && category != AudioSession::CategoryType::PlayAndRecord && CoreAudioCaptureSourceFactory::singleton().isAudioCaptureUnitRunning())
+        CoreAudioCaptureSourceFactory::singleton().movingOutOfPlayAndRecord();
+#endif
+    sharedSession->setCategory(category, mode, policy);
 }
 
 void RemoteAudioSessionProxyManager::updatePreferredBufferSizeForProcess()
