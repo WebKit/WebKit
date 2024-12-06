@@ -29,6 +29,7 @@
 #if HAVE(IOSURFACE)
 
 #include "Logging.h"
+#include "RemoteRenderingBackendProxy.h"
 #include <WebCore/GraphicsContextCG.h>
 #include <WebCore/ImageBufferIOSurfaceBackend.h>
 #include <WebCore/PixelBuffer.h>
@@ -51,14 +52,22 @@ size_t ImageBufferRemoteIOSurfaceBackend::calculateMemoryCost(const Parameters& 
     return ImageBufferIOSurfaceBackend::calculateMemoryCost(parameters);
 }
 
-std::unique_ptr<ImageBufferRemoteIOSurfaceBackend> ImageBufferRemoteIOSurfaceBackend::create(const Parameters& parameters, ImageBufferBackendHandle handle)
+std::unique_ptr<ImageBufferRemoteIOSurfaceBackend> ImageBufferRemoteIOSurfaceBackend::create(const Parameters& parameters, ImageBufferBackendHandle handle, RemoteRenderingBackendProxy& remoteRenderingBackendProxy, RenderingResourceIdentifier renderingResourceIdentifier)
 {
     if (!std::holds_alternative<MachSendRight>(handle)) {
         RELEASE_ASSERT_NOT_REACHED();
         return nullptr;
     }
 
-    return makeUnique<ImageBufferRemoteIOSurfaceBackend>(parameters, WTFMove(std::get<MachSendRight>(handle)));
+    return makeUnique<ImageBufferRemoteIOSurfaceBackend>(parameters, WTFMove(std::get<MachSendRight>(handle)), remoteRenderingBackendProxy, renderingResourceIdentifier);
+}
+
+ImageBufferRemoteIOSurfaceBackend::ImageBufferRemoteIOSurfaceBackend(const Parameters& parameters, MachSendRight&& handle, RemoteRenderingBackendProxy& remoteRenderingBackendProxy, RenderingResourceIdentifier renderingResourceIdentifier)
+    : ImageBufferBackend(parameters)
+    , m_handle(WTFMove(handle))
+    , m_remoteRenderingBackendProxy(remoteRenderingBackendProxy)
+    , m_renderingResourceIdentifier(renderingResourceIdentifier)
+{
 }
 
 std::optional<ImageBufferBackendHandle> ImageBufferRemoteIOSurfaceBackend::createBackendHandle(SharedMemory::Protection) const
@@ -103,14 +112,19 @@ unsigned ImageBufferRemoteIOSurfaceBackend::bytesPerRow() const
 
 RefPtr<NativeImage> ImageBufferRemoteIOSurfaceBackend::copyNativeImage()
 {
-    RELEASE_ASSERT_NOT_REACHED();
-    return { };
+    RefPtr remoteRenderingBackendProxy = m_remoteRenderingBackendProxy.get();
+    if (UNLIKELY(!remoteRenderingBackendProxy))
+        return { };
+
+    auto bitmap = remoteRenderingBackendProxy->getShareableBitmap(m_renderingResourceIdentifier, PreserveResolution::Yes);
+    if (!bitmap)
+        return { };
+    return NativeImage::create(bitmap->createPlatformImage(DontCopyBackingStore));
 }
 
 RefPtr<NativeImage> ImageBufferRemoteIOSurfaceBackend::createNativeImageReference()
 {
-    RELEASE_ASSERT_NOT_REACHED();
-    return { };
+    return copyNativeImage();
 }
 
 void ImageBufferRemoteIOSurfaceBackend::getPixelBuffer(const IntRect&, PixelBuffer&)

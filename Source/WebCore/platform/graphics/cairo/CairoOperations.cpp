@@ -174,14 +174,14 @@ enum PathDrawingStyle {
 
 static void drawShadowLayerBuffer(GraphicsContextCairo& platformContext, ImageBuffer& layerImage, const FloatPoint& layerOrigin, const FloatSize& layerSize, const ShadowState& shadowState)
 {
-    if (auto nativeImage = platformContext.nativeImageForDrawing(layerImage))
+    if (auto nativeImage = layerImage.nativeImageForDrawing(platformContext))
         drawPlatformImage(platformContext, nativeImage->platformImage().get(), FloatRect(roundedIntPoint(layerOrigin), layerSize), FloatRect(FloatPoint(), layerSize), { shadowState.globalCompositeOperator }, shadowState.globalAlpha, ShadowState());
 }
 
 // FIXME: This is mostly same as drawShadowLayerBuffer, so we should merge two.
 static void drawShadowImage(GraphicsContextCairo& platformContext, ImageBuffer& layerImage, const FloatRect& destRect, const FloatRect& srcRect, const ShadowState& shadowState)
 {
-    if (auto nativeImage = platformContext.nativeImageForDrawing(layerImage))
+    if (auto nativeImage = layerImage.nativeImageForDrawing(platformContext))
         drawPlatformImage(platformContext, nativeImage->platformImage().get(), destRect, srcRect, { shadowState.globalCompositeOperator }, shadowState.globalAlpha, ShadowState());
 }
 
@@ -189,7 +189,7 @@ static void fillShadowBuffer(GraphicsContextCairo& platformContext, ImageBuffer&
 {
     platformContext.save();
 
-    if (auto nativeImage = platformContext.nativeImageForDrawing(layerImage))
+    if (auto nativeImage = layerImage.nativeImageForDrawing(platformContext))
         clipToImageBuffer(platformContext, nativeImage->platformImage().get(), FloatRect(layerOrigin, expandedIntSize(layerSize)));
 
     FillSource fillSource;

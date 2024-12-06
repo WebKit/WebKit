@@ -34,6 +34,8 @@
 
 namespace WebKit {
 
+class RemoteRenderingBackendProxy;
+
 class ImageBufferRemoteIOSurfaceBackend final : public WebCore::ImageBufferBackend, public ImageBufferBackendHandleSharing {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(ImageBufferRemoteIOSurfaceBackend);
     WTF_MAKE_NONCOPYABLE(ImageBufferRemoteIOSurfaceBackend);
@@ -41,13 +43,9 @@ public:
     static WebCore::IntSize calculateSafeBackendSize(const Parameters&);
     static size_t calculateMemoryCost(const Parameters&);
 
-    static std::unique_ptr<ImageBufferRemoteIOSurfaceBackend> create(const Parameters&, ImageBufferBackendHandle);
+    static std::unique_ptr<ImageBufferRemoteIOSurfaceBackend> create(const Parameters&, ImageBufferBackendHandle, RemoteRenderingBackendProxy&, WebCore::RenderingResourceIdentifier);
 
-    ImageBufferRemoteIOSurfaceBackend(const Parameters& parameters, MachSendRight&& handle)
-        : ImageBufferBackend(parameters)
-        , m_handle(WTFMove(handle))
-    {
-    }
+    ImageBufferRemoteIOSurfaceBackend(const Parameters&, MachSendRight&&, RemoteRenderingBackendProxy&, WebCore::RenderingResourceIdentifier);
 
     static constexpr WebCore::RenderingMode renderingMode = WebCore::RenderingMode::Accelerated;
     bool canMapBackingStore() const final;
@@ -76,6 +74,8 @@ private:
     String debugDescription() const final;
 
     MachSendRight m_handle;
+    WeakPtr<RemoteRenderingBackendProxy> m_remoteRenderingBackendProxy;
+    WebCore::RenderingResourceIdentifier m_renderingResourceIdentifier;
 
     WebCore::VolatilityState m_volatilityState { WebCore::VolatilityState::NonVolatile };
 };
