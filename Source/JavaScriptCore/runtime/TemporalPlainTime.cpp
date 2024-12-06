@@ -144,22 +144,51 @@ TemporalPlainTime* TemporalPlainTime::tryCreateIfValid(JSGlobalObject* globalObj
 }
 
 // https://tc39.es/proposal-temporal/#sec-temporal-balancetime
-ISO8601::Duration TemporalPlainTime::balanceTime(double hour, double minute, double second, double millisecond, double microsecond, double nanosecond)
+ISO8601::Duration TemporalPlainTime::balanceTime(Int128 hour, Int128 minute, Int128 second, Int128 millisecond, Int128 microsecond, Int128 nanosecond)
 {
+// TODO: spec uses floor, but polyfill uses trunc
     // https://github.com/tc39/proposal-temporal/issues/1804
     // Use non-negative modulo operation.
-    microsecond += std::floor(nanosecond / 1000);
-    nanosecond = nonNegativeModulo(nanosecond, 1000);
-    millisecond += std::floor(microsecond / 1000);
-    microsecond = nonNegativeModulo(microsecond, 1000);
-    second += std::floor(millisecond / 1000);
-    millisecond = nonNegativeModulo(millisecond, 1000);
-    minute += std::floor(second / 60);
-    second = nonNegativeModulo(second, 60);
-    hour += std::floor(minute / 60);
-    minute = nonNegativeModulo(minute, 60);
-    double days = std::floor(hour / 24);
-    hour = nonNegativeModulo(hour, 24);
+
+// Can't call nonNegativeModulo here because the check
+// (nanosecond < 0) (etc.) has to be done before the
+// nanosecond += 1000 operation. Instead, inline it.
+    microsecond += nanosecond / 1000;
+    nanosecond = nanosecond % 1000;
+    if (nanosecond < 0) {
+        microsecond -= 1;
+        nanosecond += 1000;
+    }    
+    millisecond += microsecond / 1000;
+    microsecond = microsecond % 1000;
+    if (microsecond < 0) {
+        millisecond -= 1;
+        microsecond += 1000;
+    }
+    second += millisecond / 1000;
+    millisecond = millisecond % 1000;
+    if (millisecond < 0) {
+        second -= 1;
+        millisecond += 1000;
+    }
+    minute += second / 60;
+    second = second % 60;
+    if (second < 0) {
+        minute -= 1;
+        second += 60;
+    }
+    hour += minute / 60;
+    minute = minute % 60;
+    if (minute < 0) {
+        hour -= 1;
+        minute += 60;
+    }
+    double days = std::trunc(hour / 24.0);
+    hour = hour % 24;
+    if (hour < 0) {
+        days -= 1;
+        hour += 24;
+    }
     return ISO8601::Duration(0, 0, 0, days, hour, minute, second, millisecond, microsecond, nanosecond);
 }
 
@@ -488,13 +517,14 @@ int32_t TemporalPlainTime::compare(const ISO8601::PlainTime& t1, const ISO8601::
 // https://tc39.es/proposal-temporal/#sec-temporal-addtime
 ISO8601::Duration TemporalPlainTime::addTime(const ISO8601::PlainTime& plainTime, Int128 timeDuration)
 {
+    Int128 ns = ((Int128) (std::trunc(plainTime.nanosecond()))) + timeDuration;
     return balanceTime(
         plainTime.hour(),
         plainTime.minute(),
         plainTime.second(),
         plainTime.millisecond(),
         plainTime.microsecond(),
-        plainTime.nanosecond() + timeDuration);
+        ns);
 }
 
 // https://tc39.es/proposal-temporal/#sec-temporal-adddurationtotime

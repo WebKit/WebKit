@@ -207,8 +207,8 @@ balanceISODateTime(double year, double month, double day, double hour, double mi
 }
 
 // https://tc39.es/proposal-temporal/#sec-temporal-getisodatetimefor
-static std::tuple<ISO8601::PlainDate, ISO8601::PlainTime>
-getISODateTimeFor(ISO8601::TimeZone timeZone, ISO8601::ExactTime epochNs)
+std::tuple<ISO8601::PlainDate, ISO8601::PlainTime>
+TemporalZonedDateTime::getISODateTimeFor(ISO8601::TimeZone timeZone, ISO8601::ExactTime epochNs)
 {
     auto offsetNanoseconds = getOffsetNanosecondsFor(timeZone, epochNs.epochNanoseconds());
     auto [dateResult, timeResult] = getISOPartsFromEpoch(epochNs);
@@ -785,13 +785,24 @@ static String toMonthCode(JSGlobalObject* globalObject, JSValue argument)
 
 // TODO
 // https://tc39.es/proposal-temporal/#sec-getavailablenamedtimezoneidentifier
-static std::optional<ISO8601::TimeZone> getAvailableNamedTimeZoneIdentifier(JSGlobalObject* globalObject,
+std::optional<ISO8601::TimeZone> TemporalZonedDateTime::getAvailableNamedTimeZoneIdentifier(JSGlobalObject* globalObject,
     TimeZoneID timeZoneIdentifier)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     (void) timeZoneIdentifier;
+    throwRangeError(globalObject, scope, "getAvailableNamedTimeZoneIdentifier() not yet implemented"_s);
+    return { };
+}
+
+// TODO
+// https://tc39.es/proposal-temporal/#sec-getavailablenamedtimezoneidentifier
+std::optional<ISO8601::TimeZone> TemporalZonedDateTime::getAvailableNamedTimeZoneIdentifier(JSGlobalObject* globalObject, Vector<LChar>)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     throwRangeError(globalObject, scope, "getAvailableNamedTimeZoneIdentifier() not yet implemented"_s);
     return { };
 }

@@ -139,7 +139,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalCalendarPrototypeFuncDateAdd, (JSGlobalObject* 
     if (!calendar->isISO8601())
         return throwVMRangeError(globalObject, scope, "unimplemented: non-ISO8601 calendar"_s);
 
-    auto* date = TemporalPlainDate::from(globalObject, callFrame->argument(0), TemporalOverflow::Constrain);
+    auto* date = TemporalPlainDate::from(globalObject, callFrame->argument(0), std::nullopt);
     RETURN_IF_EXCEPTION(scope, { });
 
     auto duration = TemporalDuration::toISO8601Duration(globalObject, callFrame->argument(1));
@@ -168,10 +168,10 @@ JSC_DEFINE_HOST_FUNCTION(temporalCalendarPrototypeFuncDateUntil, (JSGlobalObject
     if (!calendar->isISO8601())
         return throwVMRangeError(globalObject, scope, "unimplemented: non-ISO8601 calendar"_s);
 
-    auto* date1 = TemporalPlainDate::from(globalObject, callFrame->argument(0), TemporalOverflow::Constrain);
+    auto* date1 = TemporalPlainDate::from(globalObject, callFrame->argument(0), std::nullopt);
     RETURN_IF_EXCEPTION(scope, { });
 
-    auto* date2 = TemporalPlainDate::from(globalObject, callFrame->argument(1), TemporalOverflow::Constrain);
+    auto* date2 = TemporalPlainDate::from(globalObject, callFrame->argument(1), std::nullopt);
     RETURN_IF_EXCEPTION(scope, { });
 
     JSObject* options = intlGetOptionsObject(globalObject, callFrame->argument(2));

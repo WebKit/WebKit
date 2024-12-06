@@ -764,6 +764,16 @@ static std::optional<TimeZoneRecord> parseTimeZone(StringParsingBuffer<Character
     }
 }
 
+std::optional<TimeZoneRecord> parseTimeZone(StringView string)
+{
+  return readCharactersForParsing(string, [](auto buffer) -> std::optional<TimeZoneRecord> {
+        auto result = parseTimeZone(buffer);
+        if (!buffer.atEnd())
+            return std::nullopt;
+        return result;
+    });
+}
+
 template<typename CharacterType>
 static std::optional<CalendarRecord> parseCalendar(StringParsingBuffer<CharacterType>& buffer)
 {

@@ -164,7 +164,7 @@ enum class TemporalOffset : uint8_t {
     Reject,
 };
 
-double nonNegativeModulo(double x, double y);
+Int128 nonNegativeModulo(Int128 x, Int128 y);
 WTF::String ellipsizeAt(unsigned maxLength, const WTF::String&);
 PropertyName temporalUnitPluralPropertyName(VM&, TemporalUnit);
 PropertyName temporalUnitSingularPropertyName(VM&, TemporalUnit);
