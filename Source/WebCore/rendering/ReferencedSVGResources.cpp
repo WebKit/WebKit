@@ -116,13 +116,13 @@ void ReferencedSVGResources::removeClientForTarget(TreeScope& treeScope, const A
 ReferencedSVGResources::SVGElementIdentifierAndTagPairs ReferencedSVGResources::referencedSVGResourceIDs(const RenderStyle& style, const Document& document)
 {
     SVGElementIdentifierAndTagPairs referencedResources;
-    if (auto* clipPath = dynamicDowncast<ReferencePathOperation>(style.clipPath())) {
+    if (auto* clipPath = dynamicDowncast<ReferencePathOperation>(style.usedClipPath())) {
         if (!clipPath->fragment().isEmpty())
             referencedResources.append({ clipPath->fragment(), { SVGNames::clipPathTag } });
     }
 
     if (style.hasFilter()) {
-        const auto& filterOperations = style.filter();
+        const auto& filterOperations = style.usedFilter();
         for (auto& operation : filterOperations) {
             if (RefPtr referenceFilterOperation = dynamicDowncast<ReferenceFilterOperation>(operation)) {
                 if (!referenceFilterOperation->fragment().isEmpty())

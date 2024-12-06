@@ -163,7 +163,7 @@ void InlineBoxPainter::paintMask()
     bool flattenCompositingLayers = renderer().view().frameView().paintBehavior().contains(PaintBehavior::FlattenCompositingLayers);
     CompositeOperator compositeOp = CompositeOperator::SourceOver;
     if (!compositedMask || flattenCompositingLayers) {
-        if ((maskBorder && renderer().style().maskLayers().hasImage()) || renderer().style().maskLayers().next())
+        if ((maskBorder && renderer().style().usedMaskLayers().hasImage()) || renderer().style().usedMaskLayers().next())
             pushTransparencyLayer = true;
 
         compositeOp = CompositeOperator::DestinationIn;
@@ -176,7 +176,7 @@ void InlineBoxPainter::paintMask()
 
     LayoutRect paintRect = LayoutRect(adjustedPaintOffset, localRect.size());
 
-    paintFillLayers(Color(), renderer().style().maskLayers(), paintRect, compositeOp);
+    paintFillLayers(Color(), renderer().style().usedMaskLayers(), paintRect, compositeOp);
 
     bool hasBoxImage = maskBorder && maskBorder->canRender(&renderer(), renderer().style().usedZoom());
     if (!hasBoxImage || !maskBorder->isLoaded(&renderer())) {
@@ -243,7 +243,7 @@ void InlineBoxPainter::paintDecorations()
 
     color = style.colorByApplyingColorFilter(color);
 
-    paintFillLayers(color, style.backgroundLayers(), paintRect, compositeOp);
+    paintFillLayers(color, style.usedBackgroundLayers(), paintRect, compositeOp);
     paintBoxShadow(ShadowStyle::Inset, paintRect);
 
     // :first-line cannot be used to put borders on a line. Always paint borders with our

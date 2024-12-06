@@ -115,6 +115,9 @@ public:
     bool hasBackdropFilters() const;
 
     OptionSet<Containment> usedContain() const;
+    PathOperation* usedClipPath() const;
+    BlendMode usedBlendMode() const;
+    const FilterOperations& usedBackdropFilter() const;
 
     Markable<Length> containIntrinsicWidth;
     Markable<Length> containIntrinsicHeight;
@@ -257,6 +260,7 @@ public:
     unsigned overflowAnchor : 1; // Scroll Anchoring- OverflowAnchor
 
     bool hasClip : 1;
+    bool propagatedToCanvas : 1;
 
     unsigned positionTryOrder : 3; // Style::PositionTryOrder; 5 values so 3 bits.
 

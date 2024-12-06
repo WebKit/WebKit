@@ -16,6 +16,7 @@ foobar
     (GraphicsLayer
       (bounds 800.00 600.00)
       (contentsOpaque 1)
+      (backgroundColor #000000)
       (backingStoreAttached 1)
       (children 2
         (GraphicsLayer

@@ -227,7 +227,7 @@ std::unique_ptr<SVGResources> SVGResources::buildCachedResources(const RenderEle
 
     std::unique_ptr<SVGResources> foundResources;
     if (clipperFilterMaskerTags().contains(tagName)) {
-        if (auto* clipPath = dynamicDowncast<ReferencePathOperation>(style.clipPath())) {
+        if (auto* clipPath = dynamicDowncast<ReferencePathOperation>(style.usedClipPath())) {
             // FIXME: -webkit-clip-path should support external resources
             // https://bugs.webkit.org/show_bug.cgi?id=127032
             AtomString id(clipPath->fragment());
@@ -238,7 +238,7 @@ std::unique_ptr<SVGResources> SVGResources::buildCachedResources(const RenderEle
         }
 
         if (style.hasFilter()) {
-            const FilterOperations& filterOperations = style.filter();
+            const FilterOperations& filterOperations = style.usedFilter();
             if (filterOperations.size() == 1) {
                 if (RefPtr referenceFilterOperation = dynamicDowncast<ReferenceFilterOperation>(*filterOperations.at(0))) {
                     AtomString id = SVGURIReference::fragmentIdentifierFromIRIString(referenceFilterOperation->url(), document);

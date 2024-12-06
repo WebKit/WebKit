@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>CSS Test (Transforms): scale(-1) opacity(0.5) on Root Element With Background</title>
+    <link rel="author" title="Matt Woodrow" href="mailto:mattwoodrow@apple.com">
+    <link rel="help" href="http://www.w3.org/TR/css-transforms-1/#transform-rendering">
+    <link ref="help" href="https://drafts.fxtf.org/compositing/#pagebackdrop">
+    <style>
+      body {
+        margin: 0;
+        overflow: hidden;
+      }
+      div {
+        position: absolute;
+      }
+      #background {
+        width: 100vw;
+        height: 100vw;
+        background: url(support/transform-triangle-left.svg);
+      }
+      #blend {
+        right: 0px;
+        top: -50px;
+        width: 100px;
+        height: 100px;
+        background-color: red;
+        mix-blend-mode: difference;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="background"></div>
+    <div id="blend"></div>
+  </body>
+
+
+</html>

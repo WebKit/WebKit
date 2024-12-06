@@ -2601,9 +2601,9 @@ void KeyframeEffect::computeHasReferenceFilter()
             return false;
 
         auto styleContainsFilter = [](const RenderStyle& style) {
-            if (style.filter().hasReferenceFilter())
+            if (style.usedFilter().hasReferenceFilter())
                 return true;
-            if (style.backdropFilter().hasReferenceFilter())
+            if (style.usedBackdropFilter().hasReferenceFilter())
                 return true;
             return false;
         };
@@ -2731,7 +2731,7 @@ static bool acceleratedPropertyDidChange(AnimatableCSSProperty property, const R
 
     switch (std::get<CSSPropertyID>(property)) {
     case CSSPropertyOpacity:
-        return previousStyle.opacity() != currentStyle.opacity();
+        return previousStyle.usedOpacity() != currentStyle.usedOpacity();
     case CSSPropertyTransform:
         return previousStyle.transform() != currentStyle.transform();
     case CSSPropertyTranslate:
@@ -2751,7 +2751,7 @@ static bool acceleratedPropertyDidChange(AnimatableCSSProperty property, const R
     case CSSPropertyOffsetRotate:
         return previousStyle.offsetRotate() != currentStyle.offsetRotate();
     case CSSPropertyFilter:
-        return previousStyle.filter() != currentStyle.filter();
+        return previousStyle.usedFilter() != currentStyle.usedFilter();
     case CSSPropertyBackdropFilter:
     case CSSPropertyWebkitBackdropFilter:
         return previousStyle.backdropFilter() != currentStyle.backdropFilter();

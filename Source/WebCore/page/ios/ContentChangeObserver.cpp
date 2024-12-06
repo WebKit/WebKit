@@ -92,7 +92,7 @@ bool ContentChangeObserver::isVisuallyHidden(const Node& node)
     if (style.usedVisibility() == Visibility::Hidden)
         return true;
 
-    if (!style.opacity())
+    if (!style.usedOpacity())
         return true;
 
     auto width = style.logicalWidth();
@@ -122,7 +122,7 @@ bool ContentChangeObserver::isVisuallyHidden(const Node& node)
     constexpr static unsigned numberOfAncestorsToCheckForOpacity = 4;
     unsigned i = 0;
     for (auto* parent = node.parentNode(); parent && i < numberOfAncestorsToCheckForOpacity; parent = parent->parentNode(), ++i) {
-        if (!parent->renderStyle() || !parent->renderStyle()->opacity())
+        if (!parent->renderStyle() || !parent->renderStyle()->usedOpacity())
             return true;
     }
 

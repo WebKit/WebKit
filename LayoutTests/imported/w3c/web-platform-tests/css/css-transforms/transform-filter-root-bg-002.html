@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="fuzzy" content="maxDifference=1; totalPixels=240300" />
+    <title>CSS Test (Transforms): scale(-1) opacity(0.5) on Root Element With Background</title>
+    <link rel="author" title="Matt Woodrow" href="mailto:mattwoodrow@apple.com">
+    <link rel="help" href="http://www.w3.org/TR/css-transforms-1/#transform-rendering">
+    <link ref="help" href="https://drafts.fxtf.org/compositing/#pagebackdrop">
+    <meta name="assert" content="The background here extends to the whole
+    canvas, and a transform on the root element should not transform the
+    canvas background. Thus the entire tiled background of left-pointing triangles
+    should not be rotated. An implementation that doesn't draw the background
+    correctly may rotate the background, or incorrectly clip it. Opacity is applied
+    to the root element group, containing the root element's background and the page
+    content">
+    <link rel="match" href="transform-root-bg-001-ref.html">
+    <style>
+      html {
+        background: url(support/transform-triangle-left.svg);
+        transform: scale3D(-1, 1, 1);
+        filter: opacity(0.5);
+      }
+      body {
+        /* The default 8px margin makes the background not line up exactly */
+        margin: 0;
+      }
+      div {
+        width: 100px;
+        height: 100px;
+        background-color: red;
+      }
+    </style>
+  </head>
+  <body>
+    <div></div>
+  </body>
+</html>

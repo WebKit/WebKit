@@ -90,7 +90,7 @@ auto LegacyRenderSVGResourceClipper::applyResource(RenderElement& renderer, cons
 auto LegacyRenderSVGResourceClipper::pathOnlyClipping(GraphicsContext& context, const RenderElement& renderer, const AffineTransform& animatedLocalTransform, const FloatRect& objectBoundingBox, float usedZoom) -> OptionSet<ApplyResult>
 {
     // If the current clip-path gets clipped itself, we have to fall back to masking.
-    if (style().clipPath())
+    if (style().usedClipPath())
         return { };
 
     WindRule clipRule = WindRule::NonZero;
@@ -104,7 +104,7 @@ auto LegacyRenderSVGResourceClipper::pathOnlyClipping(GraphicsContext& context, 
         if (style.display() == DisplayType::None || style.usedVisibility() != Visibility::Visible)
             return false;
         // Current shape in clip-path gets clipped too. Fall back to masking.
-        if (style.clipPath())
+        if (style.usedClipPath())
             return true;
         // Fall back to masking if there is more than one clipping path.
         if (!clipPath.isEmpty())

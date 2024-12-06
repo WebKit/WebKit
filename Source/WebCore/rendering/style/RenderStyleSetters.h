@@ -87,6 +87,12 @@ inline void RenderStyle::setBackgroundAttachment(FillAttachment attachment) { SE
 inline void RenderStyle::setBackgroundBlendMode(BlendMode blendMode) { SET_DOUBLY_NESTED_PAIR(m_nonInheritedData, backgroundData, background, m_blendMode, static_cast<unsigned>(blendMode), m_blendModeSet, true); }
 inline void RenderStyle::setBackgroundClip(FillBox fillBox) { SET_DOUBLY_NESTED_PAIR(m_nonInheritedData, backgroundData, background, m_clip, static_cast<unsigned>(fillBox), m_clipSet, true); }
 inline void RenderStyle::setBackgroundColor(const Style::Color& value) { SET_NESTED(m_nonInheritedData, backgroundData, color, value); }
+inline void RenderStyle::setBackgroundPropagatedToCanvas(bool propagated) { SET_NESTED(m_nonInheritedData, backgroundData, propagatedToCanvas, propagated); }
+inline void RenderStyle::setEffectsPropagatedToCanvas(bool propagated)
+{
+    SET_NESTED(m_nonInheritedData, miscData, propagatedToCanvas, propagated);
+    SET_NESTED(m_nonInheritedData, rareData, propagatedToCanvas, propagated);
+}
 inline void RenderStyle::setBackgroundOrigin(FillBox fillBox) { SET_DOUBLY_NESTED_PAIR(m_nonInheritedData, backgroundData, background, m_origin, static_cast<unsigned>(fillBox), m_originSet, true); }
 inline void RenderStyle::setBackgroundRepeat(FillRepeatXY fillRepeat) { SET_DOUBLY_NESTED_PAIR(m_nonInheritedData, backgroundData, background, m_repeat, fillRepeat, m_repeatSet, true); }
 inline void RenderStyle::setBlockEllipsis(const BlockEllipsis& value) { SET(m_rareInheritedData, blockEllipsis, value); }

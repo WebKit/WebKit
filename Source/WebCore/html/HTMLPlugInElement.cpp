@@ -415,7 +415,7 @@ bool HTMLPlugInElement::isReplacementObscured()
     // Check the opacity of each layer containing the element or its ancestors.
     float opacity = 1.0;
     for (auto* layer = pluginRenderer->enclosingLayer(); layer; layer = layer->parent()) {
-        opacity *= layer->renderer().style().opacity();
+        opacity *= layer->renderer().style().usedOpacity();
         if (opacity < 0.1)
             return true;
     }

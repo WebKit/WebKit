@@ -358,7 +358,7 @@ float RenderScrollbar::opacity() const
     if (!partRenderer)
         return 1;
 
-    return partRenderer->style().opacity();
+    return partRenderer->style().usedOpacity();
 }
 
 bool RenderScrollbar::isHiddenByStyle() const

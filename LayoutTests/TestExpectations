@@ -4872,13 +4872,6 @@ webkit.org/b/230080 imported/w3c/web-platform-tests/css/css-transforms/change-sc
 webkit.org/b/230080 imported/w3c/web-platform-tests/css/css-transforms/huge-length-tiny-scale.html [ ImageOnlyFailure ]
 webkit.org/b/230080 imported/w3c/web-platform-tests/css/css-transforms/rotateY-180deg-with-overflow-scroll.html [ ImageOnlyFailure ]
 webkit.org/b/230080 imported/w3c/web-platform-tests/css/css-transforms/scale-transform-overlap.html [ ImageOnlyFailure ]
-webkit.org/b/230080 imported/w3c/web-platform-tests/css/css-transforms/transform-background-007.html [ ImageOnlyFailure ]
-webkit.org/b/230080 imported/w3c/web-platform-tests/css/css-transforms/transform-background-008.html [ ImageOnlyFailure ]
-webkit.org/b/230080 imported/w3c/web-platform-tests/css/css-transforms/transform-root-bg-001.html [ ImageOnlyFailure ]
-webkit.org/b/230080 imported/w3c/web-platform-tests/css/css-transforms/transform-root-bg-002.html [ ImageOnlyFailure ]
-webkit.org/b/230080 imported/w3c/web-platform-tests/css/css-transforms/transform-root-bg-003.html [ ImageOnlyFailure ]
-webkit.org/b/230080 imported/w3c/web-platform-tests/css/css-transforms/transform-translate-background-001.html [ ImageOnlyFailure ]
-webkit.org/b/230080 imported/w3c/web-platform-tests/css/css-transforms/transform-translate-background-002.html [ ImageOnlyFailure ]
 webkit.org/b/230080 imported/w3c/web-platform-tests/css/css-transforms/transform3d-matrix3d-001.html [ ImageOnlyFailure ]
 webkit.org/b/230080 imported/w3c/web-platform-tests/css/css-transforms/transform3d-preserve3d-010.html [ Pass ImageOnlyFailure ]
 webkit.org/b/230080 imported/w3c/web-platform-tests/css/css-transforms/transform3d-preserve3d-013.html [ ImageOnlyFailure ]
@@ -6982,8 +6975,6 @@ webkit.org/b/255101 imported/w3c/web-platform-tests/css/css-backgrounds/backgrou
 webkit.org/b/255101 imported/w3c/web-platform-tests/css/css-backgrounds/background-image-gradient-currentcolor-visited.html [ ImageOnlyFailure ]
 webkit.org/b/255101 imported/w3c/web-platform-tests/css/css-backgrounds/background-image-table-cells-straddling-no-repeat.html
 webkit.org/b/255101 imported/w3c/web-platform-tests/css/css-backgrounds/background-margin-iframe-root.html [ ImageOnlyFailure ]
-webkit.org/b/255101 imported/w3c/web-platform-tests/css/css-backgrounds/background-margin-transformed-root.html [ ImageOnlyFailure ]
-webkit.org/b/255101 imported/w3c/web-platform-tests/css/css-backgrounds/background-margin-will-change-root.html [ ImageOnlyFailure ]
 webkit.org/b/255101 imported/w3c/web-platform-tests/css/css-backgrounds/background-size-043.html [ ImageOnlyFailure ]
 webkit.org/b/255101 imported/w3c/web-platform-tests/css/css-backgrounds/background-size-044.html [ ImageOnlyFailure ]
 webkit.org/b/255101 imported/w3c/web-platform-tests/css/css-backgrounds/border-radius-012.html [ ImageOnlyFailure ]
@@ -7270,8 +7261,6 @@ imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/mix-blend-mode-st
 imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/mix-blend-mode-mask.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/mix-blend-mode-plus-lighter-svg.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/mix-blend-mode-plus-lighter.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/compositing/root-element-background-transparency.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/compositing/root-element-opacity.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/compositing/svg/mix-blend-mode-in-svg-image.html [ ImageOnlyFailure ]
 
 # webkit.org/b/261464 - Import WPT css/css-inline
@@ -7330,8 +7319,6 @@ imported/w3c/web-platform-tests/css/css-inline/text-box-trim/text-box-trim-line-
 imported/w3c/web-platform-tests/css/css-inline/text-box-trim/text-box-trim-height-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-inline/text-box-trim/text-box-trim-multicol-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-inline/text-box-trim/text-box-trim-multicol-002.html [ ImageOnlyFailure ]
-
-webkit.org/b/245032 imported/w3c/web-platform-tests/css/compositing/root-element-background-image-transparency-004.html [ ImageOnlyFailure ]
 
 webkit.org/b/261916 media/video-pause-while-seeking.html [ Pass Failure ]
 

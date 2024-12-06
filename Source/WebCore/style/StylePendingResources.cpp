@@ -75,7 +75,7 @@ static void loadPendingImage(Document& document, const StyleImage* styleImage, c
 
 void loadPendingResources(RenderStyle& style, Document& document, const Element* element)
 {
-    for (auto* backgroundLayer = &style.backgroundLayers(); backgroundLayer; backgroundLayer = backgroundLayer->next())
+    for (auto* backgroundLayer = &style.usedBackgroundLayers(); backgroundLayer; backgroundLayer = backgroundLayer->next())
         loadPendingImage(document, backgroundLayer->image(), element);
 
     for (auto* contentData = style.contentData(); contentData; contentData = contentData->next()) {
@@ -100,7 +100,7 @@ void loadPendingResources(RenderStyle& style, Document& document, const Element*
     // Masking operations may be sensitive to timing attacks that can be used to reveal the pixel data of
     // the image used as the mask. As a means to mitigate such attacks CSS mask images and shape-outside
     // images are retrieved in "Anonymous" mode, which uses a potentially CORS-enabled fetch.
-    for (auto* maskLayer = &style.maskLayers(); maskLayer; maskLayer = maskLayer->next())
+    for (auto* maskLayer = &style.usedMaskLayers(); maskLayer; maskLayer = maskLayer->next())
         loadPendingImage(document, maskLayer->image(), element, LoadPolicy::CORS);
 
     if (style.shapeOutside())

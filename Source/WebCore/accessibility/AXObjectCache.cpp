@@ -463,7 +463,7 @@ bool AXObjectCache::isNodeVisible(Node* node) const
     // The resulting opacity of a RenderObject is computed as the multiplication
     // of its opacity times the opacities of its ancestors.
     for (auto* renderObject = renderer; renderObject; renderObject = renderObject->parent()) {
-        if (!renderObject->style().opacity())
+        if (!renderObject->style().usedOpacity())
             return false;
     }
 

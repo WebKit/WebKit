@@ -53,11 +53,6 @@ After adding scrollable content to frame:
                             (GraphicsLayer
                               (bounds 85.00 216.00)
                               (drawsContent 1)
-                              (children 1
-                                (GraphicsLayer
-                                  (anchor 0.00 0.00)
-                                )
-                              )
                             )
                           )
                         )

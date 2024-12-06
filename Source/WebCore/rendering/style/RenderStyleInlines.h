@@ -87,18 +87,21 @@ inline const OrderedNamedGridLinesMap& RenderStyle::autoRepeatOrderedNamedGridCo
 inline const OrderedNamedGridLinesMap& RenderStyle::autoRepeatOrderedNamedGridRowLines() const { return m_nonInheritedData->rareData->grid->autoRepeatOrderedNamedGridRowLines(); }
 inline bool RenderStyle::autoWrap() const { return textWrapMode() != TextWrapMode::NoWrap; }
 inline BackfaceVisibility RenderStyle::backfaceVisibility() const { return static_cast<BackfaceVisibility>(m_nonInheritedData->rareData->backfaceVisibility); }
-inline FillAttachment RenderStyle::backgroundAttachment() const { return backgroundLayers().attachment(); }
-inline BlendMode RenderStyle::backgroundBlendMode() const { return backgroundLayers().blendMode(); }
-inline FillBox RenderStyle::backgroundClip() const { return backgroundLayers().clip(); }
+inline FillAttachment RenderStyle::backgroundAttachment() const { return usedBackgroundLayers().attachment(); }
+inline BlendMode RenderStyle::backgroundBlendMode() const { return usedBackgroundLayers().blendMode(); }
+inline FillBox RenderStyle::backgroundClip() const { return usedBackgroundLayers().clip(); }
 inline const Style::Color& RenderStyle::backgroundColor() const { return m_nonInheritedData->backgroundData->color; }
+inline const Style::Color& RenderStyle::usedBackgroundColor() const { return m_nonInheritedData->backgroundData->usedBackgroundColor(); }
 inline const FillLayer& RenderStyle::backgroundLayers() const { return m_nonInheritedData->backgroundData->background; }
-inline Ref<const FillLayer> RenderStyle::protectedBackgroundLayers() const { return backgroundLayers(); }
-inline FillBox RenderStyle::backgroundOrigin() const { return backgroundLayers().origin(); }
-inline FillRepeatXY RenderStyle::backgroundRepeat() const { return backgroundLayers().repeat(); }
-inline const LengthSize& RenderStyle::backgroundSizeLength() const { return backgroundLayers().sizeLength(); }
-inline FillSizeType RenderStyle::backgroundSizeType() const { return backgroundLayers().sizeType(); }
-inline const Length& RenderStyle::backgroundXPosition() const { return backgroundLayers().xPosition(); }
-inline const Length& RenderStyle::backgroundYPosition() const { return backgroundLayers().yPosition(); }
+inline const FillLayer& RenderStyle::usedBackgroundLayers() const { return m_nonInheritedData->backgroundData->usedBackground(); }
+inline Ref<const FillLayer> RenderStyle::protectedUsedBackgroundLayers() const { return usedBackgroundLayers(); }
+inline FillBox RenderStyle::backgroundOrigin() const { return usedBackgroundLayers().origin(); }
+inline bool RenderStyle::backgroundPropagatedToCanvas() const { return m_nonInheritedData->backgroundData->propagatedToCanvas; }
+inline FillRepeatXY RenderStyle::backgroundRepeat() const { return usedBackgroundLayers().repeat(); }
+inline const LengthSize& RenderStyle::backgroundSizeLength() const { return usedBackgroundLayers().sizeLength(); }
+inline FillSizeType RenderStyle::backgroundSizeType() const { return usedBackgroundLayers().sizeType(); }
+inline const Length& RenderStyle::backgroundXPosition() const { return usedBackgroundLayers().xPosition(); }
+inline const Length& RenderStyle::backgroundYPosition() const { return usedBackgroundLayers().yPosition(); }
 inline const BlockEllipsis& RenderStyle::blockEllipsis() const { return m_rareInheritedData->blockEllipsis; }
 inline BlockStepAlign RenderStyle::blockStepAlign() const { return static_cast<BlockStepAlign>(m_nonInheritedData->rareData->blockStepAlign); }
 inline BlockStepInsert RenderStyle::blockStepInsert() const { return static_cast<BlockStepInsert>(m_nonInheritedData->rareData->blockStepInsert); }
@@ -163,6 +166,7 @@ inline const LengthBox& RenderStyle::clip() const { return m_nonInheritedData->r
 inline const Length& RenderStyle::clipBottom() const { return m_nonInheritedData->rareData->clip.bottom(); }
 inline const Length& RenderStyle::clipLeft() const { return m_nonInheritedData->rareData->clip.left(); }
 inline PathOperation* RenderStyle::clipPath() const { return m_nonInheritedData->rareData->clipPath.get(); }
+inline PathOperation* RenderStyle::usedClipPath() const { return m_nonInheritedData->rareData->usedClipPath(); }
 inline const Length& RenderStyle::clipRight() const { return m_nonInheritedData->rareData->clip.right(); }
 inline const Length& RenderStyle::clipTop() const { return m_nonInheritedData->rareData->clip.top(); }
 inline bool RenderStyle::collapseWhiteSpace() const { return collapseWhiteSpace(whiteSpace()); }
@@ -212,8 +216,10 @@ inline OptionSet<TouchAction> RenderStyle::usedTouchActions() const { return m_r
 inline UserModify RenderStyle::usedUserModify() const { return effectiveInert() ? UserModify::ReadOnly : userModify(); }
 inline float RenderStyle::usedZoom() const { return m_rareInheritedData->usedZoom; }
 inline OptionSet<EventListenerRegionType> RenderStyle::eventListenerRegionTypes() const { return m_rareInheritedData->eventListenerRegionTypes; }
+inline bool RenderStyle::effectsPropagatedToCanvas() const { return m_nonInheritedData->miscData->propagatedToCanvas; }
 inline const FilterOperations& RenderStyle::filter() const { return m_nonInheritedData->miscData->filter->operations; }
-inline IntOutsets RenderStyle::filterOutsets() const { return hasFilter() ? filter().outsets() : IntOutsets(); }
+inline const FilterOperations& RenderStyle::usedFilter() const { return m_nonInheritedData->miscData->usedFilter(); }
+inline IntOutsets RenderStyle::filterOutsets() const { return hasFilter() ? usedFilter().outsets() : IntOutsets(); }
 inline const Length& RenderStyle::flexBasis() const { return m_nonInheritedData->miscData->flexibleBox->flexBasis; }
 inline FlexDirection RenderStyle::flexDirection() const { return static_cast<FlexDirection>(m_nonInheritedData->miscData->flexibleBox->flexDirection); }
 inline float RenderStyle::flexGrow() const { return m_nonInheritedData->miscData->flexibleBox->flexGrow; }
@@ -257,8 +263,8 @@ inline bool RenderStyle::gridSubgridRows() const { return m_nonInheritedData->ra
 inline OptionSet<HangingPunctuation> RenderStyle::hangingPunctuation() const { return OptionSet<HangingPunctuation>::fromRaw(m_rareInheritedData->hangingPunctuation); }
 inline bool RenderStyle::hasAnimations() const { return animations() && animations()->size(); }
 inline bool RenderStyle::hasAnimationsOrTransitions() const { return hasAnimations() || hasTransitions(); }
-inline bool RenderStyle::hasAnyFixedBackground() const { return backgroundLayers().hasImageWithAttachment(FillAttachment::FixedBackground); }
-inline bool RenderStyle::hasAnyLocalBackground() const { return backgroundLayers().hasImageWithAttachment(FillAttachment::LocalBackground); }
+inline bool RenderStyle::hasAnyFixedBackground() const { return usedBackgroundLayers().hasImageWithAttachment(FillAttachment::FixedBackground); }
+inline bool RenderStyle::hasAnyLocalBackground() const { return usedBackgroundLayers().hasImageWithAttachment(FillAttachment::LocalBackground); }
 inline bool RenderStyle::hasAnyPublicPseudoStyles() const { return m_nonInheritedFlags.hasAnyPublicPseudoStyles(); }
 // FIXME: Rename this function.
 inline bool RenderStyle::hasAppearance() const { return appearance() != StyleAppearance::None && appearance() != StyleAppearance::Base; }
@@ -277,8 +283,8 @@ inline bool RenderStyle::hasAutoTopAndBottom() const { return top().isAuto() && 
 inline bool RenderStyle::hasAutoUsedZIndex() const { return m_nonInheritedData->boxData->hasAutoUsedZIndex(); }
 inline bool RenderStyle::hasAutoWidows() const { return m_rareInheritedData->hasAutoWidows; }
 inline bool RenderStyle::hasBackground() const { return visitedDependentColor(CSSPropertyBackgroundColor).isVisible() || hasBackgroundImage(); }
-inline bool RenderStyle::hasBackgroundImage() const { return backgroundLayers().hasImage(); }
-inline bool RenderStyle::hasBlendMode() const { return blendMode() != BlendMode::Normal; }
+inline bool RenderStyle::hasBackgroundImage() const { return usedBackgroundLayers().hasImage(); }
+inline bool RenderStyle::hasBlendMode() const { return usedBlendMode() != BlendMode::Normal; }
 inline bool RenderStyle::hasBorder() const { return border().hasBorder(); }
 inline bool RenderStyle::hasBorderImage() const { return border().hasBorderImage(); }
 inline bool RenderStyle::hasBorderImageOutsets() const { return borderImage().hasImage() && !borderImage().outset().isZero(); }
@@ -295,11 +301,11 @@ inline bool RenderStyle::hasExplicitlySetBorderRadius() const { return hasExplic
 inline bool RenderStyle::hasExplicitlySetBorderTopLeftRadius() const { return m_nonInheritedData->surroundData->hasExplicitlySetBorderTopLeftRadius; }
 inline bool RenderStyle::hasExplicitlySetBorderTopRightRadius() const { return m_nonInheritedData->surroundData->hasExplicitlySetBorderTopRightRadius; }
 inline bool RenderStyle::hasExplicitlySetStrokeColor() const { return m_rareInheritedData->hasSetStrokeColor; }
-inline bool RenderStyle::hasFilter() const { return !filter().isEmpty(); }
+inline bool RenderStyle::hasFilter() const { return !usedFilter().isEmpty(); }
 inline bool RenderStyle::hasInFlowPosition() const { return position() == PositionType::Relative || position() == PositionType::Sticky; }
 inline bool RenderStyle::hasIsolation() const { return isolation() != Isolation::Auto; }
 inline bool RenderStyle::hasMargin() const { return !m_nonInheritedData->surroundData->margin.isZero(); }
-inline bool RenderStyle::hasMask() const { return maskLayers().hasImage() || maskBorder().hasImage(); }
+inline bool RenderStyle::hasMask() const { return usedMaskLayers().hasImage() || maskBorder().hasImage(); }
 inline bool RenderStyle::hasOffset() const { return !m_nonInheritedData->surroundData->offset.isZero(); }
 inline bool RenderStyle::hasOpacity() const { return m_nonInheritedData->miscData->hasOpacity(); }
 inline bool RenderStyle::hasOutOfFlowPosition() const { return position() == PositionType::Absolute || position() == PositionType::Fixed; }
@@ -307,7 +313,7 @@ inline bool RenderStyle::hasOutline() const { return outlineStyle() > BorderStyl
 inline bool RenderStyle::hasOutlineInVisualOverflow() const { return hasOutline() && outlineSize() > 0; }
 inline bool RenderStyle::hasPadding() const { return !paddingBox().isZero(); }
 inline bool RenderStyle::hasPerspective() const { return perspective() != initialPerspective(); }
-inline bool RenderStyle::hasPositionedMask() const { return maskLayers().hasImage(); }
+inline bool RenderStyle::hasPositionedMask() const { return usedMaskLayers().hasImage(); }
 inline bool RenderStyle::hasPseudoStyle(PseudoId pseudo) const { return m_nonInheritedFlags.hasPseudoStyle(pseudo); }
 inline bool RenderStyle::hasStaticBlockPosition(bool horizontal) const { return horizontal ? hasAutoTopAndBottom() : hasAutoLeftAndRight(); }
 inline bool RenderStyle::hasStaticInlinePosition(bool horizontal) const { return horizontal ? hasAutoLeftAndRight() : hasAutoTopAndBottom(); }
@@ -609,17 +615,18 @@ inline const LengthBox& RenderStyle::maskBorderSlices() const { return maskBorde
 inline StyleImage* RenderStyle::maskBorderSource() const { return maskBorder().image(); }
 inline NinePieceImageRule RenderStyle::maskBorderVerticalRule() const { return maskBorder().verticalRule(); }
 inline const LengthBox& RenderStyle::maskBorderWidth() const { return maskBorder().borderSlices(); }
-inline FillBox RenderStyle::maskClip() const { return maskLayers().clip(); }
-inline CompositeOperator RenderStyle::maskComposite() const { return maskLayers().composite(); }
-inline StyleImage* RenderStyle::maskImage() const { return maskLayers().image(); }
+inline FillBox RenderStyle::maskClip() const { return usedMaskLayers().clip(); }
+inline CompositeOperator RenderStyle::maskComposite() const { return usedMaskLayers().composite(); }
+inline StyleImage* RenderStyle::maskImage() const { return usedMaskLayers().image(); }
 inline const FillLayer& RenderStyle::maskLayers() const { return m_nonInheritedData->miscData->mask; }
-inline Ref<const FillLayer> RenderStyle::protectedMaskLayers() const { return maskLayers(); }
-inline FillBox RenderStyle::maskOrigin() const { return maskLayers().origin(); }
-inline FillRepeatXY RenderStyle::maskRepeat() const { return maskLayers().repeat(); }
-inline const LengthSize& RenderStyle::maskSizeLength() const { return maskLayers().sizeLength(); }
-inline FillSizeType RenderStyle::maskSizeType() const { return maskLayers().sizeType(); }
-inline const Length& RenderStyle::maskXPosition() const { return maskLayers().xPosition(); }
-inline const Length& RenderStyle::maskYPosition() const { return maskLayers().yPosition(); }
+inline const FillLayer& RenderStyle::usedMaskLayers() const { return m_nonInheritedData->miscData->usedMask(); }
+inline Ref<const FillLayer> RenderStyle::protectedUsedMaskLayers() const { return usedMaskLayers(); }
+inline FillBox RenderStyle::maskOrigin() const { return usedMaskLayers().origin(); }
+inline FillRepeatXY RenderStyle::maskRepeat() const { return usedMaskLayers().repeat(); }
+inline const LengthSize& RenderStyle::maskSizeLength() const { return usedMaskLayers().sizeLength(); }
+inline FillSizeType RenderStyle::maskSizeType() const { return usedMaskLayers().sizeType(); }
+inline const Length& RenderStyle::maskXPosition() const { return usedMaskLayers().xPosition(); }
+inline const Length& RenderStyle::maskYPosition() const { return usedMaskLayers().yPosition(); }
 inline MasonryAutoFlow RenderStyle::masonryAutoFlow() const { return m_nonInheritedData->rareData->grid->masonryAutoFlow; }
 inline MathStyle RenderStyle::mathStyle() const { return static_cast<MathStyle>(m_rareInheritedData->mathStyle); }
 inline const Length& RenderStyle::maxHeight() const { return m_nonInheritedData->boxData->maxHeight(); }
@@ -643,6 +650,7 @@ inline const LengthPoint& RenderStyle::offsetPosition() const { return m_nonInhe
 inline OffsetRotation RenderStyle::offsetRotate() const { return m_nonInheritedData->rareData->offsetRotate; }
 inline Length RenderStyle::oneLength() { return { 1, LengthType::Fixed }; }
 inline float RenderStyle::opacity() const { return m_nonInheritedData->miscData->opacity; }
+inline float RenderStyle::usedOpacity() const { return m_nonInheritedData->miscData->usedOpacity(); }
 inline int RenderStyle::order() const { return m_nonInheritedData->miscData->order; }
 inline const OrderedNamedGridLinesMap& RenderStyle::orderedNamedGridColumnLines() const { return m_nonInheritedData->rareData->grid->orderedNamedGridColumnLines(); }
 inline const OrderedNamedGridLinesMap& RenderStyle::orderedNamedGridRowLines() const { return m_nonInheritedData->rareData->grid->orderedNamedGridRowLines(); }
@@ -803,6 +811,7 @@ constexpr ApplePayButtonType RenderStyle::initialApplePayButtonType() { return A
 inline BoxDecorationBreak RenderStyle::boxDecorationBreak() const { return m_nonInheritedData->boxData->boxDecorationBreak(); }
 
 inline BlendMode RenderStyle::blendMode() const { return static_cast<BlendMode>(m_nonInheritedData->rareData->effectiveBlendMode); }
+inline BlendMode RenderStyle::usedBlendMode() const { return static_cast<BlendMode>(m_nonInheritedData->rareData->usedBlendMode()); }
 constexpr BlendMode RenderStyle::initialBlendMode() { return BlendMode::Normal; }
 constexpr Isolation RenderStyle::initialIsolation() { return Isolation::Auto; }
 inline bool RenderStyle::isInSubtreeWithBlendMode() const { return m_rareInheritedData->isInSubtreeWithBlendMode; }
@@ -827,7 +836,8 @@ inline bool RenderStyle::hasExplicitlySetColorScheme() const { return m_nonInher
 #endif
 
 inline const FilterOperations& RenderStyle::backdropFilter() const { return m_nonInheritedData->rareData->backdropFilter->operations; }
-inline bool RenderStyle::hasBackdropFilter() const { return !backdropFilter().isEmpty(); }
+inline const FilterOperations& RenderStyle::usedBackdropFilter() const { return m_nonInheritedData->rareData->usedBackdropFilter(); }
+inline bool RenderStyle::hasBackdropFilter() const { return !usedBackdropFilter().isEmpty(); }
 inline FilterOperations RenderStyle::initialBackdropFilter() { return { }; }
 
 inline bool RenderStyle::hasExplicitlySetDirection() const { return m_nonInheritedData->miscData->hasExplicitlySetDirection; }

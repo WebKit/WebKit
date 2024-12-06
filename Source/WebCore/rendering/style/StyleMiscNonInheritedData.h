@@ -67,8 +67,12 @@ public:
     void dumpDifferences(TextStream&, const StyleMiscNonInheritedData&) const;
 #endif
 
-    bool hasOpacity() const { return opacity < 1; }
-    bool hasZeroOpacity() const { return !opacity; }
+    WEBCORE_EXPORT float usedOpacity() const;
+    const FilterOperations& usedFilter() const;
+    const FillLayer& usedMask() const;
+
+    bool hasOpacity() const { return usedOpacity() < 1; }
+    bool hasZeroOpacity() const { return !usedOpacity(); }
     bool hasFilters() const;
     bool contentDataEquivalent(const StyleMiscNonInheritedData&) const;
 
@@ -114,6 +118,7 @@ public:
     unsigned userDrag : 2; // UserDrag
     unsigned objectFit : 3; // ObjectFit
     unsigned resize : 3; // Resize
+    bool propagatedToCanvas : 1;
 
 private:
     StyleMiscNonInheritedData();

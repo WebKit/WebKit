@@ -71,6 +71,7 @@ StyleMiscNonInheritedData::StyleMiscNonInheritedData()
     , userDrag(static_cast<unsigned>(RenderStyle::initialUserDrag()))
     , objectFit(static_cast<unsigned>(RenderStyle::initialObjectFit()))
     , resize(static_cast<unsigned>(RenderStyle::initialResize()))
+    , propagatedToCanvas(false)
 {
 }
 
@@ -114,6 +115,7 @@ StyleMiscNonInheritedData::StyleMiscNonInheritedData(const StyleMiscNonInherited
     , userDrag(o.userDrag)
     , objectFit(o.objectFit)
     , resize(o.resize)
+    , propagatedToCanvas(o.propagatedToCanvas)
 {
 }
 
@@ -163,7 +165,8 @@ bool StyleMiscNonInheritedData::operator==(const StyleMiscNonInheritedData& o) c
         && textOverflow == o.textOverflow
         && userDrag == o.userDrag
         && objectFit == o.objectFit
-        && resize == o.resize;
+        && resize == o.resize
+        && propagatedToCanvas == o.propagatedToCanvas;
 }
 
 bool StyleMiscNonInheritedData::contentDataEquivalent(const StyleMiscNonInheritedData& other) const
@@ -179,7 +182,29 @@ bool StyleMiscNonInheritedData::contentDataEquivalent(const StyleMiscNonInherite
 
 bool StyleMiscNonInheritedData::hasFilters() const
 {
-    return !filter->operations.isEmpty();
+    return !usedFilter().isEmpty();
+}
+
+float StyleMiscNonInheritedData::usedOpacity() const
+{
+    return propagatedToCanvas ? RenderStyle::initialOpacity() : opacity;
+}
+
+const FilterOperations& StyleMiscNonInheritedData::usedFilter() const
+{
+    static NeverDestroyed<FilterOperations> emptyFilter = RenderStyle::initialFilter();
+    if (propagatedToCanvas)
+        return emptyFilter;
+    return filter->operations;
+}
+
+const FillLayer& StyleMiscNonInheritedData::usedMask() const
+{
+    static NeverDestroyed<Ref<FillLayer>> emptyMask = FillLayer::create(FillLayerType::Mask);
+    if (propagatedToCanvas)
+        return emptyMask.get();
+    return mask;
+
 }
 
 #if !LOG_DISABLED

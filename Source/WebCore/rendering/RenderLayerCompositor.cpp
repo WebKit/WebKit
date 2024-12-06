@@ -169,6 +169,12 @@ struct RenderLayerCompositor::CompositingState {
         childState.hasCompositedNonContainedDescendants = false;
         childState.hasNotIsolatedCompositedBlendingDescendants = false; // FIXME: should this only be reset for stacking contexts?
         childState.hasBackdropFilterDescendantsWithoutRoot = false;
+        if (layer.isRenderViewLayer())
+            childState.isolatedGroupHasBackgroundLayer = layer.compositor().needsFixedRootBackgroundLayer(layer);
+        else if (layer.renderer().isDocumentElementRenderer())
+            childState.isolatedGroupHasBackgroundLayer = isolatedGroupHasBackgroundLayer;
+        else
+            childState.isolatedGroupHasBackgroundLayer = false;
 #if !LOG_DISABLED
         childState.depth = depth + 1;
 #endif
@@ -231,6 +237,7 @@ struct RenderLayerCompositor::CompositingState {
     bool hasCompositedNonContainedDescendants { false };
     bool hasNotIsolatedCompositedBlendingDescendants { false };
     bool hasBackdropFilterDescendantsWithoutRoot { false };
+    bool isolatedGroupHasBackgroundLayer { false };
 #if !LOG_DISABLED
     unsigned depth { 0 };
 #endif
@@ -1109,6 +1116,8 @@ bool RenderLayerCompositor::updateCompositingLayers(CompositingUpdateType update
         computeCompositingRequirements(nullptr, rootLayer, overlapMap, compositingState, backingSharingState);
     }
 
+    rootBackgroundColorOrTransparencyChanged();
+
     LOG(Compositing, "\nRenderLayerCompositor::updateCompositingLayers - mid");
 #if ENABLE(TREE_DEBUGGING)
     if (compositingLogEnabled())
@@ -1437,7 +1446,7 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* ancestor
     // Now check for reasons to become composited that depend on the state of descendant layers.
     if (!willBeComposited && canBeComposited(layer)) {
         layer.update3DTransformedDescendantStatus();
-        auto indirectReason = computeIndirectCompositingReason(layer, currentState.subtreeIsCompositing, layer.has3DTransformedDescendant(), layerPaintsIntoProvidedBacking);
+        auto indirectReason = computeIndirectCompositingReason(layer, currentState.subtreeIsCompositing, layer.has3DTransformedDescendant(), layerPaintsIntoProvidedBacking, compositingState.isolatedGroupHasBackgroundLayer);
         if (indirectReason != IndirectCompositingReason::None) {
             layer.setIndirectCompositingReason(indirectReason);
             layerWillCompositePostDescendants();
@@ -2075,7 +2084,7 @@ static bool clippingChanged(const RenderStyle& oldStyle, const RenderStyle& newS
 
 static bool styleAffectsLayerGeometry(const RenderStyle& style)
 {
-    return style.hasClip() || style.clipPath() || style.hasBorderRadius();
+    return style.hasClip() || style.usedClipPath() || style.hasBorderRadius();
 }
 
 static bool recompositeChangeRequiresGeometryUpdate(const RenderStyle& oldStyle, const RenderStyle& newStyle)
@@ -2098,7 +2107,7 @@ static bool recompositeChangeRequiresGeometryUpdate(const RenderStyle& oldStyle,
         || oldStyle.offsetPosition() != newStyle.offsetPosition()
         || oldStyle.offsetDistance() != newStyle.offsetDistance()
         || oldStyle.offsetRotate() != newStyle.offsetRotate()
-        || !arePointingToEqualData(oldStyle.clipPath(), newStyle.clipPath())
+        || !arePointingToEqualData(oldStyle.usedClipPath(), newStyle.usedClipPath())
         || oldStyle.overscrollBehaviorX() != newStyle.overscrollBehaviorX()
         || oldStyle.overscrollBehaviorY() != newStyle.overscrollBehaviorY();
 }
@@ -2245,7 +2254,7 @@ void RenderLayerCompositor::layerStyleChanged(StyleDifference diff, RenderLayer&
             }
             // If we're changing to/from 0 opacity, then we need to reconfigure the layer since we try to
             // skip backing store allocation for opacity:0.
-            if (oldStyle && oldStyle->opacity() != newStyle.opacity() && (!oldStyle->opacity() || !newStyle.opacity()))
+            if (oldStyle && oldStyle->usedOpacity() != newStyle.usedOpacity() && (!oldStyle->usedOpacity() || !newStyle.usedOpacity()))
                 layer.setNeedsCompositingConfigurationUpdate();
         }
         if (oldStyle && recompositeChangeRequiresGeometryUpdate(*oldStyle, newStyle)) {
@@ -3399,6 +3408,9 @@ OptionSet<CompositingReason> RenderLayerCompositor::reasonsForCompositing(const 
     case IndirectCompositingReason::Preserve3D:
         reasons.add(CompositingReason::Preserve3D);
         break;
+    case IndirectCompositingReason::BlendMode:
+        reasons.add(CompositingReason::BlendingWithCompositedDescendants);
+        break;
     }
 
     if (usesCompositing() && renderer.layer()->isRenderViewLayer())
@@ -4040,7 +4052,7 @@ bool RenderLayerCompositor::requiresCompositingForAnchorPositioning(const Render
     return !!layer.snapshottedScrollOffsetForAnchorPositioning();
 }
 
-IndirectCompositingReason RenderLayerCompositor::computeIndirectCompositingReason(const RenderLayer& layer, bool hasCompositedDescendants, bool has3DTransformedDescendants, bool paintsIntoProvidedBacking) const
+IndirectCompositingReason RenderLayerCompositor::computeIndirectCompositingReason(const RenderLayer& layer, bool hasCompositedDescendants, bool has3DTransformedDescendants, bool paintsIntoProvidedBacking, bool isolatedGroupHasBackgroundLayer) const
 {
     // When a layer has composited descendants, some effects, like 2d transforms, filters, masks etc must be implemented
     // via compositing so that they also apply to those composited descendants.
@@ -4064,6 +4076,9 @@ IndirectCompositingReason RenderLayerCompositor::computeIndirectCompositingReaso
         if (paintDestination && layerScrollBehahaviorRelativeToCompositedAncestor(layer, *paintDestination) != ScrollPositioningBehavior::None)
             return IndirectCompositingReason::OverflowScrollPositioning;
     }
+
+    if (layer.hasBlendMode() && isolatedGroupHasBackgroundLayer)
+        return IndirectCompositingReason::BlendMode;
 
     // Check for clipping last; if compositing just for clipping, the layer doesn't need its own backing store.
     if (hasCompositedDescendants && clipsCompositingDescendants(layer))
@@ -4699,11 +4714,7 @@ bool RenderLayerCompositor::viewHasTransparentBackground(Color* backgroundColor)
         return true;
     }
 
-    Color documentBackgroundColor = m_renderView.frameView().documentBackgroundColor();
-    if (!documentBackgroundColor.isValid())
-        documentBackgroundColor = m_renderView.frameView().baseBackgroundColor();
-
-    ASSERT(documentBackgroundColor.isValid());
+    Color documentBackgroundColor = m_renderView.frameView().documentBackgroundColor(!m_renderView.settings().untransformedRootBackgrounds());
 
     if (backgroundColor)
         *backgroundColor = documentBackgroundColor;
@@ -4718,6 +4729,14 @@ void RenderLayerCompositor::rootOrBodyStyleChanged(RenderElement& renderer, cons
     if (!usesCompositing())
         return;
 
+    if (oldStyle && (oldStyle->overscrollBehaviorX() != renderer.style().overscrollBehaviorX() || oldStyle->overscrollBehaviorY() != renderer.style().overscrollBehaviorY())) {
+        if (auto* layer = m_renderView.layer())
+            layer->setNeedsCompositingGeometryUpdate();
+    }
+
+    if (m_renderView.settings().untransformedRootBackgrounds())
+        return;
+
     Color oldBackgroundColor;
     if (oldStyle)
         oldBackgroundColor = oldStyle->visitedDependentColorWithColorFilter(CSSPropertyBackgroundColor);
@@ -4728,11 +4747,24 @@ void RenderLayerCompositor::rootOrBodyStyleChanged(RenderElement& renderer, cons
     bool hadFixedBackground = oldStyle && oldStyle->hasEntirelyFixedBackground();
     if (hadFixedBackground != renderer.style().hasEntirelyFixedBackground())
         rootLayerConfigurationChanged();
-    
-    if (oldStyle && (oldStyle->overscrollBehaviorX() != renderer.style().overscrollBehaviorX() || oldStyle->overscrollBehaviorY() != renderer.style().overscrollBehaviorY())) {
-        if (auto* layer = m_renderView.layer())
-            layer->setNeedsCompositingGeometryUpdate();
-    }
+
+}
+
+void RenderLayerCompositor::viewStyleChanged(RenderElement& renderer, const RenderStyle* oldStyle)
+{
+    if (!usesCompositing() || !m_renderView.settings().untransformedRootBackgrounds())
+        return;
+
+    Color oldBackgroundColor;
+    if (oldStyle)
+        oldBackgroundColor = oldStyle->visitedDependentColorWithColorFilter(CSSPropertyBackgroundColor);
+
+    if (oldBackgroundColor != renderer.style().visitedDependentColorWithColorFilter(CSSPropertyBackgroundColor))
+        rootBackgroundColorOrTransparencyChanged();
+
+    bool hadFixedBackground = oldStyle && oldStyle->hasEntirelyFixedBackground();
+    if (hadFixedBackground != renderer.style().hasEntirelyFixedBackground())
+        rootLayerConfigurationChanged();
 }
 
 void RenderLayerCompositor::setRootElementCapturedInViewTransition(bool captured)
@@ -4747,7 +4779,9 @@ void RenderLayerCompositor::updateRootContentsLayerBackgroundColor()
 {
     if (!m_rootContentsLayer)
         return;
-    if (m_rootElementCapturedInViewTransition)
+    if (m_renderView.settings().untransformedRootBackgrounds())
+        m_rootContentsLayer->setBackgroundColor(m_baseBackgroundColor);
+    else if (m_rootElementCapturedInViewTransition)
         m_rootContentsLayer->setBackgroundColor(m_viewBackgroundColor);
     else
         m_rootContentsLayer->setBackgroundColor(Color());
@@ -4758,32 +4792,38 @@ void RenderLayerCompositor::rootBackgroundColorOrTransparencyChanged()
     if (!usesCompositing())
         return;
 
+    Color baseBackgroundColor = m_renderView.baseBackgroundPainter() == RenderView::BaseBackgroundPainter::RootLayer ? m_renderView.frameView().baseBackgroundColor() : Color();
+
     Color backgroundColor;
     bool isTransparent = viewHasTransparentBackground(&backgroundColor);
-    
+
     Color extendedBackgroundColor = m_renderView.settings().backgroundShouldExtendBeyondPage() ? backgroundColor : Color();
-    
+
     bool transparencyChanged = m_viewBackgroundIsTransparent != isTransparent;
+    bool baseBackgroundColorChanged = m_baseBackgroundColor != baseBackgroundColor;
     bool backgroundColorChanged = m_viewBackgroundColor != backgroundColor;
     bool extendedBackgroundColorChanged = m_rootExtendedBackgroundColor != extendedBackgroundColor;
 
-    if (!transparencyChanged && !backgroundColorChanged && !extendedBackgroundColorChanged)
+    if (!transparencyChanged && !baseBackgroundColorChanged && !backgroundColorChanged && !extendedBackgroundColorChanged)
         return;
 
     LOG(Compositing, "RenderLayerCompositor %p rootBackgroundColorOrTransparencyChanged. isTransparent=%d", this, isTransparent);
 
     m_viewBackgroundIsTransparent = isTransparent;
+    m_baseBackgroundColor = baseBackgroundColor;
     m_viewBackgroundColor = backgroundColor;
     m_rootExtendedBackgroundColor = extendedBackgroundColor;
     
     if (extendedBackgroundColorChanged) {
         page().chrome().client().pageExtendedBackgroundColorDidChange();
-        
+
 #if HAVE(RUBBER_BANDING)
         updateLayerForOverhangAreasBackgroundColor();
 #endif
-        updateRootContentsLayerBackgroundColor();
     }
+
+    if (baseBackgroundColorChanged || extendedBackgroundColorChanged)
+        updateRootContentsLayerBackgroundColor();
     
     rootLayerConfigurationChanged();
 }

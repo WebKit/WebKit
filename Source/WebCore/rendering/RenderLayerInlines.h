@@ -34,7 +34,7 @@ inline bool RenderLayer::hasFilter() const { return renderer().hasFilter(); }
 inline bool RenderLayer::hasPerspective() const { return renderer().style().hasPerspective(); }
 inline bool RenderLayer::isTransformed() const { return renderer().isTransformed(); }
 inline bool RenderLayer::isTransparent() const { return renderer().isTransparent() || renderer().hasMask(); }
-inline bool RenderLayer::overlapBoundsIncludeChildren() const { return hasFilter() && renderer().style().filter().hasFilterThatMovesPixels(); }
+inline bool RenderLayer::overlapBoundsIncludeChildren() const { return hasFilter() && renderer().style().usedFilter().hasFilterThatMovesPixels(); }
 inline bool RenderLayer::preserves3D() const { return renderer().style().preserves3D(); }
 inline int RenderLayer::zIndex() const { return renderer().style().usedZIndex(); }
 

@@ -1516,7 +1516,7 @@ bool RenderBox::hitTestVisualOverflow(const HitTestLocation& hitTestLocation, co
 
 bool RenderBox::hitTestClipPath(const HitTestLocation& hitTestLocation, const LayoutPoint& accumulatedOffset) const
 {
-    if (!style().clipPath())
+    if (!style().usedClipPath())
         return true;
 
     auto offsetFromHitTestRoot = toLayoutSize(accumulatedOffset + location());
@@ -1529,16 +1529,16 @@ bool RenderBox::hitTestClipPath(const HitTestLocation& hitTestLocation, const La
         return clipper->hitTestClipContent( FloatRect { borderBoxRect() }, FloatPoint { hitTestLocationInLocalCoordinates });
     };
 
-    switch (style().clipPath()->type()) {
+    switch (style().usedClipPath()->type()) {
     case PathOperation::Type::Shape: {
-        auto& clipPath = uncheckedDowncast<ShapePathOperation>(*style().clipPath());
+        auto& clipPath = uncheckedDowncast<ShapePathOperation>(*style().usedClipPath());
         auto referenceBoxRect = this->referenceBoxRect(clipPath.referenceBox());
         if (!clipPath.pathForReferenceRect(referenceBoxRect).contains(hitTestLocationInLocalCoordinates, clipPath.windRule()))
             return false;
         break;
     }
     case PathOperation::Type::Reference: {
-        const auto& referencePathOperation = uncheckedDowncast<ReferencePathOperation>(*style().clipPath());
+        const auto& referencePathOperation = uncheckedDowncast<ReferencePathOperation>(*style().usedClipPath());
         RefPtr element = document().getElementById(referencePathOperation.fragment());
         if (!element || !element->renderer())
             break;
@@ -1761,7 +1761,7 @@ bool RenderBox::getBackgroundPaintedExtent(const LayoutPoint& paintOffset, Layou
         return true;
     }
 
-    auto& layers = style().backgroundLayers();
+    auto& layers = style().usedBackgroundLayers();
     if (!layers.image() || layers.next()) {
         paintedExtent =  backgroundRect;
         return true;
@@ -1797,7 +1797,7 @@ bool RenderBox::backgroundIsKnownToBeOpaqueInRect(const LayoutRect& localRect) c
         return false;
     
     // FIXME: The background color clip is defined by the last layer.
-    if (style().backgroundLayers().next())
+    if (style().usedBackgroundLayers().next())
         return false;
     LayoutRect backgroundRect;
     switch (style().backgroundClip()) {
@@ -1896,7 +1896,7 @@ bool RenderBox::computeBackgroundIsKnownToBeObscured(const LayoutPoint& paintOff
 
 bool RenderBox::backgroundHasOpaqueTopLayer() const
 {
-    auto& fillLayer = style().backgroundLayers();
+    auto& fillLayer = style().usedBackgroundLayers();
     if (fillLayer.clip() != FillBox::BorderBox)
         return false;
 
@@ -1934,7 +1934,7 @@ void RenderBox::paintClippingMask(PaintInfo& paintInfo, const LayoutPoint& paint
 
     LayoutRect paintRect = LayoutRect(paintOffset, size());
 
-    if (document().settings().layerBasedSVGEngineEnabled() && style().clipPath() && style().clipPath()->type() == PathOperation::Type::Reference) {
+    if (document().settings().layerBasedSVGEngineEnabled() && style().usedClipPath() && style().usedClipPath()->type() == PathOperation::Type::Reference) {
         paintSVGClippingMask(paintInfo, paintRect);
         return;
     }
@@ -1959,7 +1959,7 @@ void RenderBox::paintMaskImages(const PaintInfo& paintInfo, const LayoutRect& pa
         if (auto* maskBorder = style().maskBorder().image())
             allMaskImagesLoaded &= maskBorder->isLoaded(this);
 
-        allMaskImagesLoaded &= style().maskLayers().imagesAreLoaded(this);
+        allMaskImagesLoaded &= style().usedMaskLayers().imagesAreLoaded(this);
 
         paintInfo.context().setCompositeOperation(CompositeOperator::DestinationIn);
         paintInfo.context().beginTransparencyLayer(1);
@@ -1967,7 +1967,7 @@ void RenderBox::paintMaskImages(const PaintInfo& paintInfo, const LayoutRect& pa
     }
 
     if (allMaskImagesLoaded) {
-        BackgroundPainter { *this, paintInfo }.paintFillLayers(Color(), style().maskLayers(), paintRect, BleedAvoidance::None, compositeOp);
+        BackgroundPainter { *this, paintInfo }.paintFillLayers(Color(), style().usedMaskLayers(), paintRect, BleedAvoidance::None, compositeOp);
         BorderPainter { *this, paintInfo }.paintNinePieceImage(paintRect, style(), style().maskBorder(), compositeOp);
     }
     
@@ -1988,7 +1988,7 @@ LayoutRect RenderBox::maskClipRect(const LayoutPoint& paintOffset)
     
     LayoutRect result;
     LayoutRect borderBox = borderBoxRect();
-    for (auto* maskLayer = &style().maskLayers(); maskLayer; maskLayer = maskLayer->next()) {
+    for (auto* maskLayer = &style().usedMaskLayers(); maskLayer; maskLayer = maskLayer->next()) {
         if (maskLayer->image()) {
             // Masks should never have fixed attachment, so it's OK for paintContainer to be null.
             result.unite(BackgroundPainter::calculateBackgroundImageGeometry(*this, nullptr, *maskLayer, paintOffset, borderBox).destinationRect);
@@ -2024,13 +2024,13 @@ void RenderBox::imageChanged(WrappedImagePtr image, const IntRect*)
     bool didFullRepaint = false;
 
     auto repaintForBackgroundAndMask = [&](auto& style) {
-        if (!parent())
+        if (!parent() && !isRenderView())
             return;
 
         if (!didFullRepaint)
-            didFullRepaint = repaintLayerRectsForImage(image, style.backgroundLayers(), true);
+            didFullRepaint = repaintLayerRectsForImage(image, style.usedBackgroundLayers(), true);
         if (!didFullRepaint)
-            didFullRepaint = repaintLayerRectsForImage(image, style.maskLayers(), false);
+            didFullRepaint = repaintLayerRectsForImage(image, style.usedMaskLayers(), false);
     };
 
     repaintForBackgroundAndMask(style());
@@ -2041,10 +2041,10 @@ void RenderBox::imageChanged(WrappedImagePtr image, const IntRect*)
     if (!isComposited())
         return;
 
-    if (layer()->hasCompositedMask() && findLayerUsedImage(image, style().maskLayers()))
+    if (layer()->hasCompositedMask() && findLayerUsedImage(image, style().usedMaskLayers()))
         layer()->contentChanged(ContentChangeType::MaskImage);
     
-    if (auto* styleImage = findLayerUsedImage(image, style().backgroundLayers())) {
+    if (auto* styleImage = findLayerUsedImage(image, style().usedBackgroundLayers())) {
         layer()->contentChanged(ContentChangeType::BackgroundIImage);
         incrementVisuallyNonEmptyPixelCountIfNeeded(flooredIntSize(styleImage->imageSize(this, style().usedZoom())));
     }
@@ -2067,7 +2067,7 @@ bool RenderBox::repaintLayerRectsForImage(WrappedImagePtr image, const FillLayer
     for (auto* layer = &layers; layer; layer = layer->next()) {
         if (layer->image() && image == layer->image()->data() && (layer->image()->isLoaded(this) || layer->image()->canRender(this, style().usedZoom()))) {
             // Now that we know this image is being used, compute the renderer and the rect if we haven't already.
-            bool drawingRootBackground = drawingBackground && (isDocumentElementRenderer() || (isBody() && !document().documentElement()->renderer()->hasBackground()));
+            bool drawingRootBackground = drawingBackground && (isDocumentElementRenderer() || (isBody() && !document().documentElement()->renderer()->hasBackground()) || isRenderView());
             if (!layerRenderer) {
                 if (drawingRootBackground) {
                     layerRenderer = &view();
@@ -2084,10 +2084,12 @@ bool RenderBox::repaintLayerRectsForImage(WrappedImagePtr image, const FillLayer
                     // If we're drawing the root background, then we want to use the bounds of the view
                     // (since root backgrounds cover the canvas, not just the element). If the root element
                     // is composited though, we need to issue the repaint to that root element.
-                    auto documentElementRenderer = downcast<RenderBox>(document().documentElement()->renderer());
-                    auto rendererLayer = documentElementRenderer->layer();
-                    if (rendererLayer && rendererLayer->isComposited())
-                        layerRenderer = documentElementRenderer;
+                    if (!isRenderView()) {
+                        auto documentElementRenderer = downcast<RenderBox>(document().documentElement()->renderer());
+                        auto rendererLayer = documentElementRenderer->layer();
+                        if (rendererLayer && rendererLayer->isComposited())
+                            layerRenderer = documentElementRenderer;
+                    }
                 } else {
                     layerRenderer = this;
                     rendererRect = borderBoxRect();

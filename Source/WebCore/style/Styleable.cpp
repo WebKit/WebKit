@@ -205,7 +205,7 @@ bool Styleable::mayHaveNonZeroOpacity() const
     if (!renderer)
         return false;
 
-    if (renderer->style().opacity() != 0.0f)
+    if (renderer->style().usedOpacity() != 0.0f)
         return true;
 
     if (renderer->style().willChange() && renderer->style().willChange()->containsProperty(CSSPropertyOpacity))

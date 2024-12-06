@@ -150,8 +150,17 @@ public:
     // Renderer that paints the root background has background-images which all have background-attachment: fixed.
     bool rootBackgroundIsEntirelyFixed() const;
 
-    bool rootElementShouldPaintBaseBackground() const;
+    bool needsBaseBackground() const;
     bool shouldPaintBaseBackground() const;
+    void paintBaseBackground(PaintInfo&, bool shouldPropagateBackgroundPaintingToInitialContainingBlock = false);
+
+    enum class BaseBackgroundPainter {
+        None,
+        RootLayer,
+        RenderView,
+        RootElement,
+    };
+    BaseBackgroundPainter baseBackgroundPainter() const;
 
     FloatSize sizeForCSSSmallViewportUnits() const;
     FloatSize sizeForCSSLargeViewportUnits() const;

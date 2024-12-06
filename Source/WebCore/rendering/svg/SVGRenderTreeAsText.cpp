@@ -234,7 +234,7 @@ void writeSVGPaintingFeatures(TextStream& ts, const RenderElement& renderer, Opt
     if (!renderer.localTransform().isIdentity())
         writeNameValuePair(ts, "transform"_s, renderer.localTransform());
     writeIfNotDefault(ts, "image rendering"_s, style.imageRendering(), RenderStyle::initialImageRendering());
-    writeIfNotDefault(ts, "opacity"_s, style.opacity(), RenderStyle::initialOpacity());
+    writeIfNotDefault(ts, "opacity"_s, style.usedOpacity(), RenderStyle::initialOpacity());
 
     if (auto* shape = dynamicDowncast<LegacyRenderSVGShape>(renderer)) {
         Color fallbackColor;
@@ -596,7 +596,7 @@ void writeResources(TextStream& ts, const RenderObject& renderer, OptionSet<Rend
             }
         }
     }
-    if (auto* resourceClipPath = dynamicDowncast<ReferencePathOperation>(style.clipPath())) {
+    if (auto* resourceClipPath = dynamicDowncast<ReferencePathOperation>(style.usedClipPath())) {
         AtomString id = resourceClipPath->fragment();
         if (LegacyRenderSVGResourceClipper* clipper = getRenderSVGResourceById<LegacyRenderSVGResourceClipper>(renderer.treeScopeForSVGReferences(), id)) {
             ts << indent << ' ';
@@ -607,7 +607,7 @@ void writeResources(TextStream& ts, const RenderObject& renderer, OptionSet<Rend
         }
     }
     if (style.hasFilter()) {
-        const FilterOperations& filterOperations = style.filter();
+        const FilterOperations& filterOperations = style.usedFilter();
         if (filterOperations.size() == 1) {
             if (RefPtr referenceFilterOperation = dynamicDowncast<ReferenceFilterOperation>(*filterOperations.at(0))) {
                 AtomString id = SVGURIReference::fragmentIdentifierFromIRIString(referenceFilterOperation->url(), renderer.protectedDocument());

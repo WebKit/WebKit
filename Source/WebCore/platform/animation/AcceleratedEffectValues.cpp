@@ -103,7 +103,7 @@ static LengthPoint nonCalculatedLengthPoint(LengthPoint lengthPoint, const IntSi
 
 AcceleratedEffectValues::AcceleratedEffectValues(const RenderStyle& style, const IntRect& borderBoxRect, const RenderLayerModelObject* renderer)
 {
-    opacity = style.opacity();
+    opacity = style.usedOpacity();
 
     auto borderBoxSize = borderBoxRect.size();
 

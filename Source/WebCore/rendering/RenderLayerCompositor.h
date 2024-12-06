@@ -239,6 +239,7 @@ public:
     GraphicsLayer* fixedRootBackgroundLayer() const;
 
     void rootOrBodyStyleChanged(RenderElement&, const RenderStyle* oldStyle);
+    void viewStyleChanged(RenderElement&, const RenderStyle* oldStyle);
 
     // Called after the view transparency, or the document or base background color change.
     void rootBackgroundColorOrTransparencyChanged();
@@ -542,7 +543,7 @@ private:
     bool requiresCompositingForPosition(RenderLayerModelObject&, const RenderLayer&, RequiresCompositingData&) const;
     bool requiresCompositingForOverflowScrolling(const RenderLayer&, RequiresCompositingData&) const;
     bool requiresCompositingForAnchorPositioning(const RenderLayer&) const;
-    IndirectCompositingReason computeIndirectCompositingReason(const RenderLayer&, bool hasCompositedDescendants, bool has3DTransformedDescendants, bool paintsIntoProvidedBacking) const;
+    IndirectCompositingReason computeIndirectCompositingReason(const RenderLayer&, bool hasCompositedDescendants, bool has3DTransformedDescendants, bool paintsIntoProvidedBacking, bool isolatedGroupHasBackgroundLayer) const;
 
     static ScrollPositioningBehavior layerScrollBehahaviorRelativeToCompositedAncestor(const RenderLayer&, const RenderLayer& compositedAncestor);
 
@@ -678,6 +679,7 @@ private:
     double m_secondaryBackingStoreBytes { 0 };
 #endif
 
+    Color m_baseBackgroundColor;
     Color m_viewBackgroundColor;
     Color m_rootExtendedBackgroundColor;
 

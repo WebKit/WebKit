@@ -137,7 +137,8 @@ enum class IndirectCompositingReason {
     BackgroundLayer,
     GraphicalEffect, // opacity, mask, filter, transform etc.
     Perspective,
-    Preserve3D
+    Preserve3D,
+    BlendMode
 };
 
 enum class ShouldAllowCrossOriginScrolling : bool { No, Yes };
@@ -816,7 +817,7 @@ public:
         m_hasNotIsolatedCompositedBlendingDescendants = hasNotIsolatedCompositedBlendingDescendants;
     }
 
-    bool isolatesBlending() const { return hasNotIsolatedBlendingDescendants() && isCSSStackingContext(); }
+    bool isolatesBlending() const { return hasNotIsolatedBlendingDescendants() && ((isCSSStackingContext() && !renderer().isDocumentElementRenderer()) || isRenderViewLayer()); }
 
     // FIXME: We should ASSERT(!m_hasNotIsolatedBlendingDescendantsStatusDirty); here but we hit the same bugs as visible content above.
     bool hasNotIsolatedBlendingDescendants() const { return m_hasNotIsolatedBlendingDescendants; }

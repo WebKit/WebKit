@@ -542,7 +542,7 @@ void RenderLayerBacking::createPrimaryGraphicsLayer()
         layerName = makeString(StringView(layerName).left(maxLayerNameLength), "..."_s);
     m_graphicsLayer = createGraphicsLayer(layerName, m_isFrameLayerWithTiledBacking ? GraphicsLayer::Type::PageTiledBacking : GraphicsLayer::Type::Normal);
 
-    if (m_isFrameLayerWithTiledBacking) {
+    if (m_isFrameLayerWithTiledBacking && !renderer().settings().untransformedRootBackgrounds()) {
         m_childContainmentLayer = createGraphicsLayer("Page TiledBacking containment"_s);
         m_graphicsLayer->addChild(*m_childContainmentLayer);
     }
@@ -653,7 +653,11 @@ static LayoutRect overflowControlsHostLayerRect(const RenderBox& renderBox)
 
 void RenderLayerBacking::updateOpacity(const RenderStyle& style)
 {
-    m_graphicsLayer->setOpacity(compositingOpacity(style.opacity()));
+    if (m_contentsContainmentLayer) {
+        m_contentsContainmentLayer->setOpacity(compositingOpacity(style.usedOpacity()));
+        m_graphicsLayer->setOpacity(1.);
+    } else
+        m_graphicsLayer->setOpacity(compositingOpacity(style.usedOpacity()));
 }
 
 void RenderLayerBacking::updateTransform(const RenderStyle& style)
@@ -772,12 +776,17 @@ void RenderLayerBacking::updateChildrenTransformAndAnchorPoint(const LayoutRect&
 
 void RenderLayerBacking::updateFilters(const RenderStyle& style)
 {
-    m_canCompositeFilters = m_graphicsLayer->setFilters(style.filter());
+    if (m_contentsContainmentLayer) {
+        m_canCompositeFilters = m_contentsContainmentLayer->setFilters(style.usedFilter());
+        m_graphicsLayer->setFilters(FilterOperations());
+    } else
+        m_canCompositeFilters = m_graphicsLayer->setFilters(style.usedFilter());
+
 }
 
 void RenderLayerBacking::updateBackdropFilters(const RenderStyle& style)
 {
-    m_canCompositeBackdropFilters = m_graphicsLayer->setBackdropFilters(style.backdropFilter());
+    m_canCompositeBackdropFilters = m_graphicsLayer->setBackdropFilters(style.usedBackdropFilter());
 }
 
 void RenderLayerBacking::updateBackdropFiltersGeometry()
@@ -830,8 +839,13 @@ void RenderLayerBacking::updateBlendMode(const RenderStyle& style)
     if (m_ancestorClippingStack) {
         m_ancestorClippingStack->stack().first().clippingLayer->setBlendMode(style.blendMode());
         m_graphicsLayer->setBlendMode(BlendMode::Normal);
+        if (m_contentsContainmentLayer)
+            m_contentsContainmentLayer->setBlendMode(BlendMode::Normal);
+    } else if (m_contentsContainmentLayer) {
+        m_contentsContainmentLayer->setBlendMode(style.usedBlendMode());
+        m_graphicsLayer->setBlendMode(BlendMode::Normal);
     } else
-        m_graphicsLayer->setBlendMode(style.blendMode());
+        m_graphicsLayer->setBlendMode(style.usedBlendMode());
 }
 
 #if ENABLE(VIDEO)
@@ -1464,6 +1478,8 @@ void RenderLayerBacking::updateGeometry(const RenderLayer* compositedAncestor)
 
     // FIXME: reflections should force transform-style to be flat in the style: https://bugs.webkit.org/show_bug.cgi?id=106959
     bool preserves3D = style.preserves3D() && !renderer().hasReflection();
+    if (renderer().settings().untransformedRootBackgrounds() && (m_owningLayer.renderer().isDocumentElementRenderer() || (m_owningLayer.isRenderViewLayer() && m_contentsContainmentLayer)))
+        preserves3D = true;
 
     if (m_viewportAnchorLayer) {
         m_viewportAnchorLayer->setPosition(primaryLayerPosition);
@@ -1471,7 +1487,7 @@ void RenderLayerBacking::updateGeometry(const RenderLayer* compositedAncestor)
     }
 
     if (m_contentsContainmentLayer) {
-        m_contentsContainmentLayer->setPreserves3D(preserves3D);
+        m_contentsContainmentLayer->setPreserves3D(false);
         m_contentsContainmentLayer->setPosition(primaryLayerPosition);
         primaryLayerPosition = { };
         // Use the same size as m_graphicsLayer so transforms behave correctly.
@@ -1520,7 +1536,7 @@ void RenderLayerBacking::updateGeometry(const RenderLayer* compositedAncestor)
         clipLayer->setOffsetFromRenderer(toLayoutSize(clippingBox.location() - snappedClippingGraphicsLayer.m_snapDelta));
 
         auto computeMasksToBoundsRect = [&] {
-            if ((renderer().style().clipPath() || renderer().style().hasBorderRadius())) {
+            if ((renderer().style().usedClipPath() || renderer().style().hasBorderRadius())) {
                 auto borderShape = BorderShape::shapeForBorderRect(renderer().style(), m_owningLayer.rendererBorderBoxRect());
                 auto contentsClippingRect = borderShape.deprecatedPixelSnappedInnerRoundedRect(deviceScaleFactor);
                 contentsClippingRect.move(LayoutSize(-clipLayer->offsetFromRenderer()));
@@ -1761,7 +1777,7 @@ void RenderLayerBacking::updateMaskingLayerGeometry()
     
     if (!m_maskLayer->drawsContent()) {
         if (renderer().hasClipPath()) {
-            ASSERT(renderer().style().clipPath()->type() != PathOperation::Type::Reference);
+            ASSERT(renderer().style().usedClipPath()->type() != PathOperation::Type::Reference);
 
             // FIXME: Use correct reference box for inlines: https://bugs.webkit.org/show_bug.cgi?id=129047, https://github.com/w3c/csswg-drafts/issues/6383
             LayoutRect boundingBox = m_owningLayer.boundingBox(&m_owningLayer);
@@ -2458,7 +2474,7 @@ bool RenderLayerBacking::updateTransformFlatteningLayer(const RenderLayer* compo
 {
     bool needsFlatteningLayer = false;
     // If our parent layer has preserve-3d or perspective, and it's not our DOM parent, then we need a flattening layer to block that from being applied in 3d.
-    if (ancestorLayerWillCombineTransform(compositingAncestor) && !m_owningLayer.ancestorLayerIsDOMParent(compositingAncestor))
+    if ((m_owningLayer.isTransformed() || m_owningLayer.preserves3D()) && ancestorLayerWillCombineTransform(compositingAncestor) && !m_owningLayer.ancestorLayerIsDOMParent(compositingAncestor))
         needsFlatteningLayer = true;
 
     bool layerChanged = false;
@@ -2560,7 +2576,7 @@ bool RenderLayerBacking::updateMaskingLayer(bool hasMask, bool hasClipPath)
         
         if (hasClipPath) {
             // If we have a mask, we need to paint the combined clip-path and mask into the mask layer.
-            if (hasMask || renderer().style().clipPath()->type() == PathOperation::Type::Reference || !GraphicsLayer::supportsLayerType(GraphicsLayer::Type::Shape))
+            if (hasMask || renderer().style().usedClipPath()->type() == PathOperation::Type::Reference || !GraphicsLayer::supportsLayerType(GraphicsLayer::Type::Shape))
                 maskPhases.add(GraphicsLayerPaintingPhase::ClipPath);
         }
 
@@ -2568,6 +2584,8 @@ bool RenderLayerBacking::updateMaskingLayer(bool hasMask, bool hasClipPath)
         GraphicsLayer::Type requiredLayerType = paintsContent ? GraphicsLayer::Type::Normal : GraphicsLayer::Type::Shape;
         if (m_maskLayer && m_maskLayer->type() != requiredLayerType) {
             m_graphicsLayer->setMaskLayer(nullptr);
+            if (m_contentsContainmentLayer)
+                m_contentsContainmentLayer->setMaskLayer(nullptr);
             willDestroyLayer(m_maskLayer.get());
             GraphicsLayer::clear(m_maskLayer);
         }
@@ -2575,14 +2593,22 @@ bool RenderLayerBacking::updateMaskingLayer(bool hasMask, bool hasClipPath)
         if (!m_maskLayer) {
             m_maskLayer = createGraphicsLayer("mask"_s, requiredLayerType);
             layerChanged = true;
-            m_graphicsLayer->setMaskLayer(m_maskLayer.copyRef());
             // We need a geometry update to size the new mask layer.
             m_owningLayer.setNeedsCompositingGeometryUpdate();
         }
+
+        if (m_contentsContainmentLayer) {
+            m_graphicsLayer->setMaskLayer(nullptr);
+            m_contentsContainmentLayer->setMaskLayer(m_maskLayer.copyRef());
+        } else
+            m_graphicsLayer->setMaskLayer(m_maskLayer.copyRef());
+
         m_maskLayer->setDrawsContent(paintsContent);
         m_maskLayer->setPaintingPhase(maskPhases);
     } else if (m_maskLayer) {
         m_graphicsLayer->setMaskLayer(nullptr);
+        if (m_contentsContainmentLayer)
+            m_contentsContainmentLayer->setMaskLayer(nullptr);
         willDestroyLayer(m_maskLayer.get());
         GraphicsLayer::clear(m_maskLayer);
         layerChanged = true;
@@ -2751,7 +2777,7 @@ static bool canDirectlyCompositeBackgroundBackgroundImage(const RenderElement& r
     if (!GraphicsLayer::supportsContentsTiling())
         return false;
 
-    auto& fillLayer = style.backgroundLayers();
+    auto& fillLayer = style.usedBackgroundLayers();
     if (fillLayer.next())
         return false;
 
@@ -2798,10 +2824,13 @@ static inline bool hasPerspectiveOrPreserves3D(const RenderStyle& style)
 
 Color RenderLayerBacking::rendererBackgroundColor() const
 {
+    if (renderer().settings().untransformedRootBackgrounds())
+        return renderer().style().visitedDependentColorWithColorFilter(CSSPropertyBackgroundColor);
+
     RenderElement* backgroundRenderer = nullptr;
     if (renderer().isDocumentElementRenderer())
         backgroundRenderer = renderer().view().rendererForRootBackground();
-    
+
     if (!backgroundRenderer)
         backgroundRenderer = &renderer();
 
@@ -2854,13 +2883,13 @@ void RenderLayerBacking::updateDirectlyCompositedBackgroundImage(PaintedContents
 
     auto backgroundBox = LayoutRect { backgroundBoxForSimpleContainerPainting() };
     // FIXME: Absolute paint location is required here.
-    auto geometry = BackgroundPainter::calculateBackgroundImageGeometry(*renderBox(), renderBox(), style.backgroundLayers(), { }, backgroundBox);
+    auto geometry = BackgroundPainter::calculateBackgroundImageGeometry(*renderBox(), renderBox(), style.usedBackgroundLayers(), { }, backgroundBox);
 
     m_graphicsLayer->setContentsTileSize(geometry.tileSize);
     m_graphicsLayer->setContentsTilePhase(geometry.phase);
     m_graphicsLayer->setContentsRect(geometry.destinationRect);
     m_graphicsLayer->setContentsClippingRect(FloatRoundedRect(geometry.destinationRect));
-    m_graphicsLayer->setContentsToImage(style.backgroundLayers().image()->cachedImage()->image());
+    m_graphicsLayer->setContentsToImage(style.usedBackgroundLayers().image()->cachedImage()->image());
 
     didUpdateContentsRect = true;
 }
@@ -2875,15 +2904,21 @@ void RenderLayerBacking::updateRootLayerConfiguration()
 
     if (m_backgroundLayerPaintsFixedRootBackground && m_backgroundLayer) {
         if (m_isMainFrameRenderViewLayer) {
-            m_backgroundLayer->setBackgroundColor(backgroundColor);
             m_backgroundLayer->setContentsOpaque(!viewIsTransparent);
+            if (!viewIsTransparent || !renderer().settings().untransformedRootBackgrounds())
+                m_backgroundLayer->setBackgroundColor(backgroundColor);
+            else
+                m_backgroundLayer->setBackgroundColor(Color());
         }
 
         m_graphicsLayer->setBackgroundColor(Color());
         m_graphicsLayer->setContentsOpaque(false);
     } else if (m_isMainFrameRenderViewLayer) {
-        m_graphicsLayer->setBackgroundColor(backgroundColor);
         m_graphicsLayer->setContentsOpaque(!viewIsTransparent);
+        if (!viewIsTransparent || !renderer().settings().untransformedRootBackgrounds())
+            m_graphicsLayer->setBackgroundColor(backgroundColor);
+        else
+            m_graphicsLayer->setBackgroundColor(Color());
     }
 }
 
@@ -4108,13 +4143,13 @@ bool RenderLayerBacking::startAnimation(double timeOffset, const Animation& anim
             transformVector.insert(makeUnique<TransformAnimationValue>(offset, keyframeStyle->transform(), tf));
 
         if (currentKeyframe.animatesProperty(CSSPropertyOpacity))
-            opacityVector.insert(makeUnique<FloatAnimationValue>(offset, keyframeStyle->opacity(), tf));
+            opacityVector.insert(makeUnique<FloatAnimationValue>(offset, keyframeStyle->usedOpacity(), tf));
 
         if (currentKeyframe.animatesProperty(CSSPropertyFilter))
-            filterVector.insert(makeUnique<FilterAnimationValue>(offset, keyframeStyle->filter(), tf));
+            filterVector.insert(makeUnique<FilterAnimationValue>(offset, keyframeStyle->usedFilter(), tf));
 
         if (currentKeyframe.animatesProperty(CSSPropertyWebkitBackdropFilter) || currentKeyframe.animatesProperty(CSSPropertyBackdropFilter))
-            backdropFilterVector.insert(makeUnique<FilterAnimationValue>(offset, keyframeStyle->backdropFilter(), tf));
+            backdropFilterVector.insert(makeUnique<FilterAnimationValue>(offset, keyframeStyle->usedBackdropFilter(), tf));
     }
 
     bool didAnimate = false;

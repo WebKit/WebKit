@@ -3409,6 +3409,10 @@ void LocalFrameView::setBaseBackgroundColor(const Color& backgroundColor)
     recalculateScrollbarOverlayStyle();
     setNeedsLayoutAfterViewConfigurationChange();
     setNeedsCompositingConfigurationUpdate();
+
+    RenderView* renderView = this->renderView();
+    if (renderView && renderView->usesCompositing())
+        renderView->compositor().rootBackgroundColorOrTransparencyChanged();
 }
 
 #if ENABLE(DARK_MODE_CSS)
@@ -4230,7 +4234,7 @@ float LocalFrameView::adjustVerticalPageScrollStepForFixedContent(float step)
     float bottomObscuredArea = 0;
     for (const auto& positionedObject : *positionedObjects) {
         const RenderStyle& style = positionedObject.style();
-        if (style.position() != PositionType::Fixed || style.usedVisibility() == Visibility::Hidden || !style.opacity())
+        if (style.position() != PositionType::Fixed || style.usedVisibility() == Visibility::Hidden || !style.usedOpacity())
             continue;
 
         FloatQuad contentQuad = positionedObject.absoluteContentQuad();
@@ -4461,7 +4465,7 @@ void LocalFrameView::paintScrollbar(GraphicsContext& context, Scrollbar& bar, co
     ScrollView::paintScrollbar(context, bar, rect);
 }
 
-Color LocalFrameView::documentBackgroundColor() const
+Color LocalFrameView::documentBackgroundColor(bool includeBase) const
 {
     // <https://bugs.webkit.org/show_bug.cgi?id=59540> We blend the background color of
     // the document and the body against the base background color of the frame view.
@@ -4479,18 +4483,7 @@ Color LocalFrameView::documentBackgroundColor() const
     }();
 
     if (!backgroundDocument)
-        return Color();
-
-    auto* htmlElement = backgroundDocument->documentElement();
-    auto* bodyElement = backgroundDocument->bodyOrFrameset();
-
-    // Start with invalid colors.
-    Color htmlBackgroundColor;
-    Color bodyBackgroundColor;
-    if (htmlElement && htmlElement->renderer())
-        htmlBackgroundColor = htmlElement->renderer()->style().visitedDependentColorWithColorFilter(CSSPropertyBackgroundColor);
-    if (bodyElement && bodyElement->renderer())
-        bodyBackgroundColor = bodyElement->renderer()->style().visitedDependentColorWithColorFilter(CSSPropertyBackgroundColor);
+        return baseBackgroundColor();
 
 #if ENABLE(FULLSCREEN_API)
     Color fullscreenBackgroundColor = [&] () -> Color {
@@ -4516,7 +4509,58 @@ Color LocalFrameView::documentBackgroundColor() const
         // intentionally be visible underneath (and around) the fullscreen element.
         return backdropRenderer->style().visitedDependentColorWithColorFilter(CSSPropertyBackgroundColor);
     }();
+#endif
 
+    if (m_frame->settings().untransformedRootBackgrounds()) {
+        auto renderView = backgroundDocument->checkedRenderView();
+
+        // Start with invalid colors.
+        Color viewBackgroundColor;
+        if (renderView) {
+            if (renderView->baseBackgroundPainter() == RenderView::BaseBackgroundPainter::RenderView)
+                includeBase = true;
+
+            viewBackgroundColor = renderView->style().visitedDependentColorWithColorFilter(CSSPropertyBackgroundColor);
+        }
+
+#if ENABLE(FULLSCREEN_API)
+        // Replace or blend the fullscreen background color with the view background color, if present.
+        if (fullscreenBackgroundColor.isValid()) {
+            if (!viewBackgroundColor.isValid())
+                viewBackgroundColor = fullscreenBackgroundColor;
+            else
+                viewBackgroundColor = blendSourceOver(viewBackgroundColor, fullscreenBackgroundColor);
+        }
+#endif
+
+        if (!viewBackgroundColor.isValid())
+            return includeBase ? baseBackgroundColor() : Color();
+
+        if (!includeBase)
+            return viewBackgroundColor;
+
+        // We take the aggregate of the base background color,
+        // and the view background color, to find the document color.
+        // The addition of the base background color is not
+        // technically part of the document background, but it
+        // otherwise poses problems when the aggregate is not
+        // fully opaque.
+        return blendSourceOver(baseBackgroundColor(), viewBackgroundColor);
+    }
+
+    auto* htmlElement = backgroundDocument->documentElement();
+    auto* bodyElement = backgroundDocument->bodyOrFrameset();
+
+    // Start with invalid colors.
+    Color htmlBackgroundColor;
+    Color bodyBackgroundColor;
+    if (htmlElement && htmlElement->renderer())
+        htmlBackgroundColor = htmlElement->renderer()->style().visitedDependentColorWithColorFilter(CSSPropertyBackgroundColor);
+    if (bodyElement && bodyElement->renderer())
+        bodyBackgroundColor = bodyElement->renderer()->style().visitedDependentColorWithColorFilter(CSSPropertyBackgroundColor);
+
+
+#if ENABLE(FULLSCREEN_API)
     // Replace or blend the fullscreen background color with the body background color, if present.
     if (fullscreenBackgroundColor.isValid()) {
         if (!bodyBackgroundColor.isValid())

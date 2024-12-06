@@ -31,14 +31,14 @@ inline bool RenderElement::hasBackground() const { return style().hasBackground(
 inline bool RenderElement::hasBlendMode() const { return style().hasBlendMode(); }
 inline bool RenderElement::hasClip() const { return isOutOfFlowPositioned() && style().hasClip(); }
 inline bool RenderElement::hasClipOrNonVisibleOverflow() const { return hasClip() || hasNonVisibleOverflow(); }
-inline bool RenderElement::hasClipPath() const { return style().clipPath(); }
+inline bool RenderElement::hasClipPath() const { return style().usedClipPath(); }
 inline bool RenderElement::hasFilter() const { return style().hasFilter(); }
 inline bool RenderElement::hasHiddenBackface() const { return style().backfaceVisibility() == BackfaceVisibility::Hidden; }
 inline bool RenderElement::hasMask() const { return style().hasMask(); }
 inline bool RenderElement::hasOutline() const { return style().hasOutline() || hasOutlineAnnotation(); }
 inline bool RenderElement::hasShapeOutside() const { return style().shapeOutside(); }
 inline bool RenderElement::isTransparent() const { return style().hasOpacity(); }
-inline float RenderElement::opacity() const { return style().opacity(); }
+inline float RenderElement::opacity() const { return style().usedOpacity(); }
 inline FloatRect RenderElement::transformReferenceBoxRect() const { return transformReferenceBoxRect(style()); }
 inline FloatRect RenderElement::transformReferenceBoxRect(const RenderStyle& style) const { return referenceBoxRect(transformBoxToCSSBoxType(style.transformBox())); }
 
@@ -67,7 +67,7 @@ inline bool RenderElement::canContainFixedPositionObjects() const
 
 inline bool RenderElement::createsGroupForStyle(const RenderStyle& style)
 {
-    return style.hasOpacity() || style.hasMask() || style.clipPath() || style.hasFilter() || style.hasBackdropFilter() || style.hasBlendMode();
+    return style.hasOpacity() || style.hasMask() || style.usedClipPath() || style.hasFilter() || style.hasBackdropFilter() || style.hasBlendMode();
 }
 
 inline bool RenderElement::shouldApplyAnyContainment() const

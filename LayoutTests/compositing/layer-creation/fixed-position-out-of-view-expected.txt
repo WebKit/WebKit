@@ -8,6 +8,7 @@
       (children 1
         (GraphicsLayer
           (bounds 785.00 1021.00)
+          (preserves3D 1)
           (drawsContent 1)
           (children 2
             (GraphicsLayer

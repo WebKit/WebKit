@@ -1391,7 +1391,7 @@ void RenderTableCell::paintBackgroundsBehindCell(PaintInfo& paintInfo, LayoutPoi
         return;
 
     const auto& style = backgroundObject->style();
-    auto& bgLayer = style.backgroundLayers();
+    auto& bgLayer = style.usedBackgroundLayers();
 
     auto color = style.visitedDependentColor(CSSPropertyBackgroundColor);
     if (!bgLayer.hasImage() && !color.isVisible())

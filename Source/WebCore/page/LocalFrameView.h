@@ -443,7 +443,7 @@ public:
     void paintScrollCorner(GraphicsContext&, const IntRect& cornerRect) final;
     void paintScrollbar(GraphicsContext&, Scrollbar&, const IntRect&) final;
 
-    WEBCORE_EXPORT Color documentBackgroundColor() const;
+    WEBCORE_EXPORT Color documentBackgroundColor(bool includeBase = false) const;
 
     static MonotonicTime currentPaintTimeStamp() { return sCurrentPaintTimeStamp; } // returns 0 if not painting
 

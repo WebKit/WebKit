@@ -199,7 +199,7 @@ Color RenderReplaced::calculateHighlightColor() const
                     continue;
 
                 if (auto highlightStyle = getCachedPseudoStyle({ PseudoId::Highlight, highlight.key }, &style()))
-                    return highlightStyle->colorResolvingCurrentColor(highlightStyle->backgroundColor());
+                    return highlightStyle->colorResolvingCurrentColor(highlightStyle->usedBackgroundColor());
             }
         }
     }

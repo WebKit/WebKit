@@ -5918,7 +5918,7 @@ bool Element::checkVisibility(const CheckVisibilityOptions& options)
         if (ancestorStyle->display() == DisplayType::None)
             return false;
 
-        if ((options.opacityProperty || options.checkOpacity) && ancestorStyle->opacity() == 0.0f)
+        if ((options.opacityProperty || options.checkOpacity) && ancestorStyle->usedOpacity() == 0.0f)
             return false;
     }
 

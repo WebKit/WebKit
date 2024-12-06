@@ -7625,6 +7625,20 @@ UnifyDamagedRegions:
      WebKit:
        default: false
 
+UntransformedRootBackgrounds:
+    type: bool
+    status: preview
+    category: css
+    humanReadableName: "Untransformed root background"
+    humanReadableDescription: "CSS transform on the root element should not affect the background propagated to the canvas"
+    defaultValue:
+      WebKitLegacy:
+        default: false
+      WebKit:
+        default: false
+      WebCore:
+        default: false
+
 UpgradeKnownHostsToHTTPSEnabled:
   type: bool
   status: internal

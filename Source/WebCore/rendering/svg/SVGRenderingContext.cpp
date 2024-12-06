@@ -107,7 +107,7 @@ void SVGRenderingContext::prepareToRenderSVGContent(RenderElement& renderer, Pai
     // Setup transparency layers before setting up SVG resources!
     bool isRenderingMask = isRenderingMaskImage(*m_renderer);
     // RenderLayer takes care of root opacity.
-    float opacity = (renderer.isLegacyRenderSVGRoot() || isRenderingMask) ? 1 : style.opacity();
+    float opacity = (renderer.isLegacyRenderSVGRoot() || isRenderingMask) ? 1 : style.usedOpacity();
     bool hasBlendMode = style.hasBlendMode();
     bool hasIsolation = style.hasIsolation();
     bool isolateMaskForBlending = false;
@@ -124,7 +124,7 @@ void SVGRenderingContext::prepareToRenderSVGContent(RenderElement& renderer, Pai
         if (opacity < 1 || hasBlendMode || isolateMaskForBlending || hasIsolation) {
 
             if (hasBlendMode)
-                m_paintInfo->context().setCompositeOperation(m_paintInfo->context().compositeOperation(), style.blendMode());
+                m_paintInfo->context().setCompositeOperation(m_paintInfo->context().compositeOperation(), style.usedBlendMode());
 
             m_paintInfo->context().beginTransparencyLayer(opacity);
 
@@ -135,7 +135,7 @@ void SVGRenderingContext::prepareToRenderSVGContent(RenderElement& renderer, Pai
         }
     }
 
-    bool hasSimpleClip = is<ShapePathOperation>(style.clipPath()) || is<BoxPathOperation>(style.clipPath());
+    bool hasSimpleClip = is<ShapePathOperation>(style.usedClipPath()) || is<BoxPathOperation>(style.usedClipPath());
     if (hasSimpleClip && !is<LegacyRenderSVGRoot>(renderer))
         SVGRenderSupport::clipContextToCSSClippingArea(m_paintInfo->context(), renderer);
 

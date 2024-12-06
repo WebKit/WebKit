@@ -536,8 +536,8 @@ bool RenderStyle::descendantAffectingNonInheritedPropertiesEqual(const RenderSty
 bool RenderStyle::borderAndBackgroundEqual(const RenderStyle& other) const
 {
     return border() == other.border()
-        && backgroundLayers() == other.backgroundLayers()
-        && backgroundColor() == other.backgroundColor();
+        && usedBackgroundLayers() == other.usedBackgroundLayers()
+        && usedBackgroundColor() == other.usedBackgroundColor();
 }
 
 #if ENABLE(TEXT_AUTOSIZING)
@@ -1119,18 +1119,18 @@ bool RenderStyle::changeRequiresPositionedLayoutOnly(const RenderStyle& other, O
 
 static bool miscDataChangeRequiresLayerRepaint(const StyleMiscNonInheritedData& first, const StyleMiscNonInheritedData& second, OptionSet<StyleDifferenceContextSensitiveProperty>& changedContextSensitiveProperties)
 {
-    if (first.opacity != second.opacity) {
+    if (first.usedOpacity() != second.usedOpacity()) {
         changedContextSensitiveProperties.add(StyleDifferenceContextSensitiveProperty::Opacity);
         // Don't return true; keep looking for another change.
     }
 
-    if (first.filter != second.filter) {
+    if (first.usedFilter() != second.usedFilter()) {
         changedContextSensitiveProperties.add(StyleDifferenceContextSensitiveProperty::Filter);
         // Don't return true; keep looking for another change.
     }
 
     // FIXME: In SVG this needs to trigger a layout.
-    if (first.mask != second.mask)
+    if (first.usedMask() != second.usedMask())
         return true;
 
     return false;
@@ -1138,7 +1138,7 @@ static bool miscDataChangeRequiresLayerRepaint(const StyleMiscNonInheritedData& 
 
 static bool rareDataChangeRequiresLayerRepaint(const StyleRareNonInheritedData& first, const StyleRareNonInheritedData& second, OptionSet<StyleDifferenceContextSensitiveProperty>& changedContextSensitiveProperties)
 {
-    if (first.effectiveBlendMode != second.effectiveBlendMode)
+    if (first.usedBlendMode() != second.usedBlendMode())
         return true;
 
     if (first.backdropFilter != second.backdropFilter) {
@@ -1209,7 +1209,7 @@ static bool rareDataChangeRequiresRepaint(const StyleRareNonInheritedData& first
         return true;
 
     // FIXME: this should probably be moved to changeRequiresLayerRepaint().
-    if (first.clipPath != second.clipPath) {
+    if (first.usedClipPath() != second.usedClipPath()) {
         changedContextSensitiveProperties.add(StyleDifferenceContextSensitiveProperty::ClipPath);
         // Don't return true; keep looking for another change.
     }
@@ -1610,7 +1610,7 @@ void RenderStyle::conservativelyCollectChangedAnimatableProperties(const RenderS
     };
 
     auto conservativelyCollectChangedAnimatablePropertiesViaNonInheritedBackgroundData = [&](auto& first, auto& second) {
-        if (first.background != second.background) {
+        if (first.usedBackground() != second.usedBackground()) {
             changingProperties.m_properties.set(CSSPropertyBackgroundImage);
             changingProperties.m_properties.set(CSSPropertyBackgroundPositionX);
             changingProperties.m_properties.set(CSSPropertyBackgroundPositionY);
@@ -1621,7 +1621,7 @@ void RenderStyle::conservativelyCollectChangedAnimatableProperties(const RenderS
             changingProperties.m_properties.set(CSSPropertyBackgroundRepeat);
             changingProperties.m_properties.set(CSSPropertyBackgroundBlendMode);
         }
-        if (first.color != second.color)
+        if (first.usedBackgroundColor() != second.usedBackgroundColor())
             changingProperties.m_properties.set(CSSPropertyBackgroundColor);
         if (first.outline != second.outline) {
             changingProperties.m_properties.set(CSSPropertyOutlineColor);
@@ -1705,7 +1705,7 @@ void RenderStyle::conservativelyCollectChangedAnimatableProperties(const RenderS
     };
 
     auto conservativelyCollectChangedAnimatablePropertiesViaNonInheritedMiscData = [&](auto& first, auto& second) {
-        if (first.opacity != second.opacity)
+        if (first.usedOpacity() != second.usedOpacity())
             changingProperties.m_properties.set(CSSPropertyOpacity);
 
         if (first.flexibleBox != second.flexibleBox) {
@@ -1726,10 +1726,10 @@ void RenderStyle::conservativelyCollectChangedAnimatableProperties(const RenderS
             changingProperties.m_properties.set(CSSPropertyColumnRuleWidth);
         }
 
-        if (first.filter != second.filter)
+        if (first.usedFilter() != second.usedFilter())
             changingProperties.m_properties.set(CSSPropertyFilter);
 
-        if (first.mask != second.mask) {
+        if (first.usedMask() != second.usedMask()) {
             changingProperties.m_properties.set(CSSPropertyMaskImage);
             changingProperties.m_properties.set(CSSPropertyMaskClip);
             changingProperties.m_properties.set(CSSPropertyMaskComposite);
@@ -1867,7 +1867,7 @@ void RenderStyle::conservativelyCollectChangedAnimatableProperties(const RenderS
             changingProperties.m_properties.set(CSSPropertyShapeImageThreshold);
         if (first.perspective != second.perspective)
             changingProperties.m_properties.set(CSSPropertyPerspective);
-        if (!arePointingToEqualData(first.clipPath, second.clipPath))
+        if (!arePointingToEqualData(first.usedClipPath(), second.usedClipPath()))
             changingProperties.m_properties.set(CSSPropertyClipPath);
         if (first.textDecorationColor != second.textDecorationColor)
             changingProperties.m_properties.set(CSSPropertyTextDecorationColor);
@@ -1911,7 +1911,7 @@ void RenderStyle::conservativelyCollectChangedAnimatableProperties(const RenderS
             changingProperties.m_properties.set(CSSPropertyTextDecorationStyle);
         if (first.textGroupAlign != second.textGroupAlign)
             changingProperties.m_properties.set(CSSPropertyTextGroupAlign);
-        if (first.effectiveBlendMode != second.effectiveBlendMode)
+        if (first.usedBlendMode() != second.usedBlendMode())
             changingProperties.m_properties.set(CSSPropertyMixBlendMode);
         if (first.isolation != second.isolation)
             changingProperties.m_properties.set(CSSPropertyIsolation);
@@ -2584,7 +2584,7 @@ static bool allLayersAreFixed(const FillLayer& layers)
 
 bool RenderStyle::hasEntirelyFixedBackground() const
 {
-    return allLayersAreFixed(backgroundLayers());
+    return allLayersAreFixed(usedBackgroundLayers());
 }
 
 const CounterDirectiveMap& RenderStyle::counterDirectives() const
@@ -3012,7 +3012,7 @@ void RenderStyle::getShadowVerticalExtent(const ShadowData* shadow, LayoutUnit &
     }
 }
 
-Style::Color RenderStyle::unresolvedColorForProperty(CSSPropertyID colorProperty, bool visitedLink) const
+Style::Color RenderStyle::unresolvedColorForProperty(CSSPropertyID colorProperty, bool visitedLink, bool computed) const
 {
     switch (colorProperty) {
     case CSSPropertyAccentColor:
@@ -3020,7 +3020,7 @@ Style::Color RenderStyle::unresolvedColorForProperty(CSSPropertyID colorProperty
     case CSSPropertyColor:
         return visitedLink ? visitedLinkColor() : color();
     case CSSPropertyBackgroundColor:
-        return visitedLink ? visitedLinkBackgroundColor() : backgroundColor();
+        return visitedLink ? visitedLinkBackgroundColor() : (computed ? backgroundColor() : usedBackgroundColor());
     case CSSPropertyBorderBottomColor:
         return visitedLink ? visitedLinkBorderBottomColor() : borderBottomColor();
     case CSSPropertyBorderLeftColor:
@@ -3047,7 +3047,7 @@ Style::Color RenderStyle::unresolvedColorForProperty(CSSPropertyID colorProperty
     case CSSPropertyBorderBlockStartColor:
     case CSSPropertyBorderInlineEndColor:
     case CSSPropertyBorderInlineStartColor:
-        return unresolvedColorForProperty(CSSProperty::resolveDirectionAwareProperty(colorProperty, writingMode()));
+        return unresolvedColorForProperty(CSSProperty::resolveDirectionAwareProperty(colorProperty, writingMode()), visitedLink, computed);
     case CSSPropertyColumnRuleColor:
         return visitedLink ? visitedLinkColumnRuleColor() : columnRuleColor();
     case CSSPropertyTextEmphasisColor:
@@ -3068,9 +3068,9 @@ Style::Color RenderStyle::unresolvedColorForProperty(CSSPropertyID colorProperty
     return { };
 }
 
-Color RenderStyle::colorResolvingCurrentColor(CSSPropertyID colorProperty, bool visitedLink) const
+Color RenderStyle::colorResolvingCurrentColor(CSSPropertyID colorProperty, bool visitedLink, bool computed) const
 {
-    auto result = unresolvedColorForProperty(colorProperty, visitedLink);
+    auto result = unresolvedColorForProperty(colorProperty, visitedLink, computed);
 
     if (result.isCurrentColor()) {
         if (colorProperty == CSSPropertyTextDecorationColor) {
@@ -3095,9 +3095,9 @@ Color RenderStyle::colorResolvingCurrentColor(const Style::Color& color, bool vi
     return color.resolveColor(visitedLink ? visitedLinkColor() : this->color());
 }
 
-Color RenderStyle::visitedDependentColor(CSSPropertyID colorProperty, OptionSet<PaintBehavior> paintBehavior) const
+Color RenderStyle::visitedDependentColor(CSSPropertyID colorProperty, OptionSet<PaintBehavior> paintBehavior, bool computed) const
 {
-    Color unvisitedColor = colorResolvingCurrentColor(colorProperty, false);
+    Color unvisitedColor = colorResolvingCurrentColor(colorProperty, false, computed);
     if (insideLink() != InsideLink::InsideVisited)
         return unvisitedColor;
 
@@ -3107,7 +3107,7 @@ Color RenderStyle::visitedDependentColor(CSSPropertyID colorProperty, OptionSet<
     if (isInSubtreeWithBlendMode())
         return unvisitedColor;
 
-    Color visitedColor = colorResolvingCurrentColor(colorProperty, true);
+    Color visitedColor = colorResolvingCurrentColor(colorProperty, true, computed);
 
     // FIXME: Technically someone could explicitly specify the color transparent, but for now we'll just
     // assume that if the background color is transparent that it wasn't set. Note that it's weird that

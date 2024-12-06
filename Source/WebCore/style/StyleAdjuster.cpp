@@ -544,7 +544,7 @@ void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearance
             || style.hasOpacity()
             || hasTransformRelatedProperty(style, m_element.get(), m_parentStyle)
             || style.hasMask()
-            || style.clipPath()
+            || style.usedClipPath()
             || style.boxReflect()
             || style.hasFilter()
             || style.hasBackdropFilter()
@@ -687,7 +687,7 @@ void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearance
             || style.hasOpacity()
             || style.overflowY() != Overflow::Visible
             || style.hasClip()
-            || style.clipPath()
+            || style.usedClipPath()
             || style.hasFilter()
             || style.hasIsolation()
             || style.hasMask()
@@ -1048,14 +1048,15 @@ void Adjuster::propagateToDocumentElementAndInitialContainingBlock(Update& updat
         return RenderStyle::initialDirection();
     }();
 
+    std::unique_ptr<RenderStyle> newRootStyle;
+
     // https://drafts.csswg.org/css-writing-modes-3/#icb
     WritingMode viewWritingMode = document.renderView()->writingMode();
     if (writingMode != viewWritingMode.computedWritingMode() || direction != viewWritingMode.computedTextDirection()) {
-        auto newRootStyle = RenderStyle::clonePtr(document.renderView()->style());
+        newRootStyle = RenderStyle::clonePtr(document.renderView()->style());
         newRootStyle->setWritingMode(writingMode);
         newRootStyle->setDirection(direction);
         newRootStyle->setColumnStylesFromPaginationMode(document.view()->pagination().mode);
-        update.addInitialContainingBlockUpdate(WTFMove(newRootStyle));
     }
 
     // https://drafts.csswg.org/css-writing-modes-3/#principal-flow
@@ -1068,6 +1069,77 @@ void Adjuster::propagateToDocumentElementAndInitialContainingBlock(Update& updat
         documentElementUpdate->style->setWritingMode(writingMode);
         documentElementUpdate->style->setDirection(direction);
         documentElementUpdate->change = std::max(documentElementUpdate->change, Change::Inherited);
+    }
+
+    if (!document.settings().untransformedRootBackgrounds()) {
+        if (newRootStyle)
+            update.addInitialContainingBlockUpdate(WTFMove(newRootStyle));
+        return;
+    }
+
+    auto shouldPropagateBackgroundFromBody = [&] {
+        if (!shouldPropagateFromBody || !bodyStyle)
+            return false;
+        if (bodyStyle->display() == DisplayType::Contents)
+            return false;
+        if (documentElementStyle->display() == DisplayType::None)
+            return false;
+        if (documentElementStyle->backgroundColor() != RenderStyle::initialBackgroundColor() || documentElementStyle->backgroundLayers().hasImage())
+            return false;
+        return true;
+    }();
+
+    auto backgroundColor = [&] {
+        if (shouldPropagateBackgroundFromBody)
+            return bodyStyle->backgroundColor();
+        if (documentElementStyle->display() == DisplayType::None)
+            return RenderStyle::initialBackgroundColor();
+        return documentElementStyle->backgroundColor();
+    }();
+
+    auto backgroundLayers = [&] -> Ref<const FillLayer> {
+        if (shouldPropagateBackgroundFromBody)
+            return bodyStyle->backgroundLayers();
+        if (documentElementStyle->display() == DisplayType::None)
+            return FillLayer::create(FillLayerType::Background);
+        return documentElementStyle->backgroundLayers();
+    }();
+
+    auto& viewStyle = document.renderView()->style();
+    if (backgroundColor != viewStyle.backgroundColor() || backgroundLayers != viewStyle.backgroundLayers() || documentElementStyle->opacity() != viewStyle.opacity() || documentElementStyle->blendMode() != viewStyle.blendMode() || documentElementStyle->filter() != viewStyle.filter() || documentElementStyle->clipPath() != viewStyle.clipPath() || documentElementStyle->maskLayers() != viewStyle.maskLayers()) {
+        if (!newRootStyle)
+            newRootStyle = RenderStyle::clonePtr(document.renderView()->style());
+        newRootStyle->setBackgroundColor(backgroundColor);
+        newRootStyle->inheritBackgroundLayers(backgroundLayers);
+        newRootStyle->setOpacity(documentElementStyle->opacity());
+        newRootStyle->setBlendMode(documentElementStyle->blendMode());
+        FilterOperations filters = documentElementStyle->filter();
+        newRootStyle->setFilter(WTFMove(filters));
+        FilterOperations backdropFilters = documentElementStyle->backdropFilter();
+        newRootStyle->setBackdropFilter(WTFMove(backdropFilters));
+        if (documentElementStyle->clipPath())
+            newRootStyle->setClipPath(documentElementStyle->clipPath());
+        newRootStyle->inheritMaskLayers(documentElementStyle->maskLayers());
+        update.addInitialContainingBlockUpdate(WTFMove(newRootStyle));
+    }
+
+    if (!documentElementStyle->backgroundPropagatedToCanvas() || !documentElementStyle->effectsPropagatedToCanvas()) {
+        auto* documentElementUpdate = update.elementUpdate(*document.documentElement());
+        if (!documentElementUpdate) {
+            update.addElement(*document.documentElement(), nullptr, { RenderStyle::clonePtr(*documentElementStyle) });
+            documentElementUpdate = update.elementUpdate(*document.documentElement());
+        }
+        documentElementUpdate->style->setBackgroundPropagatedToCanvas(true);
+        documentElementUpdate->style->setEffectsPropagatedToCanvas(true);
+    }
+
+    if (shouldPropagateBackgroundFromBody && !bodyStyle->backgroundPropagatedToCanvas()) {
+        auto* bodyElementUpdate = update.elementUpdate(*body);
+        if (!bodyElementUpdate) {
+            update.addElement(*body, document.documentElement(), { RenderStyle::clonePtr(*bodyStyle) });
+            bodyElementUpdate = update.elementUpdate(*body);
+        }
+        bodyElementUpdate->style->setBackgroundPropagatedToCanvas(true);
     }
 }
 

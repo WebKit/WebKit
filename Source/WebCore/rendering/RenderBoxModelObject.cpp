@@ -820,7 +820,7 @@ LayoutSize RenderBoxModelObject::calculateImageIntrinsicDimensions(StyleImage* i
 
 bool RenderBoxModelObject::fixedBackgroundPaintsInLocalCoordinates() const
 {
-    if (!isDocumentElementRenderer())
+    if (!isRenderView() && !isDocumentElementRenderer())
         return false;
 
     if (view().frameView().paintBehavior().contains(PaintBehavior::FlattenCompositingLayers))

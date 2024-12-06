@@ -130,6 +130,7 @@ StyleRareNonInheritedData::StyleRareNonInheritedData()
     , textBoxTrim(static_cast<unsigned>(RenderStyle::initialTextBoxTrim()))
     , overflowAnchor(static_cast<unsigned>(RenderStyle::initialOverflowAnchor()))
     , hasClip(false)
+    , propagatedToCanvas(false)
     , positionTryOrder(static_cast<unsigned>(RenderStyle::initialPositionTryOrder()))
     , fieldSizing(RenderStyle::initialFieldSizing())
 {
@@ -229,6 +230,7 @@ inline StyleRareNonInheritedData::StyleRareNonInheritedData(const StyleRareNonIn
     , textBoxTrim(o.textBoxTrim)
     , overflowAnchor(o.overflowAnchor)
     , hasClip(o.hasClip)
+    , propagatedToCanvas(o.propagatedToCanvas)
     , positionTryOrder(o.positionTryOrder)
     , fieldSizing(o.fieldSizing)
 {
@@ -335,6 +337,7 @@ bool StyleRareNonInheritedData::operator==(const StyleRareNonInheritedData& o) c
         && viewTransitionClasses == o.viewTransitionClasses
         && viewTransitionName == o.viewTransitionName
         && hasClip == o.hasClip
+        && propagatedToCanvas == o.propagatedToCanvas
         && positionTryOrder == o.positionTryOrder
         && fieldSizing == o.fieldSizing;
 }
@@ -357,9 +360,27 @@ OptionSet<Containment> StyleRareNonInheritedData::usedContain() const
     return containment;
 }
 
+PathOperation* StyleRareNonInheritedData::usedClipPath() const
+{
+    return propagatedToCanvas ? nullptr : clipPath.get();
+}
+
+BlendMode StyleRareNonInheritedData::usedBlendMode() const
+{
+    return propagatedToCanvas ? RenderStyle::initialBlendMode() : static_cast<BlendMode>(effectiveBlendMode);
+}
+
+const FilterOperations& StyleRareNonInheritedData::usedBackdropFilter() const
+{
+    static NeverDestroyed<FilterOperations> emptyFilter = RenderStyle::initialFilter();
+    if (propagatedToCanvas)
+        return emptyFilter;
+    return backdropFilter->operations;
+}
+
 bool StyleRareNonInheritedData::hasBackdropFilters() const
 {
-    return !backdropFilter->operations.isEmpty();
+    return !usedBackdropFilter().isEmpty();
 }
 
 #if !LOG_DISABLED

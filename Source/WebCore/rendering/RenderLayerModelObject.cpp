@@ -455,7 +455,7 @@ RenderSVGResourceClipper* RenderLayerModelObject::svgClipperResourceFromStyle() 
     if (!document().settings().layerBasedSVGEngineEnabled())
         return nullptr;
 
-    RefPtr referenceClipPathOperation = dynamicDowncast<ReferencePathOperation>(style().clipPath());
+    RefPtr referenceClipPathOperation = dynamicDowncast<ReferencePathOperation>(style().usedClipPath());
     if (!referenceClipPathOperation)
         return nullptr;
 
@@ -475,7 +475,7 @@ RenderSVGResourceFilter* RenderLayerModelObject::svgFilterResourceFromStyle() co
     if (!document().settings().layerBasedSVGEngineEnabled())
         return nullptr;
 
-    const auto& operations = style().filter();
+    const auto& operations = style().usedFilter();
     if (operations.size() != 1)
         return nullptr;
 
@@ -590,7 +590,7 @@ RenderSVGResourcePaintServer* RenderLayerModelObject::svgStrokePaintServerResour
 
 bool RenderLayerModelObject::pointInSVGClippingArea(const FloatPoint& point) const
 {
-    auto* clipPathOperation = style().clipPath();
+    auto* clipPathOperation = style().usedClipPath();
 
     auto clipPathReferenceBox = [&](CSSBoxType boxType) -> FloatRect {
         FloatRect referenceBox;

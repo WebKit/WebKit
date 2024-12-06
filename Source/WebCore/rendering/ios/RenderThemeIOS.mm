@@ -176,7 +176,7 @@ bool RenderThemeIOS::isControlStyled(const RenderStyle& style, const RenderStyle
 {
     // Buttons and MenulistButtons are styled if they contain a background image.
     if (style.usedAppearance() == StyleAppearance::PushButton || style.usedAppearance() == StyleAppearance::MenulistButton)
-        return !style.visitedDependentColor(CSSPropertyBackgroundColor).isVisible() || style.backgroundLayers().hasImage();
+        return !style.visitedDependentColor(CSSPropertyBackgroundColor).isVisible() || style.usedBackgroundLayers().hasImage();
 
     if (style.usedAppearance() == StyleAppearance::TextField || style.usedAppearance() == StyleAppearance::TextArea || style.usedAppearance() == StyleAppearance::SearchField)
         return !style.borderAndBackgroundEqual(userAgentStyle);
@@ -360,7 +360,7 @@ static inline bool canAdjustBorderRadiusForAppearance(StyleAppearance appearance
 
 void RenderThemeIOS::adjustRoundBorderRadius(RenderStyle& style, RenderBox& box)
 {
-    if (!canAdjustBorderRadiusForAppearance(style.usedAppearance(), box) || style.backgroundLayers().hasImage())
+    if (!canAdjustBorderRadiusForAppearance(style.usedAppearance(), box) || style.usedBackgroundLayers().hasImage())
         return;
 
     auto boxLogicalHeight = box.logicalHeight();

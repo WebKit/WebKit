@@ -21,6 +21,7 @@
 #include "config.h"
 #include "RenderView.h"
 
+#include "BackgroundPainter.h"
 #include "Document.h"
 #include "Element.h"
 #include "FloatQuad.h"
@@ -124,6 +125,12 @@ void RenderView::styleDidChange(StyleDifference diff, const RenderStyle* oldStyl
 
     if (directionChanged)
         frameView().topContentDirectionDidChange();
+
+    if (diff != StyleDifference::Equal)
+        compositor().viewStyleChanged(*this, oldStyle);
+
+    protectedFrameView()->updateExtendBackgroundIfNecessary();
+
 }
 
 RenderBox::LogicalExtentComputedValues RenderView::computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit) const
@@ -345,6 +352,9 @@ void RenderView::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 
 RenderElement* RenderView::rendererForRootBackground() const
 {
+    if (document().settings().untransformedRootBackgrounds())
+        return const_cast<RenderView*>(this);
+
     auto* firstChild = this->firstChild();
     if (!firstChild)
         return nullptr;
@@ -419,7 +429,18 @@ void RenderView::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint&)
         }
     }
 
-    if (!shouldPaintBaseBackground())
+    if (paintInfo.skipRootBackground())
+        return;
+
+    if (document().settings().untransformedRootBackgrounds()) {
+        auto bleedAvoidance = determineBleedAvoidance(paintInfo.context());
+        BackgroundPainter backgroundPainter { *this, paintInfo };
+
+        backgroundPainter.paintBackground(backgroundRect(), bleedAvoidance);
+        return;
+    }
+
+    if (!needsBaseBackground())
         return;
 
     if (paintInfo.skipRootBackground())
@@ -443,15 +464,23 @@ void RenderView::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint&)
     float pageScaleFactor = page ? page->pageScaleFactor() : 1;
 
     // If painting will entirely fill the view, no need to fill the background.
-    if (rootFillsViewport && rootObscuresBackground && pageScaleFactor >= 1 && rootElementShouldPaintBaseBackground())
+    if (rootFillsViewport && rootObscuresBackground && pageScaleFactor >= 1 && baseBackgroundPainter() == BaseBackgroundPainter::RootElement)
         return;
 
     // This code typically only executes if the root element's visibility has been set to hidden,
     // if there is a transform on the <html>, or if there is a page scale factor less than 1.
-    // Only fill with a background color (typically white) if we're the root document, 
+    // Only fill with a background color (typically white) if we're the root document,
     // since iframes/frames with no background in the child document should show the parent's background.
     // We use the base background color unless the backgroundShouldExtendBeyondPage setting is set,
     // in which case we use the document's background color.
+    paintBaseBackground(paintInfo, shouldPropagateBackgroundPaintingToInitialContainingBlock);
+}
+
+void RenderView::paintBaseBackground(PaintInfo& paintInfo, bool shouldPropagateBackgroundPaintingToInitialContainingBlock)
+{
+    if (!needsBaseBackground())
+        return;
+
     Ref frameView = this->frameView();
     if (frameView->isTransparent()) // FIXME: This needs to be dynamic. We should be able to go back to blitting if we ever stop being transparent.
         frameView->setCannotBlitToWindow(); // The parent must show behind the child.
@@ -636,7 +665,7 @@ bool RenderView::rootBackgroundIsEntirelyFixed() const
     return false;
 }
 
-bool RenderView::shouldPaintBaseBackground() const
+bool RenderView::needsBaseBackground() const
 {
     auto& document = this->document();
     auto& frameView = this->frameView();
@@ -676,8 +705,24 @@ bool RenderView::shouldPaintBaseBackground() const
     return false;
 }
 
-bool RenderView::rootElementShouldPaintBaseBackground() const
+bool RenderView::shouldPaintBaseBackground() const
 {
+    if (layer()->isolatesBlending() || layer()->isBackdropRoot() || createsGroup())
+        return false;
+    return needsBaseBackground();
+}
+
+RenderView::BaseBackgroundPainter RenderView::baseBackgroundPainter() const
+{
+    if (!needsBaseBackground())
+        return BaseBackgroundPainter::None;
+
+    if (document().settings().untransformedRootBackgrounds()) {
+        if (layer()->isolatesBlending() || createsGroup())
+            return BaseBackgroundPainter::RootLayer;
+        return BaseBackgroundPainter::RenderView;
+    }
+
     auto* documentElement = document().documentElement();
     if (RenderElement* rootRenderer = documentElement ? documentElement->renderer() : nullptr) {
         // The document element's renderer is currently forced to be a block, but may not always be.
@@ -685,12 +730,13 @@ bool RenderView::rootElementShouldPaintBaseBackground() const
         if (rootBox && rootBox->hasLayer()) {
             RenderLayer* layer = rootBox->layer();
             if (layer->isolatesBlending() || layer->isBackdropRoot())
-                return false;
+                return BaseBackgroundPainter::RenderView;
         }
     }
-    return shouldPaintBaseBackground();
+
+    return BaseBackgroundPainter::RootElement;
 }
-    
+
 LayoutRect RenderView::unextendedBackgroundRect() const
 {
     // FIXME: What is this? Need to patch for new columns?
@@ -986,7 +1032,7 @@ void RenderView::updatePlayStateForAllAnimations(const IntRect& visibleRect)
             }
         };
 
-        for (const auto* layer = &renderElement.style().backgroundLayers(); layer; layer = layer->next())
+        for (const auto* layer = &renderElement.style().usedBackgroundLayers(); layer; layer = layer->next())
             updateAnimation(layer->image() ? layer->image()->cachedImage() : nullptr);
 
         if (auto* renderImage = dynamicDowncast<RenderImage>(renderElement))

@@ -32,11 +32,6 @@
                             (GraphicsLayer
                               (bounds 485.00 1016.00)
                               (drawsContent 1)
-                              (children 1
-                                (GraphicsLayer
-                                  (anchor 0.00 0.00)
-                                )
-                              )
                             )
                           )
                         )

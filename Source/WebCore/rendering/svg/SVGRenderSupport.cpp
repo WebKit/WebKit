@@ -391,7 +391,7 @@ inline FloatRect clipPathReferenceBox(const RenderElement& renderer, CSSBoxType 
 
 inline bool isPointInCSSClippingArea(const RenderElement& renderer, const FloatPoint& point)
 {
-    RefPtr clipPathOperation = renderer.style().clipPath();
+    RefPtr clipPathOperation = renderer.style().usedClipPath();
     if (auto* clipPath = dynamicDowncast<ShapePathOperation>(clipPathOperation.get())) {
         FloatRect referenceBox = clipPathReferenceBox(renderer, clipPath->referenceBox());
         if (!referenceBox.contains(point))
@@ -410,7 +410,7 @@ inline bool isPointInCSSClippingArea(const RenderElement& renderer, const FloatP
 
 void SVGRenderSupport::clipContextToCSSClippingArea(GraphicsContext& context, const RenderElement& renderer)
 {
-    RefPtr clipPathOperation = renderer.style().clipPath();
+    RefPtr clipPathOperation = renderer.style().usedClipPath();
     if (auto* clipPath = dynamicDowncast<ShapePathOperation>(clipPathOperation.get())) {
         auto localToParentTransform = renderer.localToParentTransform();
 
@@ -434,7 +434,7 @@ bool SVGRenderSupport::pointInClippingArea(const RenderElement& renderer, const 
 {
     RELEASE_ASSERT(!renderer.document().settings().layerBasedSVGEngineEnabled());
 
-    RefPtr clipPathOperation = renderer.style().clipPath();
+    RefPtr clipPathOperation = renderer.style().usedClipPath();
     if (is<ShapePathOperation>(clipPathOperation) || is<BoxPathOperation>(clipPathOperation))
         return isPointInCSSClippingArea(renderer, point);
 
@@ -507,7 +507,7 @@ void SVGRenderSupport::styleChanged(RenderElement& renderer, const RenderStyle* 
 
 bool SVGRenderSupport::isolatesBlending(const RenderStyle& style)
 {
-    return style.hasPositionedMask() || style.hasFilter() || style.hasBlendMode() || style.opacity() < 1.0f;
+    return style.hasPositionedMask() || style.hasFilter() || style.hasBlendMode() || style.usedOpacity() < 1.0f;
 }
 
 void SVGRenderSupport::updateMaskedAncestorShouldIsolateBlending(const RenderElement& renderer)

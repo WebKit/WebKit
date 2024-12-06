@@ -27,6 +27,7 @@
 #include "ChildChangeInvalidation.h"
 
 #include "ElementTraversal.h"
+#include "HTMLNames.h"
 #include "NodeRenderStyle.h"
 #include "PseudoClassChangeInvalidation.h"
 #include "RenderElement.h"
@@ -362,6 +363,9 @@ void ChildChangeInvalidation::invalidateAfterChange()
 
     if (m_childChange.source == ContainerNode::ChildChange::Source::Parser)
         return;
+
+    if (m_childChange.type == ContainerNode::ChildChange::Type::ElementRemoved && !parentElement().parentElement() && m_childChange.siblingChanged &&  m_childChange.siblingChanged->hasTagName(HTMLNames::bodyTag))
+        parentElement().invalidateStyle();
 
     checkForSiblingStyleChanges();
 }

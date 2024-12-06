@@ -262,7 +262,7 @@ static bool shouldTreatAsPasswordField(const Element* element)
 static inline std::variant<SkipExtraction, ItemData, URL, Editable> extractItemData(Node& node, TraversalContext& context)
 {
     CheckedPtr renderer = node.renderer();
-    if (!renderer || renderer->style().opacity() < minOpacityToConsiderVisible)
+    if (!renderer || renderer->style().usedOpacity() < minOpacityToConsiderVisible)
         return { SkipExtraction::SelfAndSubtree };
 
     if (renderer->style().usedVisibility() == Visibility::Hidden)
@@ -540,7 +540,7 @@ static void extractRenderedTokens(Vector<TokenAndBlockOffset>& tokensAndOffsets,
         if (descendant.style().usedVisibility() == Visibility::Hidden)
             continue;
 
-        if (descendant.style().opacity() < minOpacityToConsiderVisible)
+        if (descendant.style().usedOpacity() < minOpacityToConsiderVisible)
             continue;
 
         if (RefPtr node = descendant.node(); node && ImageOverlay::isInsideOverlay(*node))

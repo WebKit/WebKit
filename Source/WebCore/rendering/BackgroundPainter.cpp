@@ -64,7 +64,7 @@ BackgroundPainter::BackgroundPainter(RenderBoxModelObject& renderer, const Paint
 {
     // background-clip has no effect when painting the root background.
     // https://www.w3.org/TR/css-backgrounds-3/#background-clip
-    if (m_renderer.isDocumentElementRenderer())
+    if (m_renderer.isRenderView() || m_renderer.isDocumentElementRenderer())
         setOverrideClip(FillBox::BorderBox);
 }
 
@@ -84,13 +84,16 @@ void BackgroundPainter::paintBackground(const LayoutRect& paintRect, BleedAvoida
     auto backgroundColor = m_renderer.style().visitedDependentColorWithColorFilter(CSSPropertyBackgroundColor);
     auto compositeOp = document().compositeOperatorForBackgroundColor(backgroundColor, m_renderer);
 
-    paintFillLayers(backgroundColor, m_renderer.style().backgroundLayers(), paintRect, bleedAvoidance, compositeOp);
+    paintFillLayers(backgroundColor, m_renderer.style().usedBackgroundLayers(), paintRect, bleedAvoidance, compositeOp);
 }
 
 void BackgroundPainter::paintRootBoxFillLayers() const
 {
     ASSERT(m_renderer.isDocumentElementRenderer());
     if (m_paintInfo.skipRootBackground())
+        return;
+
+    if (document().settings().untransformedRootBackgrounds())
         return;
 
     auto* rootBackgroundRenderer = view().rendererForRootBackground();
@@ -101,11 +104,13 @@ void BackgroundPainter::paintRootBoxFillLayers() const
     auto backgroundColor = style.visitedDependentColorWithColorFilter(CSSPropertyBackgroundColor);
     auto compositeOp = document().compositeOperatorForBackgroundColor(backgroundColor, m_renderer);
 
-    paintFillLayers(backgroundColor, style.backgroundLayers(), view().backgroundRect(), BleedAvoidance::None, compositeOp, rootBackgroundRenderer);
+    paintFillLayers(backgroundColor, style.usedBackgroundLayers(), view().backgroundRect(), BleedAvoidance::None, compositeOp, rootBackgroundRenderer);
 }
 
 bool BackgroundPainter::paintsOwnBackground(const RenderBoxModelObject& renderer)
 {
+    if (renderer.document().settings().untransformedRootBackgrounds())
+        return true;
     if (!renderer.isBody())
         return true;
     if (renderer.shouldApplyAnyContainment())
@@ -182,7 +187,7 @@ void BackgroundPainter::paintFillLayer(const Color& color, const FillLayer& bgLa
     bool hasRoundedBorder = style.hasBorderRadius() && (includeLeftEdge || includeRightEdge);
     bool clippedWithLocalScrolling = m_renderer.hasNonVisibleOverflow() && bgLayer.attachment() == FillAttachment::LocalBackground;
     bool isBorderFill = layerClip == FillBox::BorderBox;
-    bool isRoot = m_renderer.isDocumentElementRenderer();
+    bool isRoot = m_renderer.isRenderView() || m_renderer.isDocumentElementRenderer();
 
     Color bgColor = color;
     StyleImage* bgImage = bgLayer.image();
@@ -387,7 +392,9 @@ void BackgroundPainter::paintFillLayer(const Color& color, const FillLayer& bgLa
 
     auto isOpaqueRoot = false;
     if (isRoot) {
-        bool shouldPaintBaseBackground = view().rootElementShouldPaintBaseBackground();
+        RenderView::BaseBackgroundPainter baseBackgroundPainter = view().baseBackgroundPainter();
+
+        bool shouldPaintBaseBackground = m_renderer.isRenderView() ? baseBackgroundPainter == RenderView::BaseBackgroundPainter::RenderView : baseBackgroundPainter == RenderView::BaseBackgroundPainter::RootElement;
         isOpaqueRoot = bgLayer.next() || bgColor.isOpaque() || shouldPaintBaseBackground;
         if (!shouldPaintBaseBackground)
             baseBgColorUsage = BaseBackgroundColorSkip;
@@ -519,6 +526,9 @@ BackgroundImageGeometry BackgroundPainter::calculateBackgroundImageGeometry(cons
 {
     auto& view = renderer.view();
 
+    auto* documentElementRenderer = dynamicDowncast<RenderBoxModelObject>(renderer.document().documentElement()->renderer());
+    const auto& positioningRenderer = (renderer.isRenderView() && documentElementRenderer) ? *documentElementRenderer : renderer;
+
     LayoutUnit left;
     LayoutUnit top;
     LayoutSize positioningAreaSize;
@@ -536,28 +546,28 @@ BackgroundImageGeometry BackgroundPainter::calculateBackgroundImageGeometry(cons
         // Scroll and Local.
         auto fillLayerOrigin = overrideOrigin.value_or(fillLayer.origin());
         if (fillLayerOrigin != FillBox::BorderBox) {
-            left = renderer.borderLeft();
-            right = renderer.borderRight();
-            top = renderer.borderTop();
-            bottom = renderer.borderBottom();
+            left = positioningRenderer.borderLeft();
+            right = positioningRenderer.borderRight();
+            top = positioningRenderer.borderTop();
+            bottom = positioningRenderer.borderBottom();
             if (fillLayerOrigin == FillBox::ContentBox) {
-                left += renderer.paddingLeft();
-                right += renderer.paddingRight();
-                top += renderer.paddingTop();
-                bottom += renderer.paddingBottom();
+                left += positioningRenderer.paddingLeft();
+                right += positioningRenderer.paddingRight();
+                top += positioningRenderer.paddingTop();
+                bottom += positioningRenderer.paddingBottom();
             }
         }
 
         // The background of the box generated by the root element covers the entire canvas including
         // its margins. Since those were added in already, we have to factor them out when computing
         // the background positioning area.
-        if (renderer.isDocumentElementRenderer()) {
-            positioningAreaSize = downcast<RenderBox>(renderer).size() - LayoutSize(left + right, top + bottom);
+        if (positioningRenderer.isDocumentElementRenderer()) {
+            positioningAreaSize = downcast<RenderBox>(positioningRenderer).size() - LayoutSize(left + right, top + bottom);
             positioningAreaSize = LayoutSize(snapSizeToDevicePixel(positioningAreaSize, LayoutPoint(), deviceScaleFactor));
-            if (view.frameView().hasExtendedBackgroundRectForPainting()) {
+            if (view.frameView().hasExtendedBackgroundRectForPainting() && fillLayer.type() == FillLayerType::Background) {
                 LayoutRect extendedBackgroundRect = view.frameView().extendedBackgroundRectForPainting();
-                left += (renderer.marginLeft() - extendedBackgroundRect.x());
-                top += (renderer.marginTop() - extendedBackgroundRect.y());
+                left += (positioningRenderer.marginLeft() - extendedBackgroundRect.x());
+                top += (positioningRenderer.marginTop() - extendedBackgroundRect.y());
             }
         } else {
             positioningAreaSize = borderBoxRect.size() - LayoutSize(left + right, top + bottom);
@@ -687,6 +697,10 @@ BackgroundImageGeometry BackgroundPainter::calculateBackgroundImageGeometry(cons
     if (fixedAttachment) {
         LayoutPoint attachmentPoint = borderBoxRect.location();
         phase.expand(std::max<LayoutUnit>(attachmentPoint.x() - destinationRect.x(), 0), std::max<LayoutUnit>(attachmentPoint.y() - destinationRect.y(), 0));
+    } else if (&renderer != &positioningRenderer) {
+        auto offset = positioningRenderer.offsetFromContainer(const_cast<RenderBoxModelObject&>(renderer), LayoutPoint());
+        destinationRect.move(offset);
+        phase += offset;
     }
 
     destinationRect.intersect(borderBoxRect);
@@ -982,7 +996,7 @@ bool BackgroundPainter::boxShadowShouldBeAppliedToBackground(const RenderBoxMode
     if (!backgroundColor.isOpaque())
         return false;
 
-    auto* lastBackgroundLayer = &style.backgroundLayers();
+    auto* lastBackgroundLayer = &style.usedBackgroundLayers();
     while (auto* next = lastBackgroundLayer->next())
         lastBackgroundLayer = next;
 

@@ -202,7 +202,7 @@ static bool hasTransparentContainerStyle(const RenderStyle& style)
     return !style.hasBackground()
         && !style.hasOutline()
         && !style.boxShadow()
-        && !style.clipPath()
+        && !style.usedClipPath()
         && !style.hasExplicitlySetBorderRadius()
         // No visible borders or borders that do not create a complete box.
         && (!style.hasVisibleBorder()
@@ -447,7 +447,7 @@ std::optional<InteractionRegion> interactionRegionForRenderedRegion(RenderObject
             }();
         } else if (regionRenderer.style().hasBackgroundImage()) {
             isPhoto = [&]() -> bool {
-                auto* backgroundImage = regionRenderer.style().backgroundLayers().image();
+                auto* backgroundImage = regionRenderer.style().usedBackgroundLayers().image();
                 if (!backgroundImage || !backgroundImage->cachedImage())
                     return false;
 
@@ -488,7 +488,7 @@ std::optional<InteractionRegion> interactionRegionForRenderedRegion(RenderObject
     std::optional<Path> clipPath = std::nullopt;
 
     auto& style = regionRenderer.style();
-    RefPtr styleClipPath = style.clipPath();
+    RefPtr styleClipPath = style.usedClipPath();
 
     if (!hasRotationOrShear && styleClipPath && styleClipPath->type() == PathOperation::Type::Shape && originalElement) {
         auto size = boundingSize(regionRenderer, transform);

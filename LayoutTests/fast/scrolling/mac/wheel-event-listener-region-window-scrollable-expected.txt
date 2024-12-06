@@ -6,7 +6,7 @@
       (bounds 785.00 2000.00)
       (contentsOpaque 1)
       (drawsContent 1)
-      (backgroundColor #C0C0C0)
+      (backgroundColor #FFFFFF)
       (event region
         (rect (0,0) width=785 height=2000)
       (wheel event listener region

@@ -77,16 +77,6 @@
                               (tile size 512 x 512)
                               (top left tile 0, 0 tiles grid 1 x 1)
                               (in window 1)
-                              (children 1
-                                (GraphicsLayer
-                                  (anchor 0.00 0.00)
-                                  (backingStoreAttached 0)
-                                  (visible rect 0.00, 0.00 0.00 x 0.00)
-                                  (coverage rect 0.00, 0.00 285.00 x 135.00)
-                                  (intersects coverage rect 0)
-                                  (contentsScale 1.00)
-                                )
-                              )
                             )
                           )
                         )
@@ -184,16 +174,6 @@
                               (tile size 512 x 512)
                               (top left tile 0, 0 tiles grid 1 x 1)
                               (in window 1)
-                              (children 1
-                                (GraphicsLayer
-                                  (anchor 0.00 0.00)
-                                  (backingStoreAttached 0)
-                                  (visible rect 0.00, 0.00 0.00 x 0.00)
-                                  (coverage rect 0.00, 0.00 285.00 x 135.00)
-                                  (intersects coverage rect 0)
-                                  (contentsScale 1.00)
-                                )
-                              )
                             )
                           )
                         )
@@ -299,6 +279,7 @@
                                 )
                                 (GraphicsLayer
                                   (bounds 400.00 300.00)
+                                  (preserves3D 1)
                                   (drawsContent 1)
                                   (backingStoreAttached 1)
                                   (visible rect 0.00, 0.00 285.00 x 135.00)
@@ -309,16 +290,6 @@
                                   (tile size 512 x 512)
                                   (top left tile 0, 0 tiles grid 1 x 1)
                                   (in window 1)
-                                  (children 1
-                                    (GraphicsLayer
-                                      (anchor 0.00 0.00)
-                                      (backingStoreAttached 0)
-                                      (visible rect 0.00, 0.00 0.00 x 0.00)
-                                      (coverage rect 0.00, 0.00 285.00 x 135.00)
-                                      (intersects coverage rect 0)
-                                      (contentsScale 1.00)
-                                    )
-                                  )
                                 )
                               )
                             )

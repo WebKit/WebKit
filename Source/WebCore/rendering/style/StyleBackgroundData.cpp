@@ -34,6 +34,7 @@ DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StyleBackgroundData);
 StyleBackgroundData::StyleBackgroundData()
     : background(FillLayer::create(FillLayerType::Background))
     , color(RenderStyle::initialBackgroundColor())
+    , propagatedToCanvas(false)
 {
 }
 
@@ -42,6 +43,7 @@ inline StyleBackgroundData::StyleBackgroundData(const StyleBackgroundData& other
     , background(other.background)
     , color(other.color)
     , outline(other.outline)
+    , propagatedToCanvas(other.propagatedToCanvas)
 {
 }
 
@@ -52,20 +54,36 @@ Ref<StyleBackgroundData> StyleBackgroundData::copy() const
 
 bool StyleBackgroundData::operator==(const StyleBackgroundData& other) const
 {
-    return background == other.background && color == other.color && outline == other.outline;
+    return background == other.background && color == other.color && outline == other.outline && propagatedToCanvas == other.propagatedToCanvas;
 }
 
 bool StyleBackgroundData::isEquivalentForPainting(const StyleBackgroundData& other, bool currentColorDiffers) const
 {
-    if (background != other.background || color != other.color)
+    if (usedBackground() != other.usedBackground() || usedBackgroundColor() != other.usedBackgroundColor())
         return false;
-    if (currentColorDiffers && color.containsCurrentColor())
+    if (currentColorDiffers && usedBackgroundColor().containsCurrentColor())
         return false;
     if (!outline.isVisible() && !other.outline.isVisible())
         return true;
     if (currentColorDiffers && outline.color().containsCurrentColor())
         return false;
     return outline == other.outline;
+}
+
+const FillLayer& StyleBackgroundData::usedBackground() const
+{
+    static NeverDestroyed<Ref<FillLayer>> emptyBackground = FillLayer::create(FillLayerType::Background);
+    if (propagatedToCanvas)
+        return emptyBackground.get();
+    return background;
+}
+
+const Style::Color& StyleBackgroundData::usedBackgroundColor() const
+{
+    static NeverDestroyed<Style::Color> emptyColor = RenderStyle::initialBackgroundColor();
+    if (propagatedToCanvas)
+        return emptyColor;
+    return color;
 }
 
 void StyleBackgroundData::dump(TextStream& ts, DumpStyleValues behavior) const

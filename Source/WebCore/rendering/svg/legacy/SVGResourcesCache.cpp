@@ -167,14 +167,14 @@ void SVGResourcesCache::clientStyleChanged(RenderElement& renderer, StyleDiffere
         if (!oldStyle)
             return true;
 
-        if (!arePointingToEqualData(oldStyle->clipPath(), newStyle.clipPath()))
+        if (!arePointingToEqualData(oldStyle->usedClipPath(), newStyle.usedClipPath()))
             return true;
 
         // RenderSVGResourceMarker only supports SVG <mask> references.
         if (!arePointingToEqualData(oldStyle->maskImage(), newStyle.maskImage()))
             return true;
 
-        if (oldStyle->filter() != newStyle.filter())
+        if (oldStyle->usedFilter() != newStyle.usedFilter())
             return true;
 
         // -apple-color-filter affects gradients.

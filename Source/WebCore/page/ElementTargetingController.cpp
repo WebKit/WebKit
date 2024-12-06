@@ -655,7 +655,7 @@ static URL urlForElement(const Element& element)
 
     if (CheckedPtr renderer = element.renderer()) {
         if (auto& style = renderer->style(); style.hasBackgroundImage()) {
-            if (RefPtr image = style.backgroundLayers().image())
+            if (RefPtr image = style.usedBackgroundLayers().image())
                 return image->reresolvedURL(element.document());
         }
     }
@@ -1207,7 +1207,7 @@ Vector<TargetedElementInfo> ElementTargetingController::extractTargets(Vector<Re
                 return true;
 
             return targetRenderer->isOutOfFlowPositioned()
-                && (!style.hasBackground() || !style.opacity())
+                && (!style.hasBackground() || !style.usedOpacity())
                 && targetRenderer->usedPointerEvents() == PointerEvents::None;
         }();
 

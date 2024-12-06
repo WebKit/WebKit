@@ -112,7 +112,7 @@ bool ImageOverlayController::shouldUsePageOverlayToPaintSelection(const RenderEl
 {
     // If the selection is already painted (with nonzero opacity) in the overlay host's renderer,
     // then we don't need to fall back to a page overlay to paint the selection.
-    return renderer.style().opacity() <= 0.01;
+    return renderer.style().usedOpacity() <= 0.01;
 }
 
 void ImageOverlayController::documentDetached(const Document& document)

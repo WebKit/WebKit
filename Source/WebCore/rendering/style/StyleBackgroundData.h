@@ -52,9 +52,13 @@ public:
 
     bool isEquivalentForPainting(const StyleBackgroundData&, bool currentColorDiffers) const;
 
+    const FillLayer& usedBackground() const;
+    const Style::Color& usedBackgroundColor() const;
+
     DataRef<FillLayer> background;
     Style::Color color;
     OutlineValue outline;
+    bool propagatedToCanvas;
 
     void dump(TextStream&, DumpStyleValues = DumpStyleValues::All) const;
 
