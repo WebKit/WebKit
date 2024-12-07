@@ -20,7 +20,7 @@
         "test": "mocha"
     },
     "dependencies": {
-        "mocha": "~1.21.4",
+        "mocha": "~11.0.1",
         "sinon": "^1.10.3",
         "underscore": "~1.6.0"
     },
