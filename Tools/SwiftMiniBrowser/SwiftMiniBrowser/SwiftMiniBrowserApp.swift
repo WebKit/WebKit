@@ -23,53 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "_WKWebPushSubscriptionDataInternal.h"
-#import <WebCore/WebCoreObjCExtras.h>
-#import <wtf/cocoa/SpanCocoa.h>
+import SwiftUI
 
-#import <WebCore/WebCoreObjCExtras.h>
-#import <wtf/cocoa/SpanCocoa.h>
-
-@implementation _WKWebPushSubscriptionData
-
-- (void)dealloc
-{
-    if (WebCoreObjCScheduleDeallocateOnMainRunLoop(_WKWebPushSubscriptionData.class, self))
-        return;
-
-    _data->API::WebPushSubscriptionData::~WebPushSubscriptionData();
-    [super dealloc];
+@main
+struct SwiftMiniBrowserApp: App {
+    var body: some Scene {
+        WindowGroup {
+            ContentView()
+        }
+    }
 }
-
-- (NSURL *)endpoint
-{
-    return self._protectedData->endpoint();
-}
-
-- (NSData *)applicationServerKey
-{
-    return toNSData(self._protectedData->applicationServerKey()).get();
-}
-
-- (NSData *)authenticationSecret
-{
-    return toNSData(self._protectedData->sharedAuthenticationSecret()).get();
-}
-
-- (NSData *)ecdhPublicKey
-{
-    return toNSData(self._protectedData->clientECDHPublicKey()).get();
-}
-
-- (API::Object&)_apiObject
-{
-    return *_data;
-}
-
-- (Ref<API::WebPushSubscriptionData>)_protectedData
-{
-    return *_data;
-}
-
-@end

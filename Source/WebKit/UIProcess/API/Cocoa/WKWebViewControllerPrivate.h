@@ -23,53 +23,44 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "_WKWebPushSubscriptionDataInternal.h"
-#import <WebCore/WebCoreObjCExtras.h>
-#import <wtf/cocoa/SpanCocoa.h>
+#import <WebKit/WKFoundation.h>
 
-#import <WebCore/WebCoreObjCExtras.h>
-#import <wtf/cocoa/SpanCocoa.h>
+#if TARGET_OS_IPHONE
 
-@implementation _WKWebPushSubscriptionData
+#import <UIKit/UIKit.h>
 
-- (void)dealloc
-{
-    if (WebCoreObjCScheduleDeallocateOnMainRunLoop(_WKWebPushSubscriptionData.class, self))
-        return;
+@class NSCoder;
+@class WKWebView;
+@class WKWebViewConfiguration;
 
-    _data->API::WebPushSubscriptionData::~WebPushSubscriptionData();
-    [super dealloc];
-}
+NS_ASSUME_NONNULL_BEGIN
 
-- (NSURL *)endpoint
-{
-    return self._protectedData->endpoint();
-}
+/*!
+ WKWebViewConfiguration is a subclass of UIViewController that can
+ be used to display web content.
+ @helperclass @link WKWebViewConfiguration @/link
+ Used to configure @link WKWebViewController @/link instances.
+ */
+WK_CLASS_AVAILABLE(ios(WK_IOS_TBA), visionos(WK_XROS_TBA)) WK_API_UNAVAILABLE(macos)
+@interface WKWebViewController : UIViewController
 
-- (NSData *)applicationServerKey
-{
-    return toNSData(self._protectedData->applicationServerKey()).get();
-}
+/*! @abstract Returns a view controller for a web view with a
+ specified configuration
+ @param configuration The configuration for the new web view.
+ @result An initialized web view controller.
+ @discussion This is a designated initializer. You can use
+ @link -init @/link to initialize an instance with the default
+ configuration. The initializer copies the specified configuration, so
+ mutating the configuration after invoking the initializer has no effect
+ on the web view.
+ */
+- (instancetype)initWithConfiguration:(WKWebViewConfiguration *)configuration NS_DESIGNATED_INITIALIZER;
 
-- (NSData *)authenticationSecret
-{
-    return toNSData(self._protectedData->sharedAuthenticationSecret()).get();
-}
-
-- (NSData *)ecdhPublicKey
-{
-    return toNSData(self._protectedData->clientECDHPublicKey()).get();
-}
-
-- (API::Object&)_apiObject
-{
-    return *_data;
-}
-
-- (Ref<API::WebPushSubscriptionData>)_protectedData
-{
-    return *_data;
-}
-
+/*! @abstract The web view created by this view controller.
+ */
+@property (nonatomic, readonly) WKWebView *webView;
 @end
+
+NS_ASSUME_NONNULL_END
+
+#endif
