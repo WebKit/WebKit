@@ -1,0 +1,4 @@
+
+
+FAIL Test behavior when seeking to the duration and the playback rate equals 0. assert_equals: expected 0 but got 6.0272
+

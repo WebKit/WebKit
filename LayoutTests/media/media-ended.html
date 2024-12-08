@@ -1,51 +1,44 @@
 <!DOCTYPE html>
-<html>
-    <head>
-        <script src=media-file.js></script>
-        <script src=video-test.js></script>
+<title>Test "ended" event fires again after changing source after "ended" event.</title>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<audio autoplay></audio>
+<script>
+async_test(function(t) {
+    var endedCount = 0;
+    var audio = document.querySelector("audio");
 
-        <script>
-            var endedCount = 0;
-            var canplaythroughCount = 0;
-            var audio;
+    audio.onended = t.step_func(function() {
+        switch (++endedCount)
+        {
+            case 1:
+                assert_greater_than(audio.playbackRate, 0);
+                assert_true(audio.ended);
 
-            function start()
-            {
-                audio = document.querySelector("audio");
-                waitForEvent("ended", ended);
+                // Verify ended stays true even if playbackRate == 0
+                // since that is technically still "forward".
+                audio.playbackRate = 0;
+                assert_true(audio.ended);
 
-                audio.src = findMediaFile("audio", "content/silence")
-            }
-
-            function ended()
-            {
-                switch (++endedCount)
-                {
-                    case 1:
-                        testExpected("audio.ended", true);
-
-                        // Change src but don't seek so that internal state isn't reset.
-                        audio.src = findMediaFile("audio", "content/silence")
-                        testExpected("audio.ended", false);
-
-                        consoleWrite("");
-                        break;
-                    case 2:
-                        testExpected("audio.ended", true);
-                        endTest();
-                        break;
+                try {
+                    audio.playbackRate = -0.1;
+                } catch (exception) {
+                    // "Backward" playback is not supported.
+                    assert_equals(exception.name, "NotSupportedError")
                 }
-            }
-        </script>
-    </head>
-    <body onload="start()">
-        <audio controls autoplay></audio>
-        <p><b>Test ended by:</b>
-        <ol>
-            <li>Play to the end.</li>
-            <li>When 'ended' event fires, change the source.</li>
-            <li>Verify that 'ended' event fires again on different source.</li>
-        </ol>
-        </p>
-    </body>
-</html>
+
+                // Change src but don't seek so that internal state isn't reset.
+                audio.src = "content/silence.mp3";
+                assert_false(audio.ended);
+
+                break;
+            case 2:
+                assert_true(audio.ended);
+                t.done();
+                break;
+        }
+    });
+
+    audio.src = "content/silence.mp3"
+});
+</script>

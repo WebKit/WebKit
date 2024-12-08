@@ -1,0 +1,4 @@
+
+
+PASS Test behavior when seeking to the duration and the playback rate equals 0.
+

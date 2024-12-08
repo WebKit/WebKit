@@ -4241,6 +4241,11 @@ void HTMLMediaElement::setPlaybackRate(double rate)
     }
 }
 
+HTMLMediaElement::DirectionOfPlayback HTMLMediaElement::directionOfPlayback() const
+{
+    return requestedPlaybackRate() >= 0 ? DirectionOfPlayback::Forward : DirectionOfPlayback::Backward;
+}
+
 void HTMLMediaElement::updatePlaybackRate()
 {
     double requestedRate = requestedPlaybackRate();
@@ -4278,7 +4283,7 @@ bool HTMLMediaElement::ended() const
     // 4.8.10.8 Playing the media resource
     // The ended attribute must return true if the media element has ended
     // playback and the direction of playback is forwards, and false otherwise.
-    return endedPlayback() && requestedPlaybackRate() > 0;
+    return endedPlayback() && directionOfPlayback() == DirectionOfPlayback::Forward;
 }
 
 bool HTMLMediaElement::autoplay() const
@@ -4880,7 +4885,7 @@ void HTMLMediaElement::playbackProgressTimerFired()
 {
     ASSERT(m_player);
 
-    if (m_fragmentEndTime.isValid() && currentMediaTime() >= m_fragmentEndTime && requestedPlaybackRate() > 0) {
+    if (m_fragmentEndTime.isValid() && currentMediaTime() >= m_fragmentEndTime && directionOfPlayback() == DirectionOfPlayback::Forward) {
         m_fragmentEndTime = MediaTime::invalidTime();
         if (!m_mediaController && !m_paused) {
             // changes paused to true and fires a simple event named pause at the media element.
@@ -5824,12 +5829,11 @@ void HTMLMediaElement::mediaPlayerTimeChanged()
 
     MediaTime now = currentMediaTime();
     MediaTime dur = durationMediaTime();
-    double playbackRate = requestedPlaybackRate();
 
     // When the current playback position reaches the end of the media resource then the user agent must follow these steps:
     if ((dur || (!dur && !now)) && dur.isValid() && !dur.isPositiveInfinite() && !dur.isNegativeInfinite()) {
         // If the media element has a loop attribute specified and does not have a current media controller,
-        if (loop() && !m_mediaController && playbackRate > 0) {
+        if (loop() && !m_mediaController && directionOfPlayback() == DirectionOfPlayback::Forward) {
             m_sentEndEvent = false;
             // then seek to the earliest possible position of the media resource and abort these steps when the direction of
             // playback is forwards,
@@ -5837,7 +5841,7 @@ void HTMLMediaElement::mediaPlayerTimeChanged()
                 ALWAYS_LOG(LOGIDENTIFIER, "current time (", now, ") is greater then duration (", dur, "), looping");
                 seekInternal(MediaTime::zeroTime());
             }
-        } else if ((now <= MediaTime::zeroTime() && playbackRate < 0) || (now >= dur && playbackRate > 0)) {
+        } else if ((now <= MediaTime::zeroTime() && directionOfPlayback() == DirectionOfPlayback::Backward) || (now >= dur && directionOfPlayback() == DirectionOfPlayback::Forward)) {
 
             ALWAYS_LOG(LOGIDENTIFIER, "current time (", now, ") is greater then duration (", dur, ") or <= 0, pausing");
 
@@ -6313,15 +6317,13 @@ bool HTMLMediaElement::endedPlayback() const
     // of playback is forwards, Either the media element does not have a loop attribute specified,
     // or the media element has a current media controller.
     MediaTime now = currentMediaTime();
-    if (requestedPlaybackRate() > 0)
+    if (directionOfPlayback() == DirectionOfPlayback::Forward)
         return dur > MediaTime::zeroTime() && now >= dur && (!loop() || m_mediaController);
 
     // or the current playback position is the earliest possible position and the direction
     // of playback is backwards
-    if (requestedPlaybackRate() < 0)
-        return now <= MediaTime::zeroTime();
-
-    return false;
+    ASSERT(directionOfPlayback() == DirectionOfPlayback::Backward);
+    return now <= MediaTime::zeroTime();
 }
 
 bool HTMLMediaElement::stoppedDueToErrors() const
