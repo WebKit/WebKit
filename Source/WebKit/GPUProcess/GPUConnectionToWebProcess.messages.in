@@ -67,7 +67,7 @@ messages -> GPUConnectionToWebProcess WantsDispatchMessage {
 #endif
 
 #if ENABLE(EXTENSION_CAPABILITIES)
-    SetMediaEnvironment(WebCore::PageIdentifier pageIdentifier, String mediaEnvironment);
+    [EnabledBy=MediaCapabilityGrantsEnabled] SetMediaEnvironment(WebCore::PageIdentifier pageIdentifier, String mediaEnvironment);
 #endif
 }
 

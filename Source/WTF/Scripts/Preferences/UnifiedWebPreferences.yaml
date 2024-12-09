@@ -4725,6 +4725,7 @@ MediaCapabilityGrantsEnabled:
     WebCore:
       "PLATFORM(IOS_FAMILY_SIMULATOR)": false
       default: true
+  sharedPreferenceForWebProcess: true
 
 MediaCaptionFormatTypesAllowedInLockdownMode:
   type: String
