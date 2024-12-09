@@ -168,6 +168,14 @@ void HTMLVideoElementPictureInPicture::didEnterPictureInPicture(const IntSize& w
     }
 }
 
+void HTMLVideoElementPictureInPicture::failedToEnterPictureInPicture()
+{
+    if (m_enterPictureInPicturePromise) {
+        m_enterPictureInPicturePromise->reject();
+        m_enterPictureInPicturePromise = nullptr;
+    }
+}
+
 void HTMLVideoElementPictureInPicture::didExitPictureInPicture()
 {
     INFO_LOG(LOGIDENTIFIER);
@@ -181,6 +189,14 @@ void HTMLVideoElementPictureInPicture::didExitPictureInPicture()
 
     if (m_exitPictureInPicturePromise) {
         m_exitPictureInPicturePromise->resolve();
+        m_exitPictureInPicturePromise = nullptr;
+    }
+}
+
+void HTMLVideoElementPictureInPicture::failedToExitPictureInPicture()
+{
+    if (m_exitPictureInPicturePromise) {
+        m_exitPictureInPicturePromise->reject();
         m_exitPictureInPicturePromise = nullptr;
     }
 }

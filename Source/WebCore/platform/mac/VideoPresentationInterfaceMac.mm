@@ -208,6 +208,7 @@ enum class PIPState {
     [[_videoViewContainer layer] addSublayer:_playerLayer.get()];
     [_playerLayer setFrame:[_videoViewContainer layer].bounds];
     [_playerLayer setPresentationModel:model.get()];
+    [_playerLayer addSublayer:videoView.layer];
     [_playerLayer setVideoSublayer:videoView.layer];
     [_playerLayer setVideoDimensions:_videoDimensions];
     [_playerLayer setAutoresizingMask:(kCALayerWidthSizable | kCALayerHeightSizable)];
@@ -271,8 +272,8 @@ enum class PIPState {
         _pipState = PIPState::InPIP;
 
         if (auto model = _videoPresentationInterfaceMac->videoPresentationModel()) {
-            model->didEnterPictureInPicture();
-            model->didEnterFullscreen((WebCore::FloatSize)[_videoViewContainer bounds].size);
+            auto size = (WebCore::FloatSize)[_videoViewContainer bounds].size;
+            model->didEnterPictureInPicture(size);
         }
     }
 }
@@ -302,7 +303,7 @@ enum class PIPState {
         return YES;
     
     if (auto model = _videoPresentationInterfaceMac->videoPresentationModel())
-        model->fullscreenMayReturnToInline();
+        model->fullscreenMayReturnToInline([] (bool, WebCore::FloatRect) { });
 
     _videoPresentationInterfaceMac->requestHideAndExitPiP();
 

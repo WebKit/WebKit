@@ -104,7 +104,19 @@ public:
     void webkitSetPresentationMode(VideoPresentationMode);
 
     WEBCORE_EXPORT void setPresentationMode(VideoPresentationMode);
+
+    WEBCORE_EXPORT void failedToEnterPictureInPicture();
+    WEBCORE_EXPORT void didEnterPictureInPicture(const FloatSize&);
+
+    WEBCORE_EXPORT void failedToExitPictureInPicture();
+    WEBCORE_EXPORT void didExitPictureInPicture();
+
+    WEBCORE_EXPORT void willEnterFullscreen();
     WEBCORE_EXPORT void didEnterFullscreenOrPictureInPicture(const FloatSize&);
+
+    WEBCORE_EXPORT void willExitFullscreen();
+    WEBCORE_EXPORT void didExitFullscreen();
+
     WEBCORE_EXPORT void didExitFullscreenOrPictureInPicture();
     WEBCORE_EXPORT bool isChangingPresentationMode() const;
     WEBCORE_EXPORT void setPresentationModeIgnoringPermissionsPolicy(VideoPresentationMode);

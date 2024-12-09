@@ -94,7 +94,7 @@ private:
     RetainPtr<UIViewController> createVideoFullscreenViewController(AVPlayerViewController*) final;
 #endif
     void willEnterPictureInPicture() final;
-    void didEnterPictureInPicture() final;
+    void didEnterPictureInPicture(const WebCore::FloatSize&) final;
     void failedToEnterPictureInPicture() final;
     void willExitPictureInPicture() final;
     void didExitPictureInPicture() final;
@@ -103,14 +103,14 @@ private:
     void requestUpdateInlineRect() final;
     void requestVideoContentLayer() final;
     void returnVideoContentLayer() final;
-    void returnVideoView() final;
     void didSetupFullscreen() final;
+    void willEnterFullscreen() final;
     void failedToEnterFullscreen() final;
     void didEnterFullscreen(const WebCore::FloatSize&) final;
     void willExitFullscreen() final;
     void didExitFullscreen() final;
     void didCleanupFullscreen() final;
-    void fullscreenMayReturnToInline() final;
+    void fullscreenMayReturnToInline(FullscreenMayReturnToInlineReply&&) final;
     void setRequiresTextTrackRepresentation(bool) final;
     void setTextTrackRepresentationBounds(const WebCore::IntRect&) final;
 
@@ -236,8 +236,14 @@ private:
     void returnVideoContentLayer(PlaybackSessionContextIdentifier);
     void returnVideoView(PlaybackSessionContextIdentifier);
     void didSetupFullscreen(PlaybackSessionContextIdentifier);
+    void willEnterPictureInPicture(PlaybackSessionContextIdentifier);
+    void didEnterPictureInPicture(PlaybackSessionContextIdentifier, const WebCore::FloatSize&);
+    void failedToEnterPictureInPicture(PlaybackSessionContextIdentifier);
+    void willExitPictureInPicture(PlaybackSessionContextIdentifier);
+    void didExitPictureInPicture(PlaybackSessionContextIdentifier);
     void willExitFullscreen(PlaybackSessionContextIdentifier);
     void didExitFullscreen(PlaybackSessionContextIdentifier);
+    void willEnterFullscreen(PlaybackSessionContextIdentifier);
     void failedToEnterFullscreen(PlaybackSessionContextIdentifier);
     void didEnterFullscreen(PlaybackSessionContextIdentifier, const WebCore::FloatSize&);
     void didCleanupFullscreen(PlaybackSessionContextIdentifier);
@@ -245,7 +251,8 @@ private:
     void setVideoLayerGravity(PlaybackSessionContextIdentifier, WebCore::MediaPlayerEnums::VideoGravity);
     void setVideoFullscreenFrame(PlaybackSessionContextIdentifier, WebCore::FloatRect);
     void fullscreenModeChanged(PlaybackSessionContextIdentifier, WebCore::HTMLMediaElementEnums::VideoFullscreenMode);
-    void fullscreenMayReturnToInline(PlaybackSessionContextIdentifier);
+    using FullscreenMayReturnToInlineReply = WebCore::VideoPresentationModel::FullscreenMayReturnToInlineReply;
+    void fullscreenMayReturnToInline(PlaybackSessionContextIdentifier, FullscreenMayReturnToInlineReply&&);
 
     void requestCloseAllMediaPresentations(PlaybackSessionContextIdentifier, bool finishedWithMedia, CompletionHandler<void()>&&);
     void callCloseCompletionHandlers();
@@ -258,6 +265,7 @@ private:
 #endif
 
     bool m_mockVideoPresentationModeEnabled { false };
+    WebCore::HTMLMediaElementEnums::VideoFullscreenMode m_mockVideoFullscreenMode { WebCore::HTMLMediaElementEnums::VideoFullscreenModeNone };
     WebCore::FloatSize m_mockPictureInPictureWindowSize { DefaultMockPictureInPictureWindowWidth, DefaultMockPictureInPictureWindowHeight };
 
     Ref<PlaybackSessionManagerProxy> protectedPlaybackSessionManagerProxy() const;

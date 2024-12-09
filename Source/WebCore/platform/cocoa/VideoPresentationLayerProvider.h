@@ -39,17 +39,17 @@ public:
     WEBCORE_EXPORT virtual ~VideoPresentationLayerProvider();
 
     PlatformView *layerHostView() const { return m_layerHostView.get(); }
-    void setLayerHostView(RetainPtr<PlatformView>&& layerHostView) { m_layerHostView = WTFMove(layerHostView); }
+    virtual void setLayerHostView(RetainPtr<PlatformView>&& layerHostView) { m_layerHostView = WTFMove(layerHostView); }
 
     WebAVPlayerLayer *playerLayer() const { return m_playerLayer.get(); }
     virtual void setPlayerLayer(RetainPtr<WebAVPlayerLayer>&& layer) { m_playerLayer = WTFMove(layer); }
 
 #if PLATFORM(IOS_FAMILY)
     WebAVPlayerLayerView *playerLayerView() const { return m_playerLayerView.get(); }
-    void setPlayerLayerView(RetainPtr<WebAVPlayerLayerView>&& playerLayerView) { m_playerLayerView = WTFMove(playerLayerView); }
+    virtual void setPlayerLayerView(RetainPtr<WebAVPlayerLayerView>&& playerLayerView) { m_playerLayerView = WTFMove(playerLayerView); }
 
     PlatformView *videoView() const { return m_videoView.get(); }
-    void setVideoView(RetainPtr<PlatformView>&& videoView) { m_videoView = WTFMove(videoView); }
+    virtual void setVideoView(RetainPtr<PlatformView>&& videoView) { m_videoView = WTFMove(videoView); }
 #endif
 
 protected:

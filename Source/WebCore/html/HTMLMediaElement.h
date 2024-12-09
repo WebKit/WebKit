@@ -624,7 +624,6 @@ public:
     bool isSuspended() const final;
 
     WEBCORE_EXPORT void didBecomeFullscreenElement() final;
-    WEBCORE_EXPORT void willExitFullscreen();
     WEBCORE_EXPORT void didStopBeingFullscreenElement() final;
     void willBecomeFullscreenElement(VideoFullscreenMode = VideoFullscreenModeStandard);
 
@@ -761,6 +760,7 @@ protected:
     void setVideoFullscreenStandbyInternal(bool videoFullscreenStandby) { m_videoFullscreenStandby = videoFullscreenStandby; }
 
     void ignoreFullscreenPermissionPolicyOnNextCallToEnterFullscreen() { m_ignoreFullscreenPermissionsPolicy = true; }
+    void setFullscreenMode(VideoFullscreenMode);
 
 protected:
     // ActiveDOMObject
@@ -781,7 +781,6 @@ private:
     bool canStartSelection() const override { return false; } 
     bool isInteractiveContent() const override;
 
-    void setFullscreenMode(VideoFullscreenMode);
     void willStopBeingFullscreenElement() override;
 
     // ActiveDOMObject.

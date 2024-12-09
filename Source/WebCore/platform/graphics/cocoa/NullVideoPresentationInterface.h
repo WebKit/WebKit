@@ -56,7 +56,7 @@ public:
 
     void setSpatialVideoMetadata(const std::optional<SpatialVideoMetadata>&) { }
     void setVideoPresentationModel(VideoPresentationModel* model) { m_videoPresentationModel = model; }
-    void setupFullscreen(const FloatRect&, const FloatSize&, UIView*, HTMLMediaElementEnums::VideoFullscreenMode, bool, bool, bool) { }
+    void setupFullscreen(const FloatRect&, const FloatSize&, HTMLMediaElementEnums::VideoFullscreenMode, bool, bool, bool) { }
     void enterFullscreen() { }
     bool exitFullscreen(const FloatRect& finalRect) { return false; }
     void exitFullscreenWithoutAnimationToMode(HTMLMediaElementEnums::VideoFullscreenMode) { }
@@ -79,6 +79,7 @@ public:
     std::optional<MediaPlayerIdentifier> playerIdentifier() const { return std::nullopt; }
     bool changingStandbyOnly() { return false; }
     bool returningToStandby() const { return false; }
+    void setParentView(RetainPtr<PlatformView>&&) { }
 
     // VideoPresentationModelClient
     void hasVideoChanged(bool) final { }

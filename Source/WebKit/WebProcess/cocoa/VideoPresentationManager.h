@@ -193,8 +193,14 @@ protected:
 #if !PLATFORM(IOS_FAMILY)
     void didSetupFullscreen(PlaybackSessionContextIdentifier);
 #endif
+    void willEnterPictureInPicture(PlaybackSessionContextIdentifier);
+    void didEnterPictureInPicture(PlaybackSessionContextIdentifier, const WebCore::FloatSize&);
+    void failedToEnterPictureInPicture(PlaybackSessionContextIdentifier);
+    void willExitPictureInPicture(PlaybackSessionContextIdentifier);
+    void didExitPictureInPicture(PlaybackSessionContextIdentifier);
     void willExitFullscreen(PlaybackSessionContextIdentifier);
     void didExitFullscreen(PlaybackSessionContextIdentifier);
+    void willEnterFullscreen(PlaybackSessionContextIdentifier);
     void didEnterFullscreen(PlaybackSessionContextIdentifier, std::optional<WebCore::FloatSize>);
     void failedToEnterFullscreen(PlaybackSessionContextIdentifier);
     void didCleanupFullscreen(PlaybackSessionContextIdentifier);
@@ -202,13 +208,17 @@ protected:
     void setVideoLayerGravityEnum(PlaybackSessionContextIdentifier, unsigned gravity);
     void setVideoFullscreenFrame(PlaybackSessionContextIdentifier, WebCore::FloatRect);
     void fullscreenModeChanged(PlaybackSessionContextIdentifier, WebCore::HTMLMediaElementEnums::VideoFullscreenMode);
-    void fullscreenMayReturnToInline(PlaybackSessionContextIdentifier, bool isPageVisible);
+    using FullscreenMayReturnToInlineReply = WebCore::VideoPresentationModel::FullscreenMayReturnToInlineReply;
+    void fullscreenMayReturnToInline(PlaybackSessionContextIdentifier, bool isPageVisible, FullscreenMayReturnToInlineReply&&);
     void requestRouteSharingPolicyAndContextUID(PlaybackSessionContextIdentifier, CompletionHandler<void(WebCore::RouteSharingPolicy, String)>&&);
     void ensureUpdatedVideoDimensions(PlaybackSessionContextIdentifier, WebCore::FloatSize existingVideoDimensions);
 
-    void setCurrentlyInFullscreen(VideoPresentationInterfaceContext&, bool);
+    bool currentlyInFullscreen() const;
+    void setCurrentlyInFullscreen(PlaybackSessionContextIdentifier, bool);
     void setRequiresTextTrackRepresentation(PlaybackSessionContextIdentifier, bool);
     void setTextTrackRepresentationBounds(PlaybackSessionContextIdentifier, const WebCore::IntRect&);
+
+    bool shouldBlockMediaLayerRehosting() const;
 
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const;
@@ -223,7 +233,7 @@ protected:
     HashMap<PlaybackSessionContextIdentifier, ModelInterfaceTuple> m_contextMap;
     HashMap<PlaybackSessionContextIdentifier, int> m_clientCounts;
     WeakPtr<WebCore::HTMLVideoElement> m_videoElementInPictureInPicture;
-    bool m_currentlyInFullscreen { false };
+    WeakPtr<WebCore::HTMLVideoElement> m_videoElementInFullscreen;
 };
 
 } // namespace WebKit

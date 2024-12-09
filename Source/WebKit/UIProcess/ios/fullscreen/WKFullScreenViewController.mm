@@ -970,6 +970,19 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     return playbackSessionManager->controlsManagerInterface();
 }
 
+- (RefPtr<WebCore::PlatformVideoPresentationInterface>) _videoPresentationInterface
+{
+    auto page = [self._webView _page];
+    if (!page)
+        return nullptr;
+
+    WebKit::VideoPresentationManagerProxy* videoPresentationManager = page->videoPresentationManager();
+    if (!videoPresentationManager)
+        return nullptr;
+
+    return videoPresentationManager->controlsManagerInterface();
+}
+
 - (void)_pauseIfNeeded
 {
     RefPtr page = self._webView._page.get();
@@ -1004,12 +1017,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 {
     ASSERT(_valid);
 
-    RefPtr playbackSessionInterface = [self _playbackSessionInterface];
-    if (!playbackSessionInterface)
-        return;
-
-    if (auto* playbackSessionModel = playbackSessionInterface->playbackSessionModel())
-        playbackSessionModel->togglePictureInPicture();
+    if (RefPtr videoPresentationInterface = [self _videoPresentationInterface])
+        videoPresentationInterface->togglePictureInPicture();
 }
 
 - (void)_enterVideoFullscreenAction:(id)sender

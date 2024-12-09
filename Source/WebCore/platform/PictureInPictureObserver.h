@@ -46,7 +46,9 @@ class PictureInPictureObserver : public CanMakeWeakPtr<PictureInPictureObserver>
 public:
     virtual ~PictureInPictureObserver() { };
     virtual void didEnterPictureInPicture(const IntSize&) = 0;
+    virtual void failedToEnterPictureInPicture() = 0;
     virtual void didExitPictureInPicture() = 0;
+    virtual void failedToExitPictureInPicture() = 0;
     virtual void pictureInPictureWindowResized(const IntSize&) = 0;
 };
 
