@@ -109,6 +109,7 @@ CSSParserContext::CSSParserContext(const Document& document, const URL& sheetBas
     , targetTextPseudoElementEnabled { document.settings().targetTextPseudoElementEnabled() }
     , viewTransitionTypesEnabled { document.settings().viewTransitionsEnabled() && document.settings().viewTransitionTypesEnabled() }
     , cssProgressFunctionEnabled { document.settings().cssProgressFunctionEnabled() }
+    , openPseudoClassEnabled { document.settings().openPseudoClassEnabled() }
     , propertySettings { CSSPropertySettings { document.settings() } }
 {
 }
@@ -145,7 +146,8 @@ void add(Hasher& hasher, const CSSParserContext& context)
         | context.targetTextPseudoElementEnabled            << 23
         | context.viewTransitionTypesEnabled                << 24
         | context.cssProgressFunctionEnabled                << 25
-        | (uint32_t)context.mode                            << 26; // This is multiple bits, so keep it last.
+        | context.openPseudoClassEnabled                    << 26
+        | (uint32_t)context.mode                            << 27; // This is multiple bits, so keep it last.
     add(hasher, context.baseURL, context.charset, context.propertySettings, bits);
 }
 

@@ -41,6 +41,8 @@ public:
 
     void queueDetailsToggleEventTask(ToggleState oldState, ToggleState newState);
 
+    bool isOpen() const { return hasAttribute(HTMLNames::openAttr); }
+
 private:
     HTMLDetailsElement(const QualifiedName&, Document&);
 

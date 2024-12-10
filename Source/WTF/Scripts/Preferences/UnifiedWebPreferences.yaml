@@ -5438,6 +5438,20 @@ OffscreenCanvasInWorkersEnabled:
       "PLATFORM(COCOA) || PLATFORM(GTK) || PLATFORM(WPE)": true
       default: false
 
+OpenPseudoClassEnabled:
+  type: bool
+  status: testable
+  humanReadableName: ":open pseudo-class"
+  humanReadableDescription: "Enable the :open CSS pseudo-class"
+  category: css
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 # FIXME: Reenable this on iOS once we can mitigate impact on memory use.
 OpportunisticSweepingAndGarbageCollectionEnabled:
   type: bool
