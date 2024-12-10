@@ -1,0 +1,76 @@
+<!DOCTYPE HTML>
+ <script src="../../resources/js-test.js"></script>
+ <style>
+ .box {
+     background-color: grey;
+     position: absolute;
+     top: 20px;
+     left: 20px;
+     height: 100px;
+     width: 100px;
+ }
+ 
+ #inner {
+     background-color: red;
+     width: 60px;
+     height: 60px;
+ }
+ 
+ #description {
+     margin-top: 140px;
+ }
+ </style>
+ <div id="outer" class="box">
+ <div id="inner" class="box"></div>
+ </div>
+ <pre id="eventLog"></pre>
+ <script>
+     description("This tests removing an element in in the middle of mouse movement. mouseleave event should not be fired on the removed element.<br>" 
+ + "To manually test, move the mosue cursor from the grey box through the red box");
+   
+     var jsTestIsAsync = true;
+ 
+     if (window.testRunner) {
+             testRunner.waitUntilDone();
+     }
+ 
+     function logEvent(event) {
+         eventLog.innerHTML += `${event.currentTarget.id} element received ${event.type} event\n`;
+     }
+     
+     ["mouseenter", "mouseleave", "mouseover", "mouseout"].forEach(function(event) {
+         outer.addEventListener(event, logEvent);
+         inner.addEventListener(event, logEvent);
+     });
+ 
+     let mouseleaveFired = false;
+     
+     inner.addEventListener('mouseleave', () => mouseleaveFired = true);
+     let didRemove = false;
+     let didCheck = false;
+     
+     inner.addEventListener('mousemove', () => {
+         inner.remove();
+         didRemove = true;
+     });
+     
+     outer.addEventListener('mousemove', () => {
+         if (!didRemove || didCheck)
+             return;
+         shouldBeFalse('mouseleaveFired');
+         didCheck = true;
+         
+         if (window.testRunner) {
+             finishJSTest();
+             testRunner.notifyDone();
+         }
+     });
+ 
+     if (window.eventSender) {
+         eventSender.mouseMoveTo(30, 30);
+         eventSender.mouseMoveTo(50, 50);
+         eventSender.mouseMoveTo(30, 30);
+         eventSender.mouseMoveTo(0, 0);
+     }
+     successfullyParsed = true;
+ </script>

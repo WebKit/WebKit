@@ -1,0 +1,21 @@
+This tests removing an element in in the middle of mouse movement. mouseleave event should not be fired on the removed element.
+To manually test, move the mosue cursor from the grey box through the red box
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS mouseleaveFired is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+outer element received mouseover event
+outer element received mouseenter event
+outer element received mouseout event
+inner element received mouseover event
+outer element received mouseover event
+inner element received mouseenter event
+outer element received mouseover event
+outer element received mouseenter event
+outer element received mouseout event
+outer element received mouseleave event
+
