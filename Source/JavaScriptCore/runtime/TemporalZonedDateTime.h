@@ -62,9 +62,7 @@ public:
     static ISO8601::ExactTime disambiguatePossibleEpochNanoseconds(JSGlobalObject*,
         Vector<ISO8601::ExactTime>, ISO8601::TimeZone,
         std::tuple<ISO8601::PlainDate, ISO8601::PlainTime>, TemporalDisambiguation disambiguation);
-    static std::tuple<ISO8601::PlainDate, ISO8601::PlainTime>
-    getISODateTimeFor(ISO8601::TimeZone timeZone, ISO8601::ExactTime epochNs);
-
+ 
     static std::optional<ISO8601::TimeZone> getAvailableNamedTimeZoneIdentifier(JSGlobalObject*, Vector<LChar>);
     static std::optional<ISO8601::TimeZone> getAvailableNamedTimeZoneIdentifier(JSGlobalObject*, TimeZoneID);
 

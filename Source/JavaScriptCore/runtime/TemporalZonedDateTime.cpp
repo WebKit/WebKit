@@ -120,14 +120,6 @@ static Int128 getNamedTimeZoneOffsetNanosecondsImpl(TimeZoneID timeZoneIdentifie
     return 0;
 }
 
-// https://tc39.es/ecma262/#sec-getnamedtimezoneoffsetnanoseconds
-static Int128 getNamedTimeZoneOffsetNanoseconds(TimeZoneID timeZoneIdentifier, Int128)
-{
-
-    RELEASE_ASSERT(timeZoneIdentifier == utcTimeZoneID());
-    return 0;
-}
-
 // https://tc39.es/proposal-temporal/#sec-getnamedtimezoneepochnanoseconds
 static Vector<ISO8601::ExactTime> getNamedTimeZoneEpochNanoseconds(TimeZoneID timeZoneIdentifier, std::tuple<ISO8601::PlainDate, ISO8601::PlainTime> isoDateTime)
 {
@@ -135,84 +127,6 @@ static Vector<ISO8601::ExactTime> getNamedTimeZoneEpochNanoseconds(TimeZoneID ti
     RELEASE_ASSERT(timeZoneIdentifier == utcTimeZoneID());
     auto epochNanoseconds = TemporalDuration::getUTCEpochNanoseconds(isoDateTime);
     return Vector<ISO8601::ExactTime>(epochNanoseconds);
-}
-
-// https://tc39.es/proposal-temporal/#sec-temporal-getoffsetnanosecondsfor
-static Int128 getOffsetNanosecondsFor(ISO8601::TimeZone timeZone, Int128 epochNs)
-{
-    if (std::holds_alternative<int64_t>(timeZone))
-        return std::get<int64_t>(timeZone) * 60 * 1000000000;
-    return getNamedTimeZoneOffsetNanoseconds(std::get<TimeZoneID>(timeZone), epochNs);
-}
-
-// https://tc39.es/ecma262/#sec-hourfromtime
-static unsigned hourFromTime(Int128 t)
-{
-    return std::trunc(std::fmod(t / msPerHour, WTF::hoursPerDay));
-}
-
-// https://tc39.es/ecma262/#sec-minfromtime
-static unsigned minFromTime(Int128 t)
-{
-    return std::trunc(std::fmod(t / msPerMinute, minutesPerHour));
-}
-
-// https://tc39.es/ecma262/#sec-secfromtime
-static unsigned secFromTime(Int128 t)
-{
-    return std::trunc(std::fmod(t / msPerSecond, secondsPerMinute));
-}
-
-// https://tc39.es/ecma262/#sec-msfromtime
-static unsigned msFromTime(Int128 t)
-{
-    return std::trunc(std::fmod(t, msPerSecond));
-}
-
-
-// https://tc39.es/proposal-temporal/#sec-temporal-getisopartsfromepoch
-static std::tuple<ISO8601::PlainDate, ISO8601::PlainTime>
-getISOPartsFromEpoch(ISO8601::ExactTime epochNanoseconds)
-{
-    ASSERT(epochNanoseconds.isValid());
-    Int128 remainderNs = epochNanoseconds.epochNanoseconds() % 1000000;
-    auto epochMilliseconds = (epochNanoseconds.epochNanoseconds() - remainderNs) / 1000000;
-    auto year = TemporalCalendar::epochTimeToEpochYear(epochMilliseconds);
-    auto month = TemporalCalendar::epochTimeToMonthInYear(epochMilliseconds) + 1;
-    auto day = TemporalCalendar::epochTimeToDate(epochMilliseconds);
-    auto hour = hourFromTime(epochMilliseconds);
-    auto minute = minFromTime(epochMilliseconds);
-    auto second = secFromTime(epochMilliseconds);
-    auto millisecond = msFromTime(epochMilliseconds);
-    auto microsecond = remainderNs / 1000;
-    ASSERT(microsecond < 1000);
-    auto nanosecond = remainderNs % 1000;
-    auto isoDate = ISO8601::PlainDate(year, month, day);
-    auto time = ISO8601::PlainTime(hour, minute, second, millisecond, microsecond, nanosecond);
-    return std::tuple<ISO8601::PlainDate, ISO8601::PlainTime>(isoDate, time);
-}
-
-// https://tc39.es/proposal-temporal/#sec-temporal-balanceisodatetime
-static std::tuple<ISO8601::PlainDate, ISO8601::PlainTime>
-balanceISODateTime(double year, double month, double day, double hour, double minute,
-    double second, double millisecond, double microsecond, double nanosecond)
-{
-    auto balancedTime = TemporalPlainTime::balanceTime(
-        hour, minute, second, millisecond, microsecond, nanosecond);
-    auto balancedDate = TemporalCalendar::balanceISODate(year, month, day + balancedTime.days());
-    return std::tuple<ISO8601::PlainDate, ISO8601::PlainTime>(balancedDate,
-        ISO8601::PlainTime(balancedTime.hours(), balancedTime.minutes(),
-            balancedTime.seconds(), balancedTime.milliseconds(),
-            balancedTime.microseconds(), balancedTime.nanoseconds()));
-}
-
-// https://tc39.es/proposal-temporal/#sec-temporal-getisodatetimefor
-std::tuple<ISO8601::PlainDate, ISO8601::PlainTime>
-TemporalZonedDateTime::getISODateTimeFor(ISO8601::TimeZone timeZone, ISO8601::ExactTime epochNs)
-{
-    auto offsetNanoseconds = getOffsetNanosecondsFor(timeZone, epochNs.epochNanoseconds());
-    auto [dateResult, timeResult] = getISOPartsFromEpoch(epochNs);
-    return balanceISODateTime(dateResult.year(), dateResult.month(), dateResult.day(), timeResult.hour(), timeResult.minute(), timeResult.second(), timeResult.millisecond(), timeResult.microsecond(), timeResult.nanosecond() + offsetNanoseconds);
 }
 
 // https://tc39.es/proposal-temporal/#sec-checkisodaysrange
@@ -236,13 +150,13 @@ Vector<ISO8601::ExactTime> TemporalZonedDateTime::getPossibleEpochNanoseconds(JS
 
     Vector<ISO8601::ExactTime> possibleEpochNanoseconds;
     if (std::holds_alternative<int64_t>(timeZone)) {
-        auto balanced = balanceISODateTime(isoDate.year(), isoDate.month(), isoDate.day(),
-            isoTime.hour(), isoTime.minute() - std::get<int64_t>(timeZone), isoTime.second(),
-            isoTime.millisecond(), isoTime.microsecond(), isoTime.nanosecond());
+        auto balanced = ISO8601::balanceISODateTime(isoDate.year(), isoDate.month(), isoDate.day(),
+            isoTime.hour(), isoTime.minute(), isoTime.second(),
+            isoTime.millisecond(), isoTime.microsecond(), isoTime.nanosecond() - std::get<int64_t>(timeZone));
         checkISODaysRange(globalObject, std::get<0>(balanced));
         RETURN_IF_EXCEPTION(scope, { });
-        auto epochNanoseconds = TemporalDuration::getUTCEpochNanoseconds(balanced);
-        possibleEpochNanoseconds = Vector<ISO8601::ExactTime>(epochNanoseconds);
+        ISO8601::ExactTime epochNanoseconds = ISO8601::ExactTime(TemporalDuration::getUTCEpochNanoseconds(balanced));
+        possibleEpochNanoseconds = Vector<ISO8601::ExactTime>({ epochNanoseconds });
     } else {
         checkISODaysRange(globalObject, isoDate);
         RETURN_IF_EXCEPTION(scope, { });
@@ -416,9 +330,9 @@ ISO8601::ExactTime TemporalZonedDateTime::disambiguatePossibleEpochNanoseconds(J
         throwRangeError(globalObject, scope, "day before is not a valid instant in disambiguatePossibleEpochNanoseconds()"_s);
         return { };
     }
-    auto offsetBefore = getOffsetNanosecondsFor(timeZone, dayBefore);
+    auto offsetBefore = ISO8601::getOffsetNanosecondsFor(timeZone, dayBefore);
     auto dayAfter = utcNs + ISO8601::ExactTime::nsPerDay;
-    auto offsetAfter = getOffsetNanosecondsFor(timeZone, dayAfter);
+    auto offsetAfter = ISO8601::getOffsetNanosecondsFor(timeZone, dayAfter);
     auto nanoseconds = offsetAfter - offsetBefore;
     ASSERT(absInt128(nanoseconds) <= ISO8601::ExactTime::nsPerDay);
     
@@ -472,7 +386,7 @@ static ISO8601::ExactTime interpretISODateTimeOffset(JSGlobalObject* globalObjec
 
     if (offsetBehavior == TemporalOffsetBehavior::Exact
         || (offsetBehavior == TemporalOffsetBehavior::Option && offsetOption == TemporalOffset::Use)) {
-        auto balanced = balanceISODateTime(isoDate.year(), isoDate.month(), isoDate.day(),
+        auto balanced = ISO8601::balanceISODateTime(isoDate.year(), isoDate.month(), isoDate.day(),
             time.hour(), time.minute(), time.second(), time.millisecond(), time.microsecond(),
             time.nanosecond() - offsetNanoseconds);
         checkISODaysRange(globalObject, std::get<0>(balanced));
@@ -597,7 +511,7 @@ TemporalZonedDateTime* TemporalZonedDateTime::round(JSGlobalObject* globalObject
     }
     else {
         auto roundResult = roundISODateTime(isoDateTime, roundingIncrement, smallestUnit, roundingMode);
-        auto offsetNanoseconds = getOffsetNanosecondsFor(timeZone, thisNs.epochNanoseconds());
+        auto offsetNanoseconds = ISO8601::getOffsetNanosecondsFor(timeZone, thisNs.epochNanoseconds());
         epochNanoseconds = interpretISODateTimeOffset(globalObject,
             std::get<0>(roundResult), std::get<1>(roundResult),
             TemporalOffsetBehavior::Option, offsetNanoseconds, timeZone,
@@ -1088,29 +1002,40 @@ TemporalZonedDateTime* TemporalZonedDateTime::from(JSGlobalObject* globalObject,
         RETURN_IF_EXCEPTION(scope, { });
         isoDate = std::get<0>(result);
         time = std::get<1>(result);
-    }
+    } else {
+        if (!itemValue.isString()) {
+            throwTypeError(globalObject, scope, "can only convert to ZonedDateTime from object or string values"_s);
+            return { };
+        }
 
-    if (!itemValue.isString()) {
-        throwTypeError(globalObject, scope, "can only convert to ZonedDateTime from object or string values"_s);
-        return { };
-    }
+        auto string = itemValue.toWTFString(globalObject);
+        RETURN_IF_EXCEPTION(scope, { });
+        // Validate overflow -- see step 3(g) of ToTemporalTime
+        if (options)
+            overflow = toTemporalOverflow(globalObject, options.value());
+        
+        auto dateTime = ISO8601::parseDateTime(string, TemporalDateFormat::Date);
+        if (!dateTime) {
+            throwRangeError(globalObject, scope, makeString("in Temporal.ZonedDateTime.from, error parsing "_s, string));
+            return { };
+        }
 
-    auto string = itemValue.toWTFString(globalObject);
-    RETURN_IF_EXCEPTION(scope, { });
-    // Validate overflow -- see step 3(g) of ToTemporalTime
-    if (options)
-        overflow = toTemporalOverflow(globalObject, options.value());
-
-    auto dateTime = ISO8601::parseDateTime(string, TemporalDateFormat::Date);
-    if (dateTime) {
         auto [plainDate, plainTimeOptional, timeZoneOptional] = WTFMove(dateTime.value());
         if (!timeZoneOptional) {
             throwRangeError(globalObject, scope, "string must have a time zone annotation to convert to ZonedDateTime"_s);
             return { };
+    }
+        if (!timeZoneOptional->m_offset) {
+            throwRangeError(globalObject, scope, "in Temporal.ZonedDateTime, parsing strings with named time zones not implemented yet"_s);
+            return { };
         }
-        auto annotation = timeZoneOptional->m_annotation;
-        ASSERT(annotation);
-        auto timeZone = annotation.value();
+/*
+// TODO: ??
+    auto annotation = timeZoneOptional->m_annotation;
+    ASSERT(annotation);
+    timeZone = annotation.value();
+*/
+        timeZone = timeZoneOptional->m_offset.value();
         offsetString = timeZoneOptional->m_offset;
         if (timeZoneOptional->m_z)
             offsetBehavior = TemporalOffsetBehavior::Exact;

@@ -60,10 +60,12 @@ TemporalTimeZone::TemporalTimeZone(VM& vm, Structure* structure, TimeZone timeZo
 {
 }
 
-/*
+#if false
 // https://tc39.es/proposal-temporal/#sec-parsetimezoneidentifier
-static std::optional<TimeZoneRecord> parseTimeZoneIdentifier(StringView identifier)
+static std::optional<ISO8601::TimeZoneRecord> parseTimeZoneIdentifier(StringView identifier)
 {
+    (void) identifier;
+/*
     auto parseResult = parseUTCOffset(identifier);
     bool isIANAName = false;
     if (!parseResult) {
@@ -79,8 +81,10 @@ static std::optional<TimeZoneRecord> parseTimeZoneIdentifier(StringView identifi
     Int128 offsetMinutes = offsetNanoseconds / (60 * 1000000000);
     ASSERT(offsetNanoseconds % (60 * 1000000000) == 0);
     return TimeZoneRecord { "", offsetMinutes };
-}
 */
+    return std::nullopt; // TODO
+}
+#endif
 
 template<typename CharacterType>
 std::optional<int64_t> parseDateTimeUTCOffset_(StringParsingBuffer<CharacterType>& buffer)
@@ -132,11 +136,146 @@ std::optional<int64_t> TemporalTimeZone::parseDateTimeUTCOffset(StringView strin
     });
 }
 
-// https://tc39.es/proposal-temporal/#sec-temporal-parsetemporaltimeZonestring
-std::optional<ISO8601::TimeZone> TemporalTimeZone::parseTemporalTimeZoneString(StringView)
+// https://tc39.es/proposal-temporal/#prod-TimeZoneIdentifier
+bool canBeTimeZoneIdentifier(StringView string)
 {
-    // FIXME: Implement parsing temporal timeZone string, which requires full ISO 8601 parser.
+    //  TimeZoneIdentifier :::
+    //      UTCOffset[~SubMinutePrecision]
+    //      TimeZoneIANAName
+    //
+    //  UTCOffset[SubMinutePrecision] :::
+    //      ASCIISign Hour
+    //      ASCIISign Hour TimeSeparator[+Extended] MinuteSecond
+    //      ASCIISign Hour TimeSeparator[~Extended] MinuteSecond
+    //      [+SubMinutePrecision] ASCIISign Hour TimeSeparator[+Extended] MinuteSecond TimeSeparator[+Extended] MinuteSecond TemporalDecimalFractionopt
+    //      [+SubMinutePrecision] ASCIISign Hour TimeSeparator[~Extended] MinuteSecond TimeSeparator[~Extended] MinuteSecond TemporalDecimalFractionopt
+    //
+    //  TimeZoneIANAName :::
+    //      TimeZoneIANANameComponent
+    //      TimeZoneIANAName / TimeZoneIANANameComponent
+    //
+    //  TimeZoneIANANameComponent :::
+    //      TZLeadingChar
+    //      TimeZoneIANANameComponent TZChar
+    //
+    //  TZLeadingChar :::
+    //      Alpha
+    //      .
+    //      _
+    //
+    if (string[0] == '+' || string[0] == '-')
+        return true;
+    if (isASCIIAlpha(string[0]) || string[0] == '.' || string[0] == '_')
+        return true;
+    return false;
+}
+
+#if false
+// https://tc39.es/proposal-temporal/#sec-temporal-parsetemporaltimezonestring
+template<typename CharacterType>
+std::optional<ISO8601::TimeZone> TemporalTimeZone::parseTemporalTimeZoneString(StringParsingBuffer<CharacterType>& buffer)
+{
+    if (canBeTimeZoneIdentifier(buffer))
+        return parseTimeZoneIdentifier(buffer);
+    TimeZoneRecord result;
+/*
+    if (canBeTemporalDateTimeString(buffer))
+        result = parseISODateTime(buffer, TemporalParseTimeZoneFormat::DateTime);
+    else if (canBeTemporalInstantString(buffer))
+        result = parseISODateTime(buffer, TemporalParseTimeZoneFormat::Instant);
+    else if (canBeTemporalTimeString(buffer))
+        result = parseISODateTime(buffer, TemporalParseTimeZoneFormat::Time);
+    else if (canBeTemporalMonthDayString(buffer))
+        result = parseISODateTime(buffer, TemporalParseTimeZoneFormat::MonthDay);
+    else if (canBeTemporalYearMonthString(buffer))
+        result = parseISODateTime(buffer, TemporalParseTimeZoneFormat::YearMonth);
+*/
+    result = parseISODateTime(buffer);
+    auto timeZoneResult = result.timeZone;
+    if (timeZoneResult.m_annotation)
+        return parseTimeZoneIdentifier(timeZoneResult.m_annotation);
+    if (timeZoneResult.m_z)
+        return utcTimeZoneID();
+    if (timeZoneResult.m_offset)
+        return offsetTimeZone(timeZoneResult.m_offset);
     return std::nullopt;
+}
+#endif
+
+// https://tc39.es/proposal-temporal/#sec-temporal-parsetemporaltimezonestring
+std::optional<ISO8601::TimeZone> TemporalTimeZone::parseTemporalTimeZoneString(StringView timeZoneString)
+{
+    if (canBeTimeZoneIdentifier(timeZoneString))
+        return std::nullopt;
+    // TODO
+    // return parseTimeZoneIdentifier(timeZoneString);
+    ISO8601::TimeZoneRecord result;
+    auto asDateTime = ISO8601::parseCalendarDateTime(timeZoneString, TemporalDateFormat::Date);
+    if (asDateTime) {
+        auto [date, optionalTime, optionalTimeZoneRecord, optionalCalendarRecord] = asDateTime.value();
+        if (optionalTimeZoneRecord)
+            result = optionalTimeZoneRecord.value();
+        else
+            return std::nullopt;
+    }
+    else {
+        auto asExactTime = ISO8601::parseInstant(timeZoneString);
+        if (asExactTime) {
+            // TODO
+/*
+            auto [exactTime, optionalTimeZoneRecord] = asExactTime.value();
+            if (optionalTimeZoneRecord)
+                result = optionalTimeZoneRecord.value();
+            else
+*/
+                return std::nullopt;
+        } else {
+            auto asTime = ISO8601::parseCalendarTime(timeZoneString);
+            if (asTime) {
+                auto [time, optionalTimeZoneRecord, optionalCalendarRecord] = asTime.value();
+                if (optionalTimeZoneRecord)
+                    result = optionalTimeZoneRecord.value();
+                else
+                    return std::nullopt;
+            }
+            else {
+                auto asMonthDay = ISO8601::parseCalendarDateTime(timeZoneString, TemporalDateFormat::MonthDay);
+                if (asMonthDay) {
+                    auto [date, optionalTime, optionalTimeZoneRecord, optionalCalendarRecord] = asMonthDay.value();
+                    if (optionalTimeZoneRecord)
+                        result = optionalTimeZoneRecord.value();
+                    else
+                        return std::nullopt;
+                }
+                else {
+                    auto asYearMonth = ISO8601::parseCalendarDateTime(timeZoneString, TemporalDateFormat::YearMonth);
+                    if (asYearMonth) {
+                        auto [date, optionalTime, optionalTimeZoneRecord, optionalCalendarRecord] = asYearMonth.value();
+                        if (optionalTimeZoneRecord)
+                            result = optionalTimeZoneRecord.value();
+                        else
+                            return std::nullopt;
+                    } else {
+                        return std::nullopt;
+                    }
+                }
+            }
+        }
+    }
+    auto timeZoneResult = result; // TODO: ???
+    if (timeZoneResult.m_annotation) {
+        if (std::holds_alternative<int64_t>(timeZoneResult.m_annotation.value()))
+            return std::get<int64_t>(timeZoneResult.m_annotation.value());
+        else
+            return std::nullopt; // TODO
+//        return parseTimeZoneIdentifier(timeZoneResult.m_annotation);
+    }
+    if (timeZoneResult.m_z)
+        return utcTimeZoneID();
+    if (timeZoneResult.m_offset)
+        return timeZoneResult.m_offset.value();
+    return std::nullopt;
+// TODO: check that argument-propertybag-timezone-string-datetime.js works
 }
 
 // https://tc39.es/proposal-temporal/#sec-temporal.timezone.from
