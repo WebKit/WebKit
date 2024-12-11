@@ -29,7 +29,9 @@
 
 #include "IntlObject.h"
 #include "ParseInt.h"
+#include "TemporalCalendar.h"
 #include "TemporalObject.h"
+#include "TemporalPlainTime.h"
 #include <limits>
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/DateMath.h>
@@ -589,7 +591,7 @@ static std::optional<std::variant<Vector<LChar>, int64_t>> parseTimeZoneAnnotati
     switch (static_cast<UChar>(*buffer)) {
     case '+':
     case '-': {
-        auto offset = parseUTCOffset(buffer, false);
+        auto offset = parseUTCOffset(buffer, true);
         if (!offset)
             return std::nullopt;
         if (buffer.atEnd())
@@ -714,7 +716,7 @@ static std::optional<std::variant<Vector<LChar>, int64_t>> parseTimeZoneAnnotati
 }
 
 template<typename CharacterType>
-static std::optional<TimeZoneRecord> parseTimeZone(StringParsingBuffer<CharacterType>& buffer)
+static std::optional<TimeZoneRecord> parseTimeZone(StringParsingBuffer<CharacterType>& buffer, bool parseSubMinutePrecision)
 {
     if (buffer.atEnd())
         return std::nullopt;
@@ -738,7 +740,8 @@ static std::optional<TimeZoneRecord> parseTimeZone(StringParsingBuffer<Character
     // https://tc39.es/proposal-temporal/#prod-TimeZoneUTCOffsetSign
     case '+':
     case '-': {
-        auto offset = parseUTCOffset(buffer);
+        // Do not accept sub-minute precision in offset
+        auto offset = parseUTCOffset(buffer, parseSubMinutePrecision);
         if (!offset)
             return std::nullopt;
         if (!buffer.atEnd() && *buffer == '[' && canBeTimeZone(buffer, *buffer)) {
@@ -764,10 +767,10 @@ static std::optional<TimeZoneRecord> parseTimeZone(StringParsingBuffer<Character
     }
 }
 
-std::optional<TimeZoneRecord> parseTimeZone(StringView string)
+std::optional<TimeZoneRecord> parseTimeZone(StringView string, bool parseSubMinutePrecision)
 {
-  return readCharactersForParsing(string, [](auto buffer) -> std::optional<TimeZoneRecord> {
-        auto result = parseTimeZone(buffer);
+  return readCharactersForParsing(string, [parseSubMinutePrecision](auto buffer) -> std::optional<TimeZoneRecord> {
+        auto result = parseTimeZone(buffer, parseSubMinutePrecision);
         if (!buffer.atEnd())
             return std::nullopt;
         return result;
@@ -1347,6 +1350,15 @@ uint8_t daysInMonth(uint8_t month)
     return daysInMonths[isLeapYear][month - 1];
 }
 
+String formatTimeZone(TimeZone tz)
+{
+    if (std::holds_alternative<int64_t>(tz))
+        return formatTimeZoneOffsetString(std::get<int64_t>(tz));
+    else if (std::get<TimeZoneID>(tz) == utcTimeZoneID())
+        return "UTC"_s;
+    return ""_s; // TODO: handle named time zones
+}
+
 // https://tc39.es/proposal-temporal/#sec-temporal-formattimezoneoffsetstring
 String formatTimeZoneOffsetString(int64_t offset)
 {
@@ -1471,13 +1483,6 @@ String temporalMonthDayToString(PlainMonthDay plainMonthDay, StringView calendar
     }
 
     return makeString(pad('0', 2, plainMonthDay.month()), '-', pad('0', 2, plainMonthDay.day()));
-}
-
-String temporalZonedDateTimeToString(ExactTime, TimeZone,
-  PrecisionData, TemporalShowCalendar, TemporalShowTimeZone, TemporalShowOffset,
-  unsigned, TemporalUnit, RoundingMode) {
-    // TODO
-    return ""_s;
 }
 
 String monthCode(uint32_t month)
@@ -1707,6 +1712,86 @@ static bool validateTemporalRoundingIncrement(unsigned increment, Int128 dividen
     return true;
 }
 
+// https://tc39.es/proposal-temporal/#sec-temporal-formatdatetimeutcoffsetrounded
+String formatDateTimeUTCOffsetRounded(Int128 offsetNanoseconds)
+{
+    Int128 divisor = 1000000000;
+    divisor *= 60;
+    offsetNanoseconds = roundNumberToIncrementInt128(offsetNanoseconds, divisor, RoundingMode::HalfExpand);
+    auto offsetMinutes = offsetNanoseconds / divisor;
+    ASSERT(!(offsetNanoseconds % divisor));
+    return formatTimeZoneOffsetString(offsetMinutes);
+}
+
+// https://tc39.es/ecma262/#sec-hourfromtime
+static unsigned hourFromTime(Int128 t)
+{
+    return std::trunc(std::fmod(t / msPerHour, WTF::hoursPerDay));
+}
+
+// https://tc39.es/ecma262/#sec-minfromtime
+static unsigned minFromTime(Int128 t)
+{
+    return std::trunc(std::fmod(t / msPerMinute, minutesPerHour));
+}
+
+// https://tc39.es/ecma262/#sec-secfromtime
+static unsigned secFromTime(Int128 t)
+{
+    return std::trunc(std::fmod(t / msPerSecond, secondsPerMinute));
+}
+
+// https://tc39.es/ecma262/#sec-msfromtime
+static unsigned msFromTime(Int128 t)
+{
+    return std::trunc(std::fmod(t, msPerSecond));
+}
+
+// https://tc39.es/proposal-temporal/#sec-temporal-getisopartsfromepoch
+std::tuple<PlainDate, PlainTime>
+getISOPartsFromEpoch(ExactTime epochNanoseconds)
+{
+    ASSERT(epochNanoseconds.isValid());
+    Int128 remainderNs = epochNanoseconds.epochNanoseconds() % 1000000;
+    auto epochMilliseconds = (epochNanoseconds.epochNanoseconds() - remainderNs) / 1000000;
+    auto year = TemporalCalendar::epochTimeToEpochYear(epochMilliseconds);
+    auto month = TemporalCalendar::epochTimeToMonthInYear(epochMilliseconds) + 1;
+    auto day = TemporalCalendar::epochTimeToDate(epochMilliseconds);
+    auto hour = hourFromTime(epochMilliseconds);
+    auto minute = minFromTime(epochMilliseconds);
+    auto second = secFromTime(epochMilliseconds);
+    auto millisecond = msFromTime(epochMilliseconds);
+    auto microsecond = remainderNs / 1000;
+    ASSERT(microsecond < 1000);
+    auto nanosecond = remainderNs % 1000;
+    auto isoDate = PlainDate(year, month, day);
+    auto time = PlainTime(hour, minute, second, millisecond, microsecond, nanosecond);
+    return std::tuple<PlainDate, PlainTime>(isoDate, time);
+}
+
+// https://tc39.es/proposal-temporal/#sec-temporal-temporalzoneddatetimetostring
+String temporalZonedDateTimeToString(ExactTime exactTime, TimeZone timeZone,
+  PrecisionData precision, TemporalShowCalendar /* TODO */, TemporalShowTimeZone showTimeZone,
+  TemporalShowOffset showOffset, unsigned increment, TemporalUnit unit, RoundingMode roundingMode) {
+    Int128 epochNs = roundTemporalInstant(exactTime.epochNanoseconds(), increment, unit, roundingMode);
+    auto offsetNanoseconds = getOffsetNanosecondsFor(timeZone, epochNs);
+    auto isoDateTime = getISODateTimeFor(timeZone, ExactTime(epochNs));
+    auto dateTimeString = temporalDateTimeToString(std::get<0>(isoDateTime), std::get<1>(isoDateTime), precision.precision);
+    String offsetString;
+    if (showOffset != TemporalShowOffset::Never) {
+        offsetString = formatDateTimeUTCOffsetRounded(offsetNanoseconds);
+    }
+    String timeZoneString;
+    if (showTimeZone != TemporalShowTimeZone::Never) {
+        String flag;
+        if (showTimeZone == TemporalShowTimeZone::Critical) {
+            flag = "!"_s;
+        }
+        timeZoneString = makeString('[', flag, formatTimeZone(timeZone), ']');
+    }
+    return makeString(dateTimeString, offsetString, timeZoneString);
+}
+
 // https://tc39.es/proposal-temporal/#sec-temporal.instant.prototype.round
 // (Steps 10-17 only)
 std::optional<Int128> ExactTime::round(Int128 quantity, unsigned increment, TemporalUnit unit, RoundingMode roundingMode)
@@ -1858,6 +1943,44 @@ PlainDate createISODateRecord(double year, double month, double day)
 {
     ASSERT(isValidISODate(year, month, day));
     return PlainDate(year, month, day);
+}
+
+// https://tc39.es/proposal-temporal/#sec-temporal-balanceisodatetime
+std::tuple<PlainDate, PlainTime>
+balanceISODateTime(double year, double month, double day, double hour, double minute,
+    double second, double millisecond, double microsecond, double nanosecond)
+{
+    auto balancedTime = TemporalPlainTime::balanceTime(
+        hour, minute, second, millisecond, microsecond, nanosecond);
+    auto balancedDate = TemporalCalendar::balanceISODate(year, month, day + balancedTime.days());
+    return std::tuple<PlainDate, PlainTime>(balancedDate,
+        PlainTime(balancedTime.hours(), balancedTime.minutes(),
+            balancedTime.seconds(), balancedTime.milliseconds(),
+            balancedTime.microseconds(), balancedTime.nanoseconds()));
+}
+
+// https://tc39.es/proposal-temporal/#sec-temporal-getisodatetimefor
+std::tuple<PlainDate, PlainTime> getISODateTimeFor(TimeZone timeZone, ExactTime epochNs)
+{
+    auto offsetNanoseconds = getOffsetNanosecondsFor(timeZone, epochNs.epochNanoseconds());
+    auto [dateResult, timeResult] = getISOPartsFromEpoch(epochNs);
+    return balanceISODateTime(dateResult.year(), dateResult.month(), dateResult.day(), timeResult.hour(), timeResult.minute(), timeResult.second(), timeResult.millisecond(), timeResult.microsecond(), timeResult.nanosecond() + offsetNanoseconds);
+}
+
+// https://tc39.es/ecma262/#sec-getnamedtimezoneoffsetnanoseconds
+static Int128 getNamedTimeZoneOffsetNanoseconds(TimeZoneID timeZoneIdentifier, Int128)
+{
+
+    RELEASE_ASSERT(timeZoneIdentifier == utcTimeZoneID());
+    return 0;
+}
+
+// https://tc39.es/proposal-temporal/#sec-temporal-getoffsetnanosecondsfor
+Int128 getOffsetNanosecondsFor(TimeZone timeZone, Int128 epochNs)
+{
+    if (std::holds_alternative<int64_t>(timeZone))
+        return std::get<int64_t>(timeZone) * 60 * 1000000000;
+    return getNamedTimeZoneOffsetNanoseconds(std::get<TimeZoneID>(timeZone), epochNs);
 }
 
 } // namespace ISO8601

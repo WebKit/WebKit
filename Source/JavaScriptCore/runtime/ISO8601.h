@@ -369,7 +369,7 @@ using TimeZone = std::variant<TimeZoneID, int64_t>;
 // Record { [[Z]], [[OffsetString]], [[TimeZoneAnnotation]] }
 struct TimeZoneRecord {
     bool m_z { false };
-    std::optional<int64_t> m_offset;
+    std::optional<int64_t> m_offset; // In nanoseconds?
     // TODO: in the spec, this is "a String or EMPTY"
     std::optional<std::variant<Vector<LChar>, int64_t>> m_annotation;
 };
@@ -397,6 +397,7 @@ uint8_t weeksInYear(int32_t year);
 uint8_t weekOfYear(PlainDate);
 uint8_t daysInMonth(int32_t year, uint8_t month);
 uint8_t daysInMonth(uint8_t month);
+String formatTimeZone(TimeZone);
 String formatTimeZoneOffsetString(int64_t);
 String temporalTimeToString(PlainTime, std::tuple<Precision, unsigned>);
 String temporalDateToString(PlainDate);
@@ -420,7 +421,13 @@ bool isDateTimeWithinLimits(int32_t year, uint8_t month, uint8_t day, unsigned h
 bool isYearMonthWithinLimits(double year, double month);
 bool isYearWithinLimits(double year);
 
+std::tuple<PlainDate, PlainTime>
+balanceISODateTime(double, double, double, double, double,
+    double, double, double, double);
 std::optional<Int128> roundTimeDuration(Int128 timeDuration, unsigned increment, TemporalUnit, RoundingMode);
+std::tuple<PlainDate, PlainTime> getISOPartsFromEpoch(ExactTime);
+Int128 getOffsetNanosecondsFor(TimeZone, Int128);
+std::tuple<PlainDate, PlainTime> getISODateTimeFor(TimeZone, ExactTime);
 
 } // namespace ISO8601
 } // namespace JSC
