@@ -591,7 +591,7 @@ static std::optional<std::variant<Vector<LChar>, int64_t>> parseTimeZoneAnnotati
     switch (static_cast<UChar>(*buffer)) {
     case '+':
     case '-': {
-        auto offset = parseUTCOffset(buffer, true);
+        auto offset = parseUTCOffset(buffer, false);
         if (!offset)
             return std::nullopt;
         if (buffer.atEnd())
@@ -716,7 +716,7 @@ static std::optional<std::variant<Vector<LChar>, int64_t>> parseTimeZoneAnnotati
 }
 
 template<typename CharacterType>
-static std::optional<TimeZoneRecord> parseTimeZone(StringParsingBuffer<CharacterType>& buffer, bool parseSubMinutePrecision)
+static std::optional<TimeZoneRecord> parseTimeZone(StringParsingBuffer<CharacterType>& buffer)
 {
     if (buffer.atEnd())
         return std::nullopt;
@@ -740,8 +740,8 @@ static std::optional<TimeZoneRecord> parseTimeZone(StringParsingBuffer<Character
     // https://tc39.es/proposal-temporal/#prod-TimeZoneUTCOffsetSign
     case '+':
     case '-': {
-        // Do not accept sub-minute precision in offset
-        auto offset = parseUTCOffset(buffer, parseSubMinutePrecision);
+        // Accept sub-minute precision in offset
+        auto offset = parseUTCOffset(buffer, true);
         if (!offset)
             return std::nullopt;
         if (!buffer.atEnd() && *buffer == '[' && canBeTimeZone(buffer, *buffer)) {
