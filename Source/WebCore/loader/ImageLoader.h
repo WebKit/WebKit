@@ -32,6 +32,7 @@
 
 namespace WebCore {
 
+class CachedResourceRequest;
 class DeferredPromise;
 class Document;
 class ImageLoader;
@@ -57,6 +58,8 @@ public:
     // This function should be called when the element is attached to a document; starts
     // loading if a load hasn't already been started.
     void updateFromElement(RelevantMutation = RelevantMutation::No);
+
+    void doUpdateFromElement(RelevantMutation, CachedResourceRequest&&);
 
     // This function should be called whenever the 'src' attribute is set.
     // Starts new load unconditionally (matches Firefox and Opera behavior).
@@ -97,6 +100,8 @@ public:
 
     Document& document() { return m_element->document(); }
     Ref<Document> protectedDocument() { return m_element->document(); }
+
+    void clearMicrotaskQueuedBool() { m_microtaskQueued = false; }
 
 protected:
     explicit ImageLoader(Element&);
@@ -142,6 +147,7 @@ private:
     bool m_imageComplete : 1;
     bool m_loadManually : 1;
     bool m_elementIsProtected : 1;
+    bool m_microtaskQueued : 1;
     LazyImageLoadState m_lazyImageLoadState { LazyImageLoadState::None };
 };
 

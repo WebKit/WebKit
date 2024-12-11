@@ -49,6 +49,7 @@ enum class ReferrerPolicy : uint8_t;
 bool isRequestCrossOrigin(SecurityOrigin*, const URL& requestURL, const ResourceLoaderOptions&);
 
 class CachedResourceRequest {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     CachedResourceRequest(ResourceRequest&&, const ResourceLoaderOptions&, std::optional<ResourceLoadPriority> = std::nullopt, String&& charset = String());
 

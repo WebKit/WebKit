@@ -87,6 +87,12 @@ enum class AllowTrustedTypePolicy : uint8_t {
     DisallowedDuplicateName,
 };
 
+struct CodePosition {
+    String sourceFile;
+    int lineNumber;
+    int columnNumber;
+};
+
 class ContentSecurityPolicy final : public CanMakeThreadSafeCheckedPtr<ContentSecurityPolicy> {
     WTF_MAKE_TZONE_ALLOCATED_EXPORT(ContentSecurityPolicy, WEBCORE_EXPORT);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(ContentSecurityPolicy);
@@ -159,6 +165,8 @@ public:
     void setOverrideAllowInlineStyle(bool);
 
     void gatherReportURIs(DOMStringList&) const;
+
+    static std::optional<CodePosition> getCurrentCodePosition();
 
     bool allowRunningOrDisplayingInsecureContent(const URL&);
 

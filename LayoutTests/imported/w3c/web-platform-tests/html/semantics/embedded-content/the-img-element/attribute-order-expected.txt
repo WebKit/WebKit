@@ -1,0 +1,6 @@
+
+PASS srcset and src setting order does not matter
+PASS srcset and sizes setting order does not matter
+PASS srcset and loading setting order does not matter
+PASS Image loading is triggered after a microtask
+

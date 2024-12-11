@@ -867,6 +867,20 @@ void ContentSecurityPolicy::reportViolation(const ContentSecurityPolicyDirective
     return reportViolation(violatedDirective.nameForReporting().convertToASCIILowercase(), violatedDirective.directiveList(), blockedURL, consoleMessage, sourceURL, sourceContent.left(40), sourcePosition, state, preRedirectURL, element);
 }
 
+std::optional<CodePosition> ContentSecurityPolicy::getCurrentCodePosition()
+{
+    auto stack = createScriptCallStack(JSExecState::currentState(), 2);
+    auto* callFrame = stack->firstNonNativeCallFrame();
+    if (callFrame && callFrame->lineNumber()) {
+        CodePosition position;
+        position.sourceFile = callFrame->preRedirectURL().isEmpty() ? callFrame->sourceURL() : callFrame->preRedirectURL();
+        position.lineNumber = callFrame->lineNumber();
+        position.columnNumber = callFrame->columnNumber();
+        return position;
+    }
+    return std::nullopt;
+}
+
 void ContentSecurityPolicy::reportViolation(const String& effectiveViolatedDirective, const ContentSecurityPolicyDirectiveList& violatedDirectiveList, const String& blockedURLString, const String& consoleMessage, const String& sourceURL, StringView sourceContent, const TextPosition& sourcePosition, JSC::JSGlobalObject* state, const URL& preRedirectURL, Element* element) const
 {
     logToConsole(consoleMessage, sourceURL, sourcePosition.m_line, sourcePosition.m_column, state);
@@ -899,12 +913,13 @@ void ContentSecurityPolicy::reportViolation(const String& effectiveViolatedDirec
 
         info.documentURI = shouldReportProtocolOnly(document->url()) ? document->url().protocol().toString() : document->url().strippedForUseAsReferrer().string;
 
-        auto stack = createScriptCallStack(JSExecState::currentState(), 2);
-        auto* callFrame = stack->firstNonNativeCallFrame();
-        if (callFrame && callFrame->lineNumber()) {
-            info.sourceFile = createURLForReporting(URL { callFrame->preRedirectURL().isEmpty() ? callFrame->sourceURL() : callFrame->preRedirectURL() }, effectiveViolatedDirective, usesReportTo);
-            info.lineNumber = callFrame->lineNumber();
-            info.columnNumber = callFrame->columnNumber();
+        auto position = document->getCodePosition();
+        if (!position)
+            position = getCurrentCodePosition();
+        if (position) {
+            info.sourceFile = createURLForReporting(URL { position->sourceFile }, effectiveViolatedDirective, usesReportTo);
+            info.lineNumber = position->lineNumber;
+            info.columnNumber = position->columnNumber;
         }
     }
     ASSERT(m_client || is<Document>(m_scriptExecutionContext.get()));
