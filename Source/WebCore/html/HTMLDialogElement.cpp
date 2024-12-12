@@ -193,6 +193,10 @@ void HTMLDialogElement::runFocusingSteps()
     if (!control)
         control = this;
 
+    RefPtr page = control->document().protectedPage();
+    if (!page)
+        return;
+
     if (control->isFocusable())
         control->runFocusingStepsForAutofocus();
     else if (m_isModal)
@@ -203,7 +207,7 @@ void HTMLDialogElement::runFocusingSteps()
 
     Ref topDocument = control->document().topDocument();
     topDocument->clearAutofocusCandidates();
-    topDocument->setAutofocusProcessed();
+    page->setAutofocusProcessed();
 }
 
 bool HTMLDialogElement::supportsFocus() const

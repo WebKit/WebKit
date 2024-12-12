@@ -817,11 +817,43 @@ DOMAudioSessionType Page::audioSessionType() const
 }
 #endif
 
+void Page::setUserDidInteractWithPage(bool didInteract)
+{
+    if (m_documentSyncData->userDidInteractWithPage == didInteract)
+        return;
+    m_documentSyncData->userDidInteractWithPage = didInteract;
+    processSyncClient().broadcastUserDidInteractWithPageToOtherProcesses(didInteract);
+}
+
+bool Page::userDidInteractWithPage() const
+{
+    return m_documentSyncData->userDidInteractWithPage;
+}
+
+void Page::setAutofocusProcessed()
+{
+    if (m_documentSyncData->isAutofocusProcessed)
+        return;
+    m_documentSyncData->isAutofocusProcessed = true;
+    processSyncClient().broadcastIsAutofocusProcessedToOtherProcesses(true);
+}
+
+bool Page::autofocusProcessed() const
+{
+    return m_documentSyncData->isAutofocusProcessed;
+}
+
 void Page::updateProcessSyncData(const ProcessSyncData& data)
 {
     switch (data.type) {
     case ProcessSyncDataType::MainFrameURLChange:
-        setMainFrameURL(std::get<URL>(data.value));
+        setMainFrameURL(std::get<enumToUnderlyingType(ProcessSyncDataType::MainFrameURLChange)>(data.value));
+        break;
+    case ProcessSyncDataType::IsAutofocusProcessed:
+        m_documentSyncData->update(data);
+        break;
+    case ProcessSyncDataType::UserDidInteractWithPage:
+        m_documentSyncData->update(data);
         break;
 #if ENABLE(DOM_AUDIO_SESSION)
     case ProcessSyncDataType::AudioSessionType:

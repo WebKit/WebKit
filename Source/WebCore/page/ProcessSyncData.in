@@ -58,3 +58,5 @@
 
 MainFrameURLChange : URL [Header=<wtf/URL.h>]
 AudioSessionType : WebCore::DOMAudioSessionType [DocumentSyncData Conditional=ENABLE(DOM_AUDIO_SESSION) Header="DOMAudioSession.h"]
+IsAutofocusProcessed : bool [DocumentSyncData]
+UserDidInteractWithPage : bool [DocumentSyncData]

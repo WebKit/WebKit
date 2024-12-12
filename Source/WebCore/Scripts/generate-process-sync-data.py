@@ -58,6 +58,7 @@ class SyncedData(object):
         self.automatic_location = None
         self.conditional = None
         self.header = None
+        self.variant_index = None
 
         if options is not None:
             option_list = options.split()
@@ -160,7 +161,7 @@ def generate_process_sync_client_header(synched_datas):
 
     result.append(_process_sync_client_header_prefix)
 
-    for data in sorted(synched_datas, key=lambda data: data.name):
+    for data in synched_datas:
         if data.conditional is not None:
             result.append('#if %s' % data.conditional)
         result.append('    void broadcast%sToOtherProcesses(const %s&);' % (data.name, data.fully_qualified_type))
@@ -186,12 +187,14 @@ def generate_process_sync_client_impl(synched_datas):
     result.append(_header_license)
     result.append(_process_sync_client_impl_prefix)
 
-    for data in sorted(synched_datas, key=lambda data: data.name):
+    for data in synched_datas:
         if data.conditional is not None:
             result.append('#if %s' % data.conditional)
         result.append('void ProcessSyncClient::broadcast%sToOtherProcesses(const %s& data)' % (data.name, data.fully_qualified_type))
         result.append('{')
-        result.append('    broadcastProcessSyncDataToOtherProcesses({ ProcessSyncDataType::%s, { data }});' % data.name)
+        result.append('    ProcessSyncDataVariant dataVariant;')
+        result.append('    dataVariant.emplace<enumToUnderlyingType(ProcessSyncDataType::%s)>(data);' % data.name)
+        result.append('    broadcastProcessSyncDataToOtherProcesses({ ProcessSyncDataType::%s, WTFMove(dataVariant)});' % data.name)
         result.append('}')
         if data.conditional is not None:
             result.append('#endif')
@@ -210,25 +213,6 @@ struct ProcessSyncData {
 """
 
 
-def sorted_qualified_types(synched_datas):
-    type_set = set()
-    conditional_type_set = set()
-
-    for data in synched_datas:
-        if data.conditional is None:
-            type_set.add(data)
-        else:
-            conditional_type_set.add(data)
-
-    type_list = sorted(list(type_set), key=lambda data: data.fully_qualified_type)
-    conditional_type_list = sorted(list(conditional_type_set), key=lambda data: data.fully_qualified_type)
-
-    if not type_list:
-        raise Exception("Surprisingly, no unconditional types found (this will make it hard to construct the variant in a way that will compile)")
-
-    return conditional_type_list + type_list
-
-
 def generate_process_sync_data_header(synched_datas):
     result = []
     result.append(_header_license)
@@ -241,18 +225,17 @@ def generate_process_sync_data_header(synched_datas):
 
     result.append('\nnamespace WebCore {\n')
     result.append("enum class ProcessSyncDataType : uint8_t {")
-    for data in sorted(synched_datas, key=lambda data: data.name):
+    for data in synched_datas:
         if data.conditional is not None:
             result.append('#if %s' % data.conditional)
-        result.append('    %s,' % data.name)
+        result.append('    %s = %s,' % (data.name, data.variant_index))
         if data.conditional is not None:
             result.append('#endif')
 
     result.append("};")
     result.append(" ")
 
-    sorted_variant_types = sorted_qualified_types(synched_datas)
-    for data in sorted_variant_types:
+    for data in synched_datas:
         if data.conditional is not None:
             result.append('#if !%s' % data.conditional)
             result.append('using %s = bool;' % data.underlying_type)
@@ -260,10 +243,10 @@ def generate_process_sync_data_header(synched_datas):
     
     result.append("")
     result.append("using ProcessSyncDataVariant = std::variant<")
-    for data in sorted_variant_types[:-1]:
+    for data in synched_datas[:-1]:
         result.append('    %s,' % data.fully_qualified_type)
 
-    data = sorted_variant_types[-1]
+    data = synched_datas[-1]
     result.append('    %s' % data.fully_qualified_type)
 
     result.append(">;")
@@ -305,7 +288,7 @@ def generate_document_synched_data_header(synched_datas):
 
     result.append(_document_synced_data_header_midfix)
 
-    for data in sorted(synched_datas, key=lambda data: data.name):
+    for data in synched_datas:
         if data.automatic_location != 'DocumentSyncData':
             continue
         if data.conditional is not None:
@@ -327,8 +310,6 @@ _document_synched_data_impl_prefix = """
 
 namespace WebCore {
 
-// FIXME: Remove this once the update() function definitely always handles at least one case.
-IGNORE_WARNINGS_BEGIN("missing-noreturn")
 void DocumentSyncData::update(const ProcessSyncData& data)
 {
     switch (data.type) {"""
@@ -337,7 +318,6 @@ _document_synched_data_impl_suffix = """    default:
         RELEASE_ASSERT_NOT_REACHED();
     }
 }
-IGNORE_WARNINGS_END
 
 } //namespace WebCore
 """
@@ -348,7 +328,7 @@ def generate_document_synched_data_impl(synched_datas):
     result.append(_header_license)
     result.append(_document_synched_data_impl_prefix)
 
-    for data in sorted(synched_datas, key=lambda data: data.name):
+    for data in synched_datas:
         if data.automatic_location != 'DocumentSyncData':
             continue
         if data.conditional is not None:
@@ -356,7 +336,7 @@ def generate_document_synched_data_impl(synched_datas):
 
         lowercase_name = data.name[0].lower() + data.name[1:]
         result.append('    case ProcessSyncDataType::%s:' % data.name)
-        result.append('        %s = std::get<%s>(data.value);' % (lowercase_name, data.fully_qualified_type))
+        result.append('        %s = std::get<enumToUnderlyingType(ProcessSyncDataType::%s)>(data.value);' % (lowercase_name, data.name))
         result.append('        break;')
 
         if data.conditional is not None:
@@ -407,7 +387,7 @@ def generate_process_sync_data_serialiation_in(synched_datas):
     result.append(_process_sync_data_serialiation_in_prefix)
 
     result.append("enum class WebCore::ProcessSyncDataType : uint8_t {")
-    for data in sorted(synched_datas, key=lambda data: data.name):
+    for data in synched_datas:
         if data.conditional is not None:
             result.append('#if %s' % data.conditional)
         result.append('    %s,' % data.name)
@@ -417,8 +397,7 @@ def generate_process_sync_data_serialiation_in(synched_datas):
     result.append("};")
     result.append(" ")
 
-    sorted_variant_types = sorted_qualified_types(synched_datas)
-    for data in sorted_variant_types:
+    for data in synched_datas:
         if data.conditional is not None:
             result.append('#if !%s' % data.conditional)
             result.append('using %s = bool;' % data.fully_qualified_type)
@@ -426,13 +405,38 @@ def generate_process_sync_data_serialiation_in(synched_datas):
     
     result.append("")
     variant_string = "using WebCore::ProcessSyncDataVariant = std::variant<"
-    for data in sorted_variant_types[:-1]:
+    for data in synched_datas[:-1]:
         variant_string += data.fully_qualified_type + ', '
-    variant_string += sorted_variant_types[-1].fully_qualified_type + '>;'
+    variant_string += synched_datas[-1].fully_qualified_type + '>;'
     result.append(variant_string)
 
     result.append(_process_sync_data_serialiation_in_suffix)
     return '\n'.join(result)
+
+
+def sort_datas_for_variant_order(synched_datas):
+    type_set = set()
+    conditional_type_set = set()
+
+    for data in synched_datas:
+        if data.conditional is None:
+            type_set.add(data)
+        else:
+            conditional_type_set.add(data)
+
+    type_list = sorted(list(type_set), key=lambda data: data.fully_qualified_type)
+    conditional_type_list = sorted(list(conditional_type_set), key=lambda data: data.fully_qualified_type)
+
+    if not type_list:
+        raise Exception("Surprisingly, no unconditional types found (this will make it hard to construct the variant in a way that will compile)")
+
+    full_list = conditional_type_list + type_list
+    current_variant_index = 0
+    for data in full_list:
+        data.variant_index = current_variant_index
+        current_variant_index += 1
+
+    return full_list
 
 
 def main(argv):
@@ -450,6 +454,8 @@ def main(argv):
         new_synched_datas = parse_process_sync_data(file)
         for synched_data in new_synched_datas:
             synched_datas.append(synched_data)
+
+    synched_datas = sort_datas_for_variant_order(synched_datas)
 
     with open(output_directory + 'ProcessSyncClient.h', "w+") as output:
         output.write(generate_process_sync_client_header(synched_datas))

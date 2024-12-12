@@ -951,9 +951,6 @@ public:
     void adjustFocusedNodeOnNodeRemoval(Node&, NodeRemoval = NodeRemoval::Node);
     void adjustFocusNavigationNodeOnNodeRemoval(Node&, NodeRemoval = NodeRemoval::Node);
 
-    bool isAutofocusProcessed() const { return m_isAutofocusProcessed; }
-    void setAutofocusProcessed() { m_isAutofocusProcessed = true; }
-
     void appendAutofocusCandidate(Element&);
     void clearAutofocusCandidates();
     void flushAutofocusCandidates();
@@ -1477,9 +1474,6 @@ public:
     bool processingUserGestureForMedia() const;
     bool hasRecentUserInteractionForNavigationFromJS() const;
     void userActivatedMediaFinishedPlaying() { m_userActivatedMediaFinishedPlayingTimestamp = MonotonicTime::now(); }
-
-    void setUserDidInteractWithPage(bool userDidInteractWithPage) { ASSERT(isTopDocumentLegacy()); m_userDidInteractWithPage = userDidInteractWithPage; }
-    bool userDidInteractWithPage() const { ASSERT(isTopDocumentLegacy()); return m_userDidInteractWithPage; }
 
     // Used for testing. Count handlers in the main document, and one per frame which contains handlers.
     WEBCORE_EXPORT unsigned wheelEventHandlerCount() const;
@@ -2607,8 +2601,6 @@ private:
     bool m_isSynthesized { false };
     bool m_isNonRenderedPlaceholder { false };
 
-    bool m_isAutofocusProcessed { false };
-
     bool m_sawElementsInKnownNamespaces { false };
     bool m_isSrcdocDocument { false };
 
@@ -2628,7 +2620,6 @@ private:
     bool m_scheduledTasksAreSuspended { false };
 
     bool m_areDeviceMotionAndOrientationUpdatesSuspended { false };
-    bool m_userDidInteractWithPage { false };
 
     bool m_didEnqueueFirstContentfulPaint { false };
 

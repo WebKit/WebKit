@@ -1058,8 +1058,11 @@ static void runPopoverFocusingSteps(HTMLElement& popover)
     }
 
     RefPtr control = popover.hasAttribute(autofocusAttr) ? &popover : popover.findAutofocusDelegate();
-
     if (!control)
+        return;
+
+    RefPtr page = control->document().protectedPage();
+    if (!page)
         return;
 
     control->runFocusingStepsForAutofocus();
@@ -1069,7 +1072,7 @@ static void runPopoverFocusingSteps(HTMLElement& popover)
 
     Ref topDocument = control->document().topDocument();
     topDocument->clearAutofocusCandidates();
-    topDocument->setAutofocusProcessed();
+    page->setAutofocusProcessed();
 }
 
 void HTMLElement::queuePopoverToggleEventTask(ToggleState oldState, ToggleState newState)

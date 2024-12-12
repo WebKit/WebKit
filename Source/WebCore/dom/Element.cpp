@@ -230,10 +230,14 @@ static Attr* findAttrNodeInList(Vector<RefPtr<Attr>>& attrNodeList, const Qualif
 
 static bool shouldAutofocus(const Element& element)
 {
+    Ref document = element.document();
+    RefPtr page = document->protectedPage();
+    if (!page || page->autofocusProcessed())
+        return false;
+
     if (!element.hasAttributeWithoutSynchronization(HTMLNames::autofocusAttr))
         return false;
 
-    Ref document = element.document();
     if (!element.isInDocumentTree() || !document->hasBrowsingContext())
         return false;
 
@@ -242,13 +246,11 @@ static bool shouldAutofocus(const Element& element)
         document->addConsoleMessage(MessageSource::Security, MessageLevel::Error, "Blocked autofocusing on a form control because the form's frame is sandboxed and the 'allow-scripts' permission is not set."_s);
         return false;
     }
+
     if (!document->frame()->isMainFrame() && !document->topOrigin().isSameOriginDomain(document->securityOrigin())) {
         document->addConsoleMessage(MessageSource::Security, MessageLevel::Error, "Blocked autofocusing on a form control in a cross-origin subframe."_s);
         return false;
     }
-
-    if (document->topDocument().isAutofocusProcessed())
-        return false;
 
     return true;
 }

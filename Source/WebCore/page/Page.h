@@ -385,6 +385,10 @@ public:
     void setAudioSessionType(DOMAudioSessionType);
     DOMAudioSessionType audioSessionType() const;
 #endif
+    void setUserDidInteractWithPage(bool);
+    bool userDidInteractWithPage() const;
+    void setAutofocusProcessed();
+    bool autofocusProcessed() const;
 
     WEBCORE_EXPORT void updateProcessSyncData(const ProcessSyncData&);
     WEBCORE_EXPORT void setMainFrameURLFragment(String&&);

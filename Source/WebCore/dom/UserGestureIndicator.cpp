@@ -30,6 +30,7 @@
 #include "FrameDestructionObserverInlines.h"
 #include "LocalDOMWindow.h"
 #include "LocalFrame.h"
+#include "Page.h"
 #include "ResourceLoadObserver.h"
 #include "SecurityOrigin.h"
 #include <wtf/MainThread.h>
@@ -123,7 +124,8 @@ UserGestureIndicator::UserGestureIndicator(std::optional<IsProcessingUserGesture
         document->updateLastHandledUserGestureTimestamp(currentToken()->startTime());
         if (processInteractionStyle == ProcessInteractionStyle::Immediate)
             ResourceLoadObserver::shared().logUserInteractionWithReducedTimeResolution(document->topDocument());
-        document->topDocument().setUserDidInteractWithPage(true);
+        if (RefPtr page = document->protectedPage())
+            page->setUserDidInteractWithPage(true);
         if (RefPtr frame = document->frame(); frame && !frame->hasHadUserInteraction()) {
             for (RefPtr<Frame> ancestor = WTFMove(frame); ancestor; ancestor = ancestor->tree().parent()) {
                 if (RefPtr localAncestor = dynamicDowncast<LocalFrame>(ancestor))
