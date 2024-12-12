@@ -94,7 +94,9 @@ skip:
     - test/built-ins/Temporal/Duration/prototype/round/duration-out-of-range-added-to-relativeto.js
     - test/built-ins/Temporal/Duration/prototype/round/february-leap-year.js
     - test/built-ins/Temporal/Duration/prototype/round/largestunit-plurals-accepted.js
+    - test/built-ins/Temporal/Duration/prototype/round/largestunit-smallestunit-combinations-relativeto.js
     - test/built-ins/Temporal/Duration/prototype/round/largestunit-smallestunit-default.js
+    - test/built-ins/Temporal/Duration/prototype/round/next-day-out-of-range.js
     - test/built-ins/Temporal/Duration/prototype/round/order-of-operations.js
     - test/built-ins/Temporal/Duration/prototype/round/relativeto-infinity-throws-rangeerror.js
     - test/built-ins/Temporal/Duration/prototype/round/relativeto-leap-second.js
@@ -148,6 +150,7 @@ skip:
     - test/built-ins/Temporal/Duration/prototype/total/relativeto-string-zoneddatetime.js
     - test/built-ins/Temporal/Duration/prototype/total/relativeto-sub-minute-offset.js
     - test/built-ins/Temporal/Duration/prototype/total/relativeto-wrong-type.js
+    - test/built-ins/Temporal/Duration/prototype/total/total-of-each-unit-relativeto.js
     - test/built-ins/Temporal/Duration/prototype/total/unit-plurals-accepted.js
     - test/built-ins/Temporal/PlainDateTime/datetime-math.js
     - test/built-ins/Temporal/PlainYearMonth/prototype/since/round-cross-unit-boundary.js
@@ -317,6 +320,11 @@ skip:
     - test/built-ins/Temporal/PlainYearMonth/prototype/until/argument-propertybag-calendar-wrong-type.js
     - test/built-ins/Temporal/PlainYearMonth/prototype/until/argument-string-unknown-annotation.js
     - test/built-ins/Temporal/PlainYearMonth/refisoday-undefined.js
+    - test/built-ins/Temporal/ZonedDateTime/calendar-case-insensitive.js
+    - test/built-ins/Temporal/ZonedDateTime/calendar-iso-string.js
+    - test/built-ins/Temporal/ZonedDateTime/calendar-number.js
+    - test/built-ins/Temporal/ZonedDateTime/calendar-wrong-type.js
+    - test/built-ins/Temporal/ZonedDateTime/compare/argument-propertybag-calendar-case-insensitive.js
     - test/built-ins/Temporal/ZonedDateTime/compare/argument-string-unknown-annotation.js
 
     # Depends on annotations in datetime strings

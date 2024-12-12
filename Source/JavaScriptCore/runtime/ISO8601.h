@@ -369,9 +369,12 @@ using TimeZone = std::variant<TimeZoneID, int64_t>;
 // Record { [[Z]], [[OffsetString]], [[TimeZoneAnnotation]] }
 struct TimeZoneRecord {
     bool m_z { false };
-    std::optional<int64_t> m_offset; // In nanoseconds?
-    // TODO: in the spec, this is "a String or EMPTY"
-    std::optional<std::variant<Vector<LChar>, int64_t>> m_annotation;
+    // Offset in nanoseconds.
+    // Stored as a pair of the original string (so that offset strings
+    // with subsecond precision can be distinguished) and the offset
+    // as an int64_t.
+    std::optional<std::tuple<Vector<LChar>, int64_t>> m_offset_string;
+    std::optional<Vector<LChar>> m_annotation;
 };
 
 static constexpr unsigned minCalendarLength = 3;
@@ -384,7 +387,7 @@ struct CalendarRecord {
 std::optional<TimeZoneID> parseTimeZoneName(StringView);
 std::optional<TimeZoneRecord> parseTimeZone(StringView);
 std::optional<Duration> parseDuration(StringView);
-std::optional<int64_t> parseUTCOffset(StringView, bool parseSubMinutePrecision = true);
+std::optional<int64_t> parseUTCOffset(StringView, Vector<LChar>&, bool parseSubMinutePrecision = true);
 std::optional<int64_t> parseUTCOffsetInMinutes(StringView);
 enum class ValidateTimeZoneID : bool { No, Yes };
 std::optional<std::tuple<PlainTime, std::optional<TimeZoneRecord>>> parseTime(StringView);

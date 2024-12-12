@@ -260,7 +260,7 @@ std::optional<Duration> parseDuration(StringView string)
 
 enum class Second60Mode { Accept, Reject };
 template<typename CharacterType>
-static std::optional<PlainTime> parseTimeSpec(StringParsingBuffer<CharacterType>& buffer, Second60Mode second60Mode, bool parseSubMinutePrecision = true)
+static std::optional<PlainTime> parseTimeSpec(StringParsingBuffer<CharacterType>& buffer, Vector<LChar>& result, Second60Mode second60Mode, bool parseSubMinutePrecision = true)
 {
     // https://tc39.es/proposal-temporal/#prod-TimeSpec
     // TimeSpec :
@@ -278,11 +278,13 @@ static std::optional<PlainTime> parseTimeSpec(StringParsingBuffer<CharacterType>
 
     ASSERT(buffer.lengthRemaining() >= 2);
     auto firstHourCharacter = *buffer;
+    result.append(firstHourCharacter);
     if (!(firstHourCharacter >= '0' && firstHourCharacter <= '2'))
         return std::nullopt;
 
     buffer.advance();
     auto secondHourCharacter = *buffer;
+    result.append(secondHourCharacter);
     if (!isASCIIDigit(secondHourCharacter))
         return std::nullopt;
     unsigned hour = (secondHourCharacter - '0') + 10 * (firstHourCharacter - '0');
@@ -296,6 +298,7 @@ static std::optional<PlainTime> parseTimeSpec(StringParsingBuffer<CharacterType>
     bool splitByColon = false;
     if (*buffer == ':') {
         splitByColon = true;
+        result.append(':');
         buffer.advance();
     } else if (!(*buffer >= '0' && *buffer <= '5'))
         return PlainTime(hour, 0, 0, 0, 0, 0);
@@ -303,11 +306,13 @@ static std::optional<PlainTime> parseTimeSpec(StringParsingBuffer<CharacterType>
     if (buffer.lengthRemaining() < 2)
         return std::nullopt;
     auto firstMinuteCharacter = *buffer;
+    result.append(firstMinuteCharacter);
     if (!(firstMinuteCharacter >= '0' && firstMinuteCharacter <= '5'))
         return std::nullopt;
 
     buffer.advance();
     auto secondMinuteCharacter = *buffer;
+    result.append(secondMinuteCharacter);
     if (!isASCIIDigit(secondMinuteCharacter))
         return std::nullopt;
     unsigned minute = (secondMinuteCharacter - '0') + 10 * (firstMinuteCharacter - '0');
@@ -318,8 +323,10 @@ static std::optional<PlainTime> parseTimeSpec(StringParsingBuffer<CharacterType>
         return PlainTime(hour, minute, 0, 0, 0, 0);
 
     if (splitByColon) {
-        if (*buffer == ':')
+        if (*buffer == ':') {
+            result.append(':');
             buffer.advance();
+        }
         else
             return PlainTime(hour, minute, 0, 0, 0, 0);
     } else if (!(*buffer >= '0' && (second60Mode == Second60Mode::Accept ? (*buffer <= '6') : (*buffer <= '5'))))
@@ -332,9 +339,11 @@ static std::optional<PlainTime> parseTimeSpec(StringParsingBuffer<CharacterType>
     if (buffer.lengthRemaining() < 2)
         return std::nullopt;
     auto firstSecondCharacter = *buffer;
+    result.append(firstSecondCharacter);
     if (firstSecondCharacter >= '0' && firstSecondCharacter <= '5') {
         buffer.advance();
         auto secondSecondCharacter = *buffer;
+        result.append(secondSecondCharacter);
         if (!isASCIIDigit(secondSecondCharacter))
             return std::nullopt;
         second = (secondSecondCharacter - '0') + 10 * (firstSecondCharacter - '0');
@@ -343,6 +352,7 @@ static std::optional<PlainTime> parseTimeSpec(StringParsingBuffer<CharacterType>
     } else if (second60Mode == Second60Mode::Accept && firstSecondCharacter == '6') {
         buffer.advance();
         auto secondSecondCharacter = *buffer;
+        result.append(secondSecondCharacter);
         if (secondSecondCharacter != '0')
             return std::nullopt;
         second = 59;
@@ -355,6 +365,7 @@ static std::optional<PlainTime> parseTimeSpec(StringParsingBuffer<CharacterType>
 
     if (*buffer != '.' && *buffer != ',')
         return PlainTime(hour, minute, second, 0, 0, 0);
+    result.append(*buffer);
     buffer.advance();
 
     size_t digits = 0;
@@ -369,7 +380,7 @@ static std::optional<PlainTime> parseTimeSpec(StringParsingBuffer<CharacterType>
     Vector<LChar, 9> padded(9, '0');
     for (size_t i = 0; i < digits; ++i)
         padded[i] = buffer[i];
-    buffer.advanceBy(digits);
+    result.append(buffer.consume(digits));
 
     unsigned millisecond = parseDecimalInt32(padded.span().first(3));
     unsigned microsecond = parseDecimalInt32(padded.subspan(3, 3));
@@ -378,8 +389,9 @@ static std::optional<PlainTime> parseTimeSpec(StringParsingBuffer<CharacterType>
     return PlainTime(hour, minute, second, millisecond, microsecond, nanosecond);
 }
 
+
 template<typename CharacterType>
-static std::optional<int64_t> parseUTCOffset(StringParsingBuffer<CharacterType>& buffer, bool parseSubMinutePrecision = true)
+static std::optional<int64_t> parseUTCOffset(StringParsingBuffer<CharacterType>& buffer, Vector<LChar>& result, bool parseSubMinutePrecision = true)
 {
     // UTCOffset[SubMinutePrecision] :
     //     ASCIISign Hour
@@ -398,15 +410,18 @@ static std::optional<int64_t> parseUTCOffset(StringParsingBuffer<CharacterType>&
         return std::nullopt;
 
     int64_t factor = 1;
-    if (*buffer == '+')
+    if (*buffer == '+') {
+        result.append('+');
         buffer.advance();
+    }
     else if (*buffer == '-') {
         factor = -1;
+        result.append('-');
         buffer.advance();
     } else
         return std::nullopt;
 
-    auto plainTime = parseTimeSpec(buffer, Second60Mode::Reject, parseSubMinutePrecision);
+    auto plainTime = parseTimeSpec(buffer, result, Second60Mode::Reject, parseSubMinutePrecision);
     if (!plainTime)
         return std::nullopt;
 
@@ -420,10 +435,10 @@ static std::optional<int64_t> parseUTCOffset(StringParsingBuffer<CharacterType>&
     return (nsPerHour * hour + nsPerMinute * minute + nsPerSecond * second + nsPerMillisecond * millisecond + nsPerMicrosecond * microsecond + nanosecond) * factor;
 }
 
-std::optional<int64_t> parseUTCOffset(StringView string, bool parseSubMinutePrecision)
+std::optional<int64_t> parseUTCOffset(StringView string, Vector<LChar>& chars, bool parseSubMinutePrecision)
 {
-    return readCharactersForParsing(string, [parseSubMinutePrecision](auto buffer) -> std::optional<int64_t> {
-        auto result = parseUTCOffset(buffer, parseSubMinutePrecision);
+    return readCharactersForParsing(string, [parseSubMinutePrecision, chars](auto buffer) mutable -> std::optional<int64_t> {
+        auto result = parseUTCOffset(buffer, chars, parseSubMinutePrecision);
         if (!buffer.atEnd())
             return std::nullopt;
         return result;
@@ -569,7 +584,7 @@ static bool canBeTimeZone(const StringParsingBuffer<CharacterType>& buffer, Char
 }
 
 template<typename CharacterType>
-static std::optional<std::variant<Vector<LChar>, int64_t>> parseTimeZoneAnnotation(StringParsingBuffer<CharacterType>& buffer)
+static std::optional<TimeZoneRecord> parseTimeZoneAnnotation(StringParsingBuffer<CharacterType>& buffer)
 {
     // https://tc39.es/proposal-temporal/#prod-TimeZoneAnnotation
     // TimeZoneAnnotation :
@@ -591,7 +606,8 @@ static std::optional<std::variant<Vector<LChar>, int64_t>> parseTimeZoneAnnotati
     switch (static_cast<UChar>(*buffer)) {
     case '+':
     case '-': {
-        auto offset = parseUTCOffset(buffer, false);
+        Vector<LChar> asString;
+        auto offset = parseUTCOffset(buffer, asString, false);
         if (!offset)
             return std::nullopt;
         if (buffer.atEnd())
@@ -599,7 +615,7 @@ static std::optional<std::variant<Vector<LChar>, int64_t>> parseTimeZoneAnnotati
         if (*buffer != ']')
             return std::nullopt;
         buffer.advance();
-        return offset.value();
+        return TimeZoneRecord { false, std::tuple(asString, offset.value()), std::nullopt };
     }
     case 'E': {
         // "Etc/GMT+20" and "]" => length is 11.
@@ -618,8 +634,8 @@ static std::optional<std::variant<Vector<LChar>, int64_t>> parseTimeZoneAnnotati
                         if (isASCIIDigit(secondHourCharacter)) {
                             hour = (secondHourCharacter - '0') + 10 * (firstHourCharacter - '0');
                             if (hour < 24 && buffer[10] == ']') {
-                                buffer.advanceBy(11);
-                                return nsPerHour * hour * factor;
+                                Vector<LChar> asString = buffer.consume(11);
+                                return TimeZoneRecord { false, std::tuple(asString, nsPerHour * hour * factor), std::nullopt };
                             }
                         }
                     }
@@ -703,14 +719,14 @@ static std::optional<std::variant<Vector<LChar>, int64_t>> parseTimeZoneAnnotati
         if (!isValidComponent(currentNameComponentStartIndex, nameLength))
             return std::nullopt;
 
-        Vector<LChar> result(buffer.consume(nameLength));
+        Vector<LChar> result = buffer.consume(nameLength).subspan(0, nameLength);
 
         if (buffer.atEnd())
             return std::nullopt;
         if (*buffer != ']')
             return std::nullopt;
         buffer.advance();
-        return result;
+        return TimeZoneRecord { false, std::nullopt, result };
     }
     }
 }
@@ -727,12 +743,10 @@ static std::optional<TimeZoneRecord> parseTimeZone(StringParsingBuffer<Character
     case 'Z': {
         buffer.advance();
         if (!buffer.atEnd() && *buffer == '[' && canBeTimeZone(buffer, *buffer)) {
-            auto timeZone = parseTimeZoneAnnotation(buffer);
-            if (!timeZone)
+            auto timeZoneRecord = parseTimeZoneAnnotation(buffer);
+            if (!timeZoneRecord)
                 return std::nullopt;
-            if (std::holds_alternative<int64_t>(timeZone.value()))
-                return TimeZoneRecord { true, std::get<int64_t>(timeZone.value()), std::nullopt };
-            return TimeZoneRecord { true, std::nullopt, WTFMove(std::get<Vector<LChar>>(timeZone.value())) };
+            return TimeZoneRecord { true, timeZoneRecord->m_offset_string, timeZoneRecord->m_annotation };
         }
         return TimeZoneRecord { true, std::nullopt, { } };
     }
@@ -741,26 +755,22 @@ static std::optional<TimeZoneRecord> parseTimeZone(StringParsingBuffer<Character
     case '+':
     case '-': {
         // Accept sub-minute precision in offset
-        auto offset = parseUTCOffset(buffer, true);
+        Vector<LChar> chars;
+        auto offset = parseUTCOffset(buffer, chars, true);
         if (!offset)
             return std::nullopt;
         if (!buffer.atEnd() && *buffer == '[' && canBeTimeZone(buffer, *buffer)) {
             auto timeZone = parseTimeZoneAnnotation(buffer);
             if (!timeZone)
                 return std::nullopt;
-            return TimeZoneRecord { false, offset.value(), WTFMove(timeZone) };
+            return TimeZoneRecord { false, std::tuple(chars, offset.value()), timeZone->m_annotation };
         }
-        return TimeZoneRecord { false, offset.value(), { } };
+        return TimeZoneRecord { false, std::tuple(chars, offset.value()), { } };
     }
     // TimeZoneBracketedAnnotation
     // https://tc39.es/proposal-temporal/#prod-TimeZoneBracketedAnnotation
     case '[': {
-        auto timeZone = parseTimeZoneAnnotation(buffer);
-        if (!timeZone)
-            return std::nullopt;
-        if (std::holds_alternative<int64_t>(timeZone.value()))
-            return TimeZoneRecord { false, std::get<int64_t>(timeZone.value()), std::nullopt };
-        return TimeZoneRecord { false, std::nullopt, WTFMove(std::get<Vector<LChar>>(timeZone.value())) };
+        return parseTimeZoneAnnotation(buffer);
     }
     default:
         return std::nullopt;
@@ -870,7 +880,8 @@ static std::optional<std::tuple<PlainTime, std::optional<TimeZoneRecord>>> parse
     // https://tc39.es/proposal-temporal/#prod-Time
     // Time :
     //     TimeSpec TimeZone[opt]
-    auto plainTime = parseTimeSpec(buffer, Second60Mode::Accept);
+    Vector<LChar> chars;
+    auto plainTime = parseTimeSpec(buffer, chars, Second60Mode::Accept);
     if (!plainTime)
         return std::nullopt;
     if (buffer.atEnd())
@@ -1101,7 +1112,8 @@ static std::optional<std::tuple<PlainTime, std::optional<TimeZoneRecord>, std::o
     if (*buffer == 'T' || *buffer == 't')
         buffer.advance();
 
-    auto plainTime = parseTimeSpec(buffer, Second60Mode::Accept);
+    Vector<LChar> chars;
+    auto plainTime = parseTimeSpec(buffer, chars, Second60Mode::Accept);
     if (!plainTime)
         return std::nullopt;
     if (buffer.atEnd())
@@ -1270,14 +1282,20 @@ std::optional<ExactTime> parseInstant(StringView string)
         if (!datetime)
             return std::nullopt;
         auto [plainDate, plainTimeOptional, timeZoneOptional, calendarOptional] = WTFMove(datetime.value());
-        if (!timeZoneOptional || (!timeZoneOptional->m_z && !timeZoneOptional->m_offset))
+        if (!timeZoneOptional || (!timeZoneOptional->m_z && !timeZoneOptional->m_offset_string))
             return std::nullopt;
         if (!buffer.atEnd())
             return std::nullopt;
 
         PlainTime plainTime = plainTimeOptional.value_or(PlainTime());
 
-        int64_t offset = timeZoneOptional->m_z ? 0 : *timeZoneOptional->m_offset;
+        int64_t offset = 0;
+        if (!timeZoneOptional->m_z) {
+            if (timeZoneOptional->m_offset_string)
+                offset = std::get<1>(timeZoneOptional->m_offset_string.value());
+            else
+                return std::nullopt;
+        }
         return { ExactTime::fromISOPartsAndOffset(plainDate.year(), plainDate.month(), plainDate.day(), plainTime.hour(), plainTime.minute(), plainTime.second(), plainTime.millisecond(), plainTime.microsecond(), plainTime.nanosecond(), offset) };
     });
 }
