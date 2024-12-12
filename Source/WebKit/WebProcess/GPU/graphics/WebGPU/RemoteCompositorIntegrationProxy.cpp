@@ -29,6 +29,7 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "RemoteCompositorIntegrationMessages.h"
+#include "RemoteDeviceProxy.h"
 #include "RemoteGPUProxy.h"
 #include "WebGPUConvertToBackingContext.h"
 #include <WebCore/ImageBuffer.h>

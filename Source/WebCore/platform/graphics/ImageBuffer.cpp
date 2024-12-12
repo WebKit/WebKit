@@ -34,6 +34,7 @@
 #include "FilterResults.h"
 #include "GraphicsContext.h"
 #include "HostWindow.h"
+#include "ImageBufferDisplayListBackend.h"
 #include "ImageBufferPlatformBackend.h"
 #include "MIMETypeRegistry.h"
 #include "ProcessCapabilities.h"
@@ -107,7 +108,7 @@ RefPtr<ImageBuffer> ImageBuffer::create(const FloatSize& size, RenderingMode ren
 #endif
 
     case RenderingMode::DisplayList:
-        return nullptr;
+        return ImageBuffer::create<ImageBufferDisplayListBackend>(size, resolutionScale, colorSpace, pixelFormat, purpose, { });
     }
 
     ASSERT_NOT_REACHED();

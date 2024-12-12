@@ -49,6 +49,7 @@
 #endif
 
 namespace WebKit {
+using namespace WebCore;
 
 Ref<WebPermissionController> WebPermissionController::create(WebProcess& process)
 {
