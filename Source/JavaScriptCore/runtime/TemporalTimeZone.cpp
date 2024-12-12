@@ -60,11 +60,9 @@ TemporalTimeZone::TemporalTimeZone(VM& vm, Structure* structure, TimeZone timeZo
 {
 }
 
-#if false
 // https://tc39.es/proposal-temporal/#sec-parsetimezoneidentifier
-static std::optional<ISO8601::TimeZoneRecord> parseTimeZoneIdentifier(StringView identifier)
+static std::optional<TimeZoneID> parseTimeZoneIdentifier(StringView identifier)
 {
-    (void) identifier;
 /*
     auto parseResult = parseUTCOffset(identifier);
     bool isIANAName = false;
@@ -82,9 +80,10 @@ static std::optional<ISO8601::TimeZoneRecord> parseTimeZoneIdentifier(StringView
     ASSERT(offsetNanoseconds % (60 * 1000000000) == 0);
     return TimeZoneRecord { "", offsetMinutes };
 */
+    if (identifier == "UTC"_s)
+        return utcTimeZoneID();
     return std::nullopt; // TODO
 }
-#endif
 
 template<typename CharacterType>
 std::optional<int64_t> parseDateTimeUTCOffset_(StringParsingBuffer<CharacterType>& buffer)
@@ -190,7 +189,7 @@ std::optional<ISO8601::TimeZone> TemporalTimeZone::parseTemporalTimeZoneString(S
     else if (canBeTemporalYearMonthString(buffer))
         result = parseISODateTime(buffer, TemporalParseTimeZoneFormat::YearMonth);
 */
-    result = parseISODateTime(buffer);
+    result = parseISODateTime(buffer, false);
     auto timeZoneResult = result.timeZone;
     if (timeZoneResult.m_annotation)
         return parseTimeZoneIdentifier(timeZoneResult.m_annotation);
@@ -206,7 +205,7 @@ std::optional<ISO8601::TimeZone> TemporalTimeZone::parseTemporalTimeZoneString(S
 std::optional<ISO8601::TimeZone> TemporalTimeZone::parseTemporalTimeZoneString(StringView timeZoneString)
 {
     if (canBeTimeZoneIdentifier(timeZoneString))
-        return std::nullopt;
+        return parseTimeZoneIdentifier(timeZoneString);
     // TODO
     // return parseTimeZoneIdentifier(timeZoneString);
     ISO8601::TimeZoneRecord result;
@@ -264,16 +263,19 @@ std::optional<ISO8601::TimeZone> TemporalTimeZone::parseTemporalTimeZoneString(S
     }
     auto timeZoneResult = result; // TODO: ???
     if (timeZoneResult.m_annotation) {
-        if (std::holds_alternative<int64_t>(timeZoneResult.m_annotation.value()))
-            return std::get<int64_t>(timeZoneResult.m_annotation.value());
-        else
-            return std::nullopt; // TODO
-//        return parseTimeZoneIdentifier(timeZoneResult.m_annotation);
+        return parseTimeZoneIdentifier(WTF::String(timeZoneResult.m_annotation.value()));
     }
     if (timeZoneResult.m_z)
         return utcTimeZoneID();
-    if (timeZoneResult.m_offset)
-        return timeZoneResult.m_offset.value();
+    if (timeZoneResult.m_offset_string) {
+        // Check for sub-minute precision in offset string
+        Vector<LChar> ignore;
+        auto result = ISO8601::parseUTCOffset(WTF::String(std::get<0>(timeZoneResult.m_offset_string.value())),
+            ignore, false);
+        if (!result)
+            return std::nullopt;
+        return std::get<1>(timeZoneResult.m_offset_string.value());
+    }
     return std::nullopt;
 // TODO: check that argument-propertybag-timezone-string-datetime.js works
 }
@@ -309,8 +311,8 @@ JSObject* TemporalTimeZone::from(JSGlobalObject* globalObject, JSValue timeZoneL
     auto timeZoneString = timeZoneLike.toWTFString(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
 
-
-    std::optional<int64_t> utcOffset = ISO8601::parseUTCOffset(timeZoneString);
+    Vector<LChar> ignore;
+    std::optional<int64_t> utcOffset = ISO8601::parseUTCOffset(timeZoneString, ignore);
     if (utcOffset)
         return TemporalTimeZone::createFromUTCOffset(vm, globalObject->timeZoneStructure(), utcOffset.value());
 
