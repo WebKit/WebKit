@@ -744,6 +744,12 @@ ISO8601::TimeZone TemporalZonedDateTime::toTemporalTimeZoneIdentifier(JSGlobalOb
     }
     auto parseResult = parseResultOptional.value();
     if (std::holds_alternative<int64_t>(parseResult)) {
+        int64_t offsetMinutes = std::get<int64_t>(parseResult) % 60;
+        offsetMinutes = offsetMinutes % 1000000000;
+        if (offsetMinutes) {
+            throwRangeError(globalObject, scope, "Sub-minute precision not allowed in offset time zone"_s);
+            return { };
+        }
         return parseResult;
     }
     auto name = std::get<TimeZoneID>(parseResult);

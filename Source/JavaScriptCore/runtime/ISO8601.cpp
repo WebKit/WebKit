@@ -767,10 +767,10 @@ static std::optional<TimeZoneRecord> parseTimeZone(StringParsingBuffer<Character
     }
 }
 
-std::optional<TimeZoneRecord> parseTimeZone(StringView string, bool parseSubMinutePrecision)
+std::optional<TimeZoneRecord> parseTimeZone(StringView string)
 {
-  return readCharactersForParsing(string, [parseSubMinutePrecision](auto buffer) -> std::optional<TimeZoneRecord> {
-        auto result = parseTimeZone(buffer, parseSubMinutePrecision);
+  return readCharactersForParsing(string, [](auto buffer) -> std::optional<TimeZoneRecord> {
+        auto result = parseTimeZone(buffer);
         if (!buffer.atEnd())
             return std::nullopt;
         return result;
