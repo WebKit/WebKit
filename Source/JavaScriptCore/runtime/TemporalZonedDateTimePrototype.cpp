@@ -228,7 +228,7 @@ static TemporalZonedDateTime* addDurationToZonedDateTime(JSGlobalObject* globalO
     auto epochNanoseconds = addZonedDateTime(globalObject, zonedDateTime->exactTime(), timeZone,
         calendar, internalDuration, overflow);
     RETURN_IF_EXCEPTION(scope, { });
-    return TemporalZonedDateTime::tryCreateIfValid(globalObject, globalObject->zonedDateTimeStructure(), WTFMove(epochNanoseconds), WTFMove(timeZone));
+    RELEASE_AND_RETURN(scope, TemporalZonedDateTime::tryCreateIfValid(globalObject, globalObject->zonedDateTimeStructure(), WTFMove(epochNanoseconds), WTFMove(timeZone)));
 }
 
 static EncodedJSValue addOrSubtract(JSGlobalObject* globalObject, bool isAdd, CallFrame* callFrame)
@@ -289,7 +289,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalZonedDateTimePrototypeFuncWithPlainTime, (JSGlo
 
     auto* zonedDateTime = jsDynamicCast<TemporalZonedDateTime*>(callFrame->thisValue());
     if (!zonedDateTime)
-        return throwVMTypeError(globalObject, scope, "Temporal.ZonedDateTime.prototype.withZonedTime called on value that's not a ZonedDateTime"_s);
+        return throwVMTypeError(globalObject, scope, "Temporal.ZonedDateTime.prototype.withPlainTime called on value that's not a ZonedDateTime"_s);
 
     auto timeZone = zonedDateTime->timeZone();
     auto isoDateTime = ISO8601::getISODateTimeFor(timeZone, zonedDateTime->exactTime());
@@ -316,9 +316,14 @@ JSC_DEFINE_HOST_FUNCTION(temporalZonedDateTimePrototypeFuncWithTimeZone, (JSGlob
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    (void) callFrame;
+    auto* zonedDateTime = jsDynamicCast<TemporalZonedDateTime*>(callFrame->thisValue());
+    if (!zonedDateTime)
+        return throwVMTypeError(globalObject, scope, "Temporal.ZonedDateTime.prototype.withTimeZone called on value that's not a ZonedDateTime"_s);
 
-    return throwVMTypeError(globalObject, scope, "withTimeZone not implemented yet"_s);
+    auto timeZone = TemporalZonedDateTime::toTemporalTimeZoneIdentifier(globalObject, callFrame->argument(0));
+    RETURN_IF_EXCEPTION(scope, { });
+
+    RELEASE_AND_RETURN(scope, JSValue::encode(TemporalZonedDateTime::tryCreateIfValid(globalObject, globalObject->zonedDateTimeStructure(), zonedDateTime->exactTime(), WTFMove(timeZone))));
 }
 
 // https://tc39.es/proposal-temporal/#sec-temporal.zoneddatetime.prototype.until

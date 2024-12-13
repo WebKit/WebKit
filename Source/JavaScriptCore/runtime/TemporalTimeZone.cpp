@@ -60,11 +60,23 @@ TemporalTimeZone::TemporalTimeZone(VM& vm, Structure* structure, TimeZone timeZo
 {
 }
 
-// https://tc39.es/proposal-temporal/#sec-parsetimezoneidentifier
-static std::optional<TimeZoneID> parseTimeZoneIdentifier(StringView identifier)
+static std::optional<TimeZoneID> parseTimeZoneIANAName(StringView)
 {
-/*
-    auto parseResult = parseUTCOffset(identifier);
+    // TODO
+    return std::nullopt;
+}
+
+// https://tc39.es/proposal-temporal/#sec-parsetimezoneidentifier
+// Returns offset in *nanoseconds*
+// TODO: in the spec, it's minutes
+static std::optional<std::variant<TimeZoneID, int64_t>> parseTimeZoneIdentifier(StringView identifier)
+{
+
+    if (identifier == "UTC"_s)
+        return utcTimeZoneID();
+
+    Vector<LChar> ignore;
+    auto parseResult = ISO8601::parseUTCOffset(identifier, ignore, false); // Don't accept sub-minute precision
     bool isIANAName = false;
     if (!parseResult) {
         isIANAName = true;
@@ -74,15 +86,12 @@ static std::optional<TimeZoneID> parseTimeZoneIdentifier(StringView identifier)
         return std::nullopt;
        
     if (isIANAName)
-        return TimeZoneRecord { parseResult, 0 };
-    Int128 offsetNanoseconds = parseDateTimeUTCOffset(identifier);
-    Int128 offsetMinutes = offsetNanoseconds / (60 * 1000000000);
-    ASSERT(offsetNanoseconds % (60 * 1000000000) == 0);
-    return TimeZoneRecord { "", offsetMinutes };
-*/
-    if (identifier == "UTC"_s)
-        return utcTimeZoneID();
-    return std::nullopt; // TODO
+        return parseResult;
+    int64_t offsetNanoseconds = parseResult.value();
+//    int64_t offsetMinutes = offsetNanoseconds / 60000000000ll;
+    ASSERT(offsetNanoseconds % 60000000000ll == 0);
+  //  return offsetMinutes;
+    return offsetNanoseconds;
 }
 
 template<typename CharacterType>
@@ -101,11 +110,14 @@ std::optional<int64_t> parseDateTimeUTCOffset_(StringParsingBuffer<CharacterType
     else if (*buffer == '-') {
         sign = -1;
         buffer.advance();
-    }
+    } else
+        return std::nullopt;
 
     unsigned digits = 1;
     while (digits < buffer.lengthRemaining() && isASCIIDigit(buffer[digits]))
         digits++;
+    if (digits != 2)
+        return std::nullopt;
 
     double hours = parseInt(buffer.span().first(digits), 10);
     if (hours > 23)
@@ -119,6 +131,8 @@ std::optional<int64_t> parseDateTimeUTCOffset_(StringParsingBuffer<CharacterType
     digits = 1;
     while (digits < buffer.lengthRemaining() && isASCIIDigit(buffer[digits]))
         digits++;
+    if (digits != 2)
+        return std::nullopt;
     
     double minutes = parseInt(buffer.span().first(digits), 10);
     if (minutes > 59)
