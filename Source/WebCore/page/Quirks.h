@@ -238,6 +238,7 @@ public:
 #if PLATFORM(IOS)
     bool hideForbesVolumeSlider() const;
     bool hideIGNVolumeSlider() const;
+    bool hideTwitchVolumeSlider() const;
 #endif
 
     bool needsFacebookStoriesCreationFormQuirk(const Element&, const RenderStyle&) const;

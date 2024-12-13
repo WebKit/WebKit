@@ -979,6 +979,11 @@ void Adjuster::adjustForSiteSpecificQuirks(RenderStyle& style) const
         if (is<HTMLDivElement>(*m_element) && m_element->hasClassName(className))
             style.setEffectiveDisplay(DisplayType::None);
     }
+    if (m_document->quirks().hideTwitchVolumeSlider()) {
+        static MainThreadNeverDestroyed<const AtomString> className("volume-slider__slider-container"_s);
+        if (is<HTMLDivElement>(*m_element) && m_element->hasClassName(className))
+            style.setEffectiveDisplay(DisplayType::None);
+    }
 #endif // PLATFORM(IOS)
 
 #if PLATFORM(IOS_FAMILY)

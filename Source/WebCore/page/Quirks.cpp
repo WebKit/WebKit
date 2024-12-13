@@ -2185,9 +2185,16 @@ bool Quirks::hideForbesVolumeSlider() const
     return needsQuirks() && !PAL::currentUserInterfaceIdiomIsSmallScreen() && m_document->url().host() == "www.forbes.com"_s;
 }
 
+// ign.com rdar://138152557
 bool Quirks::hideIGNVolumeSlider() const
 {
     return needsQuirks() && !PAL::currentUserInterfaceIdiomIsSmallScreen() && m_document->url().host() == "www.ign.com"_s;
+}
+
+// twitch.tv rdar://117098909
+bool Quirks::hideTwitchVolumeSlider() const
+{
+    return needsQuirks() && !PAL::currentUserInterfaceIdiomIsSmallScreen() && m_document->url().host() == "www.twitch.tv"_s;
 }
 #endif // PLATFORM(IOS)
 
