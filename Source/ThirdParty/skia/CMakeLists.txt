@@ -27,7 +27,7 @@ endif ()
 #
 if (DEVELOPER_MODE AND (SKIA_ROOT_DIR OR NOT "$ENV{SKIA_ROOT_DIR}" STREQUAL ""))
     if (NOT SKIA_ROOT_DIR)
-        set(SKIA_ROOT_DIR "$ENV{SKIA_ROOT_DIR")
+        set(SKIA_ROOT_DIR "$ENV{SKIA_ROOT_DIR}")
     endif ()
 
     find_path(SKIA_INCLUDE_DIR
