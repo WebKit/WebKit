@@ -173,7 +173,7 @@ public:
 
     static constexpr int32_t compare(ExactTime one, ExactTime two)
     {
-        return (one < two ? 1 : one == two ? 0 : -1);
+        return (one < two ? -1 : one == two ? 0 : 1);
     }
 
     std::optional<ExactTime> add(Duration) const;

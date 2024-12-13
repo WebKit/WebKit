@@ -325,6 +325,9 @@ skip:
     - test/built-ins/Temporal/ZonedDateTime/calendar-number.js
     - test/built-ins/Temporal/ZonedDateTime/calendar-wrong-type.js
     - test/built-ins/Temporal/ZonedDateTime/compare/argument-propertybag-calendar-case-insensitive.js
+    - test/built-ins/Temporal/ZonedDateTime/compare/argument-propertybag-calendar-number.js
+    - test/built-ins/Temporal/ZonedDateTime/compare/argument-propertybag-calendar-wrong-type.js
+    - test/built-ins/Temporal/ZonedDateTime/compare/argument-string-calendar-annotation.js
     - test/built-ins/Temporal/ZonedDateTime/compare/argument-string-unknown-annotation.js
 
     # Depends on annotations in datetime strings

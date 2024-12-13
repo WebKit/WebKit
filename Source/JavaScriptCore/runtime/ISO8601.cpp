@@ -726,6 +726,8 @@ static std::optional<TimeZoneRecord> parseTimeZoneAnnotation(StringParsingBuffer
         if (*buffer != ']')
             return std::nullopt;
         buffer.advance();
+        if (result.size() == 3 && result[0] == 'U' && result[1] == 'T' && result[2] == 'C')
+            return TimeZoneRecord { true, std::nullopt, result };
         return TimeZoneRecord { false, std::nullopt, result };
     }
     }
@@ -763,7 +765,10 @@ static std::optional<TimeZoneRecord> parseTimeZone(StringParsingBuffer<Character
             auto timeZone = parseTimeZoneAnnotation(buffer);
             if (!timeZone)
                 return std::nullopt;
-            return TimeZoneRecord { false, std::tuple(chars, offset.value()), timeZone->m_annotation };
+            if (timeZone->m_annotation)
+                return TimeZoneRecord { false, std::tuple(chars, offset.value()), timeZone->m_annotation };
+            else if (timeZone->m_offset_string)
+                return TimeZoneRecord { false, std::tuple(chars, offset.value()), std::get<0>(timeZone->m_offset_string.value()) };
         }
         return TimeZoneRecord { false, std::tuple(chars, offset.value()), { } };
     }
@@ -1378,6 +1383,8 @@ String formatTimeZone(TimeZone tz)
 }
 
 // https://tc39.es/proposal-temporal/#sec-temporal-formattimezoneoffsetstring
+// Offset is in ns
+// TODO: https://tc39.es/proposal-temporal/#sec-temporal-formatoffsettimezoneidentifier takes minutes
 String formatTimeZoneOffsetString(int64_t offset)
 {
     bool negative = false;
@@ -1736,9 +1743,9 @@ String formatDateTimeUTCOffsetRounded(Int128 offsetNanoseconds)
     Int128 divisor = 1000000000;
     divisor *= 60;
     offsetNanoseconds = roundNumberToIncrementInt128(offsetNanoseconds, divisor, RoundingMode::HalfExpand);
-    auto offsetMinutes = offsetNanoseconds / divisor;
+//    Int128 offsetMinutes = offsetNanoseconds / divisor;
     ASSERT(!(offsetNanoseconds % divisor));
-    return formatTimeZoneOffsetString(offsetMinutes);
+    return formatTimeZoneOffsetString(offsetNanoseconds);
 }
 
 // https://tc39.es/ecma262/#sec-hourfromtime
@@ -1997,7 +2004,7 @@ static Int128 getNamedTimeZoneOffsetNanoseconds(TimeZoneID timeZoneIdentifier, I
 Int128 getOffsetNanosecondsFor(TimeZone timeZone, Int128 epochNs)
 {
     if (std::holds_alternative<int64_t>(timeZone))
-        return std::get<int64_t>(timeZone) * 60 * 1000000000;
+        return std::get<int64_t>(timeZone);
     return getNamedTimeZoneOffsetNanoseconds(std::get<TimeZoneID>(timeZone), epochNs);
 }
 
