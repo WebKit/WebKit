@@ -935,6 +935,7 @@ const GlobalObjectMethodTable GlobalObject::s_globalObjectMethodTable = {
     &shouldInterruptScript,
     &javaScriptRuntimeFlags,
     nullptr, // queueMicrotaskToEventLoop
+    nullptr, // queueMicrotaskToIncubatingRealm
     &shouldInterruptScriptBeforeTimeout,
     &moduleLoaderImportModule,
     &moduleLoaderResolve,

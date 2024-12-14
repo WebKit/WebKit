@@ -50,7 +50,8 @@ const GlobalObjectMethodTable* JSShadowRealmGlobalScopeBase::globalObjectMethodT
         &supportsRichSourceInfo,
         &shouldInterruptScript,
         &javaScriptRuntimeFlags,
-        &queueMicrotaskToEventLoop,
+        nullptr, // queueMicrotaskToEventLoop
+        &queueMicrotaskToIncubatingRealm,
         &shouldInterruptScriptBeforeTimeout,
         &moduleLoaderImportModule,
         &moduleLoaderResolve,
@@ -165,10 +166,10 @@ bool JSShadowRealmGlobalScopeBase::canCompileStrings(JSC::JSGlobalObject* global
     return JSGlobalObject::canCompileStrings(globalObject, compilationType, codeString, bodyArgument);
 }
 
-void JSShadowRealmGlobalScopeBase::queueMicrotaskToEventLoop(JSGlobalObject& object, Ref<JSC::Microtask>&& task)
+void JSShadowRealmGlobalScopeBase::queueMicrotaskToIncubatingRealm(JSC::JSGlobalObject& object, JSC::JSValue job, JSC::JSValue arg0, JSC::JSValue arg1, JSC::JSValue arg2, JSC::JSValue arg3)
 {
-    auto incubating = jsCast<JSShadowRealmGlobalScopeBase*>(&object)->incubatingRealm();
-    incubating->globalObjectMethodTable()->queueMicrotaskToEventLoop(*incubating, WTFMove(task));
+    auto* incubating = jsCast<JSShadowRealmGlobalScopeBase*>(&object)->incubatingRealm();
+    incubating->queueMicrotask(job, arg0, arg1, arg2, arg3);
 }
 
 JSValue toJS(JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject*, ShadowRealmGlobalScope& realmGlobalScope)
