@@ -290,7 +290,7 @@ static Int128 timeDurationFromEpochNanosecondsDifference(ISO8601::ExactTime one,
 }
 
 // https://tc39.es/proposal-temporal/#sec-temporal-roundtimedurationtoincrement
-static std::optional<Int128> roundTimeDurationToIncrement(Int128 d, unsigned increment, RoundingMode roundingMode)
+static std::optional<Int128> roundTimeDurationToIncrement(Int128 d, Int128 increment, RoundingMode roundingMode)
 {
     auto rounded = roundNumberToIncrementInt128(d, increment, roundingMode);
     if (absInt128(rounded) > ISO8601::ExactTime::maxValue)
@@ -469,7 +469,7 @@ TemporalZonedDateTime* TemporalZonedDateTime::round(JSGlobalObject* globalObject
     RETURN_IF_EXCEPTION(scope, { });
     std::optional<TemporalUnit> smallestUnitOptional = roundToValue.isString()
         ? temporalUnitType(roundToValue.toWTFString(globalObject))
-        : temporalSmallestUnit(globalObject, roundTo, { TemporalUnit::Year, TemporalUnit::Month, TemporalUnit::Week, TemporalUnit::Day }).value_or(TemporalUnit::Day);
+        : temporalSmallestUnit(globalObject, roundTo, { TemporalUnit::Year, TemporalUnit::Month, TemporalUnit::Week });
     RETURN_IF_EXCEPTION(scope, { });
     if (!smallestUnitOptional) {
         throwRangeError(globalObject, scope, "Bad value given for smallestUnit in Temporal.ZonedDateTime.round()"_s);
@@ -495,6 +495,7 @@ TemporalZonedDateTime* TemporalZonedDateTime::round(JSGlobalObject* globalObject
             break;
         default:
             RELEASE_ASSERT_NOT_REACHED();
+        }
         inclusive = false;
     }
 
@@ -504,7 +505,6 @@ TemporalZonedDateTime* TemporalZonedDateTime::round(JSGlobalObject* globalObject
     }
     if (smallestUnit == TemporalUnit::Nanosecond && roundingIncrement == 1)
         return this;
-    }
 
     auto thisNs = m_exactTime.get();
     auto timeZone = m_timeZone;
@@ -520,9 +520,9 @@ TemporalZonedDateTime* TemporalZonedDateTime::round(JSGlobalObject* globalObject
         auto endNs = getStartOfDay(globalObject, timeZone, dateEnd);
         RETURN_IF_EXCEPTION(scope, { });
         ASSERT(thisNs < endNs);
-        auto dayLengthNs = endNs.epochNanoseconds() - startNs.epochNanoseconds();
-        auto dayProgressNs = timeDurationFromEpochNanosecondsDifference(thisNs, startNs);
-        auto roundedDayNsOptional = roundTimeDurationToIncrement(dayProgressNs, dayLengthNs, roundingMode);
+        Int128 dayLengthNs = endNs.epochNanoseconds() - startNs.epochNanoseconds();
+        Int128 dayProgressNs = timeDurationFromEpochNanosecondsDifference(thisNs, startNs);
+        std::optional<Int128> roundedDayNsOptional = roundTimeDurationToIncrement(dayProgressNs, dayLengthNs, roundingMode);
         if (!roundedDayNsOptional) {
             throwRangeError(globalObject, scope, "rounded time duration is out of range in Temporal.ZonedDateTime.round()"_s);
             return { };
@@ -597,6 +597,7 @@ enum class FieldName : uint8_t {
     Millisecond,
     Microsecond,
     Nanosecond,
+    Calendar,
     Offset,
     TimeZone,
 };
@@ -604,29 +605,31 @@ enum class FieldName : uint8_t {
 static PropertyName propertyName(VM& vm, FieldName property)
 {
     switch (property) {
-    case FieldName:: Year:
+    case FieldName::Year:
         return vm.propertyNames->year;
-    case FieldName:: Month:
+    case FieldName::Month:
         return vm.propertyNames->month;
-    case FieldName:: MonthCode:
+    case FieldName::MonthCode:
         return vm.propertyNames->monthCode;
-    case FieldName:: Day:
+    case FieldName::Day:
         return vm.propertyNames->day;
-    case FieldName:: Hour:
+    case FieldName::Hour:
         return vm.propertyNames->hour;
-    case FieldName:: Minute:
+    case FieldName::Minute:
         return vm.propertyNames->minute;
-    case FieldName:: Second:
+    case FieldName::Second:
         return vm.propertyNames->second;
-    case FieldName:: Millisecond:
+    case FieldName::Millisecond:
         return vm.propertyNames->millisecond;
-    case FieldName:: Microsecond:
+    case FieldName::Microsecond:
         return vm.propertyNames->microsecond;
-    case FieldName:: Nanosecond:
+    case FieldName::Nanosecond:
         return vm.propertyNames->nanosecond;
-    case FieldName:: Offset:
+    case FieldName::Calendar:
+        return vm.propertyNames->calendar;
+    case FieldName::Offset:
         return vm.propertyNames->offset;
-    case FieldName:: TimeZone:
+    case FieldName::TimeZone:
         return vm.propertyNames->timeZone;
     default:
         RELEASE_ASSERT_NOT_REACHED();
@@ -788,15 +791,14 @@ static
 std::tuple<std::optional<double>, std::optional<double>, std::optional<String>, std::optional<double>,
 double, double, double, double, double, double,
 std::optional<String>, std::optional<ISO8601::TimeZone>>
-prepareCalendarFields(JSGlobalObject* globalObject, TemporalCalendar* calendar, JSObject* fields, Vector<FieldName> calendarFieldNames, Vector<FieldName> nonCalendarFieldNames, std::optional<Vector<FieldName>> requiredFieldNames)
+prepareCalendarFields(JSGlobalObject* globalObject, TemporalCalendar* calendar, JSObject* fields,
+    Vector<FieldName> fieldNames, std::optional<Vector<FieldName>> requiredFieldNames)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     (void) calendar; // TODO
 
-    auto fieldNames = calendarFieldNames;
-    fieldNames.appendVector(nonCalendarFieldNames);
 // TODO: non-iso8601 calendars
 //    auto extraFieldNames = calendarExtraFields(calendar, calendarFieldNames);
 //    fieldNames.append(extraFieldNames);
@@ -813,6 +815,7 @@ prepareCalendarFields(JSGlobalObject* globalObject, TemporalCalendar* calendar, 
     std::optional<String> offsetOptional;
     std::optional<ISO8601::TimeZone> timeZoneOptional;
     auto any = false;
+
     for (auto property : fieldNames) {
         auto value = fields->get(globalObject, propertyName(vm, property));
         RETURN_IF_EXCEPTION(scope, { });
@@ -889,6 +892,12 @@ prepareCalendarFields(JSGlobalObject* globalObject, TemporalCalendar* calendar, 
                 ISO8601::TimeZone val = TemporalZonedDateTime::toTemporalTimeZoneIdentifier(globalObject, value);
                 RETURN_IF_EXCEPTION(scope, { });
                 timeZoneOptional = val;
+                break;
+            }
+            case FieldName::Calendar: {
+                String val = value.toWTFString(globalObject);
+                // TODO: implement non-ISO8601 calendars (currently string is ignored)
+                RETURN_IF_EXCEPTION(scope, { });
                 break;
             }
             }
@@ -1006,10 +1015,7 @@ TemporalZonedDateTime* TemporalZonedDateTime::from(JSGlobalObject* globalObject,
         auto [optionalYear, optionalMonth, optionalMonthCode, optionalDay, hour, minute,
             second, millisecond, microsecond, nanosecond, optionalOffset,
             timeZoneOptional] = prepareCalendarFields(globalObject, calendar, jsCast<JSObject*>(itemValue),
-            Vector { FieldName::Day, FieldName::Month, FieldName::MonthCode, FieldName::Year },
-            Vector { FieldName::Hour, FieldName::Microsecond, FieldName::Millisecond,
-              FieldName::Minute, FieldName::Month, FieldName::MonthCode, FieldName::Nanosecond,
-              FieldName::Offset, FieldName::Second, FieldName::TimeZone }, Vector { FieldName::TimeZone });
+            Vector { FieldName::Calendar, FieldName::Day, FieldName::Hour, FieldName::Microsecond, FieldName::Millisecond, FieldName::Minute, FieldName::Month, FieldName::MonthCode, FieldName::Nanosecond, FieldName::Offset, FieldName::Second, FieldName::TimeZone, FieldName::Year }, Vector { FieldName::TimeZone });
         RETURN_IF_EXCEPTION(scope, { });
         ASSERT(timeZoneOptional);
         timeZone = timeZoneOptional.value();
@@ -1059,8 +1065,9 @@ TemporalZonedDateTime* TemporalZonedDateTime::from(JSGlobalObject* globalObject,
         }
 
         auto annotation = timeZoneOptional->m_annotation;
-        ASSERT(annotation);
-        timeZone = toTemporalTimeZoneIdentifier(globalObject, jsString(vm, WTF::String(annotation.value())));
+        ASSERT(annotation || timeZoneOptional->m_z);
+        timeZone = timeZoneOptional->m_z ? utcTimeZoneID()
+           :  toTemporalTimeZoneIdentifier(globalObject, jsString(vm, WTF::String(annotation.value())));
         RETURN_IF_EXCEPTION(scope, { });
         if (timeZoneOptional->m_offset_string)
             offsetString = WTF::String(std::get<0>(timeZoneOptional->m_offset_string.value()));
