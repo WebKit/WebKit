@@ -4004,16 +4004,16 @@ void Element::dispatchFocusOutEventIfNeeded(RefPtr<Element>&& newFocusedElement)
 
 void Element::dispatchFocusEvent(RefPtr<Element>&& oldFocusedElement, const FocusOptions& options)
 {
+    dispatchEvent(FocusEvent::create(eventNames().focusEvent, Event::CanBubble::No, Event::IsCancelable::No, document().windowProxy(), 0, WTFMove(oldFocusedElement)));
     if (RefPtr page = document().page())
         page->chrome().client().elementDidFocus(*this, options);
-    dispatchEvent(FocusEvent::create(eventNames().focusEvent, Event::CanBubble::No, Event::IsCancelable::No, document().windowProxy(), 0, WTFMove(oldFocusedElement)));
 }
 
 void Element::dispatchBlurEvent(RefPtr<Element>&& newFocusedElement)
 {
+    dispatchEvent(FocusEvent::create(eventNames().blurEvent, Event::CanBubble::No, Event::IsCancelable::No, document().windowProxy(), 0, WTFMove(newFocusedElement)));
     if (RefPtr page = document().page())
         page->chrome().client().elementDidBlur(*this);
-    dispatchEvent(FocusEvent::create(eventNames().blurEvent, Event::CanBubble::No, Event::IsCancelable::No, document().windowProxy(), 0, WTFMove(newFocusedElement)));
 }
 
 void Element::dispatchWebKitImageReadyEventForTesting()
