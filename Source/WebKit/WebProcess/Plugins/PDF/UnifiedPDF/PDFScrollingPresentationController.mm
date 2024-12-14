@@ -175,11 +175,9 @@ void PDFScrollingPresentationController::setupLayers(GraphicsLayer& scrolledCont
 void PDFScrollingPresentationController::updateLayersOnLayoutChange(FloatSize documentSize, FloatSize centeringOffset, double scaleFactor)
 {
     m_contentsLayer->setSize(documentSize);
-    m_contentsLayer->setNeedsDisplay();
 
 #if ENABLE(UNIFIED_PDF_SELECTION_LAYER)
     m_selectionLayer->setSize(documentSize);
-    m_selectionLayer->setNeedsDisplay();
 #endif
 
     TransformationMatrix transform;
