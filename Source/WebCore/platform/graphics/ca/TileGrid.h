@@ -146,6 +146,7 @@ private:
 
     // PlatformCALayerClient
     PlatformLayerIdentifier platformCALayerIdentifier() const override;
+    bool platformCALayerSupportsConcurrentPaintContents(const PlatformCALayer*) const override;
     void platformCALayerPaintContents(PlatformCALayer*, GraphicsContext&, const FloatRect&, OptionSet<GraphicsLayerPaintBehavior>) override;
     bool platformCALayerShowDebugBorders() const override;
     bool platformCALayerShowRepaintCounter(PlatformCALayer*) const override;
@@ -156,6 +157,7 @@ private:
     float platformCALayerDeviceScaleFactor() const override;
     bool isUsingDisplayListDrawing(PlatformCALayer*) const override;
     bool platformCALayerNeedsPlatformContext(const PlatformCALayer*) const override;
+    void platformCALayerLayerDidDisplay(PlatformCALayer*) override;
 
     TileGridIdentifier m_identifier;
     CheckedRef<TileController> m_controller;

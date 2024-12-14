@@ -42,8 +42,6 @@ public:
     ProcessModel processModel() const final { return ProcessModel::InProcess; }
 
     void prepareToDisplay() final;
-    void createContextAndPaintContents() final;
-    std::unique_ptr<ThreadSafeImageBufferSetFlusher> createFlusher(ThreadSafeImageBufferSetFlusher::FlushType) final;
 
     void clearBackingStore() final;
 
@@ -62,6 +60,8 @@ private:
     void ensureFrontBuffer();
     bool hasFrontBuffer() const final;
     bool frontBufferMayBeVolatile() const final;
+    WebCore::GraphicsContext* contextForPaintContents() final;
+    std::unique_ptr<ThreadSafeImageBufferSetFlusher> flushContextForPaintContents(ThreadSafeImageBufferSetFlusher::FlushType) final;
 
 #if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
     WebCore::DynamicContentScalingResourceCache ensureDynamicContentScalingResourceCache();

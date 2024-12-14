@@ -60,15 +60,10 @@ public:
     virtual void deref() const = 0;
 
 protected:
-    enum class Type : bool {
-        Serial,
-        Concurrent
-    };
-    WorkQueueBase(ASCIILiteral name, Type, QOS);
 #if USE(COCOA_EVENT_LOOP)
-    explicit WorkQueueBase(OSObjectPtr<dispatch_queue_t>&&);
+    explicit WorkQueueBase(OSObjectPtr<dispatch_queue_t>&&, uint32_t threadID);
 #else
-    explicit WorkQueueBase(RunLoop&);
+    explicit WorkQueueBase(RunLoop&, uint32 threadID);
 #endif
 
 #if USE(COCOA_EVENT_LOOP)
@@ -76,10 +71,7 @@ protected:
 #else
     RunLoop* m_runLoop;
 #endif
-    uint32_t m_threadID { 0 };
-private:
-    void platformInitialize(ASCIILiteral name, Type, QOS);
-    void platformInvalidate();
+    const uint32_t m_threadID;
 };
 
 /**
@@ -121,15 +113,20 @@ private:
  */
 class WTF_EXPORT_PRIVATE ConcurrentWorkQueue final : public WorkQueueBase, public FunctionDispatcher, public ThreadSafeRefCounted<ConcurrentWorkQueue> {
 public:
+    // Creates an independent concurrent queue.
     static Ref<ConcurrentWorkQueue> create(ASCIILiteral name, QOS = QOS::Default);
+    // Creates a concurrent queue that runs on the global queue for the `qos`. This is the preferred constructor.
+    static Ref<ConcurrentWorkQueue> createToGlobal(ASCIILiteral name, QOS = QOS::Default);
+
     static void apply(size_t iterations, WTF::Function<void(size_t index)>&&);
     void dispatch(Function<void()>&&) override;
+    void dispatchBarrierSync(WTF::Function<void()>&&);
 
     void ref() const final;
     void deref() const final;
 
 private:
-    ConcurrentWorkQueue(ASCIILiteral, QOS);
+    using WorkQueueBase::WorkQueueBase;
 };
 
 inline void ConcurrentWorkQueue::ref() const

@@ -74,8 +74,9 @@ public:
     bool backingStoreWillBeDisplayedWithRenderingSuppression(RemoteLayerBackingStore&);
     void backingStoreBecameUnreachable(RemoteLayerBackingStore&);
 
-    virtual void prepareBackingStoresForDisplay(RemoteLayerTreeTransaction&);
-    virtual bool paintReachableBackingStoreContents();
+    void prepareBackingStoresForDisplay(RemoteLayerTreeTransaction&);
+    bool paintReachableBackingStores();
+    void flushReachableBackingStores();
 
     void willFlushLayers();
     void willBuildTransaction();

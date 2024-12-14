@@ -49,6 +49,19 @@ template<typename T> static void dispatchWorkItem(void* dispatchContext)
     delete item;
 }
 
+WorkQueueBase::WorkQueueBase(OSObjectPtr<dispatch_queue_t>&& dispatchQueue, uint32_t threadID)
+    : m_dispatchQueue(WTFMove(dispatchQueue))
+    , m_threadID(threadID)
+{
+    // We use s_uid to generate the id so that WorkQueues and Threads share the id namespace.
+    // This makes it possible to assert that code runs in the expected sequence, regardless of if it is
+    // in a thread or a work queue.
+    // We use &s_uid for the key, since it's convenient. Dispatch does not dereference it.
+    dispatch_queue_set_specific(m_dispatchQueue.get(), &s_uid, reinterpret_cast<void*>(m_threadID), nullptr);
+}
+
+WorkQueueBase::~WorkQueueBase() = default;
+
 void WorkQueueBase::dispatch(Function<void()>&& function)
 {
     dispatch_async_f(m_dispatchQueue.get(), new DispatchWorkItem { Ref { *this }, WTFMove(function) }, dispatchWorkItem<DispatchWorkItem>);
@@ -76,33 +89,44 @@ void WorkQueueBase::dispatchSync(Function<void()>&& function)
     dispatch_sync_f(m_dispatchQueue.get(), new Function<void()> { WTFMove(function) }, dispatchWorkItem<Function<void()>>);
 }
 
-WorkQueueBase::WorkQueueBase(OSObjectPtr<dispatch_queue_t>&& dispatchQueue)
-    : m_dispatchQueue(WTFMove(dispatchQueue))
-    , m_threadID(mainThreadID)
+static OSObjectPtr<dispatch_queue_t> createSerialDispatchQueue(ASCIILiteral name, Thread::QOS qos)
 {
+    dispatch_queue_attr_t attr = dispatch_queue_attr_make_with_qos_class(DISPATCH_QUEUE_SERIAL, Thread::dispatchQOSClass(qos), 0);
+    return adoptOSObject(dispatch_queue_create(name, attr));
 }
 
-void WorkQueueBase::platformInitialize(ASCIILiteral name, Type type, QOS qos)
+Ref<WorkQueue> WorkQueue::create(ASCIILiteral name, QOS qos)
 {
-    dispatch_queue_attr_t attr = type == Type::Concurrent ? DISPATCH_QUEUE_CONCURRENT : DISPATCH_QUEUE_SERIAL;
-    attr = dispatch_queue_attr_make_with_qos_class(attr, Thread::dispatchQOSClass(qos), 0);
-    m_dispatchQueue = adoptOSObject(dispatch_queue_create(name, attr));
-    dispatch_set_context(m_dispatchQueue.get(), this);
-    // We use &s_uid for the key, since it's convenient. Dispatch does not dereference it.
-    // We use s_uid to generate the id so that WorkQueues and Threads share the id namespace.
-    // This makes it possible to assert that code runs in the expected sequence, regardless of if it is
-    // in a thread or a work queue.
-    m_threadID = ++s_uid;
-    dispatch_queue_set_specific(m_dispatchQueue.get(), &s_uid, reinterpret_cast<void*>(m_threadID), nullptr);
-}
-
-void WorkQueueBase::platformInvalidate()
-{
+    return adoptRef(*new WorkQueue(name, qos));
 }
 
 WorkQueue::WorkQueue(MainTag)
-    : WorkQueueBase(dispatch_get_main_queue())
+    : WorkQueueBase(dispatch_get_main_queue(), mainThreadID)
 {
+}
+
+WorkQueue::WorkQueue(ASCIILiteral name, QOS qos)
+    : WorkQueueBase(createSerialDispatchQueue(name, qos), ++s_uid)
+{
+}
+
+Ref<ConcurrentWorkQueue> ConcurrentWorkQueue::create(ASCIILiteral name, QOS qos)
+{
+    dispatch_queue_attr_t attr = dispatch_queue_attr_make_with_qos_class(DISPATCH_QUEUE_CONCURRENT, Thread::dispatchQOSClass(qos), 0);
+    return adoptRef(*new ConcurrentWorkQueue(adoptOSObject(dispatch_queue_create(name, attr)), ++s_uid));
+}
+
+Ref<ConcurrentWorkQueue> ConcurrentWorkQueue::createToGlobal(ASCIILiteral name, QOS qos)
+{
+    auto dispatchQOS = Thread::dispatchQOSClass(qos);
+    OSObjectPtr target = dispatch_get_global_queue(dispatchQOS, 0);
+    dispatch_queue_attr_t attr = dispatch_queue_attr_make_with_qos_class(DISPATCH_QUEUE_CONCURRENT, dispatchQOS, 0);
+    return adoptRef(*new ConcurrentWorkQueue(adoptOSObject(dispatch_queue_create_with_target(name, attr, target.get())), ++s_uid));
+}
+
+void ConcurrentWorkQueue::dispatchBarrierSync(WTF::Function<void()>&& function)
+{
+    dispatch_barrier_sync_f(m_dispatchQueue.get(), new DispatchWorkItem { Ref<WorkQueueBase> { *this }, WTFMove(function) }, dispatchWorkItem<DispatchWorkItem>);
 }
 
 void ConcurrentWorkQueue::apply(size_t iterations, WTF::Function<void(size_t index)>&& function)

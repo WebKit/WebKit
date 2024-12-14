@@ -195,7 +195,7 @@ void TileGrid::setTileNeedsDisplayInRect(const TileIndex& tileIndex, TileInfo& t
         tileLayer->setNeedsDisplayInRect(tileLocalRepaintRect);
         m_controller->willRepaintTile(*this, tileIndex, tileRect, tileRepaintRect);
 
-        if (m_controller->rootLayer().owner()->platformCALayerShowRepaintCounter(0)) {
+        if (platformCALayerShowRepaintCounter(nullptr)) {
             FloatRect indicatorRect(0, 0, 52, 27);
             tileLayer->setNeedsDisplayInRect(indicatorRect);
         }
@@ -743,6 +743,13 @@ PlatformLayerIdentifier TileGrid::platformCALayerIdentifier() const
     return m_controller->layerIdentifier();
 }
 
+bool TileGrid::platformCALayerSupportsConcurrentPaintContents(const PlatformCALayer* layer) const
+{
+    if (auto* layerOwner = m_controller->rootLayer().owner())
+        return layerOwner->platformCALayerSupportsConcurrentPaintContents(layer);
+    return false;
+}
+
 void TileGrid::platformCALayerPaintContents(PlatformCALayer* platformCALayer, GraphicsContext& context, const FloatRect&, OptionSet<GraphicsLayerPaintBehavior> layerPaintBehavior)
 {
 #if PLATFORM(IOS_FAMILY)
@@ -766,17 +773,24 @@ void TileGrid::platformCALayerPaintContents(PlatformCALayer* platformCALayer, Gr
         PlatformCALayer::drawLayerContents(context, &m_controller->rootLayer(), dirtyRects, layerPaintBehavior);
     }
 
-    int repaintCount = platformCALayerIncrementRepaintCount(platformCALayer);
-    if (m_controller->rootLayer().owner()->platformCALayerShowRepaintCounter(0))
-        PlatformCALayer::drawRepaintIndicator(context, platformCALayer, repaintCount, m_controller->tileDebugBorderColor());
-
-    if (m_controller->scrollingPerformanceTestingEnabled()) {
-        FloatRect visiblePart(platformCALayer->position().x(), platformCALayer->position().y(), platformCALayer->bounds().size().width(), platformCALayer->bounds().size().height());
-        visiblePart.intersect(m_controller->visibleRect());
-
-        if (repaintCount == 1 && !visiblePart.isEmpty())
-            m_controller->logFilledVisibleFreshTile(blankPixelCount());
+    if (platformCALayerShowRepaintCounter(nullptr)) {
+        int repaintCount = platformCALayerRepaintCount(platformCALayer);
+        PlatformCALayer::drawRepaintIndicator(context, platformCALayer, repaintCount + 1, m_controller->tileDebugBorderColor());
     }
+}
+
+void TileGrid::platformCALayerLayerDidDisplay(PlatformCALayer* platformCALayer)
+{
+    int repaintCount = platformCALayerIncrementRepaintCount(platformCALayer);
+    if (repaintCount != 1)
+        return;
+    if (!m_controller->scrollingPerformanceTestingEnabled())
+        return;
+    FloatRect visiblePart { platformCALayer->position().xy(), platformCALayer->bounds().size() };
+    visiblePart.intersect(m_controller->visibleRect());
+    if (visiblePart.isEmpty())
+        return;
+    m_controller->logFilledVisibleFreshTile(blankPixelCount());
 }
 
 float TileGrid::platformCALayerDeviceScaleFactor() const

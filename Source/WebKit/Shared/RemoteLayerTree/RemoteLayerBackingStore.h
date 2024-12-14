@@ -129,11 +129,11 @@ public:
 
     bool performDelegatedLayerDisplay();
 
-    void paintContents();
     virtual void prepareToDisplay() = 0;
-    virtual void createContextAndPaintContents() = 0;
+    void paintContents();
+    void flushContents();
+    virtual void clearBackingStore() = 0;
 
-    virtual std::unique_ptr<ThreadSafeImageBufferSetFlusher> createFlusher(ThreadSafeImageBufferSetFlusher::FlushType = ThreadSafeImageBufferSetFlusher::FlushType::BackendHandlesAndDrawing) = 0;
 
     WebCore::FloatSize size() const { return m_parameters.size; }
     float scale() const { return m_parameters.scale; }
@@ -170,8 +170,6 @@ public:
 
     MonotonicTime lastDisplayTime() const { return m_lastDisplayTime; }
 
-    virtual void clearBackingStore() = 0;
-
     virtual std::optional<ImageBufferBackendHandle> frontBufferHandle() const = 0;
 #if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
     virtual std::optional<ImageBufferBackendHandle> displayListHandle() const  { return std::nullopt; }
@@ -185,9 +183,12 @@ public:
     void markFrontBufferVolatileForTesting();
 
 protected:
+    virtual WebCore::GraphicsContext* contextForPaintContents() = 0;
+    virtual std::unique_ptr<ThreadSafeImageBufferSetFlusher> flushContextForPaintContents(ThreadSafeImageBufferSetFlusher::FlushType = ThreadSafeImageBufferSetFlusher::FlushType::BackendHandlesAndDrawing) = 0;
+
     RemoteLayerBackingStoreCollection* backingStoreCollection() const;
 
-    void drawInContext(WebCore::GraphicsContext&);
+    void drawInContext(PlatformCALayerRemote&, WebCore::GraphicsContext&, OptionSet<WebCore::GraphicsLayerPaintBehavior>);
 
     void dirtyRepaintCounterIfNecessary();
 

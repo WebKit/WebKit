@@ -2042,6 +2042,11 @@ bool GraphicsLayerCA::platformCALayerNeedsPlatformContext(const PlatformCALayer*
     return client().layerNeedsPlatformContext(this);
 }
 
+bool GraphicsLayerCA::platformCALayerSupportsConcurrentPaintContents(const PlatformCALayer*) const
+{
+    return client().layerSupportsConcurrentPaintContents(this);
+}
+
 void GraphicsLayerCA::commitLayerTypeChangesBeforeSublayers(CommitState&, float pageScaleFactor, bool& layerTypeChanged)
 {
     SetForScope committingChangesChange(m_isCommittingChanges, true);

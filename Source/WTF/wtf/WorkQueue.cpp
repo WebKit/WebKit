@@ -40,21 +40,6 @@
 
 namespace WTF {
 
-WorkQueueBase::WorkQueueBase(ASCIILiteral name, Type type, QOS qos)
-{
-    platformInitialize(name, type, qos);
-}
-
-WorkQueueBase::~WorkQueueBase()
-{
-    platformInvalidate();
-}
-
-Ref<ConcurrentWorkQueue> ConcurrentWorkQueue::create(ASCIILiteral name, QOS qos)
-{
-    return adoptRef(*new ConcurrentWorkQueue(name, qos));
-}
-
 void ConcurrentWorkQueue::dispatch(Function<void()>&& function)
 {
     WorkQueueBase::dispatch(WTFMove(function));
@@ -183,16 +168,6 @@ WorkQueue& WorkQueue::main()
     return *mainWorkQueue.get();
 }
 
-Ref<WorkQueue> WorkQueue::create(ASCIILiteral name, QOS qos)
-{
-    return adoptRef(*new WorkQueue(name, qos));
-}
-
-WorkQueue::WorkQueue(ASCIILiteral name, QOS qos)
-    : WorkQueueBase(name, Type::Serial, qos)
-{
-}
-
 void WorkQueue::dispatch(Function<void()>&& function)
 {
     WorkQueueBase::dispatch(WTFMove(function));
@@ -201,11 +176,6 @@ void WorkQueue::dispatch(Function<void()>&& function)
 bool WorkQueue::isCurrent() const
 {
     return currentSequence() == m_threadID;
-}
-
-ConcurrentWorkQueue::ConcurrentWorkQueue(ASCIILiteral name, QOS qos)
-    : WorkQueueBase(name, Type::Concurrent, qos)
-{
 }
 
 }

@@ -69,6 +69,9 @@ bool PlatformCALayer::canHaveBackingStore() const
 
 void PlatformCALayer::drawRepaintIndicator(GraphicsContext& graphicsContext, PlatformCALayer* platformCALayer, int repaintCount, Color customBackgroundColor)
 {
+    // Currently font system does not support work queues.
+    if (platformCALayer->owner()->platformCALayerSupportsConcurrentPaintContents(platformCALayer))
+        return;
     const float verticalMargin = 2.5;
     const float horizontalMargin = 5;
     const unsigned fontSize = 22;

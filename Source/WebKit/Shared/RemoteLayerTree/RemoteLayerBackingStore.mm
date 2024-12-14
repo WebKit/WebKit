@@ -381,23 +381,35 @@ void RemoteLayerBackingStore::dirtyRepaintCounterIfNecessary()
 
 void RemoteLayerBackingStore::paintContents()
 {
-    LOG_WITH_STREAM(RemoteLayerBuffers, stream << "RemoteLayerBackingStore " << m_layer->layerID() << " paintContents() - has dirty region " << !hasEmptyDirtyRegion());
-    if (m_layer->owner()->platformCALayerDelegatesDisplay(m_layer.ptr()))
+    Ref<PlatformCALayerRemote> layer = m_layer.get();
+    LOG_WITH_STREAM(RemoteLayerBuffers, stream << "RemoteLayerBackingStore " << layer->layerID() << " display() - has dirty region " << !hasEmptyDirtyRegion());
+    if (layer->owner()->platformCALayerDelegatesDisplay(layer.ptr()))
         return;
 
-    if (hasEmptyDirtyRegion()) {
-        if (auto flusher = createFlusher(ThreadSafeImageBufferSetFlusher::FlushType::BackendHandlesOnly))
-            m_frontBufferFlushers.append(WTFMove(flusher));
+    if (hasEmptyDirtyRegion())
         return;
-    }
 
     m_lastDisplayTime = MonotonicTime::now();
     m_paintingRects = ImageBufferSet::computePaintingRects(m_dirtyRegion, m_parameters.scale);
 
-    createContextAndPaintContents();
+    GraphicsContext* context = contextForPaintContents();
+    if (!context)
+        return;
+
+    OptionSet<WebCore::GraphicsLayerPaintBehavior> paintBehavior;
+    RefPtr treeContext = layer->context();
+    if (treeContext && treeContext->nextRenderingUpdateRequiresSynchronousImageDecoding())
+        paintBehavior.add(GraphicsLayerPaintBehavior::ForceSynchronousImageDecode);
+
+    if (treeContext && layer->owner()->platformCALayerSupportsConcurrentPaintContents(layer.ptr())) {
+        treeContext->paintQueue()->dispatch([checkedThis = this, layer = WTFMove(layer), context, paintBehavior] {
+            checkedThis->drawInContext(layer.get(), *context, paintBehavior);
+        });
+    } else
+        drawInContext(layer, *context, paintBehavior);
 }
 
-void RemoteLayerBackingStore::drawInContext(GraphicsContext& context)
+void RemoteLayerBackingStore::drawInContext(PlatformCALayerRemote& layer, GraphicsContext& context, OptionSet<WebCore::GraphicsLayerPaintBehavior> paintBehavior)
 {
     GraphicsContextStateSaver stateSaver(context);
     IntRect dirtyBounds = m_dirtyRegion.bounds();
@@ -406,20 +418,15 @@ void RemoteLayerBackingStore::drawInContext(GraphicsContext& context)
     if (m_parameters.isOpaque)
         context.fillRect(this->layerBounds(), SRGBA<uint8_t> { 255, 47, 146 });
 #endif
-
-    OptionSet<WebCore::GraphicsLayerPaintBehavior> paintBehavior;
-    if (auto* context = m_layer->context(); context && context->nextRenderingUpdateRequiresSynchronousImageDecoding())
-        paintBehavior.add(GraphicsLayerPaintBehavior::ForceSynchronousImageDecode);
-    
     // FIXME: This should be moved to PlatformCALayerRemote for better layering.
-    switch (m_layer->layerType()) {
+    switch (layer.layerType()) {
     case PlatformCALayer::LayerType::LayerTypeSimpleLayer:
     case PlatformCALayer::LayerType::LayerTypeTiledBackingTileLayer:
-        m_layer->owner()->platformCALayerPaintContents(m_layer.ptr(), context, dirtyBounds, paintBehavior);
+        layer.owner()->platformCALayerPaintContents(&layer, context, dirtyBounds, paintBehavior);
         break;
     case PlatformCALayer::LayerType::LayerTypeWebLayer:
     case PlatformCALayer::LayerType::LayerTypeBackdropLayer:
-        PlatformCALayer::drawLayerContents(context, m_layer.ptr(), m_paintingRects, paintBehavior);
+        PlatformCALayer::drawLayerContents(context, &layer, m_paintingRects, paintBehavior);
         break;
     case PlatformCALayer::LayerType::LayerTypeLayer:
     case PlatformCALayer::LayerType::LayerTypeTransformLayer:
@@ -438,17 +445,18 @@ void RemoteLayerBackingStore::drawInContext(GraphicsContext& context)
         ASSERT_NOT_REACHED();
         break;
     };
+    m_previouslyPaintedRect = dirtyBounds;
+}
 
-    stateSaver.restore();
-
+void RemoteLayerBackingStore::flushContents()
+{
+    if (m_layer->owner()->platformCALayerDelegatesDisplay(m_layer.ptr()))
+        return;
+    if (auto flusher = flushContextForPaintContents())
+        m_frontBufferFlushers.append(WTFMove(flusher));
     m_dirtyRegion = { };
     m_paintingRects.clear();
-
     m_layer->owner()->platformCALayerLayerDidDisplay(m_layer.ptr());
-
-    m_previouslyPaintedRect = dirtyBounds;
-    if (auto flusher = createFlusher())
-        m_frontBufferFlushers.append(WTFMove(flusher));
 }
 
 void RemoteLayerBackingStore::enumerateRectsBeingDrawn(GraphicsContext& context, void (^block)(FloatRect))

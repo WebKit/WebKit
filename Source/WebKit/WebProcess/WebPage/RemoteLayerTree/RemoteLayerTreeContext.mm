@@ -185,6 +185,13 @@ Ref<GraphicsLayer> RemoteLayerTreeContext::createGraphicsLayer(WebCore::Graphics
     return adoptRef(*new GraphicsLayerCARemote(layerType, client, *this));
 }
 
+Ref<ConcurrentWorkQueue> RemoteLayerTreeContext::paintQueue()
+{
+    if (!m_paintQueue)
+        m_paintQueue = ConcurrentWorkQueue::createToGlobal("RemoteLayerTree paint queue"_s, ConcurrentWorkQueue::QOS::UserInitiated);
+    return *m_paintQueue;
+}
+
 void RemoteLayerTreeContext::buildTransaction(RemoteLayerTreeTransaction& transaction, PlatformCALayer& rootLayer, WebCore::FrameIdentifier rootFrameID)
 {
     TraceScope tracingScope(BuildTransactionStart, BuildTransactionEnd);
@@ -198,9 +205,12 @@ void RemoteLayerTreeContext::buildTransaction(RemoteLayerTreeTransaction& transa
     rootLayerRemote.recursiveBuildTransaction(*this, transaction);
     m_backingStoreCollection->prepareBackingStoresForDisplay(transaction);
 
-    bool paintedAnyBackingStore = m_backingStoreCollection->paintReachableBackingStoreContents();
+    bool paintedAnyBackingStore = m_backingStoreCollection->paintReachableBackingStores();
     if (paintedAnyBackingStore)
         m_nextRenderingUpdateRequiresSynchronousImageDecoding = false;
+    if (m_paintQueue)
+        m_paintQueue->dispatchBarrierSync([] { });
+    m_backingStoreCollection->flushReachableBackingStores();
 
     m_currentTransaction = nullptr;
 

@@ -45,11 +45,9 @@ public:
 
     void prepareToDisplay() final;
     void clearBackingStore() final;
-    void createContextAndPaintContents() final;
 
     RefPtr<RemoteImageBufferSetProxy> protectedBufferSet() { return m_bufferSet; }
 
-    std::unique_ptr<ThreadSafeImageBufferSetFlusher> createFlusher(ThreadSafeImageBufferSetFlusher::FlushType) final;
     std::optional<ImageBufferBackendHandle> frontBufferHandle() const final { return std::exchange(const_cast<RemoteLayerWithRemoteRenderingBackingStore*>(this)->m_backendHandle, std::nullopt); }
 #if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
     std::optional<ImageBufferBackendHandle> displayListHandle() const final;
@@ -72,6 +70,9 @@ public:
 
     void dump(WTF::TextStream&) const final;
 private:
+    WebCore::GraphicsContext* contextForPaintContents() final;
+    std::unique_ptr<ThreadSafeImageBufferSetFlusher> flushContextForPaintContents(ThreadSafeImageBufferSetFlusher::FlushType) final;
+
     RefPtr<RemoteImageBufferSetProxy> m_bufferSet;
     BufferIdentifierSet m_bufferCacheIdentifiers;
     std::optional<ImageBufferBackendHandle> m_backendHandle;

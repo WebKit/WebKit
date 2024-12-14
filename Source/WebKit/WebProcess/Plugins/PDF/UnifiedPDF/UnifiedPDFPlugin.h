@@ -172,8 +172,7 @@ public:
 
     void scheduleRenderingUpdate(OptionSet<WebCore::RenderingUpdateStep> = WebCore::RenderingUpdateStep::LayerFlush);
     RefPtr<WebCore::GraphicsLayer> createGraphicsLayer(WebCore::GraphicsLayerClient&); // Why public?
-    float deviceScaleFactor() const override;
-
+    using PDFPluginBase::deviceScaleFactor;
     WebCore::FloatRect rectForSelectionInMainFrameContentsSpace(PDFSelection *) const;
 
     /*
@@ -559,8 +558,6 @@ private:
 
     bool isTaggedPDF() const;
 
-    bool shouldShowDebugIndicators() const;
-
     float scaleForPagePreviews() const;
 
     void createPasswordEntryForm();
@@ -619,6 +616,10 @@ private:
     bool m_didAttachScrollingTreeNode { false };
     bool m_didScrollToFragment { false };
     bool m_didLayoutWithValidDocument { false };
+    // Visiblility, activity status is stored so that it can be queried during
+    // off-thread painting. This info is not available from the GraphicsLayer tree,
+    // at the momemnt.
+    bool m_pageIsVisibleAndActive { false };
 
     ShouldUpdateAutoSizeScale m_shouldUpdateAutoSizeScale { ShouldUpdateAutoSizeScale::Yes };
 

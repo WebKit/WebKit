@@ -30,28 +30,30 @@
 #include "config.h"
 #include <wtf/WorkQueue.h>
 
+#include <utility>
 #include <wtf/threads/BinarySemaphore.h>
 
 namespace WTF {
 
-WorkQueueBase::WorkQueueBase(RunLoop& runLoop)
-    : m_runLoop(&runLoop)
-    , m_threadID(mainThreadID)
+static std::pair<Ref<RunLoop>, uint32_t> createQueueRunLoop(ASCIILiteral name, QOS qos)
 {
-}
-
-void WorkQueueBase::platformInitialize(ASCIILiteral name, Type, QOS qos)
-{
-    m_runLoop = RunLoop::create(name, ThreadType::Unknown, qos).ptr();
+    Ref runLoop = RunLoop::create(name, ThreadType::Unknown, qos);
+    uint32_t threadID = 0;
     BinarySemaphore semaphore;
-    m_runLoop->dispatch([&] {
-        m_threadID = Thread::current().uid();
+    runLoop->dispatch([&] {
+        threadID = Thread::current().uid();
         semaphore.signal();
     });
     semaphore.wait();
+    return { WTFMove(runLoop), threadID };
 }
 
-void WorkQueueBase::platformInvalidate()
+WorkQueue::WorkQueueBase(MainTag)
+    : WorkQueueBase(&RunLoop::main(), mainThreadID)
+{
+}
+
+WorkQueueBase::~WorkQueueBase()
 {
     if (m_runLoop) {
         Ref<RunLoop> protector(*m_runLoop);
@@ -76,9 +78,28 @@ void WorkQueueBase::dispatchAfter(Seconds delay, Function<void()>&& function)
     });
 }
 
-WorkQueue::WorkQueue(MainTag)
-    : WorkQueueBase(RunLoop::main())
+Ref<WorkQueue> WorkQueue::create(ASCIILiteral name, QOS qos)
 {
+    auto [workQueue, threadID] = createQueueRunLoop(name, qos);
+    return adoptRef(*new WorkQueue(WTFMove(workQueue), threadID));
+}
+
+Ref<ConcurrentWorkQueue> ConcurrentWorkQueue::create(ASCIILiteral name, QOS qos)
+{
+    auto [workQueue, threadID] = createQueueRunLoop(name, qos);
+    return adoptRef(*new ConcurrentWorkQueue(WTFMove(workQueue), threadID))
+}
+
+Ref<ConcurrentWorkQueue> ConcurrentWorkQueue::createToDefault(ASCIILiteral, QOS)
+{
+    // Minimally implemented.
+    static Ref defaultQueue = create("Default concurrent queue", QOS::Default);
+    return defaultQueue;
+}
+
+void ConcurrentWorkQueue::dispatchBarrierSync(WTF::Function<void()>&& function)
+{
+    dispatchSync(WTFMove(function));
 }
 
 }

@@ -251,6 +251,7 @@ private:
     WEBCORE_EXPORT bool platformCALayerCSSUnprefixedBackdropFilterEnabled() const override;
     WEBCORE_EXPORT void platformCALayerLogFilledVisibleFreshTile(unsigned) override;
     WEBCORE_EXPORT bool platformCALayerNeedsPlatformContext(const PlatformCALayer*) const override;
+    WEBCORE_EXPORT bool platformCALayerSupportsConcurrentPaintContents(const PlatformCALayer*) const override;
     bool platformCALayerContainsBitmapOnly(const PlatformCALayer*) const override { return client().layerContainsBitmapOnly(this); }
     bool platformCALayerShouldPaintUsingCompositeCopy() const override { return shouldPaintUsingCompositeCopy(); }
 

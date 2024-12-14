@@ -82,26 +82,26 @@ void RemoteLayerWithRemoteRenderingBackingStore::clearBackingStore()
     m_cleared = true;
 }
 
-std::unique_ptr<ThreadSafeImageBufferSetFlusher> RemoteLayerWithRemoteRenderingBackingStore::createFlusher(ThreadSafeImageBufferSetFlusher::FlushType flushType)
+std::unique_ptr<ThreadSafeImageBufferSetFlusher> RemoteLayerWithRemoteRenderingBackingStore::flushContextForPaintContents(ThreadSafeImageBufferSetFlusher::FlushType flushType)
 {
     if (!m_bufferSet)
         return { };
     return m_bufferSet->flushFrontBufferAsync(flushType);
 }
 
-void RemoteLayerWithRemoteRenderingBackingStore::createContextAndPaintContents()
+GraphicsContext* RemoteLayerWithRemoteRenderingBackingStore::contextForPaintContents()
 {
     auto bufferSet = protectedBufferSet();
     if (!bufferSet)
-        return;
+        return nullptr;
 
     if (!bufferSet->hasContext()) {
         // The platform layer delegates display or bufferSet does not have a working connection to GPUP anymore.
-        return;
+        return nullptr;
     }
 
-    drawInContext(bufferSet->context());
     m_cleared = false;
+    return &bufferSet->context();
 }
 
 void RemoteLayerWithRemoteRenderingBackingStore::ensureBackingStore(const Parameters& parameters)

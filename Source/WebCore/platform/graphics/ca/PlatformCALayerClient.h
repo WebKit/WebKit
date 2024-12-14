@@ -45,6 +45,7 @@ public:
     virtual void platformCALayerAnimationStarted(const String& /*animationKey*/, MonotonicTime) { }
     virtual void platformCALayerAnimationEnded(const String& /*animationKey*/) { }
     virtual GraphicsLayer::CompositingCoordinatesOrientation platformCALayerContentsOrientation() const { return GraphicsLayer::CompositingCoordinatesOrientation::TopDown; }
+    virtual bool platformCALayerSupportsConcurrentPaintContents(const PlatformCALayer*) const { return false; }
     virtual void platformCALayerPaintContents(PlatformCALayer*, GraphicsContext&, const FloatRect& inClip, OptionSet<GraphicsLayerPaintBehavior>) = 0;
     virtual bool platformCALayerShowDebugBorders() const { return false; }
     virtual bool platformCALayerShowRepaintCounter(PlatformCALayer*) const { return false; }

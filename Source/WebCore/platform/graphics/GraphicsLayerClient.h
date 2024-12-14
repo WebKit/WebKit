@@ -143,6 +143,8 @@ public:
 
     virtual bool layerNeedsPlatformContext(const GraphicsLayer*) const { return false; }
 
+    virtual bool layerSupportsConcurrentPaintContents(const GraphicsLayer*) const { return false; }
+
 #ifndef NDEBUG
     // RenderLayerBacking overrides this to verify that it is not
     // currently painting contents. An ASSERT fails, if it is.

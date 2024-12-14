@@ -38,6 +38,7 @@
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
+#include <wtf/WorkQueue.h>
 
 namespace WebKit {
 
@@ -58,6 +59,7 @@ public:
 
     ~RemoteLayerTreeContext();
 
+    Ref<ConcurrentWorkQueue> paintQueue();
     void layerDidEnterContext(PlatformCALayerRemote&, WebCore::PlatformCALayer::LayerType);
 #if HAVE(AVKIT)
     void layerDidEnterContext(PlatformCALayerRemote&, WebCore::PlatformCALayer::LayerType, WebCore::HTMLVideoElement&);
@@ -131,6 +133,7 @@ private:
 
     WebCore::LayerPool m_layerPool;
 
+    RefPtr<ConcurrentWorkQueue> m_paintQueue;
     CheckedPtr<RemoteLayerTreeTransaction> m_currentTransaction;
 
     bool m_nextRenderingUpdateRequiresSynchronousImageDecoding { false };

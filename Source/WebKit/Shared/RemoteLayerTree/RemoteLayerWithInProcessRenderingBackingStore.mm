@@ -101,11 +101,11 @@ DynamicContentScalingResourceCache RemoteLayerWithInProcessRenderingBackingStore
 }
 #endif
 
-void RemoteLayerWithInProcessRenderingBackingStore::createContextAndPaintContents()
+GraphicsContext* RemoteLayerWithInProcessRenderingBackingStore::contextForPaintContents()
 {
     if (!m_bufferSet.m_frontBuffer) {
-        ASSERT(m_layer->owner()->platformCALayerDelegatesDisplay(m_layer.ptr()));
-        return;
+        ASSERT_NOT_REACHED();
+        return nullptr;
     }
 
     GraphicsContext& context = m_bufferSet.m_frontBuffer->context();
@@ -113,7 +113,7 @@ void RemoteLayerWithInProcessRenderingBackingStore::createContextAndPaintContent
     WebCore::FloatRect layerBounds { { }, m_parameters.size };
 
     m_bufferSet.prepareBufferForDisplay(layerBounds, m_dirtyRegion, m_paintingRects, drawingRequiresClearedPixels());
-    drawInContext(m_bufferSet.m_frontBuffer->context());
+    return &m_bufferSet.m_frontBuffer->context();
 }
 
 class ImageBufferBackingStoreFlusher final : public ThreadSafeImageBufferSetFlusher {
@@ -139,7 +139,7 @@ private:
     std::unique_ptr<WebCore::ThreadSafeImageBufferFlusher> m_imageBufferFlusher;
 };
 
-std::unique_ptr<ThreadSafeImageBufferSetFlusher> RemoteLayerWithInProcessRenderingBackingStore::createFlusher(ThreadSafeImageBufferSetFlusher::FlushType flushType)
+std::unique_ptr<ThreadSafeImageBufferSetFlusher> RemoteLayerWithInProcessRenderingBackingStore::flushContextForPaintContents(ThreadSafeImageBufferSetFlusher::FlushType flushType)
 {
     if (flushType == ThreadSafeImageBufferSetFlusher::FlushType::BackendHandlesOnly)
         return nullptr;

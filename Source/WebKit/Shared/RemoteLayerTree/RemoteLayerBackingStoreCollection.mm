@@ -117,7 +117,7 @@ void RemoteLayerBackingStoreCollection::prepareBackingStoresForDisplay(RemoteLay
     }
 }
 
-bool RemoteLayerBackingStoreCollection::paintReachableBackingStoreContents()
+bool RemoteLayerBackingStoreCollection::paintReachableBackingStores()
 {
     bool anyNonEmptyDirtyRegion = false;
     for (auto& backingStore : m_backingStoresNeedingDisplay) {
@@ -126,6 +126,12 @@ bool RemoteLayerBackingStoreCollection::paintReachableBackingStoreContents()
         backingStore.paintContents();
     }
     return anyNonEmptyDirtyRegion;
+}
+
+void RemoteLayerBackingStoreCollection::flushReachableBackingStores()
+{
+    for (auto& backingStore : m_backingStoresNeedingDisplay)
+        backingStore.flushContents();
 }
 
 void RemoteLayerBackingStoreCollection::willFlushLayers()
