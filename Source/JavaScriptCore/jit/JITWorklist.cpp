@@ -96,15 +96,7 @@ CompilationResult JITWorklist::enqueue(Ref<JITPlan> plan)
     ASSERT(m_plans.find(plan->key()) == m_plans.end());
     m_plans.add(plan->key(), plan.copyRef());
     m_queues[static_cast<unsigned>(plan->tier())].append(WTFMove(plan));
-
-    // Notify when some of thread is waiting.
-    for (auto& thread : m_threads) {
-        if (thread->state() == JITWorklistThread::State::NotCompiling) {
-            m_planEnqueued->notifyOne(locker);
-            break;
-        }
-    }
-
+    m_planEnqueued->notifyOne(locker);
     return CompilationDeferred;
 }
 

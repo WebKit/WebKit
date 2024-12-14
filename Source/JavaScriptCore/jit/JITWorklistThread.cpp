@@ -72,7 +72,7 @@ ASCIILiteral JITWorklistThread::name() const
 #endif
 }
 
-auto JITWorklistThread::poll(const AbstractLocker& locker) -> PollResult
+auto JITWorklistThread::poll(const AbstractLocker& locker, unsigned spinCount) -> PollResult
 {
     for (unsigned i = 0; i < static_cast<unsigned>(JITPlan::Tier::Count); ++i) {
         auto& queue = m_worklist.m_queues[i];
@@ -98,6 +98,8 @@ auto JITWorklistThread::poll(const AbstractLocker& locker) -> PollResult
         return PollResult::Work;
     }
 
+    if (spinCount < Options::spinCountForWorklistThreads())
+        return PollResult::Yield;
     return PollResult::Wait;
 }
 
@@ -154,7 +156,6 @@ auto JITWorklistThread::work() -> WorkResult
 void JITWorklistThread::threadDidStart()
 {
     dataLogLnIf(Options::verboseCompilationQueue(), m_worklist, ": Thread started");
-
 }
 
 void JITWorklistThread::threadIsStopping(const AbstractLocker&)
