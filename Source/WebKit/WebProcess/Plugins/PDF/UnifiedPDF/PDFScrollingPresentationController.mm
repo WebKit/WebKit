@@ -153,11 +153,13 @@ void PDFScrollingPresentationController::setupLayers(GraphicsLayer& scrolledCont
         m_contentsLayer = createGraphicsLayer("PDF contents"_s, m_plugin->isFullMainFramePlugin() ? GraphicsLayer::Type::PageTiledBacking : GraphicsLayer::Type::TiledBacking);
         m_contentsLayer->setAnchorPoint({ });
         m_contentsLayer->setDrawsContent(true);
-        m_contentsLayer->setAcceleratesDrawing(m_plugin->canPaintSelectionIntoOwnedLayer());
+        bool useAsyncRenderer = true; // Set this to false when developing without AsyncPDFRenderer.
+        if (useAsyncRenderer)
+            m_contentsLayer->setAcceleratesDrawing(m_plugin->canPaintSelectionIntoOwnedLayer());
         scrolledContentsLayer.addChild(*m_contentsLayer);
 
-        // This is the call that enables async rendering.
-        asyncRenderer()->startTrackingLayer(*m_contentsLayer);
+        if (useAsyncRenderer)
+            asyncRenderer()->startTrackingLayer(*m_contentsLayer);
     }
 
 #if ENABLE(UNIFIED_PDF_SELECTION_LAYER)
@@ -423,7 +425,7 @@ bool PDFScrollingPresentationController::layerNeedsPlatformContext(const Graphic
     // We need a platform context if the plugin can not paint selections into its own layer,
     // since we would then have to vend a platform context that PDFKit can paint into.
     // However, this constraint only applies for the contents layer. No other layer needs to be WP-backed.
-    return layer == m_contentsLayer.get() && !m_plugin->canPaintSelectionIntoOwnedLayer();
+    return layer == m_contentsLayer.get() && !(m_plugin->canPaintSelectionIntoOwnedLayer() && asyncRendererIfExists());
 }
 
 void PDFScrollingPresentationController::tiledBackingUsageChanged(const GraphicsLayer* layer, bool usingTiledBacking)
