@@ -137,7 +137,7 @@ macro cCall2(function)
     checkStackPointerAlignment(t4, 0xbad0c002)
     if C_LOOP
         cloopCallSlowPath function, a0, a1
-    elsif X86_64 or ARM64 or ARM64E or RISCV64
+    elsif X86_64 or ARM64 or ARM64E or RISCV64 or LOONGARCH64
         call function
     else
         error
@@ -156,7 +156,7 @@ macro cCall3(function)
     checkStackPointerAlignment(t4, 0xbad0c004)
     if C_LOOP
         cloopCallSlowPath3 function, a0, a1, a2
-    elsif X86_64 or ARM64 or ARM64E or RISCV64
+    elsif X86_64 or ARM64 or ARM64E or RISCV64 or LOONGARCH64
         call function
     else
         error
@@ -168,7 +168,7 @@ macro cCall4(function)
     checkStackPointerAlignment(t4, 0xbad0c004)
     if C_LOOP
         cloopCallSlowPath4 function, a0, a1, a2, a3
-    elsif X86_64 or ARM64 or ARM64E or RISCV64
+    elsif X86_64 or ARM64 or ARM64E or RISCV64 or LOONGARCH64
         call function
     else
         error

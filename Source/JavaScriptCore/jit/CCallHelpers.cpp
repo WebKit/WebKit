@@ -92,7 +92,7 @@ void CCallHelpers::emitCTIThunkPrologue(bool returnAddressAlreadyTagged)
         tagReturnAddress();
 #if CPU(X86_64)
     push(X86Registers::ebp); // return address pushed by the call instruction
-#elif CPU(ARM64) || CPU(ARM_THUMB2) || CPU(RISCV64)
+#elif CPU(ARM64) || CPU(ARM_THUMB2) || CPU(RISCV64) || CPU(LOONGARCH64)
     pushPair(framePointerRegister, linkRegister);
 #else
 #   error "Not implemented on platform"
@@ -110,7 +110,7 @@ void CCallHelpers::emitCTIThunkEpilogue()
     // Restore frame pointer and return address
 #if CPU(X86_64)
     pop(X86Registers::ebp); // Return address left on stack
-#elif CPU(ARM64) || CPU(ARM_THUMB2) || CPU(RISCV64)
+#elif CPU(ARM64) || CPU(ARM_THUMB2) || CPU(RISCV64) || CPU(LOONGARCH64)
     popPair(framePointerRegister, linkRegister);
 #else
 #   error "Not implemented on platform"

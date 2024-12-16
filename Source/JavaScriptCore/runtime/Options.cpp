@@ -780,6 +780,10 @@ void Options::notifyOptionsChanged()
     Options::useFTLJIT() = false;
 #endif
 
+#if CPU(LOONGARCH64)
+    Options::useRegExpJIT() = false;
+#endif
+
 #if !CPU(X86_64) && !CPU(ARM64)
     Options::useConcurrentGC() = false;
     Options::forceUnlinkedDFG() = false;
@@ -1496,6 +1500,8 @@ bool canUseJITCage() { return false; }
 bool canUseHandlerIC()
 {
 #if USE(JSVALUE64)
+    return true;
+#elif CPU(LOONGARCH64)
     return true;
 #else
     return false;

@@ -118,6 +118,8 @@ PAS_BEGIN_EXTERN_C;
 
 #define PAS_RISCV __PAS_RISCV
 
+#define PAS_LOONGARCH __PAS_LOONGARCH
+
 #define PAS_PP_THIRD_ARG(a, b, c, ...) c
 #define PAS_VA_OPT_SUPPORTED_I(...) PAS_PP_THIRD_ARG(__VA_OPT__(,),true,false,)
 #define PAS_VA_OPT_SUPPORTED PAS_VA_OPT_SUPPORTED_I(?)

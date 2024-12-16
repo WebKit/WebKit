@@ -283,6 +283,9 @@ RegisterAtOffsetList* IPIntCallee::calleeSaveRegistersImpl()
 #elif CPU(ARM64) || CPU(RISCV64)
         registers.add(GPRInfo::regCS6, IgnoreVectors); // PM
         registers.add(GPRInfo::regCS7, IgnoreVectors); // PB
+#elif CPU(LOONGARCH64)
+        registers.add(GPRInfo::regCS5, IgnoreVectors); // PM
+        registers.add(GPRInfo::regCS6, IgnoreVectors); // PB
 #elif CPU(ARM)
         registers.add(GPRInfo::regCS0, IgnoreVectors); // PM
         registers.add(GPRInfo::regCS1, IgnoreVectors); // PB
@@ -363,6 +366,8 @@ RegisterAtOffsetList* LLIntCallee::calleeSaveRegistersImpl()
         registers.add(GPRInfo::regCS2, IgnoreVectors); // PB
 #elif CPU(ARM64) || CPU(RISCV64)
         registers.add(GPRInfo::regCS7, IgnoreVectors); // PB
+#elif CPU(LOONGARCH64)
+        registers.add(GPRInfo::regCS6, IgnoreVectors); // PB
 #elif CPU(ARM)
         registers.add(GPRInfo::regCS1, IgnoreVectors); // PB
 #else
@@ -499,7 +504,7 @@ RegisterAtOffsetList* JSEntrypointCallee::calleeSaveRegistersImpl()
     std::call_once(initializeFlag, [] {
         RegisterSet registers = RegisterSetBuilder::wasmPinnedRegisters();
 #if CPU(X86_64)
-#elif CPU(ARM64) || CPU(RISCV64)
+#elif CPU(ARM64) || CPU(RISCV64) || CPU(LOONGARCH64)
         ASSERT(registers.numberOfSetRegisters() == 3);
 #elif CPU(ARM)
 #else

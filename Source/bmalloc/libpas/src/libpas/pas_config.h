@@ -67,6 +67,8 @@
 
 #define PAS_RISCV __PAS_RISCV
 
+#define PAS_LOONGARCH __PAS_LOONGARCH
+
 #define PAS_ADDRESS_BITS                 48
 
 #if PAS_ARM || PAS_PLATFORM(PLAYSTATION)

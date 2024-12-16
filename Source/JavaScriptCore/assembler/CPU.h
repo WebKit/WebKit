@@ -129,6 +129,15 @@ constexpr bool isRISCV64()
 #endif
 }
 
+constexpr bool isLOONGARCH64()
+{
+#if CPU(LOONGARCH64)
+    return true;
+#else
+    return false;
+#endif
+}
+
 constexpr bool is64Bit()
 {
 #if USE(JSVALUE64)
@@ -206,7 +215,7 @@ constexpr size_t prologueStackPointerDelta()
 #elif CPU(X86_64)
     // Prologue only saves the framePointerRegister
     return sizeof(CPURegister);
-#elif CPU(ARM_THUMB2) || CPU(ARM64) || CPU(RISCV64)
+#elif CPU(ARM_THUMB2) || CPU(ARM64) || CPU(RISCV64) || CPU(LOONGARCH64)
     // Prologue saves the framePointerRegister and linkRegister
     return 2 * sizeof(CPURegister);
 #else

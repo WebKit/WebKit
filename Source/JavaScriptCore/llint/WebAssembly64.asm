@@ -175,7 +175,7 @@ wasmOp(i32_div_s, WasmI32DivS, macro (ctx)
         cdqi
         # divide edx:eax by divisor (esi or r8), result in t0 (eax) remainder in edx
         idivi divisor
-    elsif ARM64 or ARM64E or RISCV64
+    elsif ARM64 or ARM64E or RISCV64 or LOONGARCH64
         divis t1, t0
     else
         error
@@ -202,7 +202,7 @@ wasmOp(i32_div_u, WasmI32DivU, macro (ctx)
     if X86_64
         xori r_rdx, r_rdx
         udivi divisor
-    elsif ARM64 or ARM64E or RISCV64
+    elsif ARM64 or ARM64E or RISCV64 or LOONGARCH64
         divi t1, t0
     else
         error
@@ -241,6 +241,8 @@ wasmOp(i32_rem_s, WasmI32RemS, macro (ctx)
         subi t0, t2, t2
     elsif RISCV64
         remis t0, t1, t2
+    elsif LOONGARCH64
+        remis t0, t1, t2
     else
         error
     end
@@ -270,6 +272,8 @@ wasmOp(i32_rem_u, WasmI32RemU, macro (ctx)
         muli t1, t2
         subi t0, t2, t2
     elsif RISCV64
+        remi t0, t1, t2
+    elsif LOONGARCH64
         remi t0, t1, t2
     else
         error
@@ -322,7 +326,7 @@ wasmOp(i64_div_s, WasmI64DivS, macro (ctx)
         # https://bugs.webkit.org/show_bug.cgi?id=203692 
         cqoq
         idivq divisor
-    elsif ARM64 or ARM64E or RISCV64
+    elsif ARM64 or ARM64E or RISCV64 or LOONGARCH64
         divqs t1, t0
     else
         error
@@ -349,7 +353,7 @@ wasmOp(i64_div_u, WasmI64DivU, macro (ctx)
     if X86_64
         xorq r_rdx, r_rdx
         udivq divisor
-    elsif ARM64 or ARM64E or RISCV64
+    elsif ARM64 or ARM64E or RISCV64 or LOONGARCH64
         divq t1, t0
     else
         error
@@ -388,6 +392,8 @@ wasmOp(i64_rem_s, WasmI64RemS, macro (ctx)
         subq t0, t2, t2
     elsif RISCV64
         remqs t0, t1, t2
+    elsif LOONGARCH64
+        remqs t0, t1, t2
     else
         error
     end
@@ -417,6 +423,8 @@ wasmOp(i64_rem_u, WasmI64RemU, macro (ctx)
         mulq t1, t2
         subq t0, t2, t2
     elsif RISCV64
+        remq t0, t1, t2
+    elsif LOONGARCH64
         remq t0, t1, t2
     else
         error
@@ -1115,7 +1123,7 @@ elsif ARM64E
         macro(t0GPR, mem, t2GPR, t5GPR, t1GPR) atomicxchgh t0GPR, mem, t0GPR end,
         macro(t0GPR, mem, t2GPR, t5GPR, t1GPR) atomicxchgi t0GPR, mem, t0GPR end,
         macro(t0GPR, mem, t2GPR, t5GPR, t1GPR) atomicxchgq t0GPR, mem, t0GPR end)
-elsif ARM64 or RISCV64
+elsif ARM64 or RISCV64 or LOONGARCH64
     wasmAtomicBinaryRMWOpsWithWeakCAS(_add, Add,
         macro(t0GPR, t1GPR, t2GPR)
             addi t0GPR, t1GPR, t2GPR
@@ -1202,7 +1210,7 @@ macro wasmAtomicCompareExchangeOps(lowerCaseOpcode, upperCaseOpcode, fnb, fnh, f
     end)
 end
 
-if X86_64 or ARM64E or ARM64 or RISCV64
+if X86_64 or ARM64E or ARM64 or RISCV64 or LOONGARCH64
 # t0GPR => expected, t2GPR => value, mem => memory reference
 wasmAtomicCompareExchangeOps(_cmpxchg, Cmpxchg,
     macro(t0GPR, t2GPR, mem, t5GPR, t1GPR)

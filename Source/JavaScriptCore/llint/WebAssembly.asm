@@ -34,7 +34,7 @@ end
 # Must match GPRInfo.h
 if X86_64
     const NumberOfWasmArgumentJSRs = 6
-elsif ARM64 or ARM64E or RISCV64
+elsif ARM64 or ARM64E or RISCV64 or LOONGARCH64
     const NumberOfWasmArgumentJSRs = 8
 elsif ARMv7
     const NumberOfWasmArgumentJSRs = 2
@@ -49,7 +49,7 @@ const NumberOfWasmArguments = NumberOfWasmArgumentJSRs + NumberOfWasmArgumentFPR
 # All callee saves must match the definition in WasmCallee.cpp
 
 # These must match the definition in GPRInfo.h
-if X86_64 or ARM64 or ARM64E or RISCV64
+if X86_64 or ARM64 or ARM64E or RISCV64 or LOONGARCH64
     const wasmInstance = csr0
     const memoryBase = csr3
     const boundsCheckingSize = csr4
@@ -66,6 +66,8 @@ if X86_64
     const PB = csr2
 elsif ARM64 or ARM64E or RISCV64
     const PB = csr7
+elsif LOONGARCH64
+    const PB = csr6
 elsif ARMv7
     const PB = csr1
 else
@@ -247,7 +249,7 @@ macro preserveCalleeSavesUsedByWasm()
     subp CalleeSaveSpaceStackAligned, sp
     if ARM64 or ARM64E
         storepairq wasmInstance, PB, -16[cfr]
-    elsif X86_64 or RISCV64
+    elsif X86_64 or RISCV64 or LOONGARCH64
         storep PB, -0x8[cfr]
         storep wasmInstance, -0x10[cfr]
     elsif ARMv7
@@ -264,7 +266,7 @@ macro restoreCalleeSavesUsedByWasm()
     # to be observable within the same Wasm module.
     if ARM64 or ARM64E
         loadpairq -16[cfr], wasmInstance, PB
-    elsif X86_64 or RISCV64
+    elsif X86_64 or RISCV64 or LOONGARCH64
         loadp -0x8[cfr], PB
         loadp -0x10[cfr], wasmInstance
     elsif ARMv7
@@ -289,7 +291,7 @@ macro preserveReturnAddress(scratch)
 if X86_64
     loadp ReturnPC[cfr], scratch
     storep scratch, ReturnPC[sp]
-elsif ARM64 or ARM64E or ARMv7 or RISCV64
+elsif ARM64 or ARM64E or ARMv7 or RISCV64 or LOONGARCH64
     loadp ReturnPC[cfr], lr
 end
 end
@@ -297,7 +299,7 @@ end
 macro usePreviousFrame()
     if ARM64 or ARM64E
         loadpairq -PtrSize[cfr], PB, cfr
-    elsif ARMv7 or X86_64 or RISCV64
+    elsif ARMv7 or X86_64 or RISCV64 or LOONGARCH64
         loadp -PtrSize[cfr], PB
         loadp [cfr], cfr
     else
@@ -1873,7 +1875,7 @@ if X86_64
 elsif ARMv7
             addp CallerFrameAndPCSize, ws1
             move ws1, sp
-elsif ARM64 or ARM64E or RISCV64
+elsif ARM64 or ARM64E or RISCV64 or LOONGARCH64
             addp CallerFrameAndPCSize, ws1, sp
 else
             error

@@ -1214,6 +1214,8 @@ static constexpr size_t prologueSizeInBytesDataIC = 4;
 static constexpr size_t prologueSizeInBytesDataIC = 6;
 #elif CPU(RISCV64)
 static constexpr size_t prologueSizeInBytesDataIC = 12;
+#elif CPU(LOONGARCH64)
+static constexpr size_t prologueSizeInBytesDataIC = 12;
 #else
 #error "unsupported architecture"
 #endif
@@ -1239,6 +1241,9 @@ void InlineCacheCompiler::emitDataICPrologue(CCallHelpers& jit)
     jit.pushPair(CCallHelpers::framePointerRegister, CCallHelpers::linkRegister);
     jit.subPtr(CCallHelpers::TrustedImm32(maxFrameExtentForSlowPathCall), CCallHelpers::stackPointerRegister);
 #elif CPU(RISCV64)
+    static_assert(!maxFrameExtentForSlowPathCall);
+    jit.pushPair(CCallHelpers::framePointerRegister, CCallHelpers::linkRegister);
+#elif CPU(LOONGARCH64)
     static_assert(!maxFrameExtentForSlowPathCall);
     jit.pushPair(CCallHelpers::framePointerRegister, CCallHelpers::linkRegister);
 #else

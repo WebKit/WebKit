@@ -210,6 +210,8 @@ static inline void*& stackPointerImpl(mcontext_t& machineContext)
     return reinterpret_cast<void*&>((uintptr_t&) machineContext.gregs[29]);
 #elif CPU(RISCV64)
     return reinterpret_cast<void*&>((uintptr_t&) machineContext.__gregs[REG_SP]);
+#elif CPU(LOONGARCH64)
+    return reinterpret_cast<void*&>((uintptr_t&) machineContext.__gregs[LARCH_REG_SP]);
 #else
 #error Unknown Architecture
 #endif
@@ -356,6 +358,8 @@ static inline void*& framePointerImpl(mcontext_t& machineContext)
     return reinterpret_cast<void*&>((uintptr_t&) machineContext.gregs[30]);
 #elif CPU(RISCV64)
     return reinterpret_cast<void*&>((uintptr_t&) machineContext.__gregs[REG_S0]);
+#elif CPU(LOONGARCH64)
+    return reinterpret_cast<void*&>((uintptr_t&) machineContext.__gregs[22]);
 #else
 #error Unknown Architecture
 #endif
@@ -536,6 +540,8 @@ static inline void*& instructionPointerImpl(mcontext_t& machineContext)
     return reinterpret_cast<void*&>((uintptr_t&) machineContext.pc);
 #elif CPU(RISCV64)
     return reinterpret_cast<void*&>((uintptr_t&) machineContext.__gregs[REG_PC]);
+#elif CPU(LOONGARCH64)
+    return reinterpret_cast<void*&>((uintptr_t&) machineContext.__pc);
 #else
 #error Unknown Architecture
 #endif
@@ -701,6 +707,8 @@ inline void*& argumentPointer<1>(mcontext_t& machineContext)
     return reinterpret_cast<void*&>((uintptr_t&) machineContext.gregs[5]);
 #elif CPU(RISCV64)
     return reinterpret_cast<void*&>((uintptr_t&) machineContext.__gregs[REG_A0 + 1]);
+#elif CPU(LOONGARCH64)
+    return reinterpret_cast<void*&>((uintptr_t&) machineContext.__gregs[LARCH_REG_A0 + 1]);
 #else
 #error Unknown Architecture
 #endif
@@ -845,6 +853,8 @@ inline void*& llintInstructionPointer(mcontext_t& machineContext)
     return reinterpret_cast<void*&>((uintptr_t&) machineContext.gregs[12]);
 #elif CPU(RISCV64)
     return reinterpret_cast<void*&>((uintptr_t&) machineContext.__gregs[14]);
+#elif CPU(LOONGARCH64)
+    return reinterpret_cast<void*&>((uintptr_t&) machineContext.__gregs[8]);
 #else
 #error Unknown Architecture
 #endif
