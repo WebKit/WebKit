@@ -23,7 +23,8 @@
 #if ENABLE(VIDEO_PRESENTATION_MODE)
 [
     DispatchedFrom=WebContent,
-    DispatchedTo=UI
+    DispatchedTo=UI,
+    EnabledBy=MediaPlaybackEnabled
 ]
 messages -> VideoPresentationManagerProxy {
     SetHasVideo(WebKit::PlaybackSessionContextIdentifier contextId, bool hasVideo)
