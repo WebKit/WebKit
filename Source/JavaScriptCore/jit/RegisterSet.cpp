@@ -102,6 +102,8 @@ RegisterSet RegisterSetBuilder::macroClobberedGPRs()
     return RegisterSetBuilder(MacroAssembler::s_scratchRegister).buildAndValidate();
 #elif CPU(ARM64) || CPU(RISCV64)
     return RegisterSetBuilder(MacroAssembler::dataTempRegister, MacroAssembler::memoryTempRegister).buildAndValidate();
+#elif CPU(LOONGARCH64)
+    return RegisterSetBuilder(MacroAssembler::dataTempRegister, MacroAssembler::dataTempRegister2, MacroAssembler::memoryTempRegister).buildAndValidate();
 #elif CPU(ARM_THUMB2)
     return RegisterSetBuilder(MacroAssembler::dataTempRegister, MacroAssembler::addressTempRegister).buildAndValidate();
 #else
@@ -120,6 +122,11 @@ RegisterSet RegisterSetBuilder::macroClobberedFPRs()
     builder.add(MacroAssembler::fpTempRegister, IgnoreVectors);
     return builder.buildAndValidate();
 #elif CPU(RISCV64)
+    RegisterSetBuilder builder;
+    builder.add(MacroAssembler::fpTempRegister, IgnoreVectors);
+    builder.add(MacroAssembler::fpTempRegister2, IgnoreVectors);
+    return builder.buildAndValidate();
+#elif CPU(LOONGARCH64)
     RegisterSetBuilder builder;
     builder.add(MacroAssembler::fpTempRegister, IgnoreVectors);
     builder.add(MacroAssembler::fpTempRegister2, IgnoreVectors);
@@ -212,6 +219,24 @@ RegisterSet RegisterSetBuilder::vmCalleeSaveRegisters()
     result.add(FPRInfo::fpRegCS9, IgnoreVectors);
     result.add(FPRInfo::fpRegCS10, IgnoreVectors);
     result.add(FPRInfo::fpRegCS11, IgnoreVectors);
+#elif CPU(LOONGARCH64)
+    result.add(GPRInfo::regCS0, IgnoreVectors);
+    result.add(GPRInfo::regCS1, IgnoreVectors);
+    result.add(GPRInfo::regCS2, IgnoreVectors);
+    result.add(GPRInfo::regCS3, IgnoreVectors);
+    result.add(GPRInfo::regCS4, IgnoreVectors);
+    result.add(GPRInfo::regCS5, IgnoreVectors);
+    result.add(GPRInfo::regCS6, IgnoreVectors);
+    result.add(GPRInfo::regCS7, IgnoreVectors);
+    result.add(GPRInfo::regCS8, IgnoreVectors);
+    result.add(FPRInfo::fpRegCS0, IgnoreVectors);
+    result.add(FPRInfo::fpRegCS1, IgnoreVectors);
+    result.add(FPRInfo::fpRegCS2, IgnoreVectors);
+    result.add(FPRInfo::fpRegCS3, IgnoreVectors);
+    result.add(FPRInfo::fpRegCS4, IgnoreVectors);
+    result.add(FPRInfo::fpRegCS5, IgnoreVectors);
+    result.add(FPRInfo::fpRegCS6, IgnoreVectors);
+    result.add(FPRInfo::fpRegCS7, IgnoreVectors);
 #endif
     return result;
 }
@@ -238,6 +263,14 @@ RegisterSet RegisterSetBuilder::llintBaselineCalleeSaveRegisters()
     result.add(GPRInfo::regCS7, IgnoreVectors);
     result.add(GPRInfo::regCS8, IgnoreVectors);
     result.add(GPRInfo::regCS9, IgnoreVectors);
+#elif CPU(LOONGARCH64)
+    result.add(GPRInfo::regCS5, IgnoreVectors);
+    static_assert(GPRInfo::regCS6 == GPRInfo::jitDataRegister);
+    static_assert(GPRInfo::regCS7 == GPRInfo::numberTagRegister);
+    static_assert(GPRInfo::regCS8 == GPRInfo::notCellMaskRegister);
+    result.add(GPRInfo::regCS6, IgnoreVectors);
+    result.add(GPRInfo::regCS7, IgnoreVectors);
+    result.add(GPRInfo::regCS8, IgnoreVectors);
 #else
     UNREACHABLE_FOR_PLATFORM();
 #endif
@@ -266,6 +299,13 @@ RegisterSet RegisterSetBuilder::dfgCalleeSaveRegisters()
     result.add(GPRInfo::regCS7, IgnoreVectors);
     result.add(GPRInfo::regCS8, IgnoreVectors);
     result.add(GPRInfo::regCS9, IgnoreVectors);
+#elif CPU(LOONGARCH64)
+    static_assert(GPRInfo::regCS6 == GPRInfo::jitDataRegister);
+    static_assert(GPRInfo::regCS7 == GPRInfo::numberTagRegister);
+    static_assert(GPRInfo::regCS8 == GPRInfo::notCellMaskRegister);
+    result.add(GPRInfo::regCS6, IgnoreVectors);
+    result.add(GPRInfo::regCS7, IgnoreVectors);
+    result.add(GPRInfo::regCS8, IgnoreVectors);
 #else
     UNREACHABLE_FOR_PLATFORM();
 #endif
@@ -335,6 +375,24 @@ RegisterSet RegisterSetBuilder::ftlCalleeSaveRegisters()
     result.add(FPRInfo::fpRegCS9, IgnoreVectors);
     result.add(FPRInfo::fpRegCS10, IgnoreVectors);
     result.add(FPRInfo::fpRegCS11, IgnoreVectors);
+#elif CPU(LOONGARCH64)
+    result.add(GPRInfo::regCS0, IgnoreVectors);
+    result.add(GPRInfo::regCS1, IgnoreVectors);
+    result.add(GPRInfo::regCS2, IgnoreVectors);
+    result.add(GPRInfo::regCS3, IgnoreVectors);
+    result.add(GPRInfo::regCS4, IgnoreVectors);
+    result.add(GPRInfo::regCS5, IgnoreVectors);
+    static_assert(GPRInfo::regCS6 == GPRInfo::jitDataRegister);
+    static_assert(GPRInfo::regCS7 == GPRInfo::numberTagRegister);
+    static_assert(GPRInfo::regCS8 == GPRInfo::notCellMaskRegister);
+    result.add(FPRInfo::fpRegCS0, IgnoreVectors);
+    result.add(FPRInfo::fpRegCS1, IgnoreVectors);
+    result.add(FPRInfo::fpRegCS2, IgnoreVectors);
+    result.add(FPRInfo::fpRegCS3, IgnoreVectors);
+    result.add(FPRInfo::fpRegCS4, IgnoreVectors);
+    result.add(FPRInfo::fpRegCS5, IgnoreVectors);
+    result.add(FPRInfo::fpRegCS6, IgnoreVectors);
+    result.add(FPRInfo::fpRegCS7, IgnoreVectors);
 #else
     UNREACHABLE_FOR_PLATFORM();
 #endif

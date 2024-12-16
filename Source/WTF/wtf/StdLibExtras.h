@@ -108,7 +108,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
  * - https://bugs.webkit.org/show_bug.cgi?id=38045
  * - http://gcc.gnu.org/bugzilla/show_bug.cgi?id=43976
  */
-#if CPU(ARM) || CPU(MIPS) || CPU(RISCV64)
+#if CPU(ARM) || CPU(MIPS) || CPU(RISCV64) || CPU(LOONGARCH64)
 template<typename Type>
 inline bool isPointerTypeAlignmentOkay(Type* ptr)
 {

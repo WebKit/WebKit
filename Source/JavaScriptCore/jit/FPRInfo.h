@@ -420,6 +420,112 @@ public:
 
 #endif // CPU(RISCV64)
 
+#if CPU(LOONGARCH64)
+
+class FPRInfo {
+public:
+    typedef FPRReg RegisterType;
+    static constexpr unsigned numberOfRegisters = 22;
+    static constexpr unsigned numberOfArgumentRegisters = 8;
+
+    static constexpr FPRReg fpRegT0 = LOONGARCH64Registers::f0;
+    static constexpr FPRReg fpRegT1 = LOONGARCH64Registers::f1;
+    static constexpr FPRReg fpRegT2 = LOONGARCH64Registers::f2;
+    static constexpr FPRReg fpRegT3 = LOONGARCH64Registers::f3;
+    static constexpr FPRReg fpRegT4 = LOONGARCH64Registers::f4;
+    static constexpr FPRReg fpRegT5 = LOONGARCH64Registers::f5;
+    static constexpr FPRReg fpRegT6 = LOONGARCH64Registers::f6;
+    static constexpr FPRReg fpRegT7 = LOONGARCH64Registers::f7;
+    static constexpr FPRReg fpRegT8 = LOONGARCH64Registers::f8;
+    static constexpr FPRReg fpRegT9 = LOONGARCH64Registers::f9;
+    static constexpr FPRReg fpRegT10 = LOONGARCH64Registers::f10;
+    static constexpr FPRReg fpRegT11 = LOONGARCH64Registers::f11;
+    static constexpr FPRReg fpRegT12 = LOONGARCH64Registers::f12;
+    static constexpr FPRReg fpRegT13 = LOONGARCH64Registers::f13;
+    static constexpr FPRReg fpRegT14 = LOONGARCH64Registers::f14;
+    static constexpr FPRReg fpRegT15 = LOONGARCH64Registers::f15;
+    static constexpr FPRReg fpRegT16 = LOONGARCH64Registers::f16;
+    static constexpr FPRReg fpRegT17 = LOONGARCH64Registers::f17;
+    static constexpr FPRReg fpRegT18 = LOONGARCH64Registers::f18;
+    static constexpr FPRReg fpRegT19 = LOONGARCH64Registers::f19;
+    static constexpr FPRReg fpRegT20 = LOONGARCH64Registers::f20;
+    static constexpr FPRReg fpRegT21 = LOONGARCH64Registers::f21;
+
+    static constexpr FPRReg fpRegCS0 = LOONGARCH64Registers::f24;
+    static constexpr FPRReg fpRegCS1 = LOONGARCH64Registers::f25;
+    static constexpr FPRReg fpRegCS2 = LOONGARCH64Registers::f26;
+    static constexpr FPRReg fpRegCS3 = LOONGARCH64Registers::f27;
+    static constexpr FPRReg fpRegCS4 = LOONGARCH64Registers::f28;
+    static constexpr FPRReg fpRegCS5 = LOONGARCH64Registers::f29;
+    static constexpr FPRReg fpRegCS6 = LOONGARCH64Registers::f30;
+    static constexpr FPRReg fpRegCS7 = LOONGARCH64Registers::f31;
+
+    static constexpr FPRReg argumentFPR0 = LOONGARCH64Registers::f0;
+    static constexpr FPRReg argumentFPR1 = LOONGARCH64Registers::f1;
+    static constexpr FPRReg argumentFPR2 = LOONGARCH64Registers::f2;
+    static constexpr FPRReg argumentFPR3 = LOONGARCH64Registers::f3;
+    static constexpr FPRReg argumentFPR4 = LOONGARCH64Registers::f4;
+    static constexpr FPRReg argumentFPR5 = LOONGARCH64Registers::f5;
+    static constexpr FPRReg argumentFPR6 = LOONGARCH64Registers::f6;
+    static constexpr FPRReg argumentFPR7 = LOONGARCH64Registers::f7;
+
+    static constexpr FPRReg returnValueFPR = LOONGARCH64Registers::f0;
+    static constexpr FPRReg nonPreservedNonArgumentFPR0 = LOONGARCH64Registers::f23;
+
+    static FPRReg toRegister(unsigned index)
+    {
+        ASSERT(index < numberOfRegisters);
+        static const FPRReg registerForIndex[numberOfRegisters] = {
+            fpRegT0, fpRegT1, fpRegT2, fpRegT3, fpRegT4, fpRegT5, fpRegT6, fpRegT7,
+            fpRegT8, fpRegT9, fpRegT10, fpRegT11, fpRegT12, fpRegT13, fpRegT14, fpRegT15,
+            fpRegT16, fpRegT17, fpRegT18, fpRegT19, fpRegT20, fpRegT21,
+        };
+        return registerForIndex[index];
+    }
+
+    static FPRReg toArgumentRegister(unsigned index)
+    {
+        ASSERT(index < numberOfArgumentRegisters);
+        static const FPRReg registerForIndex[numberOfArgumentRegisters] = {
+            argumentFPR0, argumentFPR1, argumentFPR2, argumentFPR3,
+            argumentFPR4, argumentFPR5, argumentFPR6, argumentFPR7,
+        };
+        return registerForIndex[index];
+    }
+
+    static unsigned toIndex(FPRReg reg)
+    {
+        ASSERT(reg != InvalidFPRReg);
+        ASSERT(static_cast<int>(reg) < 32);
+        static const unsigned indexForRegister[32] = {
+            0, 1, 2, 3, 4, 5, 6, 7,
+            8, 9, 10, 11, 12, 13, 14, 15,
+            16, 17, 18, 19, 20, 21, InvalidIndex, InvalidIndex,
+            InvalidIndex, InvalidIndex, InvalidIndex, InvalidIndex, InvalidIndex, InvalidIndex, InvalidIndex, InvalidIndex,
+        };
+        return indexForRegister[reg];
+    }
+
+    static unsigned toArgumentIndex(FPRReg reg)
+    {
+        ASSERT(reg != InvalidFPRReg);
+        ASSERT(static_cast<int>(reg) < 32);
+        if (reg > argumentFPR7)
+            return InvalidIndex;
+        return static_cast<unsigned>(reg);
+    }
+
+    static ASCIILiteral debugName(FPRReg reg)
+    {
+        ASSERT(reg != InvalidFPRReg);
+        return MacroAssembler::fprName(reg);
+    }
+
+    static constexpr unsigned InvalidIndex = 0xffffffff;
+};
+
+#endif // CPU(LOONGARCH64)
+
 // We use this hack to get the FPRInfo from the FPRReg type in templates because our code is bad and we should feel bad..
 constexpr FPRInfo toInfoFromReg(FPRReg) { return FPRInfo(); }
 

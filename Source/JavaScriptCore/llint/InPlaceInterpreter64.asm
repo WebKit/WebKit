@@ -31,7 +31,7 @@ macro saveIPIntRegisters()
     if ARM64 or ARM64E
         storepairq MC, PC, -0x10[cfr]
         storeq wasmInstance, -0x18[cfr]
-    elsif X86_64 or RISCV64
+    elsif X86_64 or RISCV64 or LOONGARCH64
         storep PC, -0x8[cfr]
         storep MC, -0x10[cfr]
         storep wasmInstance, -0x18[cfr]
@@ -45,7 +45,7 @@ macro restoreIPIntRegisters()
     if ARM64 or ARM64E
         loadpairq -0x10[cfr], MC, PC
         loadq -0x18[cfr], wasmInstance
-    elsif X86_64 or RISCV64
+    elsif X86_64 or RISCV64 or LOONGARCH64
         loadp -0x8[cfr], PC
         loadp -0x10[cfr], MC
         loadp -0x18[cfr], wasmInstance
@@ -1721,7 +1721,7 @@ instructionLabel(_i32_div_s)
         # https://bugs.webkit.org/show_bug.cgi?id=203692
         cdqi
         idivi t1
-    elsif ARM64 or ARM64E or RISCV64
+    elsif ARM64 or ARM64E or RISCV64 or LOONGARCH64
         divis t1, t0
     else
         error
@@ -1745,7 +1745,7 @@ instructionLabel(_i32_div_u)
     if X86_64
         xori t2, t2
         udivi t1
-    elsif ARM64 or ARM64E or RISCV64
+    elsif ARM64 or ARM64E or RISCV64 or LOONGARCH64
         divi t1, t0
     else
         error
@@ -1782,6 +1782,8 @@ instructionLabel(_i32_rem_s)
         subi t0, t2, t2
     elsif RISCV64
         remis t0, t1, t2
+    elsif LOONGARCH64
+        remis t0, t1, t2
     else
         error
     end
@@ -1808,6 +1810,8 @@ instructionLabel(_i32_rem_u)
         muli t1, t2
         subi t0, t2, t2
     elsif RISCV64
+        remi t0, t1, t2
+    elsif LOONGARCH64
         remi t0, t1, t2
     else
         error
@@ -1975,7 +1979,7 @@ instructionLabel(_i64_div_s)
         # https://bugs.webkit.org/show_bug.cgi?id=203692
         cqoq
         idivq t1
-    elsif ARM64 or ARM64E or RISCV64
+    elsif ARM64 or ARM64E or RISCV64 or LOONGARCH64
         divqs t1, t0
     else
         error
@@ -1999,7 +2003,7 @@ instructionLabel(_i64_div_u)
     if X86_64
         xorq t2, t2
         udivq t1
-    elsif ARM64 or ARM64E or RISCV64
+    elsif ARM64 or ARM64E or RISCV64 or LOONGARCH64
         divq t1, t0
     else
         error
@@ -2036,6 +2040,8 @@ instructionLabel(_i64_rem_s)
         subq t0, t2, t2
     elsif RISCV64
         remqs t0, t1, t2
+    elsif LOONGARCH64
+        remqs t0, t1, t2
     else
         error
     end
@@ -2062,6 +2068,8 @@ instructionLabel(_i64_rem_u)
         mulq t1, t2
         subq t0, t2, t2
     elsif RISCV64
+        remq t0, t1, t2
+    elsif LOONGARCH64
         remq t0, t1, t2
     else
         error

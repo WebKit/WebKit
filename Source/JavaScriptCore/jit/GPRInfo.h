@@ -849,6 +849,143 @@ public:
 
 #endif // CPU(RISCV64)
 
+#if CPU(LOONGARCH64)
+
+#define NUMBER_OF_ARGUMENT_REGISTERS 8u
+#define NUMBER_OF_CALLEE_SAVES_REGISTERS 17u
+
+class GPRInfo {
+public:
+    typedef GPRReg RegisterType;
+    static constexpr unsigned numberOfRegisters = 14;
+    static constexpr unsigned numberOfArgumentRegisters = NUMBER_OF_ARGUMENT_REGISTERS;
+
+    // These registers match the baseline JIT.
+    static constexpr GPRReg callFrameRegister = LOONGARCH64Registers::r22;
+    static constexpr GPRReg numberTagRegister = LOONGARCH64Registers::r30;
+    static constexpr GPRReg notCellMaskRegister = LOONGARCH64Registers::r31;
+    static constexpr GPRReg jitDataRegister = LOONGARCH64Registers::r29;
+    static constexpr GPRReg metadataTableRegister = LOONGARCH64Registers::r28;
+    // Temporary registers.
+    static constexpr GPRReg regT0  = LOONGARCH64Registers::r4;
+    static constexpr GPRReg regT1  = LOONGARCH64Registers::r5;
+    static constexpr GPRReg regT2  = LOONGARCH64Registers::r6;
+    static constexpr GPRReg regT3  = LOONGARCH64Registers::r7;
+    static constexpr GPRReg regT4  = LOONGARCH64Registers::r8;
+    static constexpr GPRReg regT5  = LOONGARCH64Registers::r9;
+    static constexpr GPRReg regT6  = LOONGARCH64Registers::r10;
+    static constexpr GPRReg regT7  = LOONGARCH64Registers::r11;
+    static constexpr GPRReg regT8  = LOONGARCH64Registers::r12;
+    static constexpr GPRReg regT9  = LOONGARCH64Registers::r13;
+    static constexpr GPRReg regT10 = LOONGARCH64Registers::r14;
+    static constexpr GPRReg regT11 = LOONGARCH64Registers::r15;
+    static constexpr GPRReg regT12 = LOONGARCH64Registers::r16;
+    static constexpr GPRReg regT13 = LOONGARCH64Registers::r17;
+
+    static constexpr GPRReg regCS0 = LOONGARCH64Registers::r23;
+    static constexpr GPRReg regCS1 = LOONGARCH64Registers::r24;
+    static constexpr GPRReg regCS2 = LOONGARCH64Registers::r25;
+    static constexpr GPRReg regCS3 = LOONGARCH64Registers::r26;
+    static constexpr GPRReg regCS4 = LOONGARCH64Registers::r27;
+    static constexpr GPRReg regCS5 = LOONGARCH64Registers::r28; // metadataTable in LLInt/Baseline
+    static constexpr GPRReg regCS6 = LOONGARCH64Registers::r29; // constants
+    static constexpr GPRReg regCS7 = LOONGARCH64Registers::r30; // numberTag
+    static constexpr GPRReg regCS8 = LOONGARCH64Registers::r31; // notCellMask
+
+    // These constants provide the names for the general purpose argument & return value registers.
+    static constexpr GPRReg argumentGPR0 = LOONGARCH64Registers::r4; // regT0
+    static constexpr GPRReg argumentGPR1 = LOONGARCH64Registers::r5; // regT1
+    static constexpr GPRReg argumentGPR2 = LOONGARCH64Registers::r6; // regT2
+    static constexpr GPRReg argumentGPR3 = LOONGARCH64Registers::r7; // regT3
+    static constexpr GPRReg argumentGPR4 = LOONGARCH64Registers::r8; // regT4
+    static constexpr GPRReg argumentGPR5 = LOONGARCH64Registers::r9; // regT5
+    static constexpr GPRReg argumentGPR6 = LOONGARCH64Registers::r10; // regT6
+    static constexpr GPRReg argumentGPR7 = LOONGARCH64Registers::r11; // regT7
+
+    static constexpr GPRReg nonArgGPR0 = LOONGARCH64Registers::r12; // regT8
+    static constexpr GPRReg nonArgGPR1 = LOONGARCH64Registers::r13; // regT9
+
+    static constexpr GPRReg returnValueGPR = LOONGARCH64Registers::r4; // regT0
+    static constexpr GPRReg returnValueGPR2 = LOONGARCH64Registers::r5; // regT1
+
+    static constexpr GPRReg nonPreservedNonReturnGPR = LOONGARCH64Registers::r6; // regT2
+    static constexpr GPRReg nonPreservedNonArgumentGPR0 = LOONGARCH64Registers::r12; // regT8
+    static constexpr GPRReg nonPreservedNonArgumentGPR1 = LOONGARCH64Registers::r13; // regT9
+
+    static constexpr GPRReg handlerGPR = GPRInfo::nonPreservedNonArgumentGPR1;
+
+    static constexpr GPRReg wasmScratchGPR0 = LOONGARCH64Registers::r13; // regT9
+    static constexpr GPRReg wasmScratchGPR1 = LOONGARCH64Registers::r14; // regT10
+    static constexpr GPRReg wasmContextInstancePointer = regCS0;
+    static constexpr GPRReg wasmBaseMemoryPointer = regCS3;
+    static constexpr GPRReg wasmBoundsCheckingSizeRegister = regCS4;
+
+    static constexpr GPRReg regWS0 = LOONGARCH64Registers::r13;
+    static constexpr GPRReg regWS1 = LOONGARCH64Registers::r14;
+    static constexpr GPRReg regWA0 = LOONGARCH64Registers::r4;
+    static constexpr GPRReg regWA1 = LOONGARCH64Registers::r5;
+    static constexpr GPRReg regWA2 = LOONGARCH64Registers::r6;
+    static constexpr GPRReg regWA3 = LOONGARCH64Registers::r7;
+    static constexpr GPRReg regWA4 = LOONGARCH64Registers::r8;
+    static constexpr GPRReg regWA5 = LOONGARCH64Registers::r9;
+    static constexpr GPRReg regWA6 = LOONGARCH64Registers::r10;
+    static constexpr GPRReg regWA7 = LOONGARCH64Registers::r11;
+
+    static constexpr GPRReg patchpointScratchRegister = LOONGARCH64Registers::r20; // Should match dataTempRegister
+
+    static constexpr GPRReg toRegister(unsigned index)
+    {
+        ASSERT_UNDER_CONSTEXPR_CONTEXT(index < numberOfRegisters);
+        constexpr GPRReg registerForIndex[numberOfRegisters] = {
+            regT0, regT1, regT2,  regT3,  regT4,  regT5,  regT6,  regT7,
+            regT8, regT9, regT10, regT11, regT12, regT13,
+        };
+        return registerForIndex[index];
+    }
+
+    static GPRReg toArgumentRegister(unsigned index)
+    {
+        ASSERT(index < numberOfArgumentRegisters);
+        static const GPRReg registerForIndex[numberOfArgumentRegisters] = {
+            argumentGPR0, argumentGPR1, argumentGPR2, argumentGPR3,
+            argumentGPR4, argumentGPR5, argumentGPR6, argumentGPR7,
+        };
+        return registerForIndex[index];
+    }
+
+    static unsigned toIndex(GPRReg reg)
+    {
+        ASSERT(reg != InvalidGPRReg);
+        ASSERT(static_cast<int>(reg) < 32);
+        static const unsigned indexForRegister[32] = {
+            InvalidIndex, InvalidIndex, InvalidIndex, InvalidIndex, 0, 1, 2, 3,
+            4, 5, 6, 7, 8, 9, 10, 11,
+            12, 13, InvalidIndex, InvalidIndex, InvalidIndex, InvalidIndex, InvalidIndex, InvalidIndex,
+            InvalidIndex, InvalidIndex, InvalidIndex, InvalidIndex, InvalidIndex, InvalidIndex, InvalidIndex, InvalidIndex,
+        };
+        return indexForRegister[reg];
+    }
+
+    static unsigned toArgumentIndex(GPRReg reg)
+    {
+        ASSERT(reg != InvalidGPRReg);
+        ASSERT(static_cast<int>(reg) < 32);
+        if (reg < argumentGPR0 || reg > argumentGPR7)
+            return InvalidIndex;
+        return static_cast<unsigned>(reg) - 4;
+    }
+
+    static ASCIILiteral debugName(GPRReg reg)
+    {
+        ASSERT(reg != InvalidGPRReg);
+        return MacroAssembler::gprName(reg);
+    }
+
+    static constexpr unsigned InvalidIndex = 0xffffffff;
+};
+
+#endif // CPU(LOONGARCH64)
+
 // To make some code generic over both JSVALUE64 and JSVALUE32_64 platforms, we use standard names
 // for certain JSValueRegs instances. On JSVALUE64, a JSValueRegs corresponds to a single 64-bit
 // architectural GPR, while on JSVALUE32_64, a JSValueRegs corresponds to a pair of 32-bit

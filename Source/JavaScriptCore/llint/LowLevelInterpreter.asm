@@ -221,7 +221,7 @@ end
 
 const maxFrameExtentForSlowPathCall = constexpr maxFrameExtentForSlowPathCall
 
-if X86_64 or ARM64 or ARM64E or RISCV64
+if X86_64 or ARM64 or ARM64E or RISCV64 or LOONGARCH64
     const CalleeSaveSpaceAsVirtualRegisters = 4
 elsif C_LOOP
     const CalleeSaveSpaceAsVirtualRegisters = 1
@@ -283,6 +283,11 @@ if JSVALUE64
         const PB = csr7
         const numberTag = csr8
         const notCellMask = csr9
+    elsif LOONGARCH64
+        const metadataTable = csr5
+        const PB = csr6
+        const numberTag = csr7
+        const notCellMask = csr8
     elsif X86_64
         const metadataTable = csr1
         const PB = csr2
@@ -758,7 +763,7 @@ macro checkStackPointerAlignment(tempReg, location)
     end
 end
 
-if C_LOOP or ARM64 or ARM64E or X86_64 or RISCV64
+if C_LOOP or ARM64 or ARM64E or X86_64 or RISCV64 or LOONGARCH64
     const CalleeSaveRegisterCount = 0
 elsif ARMv7
     const CalleeSaveRegisterCount = 5 + 2 * 2 // 5 32-bit GPRs + 2 64-bit FPRs
@@ -775,7 +780,7 @@ macro pushCalleeSaves()
     # but are not in RegisterSetBuilder::vmCalleeSaveRegisters() need to be saved here,
     # i.e.: only those registers that are callee save in the C ABI, but are not
     # callee save in the JIT ABI.
-    if C_LOOP or ARM64 or ARM64E or X86_64 or RISCV64
+    if C_LOOP or ARM64 or ARM64E or X86_64 or RISCV64 or LOONGARCH64
     elsif ARMv7
         emit "vpush.64 {d14, d15}"
         emit "push {r4-r6, r8-r9}"
@@ -783,7 +788,7 @@ macro pushCalleeSaves()
 end
 
 macro popCalleeSaves()
-    if C_LOOP or ARM64 or ARM64E or X86_64 or RISCV64
+    if C_LOOP or ARM64 or ARM64E or X86_64 or RISCV64 or LOONGARCH64
     elsif ARMv7
         emit "pop {r4-r6, r8-r9}"
         emit "vpop.64 {d14, d15}"
@@ -796,7 +801,7 @@ macro preserveCallerPCAndCFR()
         push cfr
     elsif X86_64
         push cfr
-    elsif ARM64 or ARM64E or RISCV64
+    elsif ARM64 or ARM64E or RISCV64 or LOONGARCH64
         push cfr, lr
     else
         error
@@ -811,7 +816,7 @@ macro restoreCallerPCAndCFR()
         pop lr
     elsif X86_64
         pop cfr
-    elsif ARM64 or ARM64E or RISCV64
+    elsif ARM64 or ARM64E or RISCV64 or LOONGARCH64
         pop lr, cfr
     end
 end
@@ -836,6 +841,11 @@ macro preserveCalleeSavesUsedByLLInt()
         storep csr8, -16[cfr]
         storep csr7, -24[cfr]
         storep csr6, -32[cfr]
+    elsif LOONGARCH64
+        storep csr8, -8[cfr]
+        storep csr7, -16[cfr]
+        storep csr6, -24[cfr]
+        storep csr5, -32[cfr]
     end
 end
 
@@ -858,6 +868,11 @@ macro restoreCalleeSavesUsedByLLInt()
         loadp -24[cfr], csr7
         loadp -16[cfr], csr8
         loadp -8[cfr], csr9
+    elsif LOONGARCH64
+        loadp -32[cfr], csr5
+        loadp -24[cfr], csr6
+        loadp -16[cfr], csr7
+        loadp -8[cfr], csr8
     end
 end
 
@@ -901,7 +916,7 @@ macro forEachFPCalleeSave(func)
 end
 
 macro copyCalleeSavesToEntryFrameCalleeSavesBuffer(entryFrame)
-    if ARM64 or ARM64E or X86_64 or ARMv7 or RISCV64
+    if ARM64 or ARM64E or X86_64 or ARMv7 or RISCV64 or LOONGARCH64
         vmEntryRecord(entryFrame, entryFrame)
         leap VMEntryRecord::calleeSaveRegistersBuffer[entryFrame], entryFrame
         if ARM64 or ARM64E
@@ -953,19 +968,37 @@ macro copyCalleeSavesToEntryFrameCalleeSavesBuffer(entryFrame)
             stored csfr9, 160[entryFrame]
             stored csfr10, 168[entryFrame]
             stored csfr11, 176[entryFrame]
+        elsif LOONGARCH64
+            storep csr0, [entryFrame]
+            storep csr1, 8[entryFrame]
+            storep csr2, 16[entryFrame]
+            storep csr3, 24[entryFrame]
+            storep csr4, 32[entryFrame]
+            storep csr5, 40[entryFrame]
+            storep csr6, 48[entryFrame]
+            storep csr7, 56[entryFrame]
+            storep csr8, 64[entryFrame]
+            stored csfr0, 72[entryFrame]
+            stored csfr1, 80[entryFrame]
+            stored csfr2, 88[entryFrame]
+            stored csfr3, 96[entryFrame]
+            stored csfr4, 104[entryFrame]
+            stored csfr5, 112[entryFrame]
+            stored csfr6, 120[entryFrame]
+            stored csfr7, 128[entryFrame]
         end
     end
 end
 
 macro copyCalleeSavesToVMEntryFrameCalleeSavesBuffer(vm, temp)
-    if ARM64 or ARM64E or X86_64 or ARMv7 or RISCV64
+    if ARM64 or ARM64E or X86_64 or ARMv7 or RISCV64 or LOONGARCH64
         loadp VM::topEntryFrame[vm], temp
         copyCalleeSavesToEntryFrameCalleeSavesBuffer(temp)
     end
 end
 
 macro restoreCalleeSavesFromVMEntryFrameCalleeSavesBuffer(vm, temp)
-    if ARM64 or ARM64E or X86_64 or ARMv7 or RISCV64
+    if ARM64 or ARM64E or X86_64 or ARMv7 or RISCV64 or LOONGARCH64
         loadp VM::topEntryFrame[vm], temp
         vmEntryRecord(temp, temp)
         leap VMEntryRecord::calleeSaveRegistersBuffer[temp], temp
@@ -1018,12 +1051,30 @@ macro restoreCalleeSavesFromVMEntryFrameCalleeSavesBuffer(vm, temp)
             loadd 160[temp], csfr9
             loadd 168[temp], csfr10
             loadd 176[temp], csfr11
+        elsif LOONGARCH64
+            loadq [temp], csr0
+            loadq 8[temp], csr1
+            loadq 16[temp], csr2
+            loadq 24[temp], csr3
+            loadq 32[temp], csr4
+            loadq 40[temp], csr5
+            loadq 48[temp], csr6
+            loadq 56[temp], csr7
+            loadq 64[temp], csr8
+            loadd 72[temp], csfr0
+            loadd 80[temp], csfr1
+            loadd 88[temp], csfr2
+            loadd 96[temp], csfr3
+            loadd 104[temp], csfr4
+            loadd 112[temp], csfr5
+            loadd 120[temp], csfr6
+            loadd 128[temp], csfr7
         end
     end
 end
 
 macro preserveReturnAddressAfterCall(destinationRegister)
-    if C_LOOP or ARMv7 or ARM64 or ARM64E or RISCV64
+    if C_LOOP or ARMv7 or ARM64 or ARM64E or RISCV64 or LOONGARCH64
         # In C_LOOP case, we're only preserving the bytecode vPC.
         move lr, destinationRegister
     elsif X86_64
@@ -1037,7 +1088,7 @@ macro functionPrologue()
     tagReturnAddress sp
     if X86_64
         push cfr
-    elsif ARM64 or ARM64E or RISCV64
+    elsif ARM64 or ARM64E or RISCV64 or LOONGARCH64
         push cfr, lr
     elsif C_LOOP or ARMv7 
         push lr
@@ -1049,7 +1100,7 @@ end
 macro functionEpilogue()
     if X86_64
         pop cfr
-    elsif ARM64 or ARM64E or RISCV64
+    elsif ARM64 or ARM64E or RISCV64 or LOONGARCH64
         pop lr, cfr
     elsif C_LOOP or ARMv7
         pop cfr
@@ -1212,7 +1263,7 @@ macro prepareForTailCall(temp1, temp2, temp3, temp4, storeCodeBlock)
     addi StackAlignment - 1 + CallFrameHeaderSize, temp2
     andi ~StackAlignmentMask, temp2
 
-    if ARMv7 or ARM64 or ARM64E or C_LOOP or RISCV64
+    if ARMv7 or ARM64 or ARM64E or C_LOOP or RISCV64 or LOONGARCH64
         subi CallerFrameAndPCSize, temp2
         loadp CallerFrameAndPC::returnPC[cfr], lr
     else
@@ -1506,7 +1557,7 @@ macro prologue(osrSlowPath, traceSlowPath)
         btpz r0, .recover
         move cfr, sp # restore the previous sp
         # pop the callerFrame since we will jump to a function that wants to save it
-        if ARM64 or RISCV64
+        if ARM64 or RISCV64 or LOONGARCH64
             pop lr, cfr
         elsif ARM64E
             # untagReturnAddress will be performed in Gate::entryOSREntry.
@@ -1994,7 +2045,7 @@ else
             leap (label - _%kind%_relativePCBase)[t3], t4
             move index, t5
             storep t4, [map, t5, 8]
-        elsif ARM64 or RISCV64
+        elsif ARM64 or RISCV64 or LOONGARCH64
             pcrtoaddr label, t3
             move index, t4
             storep t3, [map, t4, PtrSize]
@@ -2872,6 +2923,19 @@ global _wasmLLIntPCRangeEnd
 _wasmLLIntPCRangeEnd:
     break # FIXME: rdar://96556827
 
+if LOONGARCH64
+_wasm_trampoline_wasm_ipint_call:
+_wasm_trampoline_wasm_ipint_call_wide16:
+_wasm_trampoline_wasm_ipint_call_wide32:
+_wasm_trampoline_wasm_ipint_tail_call:
+_wasm_trampoline_wasm_ipint_tail_call_wide16:
+_wasm_trampoline_wasm_ipint_tail_call_wide32:
+
+_wasm_ipint_call_return_location:
+_wasm_ipint_call_return_location_wide16:
+_wasm_ipint_call_return_location_wide32:
+    crash()
+end
 else
 
 # These need to be defined even when WebAssembly is disabled

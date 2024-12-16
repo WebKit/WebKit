@@ -657,6 +657,12 @@ private:
                 signExtend32ToPtr(argReg, argReg);
             }
 
+            if (isLOONGARCH64() && gprIndex < GPRInfo::numberOfArgumentRegisters
+                && std::is_integral_v<ArgumentType> && sizeof(ArgumentType) == 4) {
+                GPRReg argReg = GPRInfo::toArgumentRegister(gprIndex);
+                signExtend32ToPtr(argReg, argReg);
+            }
+
             finalizeGPRArguments<OperationType, gprIndex + 1>(NextIndexSequenceType());
         } else
             finalizeGPRArguments<OperationType, gprIndex>(NextIndexSequenceType());
@@ -878,7 +884,7 @@ public:
 
         // We don't need the current frame beyond this point. Masquerade as our
         // caller.
-#if CPU(ARM_THUMB2) || CPU(ARM64) || CPU(RISCV64)
+#if CPU(ARM_THUMB2) || CPU(ARM64) || CPU(RISCV64) || CPU(LOONGARCH64)
         loadPtr(Address(framePointerRegister, CallFrame::returnPCOffset()), linkRegister);
         subPtr(TrustedImm32(2 * sizeof(void*)), newFrameSizeGPR);
 #if CPU(ARM64E)

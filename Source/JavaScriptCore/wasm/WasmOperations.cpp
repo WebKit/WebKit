@@ -850,6 +850,13 @@ static void doOSREntry(JSWebAssemblyInstance* instance, Probe::Context& context,
     context.gpr(RISCV64Registers::ra) = std::bit_cast<UCPURegister>(*(framePointer + 1));
     context.sp() = framePointer + 2;
     static_assert(prologueStackPointerDelta() == sizeof(void*) * 2);
+#elif CPU(LOONGARCH64)
+    // move(framePointerRegister, stackPointerRegister);
+    // popPair(framePointerRegister, linkRegister);
+    context.fp() = std::bit_cast<UCPURegister*>(*framePointer);
+    context.gpr(LOONGARCH64Registers::ra) = std::bit_cast<UCPURegister>(*(framePointer + 1));
+    context.sp() = framePointer + 2;
+    static_assert(prologueStackPointerDelta() == sizeof(void*) * 2);
 #elif CPU(ARM)
     context.fp() = std::bit_cast<UCPURegister*>(*framePointer);
     context.gpr(ARMRegisters::lr) = std::bit_cast<UCPURegister>(*(framePointer + 1));

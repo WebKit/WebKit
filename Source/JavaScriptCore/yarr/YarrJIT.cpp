@@ -1018,7 +1018,7 @@ class YarrGenerator final : public YarrJITInfo {
         m_jit.poke(imm, frameLocation);
     }
 
-#if CPU(ARM64) || CPU(X86_64) || CPU(RISCV64)
+#if CPU(ARM64) || CPU(X86_64) || CPU(RISCV64) || CPU(LOONGARCH64)
     void storeToFrame(MacroAssembler::TrustedImmPtr imm, unsigned frameLocation)
     {
         m_jit.poke(imm, frameLocation);
@@ -1893,7 +1893,7 @@ class YarrGenerator final : public YarrJITInfo {
         }
 
         const MacroAssembler::RegisterID character = m_regs.regT0;
-#if CPU(X86_64) || CPU(ARM64) || CPU(RISCV64)
+#if CPU(X86_64) || CPU(ARM64) || CPU(RISCV64) || CPU(LOONGARCH64)
         unsigned maxCharactersAtOnce = m_charSize == CharSize::Char8 ? 8 : 4;
 #else
         unsigned maxCharactersAtOnce = m_charSize == CharSize::Char8 ? 4 : 2;
@@ -1991,7 +1991,7 @@ class YarrGenerator final : public YarrJITInfo {
                 op.m_jumps.append(m_jit.branch32WithUnalignedHalfWords(MacroAssembler::NotEqual, negativeOffsetIndexedAddress(offset, character), MacroAssembler::TrustedImm32(characters)));
             };
 
-#if CPU(X86_64) || CPU(ARM64) || CPU(RISCV64)
+#if CPU(X86_64) || CPU(ARM64) || CPU(RISCV64) || CPU(LOONGARCH64)
             auto check8 = [&] (Checked<unsigned> offset, uint64_t characters, uint64_t mask) {
                 m_jit.load64(negativeOffsetIndexedAddress(offset, character), character);
                 if (mask)
@@ -2018,7 +2018,7 @@ class YarrGenerator final : public YarrJITInfo {
                 check4(op.m_checkedOffset - startTermPosition, allCharacters & 0xffffffff, ignoreCaseMask & 0xffffffff);
                 return;
             }
-#if CPU(X86_64) || CPU(ARM64) || CPU(RISCV64)
+#if CPU(X86_64) || CPU(ARM64) || CPU(RISCV64) || CPU(LOONGARCH64)
             case 5: {
                 check4(op.m_checkedOffset - startTermPosition, allCharacters & 0xffffffff, ignoreCaseMask & 0xffffffff);
                 check1(op.m_checkedOffset - startTermPosition - 4, (allCharacters >> 32) & 0xff);
@@ -2057,7 +2057,7 @@ class YarrGenerator final : public YarrJITInfo {
                 op.m_jumps.append(m_jit.branch32WithUnalignedHalfWords(MacroAssembler::NotEqual, negativeOffsetIndexedAddress(offset, character), MacroAssembler::TrustedImm32(characters)));
             };
 
-#if CPU(X86_64) || CPU(ARM64) || CPU(RISCV64)
+#if CPU(X86_64) || CPU(ARM64) || CPU(RISCV64) || CPU(LOONGARCH64)
             auto check4 = [&] (Checked<unsigned> offset, uint64_t characters, uint64_t mask) {
                 m_jit.load64(negativeOffsetIndexedAddress(offset, character), character);
                 if (mask)
@@ -2074,7 +2074,7 @@ class YarrGenerator final : public YarrJITInfo {
             case 2:
                 check2(op.m_checkedOffset - startTermPosition, allCharacters & 0xffffffff, ignoreCaseMask & 0xffffffff);
                 return;
-#if CPU(X86_64) || CPU(ARM64) || CPU(RISCV64)
+#if CPU(X86_64) || CPU(ARM64) || CPU(RISCV64) || CPU(LOONGARCH64)
             case 3:
                 check2(op.m_checkedOffset - startTermPosition, allCharacters & 0xffffffff, ignoreCaseMask & 0xffffffff);
                 check1(op.m_checkedOffset - startTermPosition - 2, (allCharacters >> 32) & 0xffff);
@@ -2826,7 +2826,7 @@ class YarrGenerator final : public YarrJITInfo {
                             m_jit.move(MacroAssembler::TrustedImmPtr(pointer), m_regs.regT1);
                             auto loopHead = m_jit.label();
                             readCharacter(op.m_checkedOffset - endIndex + 1, m_regs.regT0);
-#if CPU(ARM64) || CPU(RISCV64)
+#if CPU(ARM64) || CPU(RISCV64) || CPU(LOONGARCH64)
                             static_assert(sizeof(BoyerMooreBitmap::Map::WordType) == sizeof(uint64_t));
                             static_assert(1 << 6 == 64);
                             static_assert(1 << (6 + 1) == BoyerMooreBitmap::Map::size());
@@ -4621,7 +4621,7 @@ class YarrGenerator final : public YarrJITInfo {
         pushInEnter(ARMRegisters::r6);
         pushInEnter(ARMRegisters::r8);
         pushInEnter(ARMRegisters::r10);
-#elif CPU(RISCV64)
+#elif CPU(RISCV64) || CPU(LOONGARCH64)
         UNUSED_VARIABLE(pushInEnter);
         if (mayCall())
             pushPairInEnter(MacroAssembler::framePointerRegister, MacroAssembler::linkRegister);
@@ -4668,7 +4668,7 @@ class YarrGenerator final : public YarrJITInfo {
         m_jit.pop(ARMRegisters::r6);
         m_jit.pop(ARMRegisters::r5);
         m_jit.pop(ARMRegisters::r4);
-#elif CPU(RISCV64)
+#elif CPU(RISCV64) || CPU(LOONGARCH64)
         if (mayCall())
             m_jit.popPair(MacroAssembler::framePointerRegister, MacroAssembler::linkRegister);
 #endif
@@ -5498,7 +5498,7 @@ void jitCompile(YarrPattern& pattern, StringView patternString, CharSize charSiz
 }
 
 #if ENABLE(YARR_JIT_REGEXP_TEST_INLINE)
-#if !(CPU(ARM64) || CPU(X86_64) || CPU(RISCV64))
+#if !(CPU(ARM64) || CPU(X86_64) || CPU(RISCV64) || CPU(LOONGARCH64))
 #error "No support for inlined JIT'ing of RegExp.test for this CPU / OS combination."
 #endif
 
