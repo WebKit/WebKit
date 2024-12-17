@@ -35,10 +35,14 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/reporting/document-reporting-override-endpoint.https.sub.html.sub.headers
 /LayoutTests/imported/w3c/web-platform-tests/reporting/document-reporting-path-absolute.https.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/reporting/document-reporting-path-absolute.https.sub.html.sub.headers
+/LayoutTests/imported/w3c/web-platform-tests/reporting/generateTestReport-honors-endpoint.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/reporting/generateTestReport-honors-endpoint.https.sub.html.sub.headers
 /LayoutTests/imported/w3c/web-platform-tests/reporting/generateTestReport.html
 /LayoutTests/imported/w3c/web-platform-tests/reporting/idlharness.any.js
 /LayoutTests/imported/w3c/web-platform-tests/reporting/nestedReport.html
 /LayoutTests/imported/w3c/web-platform-tests/reporting/order.html
+/LayoutTests/imported/w3c/web-platform-tests/reporting/reporting-api-honors-limits.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/reporting/reporting-api-honors-limits.https.sub.html.sub.headers
 /LayoutTests/imported/w3c/web-platform-tests/reporting/reporting-isolated-across-navigations.https.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/reporting/same-origin-cross-site-credentials.https.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/reporting/same-origin-report-credentials.https.sub.html

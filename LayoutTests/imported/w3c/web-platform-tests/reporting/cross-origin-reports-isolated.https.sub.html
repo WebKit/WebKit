@@ -19,7 +19,7 @@
       // same endpoint that this frame reports to.
       await new Promise(resolve => {
         const iframe = document.createElement('iframe');
-        iframe.src = "https://{{hosts[alt][]}}:{{ports[https][0]}}/reporting/resources/csp-error.https.sub.html";
+        iframe.src = "https://{{domains[www]}}:{{ports[https][0]}}/reporting/resources/csp-error.https.sub.html";
         addEventListener('message', resolve);
         document.body.appendChild(iframe);
       });

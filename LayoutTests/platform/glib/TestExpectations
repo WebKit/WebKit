@@ -1018,7 +1018,7 @@ imported/w3c/web-platform-tests/css/css-transforms/transform3d-scale-004.html [ 
 imported/w3c/web-platform-tests/css/css-transforms/transform3d-sorting-003.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-transforms/transform3d-translate3d-001.html [ Pass ]
 
-webkit.org/b/246766 imported/w3c/web-platform-tests/reporting/generateTestReport-honors-endpoint.http.sub.html [ Failure ]
+webkit.org/b/246766 imported/w3c/web-platform-tests/reporting/generateTestReport-honors-endpoint.https.sub.html [ Failure ]
 
 webkit.org/b/251527 imported/w3c/web-platform-tests/css/css-scroll-snap/selection-target.html [ Failure ]
 

@@ -1778,7 +1778,7 @@ imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/js
 webkit.org/b/245900 [ Debug ] fast/inline/inline-box-adjust-position-crash2.html [ Skip ]
 
 # http version of this test fails, but https passes. May be a PingLoad issue in GTK
-webkit.org/b/246766 imported/w3c/web-platform-tests/reporting/generateTestReport-honors-endpoint.http.sub.html [ Failure ]
+webkit.org/b/246766 imported/w3c/web-platform-tests/reporting/generateTestReport-honors-endpoint.https.sub.html [ Failure ]
 
 webkit.org/b/256768 fast/mediastream/captureStream/canvas3d.html [ Failure Pass ]
 

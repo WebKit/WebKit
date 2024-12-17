@@ -6185,6 +6185,9 @@ imported/w3c/web-platform-tests/import-maps/nonimport-integrity.html [ DumpJSCon
 # These tests have been timing out since their import.
 imported/w3c/web-platform-tests/import-maps/data-driven [ Skip ]
 
+# Imported tests that are timing out because the feature is not yet implemented.
+imported/w3c/web-platform-tests/content-security-policy/report-hash [ Skip ]
+
 # WebKit2 Only
 fullscreen/fullscreen-enter-bottom-padding-animation.html [ Skip ]
 

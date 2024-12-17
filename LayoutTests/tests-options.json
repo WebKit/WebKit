@@ -1970,6 +1970,9 @@
     "imported/w3c/web-platform-tests/content-security-policy/object-src/object-src-2_2.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/content-security-policy/report-hash/multiple-policies.https.sub.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/content-security-policy/reporting-api/reporting-api-report-to-overrides-report-uri-2.https.sub.html": [
         "slow"
     ],
