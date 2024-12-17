@@ -615,7 +615,8 @@ static std::optional<TimeZoneRecord> parseTimeZoneAnnotation(StringParsingBuffer
         if (*buffer != ']')
             return std::nullopt;
         buffer.advance();
-        return TimeZoneRecord { false, std::tuple(asString, offset.value()), std::nullopt };
+        // TODO: ?? should offset appear in both fields?
+        return TimeZoneRecord { false, std::tuple(asString, offset.value()), asString };
     }
     case 'E': {
         // "Etc/GMT+20" and "]" => length is 11.
@@ -1749,27 +1750,39 @@ String formatDateTimeUTCOffsetRounded(Int128 offsetNanoseconds)
 }
 
 // https://tc39.es/ecma262/#sec-hourfromtime
-static unsigned hourFromTime(Int128 t)
+static double hourFromTime(double t)
 {
-    return std::trunc(std::fmod(t / msPerHour, WTF::hoursPerDay));
+    double result = std::trunc(std::fmod(std::floor(t / msPerHour), WTF::hoursPerDay));
+    if (result < 0)
+        result += WTF::hoursPerDay;
+    return result;
 }
 
 // https://tc39.es/ecma262/#sec-minfromtime
-static unsigned minFromTime(Int128 t)
+static double minFromTime(double t)
 {
-    return std::trunc(std::fmod(t / msPerMinute, minutesPerHour));
+    double result = std::trunc(std::fmod(std::floor(t / msPerMinute), minutesPerHour));
+    if (result < 0)
+        result += minutesPerHour;
+    return result;
 }
 
 // https://tc39.es/ecma262/#sec-secfromtime
-static unsigned secFromTime(Int128 t)
+static double secFromTime(double t)
 {
-    return std::trunc(std::fmod(t / msPerSecond, secondsPerMinute));
+    double result = std::trunc(std::fmod(std::floor(t / msPerSecond), secondsPerMinute));
+    if (result < 0)
+        result += secondsPerMinute;
+    return result;
 }
 
 // https://tc39.es/ecma262/#sec-msfromtime
-static unsigned msFromTime(Int128 t)
+static double msFromTime(double t)
 {
-    return std::trunc(std::fmod(t, msPerSecond));
+    double result = std::fmod(t, msPerSecond);
+    if (result < 0)
+        result += msPerSecond;
+    return std::trunc(result);
 }
 
 // https://tc39.es/proposal-temporal/#sec-temporal-getisopartsfromepoch
