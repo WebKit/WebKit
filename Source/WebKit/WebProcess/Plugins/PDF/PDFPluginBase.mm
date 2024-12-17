@@ -68,6 +68,7 @@
 #import <WebCore/RenderLayerScrollableArea.h>
 #import <WebCore/ResourceResponse.h>
 #import <WebCore/ScrollAnimator.h>
+#import <WebCore/Scrollbar.h>
 #import <WebCore/SharedBuffer.h>
 #import <WebCore/VoidCallback.h>
 #import <wtf/StdLibExtras.h>
@@ -714,6 +715,26 @@ ScrollableArea* PDFPluginBase::enclosingScrollableArea() const
 IntRect PDFPluginBase::scrollableAreaBoundingBox(bool*) const
 {
     return m_view->frameRect();
+}
+
+WebCore::Scrollbar* PDFPluginBase::horizontalScrollbar() const
+{
+    return m_horizontalScrollbar.get();
+}
+
+WebCore::Scrollbar* PDFPluginBase::verticalScrollbar() const
+{
+    return m_verticalScrollbar.get();
+}
+
+RefPtr<WebCore::Scrollbar> PDFPluginBase::protectedHorizontalScrollbar() const
+{
+    return horizontalScrollbar();
+}
+
+RefPtr<WebCore::Scrollbar> PDFPluginBase::protectedVerticalScrollbar() const
+{
+    return verticalScrollbar();
 }
 
 void PDFPluginBase::setScrollOffset(const ScrollOffset& offset)

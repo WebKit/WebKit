@@ -706,6 +706,26 @@ RectEdges<bool> ScrollableArea::edgePinnedState() const
     };
 }
 
+IntRect ScrollableArea::convertFromScrollbarToContainingView(const Scrollbar& scrollbar, const IntRect& scrollbarRect) const
+{
+    return scrollbar.Widget::convertToContainingView(scrollbarRect);
+}
+
+IntRect ScrollableArea::convertFromContainingViewToScrollbar(const Scrollbar& scrollbar, const IntRect& parentRect) const
+{
+    return scrollbar.Widget::convertFromContainingView(parentRect);
+}
+
+IntPoint ScrollableArea::convertFromScrollbarToContainingView(const Scrollbar& scrollbar, const IntPoint& scrollbarPoint) const
+{
+    return scrollbar.Widget::convertToContainingView(scrollbarPoint);
+}
+
+IntPoint ScrollableArea::convertFromContainingViewToScrollbar(const Scrollbar& scrollbar, const IntPoint& parentPoint) const
+{
+    return scrollbar.Widget::convertFromContainingView(parentPoint);
+}
+
 int ScrollableArea::horizontalScrollbarIntrusion() const
 {
     return verticalScrollbar() ? verticalScrollbar()->occupiedWidth() : 0;

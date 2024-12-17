@@ -73,6 +73,7 @@
 #include "RenderScrollbarPart.h"
 #include "RenderStyleInlines.h"
 #include "RenderView.h"
+#include "ScrollAnchoringController.h"
 #include "ScrollAnimator.h"
 #include "ScrollbarTheme.h"
 #include "ScrollbarsController.h"

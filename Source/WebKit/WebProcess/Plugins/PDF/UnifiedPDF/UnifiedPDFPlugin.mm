@@ -59,6 +59,7 @@
 #include "WebPageProxyMessages.h"
 #include <CoreGraphics/CoreGraphics.h>
 #include <PDFKit/PDFKit.h>
+#include <WebCore/AXCoreObject.h>
 #include <WebCore/AffineTransform.h>
 #include <WebCore/AutoscrollController.h>
 #include <WebCore/BitmapImage.h>

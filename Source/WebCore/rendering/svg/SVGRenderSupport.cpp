@@ -40,6 +40,7 @@
 #include "ReferencedSVGResources.h"
 #include "RenderChildIterator.h"
 #include "RenderElement.h"
+#include "RenderElementInlines.h"
 #include "RenderGeometryMap.h"
 #include "RenderIterator.h"
 #include "RenderLayer.h"

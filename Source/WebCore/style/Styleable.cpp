@@ -46,6 +46,7 @@
 #include "RenderChildIterator.h"
 #include "RenderDescendantIterator.h"
 #include "RenderElement.h"
+#include "RenderElementInlines.h"
 #include "RenderListItem.h"
 #include "RenderListMarker.h"
 #include "RenderStyleInlines.h"

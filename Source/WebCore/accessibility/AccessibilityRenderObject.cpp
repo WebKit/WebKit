@@ -79,6 +79,7 @@
 #include "ProgressTracker.h"
 #include "Range.h"
 #include "RenderButton.h"
+#include "RenderElementInlines.h"
 #include "RenderFileUploadControl.h"
 #include "RenderHTMLCanvas.h"
 #include "RenderImage.h"

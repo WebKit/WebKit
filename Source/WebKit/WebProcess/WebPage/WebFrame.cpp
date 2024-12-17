@@ -58,6 +58,7 @@
 #include <JavaScriptCore/JSGlobalObjectInlines.h>
 #include <JavaScriptCore/JSLock.h>
 #include <JavaScriptCore/JSValueRef.h>
+#include <WebCore/AXObjectCache.h>
 #include <WebCore/ArchiveResource.h>
 #include <WebCore/CertificateInfo.h>
 #include <WebCore/Chrome.h>

@@ -25,14 +25,11 @@
 
 #pragma once
 
-#include "KeyboardScroll.h"
+#include "Color.h"
+#include "FrameIdentifier.h"
 #include "RectEdges.h"
-#include "ScrollAlignment.h"
-#include "ScrollAnchoringController.h"
 #include "ScrollSnapOffsetsInfo.h"
 #include "ScrollTypes.h"
-#include "Scrollbar.h"
-#include "ScrollbarColor.h"
 #include <wtf/CheckedPtr.h>
 #include <wtf/Forward.h>
 #include <wtf/TZoneMalloc.h>
@@ -44,22 +41,25 @@ class TextStream;
 
 namespace WebCore {
 
+class Element;
 class FloatPoint;
 class GraphicsContext;
+class GraphicsLayer;
 class LayoutPoint;
 class LayoutSize;
 class PlatformTouchEvent;
 class PlatformWheelEvent;
 class ScrollAnimator;
+class Scrollbar;
 class ScrollbarsController;
-class GraphicsLayer;
 class TiledBacking;
-class Element;
 
-enum class WheelScrollGestureState : uint8_t;
-
+struct KeyboardScroll;
+struct ScrollAlignment;
 struct ScrollbarColor;
 struct ScrollbarGutter;
+
+enum class WheelScrollGestureState : uint8_t;
 
 inline int offsetForOrientation(ScrollOffset offset, ScrollbarOrientation orientation)
 {
@@ -229,22 +229,10 @@ public:
     // Convert points and rects between the scrollbar and its containing view.
     // The client needs to implement these in order to be aware of layout effects
     // like CSS transforms.
-    virtual IntRect convertFromScrollbarToContainingView(const Scrollbar& scrollbar, const IntRect& scrollbarRect) const
-    {
-        return scrollbar.Widget::convertToContainingView(scrollbarRect);
-    }
-    virtual IntRect convertFromContainingViewToScrollbar(const Scrollbar& scrollbar, const IntRect& parentRect) const
-    {
-        return scrollbar.Widget::convertFromContainingView(parentRect);
-    }
-    virtual IntPoint convertFromScrollbarToContainingView(const Scrollbar& scrollbar, const IntPoint& scrollbarPoint) const
-    {
-        return scrollbar.Widget::convertToContainingView(scrollbarPoint);
-    }
-    virtual IntPoint convertFromContainingViewToScrollbar(const Scrollbar& scrollbar, const IntPoint& parentPoint) const
-    {
-        return scrollbar.Widget::convertFromContainingView(parentPoint);
-    }
+    virtual IntRect convertFromScrollbarToContainingView(const Scrollbar&, const IntRect& scrollbarRect) const;
+    virtual IntRect convertFromContainingViewToScrollbar(const Scrollbar&, const IntRect& parentRect) const;
+    virtual IntPoint convertFromScrollbarToContainingView(const Scrollbar&, const IntPoint& scrollbarPoint) const;
+    virtual IntPoint convertFromContainingViewToScrollbar(const Scrollbar&, const IntPoint& parentPoint) const;
 
     int horizontalScrollbarIntrusion() const;
     int verticalScrollbarIntrusion() const;

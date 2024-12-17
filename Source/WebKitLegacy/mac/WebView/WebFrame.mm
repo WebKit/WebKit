@@ -103,6 +103,7 @@
 #import <WebCore/PrintContext.h>
 #import <WebCore/Range.h>
 #import <WebCore/RemoteUserInputEventData.h>
+#import <WebCore/RenderElementInlines.h>
 #import <WebCore/RenderLayer.h>
 #import <WebCore/RenderLayerCompositor.h>
 #import <WebCore/RenderLayerScrollableArea.h>

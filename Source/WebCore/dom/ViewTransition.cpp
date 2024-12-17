@@ -44,6 +44,7 @@
 #include "Logging.h"
 #include "PseudoElementRequest.h"
 #include "RenderBox.h"
+#include "RenderElementInlines.h"
 #include "RenderInline.h"
 #include "RenderLayer.h"
 #include "RenderLayerModelObject.h"

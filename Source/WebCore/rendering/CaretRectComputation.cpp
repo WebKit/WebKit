@@ -37,6 +37,7 @@
 #include "RenderBlockFlow.h"
 #include "RenderBoxInlines.h"
 #include "RenderBoxModelObjectInlines.h"
+#include "RenderElementInlines.h"
 #include "RenderInline.h"
 #include "RenderLineBreak.h"
 #include "RenderSVGInlineText.h"

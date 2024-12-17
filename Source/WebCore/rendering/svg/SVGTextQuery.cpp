@@ -24,6 +24,7 @@
 #include "FloatConversion.h"
 #include "LegacyInlineFlowBox.h"
 #include "RenderBlockFlow.h"
+#include "RenderElementInlines.h"
 #include "RenderInline.h"
 #include "RenderSVGInlineText.h"
 #include "RenderSVGText.h"

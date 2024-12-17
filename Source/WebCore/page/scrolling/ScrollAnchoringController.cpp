@@ -31,6 +31,7 @@
 #include "LocalFrameView.h"
 #include "Logging.h"
 #include "RenderBox.h"
+#include "RenderElementInlines.h"
 #include "RenderLayerScrollableArea.h"
 #include "RenderObjectInlines.h"
 #include "RenderView.h"

@@ -21,7 +21,6 @@
 
 #pragma once
 
-#include "AXObjectCache.h"
 #include "Cursor.h"
 #include "DisabledAdaptations.h"
 #include "FocusDirection.h"

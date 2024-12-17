@@ -66,6 +66,7 @@
 #import "WebProcess.h"
 #import "WebTouchEvent.h"
 #import <CoreText/CTFont.h>
+#import <WebCore/AXObjectCache.h>
 #import <WebCore/Autofill.h>
 #import <WebCore/AutofillElements.h>
 #import <WebCore/Chrome.h>
@@ -141,6 +142,7 @@
 #import <WebCore/Range.h>
 #import <WebCore/RenderBlock.h>
 #import <WebCore/RenderBoxInlines.h>
+#import <WebCore/RenderElementInlines.h>
 #import <WebCore/RenderImage.h>
 #import <WebCore/RenderLayer.h>
 #import <WebCore/RenderLayerBacking.h>

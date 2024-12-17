@@ -26,6 +26,7 @@
 #pragma once
 
 #include "PlatformCAAnimationRemote.h"
+#include <WebCore/ContentsFormat.h>
 #include <WebCore/PlatformCALayer.h>
 
 namespace WebKit {

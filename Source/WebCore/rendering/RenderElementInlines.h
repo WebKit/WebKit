@@ -19,6 +19,7 @@
 
 #pragma once
 
+#include "Element.h"
 #include "RenderElement.h"
 #include "RenderObjectInlines.h"
 
@@ -41,6 +42,26 @@ inline bool RenderElement::isTransparent() const { return style().hasOpacity(); 
 inline float RenderElement::opacity() const { return style().opacity(); }
 inline FloatRect RenderElement::transformReferenceBoxRect() const { return transformReferenceBoxRect(style()); }
 inline FloatRect RenderElement::transformReferenceBoxRect(const RenderStyle& style) const { return referenceBoxRect(transformBoxToCSSBoxType(style.transformBox())); }
+
+inline Element* RenderElement::element() const
+{
+    return downcast<Element>(RenderObject::node());
+}
+
+inline RefPtr<Element> RenderElement::protectedElement() const
+{
+    return element();
+}
+
+inline Element* RenderElement::nonPseudoElement() const
+{
+    return downcast<Element>(RenderObject::nonPseudoNode());
+}
+
+inline Element* RenderElement::generatingElement() const
+{
+    return downcast<Element>(RenderObject::generatingNode());
+}
 
 inline bool RenderElement::canContainAbsolutelyPositionedObjects() const
 {

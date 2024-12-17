@@ -23,6 +23,7 @@
 #include "SVGTextLayoutEngine.h"
 
 #include "PathTraversalState.h"
+#include "RenderElementInlines.h"
 #include "RenderSVGTextPath.h"
 #include "RenderStyleInlines.h"
 #include "SVGElement.h"

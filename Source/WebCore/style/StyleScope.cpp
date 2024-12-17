@@ -47,6 +47,7 @@
 #include "Logging.h"
 #include "ProcessingInstruction.h"
 #include "RenderBoxInlines.h"
+#include "RenderElementInlines.h"
 #include "RenderLayer.h"
 #include "RenderView.h"
 #include "RuleSet.h"

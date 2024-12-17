@@ -29,6 +29,7 @@
 #if PLATFORM(MAC)
 
 #include <WebCore/ScrollableArea.h>
+#include <WebCore/Scrollbar.h>
 #include <WebCore/ScrollbarThemeMac.h>
 #include <WebCore/ScrollingCoordinator.h>
 #include <pal/spi/mac/NSScrollerImpSPI.h>

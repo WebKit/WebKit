@@ -40,6 +40,7 @@
 #include "IntRect.h"
 #include "NoiseInjectionPolicy.h"
 #include "RenderElement.h"
+#include "RenderElementInlines.h"
 #include "ScriptTelemetryCategory.h"
 #include "StyleCanvasImage.h"
 #include "WebCoreOpaqueRoot.h"

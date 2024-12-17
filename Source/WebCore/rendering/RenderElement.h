@@ -84,9 +84,9 @@ public:
     std::unique_ptr<RenderStyle> getUncachedPseudoStyle(const Style::PseudoElementRequest&, const RenderStyle* parentStyle = nullptr, const RenderStyle* ownStyle = nullptr) const;
 
     // This is null for anonymous renderers.
-    Element* element() const { return downcast<Element>(RenderObject::node()); }
-    RefPtr<Element> protectedElement() const { return element(); }
-    Element* nonPseudoElement() const { return downcast<Element>(RenderObject::nonPseudoNode()); }
+    inline Element* element() const;
+    inline RefPtr<Element> protectedElement() const;
+    inline Element* nonPseudoElement() const;
     Element* generatingElement() const;
 
     RenderObject* firstChild() const { return m_firstChild.get(); }
@@ -438,11 +438,6 @@ inline void RenderElement::setChildNeedsLayout(MarkingBehavior markParents)
     setNormalChildNeedsLayoutBit(true);
     if (markParents == MarkContainingBlockChain)
         scheduleLayout(markContainingBlocksForLayout());
-}
-
-inline Element* RenderElement::generatingElement() const
-{
-    return downcast<Element>(RenderObject::generatingNode());
 }
 
 inline bool RenderElement::canEstablishContainingBlockWithTransform() const

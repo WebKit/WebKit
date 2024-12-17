@@ -36,6 +36,7 @@
 #include "IntRect.h"
 #include "PseudoElement.h"
 #include "RenderChildIterator.h"
+#include "RenderElementInlines.h"
 #include "RenderLayer.h"
 #include "RenderLayerBacking.h"
 #include "RenderLayerCompositor.h"

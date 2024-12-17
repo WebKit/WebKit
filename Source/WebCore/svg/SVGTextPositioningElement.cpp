@@ -25,6 +25,7 @@
 
 #include "LegacyRenderSVGResource.h"
 #include "NodeName.h"
+#include "RenderElementInlines.h"
 #include "RenderSVGInline.h"
 #include "RenderSVGText.h"
 #include "SVGAltGlyphElement.h"

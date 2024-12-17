@@ -28,6 +28,7 @@
 
 #include "RenderBlockFlow.h"
 #include "RenderChildIterator.h"
+#include "RenderElementInlines.h"
 #include "RenderInline.h"
 #include "RenderTable.h"
 #include "RenderTreeBuilderMultiColumn.h"

@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "ContentsFormat.h"
 #include "FloatRect.h"
 #include "IntRect.h"
 #include "LengthBox.h"

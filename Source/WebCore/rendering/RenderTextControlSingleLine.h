@@ -93,12 +93,7 @@ public:
 
 private:
     bool hasLineIfEmpty() const override { return true; }
-    bool canBeProgramaticallyScrolled() const override
-    {
-        if (auto* shadowHost = dynamicDowncast<HTMLInputElement>(element()->shadowHost()))
-            return !shadowHost->hasAutofillStrongPasswordButton();
-        return true;
-    }
+    bool canBeProgramaticallyScrolled() const override;
 };
 
 } // namespace WebCore

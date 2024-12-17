@@ -32,6 +32,7 @@
 #include "LegacyRenderSVGShape.h"
 #include "LocalFrame.h"
 #include "LocalFrameView.h"
+#include "RenderElementInlines.h"
 #include "RenderSVGRoot.h"
 #include "RenderSVGShape.h"
 #include "RenderView.h"

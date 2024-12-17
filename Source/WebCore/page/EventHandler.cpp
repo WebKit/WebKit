@@ -29,6 +29,7 @@
 #include "config.h"
 #include "EventHandler.h"
 
+#include "AXObjectCache.h"
 #include "AutoscrollController.h"
 #include "BackForwardController.h"
 #include "CachedImage.h"
@@ -5331,6 +5332,12 @@ void EventHandler::focusDocumentView()
 Ref<LocalFrame> EventHandler::protectedFrame() const
 {
     return m_frame.get();
+}
+
+void EventHandler::resetCapturingMouseEventsElement()
+{
+    m_capturingMouseEventsElement = nullptr;
+    m_isCapturingRootElementForMouseEvents = false;
 }
 
 #if !PLATFORM(COCOA) && !PLATFORM(WIN)

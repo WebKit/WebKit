@@ -38,6 +38,7 @@
 #include "PlatformWheelEvent.h"
 #include "ScrollExtents.h"
 #include "ScrollableArea.h"
+#include "Scrollbar.h"
 #include "ScrollbarsController.h"
 #include "ScrollingEffectsController.h"
 #include <algorithm>

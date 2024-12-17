@@ -42,6 +42,7 @@
 #include "HTMLTableRowElement.h"
 #include "HTMLTableSectionElement.h"
 #include "NodeRenderStyle.h"
+#include "RenderElementInlines.h"
 #include "RenderObject.h"
 #include "RenderTable.h"
 #include "RenderTableCell.h"

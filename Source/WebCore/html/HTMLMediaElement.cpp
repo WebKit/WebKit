@@ -80,6 +80,7 @@
 #include "LocalFrame.h"
 #include "LocalFrameLoaderClient.h"
 #include "LocalFrameView.h"
+#include "LocalizedStrings.h"
 #include "Logging.h"
 #include "MIMETypeRegistry.h"
 #include "MediaController.h"

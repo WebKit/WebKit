@@ -604,11 +604,7 @@ private:
     std::optional<RemoteUserInputEventData> userInputEventDataForRemoteFrame(const RemoteFrame*, const IntPoint&);
 
     bool isCapturingMouseEventsElement() const { return m_capturingMouseEventsElement || m_isCapturingRootElementForMouseEvents; }
-    void resetCapturingMouseEventsElement()
-    {
-        m_capturingMouseEventsElement = nullptr;
-        m_isCapturingRootElementForMouseEvents = false;
-    }
+    void resetCapturingMouseEventsElement();
 
     Ref<LocalFrame> protectedFrame() const;
 

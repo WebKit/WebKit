@@ -38,6 +38,7 @@
 #include "RenderBlockFlowInlines.h"
 #include "RenderBoxInlines.h"
 #include "RenderBoxModelObjectInlines.h"
+#include "RenderElementInlines.h"
 #include "RenderLayer.h"
 #include "RenderLayerScrollableArea.h"
 #include "RenderScrollbar.h"
@@ -500,5 +501,12 @@ RenderTextControlInnerBlock::RenderTextControlInnerBlock(Element& element, Rende
 }
 
 RenderTextControlInnerBlock::~RenderTextControlInnerBlock() = default;
+
+bool RenderTextControlInnerBlock::canBeProgramaticallyScrolled() const
+{
+    if (auto* shadowHost = dynamicDowncast<HTMLInputElement>(element()->shadowHost()))
+        return !shadowHost->hasAutofillStrongPasswordButton();
+    return true;
+}
 
 }

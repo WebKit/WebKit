@@ -28,6 +28,7 @@
 
 #if USE(CA)
 
+#include "ContentsFormat.h"
 #include "GraphicsContextCG.h"
 #include "IOSurface.h"
 #include "LayerPool.h"

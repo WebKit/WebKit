@@ -37,6 +37,7 @@
 #include "PointerCharacteristics.h"
 #include "SyntheticClickResult.h"
 #include "WebCoreKeyboardUIMode.h"
+#include "Widget.h"
 #include <wtf/Assertions.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Forward.h>
@@ -76,6 +77,12 @@ class HTMLModelElement;
 
 OBJC_CLASS NSResponder;
 
+
+namespace JSC {
+enum class MessageLevel : uint8_t;
+enum class MessageSource : uint8_t;
+}
+
 namespace WebCore {
 
 class AccessibilityObject;
@@ -103,6 +110,7 @@ class HitTestResult;
 class Icon;
 class IntRect;
 class LocalFrame;
+class LocalFrameView;
 class NavigationAction;
 class Node;
 class Page;
@@ -132,6 +140,7 @@ struct FocusOptions;
 struct GraphicsDeviceAdapter;
 struct MockWebAuthenticationConfiguration;
 struct ShareDataWithParsedURL;
+struct StringWithDirection;
 struct TextIndicatorData;
 struct TextRecognitionOptions;
 struct ViewportArguments;
@@ -217,8 +226,8 @@ public:
 
     virtual void setResizable(bool) = 0;
 
-    virtual void addMessageToConsole(MessageSource, MessageLevel, const String& message, unsigned lineNumber, unsigned columnNumber, const String& sourceID) = 0;
-    virtual void addMessageWithArgumentsToConsole(MessageSource, MessageLevel, const String& message, std::span<const String> messageArguments, unsigned lineNumber, unsigned columnNumber, const String& sourceID) { UNUSED_PARAM(message); UNUSED_PARAM(messageArguments); UNUSED_PARAM(lineNumber); UNUSED_PARAM(columnNumber); UNUSED_PARAM(sourceID); }
+    virtual void addMessageToConsole(JSC::MessageSource, JSC::MessageLevel, const String& message, unsigned lineNumber, unsigned columnNumber, const String& sourceID) = 0;
+    virtual void addMessageWithArgumentsToConsole(JSC::MessageSource, JSC::MessageLevel, const String& message, std::span<const String> messageArguments, unsigned lineNumber, unsigned columnNumber, const String& sourceID) { UNUSED_PARAM(message); UNUSED_PARAM(messageArguments); UNUSED_PARAM(lineNumber); UNUSED_PARAM(columnNumber); UNUSED_PARAM(sourceID); }
 
     virtual bool canRunBeforeUnloadConfirmPanel() = 0;
     virtual bool runBeforeUnloadConfirmPanel(const String& message, LocalFrame&) = 0;
@@ -641,11 +650,7 @@ public:
 #endif
 
 #if ENABLE(IMAGE_ANALYSIS)
-    virtual void requestTextRecognition(Element&, TextRecognitionOptions&&, CompletionHandler<void(RefPtr<Element>&&)>&& completion = { })
-    {
-        if (completion)
-            completion({ });
-    }
+    WEBCORE_EXPORT virtual void requestTextRecognition(Element&, TextRecognitionOptions&&, CompletionHandler<void(RefPtr<Element>&&)>&& completion = { });
 #endif
     virtual bool needsImageOverlayControllerForSelectionPainting() const { return false; }
 

@@ -91,6 +91,7 @@
 #include "SVGLengthContext.h"
 #include "SVGRenderSupport.h"
 #include "SVGSVGElement.h"
+#include "ScrollAnchoringController.h"
 #include "Settings.h"
 #include "ShadowRoot.h"
 #include "StylePendingResources.h"

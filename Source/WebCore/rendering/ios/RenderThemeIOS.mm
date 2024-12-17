@@ -71,6 +71,7 @@
 #import "RenderAttachment.h"
 #import "RenderBoxInlines.h"
 #import "RenderButton.h"
+#import "RenderElementInlines.h"
 #import "RenderMenuList.h"
 #import "RenderMeter.h"
 #import "RenderObject.h"

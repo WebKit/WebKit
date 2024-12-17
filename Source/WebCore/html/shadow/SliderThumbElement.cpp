@@ -43,6 +43,7 @@
 #include "LocalFrame.h"
 #include "MouseEvent.h"
 #include "RenderBoxInlines.h"
+#include "RenderElementInlines.h"
 #include "RenderFlexibleBox.h"
 #include "RenderSlider.h"
 #include "RenderStyleInlines.h"

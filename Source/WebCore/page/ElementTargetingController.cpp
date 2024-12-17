@@ -58,6 +58,7 @@
 #include "PseudoElement.h"
 #include "Region.h"
 #include "RenderDescendantIterator.h"
+#include "RenderElementInlines.h"
 #include "RenderView.h"
 #include "ShadowRoot.h"
 #include "SimpleRange.h"

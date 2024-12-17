@@ -33,6 +33,7 @@
 #include "InlineIteratorInlineBox.h"
 #include "InlineIteratorTextBox.h"
 #include "RenderBoxModelObjectInlines.h"
+#include "RenderElementInlines.h"
 #include "RenderInline.h"
 
 namespace WebCore {

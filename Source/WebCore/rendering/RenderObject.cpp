@@ -77,6 +77,7 @@
 #include "RenderView.h"
 #include "RenderWidget.h"
 #include "SVGRenderSupport.h"
+#include "ScrollAnchoringController.h"
 #include "Settings.h"
 #include "StyleResolver.h"
 #include "TransformState.h"
@@ -216,6 +217,11 @@ RenderElement* RenderObject::firstNonAnonymousAncestor() const
     while (ancestor && ancestor->isAnonymous())
         ancestor = ancestor->parent();
     return ancestor;
+}
+
+bool RenderObject::isDocumentElementRenderer() const
+{
+    return document().documentElement() == m_node.ptr();
 }
 
 bool RenderObject::isLegend() const

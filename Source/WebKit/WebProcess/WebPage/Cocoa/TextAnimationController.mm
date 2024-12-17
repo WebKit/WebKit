@@ -41,6 +41,7 @@
 #include <WebCore/TextAnimationTypes.h>
 #include <WebCore/TextIndicator.h>
 #include <WebCore/TextIterator.h>
+#include <WebCore/VisibleUnits.h>
 #include <WebCore/WritingToolsTypes.h>
 #include <wtf/TZoneMallocInlines.h>
 

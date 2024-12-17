@@ -74,6 +74,7 @@ class RenderFragmentContainer;
 class RenderTheme;
 class RenderTreeBuilder;
 class RenderHighlight;
+class ScrollAnchoringController;
 class TransformState;
 class VisiblePosition;
 
@@ -490,7 +491,7 @@ public:
     bool isRenderScrollbarPart() const { return type() == Type::ScrollbarPart; }
     bool isRenderVTTCue() const { return type() == Type::VTTCue; }
 
-    bool isDocumentElementRenderer() const { return document().documentElement() == m_node.ptr(); }
+    bool isDocumentElementRenderer() const;
     bool isBody() const { return node() && node()->hasTagName(HTMLNames::bodyTag); }
     bool isHR() const { return node() && node()->hasTagName(HTMLNames::hrTag); }
     bool isLegend() const;

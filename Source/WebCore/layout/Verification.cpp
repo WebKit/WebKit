@@ -40,6 +40,7 @@
 #include "LayoutTreeBuilder.h"
 #include "LegacyInlineTextBox.h"
 #include "RenderBoxInlines.h"
+#include "RenderElementInlines.h"
 #include "RenderInline.h"
 #include "RenderLineBreak.h"
 #include "RenderTableCell.h"
