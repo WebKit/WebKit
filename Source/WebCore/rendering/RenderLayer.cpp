@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2006-2024 Apple Inc. All rights reserved.
- * Copyright (C) 2013-2014 Google Inc. All rights reserved.
+ * Copyright (C) 2006-2025 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2019 Google Inc. All rights reserved.
  * Copyright (C) 2019 Adobe. All rights reserved.
  * Copyright (c) 2020, 2021, 2022 Igalia S.L.
  *
@@ -4985,13 +4985,12 @@ RenderLayer::HitLayer RenderLayer::hitTestLayerByApplyingTransform(RenderLayer* 
     // We can't just map hitTestLocation and hitTestRect because they may have been flattened (losing z)
     // by our container.
     FloatPoint localPoint = newTransformState->mappedPoint();
-    FloatQuad localPointQuad = newTransformState->mappedQuad();
     LayoutRect localHitTestRect = newTransformState->boundsOfMappedArea();
     HitTestLocation newHitTestLocation;
     if (hitTestLocation.isRectBasedTest())
-        newHitTestLocation = HitTestLocation(localPoint, localPointQuad);
+        newHitTestLocation = HitTestLocation(localPoint, newTransformState->mappedQuad());
     else
-        newHitTestLocation = HitTestLocation(flooredLayoutPoint(localPoint));
+        newHitTestLocation = HitTestLocation(localPoint, newTransformState->boundsOfMappedQuad());
 
     // Now do a hit test with the root layer shifted to be us.
     return hitTestLayer(this, containerLayer, request, result, localHitTestRect, newHitTestLocation, true, newTransformState.ptr(), zOffset);

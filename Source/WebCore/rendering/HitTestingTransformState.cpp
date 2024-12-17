@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2025 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Google Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -64,6 +65,14 @@ FloatQuad HitTestingTransformState::mappedArea() const
     if (auto inverse = m_accumulatedTransform.inverse())
         return inverse.value().projectQuad(m_lastPlanarArea);
     return m_lastPlanarArea;
+}
+
+LayoutRect HitTestingTransformState::boundsOfMappedQuad() const
+{
+    if (auto inverse = m_accumulatedTransform.inverse())
+        return inverse.value().clampedBoundsOfProjectedQuad(m_lastPlanarQuad);
+    TransformationMatrix identity;
+    return identity.clampedBoundsOfProjectedQuad(m_lastPlanarQuad);
 }
 
 LayoutRect HitTestingTransformState::boundsOfMappedArea() const

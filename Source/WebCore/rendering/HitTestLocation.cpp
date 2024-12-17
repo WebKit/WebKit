@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2006, 2008, 2011, 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2025 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Google Inc. All rights reserved.
  * Copyright (C) 2012 Nokia Corporation and/or its subsidiary(-ies)
  *
  * This library is free software; you can redistribute it and/or
@@ -28,7 +29,7 @@ HitTestLocation::HitTestLocation() = default;
 
 HitTestLocation::HitTestLocation(const LayoutPoint& point)
     : m_point(point)
-    , m_boundingBox(LayoutRect { flooredIntPoint(point), LayoutSize { 1, 1 } })
+    , m_boundingBox(LayoutRect { point, LayoutSize { 1, 1 } })
     , m_transformedPoint(point)
     , m_transformedRect(m_boundingBox)
 {
@@ -50,6 +51,16 @@ HitTestLocation::HitTestLocation(const LayoutRect& rect)
     , m_transformedPoint { rect.center() }
     , m_transformedRect { FloatQuad { m_boundingBox } }
     , m_isRectBased { true }
+{
+}
+
+HitTestLocation::HitTestLocation(const FloatPoint& point, const LayoutRect& boundingBox)
+    : m_point { flooredLayoutPoint(point) }
+    , m_boundingBox { boundingBox }
+    , m_transformedPoint { point }
+    , m_transformedRect { FloatRect { boundingBox } }
+    , m_isRectBased { false }
+    , m_isRectilinear { true }
 {
 }
 

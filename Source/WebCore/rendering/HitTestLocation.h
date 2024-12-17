@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2006 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2025 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Google Inc. All rights reserved.
  * Copyright (C) 2012 Nokia Corporation and/or its subsidiary(-ies)
  *
  * This library is free software; you can redistribute it and/or
@@ -33,6 +34,8 @@ public:
     HitTestLocation(const FloatPoint&, const FloatQuad&);
 
     HitTestLocation(const LayoutRect&);
+
+    HitTestLocation(const FloatPoint&, const LayoutRect&);
 
     // Make a copy the HitTestLocation in a new region by applying given offset to internal point and area.
     HitTestLocation(const HitTestLocation&, const LayoutSize& offset);
