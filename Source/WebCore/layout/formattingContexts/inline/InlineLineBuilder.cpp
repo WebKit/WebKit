@@ -582,7 +582,7 @@ UniqueRef<LineContent> LineBuilder::placeInlineAndFloatContent(const InlineItemR
                 // in order to exactly fill the line box. Unless otherwise specified by text-align-last,
                 // the last line before a forced break or the end of the block is start-aligned.
                 auto hasTextAlignJustify = (isLastInlineContent || m_line.runs().last().isLineBreak()) ? rootStyle.textAlignLast() == TextAlignLast::Justify : rootStyle.textAlign() == TextAlignMode::Justify;
-                if (hasTextAlignJustify) {
+                if (hasTextAlignJustify && rootStyle.textJustify() != TextJustify::None) {
                     auto additionalSpaceForAlignedContent = InlineContentAligner::applyTextAlignJustify(m_line.runs(), spaceToDistribute, m_line.hangingTrailingWhitespaceLength());
                     m_line.inflateContentLogicalWidth(additionalSpaceForAlignedContent);
                 }

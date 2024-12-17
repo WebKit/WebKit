@@ -1,0 +1,51 @@
+<html>
+<head>
+<title>This test case tests the text-justify: none; property</title>
+<style>
+.test-container {
+    width: 600px;
+    border: 1px solid black;
+    margin-bottom: 20px;
+    padding: 10px;
+    text-align: justify;
+    text-align-last: justify;
+    text-justify: none;
+}
+
+</style>
+</head>
+<script src="../../../resources/js-test-pre.js"></script>
+<body>
+<div id="results"></div>
+<div id="test" class="test-container text-justify-none">
+    <p>This is a test paragraph with <code>text-justify: none</code>. This text should not be justified, and spacing between words should be consistent. Each line should start from the beginning without any indentation.</p>
+</div>
+<script>
+    function isTextJustified(container) {
+        const words = container.querySelector("p").innerText.split(" ");
+        const spans = words.map(word => {
+            const span = document.createElement("span");
+            span.innerText = word + " ";
+            container.appendChild(span);
+            return span;
+        });
+
+        const spacings = spans.map((span, index) => {
+            if (index === spans.length - 1) return null;
+            const rect1 = span.getBoundingClientRect();
+            const rect2 = spans[index + 1].getBoundingClientRect();
+            return rect2.left - rect1.right;
+        }).filter(Boolean);
+
+        spans.forEach(span => span.remove());
+
+        const firstSpacing = spacings[0];
+        return spacings.every(space => space === firstSpacing);
+    }
+
+    const container = document.getElementById("test");
+    const TextIsJustified = isTextJustified(container);
+    shouldBe('TextIsJustified', "false");
+</script>
+</body>
+</html>

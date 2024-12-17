@@ -1,0 +1,2 @@
+PASS TextIsJustified is false
+This is a test paragraph with text-justify: none. This text should not be justified, and spacing between words should be consistent. Each line should start from the beginning without any indentation.
