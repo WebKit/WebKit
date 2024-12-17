@@ -40,7 +40,7 @@
 #include "IntRect.h"
 #include "NoiseInjectionPolicy.h"
 #include "RenderElement.h"
-#include "ScriptTelemetryCategory.h"
+#include "ScriptTelemetryTypes.h"
 #include "StyleCanvasImage.h"
 #include "WebCoreOpaqueRoot.h"
 #include "WorkerClient.h"

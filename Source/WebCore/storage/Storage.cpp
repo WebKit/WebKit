@@ -30,7 +30,7 @@
 #include "LegacySchemeRegistry.h"
 #include "LocalFrame.h"
 #include "Page.h"
-#include "ScriptTelemetryCategory.h"
+#include "ScriptTelemetryTypes.h"
 #include "SecurityOrigin.h"
 #include "StorageArea.h"
 #include "StorageType.h"

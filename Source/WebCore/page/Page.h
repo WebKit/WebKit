@@ -42,7 +42,7 @@
 #include "RTCController.h"
 #include "Region.h"
 #include "RegistrableDomain.h"
-#include "ScriptTelemetryCategory.h"
+#include "ScriptTelemetryTypes.h"
 #include "ScrollTypes.h"
 #include "ShouldRelaxThirdPartyCookieBlocking.h"
 #include "Supplementable.h"

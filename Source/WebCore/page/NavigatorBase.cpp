@@ -29,7 +29,7 @@
 
 #include "Document.h"
 #include "GPU.h"
-#include "ScriptTelemetryCategory.h"
+#include "ScriptTelemetryTypes.h"
 #include "ServiceWorkerContainer.h"
 #include "StorageManager.h"
 #include "WebCoreOpaqueRoot.h"

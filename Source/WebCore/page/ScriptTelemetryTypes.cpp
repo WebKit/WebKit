@@ -24,9 +24,9 @@
  */
 
 #include "config.h"
-#include "ScriptTelemetryCategory.h"
+#include "ScriptTelemetryTypes.h"
 
-#if !(USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/ScriptTelemetryCategoryAdditions.cpp>))
+#if !(USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/ScriptTelemetryTypesAdditions.cpp>))
 #include <wtf/URL.h>
 #include <wtf/text/MakeString.h>
 #endif
@@ -74,13 +74,16 @@ ASCIILiteral description(ScriptTelemetryCategory category)
     return { };
 }
 
-#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/ScriptTelemetryCategoryAdditions.cpp>)
-#import <WebKitAdditions/ScriptTelemetryCategoryAdditions.cpp>
+#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/ScriptTelemetryTypesAdditions.cpp>)
+#import <WebKitAdditions/ScriptTelemetryTypesAdditions.cpp>
 #else
 String makeLogMessage(const URL& url, ScriptTelemetryCategory category)
 {
     return makeString(url.string(), " tried to access "_s, description(category));
 }
+String telemetryString(const HTMLInputElement&)
+{
+    return String();
+}
 #endif
-
 } // namespace WebCore

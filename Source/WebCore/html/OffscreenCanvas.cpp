@@ -47,7 +47,7 @@
 #include "OffscreenCanvasRenderingContext2D.h"
 #include "Page.h"
 #include "PlaceholderRenderingContext.h"
-#include "ScriptTelemetryCategory.h"
+#include "ScriptTelemetryTypes.h"
 #include "WorkerClient.h"
 #include "WorkerGlobalScope.h"
 #include "WorkerNavigator.h"

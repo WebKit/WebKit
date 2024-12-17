@@ -44,7 +44,7 @@
 #include <WebCore/LocalFrame.h>
 #include <WebCore/LocalFrameLoaderClient.h>
 #include <WebCore/Page.h>
-#include <WebCore/ScriptTelemetryCategory.h>
+#include <WebCore/ScriptTelemetryTypes.h>
 #include <WebCore/Settings.h>
 #include <WebCore/StorageSessionProvider.h>
 #include <optional>
