@@ -39,6 +39,8 @@
 #include "EventTargetConcrete.h"
 #include "HTMLBodyElement.h"
 #include "HTMLHtmlElement.h"
+#include "HTMLSelectElement.h"
+#include "HTMLTextAreaElement.h"
 #include "InspectorInstrumentation.h"
 #include "JSErrorHandler.h"
 #include "JSEventListener.h"
@@ -87,6 +89,18 @@ bool EventTarget::addEventListener(const AtomString& eventType, Ref<EventListene
 #if ASSERT_ENABLED
     listener->checkValidityForEventTarget(*this);
 #endif
+
+    if (RefPtr context = this->scriptExecutionContext()) {
+        if (context->requiresScriptExecutionTelemetry(ScriptTelemetryCategory::EventListeners)) {
+            if (eventType == eventNames().keydownEvent
+                || eventType == eventNames().keyupEvent
+                || eventType == eventNames().keypressEvent
+                || eventType == eventNames().inputEvent
+                || eventType == eventNames().beforeinputEvent) {
+                return false;
+            }
+        }
+    }
 
     if (options.signal && options.signal->aborted())
         return false;

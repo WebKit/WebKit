@@ -69,6 +69,8 @@ ASCIILiteral description(ScriptTelemetryCategory category)
         return "Speech"_s;
     case ScriptTelemetryCategory::FormControls:
         return "FormControls"_s;
+    case ScriptTelemetryCategory::EventListeners:
+        return "EventListeners"_s;
     }
     ASSERT_NOT_REACHED();
     return { };
