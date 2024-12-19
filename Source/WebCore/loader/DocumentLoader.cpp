@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2024 Apple Inc. All rights reserved.
  * Copyright (C) 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -85,6 +85,7 @@
 #include "PolicyChecker.h"
 #include "ProgressTracker.h"
 #include "Quirks.h"
+#include "QuirksData.h"
 #include "ResourceLoadObserver.h"
 #include "ResourceMonitor.h"
 #include "SWClientConnection.h"
@@ -1910,6 +1911,11 @@ void DocumentLoader::stopRecordingResponses()
 void DocumentLoader::setCustomHeaderFields(Vector<CustomHeaderFields>&& fields)
 {
     m_customHeaderFields = WTFMove(fields);
+}
+
+void DocumentLoader::setQuirksData(std::optional<QuirksData>&& quirksData)
+{
+    m_maybeQuirksData = WTFMove(quirksData);
 }
 
 void DocumentLoader::setTitle(const StringWithDirection& title)
