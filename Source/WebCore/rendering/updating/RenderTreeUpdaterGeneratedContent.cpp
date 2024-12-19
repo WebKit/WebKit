@@ -115,7 +115,7 @@ static bool elementHasDisplayAnimationForPseudoId(const Element& element, Pseudo
     return false;
 }
 
-static void createContentRenderers(RenderTreeBuilder& builder, RenderElement& pseudoRenderer, const RenderStyle& style, PseudoId pseudoId)
+void RenderTreeUpdater::GeneratedContent::createContentRenderers(RenderTreeBuilder& builder, RenderElement& pseudoRenderer, const RenderStyle& style, PseudoId pseudoId)
 {
     if (auto* contentData = style.contentData()) {
         for (const ContentData* content = contentData; content; content = content->next()) {
@@ -130,7 +130,7 @@ static void createContentRenderers(RenderTreeBuilder& builder, RenderElement& ps
     }
 }
 
-static void updateStyleForContentRenderers(RenderElement& pseudoRenderer, const RenderStyle& style)
+void RenderTreeUpdater::GeneratedContent::updateStyleForContentRenderers(RenderElement& pseudoRenderer, const RenderStyle& style)
 {
     for (auto& contentRenderer : descendantsOfType<RenderElement>(pseudoRenderer)) {
         // We only manage the style for the generated content which must be images or text.

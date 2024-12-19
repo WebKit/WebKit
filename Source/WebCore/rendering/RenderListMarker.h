@@ -52,7 +52,7 @@ struct ListMarkerTextContent {
 
 // Used to render the list item's marker.
 // The RenderListMarker always has to be a child of a RenderListItem.
-class RenderListMarker final : public RenderBox {
+class RenderListMarker final : public RenderBlockFlow {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(RenderListMarker);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderListMarker);
 public:
@@ -75,7 +75,7 @@ private:
     void willBeDestroyed() final;
     ASCIILiteral renderName() const final { return "RenderListMarker"_s; }
     void computePreferredLogicalWidths() final;
-    bool canHaveChildren() const final { return false; }
+    bool canHaveChildren() const final { return true; }
     void paint(PaintInfo&, const LayoutPoint&) final;
     void layout() final;
     void imageChanged(WrappedImagePtr, const IntRect*) final;
@@ -85,7 +85,7 @@ private:
     bool canBeSelectionLeaf() const final { return true; }
     void styleWillChange(StyleDifference, const RenderStyle& newStyle) final;
     void styleDidChange(StyleDifference, const RenderStyle* oldStyle) final;
-    void computeIntrinsicLogicalWidths(LayoutUnit&, LayoutUnit&) const override { ASSERT_NOT_REACHED(); }
+    // void computeIntrinsicLogicalWidths(LayoutUnit&, LayoutUnit&) const override { ASSERT_NOT_REACHED(); }
 
     void element() const = delete;
 

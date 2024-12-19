@@ -31,6 +31,7 @@
 #include "RenderMenuList.h"
 #include "RenderMultiColumnFlow.h"
 #include "RenderTable.h"
+#include "RenderTreeUpdaterGeneratedContent.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -101,12 +102,28 @@ void RenderTreeBuilder::List::updateItemMarker(RenderListItem& listItemRenderer)
     auto newStyle = listItemRenderer.computeMarkerStyle();
     RenderPtr<RenderListMarker> newMarkerRenderer;
     auto* markerRenderer = listItemRenderer.markerRenderer();
-    if (markerRenderer)
+
+    // Rebuild everything if the contents have changed.
+    if (markerRenderer) {
+        auto* oldContentData = markerRenderer->style().contentData();
+        if (oldContentData != newStyle.contentData()) {
+            m_builder.destroy(*markerRenderer);
+            markerRenderer = nullptr;
+        }
+    }
+
+    bool markerHasContent = newStyle.hasContent();
+    if (markerRenderer) {
         markerRenderer->setStyle(WTFMove(newStyle));
+        if (markerHasContent)
+            RenderTreeUpdater::GeneratedContent::updateStyleForContentRenderers(*markerRenderer, markerRenderer->style());
+    }
     else {
         newMarkerRenderer = WebCore::createRenderer<RenderListMarker>(listItemRenderer, WTFMove(newStyle));
         newMarkerRenderer->initializeStyle();
         markerRenderer = newMarkerRenderer.get();
+        if (markerHasContent)
+            RenderTreeUpdater::GeneratedContent::createContentRenderers(m_builder, *markerRenderer, markerRenderer->style(), PseudoId::Marker);
         listItemRenderer.setMarkerRenderer(*markerRenderer);
     }
 
@@ -136,6 +153,8 @@ void RenderTreeBuilder::List::updateItemMarker(RenderListItem& listItemRenderer)
     // If current parent is an anonymous block that has lost all its children, destroy it.
     if (currentParent && currentParent->isAnonymousBlock() && !currentParent->firstChild() && !downcast<RenderBlock>(*currentParent).continuation())
         m_builder.destroy(*currentParent);
+
+    // FIXME: do quotes need updating?
 }
 
 }

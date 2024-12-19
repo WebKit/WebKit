@@ -53,8 +53,8 @@ public:
     static void tearDownRenderersAfterSlotChange(Element& host);
     static void tearDownRenderer(Text&);
 
-private:
     class GeneratedContent;
+private:
     class ViewTransition;
 
     void updateRenderTree(ContainerNode& root);

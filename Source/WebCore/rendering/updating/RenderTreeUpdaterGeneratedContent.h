@@ -48,6 +48,9 @@ public:
     static void removeBeforePseudoElement(Element&, RenderTreeBuilder&);
     static void removeAfterPseudoElement(Element&, RenderTreeBuilder&);
 
+    static void createContentRenderers(RenderTreeBuilder&, RenderElement&, const RenderStyle&, PseudoId);
+    static void updateStyleForContentRenderers(RenderElement&, const RenderStyle&);
+
 private:
     void updateQuotesUpTo(RenderQuote*);
     
