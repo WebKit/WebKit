@@ -94,6 +94,7 @@ public:
     ISO8601::Duration addDurations(JSGlobalObject*, bool, ISO8601::Duration, TemporalUnit) const;
     static ISO8601::Duration temporalDurationFromInternal(ISO8601::InternalDuration, TemporalUnit);
     static Int128 timeDurationFromComponents(double, double, double, double, double, double);
+    static double totalTimeDuration(JSGlobalObject*, Int128, TemporalUnit);
 
     static ISO8601::Duration fromDurationLike(JSGlobalObject*, JSObject*);
     static ISO8601::Duration toISO8601Duration(JSGlobalObject*, JSValue);

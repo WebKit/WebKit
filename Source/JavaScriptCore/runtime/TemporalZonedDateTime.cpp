@@ -502,7 +502,7 @@ TemporalZonedDateTime* TemporalZonedDateTime::round(JSGlobalObject* globalObject
         return { };
     }
     if (smallestUnit == TemporalUnit::Nanosecond && roundingIncrement == 1)
-        return this;
+        RELEASE_AND_RETURN(scope, TemporalZonedDateTime::tryCreateIfValid(globalObject, globalObject->zonedDateTimeStructure(), exactTime(), timeZone()));
 
     auto thisNs = m_exactTime.get();
     auto timeZone = m_timeZone;
@@ -536,8 +536,8 @@ TemporalZonedDateTime* TemporalZonedDateTime::round(JSGlobalObject* globalObject
             TemporalDisambiguation::Compatible, TemporalOffset::Prefer, TemporalMatchBehavior::Exactly);
         RETURN_IF_EXCEPTION(scope, { });
     }
-    return TemporalZonedDateTime::tryCreateIfValid(globalObject, globalObject->zonedDateTimeStructure(),
-        WTFMove(epochNanoseconds), WTFMove(timeZone));
+    RELEASE_AND_RETURN(scope, TemporalZonedDateTime::tryCreateIfValid(globalObject, globalObject->zonedDateTimeStructure(),
+        WTFMove(epochNanoseconds), WTFMove(timeZone)));
 }
 
 TemporalZonedDateTime* TemporalZonedDateTime::with(JSGlobalObject* globalObject, JSObject*, JSValue)
@@ -563,13 +563,14 @@ String TemporalZonedDateTime::toString(JSGlobalObject* globalObject, JSValue opt
 
     auto showCalendar = getTemporalShowCalendarNameOption(globalObject, options);
     RETURN_IF_EXCEPTION(scope, { });
-//    auto digits = temporalFractionalSecondDigits(globalObject, options);
-//    RETURN_IF_EXCEPTION(scope, { });
+    TemporalFractionalSecondDigits digits =
+        temporalFractionalSecondDigits(globalObject, options);
+    RETURN_IF_EXCEPTION(scope, { });
     auto showOffset = getTemporalShowOffsetOption(globalObject, options);
     RETURN_IF_EXCEPTION(scope, { });
     auto roundingMode = temporalRoundingMode(globalObject, options, RoundingMode::Trunc);
     RETURN_IF_EXCEPTION(scope, { });
-    auto smallestUnit = temporalSmallestUnit(globalObject, options,
+    std::optional<TemporalUnit> smallestUnit = temporalSmallestUnit(globalObject, options,
         { TemporalUnit::Year, TemporalUnit::Month, TemporalUnit::Week, TemporalUnit::Day });
     RETURN_IF_EXCEPTION(scope, { });
     if (smallestUnit == TemporalUnit::Hour) {
@@ -578,7 +579,7 @@ String TemporalZonedDateTime::toString(JSGlobalObject* globalObject, JSValue opt
     }
     auto showTimeZone = getTemporalShowTimeZoneNameOption(globalObject, options);
     RETURN_IF_EXCEPTION(scope, { });
-    PrecisionData precision = secondsStringPrecision(globalObject, options);
+    PrecisionData precision = secondsStringPrecision(smallestUnit, digits);
     RETURN_IF_EXCEPTION(scope, { });
 
     return ISO8601::temporalZonedDateTimeToString(m_exactTime.get(), m_timeZone, precision, showCalendar, showTimeZone, showOffset, precision.increment, precision.unit, roundingMode);
@@ -1067,8 +1068,8 @@ TemporalZonedDateTime* TemporalZonedDateTime::from(JSGlobalObject* globalObject,
             throwRangeError(globalObject, scope, "Temporal.ZonedDateTime requires a time zone ID in brackets"_s);
             return { };
         }
-        timeZone = timeZoneOptional->m_z ? utcTimeZoneID()
-           :  toTemporalTimeZoneIdentifier(globalObject, jsString(vm, WTF::String(annotation.value())));
+        timeZone =
+            toTemporalTimeZoneIdentifier(globalObject, jsString(vm, WTF::String(annotation.value())));
         RETURN_IF_EXCEPTION(scope, { });
         if (timeZoneOptional->m_offset_string)
             offsetString = WTF::String(std::get<0>(timeZoneOptional->m_offset_string.value()));
