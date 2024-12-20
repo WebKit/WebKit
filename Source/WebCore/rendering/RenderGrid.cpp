@@ -127,7 +127,8 @@ void RenderGrid::styleDidChange(StyleDifference diff, const RenderStyle* oldStyl
 bool RenderGrid::subgridDidChange(const RenderStyle& oldStyle) const
 {
     return oldStyle.gridSubgridRows() != style().gridSubgridRows()
-        || oldStyle.gridSubgridColumns() != style().gridSubgridColumns();
+        || oldStyle.gridSubgridColumns() != style().gridSubgridColumns()
+        || oldStyle.usedContain().contains(Containment::Layout) !=style().usedContain().contains(Containment::Layout);
 }
 
 bool RenderGrid::explicitGridDidResize(const RenderStyle& oldStyle) const
