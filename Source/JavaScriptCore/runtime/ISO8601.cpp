@@ -1376,10 +1376,11 @@ uint8_t daysInMonth(uint8_t month)
 
 String formatTimeZone(TimeZone tz)
 {
+    if ((std::holds_alternative<TimeZoneID>(tz) && std::get<TimeZoneID>(tz) == utcTimeZoneID())
+        || (std::holds_alternative<int64_t>(tz) && std::get<int64_t>(tz) == 0))
+        return "UTC"_s;
     if (std::holds_alternative<int64_t>(tz))
         return formatTimeZoneOffsetString(std::get<int64_t>(tz));
-    else if (std::get<TimeZoneID>(tz) == utcTimeZoneID())
-        return "UTC"_s;
     return ""_s; // TODO: handle named time zones
 }
 
@@ -1791,6 +1792,8 @@ getISOPartsFromEpoch(ExactTime epochNanoseconds)
 {
     ASSERT(epochNanoseconds.isValid());
     Int128 remainderNs = epochNanoseconds.epochNanoseconds() % 1000000;
+    if (remainderNs < 0)
+        remainderNs += 1000000;
     auto epochMilliseconds = (epochNanoseconds.epochNanoseconds() - remainderNs) / 1000000;
     auto year = TemporalCalendar::epochTimeToEpochYear(epochMilliseconds);
     auto month = TemporalCalendar::epochTimeToMonthInYear(epochMilliseconds) + 1;
@@ -1807,9 +1810,26 @@ getISOPartsFromEpoch(ExactTime epochNanoseconds)
     return std::tuple<PlainDate, PlainTime>(isoDate, time);
 }
 
+static String formatCalendarAnnotation(TemporalShowCalendar showCalendar)
+{
+    // TODO: non-iso8601 calendars
+    switch (showCalendar) {
+    case TemporalShowCalendar::Never:
+        return ""_s;
+    case TemporalShowCalendar::Auto:
+        return ""_s;
+    case TemporalShowCalendar::Critical:
+        return "[!u-ca=iso8601]"_s;
+    case TemporalShowCalendar::Always:
+        return "[u-ca=iso8601]"_s;
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+    }
+}
+
 // https://tc39.es/proposal-temporal/#sec-temporal-temporalzoneddatetimetostring
 String temporalZonedDateTimeToString(ExactTime exactTime, TimeZone timeZone,
-  PrecisionData precision, TemporalShowCalendar /* TODO */, TemporalShowTimeZone showTimeZone,
+  PrecisionData precision, TemporalShowCalendar showCalendar, TemporalShowTimeZone showTimeZone,
   TemporalShowOffset showOffset, unsigned increment, TemporalUnit unit, RoundingMode roundingMode) {
     Int128 epochNs = roundTemporalInstant(exactTime.epochNanoseconds(), increment, unit, roundingMode);
     auto offsetNanoseconds = getOffsetNanosecondsFor(timeZone, epochNs);
@@ -1827,7 +1847,8 @@ String temporalZonedDateTimeToString(ExactTime exactTime, TimeZone timeZone,
         }
         timeZoneString = makeString('[', flag, formatTimeZone(timeZone), ']');
     }
-    return makeString(dateTimeString, offsetString, timeZoneString);
+    auto calendarString = formatCalendarAnnotation(showCalendar);
+    return makeString(dateTimeString, offsetString, timeZoneString, calendarString);
 }
 
 // https://tc39.es/proposal-temporal/#sec-temporal.instant.prototype.round

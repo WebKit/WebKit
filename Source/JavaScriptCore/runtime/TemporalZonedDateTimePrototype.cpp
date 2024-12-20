@@ -75,6 +75,7 @@ static JSC_DECLARE_CUSTOM_GETTER(temporalZonedDateTimePrototypeGetterDayOfWeek);
 static JSC_DECLARE_CUSTOM_GETTER(temporalZonedDateTimePrototypeGetterDayOfYear);
 static JSC_DECLARE_CUSTOM_GETTER(temporalZonedDateTimePrototypeGetterWeekOfYear);
 static JSC_DECLARE_CUSTOM_GETTER(temporalZonedDateTimePrototypeGetterYearOfWeek);
+static JSC_DECLARE_CUSTOM_GETTER(temporalZonedDateTimePrototypeGetterHoursInDay);
 static JSC_DECLARE_CUSTOM_GETTER(temporalZonedDateTimePrototypeGetterDaysInWeek);
 static JSC_DECLARE_CUSTOM_GETTER(temporalZonedDateTimePrototypeGetterDaysInMonth);
 static JSC_DECLARE_CUSTOM_GETTER(temporalZonedDateTimePrototypeGetterDaysInYear);
@@ -130,6 +131,7 @@ const ClassInfo TemporalZonedDateTimePrototype::s_info = { "Temporal.ZonedDateTi
   dayOfYear             temporalZonedDateTimePrototypeGetterDayOfYear           DontEnum|ReadOnly|CustomAccessor
   weekOfYear            temporalZonedDateTimePrototypeGetterWeekOfYear          DontEnum|ReadOnly|CustomAccessor
   yearOfWeek            temporalZonedDateTimePrototypeGetterYearOfWeek          DontEnum|ReadOnly|CustomAccessor
+  hoursInDay            temporalZonedDateTimePrototypeGetterHoursInDay          DontEnum|ReadOnly|CustomAccessor
   daysInWeek            temporalZonedDateTimePrototypeGetterDaysInWeek          DontEnum|ReadOnly|CustomAccessor
   daysInMonth           temporalZonedDateTimePrototypeGetterDaysInMonth         DontEnum|ReadOnly|CustomAccessor
   daysInYear            temporalZonedDateTimePrototypeGetterDaysInYear          DontEnum|ReadOnly|CustomAccessor
@@ -671,7 +673,12 @@ JSC_DEFINE_CUSTOM_GETTER(temporalZonedDateTimePrototypeGetterEpochMilliseconds, 
     if (!zonedDateTime)
         return throwVMTypeError(globalObject, scope, "Temporal.ZonedDateTime.prototype.epochMilliseconds called on value that's not a ZonedDateTime"_s);
 
-    return JSValue::encode(jsNumber(zonedDateTime->exactTime().epochMilliseconds()));
+    auto ns = zonedDateTime->exactTime().epochNanoseconds();
+    Int128 ms = ns / 1000000;
+    // 4. Let ms be floor(ℝ(ns) / 10**6).
+    if (ns % 1000000 && ms < 0)
+        ms--;
+    return JSValue::encode(jsNumber(static_cast<double>(ms)));
 }
 
 JSC_DEFINE_CUSTOM_GETTER(temporalZonedDateTimePrototypeGetterEpochNanoseconds, (JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName))
@@ -736,6 +743,27 @@ JSC_DEFINE_CUSTOM_GETTER(temporalZonedDateTimePrototypeGetterYearOfWeek, (JSGlob
 
     auto isoDateTime = ISO8601::getISODateTimeFor(zonedDateTime->timeZone(), zonedDateTime->exactTime());
     return JSValue::encode(jsNumber(ISO8601::weekOfYear(std::get<0>(isoDateTime))));
+}
+
+JSC_DEFINE_CUSTOM_GETTER(temporalZonedDateTimePrototypeGetterHoursInDay, (JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName))
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    auto* zonedDateTime = jsDynamicCast<TemporalZonedDateTime*>(JSValue::decode(thisValue));
+    if (!zonedDateTime)
+        return throwVMTypeError(globalObject, scope, "Temporal.ZonedDateTime.prototype.hoursInDay called on value that's not a ZonedDateTime"_s);
+
+    auto timeZone = zonedDateTime->timeZone();
+    auto isoDateTime = ISO8601::getISODateTimeFor(zonedDateTime->timeZone(), zonedDateTime->exactTime());
+    auto today = std::get<0>(isoDateTime);
+    auto tomorrow = TemporalCalendar::balanceISODate(today.year(), today.month(), today.day() + 1);
+    auto todayNs = getStartOfDay(globalObject, timeZone, today);
+    RETURN_IF_EXCEPTION(scope, { });
+    auto tomorrowNs = getStartOfDay(globalObject, timeZone, tomorrow);
+    RETURN_IF_EXCEPTION(scope, { });
+    auto diff = timeDurationFromEpochNanosecondsDifference(tomorrowNs, todayNs);
+    RELEASE_AND_RETURN(scope, JSValue::encode(jsNumber(TemporalDuration::totalTimeDuration(globalObject, diff, TemporalUnit::Hour))));
 }
 
 JSC_DEFINE_CUSTOM_GETTER(temporalZonedDateTimePrototypeGetterDaysInWeek, (JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName))

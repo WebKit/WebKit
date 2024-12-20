@@ -635,7 +635,7 @@ static void appendInteger(JSGlobalObject* globalObject, StringBuilder& builder, 
     builder.append(string);
 }
 
-static double totalTimeDuration(JSGlobalObject* globalObject, Int128 timeDuration, TemporalUnit unit)
+double TemporalDuration::totalTimeDuration(JSGlobalObject* globalObject, Int128 timeDuration, TemporalUnit unit)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -831,9 +831,9 @@ static NudgeResult nudgeToDayOrTime(JSGlobalObject* globalObject, ISO8601::Inter
     Int128 roundedTime = roundNumberToIncrementInt128(timeDuration,
         unitLength * (Int128) std::trunc(increment), roundingMode);
     Int128 diffTime = roundedTime - timeDuration;
-    double wholeDays = totalTimeDuration(globalObject, timeDuration, TemporalUnit::Day);
+    double wholeDays = TemporalDuration::totalTimeDuration(globalObject, timeDuration, TemporalUnit::Day);
     RETURN_IF_EXCEPTION(scope, { });
-    double roundedWholeDays = totalTimeDuration(globalObject, roundedTime, TemporalUnit::Day);
+    double roundedWholeDays = TemporalDuration::totalTimeDuration(globalObject, roundedTime, TemporalUnit::Day);
     RETURN_IF_EXCEPTION(scope, { });
     auto dayDelta = roundedWholeDays - wholeDays;
     auto dayDeltaSign = dayDelta < 0 ? -1 : dayDelta > 0 ? 1 : 0;

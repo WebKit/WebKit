@@ -164,6 +164,20 @@ enum class TemporalOffset : uint8_t {
     Reject,
 };
 
+enum class TemporalFractionalSecondDigits : uint8_t {
+    Zero = 0,
+    One,
+    Two,
+    Three,
+    Four,
+    Five,
+    Six,
+    Seven,
+    Eight,
+    Nine,
+    Auto,
+};
+
 Int128 nonNegativeModulo(Int128 x, Int128 y);
 WTF::String ellipsizeAt(unsigned maxLength, const WTF::String&);
 PropertyName temporalUnitPluralPropertyName(VM&, TemporalUnit);
@@ -177,8 +191,10 @@ TemporalShowOffset getTemporalShowOffsetOption(JSGlobalObject*, JSObject*);
 TemporalOffset getTemporalOffsetOption(JSGlobalObject*, JSObject*, TemporalOffset);
 TemporalShowTimeZone getTemporalShowTimeZoneNameOption(JSGlobalObject*, JSObject*);
 TemporalDisambiguation getTemporalDisambiguationOption(JSGlobalObject*, JSObject*);
-std::optional<unsigned> temporalFractionalSecondDigits(JSGlobalObject*, JSObject* options);
+TemporalFractionalSecondDigits temporalFractionalSecondDigits(JSGlobalObject*, JSObject* options);
 PrecisionData secondsStringPrecision(JSGlobalObject*, JSObject* options);
+PrecisionData secondsStringPrecision(std::optional<TemporalUnit>, TemporalFractionalSecondDigits);
+PrecisionData secondsStringPrecision(TemporalFractionalSecondDigits);
 RoundingMode temporalRoundingMode(JSGlobalObject*, JSObject*, RoundingMode);
 RoundingMode negateTemporalRoundingMode(RoundingMode);
 void formatSecondsStringFraction(StringBuilder&, unsigned fraction, std::tuple<Precision, unsigned>);
