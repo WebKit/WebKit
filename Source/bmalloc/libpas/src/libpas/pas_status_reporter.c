@@ -100,7 +100,7 @@ static void dump_occupancy_initial(pas_stream* stream, pas_heap_summary summary)
     dump_ratio_initial(stream, "F", summary.allocated, summary.allocated + summary.free);
 }
 
-static void dump_arrow(pas_stream* stream, uintptr_t index_of_arrow)
+static void dump_arrow(pas_stream* stream, uint64_t index_of_arrow)
 {
     uintptr_t index;
     
@@ -155,7 +155,7 @@ static void report_bitfit_directory_contents(
     pas_stream_printf(stream, "\n");
     
     pas_stream_printf(stream, "%s Last Empty+1: ", prefix);
-    dump_arrow(stream, (uintptr_t)directory->last_empty_plus_one.value);
+    dump_arrow(stream, directory->last_empty_plus_one.value);
     pas_stream_printf(stream, "\n");
 
     pas_stream_printf(stream, "%s    Committed: ", prefix);
@@ -178,7 +178,7 @@ static void report_bitfit_directory_contents(
     for (size_class = pas_compact_atomic_bitfit_size_class_ptr_load(&directory->largest_size_class);
          size_class;
          size_class = pas_compact_atomic_bitfit_size_class_ptr_load(&size_class->next_smaller)) {
-        uintptr_t index_of_first_free;
+        uint64_t index_of_first_free;
 
         index_of_first_free = size_class->first_free.value;
         
@@ -296,7 +296,7 @@ static void report_segregated_directory_contents(
     pas_stream_printf(stream, "\n");
 
     pas_stream_printf(stream, "%s First Elgbl: ", prefix);
-    dump_arrow(stream, (uintptr_t)pas_segregated_directory_get_first_eligible(directory).value);
+    dump_arrow(stream, pas_segregated_directory_get_first_eligible(directory).value);
     pas_stream_printf(stream, "\n");
 
     pas_stream_printf(stream, "%s       Empty: ", prefix);
@@ -309,7 +309,7 @@ static void report_segregated_directory_contents(
     pas_stream_printf(stream, "\n");
 
     pas_stream_printf(stream, "%s Last Empt+1: ", prefix);
-    dump_arrow(stream, (uintptr_t)pas_segregated_directory_get_last_empty_plus_one(directory).value);
+    dump_arrow(stream, pas_segregated_directory_get_last_empty_plus_one(directory).value);
     pas_stream_printf(stream, "\n");
 
     pas_stream_printf(stream, "%s   Committed: ", prefix);

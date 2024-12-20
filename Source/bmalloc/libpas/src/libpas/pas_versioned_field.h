@@ -33,9 +33,9 @@ PAS_BEGIN_EXTERN_C;
 struct pas_versioned_field;
 typedef struct pas_versioned_field pas_versioned_field;
 
-struct PAS_ALIGNED(sizeof(uintptr_t) * 2) pas_versioned_field {
-    uintptr_t value;
-    uintptr_t version;
+struct PAS_ALIGNED(sizeof(uint64_t) * 2) pas_versioned_field {
+    uint64_t value;
+    uint64_t version;
 };
 
 #define PAS_VERSIONED_FIELD_INITIALIZER ((pas_versioned_field){.value = 0, .version = 0})
@@ -43,17 +43,15 @@ struct PAS_ALIGNED(sizeof(uintptr_t) * 2) pas_versioned_field {
 #define PAS_VERSIONED_FIELD_IS_WATCHED_BIT  1
 #define PAS_VERSIONED_FIELD_VERSION_STEP    2
 
-#define PAS_VERSIONED_FIELD_INVALID_VERSION UINTPTR_MAX
+#define PAS_VERSIONED_FIELD_INVALID_VERSION UINT64_MAX
 
-static inline void pas_versioned_field_construct(pas_versioned_field* field,
-                                                 uintptr_t value)
+static inline void pas_versioned_field_construct(pas_versioned_field* field, uint64_t value)
 {
     field->value = value;
     field->version = 0;
 }
 
-static inline pas_versioned_field pas_versioned_field_create(uintptr_t value,
-                                                             uintptr_t version)
+static inline pas_versioned_field pas_versioned_field_create(uint64_t value, uint64_t version)
 {
     pas_versioned_field field;
     field.value = value;
@@ -62,7 +60,7 @@ static inline pas_versioned_field pas_versioned_field_create(uintptr_t value,
 }
 
 /* Versioned fields with invalid versions will always fail as expected values for try_write. */
-static inline pas_versioned_field pas_versioned_field_create_with_invalid_version(uintptr_t value)
+static inline pas_versioned_field pas_versioned_field_create_with_invalid_version(uint64_t value)
 {
     return pas_versioned_field_create(value, PAS_VERSIONED_FIELD_INVALID_VERSION);
 }
@@ -72,14 +70,12 @@ static inline pas_versioned_field pas_versioned_field_create_empty(void)
     return pas_versioned_field_create(0, 0);
 }
 
-static inline pas_versioned_field pas_versioned_field_with_version(pas_versioned_field field,
-                                                                   uintptr_t version)
+static inline pas_versioned_field pas_versioned_field_with_version(pas_versioned_field field, uint64_t version)
 {
     return pas_versioned_field_create(field.value, version);
 }
 
-static inline pas_versioned_field pas_versioned_field_with_value(pas_versioned_field field,
-                                                                 uintptr_t value)
+static inline pas_versioned_field pas_versioned_field_with_value(pas_versioned_field field, uint64_t value)
 {
     return pas_versioned_field_create(value, field.version);
 }
@@ -125,13 +121,13 @@ static inline pas_versioned_field pas_versioned_field_read(pas_versioned_field* 
 {
     for (;;) {
         pas_versioned_field result;
-        uintptr_t depend;
+        uint64_t depend;
 
         result.version = field->version;
-        depend = pas_depend(result.version);
+        depend = pas_depend64(result.version);
 
         result.value = field[depend].value;
-        depend = pas_depend(result.value);
+        depend = pas_depend64(result.value);
 
         if (field[depend].version == result.version)
             return result;
@@ -200,7 +196,7 @@ static inline pas_versioned_field pas_versioned_field_read_to_watch(pas_versione
    double-CAS, except for fencing. */
 static inline bool pas_versioned_field_try_write(pas_versioned_field* field,
                                                  pas_versioned_field expected_value,
-                                                 uintptr_t new_value)
+                                                 uint64_t new_value)
 {
     pas_versioned_field new_versioned_value;
 
@@ -230,7 +226,7 @@ static inline bool pas_versioned_field_try_write(pas_versioned_field* field,
    This is meant to be used by the allocator since we expect runs of allocations. */
 static inline bool pas_versioned_field_try_write_watched(pas_versioned_field* field,
                                                          pas_versioned_field expected_value,
-                                                         uintptr_t new_value)
+                                                         uint64_t new_value)
 {
     pas_versioned_field new_versioned_value;
 
@@ -248,8 +244,7 @@ static inline bool pas_versioned_field_try_write_watched(pas_versioned_field* fi
         expected_value);
 }
 
-static inline void pas_versioned_field_write(pas_versioned_field* field,
-                                             uintptr_t new_value)
+static inline void pas_versioned_field_write(pas_versioned_field* field, uint64_t new_value)
 {
     for (;;) {
         pas_versioned_field snapshot;
@@ -261,19 +256,17 @@ static inline void pas_versioned_field_write(pas_versioned_field* field,
     }
 }
 
-PAS_API uintptr_t pas_versioned_field_minimize(pas_versioned_field* field,
-                                               uintptr_t new_value);
+PAS_API uint64_t pas_versioned_field_minimize(pas_versioned_field* field, uint64_t new_value);
 
-PAS_API uintptr_t pas_versioned_field_maximize(pas_versioned_field* field,
-                                               uintptr_t new_value);
+PAS_API uint64_t pas_versioned_field_maximize(pas_versioned_field* field, uint64_t new_value);
 
 PAS_API void pas_versioned_field_minimize_watched(pas_versioned_field* field,
                                                   pas_versioned_field expected_value,
-                                                  uintptr_t new_value);
+                                                  uint64_t new_value);
 
 PAS_API void pas_versioned_field_maximize_watched(pas_versioned_field* field,
                                                   pas_versioned_field expected_value,
-                                                  uintptr_t new_value);
+                                                  uint64_t new_value);
 
 PAS_END_EXTERN_C;
 

@@ -673,8 +673,7 @@ bool pas_enumerate_segregated_heaps(pas_enumerator* enumerator)
             return false;
 
         for (index = PAS_DEALLOCATION_LOG_SIZE; index--;) {
-            uintptr_t object =
-                tlc->deallocation_log[index] & ~PAS_SEGREGATED_PAGE_CONFIG_KIND_AND_ROLE_MASK;
+            uintptr_t object = (uintptr_t)(tlc->deallocation_log[index] & ~PAS_SEGREGATED_PAGE_CONFIG_KIND_AND_ROLE_MASK);
             if (object) {
                 pas_ptr_hash_set_set(
                     &context.objects_in_deallocation_log, (void*)object,

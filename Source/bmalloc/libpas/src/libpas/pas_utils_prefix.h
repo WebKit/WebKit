@@ -146,6 +146,34 @@ static __PAS_ALWAYS_INLINE unsigned __pas_depend_impl(unsigned long input, int c
     return output;
 }
 
+static __PAS_ALWAYS_INLINE unsigned __pas_depend64_impl(uint64_t input, int cpu_only)
+{
+    unsigned output;
+#if __PAS_ARM64
+    // Create a magical zero value through inline assembly, whose computation
+    // isn't visible to the optimizer. This zero is then usable as an offset in
+    // further address computations: adding zero does nothing, but the compiler
+    // doesn't know it. It's magical because it creates an address dependency
+    // from the load of `location` to the uses of the dependency, which triggers
+    // the ARM ISA's address dependency rule, a.k.a. the mythical C++ consume
+    // ordering. This forces weak memory order CPUs to observe `location` and
+    // dependent loads in their store order without the reader using a barrier
+    // or an acquire load.
+    __PAS_UNUSED_PARAM(cpu_only);
+    asm volatile ("eor %w[out], %w[in], %w[in]"
+                  : [out] "=r"(output)
+                  : [in] "r"(input)
+                  : "memory");
+#else
+    __PAS_UNUSED_PARAM(input);
+    // No dependency is needed for this architecture.
+    if (!cpu_only)
+        __pas_compiler_fence();
+    output = 0;
+#endif
+    return output;
+}
+
 static __PAS_ALWAYS_INLINE unsigned __pas_depend(unsigned long input)
 {
     int cpu_only = 0;
@@ -156,6 +184,18 @@ static __PAS_ALWAYS_INLINE unsigned __pas_depend_cpu_only(unsigned long input)
 {
     int cpu_only = 1;
     return __pas_depend_impl(input, cpu_only);
+}
+
+static __PAS_ALWAYS_INLINE unsigned __pas_depend64(uint64_t input)
+{
+    int cpu_only = 0;
+    return __pas_depend64_impl(input, cpu_only);
+}
+
+static __PAS_ALWAYS_INLINE unsigned __pas_depend64_cpu_only(uint64_t input)
+{
+    int cpu_only = 1;
+    return __pas_depend64_impl(input, cpu_only);
 }
 
 static inline void __pas_memcpy(volatile void* to, const volatile void* from, __pas_size_t size)
