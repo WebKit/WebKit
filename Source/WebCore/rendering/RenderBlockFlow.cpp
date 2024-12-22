@@ -2297,6 +2297,12 @@ void RenderBlockFlow::styleDidChange(StyleDifference diff, const RenderStyle* ol
 
     if (multiColumnFlow())
         updateStylesForColumnChildren(oldStyle);
+
+    if (oldStyle && style().marginTrim() != oldStyle->marginTrim() && !childrenInline()) {
+        auto descendants = descendantsOfType<RenderBox>(*this);
+        for (auto descendantItr = descendants.begin(); descendantItr; descendantItr->isBlockBox() ? ++descendantItr : descendantItr.traverseNextSkippingChildren())
+            descendantItr->setNeedsLayout();
+    }
 }
 
 void RenderBlockFlow::updateStylesForColumnChildren(const RenderStyle* oldStyle)

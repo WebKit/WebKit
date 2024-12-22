@@ -74,7 +74,7 @@ public:
         , m_blockStartTrimming(false)
     {
     }
-    RenderLayoutState(const LocalFrameViewLayoutContext::LayoutStateStack&, RenderBox&, const LayoutSize& offset, LayoutUnit pageHeight, bool pageHeightChanged, std::optional<LineClamp>, std::optional<LegacyLineClamp>, std::optional<TextBoxTrim>);
+    RenderLayoutState(const LocalFrameViewLayoutContext::LayoutStateStack&, RenderBox&, const LayoutSize& offset, LayoutUnit pageHeight, bool pageHeightChanged, std::optional<LineClamp>, std::optional<LegacyLineClamp>, std::optional<TextBoxTrim>, bool blockStartTrimming);
     explicit RenderLayoutState(RenderElement&);
 
     bool isPaginated() const { return m_isPaginated; }

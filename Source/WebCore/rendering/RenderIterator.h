@@ -267,6 +267,19 @@ inline T* next(U& current, const RenderObject* stayWithin)
     return static_cast<T*>(descendant);
 }
 
+template <typename T, typename U>
+inline T* nextSkippingChildren(U& current, const RenderObject* stayWithin)
+{
+    if (&current == stayWithin)
+        return nullptr;
+
+    auto* next = RenderObjectTraversal::nextSkippingChildren(current, stayWithin);
+    while (next && !isRendererOfType<T>(*next))
+        next = RenderObjectTraversal::nextSkippingChildren(current, stayWithin);
+
+    return static_cast<T*>(next);
+}
+
 } // namespace WebCore::RenderTraversal
 
 namespace RenderPostOrderTraversal {
@@ -327,7 +340,7 @@ template <typename T>
 inline RenderIterator<T>& RenderIterator<T>::traverseNextSkippingChildren()
 {
     ASSERT(m_current);
-    m_current = RenderObjectTraversal::nextSkippingChildren(*m_current, m_root);
+    m_current = RenderTraversal::nextSkippingChildren<T>(*m_current, m_root);
     return *this;
 }
 

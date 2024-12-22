@@ -69,7 +69,7 @@ RenderLayoutState::RenderLayoutState(RenderElement& renderer)
     }
 }
 
-RenderLayoutState::RenderLayoutState(const LocalFrameViewLayoutContext::LayoutStateStack& layoutStateStack, RenderBox& renderer, const LayoutSize& offset, LayoutUnit pageLogicalHeight, bool pageLogicalHeightChanged, std::optional<LineClamp> lineClamp, std::optional<LegacyLineClamp> legacyLineClamp, std::optional<TextBoxTrim> textBoxTrim)
+RenderLayoutState::RenderLayoutState(const LocalFrameViewLayoutContext::LayoutStateStack& layoutStateStack, RenderBox& renderer, const LayoutSize& offset, LayoutUnit pageLogicalHeight, bool pageLogicalHeightChanged, std::optional<LineClamp> lineClamp, std::optional<LegacyLineClamp> legacyLineClamp, std::optional<TextBoxTrim> textBoxTrim, bool blockStartTrimming)
     : m_clipped(false)
     , m_isPaginated(false)
     , m_pageLogicalHeightChanged(false)
@@ -77,7 +77,7 @@ RenderLayoutState::RenderLayoutState(const LocalFrameViewLayoutContext::LayoutSt
     , m_layoutDeltaXSaturated(false)
     , m_layoutDeltaYSaturated(false)
 #endif
-    , m_blockStartTrimming(false)
+    , m_blockStartTrimming(blockStartTrimming)
     , m_lineClamp(lineClamp)
     , m_legacyLineClamp(legacyLineClamp)
     , m_textBoxTrim(textBoxTrim)
