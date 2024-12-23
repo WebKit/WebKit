@@ -1212,12 +1212,6 @@ bool Quirks::shouldDisableFullscreenVideoAspectRatioAdaptiveSizing() const
 }
 #endif
 
-bool Quirks::shouldEnableApplicationCacheQuirk() const
-{
-    // FIXME: Remove this when deleting ApplicationCache APIs.
-    return false;
-}
-
 // play.hbomax.com https://bugs.webkit.org/show_bug.cgi?id=244737
 bool Quirks::shouldEnableFontLoadingAPIQuirk() const
 {
