@@ -48,7 +48,7 @@ public:
     ExceptionOr<URLPatternInit> parse(ScriptExecutionContext&);
 
 private:
-    void performParse(ScriptExecutionContext&);
+    ExceptionOr<void> performParse(ScriptExecutionContext&);
     void rewind();
     const URLPatternUtilities::Token& getSafeToken(size_t index) const;
     bool isNonSpecialPatternChararacter(size_t index, char value) const;
@@ -56,7 +56,7 @@ private:
     bool isAuthoritySlashesNext() const;
     String makeComponentString() const;
     void changeState(URLPatternConstructorStringParserState, size_t skip);
-    void updateState(ScriptExecutionContext&);
+    ExceptionOr<void> updateState(ScriptExecutionContext&);
     ExceptionOr<void> computeProtocolMatchSpecialSchemeFlag(ScriptExecutionContext&);
 
     StringView m_input;

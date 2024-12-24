@@ -199,7 +199,7 @@ void URLPatternConstructorStringParser::changeState(URLPatternConstructorStringP
     m_tokenIncrement = 0;
 }
 
-void URLPatternConstructorStringParser::updateState(ScriptExecutionContext& context)
+ExceptionOr<void> URLPatternConstructorStringParser::updateState(ScriptExecutionContext& context)
 {
     switch (m_state) {
     case URLPatternConstructorStringParserState::Init:
@@ -214,7 +214,7 @@ void URLPatternConstructorStringParser::updateState(ScriptExecutionContext& cont
         if (isNonSpecialPatternChararacter(m_tokenIndex, ':')) {
             auto maybeMatchesSpecialSchemeProtocol = computeProtocolMatchSpecialSchemeFlag(context);
             if (maybeMatchesSpecialSchemeProtocol.hasException())
-                break; // FIXME: Return exceptions.
+                return maybeMatchesSpecialSchemeProtocol.releaseException();
             auto nextState = URLPatternConstructorStringParserState::Pathname;
             auto skip = 1;
             if (isAuthoritySlashesNext()) {
@@ -298,9 +298,11 @@ void URLPatternConstructorStringParser::updateState(ScriptExecutionContext& cont
     default:
         break;
     }
+
+    return { };
 }
 
-void URLPatternConstructorStringParser::performParse(ScriptExecutionContext& context)
+ExceptionOr<void> URLPatternConstructorStringParser::performParse(ScriptExecutionContext& context)
 {
     while (m_tokenIndex < m_tokenList.size()) {
         m_tokenIncrement = 1;
@@ -344,11 +346,16 @@ void URLPatternConstructorStringParser::performParse(ScriptExecutionContext& con
             }
         }
 
-        updateState(context);
+        auto maybeException = updateState(context);
+        if (maybeException.hasException())
+            return maybeException.releaseException();
+
         m_tokenIndex += m_tokenIncrement;
     }
     if (!m_result.hostname.isNull() && m_result.port.isNull())
         m_result.port = emptyString();
+
+    return { };
 }
 
 // https://urlpattern.spec.whatwg.org/#parse-a-constructor-string
@@ -359,7 +366,9 @@ ExceptionOr<URLPatternInit> URLPatternConstructorStringParser::parse(ScriptExecu
         return maybeTokenList.releaseException();
     m_tokenList = maybeTokenList.releaseReturnValue();
 
-    performParse(context);
+    auto maybeParseException = performParse(context);
+    if (maybeParseException.hasException())
+        return maybeParseException.releaseException();
 
     return URLPatternInit { m_result };
 }
