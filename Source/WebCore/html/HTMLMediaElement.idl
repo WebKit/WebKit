@@ -79,10 +79,8 @@ typedef (
     readonly attribute boolean seeking;
 
     // playback state
-    // FIXME: Remove 'unrestricted' from 'currentTime' below to align with the specification. See: https://bugs.webkit.org/show_bug.cgi?id=260738
-    [ImplementedAs=currentTimeForBindings] attribute unrestricted double currentTime;
-    // FIXME: Remove 'unrestricted' from 'fastSeek' below to align with the specification. See: https://bugs.webkit.org/show_bug.cgi?id=260738
-    undefined fastSeek(unrestricted double time);
+    [ImplementedAs=currentTimeForBindings] attribute double currentTime;
+    undefined fastSeek(double time);
     readonly attribute unrestricted double duration;
     Date getStartDate();
     readonly attribute boolean paused;
