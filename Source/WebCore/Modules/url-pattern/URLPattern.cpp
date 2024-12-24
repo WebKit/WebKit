@@ -258,8 +258,13 @@ ExceptionOr<Ref<URLPattern>> URLPattern::create(ScriptExecutionContext& context,
 ExceptionOr<Ref<URLPattern>> URLPattern::create(ScriptExecutionContext& context, std::optional<URLPatternInput>&& input, URLPatternOptions&& options)
 {
     if (!input) {
-        // FIXME: File a bug to URLPattern owners to tell them that spec does not mention supporting empty URLPattern objects. Spec and test cases have diverged!
-        return Exception { ExceptionCode::NotSupportedError, "Not implemented."_s };
+        Ref result = adoptRef(*new URLPattern);
+
+        auto maybeCompileException = result->compileAllComponents(context, URLPatternInit::emptyInit(), WTFMove(options));
+        if (maybeCompileException.hasException())
+            return maybeCompileException.releaseException();
+
+        return result;
     }
 
     return create(context, WTFMove(*input), String { }, WTFMove(options));
@@ -270,10 +275,7 @@ URLPattern::~URLPattern() = default;
 // https://urlpattern.spec.whatwg.org/#dom-urlpattern-test
 ExceptionOr<bool> URLPattern::test(ScriptExecutionContext& context, std::optional<URLPatternInput>&& input, String&& baseURL) const
 {
-    if (!input)
-        return Exception { ExceptionCode::NotSupportedError };
-
-    auto maybeResult = match(context, WTFMove(*input), WTFMove(baseURL));
+    auto maybeResult = match(context, input ? WTFMove(*input) : URLPatternInit::emptyInit(), WTFMove(baseURL));
     if (maybeResult.hasException())
         return maybeResult.releaseException();
 
@@ -284,10 +286,7 @@ ExceptionOr<bool> URLPattern::test(ScriptExecutionContext& context, std::optiona
 // https://urlpattern.spec.whatwg.org/#dom-urlpattern-exec
 ExceptionOr<std::optional<URLPatternResult>> URLPattern::exec(ScriptExecutionContext& context, std::optional<URLPatternInput>&& input, String&& baseURL) const
 {
-    if (!input)
-        return Exception { ExceptionCode::NotSupportedError };
-
-    return match(context, WTFMove(*input), WTFMove(baseURL));
+    return match(context, input ? WTFMove(*input) : URLPatternInit::emptyInit(), WTFMove(baseURL));
 }
 
 ExceptionOr<void> URLPattern::compileAllComponents(ScriptExecutionContext& context, URLPatternInit&& processedInit, const URLPatternOptions& options)

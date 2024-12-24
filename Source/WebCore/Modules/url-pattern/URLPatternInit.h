@@ -39,6 +39,12 @@ struct URLPatternInit {
     String search;
     String hash;
     String baseURL;
+
+    static URLPatternInit emptyInit()
+    {
+        // baseURL is not guaranteed to be an argument so it is null string instead of wildcard.
+        return URLPatternInit { "*"_s, "*"_s, "*"_s, "*"_s, "*"_s, "*"_s, "*"_s, "*"_s, String { } };
+    }
 };
 
 }
