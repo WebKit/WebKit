@@ -28,6 +28,7 @@
 
 #include "DisplayListItems.h"
 #include "DisplayListResourceHeap.h"
+#include "FEImage.h"
 #include "FilterResults.h"
 #include "GraphicsContext.h"
 #include <wtf/text/TextStream.h>
@@ -53,10 +54,21 @@ bool isValid(const Item& item)
 template<class T>
 inline static std::optional<RenderingResourceIdentifier> applyFilteredImageBufferItem(GraphicsContext& context, const ResourceHeap& resourceHeap, const T& item, OptionSet<ReplayOption> options)
 {
-    auto resourceIdentifier = item.sourceImageIdentifier();
-    auto sourceImage = resourceIdentifier ? resourceHeap.getImageBuffer(*resourceIdentifier, options) : nullptr;
-    if (UNLIKELY(!sourceImage && resourceIdentifier))
-        return resourceIdentifier;
+    auto sourceImageIdentifier = item.sourceImageIdentifier();
+    auto sourceImage = sourceImageIdentifier ? resourceHeap.getImageBuffer(*sourceImageIdentifier, options) : nullptr;
+    if (UNLIKELY(!sourceImage && sourceImageIdentifier))
+        return sourceImageIdentifier;
+
+    for (auto& effect : item.filter()->effectsOfType(FilterEffect::Type::FEImage)) {
+        Ref feImage = downcast<FEImage>(effect.get());
+
+        auto feSourceImageIdentifier = feImage->sourceImage().imageIdentifier();
+        auto effectImage = resourceHeap.getSourceImage(feSourceImageIdentifier);
+        if (!effectImage)
+            return feSourceImageIdentifier;
+
+        feImage->setImageSource(WTFMove(*effectImage));
+    }
 
     FilterResults results;
     item.apply(context, sourceImage, results);
@@ -98,26 +110,52 @@ inline static std::optional<RenderingResourceIdentifier> applySourceImageItem(Gr
 
 inline static std::optional<RenderingResourceIdentifier> applySetStateItem(GraphicsContext& context, const ResourceHeap& resourceHeap, const SetState& item, OptionSet<ReplayOption> options)
 {
-    auto fixPatternTileImage = [&](Pattern* pattern) -> std::optional<RenderingResourceIdentifier> {
+    auto cloneItem = item;
+
+    auto fixBrushPattern = [&](SourceBrush& brush) -> std::optional<RenderingResourceIdentifier> {
+        RefPtr pattern = brush.pattern();
         if (!pattern)
             return std::nullopt;
 
-        auto imageIdentifier = pattern->tileImage().imageIdentifier();
-        auto sourceImage = resourceHeap.getSourceImage(imageIdentifier, options);
+        auto renderingResourceIdentifier = pattern->tileImage().imageIdentifier();
+        auto sourceImage = resourceHeap.getSourceImage(renderingResourceIdentifier, options);
         if (!sourceImage)
-            return imageIdentifier;
+            return renderingResourceIdentifier;
 
         pattern->setTileImage(WTFMove(*sourceImage));
         return std::nullopt;
     };
 
-    if (auto imageIdentifier = fixPatternTileImage(item.state().strokeBrush().pattern()))
-        return *imageIdentifier;
+    auto fixBrushGradient = [&](SourceBrush& brush) -> std::optional<RenderingResourceIdentifier> {
+        auto renderingResourceIdentifier = brush.gradientIdentifier();
+        if (!renderingResourceIdentifier)
+            return std::nullopt;
 
-    if (auto imageIdentifier = fixPatternTileImage(item.state().fillBrush().pattern()))
-        return *imageIdentifier;
+        auto cachedGradient = resourceHeap.getGradient(*renderingResourceIdentifier);
+        if (!cachedGradient)
+            return renderingResourceIdentifier;
 
-    item.apply(context);
+        brush.setGradient(Ref { *cachedGradient }, brush.gradientSpaceTransform());
+        return std::nullopt;
+    };
+
+    auto fixBrush = [&](SourceBrush& brush) -> std::optional<RenderingResourceIdentifier> {
+        if (auto imageIdentifier = fixBrushPattern(brush))
+            return *imageIdentifier;
+
+        if (auto gradientIdentifier = fixBrushGradient(brush))
+            return *gradientIdentifier;
+
+        return std::nullopt;
+    };
+
+    if (auto renderingResourceIdentifier = fixBrush(cloneItem.state().strokeBrush()))
+        return *renderingResourceIdentifier;
+
+    if (auto renderingResourceIdentifier = fixBrush(cloneItem.state().fillBrush()))
+        return *renderingResourceIdentifier;
+
+    cloneItem.apply(context);
     return std::nullopt;
 }
 

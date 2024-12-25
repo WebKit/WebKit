@@ -83,6 +83,7 @@ public:
 #endif
     void strokeRect(const FloatRect&, float) final;
     void strokeEllipse(const FloatRect&) final;
+    void drawFilteredImageBuffer(ImageBuffer* sourceImage, const FloatRect& sourceImageRect, Filter&, FilterResults&) final;
     void clearRect(const FloatRect&) final;
     void drawControlPart(ControlPart&, const FloatRoundedRect& borderRect, float deviceScaleFactor, const ControlStyle&) final;
 #if USE(CG)
@@ -95,15 +96,16 @@ public:
     void endPage() final;
 
 private:
+    void appendSetStateItem(const GraphicsContextState&) final;
     void recordSetInlineFillColor(PackedColor::RGBA) final;
     void recordSetInlineStroke(SetInlineStroke&&) final;
     void recordSetState(const GraphicsContextState&) final;
     void recordClearDropShadow() final;
-    void recordClipToImageBuffer(ImageBuffer&, const FloatRect& destinationRect) final;
-    void recordDrawFilteredImageBuffer(ImageBuffer*, const FloatRect& sourceImageRect, Filter&) final;
+    void recordClipToImageBuffer(RenderingResourceIdentifier imageBufferIdentifier, const FloatRect& destinationRect) final;
+    void recordDrawFilteredImageBuffer(std::optional<RenderingResourceIdentifier> sourceImageIdentifier, const FloatRect& sourceImageRect, Filter&) final;
     void recordDrawGlyphs(const Font&, const GlyphBufferGlyph*, const GlyphBufferAdvance*, unsigned count, const FloatPoint& localAnchor, FontSmoothingMode) final;
     void recordDrawDecomposedGlyphs(const Font&, const DecomposedGlyphs&) final;
-    void recordDrawImageBuffer(ImageBuffer&, const FloatRect& destRect, const FloatRect& srcRect, ImagePaintingOptions) final;
+    void recordDrawImageBuffer(RenderingResourceIdentifier imageBufferIdentifier, const FloatRect& destRect, const FloatRect& srcRect, ImagePaintingOptions) final;
     void recordDrawNativeImage(RenderingResourceIdentifier imageIdentifier, const FloatRect& destRect, const FloatRect& srcRect, ImagePaintingOptions) final;
     void recordDrawSystemImage(SystemImage&, const FloatRect&) final;
     void recordDrawPattern(RenderingResourceIdentifier, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform&, const FloatPoint& phase, const FloatSize& spacing, ImagePaintingOptions = { }) final;
@@ -128,12 +130,12 @@ private:
     void recordStrokePath(const Path&) final;
     void recordDrawDisplayListItems(const Vector<Item>&, const FloatPoint& destination) final;
 
-    bool recordResourceUse(NativeImage&) final;
-    bool recordResourceUse(ImageBuffer&) final;
-    bool recordResourceUse(const SourceImage&) final;
+    std::optional<RenderingResourceIdentifier> recordResourceUse(NativeImage&) final;
+    std::optional<RenderingResourceIdentifier> recordResourceUse(ImageBuffer&) final;
+    std::optional<RenderingResourceIdentifier> recordResourceUse(const SourceImage&) final;
+    std::optional<RenderingResourceIdentifier> recordResourceUse(Gradient&) final;
     bool recordResourceUse(Font&) final;
     bool recordResourceUse(DecomposedGlyphs&) final;
-    bool recordResourceUse(Gradient&) final;
     bool recordResourceUse(Filter&) final;
 
     void append(Item&& item)

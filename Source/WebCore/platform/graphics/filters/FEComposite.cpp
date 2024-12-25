@@ -48,6 +48,11 @@ FEComposite::FEComposite(const CompositeOperationType& type, float k1, float k2,
 {
 }
 
+FEComposite::FEComposite(const FEComposite& other)
+    : FEComposite(other.m_type, other.m_k1, other.m_k2, other.m_k3, other.m_k4, other.m_operatingColorSpace)
+{
+}
+
 bool FEComposite::operator==(const FEComposite& other) const
 {
     return FilterEffect::operator==(other)

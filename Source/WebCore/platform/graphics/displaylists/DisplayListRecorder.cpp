@@ -74,7 +74,7 @@ void Recorder::commitRecording()
 void Recorder::appendStateChangeItem(const GraphicsContextState& state)
 {
     ASSERT(state.changes());
-    
+
     if (state.containsOnlyInlineChanges()) {
         if (state.changes().contains(GraphicsContextState::Change::FillBrush))
             recordSetInlineFillColor(*fillColor().tryGetAsPackedInline());
@@ -84,6 +84,11 @@ void Recorder::appendStateChangeItem(const GraphicsContextState& state)
         return;
     }
 
+    appendSetStateItem(state);
+}
+
+void Recorder::appendSetStateItem(const GraphicsContextState& state)
+{
     if (state.changes().contains(GraphicsContextState::Change::FillBrush)) {
         if (auto pattern = fillPattern())
             recordResourceUse(pattern->tileImage());
@@ -166,16 +171,17 @@ void Recorder::drawFilteredImageBuffer(ImageBuffer* sourceImage, const FloatRect
     }
 
     if (!sourceImage) {
-        recordDrawFilteredImageBuffer(nullptr, sourceImageRect, filter);
+        recordDrawFilteredImageBuffer(std::nullopt, sourceImageRect, filter);
         return;
     }
 
-    if (!recordResourceUse(*sourceImage)) {
+    auto renderingResourceIdentifier = recordResourceUse(*sourceImage);
+    if (!renderingResourceIdentifier) {
         GraphicsContext::drawFilteredImageBuffer(sourceImage, sourceImageRect, filter, results);
         return;
     }
 
-    recordDrawFilteredImageBuffer(sourceImage, sourceImageRect, filter);
+    recordDrawFilteredImageBuffer(renderingResourceIdentifier, sourceImageRect, filter);
 }
 
 bool Recorder::shouldDeconstructDrawGlyphs() const
@@ -262,12 +268,13 @@ void Recorder::drawImageBuffer(ImageBuffer& imageBuffer, const FloatRect& destRe
 {
     appendStateChangeItemIfNecessary();
 
-    if (!recordResourceUse(imageBuffer)) {
+    auto renderingResourceIdentifier = recordResourceUse(imageBuffer);
+    if (!renderingResourceIdentifier) {
         GraphicsContext::drawImageBuffer(imageBuffer, destRect, srcRect, options);
         return;
     }
 
-    recordDrawImageBuffer(imageBuffer, destRect, srcRect, options);
+    recordDrawImageBuffer(*renderingResourceIdentifier, destRect, srcRect, options);
 }
 void Recorder::drawConsumingImageBuffer(RefPtr<ImageBuffer> imageBuffer, const FloatRect& destRect, const FloatRect& srcRect, ImagePaintingOptions options)
 {
@@ -312,12 +319,13 @@ void Recorder::drawPattern(ImageBuffer& imageBuffer, const FloatRect& destRect, 
 {
     appendStateChangeItemIfNecessary();
 
-    if (!recordResourceUse(imageBuffer)) {
+    auto renderingResourceIdentifier = recordResourceUse(imageBuffer);
+    if (!renderingResourceIdentifier) {
         GraphicsContext::drawPattern(imageBuffer, destRect, tileRect, patternTransform, phase, spacing, options);
         return;
     }
 
-    recordDrawPattern(imageBuffer.renderingResourceIdentifier(), destRect, tileRect, patternTransform, phase, spacing, options);
+    recordDrawPattern(*renderingResourceIdentifier, destRect, tileRect, patternTransform, phase, spacing, options);
 }
 
 void Recorder::updateStateForSave(GraphicsContextState::Purpose purpose)
@@ -526,8 +534,8 @@ void Recorder::clipToImageBuffer(ImageBuffer& imageBuffer, const FloatRect& dest
 {
     appendStateChangeItemIfNecessary(); // Conservative: we do not know if the clip application might use state such as antialiasing.
     currentState().clipBounds.intersect(currentState().ctm.mapRect(destRect));
-    recordResourceUse(imageBuffer);
-    recordClipToImageBuffer(imageBuffer, destRect);
+    if (auto renderingResourceIdentifier = recordResourceUse(imageBuffer))
+        recordClipToImageBuffer(*renderingResourceIdentifier, destRect);
 }
 
 void Recorder::updateStateForApplyDeviceScaleFactor(float deviceScaleFactor)

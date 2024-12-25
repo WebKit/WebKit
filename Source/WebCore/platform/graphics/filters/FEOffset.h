@@ -42,7 +42,9 @@ public:
 
 private:
     FEOffset(float dx, float dy, DestinationColorSpace);
+    FEOffset(const FEOffset&);
 
+    Ref<FilterFunction> deepClone() const override { return adoptRef(*new FEOffset(*this)); }
     bool operator==(const FilterEffect& other) const override { return areEqual<FEOffset>(*this, other); }
 
     FloatRect calculateImageRect(const Filter&, std::span<const FloatRect> inputImageRects, const FloatRect& primitiveSubregion) const override;

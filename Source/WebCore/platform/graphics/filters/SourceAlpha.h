@@ -33,6 +33,8 @@ public:
 private:
     explicit SourceAlpha(DestinationColorSpace);
 
+    Ref<FilterFunction> deepClone() const override { return Ref { const_cast<SourceAlpha&>(*this) }; }
+
     std::unique_ptr<FilterEffectApplier> createSoftwareApplier() const override;
 
     WTF::TextStream& externalRepresentation(WTF::TextStream&, FilterRepresentation) const override;

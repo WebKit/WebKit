@@ -81,6 +81,8 @@ public:
     FilterFunction(Type, std::optional<RenderingResourceIdentifier> = std::nullopt);
     virtual ~FilterFunction() = default;
 
+    virtual Ref<FilterFunction> deepClone() const = 0;
+
     Type filterType() const { return m_filterType; }
 
     bool isCSSFilter() const { return m_filterType == Type::CSSFilter; }

@@ -1248,8 +1248,9 @@ platform/graphics/coretext/ComplexTextControllerCoreText.mm
 platform/graphics/coretext/FontCascadeCoreText.cpp
 platform/graphics/coretext/FontPlatformDataCoreText.cpp
 platform/graphics/cv/GraphicsContextGLCVCocoa.mm
-platform/graphics/displaylists/DisplayListItem.cpp
+platform/graphics/filters/FEDiffuseLighting.cpp
 platform/graphics/filters/FEDisplacementMap.cpp
+platform/graphics/filters/FESpecularLighting.cpp
 platform/graphics/filters/FilterImage.cpp
 platform/graphics/filters/software/FEComponentTransferSoftwareApplier.cpp
 platform/graphics/filters/software/FEConvolveMatrixSoftwareApplier.cpp

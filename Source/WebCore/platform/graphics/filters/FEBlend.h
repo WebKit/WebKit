@@ -39,7 +39,9 @@ public:
 
 private:
     FEBlend(BlendMode, DestinationColorSpace);
+    FEBlend(const FEBlend&);
 
+    Ref<FilterFunction> deepClone() const override { return adoptRef(*new FEBlend(*this)); }
     bool operator==(const FilterEffect& other) const override { return areEqual<FEBlend>(*this, other); }
 
     unsigned numberOfEffectInputs() const override { return 2; }

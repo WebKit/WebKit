@@ -44,7 +44,7 @@ public:
     bool setDy(float);
 
     const Color& shadowColor() const { return m_shadowColor; } 
-    bool setShadowColor(const Color&);
+    WEBCORE_EXPORT bool setShadowColor(const Color&);
 
     float shadowOpacity() const { return m_shadowOpacity; }
     bool setShadowOpacity(float);
@@ -57,7 +57,9 @@ public:
 
 private:
     FEDropShadow(float stdX, float stdY, float dx, float dy, const Color& shadowColor, float shadowOpacity, DestinationColorSpace);
+    FEDropShadow(const FEDropShadow&);
 
+    Ref<FilterFunction> deepClone() const override { return adoptRef(*new FEDropShadow(*this)); }
     bool operator==(const FilterEffect& other) const override { return areEqual<FEDropShadow>(*this, other); }
 
     FloatRect calculateImageRect(const Filter&, std::span<const FloatRect> inputImageRects, const FloatRect& primitiveSubregion) const override;

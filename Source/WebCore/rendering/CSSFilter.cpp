@@ -63,11 +63,6 @@ RefPtr<CSSFilter> CSSFilter::create(RenderElement& renderer, const FilterOperati
     return filter;
 }
 
-Ref<CSSFilter> CSSFilter::create(Vector<Ref<FilterFunction>>&& functions)
-{
-    return adoptRef(*new CSSFilter(WTFMove(functions)));
-}
-
 Ref<CSSFilter> CSSFilter::create(Vector<Ref<FilterFunction>>&& functions, OptionSet<FilterRenderingMode> filterRenderingModes, const FloatSize& filterScale, const FloatRect& filterRegion)
 {
     Ref filter = adoptRef(*new CSSFilter(WTFMove(functions), filterScale, filterRegion));
@@ -84,17 +79,26 @@ CSSFilter::CSSFilter(const FloatSize& filterScale, bool hasFilterThatMovesPixels
 {
 }
 
-CSSFilter::CSSFilter(Vector<Ref<FilterFunction>>&& functions)
-    : Filter(Type::CSSFilter)
-    , m_functions(WTFMove(functions))
-{
-}
-
 CSSFilter::CSSFilter(Vector<Ref<FilterFunction>>&& functions, const FloatSize& filterScale, const FloatRect& filterRegion)
     : Filter(Type::CSSFilter, filterScale, filterRegion)
     , m_functions(WTFMove(functions))
 {
     clampFilterRegionIfNeeded();
+}
+
+Ref<FilterFunction> CSSFilter::deepClone() const
+{
+    Vector<Ref<FilterFunction>> functions;
+
+    for (auto& function : m_functions)
+        functions.append(function->deepClone());
+
+    Ref filter = CSSFilter::create(WTFMove(functions), filterRenderingModes(), filterScale(), filterRegion());
+
+    filter->m_hasFilterThatMovesPixels = m_hasFilterThatMovesPixels;
+    filter->m_hasFilterThatShouldBeRestrictedBySecurityOrigin = m_hasFilterThatShouldBeRestrictedBySecurityOrigin;
+
+    return filter;
 }
 
 static RefPtr<FilterEffect> createBlurEffect(const BlurFilterOperation& blurOperation)

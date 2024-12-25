@@ -56,7 +56,9 @@ public:
 
 private:
     SpotLightSource(const FloatPoint3D& position, const FloatPoint3D& direction, float specularExponent, float limitingConeAngle);
+    SpotLightSource(const SpotLightSource&);
 
+    Ref<LightSource> clone() const override { return adoptRef(*new SpotLightSource(*this)); }
     bool operator==(const LightSource& other) const override { return areEqual<SpotLightSource>(*this, other); }
 
     FloatPoint3D m_position;

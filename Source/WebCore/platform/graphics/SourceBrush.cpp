@@ -80,6 +80,11 @@ void SourceBrush::setGradient(Ref<Gradient>&& gradient, const AffineTransform& s
     m_patternGradient = SourceBrushLogicalGradient { WTFMove(gradient), spaceTransform };
 }
 
+void SourceBrush::setGradient(RenderingResourceIdentifier renderingResourceIdentifier, const AffineTransform& spaceTransform)
+{
+    m_patternGradient = SourceBrushLogicalGradient { renderingResourceIdentifier, spaceTransform };
+}
+
 void SourceBrush::setPattern(Ref<Pattern>&& pattern)
 {
     m_patternGradient.emplace<Ref<Pattern>>(WTFMove(pattern));

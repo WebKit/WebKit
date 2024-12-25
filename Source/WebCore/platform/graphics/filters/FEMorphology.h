@@ -49,7 +49,9 @@ public:
 
 private:
     FEMorphology(MorphologyOperatorType, float radiusX, float radiusY, DestinationColorSpace);
+    FEMorphology(const FEMorphology&);
 
+    Ref<FilterFunction> deepClone() const override { return adoptRef(*new FEMorphology(*this)); }
     bool operator==(const FilterEffect& other) const override { return areEqual<FEMorphology>(*this, other); }
 
     FloatRect calculateImageRect(const Filter&, std::span<const FloatRect> inputImageRects, const FloatRect& primitiveSubregion) const override;

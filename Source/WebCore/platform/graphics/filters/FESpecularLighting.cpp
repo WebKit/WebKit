@@ -40,6 +40,11 @@ FESpecularLighting::FESpecularLighting(const Color& lightingColor, float surface
 {
 }
 
+FESpecularLighting::FESpecularLighting(const FESpecularLighting& other)
+    : FESpecularLighting(other.m_lightingColor, other.m_surfaceScale, other.m_specularConstant, other.m_specularExponent, other.m_kernelUnitLengthX, other.m_kernelUnitLengthY, other.m_lightSource->clone(), other.m_operatingColorSpace)
+{
+}
+
 bool FESpecularLighting::setSpecularConstant(float specularConstant)
 {
     specularConstant = std::max(specularConstant, 0.0f);

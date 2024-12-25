@@ -50,6 +50,11 @@ FEDropShadow::FEDropShadow(float stdX, float stdY, float dx, float dy, const Col
 {
 }
 
+FEDropShadow::FEDropShadow(const FEDropShadow& other)
+    : FEDropShadow(other.m_stdX, other.m_stdY, other.m_dx, other.m_dy, other.m_shadowColor, other.m_shadowOpacity, other.m_operatingColorSpace)
+{
+}
+
 bool FEDropShadow::operator==(const FEDropShadow& other) const
 {
     return FilterEffect::operator==(other)

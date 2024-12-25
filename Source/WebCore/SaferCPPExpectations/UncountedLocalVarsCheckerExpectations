@@ -742,7 +742,6 @@ platform/graphics/coretext/GlyphPageCoreText.cpp
 platform/graphics/cv/VideoFrameCV.mm
 platform/graphics/displaylists/DisplayListItem.cpp
 platform/graphics/displaylists/DisplayListItems.cpp
-platform/graphics/displaylists/DisplayListRecorder.cpp
 platform/graphics/displaylists/DisplayListRecorderImpl.cpp
 platform/graphics/displaylists/DisplayListResourceHeap.h
 platform/graphics/filters/FilterEffect.cpp

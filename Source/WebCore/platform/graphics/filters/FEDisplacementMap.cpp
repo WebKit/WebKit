@@ -44,6 +44,11 @@ FEDisplacementMap::FEDisplacementMap(ChannelSelectorType xChannelSelector, Chann
 {
 }
 
+FEDisplacementMap::FEDisplacementMap(const FEDisplacementMap& other)
+    : FEDisplacementMap(other.m_xChannelSelector, other.m_yChannelSelector, other.m_scale, other.m_operatingColorSpace)
+{
+}
+
 bool FEDisplacementMap::operator==(const FEDisplacementMap& other) const
 {
     return FilterEffect::operator==(other)

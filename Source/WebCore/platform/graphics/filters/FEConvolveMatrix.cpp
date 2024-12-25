@@ -52,6 +52,11 @@ FEConvolveMatrix::FEConvolveMatrix(const IntSize& kernelSize, float divisor, flo
     ASSERT(IntRect(IntPoint::zero(), kernelSize).contains(targetOffset));
 }
 
+FEConvolveMatrix::FEConvolveMatrix(const FEConvolveMatrix& other)
+    : FEConvolveMatrix(other.m_kernelSize, other.m_divisor, other.m_bias, other.m_targetOffset, other.m_edgeMode, other.m_kernelUnitLength, other.m_preserveAlpha, Vector<float> { other.m_kernelMatrix }, other.m_operatingColorSpace)
+{
+}
+
 bool FEConvolveMatrix::operator==(const FEConvolveMatrix& other) const
 {
     return FilterEffect::operator==(other)

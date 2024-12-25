@@ -27,10 +27,17 @@
 
 #include "Test.h"
 #include "WebCoreTestUtilities.h"
+#include <WebCore/CSSFilter.h>
 #include <WebCore/Color.h>
+#include <WebCore/DisplayListDrawingContext.h>
+#include <WebCore/FEDropShadow.h>
+#include <WebCore/FEImage.h>
+#include <WebCore/FilterResults.h>
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/ImageBuffer.h>
 #include <WebCore/PixelBuffer.h>
+#include <WebCore/SVGFilter.h>
+#include <WebCore/SourceGraphic.h>
 #include <cmath>
 #include <type_traits>
 #include <wtf/MemoryFootprint.h>
@@ -233,6 +240,334 @@ TEST(ImageBufferTests, DISABLED_DrawImageBufferDoesNotReferenceExtraMemory)
     unaccelerated = nullptr;
     lastFootprint = initialFootprint;
     EXPECT_TRUE(memoryFootprintChangedBy(lastFootprint, 0, footprintError));
+}
+
+// This test records setFillGradient to a DisplayList. Before replaying back the
+// DisplayList, the Gradient is altered. The expectation is the DisplayList keeps
+// references only to immutable Gradient.
+TEST(ImageBufferTests, DisplayListSetFillGradient)
+{
+    auto colorSpace = DestinationColorSpace::SRGB();
+    auto pixelFormat = ImageBufferPixelFormat::BGRA8;
+    FloatSize destinationSize { 100, 100 };
+    float scale = 1;
+
+    RefPtr destination = ImageBuffer::create(destinationSize, RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, scale, colorSpace, pixelFormat);
+
+    auto destinationRect = FloatRect { { }, destinationSize };
+
+    auto gradient = Gradient::create(Gradient::LinearData { destinationRect.minXMinYCorner(), destinationRect.maxXMaxYCorner() },
+        { ColorInterpolationMethod::SRGB { }, AlphaPremultiplication::Unpremultiplied },
+        GradientSpreadMethod::Pad,
+        { },
+        RenderingResourceIdentifier::generate());
+
+    gradient->addColorStop({ 0.0f, Color::green });
+    gradient->addColorStop({ 1.0f, Color::green });
+
+    DisplayList::DrawingContext drawingContext(destinationSize);
+    drawingContext.context().setFillGradient(Ref { gradient });
+    drawingContext.context().fillRect(destinationRect);
+
+    // Mutating the pattern tileImage should not affect the DisplayList drawing.
+    gradient->addColorStop({ 0.0f, Color::red });
+    gradient->addColorStop({ 1.0f, Color::red });
+
+    // The DisplayList should have cloned the gradient when recording drawImageBuffer().
+    drawingContext.replayDisplayList(destination->context());
+
+    EXPECT_TRUE(imageBufferPixelIs(Color::green, *destination, destinationRect.x() + 1, destinationRect.y() + 1));
+    EXPECT_TRUE(imageBufferPixelIs(Color::green, *destination, destinationRect.maxX() - 1, destinationRect.y() + 1));
+    EXPECT_TRUE(imageBufferPixelIs(Color::green, *destination, destinationRect.x() + 1, destinationRect.maxY() - 1));
+    EXPECT_TRUE(imageBufferPixelIs(Color::green, *destination, destinationRect.maxX() - 1, destinationRect.maxY() - 1));
+}
+
+// This test records setFillPattern to a DisplayList. Before replaying back the
+// DisplayList, the tileImage of the Pattern is altered. The expectation is the
+// DisplayList keeps references only to immutable ImageBuffers.
+TEST(ImageBufferTests, DisplayListSetFillPattern)
+{
+    auto colorSpace = DestinationColorSpace::SRGB();
+    auto pixelFormat = ImageBufferPixelFormat::BGRA8;
+    FloatSize patternSize { 100, 100 };
+    FloatSize destinationSize { 100, 100 };
+    float scale = 1;
+
+    RefPtr patternSource = ImageBuffer::create(patternSize, RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, scale, colorSpace, pixelFormat);
+    RefPtr destination = ImageBuffer::create(destinationSize, RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, scale, colorSpace, pixelFormat);
+
+    auto patternRect = FloatRect { { }, patternSize };
+    patternSource->context().fillRect(patternRect, Color::green);
+
+    DisplayList::DrawingContext drawingContext(destinationSize);
+    drawingContext.context().setFillPattern(Pattern::create({ Ref { *patternSource } }));
+
+    auto destinationRect = FloatRect { { }, destinationSize };
+    drawingContext.context().fillRect(destinationRect);
+
+    // Mutating the pattern tileImage should not affect the DisplayList drawing.
+    patternSource->context().fillRect(destinationRect, Color::red);
+
+    // The DisplayList should have cloned the patternSource ImageBuffer when recording drawImageBuffer().
+    drawingContext.replayDisplayList(destination->context());
+
+    EXPECT_TRUE(imageBufferPixelIs(Color::green, *destination, destinationRect.x() + 1, destinationRect.y() + 1));
+    EXPECT_TRUE(imageBufferPixelIs(Color::green, *destination, destinationRect.maxX() - 1, destinationRect.y() + 1));
+    EXPECT_TRUE(imageBufferPixelIs(Color::green, *destination, destinationRect.x() + 1, destinationRect.maxY() - 1));
+    EXPECT_TRUE(imageBufferPixelIs(Color::green, *destination, destinationRect.maxX() - 1, destinationRect.maxY() - 1));
+}
+
+// This test records drawImageBuffer to a DisplayList. Before replaying back the
+// DisplayList, the ImageBuffer is altered. The expectation is the DisplayList
+// keeps references only to immutable ImageBuffers.
+TEST(ImageBufferTests, DisplayListDrawImageBuffer)
+{
+    auto colorSpace = DestinationColorSpace::SRGB();
+    auto pixelFormat = ImageBufferPixelFormat::BGRA8;
+    FloatSize logicalSize { 4096, 4096 };
+    float scale = 1;
+
+    RefPtr source1 = ImageBuffer::create(logicalSize, RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, scale, colorSpace, pixelFormat);
+    RefPtr source2 = ImageBuffer::create(logicalSize, RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, scale, colorSpace, pixelFormat);
+    RefPtr source3 = ImageBuffer::create(logicalSize, RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, scale, colorSpace, pixelFormat);
+    RefPtr destination = ImageBuffer::create(logicalSize, RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, scale, colorSpace, pixelFormat);
+
+    auto redRect = FloatRect { { }, logicalSize };
+    source1->context().fillRect(redRect, Color::red);
+
+    auto greenRatio = 0.5;
+    auto greenRect = FloatRect { FloatPoint { logicalSize.scaled((1 - greenRatio) / 2) }, logicalSize.scaled(greenRatio) };
+    source2->context().fillRect(greenRect, Color::green);
+
+    auto blueRatio = 0.25;
+    auto blueRect = FloatRect { FloatPoint { logicalSize.scaled((1 - blueRatio) / 2) }, logicalSize.scaled(blueRatio) };
+    source3->context().fillRect(blueRect, Color::blue);
+
+    DisplayList::DrawingContext drawingContext(logicalSize);
+    drawingContext.context().drawImageBuffer(*source1, FloatPoint());
+    drawingContext.context().drawImageBuffer(*source2, FloatPoint());
+    drawingContext.context().drawImageBuffer(*source3, FloatPoint());
+
+    // Mutating the ImageBuffers should not affect the DisplayList drawing.
+    source1->context().fillRect(redRect, Color::black);
+    source2->context().fillRect(redRect, Color::black);
+    source3->context().fillRect(redRect, Color::black);
+
+    // The DisplayList should have cloned the source ImageBuffers when recording drawImageBuffer().
+    drawingContext.replayDisplayList(destination->context());
+
+    EXPECT_TRUE(imageBufferPixelIs(Color::red, *destination, redRect.x() + 1, redRect.y() + 1));
+    EXPECT_TRUE(imageBufferPixelIs(Color::red, *destination, redRect.maxX() - 1, redRect.y() + 1));
+    EXPECT_TRUE(imageBufferPixelIs(Color::red, *destination, redRect.x() + 1, redRect.maxY() - 1));
+    EXPECT_TRUE(imageBufferPixelIs(Color::red, *destination, redRect.maxX() - 1, redRect.maxY() - 1));
+
+    EXPECT_TRUE(imageBufferPixelIs(Color::green, *destination, greenRect.x() + 1, greenRect.y() + 1));
+    EXPECT_TRUE(imageBufferPixelIs(Color::green, *destination, greenRect.maxX() - 1, greenRect.y() + 1));
+    EXPECT_TRUE(imageBufferPixelIs(Color::green, *destination, greenRect.x() + 1, greenRect.maxY() - 1));
+    EXPECT_TRUE(imageBufferPixelIs(Color::green, *destination, greenRect.maxX() - 1, greenRect.maxY() - 1));
+
+    EXPECT_TRUE(imageBufferPixelIs(Color::blue, *destination, blueRect.x() + 1, blueRect.y() + 1));
+    EXPECT_TRUE(imageBufferPixelIs(Color::blue, *destination, blueRect.maxX() - 1, blueRect.y() + 1));
+    EXPECT_TRUE(imageBufferPixelIs(Color::blue, *destination, blueRect.x() + 1, blueRect.maxY() - 1));
+    EXPECT_TRUE(imageBufferPixelIs(Color::blue, *destination, blueRect.maxX() - 1, blueRect.maxY() - 1));
+}
+
+// This test records drawFilteredImageBuffer to a DisplayList. Before replaying back
+// the DisplayList, the sourceImage of the Filter is altered. The expectation is the
+// DisplayList keeps references only to immutable ImageBuffers.
+TEST(ImageBufferTests, DisplayListDrawFilteredImageBufferSourceImage)
+{
+    auto colorSpace = DestinationColorSpace::SRGB();
+    auto pixelFormat = ImageBufferPixelFormat::BGRA8;
+    FloatSize sourceSize { 100, 100 };
+    FloatSize destinationSize { 200, 100 };
+    float scale = 1;
+
+    RefPtr source = ImageBuffer::create(sourceSize, RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, scale, colorSpace, pixelFormat);
+    RefPtr destination = ImageBuffer::create(destinationSize, RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, scale, colorSpace, pixelFormat);
+
+    auto greenRect = FloatRect { { }, sourceSize };
+    source->context().fillRect(greenRect, Color::green);
+
+    Vector<Ref<FilterFunction>> functions;
+    functions.append(SourceGraphic::create());
+    functions.append(FEDropShadow::create(0, 0, 100, 0, Color::blue, 1));
+
+    auto filterRegion = FloatRect { { }, destinationSize };
+    RefPtr filter = CSSFilter::create(WTFMove(functions), FilterRenderingMode::Software, { 1, 1 }, filterRegion);
+
+    DisplayList::DrawingContext drawingContext(destinationSize);
+
+    FilterResults results;
+    drawingContext.context().drawFilteredImageBuffer(source.get(), greenRect, *filter, results);
+
+    // Mutating the ImageBuffers should not affect the DisplayList drawing.
+    auto redRect = FloatRect { { }, sourceSize };
+    source->context().fillRect(redRect, Color::red);
+
+    // The DisplayList should have cloned the source ImageBuffer when recording drawImageBuffer().
+    drawingContext.replayDisplayList(destination->context());
+
+    EXPECT_TRUE(imageBufferPixelIs(Color::green, *destination, filterRegion.x() + 1, filterRegion.y() + 1));
+    EXPECT_TRUE(imageBufferPixelIs(Color::blue, *destination, filterRegion.maxX() - 1, filterRegion.y() + 1));
+    EXPECT_TRUE(imageBufferPixelIs(Color::green, *destination, filterRegion.x() + 1, filterRegion.maxY() - 1));
+    EXPECT_TRUE(imageBufferPixelIs(Color::blue, *destination, filterRegion.maxX() - 1, filterRegion.maxY() - 1));
+}
+
+// This test records drawFilteredImageBuffer to a DisplayList. Before replaying back
+// the DisplayList, the Filter is altered. The expectation is the DisplayList keeps
+// references only to immutable Filters.
+TEST(ImageBufferTests, DisplayListDrawFilteredImageBufferFilter)
+{
+    auto colorSpace = DestinationColorSpace::SRGB();
+    auto pixelFormat = ImageBufferPixelFormat::BGRA8;
+    FloatSize sourceSize { 100, 100 };
+    FloatSize destinationSize { 200, 100 };
+    float scale = 1;
+
+    RefPtr source = ImageBuffer::create(sourceSize, RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, scale, colorSpace, pixelFormat);
+    RefPtr destination = ImageBuffer::create(destinationSize, RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, scale, colorSpace, pixelFormat);
+
+    auto greenRect = FloatRect { { }, sourceSize };
+    source->context().fillRect(greenRect, Color::green);
+
+    Vector<Ref<FilterFunction>> functions;
+    functions.append(SourceGraphic::create());
+
+    Ref dropShadow = FEDropShadow::create(0, 0, 100, 0, Color::blue, 1);
+    functions.append(Ref { dropShadow });
+
+    auto filterRegion = FloatRect { { }, destinationSize };
+    RefPtr filter = CSSFilter::create(WTFMove(functions), FilterRenderingMode::Software, { 1, 1 }, filterRegion);
+
+    DisplayList::DrawingContext drawingContext(destinationSize);
+
+    FilterResults results;
+    drawingContext.context().drawFilteredImageBuffer(source.get(), greenRect, *filter, results);
+
+    // Mutating the filter should not affect the DisplayList drawing.
+    dropShadow->setShadowColor(Color::red);
+
+    // The DisplayList should have cloned the filter when recording drawImageBuffer().
+    drawingContext.replayDisplayList(destination->context());
+
+    EXPECT_TRUE(imageBufferPixelIs(Color::green, *destination, filterRegion.x() + 1, filterRegion.y() + 1));
+    EXPECT_TRUE(imageBufferPixelIs(Color::blue, *destination, filterRegion.maxX() - 1, filterRegion.y() + 1));
+    EXPECT_TRUE(imageBufferPixelIs(Color::green, *destination, filterRegion.x() + 1, filterRegion.maxY() - 1));
+    EXPECT_TRUE(imageBufferPixelIs(Color::blue, *destination, filterRegion.maxX() - 1, filterRegion.maxY() - 1));
+}
+
+// This test records drawFilteredImageBuffer to a DisplayList. Before replaying
+// back the DisplayList, the SourceImage of an FEImage in the Filter is altered.
+// The expectation is the DisplayList keeps references only to immutable Filters.
+TEST(ImageBufferTests, DisplayListDrawFilteredImageBufferFEImage)
+{
+    auto colorSpace = DestinationColorSpace::SRGB();
+    auto pixelFormat = ImageBufferPixelFormat::BGRA8;
+    FloatSize logicalSize { 100, 100 };
+    float scale = 1;
+
+    RefPtr source = ImageBuffer::create(logicalSize, RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, scale, colorSpace, pixelFormat);
+    RefPtr destination = ImageBuffer::create(logicalSize, RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, scale, colorSpace, pixelFormat);
+
+    auto fillRect = FloatRect { { }, logicalSize };
+    source->context().fillRect(fillRect, Color::green);
+
+    FilterEffectVector effects;
+    effects.append(FEImage::create({ *source }, fillRect, { }));
+
+    SVGFilterExpression expression;
+    expression.append({ 0, 0, std::nullopt });
+
+    auto targetBoundingBox = fillRect;
+    auto filterRegion = fillRect;
+    RefPtr filter = SVGFilter::create(targetBoundingBox, SVGUnitTypes::SVG_UNIT_TYPE_USERSPACEONUSE, WTFMove(expression), WTFMove(effects), std::nullopt, FilterRenderingMode::Software, { 1, 1 }, filterRegion);
+
+    DisplayList::DrawingContext drawingContext(logicalSize);
+
+    FilterResults results;
+    drawingContext.context().drawFilteredImageBuffer(nullptr, fillRect, *filter, results);
+
+    // Mutating the filter should not affect the DisplayList drawing.
+    source->context().fillRect(fillRect, Color::red);
+
+    // The DisplayList should have cloned the filter feImage SourceImages when recording drawImageBuffer().
+    drawingContext.replayDisplayList(destination->context());
+
+    EXPECT_TRUE(imageBufferPixelIs(Color::green, *destination, filterRegion.x() + 1, filterRegion.y() + 1));
+    EXPECT_TRUE(imageBufferPixelIs(Color::green, *destination, filterRegion.maxX() - 1, filterRegion.y() + 1));
+    EXPECT_TRUE(imageBufferPixelIs(Color::green, *destination, filterRegion.x() + 1, filterRegion.maxY() - 1));
+    EXPECT_TRUE(imageBufferPixelIs(Color::green, *destination, filterRegion.maxX() - 1, filterRegion.maxY() - 1));
+}
+
+// This test records clipToImageBuffer to a DisplayList. Before replaying back the
+// DisplayList, the ImageBuffer is altered. The expectation is the DisplayList keeps
+// references only to immutable ImageBuffers.
+TEST(ImageBufferTests, DisplayListClipToImageBuffer)
+{
+    auto colorSpace = DestinationColorSpace::SRGB();
+    auto pixelFormat = ImageBufferPixelFormat::BGRA8;
+    FloatSize logicalSize { 100, 100 };
+    float scale = 1;
+
+    RefPtr maskSource = ImageBuffer::create(logicalSize, RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, scale, colorSpace, pixelFormat);
+    RefPtr destination = ImageBuffer::create(logicalSize, RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, scale, colorSpace, pixelFormat);
+
+    auto ratio = 0.5;
+    auto maskRect = FloatRect { FloatPoint { logicalSize.scaled((1 - ratio) / 2) }, logicalSize.scaled(ratio) };
+    maskSource->context().fillRect(maskRect, Color::white);
+
+    DisplayList::DrawingContext drawingContext(logicalSize);
+
+    auto fillRect = FloatRect { { }, logicalSize };
+    drawingContext.context().fillRect(fillRect, Color::green);
+    drawingContext.context().clipToImageBuffer(*maskSource, fillRect);
+    drawingContext.context().fillRect(fillRect, Color::red);
+
+    // Mutating the ImageBuffers should not affect the DisplayList drawing.
+    maskSource->context().fillRect(fillRect, Color::white);
+
+    // The DisplayList should have cloned the maskSource ImageBuffer when recording drawImageBuffer().
+    drawingContext.replayDisplayList(destination->context());
+
+    EXPECT_TRUE(imageBufferPixelIs(Color::green, *destination, fillRect.x() + 1, fillRect.y() + 1));
+    EXPECT_TRUE(imageBufferPixelIs(Color::green, *destination, fillRect.maxX() - 1, fillRect.y() + 1));
+    EXPECT_TRUE(imageBufferPixelIs(Color::green, *destination, fillRect.x() + 1, fillRect.maxY() - 1));
+    EXPECT_TRUE(imageBufferPixelIs(Color::green, *destination, fillRect.maxX() - 1, fillRect.maxY() - 1));
+}
+
+// This test records drawPattern to a DisplayList. Before replaying back the DisplayList,
+// the ImageBuffer is altered. The expectation is the DisplayList keeps references only
+// to immutable ImageBuffers.
+TEST(ImageBufferTests, DisplayListDrawPattern)
+{
+    auto colorSpace = DestinationColorSpace::SRGB();
+    auto pixelFormat = ImageBufferPixelFormat::BGRA8;
+    FloatSize logicalSize { 100, 100 };
+    float scale = 1;
+
+    RefPtr patternSource = ImageBuffer::create(logicalSize, RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, scale, colorSpace, pixelFormat);
+    RefPtr destination = ImageBuffer::create(logicalSize, RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, scale, colorSpace, pixelFormat);
+
+    auto fillRect = FloatRect { { }, logicalSize };
+    patternSource->context().fillRect(fillRect, Color::green);
+
+    DisplayList::DrawingContext drawingContext(logicalSize);
+
+    FloatPoint phase;
+    FloatSize spacing;
+    drawingContext.context().drawPattern(*patternSource, fillRect, fillRect, AffineTransform(), phase, spacing, ImagePaintingOptions());
+
+    // Mutating the ImageBuffers should not affect the DisplayList drawing.
+    patternSource->context().fillRect(fillRect, Color::red);
+
+    // The DisplayList should have cloned the ImageBuffer when recording drawImageBuffer().
+    drawingContext.replayDisplayList(destination->context());
+
+    EXPECT_TRUE(imageBufferPixelIs(Color::green, *destination, fillRect.x() + 1, fillRect.y() + 1));
+    EXPECT_TRUE(imageBufferPixelIs(Color::green, *destination, fillRect.maxX() - 1, fillRect.y() + 1));
+    EXPECT_TRUE(imageBufferPixelIs(Color::green, *destination, fillRect.x() + 1, fillRect.maxY() - 1));
+    EXPECT_TRUE(imageBufferPixelIs(Color::green, *destination, fillRect.maxX() - 1, fillRect.maxY() - 1));
 }
 
 enum class TestPreserveResolution : bool { No, Yes };

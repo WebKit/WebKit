@@ -68,7 +68,9 @@ public:
 
 private:
     FEConvolveMatrix(const IntSize& kernelSize, float divisor, float bias, const IntPoint& targetOffset, EdgeModeType, const FloatPoint& kernelUnitLength, bool preserveAlpha, const Vector<float>& kernelMatrix, DestinationColorSpace);
+    FEConvolveMatrix(const FEConvolveMatrix&);
 
+    Ref<FilterFunction> deepClone() const override { return adoptRef(*new FEConvolveMatrix(*this)); }
     bool operator==(const FilterEffect& other) const override { return areEqual<FEConvolveMatrix>(*this, other); }
 
     FloatRect calculateImageRect(const Filter&, std::span<const FloatRect> inputImageRects, const FloatRect& primitiveSubregion) const override;

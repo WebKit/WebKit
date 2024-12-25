@@ -48,6 +48,18 @@ bool SourceImage::operator==(const SourceImage& other) const
     return imageIdentifier() == other.imageIdentifier();
 }
 
+SourceImage SourceImage::clone() const
+{
+    RefPtr imageBuffer = imageBufferIfExists();
+    if (!imageBuffer)
+        return *this;
+
+    if (RefPtr clone = imageBuffer->clone())
+        return { clone.releaseNonNull() };
+
+    return *this;
+}
+
 static inline NativeImage* nativeImageOf(const SourceImage::ImageVariant& imageVariant)
 {
     if (auto* nativeImage = std::get_if<Ref<NativeImage>>(&imageVariant))

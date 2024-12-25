@@ -42,7 +42,9 @@ public:
 
 private:
     FESpecularLighting(const Color& lightingColor, float surfaceScale, float specularConstant, float specularExponent, float kernelUnitLengthX, float kernelUnitLengthY, Ref<LightSource>&&, DestinationColorSpace);
+    FESpecularLighting(const FESpecularLighting&);
 
+    Ref<FilterFunction> deepClone() const override { return adoptRef(*new FESpecularLighting(*this)); }
     bool operator==(const FilterEffect& other) const override { return areEqual<FESpecularLighting>(*this, other); }
 };
 

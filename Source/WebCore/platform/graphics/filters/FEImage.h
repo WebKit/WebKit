@@ -48,7 +48,9 @@ public:
 
 private:
     FEImage(SourceImage&&, const FloatRect& sourceImageRect, const SVGPreserveAspectRatioValue&);
+    FEImage(const FEImage&);
 
+    Ref<FilterFunction> deepClone() const override { return adoptRef(*new FEImage(*this)); }
     bool operator==(const FilterEffect& other) const override { return areEqual<FEImage>(*this, other); }
 
     unsigned numberOfEffectInputs() const override { return 0; }

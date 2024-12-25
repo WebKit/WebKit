@@ -50,7 +50,9 @@ public:
 
 private:
     FEGaussianBlur(float x, float y, EdgeModeType, DestinationColorSpace);
+    FEGaussianBlur(const FEGaussianBlur&);
 
+    Ref<FilterFunction> deepClone() const override { return adoptRef(*new FEGaussianBlur(*this)); }
     bool operator==(const FilterEffect& other) const override { return areEqual<FEGaussianBlur>(*this, other); }
 
     FloatRect calculateImageRect(const Filter&, std::span<const FloatRect> inputImageRects, const FloatRect& primitiveSubregion) const override;
