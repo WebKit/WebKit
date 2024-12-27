@@ -931,15 +931,6 @@ DocumentCSS.prototype.getOverrideStyle = function(elt, pseudoElt) {};
 function DOMImplementationCSS() {}
 
 /**
- * @param {string} title
- * @param {string} media
- * @return {CSSStyleSheet}
- * @see http://www.w3.org/TR/DOM-Level-2-Style/css.html#CSS-DOMImplementationCSS-createCSSStyleSheet
- * @throws DOMException {@see DomException.SYNTAX_ERR}
- */
-DOMImplementationCSS.prototype.createCSSStyleSheet = function(title, media) {};
-
-/**
  * @constructor
  * @see http://www.w3.org/TR/DOM-Level-2-Style/css.html#CSS-ElementCSSInlineStyle
  */

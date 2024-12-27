@@ -125,15 +125,6 @@ ExceptionOr<Ref<XMLDocument>> DOMImplementation::createDocument(const AtomString
     return document;
 }
 
-Ref<CSSStyleSheet> DOMImplementation::createCSSStyleSheet(const String&, const String& media)
-{
-    // FIXME: Title should be set.
-    // FIXME: Media could have wrong syntax, in which case we should generate an exception.
-    auto sheet = CSSStyleSheet::create(StyleSheetContents::create());
-    sheet->setMediaQueries(MQ::MediaQueryParser::parse(media, { }));
-    return sheet;
-}
-
 Ref<HTMLDocument> DOMImplementation::createHTMLDocument(String&& title)
 {
     Ref document = HTMLDocument::create(nullptr, m_document->protectedSettings(), URL(), { });
