@@ -1446,6 +1446,11 @@ bool UIScriptControllerIOS::keyboardIsAutomaticallyShifted() const
     return UIKeyboardImpl.activeInstance.isAutoShifted;
 }
 
+unsigned UIScriptControllerIOS::keyboardUpdateForChangedSelectionCount() const
+{
+    return TestController::singleton().keyboardUpdateForChangedSelectionCount();
+}
+
 unsigned UIScriptControllerIOS::keyboardWillHideCount() const
 {
     return static_cast<unsigned>(webView().keyboardWillHideCount);

@@ -8845,7 +8845,7 @@ RefPtr<Element> WebPage::elementForContext(const ElementContext& elementContext)
     return element;
 }
 
-std::optional<WebCore::ElementContext> WebPage::contextForElement(WebCore::Element& element) const
+std::optional<WebCore::ElementContext> WebPage::contextForElement(const WebCore::Element& element) const
 {
     Ref document = element.document();
     if (!m_page || document->page() != m_page.get())

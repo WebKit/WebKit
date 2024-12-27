@@ -184,6 +184,7 @@ class HTMLElement;
 class HTMLImageElement;
 class HTMLPlugInElement;
 class HTMLSelectElement;
+class HTMLTextFormControlElement;
 class HTMLVideoElement;
 class HandleUserInputEventResult;
 class HistoryItem;
@@ -1640,7 +1641,7 @@ public:
     void configureLoggingChannel(const String&, WTFLogChannelState, WTFLogLevel);
 
     RefPtr<WebCore::Element> elementForContext(const WebCore::ElementContext&) const;
-    std::optional<WebCore::ElementContext> contextForElement(WebCore::Element&) const;
+    std::optional<WebCore::ElementContext> contextForElement(const WebCore::Element&) const;
 
     void startTextManipulations(Vector<WebCore::TextManipulationController::ExclusionRule>&&, bool includesSubframes, CompletionHandler<void()>&&);
     void completeTextManipulation(const Vector<WebCore::TextManipulationItem>&, CompletionHandler<void(bool allFailed, const Vector<WebCore::TextManipulationController::ManipulationFailure>&)>&&);
@@ -1936,6 +1937,8 @@ public:
 #if HAVE(AUDIT_TOKEN)
     void setPresentingApplicationAuditToken(CoreIPCAuditToken&&);
 #endif
+
+    void didProgrammaticallyClearTextFormControl(const WebCore::HTMLTextFormControlElement&);
 
 private:
     WebPage(WebCore::PageIdentifier, WebPageCreationParameters&&);
@@ -3009,6 +3012,7 @@ private:
 inline void WebPage::platformWillPerformEditingCommand() { }
 inline bool WebPage::requiresPostLayoutDataForEditorState(const WebCore::LocalFrame&) const { return false; }
 inline void WebPage::prepareToRunModalJavaScriptDialog() { }
+inline void WebPage::didProgrammaticallyClearTextFormControl(const WebCore::HTMLTextFormControlElement&) { }
 #endif
 
 #if !ENABLE(IOS_TOUCH_EVENTS)

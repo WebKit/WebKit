@@ -1472,6 +1472,26 @@ void WebPage::updateInputContextAfterBlurringAndRefocusingElementIfNeeded(Elemen
     });
 }
 
+void WebPage::didProgrammaticallyClearTextFormControl(const HTMLTextFormControlElement& element)
+{
+    if (!m_isShowingInputViewForFocusedElement)
+        return;
+
+    if (m_focusedElement != &element && m_recentlyBlurredElement != &element)
+        return;
+
+    callOnMainRunLoop([protectedThis = Ref { *this }, element = Ref { element }] {
+        if (protectedThis->m_focusedElement != element.ptr())
+            return;
+
+        auto context = protectedThis->contextForElement(element);
+        if (!context)
+            return;
+
+        protectedThis->send(Messages::WebPageProxy::DidProgrammaticallyClearFocusedElement(WTFMove(*context)));
+    });
+}
+
 void WebPage::blurFocusedElement()
 {
     if (!m_focusedElement)

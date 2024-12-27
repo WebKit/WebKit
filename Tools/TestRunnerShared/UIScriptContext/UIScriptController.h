@@ -210,6 +210,12 @@ public:
         return false;
     }
 
+    virtual unsigned keyboardUpdateForChangedSelectionCount() const
+    {
+        notImplemented();
+        return 0;
+    }
+
     virtual bool isAnimatingDragCancel() const
     {
         notImplemented();

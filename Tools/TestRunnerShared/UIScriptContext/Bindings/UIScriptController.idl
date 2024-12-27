@@ -93,6 +93,7 @@ interface UIScriptController {
 
     readonly attribute unsigned long keyboardWillHideCount;
     readonly attribute boolean keyboardIsAutomaticallyShifted;
+    readonly attribute unsigned long keyboardUpdateForChangedSelectionCount;
 
     undefined rawKeyDown(DOMString key);
     undefined rawKeyUp(DOMString key);

@@ -2258,6 +2258,15 @@ window.UIHelper = class UIHelper {
             testRunner.runUIScript(`uiController.frontmostViewAtPoint(${x}, ${y})`, resolve);
         });
     }
+
+    static async keyboardUpdateForChangedSelectionCount() {
+        if (!this.isWebKit2())
+            return 0;
+
+        return new Promise(resolve => {
+            testRunner.runUIScript("uiController.keyboardUpdateForChangedSelectionCount", resolve);
+        });
+    }
 }
 
 UIHelper.EventStreamBuilder = class {

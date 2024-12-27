@@ -368,6 +368,7 @@ public:
     UIKeyboardInputMode *overriddenKeyboardInputMode() const { return m_overriddenKeyboardInputMode.get(); }
     void setIsInHardwareKeyboardMode(bool value) { m_isInHardwareKeyboardMode = value; }
     bool isInHardwareKeyboardMode() const { return m_isInHardwareKeyboardMode; }
+    unsigned keyboardUpdateForChangedSelectionCount() const;
 #endif
 
     void setAllowedMenuActions(const Vector<String>&);

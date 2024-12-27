@@ -555,6 +555,8 @@ private:
 
     void didDispatchClickEvent(const WebCore::PlatformMouseEvent&, WebCore::Node&) final;
 
+    void didProgrammaticallyClearTextFormControl(const WebCore::HTMLTextFormControlElement&) final;
+
     mutable bool m_cachedMainFrameHasHorizontalScrollbar { false };
     mutable bool m_cachedMainFrameHasVerticalScrollbar { false };
 

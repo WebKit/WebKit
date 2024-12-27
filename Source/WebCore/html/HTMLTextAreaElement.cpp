@@ -29,6 +29,8 @@
 #include "AXObjectCache.h"
 #include "BeforeTextInsertedEvent.h"
 #include "CSSValueKeywords.h"
+#include "Chrome.h"
+#include "ChromeClient.h"
 #include "DOMFormData.h"
 #include "Document.h"
 #include "Editor.h"
@@ -359,7 +361,7 @@ void HTMLTextAreaElement::setNonDirtyValue(const String& value, TextControlSetVa
     updateValidity();
 }
 
-void HTMLTextAreaElement::setValueCommon(const String& newValue, TextFieldEventBehavior, TextControlSetValueSelection selection)
+void HTMLTextAreaElement::setValueCommon(const String& newValue, TextFieldEventBehavior eventBehavior, TextControlSetValueSelection selection)
 {
     m_wasModifiedByUser = false;
     // Code elsewhere normalizes line endings added by the user via the keyboard or pasting.
@@ -371,6 +373,7 @@ void HTMLTextAreaElement::setValueCommon(const String& newValue, TextFieldEventB
     if (normalizedValue == value())
         return;
 
+    bool valueWasEmpty = m_value.isEmpty();
     bool shouldClamp = selection == TextControlSetValueSelection::Clamp;
     auto selectionStartValue = shouldClamp ? computeSelectionStart() : 0;
     auto selectionEndValue = shouldClamp ? computeSelectionEnd() : 0;
@@ -400,6 +403,11 @@ void HTMLTextAreaElement::setValueCommon(const String& newValue, TextFieldEventB
 
     if (CheckedPtr cache = document().existingAXObjectCache())
         cache->valueChanged(*this);
+
+    if (eventBehavior == DispatchNoEvent && !valueWasEmpty && normalizedValue.isEmpty()) {
+        if (RefPtr page = document().page())
+            page->chrome().client().didProgrammaticallyClearTextFormControl(*this);
+    }
 }
 
 String HTMLTextAreaElement::defaultValue() const

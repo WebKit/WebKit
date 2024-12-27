@@ -936,6 +936,12 @@ void WebPageProxy::updateInputContextAfterBlurringAndRefocusingElement()
         pageClient->updateInputContextAfterBlurringAndRefocusingElement();
 }
 
+void WebPageProxy::didProgrammaticallyClearFocusedElement(WebCore::ElementContext&& context)
+{
+    if (RefPtr client = pageClient())
+        client->didProgrammaticallyClearFocusedElement(WTFMove(context));
+}
+
 void WebPageProxy::elementDidFocus(const FocusedElementInformation& information, bool userIsInteracting, bool blurPreviousNode, OptionSet<WebCore::ActivityState> activityStateChanges, const UserData& userData)
 {
     m_pendingInputModeChange = std::nullopt;

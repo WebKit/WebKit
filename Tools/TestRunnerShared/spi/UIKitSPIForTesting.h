@@ -280,6 +280,7 @@ typedef NS_ENUM(NSInteger, _UIDataOwner) {
 - (BOOL)isAutoShifted;
 - (void)dismissKeyboard;
 - (void)setCorrectionLearningAllowed:(BOOL)allowed;
+- (void)updateForChangedSelection;
 @end
 
 @interface UIScreen ()

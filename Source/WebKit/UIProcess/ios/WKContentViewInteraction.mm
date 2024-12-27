@@ -8364,6 +8364,22 @@ static RetainPtr<NSObject <WKFormPeripheral>> createInputPeripheralWithView(WebK
     if (!self._hasFocusedElement || !_suppressSelectionAssistantReasons)
         return;
 
+    [self _internalInvalidateTextEntryContext];
+}
+
+- (void)_didProgrammaticallyClearFocusedElement:(WebCore::ElementContext&&)context
+{
+    if (!self._hasFocusedElement)
+        return;
+
+    if (!context.isSameElement(_focusedElementInformation.elementContext))
+        return;
+
+    [self _internalInvalidateTextEntryContext];
+}
+
+- (void)_internalInvalidateTextEntryContext
+{
 #if USE(BROWSERENGINEKIT)
     if (self.shouldUseAsyncInteractions) {
         [_asyncInputDelegate invalidateTextEntryContextForTextInput:self.asBETextInput];

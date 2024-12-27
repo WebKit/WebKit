@@ -1994,4 +1994,9 @@ void WebChromeClient::didDispatchClickEvent(const PlatformMouseEvent& event, Nod
     protectedPage()->didDispatchClickEvent(event, node);
 }
 
+void WebChromeClient::didProgrammaticallyClearTextFormControl(const HTMLTextFormControlElement& element)
+{
+    protectedPage()->didProgrammaticallyClearTextFormControl(element);
+}
+
 } // namespace WebKit

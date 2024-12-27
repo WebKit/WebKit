@@ -675,6 +675,11 @@ void PageClientImpl::updateInputContextAfterBlurringAndRefocusingElement()
     [contentView() _updateInputContextAfterBlurringAndRefocusingElement];
 }
 
+void PageClientImpl::didProgrammaticallyClearFocusedElement(WebCore::ElementContext&& context)
+{
+    [contentView() _didProgrammaticallyClearFocusedElement:WTFMove(context)];
+}
+
 void PageClientImpl::updateFocusedElementInformation(const FocusedElementInformation& information)
 {
     [contentView() _updateFocusedElementInformation:information];

@@ -98,6 +98,7 @@ class HTMLImageElement;
 class HTMLInputElement;
 class HTMLMediaElement;
 class HTMLSelectElement;
+class HTMLTextFormControlElement;
 class HTMLVideoElement;
 class HitTestResult;
 class Icon;
@@ -718,6 +719,8 @@ public:
     virtual void callAfterPendingSyntheticClick(CompletionHandler<void(SyntheticClickResult)>&& completion) { completion(SyntheticClickResult::Failed); }
 
     virtual void didDispatchClickEvent(const PlatformMouseEvent&, Node&) { }
+
+    virtual void didProgrammaticallyClearTextFormControl(const HTMLTextFormControlElement&) { }
 
     WEBCORE_EXPORT virtual ~ChromeClient();
 

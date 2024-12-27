@@ -1205,6 +1205,11 @@ ExceptionOr<void> HTMLInputElement::setValue(const String& value, TextFieldEvent
 
         if (m_isAutoFilledAndObscured)
             setAutofilledAndObscured(false);
+
+        if (valueChanged && value.isEmpty()) {
+            if (RefPtr page = document().page())
+                page->chrome().client().didProgrammaticallyClearTextFormControl(*this);
+        }
     }
 
     return { };

@@ -131,6 +131,7 @@ enum class ScrollIsAnimated : bool;
 struct AppHighlight;
 struct DataDetectorElementInfo;
 struct DictionaryPopupInfo;
+struct ElementContext;
 struct TextIndicatorData;
 struct ShareDataWithParsedURL;
 
@@ -551,6 +552,7 @@ public:
 
     virtual void elementDidFocus(const FocusedElementInformation&, bool userIsInteracting, bool blurPreviousNode, OptionSet<WebCore::ActivityState> activityStateChanges, API::Object* userData) = 0;
     virtual void updateInputContextAfterBlurringAndRefocusingElement() = 0;
+    virtual void didProgrammaticallyClearFocusedElement(WebCore::ElementContext&&) = 0;
     virtual void updateFocusedElementInformation(const FocusedElementInformation&) = 0;
     virtual void elementDidBlur() = 0;
     virtual void focusedElementDidChangeInputMode(WebCore::InputMode) = 0;
