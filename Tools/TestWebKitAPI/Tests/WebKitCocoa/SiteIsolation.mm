@@ -47,6 +47,7 @@
 #import <WebKit/WKWebpagePreferencesPrivate.h>
 #import <WebKit/WKWebsiteDataStorePrivate.h>
 #import <WebKit/_WKFeature.h>
+#import <WebKit/_WKFrameHandle.h>
 #import <WebKit/_WKFrameTreeNode.h>
 #import <WebKit/_WKProcessPoolConfiguration.h>
 #import <WebKit/_WKWebsiteDataStoreConfiguration.h>
@@ -3738,6 +3739,33 @@ TEST(SiteIsolation, FormSubmit)
             { { "https://example.com"_s } }
         }
     });
+}
+
+static void keepFrameIDAfterIFrameNavigation(const String& destinationDomain)
+{
+    HTTPServer server({
+        { "/example"_s, { "<iframe src='https://webkit.org/source'></iframe>"_s } },
+        { "/source"_s, { ""_s } },
+        { "/destination"_s, { "<script>alert('done')</script>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server);
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    auto frameIDBeforeNavigation = [webView firstChildFrame]._handle.frameID;
+    [webView evaluateJavaScript:[NSString stringWithFormat:@"location.href = 'https://%@/destination'", @(destinationDomain.utf8().data())] inFrame:[webView firstChildFrame] completionHandler:nil];
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "done");
+    EXPECT_EQ(frameIDBeforeNavigation, [webView firstChildFrame]._handle.frameID);
+}
+
+TEST(SiteIsolation, KeepFrameIDAfterSameSiteIFrameNavigation)
+{
+    keepFrameIDAfterIFrameNavigation("webkit.org"_s);
+}
+
+TEST(SiteIsolation, KeepFrameIDAfterCrossSiteIFrameNavigation)
+{
+    keepFrameIDAfterIFrameNavigation("apple.com"_s);
 }
 
 }
