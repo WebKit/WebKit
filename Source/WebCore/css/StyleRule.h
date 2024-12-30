@@ -52,6 +52,15 @@ class StyleSheetContents;
 using CascadeLayerName = Vector<AtomString>;
     
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StyleRuleBase);
+
+// Base class to be derived by concrete style rule implementations.
+// NOTE: StyleRuleBase doesn't have (or need) a virtual destructor, as it defines
+// a custom "destroying delete" operator, which calls  the appropriate destructor for
+// the derived type before deallocating itself. This avoids the performance overhead
+// of storing and accessing a vtable. The Safer C++ checker would raise false positives
+// about "refcounted base class without virtual destructor" though, so every derived
+// classes of StyleRuleBase should be marked with
+// "SUPPRESS_REFCOUNTED_WITHOUT_VIRTUAL_DESTRUCTOR" to suppress this warning.
 class StyleRuleBase : public RefCounted<StyleRuleBase> {
     WTF_MAKE_STRUCT_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(StyleRuleBase);
 public:
@@ -115,7 +124,7 @@ private:
 };
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StyleRule);
-class StyleRule : public StyleRuleBase {
+class SUPPRESS_REFCOUNTED_WITHOUT_VIRTUAL_DESTRUCTOR StyleRule : public StyleRuleBase {
     WTF_MAKE_STRUCT_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(StyleRule);
 public:
     static Ref<StyleRule> create(Ref<StyleProperties>&&, bool hasDocumentSecurityOrigin, CSSSelectorList&&);
@@ -202,7 +211,7 @@ private:
     StyleRuleNestedDeclarations(const StyleRuleNestedDeclarations&) = default;
 };
 
-class StyleRuleFontFace final : public StyleRuleBase {
+class SUPPRESS_REFCOUNTED_WITHOUT_VIRTUAL_DESTRUCTOR StyleRuleFontFace final : public StyleRuleBase {
 public:
     static Ref<StyleRuleFontFace> create(Ref<StyleProperties>&& properties) { return adoptRef(*new StyleRuleFontFace(WTFMove(properties))); }
     ~StyleRuleFontFace();
@@ -219,7 +228,7 @@ private:
     Ref<StyleProperties> m_properties;
 };
 
-class StyleRuleFontPaletteValues final : public StyleRuleBase {
+class SUPPRESS_REFCOUNTED_WITHOUT_VIRTUAL_DESTRUCTOR StyleRuleFontPaletteValues final : public StyleRuleBase {
 public:
     static Ref<StyleRuleFontPaletteValues> create(const AtomString& name, Vector<AtomString>&& fontFamilies, std::optional<FontPaletteIndex> basePalette, Vector<FontPaletteValues::OverriddenColor>&&);
 
@@ -240,7 +249,7 @@ private:
     FontPaletteValues m_fontPaletteValues;
 };
 
-class StyleRuleFontFeatureValuesBlock final : public StyleRuleBase {
+class SUPPRESS_REFCOUNTED_WITHOUT_VIRTUAL_DESTRUCTOR StyleRuleFontFeatureValuesBlock final : public StyleRuleBase {
 public:
     static Ref<StyleRuleFontFeatureValuesBlock> create(FontFeatureValuesType type, const Vector<FontFeatureValuesTag>& tags)
     {
@@ -262,7 +271,7 @@ private:
     Vector<FontFeatureValuesTag> m_tags;
 };
 
-class StyleRuleFontFeatureValues final : public StyleRuleBase {
+class SUPPRESS_REFCOUNTED_WITHOUT_VIRTUAL_DESTRUCTOR StyleRuleFontFeatureValues final : public StyleRuleBase {
 public:
     static Ref<StyleRuleFontFeatureValues> create(const Vector<AtomString>& fontFamilies, Ref<FontFeatureValues>&&);
     
@@ -282,7 +291,7 @@ private:
     Ref<FontFeatureValues> m_value;
 };
 
-class StyleRulePage final : public StyleRuleBase {
+class SUPPRESS_REFCOUNTED_WITHOUT_VIRTUAL_DESTRUCTOR StyleRulePage final : public StyleRuleBase {
 public:
     static Ref<StyleRulePage> create(Ref<StyleProperties>&&, CSSSelectorList&&);
 
@@ -304,7 +313,7 @@ private:
     CSSSelectorList m_selectorList;
 };
 
-class StyleRuleGroup : public StyleRuleBase {
+class SUPPRESS_REFCOUNTED_WITHOUT_VIRTUAL_DESTRUCTOR StyleRuleGroup : public StyleRuleBase {
 public:
     const Vector<Ref<StyleRuleBase>>& childRules() const;
 
@@ -388,7 +397,7 @@ private:
     CQ::ContainerQuery m_containerQuery;
 };
 
-class StyleRuleProperty final : public StyleRuleBase {
+class SUPPRESS_REFCOUNTED_WITHOUT_VIRTUAL_DESTRUCTOR StyleRuleProperty final : public StyleRuleBase {
 public:
     struct Descriptor {
         AtomString name;
@@ -448,7 +457,7 @@ private:
 };
 
 // This is only used by the CSS parser.
-class StyleRuleCharset final : public StyleRuleBase {
+class SUPPRESS_REFCOUNTED_WITHOUT_VIRTUAL_DESTRUCTOR StyleRuleCharset final : public StyleRuleBase {
 public:
     static Ref<StyleRuleCharset> create() { return adoptRef(*new StyleRuleCharset); }
     Ref<StyleRuleCharset> copy() const { return adoptRef(*new StyleRuleCharset(*this)); }
@@ -458,7 +467,7 @@ private:
     StyleRuleCharset(const StyleRuleCharset&) = default;
 };
 
-class StyleRuleNamespace final : public StyleRuleBase {
+class SUPPRESS_REFCOUNTED_WITHOUT_VIRTUAL_DESTRUCTOR StyleRuleNamespace final : public StyleRuleBase {
 public:
     static Ref<StyleRuleNamespace> create(const AtomString& prefix, const AtomString& uri);
 

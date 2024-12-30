@@ -37,7 +37,7 @@ enum class ViewTransitionNavigation : bool {
     None,
 };
 
-class StyleRuleViewTransition final : public StyleRuleBase {
+class SUPPRESS_REFCOUNTED_WITHOUT_VIRTUAL_DESTRUCTOR StyleRuleViewTransition final : public StyleRuleBase {
 public:
     static Ref<StyleRuleViewTransition> create(Ref<StyleProperties>&&);
     ~StyleRuleViewTransition();

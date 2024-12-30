@@ -36,7 +36,7 @@ namespace WebCore {
 class CSSStyleDeclaration;
 class StyleRuleCSSStyleDeclaration;
 
-class StyleRulePositionTry final : public StyleRuleBase {
+class SUPPRESS_REFCOUNTED_WITHOUT_VIRTUAL_DESTRUCTOR StyleRulePositionTry final : public StyleRuleBase {
 public:
     static Ref<StyleRulePositionTry> create(AtomString&& name, Ref<StyleProperties>&&);
 

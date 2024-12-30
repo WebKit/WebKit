@@ -33,7 +33,7 @@ class CachedCSSStyleSheet;
 class StyleSheetContents;
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StyleRuleImport);
-class StyleRuleImport final : public StyleRuleBase {
+class SUPPRESS_REFCOUNTED_WITHOUT_VIRTUAL_DESTRUCTOR StyleRuleImport final : public StyleRuleBase {
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(StyleRuleImport);
 public:
     struct SupportsCondition {

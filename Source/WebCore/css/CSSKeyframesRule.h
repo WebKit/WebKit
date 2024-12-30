@@ -37,7 +37,7 @@ class CSSKeyframeRule;
 class CSSRuleList;
 class StyleRuleKeyframe;
 
-class StyleRuleKeyframes final : public StyleRuleBase {
+class SUPPRESS_REFCOUNTED_WITHOUT_VIRTUAL_DESTRUCTOR StyleRuleKeyframes final : public StyleRuleBase {
 public:
     static Ref<StyleRuleKeyframes> create(const AtomString& name);
     ~StyleRuleKeyframes();

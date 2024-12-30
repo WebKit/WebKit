@@ -35,7 +35,7 @@ class CSSKeyframesRule;
 class StyleProperties;
 class StyleRuleCSSStyleDeclaration;
 
-class StyleRuleKeyframe final : public StyleRuleBase {
+class SUPPRESS_REFCOUNTED_WITHOUT_VIRTUAL_DESTRUCTOR StyleRuleKeyframe final : public StyleRuleBase {
 public:
     static Ref<StyleRuleKeyframe> create(Ref<StyleProperties>&&);
     static Ref<StyleRuleKeyframe> create(Vector<double>&& keys, Ref<StyleProperties>&&);

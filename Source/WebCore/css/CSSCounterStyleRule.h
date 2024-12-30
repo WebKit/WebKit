@@ -32,7 +32,7 @@
 #include <wtf/text/AtomString.h>
 
 namespace WebCore {
-class StyleRuleCounterStyle final : public StyleRuleBase {
+class SUPPRESS_REFCOUNTED_WITHOUT_VIRTUAL_DESTRUCTOR StyleRuleCounterStyle final : public StyleRuleBase {
 public:
     static Ref<StyleRuleCounterStyle> create(const AtomString&, CSSCounterStyleDescriptors&&);
     ~StyleRuleCounterStyle();
