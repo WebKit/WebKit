@@ -101,7 +101,9 @@ public:
 
     static int sign(const ISO8601::Duration&);
     static ISO8601::InternalDuration round(JSGlobalObject*, ISO8601::InternalDuration, double increment, TemporalUnit, RoundingMode);
-    static void roundRelativeDuration(JSGlobalObject*, ISO8601::InternalDuration&, Int128, ISO8601::PlainDate, TemporalUnit, double, TemporalUnit, RoundingMode);
+    static ISO8601::InternalDuration roundRelativeDuration(JSGlobalObject*, ISO8601::InternalDuration&, Int128,
+        ISO8601::PlainDate, ISO8601::PlainTime, std::optional<ISO8601::TimeZone>,
+        TemporalUnit, double, TemporalUnit, RoundingMode);
     static std::tuple<ISO8601::PlainDate, ISO8601::PlainTime>
         combineISODateAndTimeRecord(ISO8601::PlainDate, ISO8601::PlainTime);
     static std::optional<ISO8601::PlainDate> regulateISODate(double, double, double, TemporalOverflow);
@@ -112,13 +114,17 @@ public:
     static ISO8601::Duration toDateDurationWithoutTime(ISO8601::Duration);
     static Nudged nudgeToCalendarUnit(JSGlobalObject*,
         int32_t, const ISO8601::InternalDuration&, Int128,
-        ISO8601::PlainDate, std::optional<ISO8601::TimeZone>, double, TemporalUnit, RoundingMode);
+        ISO8601::PlainDate, ISO8601::PlainTime, std::optional<ISO8601::TimeZone>,
+        double, TemporalUnit, RoundingMode);
     static ISO8601::InternalDuration bubbleRelativeDuration(JSGlobalObject*,
         int32_t, ISO8601::InternalDuration, Int128,
-        ISO8601::PlainDate, TemporalUnit, TemporalUnit);
+        ISO8601::PlainDate, ISO8601::PlainTime, std::optional<ISO8601::TimeZone>,
+        TemporalUnit, TemporalUnit);
     static Int128 getUTCEpochNanoseconds(std::tuple<ISO8601::PlainDate, ISO8601::PlainTime>);
     static ISO8601::ExactTime getEpochNanosecondsFor(JSGlobalObject*,
         ISO8601::TimeZone, std::tuple<ISO8601::PlainDate, ISO8601::PlainTime>, TemporalDisambiguation);
+    static Int128 timeDurationFromEpochNanosecondsDifference(ISO8601::ExactTime, ISO8601::ExactTime);
+    static int32_t timeDurationSign(Int128);
 
 private:
     TemporalDuration(VM&, Structure*, ISO8601::Duration&&);
@@ -129,8 +135,26 @@ private:
 
     static String toString(JSGlobalObject*, const ISO8601::Duration&, std::tuple<Precision, unsigned> precision);
 
+    static NudgeResult nudgeToZonedTime(JSGlobalObject*, int32_t, ISO8601::InternalDuration,
+        ISO8601::PlainDate, ISO8601::PlainTime,
+        ISO8601::TimeZone, double, TemporalUnit, RoundingMode);
     ISO8601::Duration m_duration;
 };
 
+// https://tc39.es/proposal-temporal/#sec-temporal-isodatetimewithinlimits
+constexpr bool isoDateTimeWithinLimits(std::tuple<ISO8601::PlainDate, ISO8601::PlainTime> isoDateTime)
+{
+    auto isoDate = std::get<0>(isoDateTime);
+
+    if (absInt128(makeDay(isoDate.year(), isoDate.month() - 1, isoDate.day()))
+        > 100000001)
+        return false;
+    auto ns = TemporalDuration::getUTCEpochNanoseconds(isoDateTime);
+    if (ns <= ISO8601::ExactTime::minValue - ISO8601::ExactTime::nsPerDay)
+        return false;
+    if (ns >= ISO8601::ExactTime::maxValue + ISO8601::ExactTime::nsPerDay)
+        return false;
+    return true;
+}
 
 } // namespace JSC

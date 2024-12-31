@@ -716,7 +716,11 @@ ISO8601::ExactTime TemporalDuration::getEpochNanosecondsFor(JSGlobalObject* glob
 
 // https://tc39.es/proposal-temporal/#sec-temporal-nudgetocalendarunit
 // NudgeToCalendarUnit ( sign, duration, destEpochNs, isoDateTime, timeZone, calendar, increment, unit, roundingMode )
-Nudged TemporalDuration::nudgeToCalendarUnit(JSGlobalObject* globalObject, int32_t sign, const ISO8601::InternalDuration& duration, Int128 destEpochNs, ISO8601::PlainDate isoDate, std::optional<ISO8601::TimeZone> timeZoneOptional, double increment, TemporalUnit unit, RoundingMode roundingMode)
+Nudged TemporalDuration::nudgeToCalendarUnit(JSGlobalObject* globalObject, int32_t sign,
+    const ISO8601::InternalDuration& duration, Int128 destEpochNs,
+    ISO8601::PlainDate isoDate, ISO8601::PlainTime isoTime,
+    std::optional<ISO8601::TimeZone> timeZoneOptional, double increment,
+    TemporalUnit unit, RoundingMode roundingMode)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -773,8 +777,8 @@ Nudged TemporalDuration::nudgeToCalendarUnit(JSGlobalObject* globalObject, int32
     auto start = TemporalCalendar::isoDateAdd(globalObject, isoDate, startDuration, TemporalOverflow::Constrain);
     auto end = TemporalCalendar::isoDateAdd(globalObject, isoDate, endDuration, TemporalOverflow::Constrain);
     RETURN_IF_EXCEPTION(scope, { });
-    auto startDateTime = combineISODateAndTimeRecord(start, ISO8601::PlainTime());
-    auto endDateTime = combineISODateAndTimeRecord(end, ISO8601::PlainTime());
+    auto startDateTime = combineISODateAndTimeRecord(start, isoTime);
+    auto endDateTime = combineISODateAndTimeRecord(end, isoTime);
     Int128 startEpochNs;
     Int128 endEpochNs;
     if (!timeZoneOptional) {
@@ -912,7 +916,10 @@ static constexpr TemporalUnit unitInTable(int32_t i)
 
 // https://tc39.es/proposal-temporal/#sec-temporal-bubblerelativeduration
 // BubbleRelativeDuration ( sign, duration, nudgedEpochNs, isoDateTime, timeZone, calendar, largestUnit, smallestUnit )
-ISO8601::InternalDuration TemporalDuration::bubbleRelativeDuration(JSGlobalObject* globalObject, int32_t sign, ISO8601::InternalDuration duration, Int128 nudgedEpochNs, ISO8601::PlainDate isoDate, TemporalUnit largestUnit, TemporalUnit smallestUnit)
+ISO8601::InternalDuration TemporalDuration::bubbleRelativeDuration(JSGlobalObject* globalObject, int32_t sign,
+    ISO8601::InternalDuration duration, Int128 nudgedEpochNs,
+    ISO8601::PlainDate isoDate, ISO8601::PlainTime isoTime, std::optional<ISO8601::TimeZone> timeZone,
+    TemporalUnit largestUnit, TemporalUnit smallestUnit)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -939,8 +946,14 @@ ISO8601::InternalDuration TemporalDuration::bubbleRelativeDuration(JSGlobalObjec
                 endDuration = adjustDateDurationRecord(globalObject, duration.dateDuration(), 0, weeks, std::nullopt);
             }
             auto end = TemporalCalendar::isoDateAdd(globalObject, isoDate, endDuration, TemporalOverflow::Constrain);
-            auto endDateTime = combineISODateAndTimeRecord(end, ISO8601::PlainTime());
-            auto endEpochNs = getUTCEpochNanoseconds(endDateTime);
+            auto endDateTime = combineISODateAndTimeRecord(end, isoTime);
+            Int128 endEpochNs = 0;
+            if (!timeZone)
+                endEpochNs = getUTCEpochNanoseconds(endDateTime);
+            else {
+                endEpochNs = getEpochNanosecondsFor(globalObject, timeZone.value(), endDateTime, TemporalDisambiguation::Compatible).epochNanoseconds();
+                RETURN_IF_EXCEPTION(scope, { });
+            }
             auto beyondEnd = nudgedEpochNs - endEpochNs;
             auto beyondEndSign = beyondEnd < 0 ? -1 : beyondEnd > 0 ? 1 : 0;
             if (beyondEndSign != -sign) {
@@ -954,21 +967,97 @@ ISO8601::InternalDuration TemporalDuration::bubbleRelativeDuration(JSGlobalObjec
     return duration;
 }
 
+// https://tc39.es/proposal-temporal/#sec-temporal-timedurationsign
+int32_t TemporalDuration::timeDurationSign(Int128 d)
+{
+    return (d < 0) ? -1 : (d > 0) ? 1 : 0;
+}
+
+// https://tc39.es/proposal-temporal/#sec-temporal-timedurationfromepochnanosecondsdifference
+Int128 TemporalDuration::timeDurationFromEpochNanosecondsDifference(ISO8601::ExactTime one, ISO8601::ExactTime two)
+{
+    auto result = one.epochNanoseconds() - two.epochNanoseconds();
+    ASSERT(absInt128(result) <= ISO8601::ExactTime::maxValue);
+    return result;
+}
+
+NudgeResult TemporalDuration::nudgeToZonedTime(JSGlobalObject* globalObject,
+    int32_t sign, ISO8601::InternalDuration duration,
+    ISO8601::PlainDate isoDate, ISO8601::PlainTime isoTime, ISO8601::TimeZone timeZone,
+    double increment, TemporalUnit unit, RoundingMode roundingMode)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    auto start = TemporalCalendar::isoDateAdd(globalObject, isoDate, duration.dateDuration(), TemporalOverflow::Constrain);
+    RETURN_IF_EXCEPTION(scope, { });
+    auto startDateTime = combineISODateAndTimeRecord(start, isoTime);
+    auto endDate = TemporalCalendar::balanceISODate(start.year(), start.month(), start.day() + sign);
+    auto endDateTime = combineISODateAndTimeRecord(endDate, isoTime);
+    auto startEpochNs = getEpochNanosecondsFor(globalObject, timeZone, startDateTime, TemporalDisambiguation::Compatible);
+    RETURN_IF_EXCEPTION(scope, { });
+    auto endEpochNs = getEpochNanosecondsFor(globalObject, timeZone, endDateTime, TemporalDisambiguation::Compatible);
+    RETURN_IF_EXCEPTION(scope, { });
+    auto daySpan = timeDurationFromEpochNanosecondsDifference(endEpochNs, startEpochNs);
+    ASSERT(timeDurationSign(daySpan) == sign);
+    auto unitLength = lengthInNanoseconds(unit);
+    auto roundedTimeDuration = ISO8601::roundTimeDurationToIncrement(duration.time(),
+        increment * unitLength, roundingMode);
+    if (!roundedTimeDuration) {
+        throwRangeError(globalObject, scope, "time duration too large in nudgeToZonedTime()"_s);
+        return { };
+    }
+    auto beyondDaySpan = roundedTimeDuration.value() - daySpan;
+    bool didRoundBeyondDay = false;
+    Int128 nudgedEpochNs = 0;
+    double dayDelta = 0;
+    if (timeDurationSign(beyondDaySpan) != -sign) {
+        didRoundBeyondDay = true;
+        dayDelta = sign;
+        roundedTimeDuration = ISO8601::roundTimeDurationToIncrement(beyondDaySpan,
+            increment * unitLength, roundingMode);
+        nudgedEpochNs = roundedTimeDuration.value() + endEpochNs.epochNanoseconds();
+    } else {
+        didRoundBeyondDay = false;
+        dayDelta = 0;
+        nudgedEpochNs = roundedTimeDuration.value() + startEpochNs.epochNanoseconds();
+    }
+    auto dateDuration = adjustDateDurationRecord(globalObject, duration.dateDuration(),
+        duration.dateDuration().days() + dayDelta, std::nullopt, std::nullopt);
+    RETURN_IF_EXCEPTION(scope, { });
+    auto resultDuration = ISO8601::InternalDuration::combineDateAndTimeDuration(globalObject,
+        dateDuration, roundedTimeDuration.value());
+    RETURN_IF_EXCEPTION(scope, { });
+    return NudgeResult(resultDuration, nudgedEpochNs, didRoundBeyondDay);
+}
+
 // RoundRelativeDuration ( duration, destEpochNs, isoDateTime, timeZone, calendar, largestUnit, increment, smallestUnit, roundingMode )
 // https://tc39.es/proposal-temporal/#sec-temporal-roundrelativeduration
-// TODO: calendar and time zone
-void TemporalDuration::roundRelativeDuration(JSGlobalObject* globalObject, ISO8601::InternalDuration& duration, Int128 destEpochNs, ISO8601::PlainDate isoDate, TemporalUnit largestUnit, double increment, TemporalUnit smallestUnit, RoundingMode roundingMode)
+// TODO: calendar
+ISO8601::InternalDuration TemporalDuration::roundRelativeDuration(JSGlobalObject* globalObject, ISO8601::InternalDuration& duration, Int128 destEpochNs, ISO8601::PlainDate isoDate, ISO8601::PlainTime isoTime, std::optional<ISO8601::TimeZone> timeZone, TemporalUnit largestUnit, double increment, TemporalUnit smallestUnit, RoundingMode roundingMode)
 {
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     // 1, 2
     bool irregularLengthUnit = smallestUnit <= TemporalUnit::Week;
-    // 3 elided (no time zones)
+    // 3
+    if (timeZone && smallestUnit == TemporalUnit::Day)
+        irregularLengthUnit = true;
     // 4
     int32_t sign = duration.sign() < 0 ? -1 : 1;
     NudgeResult nudgeResult;
+    // 5
     if (irregularLengthUnit) {
-        Nudged record = nudgeToCalendarUnit(globalObject, sign, duration, destEpochNs, isoDate, std::nullopt, increment, smallestUnit, roundingMode);
+        Nudged record = nudgeToCalendarUnit(globalObject, sign, duration, destEpochNs, isoDate, isoTime, timeZone, increment, smallestUnit, roundingMode);
         nudgeResult = record.m_nudgeResult;
-    } else {
+    } else if (timeZone) {
+        // 6
+        nudgeResult = nudgeToZonedTime(globalObject, sign, duration, isoDate, isoTime,
+            timeZone.value(), increment, smallestUnit, roundingMode);
+        RETURN_IF_EXCEPTION(scope, { });
+    }
+    else {
         // 7
         nudgeResult = nudgeToDayOrTime(globalObject, duration, destEpochNs, largestUnit, increment, smallestUnit, roundingMode);
     }
@@ -977,9 +1066,10 @@ void TemporalDuration::roundRelativeDuration(JSGlobalObject* globalObject, ISO86
     // 9.
     if (nudgeResult.m_didExpandCalendarUnit && smallestUnit != TemporalUnit::Week) {
         auto startUnit = smallestUnit <= TemporalUnit::Day ? smallestUnit : TemporalUnit::Day;
-        duration = bubbleRelativeDuration(globalObject, sign, duration, nudgeResult.m_nudgedEpochNs, isoDate, largestUnit, startUnit);
+        duration = bubbleRelativeDuration(globalObject, sign, duration, nudgeResult.m_nudgedEpochNs, isoDate, isoTime, timeZone, largestUnit, startUnit);
     }
-    // 10. return duration -- elided
+    // 10
+    return duration;
 }
 
 // RoundDuration ( years, months, weeks, days, hours, minutes, seconds, milliseconds, microseconds, nanoseconds, increment, unit, roundingMode [ , relativeTo ] )

@@ -79,6 +79,8 @@ public:
     ISO8601::Duration until(JSGlobalObject*, TemporalPlainTime*, JSValue options) const;
     ISO8601::Duration since(JSGlobalObject*, TemporalPlainTime*, JSValue options) const;
 
+    static Int128 differenceTime(ISO8601::PlainTime, ISO8601::PlainTime);
+
     DECLARE_VISIT_CHILDREN;
 
 private:

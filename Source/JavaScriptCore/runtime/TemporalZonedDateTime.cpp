@@ -33,8 +33,11 @@
 #include "LazyPropertyInlines.h"
 #include "ParseInt.h"
 #include "TemporalDuration.h"
+#include "TemporalPlainDate.h"
 #include "TemporalPlainDateTime.h"
+#include "TemporalPlainMonthDay.h"
 #include "TemporalPlainTime.h"
+#include "TemporalPlainYearMonth.h"
 #include "TemporalTimeZone.h"
 #include "VMTrapsInlines.h"
 
@@ -152,10 +155,10 @@ Vector<ISO8601::ExactTime> TemporalZonedDateTime::getPossibleEpochNanoseconds(JS
     auto isoTime = std::get<1>(isoDateTime);
 
     Vector<ISO8601::ExactTime> possibleEpochNanoseconds;
-    if (std::holds_alternative<int64_t>(timeZone)) {
+    if (timeZone.isOffset()) {
         auto balanced = ISO8601::balanceISODateTime(isoDate.year(), isoDate.month(), isoDate.day(),
             isoTime.hour(), isoTime.minute(), isoTime.second(),
-            isoTime.millisecond(), isoTime.microsecond(), isoTime.nanosecond() - std::get<int64_t>(timeZone));
+            isoTime.millisecond(), isoTime.microsecond(), isoTime.nanosecond() - timeZone.asOffset());
         checkISODaysRange(globalObject, std::get<0>(balanced));
         RETURN_IF_EXCEPTION(scope, { });
         ISO8601::ExactTime epochNanoseconds = ISO8601::ExactTime(TemporalDuration::getUTCEpochNanoseconds(balanced));
@@ -163,7 +166,7 @@ Vector<ISO8601::ExactTime> TemporalZonedDateTime::getPossibleEpochNanoseconds(JS
     } else {
         checkISODaysRange(globalObject, isoDate);
         RETURN_IF_EXCEPTION(scope, { });
-        possibleEpochNanoseconds = getNamedTimeZoneEpochNanoseconds(std::get<TimeZoneID>(timeZone), isoDateTime);
+        possibleEpochNanoseconds = getNamedTimeZoneEpochNanoseconds(timeZone.asID(), isoDateTime);
     }
     for (auto epochNanoseconds : possibleEpochNanoseconds) {
         if (!epochNanoseconds.isValid()) {
@@ -238,6 +241,12 @@ std::optional<ISO8601::ExactTime> getNamedTimeZoneNextTransition(TimeZoneID time
     return ISO8601::ExactTime(result * 1000000);
 }
 
+// TODO: named time zones
+std::optional<ISO8601::ExactTime> getNamedTimeZonePreviousTransition(TimeZoneID, Int128)
+{
+    return std::nullopt;
+}
+
 // https://tc39.es/proposal-temporal/#sec-temporal-getstartofday
 static ISO8601::ExactTime getStartOfDay(JSGlobalObject* globalObject, ISO8601::TimeZone timeZone, ISO8601::PlainDate isoDate)
 {
@@ -248,7 +257,7 @@ static ISO8601::ExactTime getStartOfDay(JSGlobalObject* globalObject, ISO8601::T
     auto possibleEpochNs = TemporalZonedDateTime::getPossibleEpochNanoseconds(globalObject, timeZone, isoDateTime);
     if (possibleEpochNs.size() > 0)
         return possibleEpochNs[0];
-    ASSERT(!std::holds_alternative<int64_t>(timeZone));
+    ASSERT(!timeZone.isOffset());
 
     auto utcNs = TemporalDuration::getUTCEpochNanoseconds(isoDateTime);
     ISO8601::ExactTime dayBefore = ISO8601::ExactTime(utcNs - ISO8601::ExactTime::nsPerDay);
@@ -256,7 +265,7 @@ static ISO8601::ExactTime getStartOfDay(JSGlobalObject* globalObject, ISO8601::T
         throwRangeError(globalObject, scope, "day before is not valid in getStartOfDay()"_s);
         return { };
     }
-    auto result = getNamedTimeZoneNextTransition(std::get<TimeZoneID>(timeZone), dayBefore.epochNanoseconds());
+    auto result = getNamedTimeZoneNextTransition(timeZone.asID(), dayBefore.epochNanoseconds());
     if (!result) {
         throwRangeError(globalObject, scope, "unable to get next transition in getStartOfDay()"_s);
         return { };
@@ -264,21 +273,65 @@ static ISO8601::ExactTime getStartOfDay(JSGlobalObject* globalObject, ISO8601::T
     return result.value();
 }
 
-// https://tc39.es/proposal-temporal/#sec-temporal-timedurationfromepochnanosecondsdifference
-static Int128 timeDurationFromEpochNanosecondsDifference(ISO8601::ExactTime one, ISO8601::ExactTime two)
+static std::optional<TemporalDirectionOption> getDirectionOption(JSGlobalObject* globalObject, JSObject* options)
 {
-    auto result = one.epochNanoseconds() - two.epochNanoseconds();
-    ASSERT(absInt128(result) <= ISO8601::ExactTime::maxValue);
-    return result;
+    return intlOption<std::optional<TemporalDirectionOption>>(globalObject, options, globalObject->vm().propertyNames->direction, {
+            { "next"_s, TemporalDirectionOption::Next }, { "previous"_s, TemporalDirectionOption::Previous } },
+            "direction must be \"next\" or \"previous\""_s, std::nullopt);
 }
 
-// https://tc39.es/proposal-temporal/#sec-temporal-roundtimedurationtoincrement
-static std::optional<Int128> roundTimeDurationToIncrement(Int128 d, Int128 increment, RoundingMode roundingMode)
+static bool isOffsetTimeZoneIdentifier(const ISO8601::TimeZone& t)
 {
-    auto rounded = roundNumberToIncrementInt128(d, increment, roundingMode);
-    if (absInt128(rounded) > ISO8601::ExactTime::maxValue)
-        return std::nullopt;
-    return rounded;
+    return t.isOffset();
+}
+
+// https://tc39.es/proposal-temporal/#sec-temporal.zoneddatetime.prototype.gettimezonetransition
+JSValue TemporalZonedDateTime::getTimeZoneTransition(JSGlobalObject* globalObject,
+    JSValue directionParam)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    if (directionParam.isUndefined()) {
+        throwTypeError(globalObject, scope, "getTimeZoneTransition: direction param must not be undefined"_s);
+        return { };
+    }
+
+    TemporalDirectionOption direction;
+    if (directionParam.isString()) {
+        auto paramString = directionParam.toWTFString(globalObject);
+        RETURN_IF_EXCEPTION(scope, { });
+        if (paramString == "next"_s)
+            direction = TemporalDirectionOption::Next;
+        else if (paramString == "previous"_s)
+            direction = TemporalDirectionOption::Previous;
+        else {
+            throwRangeError(globalObject, scope, "getTimeZoneTransition: direction must be 'next' or 'previous'"_s);
+            return { };
+        }
+    } else {
+        JSObject* options = intlGetOptionsObject(globalObject, directionParam);
+        RETURN_IF_EXCEPTION(scope, { });
+        auto directionOptional = getDirectionOption(globalObject, options);
+        RETURN_IF_EXCEPTION(scope, { });
+        if (!directionOptional) {
+            throwRangeError(globalObject, scope, "getTimeZoneTransition: direction option must be present"_s);
+            return { };
+        }
+        direction = directionOptional.value();            
+    }
+
+    if (isOffsetTimeZoneIdentifier(timeZone())) {
+        return jsNull();
+    }
+    std::optional<ExactTime> transition;
+    if (direction == TemporalDirectionOption::Next)
+        transition = getNamedTimeZoneNextTransition(timeZone().asID(), exactTime().epochNanoseconds());
+    else
+        transition = getNamedTimeZonePreviousTransition(timeZone().asID(), exactTime().epochNanoseconds());
+    if (!transition)
+        return jsNull();
+    RELEASE_AND_RETURN(scope, TemporalZonedDateTime::tryCreateIfValid(globalObject, globalObject->zonedDateTimeStructure(), WTFMove(transition.value()), timeZone()));
 }
 
 // https://tc39.es/proposal-temporal/#sec-temporal-roundisodatetime
@@ -519,8 +572,8 @@ TemporalZonedDateTime* TemporalZonedDateTime::round(JSGlobalObject* globalObject
         RETURN_IF_EXCEPTION(scope, { });
         ASSERT(thisNs < endNs);
         Int128 dayLengthNs = endNs.epochNanoseconds() - startNs.epochNanoseconds();
-        Int128 dayProgressNs = timeDurationFromEpochNanosecondsDifference(thisNs, startNs);
-        std::optional<Int128> roundedDayNsOptional = roundTimeDurationToIncrement(dayProgressNs, dayLengthNs, roundingMode);
+        Int128 dayProgressNs = TemporalDuration::timeDurationFromEpochNanosecondsDifference(thisNs, startNs);
+        std::optional<Int128> roundedDayNsOptional = ISO8601::roundTimeDurationToIncrement(dayProgressNs, dayLengthNs, roundingMode);
         if (!roundedDayNsOptional) {
             throwRangeError(globalObject, scope, "rounded time duration is out of range in Temporal.ZonedDateTime.round()"_s);
             return { };
@@ -540,49 +593,30 @@ TemporalZonedDateTime* TemporalZonedDateTime::round(JSGlobalObject* globalObject
         WTFMove(epochNanoseconds), WTFMove(timeZone)));
 }
 
-TemporalZonedDateTime* TemporalZonedDateTime::with(JSGlobalObject* globalObject, JSObject*, JSValue)
+static bool isPartialTemporalObject(JSGlobalObject* globalObject, JSObject* value)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    throwRangeError(globalObject, scope, "Temporal.ZonedDateTime.with not yet implemented"_s);
-    return nullptr;
-}
+    if (value->inherits<TemporalPlainDate>()
+        || value->inherits<TemporalPlainDateTime>()
+        || value->inherits<TemporalPlainMonthDay>()
+        || value->inherits<TemporalPlainTime>()
+        || value->inherits<TemporalPlainYearMonth>()
+        || value->inherits<TemporalZonedDateTime>())
+        return false;
 
-// https://tc39.es/proposal-temporal/#sec-temporal.zoneddatetime.prototype.tostring
-String TemporalZonedDateTime::toString(JSGlobalObject* globalObject, JSValue optionsValue) const
-{
-    VM& vm = globalObject->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
+    auto calendarProperty = value->get(globalObject, vm.propertyNames->calendar);
+    RETURN_IF_EXCEPTION(scope, { });
+    if (!calendarProperty.isUndefined())
+        return false;
 
-    JSObject* options = intlGetOptionsObject(globalObject, optionsValue);
+    auto timeZoneProperty = value->get(globalObject, vm.propertyNames->timeZone);
     RETURN_IF_EXCEPTION(scope, { });
+    if (!timeZoneProperty.isUndefined())
+        return false;
 
-    if (!options)
-        return toString();
-
-    auto showCalendar = getTemporalShowCalendarNameOption(globalObject, options);
-    RETURN_IF_EXCEPTION(scope, { });
-    TemporalFractionalSecondDigits digits =
-        temporalFractionalSecondDigits(globalObject, options);
-    RETURN_IF_EXCEPTION(scope, { });
-    auto showOffset = getTemporalShowOffsetOption(globalObject, options);
-    RETURN_IF_EXCEPTION(scope, { });
-    auto roundingMode = temporalRoundingMode(globalObject, options, RoundingMode::Trunc);
-    RETURN_IF_EXCEPTION(scope, { });
-    std::optional<TemporalUnit> smallestUnit = temporalSmallestUnit(globalObject, options,
-        { TemporalUnit::Year, TemporalUnit::Month, TemporalUnit::Week, TemporalUnit::Day });
-    RETURN_IF_EXCEPTION(scope, { });
-    if (smallestUnit == TemporalUnit::Hour) {
-        throwRangeError(globalObject, scope, "smallestUnit cannot be hour"_s);
-        return { };
-    }
-    auto showTimeZone = getTemporalShowTimeZoneNameOption(globalObject, options);
-    RETURN_IF_EXCEPTION(scope, { });
-    PrecisionData precision = secondsStringPrecision(smallestUnit, digits);
-    RETURN_IF_EXCEPTION(scope, { });
-
-    return ISO8601::temporalZonedDateTimeToString(m_exactTime.get(), m_timeZone, precision, showCalendar, showTimeZone, showOffset, precision.increment, precision.unit, roundingMode);
+    return true;
 }
 
 enum class FieldName : uint8_t {
@@ -635,7 +669,7 @@ static PropertyName propertyName(VM& vm, FieldName property)
     }
 }
 
-unsigned toIntegerWithTruncation(JSGlobalObject* globalObject, JSValue argument)
+int32_t toIntegerWithTruncation(JSGlobalObject* globalObject, JSValue argument)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -653,7 +687,7 @@ unsigned toPositiveIntegerWithTruncation(JSGlobalObject* globalObject, JSValue a
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto integer = toIntegerWithTruncation(globalObject, argument);
+    int32_t integer = toIntegerWithTruncation(globalObject, argument);
     RETURN_IF_EXCEPTION(scope, { });
     if (integer <= 0) {
         throwRangeError(globalObject, scope, "Temporal property must be a positive integer"_s);
@@ -682,6 +716,15 @@ static String toOffsetString(JSGlobalObject* globalObject, JSValue argument)
         return { };
     }
     return offset;
+}
+
+static double monthCodeToMonth(String monthCode)
+{
+    ASSERT(monthCode.length() >= 3 && monthCode.length() <= 4);
+    ASSERT(monthCode[0] == 'M');
+    ASSERT(isASCIIDigit(monthCode[1]) && isASCIIDigit(monthCode[2]));
+    auto monthCodeInteger = parseInt(monthCode.substring(1, 3).span8(), 10);
+    return monthCodeInteger;
 }
 
 // https://tc39.es/proposal-temporal/#sec-temporal-tomonthcode
@@ -723,74 +766,11 @@ static String toMonthCode(JSGlobalObject* globalObject, JSValue argument)
     return monthCode;
 }
 
-// TODO
-// https://tc39.es/proposal-temporal/#sec-getavailablenamedtimezoneidentifier
-std::optional<ISO8601::TimeZone> TemporalZonedDateTime::getAvailableNamedTimeZoneIdentifier(JSGlobalObject* globalObject,
-    TimeZoneID timeZoneIdentifier)
-{
-    VM& vm = globalObject->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    if (timeZoneIdentifier == utcTimeZoneID())
-        return 0;
-    throwRangeError(globalObject, scope, "getAvailableNamedTimeZoneIdentifier() not yet implemented"_s);
-    return { };
-}
-
-// TODO
-// https://tc39.es/proposal-temporal/#sec-getavailablenamedtimezoneidentifier
-std::optional<ISO8601::TimeZone> TemporalZonedDateTime::getAvailableNamedTimeZoneIdentifier(JSGlobalObject* globalObject, Vector<LChar> chars)
-{
-    VM& vm = globalObject->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-    
-    if (chars.size() == 3 && chars[0] == 'U' && chars[1] == 'T' && chars[2] == 'C')
-        return 0;
-    throwRangeError(globalObject, scope, "getAvailableNamedTimeZoneIdentifier() not yet implemented"_s);
-    return { };
-}
-
-ISO8601::TimeZone TemporalZonedDateTime::toTemporalTimeZoneIdentifier(JSGlobalObject* globalObject,
-    JSValue temporalTimeZoneLike)
-{
-    VM& vm = globalObject->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    if (temporalTimeZoneLike.isObject()) {
-        if (temporalTimeZoneLike.inherits<TemporalZonedDateTime>()) {
-            return jsCast<TemporalZonedDateTime*>(temporalTimeZoneLike)->m_timeZone;
-        }
-    }
-    if (!temporalTimeZoneLike.isString()) {
-        throwTypeError(globalObject, scope, "time zone must be ZonedDateTime or string"_s);
-        return { };
-    }
-    auto toParse = temporalTimeZoneLike.toWTFString(globalObject);
-    RETURN_IF_EXCEPTION(scope, { });
-    auto parseResultOptional = TemporalTimeZone::parseTemporalTimeZoneString(toParse);
-    if (!parseResultOptional) {
-        throwRangeError(globalObject, scope, makeString("error parsing time zone from string "_s, toParse));
-        return { };
-    }
-    auto parseResult = parseResultOptional.value();
-    if (std::holds_alternative<int64_t>(parseResult)) {
-        return parseResult;
-    }
-    auto name = std::get<TimeZoneID>(parseResult);
-    auto timeZoneIdentifierRecord = getAvailableNamedTimeZoneIdentifier(globalObject, name);
-    RETURN_IF_EXCEPTION(scope, { });
-    if (!timeZoneIdentifierRecord) {
-        throwRangeError(globalObject, scope, "time zone is invalid"_s);
-        return { };
-    }
-    return timeZoneIdentifierRecord.value();
-}
-
 static
 std::tuple<std::optional<double>, std::optional<double>, std::optional<String>, std::optional<double>,
-double, double, double, double, double, double,
-std::optional<String>, std::optional<ISO8601::TimeZone>>
-prepareCalendarFields(JSGlobalObject* globalObject, TemporalCalendar* calendar, JSObject* fields,
+std::optional<double>, std::optional<double>, std::optional<double>, std::optional<double>,
+std::optional<double>, std::optional<double>, std::optional<String>, std::optional<ISO8601::TimeZone>>
+prepareCalendarFields(JSGlobalObject* globalObject, CalendarID calendar, JSObject* fields,
     Vector<FieldName> fieldNames, std::optional<Vector<FieldName>> requiredFieldNames)
 {
     VM& vm = globalObject->vm();
@@ -801,16 +781,16 @@ prepareCalendarFields(JSGlobalObject* globalObject, TemporalCalendar* calendar, 
 // TODO: non-iso8601 calendars
 //    auto extraFieldNames = calendarExtraFields(calendar, calendarFieldNames);
 //    fieldNames.append(extraFieldNames);
-    std::optional<unsigned> yearOptional;
+    std::optional<double> yearOptional;
     std::optional<unsigned> monthOptional;
     std::optional<String> monthCodeOptional;
     std::optional<unsigned> dayOptional;
-    unsigned hour = 0;
-    unsigned minute = 0;
-    unsigned second = 0;
-    unsigned millisecond = 0;
-    unsigned microsecond = 0;
-    unsigned nanosecond = 0;
+    std::optional<double> hourOptional;
+    std::optional<double> minuteOptional;
+    std::optional<double> secondOptional;
+    std::optional<double> millisecondOptional;
+    std::optional<double> microsecondOptional;
+    std::optional<double> nanosecondOptional;
     std::optional<String> offsetOptional;
     std::optional<ISO8601::TimeZone> timeZoneOptional;
     auto any = false;
@@ -822,7 +802,7 @@ prepareCalendarFields(JSGlobalObject* globalObject, TemporalCalendar* calendar, 
             any = true;
             switch (property) {
             case FieldName::Year: {
-                unsigned val = toIntegerWithTruncation(globalObject, value);
+                double val = toIntegerWithTruncation(globalObject, value);
                 RETURN_IF_EXCEPTION(scope, { });
                 yearOptional = val;
                 break;
@@ -837,6 +817,8 @@ prepareCalendarFields(JSGlobalObject* globalObject, TemporalCalendar* calendar, 
                 String val = toMonthCode(globalObject, value);
                 RETURN_IF_EXCEPTION(scope, { });
                 monthCodeOptional = val;
+                if (!monthOptional)
+                    monthOptional = monthCodeToMonth(val);
                 break;
             }
             case FieldName::Day: {
@@ -846,39 +828,39 @@ prepareCalendarFields(JSGlobalObject* globalObject, TemporalCalendar* calendar, 
                 break;
             }
             case FieldName::Hour: {
-                unsigned val = toIntegerWithTruncation(globalObject, value);
+                double val = toIntegerWithTruncation(globalObject, value);
                 RETURN_IF_EXCEPTION(scope, { });
-                hour = val;
+                hourOptional = val;
                 break;
             }
             case FieldName::Minute: {
-                unsigned val = toIntegerWithTruncation(globalObject, value);
+                double val = toIntegerWithTruncation(globalObject, value);
                 RETURN_IF_EXCEPTION(scope, { });
-                minute = val;
+                minuteOptional = val;
                 break;
             }
             case FieldName::Second: {
-                unsigned val = toIntegerWithTruncation(globalObject, value);
+                double val = toIntegerWithTruncation(globalObject, value);
                 RETURN_IF_EXCEPTION(scope, { });
-                second = val;
+                secondOptional = val;
                 break;
             }
             case FieldName::Millisecond: {
-                unsigned val = toIntegerWithTruncation(globalObject, value);
+                double val = toIntegerWithTruncation(globalObject, value);
                 RETURN_IF_EXCEPTION(scope, { });
-                millisecond = val;
+                millisecondOptional = val;
                 break;
             }
             case FieldName::Microsecond: {
-                unsigned val = toIntegerWithTruncation(globalObject, value);
+                double val = toIntegerWithTruncation(globalObject, value);
                 RETURN_IF_EXCEPTION(scope, { });
-                microsecond = val;
+                microsecondOptional = val;
                 break;
             }
             case FieldName::Nanosecond: {
-                unsigned val = toIntegerWithTruncation(globalObject, value);
+                double val = toIntegerWithTruncation(globalObject, value);
                 RETURN_IF_EXCEPTION(scope, { });
-                nanosecond = val;
+                nanosecondOptional = val;
                 break;
             }
             case FieldName::Offset: {
@@ -908,21 +890,22 @@ prepareCalendarFields(JSGlobalObject* globalObject, TemporalCalendar* calendar, 
         }
     }
     if (!requiredFieldNames && !any) {
-        throwTypeError(globalObject, scope, "prepareCalendarNames: at least one Temporal property must be given"_s);
+        throwTypeError(globalObject, scope, "prepareCalendarFields: at least one Temporal property must be given"_s);
         return { };
     }
     return { yearOptional, monthOptional, monthCodeOptional, dayOptional,
-        hour, minute, second, millisecond, microsecond, nanosecond, offsetOptional, timeZoneOptional };
+        hourOptional, minuteOptional, secondOptional, millisecondOptional, microsecondOptional,
+        nanosecondOptional, offsetOptional, timeZoneOptional };
 }
 
-static void calendarResolveFields(JSGlobalObject* globalObject, TemporalCalendar* calendar, std::optional<double> optionalYear,
+static void calendarResolveFields(JSGlobalObject* globalObject, CalendarID calendar, std::optional<double> optionalYear,
     std::optional<double> optionalMonth, std::optional<String> optionalMonthCode, std::optional<double> optionalDay,
     double& month, TemporalDateFormat format)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    if (calendar->isISO8601())
+    if (calendar == iso8601CalendarID())
     {
         if ((format == TemporalDateFormat::Date || format == TemporalDateFormat::YearMonth) && !optionalYear) {
             throwTypeError(globalObject, scope, "year property missing in Temporal.ZonedDateTime.from"_s);
@@ -961,10 +944,31 @@ static void calendarResolveFields(JSGlobalObject* globalObject, TemporalCalendar
     return;
 }
 
-static std::tuple<ISO8601::PlainDate, ISO8601::PlainTime>
-interpretTemporalDateTimeFields(JSGlobalObject* globalObject, TemporalCalendar* calendar, std::optional<double> optionalYear,
+ISO8601::PlainDate calendarDateToISO(JSGlobalObject* globalObject, CalendarID calendar,
+    std::optional<double> optionalYear,
+    std::optional<double> optionalMonth, std::optional<double> optionalDay,
+    TemporalOverflow overflow)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    if (calendar == iso8601CalendarID()) {
+        ASSERT(optionalYear && optionalMonth && optionalDay);
+        auto result = TemporalDuration::regulateISODate(optionalYear.value(),
+            optionalMonth.value(), optionalDay.value(), overflow);
+        if (!result) {
+            throwRangeError(globalObject, scope, "invalid date in calendarDateToISO"_s);
+            return { };
+        }
+        return result.value();
+    }
+    throwRangeError(globalObject, scope, "non-ISO8601 calendars not supported yet"_s);
+    return { };
+}
+
+ISO8601::PlainDate calendarDateFromFields(JSGlobalObject* globalObject,
+    CalendarID calendar, std::optional<double> optionalYear,
     std::optional<double> optionalMonth, std::optional<String> optionalMonthCode, std::optional<double> optionalDay,
-    double hour, double minute, double second, double millisecond, double microsecond, double nanosecond,
     TemporalOverflow overflow)
 {
     VM& vm = globalObject->vm();
@@ -973,11 +977,337 @@ interpretTemporalDateTimeFields(JSGlobalObject* globalObject, TemporalCalendar* 
     double month = 0;
     calendarResolveFields(globalObject, calendar, optionalYear, optionalMonth, optionalMonthCode, optionalDay, month, TemporalDateFormat::Date);
     RETURN_IF_EXCEPTION(scope, { });
-    auto isoDate = ISO8601::PlainDate(optionalYear.value(), month, optionalDay.value());
+    auto result = calendarDateToISO(globalObject, calendar, optionalYear, month, optionalDay, overflow);
+    RETURN_IF_EXCEPTION(scope, { });
+    if (!isoDateTimeWithinLimits(std::tuple<ISO8601::PlainDate, ISO8601::PlainTime>(
+        result, ISO8601::PlainTime()))) {
+        throwRangeError(globalObject, scope, "in calendarDateFromFields, date is out of range"_s);
+        return { };
+    }
+    return result;
+}
+
+static std::tuple<ISO8601::PlainDate, ISO8601::PlainTime>
+interpretTemporalDateTimeFields(JSGlobalObject* globalObject, CalendarID calendar, std::optional<double> optionalYear,
+    std::optional<double> optionalMonth, std::optional<String> optionalMonthCode, std::optional<double> optionalDay,
+    double hour, double minute, double second, double millisecond, double microsecond, double nanosecond,
+    TemporalOverflow overflow)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    auto isoDate = calendarDateFromFields(globalObject, calendar, optionalYear, optionalMonth, optionalMonthCode, optionalDay, overflow);
+    RETURN_IF_EXCEPTION(scope, { });
     auto time = TemporalPlainTime::regulateTime(globalObject, ISO8601::Duration { 0, 0, 0, 0, hour, minute, second, millisecond, microsecond, nanosecond }, overflow);
     RETURN_IF_EXCEPTION(scope, { });
     return TemporalDuration::combineISODateAndTimeRecord(isoDate, time);
 }
+
+TemporalZonedDateTime* TemporalZonedDateTime::with(JSGlobalObject* globalObject, JSObject* temporalZonedDateTimeLike, JSValue options)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    if (!isPartialTemporalObject(globalObject, temporalZonedDateTimeLike)) {
+        RETURN_IF_EXCEPTION(scope, { });
+        throwTypeError(globalObject, scope, "argument to with() must be an object, must not be an instance of a time-related or date-related Temporal type, and must not have a calendar or time zone property"_s);
+        return { };
+    }
+    RETURN_IF_EXCEPTION(scope, { });
+
+    auto epochNs = exactTime();
+    auto thisTimeZone = timeZone();
+    auto thisCalendar = calendar();
+    auto offsetNanoseconds = ISO8601::getOffsetNanosecondsFor(thisTimeZone, epochNs.epochNanoseconds());
+    auto isoDateTime = ISO8601::getISODateTimeFor(thisTimeZone, epochNs);
+    auto isoDate = std::get<0>(isoDateTime);
+    auto isoTime = std::get<1>(isoDateTime);
+    auto year = isoDate.year();
+    auto month = isoDate.month();
+    std::optional<WTF::String> monthCode = std::nullopt;
+    auto day = isoDate.day();
+    auto hour = isoTime.hour();
+    auto minute = isoTime.minute();
+    auto second = isoTime.second();
+    auto millisecond = isoTime.millisecond();
+    auto microsecond = isoTime.microsecond();
+    auto nanosecond = isoTime.nanosecond();
+    auto [optionalYear, optionalMonth, optionalMonthCode, optionalDay, optionalHour, optionalMinute,
+        optionalSecond, optionalMillisecond, optionalMicrosecond, optionalNanosecond, optionalOffset,
+        timeZoneOptional] = prepareCalendarFields(globalObject, thisCalendar->identifier(), temporalZonedDateTimeLike,
+        Vector { FieldName::Day, FieldName::Hour, FieldName::Microsecond, FieldName::Millisecond, FieldName::Minute, FieldName::Month, FieldName::MonthCode, FieldName::Nanosecond, FieldName::Offset, FieldName::Second, FieldName::Year }, std::nullopt);
+    RETURN_IF_EXCEPTION(scope, { });
+    year = optionalYear.value_or(year);
+    month = optionalMonth.value_or(month);
+    monthCode = optionalMonthCode;
+    day = optionalDay.value_or(day);
+    hour = optionalHour.value_or(hour);
+    minute = optionalMinute.value_or(minute);
+    second = optionalSecond.value_or(second);
+    millisecond = optionalMillisecond.value_or(millisecond);
+    microsecond = optionalMicrosecond.value_or(microsecond);
+    nanosecond = optionalNanosecond.value_or(nanosecond);
+    if (optionalOffset) {
+        Vector<LChar> asString;
+        auto offsetNanosecondsOptional = ISO8601::parseUTCOffset(optionalOffset.value(), asString, false);
+        if (!offsetNanosecondsOptional) {
+            throwRangeError(globalObject, scope, "invalid offset string in Temporal.ZonedDateTime.with"_s);
+            return { };
+        }
+        offsetNanoseconds = offsetNanosecondsOptional.value();
+    }
+    auto resolvedOptions = intlGetOptionsObject(globalObject, options);
+    RETURN_IF_EXCEPTION(scope, { });
+    auto disambiguation = getTemporalDisambiguationOption(globalObject, resolvedOptions);
+    RETURN_IF_EXCEPTION(scope, { });
+    auto offset = getTemporalOffsetOption(globalObject, resolvedOptions, TemporalOffset::Prefer);
+    RETURN_IF_EXCEPTION(scope, { });
+    auto overflow = toTemporalOverflow(globalObject, resolvedOptions);
+    RETURN_IF_EXCEPTION(scope, { });
+    auto dateTimeResult = interpretTemporalDateTimeFields(globalObject, thisCalendar->identifier(), year,
+        month, monthCode, day, hour, minute, second, millisecond, microsecond, nanosecond, overflow);
+    RETURN_IF_EXCEPTION(scope, { });
+    auto epochNanoseconds = interpretISODateTimeOffset(globalObject, std::get<0>(dateTimeResult),
+        std::get<1>(dateTimeResult), TemporalOffsetBehavior::Option, offsetNanoseconds, thisTimeZone,
+        disambiguation, offset, TemporalMatchBehavior::Exactly);
+    RETURN_IF_EXCEPTION(scope, { });
+    RELEASE_AND_RETURN(scope, TemporalZonedDateTime::tryCreateIfValid(globalObject,
+        globalObject->zonedDateTimeStructure(), WTFMove(epochNanoseconds), WTFMove(thisTimeZone)));
+}
+
+// https://tc39.es/proposal-temporal/#sec-temporal-differencezoneddatetime
+static ISO8601::InternalDuration differenceZonedDateTime(JSGlobalObject* globalObject,
+    ISO8601::ExactTime ns1, ISO8601::ExactTime ns2, ISO8601::TimeZone timeZone,
+    TemporalCalendar*, TemporalUnit largestUnit)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    if (ns1 == ns2)
+        RELEASE_AND_RETURN(scope, ISO8601::InternalDuration::combineDateAndTimeDuration(globalObject,
+            ISO8601::Duration(), 0));
+    auto startDateTime = getISODateTimeFor(timeZone, ns1);
+    auto startDate = std::get<0>(startDateTime);
+    auto startTime = std::get<1>(startDateTime);
+    auto endDateTime = getISODateTimeFor(timeZone, ns2);
+    auto endDate = std::get<0>(endDateTime);
+    auto sign = (ns2.epochNanoseconds() - ns1.epochNanoseconds() < 0) ? -1 : 1;
+    auto maxDayCorrection = (sign == 1) ? 2 : 1;
+    auto dayCorrection = 0;
+    auto timeDuration = TemporalPlainTime::differenceTime(startTime, std::get<1>(endDateTime));
+    if (TemporalDuration::timeDurationSign(timeDuration) == -sign)
+        dayCorrection++;
+    auto success = false;
+    std::tuple<ISO8601::PlainDate, ISO8601::PlainTime> intermediateDateTime;
+    while (dayCorrection <= maxDayCorrection && !success) {
+        auto intermediateDate = TemporalCalendar::balanceISODate(endDate.year(),
+            endDate.month(), endDate.day() - (dayCorrection * sign));
+        intermediateDateTime = TemporalDuration::combineISODateAndTimeRecord(intermediateDate,
+            startTime);
+        auto intermediateNs = TemporalDuration::getEpochNanosecondsFor(globalObject, timeZone,
+            intermediateDateTime, TemporalDisambiguation::Compatible);
+        RETURN_IF_EXCEPTION(scope, { });
+        timeDuration = TemporalDuration::timeDurationFromEpochNanosecondsDifference(ns2, intermediateNs);
+        auto timeSign = TemporalDuration::timeDurationSign(timeDuration);
+        if (sign != -timeSign)
+            success = true;
+        dayCorrection++;
+    }
+    ASSERT(success);
+    auto dateLargestUnit = largestUnit < TemporalUnit::Day ? largestUnit : TemporalUnit::Day;
+    auto dateDifference = TemporalCalendar::calendarDateUntil(startDate,
+        std::get<0>(intermediateDateTime), dateLargestUnit);
+    RELEASE_AND_RETURN(scope, ISO8601::InternalDuration::combineDateAndTimeDuration(globalObject,
+        dateDifference, timeDuration));
+}
+
+// https://tc39.es/proposal-temporal/#sec-temporal-differencezoneddatetimewithrounding
+static ISO8601::InternalDuration differenceZonedDateTimeWithRounding(JSGlobalObject* globalObject,
+    ISO8601::ExactTime ns1, ISO8601::ExactTime ns2, ISO8601::TimeZone timeZone,
+    TemporalCalendar* calendar, TemporalUnit largestUnit, double roundingIncrement,
+    TemporalUnit smallestUnit, RoundingMode roundingMode)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    if (largestUnit > TemporalUnit::Day)
+        return ns1.difference(globalObject, ns2, roundingIncrement, smallestUnit, roundingMode);
+
+    auto difference = differenceZonedDateTime(globalObject, ns1, ns2,
+        timeZone, calendar, largestUnit);
+    RETURN_IF_EXCEPTION(scope, { });
+    if (smallestUnit == TemporalUnit::Nanosecond && roundingIncrement == 1)
+        return difference;
+
+    auto dateTime = getISODateTimeFor(timeZone, ns1);
+    RELEASE_AND_RETURN(scope, TemporalDuration::roundRelativeDuration(globalObject,
+        difference, ns2.epochNanoseconds(),
+        std::get<0>(dateTime), std::get<1>(dateTime), timeZone,
+        largestUnit, roundingIncrement, smallestUnit, roundingMode));
+}
+
+// https://tc39.es/proposal-temporal/#sec-temporal-differencetemporalzoneddatetime
+ISO8601::Duration TemporalZonedDateTime::differenceTemporalZonedDateTime(bool isSince, JSGlobalObject* globalObject,
+    JSValue options, TemporalZonedDateTime* other)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    auto [smallestUnit, largestUnit, roundingMode, increment] = extractDifferenceOptions(globalObject, options, UnitGroup::DateTime, TemporalUnit::Nanosecond, TemporalUnit::Hour);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    if (largestUnit > TemporalUnit::Day) {
+        if (isSince)
+            roundingMode = negateTemporalRoundingMode(roundingMode);
+        auto internalDuration = exactTime().difference(globalObject, other->exactTime(), increment, smallestUnit, roundingMode);
+        auto result = TemporalDuration::temporalDurationFromInternal(internalDuration, largestUnit);
+        if (isSince)
+            result = -result;
+        return result;
+    }
+    if (timeZone() != other->timeZone()) {
+        throwRangeError(globalObject, scope, "time zones must match"_s);
+        return { };
+    }
+    if (exactTime() == other->exactTime()) {
+        return ISO8601::Duration();
+    }
+    if (isSince)
+        roundingMode = negateTemporalRoundingMode(roundingMode);
+    auto internalDuration = differenceZonedDateTimeWithRounding(globalObject,
+         exactTime(), other->exactTime(), timeZone(),
+         calendar(), largestUnit, increment, smallestUnit, roundingMode);
+    RETURN_IF_EXCEPTION(scope, { });
+    auto result = TemporalDuration::temporalDurationFromInternal(internalDuration, TemporalUnit::Hour);
+    if (isSince)
+        result = -result;
+    return result;
+}
+
+ISO8601::Duration TemporalZonedDateTime::since(JSGlobalObject* globalObject, JSValue options, TemporalZonedDateTime* other)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    RELEASE_AND_RETURN(scope, differenceTemporalZonedDateTime(true, globalObject, options, other));
+}
+
+ISO8601::Duration TemporalZonedDateTime::until(JSGlobalObject* globalObject, JSValue options, TemporalZonedDateTime* other)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    RELEASE_AND_RETURN(scope, differenceTemporalZonedDateTime(false, globalObject, options, other));
+}
+
+// https://tc39.es/proposal-temporal/#sec-temporal.zoneddatetime.prototype.tostring
+String TemporalZonedDateTime::toString(JSGlobalObject* globalObject, JSValue optionsValue) const
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSObject* options = intlGetOptionsObject(globalObject, optionsValue);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    if (!options)
+        return toString();
+
+    auto showCalendar = getTemporalShowCalendarNameOption(globalObject, options);
+    RETURN_IF_EXCEPTION(scope, { });
+    TemporalFractionalSecondDigits digits =
+        temporalFractionalSecondDigits(globalObject, options);
+    RETURN_IF_EXCEPTION(scope, { });
+    auto showOffset = getTemporalShowOffsetOption(globalObject, options);
+    RETURN_IF_EXCEPTION(scope, { });
+    auto roundingMode = temporalRoundingMode(globalObject, options, RoundingMode::Trunc);
+    RETURN_IF_EXCEPTION(scope, { });
+    std::optional<TemporalUnit> smallestUnit = temporalSmallestUnit(globalObject, options,
+        { TemporalUnit::Year, TemporalUnit::Month, TemporalUnit::Week, TemporalUnit::Day });
+    RETURN_IF_EXCEPTION(scope, { });
+    if (smallestUnit == TemporalUnit::Hour) {
+        throwRangeError(globalObject, scope, "smallestUnit cannot be hour"_s);
+        return { };
+    }
+    auto showTimeZone = getTemporalShowTimeZoneNameOption(globalObject, options);
+    RETURN_IF_EXCEPTION(scope, { });
+    PrecisionData precision = secondsStringPrecision(smallestUnit, digits);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    return ISO8601::temporalZonedDateTimeToString(m_exactTime.get(), m_timeZone, precision, showCalendar, showTimeZone, showOffset, precision.increment, precision.unit, roundingMode);
+}
+
+
+// TODO
+// https://tc39.es/proposal-temporal/#sec-getavailablenamedtimezoneidentifier
+std::optional<ISO8601::TimeZone> TemporalZonedDateTime::getAvailableNamedTimeZoneIdentifier(JSGlobalObject* globalObject,
+    TimeZoneID timeZoneIdentifier)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    if (timeZoneIdentifier == utcTimeZoneID())
+        return ISO8601::TimeZone::offset(0);
+    throwRangeError(globalObject, scope, "getAvailableNamedTimeZoneIdentifier() not yet implemented"_s);
+    return { };
+}
+
+// TODO
+// https://tc39.es/proposal-temporal/#sec-getavailablenamedtimezoneidentifier
+std::optional<ISO8601::TimeZone> TemporalZonedDateTime::getAvailableNamedTimeZoneIdentifier(JSGlobalObject* globalObject, Vector<LChar> chars)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    
+    if (chars.size() == 3 && chars[0] == 'U' && chars[1] == 'T' && chars[2] == 'C')
+        return ISO8601::TimeZone::offset(0);
+    throwRangeError(globalObject, scope, "getAvailableNamedTimeZoneIdentifier() not yet implemented"_s);
+    return { };
+}
+
+ISO8601::TimeZone TemporalZonedDateTime::toTemporalTimeZoneIdentifier(JSGlobalObject* globalObject,
+    JSValue temporalTimeZoneLike)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    if (temporalTimeZoneLike.isObject()) {
+        if (temporalTimeZoneLike.inherits<TemporalZonedDateTime>()) {
+            return jsCast<TemporalZonedDateTime*>(temporalTimeZoneLike)->m_timeZone;
+        }
+    }
+    if (!temporalTimeZoneLike.isString()) {
+        throwTypeError(globalObject, scope, "time zone must be ZonedDateTime or string"_s);
+        return { };
+    }
+    auto toParse = temporalTimeZoneLike.toWTFString(globalObject);
+    RETURN_IF_EXCEPTION(scope, { });
+    auto parseResultOptional = TemporalTimeZone::parseTemporalTimeZoneString(toParse);
+    if (!parseResultOptional) {
+        throwRangeError(globalObject, scope, makeString("error parsing time zone from string "_s, toParse));
+        return { };
+    }
+    auto parseResult = parseResultOptional.value();
+    if (parseResult.isOffset()) {
+        return parseResult;
+    }
+    auto name = parseResult.asID();
+    auto timeZoneIdentifierRecord = getAvailableNamedTimeZoneIdentifier(globalObject, name);
+    RETURN_IF_EXCEPTION(scope, { });
+    if (!timeZoneIdentifierRecord) {
+        throwRangeError(globalObject, scope, "time zone is invalid"_s);
+        return { };
+    }
+    return timeZoneIdentifierRecord.value();
+}
+
+static bool isUTCTimeZoneString(std::optional<Vector<LChar>>& annotation)
+{
+    if (!annotation)
+        return false;
+    auto a = annotation.value();
+    return (a.size() == 3 && a[0] == 'U' && a[1] == 'T' && a[2] == 'C');
+}
+
 
 // https://tc39.es/proposal-temporal/#sec-temporal-totemporalzoneddatetime
 TemporalZonedDateTime* TemporalZonedDateTime::from(JSGlobalObject* globalObject, JSValue itemValue, std::optional<JSObject*> options)
@@ -1009,12 +1339,13 @@ TemporalZonedDateTime* TemporalZonedDateTime::from(JSGlobalObject* globalObject,
             return jsCast<TemporalZonedDateTime*>(itemValue);
         }
 
-        // TODO
-        TemporalCalendar* calendar = TemporalCalendar::create(vm, globalObject->calendarStructure(), iso8601CalendarID());
-        auto [optionalYear, optionalMonth, optionalMonthCode, optionalDay, hour, minute,
-            second, millisecond, microsecond, nanosecond, optionalOffset,
-            timeZoneOptional] = prepareCalendarFields(globalObject, calendar, jsCast<JSObject*>(itemValue),
-            Vector { FieldName::Calendar, FieldName::Day, FieldName::Hour, FieldName::Microsecond, FieldName::Millisecond, FieldName::Minute, FieldName::Month, FieldName::MonthCode, FieldName::Nanosecond, FieldName::Offset, FieldName::Second, FieldName::TimeZone, FieldName::Year }, Vector { FieldName::TimeZone });
+        auto item = jsCast<JSObject*>(itemValue);
+        CalendarID calendar = TemporalCalendar::getTemporalCalendarIdentifierWithISODefault(globalObject, item);
+        RETURN_IF_EXCEPTION(scope, { });
+        auto [optionalYear, optionalMonth, optionalMonthCode, optionalDay, optionalHour, optionalMinute,
+            optionalSecond, optionalMillisecond, optionalMicrosecond, optionalNanosecond, optionalOffset,
+            timeZoneOptional] = prepareCalendarFields(globalObject, calendar, item,
+            Vector { FieldName::Day, FieldName::Hour, FieldName::Microsecond, FieldName::Millisecond, FieldName::Minute, FieldName::Month, FieldName::MonthCode, FieldName::Nanosecond, FieldName::Offset, FieldName::Second, FieldName::TimeZone, FieldName::Year }, Vector { FieldName::TimeZone });
         RETURN_IF_EXCEPTION(scope, { });
         ASSERT(timeZoneOptional);
         timeZone = timeZoneOptional.value();
@@ -1030,8 +1361,9 @@ TemporalZonedDateTime* TemporalZonedDateTime::from(JSGlobalObject* globalObject,
             RETURN_IF_EXCEPTION(scope, { });
         }
         auto result = interpretTemporalDateTimeFields(globalObject, calendar, optionalYear,
-            optionalMonth, optionalMonthCode, optionalDay, hour, minute,
-            second, millisecond, microsecond, nanosecond, overflow);
+            optionalMonth, optionalMonthCode, optionalDay, optionalHour.value_or(0),
+            optionalMinute.value_or(0), optionalSecond.value_or(0), optionalMillisecond.value_or(0),
+            optionalMicrosecond.value_or(0), optionalNanosecond.value_or(0), overflow);
         RETURN_IF_EXCEPTION(scope, { });
         isoDate = std::get<0>(result);
         time = std::get<1>(result);
@@ -1058,7 +1390,7 @@ TemporalZonedDateTime* TemporalZonedDateTime::from(JSGlobalObject* globalObject,
             throwRangeError(globalObject, scope, "string must have a time zone annotation to convert to ZonedDateTime"_s);
             return { };
     }
-        if (!(timeZoneOptional->m_z || timeZoneOptional->m_offset_string)) {
+        if (!(timeZoneOptional->m_z || timeZoneOptional->m_offset_string || isUTCTimeZoneString(timeZoneOptional->m_annotation))) {
             throwRangeError(globalObject, scope, "in Temporal.ZonedDateTime, parsing strings with named time zones not implemented yet"_s);
             return { };
         }

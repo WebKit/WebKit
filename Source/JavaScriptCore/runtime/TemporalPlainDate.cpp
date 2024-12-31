@@ -378,7 +378,7 @@ ISO8601::Duration TemporalPlainDate::differenceTemporalPlainDate(JSGlobalObject*
         Int128 destEpochNs = getUTCEpochNanoseconds(isoDateOther);
         // Step 8d.
         TemporalDuration::roundRelativeDuration(
-            globalObject, duration, destEpochNs, isoDate, largestUnit,
+            globalObject, duration, destEpochNs, isoDate, ISO8601::PlainTime(), std::nullopt, largestUnit,
             increment, smallestUnit, roundingMode);
         RETURN_IF_EXCEPTION(scope, { });
     }

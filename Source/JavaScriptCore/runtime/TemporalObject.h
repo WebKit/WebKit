@@ -309,4 +309,9 @@ enum class TemporalMatchBehavior : bool {
     Minutes,
 };
 
+enum class TemporalDirectionOption : bool {
+    Next,
+    Previous,
+};
+
 } // namespace JSC

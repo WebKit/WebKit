@@ -363,7 +363,42 @@ private:
 };
 static_assert(sizeof(PlainYearMonth) == sizeof(PlainDate));
 
-using TimeZone = std::variant<TimeZoneID, int64_t>;
+class TimeZone {
+    public:
+    bool operator==(const TimeZone& other) const
+    {
+        if (isUTC() && other.isUTC())
+            return true;
+        return m_timezone == other.m_timezone;
+    }
+    bool isUTC() const
+    {
+        return (std::holds_alternative<TimeZoneID>(m_timezone) && std::get<TimeZoneID>(m_timezone) == utcTimeZoneID())
+            || (std::holds_alternative<int64_t>(m_timezone) && std::get<int64_t>(m_timezone) == 0);
+    }
+    bool isOffset() const
+    {
+        return std::holds_alternative<int64_t>(m_timezone);
+    }
+    int64_t asOffset() const
+    {
+        RELEASE_ASSERT(isOffset());
+        return std::get<int64_t>(m_timezone);
+    }
+    TimeZoneID asID() const
+    {
+        RELEASE_ASSERT(!isOffset());
+        return std::get<TimeZoneID>(m_timezone);
+    }
+    static TimeZone utc() { return named(utcTimeZoneID()); }
+    static TimeZone offset(int64_t offset) { return TimeZone(offset); }
+    static TimeZone named(TimeZoneID id) { return TimeZone(id); }
+    TimeZone() : m_timezone(utcTimeZoneID()) {}
+    private:
+    TimeZone(TimeZoneID id) : m_timezone(id) {}
+    TimeZone(int64_t offset) : m_timezone(offset) {}
+    std::variant<TimeZoneID, int64_t> m_timezone;
+}; 
 
 // https://tc39.es/proposal-temporal/#sec-temporal-iso-string-time-zone-parse-records
 // Record { [[Z]], [[OffsetString]], [[TimeZoneAnnotation]] }
@@ -394,6 +429,8 @@ std::optional<std::tuple<PlainTime, std::optional<TimeZoneRecord>>> parseTime(St
 std::optional<std::tuple<PlainTime, std::optional<TimeZoneRecord>, std::optional<CalendarRecord>>> parseCalendarTime(StringView);
 std::optional<std::tuple<PlainDate, std::optional<PlainTime>, std::optional<TimeZoneRecord>>> parseDateTime(StringView, TemporalDateFormat);
 std::optional<std::tuple<PlainDate, std::optional<PlainTime>, std::optional<TimeZoneRecord>, std::optional<CalendarRecord>>> parseCalendarDateTime(StringView, TemporalDateFormat);
+std::optional<CalendarRecord> parseCalendar(StringView);
+std::optional<CalendarRecord> parseCalendarName(StringView);
 uint8_t dayOfWeek(PlainDate);
 uint16_t dayOfYear(PlainDate);
 uint8_t weeksInYear(int32_t year);
@@ -431,6 +468,8 @@ std::optional<Int128> roundTimeDuration(Int128 timeDuration, unsigned increment,
 std::tuple<PlainDate, PlainTime> getISOPartsFromEpoch(ExactTime);
 Int128 getOffsetNanosecondsFor(TimeZone, Int128);
 std::tuple<PlainDate, PlainTime> getISODateTimeFor(TimeZone, ExactTime);
+
+std::optional<Int128> roundTimeDurationToIncrement(Int128, Int128, RoundingMode);
 
 } // namespace ISO8601
 } // namespace JSC
