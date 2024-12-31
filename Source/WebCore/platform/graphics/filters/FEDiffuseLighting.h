@@ -41,7 +41,9 @@ public:
 
 private:
     FEDiffuseLighting(const Color& lightingColor, float surfaceScale, float diffuseConstant, float kernelUnitLengthX, float kernelUnitLengthY, Ref<LightSource>&&, DestinationColorSpace);
+    FEDiffuseLighting(const FEDiffuseLighting&);
 
+    Ref<FilterFunction> deepClone() const override { return adoptRef(*new FEDiffuseLighting(*this)); }
     bool operator==(const FilterEffect& other) const override { return areEqual<FEDiffuseLighting>(*this, other); }
 };
 

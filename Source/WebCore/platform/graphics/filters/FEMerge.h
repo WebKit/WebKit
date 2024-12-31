@@ -36,7 +36,9 @@ public:
 
 private:
     FEMerge(unsigned numberOfEffectInputs, DestinationColorSpace);
+    FEMerge(const FEMerge&);
 
+    Ref<FilterFunction> deepClone() const override { return adoptRef(*new FEMerge(*this)); }
     bool operator==(const FilterEffect& other) const override { return areEqual<FEMerge>(*this, other); }
 
     std::unique_ptr<FilterEffectApplier> createSoftwareApplier() const override;

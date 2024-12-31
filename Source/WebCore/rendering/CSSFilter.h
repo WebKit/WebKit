@@ -39,7 +39,6 @@ class CSSFilter final : public Filter {
     WTF_MAKE_TZONE_ALLOCATED(CSSFilter);
 public:
     static RefPtr<CSSFilter> create(RenderElement&, const FilterOperations&, OptionSet<FilterRenderingMode> preferredFilterRenderingModes, const FloatSize& filterScale, const FloatRect& targetBoundingBox, const GraphicsContext& destinationContext);
-    WEBCORE_EXPORT static Ref<CSSFilter> create(Vector<Ref<FilterFunction>>&&);
     WEBCORE_EXPORT static Ref<CSSFilter> create(Vector<Ref<FilterFunction>>&&, OptionSet<FilterRenderingMode>, const FloatSize& filterScale, const FloatRect& filterRegion);
 
     const Vector<Ref<FilterFunction>>& functions() const { return m_functions; }
@@ -59,8 +58,9 @@ public:
 
 private:
     CSSFilter(const FloatSize& filterScale, bool hasFilterThatMovesPixels, bool hasFilterThatShouldBeRestrictedBySecurityOrigin);
-    CSSFilter(Vector<Ref<FilterFunction>>&&);
     CSSFilter(Vector<Ref<FilterFunction>>&&, const FloatSize& filterScale, const FloatRect& filterRegion);
+
+    Ref<FilterFunction> deepClone() const final;
 
     bool buildFilterFunctions(RenderElement&, const FilterOperations&, OptionSet<FilterRenderingMode> preferredFilterRenderingModes, const FloatRect& targetBoundingBox, const GraphicsContext& destinationContext);
 

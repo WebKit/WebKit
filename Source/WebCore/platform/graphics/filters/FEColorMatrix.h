@@ -53,7 +53,9 @@ public:
 
 private:
     FEColorMatrix(ColorMatrixType, Vector<float>&&, DestinationColorSpace);
+    FEColorMatrix(const FEColorMatrix&);
 
+    Ref<FilterFunction> deepClone() const override { return adoptRef(*new FEColorMatrix(*this)); }
     bool operator==(const FilterEffect& other) const override { return areEqual<FEColorMatrix>(*this, other); }
 
     bool resultIsAlphaImage(const FilterImageVector& inputs) const override;

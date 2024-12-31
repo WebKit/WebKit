@@ -75,11 +75,11 @@ protected:
     virtual void recordSetInlineStroke(SetInlineStroke&&) = 0;
     virtual void recordSetState(const GraphicsContextState&) = 0;
     virtual void recordClearDropShadow() = 0;
-    virtual void recordClipToImageBuffer(ImageBuffer&, const FloatRect& destinationRect) = 0;
-    virtual void recordDrawFilteredImageBuffer(ImageBuffer*, const FloatRect& sourceImageRect, Filter&) = 0;
+    virtual void recordClipToImageBuffer(RenderingResourceIdentifier imageBufferIdentifier, const FloatRect& destinationRect) = 0;
+    virtual void recordDrawFilteredImageBuffer(std::optional<RenderingResourceIdentifier> sourceImageIdentifier, const FloatRect& sourceImageRect, Filter&) = 0;
     virtual void recordDrawGlyphs(const Font&, const GlyphBufferGlyph*, const GlyphBufferAdvance*, unsigned count, const FloatPoint& localAnchor, FontSmoothingMode) = 0;
     virtual void recordDrawDecomposedGlyphs(const Font&, const DecomposedGlyphs&) = 0;
-    virtual void recordDrawImageBuffer(ImageBuffer&, const FloatRect& destRect, const FloatRect& srcRect, ImagePaintingOptions) = 0;
+    virtual void recordDrawImageBuffer(RenderingResourceIdentifier imageBufferIdentifier, const FloatRect& destRect, const FloatRect& srcRect, ImagePaintingOptions) = 0;
     virtual void recordDrawNativeImage(RenderingResourceIdentifier imageIdentifier, const FloatRect& destRect, const FloatRect& srcRect, ImagePaintingOptions) = 0;
     virtual void recordDrawSystemImage(SystemImage&, const FloatRect&) = 0;
     virtual void recordDrawPattern(RenderingResourceIdentifier, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform&, const FloatPoint& phase, const FloatSize& spacing, ImagePaintingOptions = { }) = 0;
@@ -104,12 +104,12 @@ protected:
     virtual void recordStrokePath(const Path&) = 0;
     virtual void recordDrawDisplayListItems(const Vector<Item>&, const FloatPoint& destination) = 0;
 
-    virtual bool recordResourceUse(NativeImage&) = 0;
-    virtual bool recordResourceUse(ImageBuffer&) = 0;
-    virtual bool recordResourceUse(const SourceImage&) = 0;
+    virtual std::optional<RenderingResourceIdentifier> recordResourceUse(NativeImage&) = 0;
+    virtual std::optional<RenderingResourceIdentifier> recordResourceUse(ImageBuffer&) = 0;
+    virtual std::optional<RenderingResourceIdentifier> recordResourceUse(const SourceImage&) = 0;
+    virtual std::optional<RenderingResourceIdentifier> recordResourceUse(Gradient&) = 0;
     virtual bool recordResourceUse(Font&) = 0;
     virtual bool recordResourceUse(DecomposedGlyphs&) = 0;
-    virtual bool recordResourceUse(Gradient&) = 0;
     virtual bool recordResourceUse(Filter&) = 0;
 
     struct ContextState {
@@ -140,6 +140,7 @@ protected:
     ContextState& currentState();
 
 protected:
+    WEBCORE_EXPORT virtual void appendSetStateItem(const GraphicsContextState&);
     WEBCORE_EXPORT void updateStateForSave(GraphicsContextState::Purpose);
     [[nodiscard]] WEBCORE_EXPORT bool updateStateForRestore(GraphicsContextState::Purpose);
     [[nodiscard]] WEBCORE_EXPORT bool updateStateForTranslate(float x, float y);
@@ -160,6 +161,7 @@ protected:
     WEBCORE_EXPORT void updateStateForApplyDeviceScaleFactor(float);
     WEBCORE_EXPORT void appendStateChangeItemIfNecessary();
     FloatRect initialClip() const { return m_initialClip; }
+    WEBCORE_EXPORT void drawFilteredImageBuffer(ImageBuffer* sourceImage, const FloatRect& sourceImageRect, Filter&, FilterResults&) override;
 
 private:
     bool hasPlatformContext() const final { return false; }
@@ -179,7 +181,6 @@ private:
     WEBCORE_EXPORT void didUpdateSingleState(GraphicsContextState&, GraphicsContextState::ChangeIndex) final;
     WEBCORE_EXPORT void fillPath(const Path&) final;
     WEBCORE_EXPORT void strokePath(const Path&) final;
-    WEBCORE_EXPORT void drawFilteredImageBuffer(ImageBuffer* sourceImage, const FloatRect& sourceImageRect, Filter&, FilterResults&) final;
     WEBCORE_EXPORT void drawGlyphs(const Font&, const GlyphBufferGlyph*, const GlyphBufferAdvance*, unsigned numGlyphs, const FloatPoint& anchorPoint, FontSmoothingMode) final;
     WEBCORE_EXPORT void drawDecomposedGlyphs(const Font&, const DecomposedGlyphs&) override;
     WEBCORE_EXPORT void drawGlyphsAndCacheResources(const Font&, const GlyphBufferGlyph*, const GlyphBufferAdvance*, unsigned count, const FloatPoint& localAnchor, FontSmoothingMode) final;

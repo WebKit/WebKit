@@ -44,6 +44,11 @@ FEBlend::FEBlend(BlendMode mode, DestinationColorSpace colorSpace)
 {
 }
 
+FEBlend::FEBlend(const FEBlend& other)
+    : FEBlend(other.m_mode, other.m_operatingColorSpace)
+{
+}
+
 bool FEBlend::operator==(const FEBlend& other) const
 {
     return FilterEffect::operator==(other) && m_mode == other.m_mode;

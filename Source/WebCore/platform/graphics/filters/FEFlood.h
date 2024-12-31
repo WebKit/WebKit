@@ -47,7 +47,9 @@ public:
 
 private:
     FEFlood(const Color& floodColor, float floodOpacity, DestinationColorSpace = DestinationColorSpace::SRGB());
+    FEFlood(const FEFlood&);
 
+    Ref<FilterFunction> deepClone() const override { return adoptRef(*new FEFlood(*this)); }
     bool operator==(const FilterEffect& other) const override { return areEqual<FEFlood>(*this, other); }
 
     unsigned numberOfEffectInputs() const override { return 0; }

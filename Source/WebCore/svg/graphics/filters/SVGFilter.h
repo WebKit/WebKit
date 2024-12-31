@@ -68,6 +68,8 @@ private:
     SVGFilter(const FloatRect& targetBoundingBox, SVGUnitTypes::SVGUnitType primitiveUnits, SVGFilterExpression&&, FilterEffectVector&&, std::optional<RenderingResourceIdentifier>);
     SVGFilter(const FloatRect& targetBoundingBox, SVGUnitTypes::SVGUnitType primitiveUnits, SVGFilterExpression&&, FilterEffectVector&&, std::optional<RenderingResourceIdentifier>, const FloatSize& filterScale, const FloatRect& filterRegion);
 
+    Ref<FilterFunction> deepClone() const final;
+
     static std::optional<std::tuple<SVGFilterExpression, FilterEffectVector>> buildExpression(SVGFilterElement&, const SVGFilter&, const GraphicsContext& destinationContext);
     void setExpression(SVGFilterExpression&& expression) { m_expression = WTFMove(expression); }
     void setEffects(FilterEffectVector&& effects) { m_effects = WTFMove(effects); }

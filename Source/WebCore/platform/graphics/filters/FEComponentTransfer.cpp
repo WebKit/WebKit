@@ -63,6 +63,11 @@ FEComponentTransfer::FEComponentTransfer(ComponentTransferFunctions&& functions)
 {
 }
 
+FEComponentTransfer::FEComponentTransfer(const FEComponentTransfer& other)
+    : FEComponentTransfer(ComponentTransferFunctions { other.m_functions })
+{
+}
+
 bool FEComponentTransfer::operator==(const FEComponentTransfer& other) const
 {
     return FilterEffect::operator==(other) && m_functions == other.m_functions;

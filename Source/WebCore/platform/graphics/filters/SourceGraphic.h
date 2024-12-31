@@ -34,6 +34,8 @@ public:
 private:
     explicit SourceGraphic(DestinationColorSpace);
 
+    Ref<FilterFunction> deepClone() const override { return Ref { const_cast<SourceGraphic&>(*this) }; }
+
     unsigned numberOfEffectInputs() const override { return 0; }
 
     OptionSet<FilterRenderingMode> supportedFilterRenderingModes() const override;

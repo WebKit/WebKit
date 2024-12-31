@@ -43,6 +43,11 @@ FEOffset::FEOffset(float dx, float dy, DestinationColorSpace colorSpace)
 {
 }
 
+FEOffset::FEOffset(const FEOffset& other)
+    : FEOffset(other.m_dx, other.m_dy, other.m_operatingColorSpace)
+{
+}
+
 bool FEOffset::operator==(const FEOffset& other) const
 {
     return FilterEffect::operator==(other)

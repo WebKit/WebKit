@@ -46,7 +46,9 @@ public:
 
 private:
     PointLightSource(const FloatPoint3D& position);
+    PointLightSource(const PointLightSource&);
 
+    Ref<LightSource> clone() const override { return adoptRef(*new PointLightSource(*this)); }
     bool operator==(const LightSource& other) const override { return areEqual<PointLightSource>(*this, other); }
 
     FloatPoint3D m_position;

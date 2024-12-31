@@ -122,12 +122,12 @@ private:
     void recordSetInlineStroke(WebCore::DisplayList::SetInlineStroke&&) final;
     void recordSetState(const WebCore::GraphicsContextState&) final;
     void recordClearDropShadow() final;
-    void recordClipToImageBuffer(WebCore::ImageBuffer&, const WebCore::FloatRect& destinationRect) final;
-    void recordDrawFilteredImageBuffer(WebCore::ImageBuffer*, const WebCore::FloatRect& sourceImageRect, WebCore::Filter&) final;
+    void recordClipToImageBuffer(WebCore::RenderingResourceIdentifier imageBufferIdentifier, const WebCore::FloatRect& destinationRect) final;
+    void recordDrawFilteredImageBuffer(std::optional<WebCore::RenderingResourceIdentifier> sourceImageIdentifier, const WebCore::FloatRect& sourceImageRect, WebCore::Filter&) final;
     void recordDrawGlyphs(const WebCore::Font&, const WebCore::GlyphBufferGlyph*, const WebCore::GlyphBufferAdvance*, unsigned count, const WebCore::FloatPoint& localAnchor, WebCore::FontSmoothingMode) final;
     void recordDrawDecomposedGlyphs(const WebCore::Font&, const WebCore::DecomposedGlyphs&) final;
     void recordDrawDisplayListItems(const Vector<WebCore::DisplayList::Item>&, const WebCore::FloatPoint& destination);
-    void recordDrawImageBuffer(WebCore::ImageBuffer&, const WebCore::FloatRect& destRect, const WebCore::FloatRect& srcRect, WebCore::ImagePaintingOptions) final;
+    void recordDrawImageBuffer(WebCore::RenderingResourceIdentifier imageBufferIdentifier, const WebCore::FloatRect& destRect, const WebCore::FloatRect& srcRect, WebCore::ImagePaintingOptions) final;
     void recordDrawNativeImage(WebCore::RenderingResourceIdentifier imageIdentifier, const WebCore::FloatRect& destRect, const WebCore::FloatRect& srcRect, WebCore::ImagePaintingOptions) final;
     void recordDrawSystemImage(WebCore::SystemImage&, const WebCore::FloatRect&);
     void recordDrawPattern(WebCore::RenderingResourceIdentifier, const WebCore::FloatRect& destRect, const WebCore::FloatRect& tileRect, const WebCore::AffineTransform&, const WebCore::FloatPoint& phase, const WebCore::FloatSize& spacing, WebCore::ImagePaintingOptions = { }) final;
@@ -151,12 +151,12 @@ private:
     void recordStrokePathSegment(const WebCore::PathSegment&) final;
     void recordStrokePath(const WebCore::Path&) final;
 
-    bool recordResourceUse(WebCore::NativeImage&) final;
-    bool recordResourceUse(WebCore::ImageBuffer&) final;
-    bool recordResourceUse(const WebCore::SourceImage&) final;
+    std::optional<WebCore::RenderingResourceIdentifier> recordResourceUse(WebCore::NativeImage&) final;
+    std::optional<WebCore::RenderingResourceIdentifier> recordResourceUse(WebCore::ImageBuffer&) final;
+    std::optional<WebCore::RenderingResourceIdentifier> recordResourceUse(const WebCore::SourceImage&) final;
+    std::optional<WebCore::RenderingResourceIdentifier> recordResourceUse(WebCore::Gradient&) final;
     bool recordResourceUse(WebCore::Font&) final;
     bool recordResourceUse(WebCore::DecomposedGlyphs&) final;
-    bool recordResourceUse(WebCore::Gradient&) final;
     bool recordResourceUse(WebCore::Filter&) final;
 
     RefPtr<WebCore::ImageBuffer> createImageBuffer(const WebCore::FloatSize&, float resolutionScale, const WebCore::DestinationColorSpace&, std::optional<WebCore::RenderingMode>, std::optional<WebCore::RenderingMethod>) const final;

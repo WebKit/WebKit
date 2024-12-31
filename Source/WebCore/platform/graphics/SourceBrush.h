@@ -51,7 +51,8 @@ public:
     WEBCORE_EXPORT std::optional<RenderingResourceIdentifier> gradientIdentifier() const;
 
     WEBCORE_EXPORT void setGradient(Ref<Gradient>&&, const AffineTransform& spaceTransform = { });
-    void setPattern(Ref<Pattern>&&);
+    WEBCORE_EXPORT void setGradient(RenderingResourceIdentifier, const AffineTransform& spaceTransform = { });
+    WEBCORE_EXPORT void setPattern(Ref<Pattern>&&);
 
     bool isInlineColor() const { return !hasPatternOrGradient() && m_color.tryGetAsSRGBABytes(); }
     bool isVisible() const { return hasPatternOrGradient() || m_color.isVisible(); }

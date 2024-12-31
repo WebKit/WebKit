@@ -86,6 +86,8 @@ public:
 
     WEBCORE_EXPORT static Ref<Gradient> create(Data&&, ColorInterpolationMethod, GradientSpreadMethod = GradientSpreadMethod::Pad, GradientColorStops&& = { }, std::optional<RenderingResourceIdentifier> = std::nullopt);
 
+    Ref<Gradient> clone() const { return adoptRef(*new Gradient(*this)); }
+
     const Data& data() const { return m_data; }
     ColorInterpolationMethod colorInterpolationMethod() const { return m_colorInterpolationMethod; }
     GradientSpreadMethod spreadMethod() const { return m_spreadMethod; }
@@ -115,6 +117,7 @@ public:
 
 private:
     Gradient(Data&&, ColorInterpolationMethod, GradientSpreadMethod, GradientColorStops&&, std::optional<RenderingResourceIdentifier>);
+    Gradient(const Gradient&);
 
     bool isGradient() const final { return true; }
 

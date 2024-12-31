@@ -33,6 +33,8 @@ public:
 private:
     explicit FETile(DestinationColorSpace);
 
+    Ref<FilterFunction> deepClone() const override { return Ref { const_cast<FETile&>(*this) }; }
+
     FloatRect calculateImageRect(const Filter&, std::span<const FloatRect> inputImageRects, const FloatRect& primitiveSubregion) const override;
 
     bool resultIsAlphaImage(const FilterImageVector& inputs) const override;

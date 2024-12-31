@@ -40,6 +40,11 @@ FEMerge::FEMerge(unsigned numberOfEffectInputs, DestinationColorSpace colorSpace
 {
 }
 
+FEMerge::FEMerge(const FEMerge& other)
+    : FEMerge(other.m_numberOfEffectInputs, other.m_operatingColorSpace)
+{
+}
+
 bool FEMerge::operator==(const FEMerge& other) const
 {
     return FilterEffect::operator==(other) && m_numberOfEffectInputs == other.m_numberOfEffectInputs;

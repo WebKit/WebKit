@@ -48,6 +48,11 @@ FEFlood::FEFlood(const Color& floodColor, float floodOpacity, DestinationColorSp
 {
 }
 
+FEFlood::FEFlood(const FEFlood& other)
+    : FEFlood(other.m_floodColor, other.m_floodOpacity, other.m_operatingColorSpace)
+{
+}
+
 bool FEFlood::operator==(const FEFlood& other) const
 {
     return FilterEffect::operator==(other)

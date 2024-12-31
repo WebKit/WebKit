@@ -47,6 +47,11 @@ DistantLightSource::DistantLightSource(float azimuth, float elevation)
 {
 }
 
+DistantLightSource::DistantLightSource(const DistantLightSource& other)
+    : DistantLightSource(other.m_azimuth, other.m_elevation)
+{
+}
+
 bool DistantLightSource::operator==(const DistantLightSource& other) const
 {
     return LightSource::operator==(other)

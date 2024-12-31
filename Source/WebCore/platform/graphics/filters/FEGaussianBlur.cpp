@@ -49,6 +49,11 @@ FEGaussianBlur::FEGaussianBlur(float x, float y, EdgeModeType edgeMode, Destinat
 {
 }
 
+FEGaussianBlur::FEGaussianBlur(const FEGaussianBlur& other)
+    : FEGaussianBlur(other.m_stdX, other.m_stdY, other.m_edgeMode, other.m_operatingColorSpace)
+{
+}
+
 bool FEGaussianBlur::operator==(const FEGaussianBlur& other) const
 {
     return FilterEffect::operator==(other)

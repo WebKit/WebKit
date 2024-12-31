@@ -85,7 +85,9 @@ public:
 private:
     FEComponentTransfer(const ComponentTransferFunction& redFunc, const ComponentTransferFunction& greenFunc, const ComponentTransferFunction& blueFunc, const ComponentTransferFunction& alphaFunc, DestinationColorSpace);
     FEComponentTransfer(ComponentTransferFunctions&&);
+    FEComponentTransfer(const FEComponentTransfer&);
 
+    Ref<FilterFunction> deepClone() const override { return adoptRef(*new FEComponentTransfer(*this)); }
     bool operator==(const FilterEffect& other) const override { return areEqual<FEComponentTransfer>(*this, other); }
 
     OptionSet<FilterRenderingMode> supportedFilterRenderingModes() const override;

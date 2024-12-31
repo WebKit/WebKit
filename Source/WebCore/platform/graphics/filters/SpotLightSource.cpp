@@ -58,6 +58,11 @@ SpotLightSource::SpotLightSource(const FloatPoint3D& position, const FloatPoint3
 {
 }
 
+SpotLightSource::SpotLightSource(const SpotLightSource& other)
+    : SpotLightSource(other.m_position, other.m_pointsAt, other.m_specularExponent, other.m_limitingConeAngle)
+{
+}
+
 bool SpotLightSource::operator==(const SpotLightSource& other) const
 {
     return LightSource::operator==(other)

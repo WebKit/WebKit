@@ -61,7 +61,9 @@ public:
 
 private:
     FETurbulence(TurbulenceType, float baseFrequencyX, float baseFrequencyY, int numOctaves, float seed, bool stitchTiles, DestinationColorSpace);
+    FETurbulence(const FETurbulence&);
 
+    Ref<FilterFunction> deepClone() const override { return adoptRef(*new FETurbulence(*this)); }
     bool operator==(const FilterEffect& other) const override { return areEqual<FETurbulence>(*this, other); }
 
     unsigned numberOfEffectInputs() const override { return 0; }

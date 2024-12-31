@@ -51,6 +51,8 @@ public:
 
     bool operator==(const SourceImage&) const;
 
+    SourceImage clone() const;
+
     NativeImage* nativeImageIfExists() const;
     NativeImage* nativeImage() const;
 

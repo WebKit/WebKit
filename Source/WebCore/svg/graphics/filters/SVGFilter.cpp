@@ -94,6 +94,16 @@ SVGFilter::SVGFilter(const FloatRect& targetBoundingBox, SVGUnitTypes::SVGUnitTy
 {
 }
 
+Ref<FilterFunction> SVGFilter::deepClone() const
+{
+    FilterEffectVector effects;
+
+    for (auto& effect : m_effects)
+        effects.append(downcast<FilterEffect>(effect->deepClone()));
+
+    return SVGFilter::create(m_targetBoundingBox, m_primitiveUnits, SVGFilterExpression { m_expression }, WTFMove(effects), std::nullopt, filterRenderingModes(), filterScale(), filterRegion());
+}
+
 static std::optional<std::tuple<SVGFilterEffectsGraph, FilterEffectGeometryMap>> buildFilterEffectsGraph(SVGFilterElement& filterElement, const SVGFilter& filter, const GraphicsContext& destinationContext)
 {
     if (filterElement.countChildNodes() > maxCountChildNodes)

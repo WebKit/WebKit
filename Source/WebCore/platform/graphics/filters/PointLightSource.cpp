@@ -49,6 +49,11 @@ PointLightSource::PointLightSource(const FloatPoint3D& position)
 {
 }
 
+PointLightSource::PointLightSource(const PointLightSource& other)
+    : PointLightSource(other.m_position)
+{
+}
+
 bool PointLightSource::operator==(const PointLightSource& other) const
 {
     return LightSource::operator==(other) && m_position == other.m_position;

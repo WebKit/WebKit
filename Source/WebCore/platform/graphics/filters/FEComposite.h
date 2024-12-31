@@ -61,7 +61,9 @@ public:
 
 private:
     FEComposite(const CompositeOperationType&, float k1, float k2, float k3, float k4, DestinationColorSpace);
+    FEComposite(const FEComposite&);
 
+    Ref<FilterFunction> deepClone() const override { return adoptRef(*new FEComposite(*this)); }
     bool operator==(const FilterEffect& other) const override { return areEqual<FEComposite>(*this, other); }
 
     unsigned numberOfEffectInputs() const override { return 2; }

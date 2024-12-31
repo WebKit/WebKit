@@ -64,6 +64,8 @@ public:
 
     virtual ~LightSource() = default;
 
+    virtual Ref<LightSource> clone() const = 0;
+
     virtual bool operator==(const LightSource& other) const
     {
         return m_type == other.m_type;

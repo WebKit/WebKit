@@ -50,7 +50,9 @@ public:
 
 private:
     DistantLightSource(float azimuth, float elevation);
+    DistantLightSource(const DistantLightSource&);
 
+    Ref<LightSource> clone() const override { return adoptRef(*new DistantLightSource(*this)); }
     bool operator==(const LightSource& other) const override { return areEqual<DistantLightSource>(*this, other); }
 
     float m_azimuth;

@@ -52,7 +52,9 @@ public:
 
 private:
     FEDisplacementMap(ChannelSelectorType xChannelSelector, ChannelSelectorType yChannelSelector, float, DestinationColorSpace);
+    FEDisplacementMap(const FEDisplacementMap&);
 
+    Ref<FilterFunction> deepClone() const override { return adoptRef(*new FEDisplacementMap(*this)); }
     bool operator==(const FilterEffect& other) const override { return areEqual<FEDisplacementMap>(*this, other); }
 
     unsigned numberOfEffectInputs() const override { return 2; }

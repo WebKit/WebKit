@@ -29,6 +29,7 @@
 #include "DisplayList.h"
 #include "DisplayListDrawingContext.h"
 #include "DisplayListItems.h"
+#include "FEImage.h"
 #include "Filter.h"
 #include "GraphicsContext.h"
 #include "ImageBuffer.h"
@@ -55,6 +56,47 @@ RecorderImpl::RecorderImpl(DisplayList& displayList, const GraphicsContextState&
 RecorderImpl::~RecorderImpl()
 {
     ASSERT(stateStack().size() == 1); // If this fires, it indicates mismatched save/restore.
+}
+
+void RecorderImpl::appendSetStateItem(const GraphicsContextState& state)
+{
+#if USE(SKIA)
+    Recorder::appendSetStateItem(state);
+#else
+    auto clone = state;
+
+    auto recordPatternUse = [&](SourceBrush& brush) {
+        RefPtr pattern = brush.pattern();
+        if (!pattern)
+            return;
+        auto renderingResourceIdentifier = recordResourceUse(pattern->tileImage());
+        if (!renderingResourceIdentifier)
+            return;
+        pattern->setTileImage(SourceImage { *renderingResourceIdentifier });
+    };
+
+    auto recordGradientUse = [&](SourceBrush& brush) {
+        RefPtr gradient = brush.gradient();
+        if (!gradient || !gradient->hasValidRenderingResourceIdentifier())
+            return;
+        auto renderingResourceIdentifier = recordResourceUse(*gradient);
+        if (!renderingResourceIdentifier)
+            return;
+        brush.setGradient(*renderingResourceIdentifier, brush.gradientSpaceTransform());
+    };
+
+    if (clone.changes().contains(GraphicsContextState::Change::FillBrush)) {
+        recordPatternUse(clone.fillBrush());
+        recordGradientUse(clone.fillBrush());
+    }
+
+    if (clone.changes().contains(GraphicsContextState::Change::StrokeBrush)) {
+        recordPatternUse(clone.strokeBrush());
+        recordGradientUse(clone.strokeBrush());
+    }
+
+    recordSetState(state);
+#endif
 }
 
 void RecorderImpl::save(GraphicsContextState::Purpose purpose)
@@ -102,6 +144,42 @@ void RecorderImpl::concatCTM(const AffineTransform& transform)
     if (!updateStateForConcatCTM(transform))
         return;
     append(ConcatenateCTM(transform));
+}
+
+void RecorderImpl::drawFilteredImageBuffer(ImageBuffer* sourceImage, const FloatRect& sourceImageRect, Filter& filter, FilterResults& results)
+{
+#if USE(SKIA)
+    Recorder::drawFilteredImageBuffer(sourceImage, sourceImageRect, filter, results);
+#else
+    appendStateChangeItemIfNecessary();
+
+    Ref clone = filter.clone();
+
+    for (auto& effect : clone->effectsOfType(FilterEffect::Type::FEImage)) {
+        auto& feImage = downcast<FEImage>(effect.get());
+
+        auto renderingResourceIdentifier = recordResourceUse(feImage.sourceImage());
+        if (!renderingResourceIdentifier) {
+            GraphicsContext::drawFilteredImageBuffer(sourceImage, sourceImageRect, filter, results);
+            return;
+        }
+
+        feImage.setImageSource(SourceImage { *renderingResourceIdentifier });
+    }
+
+    if (!sourceImage) {
+        recordDrawFilteredImageBuffer(std::nullopt, sourceImageRect, clone);
+        return;
+    }
+
+    auto renderingResourceIdentifier = recordResourceUse(*sourceImage);
+    if (!renderingResourceIdentifier) {
+        GraphicsContext::drawFilteredImageBuffer(sourceImage, sourceImageRect, filter, results);
+        return;
+    }
+
+    recordDrawFilteredImageBuffer(renderingResourceIdentifier, sourceImageRect, clone);
+#endif
 }
 
 void RecorderImpl::recordSetInlineFillColor(PackedColor::RGBA inlineColor)
@@ -175,9 +253,9 @@ void RecorderImpl::clipOutRoundedRect(const FloatRoundedRect& clipRect)
     append(ClipOutRoundedRect(clipRect));
 }
 
-void RecorderImpl::recordClipToImageBuffer(ImageBuffer& imageBuffer, const FloatRect& destinationRect)
+void RecorderImpl::recordClipToImageBuffer(RenderingResourceIdentifier imageBufferIdentifier, const FloatRect& destinationRect)
 {
-    append(ClipToImageBuffer(imageBuffer.renderingResourceIdentifier(), destinationRect));
+    append(ClipToImageBuffer(imageBufferIdentifier, destinationRect));
 }
 
 void RecorderImpl::clipOut(const Path& path)
@@ -192,12 +270,9 @@ void RecorderImpl::clipPath(const Path& path, WindRule rule)
     append(ClipPath(path, rule));
 }
 
-void RecorderImpl::recordDrawFilteredImageBuffer(ImageBuffer* sourceImage, const FloatRect& sourceImageRect, Filter& filter)
+void RecorderImpl::recordDrawFilteredImageBuffer(std::optional<RenderingResourceIdentifier> sourceImageIdentifier, const FloatRect& sourceImageRect, Filter& filter)
 {
-    std::optional<RenderingResourceIdentifier> identifier;
-    if (sourceImage)
-        identifier = sourceImage->renderingResourceIdentifier();
-    append(DrawFilteredImageBuffer(WTFMove(identifier), sourceImageRect, filter));
+    append(DrawFilteredImageBuffer(WTFMove(sourceImageIdentifier), sourceImageRect, filter));
 }
 
 void RecorderImpl::recordDrawGlyphs(const Font& font, const GlyphBufferGlyph* glyphs, const GlyphBufferAdvance* advances, unsigned count, const FloatPoint& localAnchor, FontSmoothingMode mode)
@@ -215,9 +290,9 @@ void RecorderImpl::recordDrawDisplayListItems(const Vector<Item>& items, const F
     append(DrawDisplayListItems(items, destination));
 }
 
-void RecorderImpl::recordDrawImageBuffer(ImageBuffer& imageBuffer, const FloatRect& destRect, const FloatRect& srcRect, ImagePaintingOptions options)
+void RecorderImpl::recordDrawImageBuffer(RenderingResourceIdentifier imageBufferIdentifier, const FloatRect& destRect, const FloatRect& srcRect, ImagePaintingOptions options)
 {
-    append(DrawImageBuffer(imageBuffer.renderingResourceIdentifier(), destRect, srcRect, options));
+    append(DrawImageBuffer(imageBufferIdentifier, destRect, srcRect, options));
 }
 
 void RecorderImpl::recordDrawNativeImage(RenderingResourceIdentifier imageIdentifier, const FloatRect& destRect, const FloatRect& srcRect, ImagePaintingOptions options)
@@ -499,7 +574,7 @@ void RecorderImpl::endPage()
     append(EndPage());
 }
 
-bool RecorderImpl::recordResourceUse(NativeImage& nativeImage)
+std::optional<RenderingResourceIdentifier> RecorderImpl::recordResourceUse(NativeImage& nativeImage)
 {
 #if USE(SKIA)
     if (m_displayList.replayOptions().contains(ReplayOption::FlushImagesAndWaitForCompletion))
@@ -507,29 +582,38 @@ bool RecorderImpl::recordResourceUse(NativeImage& nativeImage)
 #endif
 
     m_displayList.cacheNativeImage(nativeImage);
-    return true;
+    return nativeImage.renderingResourceIdentifier();
 }
 
-bool RecorderImpl::recordResourceUse(ImageBuffer& imageBuffer)
+std::optional<RenderingResourceIdentifier> RecorderImpl::recordResourceUse(ImageBuffer& imageBuffer)
 {
 #if USE(SKIA)
     if (m_displayList.replayOptions().contains(ReplayOption::FlushImagesAndWaitForCompletion))
         imageBuffer.finishAcceleratedRenderingAndCreateFence();
-#endif
 
     m_displayList.cacheImageBuffer(imageBuffer);
-    return true;
+    return imageBuffer.renderingResourceIdentifier();
+#else
+    RefPtr clone = imageBuffer.clone();
+    if (!clone)
+        return std::nullopt;
+
+    m_displayList.cacheImageBuffer(*clone);
+    return clone->renderingResourceIdentifier();
+#endif
 }
 
-bool RecorderImpl::recordResourceUse(const SourceImage& image)
+std::optional<RenderingResourceIdentifier> RecorderImpl::recordResourceUse(const SourceImage& image)
 {
     if (auto imageBuffer = image.imageBufferIfExists())
         return recordResourceUse(*imageBuffer);
 
-    if (auto nativeImage = image.nativeImageIfExists())
-        return recordResourceUse(*nativeImage);
+    if (auto nativeImage = image.nativeImageIfExists()) {
+        recordResourceUse(*nativeImage);
+        nativeImage->renderingResourceIdentifier();
+    }
 
-    return true;
+    return std::nullopt;
 }
 
 bool RecorderImpl::recordResourceUse(Font& font)
@@ -544,10 +628,16 @@ bool RecorderImpl::recordResourceUse(DecomposedGlyphs& decomposedGlyphs)
     return true;
 }
 
-bool RecorderImpl::recordResourceUse(Gradient& gradient)
+std::optional<RenderingResourceIdentifier> RecorderImpl::recordResourceUse(Gradient& gradient)
 {
+#if USE(SKIA)
     m_displayList.cacheGradient(gradient);
-    return true;
+    return gradient.renderingResourceIdentifier();
+#else
+    Ref clone = gradient.clone();
+    m_displayList.cacheGradient(clone);
+    return clone->renderingResourceIdentifier();
+#endif
 }
 
 bool RecorderImpl::recordResourceUse(Filter& filter)

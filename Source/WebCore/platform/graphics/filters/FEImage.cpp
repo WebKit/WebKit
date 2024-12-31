@@ -43,6 +43,11 @@ FEImage::FEImage(SourceImage&& sourceImage, const FloatRect& sourceImageRect, co
 {
 }
 
+FEImage::FEImage(const FEImage& other)
+    : FEImage(SourceImage { other.m_sourceImage }, other.m_sourceImageRect, other.m_preserveAspectRatio)
+{
+}
+
 bool FEImage::operator==(const FEImage& other) const
 {
     return FilterEffect::operator==(other)

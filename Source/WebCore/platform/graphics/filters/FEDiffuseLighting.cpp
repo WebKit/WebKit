@@ -40,6 +40,11 @@ FEDiffuseLighting::FEDiffuseLighting(const Color& lightingColor, float surfaceSc
 {
 }
 
+FEDiffuseLighting::FEDiffuseLighting(const FEDiffuseLighting& other)
+    : FEDiffuseLighting(other.m_lightingColor, other.m_surfaceScale, other.m_diffuseConstant, other.m_kernelUnitLengthX, other.m_kernelUnitLengthY, other.m_lightSource->clone(), other.m_operatingColorSpace)
+{
+}
+
 bool FEDiffuseLighting::setDiffuseConstant(float diffuseConstant)
 {
     diffuseConstant = std::max(diffuseConstant, 0.0f);

@@ -40,6 +40,8 @@ class Filter : public FilterFunction {
     using FilterFunction::createFilterStyles;
 
 public:
+    Ref<Filter> clone() const { return downcast<Filter>(deepClone()); }
+
     RenderingMode renderingMode() const;
 
     OptionSet<FilterRenderingMode> filterRenderingModes() const { return m_filterRenderingModes; }
