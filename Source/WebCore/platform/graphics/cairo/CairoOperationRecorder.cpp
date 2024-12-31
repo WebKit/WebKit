@@ -560,7 +560,7 @@ void OperationRecorder::drawDecomposedGlyphs(const Font& font, const DecomposedG
     return drawGlyphs(font, positionedGlyphs.glyphs.span(), positionedGlyphs.advances.span(), positionedGlyphs.localAnchor, positionedGlyphs.smoothingMode);
 }
 
-void OperationRecorder::drawImageBuffer(ImageBuffer& buffer, const FloatRect& destRect, const FloatRect& srcRect, ImagePaintingOptions options)
+void OperationRecorder::drawImageBuffer(ImmutableImageBuffer& buffer, const FloatRect& destRect, const FloatRect& srcRect, ImagePaintingOptions options)
 {
     struct DrawImageBuffer final : PaintingOperation, OperationData<RefPtr<cairo_surface_t>, FloatRect, FloatRect, ImagePaintingOptions, float, Cairo::ShadowState> {
         virtual ~DrawImageBuffer() = default;
@@ -584,7 +584,7 @@ void OperationRecorder::drawImageBuffer(ImageBuffer& buffer, const FloatRect& de
     append(createCommand<DrawImageBuffer>(nativeImage->platformImage(), destRect, srcRect, ImagePaintingOptions(options, state.imageInterpolationQuality()), state.alpha(), Cairo::ShadowState(state)));
 }
 
-void OperationRecorder::drawFilteredImageBuffer(ImageBuffer* srcImage, const FloatRect& srcRect, Filter& filter, FilterResults& results)
+void OperationRecorder::drawFilteredImageBuffer(ImmutableImageBuffer* srcImage, const FloatRect& srcRect, Filter& filter, FilterResults& results)
 {
     struct DrawFilteredImageBuffer final : PaintingOperation, OperationData<RefPtr<cairo_surface_t>, FloatRect, FloatRect, FloatSize, ImagePaintingOptions, float, Cairo::ShadowState> {
         virtual ~DrawFilteredImageBuffer() = default;
@@ -606,7 +606,7 @@ void OperationRecorder::drawFilteredImageBuffer(ImageBuffer* srcImage, const Flo
     if (!result)
         return;
 
-    auto imageBuffer = result->imageBuffer();
+    auto imageBuffer = result->immutableImageBuffer();
     if (!imageBuffer)
         return;
 
@@ -1153,7 +1153,7 @@ IntRect OperationRecorder::clipBounds() const
     return enclosingIntRect(state.ctmInverse.mapRect(state.clipBounds));
 }
 
-void OperationRecorder::clipToImageBuffer(ImageBuffer& buffer, const FloatRect& destRect)
+void OperationRecorder::clipToImageBuffer(ImmutableImageBuffer& buffer, const FloatRect& destRect)
 {
     struct ClipToImageBuffer final: PaintingOperation, OperationData<RefPtr<cairo_surface_t>, FloatRect> {
         virtual ~ClipToImageBuffer() = default;

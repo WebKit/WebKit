@@ -43,7 +43,7 @@ bool FEMergeSoftwareApplier::apply(const Filter&, const FilterImageVector& input
     auto& filterContext = resultImage->context();
 
     for (auto& input : inputs) {
-        RefPtr inputImage = input->imageBuffer();
+        RefPtr inputImage = input->immutableImageBuffer();
         if (!inputImage)
             continue;
 

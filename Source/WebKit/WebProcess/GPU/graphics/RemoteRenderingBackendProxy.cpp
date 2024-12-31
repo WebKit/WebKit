@@ -587,7 +587,7 @@ void RemoteRenderingBackendProxy::didInitialize(IPC::Semaphore&& wakeUp, IPC::Se
     connection->setSemaphores(WTFMove(wakeUp), WTFMove(clientWait));
 }
 
-bool RemoteRenderingBackendProxy::isCached(const ImageBuffer& imageBuffer) const
+bool RemoteRenderingBackendProxy::isCached(const ImmutableImageBuffer& imageBuffer) const
 {
     if (auto cachedImageBuffer = m_remoteResourceCacheProxy.cachedImageBuffer(imageBuffer.renderingResourceIdentifier())) {
         ASSERT_UNUSED(cachedImageBuffer, cachedImageBuffer == &imageBuffer);

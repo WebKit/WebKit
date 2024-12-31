@@ -101,7 +101,7 @@ void Filter::setFilterRenderingModes(OptionSet<FilterRenderingMode> preferredFil
     ASSERT(m_filterRenderingModes.contains(FilterRenderingMode::Software));
 }
 
-RefPtr<FilterImage> Filter::apply(ImageBuffer* sourceImage, const FloatRect& sourceImageRect, FilterResults& results)
+RefPtr<FilterImage> Filter::apply(ImmutableImageBuffer* sourceImage, const FloatRect& sourceImageRect, FilterResults& results)
 {
     RefPtr<FilterImage> input;
 

@@ -91,7 +91,7 @@ NativeImage* RemoteResourceCacheProxy::cachedNativeImage(RenderingResourceIdenti
     return dynamicDowncast<NativeImage>(renderingResource.get().get());
 }
 
-void RemoteResourceCacheProxy::recordImageBufferUse(WebCore::ImageBuffer& imageBuffer)
+void RemoteResourceCacheProxy::recordImageBufferUse(ImmutableImageBuffer& imageBuffer)
 {
     auto iterator = m_imageBuffers.find(imageBuffer.renderingResourceIdentifier());
     ASSERT_UNUSED(iterator, iterator != m_imageBuffers.end());
@@ -264,7 +264,7 @@ void RemoteResourceCacheProxy::finalizeRenderingUpdateForFonts()
     unsigned totalFontCount = m_fonts.size();
     RELEASE_ASSERT(m_numberOfFontsUsedInCurrentRenderingUpdate <= totalFontCount);
     if (totalFontCount != m_numberOfFontsUsedInCurrentRenderingUpdate) {
-        HashSet<WebCore::RenderingResourceIdentifier> toRemove;
+        HashSet<RenderingResourceIdentifier> toRemove;
         auto renderingUpdateID = m_renderingUpdateID;
         for (auto& item : m_fonts) {
             if (renderingUpdateID - item.value >= minimumRenderingUpdateCountToKeepFontAlive) {
@@ -281,7 +281,7 @@ void RemoteResourceCacheProxy::finalizeRenderingUpdateForFonts()
     totalFontCount = m_fontCustomPlatformDatas.size();
     RELEASE_ASSERT(m_numberOfFontCustomPlatformDatasUsedInCurrentRenderingUpdate <= totalFontCount);
     if (totalFontCount != m_numberOfFontCustomPlatformDatasUsedInCurrentRenderingUpdate) {
-        HashSet<WebCore::RenderingResourceIdentifier> toRemove;
+        HashSet<RenderingResourceIdentifier> toRemove;
         auto renderingUpdateID = m_renderingUpdateID;
         for (auto& item : m_fontCustomPlatformDatas) {
             if (renderingUpdateID - item.value >= minimumRenderingUpdateCountToKeepFontAlive) {

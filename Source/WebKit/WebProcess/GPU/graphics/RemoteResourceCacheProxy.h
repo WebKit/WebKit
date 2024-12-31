@@ -37,7 +37,7 @@ class DecomposedGlyphs;
 class Filter;
 class Font;
 class Gradient;
-class ImageBuffer;
+class ImmutableImageBuffer;
 class NativeImage;
 struct FontCustomPlatformData;
 }
@@ -60,7 +60,7 @@ public:
 
     void recordNativeImageUse(WebCore::NativeImage&);
     void recordFontUse(WebCore::Font&);
-    void recordImageBufferUse(WebCore::ImageBuffer&);
+    void recordImageBufferUse(WebCore::ImmutableImageBuffer&);
     void recordDecomposedGlyphsUse(WebCore::DecomposedGlyphs&);
     void recordGradientUse(WebCore::Gradient&);
     void recordFilterUse(WebCore::Filter&);

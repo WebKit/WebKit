@@ -155,7 +155,7 @@ void ImageBufferSkiaAcceleratedBackend::waitForAcceleratedRenderingFenceCompleti
     m_fence = nullptr;
 }
 
-RefPtr<ImageBuffer> ImageBufferSkiaAcceleratedBackend::copyAcceleratedImageBufferBorrowingBackendRenderTarget(const ImageBuffer& imageBuffer) const
+RefPtr<ImageBuffer> ImageBufferSkiaAcceleratedBackend::copyAcceleratedImageBufferBorrowingBackendRenderTarget(const ImmutableImageBuffer& imageBuffer) const
 {
     auto* glContext = PlatformDisplay::sharedDisplay().skiaGLContext();
     if (!glContext || !glContext->makeContextCurrent())

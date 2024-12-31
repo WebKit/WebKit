@@ -59,7 +59,7 @@ private:
     void waitForAcceleratedRenderingFenceCompletion() final;
 
     const GrDirectContext* skiaGrContext() const final { return m_skiaGrContext; }
-    RefPtr<ImageBuffer> copyAcceleratedImageBufferBorrowingBackendRenderTarget(const ImageBuffer&) const final;
+    RefPtr<ImageBuffer> copyAcceleratedImageBufferBorrowingBackendRenderTarget(const ImmutableImageBuffer&) const final;
 
 #if USE(COORDINATED_GRAPHICS)
     RefPtr<GraphicsLayerContentsDisplayDelegate> layerContentsDisplayDelegate() const final;

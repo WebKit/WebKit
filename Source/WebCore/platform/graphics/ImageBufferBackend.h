@@ -63,6 +63,8 @@ namespace WebCore {
 struct ImageBufferCreationContext;
 class GraphicsContext;
 class GraphicsContextGL;
+class ImageBuffer;
+class ImmutableImageBuffer;
 #if HAVE(IOSURFACE)
 class IOSurfacePool;
 #endif
@@ -146,7 +148,7 @@ public:
     virtual void waitForAcceleratedRenderingFenceCompletion() { }
 
     virtual const GrDirectContext* skiaGrContext() const { return nullptr; }
-    WEBCORE_EXPORT virtual RefPtr<ImageBuffer> copyAcceleratedImageBufferBorrowingBackendRenderTarget(const ImageBuffer&) const;
+    WEBCORE_EXPORT virtual RefPtr<ImageBuffer> copyAcceleratedImageBufferBorrowingBackendRenderTarget(const ImmutableImageBuffer&) const;
 #endif
 
     virtual bool isInUse() const { return false; }

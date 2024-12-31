@@ -226,7 +226,7 @@ void ClipOutRoundedRect::dump(TextStream& ts, OptionSet<AsTextFlag>) const
     ts.dumpProperty("rect", rect());
 }
 
-void ClipToImageBuffer::apply(GraphicsContext& context, ImageBuffer& imageBuffer) const
+void ClipToImageBuffer::apply(GraphicsContext& context, ImmutableImageBuffer& imageBuffer) const
 {
     context.clipToImageBuffer(imageBuffer, m_destinationRect);
 }
@@ -276,7 +276,7 @@ NO_RETURN_DUE_TO_ASSERT void DrawFilteredImageBuffer::apply(GraphicsContext&) co
     ASSERT_NOT_REACHED();
 }
 
-void DrawFilteredImageBuffer::apply(GraphicsContext& context, ImageBuffer* sourceImage, FilterResults& results) const
+void DrawFilteredImageBuffer::apply(GraphicsContext& context, ImmutableImageBuffer* sourceImage, FilterResults& results) const
 {
     context.drawFilteredImageBuffer(sourceImage, m_sourceImageRect, m_filter, results);
 }
@@ -355,7 +355,7 @@ void DrawDisplayListItems::dump(TextStream& ts, OptionSet<AsTextFlag>) const
     ts.dumpProperty("destination", destination());
 }
 
-void DrawImageBuffer::apply(GraphicsContext& context, ImageBuffer& imageBuffer) const
+void DrawImageBuffer::apply(GraphicsContext& context, ImmutableImageBuffer& imageBuffer) const
 {
     context.drawImageBuffer(imageBuffer, m_destinationRect, m_srcRect, m_options);
 }

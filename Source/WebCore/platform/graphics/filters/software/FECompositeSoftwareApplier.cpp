@@ -51,8 +51,8 @@ bool FECompositeSoftwareApplier::apply(const Filter&, const FilterImageVector& i
     if (!resultImage)
         return false;
 
-    RefPtr inputImage = input.imageBuffer();
-    RefPtr inputImage2 = input2.imageBuffer();
+    RefPtr inputImage = input.immutableImageBuffer();
+    RefPtr inputImage2 = input2.immutableImageBuffer();
     if (!inputImage || !inputImage2)
         return false;
 

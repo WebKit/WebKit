@@ -405,7 +405,7 @@ public:
 
     bool isValid() const { return !!m_imageBufferIdentifier; }
 
-    WEBCORE_EXPORT void apply(GraphicsContext&, ImageBuffer&) const;
+    WEBCORE_EXPORT void apply(GraphicsContext&, ImmutableImageBuffer&) const;
     void dump(TextStream&, OptionSet<AsTextFlag>) const;
 
 private:
@@ -486,7 +486,7 @@ public:
     Ref<Filter> filter() const { return m_filter; }
 
     NO_RETURN_DUE_TO_ASSERT void apply(GraphicsContext&) const;
-    WEBCORE_EXPORT void apply(GraphicsContext&, ImageBuffer* sourceImage, FilterResults&) const;
+    WEBCORE_EXPORT void apply(GraphicsContext&, ImmutableImageBuffer* sourceImage, FilterResults&) const;
     void dump(TextStream&, OptionSet<AsTextFlag>) const;
 
 private:
@@ -577,7 +577,7 @@ public:
     // FIXME: We might want to validate ImagePaintingOptions.
     bool isValid() const { return !!m_imageBufferIdentifier; }
 
-    WEBCORE_EXPORT void apply(GraphicsContext&, ImageBuffer&) const;
+    WEBCORE_EXPORT void apply(GraphicsContext&, ImmutableImageBuffer&) const;
     void dump(TextStream&, OptionSet<AsTextFlag>) const;
 
 private:

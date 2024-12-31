@@ -73,7 +73,7 @@ TEST(DisplayListTests, ReplayWithMissingResource)
 
     {
         ResourceHeap resourceHeap;
-        resourceHeap.add(imageBuffer.releaseNonNull());
+        resourceHeap.add(static_reference_cast<ImmutableImageBuffer>(imageBuffer.releaseNonNull()));
 
         Replayer replayer { context, list.items(), resourceHeap, ControlFactory::shared() };
         auto result = replayer.replay();

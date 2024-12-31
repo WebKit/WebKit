@@ -99,11 +99,11 @@ private:
     void recordSetInlineStroke(SetInlineStroke&&) final;
     void recordSetState(const GraphicsContextState&) final;
     void recordClearDropShadow() final;
-    void recordClipToImageBuffer(ImageBuffer&, const FloatRect& destinationRect) final;
-    void recordDrawFilteredImageBuffer(ImageBuffer*, const FloatRect& sourceImageRect, Filter&) final;
+    void recordClipToImageBuffer(RenderingResourceIdentifier imageBufferIdentifier, const FloatRect& destinationRect) final;
+    void recordDrawFilteredImageBuffer(std::optional<RenderingResourceIdentifier> sourceImageIdentifier, const FloatRect& sourceImageRect, Filter&) final;
     void recordDrawGlyphs(const Font&, std::span<const GlyphBufferGlyph>, std::span<const GlyphBufferAdvance>, const FloatPoint& localAnchor, FontSmoothingMode) final;
     void recordDrawDecomposedGlyphs(const Font&, const DecomposedGlyphs&) final;
-    void recordDrawImageBuffer(ImageBuffer&, const FloatRect& destRect, const FloatRect& srcRect, ImagePaintingOptions) final;
+    void recordDrawImageBuffer(RenderingResourceIdentifier imageBufferIdentifier, const FloatRect& destRect, const FloatRect& srcRect, ImagePaintingOptions) final;
     void recordDrawNativeImage(RenderingResourceIdentifier imageIdentifier, const FloatRect& destRect, const FloatRect& srcRect, ImagePaintingOptions) final;
     void recordDrawSystemImage(SystemImage&, const FloatRect&) final;
     void recordDrawPattern(RenderingResourceIdentifier, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform&, const FloatPoint& phase, const FloatSize& spacing, ImagePaintingOptions = { }) final;
@@ -128,9 +128,10 @@ private:
     void recordStrokePath(const Path&) final;
     void recordDrawDisplayListItems(const Vector<Item>&, const FloatPoint& destination) final;
 
-    bool recordResourceUse(NativeImage&) final;
-    bool recordResourceUse(ImageBuffer&) final;
-    bool recordResourceUse(const SourceImage&) final;
+    std::optional<RenderingResourceIdentifier> recordResourceUse(NativeImage&) final;
+    std::optional<RenderingResourceIdentifier> recordResourceUse(ImmutableImageBuffer&) final;
+    std::optional<RenderingResourceIdentifier> recordResourceUse(ImageBuffer&) final;
+    std::optional<RenderingResourceIdentifier> recordResourceUse(const SourceImage&) final;
     bool recordResourceUse(Font&) final;
     bool recordResourceUse(DecomposedGlyphs&) final;
     bool recordResourceUse(Gradient&) final;

@@ -45,16 +45,16 @@ class ResourceHeap {
 public:
     using Resource = std::variant<
         std::monostate,
-        Ref<ImageBuffer>,
+        Ref<ImmutableImageBuffer>,
         Ref<RenderingResource>,
         Ref<Font>,
         Ref<FontCustomPlatformData>
     >;
 
-    void add(Ref<ImageBuffer>&& imageBuffer)
+    void add(Ref<ImmutableImageBuffer>&& imageBuffer)
     {
         auto renderingResourceIdentifier = imageBuffer->renderingResourceIdentifier();
-        add<ImageBuffer>(renderingResourceIdentifier, WTFMove(imageBuffer), m_imageBufferCount);
+        add<ImmutableImageBuffer>(renderingResourceIdentifier, WTFMove(imageBuffer), m_imageBufferCount);
     }
 
     void add(Ref<NativeImage>&& image)
@@ -93,9 +93,9 @@ public:
         add<FontCustomPlatformData>(renderingResourceIdentifier, WTFMove(customPlatformData), m_customPlatformDataCount);
     }
 
-    ImageBuffer* getImageBuffer(RenderingResourceIdentifier renderingResourceIdentifier, OptionSet<ReplayOption> options = { }) const
+    ImmutableImageBuffer* getImageBuffer(RenderingResourceIdentifier renderingResourceIdentifier, OptionSet<ReplayOption> options = { }) const
     {
-        auto* imageBuffer = get<ImageBuffer>(renderingResourceIdentifier);
+        auto* imageBuffer = get<ImmutableImageBuffer>(renderingResourceIdentifier);
 
 #if USE(SKIA)
         if (imageBuffer && options.contains(ReplayOption::FlushImagesAndWaitForCompletion))
@@ -168,7 +168,7 @@ public:
 
     bool removeImageBuffer(RenderingResourceIdentifier renderingResourceIdentifier)
     {
-        return remove<ImageBuffer>(renderingResourceIdentifier, m_imageBufferCount);
+        return remove<ImmutableImageBuffer>(renderingResourceIdentifier, m_imageBufferCount);
     }
 
     bool removeRenderingResource(RenderingResourceIdentifier renderingResourceIdentifier)
@@ -287,7 +287,7 @@ private:
         unsigned fontCount = 0;
         unsigned customPlatformDataCount = 0;
         for (const auto& resource : m_resources) {
-            if (std::holds_alternative<Ref<ImageBuffer>>(resource.value))
+            if (std::holds_alternative<Ref<ImmutableImageBuffer>>(resource.value))
                 ++imageBufferCount;
             else if (std::holds_alternative<Ref<RenderingResource>>(resource.value))
                 ++renderingResourceCount;

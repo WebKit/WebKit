@@ -94,7 +94,7 @@ public:
 
     void clipPath(const Path&, WindRule = WindRule::EvenOdd) final;
 
-    void clipToImageBuffer(ImageBuffer&, const FloatRect&) final;
+    void clipToImageBuffer(ImmutableImageBuffer&, const FloatRect&) final;
 
     IntRect clipBounds() const final;
 

@@ -102,7 +102,7 @@ public:
 #endif
 
     void createRemoteImageBuffer(WebCore::ImageBuffer&);
-    bool isCached(const WebCore::ImageBuffer&) const;
+    bool isCached(const WebCore::ImmutableImageBuffer&) const;
 
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;

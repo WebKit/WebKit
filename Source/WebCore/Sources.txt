@@ -2508,6 +2508,7 @@ platform/graphics/ImageFrameAnimator.cpp
 platform/graphics/ImageFrameWorkQueue.cpp
 platform/graphics/ImagePaintingOptions.cpp
 platform/graphics/ImageSource.cpp
+platform/graphics/ImmutableImageBuffer.cpp
 platform/graphics/InbandGenericCue.cpp
 platform/graphics/ImageResolution.cpp
 platform/graphics/IntPoint.cpp

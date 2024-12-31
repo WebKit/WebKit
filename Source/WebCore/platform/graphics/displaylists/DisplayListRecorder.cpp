@@ -153,7 +153,7 @@ void Recorder::didUpdateSingleState(GraphicsContextState& state, GraphicsContext
     state.didApplyChanges();
 }
 
-void Recorder::drawFilteredImageBuffer(ImageBuffer* sourceImage, const FloatRect& sourceImageRect, Filter& filter, FilterResults& results)
+void Recorder::drawFilteredImageBuffer(ImmutableImageBuffer* sourceImage, const FloatRect& sourceImageRect, Filter& filter, FilterResults& results)
 {
     appendStateChangeItemIfNecessary();
 
@@ -166,16 +166,17 @@ void Recorder::drawFilteredImageBuffer(ImageBuffer* sourceImage, const FloatRect
     }
 
     if (!sourceImage) {
-        recordDrawFilteredImageBuffer(nullptr, sourceImageRect, filter);
+        recordDrawFilteredImageBuffer(std::nullopt, sourceImageRect, filter);
         return;
     }
 
-    if (!recordResourceUse(*sourceImage)) {
+    auto renderingResourceIdentifier = recordResourceUse(*sourceImage);
+    if (!renderingResourceIdentifier) {
         GraphicsContext::drawFilteredImageBuffer(sourceImage, sourceImageRect, filter, results);
         return;
     }
 
-    recordDrawFilteredImageBuffer(sourceImage, sourceImageRect, filter);
+    recordDrawFilteredImageBuffer(*renderingResourceIdentifier, sourceImageRect, filter);
 }
 
 bool Recorder::shouldDeconstructDrawGlyphs() const
@@ -234,7 +235,7 @@ void Recorder::drawDisplayListItems(const Vector<Item>& items, const ResourceHea
         WTF::switchOn(resource,
             [](std::monostate) {
                 RELEASE_ASSERT_NOT_REACHED();
-            }, [&](const Ref<ImageBuffer>& imageBuffer) {
+            }, [&](const Ref<ImmutableImageBuffer>& imageBuffer) {
                 recordResourceUse(imageBuffer);
             }, [&](const Ref<RenderingResource>& renderingResource) {
                 if (auto* image = dynamicDowncast<NativeImage>(renderingResource.ptr()))
@@ -258,18 +259,33 @@ void Recorder::drawDisplayListItems(const Vector<Item>& items, const ResourceHea
     recordDrawDisplayListItems(items, destination);
 }
 
-void Recorder::drawImageBuffer(ImageBuffer& imageBuffer, const FloatRect& destRect, const FloatRect& srcRect, ImagePaintingOptions options)
+void Recorder::drawImageBuffer(ImmutableImageBuffer& imageBuffer, const FloatRect& destRect, const FloatRect& srcRect, ImagePaintingOptions options)
 {
     appendStateChangeItemIfNecessary();
 
-    if (!recordResourceUse(imageBuffer)) {
+    auto renderingResourceIdentifier = recordResourceUse(imageBuffer);
+    if (!renderingResourceIdentifier) {
         GraphicsContext::drawImageBuffer(imageBuffer, destRect, srcRect, options);
         return;
     }
 
-    recordDrawImageBuffer(imageBuffer, destRect, srcRect, options);
+    recordDrawImageBuffer(*renderingResourceIdentifier, destRect, srcRect, options);
 }
-void Recorder::drawConsumingImageBuffer(RefPtr<ImageBuffer> imageBuffer, const FloatRect& destRect, const FloatRect& srcRect, ImagePaintingOptions options)
+
+void Recorder::drawImageBuffer(ImageBuffer& imageBuffer, const FloatRect& destRect, const FloatRect& srcRect, ImagePaintingOptions options)
+{
+    appendStateChangeItemIfNecessary();
+
+    auto renderingResourceIdentifier = recordResourceUse(imageBuffer);
+    if (!renderingResourceIdentifier) {
+        GraphicsContext::drawImageBuffer(imageBuffer, destRect, srcRect, options);
+        return;
+    }
+
+    recordDrawImageBuffer(*renderingResourceIdentifier, destRect, srcRect, options);
+}
+
+void Recorder::drawConsumingImageBuffer(RefPtr<ImmutableImageBuffer> imageBuffer, const FloatRect& destRect, const FloatRect& srcRect, ImagePaintingOptions options)
 {
     // ImageBuffer draws are recorded as ImageBuffer draws, not as NativeImage draws. So for consistency,
     // record this too. This should be removed once NativeImages are the only image types drawn from.
@@ -308,16 +324,30 @@ void Recorder::drawPattern(NativeImage& image, const FloatRect& destRect, const 
     recordDrawPattern(image.renderingResourceIdentifier(), destRect, tileRect, patternTransform, phase, spacing, options);
 }
 
-void Recorder::drawPattern(ImageBuffer& imageBuffer, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, ImagePaintingOptions options)
+void Recorder::drawPattern(ImmutableImageBuffer& imageBuffer, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, ImagePaintingOptions options)
 {
     appendStateChangeItemIfNecessary();
 
-    if (!recordResourceUse(imageBuffer)) {
+    auto renderingResourceIdentifier = recordResourceUse(imageBuffer);
+    if (!renderingResourceIdentifier) {
         GraphicsContext::drawPattern(imageBuffer, destRect, tileRect, patternTransform, phase, spacing, options);
         return;
     }
 
-    recordDrawPattern(imageBuffer.renderingResourceIdentifier(), destRect, tileRect, patternTransform, phase, spacing, options);
+    recordDrawPattern(*renderingResourceIdentifier, destRect, tileRect, patternTransform, phase, spacing, options);
+}
+
+void Recorder::drawPattern(ImageBuffer& imageBuffer, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, ImagePaintingOptions options)
+{
+    appendStateChangeItemIfNecessary();
+
+    auto renderingResourceIdentifier = recordResourceUse(imageBuffer);
+    if (!renderingResourceIdentifier) {
+        GraphicsContext::drawPattern(imageBuffer, destRect, tileRect, patternTransform, phase, spacing, options);
+        return;
+    }
+
+    recordDrawPattern(*renderingResourceIdentifier, destRect, tileRect, patternTransform, phase, spacing, options);
 }
 
 void Recorder::updateStateForSave(GraphicsContextState::Purpose purpose)
@@ -522,12 +552,20 @@ IntRect Recorder::clipBounds() const
     return enclosingIntRect(currentState().clipBounds);
 }
 
+void Recorder::clipToImageBuffer(ImmutableImageBuffer& imageBuffer, const FloatRect& destRect)
+{
+    appendStateChangeItemIfNecessary(); // Conservative: we do not know if the clip application might use state such as antialiasing.
+    currentState().clipBounds.intersect(currentState().ctm.mapRect(destRect));
+    if (auto renderingResourceIdentifier = recordResourceUse(imageBuffer))
+        recordClipToImageBuffer(*renderingResourceIdentifier, destRect);
+}
+
 void Recorder::clipToImageBuffer(ImageBuffer& imageBuffer, const FloatRect& destRect)
 {
     appendStateChangeItemIfNecessary(); // Conservative: we do not know if the clip application might use state such as antialiasing.
     currentState().clipBounds.intersect(currentState().ctm.mapRect(destRect));
-    recordResourceUse(imageBuffer);
-    recordClipToImageBuffer(imageBuffer, destRect);
+    if (auto renderingResourceIdentifier = recordResourceUse(imageBuffer))
+        recordClipToImageBuffer(*renderingResourceIdentifier, destRect);
 }
 
 void Recorder::updateStateForApplyDeviceScaleFactor(float deviceScaleFactor)

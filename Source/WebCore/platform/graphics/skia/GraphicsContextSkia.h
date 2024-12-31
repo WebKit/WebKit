@@ -66,7 +66,7 @@ public:
 
     void drawNativeImageInternal(NativeImage&, const FloatRect&, const FloatRect&, ImagePaintingOptions) final;
     void drawPattern(NativeImage&, const FloatRect& destRect, const FloatRect& srcRect, const AffineTransform&, const FloatPoint& phase, const FloatSize& spacing, ImagePaintingOptions) final;
-    void drawFilteredImageBuffer(ImageBuffer* sourceImage, const FloatRect& sourceImageRect, Filter&, FilterResults&) final;
+    void drawFilteredImageBuffer(ImmutableImageBuffer* sourceImage, const FloatRect& sourceImageRect, Filter&, FilterResults&) final;
 
     void drawRect(const FloatRect&, float) final;
     void drawLine(const FloatPoint&, const FloatPoint&) final;
@@ -98,7 +98,7 @@ public:
     void clipOut(const Path&) final;
     void clipPath(const Path&, WindRule) final;
     IntRect clipBounds() const final;
-    void clipToImageBuffer(ImageBuffer&, const FloatRect&) final;
+    void clipToImageBuffer(ImmutableImageBuffer&, const FloatRect&) final;
 
     RenderingMode renderingMode() const final;
 

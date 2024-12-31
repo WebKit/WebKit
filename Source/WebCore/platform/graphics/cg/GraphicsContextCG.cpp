@@ -1012,7 +1012,7 @@ void GraphicsContextCG::clipPath(const Path& path, WindRule clipRule)
     }
 }
 
-void GraphicsContextCG::clipToImageBuffer(ImageBuffer& imageBuffer, const FloatRect& destRect)
+void GraphicsContextCG::clipToImageBuffer(ImmutableImageBuffer& imageBuffer, const FloatRect& destRect)
 {
     auto nativeImage = imageBuffer.createNativeImageReference();
     if (!nativeImage)

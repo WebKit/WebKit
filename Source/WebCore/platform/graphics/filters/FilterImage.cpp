@@ -46,7 +46,7 @@ RefPtr<FilterImage> FilterImage::create(const FloatRect& primitiveSubregion, con
     return adoptRef(new FilterImage(primitiveSubregion, imageRect, absoluteImageRect, isAlphaImage, isValidPremultiplied, renderingMode, colorSpace, allocator));
 }
 
-RefPtr<FilterImage> FilterImage::create(const FloatRect& primitiveSubregion, const FloatRect& imageRect, const IntRect& absoluteImageRect, Ref<ImageBuffer>&& imageBuffer, ImageBufferAllocator& allocator)
+RefPtr<FilterImage> FilterImage::create(const FloatRect& primitiveSubregion, const FloatRect& imageRect, const IntRect& absoluteImageRect, Ref<ImmutableImageBuffer>&& imageBuffer, ImageBufferAllocator& allocator)
 {
     return adoptRef(*new FilterImage(primitiveSubregion, imageRect, absoluteImageRect, WTFMove(imageBuffer), allocator));
 }
@@ -63,7 +63,7 @@ FilterImage::FilterImage(const FloatRect& primitiveSubregion, const FloatRect& i
 {
 }
 
-FilterImage::FilterImage(const FloatRect& primitiveSubregion, const FloatRect& imageRect, const IntRect& absoluteImageRect, Ref<ImageBuffer>&& imageBuffer, ImageBufferAllocator& allocator)
+FilterImage::FilterImage(const FloatRect& primitiveSubregion, const FloatRect& imageRect, const IntRect& absoluteImageRect, Ref<ImmutableImageBuffer>&& imageBuffer, ImageBufferAllocator& allocator)
     : m_primitiveSubregion(primitiveSubregion)
     , m_imageRect(imageRect)
     , m_absoluteImageRect(absoluteImageRect)
@@ -112,6 +112,18 @@ size_t FilterImage::memoryCost() const
 
 ImageBuffer* FilterImage::imageBuffer()
 {
+    ASSERT(!m_imageBuffer);
+
+    RefPtr imageBuffer = m_allocator.createImageBuffer(m_absoluteImageRect.size(), m_colorSpace, m_renderingMode);
+    if (!imageBuffer)
+        return nullptr;
+
+    m_imageBuffer = imageBuffer;
+    return imageBuffer.get();
+}
+
+ImmutableImageBuffer* FilterImage::immutableImageBuffer()
+{
 #if USE(CORE_IMAGE)
     if (m_ciImage)
         return imageBufferFromCIImage();
@@ -119,22 +131,23 @@ ImageBuffer* FilterImage::imageBuffer()
     return imageBufferFromPixelBuffer();
 }
 
-ImageBuffer* FilterImage::imageBufferFromPixelBuffer()
+ImmutableImageBuffer* FilterImage::imageBufferFromPixelBuffer()
 {
     if (m_imageBuffer)
         return m_imageBuffer.get();
 
-    m_imageBuffer = m_allocator.createImageBuffer(m_absoluteImageRect.size(), m_colorSpace, m_renderingMode);
-    if (!m_imageBuffer)
+    RefPtr imageBuffer = m_allocator.createImageBuffer(m_absoluteImageRect.size(), m_colorSpace, m_renderingMode);
+    if (!imageBuffer)
         return nullptr;
 
     auto imageBufferRect = IntRect { { }, m_absoluteImageRect.size() };
 
     if (pixelBufferSlot(AlphaPremultiplication::Premultiplied))
-        m_imageBuffer->putPixelBuffer(*pixelBufferSlot(AlphaPremultiplication::Premultiplied), imageBufferRect);
+        imageBuffer->putPixelBuffer(*pixelBufferSlot(AlphaPremultiplication::Premultiplied), imageBufferRect);
     else if (pixelBufferSlot(AlphaPremultiplication::Unpremultiplied))
-        m_imageBuffer->putPixelBuffer(*pixelBufferSlot(AlphaPremultiplication::Unpremultiplied), imageBufferRect);
+        imageBuffer->putPixelBuffer(*pixelBufferSlot(AlphaPremultiplication::Unpremultiplied), imageBufferRect);
 
+    m_imageBuffer = WTFMove(imageBuffer);
     return m_imageBuffer.get();
 }
 
@@ -199,7 +212,7 @@ static void copyImageBytes(const PixelBuffer& sourcePixelBuffer, PixelBuffer& de
     }
 }
 
-static RefPtr<PixelBuffer> getConvertedPixelBuffer(ImageBuffer& imageBuffer, AlphaPremultiplication alphaFormat, const IntRect& sourceRect, DestinationColorSpace colorSpace, ImageBufferAllocator& allocator)
+static RefPtr<PixelBuffer> getConvertedPixelBuffer(ImmutableImageBuffer& imageBuffer, AlphaPremultiplication alphaFormat, const IntRect& sourceRect, DestinationColorSpace colorSpace, ImageBufferAllocator& allocator)
 {
     auto clampedSize = ImageBuffer::clampedSize(sourceRect.size());
     auto convertedImageBuffer = allocator.createImageBuffer(clampedSize, colorSpace, RenderingMode::Unaccelerated);
