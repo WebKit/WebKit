@@ -480,7 +480,7 @@ TemporalPlainTime* TemporalPlainTime::from(JSGlobalObject* globalObject, JSValue
         }
     }
 
-    throwRangeError(globalObject, scope, "invalid time string"_s);
+    throwRangeError(globalObject, scope, makeString("invalid time string: "_s, string));
     return { };
 }
 
@@ -571,7 +571,7 @@ ISO8601::PlainTime TemporalPlainTime::with(JSGlobalObject* globalObject, JSObjec
 }
 
 // https://tc39.es/proposal-temporal/#sec-temporal-differencetime
-static Int128 differenceTime(ISO8601::PlainTime time1, ISO8601::PlainTime time2)
+Int128 TemporalPlainTime::differenceTime(ISO8601::PlainTime time1, ISO8601::PlainTime time2)
 {
     double hours = static_cast<double>(time2.hour()) - static_cast<double>(time1.hour());
     double minutes = static_cast<double>(time2.minute()) - static_cast<double>(time1.minute());

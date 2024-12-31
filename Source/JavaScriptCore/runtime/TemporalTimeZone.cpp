@@ -37,14 +37,14 @@ const ClassInfo TemporalTimeZone::s_info = { "Object"_s, &Base::s_info, nullptr,
 
 TemporalTimeZone* TemporalTimeZone::createFromID(VM& vm, Structure* structure, TimeZoneID identifier)
 {
-    TemporalTimeZone* format = new (NotNull, allocateCell<TemporalTimeZone>(vm)) TemporalTimeZone(vm, structure, TimeZone { std::in_place_index_t<0>(), identifier });
+    TemporalTimeZone* format = new (NotNull, allocateCell<TemporalTimeZone>(vm)) TemporalTimeZone(vm, structure, TimeZone::named(identifier));
     format->finishCreation(vm);
     return format;
 }
 
 TemporalTimeZone* TemporalTimeZone::createFromUTCOffset(VM& vm, Structure* structure, int64_t utcOffset)
 {
-    TemporalTimeZone* format = new (NotNull, allocateCell<TemporalTimeZone>(vm)) TemporalTimeZone(vm, structure, TimeZone { std::in_place_index_t<1>(), utcOffset });
+    TemporalTimeZone* format = new (NotNull, allocateCell<TemporalTimeZone>(vm)) TemporalTimeZone(vm, structure, TimeZone::offset(utcOffset));
     format->finishCreation(vm);
     return format;
 }
@@ -69,11 +69,11 @@ static std::optional<TimeZoneID> parseTimeZoneIANAName(StringView)
 // https://tc39.es/proposal-temporal/#sec-parsetimezoneidentifier
 // Returns offset in *nanoseconds*
 // TODO: in the spec, it's minutes
-static std::optional<std::variant<TimeZoneID, int64_t>> parseTimeZoneIdentifier(StringView identifier)
+static std::optional<ISO8601::TimeZone> parseTimeZoneIdentifier(StringView identifier)
 {
 
     if (identifier == "UTC"_s)
-        return utcTimeZoneID();
+        return ISO8601::TimeZone::utc();
 
     Vector<LChar> ignore;
     auto parseResult = ISO8601::parseUTCOffset(identifier, ignore, false); // Don't accept sub-minute precision
@@ -85,13 +85,14 @@ static std::optional<std::variant<TimeZoneID, int64_t>> parseTimeZoneIdentifier(
     if (!parseResult)
         return std::nullopt;
        
-    if (isIANAName)
-        return parseResult;
+    if (isIANAName) {
+        if (parseResult)
+            return ISO8601::TimeZone::named(parseResult.value());
+        return std::nullopt;
+    }
     int64_t offsetNanoseconds = parseResult.value();
-//    int64_t offsetMinutes = offsetNanoseconds / 60000000000ll;
     ASSERT(offsetNanoseconds % 60000000000ll == 0);
-  //  return offsetMinutes;
-    return offsetNanoseconds;
+    return ISO8601::TimeZone::offset(offsetNanoseconds);
 }
 
 template<typename CharacterType>
@@ -220,8 +221,6 @@ std::optional<ISO8601::TimeZone> TemporalTimeZone::parseTemporalTimeZoneString(S
 {
     if (canBeTimeZoneIdentifier(timeZoneString))
         return parseTimeZoneIdentifier(timeZoneString);
-    // TODO
-    // return parseTimeZoneIdentifier(timeZoneString);
     ISO8601::TimeZoneRecord result;
     auto asDateTime = ISO8601::parseCalendarDateTime(timeZoneString, TemporalDateFormat::Date);
     if (asDateTime) {
@@ -280,7 +279,7 @@ std::optional<ISO8601::TimeZone> TemporalTimeZone::parseTemporalTimeZoneString(S
         return parseTimeZoneIdentifier(WTF::String(timeZoneResult.m_annotation.value()));
     }
     if (timeZoneResult.m_z)
-        return utcTimeZoneID();
+        return ISO8601::TimeZone::utc();
     if (timeZoneResult.m_offset_string) {
         // Check for sub-minute precision in offset string
         Vector<LChar> ignore;
@@ -288,7 +287,7 @@ std::optional<ISO8601::TimeZone> TemporalTimeZone::parseTemporalTimeZoneString(S
             ignore, false);
         if (!result)
             return std::nullopt;
-        return std::get<1>(timeZoneResult.m_offset_string.value());
+        return ISO8601::TimeZone::offset(std::get<1>(timeZoneResult.m_offset_string.value()));
     }
     return std::nullopt;
 // TODO: check that argument-propertybag-timezone-string-datetime.js works
@@ -336,10 +335,10 @@ JSObject* TemporalTimeZone::from(JSGlobalObject* globalObject, JSValue timeZoneL
 
     std::optional<ISO8601::TimeZone> utcOffsetFromInstant = parseTemporalTimeZoneString(timeZoneString);
     if (utcOffsetFromInstant) {
-        if (std::holds_alternative<int64_t>(utcOffsetFromInstant.value()))
-            return TemporalTimeZone::createFromUTCOffset(vm, globalObject->timeZoneStructure(), std::get<int64_t>(utcOffsetFromInstant.value()));
+        if (utcOffsetFromInstant->isOffset())
+            return TemporalTimeZone::createFromUTCOffset(vm, globalObject->timeZoneStructure(), utcOffsetFromInstant->asOffset());
         else
-            return TemporalTimeZone::createFromID(vm, globalObject->timeZoneStructure(), std::get<TimeZoneID>(utcOffsetFromInstant.value()));
+            return TemporalTimeZone::createFromID(vm, globalObject->timeZoneStructure(), utcOffsetFromInstant->asID());
     }
 
 

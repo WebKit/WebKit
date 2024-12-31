@@ -93,14 +93,9 @@ JSC_DEFINE_HOST_FUNCTION(temporalTimeZonePrototypeFuncToString, (JSGlobalObject*
     if (!timeZone)
         return throwVMTypeError(globalObject, scope, "Temporal.TimeZone.prototype.toString called on value that's not a TimeZone"_s);
 
-    auto variant = timeZone->timeZone();
-    auto string = WTF::switchOn(variant,
-        [](TimeZoneID identifier) -> String {
-            return intlAvailableTimeZones()[identifier];
-        },
-        [](int64_t offset) -> String {
-            return ISO8601::formatTimeZoneOffsetString(offset);
-        });
+    auto tz = timeZone->timeZone();
+    auto string = tz.isOffset() ? ISO8601::formatTimeZoneOffsetString(tz.asOffset())
+        : intlAvailableTimeZones()[tz.asID()];
     return JSValue::encode(jsString(vm, WTFMove(string)));
 }
 

@@ -56,6 +56,9 @@ public:
 
     TemporalZonedDateTime* with(JSGlobalObject*, JSObject* temporalDateLike, JSValue options);
     TemporalZonedDateTime* round(JSGlobalObject*, JSValue options);
+    ISO8601::Duration since(JSGlobalObject*, JSValue, TemporalZonedDateTime*);
+    ISO8601::Duration until(JSGlobalObject*, JSValue, TemporalZonedDateTime*);
+    JSValue getTimeZoneTransition(JSGlobalObject*, JSValue);
 
     static Vector<ISO8601::ExactTime> getPossibleEpochNanoseconds(JSGlobalObject*,
         ISO8601::TimeZone, std::tuple<ISO8601::PlainDate, ISO8601::PlainTime>);
@@ -91,6 +94,9 @@ public:
 private:
     TemporalZonedDateTime(VM&, Structure*, ExactTime&&, TimeZone&&);
     void finishCreation(VM&);
+
+    ISO8601::Duration differenceTemporalZonedDateTime(bool, JSGlobalObject*, JSValue,
+        TemporalZonedDateTime*);
 
     Packed<ExactTime> m_exactTime;
     TimeZone m_timeZone;

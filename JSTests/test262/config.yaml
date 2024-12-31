@@ -338,6 +338,7 @@ skip:
     - test/built-ins/Temporal/ZonedDateTime/compare/argument-propertybag-calendar-wrong-type.js
     - test/built-ins/Temporal/ZonedDateTime/compare/argument-string-calendar-annotation.js
     - test/built-ins/Temporal/ZonedDateTime/compare/argument-string-unknown-annotation.js
+    - test/built-ins/Temporal/ZonedDateTime/prototype/withPlainTime/argument-string-calendar-annotation.js
 
     # Depends on annotations in datetime strings
     - test/built-ins/Temporal/Instant/compare/argument-string-calendar-annotation.js
@@ -407,6 +408,9 @@ skip:
     - test/built-ins/Temporal/PlainYearMonth/prototype/since/argument-string-date-with-utc-offset.js
     - test/built-ins/Temporal/PlainYearMonth/prototype/until/argument-string-calendar-annotation.js
     - test/built-ins/Temporal/PlainYearMonth/prototype/until/argument-string-date-with-utc-offset.js
+    - test/built-ins/Temporal/ZonedDateTime/prototype/since/argument-string-calendar-annotation.js
+    - test/built-ins/Temporal/ZonedDateTime/prototype/since/argument-string-unknown-annotation.js
+    - test/built-ins/Temporal/ZonedDateTime/prototype/withPlainTime/argument-string-unknown-annotation.js
 
 
     # Depends on Temporal.ZonedDateTime

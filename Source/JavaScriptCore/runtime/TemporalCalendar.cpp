@@ -33,7 +33,10 @@
 #include "TemporalDuration.h"
 #include "TemporalPlainDate.h"
 #include "TemporalPlainDateTime.h"
+#include "TemporalPlainMonthDay.h"
 #include "TemporalPlainTime.h"
+#include "TemporalPlainYearMonth.h"
+#include "TemporalZonedDateTime.h"
 
 namespace JSC {
 
@@ -57,6 +60,43 @@ TemporalCalendar::TemporalCalendar(VM& vm, Structure* structure, CalendarID iden
 {
 }
 
+// https://tc39.es/proposal-temporal/#sec-temporal-parsetemporalcalendarstring
+static std::optional<CalendarID> parseTemporalCalendarString(JSGlobalObject* globalObject, StringView string)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    auto parseResult = ISO8601::parseCalendarDateTime(string, TemporalDateFormat::Date);
+    std::optional<ISO8601::CalendarRecord> calendarParseResult;
+    if (parseResult)
+        calendarParseResult = std::get<3>(parseResult.value());
+    else {
+        parseResult = ISO8601::parseCalendarDateTime(string, TemporalDateFormat::YearMonth);
+        if (parseResult)
+            calendarParseResult = std::get<3>(parseResult.value());
+        else {
+            parseResult = ISO8601::parseCalendarDateTime(string, TemporalDateFormat::MonthDay);
+            if (parseResult)
+                calendarParseResult = std::get<3>(parseResult.value());
+            else {
+                calendarParseResult = ISO8601::parseCalendarName(string);
+                if (!calendarParseResult) {
+                    throwRangeError(globalObject, scope, "invalid calendar ID"_s);
+                    return std::nullopt;
+                }
+            }
+        }
+    }
+    if (!calendarParseResult)
+        return iso8601CalendarID();
+    if (WTF::String(calendarParseResult->m_name).convertToASCIILowercase() == "iso8601"_s)
+        return iso8601CalendarID();
+    // return string;
+    // TODO
+    throwRangeError(globalObject, scope, "calendar ID not supported yet"_s);
+    return std::nullopt;
+}
+
 JSObject* TemporalCalendar::toTemporalCalendarWithISODefault(JSGlobalObject* globalObject, JSValue temporalCalendarLike)
 {
     if (temporalCalendarLike.isUndefined())
@@ -64,6 +104,50 @@ JSObject* TemporalCalendar::toTemporalCalendarWithISODefault(JSGlobalObject* glo
     return TemporalCalendar::from(globalObject, temporalCalendarLike);
 }
 
+CalendarID TemporalCalendar::toTemporalCalendarIdentifier(JSGlobalObject* globalObject, JSValue temporalCalendarLike)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    if (temporalCalendarLike.inherits<TemporalPlainDate>())
+        return jsCast<TemporalPlainDate*>(temporalCalendarLike)->calendar()->identifier();
+
+    if (temporalCalendarLike.inherits<TemporalPlainDateTime>())
+        return jsCast<TemporalPlainDateTime*>(temporalCalendarLike)->calendar()->identifier();
+
+    if (temporalCalendarLike.inherits<TemporalPlainTime>())
+        return jsCast<TemporalPlainTime*>(temporalCalendarLike)->calendar()->identifier();
+
+    if (temporalCalendarLike.inherits<TemporalPlainMonthDay>())
+        return jsCast<TemporalPlainMonthDay*>(temporalCalendarLike)->calendar()->identifier();
+
+    if (temporalCalendarLike.inherits<TemporalPlainYearMonth>())
+        return jsCast<TemporalPlainYearMonth*>(temporalCalendarLike)->calendar()->identifier();
+
+    if (temporalCalendarLike.inherits<TemporalZonedDateTime>())
+        return jsCast<TemporalZonedDateTime*>(temporalCalendarLike)->calendar()->identifier();
+
+    if (!temporalCalendarLike.isString()) {
+        throwTypeError(globalObject, scope, "calendar must be a string"_s);
+        return { };
+    }
+
+    auto identifier = temporalCalendarLike.toWTFString(globalObject);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    std::optional<CalendarID> calendarId = isBuiltinCalendar(identifier);
+    if (!calendarId) {
+        calendarId = parseTemporalCalendarString(globalObject, identifier);
+        RETURN_IF_EXCEPTION(scope, { });
+    }
+
+    ASSERT(calendarId);
+
+    // TODO: CanonicalizeCalendar
+    return calendarId.value();
+}
+
+// https://tc39.es/proposal-temporal/#sec-temporal-gettemporalcalendarslotvaluewithisodefault
 JSObject* TemporalCalendar::getTemporalCalendarWithISODefault(JSGlobalObject* globalObject, JSValue itemValue)
 {
     VM& vm = globalObject->vm();
@@ -83,6 +167,37 @@ JSObject* TemporalCalendar::getTemporalCalendarWithISODefault(JSGlobalObject* gl
     RELEASE_AND_RETURN(scope, toTemporalCalendarWithISODefault(globalObject, calendar));
 }
 
+// https://tc39.es/proposal-temporal/#sec-temporal-gettemporalcalendarslotvaluewithisodefault
+CalendarID TemporalCalendar::getTemporalCalendarIdentifierWithISODefault(JSGlobalObject* globalObject, JSValue itemValue)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    if (itemValue.inherits<TemporalPlainDate>())
+        return jsCast<TemporalPlainDate*>(itemValue)->calendar()->identifier();
+
+    if (itemValue.inherits<TemporalPlainDateTime>())
+        return jsCast<TemporalPlainDateTime*>(itemValue)->calendar()->identifier();
+
+    if (itemValue.inherits<TemporalPlainTime>())
+        return jsCast<TemporalPlainTime*>(itemValue)->calendar()->identifier();
+
+    if (itemValue.inherits<TemporalPlainMonthDay>())
+        return jsCast<TemporalPlainMonthDay*>(itemValue)->calendar()->identifier();
+
+    if (itemValue.inherits<TemporalPlainYearMonth>())
+        return jsCast<TemporalPlainYearMonth*>(itemValue)->calendar()->identifier();
+
+    if (itemValue.inherits<TemporalZonedDateTime>())
+        return jsCast<TemporalZonedDateTime*>(itemValue)->calendar()->identifier();
+
+    JSValue calendar = itemValue.get(globalObject, vm.propertyNames->calendar);
+    RETURN_IF_EXCEPTION(scope, { });
+    if (calendar.isUndefined())
+        return iso8601CalendarID();
+    RELEASE_AND_RETURN(scope, toTemporalCalendarIdentifier(globalObject, calendar));
+}
+
 std::optional<CalendarID> TemporalCalendar::isBuiltinCalendar(StringView string)
 {
     const auto& calendars = intlAvailableCalendars();
@@ -90,16 +205,6 @@ std::optional<CalendarID> TemporalCalendar::isBuiltinCalendar(StringView string)
         if (calendars[index] == string)
             return index;
     }
-    return std::nullopt;
-}
-
-// https://tc39.es/proposal-temporal/#sec-temporal-parsetemporalcalendarstring
-static std::optional<CalendarID> parseTemporalCalendarString(JSGlobalObject* globalObject, StringView)
-{
-    // FIXME: Implement parsing temporal calendar string, which requires full ISO 8601 parser.
-    VM& vm = globalObject->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-    throwRangeError(globalObject, scope, "invalid calendar ID"_s);
     return std::nullopt;
 }
 
@@ -135,6 +240,10 @@ JSObject* TemporalCalendar::from(JSGlobalObject* globalObject, JSValue calendarL
         }
     }
 
+    if (!calendarLike.isString()) {
+        throwTypeError(globalObject, scope, "calendar must be a string"_s);
+        return { };
+    }
     auto identifier = calendarLike.toWTFString(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
 
@@ -490,7 +599,9 @@ ISO8601::Duration TemporalCalendar::differenceTemporalPlainYearMonth(JSGlobalObj
         auto isoDateTimeOther = TemporalDuration::combineISODateAndTimeRecord(otherDate, ISO8601::PlainTime());
         auto destEpochNs = TemporalDuration::getUTCEpochNanoseconds(isoDateTimeOther);
         TemporalDuration::roundRelativeDuration(globalObject,
-            duration, destEpochNs, thisDate, largestUnit, increment, smallestUnit, roundingMode);
+            duration, destEpochNs, thisDate, ISO8601::PlainTime(),
+            std::nullopt, largestUnit, increment,
+            smallestUnit, roundingMode);
         RETURN_IF_EXCEPTION(scope, { });
     }
     auto result = TemporalDuration::temporalDurationFromInternal(duration, TemporalUnit::Day);
