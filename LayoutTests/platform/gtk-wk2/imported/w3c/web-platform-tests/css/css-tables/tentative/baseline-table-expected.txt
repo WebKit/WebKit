@@ -132,7 +132,7 @@ FAIL .container 13 assert_equals:
     </tr>
   </tbody></table><div style="display:inline-block" data-offset-y="15">pX</div>
 </div>
-offsetTop expected 15 but got 76
+offsetTop expected 15 but got 19
 PASS .container 14
 PASS .container 15
 
