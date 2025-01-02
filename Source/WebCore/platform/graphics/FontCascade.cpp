@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2003-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2024 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -521,7 +521,7 @@ bool FontCascade::fastAverageCharWidthIfAvailable(float& width) const
 {
     bool success = hasValidAverageCharWidth();
     if (success)
-        width = roundf(primaryFont().avgCharWidth()); // FIXME: primaryFont() might not correspond to firstFamily().
+        width = primaryFont().avgCharWidth(); // FIXME: primaryFont() might not correspond to firstFamily().
     return success;
 }
 

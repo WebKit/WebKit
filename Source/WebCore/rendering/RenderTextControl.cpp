@@ -1,5 +1,6 @@
 /**
- * Copyright (C) 2006, 2007, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2021 Google Inc. All rights reserved.
  *           (C) 2008 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)  
  *
  * This library is free software; you can redistribute it and/or
@@ -138,12 +139,18 @@ void RenderTextControl::hitInnerTextElement(HitTestResult& result, const LayoutP
 float RenderTextControl::getAverageCharWidth()
 {
     float width;
-    if (style().fontCascade().fastAverageCharWidthIfAvailable(width))
-        return width;
+    const FontCascade& font = style().fontCascade();
+    if (font.fastAverageCharWidthIfAvailable(width)) {
+        // We apply roundf() only if the fractional part of 'width' is >= 0.5
+        // because:
+        // * We have done it for a long time.
+        // * Removing roundf() would make the intrinsic width smaller, and it
+        //   would have a compatibility risk.
+        return std::max<float>(width, LayoutUnit::fromFloatCeil(width));
+    }
 
     const UChar ch = '0';
     const String str = span(ch);
-    const FontCascade& font = style().fontCascade();
     TextRun textRun = constructTextRun(str, style(), ExpansionBehavior::allowRightOnly());
     return font.width(textRun);
 }
