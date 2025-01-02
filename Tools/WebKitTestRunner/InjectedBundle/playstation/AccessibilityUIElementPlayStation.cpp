@@ -1077,10 +1077,4 @@ bool AccessibilityUIElement::isLastItemInSuggestion() const
     return false;
 }
 
-bool AccessibilityUIElement::isInNonNativeTextControl() const
-{
-    notImplemented();
-    return false;
-}
-
 } // namespace WTR
