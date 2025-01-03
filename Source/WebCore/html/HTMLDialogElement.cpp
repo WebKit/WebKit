@@ -126,7 +126,9 @@ void HTMLDialogElement::close(const String& result)
 
     setBooleanAttribute(openAttr, false);
 
-    if (isModal())
+    bool wasModal = isModal();
+
+    if (wasModal)
         removeFromTopLayer();
 
     setIsModal(false);
@@ -135,9 +137,12 @@ void HTMLDialogElement::close(const String& result)
         m_returnValue = result;
 
     if (RefPtr element = std::exchange(m_previouslyFocusedElement, nullptr).get()) {
-        FocusOptions options;
-        options.preventScroll = true;
-        element->focus(options);
+        RefPtr focusedElement = document().focusedElement();
+        if ((focusedElement && containsIncludingShadowDOM(focusedElement)) || wasModal) {
+            FocusOptions options;
+            options.preventScroll = true;
+            element->focus(options);
+        }
     }
 
     queueTaskToDispatchEvent(TaskSource::UserInteraction, Event::create(eventNames().closeEvent, Event::CanBubble::No, Event::IsCancelable::No));
