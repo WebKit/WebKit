@@ -434,7 +434,7 @@ void Geolocation::makeCachedPositionCallbacks()
     for (auto& notifier : m_requestsAwaitingCachedPosition) {
         // FIXME: This seems wrong, since makeCachedPositionCallbacks() is called in a branch where
         // lastPosition() is known to be null in Geolocation::setIsAllowed().
-        notifier->runSuccessCallback(lastPosition());
+        notifier->runSuccessCallback(*lastPosition());
 
         // If this is a one-shot request, stop it. Otherwise, if the watch still
         // exists, start the service to get updates.
@@ -533,7 +533,7 @@ void Geolocation::sendError(GeoNotifierVector& notifiers, GeolocationPositionErr
 void Geolocation::sendPosition(GeoNotifierVector& notifiers, GeolocationPosition& position)
 {
     for (auto& notifier : notifiers)
-        notifier->runSuccessCallback(&position);
+        notifier->runSuccessCallback(position);
 }
 
 void Geolocation::stopTimer(GeoNotifierVector& notifiers)

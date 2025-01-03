@@ -69,14 +69,14 @@ bool GeoNotifier::hasZeroTimeout() const
     return !m_options.timeout;
 }
 
-void GeoNotifier::runSuccessCallback(GeolocationPosition* position)
+void GeoNotifier::runSuccessCallback(GeolocationPosition& position)
 {
     // If we are here and the Geolocation permission is not approved, something has
     // gone horribly wrong.
     if (!m_geolocation->isAllowed())
         CRASH();
 
-    protectedSuccessCallback()->handleEvent(position);
+    protectedSuccessCallback()->handleEvent(&position);
 }
 
 void GeoNotifier::runErrorCallback(GeolocationPositionError& error)
