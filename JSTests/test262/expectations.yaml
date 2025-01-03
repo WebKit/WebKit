@@ -343,6 +343,15 @@ test/built-ins/Temporal/PlainTime/prototype/subtract/precision-exact-mathematica
 test/built-ins/Temporal/PlainTime/prototype/toString/order-of-operations.js:
   default: 'Test262Error: Actual [get options.smallestUnit, get options.smallestUnit.toString, call options.smallestUnit.toString, get options.roundingMode, get options.roundingMode.toString, call options.roundingMode.toString] and expected [get options.fractionalSecondDigits, get options.fractionalSecondDigits.toString, call options.fractionalSecondDigits.toString, get options.roundingMode, get options.roundingMode.toString, call options.roundingMode.toString, get options.smallestUnit, get options.smallestUnit.toString, call options.smallestUnit.toString] should have the same contents. order of operations'
   strict mode: 'Test262Error: Actual [get options.smallestUnit, get options.smallestUnit.toString, call options.smallestUnit.toString, get options.roundingMode, get options.roundingMode.toString, call options.roundingMode.toString] and expected [get options.fractionalSecondDigits, get options.fractionalSecondDigits.toString, call options.fractionalSecondDigits.toString, get options.roundingMode, get options.roundingMode.toString, call options.roundingMode.toString, get options.smallestUnit, get options.smallestUnit.toString, call options.smallestUnit.toString] should have the same contents. order of operations'
+test/built-ins/Temporal/PlainYearMonth/calendar-iso-string.js:
+  default: 'Test262Error: An ISO string is not a valid calendar ID for constructor parameter Expected a RangeError to be thrown but no exception was thrown at all'
+  strict mode: 'Test262Error: An ISO string is not a valid calendar ID for constructor parameter Expected a RangeError to be thrown but no exception was thrown at all'
+test/built-ins/Temporal/PlainYearMonth/compare/argument-propertybag-calendar-number.js:
+  default: 'Test262Error: A number is not a valid ISO string for calendar (first argument) Expected a TypeError but got a RangeError'
+  strict mode: 'Test262Error: A number is not a valid ISO string for calendar (first argument) Expected a TypeError but got a RangeError'
+test/built-ins/Temporal/PlainYearMonth/compare/argument-propertybag-calendar-wrong-type.js:
+  default: 'Test262Error: object is not a valid property bag and does not convert to a string (first argument) Expected a TypeError but got a RangeError'
+  strict mode: 'Test262Error: object is not a valid property bag and does not convert to a string (first argument) Expected a TypeError but got a RangeError'
 test/built-ins/Temporal/getOwnPropertyNames.js:
   default: 'Test262Error: ZonedDateTime'
   strict mode: 'Test262Error: ZonedDateTime'

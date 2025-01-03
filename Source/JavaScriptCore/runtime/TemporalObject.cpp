@@ -309,18 +309,22 @@ std::optional<TemporalUnit> temporalLargestUnit(JSGlobalObject* globalObject, JS
 
 // ToSmallestTemporalUnit ( normalizedOptions, disallowedUnits, fallback )
 // https://tc39.es/proposal-temporal/#sec-temporal-tosmallesttemporalunit
-std::optional<TemporalUnit> temporalSmallestUnit(JSGlobalObject* globalObject, JSObject* options, std::initializer_list<TemporalUnit> disallowedUnits)
+std::optional<TemporalUnit> temporalSmallestUnit(JSGlobalObject* globalObject, std::variant<JSObject*, TemporalUnit> optionsOrUnit, std::initializer_list<TemporalUnit> disallowedUnits)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    String smallestUnit = intlStringOption(globalObject, options, vm.propertyNames->smallestUnit, { }, { }, { });
-    RETURN_IF_EXCEPTION(scope, std::nullopt);
+    std::optional<TemporalUnit> unitType;
+    if (std::holds_alternative<JSObject*>(optionsOrUnit)) {
+        auto options = std::get<JSObject*>(optionsOrUnit);
+        String smallestUnit = intlStringOption(globalObject, options, vm.propertyNames->smallestUnit, { }, { }, { });
+        RETURN_IF_EXCEPTION(scope, std::nullopt);
+        if (!smallestUnit)
+            return std::nullopt;
+        unitType = temporalUnitType(smallestUnit);
+    } else
+        unitType = std::get<TemporalUnit>(optionsOrUnit);
 
-    if (!smallestUnit)
-        return std::nullopt;
-
-    auto unitType = temporalUnitType(smallestUnit);
     if (!unitType) {
         throwRangeError(globalObject, scope, "smallestUnit is an invalid Temporal unit"_s);
         return std::nullopt;
@@ -498,6 +502,7 @@ PrecisionData secondsStringPrecision(JSGlobalObject* globalObject, JSObject* opt
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     auto smallestUnit = temporalSmallestUnit(globalObject, options, { TemporalUnit::Year, TemporalUnit::Month, TemporalUnit::Week, TemporalUnit::Day, TemporalUnit::Hour });
+    RETURN_IF_EXCEPTION(scope, { });
 
     if (smallestUnit)
         return smallestUnitToPrecision(smallestUnit.value());
