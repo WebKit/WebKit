@@ -1331,6 +1331,7 @@ editing/secure-input/reset-state-on-navigation.html [ Failure ]
 
 # Context menu API is not exposed on DumpRenderTree.
 editing/mac/spelling/disable-automatic-spelling-correction-context-menu-item.html [ Skip ]
+editing/mac/spelling/disable-automatic-spelling-correction-context-menu-item-does-not-leak.html [ Skip ]
 
 # Color input is not yet implemented on Mac WK1. Currently, using it erroneously triggers an ASSERT_NOT_REACHED.
 webkit.org/b/119094 fast/forms/color/input-color-onchange-event.html [ Skip ]

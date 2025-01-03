@@ -65,7 +65,6 @@ public:
 
     WEBCORE_EXPORT void checkOrEnableIfNeeded(ContextMenuItem&) const;
 
-    void setContextMenuContext(const ContextMenuContext& context) { m_context = context; }
     const ContextMenuContext& context() const { return m_context; }
     const HitTestResult& hitTestResult() const { return m_context.hitTestResult(); }
 
@@ -80,7 +79,7 @@ public:
 private:
     std::unique_ptr<ContextMenu> maybeCreateContextMenu(Event&, OptionSet<HitTestRequest::Type> hitType, ContextMenuContext::Type);
     void showContextMenu(Event&);
-    
+
     void appendItem(ContextMenuItem&, ContextMenu* parentMenu);
 
     void createAndAppendFontSubMenu(ContextMenuItem&);
