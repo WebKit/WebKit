@@ -380,7 +380,7 @@ static std::optional<PlainTime> parseTimeSpec(StringParsingBuffer<CharacterType>
     Vector<LChar, 9> padded(9, '0');
     for (size_t i = 0; i < digits; ++i)
         padded[i] = buffer[i];
-    result.append(buffer.consume(digits));
+    result.append(buffer.consume(digits).subspan(0, digits));
 
     unsigned millisecond = parseDecimalInt32(padded.span().first(3));
     unsigned microsecond = parseDecimalInt32(padded.subspan(3, 3));

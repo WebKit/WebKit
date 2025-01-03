@@ -326,8 +326,8 @@ test/built-ins/Temporal/PlainYearMonth/compare/argument-propertybag-calendar-num
   default: 'Test262Error: A number is not a valid ISO string for calendar (first argument) Expected a TypeError but got a RangeError'
   strict mode: 'Test262Error: A number is not a valid ISO string for calendar (first argument) Expected a TypeError but got a RangeError'
 test/built-ins/Temporal/PlainYearMonth/compare/argument-propertybag-calendar-wrong-type.js:
-  default: 'Test262Error: null does not convert to a valid ISO string (first argument) Expected a TypeError but got a RangeError'
-  strict mode: 'Test262Error: null does not convert to a valid ISO string (first argument) Expected a TypeError but got a RangeError'
+  default: 'Test262Error: object is not a valid property bag and does not convert to a string (first argument) Expected a TypeError but got a RangeError'
+  strict mode: 'Test262Error: object is not a valid property bag and does not convert to a string (first argument) Expected a TypeError but got a RangeError'
 test/built-ins/Temporal/getOwnPropertyNames.js:
   default: 'Test262Error: ZonedDateTime'
   strict mode: 'Test262Error: ZonedDateTime'

@@ -509,19 +509,27 @@ TemporalZonedDateTime* TemporalZonedDateTime::round(JSGlobalObject* globalObject
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     JSValue paramString;
-    JSObject* roundTo;
-    if (!roundToValue.isString())
-        roundTo = intlGetOptionsObject(globalObject, roundToValue);
+    auto roundingIncrement = 1;
+    auto roundingMode = RoundingMode::HalfExpand;
+    std::optional<TemporalUnit> smallestUnitOptional;
+
+    if (!roundToValue.isString()) {
+        JSObject* roundTo = intlGetOptionsObject(globalObject, roundToValue);
+        RETURN_IF_EXCEPTION(scope, { });
+
+        roundingIncrement = getRoundingIncrementOption(globalObject, roundTo);
+        RETURN_IF_EXCEPTION(scope, { });
+        roundingMode = temporalRoundingMode(globalObject, roundTo, RoundingMode::HalfExpand);
+        RETURN_IF_EXCEPTION(scope, { });
+        smallestUnitOptional = temporalSmallestUnit(globalObject, roundTo, { TemporalUnit::Year, TemporalUnit::Month, TemporalUnit::Week });
+    } else {
+        auto smallestUnit = temporalUnitType(roundToValue.toWTFString(globalObject));
+        RETURN_IF_EXCEPTION(scope, { });
+        if (smallestUnit)
+            smallestUnitOptional = temporalSmallestUnit(globalObject, smallestUnit.value(), { TemporalUnit::Year, TemporalUnit::Month, TemporalUnit::Week });
+    }
     RETURN_IF_EXCEPTION(scope, { });
 
-    auto roundingIncrement = getRoundingIncrementOption(globalObject, roundTo);
-    RETURN_IF_EXCEPTION(scope, { });
-    auto roundingMode = temporalRoundingMode(globalObject, roundTo, RoundingMode::HalfExpand);
-    RETURN_IF_EXCEPTION(scope, { });
-    std::optional<TemporalUnit> smallestUnitOptional = roundToValue.isString()
-        ? temporalUnitType(roundToValue.toWTFString(globalObject))
-        : temporalSmallestUnit(globalObject, roundTo, { TemporalUnit::Year, TemporalUnit::Month, TemporalUnit::Week });
-    RETURN_IF_EXCEPTION(scope, { });
     if (!smallestUnitOptional) {
         throwRangeError(globalObject, scope, "Bad value given for smallestUnit in Temporal.ZonedDateTime.round()"_s);
         return { };
@@ -939,6 +947,10 @@ static void calendarResolveFields(JSGlobalObject* globalObject, CalendarID calen
             throwRangeError(globalObject, scope, "month and monthCode properties disagree in Temporal.ZonedDateTime.from"_s);
             return;
         }
+        if (monthCodeInteger < 1 || monthCodeInteger > 12) {
+            throwRangeError(globalObject, scope, makeString("invalid month code: "_s, monthCode));
+            return;
+        }
         month = monthCodeInteger;
         return;
     }
@@ -1342,7 +1354,9 @@ TemporalZonedDateTime* TemporalZonedDateTime::from(JSGlobalObject* globalObject,
                 toTemporalOverflow(globalObject, options.value());
                 RETURN_IF_EXCEPTION(scope, { });
             }
-            return jsCast<TemporalZonedDateTime*>(itemValue);
+            auto zdt = jsCast<TemporalZonedDateTime*>(itemValue);
+            RELEASE_AND_RETURN(scope, TemporalZonedDateTime::tryCreateIfValid(globalObject,
+                globalObject->zonedDateTimeStructure(), zdt->exactTime(), zdt->timeZone()));
         }
 
         auto item = jsCast<JSObject*>(itemValue);
