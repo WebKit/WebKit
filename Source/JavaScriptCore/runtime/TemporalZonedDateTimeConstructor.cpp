@@ -143,20 +143,9 @@ JSC_DEFINE_HOST_FUNCTION(temporalZonedDateTimeConstructorFuncFrom, (JSGlobalObje
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSObject* options = intlGetOptionsObject(globalObject, callFrame->argument(1));
-    RETURN_IF_EXCEPTION(scope, { });
-
     JSValue itemValue = callFrame->argument(0);
 
-    if (itemValue.inherits<TemporalZonedDateTime>()) {
-        // Validate overflow
-        toTemporalOverflow(globalObject, options);
-        RETURN_IF_EXCEPTION(scope, { });
-
-        RELEASE_AND_RETURN(scope, JSValue::encode(TemporalZonedDateTime::create(vm, globalObject->zonedDateTimeStructure(), jsCast<TemporalZonedDateTime*>(itemValue)->exactTime(), jsCast<TemporalZonedDateTime*>(itemValue)->timeZone())));
-    }
-
-    RELEASE_AND_RETURN(scope, JSValue::encode(TemporalZonedDateTime::from(globalObject, itemValue, options)));
+    RELEASE_AND_RETURN(scope, JSValue::encode(TemporalZonedDateTime::from(globalObject, itemValue, callFrame->argument(1))));
 }
 
 // https://tc39.es/proposal-temporal/#sec-temporal.zoneddatetime.compare

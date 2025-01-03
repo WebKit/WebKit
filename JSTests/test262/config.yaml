@@ -399,8 +399,15 @@ skip:
     - test/built-ins/Temporal/PlainYearMonth/prototype/since/argument-string-date-with-utc-offset.js
     - test/built-ins/Temporal/PlainYearMonth/prototype/until/argument-string-calendar-annotation.js
     - test/built-ins/Temporal/PlainYearMonth/prototype/until/argument-string-date-with-utc-offset.js
+    - test/built-ins/Temporal/ZonedDateTime/from/argument-string-calendar-annotation.js
+    - test/built-ins/Temporal/ZonedDateTime/from/argument-string-time-zone-annotation.js
+    - test/built-ins/Temporal/ZonedDateTime/from/argument-string-unknown-annotation.js
+    - test/built-ins/Temporal/ZonedDateTime/prototype/equals/argument-string-calendar-annotation.js
+    - test/built-ins/Temporal/ZonedDateTime/prototype/equals/argument-string-unknown-annotation.js
     - test/built-ins/Temporal/ZonedDateTime/prototype/since/argument-string-calendar-annotation.js
     - test/built-ins/Temporal/ZonedDateTime/prototype/since/argument-string-unknown-annotation.js
+    - test/built-ins/Temporal/ZonedDateTime/prototype/until/argument-string-calendar-annotation.js
+    - test/built-ins/Temporal/ZonedDateTime/prototype/until/argument-string-unknown-annotation.js
     - test/built-ins/Temporal/ZonedDateTime/prototype/withPlainTime/argument-string-unknown-annotation.js
 
 

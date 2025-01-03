@@ -72,7 +72,7 @@ static std::optional<TimeZoneID> parseTimeZoneIANAName(StringView)
 static std::optional<ISO8601::TimeZone> parseTimeZoneIdentifier(StringView identifier)
 {
 
-    if (identifier == "UTC"_s)
+    if (isUTCTimeZoneString(identifier))
         return ISO8601::TimeZone::utc();
 
     Vector<LChar> ignore;
@@ -95,6 +95,8 @@ static std::optional<ISO8601::TimeZone> parseTimeZoneIdentifier(StringView ident
     return ISO8601::TimeZone::offset(offsetNanoseconds);
 }
 
+// TODO
+#if false
 template<typename CharacterType>
 std::optional<int64_t> parseDateTimeUTCOffset_(StringParsingBuffer<CharacterType>& buffer)
 {
@@ -125,6 +127,9 @@ std::optional<int64_t> parseDateTimeUTCOffset_(StringParsingBuffer<CharacterType
         return std::nullopt;
     buffer.advanceBy(digits);
 
+    if (buffer.atEnd())
+        return sign * (hours * 60);
+
     if (*buffer != ':') 
         return std::nullopt;
     buffer.advance();
@@ -139,8 +144,28 @@ std::optional<int64_t> parseDateTimeUTCOffset_(StringParsingBuffer<CharacterType
     if (minutes > 59)
         return std::nullopt;
     buffer.advanceBy(digits);
+
+    if (buffer.atEnd())
+        return sign * (((hours * 60 + minutes)));
+
+    if (*buffer != ':')
+        return std::nullopt;
+
+    digits = 1;
+    while (digits < buffer.lengthRemaining() && isASCIIDigit(buffer[digits]))
+        digits++;
+    if (digits != 2)
+        return std::nullopt;
     
-    return sign * (((hours * 60 + minutes)));
+    double seconds = parseInt(buffer.span().first(digits), 10);
+    if (seconds > 59)
+        return std::nullopt;
+    buffer.advanceBy(digits);
+
+    if (*buffer.atEnd())
+        return std::tuple<int64_t, int64_t>(sign * (((hours * 60 + minutes))), seconds * nsPerSecond);
+
+    
 } 
 
 std::optional<int64_t> TemporalTimeZone::parseDateTimeUTCOffset(StringView string)
@@ -149,6 +174,7 @@ std::optional<int64_t> TemporalTimeZone::parseDateTimeUTCOffset(StringView strin
             return parseDateTimeUTCOffset_(buffer);
     });
 }
+#endif
 
 // https://tc39.es/proposal-temporal/#prod-TimeZoneIdentifier
 bool canBeTimeZoneIdentifier(StringView string)
@@ -183,38 +209,6 @@ bool canBeTimeZoneIdentifier(StringView string)
         return true;
     return false;
 }
-
-#if false
-// https://tc39.es/proposal-temporal/#sec-temporal-parsetemporaltimezonestring
-template<typename CharacterType>
-std::optional<ISO8601::TimeZone> TemporalTimeZone::parseTemporalTimeZoneString(StringParsingBuffer<CharacterType>& buffer)
-{
-    if (canBeTimeZoneIdentifier(buffer))
-        return parseTimeZoneIdentifier(buffer);
-    TimeZoneRecord result;
-/*
-    if (canBeTemporalDateTimeString(buffer))
-        result = parseISODateTime(buffer, TemporalParseTimeZoneFormat::DateTime);
-    else if (canBeTemporalInstantString(buffer))
-        result = parseISODateTime(buffer, TemporalParseTimeZoneFormat::Instant);
-    else if (canBeTemporalTimeString(buffer))
-        result = parseISODateTime(buffer, TemporalParseTimeZoneFormat::Time);
-    else if (canBeTemporalMonthDayString(buffer))
-        result = parseISODateTime(buffer, TemporalParseTimeZoneFormat::MonthDay);
-    else if (canBeTemporalYearMonthString(buffer))
-        result = parseISODateTime(buffer, TemporalParseTimeZoneFormat::YearMonth);
-*/
-    result = parseISODateTime(buffer, false);
-    auto timeZoneResult = result.timeZone;
-    if (timeZoneResult.m_annotation)
-        return parseTimeZoneIdentifier(timeZoneResult.m_annotation);
-    if (timeZoneResult.m_z)
-        return utcTimeZoneID();
-    if (timeZoneResult.m_offset)
-        return offsetTimeZone(timeZoneResult.m_offset);
-    return std::nullopt;
-}
-#endif
 
 // https://tc39.es/proposal-temporal/#sec-temporal-parsetemporaltimezonestring
 std::optional<ISO8601::TimeZone> TemporalTimeZone::parseTemporalTimeZoneString(StringView timeZoneString)
