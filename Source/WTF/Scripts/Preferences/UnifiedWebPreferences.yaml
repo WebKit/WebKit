@@ -7485,6 +7485,7 @@ TextAnimationsEnabled:
       default: true
     WebCore:
       default: true
+  sharedPreferenceForWebProcess: true
 
 TextAreasAreResizable:
   type: bool
