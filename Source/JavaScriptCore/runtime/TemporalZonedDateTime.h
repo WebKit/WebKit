@@ -49,7 +49,7 @@ public:
 
     DECLARE_INFO;
 
-    static TemporalZonedDateTime* from(JSGlobalObject*, JSValue, std::optional<JSObject*>);
+    static TemporalZonedDateTime* from(JSGlobalObject*, JSValue, std::optional<JSValue>);
     static int32_t compare(const TemporalZonedDateTime*, const TemporalZonedDateTime*);
 
     TemporalCalendar* calendar() { return m_calendar.get(this); }
