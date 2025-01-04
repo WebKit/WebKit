@@ -62,16 +62,13 @@ TemporalTimeZone::TemporalTimeZone(VM& vm, Structure* structure, TimeZone timeZo
 
 static std::optional<TimeZoneID> parseTimeZoneIANAName(StringView)
 {
-    // TODO
+    // TODO: support named time zones
     return std::nullopt;
 }
 
 // https://tc39.es/proposal-temporal/#sec-parsetimezoneidentifier
-// Returns offset in *nanoseconds*
-// TODO: in the spec, it's minutes
 static std::optional<ISO8601::TimeZone> parseTimeZoneIdentifier(StringView identifier)
 {
-
     if (isUTCTimeZoneString(identifier))
         return ISO8601::TimeZone::utc();
 
@@ -91,90 +88,9 @@ static std::optional<ISO8601::TimeZone> parseTimeZoneIdentifier(StringView ident
         return std::nullopt;
     }
     int64_t offsetNanoseconds = parseResult.value();
-    ASSERT(offsetNanoseconds % 60000000000ll == 0);
+    ASSERT(offsetNanoseconds % ISO8601::ExactTime::nsPerMinute == 0);
     return ISO8601::TimeZone::offset(offsetNanoseconds);
 }
-
-// TODO
-#if false
-template<typename CharacterType>
-std::optional<int64_t> parseDateTimeUTCOffset_(StringParsingBuffer<CharacterType>& buffer)
-{
-    //  UTCOffset[SubMinutePrecision] :::
-    //      ASCIISign Hour
-    //      ASCIISign Hour TimeSeparator[+Extended] MinuteSecond
-    //      ASCIISign Hour TimeSeparator[~Extended] MinuteSecond
-    //      [+SubMinutePrecision] ASCIISign Hour TimeSeparator[+Extended] MinuteSecond TimeSeparator[+Extended] MinuteSecond TemporalDecimalFractionopt
-    //      [+SubMinutePrecision] ASCIISign Hour TimeSeparator[~Extended] MinuteSecond TimeSeparator[~Extended] MinuteSecond TemporalDecimalFractionopt
-
-    int sign = 1;
-    if (*buffer == '+')
-        buffer.advance();
-    else if (*buffer == '-') {
-        sign = -1;
-        buffer.advance();
-    } else
-        return std::nullopt;
-
-    unsigned digits = 1;
-    while (digits < buffer.lengthRemaining() && isASCIIDigit(buffer[digits]))
-        digits++;
-    if (digits != 2)
-        return std::nullopt;
-
-    double hours = parseInt(buffer.span().first(digits), 10);
-    if (hours > 23)
-        return std::nullopt;
-    buffer.advanceBy(digits);
-
-    if (buffer.atEnd())
-        return sign * (hours * 60);
-
-    if (*buffer != ':') 
-        return std::nullopt;
-    buffer.advance();
-
-    digits = 1;
-    while (digits < buffer.lengthRemaining() && isASCIIDigit(buffer[digits]))
-        digits++;
-    if (digits != 2)
-        return std::nullopt;
-    
-    double minutes = parseInt(buffer.span().first(digits), 10);
-    if (minutes > 59)
-        return std::nullopt;
-    buffer.advanceBy(digits);
-
-    if (buffer.atEnd())
-        return sign * (((hours * 60 + minutes)));
-
-    if (*buffer != ':')
-        return std::nullopt;
-
-    digits = 1;
-    while (digits < buffer.lengthRemaining() && isASCIIDigit(buffer[digits]))
-        digits++;
-    if (digits != 2)
-        return std::nullopt;
-    
-    double seconds = parseInt(buffer.span().first(digits), 10);
-    if (seconds > 59)
-        return std::nullopt;
-    buffer.advanceBy(digits);
-
-    if (*buffer.atEnd())
-        return std::tuple<int64_t, int64_t>(sign * (((hours * 60 + minutes))), seconds * nsPerSecond);
-
-    
-} 
-
-std::optional<int64_t> TemporalTimeZone::parseDateTimeUTCOffset(StringView string)
-{
-    return readCharactersForParsing(string, [](auto buffer) -> std::optional<int64_t> {
-            return parseDateTimeUTCOffset_(buffer);
-    });
-}
-#endif
 
 // https://tc39.es/proposal-temporal/#prod-TimeZoneIdentifier
 bool canBeTimeZoneIdentifier(StringView string)
@@ -215,32 +131,26 @@ std::optional<ISO8601::TimeZone> TemporalTimeZone::parseTemporalTimeZoneString(S
 {
     if (canBeTimeZoneIdentifier(timeZoneString))
         return parseTimeZoneIdentifier(timeZoneString);
-    ISO8601::TimeZoneRecord result;
+    ISO8601::TimeZoneRecord timeZoneResult;
     auto asDateTime = ISO8601::parseCalendarDateTime(timeZoneString, TemporalDateFormat::Date);
     if (asDateTime) {
         auto [date, optionalTime, optionalTimeZoneRecord, optionalCalendarRecord] = asDateTime.value();
         if (optionalTimeZoneRecord)
-            result = optionalTimeZoneRecord.value();
+            timeZoneResult = optionalTimeZoneRecord.value();
         else
             return std::nullopt;
     }
     else {
         auto asExactTime = ISO8601::parseInstant(timeZoneString);
         if (asExactTime) {
-            // TODO
-/*
-            auto [exactTime, optionalTimeZoneRecord] = asExactTime.value();
-            if (optionalTimeZoneRecord)
-                result = optionalTimeZoneRecord.value();
-            else
-*/
-                return std::nullopt;
+            // TODO: support parsing time zone annotation from Instant
+            return std::nullopt;
         } else {
             auto asTime = ISO8601::parseCalendarTime(timeZoneString);
             if (asTime) {
                 auto [time, optionalTimeZoneRecord, optionalCalendarRecord] = asTime.value();
                 if (optionalTimeZoneRecord)
-                    result = optionalTimeZoneRecord.value();
+                    timeZoneResult = optionalTimeZoneRecord.value();
                 else
                     return std::nullopt;
             }
@@ -249,7 +159,7 @@ std::optional<ISO8601::TimeZone> TemporalTimeZone::parseTemporalTimeZoneString(S
                 if (asMonthDay) {
                     auto [date, optionalTime, optionalTimeZoneRecord, optionalCalendarRecord] = asMonthDay.value();
                     if (optionalTimeZoneRecord)
-                        result = optionalTimeZoneRecord.value();
+                        timeZoneResult = optionalTimeZoneRecord.value();
                     else
                         return std::nullopt;
                 }
@@ -258,7 +168,7 @@ std::optional<ISO8601::TimeZone> TemporalTimeZone::parseTemporalTimeZoneString(S
                     if (asYearMonth) {
                         auto [date, optionalTime, optionalTimeZoneRecord, optionalCalendarRecord] = asYearMonth.value();
                         if (optionalTimeZoneRecord)
-                            result = optionalTimeZoneRecord.value();
+                            timeZoneResult = optionalTimeZoneRecord.value();
                         else
                             return std::nullopt;
                     } else {
@@ -268,7 +178,6 @@ std::optional<ISO8601::TimeZone> TemporalTimeZone::parseTemporalTimeZoneString(S
             }
         }
     }
-    auto timeZoneResult = result; // TODO: ???
     if (timeZoneResult.m_annotation) {
         return parseTimeZoneIdentifier(WTF::String(timeZoneResult.m_annotation.value()));
     }
@@ -284,7 +193,6 @@ std::optional<ISO8601::TimeZone> TemporalTimeZone::parseTemporalTimeZoneString(S
         return ISO8601::TimeZone::offset(std::get<1>(timeZoneResult.m_offset_string.value()));
     }
     return std::nullopt;
-// TODO: check that argument-propertybag-timezone-string-datetime.js works
 }
 
 // https://tc39.es/proposal-temporal/#sec-temporal.timezone.from
@@ -330,7 +238,7 @@ JSObject* TemporalTimeZone::from(JSGlobalObject* globalObject, JSValue timeZoneL
     std::optional<ISO8601::TimeZone> utcOffsetFromInstant = parseTemporalTimeZoneString(timeZoneString);
     if (utcOffsetFromInstant) {
         if (utcOffsetFromInstant->isOffset())
-            return TemporalTimeZone::createFromUTCOffset(vm, globalObject->timeZoneStructure(), utcOffsetFromInstant->asOffset());
+            return TemporalTimeZone::createFromUTCOffset(vm, globalObject->timeZoneStructure(), utcOffsetFromInstant->offsetNanoseconds());
         else
             return TemporalTimeZone::createFromID(vm, globalObject->timeZoneStructure(), utcOffsetFromInstant->asID());
     }

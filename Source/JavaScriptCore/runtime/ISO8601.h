@@ -380,10 +380,21 @@ class TimeZone {
     {
         return std::holds_alternative<int64_t>(m_timezone);
     }
-    int64_t asOffset() const
+    int64_t offsetNanoseconds() const
     {
         RELEASE_ASSERT(isOffset());
         return std::get<int64_t>(m_timezone);
+    }
+    int64_t offsetMinutes() const
+    {
+        RELEASE_ASSERT(isOffset());
+        return std::get<int64_t>(m_timezone) / ExactTime::nsPerMinute;
+    }
+    const String& offsetString() const
+    {
+        RELEASE_ASSERT(isOffset());
+        RELEASE_ASSERT(m_offset_string);
+        return m_offset_string.value();
     }
     TimeZoneID asID() const
     {
@@ -398,6 +409,7 @@ class TimeZone {
     TimeZone(TimeZoneID id) : m_timezone(id) {}
     TimeZone(int64_t offset) : m_timezone(offset) {}
     std::variant<TimeZoneID, int64_t> m_timezone;
+    std::optional<String> m_offset_string;
 }; 
 
 // https://tc39.es/proposal-temporal/#sec-temporal-iso-string-time-zone-parse-records

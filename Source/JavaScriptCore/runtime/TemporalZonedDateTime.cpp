@@ -157,8 +157,8 @@ Vector<ISO8601::ExactTime> TemporalZonedDateTime::getPossibleEpochNanoseconds(JS
     Vector<ISO8601::ExactTime> possibleEpochNanoseconds;
     if (timeZone.isOffset()) {
         auto balanced = ISO8601::balanceISODateTime(isoDate.year(), isoDate.month(), isoDate.day(),
-            isoTime.hour(), isoTime.minute(), isoTime.second(),
-            isoTime.millisecond(), isoTime.microsecond(), isoTime.nanosecond() - timeZone.asOffset());
+            isoTime.hour(), isoTime.minute() - timeZone.offsetMinutes(), isoTime.second(),
+            isoTime.millisecond(), isoTime.microsecond(), isoTime.nanosecond());
         checkISODaysRange(globalObject, std::get<0>(balanced));
         RETURN_IF_EXCEPTION(scope, { });
         ISO8601::ExactTime epochNanoseconds = ISO8601::ExactTime(TemporalDuration::getUTCEpochNanoseconds(balanced));
@@ -786,11 +786,11 @@ prepareCalendarFields(JSGlobalObject* globalObject, CalendarID calendar, JSObjec
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    (void) calendar; // TODO
+    // TODO: non-iso8601 calendars
+    (void) calendar;
+    // auto extraFieldNames = calendarExtraFields(calendar, calendarFieldNames);
+    // fieldNames.append(extraFieldNames);
 
-// TODO: non-iso8601 calendars
-//    auto extraFieldNames = calendarExtraFields(calendar, calendarFieldNames);
-//    fieldNames.append(extraFieldNames);
     std::optional<double> yearOptional;
     std::optional<unsigned> monthOptional;
     std::optional<String> monthCodeOptional;
@@ -1251,7 +1251,6 @@ String TemporalZonedDateTime::toString(JSGlobalObject* globalObject, JSValue opt
 }
 
 
-// TODO
 // https://tc39.es/proposal-temporal/#sec-getavailablenamedtimezoneidentifier
 std::optional<ISO8601::TimeZone> TemporalZonedDateTime::getAvailableNamedTimeZoneIdentifier(JSGlobalObject* globalObject,
     TimeZoneID timeZoneIdentifier)
@@ -1261,6 +1260,7 @@ std::optional<ISO8601::TimeZone> TemporalZonedDateTime::getAvailableNamedTimeZon
 
     if (timeZoneIdentifier == utcTimeZoneID())
         return ISO8601::TimeZone::offset(0);
+    // TODO: support named time zones
     throwRangeError(globalObject, scope, "getAvailableNamedTimeZoneIdentifier() not yet implemented"_s);
     return { };
 }
