@@ -871,7 +871,7 @@ JSC_DEFINE_CUSTOM_GETTER(temporalZonedDateTimePrototypeGetterOffset, (JSGlobalOb
         return throwVMTypeError(globalObject, scope, "Temporal.ZonedDateTime.prototype.offset called on value that's not a ZonedDateTime"_s);
 
     auto offsetNanoseconds = ISO8601::getOffsetNanosecondsFor(zonedDateTime->timeZone(), zonedDateTime->exactTime().epochNanoseconds());
-    return JSValue::encode(jsString(vm, ISO8601::formatTimeZoneOffsetString((int64_t) offsetNanoseconds)));
+    return JSValue::encode(jsString(vm, ISO8601::formatUTCOffsetNanoseconds((int64_t) offsetNanoseconds)));
 }
 
 JSC_DEFINE_CUSTOM_GETTER(temporalZonedDateTimePrototypeGetterOffsetNanoseconds, (JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName))

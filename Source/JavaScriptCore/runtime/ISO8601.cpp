@@ -1506,28 +1506,19 @@ String formatTimeZone(TimeZone tz)
     if (tz.isUTC())
         return "UTC"_s;
     if (tz.isOffset())
-        return formatTimeZoneOffsetString(tz.asOffset());
+        return formatUTCOffsetNanoseconds(tz.asOffset());
     return ""_s; // TODO: handle named time zones
 }
 
-// https://tc39.es/proposal-temporal/#sec-temporal-formattimezoneoffsetstring
-// Offset is in ns
-// TODO: https://tc39.es/proposal-temporal/#sec-temporal-formatoffsettimezoneidentifier takes minutes
-String formatTimeZoneOffsetString(int64_t offset)
+// https://tc39.es/proposal-temporal/#sec-temporal-formatfractionalseconds
+String formatFractionalSeconds(int64_t subSecondNanoseconds, TemporalFractionalSecondDigits precision)
 {
-    bool negative = false;
-    if (offset < 0) {
-        negative = true;
-        offset = -offset; // This is OK since offset range is much narrower than [INT64_MIN, INT64_MAX] range.
-    }
-    int64_t nanoseconds = offset % nsPerSecond;
-    int64_t seconds = (offset / nsPerSecond) % 60;
-    int64_t minutes = (offset / nsPerMinute) % 60;
-    int64_t hours = offset / nsPerHour;
+    WTF::String fractionString;
 
-    if (nanoseconds) {
-        // Since nsPerSecond is 1000000000, stringified nanoseconds takes at most 9 characters (999999999).
-        auto fraction = numberToStringUnsigned<Vector<LChar, 9>>(nanoseconds);
+    if (precision == TemporalFractionalSecondDigits::Auto) {
+        if (!subSecondNanoseconds)
+            return ""_s;
+        WTF::Vector<LChar, 9> fraction = numberToStringUnsigned<Vector<LChar, 9>>(subSecondNanoseconds);
         unsigned paddingLength = 9 - fraction.size();
         unsigned index = fraction.size();
         std::optional<unsigned> validLength;
@@ -1541,11 +1532,58 @@ String formatTimeZoneOffsetString(int64_t offset)
             fraction.shrink(validLength.value());
         else
             fraction.clear();
-        return makeString(negative ? '-' : '+', pad('0', 2, hours), ':', pad('0', 2, minutes), ':', pad('0', 2, seconds), '.', pad('0', paddingLength, emptyString()), fraction);
+        fractionString = makeString(pad('0', paddingLength, emptyString()), fraction);
+    } else {
+        if (precision == TemporalFractionalSecondDigits::Zero)
+            return ""_s;
+        fractionString = makeString(pad('0', 9, subSecondNanoseconds));
+        fractionString = fractionString.substring(0, (unsigned) precision);
     }
-    if (seconds)
-        return makeString(negative ? '-' : '+', pad('0', 2, hours), ':', pad('0', 2, minutes), ':', pad('0', 2, seconds));
-    return makeString(negative ? '-' : '+', pad('0', 2, hours), ':', pad('0', 2, minutes));
+    return makeString("."_s, fractionString);
+}
+
+// https://tc39.es/proposal-temporal/#sec-temporal-formattimestring
+String formatTimeString(int64_t hour, int64_t minute, int64_t second, int64_t subSecondNanoseconds,
+    std::optional<TemporalFractionalSecondDigits> precision, std::optional<bool> isSeparated)
+{
+    auto separator = isSeparated && !(isSeparated.value()) ? ""_s : ":"_s;
+    auto hh = pad('0', 2, hour);
+    auto mm = pad('0', 2, minute);
+    if (!precision)
+        return makeString(hh, separator, mm);
+    auto ss = pad('0', 2, second);
+    auto subSecondsPart = formatFractionalSeconds(subSecondNanoseconds, precision.value());
+    return makeString(hh, separator, mm, separator, ss, subSecondsPart);
+}
+
+// https://tc39.es/proposal-temporal/#sec-temporal-formatoffsettimezoneidentifier
+String formatOffsetTimeZoneIdentifier(int64_t offsetMinutes, std::optional<bool> isSeparated)
+{
+    auto sign = offsetMinutes >= 0 ? '+' : '-';
+    auto absoluteMinutes = std::abs(offsetMinutes);
+    auto hour = std::floor(absoluteMinutes / 60);
+    auto minute = std::fmod(absoluteMinutes, 60);
+    auto timeString = formatTimeString(hour, minute, 0, 0, std::nullopt, isSeparated);
+    return makeString(sign, timeString);
+}
+
+// https://tc39.es/proposal-temporal/#sec-temporal-formatutcoffsetnanoseconds
+String formatUTCOffsetNanoseconds(int64_t offsetNanoseconds)
+{
+    auto sign = offsetNanoseconds >= 0 ? '+' : '-';
+    auto absoluteNanoseconds = std::abs(offsetNanoseconds);
+    double divisor = 3600 * 1000000000.0;
+    auto hour = std::floor((double) absoluteNanoseconds / divisor);
+    divisor = 60 * 1000000000.0;
+    auto minute = std::fmod(std::floor((double) absoluteNanoseconds / divisor), 60);
+    divisor = 1000000000;
+    auto second = std::fmod(std::floor((double) absoluteNanoseconds / divisor), 60);
+    auto subSecondNanoseconds = absoluteNanoseconds % ((int64_t) divisor);
+    std::optional<TemporalFractionalSecondDigits> precision = std::nullopt;
+    if (!(!second && !subSecondNanoseconds))
+        precision = TemporalFractionalSecondDigits::Auto;
+    auto timeString = formatTimeString(hour, minute, second, subSecondNanoseconds, precision, std::nullopt);
+    return makeString(sign, timeString);
 }
 
 String temporalTimeToString(PlainTime plainTime, std::tuple<Precision, unsigned> precision)
@@ -1871,9 +1909,9 @@ String formatDateTimeUTCOffsetRounded(Int128 offsetNanoseconds)
     Int128 divisor = 1000000000;
     divisor *= 60;
     offsetNanoseconds = roundNumberToIncrementInt128(offsetNanoseconds, divisor, RoundingMode::HalfExpand);
-//    Int128 offsetMinutes = offsetNanoseconds / divisor;
     ASSERT(!(offsetNanoseconds % divisor));
-    return formatTimeZoneOffsetString(offsetNanoseconds);
+    Int128 offsetMinutes = offsetNanoseconds / divisor;
+    return formatOffsetTimeZoneIdentifier((int64_t) offsetMinutes, std::nullopt);
 }
 
 // https://tc39.es/ecma262/#sec-hourfromtime
