@@ -1540,7 +1540,7 @@ String formatTimeZone(TimeZone tz)
     if (tz.isUTC())
         return "UTC"_s;
     if (tz.isOffset())
-        return formatUTCOffsetNanoseconds(tz.asOffset());
+        return formatUTCOffsetNanoseconds(tz.offsetNanoseconds());
     return ""_s; // TODO: handle named time zones
 }
 
@@ -2237,7 +2237,7 @@ static Int128 getNamedTimeZoneOffsetNanoseconds(TimeZoneID timeZoneIdentifier, I
 Int128 getOffsetNanosecondsFor(TimeZone timeZone, Int128 epochNs)
 {
     if (timeZone.isOffset())
-        return timeZone.asOffset();
+        return timeZone.offsetNanoseconds();
     return getNamedTimeZoneOffsetNanoseconds(timeZone.asID(), epochNs);
 }
 

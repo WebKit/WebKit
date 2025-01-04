@@ -94,7 +94,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalTimeZonePrototypeFuncToString, (JSGlobalObject*
         return throwVMTypeError(globalObject, scope, "Temporal.TimeZone.prototype.toString called on value that's not a TimeZone"_s);
 
     auto tz = timeZone->timeZone();
-    auto string = tz.isOffset() ? ISO8601::formatUTCOffsetNanoseconds(tz.asOffset())
+    auto string = tz.isOffset() ? ISO8601::formatUTCOffsetNanoseconds(tz.offsetNanoseconds())
         : intlAvailableTimeZones()[tz.asID()];
     return JSValue::encode(jsString(vm, WTFMove(string)));
 }
