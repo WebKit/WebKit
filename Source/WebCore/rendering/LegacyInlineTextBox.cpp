@@ -184,11 +184,17 @@ LayoutRect LegacyInlineTextBox::localSelectionRect(unsigned startPos, unsigned e
         return { };
 
     TextRun textRun = createTextRun();
+    auto writingMode = renderer().writingMode();
+    auto width = LayoutUnit { logicalWidth() };
 
-    LayoutRect selectionRect { LayoutUnit(logicalLeft()), this->selectionTop(), LayoutUnit(logicalWidth()), this->selectionHeight() };
+    LayoutRect selectionRect { 0, this->selectionTop(), width, this->selectionHeight() };
     // Avoid measuring the text when the entire line box is selected as an optimization.
     if (clampedStart || clampedEnd != textRun.length())
         lineFont().adjustSelectionRectForText(renderer().canUseSimplifiedTextMeasuring().value_or(false), textRun, selectionRect, clampedStart, clampedEnd);
+
+    if (!writingMode.isLogicalLeftLineLeft())
+        selectionRect.setX(width - selectionRect.x());
+    selectionRect.move(logicalLeft(), 0);
     // FIXME: The computation of the snapped selection rect differs from the computation of this rect
     // in paintMarkedTextBackground(). See <https://bugs.webkit.org/show_bug.cgi?id=138913>.
     return snappedSelectionRect(selectionRect, logicalRight(), renderer().writingMode());

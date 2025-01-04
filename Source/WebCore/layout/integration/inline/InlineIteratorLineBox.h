@@ -88,8 +88,12 @@ public:
     bool isFirst() const;
     bool isFirstAfterPageBreak() const;
 
+    // Text-relative left/right
     LeafBoxIterator lineLeftmostLeafBox() const;
     LeafBoxIterator lineRightmostLeafBox() const;
+    // Coordinate-relative left/right
+    inline LeafBoxIterator logicalLeftmostLeafBox() const;
+    inline LeafBoxIterator logicalRightmostLeafBox() const;
 
     LineBoxIterator next() const;
     LineBoxIterator previous() const;
