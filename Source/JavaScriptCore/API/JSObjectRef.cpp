@@ -627,6 +627,10 @@ void* JSObjectGetPrivate(JSObjectRef object)
 {
     JSObject* jsObject = uncheckedToJS(object);
 
+    // check if jsObject is null
+    if (!jsObject)
+        return nullptr;
+
     const ClassInfo* classInfo = classInfoPrivate(jsObject);
     
     // Get wrapped object if proxied
