@@ -74,6 +74,8 @@ public:
     virtual const MutableStyleProperties* additionalPresentationalHintStyle() const { return nullptr; }
     virtual void collectExtraStyleForPresentationalHints(MutableStyleProperties&) { }
 
+    virtual void willUpdateStyleForComputedProperty(CSSPropertyID) { };
+
 protected:
     StyledElement(const QualifiedName& name, Document& document, OptionSet<TypeFlag> type)
         : Element(name, document, type)

@@ -113,6 +113,7 @@ private:
 
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
     void svgAttributeChanged(const QualifiedName&) final;
+    CSSPropertyID cssPropertyIdForSVGAttributeName(const QualifiedName&) const final;
 
     bool isValid() const final { return SVGTests::isValid(); }
     bool supportsMarkers() const final { return true; }
@@ -127,8 +128,10 @@ private:
     void collectPresentationalHintsForAttribute(const QualifiedName&, const AtomString&, MutableStyleProperties&) final;
     void collectExtraStyleForPresentationalHints(MutableStyleProperties&) override;
     void collectDPresentationalHint(MutableStyleProperties&);
+    void willUpdateStyleForComputedProperty(CSSPropertyID) final;
 
     Ref<SVGAnimatedPathSegList> m_pathSegList { SVGAnimatedPathSegList::create(this) };
+    bool m_pathDataWasSetByStyle { false };
 };
 
 } // namespace WebCore
