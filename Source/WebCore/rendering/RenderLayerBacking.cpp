@@ -3752,7 +3752,7 @@ static RefPtr<Pattern> patternForDescription(PatternDescription description, Flo
     patternOffsetTransform.translate(contentOffset + description.phase);
     patternOffsetTransform.scale(1 / destContext.scaleFactor());
 
-    return Pattern::create({ imageBuffer.releaseNonNull() }, { true, true, patternOffsetTransform });
+    return Pattern::create({ static_reference_cast<ImmutableImageBuffer>(imageBuffer.releaseNonNull()) }, { true, true, patternOffsetTransform });
 };
 #endif
 

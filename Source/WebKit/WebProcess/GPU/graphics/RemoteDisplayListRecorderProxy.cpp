@@ -222,9 +222,9 @@ void RemoteDisplayListRecorderProxy::clipOutRoundedRect(const FloatRoundedRect& 
     send(Messages::RemoteDisplayListRecorder::ClipOutRoundedRect(rect));
 }
 
-void RemoteDisplayListRecorderProxy::recordClipToImageBuffer(ImageBuffer& imageBuffer, const FloatRect& destinationRect)
+void RemoteDisplayListRecorderProxy::recordClipToImageBuffer(RenderingResourceIdentifier imageBufferIdentifier, const FloatRect& destinationRect)
 {
-    send(Messages::RemoteDisplayListRecorder::ClipToImageBuffer(imageBuffer.renderingResourceIdentifier(), destinationRect));
+    send(Messages::RemoteDisplayListRecorder::ClipToImageBuffer(imageBufferIdentifier, destinationRect));
 }
 
 void RemoteDisplayListRecorderProxy::clipOut(const Path& path)
@@ -246,17 +246,13 @@ void RemoteDisplayListRecorderProxy::resetClip()
     clip(initialClip());
 }
 
-void RemoteDisplayListRecorderProxy::recordDrawFilteredImageBuffer(ImageBuffer* sourceImage, const FloatRect& sourceImageRect, Filter& filter)
+void RemoteDisplayListRecorderProxy::recordDrawFilteredImageBuffer(std::optional<RenderingResourceIdentifier> sourceImageIdentifier, const FloatRect& sourceImageRect, Filter& filter)
 {
-    std::optional<RenderingResourceIdentifier> identifier;
-    if (sourceImage)
-        identifier = sourceImage->renderingResourceIdentifier();
-
     auto* svgFilter = dynamicDowncast<SVGFilter>(filter);
     if (svgFilter && svgFilter->hasValidRenderingResourceIdentifier())
         recordResourceUse(filter);
 
-    send(Messages::RemoteDisplayListRecorder::DrawFilteredImageBuffer(WTFMove(identifier), sourceImageRect, filter));
+    send(Messages::RemoteDisplayListRecorder::DrawFilteredImageBuffer(WTFMove(sourceImageIdentifier), sourceImageRect, filter));
 }
 
 void RemoteDisplayListRecorderProxy::recordDrawGlyphs(const Font& font, std::span<const GlyphBufferGlyph> glyphs, std::span<const GlyphBufferAdvance> advances, const FloatPoint& localAnchor, FontSmoothingMode mode)
@@ -274,9 +270,9 @@ void RemoteDisplayListRecorderProxy::recordDrawDisplayListItems(const Vector<Dis
     send(Messages::RemoteDisplayListRecorder::DrawDisplayListItems(items, destination));
 }
 
-void RemoteDisplayListRecorderProxy::recordDrawImageBuffer(ImageBuffer& imageBuffer, const FloatRect& destRect, const FloatRect& srcRect, ImagePaintingOptions options)
+void RemoteDisplayListRecorderProxy::recordDrawImageBuffer(RenderingResourceIdentifier imageBufferIdentifier, const FloatRect& destRect, const FloatRect& srcRect, ImagePaintingOptions options)
 {
-    send(Messages::RemoteDisplayListRecorder::DrawImageBuffer(imageBuffer.renderingResourceIdentifier(), destRect, srcRect, options));
+    send(Messages::RemoteDisplayListRecorder::DrawImageBuffer(imageBufferIdentifier, destRect, srcRect, options));
 }
 
 void RemoteDisplayListRecorderProxy::recordDrawNativeImage(RenderingResourceIdentifier imageIdentifier, const FloatRect& destRect, const FloatRect& srcRect, ImagePaintingOptions options)
@@ -570,33 +566,33 @@ void RemoteDisplayListRecorderProxy::endPage()
     send(Messages::RemoteDisplayListRecorder::EndPage());
 }
 
-bool RemoteDisplayListRecorderProxy::recordResourceUse(NativeImage& image)
+std::optional<RenderingResourceIdentifier> RemoteDisplayListRecorderProxy::recordResourceUse(NativeImage& image)
 {
     if (UNLIKELY(!m_renderingBackend)) {
         ASSERT_NOT_REACHED();
-        return false;
+        return std::nullopt;
     }
 
     m_renderingBackend->remoteResourceCacheProxy().recordNativeImageUse(image);
-    return true;
+    return image.renderingResourceIdentifier();
 }
 
-bool RemoteDisplayListRecorderProxy::recordResourceUse(ImageBuffer& imageBuffer)
+std::optional<RenderingResourceIdentifier> RemoteDisplayListRecorderProxy::recordResourceUse(ImmutableImageBuffer& imageBuffer)
 {
     RefPtr renderingBackend = m_renderingBackend.get();
     if (UNLIKELY(!renderingBackend)) {
         ASSERT_NOT_REACHED();
-        return false;
+        return std::nullopt;
     }
 
     if (!renderingBackend->isCached(imageBuffer))
-        return false;
+        return std::nullopt;
 
     renderingBackend->remoteResourceCacheProxy().recordImageBufferUse(imageBuffer);
-    return true;
+    return imageBuffer.renderingResourceIdentifier();
 }
 
-bool RemoteDisplayListRecorderProxy::recordResourceUse(const SourceImage& image)
+std::optional<RenderingResourceIdentifier> RemoteDisplayListRecorderProxy::recordResourceUse(const SourceImage& image)
 {
     if (RefPtr imageBuffer = image.imageBufferIfExists())
         return recordResourceUse(*imageBuffer);
@@ -604,7 +600,7 @@ bool RemoteDisplayListRecorderProxy::recordResourceUse(const SourceImage& image)
     if (RefPtr nativeImage = image.nativeImageIfExists())
         return recordResourceUse(*nativeImage);
 
-    return true;
+    return image.imageIdentifier();
 }
 
 bool RemoteDisplayListRecorderProxy::recordResourceUse(Font& font)

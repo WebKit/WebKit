@@ -27,6 +27,7 @@
 
 #include "DisplayListItems.h"
 #include "DisplayListResourceHeap.h"
+#include "ImmutableImageBuffer.h"
 #include <wtf/Noncopyable.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
@@ -58,7 +59,7 @@ public:
     Vector<Item>& items() { return m_items; }
     const ResourceHeap& resourceHeap() const { return m_resourceHeap; }
 
-    void cacheImageBuffer(ImageBuffer&);
+    void cacheImageBuffer(ImmutableImageBuffer&);
     void cacheNativeImage(NativeImage&);
     void cacheFont(Font&);
     void cacheDecomposedGlyphs(DecomposedGlyphs&);

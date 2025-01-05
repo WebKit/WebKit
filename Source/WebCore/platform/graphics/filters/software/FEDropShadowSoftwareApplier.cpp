@@ -51,7 +51,7 @@ bool FEDropShadowSoftwareApplier::apply(const Filter& filter, const FilterImageV
     FloatRect inputImageRectWithOffset(inputImageRect);
     inputImageRectWithOffset.move(absoluteOffset);
 
-    RefPtr inputImage = input.imageBuffer();
+    RefPtr inputImage = input.immutableImageBuffer();
     if (!inputImage)
         return false;
 

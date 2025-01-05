@@ -39,7 +39,7 @@ bool FETileSoftwareApplier::apply(const Filter& filter, const FilterImageVector&
     auto& input = inputs[0].get();
 
     RefPtr resultImage = result.imageBuffer();
-    RefPtr inputImage = input.imageBuffer();
+    RefPtr inputImage = input.immutableImageBuffer();
     if (!resultImage || !inputImage)
         return false;
 
@@ -63,7 +63,7 @@ bool FETileSoftwareApplier::apply(const Filter& filter, const FilterImageVector&
     AffineTransform patternTransform;
     patternTransform.translate(tileRect.location() - maxResultRect.location());
 
-    auto pattern = Pattern::create({ tileImage.releaseNonNull() }, { true, true, patternTransform });
+    auto pattern = Pattern::create({ static_reference_cast<ImmutableImageBuffer>(tileImage.releaseNonNull()) }, { true, true, patternTransform });
 
     auto& resultContext = resultImage->context();
     resultContext.setFillPattern(WTFMove(pattern));

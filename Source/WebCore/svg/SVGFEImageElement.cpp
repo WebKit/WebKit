@@ -233,7 +233,7 @@ RefPtr<FilterEffect> SVGFEImageElement::createFilterEffect(const FilterEffectVec
     if (!imageBuffer)
         return nullptr;
 
-    return FEImage::create({ imageBuffer.releaseNonNull() }, imageRect, preserveAspectRatio());
+    return FEImage::create({ static_reference_cast<ImmutableImageBuffer>(imageBuffer.releaseNonNull()) }, imageRect, preserveAspectRatio());
 }
 
 void SVGFEImageElement::addSubresourceAttributeURLs(ListHashSet<URL>& urls) const

@@ -82,9 +82,11 @@ void ImageBufferContextSwitcher::endClipAndDrawSourceImage(GraphicsContext& dest
 
 void ImageBufferContextSwitcher::endDrawSourceImage(GraphicsContext& destinationContext, const DestinationColorSpace& colorSpace)
 {
+    RefPtr sourceImage = static_pointer_cast<ImmutableImageBuffer>(m_sourceImage);
+
     if (!m_filter) {
-        if (m_sourceImage)
-            destinationContext.drawImageBuffer(*m_sourceImage, m_sourceImageRect, { destinationContext.compositeOperation(), destinationContext.blendMode() });
+        if (sourceImage)
+            destinationContext.drawImageBuffer(*sourceImage, m_sourceImageRect, { destinationContext.compositeOperation(), destinationContext.blendMode() });
         return;
     }
 
@@ -98,7 +100,7 @@ void ImageBufferContextSwitcher::endDrawSourceImage(GraphicsContext& destination
 #else
     UNUSED_PARAM(colorSpace);
 #endif
-    destinationContext.drawFilteredImageBuffer(m_sourceImage.get(), m_sourceImageRect, Ref { *m_filter }, m_results ? *m_results : results);
+    destinationContext.drawFilteredImageBuffer(sourceImage.get(), m_sourceImageRect, Ref { *m_filter }, m_results ? *m_results : results);
 }
 
 } // namespace WebCore

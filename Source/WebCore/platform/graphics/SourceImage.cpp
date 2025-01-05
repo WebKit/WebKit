@@ -62,11 +62,11 @@ NativeImage* SourceImage::nativeImageIfExists() const
 
 NativeImage* SourceImage::nativeImage() const
 {
-    if (!std::holds_alternative<Ref<ImageBuffer>>(m_imageVariant))
+    if (!std::holds_alternative<Ref<ImmutableImageBuffer>>(m_imageVariant))
         return nativeImageIfExists();
 
     if (!m_transformedImageVariant) {
-        auto imageBuffer = std::get<Ref<ImageBuffer>>(m_imageVariant);
+        auto imageBuffer = std::get<Ref<ImmutableImageBuffer>>(m_imageVariant);
 
         auto nativeImage = imageBuffer->createNativeImageReference();
         if (!nativeImage)
@@ -79,19 +79,19 @@ NativeImage* SourceImage::nativeImage() const
     return nativeImageOf(*m_transformedImageVariant);
 }
 
-static inline ImageBuffer* imageBufferOf(const SourceImage::ImageVariant& imageVariant)
+static inline ImmutableImageBuffer* imageBufferOf(const SourceImage::ImageVariant& imageVariant)
 {
-    if (auto* imageBuffer = std::get_if<Ref<ImageBuffer>>(&imageVariant))
+    if (auto* imageBuffer = std::get_if<Ref<ImmutableImageBuffer>>(&imageVariant))
         return imageBuffer->ptr();
     return nullptr;
 }
 
-ImageBuffer* SourceImage::imageBufferIfExists() const
+ImmutableImageBuffer* SourceImage::imageBufferIfExists() const
 {
     return imageBufferOf(m_imageVariant);
 }
 
-ImageBuffer* SourceImage::imageBuffer() const
+ImmutableImageBuffer* SourceImage::imageBuffer() const
 {
     if (!std::holds_alternative<Ref<NativeImage>>(m_imageVariant))
         return imageBufferIfExists();
@@ -105,7 +105,7 @@ ImageBuffer* SourceImage::imageBuffer() const
             return nullptr;
 
         imageBuffer->context().drawNativeImage(nativeImage, rect, rect);
-        m_transformedImageVariant = { imageBuffer.releaseNonNull() };
+        m_transformedImageVariant = static_reference_cast<ImmutableImageBuffer>(imageBuffer.releaseNonNull());
     }
 
     ASSERT(m_transformedImageVariant);
@@ -118,7 +118,7 @@ RenderingResourceIdentifier SourceImage::imageIdentifier() const
         [&] (const Ref<NativeImage>& nativeImage) {
             return nativeImage->renderingResourceIdentifier();
         },
-        [&] (const Ref<ImageBuffer>& imageBuffer) {
+        [&] (const Ref<ImmutableImageBuffer>& imageBuffer) {
             return imageBuffer->renderingResourceIdentifier();
         },
         [&] (RenderingResourceIdentifier renderingResourceIdentifier) {
@@ -133,7 +133,7 @@ IntSize SourceImage::size() const
         [&] (const Ref<NativeImage>& nativeImage) {
             return nativeImage->size();
         },
-        [&] (const Ref<ImageBuffer>& imageBuffer) {
+        [&] (const Ref<ImmutableImageBuffer>& imageBuffer) {
             return imageBuffer->backendSize();
         },
         [&] (RenderingResourceIdentifier) -> IntSize {

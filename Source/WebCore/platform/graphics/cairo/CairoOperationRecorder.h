@@ -69,8 +69,8 @@ private:
     void drawGlyphs(const WebCore::Font&, std::span<const WebCore::GlyphBufferGlyph>, std::span<const WebCore::GlyphBufferAdvance>, const WebCore::FloatPoint&, WebCore::FontSmoothingMode) override;
     void drawDecomposedGlyphs(const WebCore::Font&, const WebCore::DecomposedGlyphs&) override;
 
-    void drawImageBuffer(WebCore::ImageBuffer&, const WebCore::FloatRect& destination, const WebCore::FloatRect& source, WebCore::ImagePaintingOptions) override;
-    void drawFilteredImageBuffer(WebCore::ImageBuffer*, const WebCore::FloatRect&, WebCore::Filter&, WebCore::FilterResults&) override;
+    void drawImageBuffer(WebCore::ImmutableImageBuffer&, const WebCore::FloatRect& destination, const WebCore::FloatRect& source, WebCore::ImagePaintingOptions) override;
+    void drawFilteredImageBuffer(WebCore::ImmutableImageBuffer*, const WebCore::FloatRect&, WebCore::Filter&, WebCore::FilterResults&) override;
     void drawNativeImageInternal(WebCore::NativeImage&, const WebCore::FloatRect&, const WebCore::FloatRect&, WebCore::ImagePaintingOptions) override;
     void drawPattern(WebCore::NativeImage&, const WebCore::FloatRect&, const WebCore::FloatRect&, const WebCore::AffineTransform&, const WebCore::FloatPoint&, const WebCore::FloatSize&, WebCore::ImagePaintingOptions) override;
 
@@ -103,7 +103,7 @@ private:
     void clipOut(const WebCore::Path&) override;
     void clipPath(const WebCore::Path&, WebCore::WindRule) override;
     WebCore::IntRect clipBounds() const override;
-    void clipToImageBuffer(WebCore::ImageBuffer&, const WebCore::FloatRect&) override;
+    void clipToImageBuffer(WebCore::ImmutableImageBuffer&, const WebCore::FloatRect&) override;
 #if ENABLE(VIDEO)
     void drawVideoFrame(WebCore::VideoFrame&, const WebCore::FloatRect& destination, WebCore::ImageOrientation, bool shouldDiscardAlpha) override;
 #endif

@@ -49,7 +49,7 @@ bool FEComponentTransferSkiaApplier::apply(const Filter&, const FilterImageVecto
     auto& input = inputs[0].get();
 
     RefPtr resultImage = result.imageBuffer();
-    RefPtr sourceImage = input.imageBuffer();
+    RefPtr sourceImage = input.immutableImageBuffer();
     if (!resultImage || !sourceImage)
         return false;
 

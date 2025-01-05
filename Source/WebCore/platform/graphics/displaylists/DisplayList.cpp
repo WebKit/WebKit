@@ -62,7 +62,7 @@ bool DisplayList::isEmpty() const
     return m_items.isEmpty();
 }
 
-void DisplayList::cacheImageBuffer(ImageBuffer& imageBuffer)
+void DisplayList::cacheImageBuffer(ImmutableImageBuffer& imageBuffer)
 {
     m_resourceHeap.add(Ref { imageBuffer });
 }

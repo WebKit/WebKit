@@ -175,9 +175,9 @@ void RecorderImpl::clipOutRoundedRect(const FloatRoundedRect& clipRect)
     append(ClipOutRoundedRect(clipRect));
 }
 
-void RecorderImpl::recordClipToImageBuffer(ImageBuffer& imageBuffer, const FloatRect& destinationRect)
+void RecorderImpl::recordClipToImageBuffer(RenderingResourceIdentifier imageBufferIdentifier, const FloatRect& destinationRect)
 {
-    append(ClipToImageBuffer(imageBuffer.renderingResourceIdentifier(), destinationRect));
+    append(ClipToImageBuffer(imageBufferIdentifier, destinationRect));
 }
 
 void RecorderImpl::clipOut(const Path& path)
@@ -192,12 +192,9 @@ void RecorderImpl::clipPath(const Path& path, WindRule rule)
     append(ClipPath(path, rule));
 }
 
-void RecorderImpl::recordDrawFilteredImageBuffer(ImageBuffer* sourceImage, const FloatRect& sourceImageRect, Filter& filter)
+void RecorderImpl::recordDrawFilteredImageBuffer(std::optional<RenderingResourceIdentifier> sourceImageIdentifier, const FloatRect& sourceImageRect, Filter& filter)
 {
-    std::optional<RenderingResourceIdentifier> identifier;
-    if (sourceImage)
-        identifier = sourceImage->renderingResourceIdentifier();
-    append(DrawFilteredImageBuffer(WTFMove(identifier), sourceImageRect, filter));
+    append(DrawFilteredImageBuffer(WTFMove(sourceImageIdentifier), sourceImageRect, filter));
 }
 
 void RecorderImpl::recordDrawGlyphs(const Font& font, std::span<const GlyphBufferGlyph> glyphs, std::span<const GlyphBufferAdvance> advances, const FloatPoint& localAnchor, FontSmoothingMode mode)
@@ -215,9 +212,9 @@ void RecorderImpl::recordDrawDisplayListItems(const Vector<Item>& items, const F
     append(DrawDisplayListItems(items, destination));
 }
 
-void RecorderImpl::recordDrawImageBuffer(ImageBuffer& imageBuffer, const FloatRect& destRect, const FloatRect& srcRect, ImagePaintingOptions options)
+void RecorderImpl::recordDrawImageBuffer(RenderingResourceIdentifier imageBufferIdentifier, const FloatRect& destRect, const FloatRect& srcRect, ImagePaintingOptions options)
 {
-    append(DrawImageBuffer(imageBuffer.renderingResourceIdentifier(), destRect, srcRect, options));
+    append(DrawImageBuffer(imageBufferIdentifier, destRect, srcRect, options));
 }
 
 void RecorderImpl::recordDrawNativeImage(RenderingResourceIdentifier imageIdentifier, const FloatRect& destRect, const FloatRect& srcRect, ImagePaintingOptions options)
@@ -499,7 +496,7 @@ void RecorderImpl::endPage()
     append(EndPage());
 }
 
-bool RecorderImpl::recordResourceUse(NativeImage& nativeImage)
+std::optional<RenderingResourceIdentifier> RecorderImpl::recordResourceUse(NativeImage& nativeImage)
 {
 #if USE(SKIA)
     if (m_displayList.replayOptions().contains(ReplayOption::FlushImagesAndWaitForCompletion))
@@ -507,10 +504,10 @@ bool RecorderImpl::recordResourceUse(NativeImage& nativeImage)
 #endif
 
     m_displayList.cacheNativeImage(nativeImage);
-    return true;
+    return nativeImage.renderingResourceIdentifier();
 }
 
-bool RecorderImpl::recordResourceUse(ImageBuffer& imageBuffer)
+std::optional<RenderingResourceIdentifier> RecorderImpl::recordResourceUse(ImmutableImageBuffer& imageBuffer)
 {
 #if USE(SKIA)
     if (m_displayList.replayOptions().contains(ReplayOption::FlushImagesAndWaitForCompletion))
@@ -518,10 +515,24 @@ bool RecorderImpl::recordResourceUse(ImageBuffer& imageBuffer)
 #endif
 
     m_displayList.cacheImageBuffer(imageBuffer);
-    return true;
+    return imageBuffer.renderingResourceIdentifier();
 }
 
-bool RecorderImpl::recordResourceUse(const SourceImage& image)
+std::optional<RenderingResourceIdentifier> RecorderImpl::recordResourceUse(ImageBuffer& imageBuffer)
+{
+#if USE(SKIA)
+    return recordResourceUse(static_cast<ImmutableImageBuffer&>(imageBuffer));
+#else
+    RefPtr clone = imageBuffer.clone();
+    if (!clone)
+        return std::nullopt;
+
+    m_displayList.cacheImageBuffer(*clone);
+    return clone->renderingResourceIdentifier();
+#endif
+}
+
+std::optional<RenderingResourceIdentifier> RecorderImpl::recordResourceUse(const SourceImage& image)
 {
     if (auto imageBuffer = image.imageBufferIfExists())
         return recordResourceUse(*imageBuffer);
@@ -529,7 +540,7 @@ bool RecorderImpl::recordResourceUse(const SourceImage& image)
     if (auto nativeImage = image.nativeImageIfExists())
         return recordResourceUse(*nativeImage);
 
-    return true;
+    return image.imageIdentifier();
 }
 
 bool RecorderImpl::recordResourceUse(Font& font)

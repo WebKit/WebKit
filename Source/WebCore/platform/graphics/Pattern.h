@@ -71,7 +71,7 @@ public:
     WEBCORE_EXPORT void setTileImage(SourceImage&&);
 
     RefPtr<NativeImage> tileNativeImage() const;
-    RefPtr<ImageBuffer> tileImageBuffer() const;
+    RefPtr<ImmutableImageBuffer> tileImageBuffer() const;
 
     const Parameters& parameters() const { return m_parameters; }
 

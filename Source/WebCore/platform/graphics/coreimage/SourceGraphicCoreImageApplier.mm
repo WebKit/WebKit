@@ -45,7 +45,7 @@ bool SourceGraphicCoreImageApplier::apply(const Filter&, const FilterImageVector
 {
     auto& input = inputs[0].get();
 
-    RefPtr sourceImage = input.imageBuffer();
+    RefPtr sourceImage = input.immutableImageBuffer();
     if (!sourceImage)
         return false;
 

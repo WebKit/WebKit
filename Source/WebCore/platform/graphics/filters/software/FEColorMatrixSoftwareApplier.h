@@ -23,6 +23,7 @@
 #pragma once
 
 #include "FilterEffectApplier.h"
+#include <array>
 #include <wtf/TZoneMalloc.h>
 
 namespace WebCore {

@@ -2856,6 +2856,7 @@
 		72A64523294908A200C14BA3 /* MeterPart.h in Headers */ = {isa = PBXBuildFile; fileRef = 722623C429486B6A006DCCF1 /* MeterPart.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		72A645262949158000C14BA3 /* ControlFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = 722623C029486B28006DCCF1 /* ControlFactory.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		72A73BEF245A3F90001C9D03 /* AnimationFrameRate.h in Headers */ = {isa = PBXBuildFile; fileRef = 722A815C238FD50500C00583 /* AnimationFrameRate.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		72A8BBB62D1BBF88002261BA /* ImmutableImageBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 72A8BBB32D1B975F002261BA /* ImmutableImageBuffer.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		72ACC9C627629A7700D523F7 /* SVGPreserveAspectRatioValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C8F22461DD3D1C500E92DA3 /* SVGPreserveAspectRatioValue.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		72B2213129502059002B5609 /* TextFieldPart.h in Headers */ = {isa = PBXBuildFile; fileRef = 72B2212E295015BB002B5609 /* TextFieldPart.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		72B8B0352753438600F752AA /* FilterFunction.h in Headers */ = {isa = PBXBuildFile; fileRef = 7262D756272A174100C56A09 /* FilterFunction.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -13408,6 +13409,8 @@
 		72A13AD7274DE57800E2A88E /* SourceGraphicSoftwareApplier.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SourceGraphicSoftwareApplier.h; sourceTree = "<group>"; };
 		72A6451F2948F25900C14BA3 /* WebControlView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebControlView.h; sourceTree = "<group>"; };
 		72A645A4294FCDC600C14BA3 /* ControlStyle.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ControlStyle.cpp; sourceTree = "<group>"; };
+		72A8BBB32D1B975F002261BA /* ImmutableImageBuffer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ImmutableImageBuffer.h; sourceTree = "<group>"; };
+		72A8BBB42D1B975F002261BA /* ImmutableImageBuffer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ImmutableImageBuffer.cpp; sourceTree = "<group>"; };
 		72B2212E295015BB002B5609 /* TextFieldPart.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TextFieldPart.h; sourceTree = "<group>"; };
 		72B2212F295015D5002B5609 /* TextFieldMac.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = TextFieldMac.mm; sourceTree = "<group>"; };
 		72B22130295015D5002B5609 /* TextFieldMac.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TextFieldMac.h; sourceTree = "<group>"; };
@@ -33870,6 +33873,8 @@
 				554675781FD1FC1A003B10B0 /* ImageSource.h */,
 				5550CB411E955E3C00111AA0 /* ImageTypes.h */,
 				55BBD42824DB53A200BB6E0C /* ImageUtilities.h */,
+				72A8BBB42D1B975F002261BA /* ImmutableImageBuffer.cpp */,
+				72A8BBB32D1B975F002261BA /* ImmutableImageBuffer.h */,
 				078633F8240715D20087AE21 /* InbandGenericCue.cpp */,
 				078633DE23FEDF220087AE21 /* InbandGenericCue.h */,
 				0706A0D7240830A600E93818 /* InbandGenericCueIdentifier.h */,
@@ -41404,6 +41409,7 @@
 				5550CB421E955E3C00111AA0 /* ImageTypes.h in Headers */,
 				55BBD42924DB560400BB6E0C /* ImageUtilities.h in Headers */,
 				33E5A6AA2C6E023400F2CD04 /* ImmediateActionStage.h in Headers */,
+				72A8BBB62D1BBF88002261BA /* ImmutableImageBuffer.h in Headers */,
 				26F756B31B3B66F70005DD79 /* ImmutableNFA.h in Headers */,
 				26F756B51B3B68F20005DD79 /* ImmutableNFANodeBuilder.h in Headers */,
 				930A76C9297FA1CE0055B743 /* ImmutableStyleProperties.h in Headers */,

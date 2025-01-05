@@ -38,11 +38,6 @@
 OBJC_CLASS CIImage;
 #endif
 
-#if USE(SKIA)
-#include <skia/core/SkPicture.h>
-#include <skia/core/SkPictureRecorder.h>
-#endif
-
 namespace WebCore {
 
 class Filter;
@@ -51,7 +46,7 @@ class FloatRect;
 class FilterImage : public RefCounted<FilterImage> {
 public:
     static RefPtr<FilterImage> create(const FloatRect& primitiveSubregion, const FloatRect& imageRect, const IntRect& absoluteImageRect, bool isAlphaImage, bool isValidPremultiplied, RenderingMode, const DestinationColorSpace&, ImageBufferAllocator&);
-    static RefPtr<FilterImage> create(const FloatRect& primitiveSubregion, const FloatRect& imageRect, const IntRect& absoluteImageRect, Ref<ImageBuffer>&&, ImageBufferAllocator&);
+    static RefPtr<FilterImage> create(const FloatRect& primitiveSubregion, const FloatRect& imageRect, const IntRect& absoluteImageRect, Ref<ImmutableImageBuffer>&&, ImageBufferAllocator&);
 
     // The return values are in filter coordinates.
     FloatRect primitiveSubregion() const { return m_primitiveSubregion; }
@@ -70,6 +65,7 @@ public:
     size_t memoryCost() const;
 
     WEBCORE_EXPORT ImageBuffer* imageBuffer();
+    WEBCORE_EXPORT ImmutableImageBuffer* immutableImageBuffer();
     PixelBuffer* pixelBuffer(AlphaPremultiplication);
 
     RefPtr<PixelBuffer> getPixelBuffer(AlphaPremultiplication, const IntRect& sourceRect, std::optional<DestinationColorSpace> = std::nullopt);
@@ -86,14 +82,14 @@ public:
 
 private:
     FilterImage(const FloatRect& primitiveSubregion, const FloatRect& imageRect, const IntRect& absoluteImageRect, bool isAlphaImage, bool isValidPremultiplied, RenderingMode, const DestinationColorSpace&, ImageBufferAllocator&);
-    FilterImage(const FloatRect& primitiveSubregion, const FloatRect& imageRect, const IntRect& absoluteImageRect, Ref<ImageBuffer>&&, ImageBufferAllocator&);
+    FilterImage(const FloatRect& primitiveSubregion, const FloatRect& imageRect, const IntRect& absoluteImageRect, Ref<ImmutableImageBuffer>&&, ImageBufferAllocator&);
 
     RefPtr<PixelBuffer>& pixelBufferSlot(AlphaPremultiplication);
 
-    ImageBuffer* imageBufferFromPixelBuffer();
+    ImmutableImageBuffer* imageBufferFromPixelBuffer();
 
 #if USE(CORE_IMAGE)
-    ImageBuffer* imageBufferFromCIImage();
+    ImmutableImageBuffer* imageBufferFromCIImage();
 #endif
 
     bool requiresPixelBufferColorSpaceConversion(std::optional<DestinationColorSpace>) const;
@@ -107,7 +103,7 @@ private:
     RenderingMode m_renderingMode;
     DestinationColorSpace m_colorSpace;
 
-    RefPtr<ImageBuffer> m_imageBuffer;
+    RefPtr<ImmutableImageBuffer> m_imageBuffer;
     RefPtr<PixelBuffer> m_unpremultipliedPixelBuffer;
     RefPtr<PixelBuffer> m_premultipliedPixelBuffer;
 

@@ -30,14 +30,14 @@
 
 namespace WebCore {
 
-class ImageBuffer;
+class ImmutableImageBuffer;
 class NativeImage;
 
 class WEBCORE_EXPORT SourceImage {
 public:
     using ImageVariant = std::variant<
         Ref<NativeImage>,
-        Ref<ImageBuffer>,
+        Ref<ImmutableImageBuffer>,
         RenderingResourceIdentifier
     >;
 
@@ -54,8 +54,8 @@ public:
     NativeImage* nativeImageIfExists() const;
     NativeImage* nativeImage() const;
 
-    ImageBuffer* imageBufferIfExists() const;
-    ImageBuffer* imageBuffer() const;
+    ImmutableImageBuffer* imageBufferIfExists() const;
+    ImmutableImageBuffer* imageBuffer() const;
 
     RenderingResourceIdentifier imageIdentifier() const;
     IntSize size() const;

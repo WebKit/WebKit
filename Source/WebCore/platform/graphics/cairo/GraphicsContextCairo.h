@@ -101,7 +101,7 @@ public:
     void clipOut(const Path&) final;
     void clipPath(const Path&, WindRule) final;
     IntRect clipBounds() const final;
-    void clipToImageBuffer(ImageBuffer&, const FloatRect&) final;
+    void clipToImageBuffer(ImmutableImageBuffer&, const FloatRect&) final;
     
     RenderingMode renderingMode() const final;
 
@@ -109,8 +109,6 @@ public:
     Vector<float>& layers();
     void pushImageMask(cairo_surface_t*, const FloatRect&);
 
-    // Exposed as public because freestanding functions use this.
-    using GraphicsContext::nativeImageForDrawing;
 private:
     RefPtr<cairo_t> m_cr;
 

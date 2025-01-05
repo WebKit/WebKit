@@ -180,7 +180,7 @@ AffineTransform ImageBufferBackend::calculateBaseTransform(const Parameters& par
 }
 
 #if USE(SKIA)
-RefPtr<ImageBuffer> ImageBufferBackend::copyAcceleratedImageBufferBorrowingBackendRenderTarget(const ImageBuffer&) const
+RefPtr<ImageBuffer> ImageBufferBackend::copyAcceleratedImageBufferBorrowingBackendRenderTarget(const ImmutableImageBuffer&) const
 {
     return nullptr;
 }

@@ -61,7 +61,7 @@ RefPtr<NativeImage> Pattern::tileNativeImage() const
     return m_tileImage.nativeImage();
 }
 
-RefPtr<ImageBuffer> Pattern::tileImageBuffer() const
+RefPtr<ImmutableImageBuffer> Pattern::tileImageBuffer() const
 {
     return m_tileImage.imageBuffer();
 }

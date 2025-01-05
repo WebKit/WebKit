@@ -351,11 +351,23 @@ ImageDrawResult GraphicsContext::drawTiledImage(Image& image, const FloatRect& d
     return image.drawTiled(*this, destination, source, tileScaleFactor, hRule, vRule, { options.compositeOperator() });
 }
 
-RefPtr<NativeImage> GraphicsContext::nativeImageForDrawing(ImageBuffer& imageBuffer)
+void GraphicsContext::drawImageBuffer(ImmutableImageBuffer& image, const FloatPoint& destination, ImagePaintingOptions imagePaintingOptions)
 {
-    if (m_isDeferred == IsDeferred::Yes || &imageBuffer.context() == this)
-        return imageBuffer.copyNativeImage();
-    return imageBuffer.createNativeImageReference();
+    drawImageBuffer(image, FloatRect(destination, image.logicalSize()), FloatRect({ }, image.logicalSize()), imagePaintingOptions);
+}
+
+void GraphicsContext::drawImageBuffer(ImmutableImageBuffer& image, const FloatRect& destination, ImagePaintingOptions imagePaintingOptions)
+{
+    drawImageBuffer(image, destination, FloatRect({ }, image.logicalSize()), imagePaintingOptions);
+}
+
+void GraphicsContext::drawImageBuffer(ImmutableImageBuffer& image, const FloatRect& destination, const FloatRect& source, ImagePaintingOptions options)
+{
+    InterpolationQualityMaintainer interpolationQualityForThisScope(*this, options.interpolationQuality());
+    FloatRect sourceScaled = source;
+    sourceScaled.scale(image.resolutionScale());
+    if (auto nativeImage = image.nativeImageForDrawing(*this))
+        drawNativeImageInternal(*nativeImage, destination, sourceScaled, options);
 }
 
 void GraphicsContext::drawImageBuffer(ImageBuffer& image, const FloatPoint& destination, ImagePaintingOptions imagePaintingOptions)
@@ -370,14 +382,10 @@ void GraphicsContext::drawImageBuffer(ImageBuffer& image, const FloatRect& desti
 
 void GraphicsContext::drawImageBuffer(ImageBuffer& image, const FloatRect& destination, const FloatRect& source, ImagePaintingOptions options)
 {
-    InterpolationQualityMaintainer interpolationQualityForThisScope(*this, options.interpolationQuality());
-    FloatRect sourceScaled = source;
-    sourceScaled.scale(image.resolutionScale());
-    if (auto nativeImage = nativeImageForDrawing(image))
-        drawNativeImageInternal(*nativeImage, destination, sourceScaled, options);
+    drawImageBuffer(static_cast<ImmutableImageBuffer&>(image), destination, source, options);
 }
 
-void GraphicsContext::drawConsumingImageBuffer(RefPtr<ImageBuffer> image, const FloatPoint& destination, ImagePaintingOptions imagePaintingOptions)
+void GraphicsContext::drawConsumingImageBuffer(RefPtr<ImmutableImageBuffer> image, const FloatPoint& destination, ImagePaintingOptions imagePaintingOptions)
 {
     if (!image)
         return;
@@ -385,7 +393,7 @@ void GraphicsContext::drawConsumingImageBuffer(RefPtr<ImageBuffer> image, const 
     drawConsumingImageBuffer(WTFMove(image), FloatRect(destination, imageLogicalSize), FloatRect({ }, imageLogicalSize), imagePaintingOptions);
 }
 
-void GraphicsContext::drawConsumingImageBuffer(RefPtr<ImageBuffer> image, const FloatRect& destination, ImagePaintingOptions imagePaintingOptions)
+void GraphicsContext::drawConsumingImageBuffer(RefPtr<ImmutableImageBuffer> image, const FloatRect& destination, ImagePaintingOptions imagePaintingOptions)
 {
     if (!image)
         return;
@@ -393,11 +401,10 @@ void GraphicsContext::drawConsumingImageBuffer(RefPtr<ImageBuffer> image, const 
     drawConsumingImageBuffer(WTFMove(image), destination, FloatRect({ }, imageLogicalSize), imagePaintingOptions);
 }
 
-void GraphicsContext::drawConsumingImageBuffer(RefPtr<ImageBuffer> image, const FloatRect& destination, const FloatRect& source, ImagePaintingOptions options)
+void GraphicsContext::drawConsumingImageBuffer(RefPtr<ImmutableImageBuffer> image, const FloatRect& destination, const FloatRect& source, ImagePaintingOptions options)
 {
     if (!image)
         return;
-    ASSERT(this != &image->context());
     InterpolationQualityMaintainer interpolationQualityForThisScope(*this, options.interpolationQuality());
     FloatRect scaledSource = source;
     scaledSource.scale(image->resolutionScale());
@@ -405,13 +412,13 @@ void GraphicsContext::drawConsumingImageBuffer(RefPtr<ImageBuffer> image, const 
         drawNativeImageInternal(*nativeImage, destination, scaledSource, options);
 }
 
-void GraphicsContext::drawFilteredImageBuffer(ImageBuffer* sourceImage, const FloatRect& sourceImageRect, Filter& filter, FilterResults& results)
+void GraphicsContext::drawFilteredImageBuffer(ImmutableImageBuffer* sourceImage, const FloatRect& sourceImageRect, Filter& filter, FilterResults& results)
 {
     auto result = filter.apply(sourceImage, sourceImageRect, results);
     if (!result)
         return;
     
-    RefPtr imageBuffer = result->imageBuffer();
+    RefPtr imageBuffer = result->immutableImageBuffer();
     if (!imageBuffer)
         return;
 
@@ -420,12 +427,22 @@ void GraphicsContext::drawFilteredImageBuffer(ImageBuffer* sourceImage, const Fl
     scale(filter.filterScale());
 }
 
-void GraphicsContext::drawPattern(ImageBuffer& image, const FloatRect& destRect, const FloatRect& source, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, ImagePaintingOptions options)
+void GraphicsContext::drawFilteredImageBuffer(ImageBuffer* sourceImage, const FloatRect& sourceImageRect, Filter& filter, FilterResults& results)
+{
+    drawFilteredImageBuffer(static_cast<ImmutableImageBuffer*>(sourceImage), sourceImageRect, filter, results);
+}
+
+void GraphicsContext::drawPattern(ImmutableImageBuffer& image, const FloatRect& destRect, const FloatRect& source, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, ImagePaintingOptions options)
 {
     FloatRect scaledSource = source;
     scaledSource.scale(image.resolutionScale());
-    if (auto nativeImage = nativeImageForDrawing(image))
+    if (auto nativeImage = image.nativeImageForDrawing(*this))
         drawPattern(*nativeImage, destRect, source, patternTransform, phase, spacing, options);
+}
+
+void GraphicsContext::drawPattern(ImageBuffer& image, const FloatRect& destRect, const FloatRect& source, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, ImagePaintingOptions options)
+{
+    drawPattern(static_cast<ImmutableImageBuffer&>(image), destRect, source, patternTransform, phase, spacing, options);
 }
 
 void GraphicsContext::drawControlPart(ControlPart& part, const FloatRoundedRect& borderRect, float deviceScaleFactor, const ControlStyle& style)
@@ -463,6 +480,11 @@ IntRect GraphicsContext::clipBounds() const
 {
     ASSERT_NOT_REACHED();
     return IntRect();
+}
+
+void GraphicsContext::clipToImageBuffer(ImageBuffer& imageBuffer, const FloatRect& destRect)
+{
+    clipToImageBuffer(static_cast<ImmutableImageBuffer&>(imageBuffer), destRect);
 }
 
 void GraphicsContext::fillRect(const FloatRect& rect, Gradient& gradient)

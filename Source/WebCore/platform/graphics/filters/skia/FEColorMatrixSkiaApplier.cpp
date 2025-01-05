@@ -49,7 +49,7 @@ bool FEColorMatrixSkiaApplier::apply(const Filter&, const FilterImageVector& inp
     auto& input = inputs[0].get();
 
     RefPtr resultImage = result.imageBuffer();
-    RefPtr sourceImage = input.imageBuffer();
+    RefPtr sourceImage = input.immutableImageBuffer();
     if (!resultImage || !sourceImage)
         return false;
 

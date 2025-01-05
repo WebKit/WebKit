@@ -39,7 +39,7 @@ bool SourceAlphaSoftwareApplier::apply(const Filter&, const FilterImageVector& i
     if (!resultImage)
         return false;
     
-    RefPtr inputImage = input.imageBuffer();
+    RefPtr inputImage = input.immutableImageBuffer();
     if (!inputImage)
         return false;
 

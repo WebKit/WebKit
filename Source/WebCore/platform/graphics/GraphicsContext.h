@@ -30,6 +30,7 @@
 #include "DashArray.h"
 #include "DestinationColorSpace.h"
 #include "DisplayListItem.h"
+#include "DisplayListResourceHeap.h"
 #include "FloatRect.h"
 #include "FontCascade.h"
 #include "GraphicsContextState.h"
@@ -54,6 +55,7 @@ class FilterResults;
 class FloatRoundedRect;
 class Gradient;
 class ImageBuffer;
+class ImmutableImageBuffer;
 class Path;
 class SystemImage;
 class TextRun;
@@ -81,6 +83,8 @@ public:
     WEBCORE_EXPORT GraphicsContext(IsDeferred = IsDeferred::No, const GraphicsContextState::ChangeFlags& = { }, InterpolationQuality = InterpolationQuality::Default);
     WEBCORE_EXPORT GraphicsContext(IsDeferred, const GraphicsContextState&);
     WEBCORE_EXPORT virtual ~GraphicsContext();
+
+    IsDeferred isDeferred() const { return m_isDeferred; }
 
     virtual bool hasPlatformContext() const { return false; }
     virtual PlatformGraphicsContext* platformContext() const { return nullptr; }
@@ -262,14 +266,19 @@ public:
     WEBCORE_EXPORT virtual ImageDrawResult drawTiledImage(Image&, const FloatRect& destination, const FloatPoint& source, const FloatSize& tileSize, const FloatSize& spacing, ImagePaintingOptions = { });
     WEBCORE_EXPORT virtual ImageDrawResult drawTiledImage(Image&, const FloatRect& destination, const FloatRect& source, const FloatSize& tileScaleFactor, Image::TileRule, Image::TileRule, ImagePaintingOptions = { });
 
+    WEBCORE_EXPORT void drawImageBuffer(ImmutableImageBuffer&, const FloatPoint& destination, ImagePaintingOptions = { });
+    WEBCORE_EXPORT void drawImageBuffer(ImmutableImageBuffer&, const FloatRect& destination, ImagePaintingOptions = { });
+    WEBCORE_EXPORT virtual void drawImageBuffer(ImmutableImageBuffer&, const FloatRect& destination, const FloatRect& source, ImagePaintingOptions = { });
+
     WEBCORE_EXPORT void drawImageBuffer(ImageBuffer&, const FloatPoint& destination, ImagePaintingOptions = { });
     WEBCORE_EXPORT void drawImageBuffer(ImageBuffer&, const FloatRect& destination, ImagePaintingOptions = { });
     WEBCORE_EXPORT virtual void drawImageBuffer(ImageBuffer&, const FloatRect& destination, const FloatRect& source, ImagePaintingOptions = { });
 
-    WEBCORE_EXPORT void drawConsumingImageBuffer(RefPtr<ImageBuffer>, const FloatPoint& destination, ImagePaintingOptions = { });
-    WEBCORE_EXPORT void drawConsumingImageBuffer(RefPtr<ImageBuffer>, const FloatRect& destination, ImagePaintingOptions = { });
-    WEBCORE_EXPORT virtual void drawConsumingImageBuffer(RefPtr<ImageBuffer>, const FloatRect& destination, const FloatRect& source, ImagePaintingOptions = { });
+    WEBCORE_EXPORT void drawConsumingImageBuffer(RefPtr<ImmutableImageBuffer>, const FloatPoint& destination, ImagePaintingOptions = { });
+    WEBCORE_EXPORT void drawConsumingImageBuffer(RefPtr<ImmutableImageBuffer>, const FloatRect& destination, ImagePaintingOptions = { });
+    WEBCORE_EXPORT virtual void drawConsumingImageBuffer(RefPtr<ImmutableImageBuffer>, const FloatRect& destination, const FloatRect& source, ImagePaintingOptions = { });
 
+    WEBCORE_EXPORT virtual void drawFilteredImageBuffer(ImmutableImageBuffer* sourceImage, const FloatRect& sourceImageRect, Filter&, FilterResults&);
     WEBCORE_EXPORT virtual void drawFilteredImageBuffer(ImageBuffer* sourceImage, const FloatRect& sourceImageRect, Filter&, FilterResults&);
 
 #if ENABLE(MULTI_REPRESENTATION_HEIC)
@@ -277,6 +286,7 @@ public:
 #endif
 
     virtual void drawPattern(NativeImage&, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, ImagePaintingOptions = { }) = 0;
+    WEBCORE_EXPORT virtual void drawPattern(ImmutableImageBuffer&, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, ImagePaintingOptions = { });
     WEBCORE_EXPORT virtual void drawPattern(ImageBuffer&, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, ImagePaintingOptions = { });
 
     WEBCORE_EXPORT virtual void drawControlPart(ControlPart&, const FloatRoundedRect& borderRect, float deviceScaleFactor, const ControlStyle&);
@@ -295,7 +305,8 @@ public:
     virtual void clipOut(const Path&) = 0;
     WEBCORE_EXPORT virtual void clipOutRoundedRect(const FloatRoundedRect&);
     virtual void clipPath(const Path&, WindRule = WindRule::EvenOdd) = 0;
-    WEBCORE_EXPORT virtual void clipToImageBuffer(ImageBuffer&, const FloatRect&) = 0;
+    WEBCORE_EXPORT virtual void clipToImageBuffer(ImmutableImageBuffer&, const FloatRect&) = 0;
+    WEBCORE_EXPORT virtual void clipToImageBuffer(ImageBuffer&, const FloatRect&);
     WEBCORE_EXPORT virtual IntRect clipBounds() const;
 
     // Text
@@ -381,7 +392,6 @@ private:
     virtual void drawNativeImageInternal(NativeImage&, const FloatRect& destRect, const FloatRect& srcRect, ImagePaintingOptions = { }) = 0;
 
 protected:
-    WEBCORE_EXPORT RefPtr<NativeImage> nativeImageForDrawing(ImageBuffer&);
     WEBCORE_EXPORT void fillEllipseAsPath(const FloatRect&);
     WEBCORE_EXPORT void strokeEllipseAsPath(const FloatRect&);
 

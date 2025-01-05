@@ -2270,7 +2270,7 @@ ExceptionOr<RefPtr<CanvasPattern>> CanvasRenderingContext2DBase::createPattern(H
 
     videoElement.paintCurrentFrameInContext(imageBuffer->context(), FloatRect(FloatPoint(), size(videoElement)));
     
-    return RefPtr<CanvasPattern> { CanvasPattern::create({ imageBuffer.releaseNonNull() }, repeatX, repeatY, originClean) };
+    return RefPtr<CanvasPattern> { CanvasPattern::create({ static_reference_cast<ImmutableImageBuffer>(imageBuffer.releaseNonNull()) }, repeatX, repeatY, originClean) };
 }
 
 #endif
@@ -2292,7 +2292,7 @@ ExceptionOr<RefPtr<CanvasPattern>> CanvasRenderingContext2DBase::createPattern(I
     if (!buffer)
         return Exception { ExceptionCode::InvalidStateError };
 
-    return RefPtr<CanvasPattern> { CanvasPattern::create({ buffer.releaseNonNull() }, repeatX, repeatY, imageBitmap.originClean()) };
+    return RefPtr<CanvasPattern> { CanvasPattern::create({ static_reference_cast<ImmutableImageBuffer>(buffer.releaseNonNull()) }, repeatX, repeatY, imageBitmap.originClean()) };
 }
 
 ExceptionOr<RefPtr<CanvasPattern>> CanvasRenderingContext2DBase::createPattern(CSSStyleImageValue&, bool, bool)

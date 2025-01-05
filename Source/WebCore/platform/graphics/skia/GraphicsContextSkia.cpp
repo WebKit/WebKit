@@ -328,7 +328,7 @@ void GraphicsContextSkia::drawNativeImageInternal(NativeImage& nativeImage, cons
     drawSkiaImage(nativeImage.platformImage(), nativeImage.size(), destRect, srcRect, options);
 }
 
-void GraphicsContextSkia::drawFilteredImageBuffer(ImageBuffer* sourceImage, const FloatRect& sourceImageRect, Filter& filter, FilterResults& results)
+void GraphicsContextSkia::drawFilteredImageBuffer(ImmutableImageBuffer* sourceImage, const FloatRect& sourceImageRect, Filter& filter, FilterResults& results)
 {
     auto* sourceImageGrContext = sourceImage ? sourceImage->skiaGrContext() : nullptr;
     if (sourceImageGrContext && sourceImageGrContext != PlatformDisplay::sharedDisplay().skiaGrContext()) {
@@ -645,9 +645,9 @@ IntRect GraphicsContextSkia::clipBounds() const
     return enclosingIntRect(m_canvas.getLocalClipBounds());
 }
 
-void GraphicsContextSkia::clipToImageBuffer(ImageBuffer& buffer, const FloatRect& destRect)
+void GraphicsContextSkia::clipToImageBuffer(ImmutableImageBuffer& buffer, const FloatRect& destRect)
 {
-    if (auto nativeImage = nativeImageForDrawing(buffer))
+    if (auto nativeImage = buffer.nativeImageForDrawing(*this))
         m_canvas.clipShader(nativeImage->platformImage()->makeShader(SkTileMode::kDecal, SkTileMode::kDecal, { }, SkMatrix::Translate(SkFloatToScalar(destRect.x()), SkFloatToScalar(destRect.y()))));
 }
 

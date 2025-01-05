@@ -26,7 +26,6 @@
 #include "FloatPoint3D.h"
 #include "FloatRect.h"
 #include "GraphicsTypes.h"
-#include "ImageBuffer.h"
 #include "RenderingMode.h"
 
 namespace WebCore {
@@ -34,6 +33,7 @@ namespace WebCore {
 class FilterEffect;
 class FilterImage;
 class FilterResults;
+class ImmutableImageBuffer;
 
 class Filter : public FilterFunction {
     using FilterFunction::apply;
@@ -65,7 +65,7 @@ public:
 
     bool clampFilterRegionIfNeeded();
 
-    WEBCORE_EXPORT RefPtr<FilterImage> apply(ImageBuffer* sourceImage, const FloatRect& sourceImageRect, FilterResults&);
+    WEBCORE_EXPORT RefPtr<FilterImage> apply(ImmutableImageBuffer* sourceImage, const FloatRect& sourceImageRect, FilterResults&);
     WEBCORE_EXPORT FilterStyleVector createFilterStyles(GraphicsContext&, const FloatRect& sourceImageRect) const;
 
 protected:
