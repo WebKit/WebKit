@@ -74,7 +74,7 @@ public:
         return LineBoxIteratorModernPath { *m_inlineContent, m_lineIndex + 1 }.contentLogicalTop();
     }
 
-    float contentLogicalLeft() const { return line().lineBoxLeft() + line().contentLogicalLeftIgnoringInlineDirection(); }
+    float contentLogicalLeft() const { return line().lineBoxLogicalRect().x() + line().contentLogicalLeftIgnoringInlineDirection(); }
     float contentLogicalRight() const { return contentLogicalLeft() + line().contentLogicalWidth(); }
     bool isHorizontal() const { return line().isHorizontal(); }
     FontBaseline baselineType() const { return line().baselineType(); }
