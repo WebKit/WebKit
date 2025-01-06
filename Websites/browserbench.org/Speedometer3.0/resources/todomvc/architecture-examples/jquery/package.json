@@ -8,7 +8,7 @@
   },
   "dependencies": {
     "director": "~1.2.2",
-    "handlebars": "^4.0.6",
+    "handlebars": "^4.1.1",
     "jquery": "^3.6.3",
     "todomvc-app-css": "^2.4.2",
     "todomvc-common": "^1.0.5"
